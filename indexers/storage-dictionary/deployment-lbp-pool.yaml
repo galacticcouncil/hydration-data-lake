@@ -1,0 +1,125 @@
+# =============================================
+# ============== L B P   P O O L ==============
+# =============================================
+
+manifestVersion: subsquid.io/v0.1
+name: hydration-storage-dictionary
+slot: 506
+description: Hydration storage dictionary for LBP pool storage
+build:
+deploy:
+  addons:
+    postgres:
+      config:
+        statement_timeout: 1080000
+        log_min_duration_statement: 60000
+  processor:
+    - name: lbp-pool-batch-proc-1
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: true
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: false
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 3681428
+        END_BLOCK: 4120000
+        STATE_SCHEMA_NAME: lbp_pool__batch_proc_1
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+    - name: lbp-pool-batch-proc-2
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: true
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: false
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 4120001
+        END_BLOCK: 4560000
+        STATE_SCHEMA_NAME: lbp_pool__batch_proc_2
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+    - name: lbp-pool-batch-proc-3
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: true
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: false
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 4560001
+        END_BLOCK: 5000000
+        STATE_SCHEMA_NAME: lbp_pool__batch_proc_3
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+    - name: lbp-pool-batch-proc-4
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: true
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: false
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 5000001
+        END_BLOCK: 5440000
+        STATE_SCHEMA_NAME: lbp_pool__batch_proc_4
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+    - name: lbp-pool-batch-proc-5
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: true
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: false
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 5440001
+        END_BLOCK: -1
+        STATE_SCHEMA_NAME: lbp_pool__batch_proc_5
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+  api:
+    env:
+      RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+      GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+      PROCESS_LBP_POOLS: false
+      PROCESS_XYK_POOLS: false
+      PROCESS_OMNIPOOLS: false
+      PROCESS_STABLEPOOLS: false
+      GQL_PORT: 8080
+      NODE_ENV: production
+      OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+      ALL_STATE_SCHEMAS_LIST: 'lbp_pool__batch_proc_1,lbp_pool__batch_proc_2,lbp_pool__batch_proc_3,lbp_pool__batch_proc_4,lbp_pool__batch_proc_5'
+      SUB_PROCESSORS_RANGES: 'lbp_pool__batch_proc_1:3681428:4120000;lbp_pool__batch_proc_2:4120001:4560000;lbp_pool__batch_proc_3:4560001:5000000;lbp_pool__batch_proc_4:5000001:5440000;lbp_pool__batch_proc_5:5440001:-1'
+    cmd:
+      - sqd
+      - api:prod
+scale:
+  dedicated: false
+  addons:
+    postgres:
+      profile: large
+      storage: 200G
+  processor:
+    profile: large

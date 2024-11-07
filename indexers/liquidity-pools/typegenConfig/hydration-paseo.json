@@ -1,0 +1,52 @@
+{
+  "outDir": "../src/parsers/chains/hydration-paseo/typegenTypes/",
+  "specVersions": "./paseo-metadata.jsonl",
+  "pallets": {
+    "AssetRegistry": {
+      "events": ["Registered", "Updated"],
+      "storage": ["Assets"]
+    },
+    "Balances": {
+      "events": ["Transfer"],
+      "calls": [],
+      "storage": [],
+      "constants": []
+    },
+    "Tokens": {
+      "events": ["Transfer"],
+      "storage": ["Accounts"]
+    },
+    "ParachainSystem": {
+      "calls": ["set_validation_data"],
+      "storage": ["LastRelayChainBlockNumber"]
+    },
+    "XYK": {
+      "events": ["PoolCreated", "PoolDestroyed", "SellExecuted", "BuyExecuted"],
+      "calls": ["create_pool"],
+      "storage": ["PoolAssets"]
+    },
+    "Omnipool": {
+      "events": ["TokenAdded", "TokenRemoved", "SellExecuted", "BuyExecuted"],
+      "calls": [],
+      "storage": ["Assets"]
+    },
+    "Stableswap": {
+      "events": [
+        "PoolCreated",
+        "SellExecuted",
+        "BuyExecuted",
+        "LiquidityAdded",
+        "LiquidityRemoved"
+      ],
+      "storage": ["Pools"]
+    },
+    "LBP": {
+      "events": ["PoolUpdated", "PoolCreated", "SellExecuted", "BuyExecuted"],
+      "calls": ["create_pool"],
+      "storage": ["PoolData"]
+    },
+    "System": {
+      "storage": ["Account"]
+    }
+  }
+}

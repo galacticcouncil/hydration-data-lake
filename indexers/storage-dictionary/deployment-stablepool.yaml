@@ -1,0 +1,128 @@
+# =============================================
+# ============ S T A B L E P O O L ============
+# =============================================
+
+manifestVersion: subsquid.io/v0.1
+name: hydration-storage-dictionary
+slot: 406
+description: Hydration storage dictionary for Stablepool storage
+build:
+deploy:
+  addons:
+    postgres:
+      config:
+        statement_timeout: 1080000
+        log_min_duration_statement: 60000
+  processor:
+    - name: stablepool-batch-proc-1
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: false
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: true
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 3640100
+        END_BLOCK: 4100000
+        STATE_SCHEMA_NAME: stablepool__batch_proc_1
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+    - name: stablepool-batch-proc-2
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: false
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: true
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 4100001
+        END_BLOCK: 4550000
+        STATE_SCHEMA_NAME: stablepool__batch_proc_2
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+    - name: stablepool-batch-proc-3
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: false
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: true
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 4550001
+        END_BLOCK: 5000000
+        STATE_SCHEMA_NAME: stablepool__batch_proc_3
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+    - name: stablepool-batch-proc-4
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: false
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: true
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 5000001
+        END_BLOCK: 5450000
+        STATE_SCHEMA_NAME: stablepool__batch_proc_4
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+    - name: stablepool-batch-proc-5
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: false
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: true
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 5450001
+        END_BLOCK: -1
+        STATE_SCHEMA_NAME: stablepool__batch_proc_5
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+  api:
+    env:
+      RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+      GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+      PROCESS_LBP_POOLS: false
+      PROCESS_XYK_POOLS: false
+      PROCESS_OMNIPOOLS: false
+      PROCESS_STABLEPOOLS: true
+      GQL_PORT: 8080
+      NODE_ENV: production
+      OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+      ALL_STATE_SCHEMAS_LIST: 'stablepool__batch_proc_1,stablepool__batch_proc_2,stablepool__batch_proc_3,stablepool__batch_proc_4,stablepool__batch_proc_5'
+      SUB_PROCESSORS_RANGES: 'stablepool__batch_proc_1:3640100:4100000;stablepool__batch_proc_2:4100001:4550000;stablepool__batch_proc_3:4550001:5000000;stablepool__batch_proc_4:5000001:5450000;stablepool__batch_proc_5:5450001:-1'
+    cmd:
+      - sqd
+      - api:prod
+scale:
+  dedicated: false
+  addons:
+    postgres:
+      profile: medium
+      storage: 200G
+  processor:
+    profile: medium
+  api:
+    profile: large
+#    replicas: 3

@@ -1,0 +1,61 @@
+manifestVersion: subsquid.io/v0.1
+name: hydration-pools
+slot: 305
+description: Hydration pools indexer
+build:
+deploy:
+  addons:
+    postgres:
+      config:
+        statement_timeout: 360000
+        log_min_duration_statement: 60000
+  processor:
+    env:
+      CHAIN: "hydration"
+      RPC_HYDRATION_URL: 'wss://archive.rpc.hydration.cloud'
+      GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
+      PROCESS_LBP_POOLS: true
+      PROCESS_XYK_POOLS: true
+      PROCESS_OMNIPOOLS: true
+      PROCESS_STABLEPOOLS: true
+      GQL_PORT: 8080
+      NODE_ENV: 'production'
+      OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+
+      USE_STORAGE_DICTIONARY: true
+      HYDRATION_STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql'
+      HYDRATION_STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql'
+      HYDRATION_STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql'
+      HYDRATION_STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool/api/graphql'
+    cmd:
+      - sqd
+      - process:prod
+  api:
+    env:
+      CHAIN: "hydration"
+      RPC_HYDRATION_URL: 'wss://archive.rpc.hydration.cloud'
+      GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
+      PROCESS_LBP_POOLS: true
+      PROCESS_XYK_POOLS: true
+      PROCESS_OMNIPOOLS: true
+      PROCESS_STABLEPOOLS: true
+      GQL_PORT: 8080
+      NODE_ENV: 'production'
+      OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+
+      USE_STORAGE_DICTIONARY: true
+      HYDRATION_STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql'
+      HYDRATION_STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql'
+      HYDRATION_STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql'
+      HYDRATION_STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool/api/graphql'
+    cmd:
+      - sqd
+      - api:prod
+scale:
+  dedicated: false
+  addons:
+    postgres:
+      profile: large
+      storage: 200G
+  processor:
+    profile: large
