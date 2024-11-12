@@ -10,18 +10,24 @@ import { StorageResolver } from '../../../storageResolver';
 import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
 import {
   AccountData,
-  OmnipoolAssetData,
-  OmnipoolGetAssetDataInput,
   GetPoolAssetInfoInput,
-  StablepoolGetPoolDataInput,
-  StablepoolInfo,
-  XykPoolWithAssets,
-  XykGetAssetsInput,
   LbpGetPoolDataInput,
   LbpPoolData,
+  OmnipoolAssetData,
+  OmnipoolGetAssetDataInput,
+  StablepoolGetPoolDataInput,
+  StablepoolInfo,
+  XykGetAssetsInput,
+  XykPoolWithAssets,
 } from '../../../types/storage';
 import { getAccountBalances } from '../../../../handlers/assets/balances';
 import { StorageParserMethods } from '../../../types/common';
+import { RuntimeApiResolver } from '../../../runtimeApiResolver';
+import {
+  CurrenciesApiAccountInput,
+  RuntimeApiMethodName,
+  RuntimeApiName,
+} from '../../../runtimeApiResolver/types';
 
 export default {
   system,
@@ -39,7 +45,7 @@ export default {
         args,
         pallet: ProcessingPallets.STABLESWAP,
         method: 'getPoolData',
-        fallbackFn: stableswap.getPoolData,
+        fallbackFns: [stableswap.getPoolData],
       }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
@@ -51,12 +57,27 @@ export default {
         args,
         pallet: ProcessingPallets.STABLESWAP,
         method: 'getPoolAssetInfo',
-        fallbackFn: getAccountBalances,
+        fallbackFns: [
+          async (fallbackFnArgs) =>
+            await new RuntimeApiResolver().resolveRuntimeApiCall<
+              CurrenciesApiAccountInput,
+              AccountData | null
+            >({
+              apiName: RuntimeApiName.CurrenciesApi,
+              apiMethod: RuntimeApiMethodName.account,
+              args: {
+                block: fallbackFnArgs.block,
+                assetId: fallbackFnArgs.assetId,
+                address: fallbackFnArgs.poolAddress!,
+              },
+            }),
+          getAccountBalances,
+        ],
       }),
   },
   omnipool: {
     getOmnipoolAssetData: (
-      args: StablepoolGetPoolDataInput
+      args: OmnipoolGetAssetDataInput
     ): Promise<OmnipoolAssetData | null> =>
       StorageResolver.getInstance().resolveStorageData<
         OmnipoolGetAssetDataInput,
@@ -65,7 +86,7 @@ export default {
         args,
         pallet: ProcessingPallets.OMNIPOOL,
         method: 'getAssetData',
-        fallbackFn: omnipool.getOmnipoolAssetData,
+        fallbackFns: [omnipool.getOmnipoolAssetData],
       }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
@@ -77,7 +98,22 @@ export default {
         args,
         pallet: ProcessingPallets.OMNIPOOL,
         method: 'getPoolAssetInfo',
-        fallbackFn: getAccountBalances,
+        fallbackFns: [
+          async (fallbackFnArgs) =>
+            await new RuntimeApiResolver().resolveRuntimeApiCall<
+              CurrenciesApiAccountInput,
+              AccountData | null
+            >({
+              apiName: RuntimeApiName.CurrenciesApi,
+              apiMethod: RuntimeApiMethodName.account,
+              args: {
+                block: fallbackFnArgs.block,
+                assetId: fallbackFnArgs.assetId,
+                address: fallbackFnArgs.poolAddress!,
+              },
+            }),
+          getAccountBalances,
+        ],
       }),
   },
   xyk: {
@@ -91,7 +127,7 @@ export default {
         args,
         pallet: ProcessingPallets.XYK,
         method: 'getPoolAssets',
-        fallbackFn: xyk.getPoolAssets,
+        fallbackFns: [xyk.getPoolAssets],
       }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
@@ -103,7 +139,22 @@ export default {
         args,
         pallet: ProcessingPallets.XYK,
         method: 'getPoolAssetInfo',
-        fallbackFn: getAccountBalances,
+        fallbackFns: [
+          async (fallbackFnArgs) =>
+            await new RuntimeApiResolver().resolveRuntimeApiCall<
+              CurrenciesApiAccountInput,
+              AccountData | null
+            >({
+              apiName: RuntimeApiName.CurrenciesApi,
+              apiMethod: RuntimeApiMethodName.account,
+              args: {
+                block: fallbackFnArgs.block,
+                assetId: fallbackFnArgs.assetId,
+                address: fallbackFnArgs.poolAddress!,
+              },
+            }),
+          getAccountBalances,
+        ],
       }),
   },
   lbp: {
@@ -115,7 +166,7 @@ export default {
         args,
         pallet: ProcessingPallets.LBP,
         method: 'getPoolData',
-        fallbackFn: lbp.getPoolData,
+        fallbackFns: [lbp.getPoolData],
       }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
@@ -127,7 +178,22 @@ export default {
         args,
         pallet: ProcessingPallets.LBP,
         method: 'getPoolAssetInfo',
-        fallbackFn: getAccountBalances,
+        fallbackFns: [
+          async (fallbackFnArgs) =>
+            await new RuntimeApiResolver().resolveRuntimeApiCall<
+              CurrenciesApiAccountInput,
+              AccountData | null
+            >({
+              apiName: RuntimeApiName.CurrenciesApi,
+              apiMethod: RuntimeApiMethodName.account,
+              args: {
+                block: fallbackFnArgs.block,
+                assetId: fallbackFnArgs.assetId,
+                address: fallbackFnArgs.poolAddress!,
+              },
+            }),
+          getAccountBalances,
+        ],
       }),
   },
 } as StorageParserMethods;

@@ -6,11 +6,11 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 
 async function getPoolData({
-  assetId,
+  poolId,
   block,
 }: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
   if (storage.stableswap.pools.v183.is(block)) {
-    const resp = await storage.stableswap.pools.v183.get(block, assetId);
+    const resp = await storage.stableswap.pools.v183.get(block, poolId);
     return resp ?? null;
   }
 

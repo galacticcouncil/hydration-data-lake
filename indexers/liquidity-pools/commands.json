@@ -20,16 +20,16 @@
     },
     "migration:create": {
       "description": "Generate a DB migration matching the TypeORM entities",
-      "cmd": ["squid-typeorm-migration", "generate"]
+      "cmd": ["npx", "squid-typeorm-migration", "generate"]
     },
     "migration:apply": {
       "description": "Apply the DB migrations",
-      "cmd": ["squid-typeorm-migration", "apply"]
+      "cmd": ["npx", "squid-typeorm-migration", "apply"]
     },
     "migration:generate": {
       "description": "Generate a DB migration matching the TypeORM entities",
       "deps": ["build", "migration:clean"],
-      "cmd": ["squid-typeorm-migration", "generate"]
+      "cmd": ["npx", "squid-typeorm-migration", "generate"]
     },
     "migration:clean": {
       "description": "Clean the migrations folder",

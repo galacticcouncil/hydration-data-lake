@@ -14,5 +14,8 @@
   "packageManager": "npm@10.2.4",
   "workspaces": [
     "indexers/*"
-  ]
+  ],
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
 }

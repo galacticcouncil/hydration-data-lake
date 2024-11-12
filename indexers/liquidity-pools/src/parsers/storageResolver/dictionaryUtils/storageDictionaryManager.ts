@@ -49,14 +49,6 @@ import {
   XykPoolWithAssets,
 } from '../../types/storage';
 
-// type PalletBatchStorageState<T = any> = T extends ProcessingPallets.XYK
-//   ? Map<string, XykPoolGlq>
-//   : T extends ProcessingPallets.OMNIPOOL
-//     ? Map<string, OmnipoolAssetDatum>
-//     : T extends ProcessingPallets.STABLESWAP
-//       ? Map<string, StablepoolGql>
-//       : never;
-
 export type BatchStorageStateSectionNode<T> = T extends ProcessingPallets.XYK
   ? XykPoolGlq
   : T extends ProcessingPallets.OMNIPOOL
@@ -562,12 +554,12 @@ export class StorageDictionaryManager extends QueriesHelper {
   }
 
   getStableswapPoolData({
-    assetId,
+    poolId,
     block,
   }: StablepoolGetPoolDataInput): StablepoolInfo | null {
     const node = this.getBatchStorageStatePart(
       ProcessingPallets.STABLESWAP
-    ).get(`${assetId}-${block.height}`);
+    ).get(`${poolId}-${block.height}`);
 
     if (!node) return null;
 

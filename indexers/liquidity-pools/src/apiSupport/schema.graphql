@@ -494,6 +494,40 @@ type Query {
     filter: OmnipoolAssetOperationFilter
   ): OmnipoolAssetOperationsConnection
 
+  """Reads and enables pagination through a set of `ProcessorStatus`."""
+  processorStatuses(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ProcessorStatus`."""
+    orderBy: [ProcessorStatusesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProcessorStatusCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProcessorStatusFilter
+  ): ProcessorStatusesConnection
+
   """Reads and enables pagination through a set of `Stablepool`."""
   stablepools(
     """Only read the first `n` values of the set."""
@@ -1035,6 +1069,7 @@ type Query {
   omnipoolAssetHistoricalDatum(id: String!): OmnipoolAssetHistoricalDatum
   omnipoolAssetHistoricalVolume(id: String!): OmnipoolAssetHistoricalVolume
   omnipoolAssetOperation(id: String!): OmnipoolAssetOperation
+  processorStatus(id: String!): ProcessorStatus
   stablepool(id: String!): Stablepool
   stablepoolAsset(id: String!): StablepoolAsset
   stablepoolAssetHistoricalDatum(id: String!): StablepoolAssetHistoricalDatum
@@ -35063,6 +35098,319 @@ input BigIntFilter {
   greaterThanOrEqualTo: BigInt
 }
 
+"""A connection to a list of `ProcessorStatus` values."""
+type ProcessorStatusesConnection {
+  """A list of `ProcessorStatus` objects."""
+  nodes: [ProcessorStatus]!
+
+  """
+  A list of edges which contains the `ProcessorStatus` and cursor to aid in pagination.
+  """
+  edges: [ProcessorStatusesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `ProcessorStatus` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: ProcessorStatusAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `ProcessorStatus` for these aggregates.
+    """
+    groupBy: [ProcessorStatusGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: ProcessorStatusHavingInput
+  ): [ProcessorStatusAggregates!]
+}
+
+type ProcessorStatus {
+  id: String!
+  assetsActualisedAtBlock: Int!
+  initialIndexingStartedAtTime: Datetime!
+  initialIndexingFinishedAtTime: Datetime
+}
+
+"""A `ProcessorStatus` edge in the connection."""
+type ProcessorStatusesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ProcessorStatus` at the end of the edge."""
+  node: ProcessorStatus
+}
+
+type ProcessorStatusAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: ProcessorStatusSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: ProcessorStatusDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: ProcessorStatusMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: ProcessorStatusMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: ProcessorStatusAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: ProcessorStatusStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: ProcessorStatusStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: ProcessorStatusVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: ProcessorStatusVariancePopulationAggregates
+}
+
+type ProcessorStatusSumAggregates {
+  """Sum of assetsActualisedAtBlock across the matching connection"""
+  assetsActualisedAtBlock: BigInt!
+}
+
+type ProcessorStatusDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """
+  Distinct count of assetsActualisedAtBlock across the matching connection
+  """
+  assetsActualisedAtBlock: BigInt
+
+  """
+  Distinct count of initialIndexingStartedAtTime across the matching connection
+  """
+  initialIndexingStartedAtTime: BigInt
+
+  """
+  Distinct count of initialIndexingFinishedAtTime across the matching connection
+  """
+  initialIndexingFinishedAtTime: BigInt
+}
+
+type ProcessorStatusMinAggregates {
+  """Minimum of assetsActualisedAtBlock across the matching connection"""
+  assetsActualisedAtBlock: Int
+}
+
+type ProcessorStatusMaxAggregates {
+  """Maximum of assetsActualisedAtBlock across the matching connection"""
+  assetsActualisedAtBlock: Int
+}
+
+type ProcessorStatusAverageAggregates {
+  """Mean average of assetsActualisedAtBlock across the matching connection"""
+  assetsActualisedAtBlock: BigFloat
+}
+
+type ProcessorStatusStddevSampleAggregates {
+  """
+  Sample standard deviation of assetsActualisedAtBlock across the matching connection
+  """
+  assetsActualisedAtBlock: BigFloat
+}
+
+type ProcessorStatusStddevPopulationAggregates {
+  """
+  Population standard deviation of assetsActualisedAtBlock across the matching connection
+  """
+  assetsActualisedAtBlock: BigFloat
+}
+
+type ProcessorStatusVarianceSampleAggregates {
+  """
+  Sample variance of assetsActualisedAtBlock across the matching connection
+  """
+  assetsActualisedAtBlock: BigFloat
+}
+
+type ProcessorStatusVariancePopulationAggregates {
+  """
+  Population variance of assetsActualisedAtBlock across the matching connection
+  """
+  assetsActualisedAtBlock: BigFloat
+}
+
+"""Grouping methods for `ProcessorStatus` for usage during aggregation."""
+enum ProcessorStatusGroupBy {
+  ASSETS_ACTUALISED_AT_BLOCK
+  INITIAL_INDEXING_STARTED_AT_TIME
+  INITIAL_INDEXING_STARTED_AT_TIME_TRUNCATED_TO_HOUR
+  INITIAL_INDEXING_STARTED_AT_TIME_TRUNCATED_TO_DAY
+  INITIAL_INDEXING_FINISHED_AT_TIME
+  INITIAL_INDEXING_FINISHED_AT_TIME_TRUNCATED_TO_HOUR
+  INITIAL_INDEXING_FINISHED_AT_TIME_TRUNCATED_TO_DAY
+}
+
+"""Conditions for `ProcessorStatus` aggregates."""
+input ProcessorStatusHavingInput {
+  AND: [ProcessorStatusHavingInput!]
+  OR: [ProcessorStatusHavingInput!]
+  sum: ProcessorStatusHavingSumInput
+  distinctCount: ProcessorStatusHavingDistinctCountInput
+  min: ProcessorStatusHavingMinInput
+  max: ProcessorStatusHavingMaxInput
+  average: ProcessorStatusHavingAverageInput
+  stddevSample: ProcessorStatusHavingStddevSampleInput
+  stddevPopulation: ProcessorStatusHavingStddevPopulationInput
+  varianceSample: ProcessorStatusHavingVarianceSampleInput
+  variancePopulation: ProcessorStatusHavingVariancePopulationInput
+}
+
+input ProcessorStatusHavingSumInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+input ProcessorStatusHavingDistinctCountInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+input ProcessorStatusHavingMinInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+input ProcessorStatusHavingMaxInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+input ProcessorStatusHavingAverageInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+input ProcessorStatusHavingStddevSampleInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+input ProcessorStatusHavingStddevPopulationInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+input ProcessorStatusHavingVarianceSampleInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+input ProcessorStatusHavingVariancePopulationInput {
+  assetsActualisedAtBlock: HavingIntFilter
+  initialIndexingStartedAtTime: HavingDatetimeFilter
+  initialIndexingFinishedAtTime: HavingDatetimeFilter
+}
+
+"""Methods to use when ordering `ProcessorStatus`."""
+enum ProcessorStatusesOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ASSETS_ACTUALISED_AT_BLOCK_ASC
+  ASSETS_ACTUALISED_AT_BLOCK_DESC
+  INITIAL_INDEXING_STARTED_AT_TIME_ASC
+  INITIAL_INDEXING_STARTED_AT_TIME_DESC
+  INITIAL_INDEXING_FINISHED_AT_TIME_ASC
+  INITIAL_INDEXING_FINISHED_AT_TIME_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `ProcessorStatus` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input ProcessorStatusCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `assetsActualisedAtBlock` field."""
+  assetsActualisedAtBlock: Int
+
+  """
+  Checks for equality with the object’s `initialIndexingStartedAtTime` field.
+  """
+  initialIndexingStartedAtTime: Datetime
+
+  """
+  Checks for equality with the object’s `initialIndexingFinishedAtTime` field.
+  """
+  initialIndexingFinishedAtTime: Datetime
+}
+
+"""
+A filter to be used against `ProcessorStatus` object types. All fields are combined with a logical ‘and.’
+"""
+input ProcessorStatusFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `assetsActualisedAtBlock` field."""
+  assetsActualisedAtBlock: IntFilter
+
+  """Filter by the object’s `initialIndexingStartedAtTime` field."""
+  initialIndexingStartedAtTime: DatetimeFilter
+
+  """Filter by the object’s `initialIndexingFinishedAtTime` field."""
+  initialIndexingFinishedAtTime: DatetimeFilter
+
+  """Checks for all expressions in this list."""
+  and: [ProcessorStatusFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [ProcessorStatusFilter!]
+
+  """Negates the expression."""
+  not: ProcessorStatusFilter
+}
+
 type _ProcessorStatus {
   name: String!
   height: Int!
@@ -35132,45 +35480,6 @@ input StablepoolVolumesByPeriodFilter {
   poolIds: [String!]!
   startBlockNumber: Int!
   endBlockNumber: Int
-}
-
-"""
-The root mutation type which contains root level fields which mutate data.
-"""
-type Mutation {
-  notify(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: NotifyInput!
-  ): NotifyPayload
-}
-
-"""The output of our `notify` mutation."""
-type NotifyPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `notify` mutation."""
-input NotifyInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  actionName: String!
-  eventName: String!
-  nodeName: String!
-  nodeId: String!
 }
 
 """

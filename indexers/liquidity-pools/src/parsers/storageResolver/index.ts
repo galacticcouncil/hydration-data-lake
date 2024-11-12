@@ -49,11 +49,31 @@ export class StorageResolver {
       });
   }
 
+  // TODO add fallback function response status to check is it failed or response is null
+  //  fallbackFn: (args) => Promise<{success: boolean; data: R | null}>
+  private async resolveFallbackFunctions<
+    Args extends { block: BlockHeader },
+    R,
+  >(args: Args, fnsList: Array<(args: Args) => Promise<R>>) {
+    for (const fallbackFn of fnsList) {
+      const result = await fallbackFn(args);
+      if (result) return result;
+    }
+    return null;
+  }
+
+  /**
+   * @param pallet
+   * @param method
+   * @param args
+   * @param fallbackFns - List of functions which will be executed sequentially
+   *                      if previous one returned null or failed
+   */
   async resolveStorageData<Args extends { block: BlockHeader }, R>({
     pallet,
     method,
     args,
-    fallbackFn,
+    fallbackFns = [],
   }: {
     pallet: ProcessingPallets;
     method:
@@ -62,7 +82,7 @@ export class StorageResolver {
       | 'getAssetData'
       | 'getPoolAssets';
     args: Args;
-    fallbackFn?: (args: Args) => Promise<R>;
+    fallbackFns: Array<(args: Args) => Promise<R>>;
   }): Promise<R | null> {
     if (!this.storageDictionaryManager)
       throw Error(`Storage Dictionary Manager is not initialised.`);
@@ -77,7 +97,7 @@ export class StorageResolver {
 
             if (resp) return resp;
 
-            return fallbackFn ? await fallbackFn(args) : null;
+            return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
             //   (this.storageDictionaryManager.getStableswapPoolData(
             //     args as unknown as StablepoolGetPoolDataInput // TOD fix types
@@ -92,7 +112,7 @@ export class StorageResolver {
 
             if (resp) return resp;
 
-            return fallbackFn ? await fallbackFn(args) : null;
+            return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
             //   (this.storageDictionaryManager.getStableswapPoolAssetInfo(
             //     args as unknown as GetPoolAssetInfoInput // TOD fix types
@@ -109,7 +129,7 @@ export class StorageResolver {
 
             if (resp) return resp;
 
-            return fallbackFn ? await fallbackFn(args) : null;
+            return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
             //   (this.storageDictionaryManager.getOmnipoolAssetState(
             //     args as unknown as OmnipoolGetAssetDataInput // TOD fix types
@@ -124,7 +144,7 @@ export class StorageResolver {
 
             if (resp) return resp;
 
-            return fallbackFn ? await fallbackFn(args) : null;
+            return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
             //   (this.storageDictionaryManager.getOmnipoolAssetInfo(
             //     args as unknown as GetPoolAssetInfoInput // TOD fix types
@@ -142,7 +162,7 @@ export class StorageResolver {
 
             if (resp) return resp;
 
-            return fallbackFn ? await fallbackFn(args) : null;
+            return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
             //   (this.storageDictionaryManager.getXykPoolAssets(
             //     args as unknown as XykGetAssetsInput // TOD fix types
@@ -157,7 +177,7 @@ export class StorageResolver {
 
             if (resp) return resp;
 
-            return fallbackFn ? await fallbackFn(args) : null;
+            return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
             //   (this.storageDictionaryManager.getXykPoolAssetInfo(
             //     args as unknown as GetPoolAssetInfoInput // TOD fix types
@@ -175,7 +195,7 @@ export class StorageResolver {
 
             if (resp) return resp;
 
-            return fallbackFn ? await fallbackFn(args) : null;
+            return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
             //   (this.storageDictionaryManager.getLbpPoolData(
             //     args as unknown as LbpGetPoolDataInput // TOD fix types
@@ -190,7 +210,7 @@ export class StorageResolver {
 
             if (resp) return resp;
 
-            return fallbackFn ? await fallbackFn(args) : null;
+            return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
             //   (this.storageDictionaryManager.getLbpPoolAssetInfo(
             //     args as unknown as GetPoolAssetInfoInput // TOD fix types
@@ -205,7 +225,6 @@ export class StorageResolver {
       }
     } catch (e) {
       console.log(e);
-      return fallbackFn ? fallbackFn(args) : null;
     }
     return null;
   }

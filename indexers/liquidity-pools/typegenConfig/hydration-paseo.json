@@ -1,6 +1,6 @@
 {
   "outDir": "../src/parsers/chains/hydration-paseo/typegenTypes/",
-  "specVersions": "./paseo-metadata.jsonl",
+  "specVersions": "../typegenAssets/paseo-metadata.jsonl",
   "pallets": {
     "AssetRegistry": {
       "events": ["Registered", "Updated"],

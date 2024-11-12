@@ -10,6 +10,93 @@ import {
 } from '../../model';
 import { getStablepool } from './stablepool';
 import { getAsset } from '../assets/assetRegistry';
+import { BlockHeader } from '@subsquid/substrate-processor';
+
+async function getStablepoolDataPromise({
+  ctx,
+  poolId,
+  blockHeader,
+}: {
+  ctx: ProcessorContext<Store>;
+  poolId: number;
+  blockHeader: BlockHeader;
+}): Promise<{
+  poolData: StablepoolHistoricalData;
+  assetsData: StablepoolAssetHistoricalData[];
+} | null> {
+  //TODO add using pool data from current batch cache
+  const poolStorageData = await parsers.storage.stableswap.getPoolData({
+    poolId,
+    block: blockHeader,
+  });
+
+  if (!poolStorageData) return null;
+
+  const assetsData = await Promise.all(
+    poolStorageData.assets.map(async (assetId) => ({
+      assetId,
+      data: await parsers.storage.stableswap.getPoolAssetInfo({
+        poolId,
+        assetId,
+        block: blockHeader,
+        poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
+      }),
+    }))
+  );
+
+  const poolEntity = await getStablepool(ctx, poolId);
+
+  if (!poolEntity) return null;
+
+  const poolHistoricalDataEntity = new StablepoolHistoricalData({
+    id: `${poolId}-${blockHeader.height}`,
+    pool: poolEntity,
+    initialAmplification: poolStorageData.initialAmplification,
+    finalAmplification: poolStorageData.finalAmplification,
+    initialBlock: poolStorageData.initialBlock,
+    finalBlock: poolStorageData.finalBlock,
+    fee: poolStorageData.fee,
+    relayChainBlockHeight:
+      ctx.batchState.state.relayChainInfo.get(blockHeader.height)
+        ?.relaychainBlockNumber ?? 0,
+    paraChainBlockHeight: blockHeader.height,
+  });
+
+  const poolAssetHistoricalDataEntities = [];
+
+  for (const { assetId, data } of assetsData.filter(
+    (data) => !!data && !!data.data
+  )) {
+    const asset = await getAsset({
+      ctx,
+      id: assetId,
+      ensure: true,
+      blockHeader,
+    });
+
+    if (!asset) continue;
+
+    poolAssetHistoricalDataEntities.push(
+      new StablepoolAssetHistoricalData({
+        id: `${poolId}-${assetId}-${blockHeader.height}`,
+        asset,
+        poolHistoricalData: poolHistoricalDataEntity,
+        free: data!.free,
+        reserved: data!.reserved,
+        miscFrozen: data!.miscFrozen,
+        feeFrozen: data!.feeFrozen,
+        frozen: data!.frozen,
+        flags: data!.flags,
+        paraChainBlockHeight: blockHeader.height,
+      })
+    );
+  }
+
+  return {
+    poolData: poolHistoricalDataEntity,
+    assetsData: poolAssetHistoricalDataEntities,
+  };
+}
 
 export async function handleStablepoolHistoricalData(
   ctx: ProcessorContext<Store>,
@@ -27,79 +114,7 @@ export async function handleStablepoolHistoricalData(
       )
 
       .flat()
-      .map(async ({ poolId, blockHeader }) => {
-        const poolStorageData = await parsers.storage.stableswap.getPoolData({
-          assetId: poolId,
-          block: blockHeader,
-        });
-
-        if (!poolStorageData) return null;
-
-        const assetsData = await Promise.all(
-          poolStorageData.assets.map(async (assetId) => ({
-            assetId,
-            data: await parsers.storage.stableswap.getPoolAssetInfo({
-              poolId,
-              assetId,
-              block: blockHeader,
-              poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
-            }),
-          }))
-        );
-
-        const poolEntity = await getStablepool(ctx, poolId);
-
-        if (!poolEntity) return null;
-
-        const poolHistoricalDataEntity = new StablepoolHistoricalData({
-          id: `${poolId}-${blockHeader.height}`,
-          pool: poolEntity,
-          initialAmplification: poolStorageData.initialAmplification,
-          finalAmplification: poolStorageData.finalAmplification,
-          initialBlock: poolStorageData.initialBlock,
-          finalBlock: poolStorageData.finalBlock,
-          fee: poolStorageData.fee,
-          relayChainBlockHeight:
-            ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-              ?.relaychainBlockNumber ?? 0,
-          paraChainBlockHeight: blockHeader.height,
-        });
-
-        const poolAssetHistoricalDataEntities = [];
-
-        for (const { assetId, data } of assetsData.filter(
-          (data) => !!data && !!data.data
-        )) {
-          const asset = await getAsset({
-            ctx,
-            id: assetId,
-            ensure: true,
-            blockHeader,
-          });
-
-          if (!asset) continue;
-
-          poolAssetHistoricalDataEntities.push(
-            new StablepoolAssetHistoricalData({
-              id: `${poolId}-${assetId}-${blockHeader.height}`,
-              asset,
-              poolHistoricalData: poolHistoricalDataEntity,
-              free: data!.free,
-              reserved: data!.reserved,
-              miscFrozen: data!.miscFrozen,
-              feeFrozen: data!.feeFrozen,
-              frozen: data!.frozen,
-              flags: data!.flags,
-              paraChainBlockHeight: blockHeader.height,
-            })
-          );
-        }
-
-        return {
-          poolData: poolHistoricalDataEntity,
-          assetsData: poolAssetHistoricalDataEntities,
-        };
-      })
+      .map((item) => getStablepoolDataPromise({ ...item, ctx }))
   );
 
   const stablepoolAllHistoricalData =

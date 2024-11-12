@@ -86,6 +86,11 @@ export interface LbpPoolData {
   repayTarget: bigint;
 }
 
+export type AccountDataMultiple = Array<{
+  assetId: number;
+  data: AccountData;
+}>;
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
@@ -93,7 +98,7 @@ export interface LbpPoolData {
  */
 
 export type StablepoolGetPoolDataInput = {
-  assetId: number;
+  poolId: number;
   block: BlockHeader;
 };
 
