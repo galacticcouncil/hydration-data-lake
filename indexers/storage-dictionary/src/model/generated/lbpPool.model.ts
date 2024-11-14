@@ -1,64 +1,65 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, IntColumn as IntColumn_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import * as marshal from "./marshal"
 import {LbpPoolAssetsData} from "./lbpPoolAssetsData.model"
 
 @Entity_()
 export class LbpPool {
-    constructor(props?: Partial<LbpPool>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<LbpPool>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * xykPoolAddress-paraChainBlockHeight
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * xykPoolAddress-paraChainBlockHeight
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    /**
-     * XYK pool address
-     */
-    @Index_()
-    @StringColumn_({nullable: false})
-    poolAddress!: string
+  /**
+   * XYK pool address
+   */
+  @Index_()
+  @Column_("text", {nullable: false})
+  poolAddress!: string
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    assetAId!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  assetAId!: number
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    assetBId!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  assetBId!: number
 
-    @StringColumn_({nullable: false})
-    owner!: string
+  @Column_("text", {nullable: false})
+  owner!: string
 
-    @IntColumn_({nullable: true})
-    start!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  start!: number | undefined | null
 
-    @IntColumn_({nullable: true})
-    end!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  end!: number | undefined | null
 
-    @IntColumn_({nullable: false})
-    initialWeight!: number
+  @Column_("int4", {nullable: false})
+  initialWeight!: number
 
-    @IntColumn_({nullable: false})
-    finalWeight!: number
+  @Column_("int4", {nullable: false})
+  finalWeight!: number
 
-    @StringColumn_({nullable: false})
-    weightCurve!: string
+  @Column_("text", {nullable: false})
+  weightCurve!: string
 
-    @IntColumn_({array: true, nullable: false})
-    fee!: (number)[]
+  @Column_("int4", {array: true, nullable: false})
+  fee!: (number)[]
 
-    @StringColumn_({nullable: true})
-    feeCollector!: string | undefined | null
+  @Column_("text", {nullable: true})
+  feeCollector!: string | undefined | null
 
-    @BigIntColumn_({nullable: false})
-    repayTarget!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  repayTarget!: bigint
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraChainBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
 
-    @OneToMany_(() => LbpPoolAssetsData, e => e.pool)
-    assets!: LbpPoolAssetsData[]
+  @OneToMany_(() => LbpPoolAssetsData, e => e.pool)
+  assets!: LbpPoolAssetsData[]
 }

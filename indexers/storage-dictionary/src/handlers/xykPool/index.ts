@@ -25,9 +25,10 @@ export async function handleXykPoolsStorage(
 
   const allPoolAssetBalancesMap = new Map(
     (
-      await getAssetBalancesMany(
-        currentBlockHeader,
-        allPoolsWithAssets
+      await getAssetBalancesMany({
+        ctx,
+        block: currentBlockHeader,
+        keyPairs: allPoolsWithAssets
           .map((pool) => [
             {
               address: pool.poolAddress,
@@ -38,8 +39,8 @@ export async function handleXykPoolsStorage(
               assetId: pool.assetBId,
             },
           ])
-          .flat()
-      )
+          .flat(),
+      })
     ).map((item) => [`${item.poolAddress}-${item.assetId}`, item])
   );
 

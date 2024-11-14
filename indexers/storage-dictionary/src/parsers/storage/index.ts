@@ -4,6 +4,7 @@ import omnipool from './omnipool';
 import xyk from './xyk';
 import lbp from './lbp';
 import stableswap from './stableswap';
+import assetRegistry from './assetRegistry';
 
 export default {
   system,
@@ -12,4 +13,5 @@ export default {
   xyk,
   lbp,
   stableswap,
+  assetRegistry,
 };

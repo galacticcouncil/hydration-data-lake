@@ -1,4 +1,5 @@
 import {
+  Asset,
   LbpPool,
   LbpPoolAssetsData,
   OmnipoolAssetData,
@@ -9,6 +10,9 @@ import {
 } from '../model';
 
 export type BatchStatePayload = {
+  assetIdsToSave: Set<string>;
+  assetsAllBatch: Map<string, Asset>;
+
   xykPools: Map<string, XykPool>;
   xykPoolAssetsData: Map<string, XykPoolAssetsData>;
 
@@ -23,6 +27,8 @@ export type BatchStatePayload = {
 
 export class BatchState {
   private statePayload: BatchStatePayload = {
+    assetIdsToSave: new Set(),
+    assetsAllBatch: new Map(),
     xykPools: new Map(),
     xykPoolAssetsData: new Map(),
     lbpPools: new Map(),

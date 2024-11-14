@@ -1,45 +1,45 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, IntColumn as IntColumn_, Index as Index_, StringColumn as StringColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import {StablepoolAssetData} from "./stablepoolAssetData.model"
 
 @Entity_()
 export class Stablepool {
-    constructor(props?: Partial<Stablepool>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<Stablepool>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * stablepoolId-paraChainBlockHeight
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * stablepoolId-paraChainBlockHeight
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    poolId!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  poolId!: number
 
-    @Index_()
-    @StringColumn_({nullable: false})
-    poolAddress!: string
+  @Index_()
+  @Column_("text", {nullable: false})
+  poolAddress!: string
 
-    @IntColumn_({nullable: false})
-    initialAmplification!: number
+  @Column_("int4", {nullable: false})
+  initialAmplification!: number
 
-    @IntColumn_({nullable: false})
-    finalAmplification!: number
+  @Column_("int4", {nullable: false})
+  finalAmplification!: number
 
-    @IntColumn_({nullable: false})
-    initialBlock!: number
+  @Column_("int4", {nullable: false})
+  initialBlock!: number
 
-    @IntColumn_({nullable: false})
-    finalBlock!: number
+  @Column_("int4", {nullable: false})
+  finalBlock!: number
 
-    @IntColumn_({nullable: false})
-    fee!: number
+  @Column_("int4", {nullable: false})
+  fee!: number
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraChainBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
 
-    @OneToMany_(() => StablepoolAssetData, e => e.pool)
-    assets!: StablepoolAssetData[]
+  @OneToMany_(() => StablepoolAssetData, e => e.pool)
+  assets!: StablepoolAssetData[]
 }

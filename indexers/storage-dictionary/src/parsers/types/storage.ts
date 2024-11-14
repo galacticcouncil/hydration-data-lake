@@ -1,5 +1,5 @@
-import { AccountBalances } from '../../model';
-import { sts } from '../../typegenTypes/support';
+import { AccountBalances, AssetType } from '../../model';
+import { BlockHeader } from '@subsquid/substrate-processor';
 
 export interface AccountData {
   free: bigint;
@@ -83,3 +83,35 @@ export interface StablepoolWithDetails {
   finalBlock: number;
   fee: number;
 }
+
+export interface AssetDetails {
+  assetType: AssetType;
+  existentialDeposit: bigint;
+  isSufficient: boolean;
+  name?: string;
+  symbol?: string;
+  decimals?: number;
+  xcmRateLimit?: bigint;
+}
+
+export type AssetDetailsWithId = {
+  assetId: number;
+  data: AssetDetails | null;
+};
+
+export type AccountDataMultiple = Array<{
+  assetId: number;
+  data: AccountData;
+}>;
+
+/**
+ * =============================================================================
+ * =========================== I N P U T    T Y P E S===========================
+ * =============================================================================
+ */
+
+export type GetAssetBalancesInput = {
+  address: string;
+  assetId: number;
+  block: BlockHeader;
+};

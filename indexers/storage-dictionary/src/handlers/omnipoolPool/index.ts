@@ -32,13 +32,14 @@ export async function handleOmnipoolStorage(
 
   const allAssetBalancesMap = new Map(
     (
-      await getAssetBalancesMany(
-        currentBlockHeader,
-        allAssetStates.map((assetData) => ({
+      await getAssetBalancesMany({
+        ctx,
+        block: currentBlockHeader,
+        keyPairs: allAssetStates.map((assetData) => ({
           address: appConfig.OMNIPOOL_ADDRESS,
           assetId: assetData.assetId,
-        }))
-      )
+        })),
+      })
     ).map((item) => [item.assetId, item])
   );
 

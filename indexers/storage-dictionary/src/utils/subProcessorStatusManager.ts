@@ -29,6 +29,7 @@ export class SubProcessorStatusManager {
       fromBlock: this.ctx.appConfig.START_BLOCK,
       toBlock: this.ctx.appConfig.END_BLOCK,
       height: this.ctx.blocks[0]?.header.height ?? this.ctx.appConfig.END_BLOCK,
+      assetsActualisedAtBlock: -1,
     });
 
     if (ensure) await this.ctx.store.save(statusEntity);
@@ -36,9 +37,17 @@ export class SubProcessorStatusManager {
     return statusEntity;
   }
 
-  async setSubProcessorStatus(height: number) {
+  async setSubProcessorStatus({
+    height,
+    assetsActualisedAtBlock,
+  }: Partial<SubProcessorStatus>) {
     const status = await this.getStatus();
-    status.height = height;
+
+    if (height !== undefined) status.height = height;
+
+    if (assetsActualisedAtBlock !== undefined)
+      status.assetsActualisedAtBlock = assetsActualisedAtBlock;
+
     await this.ctx.store.save(status);
   }
 

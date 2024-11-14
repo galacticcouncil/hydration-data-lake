@@ -37,17 +37,18 @@ export async function handleStablepoolStorage(
 
   const allPoolAssetBalancesMap = new Map(
     (
-      await getAssetBalancesMany(
-        currentBlockHeader,
-        allPools
+      await getAssetBalancesMany({
+        ctx,
+        block: currentBlockHeader,
+        keyPairs: allPools
           .map((pool) =>
             pool.assetIds.map((id) => ({
               address: pool.poolAddress,
               assetId: id,
             }))
           )
-          .flat()
-      )
+          .flat(),
+      })
     ).map((item) => [`${item.poolAddress}-${item.assetId}`, item])
   );
 

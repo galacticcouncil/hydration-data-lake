@@ -1,28 +1,10 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type AccountId32 = Bytes
-
-export interface Type_368 {
-    free: bigint
-    reserved: bigint
-    frozen: bigint
-}
-
-export const Type_368: sts.Type<Type_368> = sts.struct(() => {
-    return  {
-        free: sts.bigint(),
-        reserved: sts.bigint(),
-        frozen: sts.bigint(),
-    }
-})
-
-export const AccountId32 = sts.bytes()
-
 export interface AssetDetails {
-    name: BoundedVec
+    name: Bytes
     assetType: AssetType
     existentialDeposit: bigint
-    locked: boolean
+    xcmRateLimit?: (bigint | undefined)
 }
 
 export type AssetType = AssetType_PoolShare | AssetType_Token
@@ -36,14 +18,12 @@ export interface AssetType_Token {
     __kind: 'Token'
 }
 
-export type BoundedVec = Bytes
-
 export const AssetDetails: sts.Type<AssetDetails> = sts.struct(() => {
     return  {
-        name: BoundedVec,
+        name: sts.bytes(),
         assetType: AssetType,
         existentialDeposit: sts.bigint(),
-        locked: sts.boolean(),
+        xcmRateLimit: sts.option(() => sts.bigint()),
     }
 })
 
@@ -53,5 +33,3 @@ export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
         Token: sts.unit(),
     }
 })
-
-export const BoundedVec = sts.bytes()

@@ -11,6 +11,11 @@ import * as crypto from 'node:crypto';
 import { SubProcessorStatusManager } from './utils/subProcessorStatusManager';
 import { handleLbpPoolsStorage } from './handlers/lbpPool';
 import { splitIntoBatches } from './utils/helpers';
+import {
+  actualiseAssets,
+  ensureNativeToken,
+  prefetchAllAssets,
+} from './handlers/asset/assetRegistry';
 
 const appConfig = AppConfig.getInstance();
 
@@ -34,6 +39,15 @@ processor.run(
       ctxWithBatchState as ProcessorContext<Store>
     );
     await subProcessorStatusManager.calcSubBatchConfig();
+
+    await prefetchAllAssets(ctxWithBatchState as ProcessorContext<Store>);
+
+    await ensureNativeToken(ctxWithBatchState as ProcessorContext<Store>);
+
+    await actualiseAssets(
+      ctxWithBatchState as ProcessorContext<Store>,
+      subProcessorStatusManager
+    );
 
     console.log(`Batch size - ${ctx.blocks.length} blocks.`);
 
@@ -84,9 +98,9 @@ processor.run(
     }
     console.timeEnd(`Blocks batch has been processed in`);
 
-    await subProcessorStatusManager.setSubProcessorStatus(
-      ctx.blocks[ctx.blocks.length - 1].header.height
-    );
+    await subProcessorStatusManager.setSubProcessorStatus({
+      height: ctx.blocks[ctx.blocks.length - 1].header.height,
+    });
     console.log('Batch complete');
   }
 );

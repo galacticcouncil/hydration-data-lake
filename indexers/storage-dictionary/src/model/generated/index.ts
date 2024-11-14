@@ -1,4 +1,6 @@
 export * from "./subProcessorStatus.model"
+export * from "./asset.model"
+export * from "./_assetType"
 export * from "./lbpPool.model"
 export * from "./lbpPoolAssetsData.model"
 export * from "./_accountBalances"

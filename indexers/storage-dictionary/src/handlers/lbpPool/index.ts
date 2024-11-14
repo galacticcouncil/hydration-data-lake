@@ -23,9 +23,10 @@ export async function handleLbpPoolsStorage(
 
   const allPoolAssetBalancesMap = new Map(
     (
-      await getAssetBalancesMany(
-        currentBlockHeader,
-        allPools
+      await getAssetBalancesMany({
+        ctx,
+        block: currentBlockHeader,
+        keyPairs: allPools
           .map((pool) => [
             {
               address: pool.poolAddress,
@@ -36,8 +37,8 @@ export async function handleLbpPoolsStorage(
               assetId: pool.assetBId,
             },
           ])
-          .flat()
-      )
+          .flat(),
+      })
     ).map((item) => [`${item.poolAddress}-${item.assetId}`, item])
   );
 

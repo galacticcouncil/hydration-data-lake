@@ -8,6 +8,7 @@ type SubProcessorStatus @entity {
   fromBlock: Int!
   toBlock: Int!
   height: Int!
+  assetsActualisedAtBlock: Int
 }
 
 type AccountBalances {
@@ -29,6 +30,27 @@ type OmnipoolAssetState {
   protocolShares: BigInt!
   cap: BigInt!
   tradable: Tradability
+}
+
+enum AssetType {
+  Bond
+  External
+  StableSwap
+  Token
+  XYK
+  Erc20
+}
+
+type Asset @entity {
+  "Asset ID"
+  id: ID!
+  assetType: AssetType!
+  name: String
+  symbol: String
+  decimals: Int
+  xcmRateLimit: BigInt
+  isSufficient: Boolean!
+  existentialDeposit: BigInt!
 }
 
 # ======================================================================================================================
