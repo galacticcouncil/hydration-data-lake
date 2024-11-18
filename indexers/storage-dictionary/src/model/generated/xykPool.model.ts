@@ -32,6 +32,10 @@ export class XykPool {
   @Column_("int4", {nullable: false})
   paraChainBlockHeight!: number
 
+  @Index_()
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
+
   @OneToMany_(() => XykPoolAssetsData, e => e.pool)
   assets!: XykPoolAssetsData[]
 }

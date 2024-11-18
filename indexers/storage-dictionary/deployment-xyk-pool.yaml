@@ -14,74 +14,82 @@ deploy:
         statement_timeout: 1080000
         log_min_duration_statement: 60000
   processor:
-    - name: xyk-pool-batch-proc-1
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: true
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        START_BLOCK: 3934550
-        END_BLOCK: 4400000
-        STATE_SCHEMA_NAME: xyk_pool__batch_proc_1
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 1000
-    - name: xyk-pool-batch-proc-2
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: true
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        START_BLOCK: 4400001
-        END_BLOCK: 4800000
-        STATE_SCHEMA_NAME: xyk_pool__batch_proc_2
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 1000
-    - name: xyk-pool-batch-proc-3
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: true
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        START_BLOCK: 4800001
-        END_BLOCK: 5200000
-        STATE_SCHEMA_NAME: xyk_pool__batch_proc_3
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 1000
-    - name: xyk-pool-batch-proc-4
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: true
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        START_BLOCK: 5200001
-        END_BLOCK: 5600000
-        STATE_SCHEMA_NAME: xyk_pool__batch_proc_4
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+#    - name: xyk-pool-batch-proc-1
+#      cmd: ['sqd', 'process:prod']
+#      env:
+#        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+#        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+#        PROCESS_LBP_POOLS: false
+#        PROCESS_XYK_POOLS: true
+#        PROCESS_OMNIPOOLS: false
+#        PROCESS_STABLEPOOLS: false
+#        GQL_PORT: 8080
+#        NODE_ENV: production
+#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#        START_BLOCK: 3934550
+#        END_BLOCK: 4400000
+#        STATE_SCHEMA_NAME: xyk_pool__batch_proc_1
+#        SUB_BATCH_SIZE: 300
+#        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+#        ASSETS_TRACKER_PROCESSOR: false
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+#    - name: xyk-pool-batch-proc-2
+#      cmd: ['sqd', 'process:prod']
+#      env:
+#        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+#        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+#        PROCESS_LBP_POOLS: false
+#        PROCESS_XYK_POOLS: true
+#        PROCESS_OMNIPOOLS: false
+#        PROCESS_STABLEPOOLS: false
+#        GQL_PORT: 8080
+#        NODE_ENV: production
+#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#        START_BLOCK: 4400001
+#        END_BLOCK: 4800000
+#        STATE_SCHEMA_NAME: xyk_pool__batch_proc_2
+#        SUB_BATCH_SIZE: 300
+#        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+#        ASSETS_TRACKER_PROCESSOR: false
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+#    - name: xyk-pool-batch-proc-3
+#      cmd: ['sqd', 'process:prod']
+#      env:
+#        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+#        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+#        PROCESS_LBP_POOLS: false
+#        PROCESS_XYK_POOLS: true
+#        PROCESS_OMNIPOOLS: false
+#        PROCESS_STABLEPOOLS: false
+#        GQL_PORT: 8080
+#        NODE_ENV: production
+#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#        START_BLOCK: 4800001
+#        END_BLOCK: 5200000
+#        STATE_SCHEMA_NAME: xyk_pool__batch_proc_3
+#        SUB_BATCH_SIZE: 300
+#        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+#        ASSETS_TRACKER_PROCESSOR: false
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+#    - name: xyk-pool-batch-proc-4
+#      cmd: ['sqd', 'process:prod']
+#      env:
+#        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+#        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+#        PROCESS_LBP_POOLS: false
+#        PROCESS_XYK_POOLS: true
+#        PROCESS_OMNIPOOLS: false
+#        PROCESS_STABLEPOOLS: false
+#        GQL_PORT: 8080
+#        NODE_ENV: production
+#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#        START_BLOCK: 5200001
+#        END_BLOCK: 5600000
+#        STATE_SCHEMA_NAME: xyk_pool__batch_proc_4
+#        SUB_BATCH_SIZE: 300
+#        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+#        ASSETS_TRACKER_PROCESSOR: false
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
     - name: xyk-pool-batch-proc-5
       cmd: ['sqd', 'process:prod']
       env:
@@ -99,6 +107,27 @@ deploy:
         STATE_SCHEMA_NAME: xyk_pool__batch_proc_5
         SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 1000
+        ASSETS_TRACKER_PROCESSOR: false
+        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+    - name: xyk-pool-assets-tracker-proc
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: false
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: false
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        START_BLOCK: 5600001
+        END_BLOCK: -1
+        STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 1000
+        ASSETS_TRACKER_PROCESSOR: true
+        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
   api:
     env:
       RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
@@ -110,8 +139,8 @@ deploy:
       GQL_PORT: 8080
       NODE_ENV: production
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-      ALL_STATE_SCHEMAS_LIST: 'xyk_pool__batch_proc_1,xyk_pool__batch_proc_2,xyk_pool__batch_proc_3,xyk_pool__batch_proc_4,xyk_pool__batch_proc_5'
-      SUB_PROCESSORS_RANGES: 'xyk_pool__batch_proc_1:3934550:4400000;xyk_pool__batch_proc_2:4400001:4800000;xyk_pool__batch_proc_3:4800001:5200000;xyk_pool__batch_proc_4:5200001:5600000;xyk_pool__batch_proc_5:5600001:-1'
+      ALL_STATE_SCHEMAS_LIST: 'xyk_pool__batch_proc_1,xyk_pool__batch_proc_2,xyk_pool__batch_proc_3,xyk_pool__batch_proc_4,xyk_pool__batch_proc_5,xyk_pool__assets_tracker_proc'
+      SUB_PROCESSORS_RANGES: 'xyk_pool__batch_proc_1:3934550:4400000;xyk_pool__batch_proc_2:4400001:4800000;xyk_pool__batch_proc_3:4800001:5200000;xyk_pool__batch_proc_4:5200001:5600000;xyk_pool__batch_proc_5:5600001:-1;xyk_pool__assets_tracker_proc:5600001:-1'
     cmd:
       - sqd
       - api:prod
@@ -120,6 +149,6 @@ scale:
   addons:
     postgres:
       profile: large
-      storage: 200G
+      storage: 300G
   processor:
     profile: large

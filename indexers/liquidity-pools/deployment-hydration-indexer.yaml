@@ -52,10 +52,10 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
-      profile: large
+      profile: med
       storage: 200G
   processor:
     profile: large

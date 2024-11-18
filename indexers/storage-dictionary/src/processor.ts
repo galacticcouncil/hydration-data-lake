@@ -9,6 +9,8 @@ import {
   Extrinsic as _Extrinsic,
 } from '@subsquid/substrate-processor';
 
+import { events } from './typegenTypes';
+
 import { BatchState } from './utils/batchState';
 import { AppConfig } from './appConfig';
 const appConfig = AppConfig.getInstance();
@@ -33,6 +35,31 @@ export const processor = new SubstrateBatchProcessor()
 
     // More RPC connection options at https://docs.subsquid.io/substrate-indexing/setup/general/#set-data-source
   })
+  .addEvent({
+    name: [events.relayChainInfo.currentBlockNumbers.name],
+    call: true,
+    extrinsic: true,
+  })
+  .setFields({
+    event: {
+      args: true,
+      name: true,
+    },
+    extrinsic: {
+      hash: true,
+      fee: true,
+    },
+    block: {
+      timestamp: true,
+    },
+    call: {
+      name: true,
+      args: true,
+      origin: true,
+      success: true,
+      error: true,
+    },
+  })
   .includeAllBlocks()
   .setBlockRange({
     from: appConfig.START_BLOCK !== undefined ? appConfig.START_BLOCK : 0,
@@ -41,11 +68,6 @@ export const processor = new SubstrateBatchProcessor()
         ? appConfig.END_BLOCK
         : undefined,
   });
-// .setBlockRange({ from: 3934551 }); // XYK.create_pool
-// .setBlockRange({ from: 3934590 }); // XYK.buy
-// .setBlockRange({ from: 1708101 }); // Omnipool.TokenAdded
-// .setBlockRange({ from: 3640110 }); // Stableswap.PoolCreated
-// .setBlockRange({ from: 1439857 }); // AssetRegistry.Registered
 
 export type Fields = SubstrateBatchProcessorFields<typeof processor>;
 export type Block = BlockHeader<Fields>;

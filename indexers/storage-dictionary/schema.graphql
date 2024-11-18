@@ -74,6 +74,7 @@ type LbpPool @entity {
   feeCollector: String
   repayTarget: BigInt!
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
   assets: [LbpPoolAssetsData!]! @derivedFrom(field: "pool")
 }
 type LbpPoolAssetsData @entity {
@@ -83,6 +84,7 @@ type LbpPoolAssetsData @entity {
   assetId: Int! @index
   balances: AccountBalances!
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -97,6 +99,7 @@ type XykPool @entity {
   assetAId: Int! @index
   assetBId: Int! @index
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
   assets: [XykPoolAssetsData!]! @derivedFrom(field: "pool")
 }
 type XykPoolAssetsData @entity {
@@ -106,6 +109,7 @@ type XykPoolAssetsData @entity {
   assetId: Int! @index
   balances: AccountBalances!
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -120,6 +124,7 @@ type OmnipoolAssetData @entity {
   balances: AccountBalances!
   assetState: OmnipoolAssetState!
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -137,6 +142,7 @@ type Stablepool @entity {
   finalBlock: Int!
   fee: Int!
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
   assets: [StablepoolAssetData!]! @derivedFrom(field: "pool")
 }
 
@@ -147,4 +153,5 @@ type StablepoolAssetData @entity {
   assetId: Int!
   balances: AccountBalances!
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
 }

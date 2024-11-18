@@ -15,7 +15,9 @@ import {
   actualiseAssets,
   ensureNativeToken,
   prefetchAllAssets,
+  waitForAssetsActualisation,
 } from './handlers/asset/assetRegistry';
+import { handleRelayChainInfo } from './handlers/relayChainInfo';
 
 const appConfig = AppConfig.getInstance();
 
@@ -40,6 +42,8 @@ processor.run(
     );
     await subProcessorStatusManager.calcSubBatchConfig();
 
+    await waitForAssetsActualisation(subProcessorStatusManager, ctxWithBatchState as ProcessorContext<Store>);
+
     await prefetchAllAssets(ctxWithBatchState as ProcessorContext<Store>);
 
     await ensureNativeToken(ctxWithBatchState as ProcessorContext<Store>);
@@ -61,6 +65,12 @@ processor.run(
       console.time(
         `Blocks sub-batch #${blocksSubBatchIndex} with size ${subProcessorStatusManager.subBatchConfig.subBatchSize} blocks has been processed in`
       );
+
+      handleRelayChainInfo(
+        blocksSubBatch,
+        ctxWithBatchState as ProcessorContext<Store>
+      );
+
       await Promise.all(
         blocksSubBatch.map(async (block) => {
           if (appConfig.PROCESS_LBP_POOLS)

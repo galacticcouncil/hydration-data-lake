@@ -8,8 +8,13 @@ import {
   XykPool,
   XykPoolAssetsData,
 } from '../model';
+import { RelayChainInfo } from '../parsers/types/common';
+
+type ParachainBlockNumber = number;
 
 export type BatchStatePayload = {
+  relayChainInfo: Map<ParachainBlockNumber, RelayChainInfo>;
+
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
 
@@ -27,6 +32,7 @@ export type BatchStatePayload = {
 
 export class BatchState {
   private statePayload: BatchStatePayload = {
+    relayChainInfo: new Map(),
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
     xykPools: new Map(),

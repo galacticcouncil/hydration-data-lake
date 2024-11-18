@@ -10,6 +10,7 @@ export async function handleXykPoolsStorage(
 ): Promise<void> {
   const xykPools: Map<string, XykPool> = new Map();
   const xykPoolAssetsData: Map<string, XykPoolAssetsData> = new Map();
+  const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allPoolsWithAssets =
     await parsers.storage.xyk.getAllPoolsWithAssets(currentBlockHeader);
@@ -49,6 +50,9 @@ export async function handleXykPoolsStorage(
       id: `${poolData.poolAddress}-${currentBlockHeader.height}`,
       poolAddress: poolData.poolAddress,
       paraChainBlockHeight: currentBlockHeader.height,
+      relayChainBlockHeight:
+        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
+        0,
       assetAId: poolData.assetAId,
       assetBId: poolData.assetBId,
     });
@@ -56,6 +60,9 @@ export async function handleXykPoolsStorage(
     const assetAData = new XykPoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetAId}-${currentBlockHeader.height}`,
       paraChainBlockHeight: currentBlockHeader.height,
+      relayChainBlockHeight:
+        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
+        0,
       assetId: poolData.assetAId,
       pool: newPoolEntity,
       balances:
@@ -66,6 +73,9 @@ export async function handleXykPoolsStorage(
     const assetBData = new XykPoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetBId}-${currentBlockHeader.height}`,
       paraChainBlockHeight: currentBlockHeader.height,
+      relayChainBlockHeight:
+        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
+        0,
       assetId: poolData.assetBId,
       pool: newPoolEntity,
       balances:

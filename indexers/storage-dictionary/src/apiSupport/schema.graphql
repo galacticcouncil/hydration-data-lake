@@ -1111,6 +1111,7 @@ type LbpPool {
   feeCollector: String
   repayTarget: BigFloat!
   paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
 
   """Reads and enables pagination through a set of `LbpPoolAssetsDatum`."""
   lbpPoolAssetsDataByPoolId(
@@ -1190,6 +1191,7 @@ type LbpPoolAssetsDatum {
   balances: JSON!
   paraChainBlockHeight: Int!
   poolId: String
+  relayChainBlockHeight: Int!
 
   """Reads a single `LbpPool` that is related to this `LbpPoolAssetsDatum`."""
   pool: LbpPool
@@ -1264,6 +1266,9 @@ type LbpPoolAssetsDatumSumAggregates {
 
   """Sum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
 }
 
 type LbpPoolAssetsDatumDistinctCountAggregates {
@@ -1281,6 +1286,9 @@ type LbpPoolAssetsDatumDistinctCountAggregates {
 
   """Distinct count of poolId across the matching connection"""
   poolId: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
 }
 
 type LbpPoolAssetsDatumMinAggregates {
@@ -1289,6 +1297,9 @@ type LbpPoolAssetsDatumMinAggregates {
 
   """Minimum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type LbpPoolAssetsDatumMaxAggregates {
@@ -1297,6 +1308,9 @@ type LbpPoolAssetsDatumMaxAggregates {
 
   """Maximum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type LbpPoolAssetsDatumAverageAggregates {
@@ -1305,6 +1319,9 @@ type LbpPoolAssetsDatumAverageAggregates {
 
   """Mean average of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
 }
 
 type LbpPoolAssetsDatumStddevSampleAggregates {
@@ -1315,6 +1332,11 @@ type LbpPoolAssetsDatumStddevSampleAggregates {
   Sample standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type LbpPoolAssetsDatumStddevPopulationAggregates {
@@ -1327,6 +1349,11 @@ type LbpPoolAssetsDatumStddevPopulationAggregates {
   Population standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type LbpPoolAssetsDatumVarianceSampleAggregates {
@@ -1335,6 +1362,11 @@ type LbpPoolAssetsDatumVarianceSampleAggregates {
 
   """Sample variance of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type LbpPoolAssetsDatumVariancePopulationAggregates {
@@ -1345,6 +1377,11 @@ type LbpPoolAssetsDatumVariancePopulationAggregates {
   Population variance of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 """
@@ -1355,6 +1392,7 @@ enum LbpPoolAssetsDataGroupBy {
   BALANCES
   PARA_CHAIN_BLOCK_HEIGHT
   POOL_ID
+  RELAY_CHAIN_BLOCK_HEIGHT
 }
 
 """Conditions for `LbpPoolAssetsDatum` aggregates."""
@@ -1375,46 +1413,55 @@ input LbpPoolAssetsDataHavingInput {
 input LbpPoolAssetsDataHavingSumInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolAssetsDataHavingDistinctCountInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolAssetsDataHavingMinInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolAssetsDataHavingMaxInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolAssetsDataHavingAverageInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolAssetsDataHavingStddevSampleInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolAssetsDataHavingStddevPopulationInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolAssetsDataHavingVarianceSampleInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolAssetsDataHavingVariancePopulationInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 """Methods to use when ordering `LbpPoolAssetsDatum`."""
@@ -1430,6 +1477,8 @@ enum LbpPoolAssetsDataOrderBy {
   PARA_CHAIN_BLOCK_HEIGHT_DESC
   POOL_ID_ASC
   POOL_ID_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -1453,6 +1502,9 @@ input LbpPoolAssetsDatumCondition {
 
   """Checks for equality with the object’s `poolId` field."""
   poolId: String
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
 }
 
 """
@@ -1473,6 +1525,9 @@ input LbpPoolAssetsDatumFilter {
 
   """Filter by the object’s `poolId` field."""
   poolId: StringFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
   and: [LbpPoolAssetsDatumFilter!]
@@ -1623,6 +1678,9 @@ type LbpPoolSumAggregates {
 
   """Sum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
 }
 
 type LbpPoolDistinctCountAggregates {
@@ -1667,6 +1725,9 @@ type LbpPoolDistinctCountAggregates {
 
   """Distinct count of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
 }
 
 type LbpPoolMinAggregates {
@@ -1693,6 +1754,9 @@ type LbpPoolMinAggregates {
 
   """Minimum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type LbpPoolMaxAggregates {
@@ -1719,6 +1783,9 @@ type LbpPoolMaxAggregates {
 
   """Maximum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type LbpPoolAverageAggregates {
@@ -1745,6 +1812,9 @@ type LbpPoolAverageAggregates {
 
   """Mean average of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
 }
 
 type LbpPoolStddevSampleAggregates {
@@ -1779,6 +1849,11 @@ type LbpPoolStddevSampleAggregates {
   Sample standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type LbpPoolStddevPopulationAggregates {
@@ -1817,6 +1892,11 @@ type LbpPoolStddevPopulationAggregates {
   Population standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type LbpPoolVarianceSampleAggregates {
@@ -1843,6 +1923,11 @@ type LbpPoolVarianceSampleAggregates {
 
   """Sample variance of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type LbpPoolVariancePopulationAggregates {
@@ -1871,6 +1956,11 @@ type LbpPoolVariancePopulationAggregates {
   Population variance of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 """Grouping methods for `LbpPool` for usage during aggregation."""
@@ -1888,6 +1978,7 @@ enum LbpPoolGroupBy {
   FEE_COLLECTOR
   REPAY_TARGET
   PARA_CHAIN_BLOCK_HEIGHT
+  RELAY_CHAIN_BLOCK_HEIGHT
 }
 
 """Conditions for `LbpPool` aggregates."""
@@ -1914,6 +2005,7 @@ input LbpPoolHavingSumInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolHavingDistinctCountInput {
@@ -1925,6 +2017,7 @@ input LbpPoolHavingDistinctCountInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolHavingMinInput {
@@ -1936,6 +2029,7 @@ input LbpPoolHavingMinInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolHavingMaxInput {
@@ -1947,6 +2041,7 @@ input LbpPoolHavingMaxInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolHavingAverageInput {
@@ -1958,6 +2053,7 @@ input LbpPoolHavingAverageInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolHavingStddevSampleInput {
@@ -1969,6 +2065,7 @@ input LbpPoolHavingStddevSampleInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolHavingStddevPopulationInput {
@@ -1980,6 +2077,7 @@ input LbpPoolHavingStddevPopulationInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolHavingVarianceSampleInput {
@@ -1991,6 +2089,7 @@ input LbpPoolHavingVarianceSampleInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input LbpPoolHavingVariancePopulationInput {
@@ -2002,6 +2101,7 @@ input LbpPoolHavingVariancePopulationInput {
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 """Methods to use when ordering `LbpPool`."""
@@ -2035,6 +2135,8 @@ enum LbpPoolsOrderBy {
   REPAY_TARGET_DESC
   PARA_CHAIN_BLOCK_HEIGHT_ASC
   PARA_CHAIN_BLOCK_HEIGHT_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_COUNT_ASC
@@ -2049,6 +2151,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_SUM_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_SUM_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_ASC
@@ -2059,6 +2163,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MIN_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MIN_ID_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC
@@ -2069,6 +2175,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MIN_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MIN_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MAX_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MAX_ID_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC
@@ -2079,6 +2187,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MAX_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_MAX_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_ID_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_ASC
@@ -2089,6 +2199,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC
@@ -2099,6 +2211,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC
@@ -2109,6 +2223,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC
@@ -2119,6 +2235,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC
@@ -2129,6 +2247,8 @@ enum LbpPoolsOrderBy {
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  LBP_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
 }
 
 """
@@ -2176,6 +2296,9 @@ input LbpPoolCondition {
 
   """Checks for equality with the object’s `paraChainBlockHeight` field."""
   paraChainBlockHeight: Int
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
 }
 
 """
@@ -2223,6 +2346,9 @@ input LbpPoolFilter {
 
   """Filter by the object’s `paraChainBlockHeight` field."""
   paraChainBlockHeight: IntFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
   and: [LbpPoolFilter!]
@@ -2683,6 +2809,7 @@ type OmnipoolAssetDatum {
   balances: JSON!
   assetState: JSON!
   paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
 }
 
 """A `OmnipoolAssetDatum` edge in the connection."""
@@ -2749,6 +2876,9 @@ type OmnipoolAssetDatumSumAggregates {
 
   """Sum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
 }
 
 type OmnipoolAssetDatumDistinctCountAggregates {
@@ -2769,6 +2899,9 @@ type OmnipoolAssetDatumDistinctCountAggregates {
 
   """Distinct count of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
 }
 
 type OmnipoolAssetDatumMinAggregates {
@@ -2777,6 +2910,9 @@ type OmnipoolAssetDatumMinAggregates {
 
   """Minimum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type OmnipoolAssetDatumMaxAggregates {
@@ -2785,6 +2921,9 @@ type OmnipoolAssetDatumMaxAggregates {
 
   """Maximum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type OmnipoolAssetDatumAverageAggregates {
@@ -2793,6 +2932,9 @@ type OmnipoolAssetDatumAverageAggregates {
 
   """Mean average of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
 }
 
 type OmnipoolAssetDatumStddevSampleAggregates {
@@ -2803,6 +2945,11 @@ type OmnipoolAssetDatumStddevSampleAggregates {
   Sample standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type OmnipoolAssetDatumStddevPopulationAggregates {
@@ -2815,6 +2962,11 @@ type OmnipoolAssetDatumStddevPopulationAggregates {
   Population standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type OmnipoolAssetDatumVarianceSampleAggregates {
@@ -2823,6 +2975,11 @@ type OmnipoolAssetDatumVarianceSampleAggregates {
 
   """Sample variance of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type OmnipoolAssetDatumVariancePopulationAggregates {
@@ -2833,6 +2990,11 @@ type OmnipoolAssetDatumVariancePopulationAggregates {
   Population variance of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 """
@@ -2844,6 +3006,7 @@ enum OmnipoolAssetDataGroupBy {
   BALANCES
   ASSET_STATE
   PARA_CHAIN_BLOCK_HEIGHT
+  RELAY_CHAIN_BLOCK_HEIGHT
 }
 
 """Conditions for `OmnipoolAssetDatum` aggregates."""
@@ -2864,46 +3027,55 @@ input OmnipoolAssetDataHavingInput {
 input OmnipoolAssetDataHavingSumInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input OmnipoolAssetDataHavingDistinctCountInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input OmnipoolAssetDataHavingMinInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input OmnipoolAssetDataHavingMaxInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input OmnipoolAssetDataHavingAverageInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input OmnipoolAssetDataHavingStddevSampleInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input OmnipoolAssetDataHavingStddevPopulationInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input OmnipoolAssetDataHavingVarianceSampleInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input OmnipoolAssetDataHavingVariancePopulationInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 """Methods to use when ordering `OmnipoolAssetDatum`."""
@@ -2921,6 +3093,8 @@ enum OmnipoolAssetDataOrderBy {
   ASSET_STATE_DESC
   PARA_CHAIN_BLOCK_HEIGHT_ASC
   PARA_CHAIN_BLOCK_HEIGHT_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -2947,6 +3121,9 @@ input OmnipoolAssetDatumCondition {
 
   """Checks for equality with the object’s `paraChainBlockHeight` field."""
   paraChainBlockHeight: Int
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
 }
 
 """
@@ -2970,6 +3147,9 @@ input OmnipoolAssetDatumFilter {
 
   """Filter by the object’s `paraChainBlockHeight` field."""
   paraChainBlockHeight: IntFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
   and: [OmnipoolAssetDatumFilter!]
@@ -3024,6 +3204,7 @@ type Stablepool {
   finalBlock: Int!
   fee: Int!
   paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
 
   """Reads and enables pagination through a set of `StablepoolAssetDatum`."""
   stablepoolAssetDataByPoolId(
@@ -3103,6 +3284,7 @@ type StablepoolAssetDatum {
   balances: JSON!
   paraChainBlockHeight: Int!
   poolId: String
+  relayChainBlockHeight: Int!
 
   """
   Reads a single `Stablepool` that is related to this `StablepoolAssetDatum`.
@@ -3174,6 +3356,9 @@ type StablepoolAssetDatumSumAggregates {
 
   """Sum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
 }
 
 type StablepoolAssetDatumDistinctCountAggregates {
@@ -3191,6 +3376,9 @@ type StablepoolAssetDatumDistinctCountAggregates {
 
   """Distinct count of poolId across the matching connection"""
   poolId: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
 }
 
 type StablepoolAssetDatumMinAggregates {
@@ -3199,6 +3387,9 @@ type StablepoolAssetDatumMinAggregates {
 
   """Minimum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type StablepoolAssetDatumMaxAggregates {
@@ -3207,6 +3398,9 @@ type StablepoolAssetDatumMaxAggregates {
 
   """Maximum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type StablepoolAssetDatumAverageAggregates {
@@ -3215,6 +3409,9 @@ type StablepoolAssetDatumAverageAggregates {
 
   """Mean average of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
 }
 
 type StablepoolAssetDatumStddevSampleAggregates {
@@ -3225,6 +3422,11 @@ type StablepoolAssetDatumStddevSampleAggregates {
   Sample standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type StablepoolAssetDatumStddevPopulationAggregates {
@@ -3237,6 +3439,11 @@ type StablepoolAssetDatumStddevPopulationAggregates {
   Population standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type StablepoolAssetDatumVarianceSampleAggregates {
@@ -3245,6 +3452,11 @@ type StablepoolAssetDatumVarianceSampleAggregates {
 
   """Sample variance of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type StablepoolAssetDatumVariancePopulationAggregates {
@@ -3255,6 +3467,11 @@ type StablepoolAssetDatumVariancePopulationAggregates {
   Population variance of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 """
@@ -3265,6 +3482,7 @@ enum StablepoolAssetDataGroupBy {
   BALANCES
   PARA_CHAIN_BLOCK_HEIGHT
   POOL_ID
+  RELAY_CHAIN_BLOCK_HEIGHT
 }
 
 """Conditions for `StablepoolAssetDatum` aggregates."""
@@ -3285,46 +3503,55 @@ input StablepoolAssetDataHavingInput {
 input StablepoolAssetDataHavingSumInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolAssetDataHavingDistinctCountInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolAssetDataHavingMinInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolAssetDataHavingMaxInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolAssetDataHavingAverageInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolAssetDataHavingStddevSampleInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolAssetDataHavingStddevPopulationInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolAssetDataHavingVarianceSampleInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolAssetDataHavingVariancePopulationInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 """Methods to use when ordering `StablepoolAssetDatum`."""
@@ -3340,6 +3567,8 @@ enum StablepoolAssetDataOrderBy {
   PARA_CHAIN_BLOCK_HEIGHT_DESC
   POOL_ID_ASC
   POOL_ID_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -3363,6 +3592,9 @@ input StablepoolAssetDatumCondition {
 
   """Checks for equality with the object’s `poolId` field."""
   poolId: String
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
 }
 
 """
@@ -3383,6 +3615,9 @@ input StablepoolAssetDatumFilter {
 
   """Filter by the object’s `poolId` field."""
   poolId: StringFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
   and: [StablepoolAssetDatumFilter!]
@@ -3473,6 +3708,9 @@ type StablepoolSumAggregates {
 
   """Sum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
 }
 
 type StablepoolDistinctCountAggregates {
@@ -3502,6 +3740,9 @@ type StablepoolDistinctCountAggregates {
 
   """Distinct count of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
 }
 
 type StablepoolMinAggregates {
@@ -3525,6 +3766,9 @@ type StablepoolMinAggregates {
 
   """Minimum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type StablepoolMaxAggregates {
@@ -3548,6 +3792,9 @@ type StablepoolMaxAggregates {
 
   """Maximum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type StablepoolAverageAggregates {
@@ -3571,6 +3818,9 @@ type StablepoolAverageAggregates {
 
   """Mean average of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
 }
 
 type StablepoolStddevSampleAggregates {
@@ -3602,6 +3852,11 @@ type StablepoolStddevSampleAggregates {
   Sample standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type StablepoolStddevPopulationAggregates {
@@ -3635,6 +3890,11 @@ type StablepoolStddevPopulationAggregates {
   Population standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type StablepoolVarianceSampleAggregates {
@@ -3658,6 +3918,11 @@ type StablepoolVarianceSampleAggregates {
 
   """Sample variance of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type StablepoolVariancePopulationAggregates {
@@ -3687,6 +3952,11 @@ type StablepoolVariancePopulationAggregates {
   Population variance of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 """Grouping methods for `Stablepool` for usage during aggregation."""
@@ -3699,6 +3969,7 @@ enum StablepoolGroupBy {
   FINAL_BLOCK
   FEE
   PARA_CHAIN_BLOCK_HEIGHT
+  RELAY_CHAIN_BLOCK_HEIGHT
 }
 
 """Conditions for `Stablepool` aggregates."""
@@ -3724,6 +3995,7 @@ input StablepoolHavingSumInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolHavingDistinctCountInput {
@@ -3734,6 +4006,7 @@ input StablepoolHavingDistinctCountInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolHavingMinInput {
@@ -3744,6 +4017,7 @@ input StablepoolHavingMinInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolHavingMaxInput {
@@ -3754,6 +4028,7 @@ input StablepoolHavingMaxInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolHavingAverageInput {
@@ -3764,6 +4039,7 @@ input StablepoolHavingAverageInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolHavingStddevSampleInput {
@@ -3774,6 +4050,7 @@ input StablepoolHavingStddevSampleInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolHavingStddevPopulationInput {
@@ -3784,6 +4061,7 @@ input StablepoolHavingStddevPopulationInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolHavingVarianceSampleInput {
@@ -3794,6 +4072,7 @@ input StablepoolHavingVarianceSampleInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input StablepoolHavingVariancePopulationInput {
@@ -3804,6 +4083,7 @@ input StablepoolHavingVariancePopulationInput {
   finalBlock: HavingIntFilter
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 """Methods to use when ordering `Stablepool`."""
@@ -3827,6 +4107,8 @@ enum StablepoolsOrderBy {
   FEE_DESC
   PARA_CHAIN_BLOCK_HEIGHT_ASC
   PARA_CHAIN_BLOCK_HEIGHT_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_COUNT_ASC
@@ -3841,6 +4123,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_ASC
@@ -3851,6 +4135,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC
@@ -3861,6 +4147,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC
@@ -3871,6 +4159,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_ASC
@@ -3881,6 +4171,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC
@@ -3891,6 +4183,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC
@@ -3901,6 +4195,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC
@@ -3911,6 +4207,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC
@@ -3921,6 +4219,8 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
 }
 
 """
@@ -3954,6 +4254,9 @@ input StablepoolCondition {
 
   """Checks for equality with the object’s `paraChainBlockHeight` field."""
   paraChainBlockHeight: Int
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
 }
 
 """
@@ -3986,6 +4289,9 @@ input StablepoolFilter {
 
   """Filter by the object’s `paraChainBlockHeight` field."""
   paraChainBlockHeight: IntFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
   and: [StablepoolFilter!]
@@ -4039,7 +4345,7 @@ type SubProcessorStatus {
   fromBlock: Int!
   toBlock: Int!
   height: Int!
-  assetsActualisedAtBlock: Int!
+  assetsActualisedAtBlock: Int
 }
 
 """A `SubProcessorStatus` edge in the connection."""
@@ -4437,6 +4743,7 @@ type XykPool {
   assetAId: Int!
   assetBId: Int!
   paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
 
   """Reads and enables pagination through a set of `XykPoolAssetsDatum`."""
   xykPoolAssetsDataByPoolId(
@@ -4516,6 +4823,7 @@ type XykPoolAssetsDatum {
   balances: JSON!
   paraChainBlockHeight: Int!
   poolId: String
+  relayChainBlockHeight: Int!
 
   """Reads a single `XykPool` that is related to this `XykPoolAssetsDatum`."""
   pool: XykPool
@@ -4585,6 +4893,9 @@ type XykPoolAssetsDatumSumAggregates {
 
   """Sum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
 }
 
 type XykPoolAssetsDatumDistinctCountAggregates {
@@ -4602,6 +4913,9 @@ type XykPoolAssetsDatumDistinctCountAggregates {
 
   """Distinct count of poolId across the matching connection"""
   poolId: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
 }
 
 type XykPoolAssetsDatumMinAggregates {
@@ -4610,6 +4924,9 @@ type XykPoolAssetsDatumMinAggregates {
 
   """Minimum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type XykPoolAssetsDatumMaxAggregates {
@@ -4618,6 +4935,9 @@ type XykPoolAssetsDatumMaxAggregates {
 
   """Maximum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type XykPoolAssetsDatumAverageAggregates {
@@ -4626,6 +4946,9 @@ type XykPoolAssetsDatumAverageAggregates {
 
   """Mean average of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
 }
 
 type XykPoolAssetsDatumStddevSampleAggregates {
@@ -4636,6 +4959,11 @@ type XykPoolAssetsDatumStddevSampleAggregates {
   Sample standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type XykPoolAssetsDatumStddevPopulationAggregates {
@@ -4648,6 +4976,11 @@ type XykPoolAssetsDatumStddevPopulationAggregates {
   Population standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type XykPoolAssetsDatumVarianceSampleAggregates {
@@ -4656,6 +4989,11 @@ type XykPoolAssetsDatumVarianceSampleAggregates {
 
   """Sample variance of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type XykPoolAssetsDatumVariancePopulationAggregates {
@@ -4666,6 +5004,11 @@ type XykPoolAssetsDatumVariancePopulationAggregates {
   Population variance of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 """
@@ -4676,6 +5019,7 @@ enum XykPoolAssetsDataGroupBy {
   BALANCES
   PARA_CHAIN_BLOCK_HEIGHT
   POOL_ID
+  RELAY_CHAIN_BLOCK_HEIGHT
 }
 
 """Conditions for `XykPoolAssetsDatum` aggregates."""
@@ -4696,46 +5040,55 @@ input XykPoolAssetsDataHavingInput {
 input XykPoolAssetsDataHavingSumInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolAssetsDataHavingDistinctCountInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolAssetsDataHavingMinInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolAssetsDataHavingMaxInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolAssetsDataHavingAverageInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolAssetsDataHavingStddevSampleInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolAssetsDataHavingStddevPopulationInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolAssetsDataHavingVarianceSampleInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolAssetsDataHavingVariancePopulationInput {
   assetId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 """Methods to use when ordering `XykPoolAssetsDatum`."""
@@ -4751,6 +5104,8 @@ enum XykPoolAssetsDataOrderBy {
   PARA_CHAIN_BLOCK_HEIGHT_DESC
   POOL_ID_ASC
   POOL_ID_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -4774,6 +5129,9 @@ input XykPoolAssetsDatumCondition {
 
   """Checks for equality with the object’s `poolId` field."""
   poolId: String
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
 }
 
 """
@@ -4794,6 +5152,9 @@ input XykPoolAssetsDatumFilter {
 
   """Filter by the object’s `poolId` field."""
   poolId: StringFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
   and: [XykPoolAssetsDatumFilter!]
@@ -4872,6 +5233,9 @@ type XykPoolSumAggregates {
 
   """Sum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
 }
 
 type XykPoolDistinctCountAggregates {
@@ -4889,6 +5253,9 @@ type XykPoolDistinctCountAggregates {
 
   """Distinct count of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
 }
 
 type XykPoolMinAggregates {
@@ -4900,6 +5267,9 @@ type XykPoolMinAggregates {
 
   """Minimum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type XykPoolMaxAggregates {
@@ -4911,6 +5281,9 @@ type XykPoolMaxAggregates {
 
   """Maximum of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
 }
 
 type XykPoolAverageAggregates {
@@ -4922,6 +5295,9 @@ type XykPoolAverageAggregates {
 
   """Mean average of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
 }
 
 type XykPoolStddevSampleAggregates {
@@ -4935,6 +5311,11 @@ type XykPoolStddevSampleAggregates {
   Sample standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type XykPoolStddevPopulationAggregates {
@@ -4952,6 +5333,11 @@ type XykPoolStddevPopulationAggregates {
   Population standard deviation of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type XykPoolVarianceSampleAggregates {
@@ -4963,6 +5349,11 @@ type XykPoolVarianceSampleAggregates {
 
   """Sample variance of paraChainBlockHeight across the matching connection"""
   paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 type XykPoolVariancePopulationAggregates {
@@ -4976,6 +5367,11 @@ type XykPoolVariancePopulationAggregates {
   Population variance of paraChainBlockHeight across the matching connection
   """
   paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 }
 
 """Grouping methods for `XykPool` for usage during aggregation."""
@@ -4984,6 +5380,7 @@ enum XykPoolGroupBy {
   ASSET_A_ID
   ASSET_B_ID
   PARA_CHAIN_BLOCK_HEIGHT
+  RELAY_CHAIN_BLOCK_HEIGHT
 }
 
 """Conditions for `XykPool` aggregates."""
@@ -5005,54 +5402,63 @@ input XykPoolHavingSumInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolHavingDistinctCountInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolHavingMinInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolHavingMaxInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolHavingAverageInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolHavingStddevSampleInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolHavingStddevPopulationInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolHavingVarianceSampleInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 input XykPoolHavingVariancePopulationInput {
   assetAId: HavingIntFilter
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
 }
 
 """Methods to use when ordering `XykPool`."""
@@ -5068,6 +5474,8 @@ enum XykPoolsOrderBy {
   ASSET_B_ID_DESC
   PARA_CHAIN_BLOCK_HEIGHT_ASC
   PARA_CHAIN_BLOCK_HEIGHT_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_COUNT_ASC
@@ -5082,6 +5490,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_SUM_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_SUM_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_ASC
@@ -5092,6 +5502,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MIN_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MIN_ID_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC
@@ -5102,6 +5514,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MIN_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MIN_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MAX_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MAX_ID_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC
@@ -5112,6 +5526,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MAX_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_MAX_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_ID_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_ASC
@@ -5122,6 +5538,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC
@@ -5132,6 +5550,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC
@@ -5142,6 +5562,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC
@@ -5152,6 +5574,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC
@@ -5162,6 +5586,8 @@ enum XykPoolsOrderBy {
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  XYK_POOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
 }
 
 """
@@ -5182,6 +5608,9 @@ input XykPoolCondition {
 
   """Checks for equality with the object’s `paraChainBlockHeight` field."""
   paraChainBlockHeight: Int
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
 }
 
 """
@@ -5202,6 +5631,9 @@ input XykPoolFilter {
 
   """Filter by the object’s `paraChainBlockHeight` field."""
   paraChainBlockHeight: IntFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
   and: [XykPoolFilter!]

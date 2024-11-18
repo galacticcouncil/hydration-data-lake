@@ -12,8 +12,19 @@ export class SubProcessorStatusManager {
     return this.subBatchConf;
   }
 
-  async getStatus(ensure = false) {
-    if (this.currentStatusEntity) return this.currentStatusEntity;
+  async getStatus(
+    {
+      ensure,
+      refetch,
+    }: {
+      ensure?: boolean;
+      refetch?: boolean;
+    } = {
+      ensure: false,
+      refetch: false,
+    }
+  ) {
+    if (!refetch && this.currentStatusEntity) return this.currentStatusEntity;
 
     let statusEntity = await this.ctx.store.findOne(SubProcessorStatus, {
       where: { id: this.ctx.appConfig.STATE_SCHEMA_NAME },
@@ -52,7 +63,7 @@ export class SubProcessorStatusManager {
   }
 
   async calcSubBatchConfig() {
-    await this.getStatus(true); // Just to init status entity for current sub-processor
+    await this.getStatus({ ensure: true }); // Just to init status entity for current sub-processor
 
     const allSubProcessorsStats = await this.ctx.store.find(SubProcessorStatus);
 

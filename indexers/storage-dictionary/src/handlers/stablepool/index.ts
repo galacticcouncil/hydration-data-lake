@@ -18,6 +18,7 @@ export async function handleStablepoolStorage(
 ): Promise<void> {
   const stablepools: Map<string, Stablepool> = new Map();
   const stablepoolAssetsData: Map<string, StablepoolAssetData> = new Map();
+  const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allPools = (
     await parsers.storage.stableswap.getPoolsAll(currentBlockHeader)
@@ -80,6 +81,9 @@ export async function handleStablepoolStorage(
         new StablepoolAssetData({
           id: `${poolId}-${assetId}-${currentBlockHeader.height}`,
           paraChainBlockHeight: currentBlockHeader.height,
+          relayChainBlockHeight:
+            relayChainInfo.get(currentBlockHeader.height)
+              ?.relaychainBlockNumber || 0,
           assetId: assetId,
           pool: newPoolEntity,
           balances:

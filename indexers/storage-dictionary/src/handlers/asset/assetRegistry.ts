@@ -1,6 +1,6 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, AssetType } from '../../model';
+import { Asset, AssetType, SubProcessorStatus } from '../../model';
 import parsers from '../../parsers';
 import { SubProcessorStatusManager } from '../../utils/subProcessorStatusManager';
 
@@ -95,10 +95,64 @@ export async function ensureNativeToken(ctx: ProcessorContext<Store>) {
   };
 }
 
+/**
+ * If Storage Dictionary is running as multiprocessor indexer, we need be sure
+ * that only one processor creates Assets to avoid deadlock error in DB.
+ *
+ * @param statusManager
+ * @param ctx
+ */
+export async function waitForAssetsActualisation(
+  statusManager: SubProcessorStatusManager,
+  ctx: ProcessorContext<Store>
+) {
+  if (ctx.appConfig.ASSETS_TRACKER_PROCESSOR) return;
+
+  const procStatus = await statusManager.getStatus();
+
+  if (
+    !!procStatus.assetsActualisedAtBlock &&
+    procStatus.assetsActualisedAtBlock > 0
+  )
+    return;
+
+  await new Promise<void>((res) => {
+    const interval = setInterval(async () => {
+      const assetsActualisationProcStatus = await ctx.store.findOne(
+        SubProcessorStatus,
+        {
+          where: {
+            id: ctx.appConfig.ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME,
+          },
+        }
+      );
+
+      if (
+        !!assetsActualisationProcStatus &&
+        assetsActualisationProcStatus.assetsActualisedAtBlock !== null &&
+        assetsActualisationProcStatus.assetsActualisedAtBlock !== undefined &&
+        assetsActualisationProcStatus.assetsActualisedAtBlock > 0
+      ) {
+        clearTimeout(interval);
+        await statusManager.setSubProcessorStatus({
+          assetsActualisedAtBlock:
+            assetsActualisationProcStatus.assetsActualisedAtBlock,
+        });
+        res();
+      }
+      console.log(
+        `Processor ${ctx.appConfig.STATE_SCHEMA_NAME} is waiting for assets actualisation.`
+      );
+    }, 5_000);
+  });
+}
+
 export async function actualiseAssets(
   ctx: ProcessorContext<Store>,
   statusManager: SubProcessorStatusManager
 ) {
+  if (!ctx.appConfig.ASSETS_TRACKER_PROCESSOR) return;
+
   const latestActualisationPoint = (await statusManager.getStatus())
     .assetsActualisedAtBlock;
 

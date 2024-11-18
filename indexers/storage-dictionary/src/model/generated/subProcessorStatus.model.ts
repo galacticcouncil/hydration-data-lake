@@ -21,6 +21,6 @@ export class SubProcessorStatus {
   @Column_("int4", {nullable: false})
   height!: number
 
-  @Column_("int4", {nullable: false})
-  assetsActualisedAtBlock!: number
+  @Column_("int4", {nullable: true})
+  assetsActualisedAtBlock!: number | undefined | null
 }

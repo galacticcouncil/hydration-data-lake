@@ -40,6 +40,10 @@ export class Stablepool {
   @Column_("int4", {nullable: false})
   paraChainBlockHeight!: number
 
+  @Index_()
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
+
   @OneToMany_(() => StablepoolAssetData, e => e.pool)
   assets!: StablepoolAssetData[]
 }

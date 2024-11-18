@@ -17,6 +17,7 @@ export async function handleOmnipoolStorage(
   currentBlockHeader: Block
 ): Promise<void> {
   const omnipoolAssetsData: Map<string, OmnipoolAssetData> = new Map();
+  const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allAssetStates =
     await parsers.storage.omnipool.getOmnipoolAssetsAll(currentBlockHeader);
@@ -56,6 +57,9 @@ export async function handleOmnipoolStorage(
         allAssetBalancesMap.get(assetState.assetId)?.balances ??
         fallbackAccountBalances,
       paraChainBlockHeight: currentBlockHeader.height,
+      relayChainBlockHeight:
+        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
+        0,
     });
 
     omnipoolAssetsData.set(newAssetDataEntity.id, newAssetDataEntity);
