@@ -1,0 +1,131 @@
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
+# Run API tests for Indexers.
+name: "Reusable :: API tests"
+
+on:
+  workflow_call:
+    inputs:
+      liquidity-pools-build-artifact-name:
+        required: true
+        type: string
+      dictionary-build-artifact-name:
+        required: true
+        type: string
+
+jobs:
+  # Run API tests
+  run:
+    name: "Run"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: "2.14.2"
+
+      - uses: actions/checkout@v4
+
+      # Download artifacts with Liquidity pools indexer build
+      - name: "Download Liquidity pools indexer build"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.liquidity-pools-build-artifact-name }}
+          path: ./indexers/liquidity-pools/lib
+
+      # Download artifacts with Liquidity pools indexer build
+      - name: "Download Storage Dictionary indexer build"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.dictionary-build-artifact-name }}
+          path: ./indexers/storage-dictionary/lib
+
+      - name: "Install Node modules for App"
+        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        run: |
+          npm ci
+
+      # Change CI scripts files permissions to prevent "Permission denied" error.
+      - name: "Change folders permissions"
+        run: chmod -R 777 ./scripts/ci
+
+      - name: "Run DB for liquidity-pools indexer"
+        shell: bash
+        run: |
+          export DB_NAME=squid
+          export DB_PORT=23798
+          docker compose -f ./indexers/liquidity-pools/docker-compose.yml -p liquidity_pools up -d
+
+      - name: "Run DB for storage-dictionary indexer"
+        shell: bash
+        run: |
+          export DB_NAME=store_dictionary
+          export DB_PORT=23799
+          docker compose -f ./indexers/storage-dictionary/docker-compose.yml -p storage_dictionary up -d
+
+      - name: "Wait for liquidity-pools DB port :23798"
+        timeout-minutes: 2
+        shell: bash
+        run: . ./scripts/ci/gh-actions-wait-for-port.sh 23798
+
+      - name: "Wait for liquidity-pools DB port :23799"
+        timeout-minutes: 2
+        shell: bash
+        run: . ./scripts/ci/gh-actions-wait-for-port.sh 23799
+
+      - name: "Run liquidity-pools indexer processor"
+        shell: bash
+        run: |
+          cd indexers/liquidity-pools
+          export NODE_ENV=test
+          export DB_NAME=squid
+          export DB_PORT=23798
+          export CHAIN=hydration
+          export INDEX_FROM_BLOCK=3681427
+          export INDEX_TO_BLOCK=3706164
+          npx squid-typeorm-migration apply
+          node --require=dotenv/config lib/main.js &
+
+      - name: "Run liquidity-pools indexer api"
+        shell: bash
+        run: |
+          cd indexers/liquidity-pools
+          export CHAIN=hydration
+          export NODE_ENV=test
+          node --require=dotenv/config lib/api.js &
+
+      # Check of liquidity-pools indexer API status
+      - name: "Wait for liquidity-pools indexer API port :8080"
+        timeout-minutes: 1
+        shell: bash
+        run: . ./scripts/ci/gh-actions-wait-for-port.sh 8080
+
+      - name: "Run github-script to wait for liquidity-pools indexer reached the end of testing range"
+        id: liquidity-pools-ind-status
+        uses: actions/github-script@v7
+        env:
+          # Env variables
+          INDEX_FROM_BLOCK: 3681427
+          INDEX_TO_BLOCK: 3706164
+          PROCESSOR_API_URL: "http://127.0.0.1:8080/graphql"
+        with:
+          result-encoding: string
+          script: |
+            const script = require('./scripts/ci/github-script-src/wait-for-processor-status.js')
+            return await script({github, context, core})
+
+      - name: "Run API tests for liquidity-pools"
+        shell: bash
+        env:
+          CI_NODE_ENV: test
+          CI_LIQUIDITY_POOLS_API_URL: "http://127.0.0.1:8080/graphql"
+          CI_INDEX_FROM_BLOCK: 3681427
+          CI_INDEX_TO_BLOCK: 3706164
+        run: |
+          cd indexers/liquidity-pools
+          npm run test:api

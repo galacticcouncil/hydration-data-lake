@@ -22,6 +22,10 @@ dotenv.config({
     if (process.env.CHAIN === 'hydration') envFileName = '.env.hydration';
     if (process.env.CHAIN === 'hydration_paseo')
       envFileName = '.env.hydration-paseo';
+
+    if (process.env.NODE_ENV === `test`) envFileName = envFileName + '.test';
+    else envFileName = envFileName + '.local';
+
     return `${__dirname}/../${envFileName}`;
   })(),
 });

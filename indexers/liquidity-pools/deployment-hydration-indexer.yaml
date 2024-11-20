@@ -11,7 +11,7 @@ deploy:
         log_min_duration_statement: 60000
   processor:
     env:
-      CHAIN: "hydration"
+      CHAIN: 'hydration'
       RPC_HYDRATION_URL: 'wss://archive.rpc.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
@@ -32,7 +32,7 @@ deploy:
       - process:prod
   api:
     env:
-      CHAIN: "hydration"
+      CHAIN: 'hydration'
       RPC_HYDRATION_URL: 'wss://archive.rpc.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
@@ -52,7 +52,7 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
       profile: med

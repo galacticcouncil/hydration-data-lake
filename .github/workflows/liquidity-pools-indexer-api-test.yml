@@ -1,0 +1,36 @@
+# Run tests for Liquidity Pools API
+
+name: "Liquidity Pools API testing"
+
+on:
+  push:
+    branches:
+      - "fix/**"
+      - "feat/**"
+  pull_request:
+    types:
+      - "opened"
+    branches:
+      - "fix/**"
+      - "feat/**"
+
+jobs:
+  # Build Indexers
+  build:
+    name: "Build"
+    uses: ./.github/workflows/_called_build_indexers.yml
+    with:
+      liquidity-pools-build-artifact-name: liquidity-pools-build-files
+      dictionary-build-artifact-name: dictionary-build-files
+    secrets:
+      gh_token: ${{ secrets.GH_TOKEN }}
+
+  # Run API tests for indexers
+  indexers-api-tests:
+    name: " API tests"
+    needs: build
+    if: ${{ needs.build.result=='success' }}
+    uses: ./.github/workflows/_called_run-liquidity-pools-api-testing.yml
+    with:
+      liquidity-pools-build-artifact-name: liquidity-pools-build-files
+      dictionary-build-artifact-name: dictionary-build-files

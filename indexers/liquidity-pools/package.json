@@ -13,37 +13,9 @@
     "deploy-main": "sqd deploy --org galacticcouncil . -m deployment-xyk-pools-indexer.yaml",
     "ingester-codegen:all": ". ./scripts/ingester-codegen.sh",
     "multi-typegen": ". ./scripts/typegen.sh",
-    "dictionary-api-codegen": "graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts"
-  },
-  "devDependencies": {
-    "@polkadot/api": "^12.1.1",
-    "@polkadot/api-augment": "^12.1.1",
-    "@polkadot/api-base": "^12.1.1",
-    "@polkadot/api-derive": "^12.1.1",
-    "@polkadot/keyring": "^12.6.2",
-    "@polkadot/rpc-augment": "^12.1.1",
-    "@polkadot/rpc-core": "^12.1.1",
-    "@polkadot/rpc-provider": "^12.1.1",
-    "@polkadot/types": "^12.1.1",
-    "@polkadot/types-augment": "^12.1.1",
-    "@polkadot/types-codec": "^12.1.1",
-    "@polkadot/types-create": "^12.1.1",
-    "@polkadot/types-known": "^12.1.1",
-    "@polkadot/util": "^12.6.2",
-    "@polkadot/util-crypto": "^12.6.2",
-    "@subsquid/substrate-metadata-explorer": "^3.1.2",
-    "@subsquid/substrate-typegen": "^8.1.0",
-    "@subsquid/typeorm-codegen": "^2.0.0",
-    "@types/lodash.camelcase": "^4.3.9",
-    "@types/node": "^20.12.7",
-    "@typescript-eslint/eslint-plugin": "^8.8.0",
-    "@typescript-eslint/parser": "^8.8.0",
-    "eslint": "^9.12.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.3.3",
-    "turbo": "^2.2.3",
-    "typescript": "^5.5.4"
+    "api-codegen:dictionary-api": "graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts",
+    "api-codegen:api-tests": "graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-api-tests.ts",
+    "test:api": "NODE_ENV=test jest --config tests/api/jest-api.js --verbose --runInBand"
   },
   "dependencies": {
     "@galacticcouncil/sdk": "^4.2.1",
@@ -74,5 +46,63 @@
     "postgraphile-plugin-connection-filter": "^2.3.0",
     "scale-ts": "^1.6.1",
     "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@polkadot/api": "^12.1.1",
+    "@polkadot/api-augment": "^12.1.1",
+    "@polkadot/api-base": "^12.1.1",
+    "@polkadot/api-derive": "^12.1.1",
+    "@polkadot/keyring": "^12.6.2",
+    "@polkadot/rpc-augment": "^12.1.1",
+    "@polkadot/rpc-core": "^12.1.1",
+    "@polkadot/rpc-provider": "^12.1.1",
+    "@polkadot/typegen": "^14.3.1",
+    "@polkadot/types": "^12.1.1",
+    "@polkadot/types-augment": "^12.1.1",
+    "@polkadot/types-codec": "^12.1.1",
+    "@polkadot/types-create": "^12.1.1",
+    "@polkadot/types-known": "^12.1.1",
+    "@polkadot/util": "^12.6.2",
+    "@polkadot/util-crypto": "^12.6.2",
+    "@subsquid/substrate-metadata-explorer": "^3.1.2",
+    "@subsquid/substrate-typegen": "^8.1.0",
+    "@subsquid/typeorm-codegen": "^2.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/lodash.camelcase": "^4.3.9",
+    "@types/node": "^20.12.7",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "jest": "^29.7.0",
+    "jest-extended": "^4.0.2",
+    "prettier": "^3.3.3",
+    "ts-jest": "^29.2.5",
+    "turbo": "^2.2.3",
+    "typescript": "^5.5.4"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "./",
+    "modulePaths": [
+      "<rootDir>"
+    ],
+    "testRegex": "(.*\\.api\\.ts$)",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "jest-extended/all"
+    ]
   }
 }
