@@ -25,10 +25,6 @@ jobs:
         with:
           node-version: 20
 
-      - uses: KengoTODA/actions-setup-docker-compose@v1
-        with:
-          version: "2.14.2"
-
       - uses: actions/checkout@v4
 
       # Download artifacts with Liquidity pools indexer build
@@ -59,29 +55,24 @@ jobs:
         run: |
           export DB_NAME=squid
           export DB_PORT=23798
-          docker compose -f ./indexers/liquidity-pools/docker-compose.yml -p liquidity_pools up -d
-
-      - name: "Run DB for storage-dictionary indexer"
-        shell: bash
-        run: |
-          export DB_NAME=store_dictionary
-          export DB_PORT=23799
-          docker compose -f ./indexers/storage-dictionary/docker-compose.yml -p storage_dictionary up -d
+          docker run -d \
+          --name liquidity_pools \
+          -e POSTGRES_DB=squid \
+          -e POSTGRES_PASSWORD=postgres \
+          --shm-size=1gb \
+          -p ${DB_PORT}:5432 \
+          postgres:15
 
       - name: "Wait for liquidity-pools DB port :23798"
         timeout-minutes: 2
         shell: bash
         run: . ./scripts/ci/gh-actions-wait-for-port.sh 23798
 
-      - name: "Wait for liquidity-pools DB port :23799"
-        timeout-minutes: 2
-        shell: bash
-        run: . ./scripts/ci/gh-actions-wait-for-port.sh 23799
-
       - name: "Run liquidity-pools indexer processor"
         shell: bash
         run: |
           cd indexers/liquidity-pools
+          sleep 10s
           export NODE_ENV=test
           export DB_NAME=squid
           export DB_PORT=23798
