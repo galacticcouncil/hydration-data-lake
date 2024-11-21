@@ -1,11 +1,11 @@
-import { QueriesHelper } from './queriesHelper';
+import { QueriesHelper } from '../queriesHelper';
 import {
   GetLbppoolHistoricalData,
   GetLbppoolHistoricalDataQuery,
   GetLbppoolHistoricalDataQueryVariables,
-} from './apiTypes/liquidityPoolsApi/types';
+} from './apiTypes/types';
 
-export class GraphQLRequestManager extends QueriesHelper {
+export class LiquidityPoolsGQLManager extends QueriesHelper {
   constructor() {
     super();
   }

@@ -139,13 +139,13 @@ jobs:
 
       #      TODO add condition to cancel workflow if storage-dictionary-ind-status script finished with un-success result
 
-#      - name: "Run API tests for storage-dictionary"
-#        shell: bash
-#        env:
-#          NODE_ENV: test
-#          GQL_PORT: "http://127.0.0.1:${{ env.STORAGE_DICT_API_PORT }}/graphql"
-#          START_BLOCK: ${{ env.FROM_BLOCK }}
-#          END_BLOCK: ${{ env.TO_BLOCK }}
-#        working-directory: ./indexers/storage-dictionary
-#        run: |
-#          npm run test:api
+      - name: "Run API tests for storage-dictionary"
+        shell: bash
+        env:
+          NODE_ENV: test
+          GQL_PORT: "http://127.0.0.1:${{ env.STORAGE_DICT_API_PORT }}/graphql"
+          START_BLOCK: ${{ env.FROM_BLOCK }}
+          END_BLOCK: ${{ env.TO_BLOCK }}
+        working-directory: ./indexers/storage-dictionary
+        run: |
+          npm run test:storage-dict-api

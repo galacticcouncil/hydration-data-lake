@@ -16,8 +16,8 @@ export default {
         hash: '0xfa8061028cdc118a785df37876163229da3c7ff6db586e16d3fce0d37548aa61',
       },
       blockB: {
-        height: 3684428,
-        hash: '0x895e0a8c8db74e70a127f280e71ab781ca7a14dfb34c9fa9d5e8aea34d025332',
+        height: 3684420,
+        hash: '0xf2177c487d3ca01b4a1cfbf37afcf1c05952583e272e07c1159894d81c0c21ce',
       },
       blockC: {
         height: 3706163,
