@@ -146,6 +146,6 @@ jobs:
           GQL_PORT: "http://127.0.0.1:${{ env.STORAGE_DICT_API_PORT }}/graphql"
           START_BLOCK: ${{ env.FROM_BLOCK }}
           END_BLOCK: ${{ env.TO_BLOCK }}
-        working-directory: ./indexers/storage-dictionary
+        working-directory: ./tests/api-tests
         run: |
           npm run test:storage-dict-api
