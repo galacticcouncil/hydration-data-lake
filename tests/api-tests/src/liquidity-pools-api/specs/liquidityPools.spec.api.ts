@@ -1,9 +1,9 @@
 import { describe, expect, test } from '@jest/globals';
-import { GraphQLRequestManager } from '../utils/graphqlRequestManager';
-import { PolkadotApiManager } from '../utils/polkadotApiManager';
+import { GraphQLRequestManager } from '../../utils/graphqlRequestManager';
+import { PolkadotApiManager } from '../../utils/polkadotApiManager';
 import stubs from '../stubs/liquidityPools.stubs';
-import { removeStringSeparators } from '../utils';
-import { decodeAddress } from '@polkadot/util-crypto';
+import { removeStringSeparators } from '../../utils';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { u8aToHex } from '@polkadot/util';
 
 describe('Validation of indexed data against blockchain storage state', () => {

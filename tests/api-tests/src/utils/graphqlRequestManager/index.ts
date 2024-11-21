@@ -3,7 +3,7 @@ import {
   GetLbppoolHistoricalData,
   GetLbppoolHistoricalDataQuery,
   GetLbppoolHistoricalDataQueryVariables,
-} from './apiTypes/types';
+} from './apiTypes/liquidityPoolsApi/types';
 
 export class GraphQLRequestManager extends QueriesHelper {
   constructor() {

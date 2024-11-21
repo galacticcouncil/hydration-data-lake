@@ -1,18 +1,18 @@
 # Run tests for Liquidity Pools API
 
-name: "Liquidity Pools API testing"
+name: "Liquidity Pools and Storage Dictionary API testing"
 
 on:
   push:
     branches:
       - "fix/**"
       - "feat/**"
+      - "develop"
   pull_request:
     types:
       - "opened"
     branches:
-      - "fix/**"
-      - "feat/**"
+      - "develop"
 
 jobs:
   # Build Indexers
@@ -23,14 +23,52 @@ jobs:
       liquidity-pools-build-artifact-name: liquidity-pools-build-files
       dictionary-build-artifact-name: dictionary-build-files
     secrets:
-      gh_token: ${{ secrets.GH_TOKEN }}
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
 
-  # Run API tests for indexers
-  indexers-api-tests:
-    name: " API tests"
+  liq-pools-indexer-with-no-dict-test:
+    name: "Liq.pools indexer with no dictionary API test"
     needs: build
     if: ${{ needs.build.result=='success' }}
-    uses: ./.github/workflows/_called_run-liquidity-pools-api-testing.yml
+    uses: ./.github/workflows/_called_run-liq-pools-indexer-api-test.yml
     with:
       liquidity-pools-build-artifact-name: liquidity-pools-build-files
       dictionary-build-artifact-name: dictionary-build-files
+      is-liq-pools-indexer-with-dictionary: false
+      liq-pools-indexer-from-block: 3681427
+      liq-pools-indexer-to-block: 3706164
+      process-lbp-pools: true
+      process-xyk-pools: false
+      process-omnipools: false
+      process-stablepools: false
+
+  liq-pools-indexer-with-dict-test:
+    name: "Liq.pools indexer with dictionary API test"
+    needs: build
+    if: ${{ needs.build.result=='success' }}
+    uses: ./.github/workflows/_called_run-liq-pools-indexer-api-test.yml
+    with:
+      liquidity-pools-build-artifact-name: liquidity-pools-build-files
+      dictionary-build-artifact-name: dictionary-build-files
+      is-liq-pools-indexer-with-dictionary: true
+      liq-pools-indexer-from-block: 3681427
+      liq-pools-indexer-to-block: 3684428
+      storage-dictionary-from-block: 3681426
+      storage-dictionary-to-block: 3684428
+      process-lbp-pools: true
+      process-xyk-pools: false
+      process-omnipools: false
+      process-stablepools: false
+
+  storage-dictionary-test:
+    name: "Storage Dictionary API test"
+    needs: build
+    if: ${{ needs.build.result=='success' }}
+    uses: ./.github/workflows/_called_run-storage-dict-api-test.yml
+    with:
+      dictionary-build-artifact-name: dictionary-build-files
+      from-block: 3681426
+      to-block: 3684428
+      process-lbp-pools: true
+      process-xyk-pools: false
+      process-omnipools: false
+      process-stablepools: false

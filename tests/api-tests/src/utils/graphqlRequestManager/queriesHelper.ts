@@ -12,10 +12,7 @@ export class QueriesHelper {
   private readonly gqlClientUrl: string;
 
   constructor() {
-    this.gqlClientUrl =
-      process.env.CI_LIQUIDITY_POOLS_API_URL ||
-      process.env.LIQUIDITY_POOLS_API_URL ||
-      '';
+    this.gqlClientUrl = process.env.GRAPHQL_API_URL || '';
   }
 
   getGqlClient(): GqlClient {

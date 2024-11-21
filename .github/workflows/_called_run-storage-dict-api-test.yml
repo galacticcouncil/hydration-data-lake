@@ -1,0 +1,151 @@
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
+# Run API tests for Indexers.
+name: "Reusable :: API test :: Storage dictionary"
+
+on:
+  workflow_call:
+    inputs:
+      working-chain:
+        required: false
+        type: string
+        default: hydration
+      from-block:
+        required: false
+        type: number
+      to-block:
+        required: false
+        type: number
+      process-lbp-pools:
+        required: true
+        type: boolean
+      process-xyk-pools:
+        required: true
+        type: boolean
+      process-omnipools:
+        required: true
+        type: boolean
+      process-stablepools:
+        required: true
+        type: boolean
+      dictionary-build-artifact-name:
+        required: true
+        type: string
+
+env:
+  STORAGE_DICT_DB_NAME: store_dictionary
+  STORAGE_DICT_DB_PORT: 23799
+  STORAGE_DICT_API_PORT: 8090
+
+jobs:
+  # Run API tests
+  run:
+    name: "Run"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/checkout@v4
+
+      # Download artifacts with Liquidity pools indexer build
+      - name: "Download Storage Dictionary indexer build"
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.dictionary-build-artifact-name }}
+          path: ./indexers/storage-dictionary/lib
+
+      - name: "Install Node modules for App"
+        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        run: |
+          npm ci
+
+      # Change CI scripts files permissions to prevent "Permission denied" error.
+      - name: "Change folders permissions"
+        run: chmod -R 777 ./scripts/ci
+
+      - name: "Run DB for storage-dictionary"
+        shell: bash
+        env:
+          DB_NAME: ${{ env.STORAGE_DICT_DB_NAME }}
+          DB_PORT: ${{ env.STORAGE_DICT_DB_PORT }}
+        run: |
+          docker run -d \
+          --name store_dictionary \
+          -e POSTGRES_DB=$DB_NAME \
+          -e POSTGRES_PASSWORD=postgres \
+          --shm-size=1gb \
+          -p ${DB_PORT}:5432 \
+          postgres:15
+
+      - name: "Wait for storage dictionary DB port"
+        timeout-minutes: 2
+        shell: bash
+        run: . ./scripts/ci/gh-actions-wait-for-port.sh $STORAGE_DICT_DB_PORT
+
+      - name: "Run storage dictionary processor"
+        shell: bash
+        working-directory: ./indexers/storage-dictionary
+        env:
+          NODE_ENV: test
+          CHAIN: ${{ inputs.working-chain }}
+          DB_NAME: ${{ env.STORAGE_DICT_DB_NAME }}
+          DB_PORT:  ${{ env.STORAGE_DICT_DB_PORT }}
+          GQL_PORT: ${{ env.STORAGE_DICT_API_PORT }}
+          START_BLOCK: ${{ env.FROM_BLOCK }}
+          END_BLOCK: ${{ env.TO_BLOCK }}
+          ASSETS_TRACKER_PROCESSOR: true
+          PROCESS_LBP_POOLS: ${{ inputs.process-lbp-pools }}
+          PROCESS_XYK_POOLS: ${{ inputs.process-xyk-pools }}
+          PROCESS_OMNIPOOLS: ${{ inputs.process-omnipools }}
+          PROCESS_STABLEPOOLS: ${{ inputs.process-stablepools }}
+        run: |
+          sleep 5s
+          npx squid-typeorm-migration apply
+          node --require=dotenv/config lib/main.js &
+
+      - name: "Run storage-dictionary indexer api"
+        shell: bash
+        env:
+          NODE_ENV: test
+          CHAIN: ${{ inputs.working-chain }}
+          GQL_PORT: ${{ env.STORAGE_DICT_API_PORT }}
+        working-directory: ./indexers/storage-dictionary
+        run: |
+          node --require=dotenv/config lib/api.js &
+
+      # Check of storage-dictionary indexer API status
+      - name: "Wait for storage-dictionary indexer API port"
+        timeout-minutes: 1
+        shell: bash
+        run: . ./scripts/ci/gh-actions-wait-for-port.sh $STORAGE_DICT_API_PORT
+
+      - name: "Wait for storage-dictionary indexer reached the end of testing range"
+        id: storage-dictionary-ind-status
+        uses: actions/github-script@v7
+        env:
+          # Env variables
+          INDEX_FROM_BLOCK: ${{ env.FROM_BLOCK }}
+          INDEX_TO_BLOCK: ${{ env.TO_BLOCK }}
+          PROCESSOR_API_URL: "http://127.0.0.1:${{ env.STORAGE_DICT_API_PORT }}/graphql"
+        with:
+          result-encoding: string
+          script: |
+            const script = require('./scripts/ci/github-script-src/wait-for-processor-status.js')
+            return await script({github, context, core})
+
+      #      TODO add condition to cancel workflow if storage-dictionary-ind-status script finished with un-success result
+
+#      - name: "Run API tests for storage-dictionary"
+#        shell: bash
+#        env:
+#          NODE_ENV: test
+#          GQL_PORT: "http://127.0.0.1:${{ env.STORAGE_DICT_API_PORT }}/graphql"
+#          START_BLOCK: ${{ env.FROM_BLOCK }}
+#          END_BLOCK: ${{ env.TO_BLOCK }}
+#        working-directory: ./indexers/storage-dictionary
+#        run: |
+#          npm run test:api
