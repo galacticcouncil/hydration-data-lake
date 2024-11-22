@@ -29669,6 +29669,13 @@ export type GetLbppoolHistoricalDataQueryVariables = Exact<{
 
 export type GetLbppoolHistoricalDataQuery = { __typename?: 'Query', lbpPoolHistoricalData?: { __typename?: 'LbpPoolHistoricalDataConnection', nodes: Array<{ __typename?: 'LbpPoolHistoricalDatum', start?: number | null, end?: number | null, initialWeight: number, finalWeight: number, feeCollectorId?: string | null, fee: Array<number | null>, repayTarget: any, weightCurve: string, poolId?: string | null, assetAId?: string | null, assetBId?: string | null, assetABalance: any, assetBBalance: any, paraChainBlockHeight: number } | null> } | null };
 
+export type GetXykPoolHistoricalDataQueryVariables = Exact<{
+  filter?: InputMaybe<XykPoolHistoricalDatumFilter>;
+}>;
+
+
+export type GetXykPoolHistoricalDataQuery = { __typename?: 'Query', xykPoolHistoricalData?: { __typename?: 'XykPoolHistoricalDataConnection', nodes: Array<{ __typename?: 'XykPoolHistoricalDatum', assetABalance: any, assetAId?: string | null, assetBBalance: any, assetBId?: string | null, poolId?: string | null, paraChainBlockHeight: number } | null> } | null };
+
 
 export const GetLbppoolHistoricalData = gql`
     query GetLbppoolHistoricalData($filter: LbpPoolHistoricalDatumFilter) {
@@ -29687,6 +29694,20 @@ export const GetLbppoolHistoricalData = gql`
       assetBId
       assetABalance
       assetBBalance
+      paraChainBlockHeight
+    }
+  }
+}
+    `;
+export const GetXykPoolHistoricalData = gql`
+    query GetXykPoolHistoricalData($filter: XykPoolHistoricalDatumFilter) {
+  xykPoolHistoricalData(filter: $filter) {
+    nodes {
+      assetABalance
+      assetAId
+      assetBBalance
+      assetBId
+      poolId
       paraChainBlockHeight
     }
   }

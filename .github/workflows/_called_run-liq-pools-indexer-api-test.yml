@@ -252,6 +252,10 @@ jobs:
           GRAPHQL_API_URL: "http://127.0.0.1:${{ env.LIQ_POOLS_INDEXER_API_PORT }}/graphql"
           FROM_BLOCK: ${{ env.LIQ_POOLS_INDEXER_FROM_BLOCK }}
           TO_BLOCK: ${{ env.LIQ_POOLS_INDEXER_TO_BLOCK }}
+          PROCESS_LBP_POOLS: ${{ inputs.process-lbp-pools }}
+          PROCESS_XYK_POOLS: ${{ inputs.process-xyk-pools }}
+          PROCESS_OMNIPOOLS: ${{ inputs.process-omnipools }}
+          PROCESS_STABLEPOOLS: ${{ inputs.process-stablepools }}
         working-directory: ./tests/api-tests
         run: |
           npm run test:liq-pools-api

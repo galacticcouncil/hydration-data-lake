@@ -34,10 +34,10 @@ jobs:
       liquidity-pools-build-artifact-name: liquidity-pools-build-files
       dictionary-build-artifact-name: dictionary-build-files
       is-liq-pools-indexer-with-dictionary: false
-      liq-pools-indexer-from-block: 3681427
-      liq-pools-indexer-to-block: 3706164
+      liq-pools-indexer-from-block: 4187498
+      liq-pools-indexer-to-block: 4198534
       process-lbp-pools: true
-      process-xyk-pools: false
+      process-xyk-pools: true
       process-omnipools: false
       process-stablepools: false
 
@@ -50,12 +50,12 @@ jobs:
       liquidity-pools-build-artifact-name: liquidity-pools-build-files
       dictionary-build-artifact-name: dictionary-build-files
       is-liq-pools-indexer-with-dictionary: true
-      liq-pools-indexer-from-block: 3681427
-      liq-pools-indexer-to-block: 3684428
-      storage-dictionary-from-block: 3681426
-      storage-dictionary-to-block: 3684428
+      liq-pools-indexer-from-block: 4187498
+      liq-pools-indexer-to-block: 4198534
+      storage-dictionary-from-block: 4187498
+      storage-dictionary-to-block: 4198534
       process-lbp-pools: true
-      process-xyk-pools: false
+      process-xyk-pools: true
       process-omnipools: false
       process-stablepools: false
 
@@ -66,8 +66,8 @@ jobs:
     uses: ./.github/workflows/_called_run-storage-dict-api-test.yml
     with:
       dictionary-build-artifact-name: dictionary-build-files
-      from-block: 3681426
-      to-block: 3684428
+      from-block: 4187498
+      to-block: 4198534
       process-lbp-pools: true
       process-xyk-pools: false
       process-omnipools: false

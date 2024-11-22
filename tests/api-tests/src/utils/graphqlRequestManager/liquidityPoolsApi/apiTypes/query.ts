@@ -23,3 +23,18 @@ export const GET_LBPPOOL_HISTORICAL_DATA = gql`
     }
   }
 `;
+
+export const GET_XYK_POOL_HISTORICAL_DATA = gql`
+  query GetXykPoolHistoricalData($filter: XykPoolHistoricalDatumFilter) {
+    xykPoolHistoricalData(filter: $filter) {
+      nodes {
+        assetABalance
+        assetAId
+        assetBBalance
+        assetBId
+        poolId
+        paraChainBlockHeight
+      }
+    }
+  }
+`;

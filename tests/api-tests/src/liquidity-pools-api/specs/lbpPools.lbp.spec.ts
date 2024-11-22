@@ -126,14 +126,13 @@ describe('Validation of indexed data against blockchain storage state', () => {
         const pdApiClientManager = new PolkadotApiManager({
           blockHash: stubs.lbpPoolHistoricalData.blocks.blockA.hash,
         });
-        beforeAll(async () => {});
         afterAll(async () => {
           await pdApiClientManager.wsClient?.disconnect();
         });
 
-        test(`for API query LbpPoolHistoricalData for pool address ${stubs.lbpPoolHistoricalData.pools.poolA.address}`, async () => {
+        test(`for API query LbpPoolHistoricalData for pool address ${stubs.lbpPoolHistoricalData.pools.poolB.address}`, async () => {
           await handleLbpPoolHistoricalDataAtBlockTestcase({
-            poolAddress: stubs.lbpPoolHistoricalData.pools.poolA.address,
+            poolAddress: stubs.lbpPoolHistoricalData.pools.poolB.address,
             blockHeight: stubs.lbpPoolHistoricalData.blocks.blockA.height,
             pdApiClientManager,
           });
@@ -144,14 +143,13 @@ describe('Validation of indexed data against blockchain storage state', () => {
         const pdApiClientManager = new PolkadotApiManager({
           blockHash: stubs.lbpPoolHistoricalData.blocks.blockB.hash,
         });
-        beforeAll(async () => {});
         afterAll(async () => {
           await pdApiClientManager.wsClient?.disconnect();
         });
 
-        test(`for API query LbpPoolHistoricalData for pool address ${stubs.lbpPoolHistoricalData.pools.poolA.address}`, async () => {
+        test(`for API query LbpPoolHistoricalData for pool address ${stubs.lbpPoolHistoricalData.pools.poolB.address}`, async () => {
           await handleLbpPoolHistoricalDataAtBlockTestcase({
-            poolAddress: stubs.lbpPoolHistoricalData.pools.poolA.address,
+            poolAddress: stubs.lbpPoolHistoricalData.pools.poolB.address,
             blockHeight: stubs.lbpPoolHistoricalData.blocks.blockB.height,
             pdApiClientManager,
           });
