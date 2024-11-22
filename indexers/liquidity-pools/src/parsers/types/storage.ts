@@ -118,8 +118,16 @@ export type XykGetAssetsInput = {
   poolAddress: string;
   block: BlockHeader;
 };
+export type XykGetShareTokenInput = {
+  poolAddress: string;
+  block: BlockHeader;
+};
 
 export type LbpGetPoolDataInput = {
   poolAddress: string;
+  block: BlockHeader;
+};
+
+export type LbpGetAllPoolsDataInput = {
   block: BlockHeader;
 };

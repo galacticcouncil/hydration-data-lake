@@ -117,6 +117,7 @@ export default {
       }),
   },
   xyk: {
+    getShareToken: xyk.getShareToken,
     getPoolAssets: (
       args: XykGetAssetsInput
     ): Promise<XykPoolWithAssets | null> =>
@@ -168,6 +169,7 @@ export default {
         method: 'getPoolData',
         fallbackFns: [lbp.getPoolData],
       }),
+    getAllPoolsData: lbp.getAllPoolsData,
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ): Promise<AccountData | null> =>

@@ -10,6 +10,7 @@ import { handleLbpPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
 import { initLbpPoolOperation } from './common';
 import { getAsset } from '../../assets/assetRegistry';
+import { getLbpPoolByAssets } from '../../isolatedPool/lbpPool';
 
 export async function lpbBuyExecuted(
   ctx: ProcessorContext<Store>,
@@ -19,13 +20,12 @@ export async function lpbBuyExecuted(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = [...ctx.batchState.state.lbpAllBatchPools.values()].find(
-    (p) =>
-      (p.assetA.id == `${eventParams.assetIn}` &&
-        p.assetB.id == `${eventParams.assetOut}`) ||
-      (p.assetB.id == `${eventParams.assetIn}` &&
-        p.assetA.id == `${eventParams.assetOut}`)
-  );
+  const pool = await getLbpPoolByAssets({
+    ctx,
+    assetIds: [eventParams.assetIn, eventParams.assetOut],
+    ensure: true,
+    blockHeader: eventCallData.eventData.metadata.blockHeader,
+  });
 
   if (!pool) {
     console.log(
@@ -94,13 +94,12 @@ export async function lpbSellExecuted(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = [...ctx.batchState.state.lbpAllBatchPools.values()].find(
-    (p) =>
-      (p.assetA.id == `${eventParams.assetIn}` &&
-        p.assetB.id == `${eventParams.assetOut}`) ||
-      (p.assetB.id == `${eventParams.assetIn}` &&
-        p.assetA.id == `${eventParams.assetOut}`)
-  );
+  const pool = await getLbpPoolByAssets({
+    ctx,
+    assetIds: [eventParams.assetIn, eventParams.assetOut],
+    ensure: true,
+    blockHeader: eventCallData.eventData.metadata.blockHeader,
+  });
 
   if (!pool) {
     console.log(

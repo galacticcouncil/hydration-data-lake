@@ -33,6 +33,7 @@ import {
   AssetDetails,
   AssetDetailsWithId,
   GetPoolAssetInfoInput,
+  LbpGetAllPoolsDataInput,
   LbpGetPoolDataInput,
   LbpPoolData,
   OmnipoolAssetData,
@@ -43,6 +44,7 @@ import {
   SystemAccountInfo,
   TokensAccountsAssetBalances,
   XykGetAssetsInput,
+  XykGetShareTokenInput,
   XykPoolWithAssets,
 } from './storage';
 
@@ -161,6 +163,7 @@ export type StorageParserMethods = {
     ) => Promise<AccountData | null>;
   };
   xyk: {
+    getShareToken: (args: XykGetShareTokenInput) => Promise<number | null>;
     getPoolAssets: (
       args: XykGetAssetsInput
     ) => Promise<XykPoolWithAssets | null>;
@@ -170,6 +173,7 @@ export type StorageParserMethods = {
   };
   lbp: {
     getPoolData: (args: LbpGetPoolDataInput) => Promise<LbpPoolData | null>;
+    getAllPoolsData: (args: LbpGetAllPoolsDataInput) => Promise<LbpPoolData[]>;
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;

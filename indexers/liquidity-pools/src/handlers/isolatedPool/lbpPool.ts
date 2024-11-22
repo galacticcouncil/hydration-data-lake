@@ -8,6 +8,102 @@ import {
 } from '../../parsers/batchBlocksParser/types';
 import { getAssetFreeBalance } from '../assets/balances';
 import { getAsset } from '../assets/assetRegistry';
+import parsers from '../../parsers';
+
+export async function createLbpPool({
+  ctx,
+  blockHeader,
+  poolData: {
+    assetAId,
+    assetBId,
+    assetABalance,
+    assetBBalance,
+    poolAddress,
+    ownerAddress,
+    startBlockNumber,
+    endBlockNumber,
+    feeCollectorAddress,
+    fee,
+    initialWeight,
+    finalWeight,
+  },
+}: {
+  ctx: ProcessorContext<Store>;
+  blockHeader: Block;
+  poolData: {
+    assetAId: string | number;
+    assetBId: string | number;
+    assetABalance?: bigint;
+    assetBBalance?: bigint;
+    poolAddress: string;
+    ownerAddress: string;
+    startBlockNumber?: number;
+    endBlockNumber?: number;
+    feeCollectorAddress: string;
+    fee: number[];
+    initialWeight: number;
+    finalWeight: number;
+  };
+}) {
+  const assetAEntity = await getAsset({
+    ctx,
+    id: assetAId,
+    ensure: true,
+    blockHeader: blockHeader,
+  });
+  const assetBEntity = await getAsset({
+    ctx,
+    id: assetBId,
+    ensure: true,
+    blockHeader: blockHeader,
+  });
+
+  if (!assetAEntity || !assetBEntity) return null;
+  const newPoolsAssetBalances: {
+    assetABalance: bigint | undefined;
+    assetBBalance: bigint | undefined;
+  } = {
+    assetABalance,
+    assetBBalance,
+  };
+
+  if (
+    !newPoolsAssetBalances.assetABalance &&
+    !newPoolsAssetBalances.assetBBalance
+  ) {
+    newPoolsAssetBalances.assetABalance = await getAssetFreeBalance(
+      blockHeader,
+      +assetAId,
+      poolAddress
+    );
+    newPoolsAssetBalances.assetBBalance = await getAssetFreeBalance(
+      blockHeader,
+      +assetBId,
+      poolAddress
+    );
+  }
+
+  const newPool = new LbpPool({
+    id: poolAddress,
+    account: await getAccount(ctx, poolAddress),
+    assetA: assetAEntity,
+    assetB: assetBEntity,
+    assetABalance: newPoolsAssetBalances.assetABalance,
+    assetBBalance: newPoolsAssetBalances.assetBBalance,
+    createdAt: new Date(blockHeader.timestamp ?? Date.now()),
+    createdAtParaBlock: blockHeader.height,
+    owner: await getAccount(ctx, ownerAddress),
+    startBlockNumber: startBlockNumber ?? null,
+    endBlockNumber: endBlockNumber ?? null,
+    feeCollector: await getAccount(ctx, feeCollectorAddress),
+    fee: fee,
+    initialWeight: initialWeight,
+    finalWeight: finalWeight,
+    isDestroyed: false,
+  });
+
+  return newPool;
+}
 
 export async function getLbpPoolByAssets({
   ctx,
@@ -41,9 +137,72 @@ export async function getLbpPoolByAssets({
     },
   });
 
-  return pool ?? null;
+  if (pool) return pool;
 
-  // TODO implement automatic creation of XykPool based on storage data if ensure === true
+  if (!pool && !ensure) return null;
+
+  /**
+   * Following logic below is implemented and will be used only if indexer
+   * has been started not from genesis block and some assets have not been
+   * pre-created before indexing start point.
+   */
+
+  if (!blockHeader) return null;
+
+  const allLbpPoolsStorageData = await parsers.storage.lbp.getAllPoolsData({
+    block: blockHeader,
+  });
+
+  const newPoolStorageData = allLbpPoolsStorageData.find(
+    (poolData) =>
+      (poolData.assetAId === +assetIds[0] &&
+        poolData.assetBId === +assetIds[1]) ||
+      (poolData.assetBId === +assetIds[0] && poolData.assetAId === +assetIds[1])
+  );
+
+  if (!newPoolStorageData) return null;
+
+  const {
+    poolAddress,
+    owner,
+    start,
+    end,
+    assetAId,
+    assetBId,
+    initialWeight,
+    finalWeight,
+    fee,
+    feeCollector,
+  } = newPoolStorageData;
+
+  const newPool = await createLbpPool({
+    ctx,
+    blockHeader: blockHeader,
+    poolData: {
+      assetAId,
+      assetBId,
+      poolAddress: poolAddress,
+      ownerAddress: owner,
+      startBlockNumber: start,
+      endBlockNumber: end,
+      feeCollectorAddress: feeCollector,
+      fee: fee,
+      initialWeight: initialWeight,
+      finalWeight: finalWeight,
+    },
+  });
+
+  if (!newPool) return null;
+
+  await ctx.store.upsert(newPool);
+
+  const lbpAllBatchPools = ctx.batchState.state.lbpAllBatchPools;
+  lbpAllBatchPools.set(newPool.id, newPool);
+  ctx.batchState.state = {
+    lbpAllBatchPools,
+  };
+
+  return newPool;
 }
 
 export async function lpbPoolCreated(
@@ -56,63 +215,26 @@ export async function lpbPoolCreated(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const assetAEntity = await getAsset({
+  const newPool = await createLbpPool({
     ctx,
-    id: eventParams.data.assets[0],
-    ensure: true,
     blockHeader: eventMetadata.blockHeader,
+    poolData: {
+      assetAId: eventParams.data.assets[0],
+      assetBId: eventParams.data.assets[1],
+      assetABalance: eventCallData.callData?.args?.assetAAmount,
+      assetBBalance: eventCallData.callData?.args?.assetBAmount,
+      poolAddress: eventParams.pool,
+      ownerAddress: eventParams.data.owner,
+      startBlockNumber: eventParams.data.start,
+      endBlockNumber: eventParams.data.end,
+      feeCollectorAddress: eventParams.data.feeCollector,
+      fee: eventParams.data.fee,
+      initialWeight: eventParams.data.initialWeight,
+      finalWeight: eventParams.data.finalWeight,
+    },
   });
-  const assetBEntity = await getAsset({
-    ctx,
-    id: eventParams.data.assets[1],
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
 
-  if (!assetAEntity || !assetBEntity) return null;
-
-  const newPoolsAssetBalances: {
-    assetABalance: bigint | undefined;
-    assetBBalance: bigint | undefined;
-  } = {
-    assetABalance: eventCallData.callData?.args?.assetAAmount,
-    assetBBalance: eventCallData.callData?.args?.assetBAmount,
-  };
-
-  if (
-    !newPoolsAssetBalances.assetABalance &&
-    !newPoolsAssetBalances.assetBBalance
-  ) {
-    newPoolsAssetBalances.assetABalance = await getAssetFreeBalance(
-      eventMetadata.blockHeader,
-      eventParams.data.assets[0],
-      eventParams.pool
-    );
-    newPoolsAssetBalances.assetBBalance = await getAssetFreeBalance(
-      eventMetadata.blockHeader,
-      eventParams.data.assets[1],
-      eventParams.pool
-    );
-  }
-
-  const newPool = new LbpPool({
-    id: eventParams.pool,
-    account: await getAccount(ctx, eventParams.pool),
-    assetA: assetAEntity,
-    assetB: assetBEntity,
-    assetABalance: newPoolsAssetBalances.assetABalance,
-    assetBBalance: newPoolsAssetBalances.assetBBalance,
-    createdAt: new Date(eventMetadata.blockHeader.timestamp ?? Date.now()),
-    createdAtParaBlock: eventMetadata.blockHeader.height,
-    owner: await getAccount(ctx, eventParams.data.owner),
-    startBlockNumber: eventParams.data.start,
-    endBlockNumber: eventParams.data.end,
-    feeCollector: await getAccount(ctx, eventParams.data.feeCollector),
-    fee: eventParams.data.fee,
-    initialWeight: eventParams.data.initialWeight,
-    finalWeight: eventParams.data.finalWeight,
-    isDestroyed: false,
-  });
+  if (!newPool) return null;
 
   const poolsToSave = ctx.batchState.state.lbpPoolIdsToSave;
   poolsToSave.add(newPool.id);

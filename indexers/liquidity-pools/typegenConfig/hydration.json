@@ -23,7 +23,7 @@
     "XYK": {
       "events": ["PoolCreated", "PoolDestroyed", "SellExecuted", "BuyExecuted"],
       "calls": ["create_pool"],
-      "storage": ["PoolAssets"]
+      "storage": ["PoolAssets", "ShareToken"]
     },
     "Omnipool": {
       "events": ["TokenAdded", "TokenRemoved", "SellExecuted", "BuyExecuted"],

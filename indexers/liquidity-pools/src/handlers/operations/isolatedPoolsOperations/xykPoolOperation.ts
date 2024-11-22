@@ -10,6 +10,8 @@ import { handleXykPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
 import { initXykPoolOperation } from './common';
 import { getAsset } from '../../assets/assetRegistry';
+import { getLbpPoolByAssets } from '../../isolatedPool/lbpPool';
+import { getXykPool } from '../../isolatedPool/xykPool';
 
 export async function xykBuyExecuted(
   ctx: ProcessorContext<Store>,
@@ -19,9 +21,12 @@ export async function xykBuyExecuted(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = [...ctx.batchState.state.xykAllBatchPools.values()].find(
-    (p) => p.id === eventParams.pool
-  );
+  const pool = await getXykPool({
+    ctx,
+    id: eventParams.pool,
+    ensure: true,
+    blockHeader: eventCallData.eventData.metadata.blockHeader,
+  });
 
   if (!pool) {
     console.log(
@@ -90,9 +95,12 @@ export async function xykSellExecuted(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = [...ctx.batchState.state.xykAllBatchPools.values()].find(
-    (p) => p.id === eventParams.pool
-  );
+  const pool = await getXykPool({
+    ctx,
+    id: eventParams.pool,
+    ensure: true,
+    blockHeader: eventCallData.eventData.metadata.blockHeader,
+  });
 
   if (!pool) {
     console.log(

@@ -1,10 +1,102 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { XykPool } from '../../model';
+import { LbpPool, XykPool } from '../../model';
 import { getAccount } from '../accounts';
 import { XykPoolCreatedData } from '../../parsers/batchBlocksParser/types';
 import { getAssetFreeBalance } from '../assets/balances';
 import { getAsset } from '../assets/assetRegistry';
+import parsers from '../../parsers';
+
+export async function createXykPool({
+  ctx,
+  blockHeader,
+  poolData: {
+    assetAId,
+    assetBId,
+    assetABalance,
+    assetBBalance,
+    poolAddress,
+    initialSharesAmount,
+    shareTokenId,
+  },
+}: {
+  ctx: ProcessorContext<Store>;
+  blockHeader: Block;
+  poolData: {
+    poolAddress: string;
+    assetAId: string | number;
+    assetBId: string | number;
+    assetABalance?: bigint;
+    assetBBalance?: bigint;
+    initialSharesAmount?: bigint;
+    shareTokenId?: number;
+  };
+}) {
+  const newPoolsAssetBalances: {
+    assetABalance: bigint | undefined;
+    assetBBalance: bigint | undefined;
+  } = {
+    assetABalance: assetABalance,
+    assetBBalance: assetBBalance,
+  };
+
+  const assetAEntity = await getAsset({
+    ctx,
+    id: assetAId,
+    ensure: true,
+    blockHeader: blockHeader,
+  });
+  const assetBEntity = await getAsset({
+    ctx,
+    id: assetBId,
+    ensure: true,
+    blockHeader: blockHeader,
+  });
+
+  if (!assetAEntity || !assetBEntity) return null;
+
+  if (
+    !newPoolsAssetBalances.assetABalance &&
+    !newPoolsAssetBalances.assetBBalance
+  ) {
+    newPoolsAssetBalances.assetABalance = await getAssetFreeBalance(
+      blockHeader,
+      +assetAId,
+      poolAddress
+    );
+    newPoolsAssetBalances.assetBBalance = await getAssetFreeBalance(
+      blockHeader,
+      +assetBId,
+      poolAddress
+    );
+  }
+
+  let shareTokenIdEnsured = shareTokenId ?? null;
+
+  if (!shareTokenIdEnsured) {
+    shareTokenIdEnsured = await parsers.storage.xyk.getShareToken({
+      block: blockHeader,
+      poolAddress,
+    });
+  }
+  if (!shareTokenIdEnsured) return null;
+
+  const newPool = new XykPool({
+    id: poolAddress,
+    account: await getAccount(ctx, poolAddress),
+    assetA: assetAEntity,
+    assetB: assetBEntity,
+    shareTokenId: shareTokenIdEnsured,
+    assetABalance: newPoolsAssetBalances.assetABalance,
+    assetBBalance: newPoolsAssetBalances.assetBBalance,
+    initialSharesAmount: initialSharesAmount ?? BigInt(0),
+    createdAt: new Date(blockHeader.timestamp ?? Date.now()),
+    createdAtParaBlock: blockHeader.height,
+    isDestroyed: false,
+  });
+
+  return newPool;
+}
 
 export async function getXykPool({
   ctx,
@@ -13,23 +105,60 @@ export async function getXykPool({
   blockHeader,
 }: {
   ctx: ProcessorContext<Store>;
-  id: string | number;
+  id: string;
   ensure?: boolean;
   blockHeader?: Block;
 }): Promise<XykPool | null> {
   const batchState = ctx.batchState.state;
 
-  let pool = batchState.xykAllBatchPools.get(`${id}`);
+  let pool = batchState.xykAllBatchPools.get(id);
   if (pool) return pool;
 
   pool = await ctx.store.findOne(XykPool, {
-    where: { id: `${id}` },
+    where: { id },
     relations: { assetA: true, assetB: true, account: true },
   });
 
-  return pool ?? null;
+  if (pool) return pool;
 
-  // TODO implement automatic creation of XykPool based on storage data if ensure === true
+  if (!pool && !ensure) return null;
+
+  /**
+   * Following logic below is implemented and will be used only if indexer
+   * has been started not from genesis block and some assets have not been
+   * pre-created before indexing start point.
+   */
+
+  if (!blockHeader) return null;
+
+  const xykPoolAssetsStorageData = await parsers.storage.xyk.getPoolAssets({
+    block: blockHeader,
+    poolAddress: id,
+  });
+
+  if (!xykPoolAssetsStorageData) return null;
+
+  const newPool = await createXykPool({
+    ctx,
+    blockHeader: blockHeader,
+    poolData: {
+      assetAId: xykPoolAssetsStorageData.assetAId,
+      assetBId: xykPoolAssetsStorageData.assetBId,
+      poolAddress: id,
+    },
+  });
+
+  if (!newPool) return null;
+
+  await ctx.store.upsert(newPool);
+
+  const xykAllBatchPools = ctx.batchState.state.xykAllBatchPools;
+  xykAllBatchPools.set(newPool.id, newPool);
+  ctx.batchState.state = {
+    xykAllBatchPools,
+  };
+
+  return newPool;
 }
 
 export async function xykPoolCreated(
@@ -42,58 +171,21 @@ export async function xykPoolCreated(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const newPoolsAssetBalances: {
-    assetABalance: bigint | undefined;
-    assetBBalance: bigint | undefined;
-  } = {
-    assetABalance: eventCallData.callData?.args?.amountA,
-    assetBBalance: eventCallData.callData?.args?.amountB,
-  };
-
-  const assetAEntity = await getAsset({
+  const newPool = await createXykPool({
     ctx,
-    id: eventParams.assetA,
-    ensure: true,
     blockHeader: eventMetadata.blockHeader,
-  });
-  const assetBEntity = await getAsset({
-    ctx,
-    id: eventParams.assetB,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
+    poolData: {
+      assetAId: eventParams.assetA,
+      assetBId: eventParams.assetB,
+      assetABalance: eventCallData.callData?.args?.amountA,
+      assetBBalance: eventCallData.callData?.args?.amountB,
+      poolAddress: eventParams.pool,
+      initialSharesAmount: eventParams.initialSharesAmount,
+      shareTokenId: eventParams.shareToken,
+    },
   });
 
-  if (!assetAEntity || !assetBEntity) return null;
-
-  if (
-    !newPoolsAssetBalances.assetABalance &&
-    !newPoolsAssetBalances.assetBBalance
-  ) {
-    newPoolsAssetBalances.assetABalance = await getAssetFreeBalance(
-      eventMetadata.blockHeader,
-      eventParams.assetA,
-      eventParams.pool
-    );
-    newPoolsAssetBalances.assetBBalance = await getAssetFreeBalance(
-      eventMetadata.blockHeader,
-      eventParams.assetB,
-      eventParams.pool
-    );
-  }
-
-  const newPool = new XykPool({
-    id: eventParams.pool,
-    account: await getAccount(ctx, eventParams.pool),
-    assetA: assetAEntity,
-    assetB: assetBEntity,
-    shareTokenId: eventParams.shareToken,
-    assetABalance: newPoolsAssetBalances.assetABalance,
-    assetBBalance: newPoolsAssetBalances.assetBBalance,
-    initialSharesAmount: eventParams.initialSharesAmount ?? BigInt(0),
-    createdAt: new Date(eventMetadata.blockHeader.timestamp ?? Date.now()),
-    createdAtParaBlock: eventMetadata.blockHeader.height,
-    isDestroyed: false,
-  });
+  if (!newPool) return;
 
   const poolsToSave = ctx.batchState.state.xykPoolIdsToSave;
   poolsToSave.add(newPool.id);
