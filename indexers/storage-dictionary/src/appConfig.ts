@@ -6,7 +6,26 @@ import dotenv from 'dotenv';
 
 import { NodeEnv } from './utils/types';
 
-dotenv.config();
+dotenv.config({
+  path: (() => {
+    let envFileName = '.env.hydration';
+
+    switch (process.env.NODE_ENV) {
+      case 'test':
+        envFileName = envFileName + '.test';
+        break;
+      case 'self-hosted':
+        envFileName = envFileName + '.self-hosted';
+        break;
+      case 'production':
+        break;
+      default:
+        envFileName = envFileName + '.local';
+    }
+
+    return `${__dirname}/../${envFileName}`;
+  })(),
+});
 
 export class AppConfig {
   private static instance: AppConfig;
@@ -16,7 +35,7 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   @IsNotEmpty()
-  readonly GQL_PORT: number = 8080;
+  readonly GQL_PORT: number = 8090;
 
   readonly BASE_PATH?: string;
 

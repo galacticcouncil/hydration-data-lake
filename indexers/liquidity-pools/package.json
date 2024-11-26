@@ -9,7 +9,7 @@
     "process": "node --require=dotenv/config lib/main.js",
     "build": "rm -rf lib && tsc",
     "node-pg-migrate": "node-pg-migrate",
-    "postbuild": "cpx 'src/**/*.sql' lib",
+    "postbuild": "cpx 'src/**/*.sql' lib && cpx 'src/**/*.graphql' lib",
     "deploy-main": "sqd deploy --org galacticcouncil . -m deployment-xyk-pools-indexer.yaml",
     "ingester-codegen:all": ". ./scripts/ingester-codegen.sh",
     "multi-typegen": ". ./scripts/typegen.sh",

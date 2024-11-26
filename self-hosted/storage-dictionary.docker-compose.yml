@@ -1,0 +1,62 @@
+version: "3"
+
+networks:
+  hydration_data_lake:
+    driver: bridge
+
+services:
+  storage-dictionary-db:
+    container_name: storage_dictionary_db
+    image: postgres:15
+    ports:
+      - "${STORAGE_DICT_DB_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${STORAGE_DICT_DB_NAME}
+      POSTGRES_USER: ${STORAGE_DICT_DB_USER}
+      POSTGRES_PASSWORD: ${STORAGE_DICT_DB_PASS}
+    networks:
+      - hydration_data_lake
+
+  storage-dictionary-processor:
+    build:
+      context: ../indexers/storage-dictionary
+      dockerfile: Dockerfile
+    image: storage_dictionary_indexer
+    depends_on:
+      - storage-dictionary-db
+    container_name: storage_dictionary_processor
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      CHAIN: hydration
+      DB_NAME: ${STORAGE_DICT_DB_NAME}
+      DB_PORT: 5432
+      DB_USER: ${STORAGE_DICT_DB_USER}
+      DB_PASS: ${STORAGE_DICT_DB_PASS}
+      DB_HOST: storage-dictionary-db
+    ports:
+      - "3031:3031"
+    networks:
+      - hydration_data_lake
+    entrypoint: ["scripts/container-entrypoint.sh"]
+
+  storage-dictionary-api:
+    image: storage_dictionary_indexer
+    depends_on:
+      - storage-dictionary-processor
+    container_name: storage_dictionary_api
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      CHAIN: hydration
+      GQL_PORT: ${STORAGE_DICT_GQL_PORT}
+      DB_NAME: ${STORAGE_DICT_DB_NAME}
+      DB_PORT: 5432
+      DB_USER: ${STORAGE_DICT_DB_USER}
+      DB_PASS: ${STORAGE_DICT_DB_PASS}
+      DB_HOST: storage-dictionary-db
+    ports:
+      - "${STORAGE_DICT_GQL_PORT}:${STORAGE_DICT_GQL_PORT}"
+    networks:
+      - hydration_data_lake
+    # Wait 15s for processor complete DB migrations and create service tables which are required for api app.
+    # API app needs to run its own DB migrations to set up DB subscriptions.
+    command: ["/bin/sh", "-c", "sleep 30 && sqd api:prod"]

@@ -1,0 +1,62 @@
+version: "3"
+
+networks:
+  hydration_data_lake:
+    driver: bridge
+
+services:
+  liquidity-pools-db:
+    container_name: liquidity_pools_db
+    image: postgres:15
+    ports:
+      - "${LIQ_POOLS_DB_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${LIQ_POOLS_DB_NAME}
+      POSTGRES_USER: ${LIQ_POOLS_DB_USER}
+      POSTGRES_PASSWORD: ${LIQ_POOLS_DB_PASS}
+    networks:
+      - hydration_data_lake
+
+  liquidity-pools-processor:
+    build:
+      context: ../indexers/liquidity-pools
+      dockerfile: Dockerfile
+    image: liquidity_pools_indexer
+    depends_on:
+      - liquidity-pools-db
+    container_name: liquidity_pools_processor
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      CHAIN: hydration
+      DB_NAME: ${LIQ_POOLS_DB_NAME}
+      DB_PORT: 5432
+      DB_USER: ${LIQ_POOLS_DB_USER}
+      DB_PASS: ${LIQ_POOLS_DB_PASS}
+      DB_HOST: liquidity-pools-db
+    ports:
+      - "3030:3030"
+    networks:
+      - hydration_data_lake
+    entrypoint: ["scripts/container-entrypoint.sh"]
+
+  liquidity-pools-api:
+    image: liquidity_pools_indexer
+    depends_on:
+      - liquidity-pools-processor
+    container_name: liquidity_pools_api
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      CHAIN: hydration
+      GQL_PORT: ${LIQ_POOLS_GQL_PORT}
+      DB_NAME: ${LIQ_POOLS_DB_NAME}
+      DB_PORT: 5432
+      DB_USER: ${LIQ_POOLS_DB_USER}
+      DB_PASS: ${LIQ_POOLS_DB_PASS}
+      DB_HOST: liquidity-pools-db
+    ports:
+      - "${LIQ_POOLS_GQL_PORT}:${LIQ_POOLS_GQL_PORT}"
+    networks:
+      - hydration_data_lake
+    # Wait 15s for processor complete DB migrations and create service tables which are required for api app.
+    # API app needs to run its own DB migrations to set up DB subscriptions.
+    command: ["/bin/sh", "-c", "sleep 10 && sqd api:prod"]

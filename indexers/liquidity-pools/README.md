@@ -1,8 +1,58 @@
-# Hydration Liquidity Pools indexer
 
-An indexer for the Hydration mainnet and Pareo chains, designed to collect and organize data on liquidity pools.
+# 🌊 Liquidity Pools Indexer
 
-### Currently tracking for following entities is implemented:
+An indexer for the **Hydration mainnet** and **Pareo testnet**, designed to collect and organize data on liquidity pools across chains.
+
+---
+
+## 📊 Blockchain Storage Datasource
+
+The Liquidity Pools Indexer is implemented with the flexibility to use multiple sources of blockchain data. These data sources are prioritized in a fallback sequence to ensure robust data retrieval:
+
+1. **Storage Dictionary** (primary source for prefetched data)
+2. **Runtime API Calls** (specific data on-demand)
+3. **RPC Calls to Storage** (fallback for all other methods)
+
+The **StorageResolver** orchestrates this process by attempting to fetch the required data in the order listed above. If a primary source is unavailable or incomplete, the resolver falls back to the next source.
+
+### 🔧 Optimizing with Storage Dictionary
+
+To maximize efficiency when using the **Storage Dictionary**, the indexer performs the following steps during the batch processing flow:
+1. **Parse Events and Calls**: Identifies all required data at the start of the batch.
+2. **Collect Keys**: Gathers the necessary keys for subsequent processing.
+3. **Fetch Data**: Queries the Storage Dictionary for:
+  - Specific keys at specific blocks.
+  - All keys within a block range, avoiding heavy filtering in API queries (fetching redundant data is acceptable to improve reliability).
+4. **Process Batch**: Utilizes the prefetched data during the batch processing logic.
+
+This design minimizes latency, improves reliability, and reduces RPC payload.
+
+---
+
+## 🌐 Hydration and Paseo Chains
+
+The Liquidity Pools Indexer supports both the **Hydration mainnet** and the **Hydration Paseo testnet** with the same codebase.
+
+### 🔄 Switching Between Chains
+Use the `CHAIN` runtime environment variable to specify the target chain:
+```bash
+CHAIN: "hydration" | "hydration_paseo"
+```
+
+### 🛠 Chain-Specific Details
+
+- **Hydration Mainnet**:  
+  Utilizes the Storage Dictionary to optimize data retrieval for events, calls, and storage.
+
+- **Hydration Paseo Testnet**:  
+  Does not support the Storage Dictionary. All storage data is fetched directly from the RPC node, relying on Runtime API and RPC calls for data retrieval.
+
+### ⚠️ Note
+While the same event handlers are used across both chains, chain-specific events, calls, and storage parsers are generated separately to ensure compatibility.
+
+---
+
+### Currently tracking for following entities are implemented:
 
 - assets *(all assets based on AssetsRegistry pallet and Registered/Updated events)*
 
@@ -49,4 +99,3 @@ An indexer for the Hydration mainnet and Pareo chains, designed to collect and o
   - `Omnipool.Buy/SellExecuted.asset_out == Stableswap.LiquidityRemoved.pool_id`
   - `Omnipool.Buy/SellExecuted.amount_out == Stableswap.LiquidityRemoved.shares`
 - all API subscriptions have filter so UI can subscribe to updates of specific list of entities by ID
-

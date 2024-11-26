@@ -19,6 +19,8 @@ pgTypes.setTypeParser(1700, function (val) {
 const app = express();
 const appConfig = AppConfig.getInstance();
 
+console.dir(appConfig, {depth: null})
+
 const postgraphileInstance = postgraphile(
   {
     host: appConfig.DB_HOST,

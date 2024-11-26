@@ -14,17 +14,26 @@ import {
 } from './parsers/chains/hydration-paseo/typegenTypes';
 import { ChainName, NodeEnv } from './utils/types';
 
-// dotenv.config();
-
 dotenv.config({
   path: (() => {
-    let envFileName = '.env';
+    let envFileName = '.env.hydration';
+
     if (process.env.CHAIN === 'hydration') envFileName = '.env.hydration';
     if (process.env.CHAIN === 'hydration_paseo')
       envFileName = '.env.hydration-paseo';
 
-    if (process.env.NODE_ENV === `test`) envFileName = envFileName + '.test';
-    else envFileName = envFileName + '.local';
+    switch (process.env.NODE_ENV) {
+      case 'test':
+        envFileName = envFileName + '.test';
+        break;
+      case 'self-hosted':
+        envFileName = envFileName + '.self-hosted';
+        break;
+      case 'production':
+        break;
+      default:
+        envFileName = envFileName + '.local';
+    }
 
     return `${__dirname}/../${envFileName}`;
   })(),

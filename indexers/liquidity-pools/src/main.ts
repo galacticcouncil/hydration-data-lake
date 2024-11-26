@@ -23,9 +23,9 @@ import {
   prefetchAllAssets,
 } from './handlers/assets/assetRegistry';
 
-const timeMes = { start: Date.now(), end: Date.now() };
-
-console.log('Indexer is staring for CHAIN - ', process.env.CHAIN);
+console.log(
+  `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
+);
 
 processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   const ctxWithBatchState: Omit<
@@ -110,7 +110,4 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     parsedData
   );
   console.timeEnd('handleLbpPoolHistoricalData');
-
-  timeMes.end = Date.now();
-  console.log('Batch complete - ', timeMes);
 });

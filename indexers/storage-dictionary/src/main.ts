@@ -6,7 +6,6 @@ import { AppConfig } from './appConfig';
 import { handleXykPoolsStorage } from './handlers/xykPool';
 import { handleOmnipoolStorage } from './handlers/omnipoolPool';
 import { handleStablepoolStorage } from './handlers/stablepool';
-// import { splitIntoBatches } from '@repo/data-lake-utils/common';
 import * as crypto from 'node:crypto';
 import { SubProcessorStatusManager } from './utils/subProcessorStatusManager';
 import { handleLbpPoolsStorage } from './handlers/lbpPool';
@@ -20,6 +19,10 @@ import {
 import { handleRelayChainInfo } from './handlers/relayChainInfo';
 
 const appConfig = AppConfig.getInstance();
+
+console.log(`Indexer is staring in ${process.env.NODE_ENV} environment`);
+
+console.dir(appConfig, {depth: null})
 
 processor.run(
   new TypeormDatabase({
@@ -42,7 +45,10 @@ processor.run(
     );
     await subProcessorStatusManager.calcSubBatchConfig();
 
-    await waitForAssetsActualisation(subProcessorStatusManager, ctxWithBatchState as ProcessorContext<Store>);
+    await waitForAssetsActualisation(
+      subProcessorStatusManager,
+      ctxWithBatchState as ProcessorContext<Store>
+    );
 
     await prefetchAllAssets(ctxWithBatchState as ProcessorContext<Store>);
 
