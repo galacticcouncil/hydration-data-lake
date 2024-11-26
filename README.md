@@ -8,6 +8,10 @@ A collection of blockchain indexers designed to simplify data access on Hydratio
 | --- | --- | --- |
 | [liquidity-pools](./indexers/liquidity-pools) | [changelog](./indexers/liquidity-pools/CHANGELOG.md) | An indexer for the Hydration mainnet and Pareo chains, designed to collect and organize data on liquidity pools. |
 | [storage-dictionary](./indexers/storage-dictionary) | [changelog](./indexers/storage-dictionary/CHANGELOG.md) | An indexer for Hydration mainnet chains, built to collect historical storage data for each block. Optimized for fast, filtered access to storage data with minimal latency. |
+
+
+⚙️ [Self-hosted deployment configs](./self-hosted/README.md)
+
 ## Issue reporting
 
 In case of unexpected indexer behaviour, please create well-written issue 

@@ -83,10 +83,10 @@ hydration-data-lake/
    ```
 2. Start the Storage-Dictionary Indexer (if required):
     ```bash
-    docker-compose -f storage-dictionary.docker-compose.yml up
+    docker compose -f storage-dictionary.docker-compose.yml up
     ```
 
 3. Start the Liquidity-Pools Indexer:
    ```bash
-   docker-compose -f liquidity-pools.docker-compose.yml up
+   docker compose -f liquidity-pools.docker-compose.yml up
    ```
