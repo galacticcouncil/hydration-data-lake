@@ -1,8 +1,10 @@
 version: "3.7"
 
 networks:
-  hydration-data-lake:
-    driver: bridge
+  default:
+    driver: overlay
+  gateway:
+    external: true
 
 volumes:
   db:
@@ -22,10 +24,10 @@ services:
     logging:
       driver: json-file
     networks:
-      - hydration-data-lake
+      - default
 
   liquidity-pools-processor:
-    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
+    image: liquidity-pools-indexer:latest
     depends_on:
       - liquidity-pools-db
     environment:
@@ -39,14 +41,14 @@ services:
     ports:
       - "3030:3030"
     networks:
-      - hydration-data-lake
+      - default
     command:
       - sh
       - -c
       - "sqd migration:apply && sqd process:prod"
 
   liquidity-pools-api:
-    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
+    image: liquidity-pools-indexer:latest
     depends_on:
       - liquidity-pools-processor
     environment:
@@ -61,7 +63,8 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - hydration-data-lake
+      - default
+      - gateway
     logging:
       driver: json-file
     # Wait 15s for processor complete DB migrations and create service tables which are required for api app.
@@ -70,3 +73,10 @@ services:
       - sh
       - -c
       - "sleep 10 && sqd api:prod"
+    deploy:
+      replicas: 3
+      labels:
+        traefik.http.routers.hrds.rule: Host(`liquidity-pools-indexer.play.hydration.cloud`)
+        traefik.http.routers.hrds.tls: "true"
+        traefik.http.routers.hrds.tls.certresolver: myresolver
+        traefik.http.services.hrds.loadbalancer.server.port: "8080"

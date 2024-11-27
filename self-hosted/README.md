@@ -71,8 +71,7 @@ hydration-data-lake/
 │   └── storage-dictionary/
 └── self-hosted/
     ├── liquidity-pools.docker-compose.yml
-    ├── storage-dictionary.docker-compose.yml
-    └── .env
+    └──  storage-dictionary.docker-compose.yml
 ```
 
 ### Instructions
@@ -82,9 +81,10 @@ hydration-data-lake/
    cd self-hosted
    ```
 2. Start the Storage-Dictionary Indexer (if required):
-    ```bash
-    docker compose -f storage-dictionary.docker-compose.yml up
-    ```
+
+   ```bash
+   docker compose -f storage-dictionary.docker-compose.yml up
+   ```
 
 3. Start the Liquidity-Pools Indexer:
    ```bash

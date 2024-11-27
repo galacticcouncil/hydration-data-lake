@@ -3,41 +3,41 @@ version: "3.7"
 networks:
   hydration-data-lake:
     driver: bridge
+  gateway:
+    external: true
 
 volumes:
   db:
     driver: local
 
 services:
-  liquidity-pools-db:
+  storage-dictionary-db:
     image: postgres:15
     ports:
-      - "23798:5432"
+      - "23799:5432"
     environment:
-      POSTGRES_DB: "liquidity_pools_db"
+      POSTGRES_DB: "storage_dictionary_db"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     volumes:
-      - ./db/liquidity-pools-db:/var/lib/postgresql/data
-    logging:
-      driver: json-file
+      - ./db/storage-dictionary-db:/var/lib/postgresql/data
     networks:
       - hydration-data-lake
 
-  liquidity-pools-processor:
-    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
+  storage-dictionary-processor:
+    image: storage_dictionary_indexer:latest
     depends_on:
-      - liquidity-pools-db
+      - storage-dictionary-db
     environment:
       NODE_ENV: "self-hosted"
       CHAIN: "hydration"
       DB_PORT: 5432
-      DB_NAME: "liquidity_pools_db"
+      DB_HOST: "storage-dictionary-db"
+      DB_NAME: "storage_dictionary_db"
       DB_USER: "postgres"
       DB_PASS: "postgres"
-      DB_HOST: "liquidity-pools-db"
     ports:
-      - "3030:3030"
+      - "3031:3031"
     networks:
       - hydration-data-lake
     command:
@@ -45,28 +45,34 @@ services:
       - -c
       - "sqd migration:apply && sqd process:prod"
 
-  liquidity-pools-api:
-    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
+  storage-dictionary-api:
+    image: storage_dictionary_indexer:latest
     depends_on:
-      - liquidity-pools-processor
+      - storage-dictionary-processor
     environment:
       NODE_ENV: "self-hosted"
       CHAIN: "hydration"
-      GQL_PORT: 8080
+      GQL_PORT: 8089
       DB_PORT: 5432
-      DB_NAME: "liquidity_pools_db"
+      DB_HOST: "storage-dictionary-db"
+      DB_NAME: "storage_dictionary_db"
       DB_USER: "postgres"
       DB_PASS: "postgres"
-      DB_HOST: "liquidity-pools-db"
     ports:
-      - "8080:8080"
+      - "8090:8090"
     networks:
       - hydration-data-lake
-    logging:
-      driver: json-file
+      - gateway
     # Wait 15s for processor complete DB migrations and create service tables which are required for api app.
     # API app needs to run its own DB migrations to set up DB subscriptions.
     command:
       - sh
       - -c
       - "sleep 10 && sqd api:prod"
+    deploy:
+      replicas: 3
+      labels:
+        traefik.http.routers.hrds.rule: Host(`storage-dictionary-indexer.play.hydration.cloud`)
+        traefik.http.routers.hrds.tls: "true"
+        traefik.http.routers.hrds.tls.certresolver: myresolver
+        traefik.http.services.hrds.loadbalancer.server.port: "8090"
