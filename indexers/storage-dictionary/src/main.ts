@@ -22,8 +22,6 @@ const appConfig = AppConfig.getInstance();
 
 console.log(`Indexer is staring in ${process.env.NODE_ENV} environment`);
 
-console.dir(appConfig, {depth: null})
-
 processor.run(
   new TypeormDatabase({
     supportHotBlocks: true,
