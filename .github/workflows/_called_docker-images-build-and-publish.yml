@@ -75,9 +75,7 @@ jobs:
         id: liquidity-pools-indexer-push
         uses: docker/build-push-action@v3
         with:
-          platforms:
-            - linux/amd64
-            - linux/arm64
+          platforms: linux/amd64,linux/arm64
           context: ./indexers/liquidity-pools/
           push: true
           tags: ${{ steps.liquidity-pools-ind-meta.outputs.tags }}
@@ -124,6 +122,7 @@ jobs:
         id: storage-dictionary-indexer-push
         uses: docker/build-push-action@v3
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./indexers/storage-dictionary/
           push: true
           tags: ${{ steps.storage-dictionary-ind-meta.outputs.tags }}
