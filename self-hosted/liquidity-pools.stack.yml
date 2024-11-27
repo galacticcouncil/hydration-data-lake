@@ -7,7 +7,7 @@ networks:
     external: true
 
 volumes:
-  db:
+  liquidity-pools-db:
     driver: local
 
 services:
@@ -20,7 +20,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     volumes:
-      - ./db/liquidity-pools-db:/var/lib/postgresql/data
+      - liquidity-pools-db:/var/lib/postgresql/data
     logging:
       driver: json-file
     networks:

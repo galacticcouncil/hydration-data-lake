@@ -5,7 +5,7 @@ networks:
     driver: bridge
 
 volumes:
-  db:
+  storage-dictionary-db:
     driver: local
 
 services:
@@ -18,12 +18,12 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     volumes:
-      - ./db/storage-dictionary-db:/var/lib/postgresql/data
+      - storage-dictionary-db:/var/lib/postgresql/data
     networks:
       - hydration-data-lake
 
   storage-dictionary-processor:
-    image: storage_dictionary_indexer:latest
+    image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
     depends_on:
       - storage-dictionary-db
     environment:
@@ -44,7 +44,7 @@ services:
       - "sqd migration:apply && sqd process:prod"
 
   storage-dictionary-api:
-    image: storage_dictionary_indexer:latest
+    image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
     depends_on:
       - storage-dictionary-processor
     environment:
