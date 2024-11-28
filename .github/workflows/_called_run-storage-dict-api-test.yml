@@ -34,7 +34,7 @@ on:
         type: string
 
 env:
-  STORAGE_DICT_DB_NAME: store_dictionary
+  STORAGE_DICT_DB_NAME: store_dictionary_db
   STORAGE_DICT_DB_PORT: 23799
   STORAGE_DICT_API_PORT: 8090
 
@@ -113,6 +113,8 @@ jobs:
           NODE_ENV: test
           CHAIN: ${{ inputs.working-chain }}
           GQL_PORT: ${{ env.STORAGE_DICT_API_PORT }}
+          DB_NAME: ${{ env.STORAGE_DICT_DB_NAME }}
+          DB_PORT: ${{ env.STORAGE_DICT_DB_PORT }}
         working-directory: ./indexers/storage-dictionary
         run: |
           node --require=dotenv/config lib/api.js &

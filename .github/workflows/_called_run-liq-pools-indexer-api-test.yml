@@ -46,14 +46,14 @@ on:
         type: string
 
 env:
-  LIQ_POOLS_INDEXER_DB_NAME: squid
+  LIQ_POOLS_INDEXER_DB_NAME: liquidity_pools_db
   LIQ_POOLS_INDEXER_DB_PORT: 23798
   LIQ_POOLS_INDEXER_API_PORT: 8080
 
   LIQ_POOLS_INDEXER_FROM_BLOCK: ${{ inputs.liq-pools-indexer-from-block }}
   LIQ_POOLS_INDEXER_TO_BLOCK: ${{ inputs.liq-pools-indexer-to-block }}
 
-  STORAGE_DICT_DB_NAME: store_dictionary
+  STORAGE_DICT_DB_NAME: store_dictionary_db
   STORAGE_DICT_DB_PORT: 23799
   STORAGE_DICT_API_PORT: 8090
 
@@ -166,6 +166,8 @@ jobs:
           NODE_ENV: test
           CHAIN: ${{ inputs.working-chain }}
           GQL_PORT: ${{ env.STORAGE_DICT_API_PORT }}
+          DB_NAME: ${{ env.STORAGE_DICT_DB_NAME }}
+          DB_PORT: ${{ env.STORAGE_DICT_DB_PORT }}
         working-directory: ./indexers/storage-dictionary
         run: |
           node --require=dotenv/config lib/api.js &
@@ -182,7 +184,6 @@ jobs:
         id: storage-dictionary-ind-status
         uses: actions/github-script@v7
         env:
-          # Env variables
           PROCESS_FROM_BLOCK: ${{ env.STORAGE_DICT_INDEXER_FROM_BLOCK }}
           PROCESS_TO_BLOCK: ${{ env.STORAGE_DICT_INDEXER_TO_BLOCK }}
           PROCESSOR_API_URL: "http://127.0.0.1:${{ env.STORAGE_DICT_API_PORT }}/graphql"
@@ -221,6 +222,8 @@ jobs:
           NODE_ENV: test
           CHAIN: ${{ inputs.working-chain }}
           GQL_PORT: ${{ env.LIQ_POOLS_INDEXER_API_PORT }}
+          DB_NAME: ${{ env.LIQ_POOLS_INDEXER_DB_NAME }}
+          DB_PORT: ${{ env.LIQ_POOLS_INDEXER_DB_PORT }}
         working-directory: ./indexers/liquidity-pools
         run: |
           node --require=dotenv/config lib/api.js &
@@ -235,7 +238,6 @@ jobs:
         id: liquidity-pools-ind-status
         uses: actions/github-script@v7
         env:
-          # Env variables
           PROCESS_FROM_BLOCK: ${{ env.LIQ_POOLS_INDEXER_FROM_BLOCK }}
           PROCESS_TO_BLOCK: ${{ env.LIQ_POOLS_INDEXER_TO_BLOCK }}
           PROCESSOR_API_URL: "http://127.0.0.1:${{ env.LIQ_POOLS_INDEXER_API_PORT }}/graphql"
