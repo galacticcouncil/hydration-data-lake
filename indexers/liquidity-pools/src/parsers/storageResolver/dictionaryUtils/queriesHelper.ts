@@ -20,19 +20,19 @@ export class QueriesHelper {
     this.gqlClientUrlsMap = new Map([
       [
         ProcessingPallets.XYK,
-        batchCtx.appConfig.HYDRATION_STORAGE_DICTIONARY_XYKPOOL_URL,
+        batchCtx.appConfig.STORAGE_DICTIONARY_XYKPOOL_URL,
       ],
       [
         ProcessingPallets.LBP,
-        batchCtx.appConfig.HYDRATION_STORAGE_DICTIONARY_LBPPOOL_URL,
+        batchCtx.appConfig.STORAGE_DICTIONARY_LBPPOOL_URL,
       ],
       [
         ProcessingPallets.OMNIPOOL,
-        batchCtx.appConfig.HYDRATION_STORAGE_DICTIONARY_OMNIPOOL_URL,
+        batchCtx.appConfig.STORAGE_DICTIONARY_OMNIPOOL_URL,
       ],
       [
         ProcessingPallets.STABLESWAP,
-        batchCtx.appConfig.HYDRATION_STORAGE_DICTIONARY_STABLEPOOL_URL,
+        batchCtx.appConfig.STORAGE_DICTIONARY_STABLEPOOL_URL,
       ],
     ]);
   }

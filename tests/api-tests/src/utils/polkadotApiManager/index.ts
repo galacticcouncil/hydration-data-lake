@@ -8,7 +8,7 @@ export class PolkadotApiManager {
   wsClient: WsProvider | null = null;
   readonly blockHash: string | null = null;
   readonly nodeUrl: string =
-    process.env.RPC_HYDRATION_URL || 'ws://127.0.0.1:9944/';
+    process.env.RPC_URL || 'ws://127.0.0.1:9944/';
 
   constructor({
     blockHash,

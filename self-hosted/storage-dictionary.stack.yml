@@ -1,10 +1,19 @@
 version: "3.7"
 
+x-chain-name: &chain-name "hydration"
+x-postgres-db: &postgres-db "storage_dictionary_db"
+x-postgres-user: &postgres-user "postgres"
+x-postgres-password: &postgres-password "postgres"
+
+x-storage-dictionary-db-creds: &storage-dictionary-db-creds
+  DB_PORT: 5432
+  DB_NAME: *postgres-db
+  DB_USER: *postgres-user
+  DB_PASS: *postgres-password
+
 networks:
-  hydration-data-lake:
-    driver: bridge
-  gateway:
-    external: true
+  default:
+    driver: overlay
 
 volumes:
   storage-dictionary-db:
@@ -13,33 +22,51 @@ volumes:
 services:
   storage-dictionary-db:
     image: postgres:15
-    ports:
-      - "23799:5432"
     environment:
-      POSTGRES_DB: "storage_dictionary_db"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: *postgres-db
+      POSTGRES_USER: *postgres-user
+      POSTGRES_PASSWORD: *postgres-password
     volumes:
       - storage-dictionary-db:/var/lib/postgresql/data
     networks:
-      - hydration-data-lake
+      - default
 
   storage-dictionary-processor:
     image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
     depends_on:
       - storage-dictionary-db
     environment:
+      #
+      # REQUIRED PARAMETERS
+      #
       NODE_ENV: "self-hosted"
-      CHAIN: "hydration"
-      DB_PORT: 5432
+      CHAIN: *chain-name
+      <<: *storage-dictionary-db-creds
       DB_HOST: "storage-dictionary-db"
-      DB_NAME: "storage_dictionary_db"
-      DB_USER: "postgres"
-      DB_PASS: "postgres"
-    ports:
-      - "3031:3031"
+      RPC_URL: "wss://archive.rpc.hydration.cloud"
+      # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
+      IGNORE_ARCHIVE_DATA_SOURCE: false
+      GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
+      OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+
+      #
+      # OPTIONAL PARAMETERS
+      #
+      PROCESS_FROM_BLOCK: 0
+      PROCESS_TO_BLOCK: -1
+      PROCESS_LBP_POOLS: true
+      PROCESS_XYK_POOLS: true
+      PROCESS_OMNIPOOLS: true
+      PROCESS_STABLEPOOLS: true
+
+      STATE_SCHEMA_NAME: "squid_processor"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "squid_processor"
+      INDEXER_MAX_SUB_BATCH_SIZE: 1500
+      SUB_BATCH_MAX_TIMEOUT_MS: 500
+      INDEXER_SUB_PROCESSORS_NUMBER: 5
+      ASSETS_TRACKER_PROCESSOR: true
     networks:
-      - hydration-data-lake
+      - default
     command:
       - sh
       - -c
@@ -51,28 +78,21 @@ services:
       - storage-dictionary-processor
     environment:
       NODE_ENV: "self-hosted"
-      CHAIN: "hydration"
-      GQL_PORT: 8089
-      DB_PORT: 5432
+      CHAIN: *chain-name
+      GQL_PORT: 8090
+      <<: *storage-dictionary-db-creds
       DB_HOST: "storage-dictionary-db"
-      DB_NAME: "storage_dictionary_db"
-      DB_USER: "postgres"
-      DB_PASS: "postgres"
+
+      #
+      # OPTIONAL PARAMETERS
+      #
+      SUB_PROCESSORS_RANGES: "squid_processor:0:-1"
+
     ports:
       - "8090:8090"
     networks:
-      - hydration-data-lake
-      - gateway
-    # Wait 15s for processor complete DB migrations and create service tables which are required for api app.
-    # API app needs to run its own DB migrations to set up DB subscriptions.
+      - default
     command:
       - sh
       - -c
-      - "sleep 10 && sqd api:prod"
-    deploy:
-      replicas: 3
-      labels:
-        traefik.http.routers.hrds.rule: Host(`storage-dictionary-indexer.play.hydration.cloud`)
-        traefik.http.routers.hrds.tls: "true"
-        traefik.http.routers.hrds.tls.certresolver: myresolver
-        traefik.http.services.hrds.loadbalancer.server.port: "8090"
+      - "sqd api:prod"

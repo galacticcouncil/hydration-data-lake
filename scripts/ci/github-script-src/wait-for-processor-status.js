@@ -15,7 +15,7 @@ const query = `
  * @returns {Promise<string|*>}
  */
 module.exports = async ({ github, context }) => {
-  const { INDEX_FROM_BLOCK, INDEX_TO_BLOCK, PROCESSOR_API_URL } = process.env;
+  const { PROCESS_FROM_BLOCK, PROCESS_TO_BLOCK, PROCESSOR_API_URL } = process.env;
 
   const [owner, repo] = context.payload.repository.full_name.split("/");
 
@@ -45,7 +45,7 @@ module.exports = async ({ github, context }) => {
     }
   };
 
-  console.log("INDEX_TO_BLOCK - ", INDEX_TO_BLOCK, typeof INDEX_TO_BLOCK);
+  console.log("PROCESS_TO_BLOCK - ", PROCESS_TO_BLOCK, typeof PROCESS_TO_BLOCK);
 
   let waitingStatus = {
     finished: await new Promise(async (res, rej) => {
@@ -54,7 +54,7 @@ module.exports = async ({ github, context }) => {
         const currentBlockHeight = await getProcessorStatus();
         console.log("currentBlockHeight - ", currentBlockHeight);
         console.log("attemptsCount - ", attemptsCount);
-        if (currentBlockHeight >= INDEX_TO_BLOCK) {
+        if (currentBlockHeight >= PROCESS_TO_BLOCK) {
           clearInterval(interval);
           res(true);
           return;

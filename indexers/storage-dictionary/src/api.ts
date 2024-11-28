@@ -51,7 +51,7 @@ const postgraphileInstance = postgraphile(
       ? process.env.BASE_PATH + '/api'
       : undefined,
     graphileBuildOptions: {
-      stateSchemas: appConfig.ALL_STATE_SCHEMAS_LIST,
+      stateSchemas: [...appConfig.SUB_PROCESSORS_RANGES.keys()],
     },
     allowExplain: true,
     exportGqlSchemaPath: getEnvPath('apiSupport/schema.graphql'),

@@ -15,8 +15,6 @@ COPY db db
 COPY schema.graphql .
 COPY commands.json .
 COPY .env .
-COPY .env.hydration.self-hosted .
-COPY .env.hydration-paseo.self-hosted .
 
 RUN npm ci
 RUN npm run build
@@ -41,8 +39,6 @@ COPY --from=builder /squid/schema.graphql schema.graphql
 COPY --from=builder /squid/scripts scripts
 COPY --from=builder /squid/commands.json commands.json
 COPY --from=builder /squid/.env .env
-COPY --from=builder /squid/.env.hydration.self-hosted .env.hydration.self-hosted
-COPY --from=builder /squid/.env.hydration-paseo.self-hosted .env.hydration-paseo.self-hosted
 
 RUN chmod +x scripts/container-entrypoint.sh
 

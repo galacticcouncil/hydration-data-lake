@@ -147,8 +147,8 @@ jobs:
           DB_NAME: ${{ env.STORAGE_DICT_DB_NAME }}
           DB_PORT: ${{ env.STORAGE_DICT_DB_PORT }}
           GQL_PORT: ${{ env.STORAGE_DICT_API_PORT }}
-          START_BLOCK: ${{ env.STORAGE_DICT_INDEXER_FROM_BLOCK }}
-          END_BLOCK: ${{ env.STORAGE_DICT_INDEXER_TO_BLOCK }}
+          PROCESS_FROM_BLOCK: ${{ env.STORAGE_DICT_INDEXER_FROM_BLOCK }}
+          PROCESS_TO_BLOCK: ${{ env.STORAGE_DICT_INDEXER_TO_BLOCK }}
           ASSETS_TRACKER_PROCESSOR: true
           PROCESS_LBP_POOLS: ${{ inputs.process-lbp-pools }}
           PROCESS_XYK_POOLS: ${{ inputs.process-xyk-pools }}
@@ -183,8 +183,8 @@ jobs:
         uses: actions/github-script@v7
         env:
           # Env variables
-          INDEX_FROM_BLOCK: ${{ env.STORAGE_DICT_INDEXER_FROM_BLOCK }}
-          INDEX_TO_BLOCK: ${{ env.STORAGE_DICT_INDEXER_TO_BLOCK }}
+          PROCESS_FROM_BLOCK: ${{ env.STORAGE_DICT_INDEXER_FROM_BLOCK }}
+          PROCESS_TO_BLOCK: ${{ env.STORAGE_DICT_INDEXER_TO_BLOCK }}
           PROCESSOR_API_URL: "http://127.0.0.1:${{ env.STORAGE_DICT_API_PORT }}/graphql"
         with:
           result-encoding: string
@@ -204,8 +204,8 @@ jobs:
           DB_PORT: ${{ env.LIQ_POOLS_INDEXER_DB_PORT }}
           GQL_PORT: ${{ env.LIQ_POOLS_INDEXER_API_PORT }}
           USE_STORAGE_DICTIONARY: ${{ inputs.is-liq-pools-indexer-with-dictionary }}
-          INDEX_FROM_BLOCK: ${{ env.LIQ_POOLS_INDEXER_FROM_BLOCK }}
-          INDEX_TO_BLOCK: ${{ env.LIQ_POOLS_INDEXER_TO_BLOCK }}
+          PROCESS_FROM_BLOCK: ${{ env.LIQ_POOLS_INDEXER_FROM_BLOCK }}
+          PROCESS_TO_BLOCK: ${{ env.LIQ_POOLS_INDEXER_TO_BLOCK }}
           PROCESS_LBP_POOLS: ${{ inputs.process-lbp-pools }}
           PROCESS_XYK_POOLS: ${{ inputs.process-xyk-pools }}
           PROCESS_OMNIPOOLS: ${{ inputs.process-omnipools }}
@@ -236,8 +236,8 @@ jobs:
         uses: actions/github-script@v7
         env:
           # Env variables
-          INDEX_FROM_BLOCK: ${{ env.LIQ_POOLS_INDEXER_FROM_BLOCK }}
-          INDEX_TO_BLOCK: ${{ env.LIQ_POOLS_INDEXER_TO_BLOCK }}
+          PROCESS_FROM_BLOCK: ${{ env.LIQ_POOLS_INDEXER_FROM_BLOCK }}
+          PROCESS_TO_BLOCK: ${{ env.LIQ_POOLS_INDEXER_TO_BLOCK }}
           PROCESSOR_API_URL: "http://127.0.0.1:${{ env.LIQ_POOLS_INDEXER_API_PORT }}/graphql"
         with:
           result-encoding: string

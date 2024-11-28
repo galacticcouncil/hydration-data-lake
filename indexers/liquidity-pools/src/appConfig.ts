@@ -1,7 +1,12 @@
 import { transformAndValidateSync } from 'class-transformer-validator';
 import 'reflect-metadata';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidationError } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  ValidationError,
+  IsPositive,
+} from 'class-validator';
 import dotenv from 'dotenv';
 
 import {
@@ -22,14 +27,9 @@ dotenv.config({
     if (process.env.CHAIN === 'hydration_paseo')
       envFileName = '.env.hydration-paseo';
 
-    switch (process.env.NODE_ENV) {
-      case 'test':
+    switch (process.env.NODE_ENV as NodeEnv) {
+      case NodeEnv.TEST:
         envFileName = envFileName + '.test';
-        break;
-      case 'self-hosted':
-        envFileName = envFileName + '.self-hosted';
-        break;
-      case 'production':
         break;
       default:
         envFileName = envFileName + '.local';
@@ -49,7 +49,6 @@ export class AppConfig {
   readonly CHAIN!: ChainName;
 
   @Transform(({ value }: { value: string }) => +value)
-  @IsNotEmpty()
   readonly GQL_PORT: number = 8080;
 
   readonly BASE_PATH?: string;
@@ -67,59 +66,72 @@ export class AppConfig {
   readonly DB_PASS: string = 'postgres';
 
   @Transform(({ value }: { value: string }) => +value)
-  @IsNotEmpty()
   readonly DB_PORT: number = 5432;
 
-  @IsNotEmpty()
-  readonly RPC_HYDRATION_URL!: string;
+  /**
+   * RPC endpoint URL (either http(s) or ws(s))
+   */
+  readonly RPC_URL: string | null = null;
+
+  /**
+   * Maximum number of ongoing concurrent requests
+   */
+  readonly RPC_CAPACITY: number = 1_000;
+  /**
+   * Maximum number of requests per second
+   */
+  readonly RPC_RATE_LIMIT: number = 1_000;
+  /**
+   * Maximum number of requests in a single batch call
+   */
+  readonly RPC_MAX_BATCH_CALL_SIZE: number = 1_000;
+  /**
+   * Request timeout in ms
+   */
+  readonly RPC_REQUEST_TIMEOUT: number = 3_000;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly IGNORE_ARCHIVE_DATA_SOURCE: boolean = false;
 
   readonly GATEWAY_HYDRATION_HTTPS: string | null = null;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly INDEX_FROM_BLOCK: number = 0;
+  readonly PROCESS_FROM_BLOCK: number = 0;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly INDEX_TO_BLOCK: number | null = null;
+  @IsPositive()
+  readonly PROCESS_TO_BLOCK: number = -1;
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  @IsNotEmpty()
-  readonly PROCESS_LBP_POOLS!: boolean;
+  readonly PROCESS_LBP_POOLS: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  @IsNotEmpty()
-  readonly PROCESS_XYK_POOLS!: boolean;
+  readonly PROCESS_XYK_POOLS: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  @IsNotEmpty()
-  readonly PROCESS_OMNIPOOLS!: boolean;
+  readonly PROCESS_OMNIPOOLS: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  @IsNotEmpty()
-  readonly PROCESS_STABLEPOOLS!: boolean;
+  readonly PROCESS_STABLEPOOLS: boolean = true;
 
-  @IsNotEmpty()
   @IsString()
-  readonly OMNIPOOL_ADDRESS!: string;
+  readonly OMNIPOOL_ADDRESS: string =
+    '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000';
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  @IsNotEmpty()
-  readonly USE_STORAGE_DICTIONARY!: boolean;
+  readonly USE_STORAGE_DICTIONARY: boolean = true;
 
-  @IsNotEmpty()
   @IsString()
-  readonly HYDRATION_STORAGE_DICTIONARY_LBPPOOL_URL!: string;
+  readonly STORAGE_DICTIONARY_LBPPOOL_URL: string = '';
 
-  @IsNotEmpty()
   @IsString()
-  readonly HYDRATION_STORAGE_DICTIONARY_XYKPOOL_URL!: string;
+  readonly STORAGE_DICTIONARY_XYKPOOL_URL: string = '';
 
-  @IsNotEmpty()
   @IsString()
-  readonly HYDRATION_STORAGE_DICTIONARY_OMNIPOOL_URL!: string;
+  readonly STORAGE_DICTIONARY_OMNIPOOL_URL: string = '';
 
-  @IsNotEmpty()
   @IsString()
-  readonly HYDRATION_STORAGE_DICTIONARY_STABLEPOOL_URL!: string;
+  readonly STORAGE_DICTIONARY_STABLEPOOL_URL: string = '';
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {

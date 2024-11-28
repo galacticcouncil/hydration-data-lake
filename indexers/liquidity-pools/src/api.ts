@@ -16,6 +16,7 @@ import { OmnipoolAssetVolumePlugin } from './apiSupport/plugins/query/omnipoolVo
 import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/omnipoolAssetVolumeSubscriptions.plugin';
 import { StablepoolVolumePlugin } from './apiSupport/plugins/query/stablepoolVolume.plugin';
 import { StablepoolVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stablepoolVolumeSubscriptions.plugin';
+import { NodeEnv } from './utils/types';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -63,7 +64,7 @@ const postgraphileInstance = postgraphile(
       StablepoolVolumePlugin,
       StablepoolVolumeSubscriptionsPlugin,
     ],
-    disableQueryLog: appConfig.NODE_ENV !== 'development',
+    disableQueryLog: appConfig.NODE_ENV !== NodeEnv.DEV,
     externalUrlBase: process.env.BASE_PATH
       ? process.env.BASE_PATH + '/api'
       : undefined,

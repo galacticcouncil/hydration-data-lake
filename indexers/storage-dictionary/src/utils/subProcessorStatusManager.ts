@@ -37,9 +37,9 @@ export class SubProcessorStatusManager {
 
     statusEntity = new SubProcessorStatus({
       id: this.ctx.appConfig.STATE_SCHEMA_NAME,
-      fromBlock: this.ctx.appConfig.START_BLOCK,
-      toBlock: this.ctx.appConfig.END_BLOCK,
-      height: this.ctx.blocks[0]?.header.height ?? this.ctx.appConfig.END_BLOCK,
+      fromBlock: this.ctx.appConfig.PROCESS_FROM_BLOCK,
+      toBlock: this.ctx.appConfig.PROCESS_TO_BLOCK ?? -1,
+      height: this.ctx.blocks[0]?.header.height ?? this.ctx.appConfig.PROCESS_TO_BLOCK,
       assetsActualisedAtBlock: -1,
     });
 

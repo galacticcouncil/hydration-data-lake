@@ -1,10 +1,19 @@
 version: "3.7"
 
+x-chain-name: &chain-name "hydration"
+x-postgres-db: &postgres-db "liquidity_pools_db"
+x-postgres-user: &postgres-user "postgres"
+x-postgres-password: &postgres-password "postgres"
+
+x-liquidity-pools-db-creds: &liquidity-pools-db-creds
+  DB_PORT: 5432
+  DB_NAME: *postgres-db
+  DB_USER: *postgres-user
+  DB_PASS: *postgres-password
+
 networks:
   default:
     driver: overlay
-  gateway:
-    external: true
 
 volumes:
   liquidity-pools-db:
@@ -13,12 +22,10 @@ volumes:
 services:
   liquidity-pools-db:
     image: postgres:15
-    ports:
-      - "23798:5432"
     environment:
-      POSTGRES_DB: "liquidity_pools_db"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: *postgres-db
+      POSTGRES_USER: *postgres-user
+      POSTGRES_PASSWORD: *postgres-password
     volumes:
       - liquidity-pools-db:/var/lib/postgresql/data
     logging:
@@ -27,19 +34,42 @@ services:
       - default
 
   liquidity-pools-processor:
-    image: liquidity-pools-indexer:latest
+    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
     depends_on:
       - liquidity-pools-db
+    restart: "always"
     environment:
+      #
+      # REQUIRED PARAMETERS
+      #
       NODE_ENV: "self-hosted"
-      CHAIN: "hydration"
-      DB_PORT: 5432
-      DB_NAME: "liquidity_pools_db"
-      DB_USER: "postgres"
-      DB_PASS: "postgres"
+      CHAIN: *chain-name
+      <<: *liquidity-pools-db-creds
       DB_HOST: "liquidity-pools-db"
-    ports:
-      - "3030:3030"
+      RPC_URL: "wss://archive.rpc.hydration.cloud"
+      # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
+      IGNORE_ARCHIVE_DATA_SOURCE: false
+      GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
+      OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+      #
+      # OPTIONAL PARAMETERS
+      #
+      PROCESS_FROM_BLOCK: 0
+      PROCESS_TO_BLOCK: -1
+      PROCESS_LBP_POOLS: true
+      PROCESS_XYK_POOLS: true
+      PROCESS_OMNIPOOLS: true
+      PROCESS_STABLEPOOLS: true
+      # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
+      USE_STORAGE_DICTIONARY: true
+      # If Storage dictionary indexer has a single instance for all kinds of pools, the same API url must be provided
+      #   to all STORAGE_DICTIONARY_..._URL params.
+      #   (e.g. Storage dictionary is running as single processor indexer in the same Swarm stack as Liquidity pools
+      #   indexer so url for all pools should be the same as following - http://storage-dictionary-api:8090/graphql)
+      STORAGE_DICTIONARY_LBPPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql"
+      STORAGE_DICTIONARY_XYKPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql"
+      STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql"
+      STORAGE_DICTIONARY_STABLEPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool/api/graphql"
     networks:
       - default
     command:
@@ -48,35 +78,23 @@ services:
       - "sqd migration:apply && sqd process:prod"
 
   liquidity-pools-api:
-    image: liquidity-pools-indexer:latest
+    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
     depends_on:
       - liquidity-pools-processor
+    restart: "always"
     environment:
       NODE_ENV: "self-hosted"
-      CHAIN: "hydration"
+      CHAIN: *chain-name
       GQL_PORT: 8080
-      DB_PORT: 5432
-      DB_NAME: "liquidity_pools_db"
-      DB_USER: "postgres"
-      DB_PASS: "postgres"
+      <<: *liquidity-pools-db-creds
       DB_HOST: "liquidity-pools-db"
     ports:
       - "8080:8080"
     networks:
       - default
-      - gateway
     logging:
       driver: json-file
-    # Wait 15s for processor complete DB migrations and create service tables which are required for api app.
-    # API app needs to run its own DB migrations to set up DB subscriptions.
     command:
       - sh
       - -c
-      - "sleep 10 && sqd api:prod"
-    deploy:
-      replicas: 3
-      labels:
-        traefik.http.routers.hrds.rule: Host(`liquidity-pools-indexer.play.hydration.cloud`)
-        traefik.http.routers.hrds.tls: "true"
-        traefik.http.routers.hrds.tls.certresolver: myresolver
-        traefik.http.services.hrds.loadbalancer.server.port: "8080"
+      - "sqd api:prod"

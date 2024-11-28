@@ -12,8 +12,9 @@ const appConfig = AppConfig.getInstance();
 
 export const ProcessorStatusPlugin: Plugin = makeExtendSchemaPlugin(
   (build: Build, options) => {
-    const schemas: string[] =
-      options.stateSchemas || appConfig.ALL_STATE_SCHEMAS_LIST;
+    const schemas: string[] = options.stateSchemas || [
+      ...appConfig.SUB_PROCESSORS_RANGES.keys(),
+    ];
     const { pgSql: sql } = build;
 
     return {

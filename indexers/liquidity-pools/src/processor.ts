@@ -18,10 +18,11 @@ let processor = new SubstrateBatchProcessor()
     // Set via .env for local runs or via secrets when deploying to Subsquid Cloud
     // https://docs.subsquid.io/deploy-squid/env-variables/
     // See https://docs.subsquid.io/substrate-indexing/setup/general/#set-data-source
-    url: assertNotNull(appConfig.RPC_HYDRATION_URL, 'No RPC endpoint supplied'),
-    capacity: 1000,
-    rateLimit: 1000,
-    maxBatchCallSize: 1000,
+    url: assertNotNull(appConfig.RPC_URL, 'No RPC endpoint supplied'),
+    capacity: appConfig.RPC_CAPACITY,
+    rateLimit: appConfig.RPC_RATE_LIMIT,
+    maxBatchCallSize: appConfig.RPC_MAX_BATCH_CALL_SIZE,
+    requestTimeout: appConfig.RPC_REQUEST_TIMEOUT,
 
     // More RPC connection options at https://docs.subsquid.io/substrate-indexing/setup/general/#set-data-source
   })
@@ -52,25 +53,16 @@ let processor = new SubstrateBatchProcessor()
       success: true,
       error: true,
     },
+  })
+  .setBlockRange({
+    from: appConfig.PROCESS_FROM_BLOCK,
+    to: appConfig.PROCESS_TO_BLOCK > 0 ? appConfig.PROCESS_TO_BLOCK : undefined,
   });
 
-if (appConfig.GATEWAY_HYDRATION_HTTPS)
+if (appConfig.GATEWAY_HYDRATION_HTTPS && !appConfig.IGNORE_ARCHIVE_DATA_SOURCE)
   // Lookup archive by the network name in Subsquid registry
   // See https://docs.subsquid.io/substrate-indexing/supported-networks/
-  processor = processor.setGateway(
-    assertNotNull(
-      appConfig.GATEWAY_HYDRATION_HTTPS,
-      'No gateway endpoint supplied'
-    )
-  );
-
-if (appConfig.INDEX_FROM_BLOCK && appConfig.INDEX_FROM_BLOCK > 0)
-  processor = processor.setBlockRange({
-    from: appConfig.INDEX_FROM_BLOCK,
-    ...(appConfig.INDEX_TO_BLOCK && appConfig.INDEX_TO_BLOCK > 0
-      ? { to: appConfig.INDEX_TO_BLOCK }
-      : {}),
-  });
+  processor = processor.setGateway(appConfig.GATEWAY_HYDRATION_HTTPS);
 
 export { processor };
 

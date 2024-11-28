@@ -17,7 +17,7 @@ deploy:
 #    - name: omnipool-batch-proc-1
 #      cmd: ['sqd', 'process:prod']
 #      env:
-#        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+#        RPC_URL: wss://archive.rpc.hydration.cloud
 #        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
 #        PROCESS_LBP_POOLS: false
 #        PROCESS_XYK_POOLS: false
@@ -26,8 +26,8 @@ deploy:
 #        GQL_PORT: 8080
 #        NODE_ENV: production
 #        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-#        START_BLOCK: 1708100
-#        END_BLOCK: 2500000
+#        PROCESS_FROM_BLOCK: 1708100
+#        PROCESS_TO_BLOCK: 2500000
 #        STATE_SCHEMA_NAME: omnipool__batch_proc_1
 #        SUB_BATCH_SIZE: 300
 #        INDEXER_MAX_SUB_BATCH_SIZE: 1000
@@ -36,7 +36,7 @@ deploy:
 #    - name: omnipool-batch-proc-2
 #      cmd: ['sqd', 'process:prod']
 #      env:
-#        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+#        RPC_URL: wss://archive.rpc.hydration.cloud
 #        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
 #        PROCESS_LBP_POOLS: false
 #        PROCESS_XYK_POOLS: false
@@ -45,8 +45,8 @@ deploy:
 #        GQL_PORT: 8080
 #        NODE_ENV: production
 #        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-#        START_BLOCK: 2500001
-#        END_BLOCK: 3300000
+#        PROCESS_FROM_BLOCK: 2500001
+#        PROCESS_TO_BLOCK: 3300000
 #        STATE_SCHEMA_NAME: omnipool__batch_proc_2
 #        SUB_BATCH_SIZE: 300
 #        INDEXER_MAX_SUB_BATCH_SIZE: 1000
@@ -55,7 +55,7 @@ deploy:
 #    - name: omnipool-batch-proc-3
 #      cmd: ['sqd', 'process:prod']
 #      env:
-#        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+#        RPC_URL: wss://archive.rpc.hydration.cloud
 #        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
 #        PROCESS_LBP_POOLS: false
 #        PROCESS_XYK_POOLS: false
@@ -64,8 +64,8 @@ deploy:
 #        GQL_PORT: 8080
 #        NODE_ENV: production
 #        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-#        START_BLOCK: 3300001
-#        END_BLOCK: 4100000
+#        PROCESS_FROM_BLOCK: 3300001
+#        PROCESS_TO_BLOCK: 4100000
 #        STATE_SCHEMA_NAME: omnipool__batch_proc_3
 #        SUB_BATCH_SIZE: 300
 #        INDEXER_MAX_SUB_BATCH_SIZE: 1000
@@ -74,7 +74,7 @@ deploy:
 #    - name: omnipool-batch-proc-4
 #      cmd: ['sqd', 'process:prod']
 #      env:
-#        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+#        RPC_URL: wss://archive.rpc.hydration.cloud
 #        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
 #        PROCESS_LBP_POOLS: false
 #        PROCESS_XYK_POOLS: false
@@ -83,8 +83,8 @@ deploy:
 #        GQL_PORT: 8080
 #        NODE_ENV: production
 #        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-#        START_BLOCK: 4100001
-#        END_BLOCK: 4900000
+#        PROCESS_FROM_BLOCK: 4100001
+#        PROCESS_TO_BLOCK: 4900000
 #        STATE_SCHEMA_NAME: omnipool__batch_proc_4
 #        SUB_BATCH_SIZE: 300
 #        INDEXER_MAX_SUB_BATCH_SIZE: 1000
@@ -93,7 +93,7 @@ deploy:
     - name: omnipool-batch-proc-5
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        RPC_URL: wss://archive.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -102,8 +102,8 @@ deploy:
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        START_BLOCK: 4900001
-        END_BLOCK: -1
+        PROCESS_FROM_BLOCK: 4900001
+        PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: omnipool__batch_proc_5
         SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 1000
@@ -112,7 +112,7 @@ deploy:
     - name: omnipool-assets-tracker-proc
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+        RPC_URL: wss://archive.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -121,8 +121,8 @@ deploy:
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        START_BLOCK: 4900001
-        END_BLOCK: -1
+        PROCESS_FROM_BLOCK: 4900001
+        PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: omnipool__assets_tracker_proc
         SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 1000
@@ -130,7 +130,7 @@ deploy:
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: omnipool__assets_tracker_proc
   api:
     env:
-      RPC_HYDRATION_URL: wss://archive.rpc.hydration.cloud
+      RPC_URL: wss://archive.rpc.hydration.cloud
       GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
       PROCESS_LBP_POOLS: false
       PROCESS_XYK_POOLS: false
@@ -139,7 +139,6 @@ deploy:
       GQL_PORT: 8080
       NODE_ENV: production
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-      ALL_STATE_SCHEMAS_LIST: 'omnipool__batch_proc_1,omnipool__batch_proc_2,omnipool__batch_proc_3,omnipool__batch_proc_4,omnipool__batch_proc_5,omnipool__assets_tracker_proc'
       SUB_PROCESSORS_RANGES: 'omnipool__batch_proc_1:1708100:2500000;omnipool__batch_proc_2:2500001:3300000;omnipool__batch_proc_3:3300001:4100000;omnipool__batch_proc_4:4100001:4900000;omnipool__batch_proc_5:4900001:-1;omnipool__assets_tracker_proc:4900001:-1'
 
     cmd:
