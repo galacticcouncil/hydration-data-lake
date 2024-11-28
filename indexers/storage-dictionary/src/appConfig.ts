@@ -5,7 +5,7 @@ import {
   IsNotEmpty,
   IsString,
   ValidationError,
-  IsPositive
+  IsPositive,
 } from 'class-validator';
 import dotenv from 'dotenv';
 
@@ -136,17 +136,30 @@ export class AppConfig {
         })
       )
   )
-  readonly SUB_PROCESSORS_RANGES: Map<string, { from: number; to: number }> =
-    new Map([['squid_processor', { from: 0, to: -1 }]]);
+  SUB_PROCESSORS_RANGES: Map<string, { from: number; to: number }> = new Map();
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       AppConfig.instance = new AppConfig();
     }
     try {
-      return transformAndValidateSync(AppConfig, process.env, {
+      const config = transformAndValidateSync(AppConfig, process.env, {
         validator: { stopAtFirstError: true },
       });
+
+      if (
+        !config.SUB_PROCESSORS_RANGES ||
+        config.SUB_PROCESSORS_RANGES.size === 0
+      ) {
+        config.SUB_PROCESSORS_RANGES = new Map([
+          [
+            config.STATE_SCHEMA_NAME,
+            { from: config.PROCESS_FROM_BLOCK, to: config.PROCESS_TO_BLOCK },
+          ],
+        ]);
+      }
+
+      return config;
     } catch (errors) {
       if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
         errors.forEach((error: ValidationError) => {

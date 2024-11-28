@@ -45,8 +45,6 @@ module.exports = async ({ github, context }) => {
     }
   };
 
-  console.log("PROCESS_TO_BLOCK - ", PROCESS_TO_BLOCK, typeof PROCESS_TO_BLOCK);
-
   let waitingStatus = {
     finished: await new Promise(async (res, rej) => {
       let attemptsCount = 0;
