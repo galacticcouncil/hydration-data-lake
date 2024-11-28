@@ -98,7 +98,6 @@ export class AppConfig {
     '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000';
 
   @Transform(({ value }: { value: string }) => +value)
-  @IsPositive()
   readonly PROCESS_FROM_BLOCK: number = 0;
 
   @Transform(({ value }: { value: string }) => +value)

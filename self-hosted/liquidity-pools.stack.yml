@@ -48,20 +48,20 @@ services:
       DB_HOST: "liquidity-pools-db"
       RPC_URL: "wss://archive.rpc.hydration.cloud"
       # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
-      IGNORE_ARCHIVE_DATA_SOURCE: false
+      IGNORE_ARCHIVE_DATA_SOURCE: "false"
       GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
       OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
       #
       # OPTIONAL PARAMETERS
       #
-      PROCESS_FROM_BLOCK: 0
+      PROCESS_FROM_BLOCK: 1708000
       PROCESS_TO_BLOCK: -1
-      PROCESS_LBP_POOLS: true
-      PROCESS_XYK_POOLS: true
-      PROCESS_OMNIPOOLS: true
-      PROCESS_STABLEPOOLS: true
+      PROCESS_LBP_POOLS: "true"
+      PROCESS_XYK_POOLS: "true"
+      PROCESS_OMNIPOOLS: "true"
+      PROCESS_STABLEPOOLS: "true"
       # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
-      USE_STORAGE_DICTIONARY: true
+      USE_STORAGE_DICTIONARY: "true"
       # If Storage dictionary indexer has a single instance for all kinds of pools, the same API url must be provided
       #   to all STORAGE_DICTIONARY_..._URL params.
       #   (e.g. Storage dictionary is running as single processor indexer in the same Swarm stack as Liquidity pools
