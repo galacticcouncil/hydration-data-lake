@@ -56,7 +56,6 @@ export class AppConfig {
   /**
    * RPC endpoint URL (either http(s) or ws(s))
    */
-  @IsNotEmpty()
   readonly RPC_URL: string | null = null;
 
   /**

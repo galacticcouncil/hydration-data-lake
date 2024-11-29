@@ -32,12 +32,14 @@ services:
       driver: json-file
     networks:
       - default
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   liquidity-pools-processor:
     image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
     depends_on:
       - liquidity-pools-db
-    restart: "always"
     environment:
       #
       # REQUIRED PARAMETERS
@@ -62,10 +64,12 @@ services:
       PROCESS_STABLEPOOLS: "true"
       # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
       USE_STORAGE_DICTIONARY: "true"
-      # If Storage dictionary indexer has a single instance for all kinds of pools, the same API url must be provided
-      #   to all STORAGE_DICTIONARY_..._URL params.
-      #   (e.g. Storage dictionary is running as single processor indexer in the same Swarm stack as Liquidity pools
-      #   indexer so url for all pools should be the same as following - http://storage-dictionary-api:8090/graphql)
+      # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
+      # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
+      # For example, if the Storage Dictionary is running as a single processor indexer
+      # within the same Swarm stack as the Liquidity Pools indexer,
+      # the URL for all pools should be set uniformly, such as:
+      #   http://storage-dictionary-api:8090/graphql
       STORAGE_DICTIONARY_LBPPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql"
       STORAGE_DICTIONARY_XYKPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql"
       STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql"
@@ -76,12 +80,14 @@ services:
       - sh
       - -c
       - "sqd migration:apply && sqd process:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   liquidity-pools-api:
     image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
     depends_on:
       - liquidity-pools-processor
-    restart: "always"
     environment:
       NODE_ENV: "self-hosted"
       CHAIN: *chain-name
@@ -98,3 +104,6 @@ services:
       - sh
       - -c
       - "sqd api:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure

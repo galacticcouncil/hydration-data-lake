@@ -168,6 +168,8 @@ jobs:
           GQL_PORT: ${{ env.STORAGE_DICT_API_PORT }}
           DB_NAME: ${{ env.STORAGE_DICT_DB_NAME }}
           DB_PORT: ${{ env.STORAGE_DICT_DB_PORT }}
+          PROCESS_FROM_BLOCK: ${{ env.STORAGE_DICT_INDEXER_FROM_BLOCK }}
+          PROCESS_TO_BLOCK: ${{ env.STORAGE_DICT_INDEXER_TO_BLOCK }}
         working-directory: ./indexers/storage-dictionary
         run: |
           node --require=dotenv/config lib/api.js &

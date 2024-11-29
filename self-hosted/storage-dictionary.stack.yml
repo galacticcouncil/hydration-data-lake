@@ -30,6 +30,9 @@ services:
       - storage-dictionary-db:/var/lib/postgresql/data
     networks:
       - default
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   storage-dictionary-processor:
     image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
@@ -44,7 +47,7 @@ services:
       <<: *storage-dictionary-db-creds
       DB_HOST: "storage-dictionary-db"
       RPC_URL: "wss://archive.rpc.hydration.cloud"
-      # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
+      # Set IGNORE_ARCHIVE_DATA_SOURCE to true to enable the indexer to operate without requiring the SQD archive.
       IGNORE_ARCHIVE_DATA_SOURCE: "false"
       GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
       OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
@@ -59,11 +62,15 @@ services:
       PROCESS_OMNIPOOLS: "true"
       PROCESS_STABLEPOOLS: "true"
 
+      #
+      # Configuration settings for running the indexer in multiprocessor mode.
+      # Refer to the documentation for detailed explanations.
+      #
       STATE_SCHEMA_NAME: "squid_processor"
       ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "squid_processor"
       INDEXER_MAX_SUB_BATCH_SIZE: 1500
       SUB_BATCH_MAX_TIMEOUT_MS: 500
-      INDEXER_SUB_PROCESSORS_NUMBER: 5
+      INDEXER_SUB_PROCESSORS_NUMBER: 1
       ASSETS_TRACKER_PROCESSOR: "true"
     networks:
       - default
@@ -71,6 +78,9 @@ services:
       - sh
       - -c
       - "sqd migration:apply && sqd process:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   storage-dictionary-api:
     image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
@@ -82,11 +92,11 @@ services:
       GQL_PORT: 8090
       <<: *storage-dictionary-db-creds
       DB_HOST: "storage-dictionary-db"
-
       #
-      # OPTIONAL PARAMETERS
+      # Configuration settings for running the indexer in multiprocessor mode.
+      # Refer to the documentation for detailed explanations.
       #
-      SUB_PROCESSORS_RANGES: "squid_processor:0:-1"
+      SUB_PROCESSORS_RANGES: "squid_processor:1708000:-1"
     ports:
       - "8090:8090"
     networks:
@@ -95,3 +105,6 @@ services:
       - sh
       - -c
       - "sqd api:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure
