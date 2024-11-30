@@ -77,3 +77,5 @@ The same architecture can be implemented in self-hosted mode:
 - **Modular Design**: Isolate data categories for efficient reindexing and independent scalability.
 
 ---
+
+

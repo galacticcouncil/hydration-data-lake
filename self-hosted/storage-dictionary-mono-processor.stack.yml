@@ -68,9 +68,18 @@ services:
       #
       STATE_SCHEMA_NAME: "squid_processor"
       ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "squid_processor"
+      # Sub-batch is a chunk of blocks from Processor batch handler. Processor handles blocks by batches (batch size cannot
+      # be configured and is defining automatically by archive) and on reindexing mode Processor batch can contain up to 100K
+      # blocks so it can cause RPC calls rate limit errors. By implemented logic, processor splits main batch to smaller
+      # chunks and processes them sequentially. INDEXER_MAX_SUB_BATCH_SIZE can be split between multiple processors
+      # of particular indexer in case indexer has multiple processor running (INDEXER_MAX_SUB_BATCH_SIZE / INDEXER_SUB_PROCESSORS_NUMBER)
       INDEXER_MAX_SUB_BATCH_SIZE: 1500
+      # Maximum timeout between processing single sub-batch.
       SUB_BATCH_MAX_TIMEOUT_MS: 500
+      # Number of deployed sub-processors in particular indexer. Should be defined manually as can have incorrect value
+      # in case of automatic detection of processors in indexer.
       INDEXER_SUB_PROCESSORS_NUMBER: 1
+      # Forces current processor instance to crack all assets state (AssetRegistry.assets store).
       ASSETS_TRACKER_PROCESSOR: "true"
     networks:
       - default
@@ -94,8 +103,9 @@ services:
       DB_HOST: "storage-dictionary-db"
       #
       # Configuration settings for running the indexer in multiprocessor mode.
-      # Refer to the documentation for detailed explanations.
       #
+      # Config for squidStatus API query to show statuses of all running processors with information about target
+      # blocks range of each processor.
       SUB_PROCESSORS_RANGES: "squid_processor:1708000:-1"
     ports:
       - "8090:8090"
