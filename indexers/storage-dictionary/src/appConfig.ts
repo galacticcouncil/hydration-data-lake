@@ -13,7 +13,7 @@ import { NodeEnv } from './utils/types';
 
 dotenv.config({
   path: (() => {
-    let envFileName = '.env.hydration';
+    let envFileName = '.env';
 
     switch (process.env.NODE_ENV as NodeEnv) {
       case NodeEnv.TEST:
@@ -118,7 +118,7 @@ export class AppConfig {
   readonly SUB_BATCH_MAX_TIMEOUT_MS: number = 500;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly INDEXER_SUB_PROCESSORS_NUMBER: number = 5;
+  readonly INDEXER_SUB_PROCESSORS_NUMBER: number = 1;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ASSETS_TRACKER_PROCESSOR: boolean = true;

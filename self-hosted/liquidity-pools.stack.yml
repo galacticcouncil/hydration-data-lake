@@ -79,7 +79,7 @@ services:
     command:
       - sh
       - -c
-      - "sqd migration:apply && sqd process:prod"
+      - "sqd process:prod"
     deploy:
       restart_policy:
         condition: on-failure

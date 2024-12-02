@@ -16,10 +16,10 @@ This section provides an alternative Docker-based approach for deploying **Subsq
 
 ## Deployment Workflow
 
-The containers **must be started in the following order**:
+The containers **should be started in the following order**:
 
 1. **Database (PostgreSQL)**: Initializes storage.
-2. **Processor Application**: Applies database migrations and starts processing data.
+2. **Processor Application(s)**: Applies database migrations and starts processing data.
 3. **API Application**: Runs its own database migrations and exposes an API for querying processed data.
 
 ### ⚠️ Critical Startup Requirement
@@ -58,35 +58,39 @@ The **API Application** must start **after** the **Processor Application**, with
 
 ---
 
-## Running with Docker Compose
+## Running with Docker Swarm
 
-### Directory Structure
+Prebuilt and published Docker images are available for deployment:
 
-Ensure the following structure:
+- **Liquidity Pools Indexer**: [ghcr.io/mckrava/liquidity-pools-indexer](https://ghcr.io/mckrava/liquidity-pools-indexer)
+- **Storage Dictionary Indexer**: [ghcr.io/mckrava/storage-dictionary-indexer](https://ghcr.io/mckrava/storage-dictionary-indexer)
 
-```
-hydration-data-lake/
-├── indexers/
-│   ├── liquidity-pools/
-│   └── storage-dictionary/
-└── self-hosted/
-    ├── liquidity-pools.docker-compose.yml
-    └──  storage-dictionary.docker-compose.yml
-```
+For details on environment variable configurations, refer to the documentation:
 
-### Instructions
+- [Liquidity Pools Documentation](../indexers/liquidity-pools/README.md#environment-variables)
+- [Storage Dictionary Documentation](../indexers/storage-dictionary/README.md#environment-variables)
 
-1. Navigate to the `self-hosted` directory:
-   ```bash
-   cd self-hosted
-   ```
-2. Start the Storage-Dictionary Indexer (if required):
+### Stack Files to Run
 
-   ```bash
-   docker compose -f storage-dictionary.docker-compose.yml up
-   ```
+- **Liquidity Pools Stack**: [liquidity-pools.stack.yml](liquidity-pools.stack.yml)
 
-3. Start the Liquidity-Pools Indexer:
-   ```bash
-   docker compose -f liquidity-pools.docker-compose.yml up
-   ```
+  - Runs all necessary components for the Liquidity Pools Indexer.
+  - **Exclusion**: Does not run the Storage Dictionary Indexer.
+
+- **Storage Dictionary Mono-Processor Stack**: [storage-dictionary-mono-processor.stack.yml](storage-dictionary-mono-processor.stack.yml)
+
+  - Establishes a single indexer with one processor app for all pool types.
+  - Provides a unified API endpoint usable across all `STORAGE_DICTIONARY_<pool_kind>_URL` environment variables.
+  - **Efficiency**: Less efficient in indexing time.
+
+- **Storage Dictionary Multi-Processor Stack**: [storage-dictionary-multiprocessor.stack.yml](storage-dictionary-multiprocessor.stack.yml)
+  - Creates an infrastructure with one indexer and two processor apps per liquidity pool type, leading to:
+    - **4 Indexers**: Distinct data gathering per pool type.
+    - **4 Databases**: Unique data storage for each indexer.
+    - **8 Processor Apps**: Each app manages its own blocks range.
+    - **4 API URLs**: Separate endpoints for enhanced access control.
+  - Shared codebase across indexers ensuring identical API schema.
+  - Individual data handling:
+    - Each processor manages its assigned blocks range into the indexer's database.
+    - One processor handles the latest block chunk and new blocks.
+  - **Efficiency Advantage**: Optimizes indexing by parallelizing data processing across multiple handlers.

@@ -49,6 +49,7 @@ services:
       RPC_URL: "wss://archive.rpc.hydration.cloud"
       # Set IGNORE_ARCHIVE_DATA_SOURCE to true to enable the indexer to operate without requiring the SQD archive.
       IGNORE_ARCHIVE_DATA_SOURCE: "false"
+      # If not set, its value will be automatically extracted from the .env file as a fallback.
       GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
       OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
 

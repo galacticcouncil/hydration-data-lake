@@ -15,6 +15,8 @@ The Liquidity Pools Indexer is implemented with the flexibility to use multiple 
 
 The **StorageResolver** orchestrates this process by attempting to fetch the required data in the order listed above. If a primary source is unavailable or incomplete, the resolver falls back to the next source.
 
+--- 
+
 ### 🔧 Optimizing with Storage Dictionary
 
 To maximize efficiency when using the **Storage Dictionary**, the indexer performs the following steps during the batch processing flow:
@@ -49,6 +51,59 @@ CHAIN: "hydration" | "hydration_paseo"
 
 ### ⚠️ Note
 While the same event handlers are used across both chains, chain-specific events, calls, and storage parsers are generated separately to ensure compatibility.
+
+---
+
+## Environment variables
+
+All environment variables with default values can be found here - [.env.example](.env.example)
+
+
+---
+
+## Docker Image
+
+A Docker image has been built and published based on the [Dockerfile](Dockerfile): [ghcr.io/mckrava/liquidity-pools-indexer](https://ghcr.io/mckrava/liquidity-pools-indexer).
+
+### Environment Variables Explanation
+
+- **`IGNORE_ARCHIVE_DATA_SOURCE: boolean`**  
+  This variable helps avoid using the SQD archive by working alongside the `GATEWAY_HYDRATION_HTTPS` variable, which has a fallback value.
+
+---
+
+- **`GATEWAY_HYDRATION_HTTPS: string`**  
+  URL for the SQD archive, with naming history: `archive -> gateway -> portal`. Default: `https://v2.archive.subsquid.io/network/hydradx`.
+
+---
+
+- **`PROCESS_FROM_BLOCK: number`**  
+  Specifies the block height from which the processor application starts processing. Default: `0`.
+
+---
+
+- **`PROCESS_TO_BLOCK: number`**  
+  Specifies the block height to which the processor application processing blockchain. Default: `-1` - following latest blocks.
+
+---
+
+- **`PROCESS_<LBP_POOLS | XYK_POOLS | OMNIPOOLS | STABLEPOOLS>: boolean`**  
+  Determines which type(s) of pool will be processed by the processor. In a mono-indexer configuration, set all to `true` to handle data for all pools. In a multiprocessor configuration, assign each processor to specific pool types.
+
+---
+
+- **`USE_STORAGE_DICTIONARY: boolean`**  
+  Determines whether the processor app should use the Storage Dictionary Indexer as the initial storage data source. If not, the processor app will attempt to obtain storage data via RPC calls.
+
+---
+
+- **`STORAGE_DICTIONARY_<LBPPOOL | XYKPOOL | OMNIPOOL | STABLEPOOL>_URL: string`**  
+  API URL for the Storage Dictionary Indexer containing the appropriate data. If the dictionary is a single instance indexer that processes all types of pools, all four variables will share the same value.
+
+
+
+
+**Examples of environment variable usage can be found in the [SQD cloud deployment manifest files](./deployment-hydration-indexer.yaml) and [Docker Swarm stack files](../../self-hosted/liquidity-pools.stack.yml).**
 
 ---
 
