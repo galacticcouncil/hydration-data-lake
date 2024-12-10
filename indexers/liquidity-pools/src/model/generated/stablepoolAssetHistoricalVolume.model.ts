@@ -1,82 +1,83 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 import {StablepoolHistoricalVolume} from "./stablepoolHistoricalVolume.model"
 import {Asset} from "./asset.model"
 
 @Entity_()
 export class StablepoolAssetHistoricalVolume {
-    constructor(props?: Partial<StablepoolAssetHistoricalVolume>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<StablepoolAssetHistoricalVolume>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * stablepoolId-assetId-paraChainBlockHeight
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * stablepoolId-assetId-paraChainBlockHeight
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @Index_()
-    @ManyToOne_(() => StablepoolHistoricalVolume, {nullable: true})
-    volumesCollection!: StablepoolHistoricalVolume
+  @Index_()
+  @ManyToOne_(() => StablepoolHistoricalVolume, {nullable: true})
+  volumesCollection!: StablepoolHistoricalVolume
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  asset!: Asset
 
-    @BigIntColumn_({nullable: false})
-    swapFee!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  swapFee!: bigint
 
-    @BigIntColumn_({nullable: false})
-    swapTotalFees!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  swapTotalFees!: bigint
 
-    @BigIntColumn_({nullable: false})
-    liqFee!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  liqFee!: bigint
 
-    @BigIntColumn_({nullable: false})
-    liqTotalFees!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  liqTotalFees!: bigint
 
-    @BigIntColumn_({nullable: false})
-    routedLiqFee!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  routedLiqFee!: bigint
 
-    @BigIntColumn_({nullable: false})
-    routedLiqTotalFees!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  routedLiqTotalFees!: bigint
 
-    @BigIntColumn_({nullable: false})
-    swapVolumeIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  swapVolumeIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    swapVolumeOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  swapVolumeOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    swapTotalVolumeIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  swapTotalVolumeIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    swapTotalVolumeOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  swapTotalVolumeOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    liqAddedAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  liqAddedAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    liqRemovedAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  liqRemovedAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    liqAddedTotalAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  liqAddedTotalAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    liqRemovedTotalAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  liqRemovedTotalAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    routedLiqAddedAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  routedLiqAddedAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    routedLiqRemovedAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  routedLiqRemovedAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    routedLiqAddedTotalAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  routedLiqAddedTotalAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    routedLiqRemovedTotalAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  routedLiqRemovedTotalAmount!: bigint
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraChainBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
 }

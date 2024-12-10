@@ -195,11 +195,16 @@ export async function getLbpPoolByAssets({
   if (!newPool) return null;
 
   await ctx.store.upsert(newPool);
+  newPool.account.lbpPool = newPool;
+  await ctx.store.upsert(newPool.account);
 
-  const lbpAllBatchPools = ctx.batchState.state.lbpAllBatchPools;
-  lbpAllBatchPools.set(newPool.id, newPool);
+  const state = ctx.batchState.state;
+  state.lbpAllBatchPools.set(newPool.id, newPool);
+  state.accounts.set(newPool.account.id, newPool.account);
+
   ctx.batchState.state = {
-    lbpAllBatchPools,
+    lbpAllBatchPools: state.lbpAllBatchPools,
+    accounts: state.accounts,
   };
 
   return newPool;
@@ -236,14 +241,18 @@ export async function lpbPoolCreated(
 
   if (!newPool) return null;
 
-  const poolsToSave = ctx.batchState.state.lbpPoolIdsToSave;
-  poolsToSave.add(newPool.id);
-  ctx.batchState.state = { lbpPoolIdsToSave: poolsToSave };
+  newPool.account.lbpPool = newPool;
 
-  const lbpAllBatchPools = ctx.batchState.state.lbpAllBatchPools;
-  lbpAllBatchPools.set(newPool.id, newPool);
+  const state = ctx.batchState.state;
+
+  state.lbpPoolIdsToSave.add(newPool.id);
+  state.lbpAllBatchPools.set(newPool.id, newPool);
+  state.accounts.set(newPool.account.id, newPool.account);
+
   ctx.batchState.state = {
-    lbpAllBatchPools,
+    accounts: state.accounts,
+    lbpPoolIdsToSave: state.lbpPoolIdsToSave,
+    lbpAllBatchPools: state.lbpAllBatchPools,
   };
 }
 

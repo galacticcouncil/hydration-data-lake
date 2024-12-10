@@ -90,6 +90,7 @@ export async function stablepoolLiquidityAddedRemoved(
 
   await handleStablepoolVolumeUpdates({
     ctx,
+    pool,
     liquidityAction: { ...newAction, assetAmounts: newAmountsList },
   });
 }

@@ -1,5 +1,5 @@
 import { PoolData } from './common';
-import { AssetType } from '../../model';
+import { AssetType, SwapFillerType, TradeOperationType } from '../../model';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -28,6 +28,8 @@ export enum EventName {
   'Stableswap_SellExecuted' = 'Stableswap.SellExecuted',
   'Stableswap_LiquidityAdded' = 'Stableswap.LiquidityAdded',
   'Stableswap_LiquidityRemoved' = 'Stableswap.LiquidityRemoved',
+
+  'AmmSupport_Swapped' = 'AmmSupport.Swapped',
 }
 
 export type RelayChainInfo = {

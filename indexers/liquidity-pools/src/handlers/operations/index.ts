@@ -8,7 +8,7 @@ import {
 import { handleOmnioolOperations } from './omnipoolOperations';
 import { handleStablepoolOperations } from './stablepoolOperations';
 
-export async function handleOperations(
+export async function handleBuySellOperations(
   ctx: ProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
@@ -24,12 +24,11 @@ export async function handleOperations(
   if (ctx.appConfig.PROCESS_STABLEPOOLS)
     await handleStablepoolOperations(ctx, parsedEvents);
 
-  await ctx.store.save([...ctx.batchState.state.xykPoolOperations.values()]);
-  await ctx.store.save([...ctx.batchState.state.lbpPoolOperations.values()]);
-  await ctx.store.save([
-    ...ctx.batchState.state.omnipoolAssetOperations.values(),
-  ]);
-  await ctx.store.save([...ctx.batchState.state.stablepoolOperations.values()]);
+  await ctx.store.save([...ctx.batchState.state.trades.values()]);
+  await ctx.store.save([...ctx.batchState.state.swaps.values()]);
+  await ctx.store.save([...ctx.batchState.state.swapFees.values()]);
+  await ctx.store.save([...ctx.batchState.state.swapInputs.values()]);
+  await ctx.store.save([...ctx.batchState.state.swapOutputs.values()]);
 
   await ctx.store.save([...ctx.batchState.state.assetVolumes.values()]);
   await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);

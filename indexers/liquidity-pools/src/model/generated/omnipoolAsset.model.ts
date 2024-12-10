@@ -1,63 +1,57 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, DateTimeColumn as DateTimeColumn_, IntColumn as IntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {Omnipool} from "./omnipool.model"
 import {OmnipoolAssetHistoricalVolume} from "./omnipoolAssetHistoricalVolume.model"
 import {OmnipoolAssetHistoricalData} from "./omnipoolAssetHistoricalData.model"
-import {OmnipoolAssetOperation} from "./omnipoolAssetOperation.model"
 
 @Entity_()
 export class OmnipoolAsset {
-    constructor(props?: Partial<OmnipoolAsset>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<OmnipoolAsset>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * OmnipoolId-AssetId
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * OmnipoolId-AssetId
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  asset!: Asset
 
-    @BigIntColumn_({nullable: false})
-    initialAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  initialAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    initialPrice!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  initialPrice!: bigint
 
-    @Index_()
-    @ManyToOne_(() => Omnipool, {nullable: true})
-    pool!: Omnipool
+  @Index_()
+  @ManyToOne_(() => Omnipool, {nullable: true})
+  pool!: Omnipool
 
-    @DateTimeColumn_({nullable: false})
-    createdAt!: Date
+  @Column_("timestamp with time zone", {nullable: false})
+  createdAt!: Date
 
-    @IntColumn_({nullable: false})
-    createdAtParaBlock!: number
+  @Column_("int4", {nullable: false})
+  createdAtParaBlock!: number
 
-    @BooleanColumn_({nullable: true})
-    isRemoved!: boolean | undefined | null
+  @Column_("bool", {nullable: true})
+  isRemoved!: boolean | undefined | null
 
-    @IntColumn_({nullable: true})
-    removedAtParaBlock!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  removedAtParaBlock!: number | undefined | null
 
-    @BigIntColumn_({nullable: true})
-    removedAmount!: bigint | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  removedAmount!: bigint | undefined | null
 
-    @BigIntColumn_({nullable: true})
-    hubWithdrawn!: bigint | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  hubWithdrawn!: bigint | undefined | null
 
-    @OneToMany_(() => OmnipoolAssetHistoricalVolume, e => e.omnipoolAsset)
-    historicalVolume!: OmnipoolAssetHistoricalVolume[]
+  @OneToMany_(() => OmnipoolAssetHistoricalVolume, e => e.omnipoolAsset)
+  historicalVolume!: OmnipoolAssetHistoricalVolume[]
 
-    @OneToMany_(() => OmnipoolAssetHistoricalData, e => e.omnipoolAsset)
-    historicalData!: OmnipoolAssetHistoricalData[]
-
-    @OneToMany_(() => OmnipoolAssetOperation, e => e.assetIn)
-    operationsIn!: OmnipoolAssetOperation[]
-
-    @OneToMany_(() => OmnipoolAssetOperation, e => e.assetOut)
-    operationsOut!: OmnipoolAssetOperation[]
+  @OneToMany_(() => OmnipoolAssetHistoricalData, e => e.omnipoolAsset)
+  historicalData!: OmnipoolAssetHistoricalData[]
 }

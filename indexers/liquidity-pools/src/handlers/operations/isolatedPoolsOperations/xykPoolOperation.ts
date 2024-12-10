@@ -1,17 +1,14 @@
-import { PoolOperationType } from '../../../model';
+import { SwapFillerType, TradeOperationType } from '../../../model';
 import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   XykBuyExecutedData,
   XykSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { getAccount } from '../../accounts';
 import { handleXykPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
-import { initXykPoolOperation } from './common';
-import { getAsset } from '../../assets/assetRegistry';
-import { getLbpPoolByAssets } from '../../isolatedPool/lbpPool';
 import { getXykPool } from '../../isolatedPool/xykPool';
+import { handleSellBuyAsSwap } from '../../trade/swap';
 
 export async function xykBuyExecuted(
   ctx: ProcessorContext<Store>,
@@ -35,56 +32,48 @@ export async function xykBuyExecuted(
     return;
   }
 
-  const assetInEntity = await getAsset({
+  const { swap, swapInputs, swapOutputs } = await handleSellBuyAsSwap({
     ctx,
-    id: eventParams.assetIn,
-    ensure: true,
     blockHeader: eventMetadata.blockHeader,
+    data: {
+      eventId: eventMetadata.id,
+      extrinsicHash: eventMetadata.extrinsic?.hash || '',
+      eventIndex: eventMetadata.indexInBlock,
+      swapperAccountId: eventParams.who,
+      poolAccountId: pool.id,
+      poolType: SwapFillerType.XYK,
+      assetInId: `${eventParams.assetIn}`,
+      assetOutId: `${eventParams.assetOut}`,
+      amountIn: eventParams.buyPrice,
+      amountOut: eventParams.amount,
+      fees: [
+        {
+          amount: eventParams.feeAmount,
+          assetId: `${eventParams.feeAsset}`,
+          recipientId: pool.account.id,
+        },
+      ],
+      operationType: TradeOperationType.ExactOut,
+      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
+    },
   });
 
-  const assetOutEntity = await getAsset({
+  await handleXykPoolVolumeUpdates({
     ctx,
-    id: eventParams.assetOut,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  const assetFeeEntity = await getAsset({
-    ctx,
-    id: eventParams.feeAsset,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  if (!assetInEntity || !assetOutEntity || !assetFeeEntity) return;
-
-  const operationInstance = initXykPoolOperation({
-    eventId: eventMetadata.id,
-    hash: eventMetadata.extrinsic?.hash || '',
-    indexInBlock: eventMetadata.indexInBlock,
-    account: await getAccount(ctx, eventParams.who),
-    assetIn: assetInEntity,
-    assetOut: assetOutEntity,
-    amountIn: eventParams.buyPrice,
-    amountOut: eventParams.amount,
-    feeAsset: assetFeeEntity,
-    feeAmount: eventParams.feeAmount,
-    operationType: PoolOperationType.BUY,
+    swap,
     pool,
-    relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
   });
 
-  ctx.batchState.state = {
-    xykPoolOperations: [
-      ...ctx.batchState.state.xykPoolOperations,
-      operationInstance,
-    ],
-  };
-
-  await handleXykPoolVolumeUpdates({ ctx, poolOperation: operationInstance });
-
-  await handleAssetVolumeUpdates(ctx, operationInstance);
+  await handleAssetVolumeUpdates(ctx, {
+    paraChainBlockHeight: swap.paraChainBlockHeight,
+    relayChainBlockHeight: swap.relayChainBlockHeight,
+    assetIn: swapInputs[0].asset,
+    assetInAmount: swapInputs[0].amount,
+    assetOut: swapOutputs[0].asset,
+    assetOutAmount: swapOutputs[0].amount,
+  });
 }
 
 export async function xykSellExecuted(
@@ -109,54 +98,46 @@ export async function xykSellExecuted(
     return;
   }
 
-  const assetInEntity = await getAsset({
+  const { swap, swapInputs, swapOutputs } = await handleSellBuyAsSwap({
     ctx,
-    id: eventParams.assetIn,
-    ensure: true,
     blockHeader: eventMetadata.blockHeader,
+    data: {
+      eventId: eventMetadata.id,
+      extrinsicHash: eventMetadata.extrinsic?.hash || '',
+      eventIndex: eventMetadata.indexInBlock,
+      swapperAccountId: eventParams.who,
+      poolAccountId: pool.id,
+      poolType: SwapFillerType.XYK,
+      assetInId: `${eventParams.assetIn}`,
+      assetOutId: `${eventParams.assetOut}`,
+      amountIn: eventParams.amount,
+      amountOut: eventParams.salePrice,
+      fees: [
+        {
+          amount: eventParams.feeAmount,
+          assetId: `${eventParams.feeAsset}`,
+          recipientId: pool.account.id,
+        },
+      ],
+      operationType: TradeOperationType.ExactIn,
+      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
+    },
   });
 
-  const assetOutEntity = await getAsset({
+  await handleXykPoolVolumeUpdates({
     ctx,
-    id: eventParams.assetOut,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  const assetFeeEntity = await getAsset({
-    ctx,
-    id: eventParams.feeAsset,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  if (!assetInEntity || !assetOutEntity || !assetFeeEntity) return;
-
-  const operationInstance = initXykPoolOperation({
-    eventId: eventMetadata.id,
-    hash: eventMetadata.extrinsic?.hash || '',
-    indexInBlock: eventMetadata.indexInBlock,
-    account: await getAccount(ctx, eventParams.who),
-    assetIn: assetInEntity,
-    assetOut: assetOutEntity,
-    amountIn: eventParams.amount,
-    amountOut: eventParams.salePrice,
-    feeAsset: assetFeeEntity,
-    feeAmount: eventParams.feeAmount,
-    operationType: PoolOperationType.SELL,
+    swap,
     pool,
-    relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
   });
 
-  ctx.batchState.state = {
-    xykPoolOperations: [
-      ...ctx.batchState.state.xykPoolOperations,
-      operationInstance,
-    ],
-  };
-
-  await handleXykPoolVolumeUpdates({ ctx, poolOperation: operationInstance });
-
-  await handleAssetVolumeUpdates(ctx, operationInstance);
+  await handleAssetVolumeUpdates(ctx, {
+    paraChainBlockHeight: swap.paraChainBlockHeight,
+    relayChainBlockHeight: swap.relayChainBlockHeight,
+    assetIn: swapInputs[0].asset,
+    assetInAmount: swapInputs[0].amount,
+    assetOut: swapOutputs[0].asset,
+    assetOutAmount: swapOutputs[0].amount,
+  });
 }

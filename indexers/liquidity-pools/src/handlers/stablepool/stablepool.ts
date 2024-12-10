@@ -35,10 +35,6 @@ export async function stablepoolCreated(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const poolsToSave = ctx.batchState.state.stablepoolIdsToSave;
-  const allBatchPools = ctx.batchState.state.stablepoolAllBatchPools;
-  const allBatchAssets = ctx.batchState.state.stablepoolAssetsAllBatch;
-
   const newPool = new Stablepool({
     id: `${eventParams.poolId}`,
     account: await getAccount(
@@ -68,21 +64,26 @@ export async function stablepoolCreated(
         }))!, // TODO fix types
       })
   );
+
+  const state = ctx.batchState.state;
+
   for (const asset of (await Promise.all(assetsListPromise)).filter(
     isNotNullOrUndefined
   )) {
-    allBatchAssets.set(+asset.asset.id, asset);
+    state.stablepoolAssetsAllBatch.set(+asset.asset.id, asset);
   }
 
-  poolsToSave.add(newPool.id);
-  ctx.batchState.state = { stablepoolIdsToSave: poolsToSave };
+  state.stablepoolIdsToSave.add(newPool.id);
 
-  allBatchPools.set(newPool.id, newPool);
-  ctx.batchState.state = {
-    stablepoolAllBatchPools: allBatchPools,
-  };
+  state.stablepoolAllBatchPools.set(newPool.id, newPool);
+
+  await ctx.store.save(newPool.account);
+  state.accounts.set(newPool.account.id, newPool.account);
 
   ctx.batchState.state = {
-    stablepoolAssetsAllBatch: allBatchAssets,
+    accounts: state.accounts,
+    stablepoolAssetsAllBatch: state.stablepoolAssetsAllBatch,
+    stablepoolAllBatchPools: state.stablepoolAllBatchPools,
+    stablepoolIdsToSave: state.stablepoolIdsToSave,
   };
 }

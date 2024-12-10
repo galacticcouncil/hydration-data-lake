@@ -9,7 +9,7 @@ import { AppConfig } from './appConfig';
 import { handlePoolPrices } from './handlers/prices';
 import { handleOmnipoolAssets } from './handlers/omnipool';
 import { ensureOmnipool } from './handlers/omnipool/omnipool';
-import { handleOperations } from './handlers/operations';
+import { handleBuySellOperations } from './handlers/operations';
 import { handleStablepools } from './handlers/stablepool';
 import { handleAssetRegistry } from './handlers/assets';
 import { StorageResolver } from './parsers/storageResolver';
@@ -70,13 +70,13 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     parsedData
   );
 
-  await handleOperations(
+  await handleBuySellOperations(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
 
-  if (ctx.isHead)
-    await handlePoolPrices(ctxWithBatchState as ProcessorContext<Store>);
+  // if (ctx.isHead)
+  //   await handlePoolPrices(ctxWithBatchState as ProcessorContext<Store>);
 
   await handleTransfers(
     ctxWithBatchState as ProcessorContext<Store>,

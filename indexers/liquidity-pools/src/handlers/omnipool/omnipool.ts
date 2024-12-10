@@ -22,7 +22,7 @@ export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
 
   const lrnaAssetEntity = await getAsset({
     ctx,
-    id: 1,
+    id: ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
     ensure: true,
     blockHeader: ctx.blocks[0].header,
   });
@@ -40,7 +40,7 @@ export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
   omnipoolEntity.isDestroyed = false;
 
   const internalOmnipoolToken = new OmnipoolAsset({
-    id: `${omnipoolEntity.id}-1`,
+    id: `${omnipoolEntity.id}-${ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID}`,
     asset: lrnaAssetEntity,
     initialAmount: BigInt(0),
     initialPrice: BigInt(0),
@@ -53,7 +53,14 @@ export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
   await ctx.store.save(omnipoolEntity);
   await ctx.store.save(internalOmnipoolToken);
 
+  omnipoolEntity.account.omnipool = omnipoolEntity;
+  await ctx.store.save(omnipoolEntity.account);
+
+  const state = ctx.batchState.state;
+  state.accounts.set(omnipoolEntity.account.id, omnipoolEntity.account);
+
   ctx.batchState.state = {
     omnipoolEntity,
+    accounts: state.accounts,
   };
 }

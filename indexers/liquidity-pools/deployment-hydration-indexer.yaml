@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 305
+slot: 400
 description: Hydration pools indexer
 build:
 deploy:
@@ -41,7 +41,7 @@ scale:
   dedicated: false
   addons:
     postgres:
-      profile: med
+      profile: medium
       storage: 200G
   processor:
     profile: large

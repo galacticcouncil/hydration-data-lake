@@ -2,7 +2,7 @@ import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { Stablepool, StablepoolAsset } from '../../model';
 
-export async function getStablepoolAssetsAll(
+export async function getAssetsByStablepool(
   ctx: ProcessorContext<Store>,
   poolId: string | number
 ) {
@@ -22,5 +22,7 @@ export async function getStablepoolAssetsAll(
     [...cachedAssets, ...persistentAssets].map((asset) => [asset.id, asset])
   );
 
-  return [...compiledMap.values()].map((sAsset) => sAsset.asset);
+  return [...compiledMap.values()].map(
+    (stablepoolAsset) => stablepoolAsset.asset
+  );
 }

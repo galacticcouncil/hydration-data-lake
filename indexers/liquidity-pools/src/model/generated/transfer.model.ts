@@ -1,40 +1,41 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, IntColumn as IntColumn_, Index as Index_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import * as marshal from "./marshal"
 import {Account} from "./account.model"
 
 @Entity_()
 export class Transfer {
-    constructor(props?: Partial<Transfer>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<Transfer>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * TxId
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * TxId
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @IntColumn_({nullable: false})
-    paraChainBlockHeight!: number
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    assetId!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  assetId!: number
 
-    @Index_()
-    @StringColumn_({nullable: true})
-    extrinsicHash!: string | undefined | null
+  @Index_()
+  @Column_("text", {nullable: true})
+  extrinsicHash!: string | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    from!: Account
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  from!: Account
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    to!: Account
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  to!: Account
 
-    @BigIntColumn_({nullable: false})
-    amount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  amount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    txFee!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  txFee!: bigint
 }

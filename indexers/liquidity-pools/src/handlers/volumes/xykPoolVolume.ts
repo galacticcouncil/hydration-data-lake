@@ -1,19 +1,20 @@
-import { XykPoolHistoricalVolume, XykPoolOperation } from '../../model';
+import { Swap, XykPool, XykPoolHistoricalVolume } from '../../model';
 import { calculateAveragePrice } from '../prices/utils';
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { getLastVolumeFromCache, getOldXykVolume } from './index';
 
 export function initXykPoolVolume(
-  swap: XykPoolOperation,
+  swap: Swap,
+  pool: XykPool,
   currentVolume: XykPoolHistoricalVolume | undefined,
   oldVolume: XykPoolHistoricalVolume | undefined
 ) {
   const newVolume = new XykPoolHistoricalVolume({
-    id: swap.pool.id + '-' + swap.paraChainBlockHeight,
-    pool: swap.pool,
-    assetA: swap.pool.assetA,
-    assetB: swap.pool.assetB,
+    id: swap.filler.id + '-' + swap.paraChainBlockHeight,
+    pool: pool,
+    assetA: pool.assetA,
+    assetB: pool.assetB,
     averagePrice: 0,
     assetAVolumeIn: currentVolume?.assetAVolumeIn || BigInt(0),
     assetAVolumeOut: currentVolume?.assetAVolumeOut || BigInt(0),
@@ -45,24 +46,36 @@ export function initXykPoolVolume(
     paraChainBlockHeight: swap.paraChainBlockHeight,
   });
 
+  const swapAssetInData = swap.inputs[0];
+  const swapAssetOutData = swap.outputs[0];
+  const swapAssetFeeData = swap.fees[0];
+
   const assetAVolumeIn =
-    swap.assetIn.id === newVolume.assetA.id ? swap.assetInAmount : BigInt(0);
+    swapAssetInData.asset.id === newVolume.assetA.id
+      ? swapAssetInData.amount
+      : BigInt(0);
   const assetBVolumeIn =
-    swap.assetIn.id === newVolume.assetB.id ? swap.assetInAmount : BigInt(0);
+    swapAssetInData.asset.id === newVolume.assetB.id
+      ? swapAssetInData.amount
+      : BigInt(0);
 
   const assetAVolumeOut =
-    swap.assetOut.id === newVolume.assetA.id ? swap.assetOutAmount : BigInt(0);
+    swapAssetOutData.asset.id === newVolume.assetA.id
+      ? swapAssetOutData.amount
+      : BigInt(0);
   const assetBVolumeOut =
-    swap.assetOut.id === newVolume.assetB.id ? swap.assetOutAmount : BigInt(0);
+    swapAssetOutData.asset.id === newVolume.assetB.id
+      ? swapAssetOutData.amount
+      : BigInt(0);
 
   const assetAFee =
-    swap.assetIn.id === newVolume.assetA.id
-      ? swap.assetInFee
-      : swap.assetOutFee;
+    swapAssetFeeData.asset.id === newVolume.assetA.id
+      ? swapAssetFeeData.amount
+      : BigInt(0);
   const assetBFee =
-    swap.assetIn.id === newVolume.assetB.id
-      ? swap.assetInFee
-      : swap.assetOutFee;
+    swapAssetFeeData.asset.id === newVolume.assetB.id
+      ? swapAssetFeeData.amount
+      : BigInt(0);
 
   // Block volumes
   newVolume.assetAVolumeIn += assetAVolumeIn;
@@ -82,37 +95,40 @@ export function initXykPoolVolume(
   newVolume.assetBTotalVolumeOut += assetBVolumeOut;
   newVolume.assetBTotalFees += assetBFee;
 
-  newVolume.averagePrice = calculateAveragePrice(
+  newVolume.averagePrice = calculateAveragePrice({
     swap,
+    pool,
     newVolume,
     currentVolume,
-    oldVolume
-  );
+    oldVolume,
+  });
 
   return newVolume;
 }
 
 export async function handleXykPoolVolumeUpdates({
   ctx,
-  poolOperation,
+  pool,
+  swap,
 }: {
   ctx: ProcessorContext<Store>;
-  poolOperation: XykPoolOperation;
+  pool: XykPool;
+  swap: Swap;
 }) {
   const xykPoolVolumes = ctx.batchState.state.xykPoolVolumes;
   const currentVolume = xykPoolVolumes.get(
-    poolOperation.pool.id + '-' + poolOperation.paraChainBlockHeight
+    swap.filler.id + '-' + swap.paraChainBlockHeight
   );
 
   const oldVolume =
     currentVolume ||
     (getLastVolumeFromCache(
       ctx.batchState.state.xykPoolVolumes,
-      poolOperation.pool.id
+      swap.filler.id
     ) as XykPoolHistoricalVolume | undefined) ||
-    (await getOldXykVolume(ctx, poolOperation.pool.id));
+    (await getOldXykVolume(ctx, swap.filler.id));
 
-  const newVolume = initXykPoolVolume(poolOperation, currentVolume, oldVolume);
+  const newVolume = initXykPoolVolume(swap, pool, currentVolume, oldVolume);
 
   xykPoolVolumes.set(newVolume.id, newVolume);
   ctx.batchState.state = { xykPoolVolumes };

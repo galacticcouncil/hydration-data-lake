@@ -1,17 +1,25 @@
 import {
+  LbpPool,
   LbpPoolHistoricalVolume,
-  LbpPoolOperation,
+  Swap,
+  XykPool,
   XykPoolHistoricalVolume,
-  XykPoolOperation,
 } from '../../model';
 import { BigNumber } from 'bignumber.js';
 
-export function calculateAveragePrice(
-  swap: LbpPoolOperation | XykPoolOperation,
-  newVolume: LbpPoolHistoricalVolume | XykPoolHistoricalVolume,
-  currentVolume?: LbpPoolHistoricalVolume | XykPoolHistoricalVolume,
-  oldVolume?: LbpPoolHistoricalVolume | XykPoolHistoricalVolume
-) {
+export function calculateAveragePrice({
+  swap,
+  pool,
+  newVolume,
+  currentVolume,
+  oldVolume,
+}: {
+  swap: Swap;
+  pool: XykPool | LbpPool;
+  newVolume: LbpPoolHistoricalVolume | XykPoolHistoricalVolume;
+  currentVolume?: LbpPoolHistoricalVolume | XykPoolHistoricalVolume;
+  oldVolume?: LbpPoolHistoricalVolume | XykPoolHistoricalVolume;
+}) {
   const totalVolume = oldVolume
     ? oldVolume.assetATotalVolumeIn + oldVolume.assetATotalVolumeOut
     : currentVolume
@@ -20,10 +28,12 @@ export function calculateAveragePrice(
 
   const volume = newVolume.assetAVolumeIn + newVolume.assetAVolumeOut;
 
+  const swapPrice = new BigNumber(swap.inputs[0].amount.toString())
+    .div(swap.outputs[0].amount.toString())
+    .toNumber();
+
   const price =
-    swap.assetIn.id === swap.pool.assetA.id
-      ? swap.swapPrice
-      : 1 / swap.swapPrice;
+    swap.inputs[0].asset.id === pool.assetA.id ? swapPrice : 1 / swapPrice;
 
   const oldPrice = currentVolume?.averagePrice || oldVolume?.averagePrice || 0;
 

@@ -1,74 +1,75 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, FloatColumn as FloatColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 import {XykPool} from "./xykPool.model"
 import {Asset} from "./asset.model"
 
 @Entity_()
 export class XykPoolHistoricalVolume {
-    constructor(props?: Partial<XykPoolHistoricalVolume>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<XykPoolHistoricalVolume>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * PoolId-paraChainBlockHeight
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * PoolId-paraChainBlockHeight
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @Index_()
-    @ManyToOne_(() => XykPool, {nullable: true})
-    pool!: XykPool
+  @Index_()
+  @ManyToOne_(() => XykPool, {nullable: true})
+  pool!: XykPool
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetA!: Asset
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  assetA!: Asset
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetB!: Asset
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  assetB!: Asset
 
-    @FloatColumn_({nullable: false})
-    averagePrice!: number
+  @Column_("numeric", {nullable: false})
+  averagePrice!: number
 
-    @BigIntColumn_({nullable: false})
-    assetAVolumeIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetAVolumeIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetAVolumeOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetAVolumeOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetATotalVolumeIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetATotalVolumeIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetATotalVolumeOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetATotalVolumeOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetAFee!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetAFee!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBFee!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBFee!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetATotalFees!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetATotalFees!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBTotalFees!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBTotalFees!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBVolumeIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBVolumeIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBVolumeOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBVolumeOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBTotalVolumeIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBTotalVolumeIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBTotalVolumeOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBTotalVolumeOut!: bigint
 
-    @IntColumn_({nullable: false})
-    relayChainBlockHeight!: number
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraChainBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
 }

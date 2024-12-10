@@ -117,6 +117,9 @@ export class AppConfig {
   readonly OMNIPOOL_ADDRESS: string =
     '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000';
 
+  @IsString()
+  readonly OMNIPOOL_PROTOCOL_ASSET_ID: string = '1';
+
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly USE_STORAGE_DICTIONARY: boolean = true;
 

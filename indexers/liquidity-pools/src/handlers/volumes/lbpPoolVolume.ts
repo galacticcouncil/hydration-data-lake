@@ -1,19 +1,20 @@
-import { LbpPoolHistoricalVolume, LbpPoolOperation } from '../../model';
+import { LbpPool, LbpPoolHistoricalVolume, Swap } from '../../model';
 import { calculateAveragePrice } from '../prices/utils';
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { getLastVolumeFromCache, getOldLbpVolume } from './index';
 
 export function initLbpPoolVolume(
-  swap: LbpPoolOperation,
+  swap: Swap,
+  pool: LbpPool,
   currentVolume: LbpPoolHistoricalVolume | undefined,
   oldVolume: LbpPoolHistoricalVolume | undefined
 ) {
   const newVolume = new LbpPoolHistoricalVolume({
-    id: swap.pool.id + '-' + swap.paraChainBlockHeight,
-    pool: swap.pool,
-    assetA: swap.pool.assetA,
-    assetB: swap.pool.assetB,
+    id: pool.id + '-' + swap.paraChainBlockHeight,
+    pool: pool,
+    assetA: pool.assetA,
+    assetB: pool.assetB,
     averagePrice: 0,
     assetAVolumeIn: currentVolume?.assetAVolumeIn || BigInt(0),
     assetAVolumeOut: currentVolume?.assetAVolumeOut || BigInt(0),
@@ -45,22 +46,38 @@ export function initLbpPoolVolume(
     paraChainBlockHeight: swap.paraChainBlockHeight,
   });
 
+  // console.dir(swap, { depth: null });
+
+  const swapAssetInData = swap.inputs[0];
+  const swapAssetOutData = swap.outputs[0];
+  const swapAssetFeeData = swap.fees[0];
+
   const assetAVolumeIn =
-    swap.assetIn.id === newVolume.assetA.id ? swap.assetInAmount : BigInt(0);
+    swapAssetInData.asset.id === newVolume.assetA.id
+      ? swapAssetInData.amount
+      : BigInt(0);
   const assetBVolumeIn =
-    swap.assetIn.id === newVolume.assetB.id ? swap.assetInAmount : BigInt(0);
+    swapAssetInData.asset.id === newVolume.assetB.id
+      ? swapAssetInData.amount
+      : BigInt(0);
+
   const assetAVolumeOut =
-    swap.assetOut.id === newVolume.assetA.id ? swap.assetOutAmount : BigInt(0);
+    swapAssetOutData.asset.id === newVolume.assetA.id
+      ? swapAssetOutData.amount
+      : BigInt(0);
   const assetBVolumeOut =
-    swap.assetOut.id === newVolume.assetB.id ? swap.assetOutAmount : BigInt(0);
+    swapAssetOutData.asset.id === newVolume.assetB.id
+      ? swapAssetOutData.amount
+      : BigInt(0);
+
   const assetAFee =
-    swap.assetIn.id === newVolume.assetA.id
-      ? swap.assetInFee
-      : swap.assetOutFee;
+    swapAssetFeeData.asset.id === newVolume.assetA.id
+      ? swapAssetFeeData.amount
+      : BigInt(0);
   const assetBFee =
-    swap.assetIn.id === newVolume.assetB.id
-      ? swap.assetInFee
-      : swap.assetOutFee;
+    swapAssetFeeData.asset.id === newVolume.assetB.id
+      ? swapAssetFeeData.amount
+      : BigInt(0);
 
   newVolume.assetAVolumeIn += assetAVolumeIn;
   newVolume.assetAVolumeOut += assetAVolumeOut;
@@ -78,37 +95,40 @@ export function initLbpPoolVolume(
   newVolume.assetBTotalVolumeOut += assetBVolumeOut;
   newVolume.assetBTotalFees += assetBFee;
 
-  newVolume.averagePrice = calculateAveragePrice(
+  newVolume.averagePrice = calculateAveragePrice({
     swap,
+    pool,
     newVolume,
     currentVolume,
-    oldVolume
-  );
+    oldVolume,
+  });
 
   return newVolume;
 }
 
 export async function handleLbpPoolVolumeUpdates({
   ctx,
-  poolOperation,
+  pool,
+  swap,
 }: {
   ctx: ProcessorContext<Store>;
-  poolOperation: LbpPoolOperation;
+  pool: LbpPool;
+  swap: Swap;
 }) {
   const lbpPoolVolumes = ctx.batchState.state.lbpPoolVolumes;
   const currentVolume = lbpPoolVolumes.get(
-    poolOperation.pool.id + '-' + poolOperation.paraChainBlockHeight
+    swap.filler.id + '-' + swap.paraChainBlockHeight
   );
 
   const oldVolume =
     currentVolume ||
     (getLastVolumeFromCache(
       ctx.batchState.state.lbpPoolVolumes,
-      poolOperation.pool.id
+      swap.filler.id
     ) as LbpPoolHistoricalVolume | undefined) ||
-    (await getOldLbpVolume(ctx, poolOperation.pool.id));
+    (await getOldLbpVolume(ctx, swap.filler.id));
 
-  const newVolume = initLbpPoolVolume(poolOperation, currentVolume, oldVolume);
+  const newVolume = initLbpPoolVolume(swap, pool, currentVolume, oldVolume);
 
   lbpPoolVolumes.set(newVolume.id, newVolume);
   ctx.batchState.state = { lbpPoolVolumes };

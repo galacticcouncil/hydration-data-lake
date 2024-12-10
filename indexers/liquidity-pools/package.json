@@ -13,7 +13,8 @@
     "deploy-main": "sqd deploy --org galacticcouncil . -m deployment-xyk-pools-indexer.yaml",
     "ingester-codegen:all": ". ./scripts/ingester-codegen.sh",
     "multi-typegen": ". ./scripts/typegen.sh",
-    "api-codegen:dictionary-api": "graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts"
+    "api-codegen:dictionary-api": "graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts",
+    "explore-metadata": "npx squid-substrate-metadata-explorer --rpc ws://localhost:8000 --out ./typegenAssets/paseo-next-metadata.jsonl --fromBlock 6513491"
   },
   "dependencies": {
     "@galacticcouncil/sdk": "^4.2.1",

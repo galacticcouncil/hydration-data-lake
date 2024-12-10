@@ -151,11 +151,15 @@ export async function getXykPool({
   if (!newPool) return null;
 
   await ctx.store.upsert(newPool);
+  newPool.account.xykPool = newPool;
+  await ctx.store.upsert(newPool.account);
 
-  const xykAllBatchPools = ctx.batchState.state.xykAllBatchPools;
-  xykAllBatchPools.set(newPool.id, newPool);
+  const state = ctx.batchState.state;
+  state.xykAllBatchPools.set(newPool.id, newPool);
+  state.accounts.set(newPool.account.id, newPool.account);
   ctx.batchState.state = {
-    xykAllBatchPools,
+    xykAllBatchPools: state.xykAllBatchPools,
+    accounts: state.accounts,
   };
 
   return newPool;
@@ -187,13 +191,17 @@ export async function xykPoolCreated(
 
   if (!newPool) return;
 
-  const poolsToSave = ctx.batchState.state.xykPoolIdsToSave;
-  poolsToSave.add(newPool.id);
-  ctx.batchState.state = { xykPoolIdsToSave: poolsToSave };
+  newPool.account.xykPool = newPool;
 
-  const xykAllBatchPools = ctx.batchState.state.xykAllBatchPools;
-  xykAllBatchPools.set(newPool.id, newPool);
+  const state = ctx.batchState.state;
+
+  state.xykPoolIdsToSave.add(newPool.id);
+  state.xykAllBatchPools.set(newPool.id, newPool);
+  state.accounts.set(newPool.account.id, newPool.account);
+
   ctx.batchState.state = {
-    xykAllBatchPools,
+    accounts: state.accounts,
+    xykPoolIdsToSave: state.xykPoolIdsToSave,
+    xykAllBatchPools: state.xykAllBatchPools,
   };
 }

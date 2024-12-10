@@ -1,4 +1,9 @@
-import { LbpPoolOperation } from '../model';
+import {
+  Swap,
+  SwapFee,
+  SwapInputAssetBalance,
+  SwapOutputAssetBalance,
+} from '../model';
 import type * as base from '@subsquid/substrate-data';
 
 export interface TransferEvent {
@@ -35,13 +40,6 @@ export interface PoolCreatedEvent {
   lbpPoolData?: LBPPoolDataUpdate;
 }
 
-export interface ProcessorBlockData {
-  timestamp: Date | null;
-  paraChainBlockHeight: number;
-  relayChainBlockHeight: number | null;
-  swaps: LbpPoolOperation[];
-}
-
 export interface FullExtrinsic extends base.Extrinsic {
   success: boolean;
   hash: base.Bytes;
@@ -65,3 +63,10 @@ export enum ChainName {
   hydration = 'hydration',
   hydration_paseo = 'hydration_paseo',
 }
+
+export type GetNewSwapResponse = {
+  swap: Swap;
+  swapFees: SwapFee[];
+  swapInputs: SwapInputAssetBalance[];
+  swapOutputs: SwapOutputAssetBalance[];
+};

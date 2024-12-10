@@ -19,7 +19,7 @@
       "cmd": ["docker", "compose", "down"]
     },
     "migration:create": {
-      "description": "Generate a DB migration matching the TypeORM entities",
+      "description": "Generate a DB migration matching the TypeORM entities on top of existing schema",
       "cmd": ["npx", "squid-typeorm-migration", "generate"]
     },
     "migration:apply": {

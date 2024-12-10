@@ -6,12 +6,10 @@ import {
   LbpPoolHistoricalData,
   LbpPoolHistoricalPrice,
   LbpPoolHistoricalVolume,
-  LbpPoolOperation,
   Omnipool,
   OmnipoolAsset,
   OmnipoolAssetHistoricalData,
   OmnipoolAssetHistoricalVolume,
-  OmnipoolAssetOperation,
   Stablepool,
   StablepoolAsset,
   StablepoolAssetHistoricalData,
@@ -20,13 +18,16 @@ import {
   StablepoolHistoricalData,
   StablepoolHistoricalVolume,
   StablepoolLiquidityAction,
-  StablepoolOperation,
+  Swap,
+  SwapFee,
+  SwapInputAssetBalance,
+  SwapOutputAssetBalance,
+  Trade,
   Transfer,
   XykPool,
   XykPoolHistoricalData,
   XykPoolHistoricalPrice,
   XykPoolHistoricalVolume,
-  XykPoolOperation,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -42,9 +43,14 @@ export type BatchStatePayload = {
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
 
+  trades: Map<string, Trade>;
+  swaps: Map<string, Swap>;
+  swapFees: Map<string, SwapFee>;
+  swapInputs: Map<string, SwapInputAssetBalance>;
+  swapOutputs: Map<string, SwapOutputAssetBalance>;
+
   lbpPoolIdsToSave: Set<string>;
   lbpAllBatchPools: Map<string, LbpPool>;
-  lbpPoolOperations: LbpPoolOperation[];
   lbpPoolVolumes: Map<string, LbpPoolHistoricalVolume>;
   lbpPoolHistoricalPrices: Map<string, LbpPoolHistoricalPrice>;
   lbpPoolAssetIdsForStoragePrefetch: Map<
@@ -55,7 +61,6 @@ export type BatchStatePayload = {
 
   xykPoolIdsToSave: Set<string>;
   xykAllBatchPools: Map<string, XykPool>;
-  xykPoolOperations: XykPoolOperation[];
   xykPoolVolumes: Map<string, XykPoolHistoricalVolume>;
   xykPoolHistoricalPrices: Map<string, XykPoolHistoricalPrice>;
   xykPoolIdsForStoragePrefetch: Map<
@@ -67,7 +72,6 @@ export type BatchStatePayload = {
   omnipoolEntity: Omnipool | null;
   omnipoolAssets: Map<string, OmnipoolAsset>;
   omnipoolAssetIdsToSave: Set<string>;
-  omnipoolAssetOperations: OmnipoolAssetOperation[];
   omnipoolAssetVolumes: Map<string, OmnipoolAssetHistoricalVolume>;
   omnipoolAssetIdsForStoragePrefetch: Map<
     number,
@@ -78,7 +82,6 @@ export type BatchStatePayload = {
   stablepoolIdsToSave: Set<string>;
   stablepoolAssetsAllBatch: Map<number, StablepoolAsset>;
   stablepoolAllBatchPools: Map<string, Stablepool>;
-  stablepoolOperations: StablepoolOperation[];
   stablepoolVolumeCollections: Map<string, StablepoolHistoricalVolume>;
   stablepoolAssetVolumes: Map<string, StablepoolAssetHistoricalVolume>;
   stablepoolAssetVolumeIdsToSave: Set<string>;
@@ -106,9 +109,14 @@ export class BatchState {
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
 
+    trades: new Map(),
+    swaps: new Map(),
+    swapFees: new Map(),
+    swapInputs: new Map(),
+    swapOutputs: new Map(),
+
     lbpPoolIdsToSave: new Set(),
     lbpAllBatchPools: new Map(),
-    lbpPoolOperations: [],
     lbpPoolVolumes: new Map(),
     lbpPoolHistoricalPrices: new Map(),
     lbpPoolAssetIdsForStoragePrefetch: new Map(),
@@ -116,7 +124,6 @@ export class BatchState {
 
     xykPoolIdsToSave: new Set(),
     xykAllBatchPools: new Map(),
-    xykPoolOperations: [],
     xykPoolVolumes: new Map(),
     xykPoolHistoricalPrices: new Map(),
     xykPoolIdsForStoragePrefetch: new Map(),
@@ -125,7 +132,6 @@ export class BatchState {
     omnipoolEntity: null,
     omnipoolAssets: new Map(),
     omnipoolAssetIdsToSave: new Set(),
-    omnipoolAssetOperations: [],
     omnipoolAssetVolumes: new Map(),
     omnipoolAssetIdsForStoragePrefetch: new Map(),
     omnipoolAssetAllHistoricalData: [],
@@ -133,7 +139,6 @@ export class BatchState {
     stablepoolIdsToSave: new Set(),
     stablepoolAllBatchPools: new Map(),
     stablepoolAssetsAllBatch: new Map(),
-    stablepoolOperations: [],
     stablepoolAssetVolumes: new Map(),
     stablepoolAssetVolumeIdsToSave: new Set(),
     stablepoolVolumeCollections: new Map(),

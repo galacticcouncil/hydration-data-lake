@@ -1,7 +1,7 @@
 import {
   OmnipoolAsset,
   OmnipoolAssetHistoricalVolume,
-  OmnipoolAssetOperation,
+  Swap,
 } from '../../model';
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
@@ -9,6 +9,7 @@ import {
   getOldOmnipoolAssetVolume,
   getPoolAssetLastVolumeFromCache,
 } from './index';
+import { getOmnipoolAsset } from '../omnipool/omnipoolAssets';
 
 export function initOmnipoolAssetVolume({
   swap,
@@ -16,7 +17,7 @@ export function initOmnipoolAssetVolume({
   oldVolume,
   omnipoolAsset,
 }: {
-  swap: OmnipoolAssetOperation;
+  swap: Swap;
   omnipoolAsset: OmnipoolAsset;
   currentVolume?: OmnipoolAssetHistoricalVolume | undefined;
   oldVolume?: OmnipoolAssetHistoricalVolume | undefined;
@@ -42,18 +43,18 @@ export function initOmnipoolAssetVolume({
   });
 
   const assetVolumeIn =
-    swap.assetIn.id === newVolume.omnipoolAsset.id
-      ? swap.assetInAmount
+    swap.inputs[0].asset.id === newVolume.omnipoolAsset.asset.id
+      ? swap.inputs[0].amount
       : BigInt(0);
 
   const assetVolumeOut =
-    swap.assetOut.id === newVolume.omnipoolAsset.id
-      ? swap.assetOutAmount
+    swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
+      ? swap.outputs[0].amount
       : BigInt(0);
 
   const assetFee =
-    swap.assetOut.id === newVolume.omnipoolAsset.id
-      ? swap.assetFeeAmount
+    swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
+      ? swap.outputs[0].amount
       : BigInt(0);
 
   // Block volumes
@@ -71,17 +72,33 @@ export function initOmnipoolAssetVolume({
 
 export async function handleOmnipoolAssetVolumeUpdates({
   ctx,
-  assetOperation,
+  swap,
 }: {
   ctx: ProcessorContext<Store>;
-  assetOperation: OmnipoolAssetOperation;
+  swap: Swap;
 }) {
   const omnipoolAssetVolumes = ctx.batchState.state.omnipoolAssetVolumes;
-  const assetsToProcess = [assetOperation.assetIn, assetOperation.assetOut];
 
-  for (const omnipoolAsset of assetsToProcess) {
+  let omnipoolAssetInEntity = await getOmnipoolAsset(
+    ctx,
+    swap.inputs[0].asset.id
+  );
+
+  let omnipoolAssetOutEntity = await getOmnipoolAsset(
+    ctx,
+    swap.outputs[0].asset.id
+  );
+
+  if (!omnipoolAssetInEntity || !omnipoolAssetOutEntity) {
+    console.log(
+      `Omnipool asset with assetId: ${!omnipoolAssetInEntity ? swap.inputs[0].asset.id : swap.outputs[0].asset.id} has not been found`
+    );
+    return;
+  }
+
+  for (const omnipoolAsset of [omnipoolAssetInEntity, omnipoolAssetOutEntity]) {
     const currentVolume = omnipoolAssetVolumes.get(
-      `${omnipoolAsset.id}-${assetOperation.paraChainBlockHeight}`
+      `${omnipoolAsset.id}-${swap.paraChainBlockHeight}`
     );
 
     const oldVolume =
@@ -93,7 +110,7 @@ export async function handleOmnipoolAssetVolumeUpdates({
       (await getOldOmnipoolAssetVolume(ctx, omnipoolAsset.id));
 
     const newVolume = initOmnipoolAssetVolume({
-      swap: assetOperation,
+      swap,
       currentVolume,
       oldVolume,
       omnipoolAsset,

@@ -9,12 +9,11 @@ import {
   StableswapLiquidityRemovedData,
   StableswapSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { getAccount } from '../../accounts';
-import { PoolOperationType, StablepoolOperation } from '../../../model';
-import { getAsset } from '../../assets/assetRegistry';
+import { SwapFillerType, TradeOperationType } from '../../../model';
 import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
 import { getStablepool } from '../../stablepool/stablepool';
 import { stablepoolLiquidityAddedRemoved } from '../../stablepool/liquidity';
+import { handleSellBuyAsSwap } from '../../trade/swap';
 
 export async function handleStablepoolOperations(
   ctx: ProcessorContext<Store>,
@@ -74,46 +73,52 @@ export async function stablepoolBuySellExecuted(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  let assetInEntity = await getAsset({ ctx, id: eventParams.assetIn });
-  let assetOutEntity = await getAsset({ ctx, id: eventParams.assetOut });
+  // let assetInEntity = await getAsset({ ctx, id: eventParams.assetIn });
+  // let assetOutEntity = await getAsset({ ctx, id: eventParams.assetOut });
   const pool = await getStablepool(ctx, eventParams.poolId);
 
-  if (!assetInEntity || !assetOutEntity || !pool) return;
+  if (!pool) {
+    console.log(`Stablepool with ID ${eventParams.poolId} has not been found`);
+    return;
+  }
 
-  const operationInstance = new StablepoolOperation({
-    id: eventMetadata.id,
-    account: await getAccount(ctx, eventParams.who),
-    pool,
-    assetIn: assetInEntity,
-    assetOut: assetOutEntity,
-    assetInAmount: eventParams.amountIn,
-    assetOutAmount: eventParams.amountOut,
-    assetFeeAmount: eventParams.fee,
-    type:
-      eventMetadata.name === EventName.Omnipool_BuyExecuted
-        ? PoolOperationType.BUY
-        : PoolOperationType.SELL,
-    extrinsicHash: eventMetadata.extrinsic?.hash,
-    indexInBlock: eventMetadata.indexInBlock,
-    relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
+  const { swap } = await handleSellBuyAsSwap({
+    ctx,
+    blockHeader: eventMetadata.blockHeader,
+    data: {
+      eventId: eventMetadata.id,
+      extrinsicHash: eventMetadata.extrinsic?.hash || '',
+      eventIndex: eventMetadata.indexInBlock,
+      swapperAccountId: eventParams.who,
+      poolAccountId: pool.account.id,
+      poolType: SwapFillerType.Stableswap,
+      assetInId: `${eventParams.assetIn}`,
+      assetOutId: `${eventParams.assetOut}`,
+      amountIn: eventParams.amountIn,
+      amountOut: eventParams.amountOut,
+      fees: [
+        {
+          amount: eventParams.fee,
+          assetId: `${eventParams.assetOut}`,
+          recipientId: pool.account.id,
+        },
+      ],
+      operationType:
+        eventMetadata.name === EventName.Stableswap_BuyExecuted
+          ? TradeOperationType.ExactOut
+          : TradeOperationType.ExactIn,
+      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
+    },
   });
 
   const stablepoolAllBatchPools = ctx.batchState.state.stablepoolAllBatchPools;
   stablepoolAllBatchPools.set(pool.id, pool);
 
-  ctx.batchState.state = {
-    stablepoolOperations: [
-      ...ctx.batchState.state.stablepoolOperations,
-      operationInstance,
-    ],
-    stablepoolAllBatchPools,
-  };
-
   await handleStablepoolVolumeUpdates({
     ctx,
-    poolOperation: operationInstance,
+    swap,
+    pool,
   });
-  //
-  // await handleAssetVolumeUpdates(ctx, operationInstance);
 }

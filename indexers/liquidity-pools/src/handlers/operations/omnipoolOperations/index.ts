@@ -7,13 +7,9 @@ import {
   OmnipoolBuyExecutedData,
   OmnipoolSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { getAccount } from '../../accounts';
-import {
-  OmnipoolAssetOperation,
-  PoolOperationType,
-} from '../../../model';
+import { SwapFillerType, TradeOperationType } from '../../../model';
 import { handleOmnipoolAssetVolumeUpdates } from '../../volumes';
-import { getOmnipoolAsset } from '../../omnipool/omnipoolAssets';
+import { handleSellBuyAsSwap } from '../../trade/swap';
 
 export async function handleOmnioolOperations(
   ctx: ProcessorContext<Store>,
@@ -43,49 +39,46 @@ export async function omnipoolBuySellExecuted(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  let assetInEntity = await getOmnipoolAsset(ctx, eventParams.assetIn);
-
-  let assetOutEntity = await getOmnipoolAsset(ctx, eventParams.assetOut);
-
-  if (!assetInEntity || !assetOutEntity) {
-    console.log(
-      `Omnipool asset with assetId: ${!assetInEntity ? eventParams.assetIn : eventParams.assetOut} has not been found`
-    );
-    return;
-  }
-
-  const operationInstance = new OmnipoolAssetOperation({
-    id: eventMetadata.id,
-    account: await getAccount(ctx, eventParams.who),
-    assetIn: assetInEntity,
-    assetOut: assetOutEntity,
-    assetInAmount: eventParams.amountIn,
-    assetOutAmount: eventParams.amountOut,
-    assetFeeAmount: eventParams.assetFeeAmount,
-    protocolFeeAmount: eventParams.protocolFeeAmount,
-    hubAmountIn: eventParams.hubAmountIn,
-    hubAmountOut: eventParams.hubAmountOut,
-    type:
-      eventMetadata.name === EventName.Omnipool_BuyExecuted
-        ? PoolOperationType.BUY
-        : PoolOperationType.SELL,
-    extrinsicHash: eventMetadata.extrinsic?.hash,
-    indexInBlock: eventMetadata.indexInBlock,
-    relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
+  const { swap } = await handleSellBuyAsSwap({
+    ctx,
+    blockHeader: eventMetadata.blockHeader,
+    data: {
+      eventId: eventMetadata.id,
+      extrinsicHash: eventMetadata.extrinsic?.hash || '',
+      eventIndex: eventMetadata.indexInBlock,
+      swapperAccountId: eventParams.who,
+      poolAccountId: ctx.appConfig.OMNIPOOL_ADDRESS,
+      poolType: SwapFillerType.Omnipool,
+      assetInId: `${eventParams.assetIn}`,
+      assetOutId: `${eventParams.assetOut}`,
+      amountIn: eventParams.amountIn,
+      amountOut: eventParams.amountOut,
+      hubAmountIn: eventParams.hubAmountIn,
+      hubAmountOut: eventParams.hubAmountOut,
+      fees: [
+        {
+          amount: eventParams.assetFeeAmount,
+          assetId: `${eventParams.assetOut}`,
+          recipientId: ctx.appConfig.OMNIPOOL_ADDRESS,
+        },
+        {
+          amount: eventParams.assetFeeAmount,
+          assetId: ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
+          recipientId: ctx.appConfig.OMNIPOOL_ADDRESS,
+        },
+      ],
+      operationType:
+        eventMetadata.name === EventName.Omnipool_BuyExecuted
+          ? TradeOperationType.ExactOut
+          : TradeOperationType.ExactIn,
+      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
+    },
   });
-
-  ctx.batchState.state = {
-    omnipoolAssetOperations: [
-      ...ctx.batchState.state.omnipoolAssetOperations,
-      operationInstance,
-    ],
-  };
 
   await handleOmnipoolAssetVolumeUpdates({
     ctx,
-    assetOperation: operationInstance,
+    swap,
   });
-  //
-  // await handleAssetVolumeUpdates(ctx, operationInstance);
 }

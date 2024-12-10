@@ -1,11 +1,12 @@
 import {
   Asset,
   LiquidityActionType,
+  Stablepool,
   StablepoolAssetHistoricalVolume,
   StablepoolAssetLiquidityAmount,
   StablepoolHistoricalVolume,
   StablepoolLiquidityAction,
-  StablepoolOperation,
+  Swap,
 } from '../../model';
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
@@ -13,34 +14,31 @@ import {
   getOldStablepoolAssetVolume,
   getPoolAssetLastVolumeFromCache,
 } from './index';
-import { getStablepoolAssetsAll } from '../stablepool/assets';
+import { getAssetsByStablepool } from '../stablepool/assets';
 
 // TODO improve conditional usage with poolOperation and liquidityAction
 export async function handleStablepoolVolumeUpdates({
   ctx,
-  poolOperation,
+  pool,
+  swap,
   liquidityAction,
 }: {
   ctx: ProcessorContext<Store>;
-  poolOperation?: StablepoolOperation;
+  pool: Stablepool;
+  swap?: Swap;
   liquidityAction?: StablepoolLiquidityAction;
 }) {
-  if (!poolOperation && !liquidityAction) return;
+  if (!swap && !liquidityAction) return;
 
-  const paraChainBlockHeight = poolOperation
-    ? poolOperation.paraChainBlockHeight
+  const paraChainBlockHeight = swap
+    ? swap.paraChainBlockHeight
     : liquidityAction!.paraChainBlockHeight;
 
-  const relayChainBlockHeight = poolOperation
-    ? poolOperation.relayChainBlockHeight
+  const relayChainBlockHeight = swap
+    ? swap.relayChainBlockHeight
     : liquidityAction!.relayChainBlockHeight;
 
-  const pool = poolOperation ? poolOperation.pool : liquidityAction!.pool;
-
-  let allPoolAssetsToProcess: Asset[] = await getStablepoolAssetsAll(
-    ctx,
-    pool.id
-  );
+  let allAssetsToProcess: Asset[] = await getAssetsByStablepool(ctx, pool.id);
 
   const stablepoolVolumeCollections =
     ctx.batchState.state.stablepoolVolumeCollections;
@@ -62,7 +60,7 @@ export async function handleStablepoolVolumeUpdates({
     stablepoolVolumeCollections.set(volumesCollection.id, volumesCollection);
   }
 
-  for (const asset of allPoolAssetsToProcess) {
+  for (const asset of allAssetsToProcess) {
     const currentAssetVolume = stablepoolAssetVolumes.get(
       `${pool.id}-${asset.id}-${paraChainBlockHeight}`
     );
@@ -76,7 +74,7 @@ export async function handleStablepoolVolumeUpdates({
       (await getOldStablepoolAssetVolume(ctx, asset.id, pool.id));
 
     const newVolume = initStablepoolAssetVolume({
-      ...(!!poolOperation ? { swap: poolOperation } : {}),
+      ...(!!swap ? { swap } : {}),
       ...(!!liquidityAction
         ? {
             liquidityActionData: {
@@ -90,6 +88,7 @@ export async function handleStablepoolVolumeUpdates({
       currentVolume: currentAssetVolume,
       oldVolume,
       asset,
+      pool,
       volumesCollection,
       ctx,
     });
@@ -114,15 +113,17 @@ export function initStablepoolAssetVolume({
   currentVolume,
   oldVolume,
   asset,
+  pool,
   volumesCollection,
   ctx,
 }: {
-  swap?: StablepoolOperation;
+  swap?: Swap;
   liquidityActionData?: {
     actionData: StablepoolLiquidityAction;
     assetData?: StablepoolAssetLiquidityAmount;
   };
   asset: Asset;
+  pool: Stablepool;
   volumesCollection: StablepoolHistoricalVolume;
   currentVolume?: StablepoolAssetHistoricalVolume | undefined;
   oldVolume?: StablepoolAssetHistoricalVolume | undefined;
@@ -130,7 +131,7 @@ export function initStablepoolAssetVolume({
 }) {
   if (!swap && !liquidityActionData) return;
 
-  const poolId = swap ? swap.pool.id : liquidityActionData!.actionData.pool.id;
+  const poolId = pool.id;
   const paraChainBlockHeight = swap
     ? swap.paraChainBlockHeight
     : liquidityActionData!.actionData.paraChainBlockHeight;
@@ -198,12 +199,30 @@ export function initStablepoolAssetVolume({
   let routedLiqFee = BigInt(0);
 
   if (swap) {
-    swapVolumeIn =
-      swap.assetIn.id === newVolume.asset.id ? swap.assetInAmount : BigInt(0);
-    swapVolumeOut =
-      swap.assetOut.id === newVolume.asset.id ? swap.assetOutAmount : BigInt(0);
-    swapFee =
-      swap.assetOut.id === newVolume.asset.id ? swap.assetFeeAmount : BigInt(0);
+    const inputsMap = new Map(
+      swap.inputs.map((inputAssetData) => [
+        inputAssetData.asset.id,
+        inputAssetData,
+      ])
+    );
+    const outputsMap = new Map(
+      swap.outputs.map((outputAssetData) => [
+        outputAssetData.asset.id,
+        outputAssetData,
+      ])
+    );
+    const feesMap = new Map(
+      swap.fees.map((feeAssetData) => [feeAssetData.asset.id, feeAssetData])
+    );
+    swapVolumeIn = inputsMap.has(newVolume.asset.id)
+      ? inputsMap.get(newVolume.asset.id)!.amount
+      : BigInt(0);
+    swapVolumeOut = outputsMap.has(newVolume.asset.id)
+      ? outputsMap.get(newVolume.asset.id)!.amount
+      : BigInt(0);
+    swapFee = feesMap.has(newVolume.asset.id)
+      ? feesMap.get(newVolume.asset.id)!.amount
+      : BigInt(0);
   }
 
   if (liquidityActionData) {
@@ -276,11 +295,16 @@ export function isRoutedStablepoolLiquidityAction({
 }) {
   if (liquidityAction.actionType !== LiquidityActionType.REMOVE) return false;
 
-  return !!ctx.batchState.state.omnipoolAssetOperations.find(
-    (ompAssetOperation) =>
-      ompAssetOperation.paraChainBlockHeight ===
-        liquidityAction.paraChainBlockHeight &&
-      ompAssetOperation.assetOut.asset.id === liquidityAction.pool.id &&
-      ompAssetOperation.assetOutAmount === liquidityAction.sharesAmount
-  );
+  return !![...ctx.batchState.state.swaps.values()].find((swap) => {
+    const swapOutputsMap = new Map(
+      swap.outputs.map((output) => [output.asset.id, output])
+    );
+
+    return (
+      swap.paraChainBlockHeight === liquidityAction.paraChainBlockHeight &&
+      swapOutputsMap.has(liquidityAction.pool.id) &&
+      swapOutputsMap.get(liquidityAction.pool.id)!.amount ===
+        liquidityAction.sharesAmount
+    );
+  });
 }

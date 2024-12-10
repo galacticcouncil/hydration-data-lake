@@ -1,16 +1,14 @@
-import { PoolOperationType } from '../../../model';
+import { SwapFillerType, TradeOperationType } from '../../../model';
 import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   LbpBuyExecutedData,
   LbpSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { getAccount } from '../../accounts';
 import { handleLbpPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
-import { initLbpPoolOperation } from './common';
-import { getAsset } from '../../assets/assetRegistry';
 import { getLbpPoolByAssets } from '../../isolatedPool/lbpPool';
+import { handleSellBuyAsSwap } from '../../trade/swap';
 
 export async function lpbBuyExecuted(
   ctx: ProcessorContext<Store>,
@@ -34,56 +32,48 @@ export async function lpbBuyExecuted(
     return;
   }
 
-  const assetInEntity = await getAsset({
+  const { swap, swapInputs, swapOutputs } = await handleSellBuyAsSwap({
     ctx,
-    id: eventParams.assetIn,
-    ensure: true,
     blockHeader: eventMetadata.blockHeader,
+    data: {
+      eventId: eventMetadata.id,
+      extrinsicHash: eventMetadata.extrinsic?.hash || '',
+      eventIndex: eventMetadata.indexInBlock,
+      swapperAccountId: eventParams.who,
+      poolAccountId: pool.id,
+      poolType: SwapFillerType.LBP,
+      assetInId: `${eventParams.assetIn}`,
+      assetOutId: `${eventParams.assetOut}`,
+      amountIn: eventParams.buyPrice,
+      amountOut: eventParams.amount,
+      fees: [
+        {
+          amount: eventParams.feeAmount,
+          assetId: `${eventParams.feeAsset}`,
+          recipientId: pool.account.id,
+        },
+      ],
+      operationType: TradeOperationType.ExactOut,
+      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
+    },
   });
 
-  const assetOutEntity = await getAsset({
+  await handleLbpPoolVolumeUpdates({
     ctx,
-    id: eventParams.assetOut,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  const assetFeeEntity = await getAsset({
-    ctx,
-    id: eventParams.feeAsset,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  if (!assetInEntity || !assetOutEntity || !assetFeeEntity) return;
-
-  const operationInstance = initLbpPoolOperation({
-    eventId: eventMetadata.id,
-    hash: eventMetadata.extrinsic?.hash || '',
-    indexInBlock: eventMetadata.indexInBlock,
-    account: await getAccount(ctx, eventParams.who),
-    assetIn: assetInEntity,
-    assetOut: assetOutEntity,
-    amountIn: eventParams.amount,
-    amountOut: eventParams.buyPrice,
-    feeAsset: assetFeeEntity,
-    feeAmount: eventParams.feeAmount,
-    operationType: PoolOperationType.BUY,
+    swap,
     pool,
-    relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
   });
 
-  ctx.batchState.state = {
-    lbpPoolOperations: [
-      ...ctx.batchState.state.lbpPoolOperations,
-      operationInstance,
-    ],
-  };
-
-  await handleLbpPoolVolumeUpdates({ ctx, poolOperation: operationInstance });
-
-  await handleAssetVolumeUpdates(ctx, operationInstance);
+  await handleAssetVolumeUpdates(ctx, {
+    paraChainBlockHeight: swap.paraChainBlockHeight,
+    relayChainBlockHeight: swap.relayChainBlockHeight,
+    assetIn: swapInputs[0].asset,
+    assetInAmount: swapInputs[0].amount,
+    assetOut: swapOutputs[0].asset,
+    assetOutAmount: swapOutputs[0].amount,
+  });
 }
 
 export async function lpbSellExecuted(
@@ -108,54 +98,46 @@ export async function lpbSellExecuted(
     return;
   }
 
-  const assetInEntity = await getAsset({
+  const { swap, swapInputs, swapOutputs } = await handleSellBuyAsSwap({
     ctx,
-    id: eventParams.assetIn,
-    ensure: true,
     blockHeader: eventMetadata.blockHeader,
+    data: {
+      eventId: eventMetadata.id,
+      extrinsicHash: eventMetadata.extrinsic?.hash || '',
+      eventIndex: eventMetadata.indexInBlock,
+      swapperAccountId: eventParams.who,
+      poolAccountId: pool.id,
+      poolType: SwapFillerType.LBP,
+      assetInId: `${eventParams.assetIn}`,
+      assetOutId: `${eventParams.assetOut}`,
+      amountIn: eventParams.amount,
+      amountOut: eventParams.salePrice,
+      fees: [
+        {
+          amount: eventParams.feeAmount,
+          assetId: `${eventParams.feeAsset}`,
+          recipientId: pool.account.id,
+        },
+      ],
+      operationType: TradeOperationType.ExactIn,
+      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
+    },
   });
 
-  const assetOutEntity = await getAsset({
+  await handleLbpPoolVolumeUpdates({
     ctx,
-    id: eventParams.assetOut,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  const assetFeeEntity = await getAsset({
-    ctx,
-    id: eventParams.feeAsset,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  if (!assetInEntity || !assetOutEntity || !assetFeeEntity) return;
-
-  const operationInstance = initLbpPoolOperation({
-    eventId: eventMetadata.id,
-    hash: eventMetadata.extrinsic?.hash || '',
-    indexInBlock: eventMetadata.indexInBlock,
-    account: await getAccount(ctx, eventParams.who),
-    assetIn: assetInEntity,
-    assetOut: assetOutEntity,
-    amountIn: eventParams.amount,
-    amountOut: eventParams.salePrice,
-    feeAsset: assetFeeEntity,
-    feeAmount: eventParams.feeAmount,
-    operationType: PoolOperationType.SELL,
+    swap,
     pool,
-    relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
   });
 
-  ctx.batchState.state = {
-    lbpPoolOperations: [
-      ...ctx.batchState.state.lbpPoolOperations,
-      operationInstance,
-    ],
-  };
-
-  await handleLbpPoolVolumeUpdates({ ctx, poolOperation: operationInstance });
-
-  await handleAssetVolumeUpdates(ctx, operationInstance);
+  await handleAssetVolumeUpdates(ctx, {
+    paraChainBlockHeight: swap.paraChainBlockHeight,
+    relayChainBlockHeight: swap.relayChainBlockHeight,
+    assetIn: swapInputs[0].asset,
+    assetInAmount: swapInputs[0].amount,
+    assetOut: swapOutputs[0].asset,
+    assetOutAmount: swapOutputs[0].amount,
+  });
 }

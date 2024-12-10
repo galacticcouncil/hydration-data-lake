@@ -1,23 +1,24 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {StablepoolLiquidityAction} from "./stablepoolLiquidityAction.model"
+import {Swap} from "./swap.model"
 import {Asset} from "./asset.model"
+import {Account} from "./account.model"
 
 @Entity_()
-export class StablepoolAssetLiquidityAmount {
-  constructor(props?: Partial<StablepoolAssetLiquidityAmount>) {
+export class SwapFee {
+  constructor(props?: Partial<SwapFee>) {
     Object.assign(this, props)
   }
 
   /**
-   * poolId-assetId-paraChainBlockHeight-indexInBlock
+   * uuid
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => StablepoolLiquidityAction, {nullable: true})
-  liquidityAction!: StablepoolLiquidityAction
+  @ManyToOne_(() => Swap, {nullable: true})
+  swap!: Swap
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
@@ -25,4 +26,8 @@ export class StablepoolAssetLiquidityAmount {
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   amount!: bigint
+
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  recipient!: Account
 }
