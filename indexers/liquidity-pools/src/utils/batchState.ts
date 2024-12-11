@@ -22,7 +22,6 @@ import {
   SwapFee,
   SwapInputAssetBalance,
   SwapOutputAssetBalance,
-  Trade,
   Transfer,
   XykPool,
   XykPoolHistoricalData,
@@ -43,7 +42,6 @@ export type BatchStatePayload = {
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
 
-  trades: Map<string, Trade>;
   swaps: Map<string, Swap>;
   swapFees: Map<string, SwapFee>;
   swapInputs: Map<string, SwapInputAssetBalance>;
@@ -109,7 +107,6 @@ export class BatchState {
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
 
-    trades: new Map(),
     swaps: new Map(),
     swapFees: new Map(),
     swapInputs: new Map(),

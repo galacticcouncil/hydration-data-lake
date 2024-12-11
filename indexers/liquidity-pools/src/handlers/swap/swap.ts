@@ -7,20 +7,16 @@ import {
   SwapFillerType,
   SwapInputAssetBalance,
   SwapOutputAssetBalance,
-  Trade,
   TradeOperationType,
-  XykPool,
 } from '../../model';
 import { getAccount } from '../accounts';
 import { getAsset } from '../assets/assetRegistry';
-import * as crypto from 'node:crypto';
 import { GetNewSwapResponse } from '../../utils/types';
 
 export async function getNewSwap({
   ctx,
   blockHeader,
   data: {
-    trade,
     swapIndex,
     swapperId,
     fillerId,
@@ -42,7 +38,6 @@ export async function getNewSwap({
   ctx: ProcessorContext<Store>;
   blockHeader: BlockHeader;
   data: {
-    trade: Trade;
     swapIndex: number;
     swapperId: string;
     fillerId: string;
@@ -64,7 +59,6 @@ export async function getNewSwap({
   const swap = new Swap({
     id: eventId,
     swapIndex,
-    trade,
     swapper: await getAccount(ctx, swapperId),
     filler: await getAccount(ctx, fillerId),
     fillerType,
@@ -202,16 +196,10 @@ export async function handleSellBuyAsSwap({
     timestamp: number;
   };
 }): Promise<GetNewSwapResponse> {
-  const trade = new Trade({
-    id: crypto.randomUUID(),
-    initiator: await getAccount(ctx, swapperAccountId),
-  });
-
   const swapData = await getNewSwap({
     ctx,
     blockHeader,
     data: {
-      trade,
       swapIndex: 0,
       swapperId: swapperAccountId,
       fillerId: poolAccountId,
@@ -245,7 +233,6 @@ export async function handleSellBuyAsSwap({
 
   const state = ctx.batchState.state;
 
-  state.trades.set(trade.id, trade);
   state.swaps.set(swap.id, swap);
   for (const fee of swapFees) state.swapFees.set(fee.id, fee);
   for (const swapInput of swapInputs)

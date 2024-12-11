@@ -131,24 +131,11 @@ type SwapOutputAssetBalance @entity {
   amount: BigInt!
 }
 
-type Trade @entity {
-  "uuid"
-  id: ID!
-  "Swapper account picked up from first Swapped event in Trade hops sequence"
-  initiator: Account!
-  routerOperationId: Int @index
-  batchOperationId: Int @index
-  dcaOperationId: Int @index
-  iceOperationId: Int @index
-  swaps: [Swap!]! @derivedFrom(field: "trade")
-}
-
 type Swap @entity {
   "indexer event_id (e.g. <block_number>-<block_hash_partial>-<event_index> 0006516718-9965d-000107)"
   id: ID!
   "Swapped event index within Trade events sequence"
   swapIndex: Int! @index
-  trade: Trade!
   swapper: Account!
   filler: Account!
   fillerType: SwapFillerType!

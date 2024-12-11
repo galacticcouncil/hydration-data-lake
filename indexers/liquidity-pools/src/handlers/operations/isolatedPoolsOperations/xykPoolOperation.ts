@@ -8,7 +8,7 @@ import {
 import { handleXykPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
 import { getXykPool } from '../../isolatedPool/xykPool';
-import { handleSellBuyAsSwap } from '../../trade/swap';
+import { handleSellBuyAsSwap } from '../../swap/swap';
 
 export async function xykBuyExecuted(
   ctx: ProcessorContext<Store>,

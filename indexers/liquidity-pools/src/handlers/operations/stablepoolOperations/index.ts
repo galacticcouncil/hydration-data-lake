@@ -13,7 +13,7 @@ import { SwapFillerType, TradeOperationType } from '../../../model';
 import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
 import { getStablepool } from '../../stablepool/stablepool';
 import { stablepoolLiquidityAddedRemoved } from '../../stablepool/liquidity';
-import { handleSellBuyAsSwap } from '../../trade/swap';
+import { handleSellBuyAsSwap } from '../../swap/swap';
 
 export async function handleStablepoolOperations(
   ctx: ProcessorContext<Store>,

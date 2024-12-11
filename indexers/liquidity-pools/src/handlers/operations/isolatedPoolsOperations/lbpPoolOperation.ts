@@ -8,7 +8,7 @@ import {
 import { handleLbpPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
 import { getLbpPoolByAssets } from '../../isolatedPool/lbpPool';
-import { handleSellBuyAsSwap } from '../../trade/swap';
+import { handleSellBuyAsSwap } from '../../swap/swap';
 
 export async function lpbBuyExecuted(
   ctx: ProcessorContext<Store>,

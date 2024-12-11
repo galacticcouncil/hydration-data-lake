@@ -9,7 +9,7 @@ import {
 } from '../../../parsers/batchBlocksParser/types';
 import { SwapFillerType, TradeOperationType } from '../../../model';
 import { handleOmnipoolAssetVolumeUpdates } from '../../volumes';
-import { handleSellBuyAsSwap } from '../../trade/swap';
+import { handleSellBuyAsSwap } from '../../swap/swap';
 
 export async function handleOmnioolOperations(
   ctx: ProcessorContext<Store>,

@@ -880,40 +880,6 @@ type Query {
     filter: SwapOutputAssetBalanceFilter
   ): SwapOutputAssetBalancesConnection
 
-  """Reads and enables pagination through a set of `Trade`."""
-  trades(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Trade`."""
-    orderBy: [TradesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TradeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: TradeFilter
-  ): TradesConnection
-
   """Reads and enables pagination through a set of `Transfer`."""
   transfers(
     """Only read the first `n` values of the set."""
@@ -1114,7 +1080,6 @@ type Query {
   swapFee(id: String!): SwapFee
   swapInputAssetBalance(id: String!): SwapInputAssetBalance
   swapOutputAssetBalance(id: String!): SwapOutputAssetBalance
-  trade(id: String!): Trade
   transfer(id: String!): Transfer
   xykPool(id: String!): XykPool
   xykPoolHistoricalDatum(id: String!): XykPoolHistoricalDatum
@@ -1453,40 +1418,6 @@ type Account {
     """
     filter: StablepoolFilter
   ): StablepoolsConnection!
-
-  """Reads and enables pagination through a set of `Trade`."""
-  tradesByInitiatorId(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Trade`."""
-    orderBy: [TradesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TradeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: TradeFilter
-  ): TradesConnection!
 
   """Reads and enables pagination through a set of `SwapFee`."""
   swapFeesByRecipientId(
@@ -10920,116 +10851,6 @@ enum AccountsOrderBy {
   STABLEPOOLS_VARIANCE_POPULATION_DESTROYED_AT_PARA_BLOCK_DESC
   STABLEPOOLS_VARIANCE_POPULATION_ACCOUNT_ID_ASC
   STABLEPOOLS_VARIANCE_POPULATION_ACCOUNT_ID_DESC
-  TRADES_BY_INITIATOR_ID_COUNT_ASC
-  TRADES_BY_INITIATOR_ID_COUNT_DESC
-  TRADES_BY_INITIATOR_ID_SUM_ID_ASC
-  TRADES_BY_INITIATOR_ID_SUM_ID_DESC
-  TRADES_BY_INITIATOR_ID_SUM_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_SUM_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_SUM_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_SUM_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_SUM_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_SUM_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_SUM_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_SUM_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_SUM_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_SUM_INITIATOR_ID_DESC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_ID_ASC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_ID_DESC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_DISTINCT_COUNT_INITIATOR_ID_DESC
-  TRADES_BY_INITIATOR_ID_MIN_ID_ASC
-  TRADES_BY_INITIATOR_ID_MIN_ID_DESC
-  TRADES_BY_INITIATOR_ID_MIN_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_MIN_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_MIN_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_MIN_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_MIN_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_MIN_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_MIN_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_MIN_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_MIN_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_MIN_INITIATOR_ID_DESC
-  TRADES_BY_INITIATOR_ID_MAX_ID_ASC
-  TRADES_BY_INITIATOR_ID_MAX_ID_DESC
-  TRADES_BY_INITIATOR_ID_MAX_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_MAX_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_MAX_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_MAX_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_MAX_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_MAX_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_MAX_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_MAX_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_MAX_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_MAX_INITIATOR_ID_DESC
-  TRADES_BY_INITIATOR_ID_AVERAGE_ID_ASC
-  TRADES_BY_INITIATOR_ID_AVERAGE_ID_DESC
-  TRADES_BY_INITIATOR_ID_AVERAGE_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_AVERAGE_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_AVERAGE_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_AVERAGE_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_AVERAGE_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_AVERAGE_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_AVERAGE_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_AVERAGE_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_AVERAGE_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_AVERAGE_INITIATOR_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_SAMPLE_INITIATOR_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_STDDEV_POPULATION_INITIATOR_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_SAMPLE_INITIATOR_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_ROUTER_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_ROUTER_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_BATCH_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_BATCH_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_DCA_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_DCA_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_ICE_OPERATION_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_ICE_OPERATION_ID_DESC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_INITIATOR_ID_ASC
-  TRADES_BY_INITIATOR_ID_VARIANCE_POPULATION_INITIATOR_ID_DESC
   SWAP_FEES_BY_RECIPIENT_ID_COUNT_ASC
   SWAP_FEES_BY_RECIPIENT_ID_COUNT_DESC
   SWAP_FEES_BY_RECIPIENT_ID_SUM_ID_ASC
@@ -11146,8 +10967,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_SUM_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_SUM_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_SUM_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_SUM_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_SUM_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_SUM_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_SUM_FILLER_ID_ASC
@@ -11174,8 +10993,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_FILLER_ID_ASC
@@ -11202,8 +11019,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_MIN_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_MIN_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_MIN_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_MIN_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_MIN_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_MIN_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_MIN_FILLER_ID_ASC
@@ -11230,8 +11045,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_MAX_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_MAX_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_MAX_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_MAX_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_MAX_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_MAX_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_MAX_FILLER_ID_ASC
@@ -11258,8 +11071,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_AVERAGE_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_AVERAGE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_AVERAGE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_AVERAGE_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_AVERAGE_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_AVERAGE_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_AVERAGE_FILLER_ID_ASC
@@ -11286,8 +11097,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_FILLER_ID_ASC
@@ -11314,8 +11123,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_FILLER_ID_ASC
@@ -11342,8 +11149,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_FILLER_ID_ASC
@@ -11370,8 +11175,6 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_SWAPPER_ID_ASC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_SWAPPER_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_FILLER_ID_ASC
@@ -11400,8 +11203,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_SUM_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_SUM_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_SUM_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_SUM_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_SUM_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_SUM_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_SUM_FILLER_ID_ASC
@@ -11428,8 +11229,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_DISTINCT_COUNT_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_DISTINCT_COUNT_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_FILLER_ID_ASC
@@ -11456,8 +11255,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_MIN_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_MIN_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_MIN_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_MIN_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_MIN_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_MIN_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_MIN_FILLER_ID_ASC
@@ -11484,8 +11281,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_MAX_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_MAX_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_MAX_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_MAX_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_MAX_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_MAX_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_MAX_FILLER_ID_ASC
@@ -11512,8 +11307,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_AVERAGE_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_AVERAGE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_AVERAGE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_AVERAGE_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_AVERAGE_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_AVERAGE_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_AVERAGE_FILLER_ID_ASC
@@ -11540,8 +11333,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_FILLER_ID_ASC
@@ -11568,8 +11359,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_STDDEV_POPULATION_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_STDDEV_POPULATION_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_FILLER_ID_ASC
@@ -11596,8 +11385,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_FILLER_ID_ASC
@@ -11624,8 +11411,6 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_ASC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_SWAPPER_ID_ASC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_SWAPPER_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_FILLER_ID_ASC
@@ -20989,12 +20774,8 @@ type Swap {
   relayChainBlockHeight: Int!
   paraChainBlockHeight: Int!
   paraChainTimestamp: Datetime!
-  tradeId: String
   swapperId: String
   fillerId: String
-
-  """Reads a single `Trade` that is related to this `Swap`."""
-  trade: Trade
 
   """Reads a single `Account` that is related to this `Swap`."""
   swapper: Account
@@ -21105,875 +20886,6 @@ type Swap {
     """
     filter: SwapOutputAssetBalanceFilter
   ): SwapOutputAssetBalancesConnection!
-}
-
-type Trade {
-  id: String!
-  routerOperationId: Int
-  batchOperationId: Int
-  dcaOperationId: Int
-  iceOperationId: Int
-  initiatorId: String
-
-  """Reads a single `Account` that is related to this `Trade`."""
-  initiator: Account
-
-  """Reads and enables pagination through a set of `Swap`."""
-  swaps(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Swap`."""
-    orderBy: [SwapsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SwapCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: SwapFilter
-  ): SwapsConnection!
-}
-
-"""A connection to a list of `Swap` values."""
-type SwapsConnection {
-  """A list of `Swap` objects."""
-  nodes: [Swap]!
-
-  """
-  A list of edges which contains the `Swap` and cursor to aid in pagination.
-  """
-  edges: [SwapsEdge!]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `Swap` you could get from the connection."""
-  totalCount: Int!
-
-  """
-  Aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  aggregates: SwapAggregates
-
-  """
-  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  groupedAggregates(
-    """The method to use when grouping `Swap` for these aggregates."""
-    groupBy: [SwapGroupBy!]!
-
-    """Conditions on the grouped aggregates."""
-    having: SwapHavingInput
-  ): [SwapAggregates!]
-}
-
-"""A `Swap` edge in the connection."""
-type SwapsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `Swap` at the end of the edge."""
-  node: Swap
-}
-
-type SwapAggregates {
-  keys: [String!]
-
-  """
-  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  sum: SwapSumAggregates
-
-  """
-  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  distinctCount: SwapDistinctCountAggregates
-
-  """
-  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  min: SwapMinAggregates
-
-  """
-  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  max: SwapMaxAggregates
-
-  """
-  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  average: SwapAverageAggregates
-
-  """
-  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  stddevSample: SwapStddevSampleAggregates
-
-  """
-  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  stddevPopulation: SwapStddevPopulationAggregates
-
-  """
-  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  varianceSample: SwapVarianceSampleAggregates
-
-  """
-  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
-  """
-  variancePopulation: SwapVariancePopulationAggregates
-}
-
-type SwapSumAggregates {
-  """Sum of swapIndex across the matching connection"""
-  swapIndex: BigInt!
-
-  """Sum of hubAmountIn across the matching connection"""
-  hubAmountIn: BigFloat!
-
-  """Sum of hubAmountOut across the matching connection"""
-  hubAmountOut: BigFloat!
-
-  """Sum of eventIndex across the matching connection"""
-  eventIndex: BigInt!
-
-  """Sum of relayChainBlockHeight across the matching connection"""
-  relayChainBlockHeight: BigInt!
-
-  """Sum of paraChainBlockHeight across the matching connection"""
-  paraChainBlockHeight: BigInt!
-}
-
-type SwapDistinctCountAggregates {
-  """Distinct count of id across the matching connection"""
-  id: BigInt
-
-  """Distinct count of swapIndex across the matching connection"""
-  swapIndex: BigInt
-
-  """Distinct count of fillerType across the matching connection"""
-  fillerType: BigInt
-
-  """Distinct count of operationType across the matching connection"""
-  operationType: BigInt
-
-  """Distinct count of hubAmountIn across the matching connection"""
-  hubAmountIn: BigInt
-
-  """Distinct count of hubAmountOut across the matching connection"""
-  hubAmountOut: BigInt
-
-  """Distinct count of eventIndex across the matching connection"""
-  eventIndex: BigInt
-
-  """Distinct count of extrinsicHash across the matching connection"""
-  extrinsicHash: BigInt
-
-  """Distinct count of relayChainBlockHeight across the matching connection"""
-  relayChainBlockHeight: BigInt
-
-  """Distinct count of paraChainBlockHeight across the matching connection"""
-  paraChainBlockHeight: BigInt
-
-  """Distinct count of paraChainTimestamp across the matching connection"""
-  paraChainTimestamp: BigInt
-
-  """Distinct count of tradeId across the matching connection"""
-  tradeId: BigInt
-
-  """Distinct count of swapperId across the matching connection"""
-  swapperId: BigInt
-
-  """Distinct count of fillerId across the matching connection"""
-  fillerId: BigInt
-}
-
-type SwapMinAggregates {
-  """Minimum of swapIndex across the matching connection"""
-  swapIndex: Int
-
-  """Minimum of hubAmountIn across the matching connection"""
-  hubAmountIn: BigFloat
-
-  """Minimum of hubAmountOut across the matching connection"""
-  hubAmountOut: BigFloat
-
-  """Minimum of eventIndex across the matching connection"""
-  eventIndex: Int
-
-  """Minimum of relayChainBlockHeight across the matching connection"""
-  relayChainBlockHeight: Int
-
-  """Minimum of paraChainBlockHeight across the matching connection"""
-  paraChainBlockHeight: Int
-}
-
-type SwapMaxAggregates {
-  """Maximum of swapIndex across the matching connection"""
-  swapIndex: Int
-
-  """Maximum of hubAmountIn across the matching connection"""
-  hubAmountIn: BigFloat
-
-  """Maximum of hubAmountOut across the matching connection"""
-  hubAmountOut: BigFloat
-
-  """Maximum of eventIndex across the matching connection"""
-  eventIndex: Int
-
-  """Maximum of relayChainBlockHeight across the matching connection"""
-  relayChainBlockHeight: Int
-
-  """Maximum of paraChainBlockHeight across the matching connection"""
-  paraChainBlockHeight: Int
-}
-
-type SwapAverageAggregates {
-  """Mean average of swapIndex across the matching connection"""
-  swapIndex: BigFloat
-
-  """Mean average of hubAmountIn across the matching connection"""
-  hubAmountIn: BigFloat
-
-  """Mean average of hubAmountOut across the matching connection"""
-  hubAmountOut: BigFloat
-
-  """Mean average of eventIndex across the matching connection"""
-  eventIndex: BigFloat
-
-  """Mean average of relayChainBlockHeight across the matching connection"""
-  relayChainBlockHeight: BigFloat
-
-  """Mean average of paraChainBlockHeight across the matching connection"""
-  paraChainBlockHeight: BigFloat
-}
-
-type SwapStddevSampleAggregates {
-  """Sample standard deviation of swapIndex across the matching connection"""
-  swapIndex: BigFloat
-
-  """
-  Sample standard deviation of hubAmountIn across the matching connection
-  """
-  hubAmountIn: BigFloat
-
-  """
-  Sample standard deviation of hubAmountOut across the matching connection
-  """
-  hubAmountOut: BigFloat
-
-  """Sample standard deviation of eventIndex across the matching connection"""
-  eventIndex: BigFloat
-
-  """
-  Sample standard deviation of relayChainBlockHeight across the matching connection
-  """
-  relayChainBlockHeight: BigFloat
-
-  """
-  Sample standard deviation of paraChainBlockHeight across the matching connection
-  """
-  paraChainBlockHeight: BigFloat
-}
-
-type SwapStddevPopulationAggregates {
-  """
-  Population standard deviation of swapIndex across the matching connection
-  """
-  swapIndex: BigFloat
-
-  """
-  Population standard deviation of hubAmountIn across the matching connection
-  """
-  hubAmountIn: BigFloat
-
-  """
-  Population standard deviation of hubAmountOut across the matching connection
-  """
-  hubAmountOut: BigFloat
-
-  """
-  Population standard deviation of eventIndex across the matching connection
-  """
-  eventIndex: BigFloat
-
-  """
-  Population standard deviation of relayChainBlockHeight across the matching connection
-  """
-  relayChainBlockHeight: BigFloat
-
-  """
-  Population standard deviation of paraChainBlockHeight across the matching connection
-  """
-  paraChainBlockHeight: BigFloat
-}
-
-type SwapVarianceSampleAggregates {
-  """Sample variance of swapIndex across the matching connection"""
-  swapIndex: BigFloat
-
-  """Sample variance of hubAmountIn across the matching connection"""
-  hubAmountIn: BigFloat
-
-  """Sample variance of hubAmountOut across the matching connection"""
-  hubAmountOut: BigFloat
-
-  """Sample variance of eventIndex across the matching connection"""
-  eventIndex: BigFloat
-
-  """
-  Sample variance of relayChainBlockHeight across the matching connection
-  """
-  relayChainBlockHeight: BigFloat
-
-  """Sample variance of paraChainBlockHeight across the matching connection"""
-  paraChainBlockHeight: BigFloat
-}
-
-type SwapVariancePopulationAggregates {
-  """Population variance of swapIndex across the matching connection"""
-  swapIndex: BigFloat
-
-  """Population variance of hubAmountIn across the matching connection"""
-  hubAmountIn: BigFloat
-
-  """Population variance of hubAmountOut across the matching connection"""
-  hubAmountOut: BigFloat
-
-  """Population variance of eventIndex across the matching connection"""
-  eventIndex: BigFloat
-
-  """
-  Population variance of relayChainBlockHeight across the matching connection
-  """
-  relayChainBlockHeight: BigFloat
-
-  """
-  Population variance of paraChainBlockHeight across the matching connection
-  """
-  paraChainBlockHeight: BigFloat
-}
-
-"""Grouping methods for `Swap` for usage during aggregation."""
-enum SwapGroupBy {
-  SWAP_INDEX
-  FILLER_TYPE
-  OPERATION_TYPE
-  HUB_AMOUNT_IN
-  HUB_AMOUNT_OUT
-  EVENT_INDEX
-  EXTRINSIC_HASH
-  RELAY_CHAIN_BLOCK_HEIGHT
-  PARA_CHAIN_BLOCK_HEIGHT
-  PARA_CHAIN_TIMESTAMP
-  PARA_CHAIN_TIMESTAMP_TRUNCATED_TO_HOUR
-  PARA_CHAIN_TIMESTAMP_TRUNCATED_TO_DAY
-  TRADE_ID
-  SWAPPER_ID
-  FILLER_ID
-}
-
-"""Conditions for `Swap` aggregates."""
-input SwapHavingInput {
-  AND: [SwapHavingInput!]
-  OR: [SwapHavingInput!]
-  sum: SwapHavingSumInput
-  distinctCount: SwapHavingDistinctCountInput
-  min: SwapHavingMinInput
-  max: SwapHavingMaxInput
-  average: SwapHavingAverageInput
-  stddevSample: SwapHavingStddevSampleInput
-  stddevPopulation: SwapHavingStddevPopulationInput
-  varianceSample: SwapHavingVarianceSampleInput
-  variancePopulation: SwapHavingVariancePopulationInput
-}
-
-input SwapHavingSumInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-input SwapHavingDistinctCountInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-input SwapHavingMinInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-input SwapHavingMaxInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-input SwapHavingAverageInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-input SwapHavingStddevSampleInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-input SwapHavingStddevPopulationInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-input SwapHavingVarianceSampleInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-input SwapHavingVariancePopulationInput {
-  swapIndex: HavingIntFilter
-  hubAmountIn: HavingBigfloatFilter
-  hubAmountOut: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
-  relayChainBlockHeight: HavingIntFilter
-  paraChainBlockHeight: HavingIntFilter
-  paraChainTimestamp: HavingDatetimeFilter
-}
-
-"""Methods to use when ordering `Swap`."""
-enum SwapsOrderBy {
-  NATURAL
-  ID_ASC
-  ID_DESC
-  SWAP_INDEX_ASC
-  SWAP_INDEX_DESC
-  FILLER_TYPE_ASC
-  FILLER_TYPE_DESC
-  OPERATION_TYPE_ASC
-  OPERATION_TYPE_DESC
-  HUB_AMOUNT_IN_ASC
-  HUB_AMOUNT_IN_DESC
-  HUB_AMOUNT_OUT_ASC
-  HUB_AMOUNT_OUT_DESC
-  EVENT_INDEX_ASC
-  EVENT_INDEX_DESC
-  EXTRINSIC_HASH_ASC
-  EXTRINSIC_HASH_DESC
-  RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  PARA_CHAIN_BLOCK_HEIGHT_ASC
-  PARA_CHAIN_BLOCK_HEIGHT_DESC
-  PARA_CHAIN_TIMESTAMP_ASC
-  PARA_CHAIN_TIMESTAMP_DESC
-  TRADE_ID_ASC
-  TRADE_ID_DESC
-  SWAPPER_ID_ASC
-  SWAPPER_ID_DESC
-  FILLER_ID_ASC
-  FILLER_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  SWAP_FEES_COUNT_ASC
-  SWAP_FEES_COUNT_DESC
-  SWAP_FEES_SUM_ID_ASC
-  SWAP_FEES_SUM_ID_DESC
-  SWAP_FEES_SUM_AMOUNT_ASC
-  SWAP_FEES_SUM_AMOUNT_DESC
-  SWAP_FEES_SUM_SWAP_ID_ASC
-  SWAP_FEES_SUM_SWAP_ID_DESC
-  SWAP_FEES_SUM_ASSET_ID_ASC
-  SWAP_FEES_SUM_ASSET_ID_DESC
-  SWAP_FEES_SUM_RECIPIENT_ID_ASC
-  SWAP_FEES_SUM_RECIPIENT_ID_DESC
-  SWAP_FEES_DISTINCT_COUNT_ID_ASC
-  SWAP_FEES_DISTINCT_COUNT_ID_DESC
-  SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC
-  SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC
-  SWAP_FEES_DISTINCT_COUNT_SWAP_ID_ASC
-  SWAP_FEES_DISTINCT_COUNT_SWAP_ID_DESC
-  SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC
-  SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC
-  SWAP_FEES_DISTINCT_COUNT_RECIPIENT_ID_ASC
-  SWAP_FEES_DISTINCT_COUNT_RECIPIENT_ID_DESC
-  SWAP_FEES_MIN_ID_ASC
-  SWAP_FEES_MIN_ID_DESC
-  SWAP_FEES_MIN_AMOUNT_ASC
-  SWAP_FEES_MIN_AMOUNT_DESC
-  SWAP_FEES_MIN_SWAP_ID_ASC
-  SWAP_FEES_MIN_SWAP_ID_DESC
-  SWAP_FEES_MIN_ASSET_ID_ASC
-  SWAP_FEES_MIN_ASSET_ID_DESC
-  SWAP_FEES_MIN_RECIPIENT_ID_ASC
-  SWAP_FEES_MIN_RECIPIENT_ID_DESC
-  SWAP_FEES_MAX_ID_ASC
-  SWAP_FEES_MAX_ID_DESC
-  SWAP_FEES_MAX_AMOUNT_ASC
-  SWAP_FEES_MAX_AMOUNT_DESC
-  SWAP_FEES_MAX_SWAP_ID_ASC
-  SWAP_FEES_MAX_SWAP_ID_DESC
-  SWAP_FEES_MAX_ASSET_ID_ASC
-  SWAP_FEES_MAX_ASSET_ID_DESC
-  SWAP_FEES_MAX_RECIPIENT_ID_ASC
-  SWAP_FEES_MAX_RECIPIENT_ID_DESC
-  SWAP_FEES_AVERAGE_ID_ASC
-  SWAP_FEES_AVERAGE_ID_DESC
-  SWAP_FEES_AVERAGE_AMOUNT_ASC
-  SWAP_FEES_AVERAGE_AMOUNT_DESC
-  SWAP_FEES_AVERAGE_SWAP_ID_ASC
-  SWAP_FEES_AVERAGE_SWAP_ID_DESC
-  SWAP_FEES_AVERAGE_ASSET_ID_ASC
-  SWAP_FEES_AVERAGE_ASSET_ID_DESC
-  SWAP_FEES_AVERAGE_RECIPIENT_ID_ASC
-  SWAP_FEES_AVERAGE_RECIPIENT_ID_DESC
-  SWAP_FEES_STDDEV_SAMPLE_ID_ASC
-  SWAP_FEES_STDDEV_SAMPLE_ID_DESC
-  SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC
-  SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC
-  SWAP_FEES_STDDEV_SAMPLE_SWAP_ID_ASC
-  SWAP_FEES_STDDEV_SAMPLE_SWAP_ID_DESC
-  SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC
-  SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC
-  SWAP_FEES_STDDEV_SAMPLE_RECIPIENT_ID_ASC
-  SWAP_FEES_STDDEV_SAMPLE_RECIPIENT_ID_DESC
-  SWAP_FEES_STDDEV_POPULATION_ID_ASC
-  SWAP_FEES_STDDEV_POPULATION_ID_DESC
-  SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC
-  SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC
-  SWAP_FEES_STDDEV_POPULATION_SWAP_ID_ASC
-  SWAP_FEES_STDDEV_POPULATION_SWAP_ID_DESC
-  SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC
-  SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC
-  SWAP_FEES_STDDEV_POPULATION_RECIPIENT_ID_ASC
-  SWAP_FEES_STDDEV_POPULATION_RECIPIENT_ID_DESC
-  SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
-  SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
-  SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC
-  SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC
-  SWAP_FEES_VARIANCE_SAMPLE_SWAP_ID_ASC
-  SWAP_FEES_VARIANCE_SAMPLE_SWAP_ID_DESC
-  SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC
-  SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC
-  SWAP_FEES_VARIANCE_SAMPLE_RECIPIENT_ID_ASC
-  SWAP_FEES_VARIANCE_SAMPLE_RECIPIENT_ID_DESC
-  SWAP_FEES_VARIANCE_POPULATION_ID_ASC
-  SWAP_FEES_VARIANCE_POPULATION_ID_DESC
-  SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC
-  SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC
-  SWAP_FEES_VARIANCE_POPULATION_SWAP_ID_ASC
-  SWAP_FEES_VARIANCE_POPULATION_SWAP_ID_DESC
-  SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC
-  SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC
-  SWAP_FEES_VARIANCE_POPULATION_RECIPIENT_ID_ASC
-  SWAP_FEES_VARIANCE_POPULATION_RECIPIENT_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_COUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_COUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_SUM_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_SUM_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_SUM_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_SUM_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_SUM_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_SUM_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_MIN_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_MIN_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_MIN_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_MIN_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_MIN_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_MIN_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_MAX_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_MAX_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_MAX_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_MAX_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_MAX_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_MAX_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_AVERAGE_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_AVERAGE_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_DESC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC
-  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_COUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_COUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_SUM_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_SUM_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_SUM_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_SUM_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_MIN_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_MIN_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_MIN_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_MIN_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_MAX_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_MAX_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_MAX_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_MAX_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_DESC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC
-  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC
-}
-
-"""
-A condition to be used against `Swap` object types. All fields are tested for equality and combined with a logical ‘and.’
-"""
-input SwapCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: String
-
-  """Checks for equality with the object’s `swapIndex` field."""
-  swapIndex: Int
-
-  """Checks for equality with the object’s `fillerType` field."""
-  fillerType: String
-
-  """Checks for equality with the object’s `operationType` field."""
-  operationType: String
-
-  """Checks for equality with the object’s `hubAmountIn` field."""
-  hubAmountIn: BigFloat
-
-  """Checks for equality with the object’s `hubAmountOut` field."""
-  hubAmountOut: BigFloat
-
-  """Checks for equality with the object’s `eventIndex` field."""
-  eventIndex: Int
-
-  """Checks for equality with the object’s `extrinsicHash` field."""
-  extrinsicHash: String
-
-  """Checks for equality with the object’s `relayChainBlockHeight` field."""
-  relayChainBlockHeight: Int
-
-  """Checks for equality with the object’s `paraChainBlockHeight` field."""
-  paraChainBlockHeight: Int
-
-  """Checks for equality with the object’s `paraChainTimestamp` field."""
-  paraChainTimestamp: Datetime
-
-  """Checks for equality with the object’s `tradeId` field."""
-  tradeId: String
-
-  """Checks for equality with the object’s `swapperId` field."""
-  swapperId: String
-
-  """Checks for equality with the object’s `fillerId` field."""
-  fillerId: String
-}
-
-"""
-A filter to be used against `Swap` object types. All fields are combined with a logical ‘and.’
-"""
-input SwapFilter {
-  """Filter by the object’s `id` field."""
-  id: StringFilter
-
-  """Filter by the object’s `swapIndex` field."""
-  swapIndex: IntFilter
-
-  """Filter by the object’s `fillerType` field."""
-  fillerType: StringFilter
-
-  """Filter by the object’s `operationType` field."""
-  operationType: StringFilter
-
-  """Filter by the object’s `hubAmountIn` field."""
-  hubAmountIn: BigFloatFilter
-
-  """Filter by the object’s `hubAmountOut` field."""
-  hubAmountOut: BigFloatFilter
-
-  """Filter by the object’s `eventIndex` field."""
-  eventIndex: IntFilter
-
-  """Filter by the object’s `extrinsicHash` field."""
-  extrinsicHash: StringFilter
-
-  """Filter by the object’s `relayChainBlockHeight` field."""
-  relayChainBlockHeight: IntFilter
-
-  """Filter by the object’s `paraChainBlockHeight` field."""
-  paraChainBlockHeight: IntFilter
-
-  """Filter by the object’s `paraChainTimestamp` field."""
-  paraChainTimestamp: DatetimeFilter
-
-  """Filter by the object’s `tradeId` field."""
-  tradeId: StringFilter
-
-  """Filter by the object’s `swapperId` field."""
-  swapperId: StringFilter
-
-  """Filter by the object’s `fillerId` field."""
-  fillerId: StringFilter
-
-  """Checks for all expressions in this list."""
-  and: [SwapFilter!]
-
-  """Checks for any expressions in this list."""
-  or: [SwapFilter!]
-
-  """Negates the expression."""
-  not: SwapFilter
 }
 
 """Methods to use when ordering `SwapFee`."""
@@ -24833,660 +23745,815 @@ input StablepoolFilter {
   not: StablepoolFilter
 }
 
-"""A connection to a list of `Trade` values."""
-type TradesConnection {
-  """A list of `Trade` objects."""
-  nodes: [Trade]!
+"""A connection to a list of `Swap` values."""
+type SwapsConnection {
+  """A list of `Swap` objects."""
+  nodes: [Swap]!
 
   """
-  A list of edges which contains the `Trade` and cursor to aid in pagination.
+  A list of edges which contains the `Swap` and cursor to aid in pagination.
   """
-  edges: [TradesEdge!]!
+  edges: [SwapsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* `Trade` you could get from the connection."""
+  """The count of *all* `Swap` you could get from the connection."""
   totalCount: Int!
 
   """
   Aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  aggregates: TradeAggregates
+  aggregates: SwapAggregates
 
   """
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
-    """The method to use when grouping `Trade` for these aggregates."""
-    groupBy: [TradeGroupBy!]!
+    """The method to use when grouping `Swap` for these aggregates."""
+    groupBy: [SwapGroupBy!]!
 
     """Conditions on the grouped aggregates."""
-    having: TradeHavingInput
-  ): [TradeAggregates!]
+    having: SwapHavingInput
+  ): [SwapAggregates!]
 }
 
-"""A `Trade` edge in the connection."""
-type TradesEdge {
+"""A `Swap` edge in the connection."""
+type SwapsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `Trade` at the end of the edge."""
-  node: Trade
+  """The `Swap` at the end of the edge."""
+  node: Swap
 }
 
-type TradeAggregates {
+type SwapAggregates {
   keys: [String!]
 
   """
   Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  sum: TradeSumAggregates
+  sum: SwapSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: TradeDistinctCountAggregates
+  distinctCount: SwapDistinctCountAggregates
 
   """
   Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  min: TradeMinAggregates
+  min: SwapMinAggregates
 
   """
   Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  max: TradeMaxAggregates
+  max: SwapMaxAggregates
 
   """
   Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  average: TradeAverageAggregates
+  average: SwapAverageAggregates
 
   """
   Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevSample: TradeStddevSampleAggregates
+  stddevSample: SwapStddevSampleAggregates
 
   """
   Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevPopulation: TradeStddevPopulationAggregates
+  stddevPopulation: SwapStddevPopulationAggregates
 
   """
   Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  varianceSample: TradeVarianceSampleAggregates
+  varianceSample: SwapVarianceSampleAggregates
 
   """
   Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  variancePopulation: TradeVariancePopulationAggregates
+  variancePopulation: SwapVariancePopulationAggregates
 }
 
-type TradeSumAggregates {
-  """Sum of routerOperationId across the matching connection"""
-  routerOperationId: BigInt!
+type SwapSumAggregates {
+  """Sum of swapIndex across the matching connection"""
+  swapIndex: BigInt!
 
-  """Sum of batchOperationId across the matching connection"""
-  batchOperationId: BigInt!
+  """Sum of hubAmountIn across the matching connection"""
+  hubAmountIn: BigFloat!
 
-  """Sum of dcaOperationId across the matching connection"""
-  dcaOperationId: BigInt!
+  """Sum of hubAmountOut across the matching connection"""
+  hubAmountOut: BigFloat!
 
-  """Sum of iceOperationId across the matching connection"""
-  iceOperationId: BigInt!
+  """Sum of eventIndex across the matching connection"""
+  eventIndex: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
+
+  """Sum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigInt!
 }
 
-type TradeDistinctCountAggregates {
+type SwapDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
-  """Distinct count of routerOperationId across the matching connection"""
-  routerOperationId: BigInt
+  """Distinct count of swapIndex across the matching connection"""
+  swapIndex: BigInt
 
-  """Distinct count of batchOperationId across the matching connection"""
-  batchOperationId: BigInt
+  """Distinct count of fillerType across the matching connection"""
+  fillerType: BigInt
 
-  """Distinct count of dcaOperationId across the matching connection"""
-  dcaOperationId: BigInt
+  """Distinct count of operationType across the matching connection"""
+  operationType: BigInt
 
-  """Distinct count of iceOperationId across the matching connection"""
-  iceOperationId: BigInt
+  """Distinct count of hubAmountIn across the matching connection"""
+  hubAmountIn: BigInt
 
-  """Distinct count of initiatorId across the matching connection"""
-  initiatorId: BigInt
+  """Distinct count of hubAmountOut across the matching connection"""
+  hubAmountOut: BigInt
+
+  """Distinct count of eventIndex across the matching connection"""
+  eventIndex: BigInt
+
+  """Distinct count of extrinsicHash across the matching connection"""
+  extrinsicHash: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
+
+  """Distinct count of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigInt
+
+  """Distinct count of paraChainTimestamp across the matching connection"""
+  paraChainTimestamp: BigInt
+
+  """Distinct count of swapperId across the matching connection"""
+  swapperId: BigInt
+
+  """Distinct count of fillerId across the matching connection"""
+  fillerId: BigInt
 }
 
-type TradeMinAggregates {
-  """Minimum of routerOperationId across the matching connection"""
-  routerOperationId: Int
+type SwapMinAggregates {
+  """Minimum of swapIndex across the matching connection"""
+  swapIndex: Int
 
-  """Minimum of batchOperationId across the matching connection"""
-  batchOperationId: Int
+  """Minimum of hubAmountIn across the matching connection"""
+  hubAmountIn: BigFloat
 
-  """Minimum of dcaOperationId across the matching connection"""
-  dcaOperationId: Int
+  """Minimum of hubAmountOut across the matching connection"""
+  hubAmountOut: BigFloat
 
-  """Minimum of iceOperationId across the matching connection"""
-  iceOperationId: Int
+  """Minimum of eventIndex across the matching connection"""
+  eventIndex: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
+
+  """Minimum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: Int
 }
 
-type TradeMaxAggregates {
-  """Maximum of routerOperationId across the matching connection"""
-  routerOperationId: Int
+type SwapMaxAggregates {
+  """Maximum of swapIndex across the matching connection"""
+  swapIndex: Int
 
-  """Maximum of batchOperationId across the matching connection"""
-  batchOperationId: Int
+  """Maximum of hubAmountIn across the matching connection"""
+  hubAmountIn: BigFloat
 
-  """Maximum of dcaOperationId across the matching connection"""
-  dcaOperationId: Int
+  """Maximum of hubAmountOut across the matching connection"""
+  hubAmountOut: BigFloat
 
-  """Maximum of iceOperationId across the matching connection"""
-  iceOperationId: Int
+  """Maximum of eventIndex across the matching connection"""
+  eventIndex: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
+
+  """Maximum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: Int
 }
 
-type TradeAverageAggregates {
-  """Mean average of routerOperationId across the matching connection"""
-  routerOperationId: BigFloat
+type SwapAverageAggregates {
+  """Mean average of swapIndex across the matching connection"""
+  swapIndex: BigFloat
 
-  """Mean average of batchOperationId across the matching connection"""
-  batchOperationId: BigFloat
+  """Mean average of hubAmountIn across the matching connection"""
+  hubAmountIn: BigFloat
 
-  """Mean average of dcaOperationId across the matching connection"""
-  dcaOperationId: BigFloat
+  """Mean average of hubAmountOut across the matching connection"""
+  hubAmountOut: BigFloat
 
-  """Mean average of iceOperationId across the matching connection"""
-  iceOperationId: BigFloat
+  """Mean average of eventIndex across the matching connection"""
+  eventIndex: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
+
+  """Mean average of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigFloat
 }
 
-type TradeStddevSampleAggregates {
+type SwapStddevSampleAggregates {
+  """Sample standard deviation of swapIndex across the matching connection"""
+  swapIndex: BigFloat
+
   """
-  Sample standard deviation of routerOperationId across the matching connection
+  Sample standard deviation of hubAmountIn across the matching connection
   """
-  routerOperationId: BigFloat
+  hubAmountIn: BigFloat
 
   """
-  Sample standard deviation of batchOperationId across the matching connection
+  Sample standard deviation of hubAmountOut across the matching connection
   """
-  batchOperationId: BigFloat
+  hubAmountOut: BigFloat
+
+  """Sample standard deviation of eventIndex across the matching connection"""
+  eventIndex: BigFloat
 
   """
-  Sample standard deviation of dcaOperationId across the matching connection
+  Sample standard deviation of relayChainBlockHeight across the matching connection
   """
-  dcaOperationId: BigFloat
+  relayChainBlockHeight: BigFloat
 
   """
-  Sample standard deviation of iceOperationId across the matching connection
+  Sample standard deviation of paraChainBlockHeight across the matching connection
   """
-  iceOperationId: BigFloat
+  paraChainBlockHeight: BigFloat
 }
 
-type TradeStddevPopulationAggregates {
+type SwapStddevPopulationAggregates {
   """
-  Population standard deviation of routerOperationId across the matching connection
+  Population standard deviation of swapIndex across the matching connection
   """
-  routerOperationId: BigFloat
-
-  """
-  Population standard deviation of batchOperationId across the matching connection
-  """
-  batchOperationId: BigFloat
+  swapIndex: BigFloat
 
   """
-  Population standard deviation of dcaOperationId across the matching connection
+  Population standard deviation of hubAmountIn across the matching connection
   """
-  dcaOperationId: BigFloat
+  hubAmountIn: BigFloat
 
   """
-  Population standard deviation of iceOperationId across the matching connection
+  Population standard deviation of hubAmountOut across the matching connection
   """
-  iceOperationId: BigFloat
-}
+  hubAmountOut: BigFloat
 
-type TradeVarianceSampleAggregates {
-  """Sample variance of routerOperationId across the matching connection"""
-  routerOperationId: BigFloat
-
-  """Sample variance of batchOperationId across the matching connection"""
-  batchOperationId: BigFloat
-
-  """Sample variance of dcaOperationId across the matching connection"""
-  dcaOperationId: BigFloat
-
-  """Sample variance of iceOperationId across the matching connection"""
-  iceOperationId: BigFloat
-}
-
-type TradeVariancePopulationAggregates {
   """
-  Population variance of routerOperationId across the matching connection
+  Population standard deviation of eventIndex across the matching connection
   """
-  routerOperationId: BigFloat
+  eventIndex: BigFloat
 
-  """Population variance of batchOperationId across the matching connection"""
-  batchOperationId: BigFloat
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
 
-  """Population variance of dcaOperationId across the matching connection"""
-  dcaOperationId: BigFloat
-
-  """Population variance of iceOperationId across the matching connection"""
-  iceOperationId: BigFloat
+  """
+  Population standard deviation of paraChainBlockHeight across the matching connection
+  """
+  paraChainBlockHeight: BigFloat
 }
 
-"""Grouping methods for `Trade` for usage during aggregation."""
-enum TradeGroupBy {
-  ROUTER_OPERATION_ID
-  BATCH_OPERATION_ID
-  DCA_OPERATION_ID
-  ICE_OPERATION_ID
-  INITIATOR_ID
+type SwapVarianceSampleAggregates {
+  """Sample variance of swapIndex across the matching connection"""
+  swapIndex: BigFloat
+
+  """Sample variance of hubAmountIn across the matching connection"""
+  hubAmountIn: BigFloat
+
+  """Sample variance of hubAmountOut across the matching connection"""
+  hubAmountOut: BigFloat
+
+  """Sample variance of eventIndex across the matching connection"""
+  eventIndex: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+
+  """Sample variance of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigFloat
 }
 
-"""Conditions for `Trade` aggregates."""
-input TradeHavingInput {
-  AND: [TradeHavingInput!]
-  OR: [TradeHavingInput!]
-  sum: TradeHavingSumInput
-  distinctCount: TradeHavingDistinctCountInput
-  min: TradeHavingMinInput
-  max: TradeHavingMaxInput
-  average: TradeHavingAverageInput
-  stddevSample: TradeHavingStddevSampleInput
-  stddevPopulation: TradeHavingStddevPopulationInput
-  varianceSample: TradeHavingVarianceSampleInput
-  variancePopulation: TradeHavingVariancePopulationInput
+type SwapVariancePopulationAggregates {
+  """Population variance of swapIndex across the matching connection"""
+  swapIndex: BigFloat
+
+  """Population variance of hubAmountIn across the matching connection"""
+  hubAmountIn: BigFloat
+
+  """Population variance of hubAmountOut across the matching connection"""
+  hubAmountOut: BigFloat
+
+  """Population variance of eventIndex across the matching connection"""
+  eventIndex: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+
+  """
+  Population variance of paraChainBlockHeight across the matching connection
+  """
+  paraChainBlockHeight: BigFloat
 }
 
-input TradeHavingSumInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+"""Grouping methods for `Swap` for usage during aggregation."""
+enum SwapGroupBy {
+  SWAP_INDEX
+  FILLER_TYPE
+  OPERATION_TYPE
+  HUB_AMOUNT_IN
+  HUB_AMOUNT_OUT
+  EVENT_INDEX
+  EXTRINSIC_HASH
+  RELAY_CHAIN_BLOCK_HEIGHT
+  PARA_CHAIN_BLOCK_HEIGHT
+  PARA_CHAIN_TIMESTAMP
+  PARA_CHAIN_TIMESTAMP_TRUNCATED_TO_HOUR
+  PARA_CHAIN_TIMESTAMP_TRUNCATED_TO_DAY
+  SWAPPER_ID
+  FILLER_ID
 }
 
-input TradeHavingDistinctCountInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+"""Conditions for `Swap` aggregates."""
+input SwapHavingInput {
+  AND: [SwapHavingInput!]
+  OR: [SwapHavingInput!]
+  sum: SwapHavingSumInput
+  distinctCount: SwapHavingDistinctCountInput
+  min: SwapHavingMinInput
+  max: SwapHavingMaxInput
+  average: SwapHavingAverageInput
+  stddevSample: SwapHavingStddevSampleInput
+  stddevPopulation: SwapHavingStddevPopulationInput
+  varianceSample: SwapHavingVarianceSampleInput
+  variancePopulation: SwapHavingVariancePopulationInput
 }
 
-input TradeHavingMinInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+input SwapHavingSumInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
 }
 
-input TradeHavingMaxInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+input SwapHavingDistinctCountInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
 }
 
-input TradeHavingAverageInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+input SwapHavingMinInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
 }
 
-input TradeHavingStddevSampleInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+input SwapHavingMaxInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
 }
 
-input TradeHavingStddevPopulationInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+input SwapHavingAverageInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
 }
 
-input TradeHavingVarianceSampleInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+input SwapHavingStddevSampleInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
 }
 
-input TradeHavingVariancePopulationInput {
-  routerOperationId: HavingIntFilter
-  batchOperationId: HavingIntFilter
-  dcaOperationId: HavingIntFilter
-  iceOperationId: HavingIntFilter
+input SwapHavingStddevPopulationInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
 }
 
-"""Methods to use when ordering `Trade`."""
-enum TradesOrderBy {
+input SwapHavingVarianceSampleInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
+}
+
+input SwapHavingVariancePopulationInput {
+  swapIndex: HavingIntFilter
+  hubAmountIn: HavingBigfloatFilter
+  hubAmountOut: HavingBigfloatFilter
+  eventIndex: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  paraChainTimestamp: HavingDatetimeFilter
+}
+
+"""Methods to use when ordering `Swap`."""
+enum SwapsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
-  ROUTER_OPERATION_ID_ASC
-  ROUTER_OPERATION_ID_DESC
-  BATCH_OPERATION_ID_ASC
-  BATCH_OPERATION_ID_DESC
-  DCA_OPERATION_ID_ASC
-  DCA_OPERATION_ID_DESC
-  ICE_OPERATION_ID_ASC
-  ICE_OPERATION_ID_DESC
-  INITIATOR_ID_ASC
-  INITIATOR_ID_DESC
+  SWAP_INDEX_ASC
+  SWAP_INDEX_DESC
+  FILLER_TYPE_ASC
+  FILLER_TYPE_DESC
+  OPERATION_TYPE_ASC
+  OPERATION_TYPE_DESC
+  HUB_AMOUNT_IN_ASC
+  HUB_AMOUNT_IN_DESC
+  HUB_AMOUNT_OUT_ASC
+  HUB_AMOUNT_OUT_DESC
+  EVENT_INDEX_ASC
+  EVENT_INDEX_DESC
+  EXTRINSIC_HASH_ASC
+  EXTRINSIC_HASH_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  PARA_CHAIN_BLOCK_HEIGHT_ASC
+  PARA_CHAIN_BLOCK_HEIGHT_DESC
+  PARA_CHAIN_TIMESTAMP_ASC
+  PARA_CHAIN_TIMESTAMP_DESC
+  SWAPPER_ID_ASC
+  SWAPPER_ID_DESC
+  FILLER_ID_ASC
+  FILLER_ID_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
-  SWAPS_COUNT_ASC
-  SWAPS_COUNT_DESC
-  SWAPS_SUM_ID_ASC
-  SWAPS_SUM_ID_DESC
-  SWAPS_SUM_SWAP_INDEX_ASC
-  SWAPS_SUM_SWAP_INDEX_DESC
-  SWAPS_SUM_FILLER_TYPE_ASC
-  SWAPS_SUM_FILLER_TYPE_DESC
-  SWAPS_SUM_OPERATION_TYPE_ASC
-  SWAPS_SUM_OPERATION_TYPE_DESC
-  SWAPS_SUM_HUB_AMOUNT_IN_ASC
-  SWAPS_SUM_HUB_AMOUNT_IN_DESC
-  SWAPS_SUM_HUB_AMOUNT_OUT_ASC
-  SWAPS_SUM_HUB_AMOUNT_OUT_DESC
-  SWAPS_SUM_EVENT_INDEX_ASC
-  SWAPS_SUM_EVENT_INDEX_DESC
-  SWAPS_SUM_EXTRINSIC_HASH_ASC
-  SWAPS_SUM_EXTRINSIC_HASH_DESC
-  SWAPS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_SUM_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_SUM_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_SUM_TRADE_ID_ASC
-  SWAPS_SUM_TRADE_ID_DESC
-  SWAPS_SUM_SWAPPER_ID_ASC
-  SWAPS_SUM_SWAPPER_ID_DESC
-  SWAPS_SUM_FILLER_ID_ASC
-  SWAPS_SUM_FILLER_ID_DESC
-  SWAPS_DISTINCT_COUNT_ID_ASC
-  SWAPS_DISTINCT_COUNT_ID_DESC
-  SWAPS_DISTINCT_COUNT_SWAP_INDEX_ASC
-  SWAPS_DISTINCT_COUNT_SWAP_INDEX_DESC
-  SWAPS_DISTINCT_COUNT_FILLER_TYPE_ASC
-  SWAPS_DISTINCT_COUNT_FILLER_TYPE_DESC
-  SWAPS_DISTINCT_COUNT_OPERATION_TYPE_ASC
-  SWAPS_DISTINCT_COUNT_OPERATION_TYPE_DESC
-  SWAPS_DISTINCT_COUNT_HUB_AMOUNT_IN_ASC
-  SWAPS_DISTINCT_COUNT_HUB_AMOUNT_IN_DESC
-  SWAPS_DISTINCT_COUNT_HUB_AMOUNT_OUT_ASC
-  SWAPS_DISTINCT_COUNT_HUB_AMOUNT_OUT_DESC
-  SWAPS_DISTINCT_COUNT_EVENT_INDEX_ASC
-  SWAPS_DISTINCT_COUNT_EVENT_INDEX_DESC
-  SWAPS_DISTINCT_COUNT_EXTRINSIC_HASH_ASC
-  SWAPS_DISTINCT_COUNT_EXTRINSIC_HASH_DESC
-  SWAPS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_DISTINCT_COUNT_TRADE_ID_ASC
-  SWAPS_DISTINCT_COUNT_TRADE_ID_DESC
-  SWAPS_DISTINCT_COUNT_SWAPPER_ID_ASC
-  SWAPS_DISTINCT_COUNT_SWAPPER_ID_DESC
-  SWAPS_DISTINCT_COUNT_FILLER_ID_ASC
-  SWAPS_DISTINCT_COUNT_FILLER_ID_DESC
-  SWAPS_MIN_ID_ASC
-  SWAPS_MIN_ID_DESC
-  SWAPS_MIN_SWAP_INDEX_ASC
-  SWAPS_MIN_SWAP_INDEX_DESC
-  SWAPS_MIN_FILLER_TYPE_ASC
-  SWAPS_MIN_FILLER_TYPE_DESC
-  SWAPS_MIN_OPERATION_TYPE_ASC
-  SWAPS_MIN_OPERATION_TYPE_DESC
-  SWAPS_MIN_HUB_AMOUNT_IN_ASC
-  SWAPS_MIN_HUB_AMOUNT_IN_DESC
-  SWAPS_MIN_HUB_AMOUNT_OUT_ASC
-  SWAPS_MIN_HUB_AMOUNT_OUT_DESC
-  SWAPS_MIN_EVENT_INDEX_ASC
-  SWAPS_MIN_EVENT_INDEX_DESC
-  SWAPS_MIN_EXTRINSIC_HASH_ASC
-  SWAPS_MIN_EXTRINSIC_HASH_DESC
-  SWAPS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_MIN_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_MIN_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_MIN_TRADE_ID_ASC
-  SWAPS_MIN_TRADE_ID_DESC
-  SWAPS_MIN_SWAPPER_ID_ASC
-  SWAPS_MIN_SWAPPER_ID_DESC
-  SWAPS_MIN_FILLER_ID_ASC
-  SWAPS_MIN_FILLER_ID_DESC
-  SWAPS_MAX_ID_ASC
-  SWAPS_MAX_ID_DESC
-  SWAPS_MAX_SWAP_INDEX_ASC
-  SWAPS_MAX_SWAP_INDEX_DESC
-  SWAPS_MAX_FILLER_TYPE_ASC
-  SWAPS_MAX_FILLER_TYPE_DESC
-  SWAPS_MAX_OPERATION_TYPE_ASC
-  SWAPS_MAX_OPERATION_TYPE_DESC
-  SWAPS_MAX_HUB_AMOUNT_IN_ASC
-  SWAPS_MAX_HUB_AMOUNT_IN_DESC
-  SWAPS_MAX_HUB_AMOUNT_OUT_ASC
-  SWAPS_MAX_HUB_AMOUNT_OUT_DESC
-  SWAPS_MAX_EVENT_INDEX_ASC
-  SWAPS_MAX_EVENT_INDEX_DESC
-  SWAPS_MAX_EXTRINSIC_HASH_ASC
-  SWAPS_MAX_EXTRINSIC_HASH_DESC
-  SWAPS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_MAX_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_MAX_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_MAX_TRADE_ID_ASC
-  SWAPS_MAX_TRADE_ID_DESC
-  SWAPS_MAX_SWAPPER_ID_ASC
-  SWAPS_MAX_SWAPPER_ID_DESC
-  SWAPS_MAX_FILLER_ID_ASC
-  SWAPS_MAX_FILLER_ID_DESC
-  SWAPS_AVERAGE_ID_ASC
-  SWAPS_AVERAGE_ID_DESC
-  SWAPS_AVERAGE_SWAP_INDEX_ASC
-  SWAPS_AVERAGE_SWAP_INDEX_DESC
-  SWAPS_AVERAGE_FILLER_TYPE_ASC
-  SWAPS_AVERAGE_FILLER_TYPE_DESC
-  SWAPS_AVERAGE_OPERATION_TYPE_ASC
-  SWAPS_AVERAGE_OPERATION_TYPE_DESC
-  SWAPS_AVERAGE_HUB_AMOUNT_IN_ASC
-  SWAPS_AVERAGE_HUB_AMOUNT_IN_DESC
-  SWAPS_AVERAGE_HUB_AMOUNT_OUT_ASC
-  SWAPS_AVERAGE_HUB_AMOUNT_OUT_DESC
-  SWAPS_AVERAGE_EVENT_INDEX_ASC
-  SWAPS_AVERAGE_EVENT_INDEX_DESC
-  SWAPS_AVERAGE_EXTRINSIC_HASH_ASC
-  SWAPS_AVERAGE_EXTRINSIC_HASH_DESC
-  SWAPS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_AVERAGE_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_AVERAGE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_AVERAGE_TRADE_ID_ASC
-  SWAPS_AVERAGE_TRADE_ID_DESC
-  SWAPS_AVERAGE_SWAPPER_ID_ASC
-  SWAPS_AVERAGE_SWAPPER_ID_DESC
-  SWAPS_AVERAGE_FILLER_ID_ASC
-  SWAPS_AVERAGE_FILLER_ID_DESC
-  SWAPS_STDDEV_SAMPLE_ID_ASC
-  SWAPS_STDDEV_SAMPLE_ID_DESC
-  SWAPS_STDDEV_SAMPLE_SWAP_INDEX_ASC
-  SWAPS_STDDEV_SAMPLE_SWAP_INDEX_DESC
-  SWAPS_STDDEV_SAMPLE_FILLER_TYPE_ASC
-  SWAPS_STDDEV_SAMPLE_FILLER_TYPE_DESC
-  SWAPS_STDDEV_SAMPLE_OPERATION_TYPE_ASC
-  SWAPS_STDDEV_SAMPLE_OPERATION_TYPE_DESC
-  SWAPS_STDDEV_SAMPLE_HUB_AMOUNT_IN_ASC
-  SWAPS_STDDEV_SAMPLE_HUB_AMOUNT_IN_DESC
-  SWAPS_STDDEV_SAMPLE_HUB_AMOUNT_OUT_ASC
-  SWAPS_STDDEV_SAMPLE_HUB_AMOUNT_OUT_DESC
-  SWAPS_STDDEV_SAMPLE_EVENT_INDEX_ASC
-  SWAPS_STDDEV_SAMPLE_EVENT_INDEX_DESC
-  SWAPS_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC
-  SWAPS_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC
-  SWAPS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_STDDEV_SAMPLE_TRADE_ID_ASC
-  SWAPS_STDDEV_SAMPLE_TRADE_ID_DESC
-  SWAPS_STDDEV_SAMPLE_SWAPPER_ID_ASC
-  SWAPS_STDDEV_SAMPLE_SWAPPER_ID_DESC
-  SWAPS_STDDEV_SAMPLE_FILLER_ID_ASC
-  SWAPS_STDDEV_SAMPLE_FILLER_ID_DESC
-  SWAPS_STDDEV_POPULATION_ID_ASC
-  SWAPS_STDDEV_POPULATION_ID_DESC
-  SWAPS_STDDEV_POPULATION_SWAP_INDEX_ASC
-  SWAPS_STDDEV_POPULATION_SWAP_INDEX_DESC
-  SWAPS_STDDEV_POPULATION_FILLER_TYPE_ASC
-  SWAPS_STDDEV_POPULATION_FILLER_TYPE_DESC
-  SWAPS_STDDEV_POPULATION_OPERATION_TYPE_ASC
-  SWAPS_STDDEV_POPULATION_OPERATION_TYPE_DESC
-  SWAPS_STDDEV_POPULATION_HUB_AMOUNT_IN_ASC
-  SWAPS_STDDEV_POPULATION_HUB_AMOUNT_IN_DESC
-  SWAPS_STDDEV_POPULATION_HUB_AMOUNT_OUT_ASC
-  SWAPS_STDDEV_POPULATION_HUB_AMOUNT_OUT_DESC
-  SWAPS_STDDEV_POPULATION_EVENT_INDEX_ASC
-  SWAPS_STDDEV_POPULATION_EVENT_INDEX_DESC
-  SWAPS_STDDEV_POPULATION_EXTRINSIC_HASH_ASC
-  SWAPS_STDDEV_POPULATION_EXTRINSIC_HASH_DESC
-  SWAPS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_STDDEV_POPULATION_TRADE_ID_ASC
-  SWAPS_STDDEV_POPULATION_TRADE_ID_DESC
-  SWAPS_STDDEV_POPULATION_SWAPPER_ID_ASC
-  SWAPS_STDDEV_POPULATION_SWAPPER_ID_DESC
-  SWAPS_STDDEV_POPULATION_FILLER_ID_ASC
-  SWAPS_STDDEV_POPULATION_FILLER_ID_DESC
-  SWAPS_VARIANCE_SAMPLE_ID_ASC
-  SWAPS_VARIANCE_SAMPLE_ID_DESC
-  SWAPS_VARIANCE_SAMPLE_SWAP_INDEX_ASC
-  SWAPS_VARIANCE_SAMPLE_SWAP_INDEX_DESC
-  SWAPS_VARIANCE_SAMPLE_FILLER_TYPE_ASC
-  SWAPS_VARIANCE_SAMPLE_FILLER_TYPE_DESC
-  SWAPS_VARIANCE_SAMPLE_OPERATION_TYPE_ASC
-  SWAPS_VARIANCE_SAMPLE_OPERATION_TYPE_DESC
-  SWAPS_VARIANCE_SAMPLE_HUB_AMOUNT_IN_ASC
-  SWAPS_VARIANCE_SAMPLE_HUB_AMOUNT_IN_DESC
-  SWAPS_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_ASC
-  SWAPS_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_DESC
-  SWAPS_VARIANCE_SAMPLE_EVENT_INDEX_ASC
-  SWAPS_VARIANCE_SAMPLE_EVENT_INDEX_DESC
-  SWAPS_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC
-  SWAPS_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC
-  SWAPS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_VARIANCE_SAMPLE_TRADE_ID_ASC
-  SWAPS_VARIANCE_SAMPLE_TRADE_ID_DESC
-  SWAPS_VARIANCE_SAMPLE_SWAPPER_ID_ASC
-  SWAPS_VARIANCE_SAMPLE_SWAPPER_ID_DESC
-  SWAPS_VARIANCE_SAMPLE_FILLER_ID_ASC
-  SWAPS_VARIANCE_SAMPLE_FILLER_ID_DESC
-  SWAPS_VARIANCE_POPULATION_ID_ASC
-  SWAPS_VARIANCE_POPULATION_ID_DESC
-  SWAPS_VARIANCE_POPULATION_SWAP_INDEX_ASC
-  SWAPS_VARIANCE_POPULATION_SWAP_INDEX_DESC
-  SWAPS_VARIANCE_POPULATION_FILLER_TYPE_ASC
-  SWAPS_VARIANCE_POPULATION_FILLER_TYPE_DESC
-  SWAPS_VARIANCE_POPULATION_OPERATION_TYPE_ASC
-  SWAPS_VARIANCE_POPULATION_OPERATION_TYPE_DESC
-  SWAPS_VARIANCE_POPULATION_HUB_AMOUNT_IN_ASC
-  SWAPS_VARIANCE_POPULATION_HUB_AMOUNT_IN_DESC
-  SWAPS_VARIANCE_POPULATION_HUB_AMOUNT_OUT_ASC
-  SWAPS_VARIANCE_POPULATION_HUB_AMOUNT_OUT_DESC
-  SWAPS_VARIANCE_POPULATION_EVENT_INDEX_ASC
-  SWAPS_VARIANCE_POPULATION_EVENT_INDEX_DESC
-  SWAPS_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC
-  SWAPS_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC
-  SWAPS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC
-  SWAPS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
-  SWAPS_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_ASC
-  SWAPS_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_DESC
-  SWAPS_VARIANCE_POPULATION_TRADE_ID_ASC
-  SWAPS_VARIANCE_POPULATION_TRADE_ID_DESC
-  SWAPS_VARIANCE_POPULATION_SWAPPER_ID_ASC
-  SWAPS_VARIANCE_POPULATION_SWAPPER_ID_DESC
-  SWAPS_VARIANCE_POPULATION_FILLER_ID_ASC
-  SWAPS_VARIANCE_POPULATION_FILLER_ID_DESC
+  SWAP_FEES_COUNT_ASC
+  SWAP_FEES_COUNT_DESC
+  SWAP_FEES_SUM_ID_ASC
+  SWAP_FEES_SUM_ID_DESC
+  SWAP_FEES_SUM_AMOUNT_ASC
+  SWAP_FEES_SUM_AMOUNT_DESC
+  SWAP_FEES_SUM_SWAP_ID_ASC
+  SWAP_FEES_SUM_SWAP_ID_DESC
+  SWAP_FEES_SUM_ASSET_ID_ASC
+  SWAP_FEES_SUM_ASSET_ID_DESC
+  SWAP_FEES_SUM_RECIPIENT_ID_ASC
+  SWAP_FEES_SUM_RECIPIENT_ID_DESC
+  SWAP_FEES_DISTINCT_COUNT_ID_ASC
+  SWAP_FEES_DISTINCT_COUNT_ID_DESC
+  SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC
+  SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC
+  SWAP_FEES_DISTINCT_COUNT_SWAP_ID_ASC
+  SWAP_FEES_DISTINCT_COUNT_SWAP_ID_DESC
+  SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC
+  SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC
+  SWAP_FEES_DISTINCT_COUNT_RECIPIENT_ID_ASC
+  SWAP_FEES_DISTINCT_COUNT_RECIPIENT_ID_DESC
+  SWAP_FEES_MIN_ID_ASC
+  SWAP_FEES_MIN_ID_DESC
+  SWAP_FEES_MIN_AMOUNT_ASC
+  SWAP_FEES_MIN_AMOUNT_DESC
+  SWAP_FEES_MIN_SWAP_ID_ASC
+  SWAP_FEES_MIN_SWAP_ID_DESC
+  SWAP_FEES_MIN_ASSET_ID_ASC
+  SWAP_FEES_MIN_ASSET_ID_DESC
+  SWAP_FEES_MIN_RECIPIENT_ID_ASC
+  SWAP_FEES_MIN_RECIPIENT_ID_DESC
+  SWAP_FEES_MAX_ID_ASC
+  SWAP_FEES_MAX_ID_DESC
+  SWAP_FEES_MAX_AMOUNT_ASC
+  SWAP_FEES_MAX_AMOUNT_DESC
+  SWAP_FEES_MAX_SWAP_ID_ASC
+  SWAP_FEES_MAX_SWAP_ID_DESC
+  SWAP_FEES_MAX_ASSET_ID_ASC
+  SWAP_FEES_MAX_ASSET_ID_DESC
+  SWAP_FEES_MAX_RECIPIENT_ID_ASC
+  SWAP_FEES_MAX_RECIPIENT_ID_DESC
+  SWAP_FEES_AVERAGE_ID_ASC
+  SWAP_FEES_AVERAGE_ID_DESC
+  SWAP_FEES_AVERAGE_AMOUNT_ASC
+  SWAP_FEES_AVERAGE_AMOUNT_DESC
+  SWAP_FEES_AVERAGE_SWAP_ID_ASC
+  SWAP_FEES_AVERAGE_SWAP_ID_DESC
+  SWAP_FEES_AVERAGE_ASSET_ID_ASC
+  SWAP_FEES_AVERAGE_ASSET_ID_DESC
+  SWAP_FEES_AVERAGE_RECIPIENT_ID_ASC
+  SWAP_FEES_AVERAGE_RECIPIENT_ID_DESC
+  SWAP_FEES_STDDEV_SAMPLE_ID_ASC
+  SWAP_FEES_STDDEV_SAMPLE_ID_DESC
+  SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC
+  SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC
+  SWAP_FEES_STDDEV_SAMPLE_SWAP_ID_ASC
+  SWAP_FEES_STDDEV_SAMPLE_SWAP_ID_DESC
+  SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC
+  SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC
+  SWAP_FEES_STDDEV_SAMPLE_RECIPIENT_ID_ASC
+  SWAP_FEES_STDDEV_SAMPLE_RECIPIENT_ID_DESC
+  SWAP_FEES_STDDEV_POPULATION_ID_ASC
+  SWAP_FEES_STDDEV_POPULATION_ID_DESC
+  SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC
+  SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC
+  SWAP_FEES_STDDEV_POPULATION_SWAP_ID_ASC
+  SWAP_FEES_STDDEV_POPULATION_SWAP_ID_DESC
+  SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC
+  SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC
+  SWAP_FEES_STDDEV_POPULATION_RECIPIENT_ID_ASC
+  SWAP_FEES_STDDEV_POPULATION_RECIPIENT_ID_DESC
+  SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
+  SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
+  SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC
+  SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC
+  SWAP_FEES_VARIANCE_SAMPLE_SWAP_ID_ASC
+  SWAP_FEES_VARIANCE_SAMPLE_SWAP_ID_DESC
+  SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC
+  SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC
+  SWAP_FEES_VARIANCE_SAMPLE_RECIPIENT_ID_ASC
+  SWAP_FEES_VARIANCE_SAMPLE_RECIPIENT_ID_DESC
+  SWAP_FEES_VARIANCE_POPULATION_ID_ASC
+  SWAP_FEES_VARIANCE_POPULATION_ID_DESC
+  SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC
+  SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC
+  SWAP_FEES_VARIANCE_POPULATION_SWAP_ID_ASC
+  SWAP_FEES_VARIANCE_POPULATION_SWAP_ID_DESC
+  SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC
+  SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC
+  SWAP_FEES_VARIANCE_POPULATION_RECIPIENT_ID_ASC
+  SWAP_FEES_VARIANCE_POPULATION_RECIPIENT_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_COUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_COUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_SUM_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_SUM_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_SUM_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_SUM_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_SUM_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_SUM_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_MIN_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_MIN_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_MIN_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_MIN_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_MIN_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_MIN_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_MAX_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_MAX_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_MAX_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_MAX_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_MAX_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_MAX_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_AVERAGE_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_AVERAGE_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_DESC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC
+  SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_COUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_COUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_SUM_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_SUM_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_SUM_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_SUM_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_MIN_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_MIN_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_MIN_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_MIN_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_MAX_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_MAX_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_MAX_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_MAX_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_DESC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC
+  SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC
 }
 
 """
-A condition to be used against `Trade` object types. All fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `Swap` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
-input TradeCondition {
+input SwapCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
-  """Checks for equality with the object’s `routerOperationId` field."""
-  routerOperationId: Int
+  """Checks for equality with the object’s `swapIndex` field."""
+  swapIndex: Int
 
-  """Checks for equality with the object’s `batchOperationId` field."""
-  batchOperationId: Int
+  """Checks for equality with the object’s `fillerType` field."""
+  fillerType: String
 
-  """Checks for equality with the object’s `dcaOperationId` field."""
-  dcaOperationId: Int
+  """Checks for equality with the object’s `operationType` field."""
+  operationType: String
 
-  """Checks for equality with the object’s `iceOperationId` field."""
-  iceOperationId: Int
+  """Checks for equality with the object’s `hubAmountIn` field."""
+  hubAmountIn: BigFloat
 
-  """Checks for equality with the object’s `initiatorId` field."""
-  initiatorId: String
+  """Checks for equality with the object’s `hubAmountOut` field."""
+  hubAmountOut: BigFloat
+
+  """Checks for equality with the object’s `eventIndex` field."""
+  eventIndex: Int
+
+  """Checks for equality with the object’s `extrinsicHash` field."""
+  extrinsicHash: String
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
+
+  """Checks for equality with the object’s `paraChainBlockHeight` field."""
+  paraChainBlockHeight: Int
+
+  """Checks for equality with the object’s `paraChainTimestamp` field."""
+  paraChainTimestamp: Datetime
+
+  """Checks for equality with the object’s `swapperId` field."""
+  swapperId: String
+
+  """Checks for equality with the object’s `fillerId` field."""
+  fillerId: String
 }
 
 """
-A filter to be used against `Trade` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `Swap` object types. All fields are combined with a logical ‘and.’
 """
-input TradeFilter {
+input SwapFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
-  """Filter by the object’s `routerOperationId` field."""
-  routerOperationId: IntFilter
+  """Filter by the object’s `swapIndex` field."""
+  swapIndex: IntFilter
 
-  """Filter by the object’s `batchOperationId` field."""
-  batchOperationId: IntFilter
+  """Filter by the object’s `fillerType` field."""
+  fillerType: StringFilter
 
-  """Filter by the object’s `dcaOperationId` field."""
-  dcaOperationId: IntFilter
+  """Filter by the object’s `operationType` field."""
+  operationType: StringFilter
 
-  """Filter by the object’s `iceOperationId` field."""
-  iceOperationId: IntFilter
+  """Filter by the object’s `hubAmountIn` field."""
+  hubAmountIn: BigFloatFilter
 
-  """Filter by the object’s `initiatorId` field."""
-  initiatorId: StringFilter
+  """Filter by the object’s `hubAmountOut` field."""
+  hubAmountOut: BigFloatFilter
+
+  """Filter by the object’s `eventIndex` field."""
+  eventIndex: IntFilter
+
+  """Filter by the object’s `extrinsicHash` field."""
+  extrinsicHash: StringFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
+
+  """Filter by the object’s `paraChainBlockHeight` field."""
+  paraChainBlockHeight: IntFilter
+
+  """Filter by the object’s `paraChainTimestamp` field."""
+  paraChainTimestamp: DatetimeFilter
+
+  """Filter by the object’s `swapperId` field."""
+  swapperId: StringFilter
+
+  """Filter by the object’s `fillerId` field."""
+  fillerId: StringFilter
 
   """Checks for all expressions in this list."""
-  and: [TradeFilter!]
+  and: [SwapFilter!]
 
   """Checks for any expressions in this list."""
-  or: [TradeFilter!]
+  or: [SwapFilter!]
 
   """Negates the expression."""
-  not: TradeFilter
+  not: SwapFilter
 }
 
 """A connection to a list of `Transfer` values."""

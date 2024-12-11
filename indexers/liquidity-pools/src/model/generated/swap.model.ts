@@ -1,6 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
-import {Trade} from "./trade.model"
 import {Account} from "./account.model"
 import {SwapFillerType} from "./_swapFillerType"
 import {TradeOperationType} from "./_tradeOperationType"
@@ -26,10 +25,6 @@ export class Swap {
   @Index_()
   @Column_("int4", {nullable: false})
   swapIndex!: number
-
-  @Index_()
-  @ManyToOne_(() => Trade, {nullable: true})
-  trade!: Trade
 
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})
