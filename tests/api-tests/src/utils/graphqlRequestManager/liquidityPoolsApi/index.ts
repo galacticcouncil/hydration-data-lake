@@ -6,6 +6,9 @@ import {
   GetXykPoolHistoricalData,
   GetXykPoolHistoricalDataQuery,
   GetXykPoolHistoricalDataQueryVariables,
+  GetXykPoolSwapsData,
+  GetXykPoolSwapsDataQuery,
+  GetXykPoolSwapsDataQueryVariables,
 } from './apiTypes/types';
 
 export class LiquidityPoolsGQLManager extends QueriesHelper {
@@ -57,5 +60,28 @@ export class LiquidityPoolsGQLManager extends QueriesHelper {
     });
 
     return resp.data?.xykPoolHistoricalData?.nodes[0] ?? null;
+  }
+
+  async getXykPoolSwapAtBlock({
+    blockNumber,
+    poolAddress,
+  }: {
+    blockNumber: number;
+    poolAddress: string;
+  }) {
+    const resp = await this.gqlRequest<
+      GetXykPoolSwapsDataQuery,
+      GetXykPoolSwapsDataQueryVariables
+    >({
+      query: GetXykPoolSwapsData,
+      variables: {
+        filter: {
+          paraChainBlockHeight: { equalTo: blockNumber },
+          fillerId: { equalTo: poolAddress },
+        },
+      },
+    });
+
+    return resp.data?.swaps?.nodes[0] ?? null;
   }
 }

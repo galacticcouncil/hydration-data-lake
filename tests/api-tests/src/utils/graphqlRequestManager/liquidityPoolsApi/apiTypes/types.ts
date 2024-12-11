@@ -22,32 +22,42 @@ export type Scalars = {
 export type Account = {
   __typename?: 'Account';
   id: Scalars['String']['output'];
+  /** Reads a single `LbpPool` that is related to this `Account`. */
+  lbpPool?: Maybe<LbpPool>;
   /** Reads and enables pagination through a set of `LbpPoolHistoricalDatum`. */
   lbpPoolHistoricalDataByFeeCollectorId: LbpPoolHistoricalDataConnection;
   /** Reads and enables pagination through a set of `LbpPoolHistoricalDatum`. */
   lbpPoolHistoricalDataByOwnerId: LbpPoolHistoricalDataConnection;
-  /** Reads and enables pagination through a set of `LbpPoolOperation`. */
-  lbpPoolOperations: LbpPoolOperationsConnection;
+  lbpPoolId?: Maybe<Scalars['String']['output']>;
   /** Reads and enables pagination through a set of `LbpPool`. */
   lbpPools: LbpPoolsConnection;
   /** Reads and enables pagination through a set of `LbpPool`. */
   lbpPoolsByFeeCollectorId: LbpPoolsConnection;
   /** Reads and enables pagination through a set of `LbpPool`. */
   lbpPoolsByOwnerId: LbpPoolsConnection;
-  /** Reads and enables pagination through a set of `OmnipoolAssetOperation`. */
-  omnipoolAssetOperations: OmnipoolAssetOperationsConnection;
+  /** Reads a single `Omnipool` that is related to this `Account`. */
+  omnipool?: Maybe<Omnipool>;
+  omnipoolId?: Maybe<Scalars['String']['output']>;
   /** Reads and enables pagination through a set of `Omnipool`. */
   omnipools: OmnipoolsConnection;
-  /** Reads and enables pagination through a set of `StablepoolOperation`. */
-  stablepoolOperations: StablepoolOperationsConnection;
+  /** Reads a single `Stablepool` that is related to this `Account`. */
+  stablepool?: Maybe<Stablepool>;
+  stablepoolId?: Maybe<Scalars['String']['output']>;
   /** Reads and enables pagination through a set of `Stablepool`. */
   stablepools: StablepoolsConnection;
+  /** Reads and enables pagination through a set of `SwapFee`. */
+  swapFeesByRecipientId: SwapFeesConnection;
+  /** Reads and enables pagination through a set of `Swap`. */
+  swapsByFillerId: SwapsConnection;
+  /** Reads and enables pagination through a set of `Swap`. */
+  swapsBySwapperId: SwapsConnection;
   /** Reads and enables pagination through a set of `Transfer`. */
   transfersByFromId: TransfersConnection;
   /** Reads and enables pagination through a set of `Transfer`. */
   transfersByToId: TransfersConnection;
-  /** Reads and enables pagination through a set of `XykPoolOperation`. */
-  xykPoolOperations: XykPoolOperationsConnection;
+  /** Reads a single `XykPool` that is related to this `Account`. */
+  xykPool?: Maybe<XykPool>;
+  xykPoolId?: Maybe<Scalars['String']['output']>;
   /** Reads and enables pagination through a set of `XykPool`. */
   xykPools: XykPoolsConnection;
 };
@@ -74,18 +84,6 @@ export type AccountLbpPoolHistoricalDataByOwnerIdArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<LbpPoolHistoricalDataOrderBy>>;
-};
-
-
-export type AccountLbpPoolOperationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<LbpPoolOperationCondition>;
-  filter?: InputMaybe<LbpPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<LbpPoolOperationsOrderBy>>;
 };
 
 
@@ -125,18 +123,6 @@ export type AccountLbpPoolsByOwnerIdArgs = {
 };
 
 
-export type AccountOmnipoolAssetOperationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<OmnipoolAssetOperationCondition>;
-  filter?: InputMaybe<OmnipoolAssetOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OmnipoolAssetOperationsOrderBy>>;
-};
-
-
 export type AccountOmnipoolsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -149,18 +135,6 @@ export type AccountOmnipoolsArgs = {
 };
 
 
-export type AccountStablepoolOperationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<StablepoolOperationCondition>;
-  filter?: InputMaybe<StablepoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<StablepoolOperationsOrderBy>>;
-};
-
-
 export type AccountStablepoolsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -170,6 +144,42 @@ export type AccountStablepoolsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<StablepoolsOrderBy>>;
+};
+
+
+export type AccountSwapFeesByRecipientIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapFeeCondition>;
+  filter?: InputMaybe<SwapFeeFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapFeesOrderBy>>;
+};
+
+
+export type AccountSwapsByFillerIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapCondition>;
+  filter?: InputMaybe<SwapFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapsOrderBy>>;
+};
+
+
+export type AccountSwapsBySwapperIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapCondition>;
+  filter?: InputMaybe<SwapFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapsOrderBy>>;
 };
 
 
@@ -197,18 +207,6 @@ export type AccountTransfersByToIdArgs = {
 };
 
 
-export type AccountXykPoolOperationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<XykPoolOperationCondition>;
-  filter?: InputMaybe<XykPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<XykPoolOperationsOrderBy>>;
-};
-
-
 export type AccountXykPoolsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -231,12 +229,28 @@ export type AccountAggregates = {
 export type AccountCondition = {
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `lbpPoolId` field. */
+  lbpPoolId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `omnipoolId` field. */
+  omnipoolId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `stablepoolId` field. */
+  stablepoolId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `xykPoolId` field. */
+  xykPoolId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AccountDistinctCountAggregates = {
   __typename?: 'AccountDistinctCountAggregates';
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of lbpPoolId across the matching connection */
+  lbpPoolId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of omnipoolId across the matching connection */
+  omnipoolId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of stablepoolId across the matching connection */
+  stablepoolId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of xykPoolId across the matching connection */
+  xykPoolId?: Maybe<Scalars['BigInt']['output']>;
 };
 
 /** A filter to be used against `Account` object types. All fields are combined with a logical ‘and.’ */
@@ -245,10 +259,32 @@ export type AccountFilter = {
   and?: InputMaybe<Array<AccountFilter>>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `lbpPoolId` field. */
+  lbpPoolId?: InputMaybe<StringFilter>;
   /** Negates the expression. */
   not?: InputMaybe<AccountFilter>;
+  /** Filter by the object’s `omnipoolId` field. */
+  omnipoolId?: InputMaybe<StringFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<AccountFilter>>;
+  /** Filter by the object’s `stablepoolId` field. */
+  stablepoolId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `xykPoolId` field. */
+  xykPoolId?: InputMaybe<StringFilter>;
+};
+
+/** Grouping methods for `Account` for usage during aggregation. */
+export enum AccountGroupBy {
+  LbpPoolId = 'LBP_POOL_ID',
+  OmnipoolId = 'OMNIPOOL_ID',
+  StablepoolId = 'STABLEPOOL_ID',
+  XykPoolId = 'XYK_POOL_ID'
+}
+
+/** Conditions for `Account` aggregates. */
+export type AccountHavingInput = {
+  AND?: InputMaybe<Array<AccountHavingInput>>;
+  OR?: InputMaybe<Array<AccountHavingInput>>;
 };
 
 /** A connection to a list of `Account` values. */
@@ -258,12 +294,21 @@ export type AccountsConnection = {
   aggregates?: Maybe<AccountAggregates>;
   /** A list of edges which contains the `Account` and cursor to aid in pagination. */
   edges: Array<AccountsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<AccountAggregates>>;
   /** A list of `Account` objects. */
   nodes: Array<Maybe<Account>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** The count of *all* `Account` you could get from the connection. */
   totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `Account` values. */
+export type AccountsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<AccountGroupBy>;
+  having?: InputMaybe<AccountHavingInput>;
 };
 
 /** A `Account` edge in the connection. */
@@ -1873,278 +1918,8 @@ export enum AccountsOrderBy {
   LbpPoolHistoricalDataByOwnerIdVarianceSampleStartDesc = 'LBP_POOL_HISTORICAL_DATA_BY_OWNER_ID_VARIANCE_SAMPLE_START_DESC',
   LbpPoolHistoricalDataByOwnerIdVarianceSampleWeightCurveAsc = 'LBP_POOL_HISTORICAL_DATA_BY_OWNER_ID_VARIANCE_SAMPLE_WEIGHT_CURVE_ASC',
   LbpPoolHistoricalDataByOwnerIdVarianceSampleWeightCurveDesc = 'LBP_POOL_HISTORICAL_DATA_BY_OWNER_ID_VARIANCE_SAMPLE_WEIGHT_CURVE_DESC',
-  LbpPoolOperationsAverageAccountIdAsc = 'LBP_POOL_OPERATIONS_AVERAGE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsAverageAccountIdDesc = 'LBP_POOL_OPERATIONS_AVERAGE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsAverageAssetInAmountAsc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsAverageAssetInAmountDesc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsAverageAssetInFeeAsc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsAverageAssetInFeeDesc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsAverageAssetInIdAsc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsAverageAssetInIdDesc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsAverageAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsAverageAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsAverageAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsAverageAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsAverageAssetOutIdAsc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsAverageAssetOutIdDesc = 'LBP_POOL_OPERATIONS_AVERAGE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsAverageExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_AVERAGE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsAverageExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_AVERAGE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsAverageIdAsc = 'LBP_POOL_OPERATIONS_AVERAGE_ID_ASC',
-  LbpPoolOperationsAverageIdDesc = 'LBP_POOL_OPERATIONS_AVERAGE_ID_DESC',
-  LbpPoolOperationsAverageIndexInBlockAsc = 'LBP_POOL_OPERATIONS_AVERAGE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsAverageIndexInBlockDesc = 'LBP_POOL_OPERATIONS_AVERAGE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsAverageParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsAverageParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsAveragePoolIdAsc = 'LBP_POOL_OPERATIONS_AVERAGE_POOL_ID_ASC',
-  LbpPoolOperationsAveragePoolIdDesc = 'LBP_POOL_OPERATIONS_AVERAGE_POOL_ID_DESC',
-  LbpPoolOperationsAverageRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsAverageRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsAverageSwapPriceAsc = 'LBP_POOL_OPERATIONS_AVERAGE_SWAP_PRICE_ASC',
-  LbpPoolOperationsAverageSwapPriceDesc = 'LBP_POOL_OPERATIONS_AVERAGE_SWAP_PRICE_DESC',
-  LbpPoolOperationsAverageTypeAsc = 'LBP_POOL_OPERATIONS_AVERAGE_TYPE_ASC',
-  LbpPoolOperationsAverageTypeDesc = 'LBP_POOL_OPERATIONS_AVERAGE_TYPE_DESC',
-  LbpPoolOperationsCountAsc = 'LBP_POOL_OPERATIONS_COUNT_ASC',
-  LbpPoolOperationsCountDesc = 'LBP_POOL_OPERATIONS_COUNT_DESC',
-  LbpPoolOperationsDistinctCountAccountIdAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  LbpPoolOperationsDistinctCountAccountIdDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  LbpPoolOperationsDistinctCountAssetInAmountAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsDistinctCountAssetInAmountDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsDistinctCountAssetInFeeAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsDistinctCountAssetInFeeDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsDistinctCountAssetInIdAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  LbpPoolOperationsDistinctCountAssetInIdDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  LbpPoolOperationsDistinctCountAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsDistinctCountAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsDistinctCountAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsDistinctCountAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsDistinctCountAssetOutIdAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsDistinctCountAssetOutIdDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsDistinctCountExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsDistinctCountExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsDistinctCountIdAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ID_ASC',
-  LbpPoolOperationsDistinctCountIdDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_ID_DESC',
-  LbpPoolOperationsDistinctCountIndexInBlockAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsDistinctCountIndexInBlockDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsDistinctCountParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsDistinctCountParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsDistinctCountPoolIdAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_POOL_ID_ASC',
-  LbpPoolOperationsDistinctCountPoolIdDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_POOL_ID_DESC',
-  LbpPoolOperationsDistinctCountRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsDistinctCountRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsDistinctCountSwapPriceAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_SWAP_PRICE_ASC',
-  LbpPoolOperationsDistinctCountSwapPriceDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_SWAP_PRICE_DESC',
-  LbpPoolOperationsDistinctCountTypeAsc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_TYPE_ASC',
-  LbpPoolOperationsDistinctCountTypeDesc = 'LBP_POOL_OPERATIONS_DISTINCT_COUNT_TYPE_DESC',
-  LbpPoolOperationsMaxAccountIdAsc = 'LBP_POOL_OPERATIONS_MAX_ACCOUNT_ID_ASC',
-  LbpPoolOperationsMaxAccountIdDesc = 'LBP_POOL_OPERATIONS_MAX_ACCOUNT_ID_DESC',
-  LbpPoolOperationsMaxAssetInAmountAsc = 'LBP_POOL_OPERATIONS_MAX_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsMaxAssetInAmountDesc = 'LBP_POOL_OPERATIONS_MAX_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsMaxAssetInFeeAsc = 'LBP_POOL_OPERATIONS_MAX_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsMaxAssetInFeeDesc = 'LBP_POOL_OPERATIONS_MAX_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsMaxAssetInIdAsc = 'LBP_POOL_OPERATIONS_MAX_ASSET_IN_ID_ASC',
-  LbpPoolOperationsMaxAssetInIdDesc = 'LBP_POOL_OPERATIONS_MAX_ASSET_IN_ID_DESC',
-  LbpPoolOperationsMaxAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_MAX_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsMaxAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_MAX_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsMaxAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_MAX_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsMaxAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_MAX_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsMaxAssetOutIdAsc = 'LBP_POOL_OPERATIONS_MAX_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsMaxAssetOutIdDesc = 'LBP_POOL_OPERATIONS_MAX_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsMaxExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_MAX_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsMaxExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_MAX_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsMaxIdAsc = 'LBP_POOL_OPERATIONS_MAX_ID_ASC',
-  LbpPoolOperationsMaxIdDesc = 'LBP_POOL_OPERATIONS_MAX_ID_DESC',
-  LbpPoolOperationsMaxIndexInBlockAsc = 'LBP_POOL_OPERATIONS_MAX_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsMaxIndexInBlockDesc = 'LBP_POOL_OPERATIONS_MAX_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsMaxParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsMaxParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsMaxPoolIdAsc = 'LBP_POOL_OPERATIONS_MAX_POOL_ID_ASC',
-  LbpPoolOperationsMaxPoolIdDesc = 'LBP_POOL_OPERATIONS_MAX_POOL_ID_DESC',
-  LbpPoolOperationsMaxRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsMaxRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsMaxSwapPriceAsc = 'LBP_POOL_OPERATIONS_MAX_SWAP_PRICE_ASC',
-  LbpPoolOperationsMaxSwapPriceDesc = 'LBP_POOL_OPERATIONS_MAX_SWAP_PRICE_DESC',
-  LbpPoolOperationsMaxTypeAsc = 'LBP_POOL_OPERATIONS_MAX_TYPE_ASC',
-  LbpPoolOperationsMaxTypeDesc = 'LBP_POOL_OPERATIONS_MAX_TYPE_DESC',
-  LbpPoolOperationsMinAccountIdAsc = 'LBP_POOL_OPERATIONS_MIN_ACCOUNT_ID_ASC',
-  LbpPoolOperationsMinAccountIdDesc = 'LBP_POOL_OPERATIONS_MIN_ACCOUNT_ID_DESC',
-  LbpPoolOperationsMinAssetInAmountAsc = 'LBP_POOL_OPERATIONS_MIN_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsMinAssetInAmountDesc = 'LBP_POOL_OPERATIONS_MIN_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsMinAssetInFeeAsc = 'LBP_POOL_OPERATIONS_MIN_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsMinAssetInFeeDesc = 'LBP_POOL_OPERATIONS_MIN_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsMinAssetInIdAsc = 'LBP_POOL_OPERATIONS_MIN_ASSET_IN_ID_ASC',
-  LbpPoolOperationsMinAssetInIdDesc = 'LBP_POOL_OPERATIONS_MIN_ASSET_IN_ID_DESC',
-  LbpPoolOperationsMinAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_MIN_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsMinAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_MIN_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsMinAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_MIN_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsMinAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_MIN_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsMinAssetOutIdAsc = 'LBP_POOL_OPERATIONS_MIN_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsMinAssetOutIdDesc = 'LBP_POOL_OPERATIONS_MIN_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsMinExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_MIN_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsMinExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_MIN_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsMinIdAsc = 'LBP_POOL_OPERATIONS_MIN_ID_ASC',
-  LbpPoolOperationsMinIdDesc = 'LBP_POOL_OPERATIONS_MIN_ID_DESC',
-  LbpPoolOperationsMinIndexInBlockAsc = 'LBP_POOL_OPERATIONS_MIN_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsMinIndexInBlockDesc = 'LBP_POOL_OPERATIONS_MIN_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsMinParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsMinParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsMinPoolIdAsc = 'LBP_POOL_OPERATIONS_MIN_POOL_ID_ASC',
-  LbpPoolOperationsMinPoolIdDesc = 'LBP_POOL_OPERATIONS_MIN_POOL_ID_DESC',
-  LbpPoolOperationsMinRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsMinRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsMinSwapPriceAsc = 'LBP_POOL_OPERATIONS_MIN_SWAP_PRICE_ASC',
-  LbpPoolOperationsMinSwapPriceDesc = 'LBP_POOL_OPERATIONS_MIN_SWAP_PRICE_DESC',
-  LbpPoolOperationsMinTypeAsc = 'LBP_POOL_OPERATIONS_MIN_TYPE_ASC',
-  LbpPoolOperationsMinTypeDesc = 'LBP_POOL_OPERATIONS_MIN_TYPE_DESC',
-  LbpPoolOperationsStddevPopulationAccountIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  LbpPoolOperationsStddevPopulationAccountIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  LbpPoolOperationsStddevPopulationAssetInAmountAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsStddevPopulationAssetInAmountDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsStddevPopulationAssetInFeeAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsStddevPopulationAssetInFeeDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsStddevPopulationAssetInIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  LbpPoolOperationsStddevPopulationAssetInIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  LbpPoolOperationsStddevPopulationAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsStddevPopulationAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsStddevPopulationAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsStddevPopulationAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsStddevPopulationAssetOutIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsStddevPopulationAssetOutIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsStddevPopulationExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsStddevPopulationExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsStddevPopulationIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ID_ASC',
-  LbpPoolOperationsStddevPopulationIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_ID_DESC',
-  LbpPoolOperationsStddevPopulationIndexInBlockAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsStddevPopulationIndexInBlockDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsStddevPopulationParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsStddevPopulationParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsStddevPopulationPoolIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_POOL_ID_ASC',
-  LbpPoolOperationsStddevPopulationPoolIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_POOL_ID_DESC',
-  LbpPoolOperationsStddevPopulationRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsStddevPopulationRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsStddevPopulationSwapPriceAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_SWAP_PRICE_ASC',
-  LbpPoolOperationsStddevPopulationSwapPriceDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_SWAP_PRICE_DESC',
-  LbpPoolOperationsStddevPopulationTypeAsc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_TYPE_ASC',
-  LbpPoolOperationsStddevPopulationTypeDesc = 'LBP_POOL_OPERATIONS_STDDEV_POPULATION_TYPE_DESC',
-  LbpPoolOperationsStddevSampleAccountIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsStddevSampleAccountIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsStddevSampleAssetInAmountAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsStddevSampleAssetInAmountDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsStddevSampleAssetInFeeAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsStddevSampleAssetInFeeDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsStddevSampleAssetInIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsStddevSampleAssetInIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsStddevSampleAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsStddevSampleAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsStddevSampleAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsStddevSampleAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsStddevSampleAssetOutIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsStddevSampleAssetOutIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsStddevSampleExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsStddevSampleExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsStddevSampleIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ID_ASC',
-  LbpPoolOperationsStddevSampleIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_ID_DESC',
-  LbpPoolOperationsStddevSampleIndexInBlockAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsStddevSampleIndexInBlockDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsStddevSampleParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsStddevSampleParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsStddevSamplePoolIdAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_POOL_ID_ASC',
-  LbpPoolOperationsStddevSamplePoolIdDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_POOL_ID_DESC',
-  LbpPoolOperationsStddevSampleRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsStddevSampleRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsStddevSampleSwapPriceAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_SWAP_PRICE_ASC',
-  LbpPoolOperationsStddevSampleSwapPriceDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_SWAP_PRICE_DESC',
-  LbpPoolOperationsStddevSampleTypeAsc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_TYPE_ASC',
-  LbpPoolOperationsStddevSampleTypeDesc = 'LBP_POOL_OPERATIONS_STDDEV_SAMPLE_TYPE_DESC',
-  LbpPoolOperationsSumAccountIdAsc = 'LBP_POOL_OPERATIONS_SUM_ACCOUNT_ID_ASC',
-  LbpPoolOperationsSumAccountIdDesc = 'LBP_POOL_OPERATIONS_SUM_ACCOUNT_ID_DESC',
-  LbpPoolOperationsSumAssetInAmountAsc = 'LBP_POOL_OPERATIONS_SUM_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsSumAssetInAmountDesc = 'LBP_POOL_OPERATIONS_SUM_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsSumAssetInFeeAsc = 'LBP_POOL_OPERATIONS_SUM_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsSumAssetInFeeDesc = 'LBP_POOL_OPERATIONS_SUM_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsSumAssetInIdAsc = 'LBP_POOL_OPERATIONS_SUM_ASSET_IN_ID_ASC',
-  LbpPoolOperationsSumAssetInIdDesc = 'LBP_POOL_OPERATIONS_SUM_ASSET_IN_ID_DESC',
-  LbpPoolOperationsSumAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_SUM_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsSumAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_SUM_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsSumAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_SUM_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsSumAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_SUM_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsSumAssetOutIdAsc = 'LBP_POOL_OPERATIONS_SUM_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsSumAssetOutIdDesc = 'LBP_POOL_OPERATIONS_SUM_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsSumExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_SUM_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsSumExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_SUM_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsSumIdAsc = 'LBP_POOL_OPERATIONS_SUM_ID_ASC',
-  LbpPoolOperationsSumIdDesc = 'LBP_POOL_OPERATIONS_SUM_ID_DESC',
-  LbpPoolOperationsSumIndexInBlockAsc = 'LBP_POOL_OPERATIONS_SUM_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsSumIndexInBlockDesc = 'LBP_POOL_OPERATIONS_SUM_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsSumParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsSumParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsSumPoolIdAsc = 'LBP_POOL_OPERATIONS_SUM_POOL_ID_ASC',
-  LbpPoolOperationsSumPoolIdDesc = 'LBP_POOL_OPERATIONS_SUM_POOL_ID_DESC',
-  LbpPoolOperationsSumRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsSumRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsSumSwapPriceAsc = 'LBP_POOL_OPERATIONS_SUM_SWAP_PRICE_ASC',
-  LbpPoolOperationsSumSwapPriceDesc = 'LBP_POOL_OPERATIONS_SUM_SWAP_PRICE_DESC',
-  LbpPoolOperationsSumTypeAsc = 'LBP_POOL_OPERATIONS_SUM_TYPE_ASC',
-  LbpPoolOperationsSumTypeDesc = 'LBP_POOL_OPERATIONS_SUM_TYPE_DESC',
-  LbpPoolOperationsVariancePopulationAccountIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  LbpPoolOperationsVariancePopulationAccountIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  LbpPoolOperationsVariancePopulationAssetInAmountAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsVariancePopulationAssetInAmountDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsVariancePopulationAssetInFeeAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsVariancePopulationAssetInFeeDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsVariancePopulationAssetInIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  LbpPoolOperationsVariancePopulationAssetInIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  LbpPoolOperationsVariancePopulationAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsVariancePopulationAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsVariancePopulationAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsVariancePopulationAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsVariancePopulationAssetOutIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsVariancePopulationAssetOutIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsVariancePopulationExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsVariancePopulationExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsVariancePopulationIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ID_ASC',
-  LbpPoolOperationsVariancePopulationIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_ID_DESC',
-  LbpPoolOperationsVariancePopulationIndexInBlockAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsVariancePopulationIndexInBlockDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsVariancePopulationParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsVariancePopulationParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsVariancePopulationPoolIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_POOL_ID_ASC',
-  LbpPoolOperationsVariancePopulationPoolIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_POOL_ID_DESC',
-  LbpPoolOperationsVariancePopulationRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsVariancePopulationRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsVariancePopulationSwapPriceAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_SWAP_PRICE_ASC',
-  LbpPoolOperationsVariancePopulationSwapPriceDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_SWAP_PRICE_DESC',
-  LbpPoolOperationsVariancePopulationTypeAsc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_TYPE_ASC',
-  LbpPoolOperationsVariancePopulationTypeDesc = 'LBP_POOL_OPERATIONS_VARIANCE_POPULATION_TYPE_DESC',
-  LbpPoolOperationsVarianceSampleAccountIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsVarianceSampleAccountIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsVarianceSampleAssetInAmountAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsVarianceSampleAssetInAmountDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsVarianceSampleAssetInFeeAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsVarianceSampleAssetInFeeDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsVarianceSampleAssetInIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsVarianceSampleAssetInIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsVarianceSampleAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsVarianceSampleAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsVarianceSampleAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsVarianceSampleAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsVarianceSampleAssetOutIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsVarianceSampleAssetOutIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsVarianceSampleExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsVarianceSampleExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsVarianceSampleIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ID_ASC',
-  LbpPoolOperationsVarianceSampleIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_ID_DESC',
-  LbpPoolOperationsVarianceSampleIndexInBlockAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsVarianceSampleIndexInBlockDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsVarianceSampleParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsVarianceSampleParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsVarianceSamplePoolIdAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_POOL_ID_ASC',
-  LbpPoolOperationsVarianceSamplePoolIdDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_POOL_ID_DESC',
-  LbpPoolOperationsVarianceSampleRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsVarianceSampleRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsVarianceSampleSwapPriceAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_SWAP_PRICE_ASC',
-  LbpPoolOperationsVarianceSampleSwapPriceDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_SWAP_PRICE_DESC',
-  LbpPoolOperationsVarianceSampleTypeAsc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_TYPE_ASC',
-  LbpPoolOperationsVarianceSampleTypeDesc = 'LBP_POOL_OPERATIONS_VARIANCE_SAMPLE_TYPE_DESC',
+  LbpPoolIdAsc = 'LBP_POOL_ID_ASC',
+  LbpPoolIdDesc = 'LBP_POOL_ID_DESC',
   Natural = 'NATURAL',
   OmnipoolsAverageAccountIdAsc = 'OMNIPOOLS_AVERAGE_ACCOUNT_ID_ASC',
   OmnipoolsAverageAccountIdDesc = 'OMNIPOOLS_AVERAGE_ACCOUNT_ID_DESC',
@@ -2256,278 +2031,8 @@ export enum AccountsOrderBy {
   OmnipoolsVarianceSampleIdDesc = 'OMNIPOOLS_VARIANCE_SAMPLE_ID_DESC',
   OmnipoolsVarianceSampleIsDestroyedAsc = 'OMNIPOOLS_VARIANCE_SAMPLE_IS_DESTROYED_ASC',
   OmnipoolsVarianceSampleIsDestroyedDesc = 'OMNIPOOLS_VARIANCE_SAMPLE_IS_DESTROYED_DESC',
-  OmnipoolAssetOperationsAverageAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsAverageAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsAverageAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsAverageAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsAverageAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsAverageAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsAverageAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsAverageAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsAverageAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsAverageAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsAverageAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsAverageAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsAverageExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsAverageExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsAverageHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsAverageHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsAverageHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsAverageHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsAverageIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ID_ASC',
-  OmnipoolAssetOperationsAverageIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_ID_DESC',
-  OmnipoolAssetOperationsAverageIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsAverageIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsAverageParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsAverageParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsAverageProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsAverageProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsAverageRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsAverageRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsAverageTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_TYPE_ASC',
-  OmnipoolAssetOperationsAverageTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_AVERAGE_TYPE_DESC',
-  OmnipoolAssetOperationsCountAsc = 'OMNIPOOL_ASSET_OPERATIONS_COUNT_ASC',
-  OmnipoolAssetOperationsCountDesc = 'OMNIPOOL_ASSET_OPERATIONS_COUNT_DESC',
-  OmnipoolAssetOperationsDistinctCountAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsDistinctCountAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsDistinctCountAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsDistinctCountAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsDistinctCountAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsDistinctCountAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsDistinctCountAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsDistinctCountAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsDistinctCountAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsDistinctCountAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsDistinctCountAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsDistinctCountAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsDistinctCountExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsDistinctCountExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsDistinctCountHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsDistinctCountHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsDistinctCountHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsDistinctCountHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsDistinctCountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ID_ASC',
-  OmnipoolAssetOperationsDistinctCountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_ID_DESC',
-  OmnipoolAssetOperationsDistinctCountIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsDistinctCountIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsDistinctCountParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsDistinctCountParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsDistinctCountProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsDistinctCountProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsDistinctCountRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsDistinctCountRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsDistinctCountTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_TYPE_ASC',
-  OmnipoolAssetOperationsDistinctCountTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_DISTINCT_COUNT_TYPE_DESC',
-  OmnipoolAssetOperationsMaxAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsMaxAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsMaxAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsMaxAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsMaxAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsMaxAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsMaxAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsMaxAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsMaxAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsMaxAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsMaxAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsMaxAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsMaxExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsMaxExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsMaxHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsMaxHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsMaxHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsMaxHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsMaxIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ID_ASC',
-  OmnipoolAssetOperationsMaxIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_ID_DESC',
-  OmnipoolAssetOperationsMaxIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsMaxIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsMaxParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsMaxParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsMaxProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsMaxProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsMaxRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsMaxRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsMaxTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_TYPE_ASC',
-  OmnipoolAssetOperationsMaxTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_MAX_TYPE_DESC',
-  OmnipoolAssetOperationsMinAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsMinAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsMinAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsMinAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsMinAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsMinAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsMinAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsMinAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsMinAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsMinAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsMinAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsMinAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsMinExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsMinExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsMinHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsMinHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsMinHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsMinHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsMinIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ID_ASC',
-  OmnipoolAssetOperationsMinIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_ID_DESC',
-  OmnipoolAssetOperationsMinIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsMinIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsMinParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsMinParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsMinProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsMinProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsMinRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsMinRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsMinTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_TYPE_ASC',
-  OmnipoolAssetOperationsMinTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_MIN_TYPE_DESC',
-  OmnipoolAssetOperationsStddevPopulationAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsStddevPopulationAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsStddevPopulationAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsStddevPopulationAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsStddevPopulationAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsStddevPopulationAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsStddevPopulationAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsStddevPopulationAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsStddevPopulationAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsStddevPopulationAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsStddevPopulationAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsStddevPopulationAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsStddevPopulationExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsStddevPopulationExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsStddevPopulationHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsStddevPopulationHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsStddevPopulationHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsStddevPopulationHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsStddevPopulationIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ID_ASC',
-  OmnipoolAssetOperationsStddevPopulationIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_ID_DESC',
-  OmnipoolAssetOperationsStddevPopulationIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsStddevPopulationIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsStddevPopulationParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsStddevPopulationParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsStddevPopulationProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsStddevPopulationProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsStddevPopulationRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsStddevPopulationRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsStddevPopulationTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_TYPE_ASC',
-  OmnipoolAssetOperationsStddevPopulationTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_POPULATION_TYPE_DESC',
-  OmnipoolAssetOperationsStddevSampleAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsStddevSampleAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsStddevSampleAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsStddevSampleAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsStddevSampleAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsStddevSampleAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsStddevSampleAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsStddevSampleAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsStddevSampleAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsStddevSampleAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsStddevSampleAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsStddevSampleAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsStddevSampleExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsStddevSampleExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsStddevSampleHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsStddevSampleHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsStddevSampleHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsStddevSampleHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsStddevSampleIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ID_ASC',
-  OmnipoolAssetOperationsStddevSampleIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_ID_DESC',
-  OmnipoolAssetOperationsStddevSampleIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsStddevSampleIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsStddevSampleParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsStddevSampleParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsStddevSampleProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsStddevSampleProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsStddevSampleRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsStddevSampleRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsStddevSampleTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_TYPE_ASC',
-  OmnipoolAssetOperationsStddevSampleTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_STDDEV_SAMPLE_TYPE_DESC',
-  OmnipoolAssetOperationsSumAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsSumAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsSumAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsSumAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsSumAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsSumAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsSumAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsSumAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsSumAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsSumAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsSumAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsSumAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsSumExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsSumExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsSumHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsSumHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsSumHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsSumHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsSumIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ID_ASC',
-  OmnipoolAssetOperationsSumIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_ID_DESC',
-  OmnipoolAssetOperationsSumIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsSumIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsSumParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsSumParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsSumProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsSumProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsSumRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsSumRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsSumTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_TYPE_ASC',
-  OmnipoolAssetOperationsSumTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_SUM_TYPE_DESC',
-  OmnipoolAssetOperationsVariancePopulationAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsVariancePopulationAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsVariancePopulationAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsVariancePopulationAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsVariancePopulationAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsVariancePopulationAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsVariancePopulationAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsVariancePopulationAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsVariancePopulationAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsVariancePopulationAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsVariancePopulationAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsVariancePopulationAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsVariancePopulationExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsVariancePopulationExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsVariancePopulationHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsVariancePopulationHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsVariancePopulationHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsVariancePopulationHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsVariancePopulationIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ID_ASC',
-  OmnipoolAssetOperationsVariancePopulationIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_ID_DESC',
-  OmnipoolAssetOperationsVariancePopulationIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsVariancePopulationIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsVariancePopulationParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsVariancePopulationParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsVariancePopulationProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsVariancePopulationProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsVariancePopulationRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsVariancePopulationRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsVariancePopulationTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_TYPE_ASC',
-  OmnipoolAssetOperationsVariancePopulationTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_POPULATION_TYPE_DESC',
-  OmnipoolAssetOperationsVarianceSampleAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsVarianceSampleAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsVarianceSampleAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsVarianceSampleAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsVarianceSampleAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsVarianceSampleAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsVarianceSampleAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsVarianceSampleAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsVarianceSampleAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsVarianceSampleAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsVarianceSampleAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsVarianceSampleAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsVarianceSampleExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsVarianceSampleExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsVarianceSampleHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsVarianceSampleHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsVarianceSampleHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsVarianceSampleHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsVarianceSampleIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ID_ASC',
-  OmnipoolAssetOperationsVarianceSampleIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_ID_DESC',
-  OmnipoolAssetOperationsVarianceSampleIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsVarianceSampleIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsVarianceSampleParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsVarianceSampleParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsVarianceSampleProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsVarianceSampleProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsVarianceSampleRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsVarianceSampleRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsVarianceSampleTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_TYPE_ASC',
-  OmnipoolAssetOperationsVarianceSampleTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_VARIANCE_SAMPLE_TYPE_DESC',
+  OmnipoolIdAsc = 'OMNIPOOL_ID_ASC',
+  OmnipoolIdDesc = 'OMNIPOOL_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   StablepoolsAverageAccountIdAsc = 'STABLEPOOLS_AVERAGE_ACCOUNT_ID_ASC',
@@ -2640,242 +2145,572 @@ export enum AccountsOrderBy {
   StablepoolsVarianceSampleIdDesc = 'STABLEPOOLS_VARIANCE_SAMPLE_ID_DESC',
   StablepoolsVarianceSampleIsDestroyedAsc = 'STABLEPOOLS_VARIANCE_SAMPLE_IS_DESTROYED_ASC',
   StablepoolsVarianceSampleIsDestroyedDesc = 'STABLEPOOLS_VARIANCE_SAMPLE_IS_DESTROYED_DESC',
-  StablepoolOperationsAverageAccountIdAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_ACCOUNT_ID_ASC',
-  StablepoolOperationsAverageAccountIdDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_ACCOUNT_ID_DESC',
-  StablepoolOperationsAverageAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsAverageAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsAverageAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsAverageAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsAverageAssetInIdAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_IN_ID_ASC',
-  StablepoolOperationsAverageAssetInIdDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_IN_ID_DESC',
-  StablepoolOperationsAverageAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsAverageAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsAverageAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsAverageAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsAverageExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsAverageExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsAverageIdAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_ID_ASC',
-  StablepoolOperationsAverageIdDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_ID_DESC',
-  StablepoolOperationsAverageIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsAverageIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsAverageParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsAverageParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsAveragePoolIdAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_POOL_ID_ASC',
-  StablepoolOperationsAveragePoolIdDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_POOL_ID_DESC',
-  StablepoolOperationsAverageRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsAverageRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsAverageTypeAsc = 'STABLEPOOL_OPERATIONS_AVERAGE_TYPE_ASC',
-  StablepoolOperationsAverageTypeDesc = 'STABLEPOOL_OPERATIONS_AVERAGE_TYPE_DESC',
-  StablepoolOperationsCountAsc = 'STABLEPOOL_OPERATIONS_COUNT_ASC',
-  StablepoolOperationsCountDesc = 'STABLEPOOL_OPERATIONS_COUNT_DESC',
-  StablepoolOperationsDistinctCountAccountIdAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  StablepoolOperationsDistinctCountAccountIdDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  StablepoolOperationsDistinctCountAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsDistinctCountAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsDistinctCountAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsDistinctCountAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsDistinctCountAssetInIdAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  StablepoolOperationsDistinctCountAssetInIdDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  StablepoolOperationsDistinctCountAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsDistinctCountAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsDistinctCountAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  StablepoolOperationsDistinctCountAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  StablepoolOperationsDistinctCountExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsDistinctCountExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsDistinctCountIdAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ID_ASC',
-  StablepoolOperationsDistinctCountIdDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_ID_DESC',
-  StablepoolOperationsDistinctCountIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsDistinctCountIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsDistinctCountParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsDistinctCountParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsDistinctCountPoolIdAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_POOL_ID_ASC',
-  StablepoolOperationsDistinctCountPoolIdDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_POOL_ID_DESC',
-  StablepoolOperationsDistinctCountRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsDistinctCountRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsDistinctCountTypeAsc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_TYPE_ASC',
-  StablepoolOperationsDistinctCountTypeDesc = 'STABLEPOOL_OPERATIONS_DISTINCT_COUNT_TYPE_DESC',
-  StablepoolOperationsMaxAccountIdAsc = 'STABLEPOOL_OPERATIONS_MAX_ACCOUNT_ID_ASC',
-  StablepoolOperationsMaxAccountIdDesc = 'STABLEPOOL_OPERATIONS_MAX_ACCOUNT_ID_DESC',
-  StablepoolOperationsMaxAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsMaxAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsMaxAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsMaxAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsMaxAssetInIdAsc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_IN_ID_ASC',
-  StablepoolOperationsMaxAssetInIdDesc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_IN_ID_DESC',
-  StablepoolOperationsMaxAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsMaxAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsMaxAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_OUT_ID_ASC',
-  StablepoolOperationsMaxAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_MAX_ASSET_OUT_ID_DESC',
-  StablepoolOperationsMaxExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_MAX_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsMaxExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_MAX_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsMaxIdAsc = 'STABLEPOOL_OPERATIONS_MAX_ID_ASC',
-  StablepoolOperationsMaxIdDesc = 'STABLEPOOL_OPERATIONS_MAX_ID_DESC',
-  StablepoolOperationsMaxIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_MAX_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsMaxIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_MAX_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsMaxParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsMaxParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsMaxPoolIdAsc = 'STABLEPOOL_OPERATIONS_MAX_POOL_ID_ASC',
-  StablepoolOperationsMaxPoolIdDesc = 'STABLEPOOL_OPERATIONS_MAX_POOL_ID_DESC',
-  StablepoolOperationsMaxRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsMaxRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsMaxTypeAsc = 'STABLEPOOL_OPERATIONS_MAX_TYPE_ASC',
-  StablepoolOperationsMaxTypeDesc = 'STABLEPOOL_OPERATIONS_MAX_TYPE_DESC',
-  StablepoolOperationsMinAccountIdAsc = 'STABLEPOOL_OPERATIONS_MIN_ACCOUNT_ID_ASC',
-  StablepoolOperationsMinAccountIdDesc = 'STABLEPOOL_OPERATIONS_MIN_ACCOUNT_ID_DESC',
-  StablepoolOperationsMinAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsMinAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsMinAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsMinAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsMinAssetInIdAsc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_IN_ID_ASC',
-  StablepoolOperationsMinAssetInIdDesc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_IN_ID_DESC',
-  StablepoolOperationsMinAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsMinAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsMinAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_OUT_ID_ASC',
-  StablepoolOperationsMinAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_MIN_ASSET_OUT_ID_DESC',
-  StablepoolOperationsMinExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_MIN_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsMinExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_MIN_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsMinIdAsc = 'STABLEPOOL_OPERATIONS_MIN_ID_ASC',
-  StablepoolOperationsMinIdDesc = 'STABLEPOOL_OPERATIONS_MIN_ID_DESC',
-  StablepoolOperationsMinIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_MIN_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsMinIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_MIN_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsMinParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsMinParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsMinPoolIdAsc = 'STABLEPOOL_OPERATIONS_MIN_POOL_ID_ASC',
-  StablepoolOperationsMinPoolIdDesc = 'STABLEPOOL_OPERATIONS_MIN_POOL_ID_DESC',
-  StablepoolOperationsMinRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsMinRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsMinTypeAsc = 'STABLEPOOL_OPERATIONS_MIN_TYPE_ASC',
-  StablepoolOperationsMinTypeDesc = 'STABLEPOOL_OPERATIONS_MIN_TYPE_DESC',
-  StablepoolOperationsStddevPopulationAccountIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  StablepoolOperationsStddevPopulationAccountIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  StablepoolOperationsStddevPopulationAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsStddevPopulationAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsStddevPopulationAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsStddevPopulationAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsStddevPopulationAssetInIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  StablepoolOperationsStddevPopulationAssetInIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  StablepoolOperationsStddevPopulationAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsStddevPopulationAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsStddevPopulationAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  StablepoolOperationsStddevPopulationAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  StablepoolOperationsStddevPopulationExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsStddevPopulationExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsStddevPopulationIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ID_ASC',
-  StablepoolOperationsStddevPopulationIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_ID_DESC',
-  StablepoolOperationsStddevPopulationIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsStddevPopulationIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsStddevPopulationParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsStddevPopulationParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsStddevPopulationPoolIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_POOL_ID_ASC',
-  StablepoolOperationsStddevPopulationPoolIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_POOL_ID_DESC',
-  StablepoolOperationsStddevPopulationRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsStddevPopulationRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsStddevPopulationTypeAsc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_TYPE_ASC',
-  StablepoolOperationsStddevPopulationTypeDesc = 'STABLEPOOL_OPERATIONS_STDDEV_POPULATION_TYPE_DESC',
-  StablepoolOperationsStddevSampleAccountIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  StablepoolOperationsStddevSampleAccountIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  StablepoolOperationsStddevSampleAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsStddevSampleAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsStddevSampleAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsStddevSampleAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsStddevSampleAssetInIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  StablepoolOperationsStddevSampleAssetInIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  StablepoolOperationsStddevSampleAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsStddevSampleAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsStddevSampleAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsStddevSampleAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsStddevSampleExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsStddevSampleExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsStddevSampleIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ID_ASC',
-  StablepoolOperationsStddevSampleIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_ID_DESC',
-  StablepoolOperationsStddevSampleIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsStddevSampleIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsStddevSampleParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsStddevSampleParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsStddevSamplePoolIdAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_POOL_ID_ASC',
-  StablepoolOperationsStddevSamplePoolIdDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_POOL_ID_DESC',
-  StablepoolOperationsStddevSampleRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsStddevSampleRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsStddevSampleTypeAsc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_TYPE_ASC',
-  StablepoolOperationsStddevSampleTypeDesc = 'STABLEPOOL_OPERATIONS_STDDEV_SAMPLE_TYPE_DESC',
-  StablepoolOperationsSumAccountIdAsc = 'STABLEPOOL_OPERATIONS_SUM_ACCOUNT_ID_ASC',
-  StablepoolOperationsSumAccountIdDesc = 'STABLEPOOL_OPERATIONS_SUM_ACCOUNT_ID_DESC',
-  StablepoolOperationsSumAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsSumAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsSumAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsSumAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsSumAssetInIdAsc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_IN_ID_ASC',
-  StablepoolOperationsSumAssetInIdDesc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_IN_ID_DESC',
-  StablepoolOperationsSumAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsSumAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsSumAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_OUT_ID_ASC',
-  StablepoolOperationsSumAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_SUM_ASSET_OUT_ID_DESC',
-  StablepoolOperationsSumExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_SUM_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsSumExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_SUM_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsSumIdAsc = 'STABLEPOOL_OPERATIONS_SUM_ID_ASC',
-  StablepoolOperationsSumIdDesc = 'STABLEPOOL_OPERATIONS_SUM_ID_DESC',
-  StablepoolOperationsSumIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_SUM_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsSumIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_SUM_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsSumParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsSumParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsSumPoolIdAsc = 'STABLEPOOL_OPERATIONS_SUM_POOL_ID_ASC',
-  StablepoolOperationsSumPoolIdDesc = 'STABLEPOOL_OPERATIONS_SUM_POOL_ID_DESC',
-  StablepoolOperationsSumRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsSumRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsSumTypeAsc = 'STABLEPOOL_OPERATIONS_SUM_TYPE_ASC',
-  StablepoolOperationsSumTypeDesc = 'STABLEPOOL_OPERATIONS_SUM_TYPE_DESC',
-  StablepoolOperationsVariancePopulationAccountIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  StablepoolOperationsVariancePopulationAccountIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  StablepoolOperationsVariancePopulationAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsVariancePopulationAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsVariancePopulationAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsVariancePopulationAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsVariancePopulationAssetInIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  StablepoolOperationsVariancePopulationAssetInIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  StablepoolOperationsVariancePopulationAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsVariancePopulationAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsVariancePopulationAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  StablepoolOperationsVariancePopulationAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  StablepoolOperationsVariancePopulationExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsVariancePopulationExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsVariancePopulationIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ID_ASC',
-  StablepoolOperationsVariancePopulationIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_ID_DESC',
-  StablepoolOperationsVariancePopulationIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsVariancePopulationIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsVariancePopulationParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsVariancePopulationParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsVariancePopulationPoolIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_POOL_ID_ASC',
-  StablepoolOperationsVariancePopulationPoolIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_POOL_ID_DESC',
-  StablepoolOperationsVariancePopulationRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsVariancePopulationRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsVariancePopulationTypeAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_TYPE_ASC',
-  StablepoolOperationsVariancePopulationTypeDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_POPULATION_TYPE_DESC',
-  StablepoolOperationsVarianceSampleAccountIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  StablepoolOperationsVarianceSampleAccountIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  StablepoolOperationsVarianceSampleAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsVarianceSampleAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsVarianceSampleAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsVarianceSampleAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsVarianceSampleAssetInIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  StablepoolOperationsVarianceSampleAssetInIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  StablepoolOperationsVarianceSampleAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsVarianceSampleAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsVarianceSampleAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsVarianceSampleAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsVarianceSampleExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsVarianceSampleExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsVarianceSampleIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ID_ASC',
-  StablepoolOperationsVarianceSampleIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_ID_DESC',
-  StablepoolOperationsVarianceSampleIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsVarianceSampleIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsVarianceSampleParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsVarianceSampleParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsVarianceSamplePoolIdAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_POOL_ID_ASC',
-  StablepoolOperationsVarianceSamplePoolIdDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_POOL_ID_DESC',
-  StablepoolOperationsVarianceSampleRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsVarianceSampleRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsVarianceSampleTypeAsc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_TYPE_ASC',
-  StablepoolOperationsVarianceSampleTypeDesc = 'STABLEPOOL_OPERATIONS_VARIANCE_SAMPLE_TYPE_DESC',
+  StablepoolIdAsc = 'STABLEPOOL_ID_ASC',
+  StablepoolIdDesc = 'STABLEPOOL_ID_DESC',
+  SwapsByFillerIdAverageEventIndexAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_EVENT_INDEX_ASC',
+  SwapsByFillerIdAverageEventIndexDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_EVENT_INDEX_DESC',
+  SwapsByFillerIdAverageExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdAverageExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdAverageFillerIdAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_FILLER_ID_ASC',
+  SwapsByFillerIdAverageFillerIdDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_FILLER_ID_DESC',
+  SwapsByFillerIdAverageFillerTypeAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_FILLER_TYPE_ASC',
+  SwapsByFillerIdAverageFillerTypeDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_FILLER_TYPE_DESC',
+  SwapsByFillerIdAverageHubAmountInAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdAverageHubAmountInDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdAverageHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdAverageHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdAverageIdAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_ID_ASC',
+  SwapsByFillerIdAverageIdDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_ID_DESC',
+  SwapsByFillerIdAverageOperationTypeAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_OPERATION_TYPE_ASC',
+  SwapsByFillerIdAverageOperationTypeDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_OPERATION_TYPE_DESC',
+  SwapsByFillerIdAverageParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdAverageParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdAverageParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdAverageParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdAverageRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdAverageRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdAverageSwapperIdAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_SWAPPER_ID_ASC',
+  SwapsByFillerIdAverageSwapperIdDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_SWAPPER_ID_DESC',
+  SwapsByFillerIdAverageSwapIndexAsc = 'SWAPS_BY_FILLER_ID_AVERAGE_SWAP_INDEX_ASC',
+  SwapsByFillerIdAverageSwapIndexDesc = 'SWAPS_BY_FILLER_ID_AVERAGE_SWAP_INDEX_DESC',
+  SwapsByFillerIdCountAsc = 'SWAPS_BY_FILLER_ID_COUNT_ASC',
+  SwapsByFillerIdCountDesc = 'SWAPS_BY_FILLER_ID_COUNT_DESC',
+  SwapsByFillerIdDistinctCountEventIndexAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_EVENT_INDEX_ASC',
+  SwapsByFillerIdDistinctCountEventIndexDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_EVENT_INDEX_DESC',
+  SwapsByFillerIdDistinctCountExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdDistinctCountExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdDistinctCountFillerIdAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_FILLER_ID_ASC',
+  SwapsByFillerIdDistinctCountFillerIdDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_FILLER_ID_DESC',
+  SwapsByFillerIdDistinctCountFillerTypeAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_FILLER_TYPE_ASC',
+  SwapsByFillerIdDistinctCountFillerTypeDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_FILLER_TYPE_DESC',
+  SwapsByFillerIdDistinctCountHubAmountInAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdDistinctCountHubAmountInDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdDistinctCountHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdDistinctCountHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdDistinctCountIdAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_ID_ASC',
+  SwapsByFillerIdDistinctCountIdDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_ID_DESC',
+  SwapsByFillerIdDistinctCountOperationTypeAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_OPERATION_TYPE_ASC',
+  SwapsByFillerIdDistinctCountOperationTypeDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_OPERATION_TYPE_DESC',
+  SwapsByFillerIdDistinctCountParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdDistinctCountParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdDistinctCountParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdDistinctCountParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdDistinctCountRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdDistinctCountRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdDistinctCountSwapperIdAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_SWAPPER_ID_ASC',
+  SwapsByFillerIdDistinctCountSwapperIdDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_SWAPPER_ID_DESC',
+  SwapsByFillerIdDistinctCountSwapIndexAsc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_SWAP_INDEX_ASC',
+  SwapsByFillerIdDistinctCountSwapIndexDesc = 'SWAPS_BY_FILLER_ID_DISTINCT_COUNT_SWAP_INDEX_DESC',
+  SwapsByFillerIdMaxEventIndexAsc = 'SWAPS_BY_FILLER_ID_MAX_EVENT_INDEX_ASC',
+  SwapsByFillerIdMaxEventIndexDesc = 'SWAPS_BY_FILLER_ID_MAX_EVENT_INDEX_DESC',
+  SwapsByFillerIdMaxExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_MAX_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdMaxExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_MAX_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdMaxFillerIdAsc = 'SWAPS_BY_FILLER_ID_MAX_FILLER_ID_ASC',
+  SwapsByFillerIdMaxFillerIdDesc = 'SWAPS_BY_FILLER_ID_MAX_FILLER_ID_DESC',
+  SwapsByFillerIdMaxFillerTypeAsc = 'SWAPS_BY_FILLER_ID_MAX_FILLER_TYPE_ASC',
+  SwapsByFillerIdMaxFillerTypeDesc = 'SWAPS_BY_FILLER_ID_MAX_FILLER_TYPE_DESC',
+  SwapsByFillerIdMaxHubAmountInAsc = 'SWAPS_BY_FILLER_ID_MAX_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdMaxHubAmountInDesc = 'SWAPS_BY_FILLER_ID_MAX_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdMaxHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_MAX_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdMaxHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_MAX_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdMaxIdAsc = 'SWAPS_BY_FILLER_ID_MAX_ID_ASC',
+  SwapsByFillerIdMaxIdDesc = 'SWAPS_BY_FILLER_ID_MAX_ID_DESC',
+  SwapsByFillerIdMaxOperationTypeAsc = 'SWAPS_BY_FILLER_ID_MAX_OPERATION_TYPE_ASC',
+  SwapsByFillerIdMaxOperationTypeDesc = 'SWAPS_BY_FILLER_ID_MAX_OPERATION_TYPE_DESC',
+  SwapsByFillerIdMaxParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdMaxParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdMaxParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_MAX_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdMaxParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_MAX_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdMaxRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdMaxRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdMaxSwapperIdAsc = 'SWAPS_BY_FILLER_ID_MAX_SWAPPER_ID_ASC',
+  SwapsByFillerIdMaxSwapperIdDesc = 'SWAPS_BY_FILLER_ID_MAX_SWAPPER_ID_DESC',
+  SwapsByFillerIdMaxSwapIndexAsc = 'SWAPS_BY_FILLER_ID_MAX_SWAP_INDEX_ASC',
+  SwapsByFillerIdMaxSwapIndexDesc = 'SWAPS_BY_FILLER_ID_MAX_SWAP_INDEX_DESC',
+  SwapsByFillerIdMinEventIndexAsc = 'SWAPS_BY_FILLER_ID_MIN_EVENT_INDEX_ASC',
+  SwapsByFillerIdMinEventIndexDesc = 'SWAPS_BY_FILLER_ID_MIN_EVENT_INDEX_DESC',
+  SwapsByFillerIdMinExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_MIN_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdMinExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_MIN_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdMinFillerIdAsc = 'SWAPS_BY_FILLER_ID_MIN_FILLER_ID_ASC',
+  SwapsByFillerIdMinFillerIdDesc = 'SWAPS_BY_FILLER_ID_MIN_FILLER_ID_DESC',
+  SwapsByFillerIdMinFillerTypeAsc = 'SWAPS_BY_FILLER_ID_MIN_FILLER_TYPE_ASC',
+  SwapsByFillerIdMinFillerTypeDesc = 'SWAPS_BY_FILLER_ID_MIN_FILLER_TYPE_DESC',
+  SwapsByFillerIdMinHubAmountInAsc = 'SWAPS_BY_FILLER_ID_MIN_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdMinHubAmountInDesc = 'SWAPS_BY_FILLER_ID_MIN_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdMinHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_MIN_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdMinHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_MIN_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdMinIdAsc = 'SWAPS_BY_FILLER_ID_MIN_ID_ASC',
+  SwapsByFillerIdMinIdDesc = 'SWAPS_BY_FILLER_ID_MIN_ID_DESC',
+  SwapsByFillerIdMinOperationTypeAsc = 'SWAPS_BY_FILLER_ID_MIN_OPERATION_TYPE_ASC',
+  SwapsByFillerIdMinOperationTypeDesc = 'SWAPS_BY_FILLER_ID_MIN_OPERATION_TYPE_DESC',
+  SwapsByFillerIdMinParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdMinParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdMinParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_MIN_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdMinParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_MIN_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdMinRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdMinRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdMinSwapperIdAsc = 'SWAPS_BY_FILLER_ID_MIN_SWAPPER_ID_ASC',
+  SwapsByFillerIdMinSwapperIdDesc = 'SWAPS_BY_FILLER_ID_MIN_SWAPPER_ID_DESC',
+  SwapsByFillerIdMinSwapIndexAsc = 'SWAPS_BY_FILLER_ID_MIN_SWAP_INDEX_ASC',
+  SwapsByFillerIdMinSwapIndexDesc = 'SWAPS_BY_FILLER_ID_MIN_SWAP_INDEX_DESC',
+  SwapsByFillerIdStddevPopulationEventIndexAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_EVENT_INDEX_ASC',
+  SwapsByFillerIdStddevPopulationEventIndexDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_EVENT_INDEX_DESC',
+  SwapsByFillerIdStddevPopulationExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdStddevPopulationExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdStddevPopulationFillerIdAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_FILLER_ID_ASC',
+  SwapsByFillerIdStddevPopulationFillerIdDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_FILLER_ID_DESC',
+  SwapsByFillerIdStddevPopulationFillerTypeAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_FILLER_TYPE_ASC',
+  SwapsByFillerIdStddevPopulationFillerTypeDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_FILLER_TYPE_DESC',
+  SwapsByFillerIdStddevPopulationHubAmountInAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdStddevPopulationHubAmountInDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdStddevPopulationHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdStddevPopulationHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdStddevPopulationIdAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_ID_ASC',
+  SwapsByFillerIdStddevPopulationIdDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_ID_DESC',
+  SwapsByFillerIdStddevPopulationOperationTypeAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_OPERATION_TYPE_ASC',
+  SwapsByFillerIdStddevPopulationOperationTypeDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_OPERATION_TYPE_DESC',
+  SwapsByFillerIdStddevPopulationParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdStddevPopulationParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdStddevPopulationParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdStddevPopulationParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdStddevPopulationRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdStddevPopulationRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdStddevPopulationSwapperIdAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_SWAPPER_ID_ASC',
+  SwapsByFillerIdStddevPopulationSwapperIdDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_SWAPPER_ID_DESC',
+  SwapsByFillerIdStddevPopulationSwapIndexAsc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_SWAP_INDEX_ASC',
+  SwapsByFillerIdStddevPopulationSwapIndexDesc = 'SWAPS_BY_FILLER_ID_STDDEV_POPULATION_SWAP_INDEX_DESC',
+  SwapsByFillerIdStddevSampleEventIndexAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_EVENT_INDEX_ASC',
+  SwapsByFillerIdStddevSampleEventIndexDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_EVENT_INDEX_DESC',
+  SwapsByFillerIdStddevSampleExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdStddevSampleExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdStddevSampleFillerIdAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_FILLER_ID_ASC',
+  SwapsByFillerIdStddevSampleFillerIdDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_FILLER_ID_DESC',
+  SwapsByFillerIdStddevSampleFillerTypeAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_FILLER_TYPE_ASC',
+  SwapsByFillerIdStddevSampleFillerTypeDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_FILLER_TYPE_DESC',
+  SwapsByFillerIdStddevSampleHubAmountInAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdStddevSampleHubAmountInDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdStddevSampleHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdStddevSampleHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdStddevSampleIdAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_ID_ASC',
+  SwapsByFillerIdStddevSampleIdDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_ID_DESC',
+  SwapsByFillerIdStddevSampleOperationTypeAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_OPERATION_TYPE_ASC',
+  SwapsByFillerIdStddevSampleOperationTypeDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_OPERATION_TYPE_DESC',
+  SwapsByFillerIdStddevSampleParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdStddevSampleParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdStddevSampleParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdStddevSampleParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdStddevSampleRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdStddevSampleRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdStddevSampleSwapperIdAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_SWAPPER_ID_ASC',
+  SwapsByFillerIdStddevSampleSwapperIdDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_SWAPPER_ID_DESC',
+  SwapsByFillerIdStddevSampleSwapIndexAsc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_SWAP_INDEX_ASC',
+  SwapsByFillerIdStddevSampleSwapIndexDesc = 'SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_SWAP_INDEX_DESC',
+  SwapsByFillerIdSumEventIndexAsc = 'SWAPS_BY_FILLER_ID_SUM_EVENT_INDEX_ASC',
+  SwapsByFillerIdSumEventIndexDesc = 'SWAPS_BY_FILLER_ID_SUM_EVENT_INDEX_DESC',
+  SwapsByFillerIdSumExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_SUM_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdSumExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_SUM_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdSumFillerIdAsc = 'SWAPS_BY_FILLER_ID_SUM_FILLER_ID_ASC',
+  SwapsByFillerIdSumFillerIdDesc = 'SWAPS_BY_FILLER_ID_SUM_FILLER_ID_DESC',
+  SwapsByFillerIdSumFillerTypeAsc = 'SWAPS_BY_FILLER_ID_SUM_FILLER_TYPE_ASC',
+  SwapsByFillerIdSumFillerTypeDesc = 'SWAPS_BY_FILLER_ID_SUM_FILLER_TYPE_DESC',
+  SwapsByFillerIdSumHubAmountInAsc = 'SWAPS_BY_FILLER_ID_SUM_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdSumHubAmountInDesc = 'SWAPS_BY_FILLER_ID_SUM_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdSumHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_SUM_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdSumHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_SUM_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdSumIdAsc = 'SWAPS_BY_FILLER_ID_SUM_ID_ASC',
+  SwapsByFillerIdSumIdDesc = 'SWAPS_BY_FILLER_ID_SUM_ID_DESC',
+  SwapsByFillerIdSumOperationTypeAsc = 'SWAPS_BY_FILLER_ID_SUM_OPERATION_TYPE_ASC',
+  SwapsByFillerIdSumOperationTypeDesc = 'SWAPS_BY_FILLER_ID_SUM_OPERATION_TYPE_DESC',
+  SwapsByFillerIdSumParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdSumParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdSumParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_SUM_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdSumParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_SUM_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdSumRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdSumRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdSumSwapperIdAsc = 'SWAPS_BY_FILLER_ID_SUM_SWAPPER_ID_ASC',
+  SwapsByFillerIdSumSwapperIdDesc = 'SWAPS_BY_FILLER_ID_SUM_SWAPPER_ID_DESC',
+  SwapsByFillerIdSumSwapIndexAsc = 'SWAPS_BY_FILLER_ID_SUM_SWAP_INDEX_ASC',
+  SwapsByFillerIdSumSwapIndexDesc = 'SWAPS_BY_FILLER_ID_SUM_SWAP_INDEX_DESC',
+  SwapsByFillerIdVariancePopulationEventIndexAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_EVENT_INDEX_ASC',
+  SwapsByFillerIdVariancePopulationEventIndexDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_EVENT_INDEX_DESC',
+  SwapsByFillerIdVariancePopulationExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdVariancePopulationExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdVariancePopulationFillerIdAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_FILLER_ID_ASC',
+  SwapsByFillerIdVariancePopulationFillerIdDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_FILLER_ID_DESC',
+  SwapsByFillerIdVariancePopulationFillerTypeAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_FILLER_TYPE_ASC',
+  SwapsByFillerIdVariancePopulationFillerTypeDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_FILLER_TYPE_DESC',
+  SwapsByFillerIdVariancePopulationHubAmountInAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdVariancePopulationHubAmountInDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdVariancePopulationHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdVariancePopulationHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdVariancePopulationIdAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_ID_ASC',
+  SwapsByFillerIdVariancePopulationIdDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_ID_DESC',
+  SwapsByFillerIdVariancePopulationOperationTypeAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_OPERATION_TYPE_ASC',
+  SwapsByFillerIdVariancePopulationOperationTypeDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_OPERATION_TYPE_DESC',
+  SwapsByFillerIdVariancePopulationParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdVariancePopulationParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdVariancePopulationParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdVariancePopulationParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdVariancePopulationRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdVariancePopulationRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdVariancePopulationSwapperIdAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_SWAPPER_ID_ASC',
+  SwapsByFillerIdVariancePopulationSwapperIdDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_SWAPPER_ID_DESC',
+  SwapsByFillerIdVariancePopulationSwapIndexAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_SWAP_INDEX_ASC',
+  SwapsByFillerIdVariancePopulationSwapIndexDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_SWAP_INDEX_DESC',
+  SwapsByFillerIdVarianceSampleEventIndexAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_EVENT_INDEX_ASC',
+  SwapsByFillerIdVarianceSampleEventIndexDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_EVENT_INDEX_DESC',
+  SwapsByFillerIdVarianceSampleExtrinsicHashAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
+  SwapsByFillerIdVarianceSampleExtrinsicHashDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
+  SwapsByFillerIdVarianceSampleFillerIdAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_FILLER_ID_ASC',
+  SwapsByFillerIdVarianceSampleFillerIdDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_FILLER_ID_DESC',
+  SwapsByFillerIdVarianceSampleFillerTypeAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_FILLER_TYPE_ASC',
+  SwapsByFillerIdVarianceSampleFillerTypeDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_FILLER_TYPE_DESC',
+  SwapsByFillerIdVarianceSampleHubAmountInAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_HUB_AMOUNT_IN_ASC',
+  SwapsByFillerIdVarianceSampleHubAmountInDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_HUB_AMOUNT_IN_DESC',
+  SwapsByFillerIdVarianceSampleHubAmountOutAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_ASC',
+  SwapsByFillerIdVarianceSampleHubAmountOutDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_DESC',
+  SwapsByFillerIdVarianceSampleIdAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_ID_ASC',
+  SwapsByFillerIdVarianceSampleIdDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_ID_DESC',
+  SwapsByFillerIdVarianceSampleOperationTypeAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_OPERATION_TYPE_ASC',
+  SwapsByFillerIdVarianceSampleOperationTypeDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_OPERATION_TYPE_DESC',
+  SwapsByFillerIdVarianceSampleParaChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdVarianceSampleParaChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdVarianceSampleParaChainTimestampAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsByFillerIdVarianceSampleParaChainTimestampDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsByFillerIdVarianceSampleRelayChainBlockHeightAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsByFillerIdVarianceSampleRelayChainBlockHeightDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsByFillerIdVarianceSampleSwapperIdAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_SWAPPER_ID_ASC',
+  SwapsByFillerIdVarianceSampleSwapperIdDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_SWAPPER_ID_DESC',
+  SwapsByFillerIdVarianceSampleSwapIndexAsc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_SWAP_INDEX_ASC',
+  SwapsByFillerIdVarianceSampleSwapIndexDesc = 'SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_SWAP_INDEX_DESC',
+  SwapsBySwapperIdAverageEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_EVENT_INDEX_ASC',
+  SwapsBySwapperIdAverageEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_EVENT_INDEX_DESC',
+  SwapsBySwapperIdAverageExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdAverageExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdAverageFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_FILLER_ID_ASC',
+  SwapsBySwapperIdAverageFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_FILLER_ID_DESC',
+  SwapsBySwapperIdAverageFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_FILLER_TYPE_ASC',
+  SwapsBySwapperIdAverageFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_FILLER_TYPE_DESC',
+  SwapsBySwapperIdAverageHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdAverageHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdAverageHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdAverageHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdAverageIdAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_ID_ASC',
+  SwapsBySwapperIdAverageIdDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_ID_DESC',
+  SwapsBySwapperIdAverageOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdAverageOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdAverageParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdAverageParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdAverageParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdAverageParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdAverageRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdAverageRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdAverageSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_SWAPPER_ID_ASC',
+  SwapsBySwapperIdAverageSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_SWAPPER_ID_DESC',
+  SwapsBySwapperIdAverageSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_SWAP_INDEX_ASC',
+  SwapsBySwapperIdAverageSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_AVERAGE_SWAP_INDEX_DESC',
+  SwapsBySwapperIdCountAsc = 'SWAPS_BY_SWAPPER_ID_COUNT_ASC',
+  SwapsBySwapperIdCountDesc = 'SWAPS_BY_SWAPPER_ID_COUNT_DESC',
+  SwapsBySwapperIdDistinctCountEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_EVENT_INDEX_ASC',
+  SwapsBySwapperIdDistinctCountEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_EVENT_INDEX_DESC',
+  SwapsBySwapperIdDistinctCountExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdDistinctCountExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdDistinctCountFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_FILLER_ID_ASC',
+  SwapsBySwapperIdDistinctCountFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_FILLER_ID_DESC',
+  SwapsBySwapperIdDistinctCountFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_FILLER_TYPE_ASC',
+  SwapsBySwapperIdDistinctCountFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_FILLER_TYPE_DESC',
+  SwapsBySwapperIdDistinctCountHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdDistinctCountHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdDistinctCountHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdDistinctCountHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdDistinctCountIdAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_ID_ASC',
+  SwapsBySwapperIdDistinctCountIdDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_ID_DESC',
+  SwapsBySwapperIdDistinctCountOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdDistinctCountOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdDistinctCountParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdDistinctCountParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdDistinctCountParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdDistinctCountParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdDistinctCountRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdDistinctCountRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdDistinctCountSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_SWAPPER_ID_ASC',
+  SwapsBySwapperIdDistinctCountSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_SWAPPER_ID_DESC',
+  SwapsBySwapperIdDistinctCountSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_SWAP_INDEX_ASC',
+  SwapsBySwapperIdDistinctCountSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_SWAP_INDEX_DESC',
+  SwapsBySwapperIdMaxEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_MAX_EVENT_INDEX_ASC',
+  SwapsBySwapperIdMaxEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_MAX_EVENT_INDEX_DESC',
+  SwapsBySwapperIdMaxExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_MAX_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdMaxExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_MAX_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdMaxFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_MAX_FILLER_ID_ASC',
+  SwapsBySwapperIdMaxFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_MAX_FILLER_ID_DESC',
+  SwapsBySwapperIdMaxFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_MAX_FILLER_TYPE_ASC',
+  SwapsBySwapperIdMaxFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_MAX_FILLER_TYPE_DESC',
+  SwapsBySwapperIdMaxHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_MAX_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdMaxHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_MAX_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdMaxHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_MAX_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdMaxHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_MAX_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdMaxIdAsc = 'SWAPS_BY_SWAPPER_ID_MAX_ID_ASC',
+  SwapsBySwapperIdMaxIdDesc = 'SWAPS_BY_SWAPPER_ID_MAX_ID_DESC',
+  SwapsBySwapperIdMaxOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_MAX_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdMaxOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_MAX_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdMaxParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdMaxParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdMaxParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_MAX_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdMaxParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_MAX_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdMaxRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdMaxRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdMaxSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_MAX_SWAPPER_ID_ASC',
+  SwapsBySwapperIdMaxSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_MAX_SWAPPER_ID_DESC',
+  SwapsBySwapperIdMaxSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_MAX_SWAP_INDEX_ASC',
+  SwapsBySwapperIdMaxSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_MAX_SWAP_INDEX_DESC',
+  SwapsBySwapperIdMinEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_MIN_EVENT_INDEX_ASC',
+  SwapsBySwapperIdMinEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_MIN_EVENT_INDEX_DESC',
+  SwapsBySwapperIdMinExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_MIN_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdMinExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_MIN_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdMinFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_MIN_FILLER_ID_ASC',
+  SwapsBySwapperIdMinFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_MIN_FILLER_ID_DESC',
+  SwapsBySwapperIdMinFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_MIN_FILLER_TYPE_ASC',
+  SwapsBySwapperIdMinFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_MIN_FILLER_TYPE_DESC',
+  SwapsBySwapperIdMinHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_MIN_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdMinHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_MIN_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdMinHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_MIN_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdMinHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_MIN_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdMinIdAsc = 'SWAPS_BY_SWAPPER_ID_MIN_ID_ASC',
+  SwapsBySwapperIdMinIdDesc = 'SWAPS_BY_SWAPPER_ID_MIN_ID_DESC',
+  SwapsBySwapperIdMinOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_MIN_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdMinOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_MIN_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdMinParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdMinParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdMinParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_MIN_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdMinParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_MIN_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdMinRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdMinRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdMinSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_MIN_SWAPPER_ID_ASC',
+  SwapsBySwapperIdMinSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_MIN_SWAPPER_ID_DESC',
+  SwapsBySwapperIdMinSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_MIN_SWAP_INDEX_ASC',
+  SwapsBySwapperIdMinSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_MIN_SWAP_INDEX_DESC',
+  SwapsBySwapperIdStddevPopulationEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_EVENT_INDEX_ASC',
+  SwapsBySwapperIdStddevPopulationEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_EVENT_INDEX_DESC',
+  SwapsBySwapperIdStddevPopulationExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdStddevPopulationExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdStddevPopulationFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_FILLER_ID_ASC',
+  SwapsBySwapperIdStddevPopulationFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_FILLER_ID_DESC',
+  SwapsBySwapperIdStddevPopulationFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_FILLER_TYPE_ASC',
+  SwapsBySwapperIdStddevPopulationFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_FILLER_TYPE_DESC',
+  SwapsBySwapperIdStddevPopulationHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdStddevPopulationHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdStddevPopulationHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdStddevPopulationHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdStddevPopulationIdAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_ID_ASC',
+  SwapsBySwapperIdStddevPopulationIdDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_ID_DESC',
+  SwapsBySwapperIdStddevPopulationOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdStddevPopulationOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdStddevPopulationParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdStddevPopulationParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdStddevPopulationParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdStddevPopulationParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdStddevPopulationRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdStddevPopulationRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdStddevPopulationSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_SWAPPER_ID_ASC',
+  SwapsBySwapperIdStddevPopulationSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_SWAPPER_ID_DESC',
+  SwapsBySwapperIdStddevPopulationSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_SWAP_INDEX_ASC',
+  SwapsBySwapperIdStddevPopulationSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_SWAP_INDEX_DESC',
+  SwapsBySwapperIdStddevSampleEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_EVENT_INDEX_ASC',
+  SwapsBySwapperIdStddevSampleEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_EVENT_INDEX_DESC',
+  SwapsBySwapperIdStddevSampleExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdStddevSampleExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdStddevSampleFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_FILLER_ID_ASC',
+  SwapsBySwapperIdStddevSampleFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_FILLER_ID_DESC',
+  SwapsBySwapperIdStddevSampleFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_FILLER_TYPE_ASC',
+  SwapsBySwapperIdStddevSampleFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_FILLER_TYPE_DESC',
+  SwapsBySwapperIdStddevSampleHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdStddevSampleHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdStddevSampleHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdStddevSampleHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdStddevSampleIdAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_ID_ASC',
+  SwapsBySwapperIdStddevSampleIdDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_ID_DESC',
+  SwapsBySwapperIdStddevSampleOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdStddevSampleOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdStddevSampleParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdStddevSampleParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdStddevSampleParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdStddevSampleParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdStddevSampleRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdStddevSampleRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdStddevSampleSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_SWAPPER_ID_ASC',
+  SwapsBySwapperIdStddevSampleSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_SWAPPER_ID_DESC',
+  SwapsBySwapperIdStddevSampleSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_SWAP_INDEX_ASC',
+  SwapsBySwapperIdStddevSampleSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_SWAP_INDEX_DESC',
+  SwapsBySwapperIdSumEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_SUM_EVENT_INDEX_ASC',
+  SwapsBySwapperIdSumEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_SUM_EVENT_INDEX_DESC',
+  SwapsBySwapperIdSumExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_SUM_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdSumExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_SUM_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdSumFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_SUM_FILLER_ID_ASC',
+  SwapsBySwapperIdSumFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_SUM_FILLER_ID_DESC',
+  SwapsBySwapperIdSumFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_SUM_FILLER_TYPE_ASC',
+  SwapsBySwapperIdSumFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_SUM_FILLER_TYPE_DESC',
+  SwapsBySwapperIdSumHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_SUM_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdSumHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_SUM_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdSumHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_SUM_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdSumHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_SUM_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdSumIdAsc = 'SWAPS_BY_SWAPPER_ID_SUM_ID_ASC',
+  SwapsBySwapperIdSumIdDesc = 'SWAPS_BY_SWAPPER_ID_SUM_ID_DESC',
+  SwapsBySwapperIdSumOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_SUM_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdSumOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_SUM_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdSumParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdSumParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdSumParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_SUM_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdSumParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_SUM_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdSumRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdSumRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdSumSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_SUM_SWAPPER_ID_ASC',
+  SwapsBySwapperIdSumSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_SUM_SWAPPER_ID_DESC',
+  SwapsBySwapperIdSumSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_SUM_SWAP_INDEX_ASC',
+  SwapsBySwapperIdSumSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_SUM_SWAP_INDEX_DESC',
+  SwapsBySwapperIdVariancePopulationEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_EVENT_INDEX_ASC',
+  SwapsBySwapperIdVariancePopulationEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_EVENT_INDEX_DESC',
+  SwapsBySwapperIdVariancePopulationExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdVariancePopulationExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdVariancePopulationFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_FILLER_ID_ASC',
+  SwapsBySwapperIdVariancePopulationFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_FILLER_ID_DESC',
+  SwapsBySwapperIdVariancePopulationFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_FILLER_TYPE_ASC',
+  SwapsBySwapperIdVariancePopulationFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_FILLER_TYPE_DESC',
+  SwapsBySwapperIdVariancePopulationHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdVariancePopulationHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdVariancePopulationHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdVariancePopulationHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdVariancePopulationIdAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_ID_ASC',
+  SwapsBySwapperIdVariancePopulationIdDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_ID_DESC',
+  SwapsBySwapperIdVariancePopulationOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdVariancePopulationOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdVariancePopulationParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdVariancePopulationParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdVariancePopulationParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdVariancePopulationParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdVariancePopulationRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdVariancePopulationRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdVariancePopulationSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_SWAPPER_ID_ASC',
+  SwapsBySwapperIdVariancePopulationSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_SWAPPER_ID_DESC',
+  SwapsBySwapperIdVariancePopulationSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_SWAP_INDEX_ASC',
+  SwapsBySwapperIdVariancePopulationSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_SWAP_INDEX_DESC',
+  SwapsBySwapperIdVarianceSampleEventIndexAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_EVENT_INDEX_ASC',
+  SwapsBySwapperIdVarianceSampleEventIndexDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_EVENT_INDEX_DESC',
+  SwapsBySwapperIdVarianceSampleExtrinsicHashAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
+  SwapsBySwapperIdVarianceSampleExtrinsicHashDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
+  SwapsBySwapperIdVarianceSampleFillerIdAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_FILLER_ID_ASC',
+  SwapsBySwapperIdVarianceSampleFillerIdDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_FILLER_ID_DESC',
+  SwapsBySwapperIdVarianceSampleFillerTypeAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_FILLER_TYPE_ASC',
+  SwapsBySwapperIdVarianceSampleFillerTypeDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_FILLER_TYPE_DESC',
+  SwapsBySwapperIdVarianceSampleHubAmountInAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_HUB_AMOUNT_IN_ASC',
+  SwapsBySwapperIdVarianceSampleHubAmountInDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_HUB_AMOUNT_IN_DESC',
+  SwapsBySwapperIdVarianceSampleHubAmountOutAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_ASC',
+  SwapsBySwapperIdVarianceSampleHubAmountOutDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_DESC',
+  SwapsBySwapperIdVarianceSampleIdAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_ID_ASC',
+  SwapsBySwapperIdVarianceSampleIdDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_ID_DESC',
+  SwapsBySwapperIdVarianceSampleOperationTypeAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_OPERATION_TYPE_ASC',
+  SwapsBySwapperIdVarianceSampleOperationTypeDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_OPERATION_TYPE_DESC',
+  SwapsBySwapperIdVarianceSampleParaChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdVarianceSampleParaChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdVarianceSampleParaChainTimestampAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_ASC',
+  SwapsBySwapperIdVarianceSampleParaChainTimestampDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_PARA_CHAIN_TIMESTAMP_DESC',
+  SwapsBySwapperIdVarianceSampleRelayChainBlockHeightAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  SwapsBySwapperIdVarianceSampleRelayChainBlockHeightDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapsBySwapperIdVarianceSampleSwapperIdAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_SWAPPER_ID_ASC',
+  SwapsBySwapperIdVarianceSampleSwapperIdDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_SWAPPER_ID_DESC',
+  SwapsBySwapperIdVarianceSampleSwapIndexAsc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_SWAP_INDEX_ASC',
+  SwapsBySwapperIdVarianceSampleSwapIndexDesc = 'SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_SWAP_INDEX_DESC',
+  SwapFeesByRecipientIdAverageAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_AMOUNT_ASC',
+  SwapFeesByRecipientIdAverageAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_AMOUNT_DESC',
+  SwapFeesByRecipientIdAverageAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_ASSET_ID_ASC',
+  SwapFeesByRecipientIdAverageAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_ASSET_ID_DESC',
+  SwapFeesByRecipientIdAverageIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_ID_ASC',
+  SwapFeesByRecipientIdAverageIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_ID_DESC',
+  SwapFeesByRecipientIdAverageRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdAverageRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdAverageSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_SWAP_ID_ASC',
+  SwapFeesByRecipientIdAverageSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_AVERAGE_SWAP_ID_DESC',
+  SwapFeesByRecipientIdCountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_COUNT_ASC',
+  SwapFeesByRecipientIdCountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_COUNT_DESC',
+  SwapFeesByRecipientIdDistinctCountAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_AMOUNT_ASC',
+  SwapFeesByRecipientIdDistinctCountAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_AMOUNT_DESC',
+  SwapFeesByRecipientIdDistinctCountAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_ASSET_ID_ASC',
+  SwapFeesByRecipientIdDistinctCountAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_ASSET_ID_DESC',
+  SwapFeesByRecipientIdDistinctCountIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_ID_ASC',
+  SwapFeesByRecipientIdDistinctCountIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_ID_DESC',
+  SwapFeesByRecipientIdDistinctCountRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdDistinctCountRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdDistinctCountSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_SWAP_ID_ASC',
+  SwapFeesByRecipientIdDistinctCountSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_DISTINCT_COUNT_SWAP_ID_DESC',
+  SwapFeesByRecipientIdMaxAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_AMOUNT_ASC',
+  SwapFeesByRecipientIdMaxAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_AMOUNT_DESC',
+  SwapFeesByRecipientIdMaxAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_ASSET_ID_ASC',
+  SwapFeesByRecipientIdMaxAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_ASSET_ID_DESC',
+  SwapFeesByRecipientIdMaxIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_ID_ASC',
+  SwapFeesByRecipientIdMaxIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_ID_DESC',
+  SwapFeesByRecipientIdMaxRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdMaxRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdMaxSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_SWAP_ID_ASC',
+  SwapFeesByRecipientIdMaxSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MAX_SWAP_ID_DESC',
+  SwapFeesByRecipientIdMinAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_AMOUNT_ASC',
+  SwapFeesByRecipientIdMinAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_AMOUNT_DESC',
+  SwapFeesByRecipientIdMinAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_ASSET_ID_ASC',
+  SwapFeesByRecipientIdMinAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_ASSET_ID_DESC',
+  SwapFeesByRecipientIdMinIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_ID_ASC',
+  SwapFeesByRecipientIdMinIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_ID_DESC',
+  SwapFeesByRecipientIdMinRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdMinRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdMinSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_SWAP_ID_ASC',
+  SwapFeesByRecipientIdMinSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_MIN_SWAP_ID_DESC',
+  SwapFeesByRecipientIdStddevPopulationAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_AMOUNT_ASC',
+  SwapFeesByRecipientIdStddevPopulationAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_AMOUNT_DESC',
+  SwapFeesByRecipientIdStddevPopulationAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_ASSET_ID_ASC',
+  SwapFeesByRecipientIdStddevPopulationAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_ASSET_ID_DESC',
+  SwapFeesByRecipientIdStddevPopulationIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_ID_ASC',
+  SwapFeesByRecipientIdStddevPopulationIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_ID_DESC',
+  SwapFeesByRecipientIdStddevPopulationRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdStddevPopulationRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdStddevPopulationSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_SWAP_ID_ASC',
+  SwapFeesByRecipientIdStddevPopulationSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_POPULATION_SWAP_ID_DESC',
+  SwapFeesByRecipientIdStddevSampleAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_AMOUNT_ASC',
+  SwapFeesByRecipientIdStddevSampleAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_AMOUNT_DESC',
+  SwapFeesByRecipientIdStddevSampleAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_ASSET_ID_ASC',
+  SwapFeesByRecipientIdStddevSampleAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_ASSET_ID_DESC',
+  SwapFeesByRecipientIdStddevSampleIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_ID_ASC',
+  SwapFeesByRecipientIdStddevSampleIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_ID_DESC',
+  SwapFeesByRecipientIdStddevSampleRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdStddevSampleRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdStddevSampleSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_SWAP_ID_ASC',
+  SwapFeesByRecipientIdStddevSampleSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_STDDEV_SAMPLE_SWAP_ID_DESC',
+  SwapFeesByRecipientIdSumAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_AMOUNT_ASC',
+  SwapFeesByRecipientIdSumAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_AMOUNT_DESC',
+  SwapFeesByRecipientIdSumAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_ASSET_ID_ASC',
+  SwapFeesByRecipientIdSumAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_ASSET_ID_DESC',
+  SwapFeesByRecipientIdSumIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_ID_ASC',
+  SwapFeesByRecipientIdSumIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_ID_DESC',
+  SwapFeesByRecipientIdSumRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdSumRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdSumSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_SWAP_ID_ASC',
+  SwapFeesByRecipientIdSumSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_SUM_SWAP_ID_DESC',
+  SwapFeesByRecipientIdVariancePopulationAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_AMOUNT_ASC',
+  SwapFeesByRecipientIdVariancePopulationAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_AMOUNT_DESC',
+  SwapFeesByRecipientIdVariancePopulationAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_ASSET_ID_ASC',
+  SwapFeesByRecipientIdVariancePopulationAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_ASSET_ID_DESC',
+  SwapFeesByRecipientIdVariancePopulationIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_ID_ASC',
+  SwapFeesByRecipientIdVariancePopulationIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_ID_DESC',
+  SwapFeesByRecipientIdVariancePopulationRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdVariancePopulationRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdVariancePopulationSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_SWAP_ID_ASC',
+  SwapFeesByRecipientIdVariancePopulationSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_POPULATION_SWAP_ID_DESC',
+  SwapFeesByRecipientIdVarianceSampleAmountAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_AMOUNT_ASC',
+  SwapFeesByRecipientIdVarianceSampleAmountDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_AMOUNT_DESC',
+  SwapFeesByRecipientIdVarianceSampleAssetIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_ASSET_ID_ASC',
+  SwapFeesByRecipientIdVarianceSampleAssetIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_ASSET_ID_DESC',
+  SwapFeesByRecipientIdVarianceSampleIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_ID_ASC',
+  SwapFeesByRecipientIdVarianceSampleIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_ID_DESC',
+  SwapFeesByRecipientIdVarianceSampleRecipientIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_RECIPIENT_ID_ASC',
+  SwapFeesByRecipientIdVarianceSampleRecipientIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_RECIPIENT_ID_DESC',
+  SwapFeesByRecipientIdVarianceSampleSwapIdAsc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_SWAP_ID_ASC',
+  SwapFeesByRecipientIdVarianceSampleSwapIdDesc = 'SWAP_FEES_BY_RECIPIENT_ID_VARIANCE_SAMPLE_SWAP_ID_DESC',
   TransfersByFromIdAverageAmountAsc = 'TRANSFERS_BY_FROM_ID_AVERAGE_AMOUNT_ASC',
   TransfersByFromIdAverageAmountDesc = 'TRANSFERS_BY_FROM_ID_AVERAGE_AMOUNT_DESC',
   TransfersByFromIdAverageAssetIdAsc = 'TRANSFERS_BY_FROM_ID_AVERAGE_ASSET_ID_ASC',
@@ -3386,278 +3221,8 @@ export enum AccountsOrderBy {
   XykPoolsVarianceSampleIsDestroyedDesc = 'XYK_POOLS_VARIANCE_SAMPLE_IS_DESTROYED_DESC',
   XykPoolsVarianceSampleShareTokenIdAsc = 'XYK_POOLS_VARIANCE_SAMPLE_SHARE_TOKEN_ID_ASC',
   XykPoolsVarianceSampleShareTokenIdDesc = 'XYK_POOLS_VARIANCE_SAMPLE_SHARE_TOKEN_ID_DESC',
-  XykPoolOperationsAverageAccountIdAsc = 'XYK_POOL_OPERATIONS_AVERAGE_ACCOUNT_ID_ASC',
-  XykPoolOperationsAverageAccountIdDesc = 'XYK_POOL_OPERATIONS_AVERAGE_ACCOUNT_ID_DESC',
-  XykPoolOperationsAverageAssetInAmountAsc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsAverageAssetInAmountDesc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsAverageAssetInFeeAsc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsAverageAssetInFeeDesc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsAverageAssetInIdAsc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_IN_ID_ASC',
-  XykPoolOperationsAverageAssetInIdDesc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_IN_ID_DESC',
-  XykPoolOperationsAverageAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsAverageAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsAverageAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsAverageAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsAverageAssetOutIdAsc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsAverageAssetOutIdDesc = 'XYK_POOL_OPERATIONS_AVERAGE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsAverageExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_AVERAGE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsAverageExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_AVERAGE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsAverageIdAsc = 'XYK_POOL_OPERATIONS_AVERAGE_ID_ASC',
-  XykPoolOperationsAverageIdDesc = 'XYK_POOL_OPERATIONS_AVERAGE_ID_DESC',
-  XykPoolOperationsAverageIndexInBlockAsc = 'XYK_POOL_OPERATIONS_AVERAGE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsAverageIndexInBlockDesc = 'XYK_POOL_OPERATIONS_AVERAGE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsAverageParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsAverageParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsAveragePoolIdAsc = 'XYK_POOL_OPERATIONS_AVERAGE_POOL_ID_ASC',
-  XykPoolOperationsAveragePoolIdDesc = 'XYK_POOL_OPERATIONS_AVERAGE_POOL_ID_DESC',
-  XykPoolOperationsAverageRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsAverageRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsAverageSwapPriceAsc = 'XYK_POOL_OPERATIONS_AVERAGE_SWAP_PRICE_ASC',
-  XykPoolOperationsAverageSwapPriceDesc = 'XYK_POOL_OPERATIONS_AVERAGE_SWAP_PRICE_DESC',
-  XykPoolOperationsAverageTypeAsc = 'XYK_POOL_OPERATIONS_AVERAGE_TYPE_ASC',
-  XykPoolOperationsAverageTypeDesc = 'XYK_POOL_OPERATIONS_AVERAGE_TYPE_DESC',
-  XykPoolOperationsCountAsc = 'XYK_POOL_OPERATIONS_COUNT_ASC',
-  XykPoolOperationsCountDesc = 'XYK_POOL_OPERATIONS_COUNT_DESC',
-  XykPoolOperationsDistinctCountAccountIdAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  XykPoolOperationsDistinctCountAccountIdDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  XykPoolOperationsDistinctCountAssetInAmountAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsDistinctCountAssetInAmountDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsDistinctCountAssetInFeeAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_FEE_ASC',
-  XykPoolOperationsDistinctCountAssetInFeeDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_FEE_DESC',
-  XykPoolOperationsDistinctCountAssetInIdAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  XykPoolOperationsDistinctCountAssetInIdDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  XykPoolOperationsDistinctCountAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsDistinctCountAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsDistinctCountAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsDistinctCountAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsDistinctCountAssetOutIdAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  XykPoolOperationsDistinctCountAssetOutIdDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  XykPoolOperationsDistinctCountExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsDistinctCountExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsDistinctCountIdAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ID_ASC',
-  XykPoolOperationsDistinctCountIdDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_ID_DESC',
-  XykPoolOperationsDistinctCountIndexInBlockAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsDistinctCountIndexInBlockDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsDistinctCountParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsDistinctCountParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsDistinctCountPoolIdAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_POOL_ID_ASC',
-  XykPoolOperationsDistinctCountPoolIdDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_POOL_ID_DESC',
-  XykPoolOperationsDistinctCountRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsDistinctCountRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsDistinctCountSwapPriceAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_SWAP_PRICE_ASC',
-  XykPoolOperationsDistinctCountSwapPriceDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_SWAP_PRICE_DESC',
-  XykPoolOperationsDistinctCountTypeAsc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_TYPE_ASC',
-  XykPoolOperationsDistinctCountTypeDesc = 'XYK_POOL_OPERATIONS_DISTINCT_COUNT_TYPE_DESC',
-  XykPoolOperationsMaxAccountIdAsc = 'XYK_POOL_OPERATIONS_MAX_ACCOUNT_ID_ASC',
-  XykPoolOperationsMaxAccountIdDesc = 'XYK_POOL_OPERATIONS_MAX_ACCOUNT_ID_DESC',
-  XykPoolOperationsMaxAssetInAmountAsc = 'XYK_POOL_OPERATIONS_MAX_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsMaxAssetInAmountDesc = 'XYK_POOL_OPERATIONS_MAX_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsMaxAssetInFeeAsc = 'XYK_POOL_OPERATIONS_MAX_ASSET_IN_FEE_ASC',
-  XykPoolOperationsMaxAssetInFeeDesc = 'XYK_POOL_OPERATIONS_MAX_ASSET_IN_FEE_DESC',
-  XykPoolOperationsMaxAssetInIdAsc = 'XYK_POOL_OPERATIONS_MAX_ASSET_IN_ID_ASC',
-  XykPoolOperationsMaxAssetInIdDesc = 'XYK_POOL_OPERATIONS_MAX_ASSET_IN_ID_DESC',
-  XykPoolOperationsMaxAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_MAX_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsMaxAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_MAX_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsMaxAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_MAX_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsMaxAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_MAX_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsMaxAssetOutIdAsc = 'XYK_POOL_OPERATIONS_MAX_ASSET_OUT_ID_ASC',
-  XykPoolOperationsMaxAssetOutIdDesc = 'XYK_POOL_OPERATIONS_MAX_ASSET_OUT_ID_DESC',
-  XykPoolOperationsMaxExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_MAX_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsMaxExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_MAX_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsMaxIdAsc = 'XYK_POOL_OPERATIONS_MAX_ID_ASC',
-  XykPoolOperationsMaxIdDesc = 'XYK_POOL_OPERATIONS_MAX_ID_DESC',
-  XykPoolOperationsMaxIndexInBlockAsc = 'XYK_POOL_OPERATIONS_MAX_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsMaxIndexInBlockDesc = 'XYK_POOL_OPERATIONS_MAX_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsMaxParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsMaxParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsMaxPoolIdAsc = 'XYK_POOL_OPERATIONS_MAX_POOL_ID_ASC',
-  XykPoolOperationsMaxPoolIdDesc = 'XYK_POOL_OPERATIONS_MAX_POOL_ID_DESC',
-  XykPoolOperationsMaxRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsMaxRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsMaxSwapPriceAsc = 'XYK_POOL_OPERATIONS_MAX_SWAP_PRICE_ASC',
-  XykPoolOperationsMaxSwapPriceDesc = 'XYK_POOL_OPERATIONS_MAX_SWAP_PRICE_DESC',
-  XykPoolOperationsMaxTypeAsc = 'XYK_POOL_OPERATIONS_MAX_TYPE_ASC',
-  XykPoolOperationsMaxTypeDesc = 'XYK_POOL_OPERATIONS_MAX_TYPE_DESC',
-  XykPoolOperationsMinAccountIdAsc = 'XYK_POOL_OPERATIONS_MIN_ACCOUNT_ID_ASC',
-  XykPoolOperationsMinAccountIdDesc = 'XYK_POOL_OPERATIONS_MIN_ACCOUNT_ID_DESC',
-  XykPoolOperationsMinAssetInAmountAsc = 'XYK_POOL_OPERATIONS_MIN_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsMinAssetInAmountDesc = 'XYK_POOL_OPERATIONS_MIN_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsMinAssetInFeeAsc = 'XYK_POOL_OPERATIONS_MIN_ASSET_IN_FEE_ASC',
-  XykPoolOperationsMinAssetInFeeDesc = 'XYK_POOL_OPERATIONS_MIN_ASSET_IN_FEE_DESC',
-  XykPoolOperationsMinAssetInIdAsc = 'XYK_POOL_OPERATIONS_MIN_ASSET_IN_ID_ASC',
-  XykPoolOperationsMinAssetInIdDesc = 'XYK_POOL_OPERATIONS_MIN_ASSET_IN_ID_DESC',
-  XykPoolOperationsMinAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_MIN_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsMinAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_MIN_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsMinAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_MIN_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsMinAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_MIN_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsMinAssetOutIdAsc = 'XYK_POOL_OPERATIONS_MIN_ASSET_OUT_ID_ASC',
-  XykPoolOperationsMinAssetOutIdDesc = 'XYK_POOL_OPERATIONS_MIN_ASSET_OUT_ID_DESC',
-  XykPoolOperationsMinExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_MIN_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsMinExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_MIN_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsMinIdAsc = 'XYK_POOL_OPERATIONS_MIN_ID_ASC',
-  XykPoolOperationsMinIdDesc = 'XYK_POOL_OPERATIONS_MIN_ID_DESC',
-  XykPoolOperationsMinIndexInBlockAsc = 'XYK_POOL_OPERATIONS_MIN_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsMinIndexInBlockDesc = 'XYK_POOL_OPERATIONS_MIN_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsMinParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsMinParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsMinPoolIdAsc = 'XYK_POOL_OPERATIONS_MIN_POOL_ID_ASC',
-  XykPoolOperationsMinPoolIdDesc = 'XYK_POOL_OPERATIONS_MIN_POOL_ID_DESC',
-  XykPoolOperationsMinRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsMinRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsMinSwapPriceAsc = 'XYK_POOL_OPERATIONS_MIN_SWAP_PRICE_ASC',
-  XykPoolOperationsMinSwapPriceDesc = 'XYK_POOL_OPERATIONS_MIN_SWAP_PRICE_DESC',
-  XykPoolOperationsMinTypeAsc = 'XYK_POOL_OPERATIONS_MIN_TYPE_ASC',
-  XykPoolOperationsMinTypeDesc = 'XYK_POOL_OPERATIONS_MIN_TYPE_DESC',
-  XykPoolOperationsStddevPopulationAccountIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  XykPoolOperationsStddevPopulationAccountIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  XykPoolOperationsStddevPopulationAssetInAmountAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsStddevPopulationAssetInAmountDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsStddevPopulationAssetInFeeAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_FEE_ASC',
-  XykPoolOperationsStddevPopulationAssetInFeeDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_FEE_DESC',
-  XykPoolOperationsStddevPopulationAssetInIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  XykPoolOperationsStddevPopulationAssetInIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  XykPoolOperationsStddevPopulationAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsStddevPopulationAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsStddevPopulationAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsStddevPopulationAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsStddevPopulationAssetOutIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  XykPoolOperationsStddevPopulationAssetOutIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  XykPoolOperationsStddevPopulationExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsStddevPopulationExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsStddevPopulationIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ID_ASC',
-  XykPoolOperationsStddevPopulationIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_ID_DESC',
-  XykPoolOperationsStddevPopulationIndexInBlockAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsStddevPopulationIndexInBlockDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsStddevPopulationParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsStddevPopulationParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsStddevPopulationPoolIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_POOL_ID_ASC',
-  XykPoolOperationsStddevPopulationPoolIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_POOL_ID_DESC',
-  XykPoolOperationsStddevPopulationRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsStddevPopulationRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsStddevPopulationSwapPriceAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_SWAP_PRICE_ASC',
-  XykPoolOperationsStddevPopulationSwapPriceDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_SWAP_PRICE_DESC',
-  XykPoolOperationsStddevPopulationTypeAsc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_TYPE_ASC',
-  XykPoolOperationsStddevPopulationTypeDesc = 'XYK_POOL_OPERATIONS_STDDEV_POPULATION_TYPE_DESC',
-  XykPoolOperationsStddevSampleAccountIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  XykPoolOperationsStddevSampleAccountIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  XykPoolOperationsStddevSampleAssetInAmountAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsStddevSampleAssetInAmountDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsStddevSampleAssetInFeeAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsStddevSampleAssetInFeeDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsStddevSampleAssetInIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  XykPoolOperationsStddevSampleAssetInIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  XykPoolOperationsStddevSampleAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsStddevSampleAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsStddevSampleAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsStddevSampleAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsStddevSampleAssetOutIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsStddevSampleAssetOutIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsStddevSampleExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsStddevSampleExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsStddevSampleIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ID_ASC',
-  XykPoolOperationsStddevSampleIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_ID_DESC',
-  XykPoolOperationsStddevSampleIndexInBlockAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsStddevSampleIndexInBlockDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsStddevSampleParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsStddevSampleParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsStddevSamplePoolIdAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_POOL_ID_ASC',
-  XykPoolOperationsStddevSamplePoolIdDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_POOL_ID_DESC',
-  XykPoolOperationsStddevSampleRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsStddevSampleRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsStddevSampleSwapPriceAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_SWAP_PRICE_ASC',
-  XykPoolOperationsStddevSampleSwapPriceDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_SWAP_PRICE_DESC',
-  XykPoolOperationsStddevSampleTypeAsc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_TYPE_ASC',
-  XykPoolOperationsStddevSampleTypeDesc = 'XYK_POOL_OPERATIONS_STDDEV_SAMPLE_TYPE_DESC',
-  XykPoolOperationsSumAccountIdAsc = 'XYK_POOL_OPERATIONS_SUM_ACCOUNT_ID_ASC',
-  XykPoolOperationsSumAccountIdDesc = 'XYK_POOL_OPERATIONS_SUM_ACCOUNT_ID_DESC',
-  XykPoolOperationsSumAssetInAmountAsc = 'XYK_POOL_OPERATIONS_SUM_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsSumAssetInAmountDesc = 'XYK_POOL_OPERATIONS_SUM_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsSumAssetInFeeAsc = 'XYK_POOL_OPERATIONS_SUM_ASSET_IN_FEE_ASC',
-  XykPoolOperationsSumAssetInFeeDesc = 'XYK_POOL_OPERATIONS_SUM_ASSET_IN_FEE_DESC',
-  XykPoolOperationsSumAssetInIdAsc = 'XYK_POOL_OPERATIONS_SUM_ASSET_IN_ID_ASC',
-  XykPoolOperationsSumAssetInIdDesc = 'XYK_POOL_OPERATIONS_SUM_ASSET_IN_ID_DESC',
-  XykPoolOperationsSumAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_SUM_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsSumAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_SUM_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsSumAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_SUM_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsSumAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_SUM_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsSumAssetOutIdAsc = 'XYK_POOL_OPERATIONS_SUM_ASSET_OUT_ID_ASC',
-  XykPoolOperationsSumAssetOutIdDesc = 'XYK_POOL_OPERATIONS_SUM_ASSET_OUT_ID_DESC',
-  XykPoolOperationsSumExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_SUM_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsSumExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_SUM_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsSumIdAsc = 'XYK_POOL_OPERATIONS_SUM_ID_ASC',
-  XykPoolOperationsSumIdDesc = 'XYK_POOL_OPERATIONS_SUM_ID_DESC',
-  XykPoolOperationsSumIndexInBlockAsc = 'XYK_POOL_OPERATIONS_SUM_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsSumIndexInBlockDesc = 'XYK_POOL_OPERATIONS_SUM_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsSumParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsSumParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsSumPoolIdAsc = 'XYK_POOL_OPERATIONS_SUM_POOL_ID_ASC',
-  XykPoolOperationsSumPoolIdDesc = 'XYK_POOL_OPERATIONS_SUM_POOL_ID_DESC',
-  XykPoolOperationsSumRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsSumRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsSumSwapPriceAsc = 'XYK_POOL_OPERATIONS_SUM_SWAP_PRICE_ASC',
-  XykPoolOperationsSumSwapPriceDesc = 'XYK_POOL_OPERATIONS_SUM_SWAP_PRICE_DESC',
-  XykPoolOperationsSumTypeAsc = 'XYK_POOL_OPERATIONS_SUM_TYPE_ASC',
-  XykPoolOperationsSumTypeDesc = 'XYK_POOL_OPERATIONS_SUM_TYPE_DESC',
-  XykPoolOperationsVariancePopulationAccountIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  XykPoolOperationsVariancePopulationAccountIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  XykPoolOperationsVariancePopulationAssetInAmountAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsVariancePopulationAssetInAmountDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsVariancePopulationAssetInFeeAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_FEE_ASC',
-  XykPoolOperationsVariancePopulationAssetInFeeDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_FEE_DESC',
-  XykPoolOperationsVariancePopulationAssetInIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  XykPoolOperationsVariancePopulationAssetInIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  XykPoolOperationsVariancePopulationAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsVariancePopulationAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsVariancePopulationAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsVariancePopulationAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsVariancePopulationAssetOutIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  XykPoolOperationsVariancePopulationAssetOutIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  XykPoolOperationsVariancePopulationExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsVariancePopulationExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsVariancePopulationIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ID_ASC',
-  XykPoolOperationsVariancePopulationIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_ID_DESC',
-  XykPoolOperationsVariancePopulationIndexInBlockAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsVariancePopulationIndexInBlockDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsVariancePopulationParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsVariancePopulationParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsVariancePopulationPoolIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_POOL_ID_ASC',
-  XykPoolOperationsVariancePopulationPoolIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_POOL_ID_DESC',
-  XykPoolOperationsVariancePopulationRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsVariancePopulationRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsVariancePopulationSwapPriceAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_SWAP_PRICE_ASC',
-  XykPoolOperationsVariancePopulationSwapPriceDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_SWAP_PRICE_DESC',
-  XykPoolOperationsVariancePopulationTypeAsc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_TYPE_ASC',
-  XykPoolOperationsVariancePopulationTypeDesc = 'XYK_POOL_OPERATIONS_VARIANCE_POPULATION_TYPE_DESC',
-  XykPoolOperationsVarianceSampleAccountIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  XykPoolOperationsVarianceSampleAccountIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  XykPoolOperationsVarianceSampleAssetInAmountAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsVarianceSampleAssetInAmountDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsVarianceSampleAssetInFeeAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsVarianceSampleAssetInFeeDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsVarianceSampleAssetInIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  XykPoolOperationsVarianceSampleAssetInIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  XykPoolOperationsVarianceSampleAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsVarianceSampleAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsVarianceSampleAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsVarianceSampleAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsVarianceSampleAssetOutIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsVarianceSampleAssetOutIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsVarianceSampleExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsVarianceSampleExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsVarianceSampleIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ID_ASC',
-  XykPoolOperationsVarianceSampleIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_ID_DESC',
-  XykPoolOperationsVarianceSampleIndexInBlockAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsVarianceSampleIndexInBlockDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsVarianceSampleParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsVarianceSampleParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsVarianceSamplePoolIdAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_POOL_ID_ASC',
-  XykPoolOperationsVarianceSamplePoolIdDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_POOL_ID_DESC',
-  XykPoolOperationsVarianceSampleRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsVarianceSampleRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsVarianceSampleSwapPriceAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_SWAP_PRICE_ASC',
-  XykPoolOperationsVarianceSampleSwapPriceDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_SWAP_PRICE_DESC',
-  XykPoolOperationsVarianceSampleTypeAsc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_TYPE_ASC',
-  XykPoolOperationsVarianceSampleTypeDesc = 'XYK_POOL_OPERATIONS_VARIANCE_SAMPLE_TYPE_DESC'
+  XykPoolIdAsc = 'XYK_POOL_ID_ASC',
+  XykPoolIdDesc = 'XYK_POOL_ID_DESC'
 }
 
 export type Asset = {
@@ -3681,10 +3246,6 @@ export type Asset = {
   lbpPoolHistoricalVolumesByAssetAId: LbpPoolHistoricalVolumesConnection;
   /** Reads and enables pagination through a set of `LbpPoolHistoricalVolume`. */
   lbpPoolHistoricalVolumesByAssetBId: LbpPoolHistoricalVolumesConnection;
-  /** Reads and enables pagination through a set of `LbpPoolOperation`. */
-  lbpPoolOperationsByAssetInId: LbpPoolOperationsConnection;
-  /** Reads and enables pagination through a set of `LbpPoolOperation`. */
-  lbpPoolOperationsByAssetOutId: LbpPoolOperationsConnection;
   /** Reads and enables pagination through a set of `LbpPool`. */
   lbpPoolsByAssetAId: LbpPoolsConnection;
   /** Reads and enables pagination through a set of `LbpPool`. */
@@ -3702,10 +3263,12 @@ export type Asset = {
   stablepoolAssetLiquidityAmounts: StablepoolAssetLiquidityAmountsConnection;
   /** Reads and enables pagination through a set of `StablepoolAsset`. */
   stablepoolAssets: StablepoolAssetsConnection;
-  /** Reads and enables pagination through a set of `StablepoolOperation`. */
-  stablepoolOperationsByAssetInId: StablepoolOperationsConnection;
-  /** Reads and enables pagination through a set of `StablepoolOperation`. */
-  stablepoolOperationsByAssetOutId: StablepoolOperationsConnection;
+  /** Reads and enables pagination through a set of `SwapFee`. */
+  swapFees: SwapFeesConnection;
+  /** Reads and enables pagination through a set of `SwapInputAssetBalance`. */
+  swapInputAssetBalances: SwapInputAssetBalancesConnection;
+  /** Reads and enables pagination through a set of `SwapOutputAssetBalance`. */
+  swapOutputAssetBalances: SwapOutputAssetBalancesConnection;
   symbol?: Maybe<Scalars['String']['output']>;
   xcmRateLimit?: Maybe<Scalars['BigFloat']['output']>;
   /** Reads and enables pagination through a set of `XykPoolHistoricalDatum`. */
@@ -3720,10 +3283,6 @@ export type Asset = {
   xykPoolHistoricalVolumesByAssetAId: XykPoolHistoricalVolumesConnection;
   /** Reads and enables pagination through a set of `XykPoolHistoricalVolume`. */
   xykPoolHistoricalVolumesByAssetBId: XykPoolHistoricalVolumesConnection;
-  /** Reads and enables pagination through a set of `XykPoolOperation`. */
-  xykPoolOperationsByAssetInId: XykPoolOperationsConnection;
-  /** Reads and enables pagination through a set of `XykPoolOperation`. */
-  xykPoolOperationsByAssetOutId: XykPoolOperationsConnection;
   /** Reads and enables pagination through a set of `XykPool`. */
   xykPoolsByAssetAId: XykPoolsConnection;
   /** Reads and enables pagination through a set of `XykPool`. */
@@ -3812,30 +3371,6 @@ export type AssetLbpPoolHistoricalVolumesByAssetBIdArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<LbpPoolHistoricalVolumesOrderBy>>;
-};
-
-
-export type AssetLbpPoolOperationsByAssetInIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<LbpPoolOperationCondition>;
-  filter?: InputMaybe<LbpPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<LbpPoolOperationsOrderBy>>;
-};
-
-
-export type AssetLbpPoolOperationsByAssetOutIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<LbpPoolOperationCondition>;
-  filter?: InputMaybe<LbpPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<LbpPoolOperationsOrderBy>>;
 };
 
 
@@ -3935,27 +3470,39 @@ export type AssetStablepoolAssetsArgs = {
 };
 
 
-export type AssetStablepoolOperationsByAssetInIdArgs = {
+export type AssetSwapFeesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<StablepoolOperationCondition>;
-  filter?: InputMaybe<StablepoolOperationFilter>;
+  condition?: InputMaybe<SwapFeeCondition>;
+  filter?: InputMaybe<SwapFeeFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<StablepoolOperationsOrderBy>>;
+  orderBy?: InputMaybe<Array<SwapFeesOrderBy>>;
 };
 
 
-export type AssetStablepoolOperationsByAssetOutIdArgs = {
+export type AssetSwapInputAssetBalancesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<StablepoolOperationCondition>;
-  filter?: InputMaybe<StablepoolOperationFilter>;
+  condition?: InputMaybe<SwapInputAssetBalanceCondition>;
+  filter?: InputMaybe<SwapInputAssetBalanceFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<StablepoolOperationsOrderBy>>;
+  orderBy?: InputMaybe<Array<SwapInputAssetBalancesOrderBy>>;
+};
+
+
+export type AssetSwapOutputAssetBalancesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapOutputAssetBalanceCondition>;
+  filter?: InputMaybe<SwapOutputAssetBalanceFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapOutputAssetBalancesOrderBy>>;
 };
 
 
@@ -4028,30 +3575,6 @@ export type AssetXykPoolHistoricalVolumesByAssetBIdArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<XykPoolHistoricalVolumesOrderBy>>;
-};
-
-
-export type AssetXykPoolOperationsByAssetInIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<XykPoolOperationCondition>;
-  filter?: InputMaybe<XykPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<XykPoolOperationsOrderBy>>;
-};
-
-
-export type AssetXykPoolOperationsByAssetOutIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<XykPoolOperationCondition>;
-  filter?: InputMaybe<XykPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<XykPoolOperationsOrderBy>>;
 };
 
 
@@ -6766,550 +6289,6 @@ export enum AssetsOrderBy {
   LbpPoolHistoricalVolumesByAssetBidVarianceSamplePoolIdDesc = 'LBP_POOL_HISTORICAL_VOLUMES_BY_ASSET_BID_VARIANCE_SAMPLE_POOL_ID_DESC',
   LbpPoolHistoricalVolumesByAssetBidVarianceSampleRelayChainBlockHeightAsc = 'LBP_POOL_HISTORICAL_VOLUMES_BY_ASSET_BID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
   LbpPoolHistoricalVolumesByAssetBidVarianceSampleRelayChainBlockHeightDesc = 'LBP_POOL_HISTORICAL_VOLUMES_BY_ASSET_BID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdAverageAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdAverageAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdAverageAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdAverageAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdAverageAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdAverageAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdAverageAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdAverageAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdAverageAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdAverageAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdAverageAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdAverageAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdAverageAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdAverageAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdAverageExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdAverageExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdAverageIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ID_ASC',
-  LbpPoolOperationsByAssetInIdAverageIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ID_DESC',
-  LbpPoolOperationsByAssetInIdAverageIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdAverageIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdAverageParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdAverageParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdAveragePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdAveragePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdAverageRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdAverageRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdAverageSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdAverageSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdAverageTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdAverageTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_TYPE_DESC',
-  LbpPoolOperationsByAssetInIdCountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_COUNT_ASC',
-  LbpPoolOperationsByAssetInIdCountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_COUNT_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdDistinctCountTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdDistinctCountTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_TYPE_DESC',
-  LbpPoolOperationsByAssetInIdMaxAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdMaxAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdMaxAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdMaxAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdMaxAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdMaxAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdMaxAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdMaxAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdMaxAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdMaxAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdMaxAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdMaxAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdMaxAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdMaxAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdMaxExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdMaxExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdMaxIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ID_ASC',
-  LbpPoolOperationsByAssetInIdMaxIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ID_DESC',
-  LbpPoolOperationsByAssetInIdMaxIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdMaxIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdMaxParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdMaxParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdMaxPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdMaxPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdMaxRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdMaxRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdMaxSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdMaxSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdMaxTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdMaxTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_TYPE_DESC',
-  LbpPoolOperationsByAssetInIdMinAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdMinAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdMinAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdMinAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdMinAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdMinAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdMinAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdMinAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdMinAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdMinAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdMinAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdMinAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdMinAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdMinAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdMinExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdMinExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdMinIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ID_ASC',
-  LbpPoolOperationsByAssetInIdMinIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ID_DESC',
-  LbpPoolOperationsByAssetInIdMinIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdMinIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdMinParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdMinParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdMinPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdMinPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdMinRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdMinRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdMinSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdMinSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdMinTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdMinTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_TYPE_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdStddevPopulationTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdStddevPopulationTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_TYPE_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdStddevSamplePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdStddevSamplePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdStddevSampleTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdStddevSampleTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_TYPE_DESC',
-  LbpPoolOperationsByAssetInIdSumAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdSumAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdSumAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdSumAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdSumAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdSumAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdSumAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdSumAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdSumAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdSumAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdSumAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdSumAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdSumAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdSumAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdSumExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdSumExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdSumIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ID_ASC',
-  LbpPoolOperationsByAssetInIdSumIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ID_DESC',
-  LbpPoolOperationsByAssetInIdSumIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdSumIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdSumParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdSumParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdSumPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdSumPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdSumRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdSumRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdSumSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdSumSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdSumTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdSumTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_TYPE_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ID_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ID_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdVariancePopulationTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdVariancePopulationTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_TYPE_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ID_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ID_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSamplePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSamplePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetInIdVarianceSampleTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  LbpPoolOperationsByAssetInIdVarianceSampleTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdAverageAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdAverageAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdAverageAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdAverageAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdAverageAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdAverageAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdAverageAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdAverageAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdAverageAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdAverageAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdAverageAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdAverageAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdAverageAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdAverageAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdAverageExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdAverageExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdAverageIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ID_ASC',
-  LbpPoolOperationsByAssetOutIdAverageIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ID_DESC',
-  LbpPoolOperationsByAssetOutIdAverageIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdAverageIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdAverageParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdAverageParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdAveragePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdAveragePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdAverageRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdAverageRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdAverageSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdAverageSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdAverageTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdAverageTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdCountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_COUNT_ASC',
-  LbpPoolOperationsByAssetOutIdCountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_COUNT_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdDistinctCountTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdDistinctCountTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdMaxAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMaxAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMaxAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdMaxAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdMaxAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdMaxAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdMaxAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMaxAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMaxAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdMaxAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdMaxAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdMaxAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdMaxAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMaxAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMaxExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdMaxExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdMaxIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMaxIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMaxIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdMaxIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdMaxParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdMaxParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdMaxPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMaxPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMaxRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdMaxRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdMaxSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdMaxSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdMaxTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdMaxTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdMinAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMinAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMinAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdMinAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdMinAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdMinAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdMinAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMinAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMinAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdMinAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdMinAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdMinAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdMinAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMinAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMinExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdMinExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdMinIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMinIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMinIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdMinIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdMinParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdMinParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdMinPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdMinPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdMinRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdMinRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdMinSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdMinSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdMinTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdMinTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdStddevPopulationTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSamplePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSamplePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdStddevSampleTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdStddevSampleTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdSumAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdSumAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdSumAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdSumAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdSumAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdSumAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdSumAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdSumAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdSumAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdSumAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdSumAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdSumAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdSumAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdSumAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdSumExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdSumExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdSumIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ID_ASC',
-  LbpPoolOperationsByAssetOutIdSumIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ID_DESC',
-  LbpPoolOperationsByAssetOutIdSumIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdSumIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdSumParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdSumParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdSumPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdSumPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdSumRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdSumRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdSumSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdSumSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdSumTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdSumTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdVariancePopulationTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_TYPE_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSamplePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSamplePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleTypeAsc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  LbpPoolOperationsByAssetOutIdVarianceSampleTypeDesc = 'LBP_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_TYPE_DESC',
   NameAsc = 'NAME_ASC',
   NameDesc = 'NAME_DESC',
   Natural = 'NATURAL',
@@ -8515,478 +7494,246 @@ export enum AssetsOrderBy {
   StablepoolAssetLiquidityAmountsVarianceSampleIdDesc = 'STABLEPOOL_ASSET_LIQUIDITY_AMOUNTS_VARIANCE_SAMPLE_ID_DESC',
   StablepoolAssetLiquidityAmountsVarianceSampleLiquidityActionIdAsc = 'STABLEPOOL_ASSET_LIQUIDITY_AMOUNTS_VARIANCE_SAMPLE_LIQUIDITY_ACTION_ID_ASC',
   StablepoolAssetLiquidityAmountsVarianceSampleLiquidityActionIdDesc = 'STABLEPOOL_ASSET_LIQUIDITY_AMOUNTS_VARIANCE_SAMPLE_LIQUIDITY_ACTION_ID_DESC',
-  StablepoolOperationsByAssetInIdAverageAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdAverageAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdAverageAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdAverageAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdAverageAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdAverageAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdAverageAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdAverageAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdAverageAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdAverageAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdAverageAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdAverageAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdAverageExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdAverageExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdAverageIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ID_ASC',
-  StablepoolOperationsByAssetInIdAverageIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ID_DESC',
-  StablepoolOperationsByAssetInIdAverageIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdAverageIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdAverageParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdAverageParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdAveragePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdAveragePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdAverageRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdAverageRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdAverageTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_TYPE_ASC',
-  StablepoolOperationsByAssetInIdAverageTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_TYPE_DESC',
-  StablepoolOperationsByAssetInIdCountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_COUNT_ASC',
-  StablepoolOperationsByAssetInIdCountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_COUNT_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdDistinctCountTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_TYPE_ASC',
-  StablepoolOperationsByAssetInIdDistinctCountTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_TYPE_DESC',
-  StablepoolOperationsByAssetInIdMaxAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdMaxAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdMaxAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdMaxAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdMaxAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdMaxAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdMaxAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdMaxAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdMaxAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdMaxAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdMaxAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdMaxAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdMaxExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdMaxExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdMaxIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ID_ASC',
-  StablepoolOperationsByAssetInIdMaxIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ID_DESC',
-  StablepoolOperationsByAssetInIdMaxIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdMaxIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdMaxParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdMaxParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdMaxPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdMaxPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdMaxRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdMaxRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdMaxTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_TYPE_ASC',
-  StablepoolOperationsByAssetInIdMaxTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MAX_TYPE_DESC',
-  StablepoolOperationsByAssetInIdMinAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdMinAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdMinAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdMinAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdMinAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdMinAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdMinAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdMinAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdMinAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdMinAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdMinAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdMinAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdMinExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdMinExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdMinIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ID_ASC',
-  StablepoolOperationsByAssetInIdMinIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ID_DESC',
-  StablepoolOperationsByAssetInIdMinIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdMinIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdMinParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdMinParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdMinPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdMinPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdMinRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdMinRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdMinTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_TYPE_ASC',
-  StablepoolOperationsByAssetInIdMinTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_MIN_TYPE_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdStddevPopulationTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_TYPE_ASC',
-  StablepoolOperationsByAssetInIdStddevPopulationTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_TYPE_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdStddevSamplePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdStddevSamplePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdStddevSampleTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_TYPE_ASC',
-  StablepoolOperationsByAssetInIdStddevSampleTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_TYPE_DESC',
-  StablepoolOperationsByAssetInIdSumAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdSumAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdSumAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdSumAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdSumAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdSumAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdSumAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdSumAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdSumAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdSumAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdSumAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdSumAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdSumExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdSumExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdSumIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ID_ASC',
-  StablepoolOperationsByAssetInIdSumIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ID_DESC',
-  StablepoolOperationsByAssetInIdSumIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdSumIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdSumParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdSumParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdSumPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdSumPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdSumRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdSumRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdSumTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_TYPE_ASC',
-  StablepoolOperationsByAssetInIdSumTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_SUM_TYPE_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ID_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ID_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdVariancePopulationTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_TYPE_ASC',
-  StablepoolOperationsByAssetInIdVariancePopulationTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_TYPE_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ID_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ID_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdVarianceSamplePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  StablepoolOperationsByAssetInIdVarianceSamplePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetInIdVarianceSampleTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  StablepoolOperationsByAssetInIdVarianceSampleTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdAverageAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdAverageAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdAverageAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdAverageAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdAverageAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdAverageAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdAverageAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdAverageAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdAverageAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdAverageAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdAverageAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdAverageAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdAverageExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdAverageExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdAverageIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ID_ASC',
-  StablepoolOperationsByAssetOutIdAverageIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ID_DESC',
-  StablepoolOperationsByAssetOutIdAverageIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdAverageIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdAverageParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdAverageParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdAveragePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdAveragePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdAverageRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdAverageRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdAverageTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdAverageTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdCountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_COUNT_ASC',
-  StablepoolOperationsByAssetOutIdCountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_COUNT_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdDistinctCountTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdDistinctCountTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdMaxAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdMaxAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdMaxAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdMaxAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdMaxAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdMaxAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdMaxAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdMaxAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdMaxAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdMaxAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdMaxAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdMaxAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdMaxExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdMaxExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdMaxIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ID_ASC',
-  StablepoolOperationsByAssetOutIdMaxIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ID_DESC',
-  StablepoolOperationsByAssetOutIdMaxIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdMaxIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdMaxParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdMaxParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdMaxPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdMaxPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdMaxRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdMaxRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdMaxTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdMaxTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdMinAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdMinAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdMinAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdMinAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdMinAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdMinAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdMinAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdMinAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdMinAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdMinAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdMinAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdMinAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdMinExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdMinExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdMinIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ID_ASC',
-  StablepoolOperationsByAssetOutIdMinIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ID_DESC',
-  StablepoolOperationsByAssetOutIdMinIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdMinIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdMinParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdMinParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdMinPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdMinPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdMinRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdMinRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdMinTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdMinTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdStddevPopulationTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdStddevPopulationTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdStddevSamplePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdStddevSamplePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdStddevSampleTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdStddevSampleTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdSumAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdSumAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdSumAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdSumAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdSumAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdSumAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdSumAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdSumAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdSumAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdSumAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdSumAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdSumAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdSumExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdSumExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdSumIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ID_ASC',
-  StablepoolOperationsByAssetOutIdSumIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ID_DESC',
-  StablepoolOperationsByAssetOutIdSumIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdSumIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdSumParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdSumParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdSumPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdSumPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdSumRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdSumRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdSumTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdSumTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ID_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ID_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdVariancePopulationTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdVariancePopulationTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_TYPE_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ID_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ID_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSamplePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSamplePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByAssetOutIdVarianceSampleTypeAsc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  StablepoolOperationsByAssetOutIdVarianceSampleTypeDesc = 'STABLEPOOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_TYPE_DESC',
+  SwapFeesAverageAmountAsc = 'SWAP_FEES_AVERAGE_AMOUNT_ASC',
+  SwapFeesAverageAmountDesc = 'SWAP_FEES_AVERAGE_AMOUNT_DESC',
+  SwapFeesAverageAssetIdAsc = 'SWAP_FEES_AVERAGE_ASSET_ID_ASC',
+  SwapFeesAverageAssetIdDesc = 'SWAP_FEES_AVERAGE_ASSET_ID_DESC',
+  SwapFeesAverageIdAsc = 'SWAP_FEES_AVERAGE_ID_ASC',
+  SwapFeesAverageIdDesc = 'SWAP_FEES_AVERAGE_ID_DESC',
+  SwapFeesAverageRecipientIdAsc = 'SWAP_FEES_AVERAGE_RECIPIENT_ID_ASC',
+  SwapFeesAverageRecipientIdDesc = 'SWAP_FEES_AVERAGE_RECIPIENT_ID_DESC',
+  SwapFeesAverageSwapIdAsc = 'SWAP_FEES_AVERAGE_SWAP_ID_ASC',
+  SwapFeesAverageSwapIdDesc = 'SWAP_FEES_AVERAGE_SWAP_ID_DESC',
+  SwapFeesCountAsc = 'SWAP_FEES_COUNT_ASC',
+  SwapFeesCountDesc = 'SWAP_FEES_COUNT_DESC',
+  SwapFeesDistinctCountAmountAsc = 'SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC',
+  SwapFeesDistinctCountAmountDesc = 'SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC',
+  SwapFeesDistinctCountAssetIdAsc = 'SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC',
+  SwapFeesDistinctCountAssetIdDesc = 'SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC',
+  SwapFeesDistinctCountIdAsc = 'SWAP_FEES_DISTINCT_COUNT_ID_ASC',
+  SwapFeesDistinctCountIdDesc = 'SWAP_FEES_DISTINCT_COUNT_ID_DESC',
+  SwapFeesDistinctCountRecipientIdAsc = 'SWAP_FEES_DISTINCT_COUNT_RECIPIENT_ID_ASC',
+  SwapFeesDistinctCountRecipientIdDesc = 'SWAP_FEES_DISTINCT_COUNT_RECIPIENT_ID_DESC',
+  SwapFeesDistinctCountSwapIdAsc = 'SWAP_FEES_DISTINCT_COUNT_SWAP_ID_ASC',
+  SwapFeesDistinctCountSwapIdDesc = 'SWAP_FEES_DISTINCT_COUNT_SWAP_ID_DESC',
+  SwapFeesMaxAmountAsc = 'SWAP_FEES_MAX_AMOUNT_ASC',
+  SwapFeesMaxAmountDesc = 'SWAP_FEES_MAX_AMOUNT_DESC',
+  SwapFeesMaxAssetIdAsc = 'SWAP_FEES_MAX_ASSET_ID_ASC',
+  SwapFeesMaxAssetIdDesc = 'SWAP_FEES_MAX_ASSET_ID_DESC',
+  SwapFeesMaxIdAsc = 'SWAP_FEES_MAX_ID_ASC',
+  SwapFeesMaxIdDesc = 'SWAP_FEES_MAX_ID_DESC',
+  SwapFeesMaxRecipientIdAsc = 'SWAP_FEES_MAX_RECIPIENT_ID_ASC',
+  SwapFeesMaxRecipientIdDesc = 'SWAP_FEES_MAX_RECIPIENT_ID_DESC',
+  SwapFeesMaxSwapIdAsc = 'SWAP_FEES_MAX_SWAP_ID_ASC',
+  SwapFeesMaxSwapIdDesc = 'SWAP_FEES_MAX_SWAP_ID_DESC',
+  SwapFeesMinAmountAsc = 'SWAP_FEES_MIN_AMOUNT_ASC',
+  SwapFeesMinAmountDesc = 'SWAP_FEES_MIN_AMOUNT_DESC',
+  SwapFeesMinAssetIdAsc = 'SWAP_FEES_MIN_ASSET_ID_ASC',
+  SwapFeesMinAssetIdDesc = 'SWAP_FEES_MIN_ASSET_ID_DESC',
+  SwapFeesMinIdAsc = 'SWAP_FEES_MIN_ID_ASC',
+  SwapFeesMinIdDesc = 'SWAP_FEES_MIN_ID_DESC',
+  SwapFeesMinRecipientIdAsc = 'SWAP_FEES_MIN_RECIPIENT_ID_ASC',
+  SwapFeesMinRecipientIdDesc = 'SWAP_FEES_MIN_RECIPIENT_ID_DESC',
+  SwapFeesMinSwapIdAsc = 'SWAP_FEES_MIN_SWAP_ID_ASC',
+  SwapFeesMinSwapIdDesc = 'SWAP_FEES_MIN_SWAP_ID_DESC',
+  SwapFeesStddevPopulationAmountAsc = 'SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC',
+  SwapFeesStddevPopulationAmountDesc = 'SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC',
+  SwapFeesStddevPopulationAssetIdAsc = 'SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC',
+  SwapFeesStddevPopulationAssetIdDesc = 'SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC',
+  SwapFeesStddevPopulationIdAsc = 'SWAP_FEES_STDDEV_POPULATION_ID_ASC',
+  SwapFeesStddevPopulationIdDesc = 'SWAP_FEES_STDDEV_POPULATION_ID_DESC',
+  SwapFeesStddevPopulationRecipientIdAsc = 'SWAP_FEES_STDDEV_POPULATION_RECIPIENT_ID_ASC',
+  SwapFeesStddevPopulationRecipientIdDesc = 'SWAP_FEES_STDDEV_POPULATION_RECIPIENT_ID_DESC',
+  SwapFeesStddevPopulationSwapIdAsc = 'SWAP_FEES_STDDEV_POPULATION_SWAP_ID_ASC',
+  SwapFeesStddevPopulationSwapIdDesc = 'SWAP_FEES_STDDEV_POPULATION_SWAP_ID_DESC',
+  SwapFeesStddevSampleAmountAsc = 'SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC',
+  SwapFeesStddevSampleAmountDesc = 'SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC',
+  SwapFeesStddevSampleAssetIdAsc = 'SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC',
+  SwapFeesStddevSampleAssetIdDesc = 'SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC',
+  SwapFeesStddevSampleIdAsc = 'SWAP_FEES_STDDEV_SAMPLE_ID_ASC',
+  SwapFeesStddevSampleIdDesc = 'SWAP_FEES_STDDEV_SAMPLE_ID_DESC',
+  SwapFeesStddevSampleRecipientIdAsc = 'SWAP_FEES_STDDEV_SAMPLE_RECIPIENT_ID_ASC',
+  SwapFeesStddevSampleRecipientIdDesc = 'SWAP_FEES_STDDEV_SAMPLE_RECIPIENT_ID_DESC',
+  SwapFeesStddevSampleSwapIdAsc = 'SWAP_FEES_STDDEV_SAMPLE_SWAP_ID_ASC',
+  SwapFeesStddevSampleSwapIdDesc = 'SWAP_FEES_STDDEV_SAMPLE_SWAP_ID_DESC',
+  SwapFeesSumAmountAsc = 'SWAP_FEES_SUM_AMOUNT_ASC',
+  SwapFeesSumAmountDesc = 'SWAP_FEES_SUM_AMOUNT_DESC',
+  SwapFeesSumAssetIdAsc = 'SWAP_FEES_SUM_ASSET_ID_ASC',
+  SwapFeesSumAssetIdDesc = 'SWAP_FEES_SUM_ASSET_ID_DESC',
+  SwapFeesSumIdAsc = 'SWAP_FEES_SUM_ID_ASC',
+  SwapFeesSumIdDesc = 'SWAP_FEES_SUM_ID_DESC',
+  SwapFeesSumRecipientIdAsc = 'SWAP_FEES_SUM_RECIPIENT_ID_ASC',
+  SwapFeesSumRecipientIdDesc = 'SWAP_FEES_SUM_RECIPIENT_ID_DESC',
+  SwapFeesSumSwapIdAsc = 'SWAP_FEES_SUM_SWAP_ID_ASC',
+  SwapFeesSumSwapIdDesc = 'SWAP_FEES_SUM_SWAP_ID_DESC',
+  SwapFeesVariancePopulationAmountAsc = 'SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC',
+  SwapFeesVariancePopulationAmountDesc = 'SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC',
+  SwapFeesVariancePopulationAssetIdAsc = 'SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC',
+  SwapFeesVariancePopulationAssetIdDesc = 'SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC',
+  SwapFeesVariancePopulationIdAsc = 'SWAP_FEES_VARIANCE_POPULATION_ID_ASC',
+  SwapFeesVariancePopulationIdDesc = 'SWAP_FEES_VARIANCE_POPULATION_ID_DESC',
+  SwapFeesVariancePopulationRecipientIdAsc = 'SWAP_FEES_VARIANCE_POPULATION_RECIPIENT_ID_ASC',
+  SwapFeesVariancePopulationRecipientIdDesc = 'SWAP_FEES_VARIANCE_POPULATION_RECIPIENT_ID_DESC',
+  SwapFeesVariancePopulationSwapIdAsc = 'SWAP_FEES_VARIANCE_POPULATION_SWAP_ID_ASC',
+  SwapFeesVariancePopulationSwapIdDesc = 'SWAP_FEES_VARIANCE_POPULATION_SWAP_ID_DESC',
+  SwapFeesVarianceSampleAmountAsc = 'SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC',
+  SwapFeesVarianceSampleAmountDesc = 'SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC',
+  SwapFeesVarianceSampleAssetIdAsc = 'SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC',
+  SwapFeesVarianceSampleAssetIdDesc = 'SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC',
+  SwapFeesVarianceSampleIdAsc = 'SWAP_FEES_VARIANCE_SAMPLE_ID_ASC',
+  SwapFeesVarianceSampleIdDesc = 'SWAP_FEES_VARIANCE_SAMPLE_ID_DESC',
+  SwapFeesVarianceSampleRecipientIdAsc = 'SWAP_FEES_VARIANCE_SAMPLE_RECIPIENT_ID_ASC',
+  SwapFeesVarianceSampleRecipientIdDesc = 'SWAP_FEES_VARIANCE_SAMPLE_RECIPIENT_ID_DESC',
+  SwapFeesVarianceSampleSwapIdAsc = 'SWAP_FEES_VARIANCE_SAMPLE_SWAP_ID_ASC',
+  SwapFeesVarianceSampleSwapIdDesc = 'SWAP_FEES_VARIANCE_SAMPLE_SWAP_ID_DESC',
+  SwapInputAssetBalancesAverageAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC',
+  SwapInputAssetBalancesAverageAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC',
+  SwapInputAssetBalancesAverageAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC',
+  SwapInputAssetBalancesAverageAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC',
+  SwapInputAssetBalancesAverageIdAsc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_ID_ASC',
+  SwapInputAssetBalancesAverageIdDesc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_ID_DESC',
+  SwapInputAssetBalancesAverageSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_ASC',
+  SwapInputAssetBalancesAverageSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_DESC',
+  SwapInputAssetBalancesCountAsc = 'SWAP_INPUT_ASSET_BALANCES_COUNT_ASC',
+  SwapInputAssetBalancesCountDesc = 'SWAP_INPUT_ASSET_BALANCES_COUNT_DESC',
+  SwapInputAssetBalancesDistinctCountAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC',
+  SwapInputAssetBalancesDistinctCountAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC',
+  SwapInputAssetBalancesDistinctCountAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC',
+  SwapInputAssetBalancesDistinctCountAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC',
+  SwapInputAssetBalancesDistinctCountIdAsc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC',
+  SwapInputAssetBalancesDistinctCountIdDesc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_DESC',
+  SwapInputAssetBalancesDistinctCountSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_ASC',
+  SwapInputAssetBalancesDistinctCountSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_DESC',
+  SwapInputAssetBalancesMaxAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_MAX_AMOUNT_ASC',
+  SwapInputAssetBalancesMaxAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_MAX_AMOUNT_DESC',
+  SwapInputAssetBalancesMaxAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC',
+  SwapInputAssetBalancesMaxAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC',
+  SwapInputAssetBalancesMaxIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MAX_ID_ASC',
+  SwapInputAssetBalancesMaxIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MAX_ID_DESC',
+  SwapInputAssetBalancesMaxSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MAX_SWAP_ID_ASC',
+  SwapInputAssetBalancesMaxSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MAX_SWAP_ID_DESC',
+  SwapInputAssetBalancesMinAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_MIN_AMOUNT_ASC',
+  SwapInputAssetBalancesMinAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_MIN_AMOUNT_DESC',
+  SwapInputAssetBalancesMinAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC',
+  SwapInputAssetBalancesMinAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC',
+  SwapInputAssetBalancesMinIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MIN_ID_ASC',
+  SwapInputAssetBalancesMinIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MIN_ID_DESC',
+  SwapInputAssetBalancesMinSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MIN_SWAP_ID_ASC',
+  SwapInputAssetBalancesMinSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MIN_SWAP_ID_DESC',
+  SwapInputAssetBalancesStddevPopulationAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC',
+  SwapInputAssetBalancesStddevPopulationAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC',
+  SwapInputAssetBalancesStddevPopulationAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC',
+  SwapInputAssetBalancesStddevPopulationAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC',
+  SwapInputAssetBalancesStddevPopulationIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC',
+  SwapInputAssetBalancesStddevPopulationIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_DESC',
+  SwapInputAssetBalancesStddevPopulationSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_ASC',
+  SwapInputAssetBalancesStddevPopulationSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_DESC',
+  SwapInputAssetBalancesStddevSampleAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC',
+  SwapInputAssetBalancesStddevSampleAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC',
+  SwapInputAssetBalancesStddevSampleAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC',
+  SwapInputAssetBalancesStddevSampleAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC',
+  SwapInputAssetBalancesStddevSampleIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC',
+  SwapInputAssetBalancesStddevSampleIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_DESC',
+  SwapInputAssetBalancesStddevSampleSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_ASC',
+  SwapInputAssetBalancesStddevSampleSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_DESC',
+  SwapInputAssetBalancesSumAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_SUM_AMOUNT_ASC',
+  SwapInputAssetBalancesSumAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_SUM_AMOUNT_DESC',
+  SwapInputAssetBalancesSumAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC',
+  SwapInputAssetBalancesSumAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC',
+  SwapInputAssetBalancesSumIdAsc = 'SWAP_INPUT_ASSET_BALANCES_SUM_ID_ASC',
+  SwapInputAssetBalancesSumIdDesc = 'SWAP_INPUT_ASSET_BALANCES_SUM_ID_DESC',
+  SwapInputAssetBalancesSumSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_SUM_SWAP_ID_ASC',
+  SwapInputAssetBalancesSumSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_SUM_SWAP_ID_DESC',
+  SwapInputAssetBalancesVariancePopulationAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC',
+  SwapInputAssetBalancesVariancePopulationAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC',
+  SwapInputAssetBalancesVariancePopulationAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC',
+  SwapInputAssetBalancesVariancePopulationAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC',
+  SwapInputAssetBalancesVariancePopulationIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC',
+  SwapInputAssetBalancesVariancePopulationIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_DESC',
+  SwapInputAssetBalancesVariancePopulationSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_ASC',
+  SwapInputAssetBalancesVariancePopulationSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_DESC',
+  SwapInputAssetBalancesVarianceSampleAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC',
+  SwapInputAssetBalancesVarianceSampleAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC',
+  SwapInputAssetBalancesVarianceSampleAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC',
+  SwapInputAssetBalancesVarianceSampleAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC',
+  SwapInputAssetBalancesVarianceSampleIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC',
+  SwapInputAssetBalancesVarianceSampleIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_DESC',
+  SwapInputAssetBalancesVarianceSampleSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_ASC',
+  SwapInputAssetBalancesVarianceSampleSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_DESC',
+  SwapOutputAssetBalancesAverageAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC',
+  SwapOutputAssetBalancesAverageAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC',
+  SwapOutputAssetBalancesAverageAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC',
+  SwapOutputAssetBalancesAverageAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC',
+  SwapOutputAssetBalancesAverageIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ID_ASC',
+  SwapOutputAssetBalancesAverageIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ID_DESC',
+  SwapOutputAssetBalancesAverageSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_ASC',
+  SwapOutputAssetBalancesAverageSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_DESC',
+  SwapOutputAssetBalancesCountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_COUNT_ASC',
+  SwapOutputAssetBalancesCountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_COUNT_DESC',
+  SwapOutputAssetBalancesDistinctCountAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC',
+  SwapOutputAssetBalancesDistinctCountAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC',
+  SwapOutputAssetBalancesDistinctCountAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC',
+  SwapOutputAssetBalancesDistinctCountAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC',
+  SwapOutputAssetBalancesDistinctCountIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC',
+  SwapOutputAssetBalancesDistinctCountIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_DESC',
+  SwapOutputAssetBalancesDistinctCountSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_ASC',
+  SwapOutputAssetBalancesDistinctCountSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_DESC',
+  SwapOutputAssetBalancesMaxAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_ASC',
+  SwapOutputAssetBalancesMaxAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_DESC',
+  SwapOutputAssetBalancesMaxAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC',
+  SwapOutputAssetBalancesMaxAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC',
+  SwapOutputAssetBalancesMaxIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_ID_ASC',
+  SwapOutputAssetBalancesMaxIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_ID_DESC',
+  SwapOutputAssetBalancesMaxSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_SWAP_ID_ASC',
+  SwapOutputAssetBalancesMaxSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_SWAP_ID_DESC',
+  SwapOutputAssetBalancesMinAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_ASC',
+  SwapOutputAssetBalancesMinAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_DESC',
+  SwapOutputAssetBalancesMinAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC',
+  SwapOutputAssetBalancesMinAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC',
+  SwapOutputAssetBalancesMinIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_ID_ASC',
+  SwapOutputAssetBalancesMinIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_ID_DESC',
+  SwapOutputAssetBalancesMinSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_SWAP_ID_ASC',
+  SwapOutputAssetBalancesMinSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_SWAP_ID_DESC',
+  SwapOutputAssetBalancesStddevPopulationAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC',
+  SwapOutputAssetBalancesStddevPopulationAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC',
+  SwapOutputAssetBalancesStddevPopulationAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC',
+  SwapOutputAssetBalancesStddevPopulationAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC',
+  SwapOutputAssetBalancesStddevPopulationIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC',
+  SwapOutputAssetBalancesStddevPopulationIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_DESC',
+  SwapOutputAssetBalancesStddevPopulationSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_ASC',
+  SwapOutputAssetBalancesStddevPopulationSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_DESC',
+  SwapOutputAssetBalancesStddevSampleAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC',
+  SwapOutputAssetBalancesStddevSampleAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC',
+  SwapOutputAssetBalancesStddevSampleAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC',
+  SwapOutputAssetBalancesStddevSampleAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC',
+  SwapOutputAssetBalancesStddevSampleIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC',
+  SwapOutputAssetBalancesStddevSampleIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_DESC',
+  SwapOutputAssetBalancesStddevSampleSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_ASC',
+  SwapOutputAssetBalancesStddevSampleSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_DESC',
+  SwapOutputAssetBalancesSumAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_ASC',
+  SwapOutputAssetBalancesSumAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_DESC',
+  SwapOutputAssetBalancesSumAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC',
+  SwapOutputAssetBalancesSumAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC',
+  SwapOutputAssetBalancesSumIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_ID_ASC',
+  SwapOutputAssetBalancesSumIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_ID_DESC',
+  SwapOutputAssetBalancesSumSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_SWAP_ID_ASC',
+  SwapOutputAssetBalancesSumSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_SWAP_ID_DESC',
+  SwapOutputAssetBalancesVariancePopulationAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC',
+  SwapOutputAssetBalancesVariancePopulationAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC',
+  SwapOutputAssetBalancesVariancePopulationAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC',
+  SwapOutputAssetBalancesVariancePopulationAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC',
+  SwapOutputAssetBalancesVariancePopulationIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC',
+  SwapOutputAssetBalancesVariancePopulationIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_DESC',
+  SwapOutputAssetBalancesVariancePopulationSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_ASC',
+  SwapOutputAssetBalancesVariancePopulationSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_DESC',
+  SwapOutputAssetBalancesVarianceSampleAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC',
+  SwapOutputAssetBalancesVarianceSampleAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC',
+  SwapOutputAssetBalancesVarianceSampleAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC',
+  SwapOutputAssetBalancesVarianceSampleAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC',
+  SwapOutputAssetBalancesVarianceSampleIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC',
+  SwapOutputAssetBalancesVarianceSampleIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_DESC',
+  SwapOutputAssetBalancesVarianceSampleSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_ASC',
+  SwapOutputAssetBalancesVarianceSampleSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_DESC',
   SymbolAsc = 'SYMBOL_ASC',
   SymbolDesc = 'SYMBOL_DESC',
   XcmRateLimitAsc = 'XCM_RATE_LIMIT_ASC',
@@ -10698,551 +9445,7 @@ export enum AssetsOrderBy {
   XykPoolHistoricalVolumesByAssetBidVarianceSamplePoolIdAsc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_ASSET_BID_VARIANCE_SAMPLE_POOL_ID_ASC',
   XykPoolHistoricalVolumesByAssetBidVarianceSamplePoolIdDesc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_ASSET_BID_VARIANCE_SAMPLE_POOL_ID_DESC',
   XykPoolHistoricalVolumesByAssetBidVarianceSampleRelayChainBlockHeightAsc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_ASSET_BID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolHistoricalVolumesByAssetBidVarianceSampleRelayChainBlockHeightDesc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_ASSET_BID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdAverageAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdAverageAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdAverageAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdAverageAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdAverageAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdAverageAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdAverageAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdAverageAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdAverageAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdAverageAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdAverageAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdAverageAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdAverageAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdAverageAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdAverageExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdAverageExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdAverageIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ID_ASC',
-  XykPoolOperationsByAssetInIdAverageIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ID_DESC',
-  XykPoolOperationsByAssetInIdAverageIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdAverageIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdAverageParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdAverageParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdAveragePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdAveragePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdAverageRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdAverageRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdAverageSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdAverageSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdAverageTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_TYPE_ASC',
-  XykPoolOperationsByAssetInIdAverageTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_TYPE_DESC',
-  XykPoolOperationsByAssetInIdCountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_COUNT_ASC',
-  XykPoolOperationsByAssetInIdCountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_COUNT_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdDistinctCountTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_TYPE_ASC',
-  XykPoolOperationsByAssetInIdDistinctCountTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_TYPE_DESC',
-  XykPoolOperationsByAssetInIdMaxAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdMaxAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdMaxAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdMaxAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdMaxAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdMaxAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdMaxAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdMaxAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdMaxAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdMaxAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdMaxAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdMaxAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdMaxAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdMaxAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdMaxExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdMaxExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdMaxIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ID_ASC',
-  XykPoolOperationsByAssetInIdMaxIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_ID_DESC',
-  XykPoolOperationsByAssetInIdMaxIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdMaxIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdMaxParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdMaxParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdMaxPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdMaxPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdMaxRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdMaxRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdMaxSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdMaxSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdMaxTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_TYPE_ASC',
-  XykPoolOperationsByAssetInIdMaxTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MAX_TYPE_DESC',
-  XykPoolOperationsByAssetInIdMinAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdMinAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdMinAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdMinAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdMinAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdMinAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdMinAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdMinAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdMinAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdMinAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdMinAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdMinAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdMinAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdMinAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdMinExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdMinExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdMinIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ID_ASC',
-  XykPoolOperationsByAssetInIdMinIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_ID_DESC',
-  XykPoolOperationsByAssetInIdMinIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdMinIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdMinParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdMinParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdMinPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdMinPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdMinRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdMinRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdMinSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdMinSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdMinTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_TYPE_ASC',
-  XykPoolOperationsByAssetInIdMinTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_MIN_TYPE_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdStddevPopulationTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_TYPE_ASC',
-  XykPoolOperationsByAssetInIdStddevPopulationTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_TYPE_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdStddevSamplePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdStddevSamplePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdStddevSampleTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_TYPE_ASC',
-  XykPoolOperationsByAssetInIdStddevSampleTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_TYPE_DESC',
-  XykPoolOperationsByAssetInIdSumAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdSumAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdSumAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdSumAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdSumAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdSumAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdSumAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdSumAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdSumAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdSumAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdSumAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdSumAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdSumAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdSumAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdSumExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdSumExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdSumIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ID_ASC',
-  XykPoolOperationsByAssetInIdSumIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_ID_DESC',
-  XykPoolOperationsByAssetInIdSumIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdSumIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdSumParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdSumParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdSumPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdSumPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdSumRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdSumRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdSumSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdSumSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdSumTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_TYPE_ASC',
-  XykPoolOperationsByAssetInIdSumTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_SUM_TYPE_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ID_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ID_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdVariancePopulationTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_TYPE_ASC',
-  XykPoolOperationsByAssetInIdVariancePopulationTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_TYPE_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ID_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ID_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdVarianceSamplePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  XykPoolOperationsByAssetInIdVarianceSamplePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetInIdVarianceSampleTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  XykPoolOperationsByAssetInIdVarianceSampleTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdAverageAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdAverageAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdAverageAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdAverageAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdAverageAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdAverageAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdAverageAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdAverageAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdAverageAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdAverageAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdAverageAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdAverageAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdAverageAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdAverageAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdAverageExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdAverageExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdAverageIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ID_ASC',
-  XykPoolOperationsByAssetOutIdAverageIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ID_DESC',
-  XykPoolOperationsByAssetOutIdAverageIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdAverageIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdAverageParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdAverageParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdAveragePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdAveragePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdAverageRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdAverageRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdAverageSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdAverageSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdAverageTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdAverageTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdCountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_COUNT_ASC',
-  XykPoolOperationsByAssetOutIdCountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_COUNT_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdDistinctCountTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdDistinctCountTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdMaxAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdMaxAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdMaxAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdMaxAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdMaxAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdMaxAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdMaxAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdMaxAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdMaxAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdMaxAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdMaxAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdMaxAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdMaxAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdMaxAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdMaxExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdMaxExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdMaxIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ID_ASC',
-  XykPoolOperationsByAssetOutIdMaxIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_ID_DESC',
-  XykPoolOperationsByAssetOutIdMaxIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdMaxIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdMaxParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdMaxParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdMaxPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdMaxPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdMaxRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdMaxRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdMaxSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdMaxSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdMaxTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdMaxTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MAX_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdMinAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdMinAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdMinAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdMinAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdMinAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdMinAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdMinAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdMinAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdMinAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdMinAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdMinAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdMinAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdMinAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdMinAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdMinExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdMinExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdMinIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ID_ASC',
-  XykPoolOperationsByAssetOutIdMinIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_ID_DESC',
-  XykPoolOperationsByAssetOutIdMinIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdMinIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdMinParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdMinParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdMinPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdMinPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdMinRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdMinRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdMinSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdMinSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdMinTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdMinTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_MIN_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdStddevPopulationTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdStddevPopulationTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdStddevSamplePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdStddevSamplePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdStddevSampleTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdStddevSampleTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdSumAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdSumAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdSumAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdSumAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdSumAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdSumAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdSumAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdSumAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdSumAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdSumAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdSumAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdSumAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdSumAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdSumAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdSumExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdSumExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdSumIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ID_ASC',
-  XykPoolOperationsByAssetOutIdSumIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_ID_DESC',
-  XykPoolOperationsByAssetOutIdSumIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdSumIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdSumParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdSumParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdSumPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdSumPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdSumRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdSumRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdSumSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdSumSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdSumTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdSumTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_SUM_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ID_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ID_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdVariancePopulationTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdVariancePopulationTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_TYPE_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ID_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ID_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSamplePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSamplePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_SWAP_PRICE_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_SWAP_PRICE_DESC',
-  XykPoolOperationsByAssetOutIdVarianceSampleTypeAsc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  XykPoolOperationsByAssetOutIdVarianceSampleTypeDesc = 'XYK_POOL_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_TYPE_DESC'
+  XykPoolHistoricalVolumesByAssetBidVarianceSampleRelayChainBlockHeightDesc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_ASSET_BID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC'
 }
 
 /** A filter to be used against BigFloat fields. All fields are combined with a logical ‘and.’ */
@@ -11853,6 +10056,8 @@ export type LbpPool = {
   /** Reads a single `Account` that is related to this `LbpPool`. */
   account?: Maybe<Account>;
   accountId?: Maybe<Scalars['String']['output']>;
+  /** Reads and enables pagination through a set of `Account`. */
+  accounts: AccountsConnection;
   /** Reads a single `Asset` that is related to this `LbpPool`. */
   assetA?: Maybe<Asset>;
   assetABalance: Scalars['BigFloat']['output'];
@@ -11879,13 +10084,23 @@ export type LbpPool = {
   lbpPoolHistoricalPricesByPoolId: LbpPoolHistoricalPricesConnection;
   /** Reads and enables pagination through a set of `LbpPoolHistoricalVolume`. */
   lbpPoolHistoricalVolumesByPoolId: LbpPoolHistoricalVolumesConnection;
-  /** Reads and enables pagination through a set of `LbpPoolOperation`. */
-  lbpPoolOperationsByPoolId: LbpPoolOperationsConnection;
   /** Reads a single `Account` that is related to this `LbpPool`. */
   owner?: Maybe<Account>;
   ownerId?: Maybe<Scalars['String']['output']>;
   repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   startBlockNumber?: Maybe<Scalars['Int']['output']>;
+};
+
+
+export type LbpPoolAccountsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AccountCondition>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
 
@@ -11922,18 +10137,6 @@ export type LbpPoolLbpPoolHistoricalVolumesByPoolIdArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<LbpPoolHistoricalVolumesOrderBy>>;
-};
-
-
-export type LbpPoolLbpPoolOperationsByPoolIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<LbpPoolOperationCondition>;
-  filter?: InputMaybe<LbpPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<LbpPoolOperationsOrderBy>>;
 };
 
 export type LbpPoolAggregates = {
@@ -13963,529 +12166,6 @@ export type LbpPoolMinAggregates = {
   startBlockNumber?: Maybe<Scalars['Int']['output']>;
 };
 
-export type LbpPoolOperation = {
-  __typename?: 'LbpPoolOperation';
-  /** Reads a single `Account` that is related to this `LbpPoolOperation`. */
-  account?: Maybe<Account>;
-  accountId?: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Asset` that is related to this `LbpPoolOperation`. */
-  assetIn?: Maybe<Asset>;
-  assetInAmount: Scalars['BigFloat']['output'];
-  assetInFee: Scalars['BigFloat']['output'];
-  assetInId?: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Asset` that is related to this `LbpPoolOperation`. */
-  assetOut?: Maybe<Asset>;
-  assetOutAmount: Scalars['BigFloat']['output'];
-  assetOutFee: Scalars['BigFloat']['output'];
-  assetOutId?: Maybe<Scalars['String']['output']>;
-  extrinsicHash?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  indexInBlock: Scalars['Int']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
-  /** Reads a single `LbpPool` that is related to this `LbpPoolOperation`. */
-  pool?: Maybe<LbpPool>;
-  poolId?: Maybe<Scalars['String']['output']>;
-  relayChainBlockHeight: Scalars['Int']['output'];
-  swapPrice: Scalars['BigFloat']['output'];
-  type: Scalars['String']['output'];
-};
-
-export type LbpPoolOperationAggregates = {
-  __typename?: 'LbpPoolOperationAggregates';
-  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  average?: Maybe<LbpPoolOperationAverageAggregates>;
-  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  distinctCount?: Maybe<LbpPoolOperationDistinctCountAggregates>;
-  keys?: Maybe<Array<Scalars['String']['output']>>;
-  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  max?: Maybe<LbpPoolOperationMaxAggregates>;
-  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  min?: Maybe<LbpPoolOperationMinAggregates>;
-  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevPopulation?: Maybe<LbpPoolOperationStddevPopulationAggregates>;
-  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevSample?: Maybe<LbpPoolOperationStddevSampleAggregates>;
-  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  sum?: Maybe<LbpPoolOperationSumAggregates>;
-  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  variancePopulation?: Maybe<LbpPoolOperationVariancePopulationAggregates>;
-  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  varianceSample?: Maybe<LbpPoolOperationVarianceSampleAggregates>;
-};
-
-export type LbpPoolOperationAverageAggregates = {
-  __typename?: 'LbpPoolOperationAverageAggregates';
-  /** Mean average of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-/**
- * A condition to be used against `LbpPoolOperation` object types. All fields are
- * tested for equality and combined with a logical ‘and.’
- */
-export type LbpPoolOperationCondition = {
-  /** Checks for equality with the object’s `accountId` field. */
-  accountId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `assetInAmount` field. */
-  assetInAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetInFee` field. */
-  assetInFee?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetInId` field. */
-  assetInId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `assetOutAmount` field. */
-  assetOutAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetOutFee` field. */
-  assetOutFee?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetOutId` field. */
-  assetOutId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `extrinsicHash` field. */
-  extrinsicHash?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `indexInBlock` field. */
-  indexInBlock?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `poolId` field. */
-  poolId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayChainBlockHeight` field. */
-  relayChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `swapPrice` field. */
-  swapPrice?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `type` field. */
-  type?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type LbpPoolOperationDistinctCountAggregates = {
-  __typename?: 'LbpPoolOperationDistinctCountAggregates';
-  /** Distinct count of accountId across the matching connection */
-  accountId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInId across the matching connection */
-  assetInId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutId across the matching connection */
-  assetOutId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of extrinsicHash across the matching connection */
-  extrinsicHash?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of id across the matching connection */
-  id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of poolId across the matching connection */
-  poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of type across the matching connection */
-  type?: Maybe<Scalars['BigInt']['output']>;
-};
-
-/** A filter to be used against `LbpPoolOperation` object types. All fields are combined with a logical ‘and.’ */
-export type LbpPoolOperationFilter = {
-  /** Filter by the object’s `accountId` field. */
-  accountId?: InputMaybe<StringFilter>;
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<LbpPoolOperationFilter>>;
-  /** Filter by the object’s `assetInAmount` field. */
-  assetInAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetInFee` field. */
-  assetInFee?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetInId` field. */
-  assetInId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `assetOutAmount` field. */
-  assetOutAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetOutFee` field. */
-  assetOutFee?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetOutId` field. */
-  assetOutId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `extrinsicHash` field. */
-  extrinsicHash?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `indexInBlock` field. */
-  indexInBlock?: InputMaybe<IntFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<LbpPoolOperationFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<LbpPoolOperationFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `poolId` field. */
-  poolId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayChainBlockHeight` field. */
-  relayChainBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `swapPrice` field. */
-  swapPrice?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `type` field. */
-  type?: InputMaybe<StringFilter>;
-};
-
-/** Grouping methods for `LbpPoolOperation` for usage during aggregation. */
-export enum LbpPoolOperationGroupBy {
-  AccountId = 'ACCOUNT_ID',
-  AssetInAmount = 'ASSET_IN_AMOUNT',
-  AssetInFee = 'ASSET_IN_FEE',
-  AssetInId = 'ASSET_IN_ID',
-  AssetOutAmount = 'ASSET_OUT_AMOUNT',
-  AssetOutFee = 'ASSET_OUT_FEE',
-  AssetOutId = 'ASSET_OUT_ID',
-  ExtrinsicHash = 'EXTRINSIC_HASH',
-  IndexInBlock = 'INDEX_IN_BLOCK',
-  ParaChainBlockHeight = 'PARA_CHAIN_BLOCK_HEIGHT',
-  PoolId = 'POOL_ID',
-  RelayChainBlockHeight = 'RELAY_CHAIN_BLOCK_HEIGHT',
-  SwapPrice = 'SWAP_PRICE',
-  Type = 'TYPE'
-}
-
-export type LbpPoolOperationHavingAverageInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type LbpPoolOperationHavingDistinctCountInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-/** Conditions for `LbpPoolOperation` aggregates. */
-export type LbpPoolOperationHavingInput = {
-  AND?: InputMaybe<Array<LbpPoolOperationHavingInput>>;
-  OR?: InputMaybe<Array<LbpPoolOperationHavingInput>>;
-  average?: InputMaybe<LbpPoolOperationHavingAverageInput>;
-  distinctCount?: InputMaybe<LbpPoolOperationHavingDistinctCountInput>;
-  max?: InputMaybe<LbpPoolOperationHavingMaxInput>;
-  min?: InputMaybe<LbpPoolOperationHavingMinInput>;
-  stddevPopulation?: InputMaybe<LbpPoolOperationHavingStddevPopulationInput>;
-  stddevSample?: InputMaybe<LbpPoolOperationHavingStddevSampleInput>;
-  sum?: InputMaybe<LbpPoolOperationHavingSumInput>;
-  variancePopulation?: InputMaybe<LbpPoolOperationHavingVariancePopulationInput>;
-  varianceSample?: InputMaybe<LbpPoolOperationHavingVarianceSampleInput>;
-};
-
-export type LbpPoolOperationHavingMaxInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type LbpPoolOperationHavingMinInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type LbpPoolOperationHavingStddevPopulationInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type LbpPoolOperationHavingStddevSampleInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type LbpPoolOperationHavingSumInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type LbpPoolOperationHavingVariancePopulationInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type LbpPoolOperationHavingVarianceSampleInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type LbpPoolOperationMaxAggregates = {
-  __typename?: 'LbpPoolOperationMaxAggregates';
-  /** Maximum of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type LbpPoolOperationMinAggregates = {
-  __typename?: 'LbpPoolOperationMinAggregates';
-  /** Minimum of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type LbpPoolOperationStddevPopulationAggregates = {
-  __typename?: 'LbpPoolOperationStddevPopulationAggregates';
-  /** Population standard deviation of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type LbpPoolOperationStddevSampleAggregates = {
-  __typename?: 'LbpPoolOperationStddevSampleAggregates';
-  /** Sample standard deviation of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type LbpPoolOperationSumAggregates = {
-  __typename?: 'LbpPoolOperationSumAggregates';
-  /** Sum of assetInAmount across the matching connection */
-  assetInAmount: Scalars['BigFloat']['output'];
-  /** Sum of assetInFee across the matching connection */
-  assetInFee: Scalars['BigFloat']['output'];
-  /** Sum of assetOutAmount across the matching connection */
-  assetOutAmount: Scalars['BigFloat']['output'];
-  /** Sum of assetOutFee across the matching connection */
-  assetOutFee: Scalars['BigFloat']['output'];
-  /** Sum of indexInBlock across the matching connection */
-  indexInBlock: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of swapPrice across the matching connection */
-  swapPrice: Scalars['BigFloat']['output'];
-};
-
-export type LbpPoolOperationVariancePopulationAggregates = {
-  __typename?: 'LbpPoolOperationVariancePopulationAggregates';
-  /** Population variance of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type LbpPoolOperationVarianceSampleAggregates = {
-  __typename?: 'LbpPoolOperationVarianceSampleAggregates';
-  /** Sample variance of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-/** A connection to a list of `LbpPoolOperation` values. */
-export type LbpPoolOperationsConnection = {
-  __typename?: 'LbpPoolOperationsConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<LbpPoolOperationAggregates>;
-  /** A list of edges which contains the `LbpPoolOperation` and cursor to aid in pagination. */
-  edges: Array<LbpPoolOperationsEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<LbpPoolOperationAggregates>>;
-  /** A list of `LbpPoolOperation` objects. */
-  nodes: Array<Maybe<LbpPoolOperation>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `LbpPoolOperation` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-
-/** A connection to a list of `LbpPoolOperation` values. */
-export type LbpPoolOperationsConnectionGroupedAggregatesArgs = {
-  groupBy: Array<LbpPoolOperationGroupBy>;
-  having?: InputMaybe<LbpPoolOperationHavingInput>;
-};
-
-/** A `LbpPoolOperation` edge in the connection. */
-export type LbpPoolOperationsEdge = {
-  __typename?: 'LbpPoolOperationsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `LbpPoolOperation` at the end of the edge. */
-  node?: Maybe<LbpPoolOperation>;
-};
-
-/** Methods to use when ordering `LbpPoolOperation`. */
-export enum LbpPoolOperationsOrderBy {
-  AccountIdAsc = 'ACCOUNT_ID_ASC',
-  AccountIdDesc = 'ACCOUNT_ID_DESC',
-  AssetInAmountAsc = 'ASSET_IN_AMOUNT_ASC',
-  AssetInAmountDesc = 'ASSET_IN_AMOUNT_DESC',
-  AssetInFeeAsc = 'ASSET_IN_FEE_ASC',
-  AssetInFeeDesc = 'ASSET_IN_FEE_DESC',
-  AssetInIdAsc = 'ASSET_IN_ID_ASC',
-  AssetInIdDesc = 'ASSET_IN_ID_DESC',
-  AssetOutAmountAsc = 'ASSET_OUT_AMOUNT_ASC',
-  AssetOutAmountDesc = 'ASSET_OUT_AMOUNT_DESC',
-  AssetOutFeeAsc = 'ASSET_OUT_FEE_ASC',
-  AssetOutFeeDesc = 'ASSET_OUT_FEE_DESC',
-  AssetOutIdAsc = 'ASSET_OUT_ID_ASC',
-  AssetOutIdDesc = 'ASSET_OUT_ID_DESC',
-  ExtrinsicHashAsc = 'EXTRINSIC_HASH_ASC',
-  ExtrinsicHashDesc = 'EXTRINSIC_HASH_DESC',
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  IndexInBlockAsc = 'INDEX_IN_BLOCK_ASC',
-  IndexInBlockDesc = 'INDEX_IN_BLOCK_DESC',
-  Natural = 'NATURAL',
-  ParaChainBlockHeightAsc = 'PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  ParaChainBlockHeightDesc = 'PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  PoolIdAsc = 'POOL_ID_ASC',
-  PoolIdDesc = 'POOL_ID_DESC',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayChainBlockHeightAsc = 'RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  RelayChainBlockHeightDesc = 'RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  SwapPriceAsc = 'SWAP_PRICE_ASC',
-  SwapPriceDesc = 'SWAP_PRICE_DESC',
-  TypeAsc = 'TYPE_ASC',
-  TypeDesc = 'TYPE_DESC'
-}
-
 export type LbpPoolStddevPopulationAggregates = {
   __typename?: 'LbpPoolStddevPopulationAggregates';
   /** Population standard deviation of assetABalance across the matching connection */
@@ -14631,6 +12311,98 @@ export type LbpPoolsEdge = {
 
 /** Methods to use when ordering `LbpPool`. */
 export enum LbpPoolsOrderBy {
+  AccountsAverageIdAsc = 'ACCOUNTS_AVERAGE_ID_ASC',
+  AccountsAverageIdDesc = 'ACCOUNTS_AVERAGE_ID_DESC',
+  AccountsAverageLbpPoolIdAsc = 'ACCOUNTS_AVERAGE_LBP_POOL_ID_ASC',
+  AccountsAverageLbpPoolIdDesc = 'ACCOUNTS_AVERAGE_LBP_POOL_ID_DESC',
+  AccountsAverageOmnipoolIdAsc = 'ACCOUNTS_AVERAGE_OMNIPOOL_ID_ASC',
+  AccountsAverageOmnipoolIdDesc = 'ACCOUNTS_AVERAGE_OMNIPOOL_ID_DESC',
+  AccountsAverageStablepoolIdAsc = 'ACCOUNTS_AVERAGE_STABLEPOOL_ID_ASC',
+  AccountsAverageStablepoolIdDesc = 'ACCOUNTS_AVERAGE_STABLEPOOL_ID_DESC',
+  AccountsAverageXykPoolIdAsc = 'ACCOUNTS_AVERAGE_XYK_POOL_ID_ASC',
+  AccountsAverageXykPoolIdDesc = 'ACCOUNTS_AVERAGE_XYK_POOL_ID_DESC',
+  AccountsCountAsc = 'ACCOUNTS_COUNT_ASC',
+  AccountsCountDesc = 'ACCOUNTS_COUNT_DESC',
+  AccountsDistinctCountIdAsc = 'ACCOUNTS_DISTINCT_COUNT_ID_ASC',
+  AccountsDistinctCountIdDesc = 'ACCOUNTS_DISTINCT_COUNT_ID_DESC',
+  AccountsDistinctCountLbpPoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_LBP_POOL_ID_ASC',
+  AccountsDistinctCountLbpPoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_LBP_POOL_ID_DESC',
+  AccountsDistinctCountOmnipoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_OMNIPOOL_ID_ASC',
+  AccountsDistinctCountOmnipoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_OMNIPOOL_ID_DESC',
+  AccountsDistinctCountStablepoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_STABLEPOOL_ID_ASC',
+  AccountsDistinctCountStablepoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_STABLEPOOL_ID_DESC',
+  AccountsDistinctCountXykPoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_XYK_POOL_ID_ASC',
+  AccountsDistinctCountXykPoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_XYK_POOL_ID_DESC',
+  AccountsMaxIdAsc = 'ACCOUNTS_MAX_ID_ASC',
+  AccountsMaxIdDesc = 'ACCOUNTS_MAX_ID_DESC',
+  AccountsMaxLbpPoolIdAsc = 'ACCOUNTS_MAX_LBP_POOL_ID_ASC',
+  AccountsMaxLbpPoolIdDesc = 'ACCOUNTS_MAX_LBP_POOL_ID_DESC',
+  AccountsMaxOmnipoolIdAsc = 'ACCOUNTS_MAX_OMNIPOOL_ID_ASC',
+  AccountsMaxOmnipoolIdDesc = 'ACCOUNTS_MAX_OMNIPOOL_ID_DESC',
+  AccountsMaxStablepoolIdAsc = 'ACCOUNTS_MAX_STABLEPOOL_ID_ASC',
+  AccountsMaxStablepoolIdDesc = 'ACCOUNTS_MAX_STABLEPOOL_ID_DESC',
+  AccountsMaxXykPoolIdAsc = 'ACCOUNTS_MAX_XYK_POOL_ID_ASC',
+  AccountsMaxXykPoolIdDesc = 'ACCOUNTS_MAX_XYK_POOL_ID_DESC',
+  AccountsMinIdAsc = 'ACCOUNTS_MIN_ID_ASC',
+  AccountsMinIdDesc = 'ACCOUNTS_MIN_ID_DESC',
+  AccountsMinLbpPoolIdAsc = 'ACCOUNTS_MIN_LBP_POOL_ID_ASC',
+  AccountsMinLbpPoolIdDesc = 'ACCOUNTS_MIN_LBP_POOL_ID_DESC',
+  AccountsMinOmnipoolIdAsc = 'ACCOUNTS_MIN_OMNIPOOL_ID_ASC',
+  AccountsMinOmnipoolIdDesc = 'ACCOUNTS_MIN_OMNIPOOL_ID_DESC',
+  AccountsMinStablepoolIdAsc = 'ACCOUNTS_MIN_STABLEPOOL_ID_ASC',
+  AccountsMinStablepoolIdDesc = 'ACCOUNTS_MIN_STABLEPOOL_ID_DESC',
+  AccountsMinXykPoolIdAsc = 'ACCOUNTS_MIN_XYK_POOL_ID_ASC',
+  AccountsMinXykPoolIdDesc = 'ACCOUNTS_MIN_XYK_POOL_ID_DESC',
+  AccountsStddevPopulationIdAsc = 'ACCOUNTS_STDDEV_POPULATION_ID_ASC',
+  AccountsStddevPopulationIdDesc = 'ACCOUNTS_STDDEV_POPULATION_ID_DESC',
+  AccountsStddevPopulationLbpPoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_LBP_POOL_ID_ASC',
+  AccountsStddevPopulationLbpPoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_LBP_POOL_ID_DESC',
+  AccountsStddevPopulationOmnipoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_OMNIPOOL_ID_ASC',
+  AccountsStddevPopulationOmnipoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_OMNIPOOL_ID_DESC',
+  AccountsStddevPopulationStablepoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_STABLEPOOL_ID_ASC',
+  AccountsStddevPopulationStablepoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_STABLEPOOL_ID_DESC',
+  AccountsStddevPopulationXykPoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_XYK_POOL_ID_ASC',
+  AccountsStddevPopulationXykPoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_XYK_POOL_ID_DESC',
+  AccountsStddevSampleIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_ID_ASC',
+  AccountsStddevSampleIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_ID_DESC',
+  AccountsStddevSampleLbpPoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_LBP_POOL_ID_ASC',
+  AccountsStddevSampleLbpPoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_LBP_POOL_ID_DESC',
+  AccountsStddevSampleOmnipoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_OMNIPOOL_ID_ASC',
+  AccountsStddevSampleOmnipoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_OMNIPOOL_ID_DESC',
+  AccountsStddevSampleStablepoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_STABLEPOOL_ID_ASC',
+  AccountsStddevSampleStablepoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_STABLEPOOL_ID_DESC',
+  AccountsStddevSampleXykPoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_XYK_POOL_ID_ASC',
+  AccountsStddevSampleXykPoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_XYK_POOL_ID_DESC',
+  AccountsSumIdAsc = 'ACCOUNTS_SUM_ID_ASC',
+  AccountsSumIdDesc = 'ACCOUNTS_SUM_ID_DESC',
+  AccountsSumLbpPoolIdAsc = 'ACCOUNTS_SUM_LBP_POOL_ID_ASC',
+  AccountsSumLbpPoolIdDesc = 'ACCOUNTS_SUM_LBP_POOL_ID_DESC',
+  AccountsSumOmnipoolIdAsc = 'ACCOUNTS_SUM_OMNIPOOL_ID_ASC',
+  AccountsSumOmnipoolIdDesc = 'ACCOUNTS_SUM_OMNIPOOL_ID_DESC',
+  AccountsSumStablepoolIdAsc = 'ACCOUNTS_SUM_STABLEPOOL_ID_ASC',
+  AccountsSumStablepoolIdDesc = 'ACCOUNTS_SUM_STABLEPOOL_ID_DESC',
+  AccountsSumXykPoolIdAsc = 'ACCOUNTS_SUM_XYK_POOL_ID_ASC',
+  AccountsSumXykPoolIdDesc = 'ACCOUNTS_SUM_XYK_POOL_ID_DESC',
+  AccountsVariancePopulationIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_ID_ASC',
+  AccountsVariancePopulationIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_ID_DESC',
+  AccountsVariancePopulationLbpPoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_LBP_POOL_ID_ASC',
+  AccountsVariancePopulationLbpPoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_LBP_POOL_ID_DESC',
+  AccountsVariancePopulationOmnipoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_OMNIPOOL_ID_ASC',
+  AccountsVariancePopulationOmnipoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_OMNIPOOL_ID_DESC',
+  AccountsVariancePopulationStablepoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_STABLEPOOL_ID_ASC',
+  AccountsVariancePopulationStablepoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_STABLEPOOL_ID_DESC',
+  AccountsVariancePopulationXykPoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_XYK_POOL_ID_ASC',
+  AccountsVariancePopulationXykPoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_XYK_POOL_ID_DESC',
+  AccountsVarianceSampleIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_ASC',
+  AccountsVarianceSampleIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_DESC',
+  AccountsVarianceSampleLbpPoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_LBP_POOL_ID_ASC',
+  AccountsVarianceSampleLbpPoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_LBP_POOL_ID_DESC',
+  AccountsVarianceSampleOmnipoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_OMNIPOOL_ID_ASC',
+  AccountsVarianceSampleOmnipoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_OMNIPOOL_ID_DESC',
+  AccountsVarianceSampleStablepoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_STABLEPOOL_ID_ASC',
+  AccountsVarianceSampleStablepoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_STABLEPOOL_ID_DESC',
+  AccountsVarianceSampleXykPoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_XYK_POOL_ID_ASC',
+  AccountsVarianceSampleXykPoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_XYK_POOL_ID_DESC',
   AccountIdAsc = 'ACCOUNT_ID_ASC',
   AccountIdDesc = 'ACCOUNT_ID_DESC',
   AssetABalanceAsc = 'ASSET_A_BALANCE_ASC',
@@ -15459,278 +13231,6 @@ export enum LbpPoolsOrderBy {
   LbpPoolHistoricalVolumesByPoolIdVarianceSamplePoolIdDesc = 'LBP_POOL_HISTORICAL_VOLUMES_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
   LbpPoolHistoricalVolumesByPoolIdVarianceSampleRelayChainBlockHeightAsc = 'LBP_POOL_HISTORICAL_VOLUMES_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
   LbpPoolHistoricalVolumesByPoolIdVarianceSampleRelayChainBlockHeightDesc = 'LBP_POOL_HISTORICAL_VOLUMES_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdAverageAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdAverageAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdAverageAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdAverageAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdAverageAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdAverageAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdAverageAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdAverageAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdAverageAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdAverageAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdAverageAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdAverageAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdAverageAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdAverageAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdAverageExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdAverageExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdAverageIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ID_ASC',
-  LbpPoolOperationsByPoolIdAverageIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ID_DESC',
-  LbpPoolOperationsByPoolIdAverageIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdAverageIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdAverageParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdAverageParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdAveragePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdAveragePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdAverageRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdAverageRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdAverageSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdAverageSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdAverageTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_TYPE_ASC',
-  LbpPoolOperationsByPoolIdAverageTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_TYPE_DESC',
-  LbpPoolOperationsByPoolIdCountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_COUNT_ASC',
-  LbpPoolOperationsByPoolIdCountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_COUNT_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdDistinctCountTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_TYPE_ASC',
-  LbpPoolOperationsByPoolIdDistinctCountTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_TYPE_DESC',
-  LbpPoolOperationsByPoolIdMaxAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdMaxAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdMaxAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdMaxAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdMaxAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdMaxAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdMaxAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdMaxAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdMaxAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdMaxAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdMaxAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdMaxAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdMaxAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdMaxAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdMaxExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdMaxExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdMaxIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ID_ASC',
-  LbpPoolOperationsByPoolIdMaxIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_ID_DESC',
-  LbpPoolOperationsByPoolIdMaxIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdMaxIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdMaxParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdMaxParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdMaxPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdMaxPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdMaxRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdMaxRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdMaxSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdMaxSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdMaxTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_TYPE_ASC',
-  LbpPoolOperationsByPoolIdMaxTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MAX_TYPE_DESC',
-  LbpPoolOperationsByPoolIdMinAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdMinAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdMinAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdMinAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdMinAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdMinAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdMinAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdMinAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdMinAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdMinAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdMinAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdMinAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdMinAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdMinAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdMinExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdMinExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdMinIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ID_ASC',
-  LbpPoolOperationsByPoolIdMinIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_ID_DESC',
-  LbpPoolOperationsByPoolIdMinIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdMinIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdMinParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdMinParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdMinPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdMinPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdMinRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdMinRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdMinSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdMinSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdMinTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_TYPE_ASC',
-  LbpPoolOperationsByPoolIdMinTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_MIN_TYPE_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdStddevPopulationTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_TYPE_ASC',
-  LbpPoolOperationsByPoolIdStddevPopulationTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_TYPE_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdStddevSamplePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdStddevSamplePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdStddevSampleTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_TYPE_ASC',
-  LbpPoolOperationsByPoolIdStddevSampleTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_TYPE_DESC',
-  LbpPoolOperationsByPoolIdSumAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdSumAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdSumAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdSumAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdSumAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdSumAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdSumAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdSumAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdSumAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdSumAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdSumAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdSumAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdSumAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdSumAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdSumExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdSumExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdSumIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ID_ASC',
-  LbpPoolOperationsByPoolIdSumIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_ID_DESC',
-  LbpPoolOperationsByPoolIdSumIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdSumIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdSumParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdSumParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdSumPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdSumPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdSumRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdSumRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdSumSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdSumSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdSumTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_TYPE_ASC',
-  LbpPoolOperationsByPoolIdSumTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_SUM_TYPE_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ID_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ID_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationPoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationPoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdVariancePopulationTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_TYPE_ASC',
-  LbpPoolOperationsByPoolIdVariancePopulationTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_TYPE_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleAccountIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleAccountIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetInAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetInAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetInFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetInFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetInIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetInIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetOutAmountAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetOutAmountDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetOutFeeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetOutFeeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetOutIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleAssetOutIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleExtrinsicHashAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleExtrinsicHashDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ID_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ID_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleIndexInBlockAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleIndexInBlockDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleParaChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleParaChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdVarianceSamplePoolIdAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  LbpPoolOperationsByPoolIdVarianceSamplePoolIdDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleRelayChainBlockHeightAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleRelayChainBlockHeightDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleSwapPriceAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_SWAP_PRICE_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleSwapPriceDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_SWAP_PRICE_DESC',
-  LbpPoolOperationsByPoolIdVarianceSampleTypeAsc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  LbpPoolOperationsByPoolIdVarianceSampleTypeDesc = 'LBP_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_TYPE_DESC',
   Natural = 'NATURAL',
   OwnerIdAsc = 'OWNER_ID_ASC',
   OwnerIdDesc = 'OWNER_ID_DESC',
@@ -15987,48 +13487,13 @@ export enum MigrationsOrderBy {
   TimestampDesc = 'TIMESTAMP_DESC'
 }
 
-/** The root mutation type which contains root level fields which mutate data. */
-export type Mutation = {
-  __typename?: 'Mutation';
-  notify?: Maybe<NotifyPayload>;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationNotifyArgs = {
-  input: NotifyInput;
-};
-
-/** All input for the `notify` mutation. */
-export type NotifyInput = {
-  actionName: Scalars['String']['input'];
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  eventName: Scalars['String']['input'];
-  nodeId: Scalars['String']['input'];
-  nodeName: Scalars['String']['input'];
-};
-
-/** The output of our `notify` mutation. */
-export type NotifyPayload = {
-  __typename?: 'NotifyPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId?: Maybe<Scalars['String']['output']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query?: Maybe<Query>;
-};
-
 export type Omnipool = {
   __typename?: 'Omnipool';
   /** Reads a single `Account` that is related to this `Omnipool`. */
   account?: Maybe<Account>;
   accountId?: Maybe<Scalars['String']['output']>;
+  /** Reads and enables pagination through a set of `Account`. */
+  accounts: AccountsConnection;
   createdAt: Scalars['Datetime']['output'];
   createdAtParaBlock: Scalars['Int']['output'];
   destroyedAtParaBlock?: Maybe<Scalars['Int']['output']>;
@@ -16036,6 +13501,18 @@ export type Omnipool = {
   isDestroyed?: Maybe<Scalars['Boolean']['output']>;
   /** Reads and enables pagination through a set of `OmnipoolAsset`. */
   omnipoolAssetsByPoolId: OmnipoolAssetsConnection;
+};
+
+
+export type OmnipoolAccountsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AccountCondition>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
 
@@ -16089,10 +13566,6 @@ export type OmnipoolAsset = {
   omnipoolAssetHistoricalData: OmnipoolAssetHistoricalDataConnection;
   /** Reads and enables pagination through a set of `OmnipoolAssetHistoricalVolume`. */
   omnipoolAssetHistoricalVolumes: OmnipoolAssetHistoricalVolumesConnection;
-  /** Reads and enables pagination through a set of `OmnipoolAssetOperation`. */
-  omnipoolAssetOperationsByAssetInId: OmnipoolAssetOperationsConnection;
-  /** Reads and enables pagination through a set of `OmnipoolAssetOperation`. */
-  omnipoolAssetOperationsByAssetOutId: OmnipoolAssetOperationsConnection;
   /** Reads a single `Omnipool` that is related to this `OmnipoolAsset`. */
   pool?: Maybe<Omnipool>;
   poolId?: Maybe<Scalars['String']['output']>;
@@ -16122,30 +13595,6 @@ export type OmnipoolAssetOmnipoolAssetHistoricalVolumesArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<OmnipoolAssetHistoricalVolumesOrderBy>>;
-};
-
-
-export type OmnipoolAssetOmnipoolAssetOperationsByAssetInIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<OmnipoolAssetOperationCondition>;
-  filter?: InputMaybe<OmnipoolAssetOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OmnipoolAssetOperationsOrderBy>>;
-};
-
-
-export type OmnipoolAssetOmnipoolAssetOperationsByAssetOutIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<OmnipoolAssetOperationCondition>;
-  filter?: InputMaybe<OmnipoolAssetOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OmnipoolAssetOperationsOrderBy>>;
 };
 
 export type OmnipoolAssetAggregates = {
@@ -17537,552 +14986,6 @@ export type OmnipoolAssetMinAggregates = {
   removedAtParaBlock?: Maybe<Scalars['Int']['output']>;
 };
 
-export type OmnipoolAssetOperation = {
-  __typename?: 'OmnipoolAssetOperation';
-  /** Reads a single `Account` that is related to this `OmnipoolAssetOperation`. */
-  account?: Maybe<Account>;
-  accountId?: Maybe<Scalars['String']['output']>;
-  assetFeeAmount: Scalars['BigFloat']['output'];
-  /** Reads a single `OmnipoolAsset` that is related to this `OmnipoolAssetOperation`. */
-  assetIn?: Maybe<OmnipoolAsset>;
-  assetInAmount: Scalars['BigFloat']['output'];
-  assetInId?: Maybe<Scalars['String']['output']>;
-  /** Reads a single `OmnipoolAsset` that is related to this `OmnipoolAssetOperation`. */
-  assetOut?: Maybe<OmnipoolAsset>;
-  assetOutAmount: Scalars['BigFloat']['output'];
-  assetOutId?: Maybe<Scalars['String']['output']>;
-  extrinsicHash?: Maybe<Scalars['String']['output']>;
-  hubAmountIn: Scalars['BigFloat']['output'];
-  hubAmountOut: Scalars['BigFloat']['output'];
-  id: Scalars['String']['output'];
-  indexInBlock: Scalars['Int']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
-  protocolFeeAmount: Scalars['BigFloat']['output'];
-  relayChainBlockHeight: Scalars['Int']['output'];
-  type: Scalars['String']['output'];
-};
-
-export type OmnipoolAssetOperationAggregates = {
-  __typename?: 'OmnipoolAssetOperationAggregates';
-  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  average?: Maybe<OmnipoolAssetOperationAverageAggregates>;
-  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  distinctCount?: Maybe<OmnipoolAssetOperationDistinctCountAggregates>;
-  keys?: Maybe<Array<Scalars['String']['output']>>;
-  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  max?: Maybe<OmnipoolAssetOperationMaxAggregates>;
-  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  min?: Maybe<OmnipoolAssetOperationMinAggregates>;
-  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevPopulation?: Maybe<OmnipoolAssetOperationStddevPopulationAggregates>;
-  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevSample?: Maybe<OmnipoolAssetOperationStddevSampleAggregates>;
-  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  sum?: Maybe<OmnipoolAssetOperationSumAggregates>;
-  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  variancePopulation?: Maybe<OmnipoolAssetOperationVariancePopulationAggregates>;
-  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  varianceSample?: Maybe<OmnipoolAssetOperationVarianceSampleAggregates>;
-};
-
-export type OmnipoolAssetOperationAverageAggregates = {
-  __typename?: 'OmnipoolAssetOperationAverageAggregates';
-  /** Mean average of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of hubAmountIn across the matching connection */
-  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of hubAmountOut across the matching connection */
-  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of protocolFeeAmount across the matching connection */
-  protocolFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-/**
- * A condition to be used against `OmnipoolAssetOperation` object types. All fields
- * are tested for equality and combined with a logical ‘and.’
- */
-export type OmnipoolAssetOperationCondition = {
-  /** Checks for equality with the object’s `accountId` field. */
-  accountId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `assetFeeAmount` field. */
-  assetFeeAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetInAmount` field. */
-  assetInAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetInId` field. */
-  assetInId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `assetOutAmount` field. */
-  assetOutAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetOutId` field. */
-  assetOutId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `extrinsicHash` field. */
-  extrinsicHash?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `hubAmountIn` field. */
-  hubAmountIn?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `hubAmountOut` field. */
-  hubAmountOut?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `indexInBlock` field. */
-  indexInBlock?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `protocolFeeAmount` field. */
-  protocolFeeAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `relayChainBlockHeight` field. */
-  relayChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `type` field. */
-  type?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type OmnipoolAssetOperationDistinctCountAggregates = {
-  __typename?: 'OmnipoolAssetOperationDistinctCountAggregates';
-  /** Distinct count of accountId across the matching connection */
-  accountId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInId across the matching connection */
-  assetInId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutId across the matching connection */
-  assetOutId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of extrinsicHash across the matching connection */
-  extrinsicHash?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of hubAmountIn across the matching connection */
-  hubAmountIn?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of hubAmountOut across the matching connection */
-  hubAmountOut?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of id across the matching connection */
-  id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of protocolFeeAmount across the matching connection */
-  protocolFeeAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of type across the matching connection */
-  type?: Maybe<Scalars['BigInt']['output']>;
-};
-
-/** A filter to be used against `OmnipoolAssetOperation` object types. All fields are combined with a logical ‘and.’ */
-export type OmnipoolAssetOperationFilter = {
-  /** Filter by the object’s `accountId` field. */
-  accountId?: InputMaybe<StringFilter>;
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<OmnipoolAssetOperationFilter>>;
-  /** Filter by the object’s `assetFeeAmount` field. */
-  assetFeeAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetInAmount` field. */
-  assetInAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetInId` field. */
-  assetInId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `assetOutAmount` field. */
-  assetOutAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetOutId` field. */
-  assetOutId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `extrinsicHash` field. */
-  extrinsicHash?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `hubAmountIn` field. */
-  hubAmountIn?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `hubAmountOut` field. */
-  hubAmountOut?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `indexInBlock` field. */
-  indexInBlock?: InputMaybe<IntFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<OmnipoolAssetOperationFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<OmnipoolAssetOperationFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `protocolFeeAmount` field. */
-  protocolFeeAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `relayChainBlockHeight` field. */
-  relayChainBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `type` field. */
-  type?: InputMaybe<StringFilter>;
-};
-
-/** Grouping methods for `OmnipoolAssetOperation` for usage during aggregation. */
-export enum OmnipoolAssetOperationGroupBy {
-  AccountId = 'ACCOUNT_ID',
-  AssetFeeAmount = 'ASSET_FEE_AMOUNT',
-  AssetInAmount = 'ASSET_IN_AMOUNT',
-  AssetInId = 'ASSET_IN_ID',
-  AssetOutAmount = 'ASSET_OUT_AMOUNT',
-  AssetOutId = 'ASSET_OUT_ID',
-  ExtrinsicHash = 'EXTRINSIC_HASH',
-  HubAmountIn = 'HUB_AMOUNT_IN',
-  HubAmountOut = 'HUB_AMOUNT_OUT',
-  IndexInBlock = 'INDEX_IN_BLOCK',
-  ParaChainBlockHeight = 'PARA_CHAIN_BLOCK_HEIGHT',
-  ProtocolFeeAmount = 'PROTOCOL_FEE_AMOUNT',
-  RelayChainBlockHeight = 'RELAY_CHAIN_BLOCK_HEIGHT',
-  Type = 'TYPE'
-}
-
-export type OmnipoolAssetOperationHavingAverageInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type OmnipoolAssetOperationHavingDistinctCountInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-/** Conditions for `OmnipoolAssetOperation` aggregates. */
-export type OmnipoolAssetOperationHavingInput = {
-  AND?: InputMaybe<Array<OmnipoolAssetOperationHavingInput>>;
-  OR?: InputMaybe<Array<OmnipoolAssetOperationHavingInput>>;
-  average?: InputMaybe<OmnipoolAssetOperationHavingAverageInput>;
-  distinctCount?: InputMaybe<OmnipoolAssetOperationHavingDistinctCountInput>;
-  max?: InputMaybe<OmnipoolAssetOperationHavingMaxInput>;
-  min?: InputMaybe<OmnipoolAssetOperationHavingMinInput>;
-  stddevPopulation?: InputMaybe<OmnipoolAssetOperationHavingStddevPopulationInput>;
-  stddevSample?: InputMaybe<OmnipoolAssetOperationHavingStddevSampleInput>;
-  sum?: InputMaybe<OmnipoolAssetOperationHavingSumInput>;
-  variancePopulation?: InputMaybe<OmnipoolAssetOperationHavingVariancePopulationInput>;
-  varianceSample?: InputMaybe<OmnipoolAssetOperationHavingVarianceSampleInput>;
-};
-
-export type OmnipoolAssetOperationHavingMaxInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type OmnipoolAssetOperationHavingMinInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type OmnipoolAssetOperationHavingStddevPopulationInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type OmnipoolAssetOperationHavingStddevSampleInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type OmnipoolAssetOperationHavingSumInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type OmnipoolAssetOperationHavingVariancePopulationInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type OmnipoolAssetOperationHavingVarianceSampleInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
-  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  protocolFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type OmnipoolAssetOperationMaxAggregates = {
-  __typename?: 'OmnipoolAssetOperationMaxAggregates';
-  /** Maximum of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of hubAmountIn across the matching connection */
-  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of hubAmountOut across the matching connection */
-  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of protocolFeeAmount across the matching connection */
-  protocolFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-};
-
-export type OmnipoolAssetOperationMinAggregates = {
-  __typename?: 'OmnipoolAssetOperationMinAggregates';
-  /** Minimum of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of hubAmountIn across the matching connection */
-  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of hubAmountOut across the matching connection */
-  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of protocolFeeAmount across the matching connection */
-  protocolFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-};
-
-export type OmnipoolAssetOperationStddevPopulationAggregates = {
-  __typename?: 'OmnipoolAssetOperationStddevPopulationAggregates';
-  /** Population standard deviation of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of hubAmountIn across the matching connection */
-  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of hubAmountOut across the matching connection */
-  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of protocolFeeAmount across the matching connection */
-  protocolFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type OmnipoolAssetOperationStddevSampleAggregates = {
-  __typename?: 'OmnipoolAssetOperationStddevSampleAggregates';
-  /** Sample standard deviation of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of hubAmountIn across the matching connection */
-  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of hubAmountOut across the matching connection */
-  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of protocolFeeAmount across the matching connection */
-  protocolFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type OmnipoolAssetOperationSumAggregates = {
-  __typename?: 'OmnipoolAssetOperationSumAggregates';
-  /** Sum of assetFeeAmount across the matching connection */
-  assetFeeAmount: Scalars['BigFloat']['output'];
-  /** Sum of assetInAmount across the matching connection */
-  assetInAmount: Scalars['BigFloat']['output'];
-  /** Sum of assetOutAmount across the matching connection */
-  assetOutAmount: Scalars['BigFloat']['output'];
-  /** Sum of hubAmountIn across the matching connection */
-  hubAmountIn: Scalars['BigFloat']['output'];
-  /** Sum of hubAmountOut across the matching connection */
-  hubAmountOut: Scalars['BigFloat']['output'];
-  /** Sum of indexInBlock across the matching connection */
-  indexInBlock: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of protocolFeeAmount across the matching connection */
-  protocolFeeAmount: Scalars['BigFloat']['output'];
-  /** Sum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight: Scalars['BigInt']['output'];
-};
-
-export type OmnipoolAssetOperationVariancePopulationAggregates = {
-  __typename?: 'OmnipoolAssetOperationVariancePopulationAggregates';
-  /** Population variance of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of hubAmountIn across the matching connection */
-  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of hubAmountOut across the matching connection */
-  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of protocolFeeAmount across the matching connection */
-  protocolFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type OmnipoolAssetOperationVarianceSampleAggregates = {
-  __typename?: 'OmnipoolAssetOperationVarianceSampleAggregates';
-  /** Sample variance of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of hubAmountIn across the matching connection */
-  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of hubAmountOut across the matching connection */
-  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of protocolFeeAmount across the matching connection */
-  protocolFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-/** A connection to a list of `OmnipoolAssetOperation` values. */
-export type OmnipoolAssetOperationsConnection = {
-  __typename?: 'OmnipoolAssetOperationsConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OmnipoolAssetOperationAggregates>;
-  /** A list of edges which contains the `OmnipoolAssetOperation` and cursor to aid in pagination. */
-  edges: Array<OmnipoolAssetOperationsEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OmnipoolAssetOperationAggregates>>;
-  /** A list of `OmnipoolAssetOperation` objects. */
-  nodes: Array<Maybe<OmnipoolAssetOperation>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `OmnipoolAssetOperation` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-
-/** A connection to a list of `OmnipoolAssetOperation` values. */
-export type OmnipoolAssetOperationsConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OmnipoolAssetOperationGroupBy>;
-  having?: InputMaybe<OmnipoolAssetOperationHavingInput>;
-};
-
-/** A `OmnipoolAssetOperation` edge in the connection. */
-export type OmnipoolAssetOperationsEdge = {
-  __typename?: 'OmnipoolAssetOperationsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `OmnipoolAssetOperation` at the end of the edge. */
-  node?: Maybe<OmnipoolAssetOperation>;
-};
-
-/** Methods to use when ordering `OmnipoolAssetOperation`. */
-export enum OmnipoolAssetOperationsOrderBy {
-  AccountIdAsc = 'ACCOUNT_ID_ASC',
-  AccountIdDesc = 'ACCOUNT_ID_DESC',
-  AssetFeeAmountAsc = 'ASSET_FEE_AMOUNT_ASC',
-  AssetFeeAmountDesc = 'ASSET_FEE_AMOUNT_DESC',
-  AssetInAmountAsc = 'ASSET_IN_AMOUNT_ASC',
-  AssetInAmountDesc = 'ASSET_IN_AMOUNT_DESC',
-  AssetInIdAsc = 'ASSET_IN_ID_ASC',
-  AssetInIdDesc = 'ASSET_IN_ID_DESC',
-  AssetOutAmountAsc = 'ASSET_OUT_AMOUNT_ASC',
-  AssetOutAmountDesc = 'ASSET_OUT_AMOUNT_DESC',
-  AssetOutIdAsc = 'ASSET_OUT_ID_ASC',
-  AssetOutIdDesc = 'ASSET_OUT_ID_DESC',
-  ExtrinsicHashAsc = 'EXTRINSIC_HASH_ASC',
-  ExtrinsicHashDesc = 'EXTRINSIC_HASH_DESC',
-  HubAmountInAsc = 'HUB_AMOUNT_IN_ASC',
-  HubAmountInDesc = 'HUB_AMOUNT_IN_DESC',
-  HubAmountOutAsc = 'HUB_AMOUNT_OUT_ASC',
-  HubAmountOutDesc = 'HUB_AMOUNT_OUT_DESC',
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  IndexInBlockAsc = 'INDEX_IN_BLOCK_ASC',
-  IndexInBlockDesc = 'INDEX_IN_BLOCK_DESC',
-  Natural = 'NATURAL',
-  ParaChainBlockHeightAsc = 'PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  ParaChainBlockHeightDesc = 'PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  ProtocolFeeAmountAsc = 'PROTOCOL_FEE_AMOUNT_ASC',
-  ProtocolFeeAmountDesc = 'PROTOCOL_FEE_AMOUNT_DESC',
-  RelayChainBlockHeightAsc = 'RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  RelayChainBlockHeightDesc = 'RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  TypeAsc = 'TYPE_ASC',
-  TypeDesc = 'TYPE_DESC'
-}
-
 export type OmnipoolAssetStddevPopulationAggregates = {
   __typename?: 'OmnipoolAssetStddevPopulationAggregates';
   /** Population standard deviation of createdAtParaBlock across the matching connection */
@@ -18689,550 +15592,6 @@ export enum OmnipoolAssetsOrderBy {
   OmnipoolAssetHistoricalVolumesVarianceSampleParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_HISTORICAL_VOLUMES_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
   OmnipoolAssetHistoricalVolumesVarianceSampleRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_HISTORICAL_VOLUMES_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
   OmnipoolAssetHistoricalVolumesVarianceSampleRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_HISTORICAL_VOLUMES_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdAverageTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdAverageTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_AVERAGE_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetInIdCountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_COUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdCountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_COUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdDistinctCountTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_DISTINCT_COUNT_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMaxTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdMaxTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MAX_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdMinTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdMinTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_MIN_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevPopulationTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_POPULATION_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdStddevSampleTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_STDDEV_SAMPLE_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdSumTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdSumTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_SUM_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdVariancePopulationTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_POPULATION_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ID_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_ID_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetInIdVarianceSampleTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_IN_ID_VARIANCE_SAMPLE_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdAverageTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdAverageTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_AVERAGE_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdCountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_COUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdCountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_COUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdDistinctCountTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_DISTINCT_COUNT_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMaxTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMaxTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MAX_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdMinTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdMinTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_MIN_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevPopulationTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_POPULATION_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdStddevSampleTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_STDDEV_SAMPLE_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdSumTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdSumTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_SUM_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVariancePopulationTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_POPULATION_TYPE_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAccountIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAccountIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetInAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetInAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetInIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetInIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetOutAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetOutAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetOutIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleAssetOutIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleExtrinsicHashAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleExtrinsicHashDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleHubAmountInAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_HUB_AMOUNT_IN_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleHubAmountInDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_HUB_AMOUNT_IN_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleHubAmountOutAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleHubAmountOutDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_HUB_AMOUNT_OUT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleIdAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ID_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleIdDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_ID_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleIndexInBlockAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleIndexInBlockDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleParaChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleParaChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleProtocolFeeAmountAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PROTOCOL_FEE_AMOUNT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleProtocolFeeAmountDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_PROTOCOL_FEE_AMOUNT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleRelayChainBlockHeightAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleRelayChainBlockHeightDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleTypeAsc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  OmnipoolAssetOperationsByAssetOutIdVarianceSampleTypeDesc = 'OMNIPOOL_ASSET_OPERATIONS_BY_ASSET_OUT_ID_VARIANCE_SAMPLE_TYPE_DESC',
   PoolIdAsc = 'POOL_ID_ASC',
   PoolIdDesc = 'POOL_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
@@ -19479,6 +15838,98 @@ export type OmnipoolsEdge = {
 
 /** Methods to use when ordering `Omnipool`. */
 export enum OmnipoolsOrderBy {
+  AccountsAverageIdAsc = 'ACCOUNTS_AVERAGE_ID_ASC',
+  AccountsAverageIdDesc = 'ACCOUNTS_AVERAGE_ID_DESC',
+  AccountsAverageLbpPoolIdAsc = 'ACCOUNTS_AVERAGE_LBP_POOL_ID_ASC',
+  AccountsAverageLbpPoolIdDesc = 'ACCOUNTS_AVERAGE_LBP_POOL_ID_DESC',
+  AccountsAverageOmnipoolIdAsc = 'ACCOUNTS_AVERAGE_OMNIPOOL_ID_ASC',
+  AccountsAverageOmnipoolIdDesc = 'ACCOUNTS_AVERAGE_OMNIPOOL_ID_DESC',
+  AccountsAverageStablepoolIdAsc = 'ACCOUNTS_AVERAGE_STABLEPOOL_ID_ASC',
+  AccountsAverageStablepoolIdDesc = 'ACCOUNTS_AVERAGE_STABLEPOOL_ID_DESC',
+  AccountsAverageXykPoolIdAsc = 'ACCOUNTS_AVERAGE_XYK_POOL_ID_ASC',
+  AccountsAverageXykPoolIdDesc = 'ACCOUNTS_AVERAGE_XYK_POOL_ID_DESC',
+  AccountsCountAsc = 'ACCOUNTS_COUNT_ASC',
+  AccountsCountDesc = 'ACCOUNTS_COUNT_DESC',
+  AccountsDistinctCountIdAsc = 'ACCOUNTS_DISTINCT_COUNT_ID_ASC',
+  AccountsDistinctCountIdDesc = 'ACCOUNTS_DISTINCT_COUNT_ID_DESC',
+  AccountsDistinctCountLbpPoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_LBP_POOL_ID_ASC',
+  AccountsDistinctCountLbpPoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_LBP_POOL_ID_DESC',
+  AccountsDistinctCountOmnipoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_OMNIPOOL_ID_ASC',
+  AccountsDistinctCountOmnipoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_OMNIPOOL_ID_DESC',
+  AccountsDistinctCountStablepoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_STABLEPOOL_ID_ASC',
+  AccountsDistinctCountStablepoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_STABLEPOOL_ID_DESC',
+  AccountsDistinctCountXykPoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_XYK_POOL_ID_ASC',
+  AccountsDistinctCountXykPoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_XYK_POOL_ID_DESC',
+  AccountsMaxIdAsc = 'ACCOUNTS_MAX_ID_ASC',
+  AccountsMaxIdDesc = 'ACCOUNTS_MAX_ID_DESC',
+  AccountsMaxLbpPoolIdAsc = 'ACCOUNTS_MAX_LBP_POOL_ID_ASC',
+  AccountsMaxLbpPoolIdDesc = 'ACCOUNTS_MAX_LBP_POOL_ID_DESC',
+  AccountsMaxOmnipoolIdAsc = 'ACCOUNTS_MAX_OMNIPOOL_ID_ASC',
+  AccountsMaxOmnipoolIdDesc = 'ACCOUNTS_MAX_OMNIPOOL_ID_DESC',
+  AccountsMaxStablepoolIdAsc = 'ACCOUNTS_MAX_STABLEPOOL_ID_ASC',
+  AccountsMaxStablepoolIdDesc = 'ACCOUNTS_MAX_STABLEPOOL_ID_DESC',
+  AccountsMaxXykPoolIdAsc = 'ACCOUNTS_MAX_XYK_POOL_ID_ASC',
+  AccountsMaxXykPoolIdDesc = 'ACCOUNTS_MAX_XYK_POOL_ID_DESC',
+  AccountsMinIdAsc = 'ACCOUNTS_MIN_ID_ASC',
+  AccountsMinIdDesc = 'ACCOUNTS_MIN_ID_DESC',
+  AccountsMinLbpPoolIdAsc = 'ACCOUNTS_MIN_LBP_POOL_ID_ASC',
+  AccountsMinLbpPoolIdDesc = 'ACCOUNTS_MIN_LBP_POOL_ID_DESC',
+  AccountsMinOmnipoolIdAsc = 'ACCOUNTS_MIN_OMNIPOOL_ID_ASC',
+  AccountsMinOmnipoolIdDesc = 'ACCOUNTS_MIN_OMNIPOOL_ID_DESC',
+  AccountsMinStablepoolIdAsc = 'ACCOUNTS_MIN_STABLEPOOL_ID_ASC',
+  AccountsMinStablepoolIdDesc = 'ACCOUNTS_MIN_STABLEPOOL_ID_DESC',
+  AccountsMinXykPoolIdAsc = 'ACCOUNTS_MIN_XYK_POOL_ID_ASC',
+  AccountsMinXykPoolIdDesc = 'ACCOUNTS_MIN_XYK_POOL_ID_DESC',
+  AccountsStddevPopulationIdAsc = 'ACCOUNTS_STDDEV_POPULATION_ID_ASC',
+  AccountsStddevPopulationIdDesc = 'ACCOUNTS_STDDEV_POPULATION_ID_DESC',
+  AccountsStddevPopulationLbpPoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_LBP_POOL_ID_ASC',
+  AccountsStddevPopulationLbpPoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_LBP_POOL_ID_DESC',
+  AccountsStddevPopulationOmnipoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_OMNIPOOL_ID_ASC',
+  AccountsStddevPopulationOmnipoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_OMNIPOOL_ID_DESC',
+  AccountsStddevPopulationStablepoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_STABLEPOOL_ID_ASC',
+  AccountsStddevPopulationStablepoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_STABLEPOOL_ID_DESC',
+  AccountsStddevPopulationXykPoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_XYK_POOL_ID_ASC',
+  AccountsStddevPopulationXykPoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_XYK_POOL_ID_DESC',
+  AccountsStddevSampleIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_ID_ASC',
+  AccountsStddevSampleIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_ID_DESC',
+  AccountsStddevSampleLbpPoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_LBP_POOL_ID_ASC',
+  AccountsStddevSampleLbpPoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_LBP_POOL_ID_DESC',
+  AccountsStddevSampleOmnipoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_OMNIPOOL_ID_ASC',
+  AccountsStddevSampleOmnipoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_OMNIPOOL_ID_DESC',
+  AccountsStddevSampleStablepoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_STABLEPOOL_ID_ASC',
+  AccountsStddevSampleStablepoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_STABLEPOOL_ID_DESC',
+  AccountsStddevSampleXykPoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_XYK_POOL_ID_ASC',
+  AccountsStddevSampleXykPoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_XYK_POOL_ID_DESC',
+  AccountsSumIdAsc = 'ACCOUNTS_SUM_ID_ASC',
+  AccountsSumIdDesc = 'ACCOUNTS_SUM_ID_DESC',
+  AccountsSumLbpPoolIdAsc = 'ACCOUNTS_SUM_LBP_POOL_ID_ASC',
+  AccountsSumLbpPoolIdDesc = 'ACCOUNTS_SUM_LBP_POOL_ID_DESC',
+  AccountsSumOmnipoolIdAsc = 'ACCOUNTS_SUM_OMNIPOOL_ID_ASC',
+  AccountsSumOmnipoolIdDesc = 'ACCOUNTS_SUM_OMNIPOOL_ID_DESC',
+  AccountsSumStablepoolIdAsc = 'ACCOUNTS_SUM_STABLEPOOL_ID_ASC',
+  AccountsSumStablepoolIdDesc = 'ACCOUNTS_SUM_STABLEPOOL_ID_DESC',
+  AccountsSumXykPoolIdAsc = 'ACCOUNTS_SUM_XYK_POOL_ID_ASC',
+  AccountsSumXykPoolIdDesc = 'ACCOUNTS_SUM_XYK_POOL_ID_DESC',
+  AccountsVariancePopulationIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_ID_ASC',
+  AccountsVariancePopulationIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_ID_DESC',
+  AccountsVariancePopulationLbpPoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_LBP_POOL_ID_ASC',
+  AccountsVariancePopulationLbpPoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_LBP_POOL_ID_DESC',
+  AccountsVariancePopulationOmnipoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_OMNIPOOL_ID_ASC',
+  AccountsVariancePopulationOmnipoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_OMNIPOOL_ID_DESC',
+  AccountsVariancePopulationStablepoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_STABLEPOOL_ID_ASC',
+  AccountsVariancePopulationStablepoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_STABLEPOOL_ID_DESC',
+  AccountsVariancePopulationXykPoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_XYK_POOL_ID_ASC',
+  AccountsVariancePopulationXykPoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_XYK_POOL_ID_DESC',
+  AccountsVarianceSampleIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_ASC',
+  AccountsVarianceSampleIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_DESC',
+  AccountsVarianceSampleLbpPoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_LBP_POOL_ID_ASC',
+  AccountsVarianceSampleLbpPoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_LBP_POOL_ID_DESC',
+  AccountsVarianceSampleOmnipoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_OMNIPOOL_ID_ASC',
+  AccountsVarianceSampleOmnipoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_OMNIPOOL_ID_DESC',
+  AccountsVarianceSampleStablepoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_STABLEPOOL_ID_ASC',
+  AccountsVarianceSampleStablepoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_STABLEPOOL_ID_DESC',
+  AccountsVarianceSampleXykPoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_XYK_POOL_ID_ASC',
+  AccountsVarianceSampleXykPoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_XYK_POOL_ID_DESC',
   AccountIdAsc = 'ACCOUNT_ID_ASC',
   AccountIdDesc = 'ACCOUNT_ID_DESC',
   CreatedAtAsc = 'CREATED_AT_ASC',
@@ -19984,9 +16435,6 @@ export type Query = {
   lbpPoolHistoricalVolume?: Maybe<LbpPoolHistoricalVolume>;
   /** Reads and enables pagination through a set of `LbpPoolHistoricalVolume`. */
   lbpPoolHistoricalVolumes?: Maybe<LbpPoolHistoricalVolumesConnection>;
-  lbpPoolOperation?: Maybe<LbpPoolOperation>;
-  /** Reads and enables pagination through a set of `LbpPoolOperation`. */
-  lbpPoolOperations?: Maybe<LbpPoolOperationsConnection>;
   /** Reads and enables pagination through a set of `LbpPool`. */
   lbpPools?: Maybe<LbpPoolsConnection>;
   migration?: Maybe<Migration>;
@@ -20001,9 +16449,6 @@ export type Query = {
   /** Reads and enables pagination through a set of `OmnipoolAssetHistoricalVolume`. */
   omnipoolAssetHistoricalVolumes?: Maybe<OmnipoolAssetHistoricalVolumesConnection>;
   omnipoolAssetHistoricalVolumesByPeriod: OmnipoolAssetVolumesByPeriodResponse;
-  omnipoolAssetOperation?: Maybe<OmnipoolAssetOperation>;
-  /** Reads and enables pagination through a set of `OmnipoolAssetOperation`. */
-  omnipoolAssetOperations?: Maybe<OmnipoolAssetOperationsConnection>;
   /** Reads and enables pagination through a set of `OmnipoolAsset`. */
   omnipoolAssets?: Maybe<OmnipoolAssetsConnection>;
   /** Reads and enables pagination through a set of `Omnipool`. */
@@ -20039,11 +16484,20 @@ export type Query = {
   stablepoolLiquidityAction?: Maybe<StablepoolLiquidityAction>;
   /** Reads and enables pagination through a set of `StablepoolLiquidityAction`. */
   stablepoolLiquidityActions?: Maybe<StablepoolLiquidityActionsConnection>;
-  stablepoolOperation?: Maybe<StablepoolOperation>;
-  /** Reads and enables pagination through a set of `StablepoolOperation`. */
-  stablepoolOperations?: Maybe<StablepoolOperationsConnection>;
   /** Reads and enables pagination through a set of `Stablepool`. */
   stablepools?: Maybe<StablepoolsConnection>;
+  swap?: Maybe<Swap>;
+  swapFee?: Maybe<SwapFee>;
+  /** Reads and enables pagination through a set of `SwapFee`. */
+  swapFees?: Maybe<SwapFeesConnection>;
+  swapInputAssetBalance?: Maybe<SwapInputAssetBalance>;
+  /** Reads and enables pagination through a set of `SwapInputAssetBalance`. */
+  swapInputAssetBalances?: Maybe<SwapInputAssetBalancesConnection>;
+  swapOutputAssetBalance?: Maybe<SwapOutputAssetBalance>;
+  /** Reads and enables pagination through a set of `SwapOutputAssetBalance`. */
+  swapOutputAssetBalances?: Maybe<SwapOutputAssetBalancesConnection>;
+  /** Reads and enables pagination through a set of `Swap`. */
+  swaps?: Maybe<SwapsConnection>;
   transfer?: Maybe<Transfer>;
   /** Reads and enables pagination through a set of `Transfer`. */
   transfers?: Maybe<TransfersConnection>;
@@ -20058,9 +16512,6 @@ export type Query = {
   /** Reads and enables pagination through a set of `XykPoolHistoricalVolume`. */
   xykPoolHistoricalVolumes?: Maybe<XykPoolHistoricalVolumesConnection>;
   xykPoolHistoricalVolumesByPeriod: XykPoolVolumesByPeriodResponse;
-  xykPoolOperation?: Maybe<XykPoolOperation>;
-  /** Reads and enables pagination through a set of `XykPoolOperation`. */
-  xykPoolOperations?: Maybe<XykPoolOperationsConnection>;
   /** Reads and enables pagination through a set of `XykPool`. */
   xykPools?: Maybe<XykPoolsConnection>;
 };
@@ -20187,25 +16638,6 @@ export type QueryLbpPoolHistoricalVolumesArgs = {
 
 
 /** The root query type which gives access points into the data universe. */
-export type QueryLbpPoolOperationArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryLbpPoolOperationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<LbpPoolOperationCondition>;
-  filter?: InputMaybe<LbpPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<LbpPoolOperationsOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
 export type QueryLbpPoolsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -20290,25 +16722,6 @@ export type QueryOmnipoolAssetHistoricalVolumesArgs = {
 /** The root query type which gives access points into the data universe. */
 export type QueryOmnipoolAssetHistoricalVolumesByPeriodArgs = {
   filter: OmnipoolAssetVolumesByPeriodFilter;
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOmnipoolAssetOperationArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOmnipoolAssetOperationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<OmnipoolAssetOperationCondition>;
-  filter?: InputMaybe<OmnipoolAssetOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OmnipoolAssetOperationsOrderBy>>;
 };
 
 
@@ -20503,25 +16916,6 @@ export type QueryStablepoolLiquidityActionsArgs = {
 
 
 /** The root query type which gives access points into the data universe. */
-export type QueryStablepoolOperationArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryStablepoolOperationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<StablepoolOperationCondition>;
-  filter?: InputMaybe<StablepoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<StablepoolOperationsOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
 export type QueryStablepoolsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -20531,6 +16925,82 @@ export type QueryStablepoolsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<StablepoolsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySwapArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySwapFeeArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySwapFeesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapFeeCondition>;
+  filter?: InputMaybe<SwapFeeFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapFeesOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySwapInputAssetBalanceArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySwapInputAssetBalancesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapInputAssetBalanceCondition>;
+  filter?: InputMaybe<SwapInputAssetBalanceFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapInputAssetBalancesOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySwapOutputAssetBalanceArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySwapOutputAssetBalancesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapOutputAssetBalanceCondition>;
+  filter?: InputMaybe<SwapOutputAssetBalanceFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapOutputAssetBalancesOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySwapsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapCondition>;
+  filter?: InputMaybe<SwapFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapsOrderBy>>;
 };
 
 
@@ -20623,25 +17093,6 @@ export type QueryXykPoolHistoricalVolumesByPeriodArgs = {
 
 
 /** The root query type which gives access points into the data universe. */
-export type QueryXykPoolOperationArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryXykPoolOperationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<XykPoolOperationCondition>;
-  filter?: InputMaybe<XykPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<XykPoolOperationsOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
 export type QueryXykPoolsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -20664,6 +17115,8 @@ export type Stablepool = {
   /** Reads a single `Account` that is related to this `Stablepool`. */
   account?: Maybe<Account>;
   accountId?: Maybe<Scalars['String']['output']>;
+  /** Reads and enables pagination through a set of `Account`. */
+  accounts: AccountsConnection;
   createdAt: Scalars['Datetime']['output'];
   createdAtParaBlock: Scalars['Int']['output'];
   destroyedAtParaBlock?: Maybe<Scalars['Int']['output']>;
@@ -20677,8 +17130,18 @@ export type Stablepool = {
   stablepoolHistoricalVolumesByPoolId: StablepoolHistoricalVolumesConnection;
   /** Reads and enables pagination through a set of `StablepoolLiquidityAction`. */
   stablepoolLiquidityActionsByPoolId: StablepoolLiquidityActionsConnection;
-  /** Reads and enables pagination through a set of `StablepoolOperation`. */
-  stablepoolOperationsByPoolId: StablepoolOperationsConnection;
+};
+
+
+export type StablepoolAccountsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AccountCondition>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
 
@@ -20727,18 +17190,6 @@ export type StablepoolStablepoolLiquidityActionsByPoolIdArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<StablepoolLiquidityActionsOrderBy>>;
-};
-
-
-export type StablepoolStablepoolOperationsByPoolIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<StablepoolOperationCondition>;
-  filter?: InputMaybe<StablepoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<StablepoolOperationsOrderBy>>;
 };
 
 export type StablepoolAggregates = {
@@ -24516,459 +20967,6 @@ export type StablepoolMinAggregates = {
   destroyedAtParaBlock?: Maybe<Scalars['Int']['output']>;
 };
 
-export type StablepoolOperation = {
-  __typename?: 'StablepoolOperation';
-  /** Reads a single `Account` that is related to this `StablepoolOperation`. */
-  account?: Maybe<Account>;
-  accountId?: Maybe<Scalars['String']['output']>;
-  assetFeeAmount: Scalars['BigFloat']['output'];
-  /** Reads a single `Asset` that is related to this `StablepoolOperation`. */
-  assetIn?: Maybe<Asset>;
-  assetInAmount: Scalars['BigFloat']['output'];
-  assetInId?: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Asset` that is related to this `StablepoolOperation`. */
-  assetOut?: Maybe<Asset>;
-  assetOutAmount: Scalars['BigFloat']['output'];
-  assetOutId?: Maybe<Scalars['String']['output']>;
-  extrinsicHash?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  indexInBlock: Scalars['Int']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
-  /** Reads a single `Stablepool` that is related to this `StablepoolOperation`. */
-  pool?: Maybe<Stablepool>;
-  poolId?: Maybe<Scalars['String']['output']>;
-  relayChainBlockHeight: Scalars['Int']['output'];
-  type: Scalars['String']['output'];
-};
-
-export type StablepoolOperationAggregates = {
-  __typename?: 'StablepoolOperationAggregates';
-  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  average?: Maybe<StablepoolOperationAverageAggregates>;
-  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  distinctCount?: Maybe<StablepoolOperationDistinctCountAggregates>;
-  keys?: Maybe<Array<Scalars['String']['output']>>;
-  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  max?: Maybe<StablepoolOperationMaxAggregates>;
-  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  min?: Maybe<StablepoolOperationMinAggregates>;
-  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevPopulation?: Maybe<StablepoolOperationStddevPopulationAggregates>;
-  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevSample?: Maybe<StablepoolOperationStddevSampleAggregates>;
-  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  sum?: Maybe<StablepoolOperationSumAggregates>;
-  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  variancePopulation?: Maybe<StablepoolOperationVariancePopulationAggregates>;
-  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  varianceSample?: Maybe<StablepoolOperationVarianceSampleAggregates>;
-};
-
-export type StablepoolOperationAverageAggregates = {
-  __typename?: 'StablepoolOperationAverageAggregates';
-  /** Mean average of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-/**
- * A condition to be used against `StablepoolOperation` object types. All fields
- * are tested for equality and combined with a logical ‘and.’
- */
-export type StablepoolOperationCondition = {
-  /** Checks for equality with the object’s `accountId` field. */
-  accountId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `assetFeeAmount` field. */
-  assetFeeAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetInAmount` field. */
-  assetInAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetInId` field. */
-  assetInId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `assetOutAmount` field. */
-  assetOutAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetOutId` field. */
-  assetOutId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `extrinsicHash` field. */
-  extrinsicHash?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `indexInBlock` field. */
-  indexInBlock?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `poolId` field. */
-  poolId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayChainBlockHeight` field. */
-  relayChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `type` field. */
-  type?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type StablepoolOperationDistinctCountAggregates = {
-  __typename?: 'StablepoolOperationDistinctCountAggregates';
-  /** Distinct count of accountId across the matching connection */
-  accountId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInId across the matching connection */
-  assetInId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutId across the matching connection */
-  assetOutId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of extrinsicHash across the matching connection */
-  extrinsicHash?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of id across the matching connection */
-  id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of poolId across the matching connection */
-  poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of type across the matching connection */
-  type?: Maybe<Scalars['BigInt']['output']>;
-};
-
-/** A filter to be used against `StablepoolOperation` object types. All fields are combined with a logical ‘and.’ */
-export type StablepoolOperationFilter = {
-  /** Filter by the object’s `accountId` field. */
-  accountId?: InputMaybe<StringFilter>;
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<StablepoolOperationFilter>>;
-  /** Filter by the object’s `assetFeeAmount` field. */
-  assetFeeAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetInAmount` field. */
-  assetInAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetInId` field. */
-  assetInId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `assetOutAmount` field. */
-  assetOutAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetOutId` field. */
-  assetOutId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `extrinsicHash` field. */
-  extrinsicHash?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `indexInBlock` field. */
-  indexInBlock?: InputMaybe<IntFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<StablepoolOperationFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<StablepoolOperationFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `poolId` field. */
-  poolId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayChainBlockHeight` field. */
-  relayChainBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `type` field. */
-  type?: InputMaybe<StringFilter>;
-};
-
-/** Grouping methods for `StablepoolOperation` for usage during aggregation. */
-export enum StablepoolOperationGroupBy {
-  AccountId = 'ACCOUNT_ID',
-  AssetFeeAmount = 'ASSET_FEE_AMOUNT',
-  AssetInAmount = 'ASSET_IN_AMOUNT',
-  AssetInId = 'ASSET_IN_ID',
-  AssetOutAmount = 'ASSET_OUT_AMOUNT',
-  AssetOutId = 'ASSET_OUT_ID',
-  ExtrinsicHash = 'EXTRINSIC_HASH',
-  IndexInBlock = 'INDEX_IN_BLOCK',
-  ParaChainBlockHeight = 'PARA_CHAIN_BLOCK_HEIGHT',
-  PoolId = 'POOL_ID',
-  RelayChainBlockHeight = 'RELAY_CHAIN_BLOCK_HEIGHT',
-  Type = 'TYPE'
-}
-
-export type StablepoolOperationHavingAverageInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type StablepoolOperationHavingDistinctCountInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-/** Conditions for `StablepoolOperation` aggregates. */
-export type StablepoolOperationHavingInput = {
-  AND?: InputMaybe<Array<StablepoolOperationHavingInput>>;
-  OR?: InputMaybe<Array<StablepoolOperationHavingInput>>;
-  average?: InputMaybe<StablepoolOperationHavingAverageInput>;
-  distinctCount?: InputMaybe<StablepoolOperationHavingDistinctCountInput>;
-  max?: InputMaybe<StablepoolOperationHavingMaxInput>;
-  min?: InputMaybe<StablepoolOperationHavingMinInput>;
-  stddevPopulation?: InputMaybe<StablepoolOperationHavingStddevPopulationInput>;
-  stddevSample?: InputMaybe<StablepoolOperationHavingStddevSampleInput>;
-  sum?: InputMaybe<StablepoolOperationHavingSumInput>;
-  variancePopulation?: InputMaybe<StablepoolOperationHavingVariancePopulationInput>;
-  varianceSample?: InputMaybe<StablepoolOperationHavingVarianceSampleInput>;
-};
-
-export type StablepoolOperationHavingMaxInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type StablepoolOperationHavingMinInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type StablepoolOperationHavingStddevPopulationInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type StablepoolOperationHavingStddevSampleInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type StablepoolOperationHavingSumInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type StablepoolOperationHavingVariancePopulationInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type StablepoolOperationHavingVarianceSampleInput = {
-  assetFeeAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-};
-
-export type StablepoolOperationMaxAggregates = {
-  __typename?: 'StablepoolOperationMaxAggregates';
-  /** Maximum of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-};
-
-export type StablepoolOperationMinAggregates = {
-  __typename?: 'StablepoolOperationMinAggregates';
-  /** Minimum of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-};
-
-export type StablepoolOperationStddevPopulationAggregates = {
-  __typename?: 'StablepoolOperationStddevPopulationAggregates';
-  /** Population standard deviation of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type StablepoolOperationStddevSampleAggregates = {
-  __typename?: 'StablepoolOperationStddevSampleAggregates';
-  /** Sample standard deviation of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type StablepoolOperationSumAggregates = {
-  __typename?: 'StablepoolOperationSumAggregates';
-  /** Sum of assetFeeAmount across the matching connection */
-  assetFeeAmount: Scalars['BigFloat']['output'];
-  /** Sum of assetInAmount across the matching connection */
-  assetInAmount: Scalars['BigFloat']['output'];
-  /** Sum of assetOutAmount across the matching connection */
-  assetOutAmount: Scalars['BigFloat']['output'];
-  /** Sum of indexInBlock across the matching connection */
-  indexInBlock: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight: Scalars['BigInt']['output'];
-};
-
-export type StablepoolOperationVariancePopulationAggregates = {
-  __typename?: 'StablepoolOperationVariancePopulationAggregates';
-  /** Population variance of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type StablepoolOperationVarianceSampleAggregates = {
-  __typename?: 'StablepoolOperationVarianceSampleAggregates';
-  /** Sample variance of assetFeeAmount across the matching connection */
-  assetFeeAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-/** A connection to a list of `StablepoolOperation` values. */
-export type StablepoolOperationsConnection = {
-  __typename?: 'StablepoolOperationsConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<StablepoolOperationAggregates>;
-  /** A list of edges which contains the `StablepoolOperation` and cursor to aid in pagination. */
-  edges: Array<StablepoolOperationsEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<StablepoolOperationAggregates>>;
-  /** A list of `StablepoolOperation` objects. */
-  nodes: Array<Maybe<StablepoolOperation>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `StablepoolOperation` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-
-/** A connection to a list of `StablepoolOperation` values. */
-export type StablepoolOperationsConnectionGroupedAggregatesArgs = {
-  groupBy: Array<StablepoolOperationGroupBy>;
-  having?: InputMaybe<StablepoolOperationHavingInput>;
-};
-
-/** A `StablepoolOperation` edge in the connection. */
-export type StablepoolOperationsEdge = {
-  __typename?: 'StablepoolOperationsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `StablepoolOperation` at the end of the edge. */
-  node?: Maybe<StablepoolOperation>;
-};
-
-/** Methods to use when ordering `StablepoolOperation`. */
-export enum StablepoolOperationsOrderBy {
-  AccountIdAsc = 'ACCOUNT_ID_ASC',
-  AccountIdDesc = 'ACCOUNT_ID_DESC',
-  AssetFeeAmountAsc = 'ASSET_FEE_AMOUNT_ASC',
-  AssetFeeAmountDesc = 'ASSET_FEE_AMOUNT_DESC',
-  AssetInAmountAsc = 'ASSET_IN_AMOUNT_ASC',
-  AssetInAmountDesc = 'ASSET_IN_AMOUNT_DESC',
-  AssetInIdAsc = 'ASSET_IN_ID_ASC',
-  AssetInIdDesc = 'ASSET_IN_ID_DESC',
-  AssetOutAmountAsc = 'ASSET_OUT_AMOUNT_ASC',
-  AssetOutAmountDesc = 'ASSET_OUT_AMOUNT_DESC',
-  AssetOutIdAsc = 'ASSET_OUT_ID_ASC',
-  AssetOutIdDesc = 'ASSET_OUT_ID_DESC',
-  ExtrinsicHashAsc = 'EXTRINSIC_HASH_ASC',
-  ExtrinsicHashDesc = 'EXTRINSIC_HASH_DESC',
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  IndexInBlockAsc = 'INDEX_IN_BLOCK_ASC',
-  IndexInBlockDesc = 'INDEX_IN_BLOCK_DESC',
-  Natural = 'NATURAL',
-  ParaChainBlockHeightAsc = 'PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  ParaChainBlockHeightDesc = 'PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  PoolIdAsc = 'POOL_ID_ASC',
-  PoolIdDesc = 'POOL_ID_DESC',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayChainBlockHeightAsc = 'RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  RelayChainBlockHeightDesc = 'RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  TypeAsc = 'TYPE_ASC',
-  TypeDesc = 'TYPE_DESC'
-}
-
 export type StablepoolStddevPopulationAggregates = {
   __typename?: 'StablepoolStddevPopulationAggregates';
   /** Population standard deviation of createdAtParaBlock across the matching connection */
@@ -25062,6 +21060,98 @@ export type StablepoolsEdge = {
 
 /** Methods to use when ordering `Stablepool`. */
 export enum StablepoolsOrderBy {
+  AccountsAverageIdAsc = 'ACCOUNTS_AVERAGE_ID_ASC',
+  AccountsAverageIdDesc = 'ACCOUNTS_AVERAGE_ID_DESC',
+  AccountsAverageLbpPoolIdAsc = 'ACCOUNTS_AVERAGE_LBP_POOL_ID_ASC',
+  AccountsAverageLbpPoolIdDesc = 'ACCOUNTS_AVERAGE_LBP_POOL_ID_DESC',
+  AccountsAverageOmnipoolIdAsc = 'ACCOUNTS_AVERAGE_OMNIPOOL_ID_ASC',
+  AccountsAverageOmnipoolIdDesc = 'ACCOUNTS_AVERAGE_OMNIPOOL_ID_DESC',
+  AccountsAverageStablepoolIdAsc = 'ACCOUNTS_AVERAGE_STABLEPOOL_ID_ASC',
+  AccountsAverageStablepoolIdDesc = 'ACCOUNTS_AVERAGE_STABLEPOOL_ID_DESC',
+  AccountsAverageXykPoolIdAsc = 'ACCOUNTS_AVERAGE_XYK_POOL_ID_ASC',
+  AccountsAverageXykPoolIdDesc = 'ACCOUNTS_AVERAGE_XYK_POOL_ID_DESC',
+  AccountsCountAsc = 'ACCOUNTS_COUNT_ASC',
+  AccountsCountDesc = 'ACCOUNTS_COUNT_DESC',
+  AccountsDistinctCountIdAsc = 'ACCOUNTS_DISTINCT_COUNT_ID_ASC',
+  AccountsDistinctCountIdDesc = 'ACCOUNTS_DISTINCT_COUNT_ID_DESC',
+  AccountsDistinctCountLbpPoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_LBP_POOL_ID_ASC',
+  AccountsDistinctCountLbpPoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_LBP_POOL_ID_DESC',
+  AccountsDistinctCountOmnipoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_OMNIPOOL_ID_ASC',
+  AccountsDistinctCountOmnipoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_OMNIPOOL_ID_DESC',
+  AccountsDistinctCountStablepoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_STABLEPOOL_ID_ASC',
+  AccountsDistinctCountStablepoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_STABLEPOOL_ID_DESC',
+  AccountsDistinctCountXykPoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_XYK_POOL_ID_ASC',
+  AccountsDistinctCountXykPoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_XYK_POOL_ID_DESC',
+  AccountsMaxIdAsc = 'ACCOUNTS_MAX_ID_ASC',
+  AccountsMaxIdDesc = 'ACCOUNTS_MAX_ID_DESC',
+  AccountsMaxLbpPoolIdAsc = 'ACCOUNTS_MAX_LBP_POOL_ID_ASC',
+  AccountsMaxLbpPoolIdDesc = 'ACCOUNTS_MAX_LBP_POOL_ID_DESC',
+  AccountsMaxOmnipoolIdAsc = 'ACCOUNTS_MAX_OMNIPOOL_ID_ASC',
+  AccountsMaxOmnipoolIdDesc = 'ACCOUNTS_MAX_OMNIPOOL_ID_DESC',
+  AccountsMaxStablepoolIdAsc = 'ACCOUNTS_MAX_STABLEPOOL_ID_ASC',
+  AccountsMaxStablepoolIdDesc = 'ACCOUNTS_MAX_STABLEPOOL_ID_DESC',
+  AccountsMaxXykPoolIdAsc = 'ACCOUNTS_MAX_XYK_POOL_ID_ASC',
+  AccountsMaxXykPoolIdDesc = 'ACCOUNTS_MAX_XYK_POOL_ID_DESC',
+  AccountsMinIdAsc = 'ACCOUNTS_MIN_ID_ASC',
+  AccountsMinIdDesc = 'ACCOUNTS_MIN_ID_DESC',
+  AccountsMinLbpPoolIdAsc = 'ACCOUNTS_MIN_LBP_POOL_ID_ASC',
+  AccountsMinLbpPoolIdDesc = 'ACCOUNTS_MIN_LBP_POOL_ID_DESC',
+  AccountsMinOmnipoolIdAsc = 'ACCOUNTS_MIN_OMNIPOOL_ID_ASC',
+  AccountsMinOmnipoolIdDesc = 'ACCOUNTS_MIN_OMNIPOOL_ID_DESC',
+  AccountsMinStablepoolIdAsc = 'ACCOUNTS_MIN_STABLEPOOL_ID_ASC',
+  AccountsMinStablepoolIdDesc = 'ACCOUNTS_MIN_STABLEPOOL_ID_DESC',
+  AccountsMinXykPoolIdAsc = 'ACCOUNTS_MIN_XYK_POOL_ID_ASC',
+  AccountsMinXykPoolIdDesc = 'ACCOUNTS_MIN_XYK_POOL_ID_DESC',
+  AccountsStddevPopulationIdAsc = 'ACCOUNTS_STDDEV_POPULATION_ID_ASC',
+  AccountsStddevPopulationIdDesc = 'ACCOUNTS_STDDEV_POPULATION_ID_DESC',
+  AccountsStddevPopulationLbpPoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_LBP_POOL_ID_ASC',
+  AccountsStddevPopulationLbpPoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_LBP_POOL_ID_DESC',
+  AccountsStddevPopulationOmnipoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_OMNIPOOL_ID_ASC',
+  AccountsStddevPopulationOmnipoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_OMNIPOOL_ID_DESC',
+  AccountsStddevPopulationStablepoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_STABLEPOOL_ID_ASC',
+  AccountsStddevPopulationStablepoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_STABLEPOOL_ID_DESC',
+  AccountsStddevPopulationXykPoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_XYK_POOL_ID_ASC',
+  AccountsStddevPopulationXykPoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_XYK_POOL_ID_DESC',
+  AccountsStddevSampleIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_ID_ASC',
+  AccountsStddevSampleIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_ID_DESC',
+  AccountsStddevSampleLbpPoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_LBP_POOL_ID_ASC',
+  AccountsStddevSampleLbpPoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_LBP_POOL_ID_DESC',
+  AccountsStddevSampleOmnipoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_OMNIPOOL_ID_ASC',
+  AccountsStddevSampleOmnipoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_OMNIPOOL_ID_DESC',
+  AccountsStddevSampleStablepoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_STABLEPOOL_ID_ASC',
+  AccountsStddevSampleStablepoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_STABLEPOOL_ID_DESC',
+  AccountsStddevSampleXykPoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_XYK_POOL_ID_ASC',
+  AccountsStddevSampleXykPoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_XYK_POOL_ID_DESC',
+  AccountsSumIdAsc = 'ACCOUNTS_SUM_ID_ASC',
+  AccountsSumIdDesc = 'ACCOUNTS_SUM_ID_DESC',
+  AccountsSumLbpPoolIdAsc = 'ACCOUNTS_SUM_LBP_POOL_ID_ASC',
+  AccountsSumLbpPoolIdDesc = 'ACCOUNTS_SUM_LBP_POOL_ID_DESC',
+  AccountsSumOmnipoolIdAsc = 'ACCOUNTS_SUM_OMNIPOOL_ID_ASC',
+  AccountsSumOmnipoolIdDesc = 'ACCOUNTS_SUM_OMNIPOOL_ID_DESC',
+  AccountsSumStablepoolIdAsc = 'ACCOUNTS_SUM_STABLEPOOL_ID_ASC',
+  AccountsSumStablepoolIdDesc = 'ACCOUNTS_SUM_STABLEPOOL_ID_DESC',
+  AccountsSumXykPoolIdAsc = 'ACCOUNTS_SUM_XYK_POOL_ID_ASC',
+  AccountsSumXykPoolIdDesc = 'ACCOUNTS_SUM_XYK_POOL_ID_DESC',
+  AccountsVariancePopulationIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_ID_ASC',
+  AccountsVariancePopulationIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_ID_DESC',
+  AccountsVariancePopulationLbpPoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_LBP_POOL_ID_ASC',
+  AccountsVariancePopulationLbpPoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_LBP_POOL_ID_DESC',
+  AccountsVariancePopulationOmnipoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_OMNIPOOL_ID_ASC',
+  AccountsVariancePopulationOmnipoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_OMNIPOOL_ID_DESC',
+  AccountsVariancePopulationStablepoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_STABLEPOOL_ID_ASC',
+  AccountsVariancePopulationStablepoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_STABLEPOOL_ID_DESC',
+  AccountsVariancePopulationXykPoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_XYK_POOL_ID_ASC',
+  AccountsVariancePopulationXykPoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_XYK_POOL_ID_DESC',
+  AccountsVarianceSampleIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_ASC',
+  AccountsVarianceSampleIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_DESC',
+  AccountsVarianceSampleLbpPoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_LBP_POOL_ID_ASC',
+  AccountsVarianceSampleLbpPoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_LBP_POOL_ID_DESC',
+  AccountsVarianceSampleOmnipoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_OMNIPOOL_ID_ASC',
+  AccountsVarianceSampleOmnipoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_OMNIPOOL_ID_DESC',
+  AccountsVarianceSampleStablepoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_STABLEPOOL_ID_ASC',
+  AccountsVarianceSampleStablepoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_STABLEPOOL_ID_DESC',
+  AccountsVarianceSampleXykPoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_XYK_POOL_ID_ASC',
+  AccountsVarianceSampleXykPoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_XYK_POOL_ID_DESC',
   AccountIdAsc = 'ACCOUNT_ID_ASC',
   AccountIdDesc = 'ACCOUNT_ID_DESC',
   CreatedAtAsc = 'CREATED_AT_ASC',
@@ -25534,243 +21624,7 @@ export enum StablepoolsOrderBy {
   StablepoolLiquidityActionsByPoolIdVarianceSampleRelayChainBlockHeightAsc = 'STABLEPOOL_LIQUIDITY_ACTIONS_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
   StablepoolLiquidityActionsByPoolIdVarianceSampleRelayChainBlockHeightDesc = 'STABLEPOOL_LIQUIDITY_ACTIONS_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
   StablepoolLiquidityActionsByPoolIdVarianceSampleSharesAmountAsc = 'STABLEPOOL_LIQUIDITY_ACTIONS_BY_POOL_ID_VARIANCE_SAMPLE_SHARES_AMOUNT_ASC',
-  StablepoolLiquidityActionsByPoolIdVarianceSampleSharesAmountDesc = 'STABLEPOOL_LIQUIDITY_ACTIONS_BY_POOL_ID_VARIANCE_SAMPLE_SHARES_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdAverageAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdAverageAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdAverageAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdAverageAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdAverageAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdAverageAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdAverageAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdAverageAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdAverageAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdAverageAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdAverageAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdAverageAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdAverageExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdAverageExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdAverageIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ID_ASC',
-  StablepoolOperationsByPoolIdAverageIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_ID_DESC',
-  StablepoolOperationsByPoolIdAverageIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdAverageIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdAverageParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdAverageParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdAveragePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdAveragePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdAverageRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdAverageRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdAverageTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_TYPE_ASC',
-  StablepoolOperationsByPoolIdAverageTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_AVERAGE_TYPE_DESC',
-  StablepoolOperationsByPoolIdCountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_COUNT_ASC',
-  StablepoolOperationsByPoolIdCountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_COUNT_DESC',
-  StablepoolOperationsByPoolIdDistinctCountAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdDistinctCountAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdDistinctCountAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdDistinctCountAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdDistinctCountAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdDistinctCountAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdDistinctCountAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdDistinctCountAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdDistinctCountAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdDistinctCountAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdDistinctCountAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdDistinctCountAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdDistinctCountExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdDistinctCountExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdDistinctCountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ID_ASC',
-  StablepoolOperationsByPoolIdDistinctCountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ID_DESC',
-  StablepoolOperationsByPoolIdDistinctCountIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdDistinctCountIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdDistinctCountParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdDistinctCountParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdDistinctCountPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdDistinctCountPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdDistinctCountRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdDistinctCountRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdDistinctCountTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_TYPE_ASC',
-  StablepoolOperationsByPoolIdDistinctCountTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_TYPE_DESC',
-  StablepoolOperationsByPoolIdMaxAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdMaxAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdMaxAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdMaxAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdMaxAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdMaxAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdMaxAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdMaxAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdMaxAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdMaxAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdMaxAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdMaxAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdMaxExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdMaxExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdMaxIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ID_ASC',
-  StablepoolOperationsByPoolIdMaxIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_ID_DESC',
-  StablepoolOperationsByPoolIdMaxIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdMaxIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdMaxParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdMaxParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdMaxPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdMaxPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdMaxRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdMaxRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdMaxTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_TYPE_ASC',
-  StablepoolOperationsByPoolIdMaxTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MAX_TYPE_DESC',
-  StablepoolOperationsByPoolIdMinAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdMinAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdMinAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdMinAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdMinAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdMinAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdMinAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdMinAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdMinAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdMinAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdMinAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdMinAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdMinExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdMinExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdMinIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ID_ASC',
-  StablepoolOperationsByPoolIdMinIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_ID_DESC',
-  StablepoolOperationsByPoolIdMinIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdMinIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdMinParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdMinParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdMinPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdMinPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdMinRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdMinRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdMinTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_TYPE_ASC',
-  StablepoolOperationsByPoolIdMinTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_MIN_TYPE_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ID_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ID_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdStddevPopulationTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_TYPE_ASC',
-  StablepoolOperationsByPoolIdStddevPopulationTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_TYPE_DESC',
-  StablepoolOperationsByPoolIdStddevSampleAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdStddevSampleAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdStddevSampleAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdStddevSampleAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdStddevSampleAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdStddevSampleAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdStddevSampleAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdStddevSampleAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdStddevSampleAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdStddevSampleAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdStddevSampleAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdStddevSampleAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdStddevSampleExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdStddevSampleExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdStddevSampleIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ID_ASC',
-  StablepoolOperationsByPoolIdStddevSampleIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ID_DESC',
-  StablepoolOperationsByPoolIdStddevSampleIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdStddevSampleIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdStddevSampleParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdStddevSampleParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdStddevSamplePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdStddevSamplePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdStddevSampleRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdStddevSampleRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdStddevSampleTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_TYPE_ASC',
-  StablepoolOperationsByPoolIdStddevSampleTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_TYPE_DESC',
-  StablepoolOperationsByPoolIdSumAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdSumAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdSumAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdSumAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdSumAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdSumAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdSumAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdSumAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdSumAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdSumAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdSumAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdSumAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdSumExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdSumExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdSumIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ID_ASC',
-  StablepoolOperationsByPoolIdSumIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_ID_DESC',
-  StablepoolOperationsByPoolIdSumIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdSumIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdSumParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdSumParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdSumPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdSumPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdSumRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdSumRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdSumTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_TYPE_ASC',
-  StablepoolOperationsByPoolIdSumTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_SUM_TYPE_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ID_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ID_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationPoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationPoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdVariancePopulationTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_TYPE_ASC',
-  StablepoolOperationsByPoolIdVariancePopulationTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_TYPE_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleAccountIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleAccountIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetFeeAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetFeeAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_FEE_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetInAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetInAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetInIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetInIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetOutAmountAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetOutAmountDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetOutIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleAssetOutIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleExtrinsicHashAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleExtrinsicHashDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ID_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ID_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleIndexInBlockAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleIndexInBlockDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleParaChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleParaChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdVarianceSamplePoolIdAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  StablepoolOperationsByPoolIdVarianceSamplePoolIdDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleRelayChainBlockHeightAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleRelayChainBlockHeightDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  StablepoolOperationsByPoolIdVarianceSampleTypeAsc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  StablepoolOperationsByPoolIdVarianceSampleTypeDesc = 'STABLEPOOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_TYPE_DESC'
+  StablepoolLiquidityActionsByPoolIdVarianceSampleSharesAmountDesc = 'STABLEPOOL_LIQUIDITY_ACTIONS_BY_POOL_ID_VARIANCE_SAMPLE_SHARES_AMOUNT_DESC'
 }
 
 /** A filter to be used against String fields. All fields are combined with a logical ‘and.’ */
@@ -25877,6 +21731,1456 @@ export type SubscriptionStablepoolHistoricalVolumeArgs = {
 export type SubscriptionXykPoolHistoricalVolumeArgs = {
   filter?: InputMaybe<XykPoolHistoricalVolumeSubscriptionFilter>;
 };
+
+export type Swap = {
+  __typename?: 'Swap';
+  eventIndex: Scalars['Int']['output'];
+  extrinsicHash: Scalars['String']['output'];
+  /** Reads a single `Account` that is related to this `Swap`. */
+  filler?: Maybe<Account>;
+  fillerId?: Maybe<Scalars['String']['output']>;
+  fillerType: Scalars['String']['output'];
+  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
+  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
+  id: Scalars['String']['output'];
+  operationType: Scalars['String']['output'];
+  paraChainBlockHeight: Scalars['Int']['output'];
+  paraChainTimestamp: Scalars['Datetime']['output'];
+  relayChainBlockHeight: Scalars['Int']['output'];
+  /** Reads and enables pagination through a set of `SwapFee`. */
+  swapFees: SwapFeesConnection;
+  swapIndex: Scalars['Int']['output'];
+  /** Reads and enables pagination through a set of `SwapInputAssetBalance`. */
+  swapInputAssetBalances: SwapInputAssetBalancesConnection;
+  /** Reads and enables pagination through a set of `SwapOutputAssetBalance`. */
+  swapOutputAssetBalances: SwapOutputAssetBalancesConnection;
+  /** Reads a single `Account` that is related to this `Swap`. */
+  swapper?: Maybe<Account>;
+  swapperId?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type SwapSwapFeesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapFeeCondition>;
+  filter?: InputMaybe<SwapFeeFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapFeesOrderBy>>;
+};
+
+
+export type SwapSwapInputAssetBalancesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapInputAssetBalanceCondition>;
+  filter?: InputMaybe<SwapInputAssetBalanceFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapInputAssetBalancesOrderBy>>;
+};
+
+
+export type SwapSwapOutputAssetBalancesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<SwapOutputAssetBalanceCondition>;
+  filter?: InputMaybe<SwapOutputAssetBalanceFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<SwapOutputAssetBalancesOrderBy>>;
+};
+
+export type SwapAggregates = {
+  __typename?: 'SwapAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<SwapAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<SwapDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<SwapMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<SwapMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<SwapStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<SwapStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<SwapSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<SwapVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<SwapVarianceSampleAggregates>;
+};
+
+export type SwapAverageAggregates = {
+  __typename?: 'SwapAverageAggregates';
+  /** Mean average of eventIndex across the matching connection */
+  eventIndex?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of hubAmountIn across the matching connection */
+  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of hubAmountOut across the matching connection */
+  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of swapIndex across the matching connection */
+  swapIndex?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A condition to be used against `Swap` object types. All fields are tested for equality and combined with a logical ‘and.’ */
+export type SwapCondition = {
+  /** Checks for equality with the object’s `eventIndex` field. */
+  eventIndex?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `extrinsicHash` field. */
+  extrinsicHash?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `fillerId` field. */
+  fillerId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `fillerType` field. */
+  fillerType?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `hubAmountIn` field. */
+  hubAmountIn?: InputMaybe<Scalars['BigFloat']['input']>;
+  /** Checks for equality with the object’s `hubAmountOut` field. */
+  hubAmountOut?: InputMaybe<Scalars['BigFloat']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `operationType` field. */
+  operationType?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
+  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `paraChainTimestamp` field. */
+  paraChainTimestamp?: InputMaybe<Scalars['Datetime']['input']>;
+  /** Checks for equality with the object’s `relayChainBlockHeight` field. */
+  relayChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `swapIndex` field. */
+  swapIndex?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `swapperId` field. */
+  swapperId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SwapDistinctCountAggregates = {
+  __typename?: 'SwapDistinctCountAggregates';
+  /** Distinct count of eventIndex across the matching connection */
+  eventIndex?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of extrinsicHash across the matching connection */
+  extrinsicHash?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of fillerId across the matching connection */
+  fillerId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of fillerType across the matching connection */
+  fillerType?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of hubAmountIn across the matching connection */
+  hubAmountIn?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of hubAmountOut across the matching connection */
+  hubAmountOut?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of operationType across the matching connection */
+  operationType?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraChainTimestamp across the matching connection */
+  paraChainTimestamp?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of swapIndex across the matching connection */
+  swapIndex?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of swapperId across the matching connection */
+  swapperId?: Maybe<Scalars['BigInt']['output']>;
+};
+
+export type SwapFee = {
+  __typename?: 'SwapFee';
+  amount: Scalars['BigFloat']['output'];
+  /** Reads a single `Asset` that is related to this `SwapFee`. */
+  asset?: Maybe<Asset>;
+  assetId?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  /** Reads a single `Account` that is related to this `SwapFee`. */
+  recipient?: Maybe<Account>;
+  recipientId?: Maybe<Scalars['String']['output']>;
+  /** Reads a single `Swap` that is related to this `SwapFee`. */
+  swap?: Maybe<Swap>;
+  swapId?: Maybe<Scalars['String']['output']>;
+};
+
+export type SwapFeeAggregates = {
+  __typename?: 'SwapFeeAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<SwapFeeAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<SwapFeeDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<SwapFeeMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<SwapFeeMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<SwapFeeStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<SwapFeeStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<SwapFeeSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<SwapFeeVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<SwapFeeVarianceSampleAggregates>;
+};
+
+export type SwapFeeAverageAggregates = {
+  __typename?: 'SwapFeeAverageAggregates';
+  /** Mean average of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A condition to be used against `SwapFee` object types. All fields are tested for equality and combined with a logical ‘and.’ */
+export type SwapFeeCondition = {
+  /** Checks for equality with the object’s `amount` field. */
+  amount?: InputMaybe<Scalars['BigFloat']['input']>;
+  /** Checks for equality with the object’s `assetId` field. */
+  assetId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `recipientId` field. */
+  recipientId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `swapId` field. */
+  swapId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SwapFeeDistinctCountAggregates = {
+  __typename?: 'SwapFeeDistinctCountAggregates';
+  /** Distinct count of amount across the matching connection */
+  amount?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of assetId across the matching connection */
+  assetId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of recipientId across the matching connection */
+  recipientId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of swapId across the matching connection */
+  swapId?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `SwapFee` object types. All fields are combined with a logical ‘and.’ */
+export type SwapFeeFilter = {
+  /** Filter by the object’s `amount` field. */
+  amount?: InputMaybe<BigFloatFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<SwapFeeFilter>>;
+  /** Filter by the object’s `assetId` field. */
+  assetId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<SwapFeeFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<SwapFeeFilter>>;
+  /** Filter by the object’s `recipientId` field. */
+  recipientId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `swapId` field. */
+  swapId?: InputMaybe<StringFilter>;
+};
+
+/** Grouping methods for `SwapFee` for usage during aggregation. */
+export enum SwapFeeGroupBy {
+  Amount = 'AMOUNT',
+  AssetId = 'ASSET_ID',
+  RecipientId = 'RECIPIENT_ID',
+  SwapId = 'SWAP_ID'
+}
+
+export type SwapFeeHavingAverageInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapFeeHavingDistinctCountInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+/** Conditions for `SwapFee` aggregates. */
+export type SwapFeeHavingInput = {
+  AND?: InputMaybe<Array<SwapFeeHavingInput>>;
+  OR?: InputMaybe<Array<SwapFeeHavingInput>>;
+  average?: InputMaybe<SwapFeeHavingAverageInput>;
+  distinctCount?: InputMaybe<SwapFeeHavingDistinctCountInput>;
+  max?: InputMaybe<SwapFeeHavingMaxInput>;
+  min?: InputMaybe<SwapFeeHavingMinInput>;
+  stddevPopulation?: InputMaybe<SwapFeeHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<SwapFeeHavingStddevSampleInput>;
+  sum?: InputMaybe<SwapFeeHavingSumInput>;
+  variancePopulation?: InputMaybe<SwapFeeHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<SwapFeeHavingVarianceSampleInput>;
+};
+
+export type SwapFeeHavingMaxInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapFeeHavingMinInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapFeeHavingStddevPopulationInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapFeeHavingStddevSampleInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapFeeHavingSumInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapFeeHavingVariancePopulationInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapFeeHavingVarianceSampleInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapFeeMaxAggregates = {
+  __typename?: 'SwapFeeMaxAggregates';
+  /** Maximum of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapFeeMinAggregates = {
+  __typename?: 'SwapFeeMinAggregates';
+  /** Minimum of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapFeeStddevPopulationAggregates = {
+  __typename?: 'SwapFeeStddevPopulationAggregates';
+  /** Population standard deviation of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapFeeStddevSampleAggregates = {
+  __typename?: 'SwapFeeStddevSampleAggregates';
+  /** Sample standard deviation of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapFeeSumAggregates = {
+  __typename?: 'SwapFeeSumAggregates';
+  /** Sum of amount across the matching connection */
+  amount: Scalars['BigFloat']['output'];
+};
+
+export type SwapFeeVariancePopulationAggregates = {
+  __typename?: 'SwapFeeVariancePopulationAggregates';
+  /** Population variance of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapFeeVarianceSampleAggregates = {
+  __typename?: 'SwapFeeVarianceSampleAggregates';
+  /** Sample variance of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A connection to a list of `SwapFee` values. */
+export type SwapFeesConnection = {
+  __typename?: 'SwapFeesConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<SwapFeeAggregates>;
+  /** A list of edges which contains the `SwapFee` and cursor to aid in pagination. */
+  edges: Array<SwapFeesEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<SwapFeeAggregates>>;
+  /** A list of `SwapFee` objects. */
+  nodes: Array<Maybe<SwapFee>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `SwapFee` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `SwapFee` values. */
+export type SwapFeesConnectionGroupedAggregatesArgs = {
+  groupBy: Array<SwapFeeGroupBy>;
+  having?: InputMaybe<SwapFeeHavingInput>;
+};
+
+/** A `SwapFee` edge in the connection. */
+export type SwapFeesEdge = {
+  __typename?: 'SwapFeesEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `SwapFee` at the end of the edge. */
+  node?: Maybe<SwapFee>;
+};
+
+/** Methods to use when ordering `SwapFee`. */
+export enum SwapFeesOrderBy {
+  AmountAsc = 'AMOUNT_ASC',
+  AmountDesc = 'AMOUNT_DESC',
+  AssetIdAsc = 'ASSET_ID_ASC',
+  AssetIdDesc = 'ASSET_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  RecipientIdAsc = 'RECIPIENT_ID_ASC',
+  RecipientIdDesc = 'RECIPIENT_ID_DESC',
+  SwapIdAsc = 'SWAP_ID_ASC',
+  SwapIdDesc = 'SWAP_ID_DESC'
+}
+
+/** A filter to be used against `Swap` object types. All fields are combined with a logical ‘and.’ */
+export type SwapFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<SwapFilter>>;
+  /** Filter by the object’s `eventIndex` field. */
+  eventIndex?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `extrinsicHash` field. */
+  extrinsicHash?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `fillerId` field. */
+  fillerId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `fillerType` field. */
+  fillerType?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `hubAmountIn` field. */
+  hubAmountIn?: InputMaybe<BigFloatFilter>;
+  /** Filter by the object’s `hubAmountOut` field. */
+  hubAmountOut?: InputMaybe<BigFloatFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<SwapFilter>;
+  /** Filter by the object’s `operationType` field. */
+  operationType?: InputMaybe<StringFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<SwapFilter>>;
+  /** Filter by the object’s `paraChainBlockHeight` field. */
+  paraChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `paraChainTimestamp` field. */
+  paraChainTimestamp?: InputMaybe<DatetimeFilter>;
+  /** Filter by the object’s `relayChainBlockHeight` field. */
+  relayChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `swapIndex` field. */
+  swapIndex?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `swapperId` field. */
+  swapperId?: InputMaybe<StringFilter>;
+};
+
+/** Grouping methods for `Swap` for usage during aggregation. */
+export enum SwapGroupBy {
+  EventIndex = 'EVENT_INDEX',
+  ExtrinsicHash = 'EXTRINSIC_HASH',
+  FillerId = 'FILLER_ID',
+  FillerType = 'FILLER_TYPE',
+  HubAmountIn = 'HUB_AMOUNT_IN',
+  HubAmountOut = 'HUB_AMOUNT_OUT',
+  OperationType = 'OPERATION_TYPE',
+  ParaChainBlockHeight = 'PARA_CHAIN_BLOCK_HEIGHT',
+  ParaChainTimestamp = 'PARA_CHAIN_TIMESTAMP',
+  ParaChainTimestampTruncatedToDay = 'PARA_CHAIN_TIMESTAMP_TRUNCATED_TO_DAY',
+  ParaChainTimestampTruncatedToHour = 'PARA_CHAIN_TIMESTAMP_TRUNCATED_TO_HOUR',
+  RelayChainBlockHeight = 'RELAY_CHAIN_BLOCK_HEIGHT',
+  SwapperId = 'SWAPPER_ID',
+  SwapIndex = 'SWAP_INDEX'
+}
+
+export type SwapHavingAverageInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+export type SwapHavingDistinctCountInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `Swap` aggregates. */
+export type SwapHavingInput = {
+  AND?: InputMaybe<Array<SwapHavingInput>>;
+  OR?: InputMaybe<Array<SwapHavingInput>>;
+  average?: InputMaybe<SwapHavingAverageInput>;
+  distinctCount?: InputMaybe<SwapHavingDistinctCountInput>;
+  max?: InputMaybe<SwapHavingMaxInput>;
+  min?: InputMaybe<SwapHavingMinInput>;
+  stddevPopulation?: InputMaybe<SwapHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<SwapHavingStddevSampleInput>;
+  sum?: InputMaybe<SwapHavingSumInput>;
+  variancePopulation?: InputMaybe<SwapHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<SwapHavingVarianceSampleInput>;
+};
+
+export type SwapHavingMaxInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+export type SwapHavingMinInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+export type SwapHavingStddevPopulationInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+export type SwapHavingStddevSampleInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+export type SwapHavingSumInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+export type SwapHavingVariancePopulationInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+export type SwapHavingVarianceSampleInput = {
+  eventIndex?: InputMaybe<HavingIntFilter>;
+  hubAmountIn?: InputMaybe<HavingBigfloatFilter>;
+  hubAmountOut?: InputMaybe<HavingBigfloatFilter>;
+  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraChainTimestamp?: InputMaybe<HavingDatetimeFilter>;
+  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  swapIndex?: InputMaybe<HavingIntFilter>;
+};
+
+export type SwapInputAssetBalance = {
+  __typename?: 'SwapInputAssetBalance';
+  amount: Scalars['BigFloat']['output'];
+  /** Reads a single `Asset` that is related to this `SwapInputAssetBalance`. */
+  asset?: Maybe<Asset>;
+  assetId?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  /** Reads a single `Swap` that is related to this `SwapInputAssetBalance`. */
+  swap?: Maybe<Swap>;
+  swapId?: Maybe<Scalars['String']['output']>;
+};
+
+export type SwapInputAssetBalanceAggregates = {
+  __typename?: 'SwapInputAssetBalanceAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<SwapInputAssetBalanceAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<SwapInputAssetBalanceDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<SwapInputAssetBalanceMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<SwapInputAssetBalanceMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<SwapInputAssetBalanceStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<SwapInputAssetBalanceStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<SwapInputAssetBalanceSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<SwapInputAssetBalanceVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<SwapInputAssetBalanceVarianceSampleAggregates>;
+};
+
+export type SwapInputAssetBalanceAverageAggregates = {
+  __typename?: 'SwapInputAssetBalanceAverageAggregates';
+  /** Mean average of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/**
+ * A condition to be used against `SwapInputAssetBalance` object types. All fields
+ * are tested for equality and combined with a logical ‘and.’
+ */
+export type SwapInputAssetBalanceCondition = {
+  /** Checks for equality with the object’s `amount` field. */
+  amount?: InputMaybe<Scalars['BigFloat']['input']>;
+  /** Checks for equality with the object’s `assetId` field. */
+  assetId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `swapId` field. */
+  swapId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SwapInputAssetBalanceDistinctCountAggregates = {
+  __typename?: 'SwapInputAssetBalanceDistinctCountAggregates';
+  /** Distinct count of amount across the matching connection */
+  amount?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of assetId across the matching connection */
+  assetId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of swapId across the matching connection */
+  swapId?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `SwapInputAssetBalance` object types. All fields are combined with a logical ‘and.’ */
+export type SwapInputAssetBalanceFilter = {
+  /** Filter by the object’s `amount` field. */
+  amount?: InputMaybe<BigFloatFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<SwapInputAssetBalanceFilter>>;
+  /** Filter by the object’s `assetId` field. */
+  assetId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<SwapInputAssetBalanceFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<SwapInputAssetBalanceFilter>>;
+  /** Filter by the object’s `swapId` field. */
+  swapId?: InputMaybe<StringFilter>;
+};
+
+/** Grouping methods for `SwapInputAssetBalance` for usage during aggregation. */
+export enum SwapInputAssetBalanceGroupBy {
+  Amount = 'AMOUNT',
+  AssetId = 'ASSET_ID',
+  SwapId = 'SWAP_ID'
+}
+
+export type SwapInputAssetBalanceHavingAverageInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapInputAssetBalanceHavingDistinctCountInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+/** Conditions for `SwapInputAssetBalance` aggregates. */
+export type SwapInputAssetBalanceHavingInput = {
+  AND?: InputMaybe<Array<SwapInputAssetBalanceHavingInput>>;
+  OR?: InputMaybe<Array<SwapInputAssetBalanceHavingInput>>;
+  average?: InputMaybe<SwapInputAssetBalanceHavingAverageInput>;
+  distinctCount?: InputMaybe<SwapInputAssetBalanceHavingDistinctCountInput>;
+  max?: InputMaybe<SwapInputAssetBalanceHavingMaxInput>;
+  min?: InputMaybe<SwapInputAssetBalanceHavingMinInput>;
+  stddevPopulation?: InputMaybe<SwapInputAssetBalanceHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<SwapInputAssetBalanceHavingStddevSampleInput>;
+  sum?: InputMaybe<SwapInputAssetBalanceHavingSumInput>;
+  variancePopulation?: InputMaybe<SwapInputAssetBalanceHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<SwapInputAssetBalanceHavingVarianceSampleInput>;
+};
+
+export type SwapInputAssetBalanceHavingMaxInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapInputAssetBalanceHavingMinInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapInputAssetBalanceHavingStddevPopulationInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapInputAssetBalanceHavingStddevSampleInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapInputAssetBalanceHavingSumInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapInputAssetBalanceHavingVariancePopulationInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapInputAssetBalanceHavingVarianceSampleInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapInputAssetBalanceMaxAggregates = {
+  __typename?: 'SwapInputAssetBalanceMaxAggregates';
+  /** Maximum of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapInputAssetBalanceMinAggregates = {
+  __typename?: 'SwapInputAssetBalanceMinAggregates';
+  /** Minimum of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapInputAssetBalanceStddevPopulationAggregates = {
+  __typename?: 'SwapInputAssetBalanceStddevPopulationAggregates';
+  /** Population standard deviation of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapInputAssetBalanceStddevSampleAggregates = {
+  __typename?: 'SwapInputAssetBalanceStddevSampleAggregates';
+  /** Sample standard deviation of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapInputAssetBalanceSumAggregates = {
+  __typename?: 'SwapInputAssetBalanceSumAggregates';
+  /** Sum of amount across the matching connection */
+  amount: Scalars['BigFloat']['output'];
+};
+
+export type SwapInputAssetBalanceVariancePopulationAggregates = {
+  __typename?: 'SwapInputAssetBalanceVariancePopulationAggregates';
+  /** Population variance of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapInputAssetBalanceVarianceSampleAggregates = {
+  __typename?: 'SwapInputAssetBalanceVarianceSampleAggregates';
+  /** Sample variance of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A connection to a list of `SwapInputAssetBalance` values. */
+export type SwapInputAssetBalancesConnection = {
+  __typename?: 'SwapInputAssetBalancesConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<SwapInputAssetBalanceAggregates>;
+  /** A list of edges which contains the `SwapInputAssetBalance` and cursor to aid in pagination. */
+  edges: Array<SwapInputAssetBalancesEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<SwapInputAssetBalanceAggregates>>;
+  /** A list of `SwapInputAssetBalance` objects. */
+  nodes: Array<Maybe<SwapInputAssetBalance>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `SwapInputAssetBalance` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `SwapInputAssetBalance` values. */
+export type SwapInputAssetBalancesConnectionGroupedAggregatesArgs = {
+  groupBy: Array<SwapInputAssetBalanceGroupBy>;
+  having?: InputMaybe<SwapInputAssetBalanceHavingInput>;
+};
+
+/** A `SwapInputAssetBalance` edge in the connection. */
+export type SwapInputAssetBalancesEdge = {
+  __typename?: 'SwapInputAssetBalancesEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `SwapInputAssetBalance` at the end of the edge. */
+  node?: Maybe<SwapInputAssetBalance>;
+};
+
+/** Methods to use when ordering `SwapInputAssetBalance`. */
+export enum SwapInputAssetBalancesOrderBy {
+  AmountAsc = 'AMOUNT_ASC',
+  AmountDesc = 'AMOUNT_DESC',
+  AssetIdAsc = 'ASSET_ID_ASC',
+  AssetIdDesc = 'ASSET_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SwapIdAsc = 'SWAP_ID_ASC',
+  SwapIdDesc = 'SWAP_ID_DESC'
+}
+
+export type SwapMaxAggregates = {
+  __typename?: 'SwapMaxAggregates';
+  /** Maximum of eventIndex across the matching connection */
+  eventIndex?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of hubAmountIn across the matching connection */
+  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
+  /** Maximum of hubAmountOut across the matching connection */
+  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
+  /** Maximum of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of swapIndex across the matching connection */
+  swapIndex?: Maybe<Scalars['Int']['output']>;
+};
+
+export type SwapMinAggregates = {
+  __typename?: 'SwapMinAggregates';
+  /** Minimum of eventIndex across the matching connection */
+  eventIndex?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of hubAmountIn across the matching connection */
+  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
+  /** Minimum of hubAmountOut across the matching connection */
+  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
+  /** Minimum of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of swapIndex across the matching connection */
+  swapIndex?: Maybe<Scalars['Int']['output']>;
+};
+
+export type SwapOutputAssetBalance = {
+  __typename?: 'SwapOutputAssetBalance';
+  amount: Scalars['BigFloat']['output'];
+  /** Reads a single `Asset` that is related to this `SwapOutputAssetBalance`. */
+  asset?: Maybe<Asset>;
+  assetId?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  /** Reads a single `Swap` that is related to this `SwapOutputAssetBalance`. */
+  swap?: Maybe<Swap>;
+  swapId?: Maybe<Scalars['String']['output']>;
+};
+
+export type SwapOutputAssetBalanceAggregates = {
+  __typename?: 'SwapOutputAssetBalanceAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<SwapOutputAssetBalanceAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<SwapOutputAssetBalanceDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<SwapOutputAssetBalanceMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<SwapOutputAssetBalanceMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<SwapOutputAssetBalanceStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<SwapOutputAssetBalanceStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<SwapOutputAssetBalanceSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<SwapOutputAssetBalanceVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<SwapOutputAssetBalanceVarianceSampleAggregates>;
+};
+
+export type SwapOutputAssetBalanceAverageAggregates = {
+  __typename?: 'SwapOutputAssetBalanceAverageAggregates';
+  /** Mean average of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/**
+ * A condition to be used against `SwapOutputAssetBalance` object types. All fields
+ * are tested for equality and combined with a logical ‘and.’
+ */
+export type SwapOutputAssetBalanceCondition = {
+  /** Checks for equality with the object’s `amount` field. */
+  amount?: InputMaybe<Scalars['BigFloat']['input']>;
+  /** Checks for equality with the object’s `assetId` field. */
+  assetId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `swapId` field. */
+  swapId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SwapOutputAssetBalanceDistinctCountAggregates = {
+  __typename?: 'SwapOutputAssetBalanceDistinctCountAggregates';
+  /** Distinct count of amount across the matching connection */
+  amount?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of assetId across the matching connection */
+  assetId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of swapId across the matching connection */
+  swapId?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `SwapOutputAssetBalance` object types. All fields are combined with a logical ‘and.’ */
+export type SwapOutputAssetBalanceFilter = {
+  /** Filter by the object’s `amount` field. */
+  amount?: InputMaybe<BigFloatFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<SwapOutputAssetBalanceFilter>>;
+  /** Filter by the object’s `assetId` field. */
+  assetId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<SwapOutputAssetBalanceFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<SwapOutputAssetBalanceFilter>>;
+  /** Filter by the object’s `swapId` field. */
+  swapId?: InputMaybe<StringFilter>;
+};
+
+/** Grouping methods for `SwapOutputAssetBalance` for usage during aggregation. */
+export enum SwapOutputAssetBalanceGroupBy {
+  Amount = 'AMOUNT',
+  AssetId = 'ASSET_ID',
+  SwapId = 'SWAP_ID'
+}
+
+export type SwapOutputAssetBalanceHavingAverageInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapOutputAssetBalanceHavingDistinctCountInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+/** Conditions for `SwapOutputAssetBalance` aggregates. */
+export type SwapOutputAssetBalanceHavingInput = {
+  AND?: InputMaybe<Array<SwapOutputAssetBalanceHavingInput>>;
+  OR?: InputMaybe<Array<SwapOutputAssetBalanceHavingInput>>;
+  average?: InputMaybe<SwapOutputAssetBalanceHavingAverageInput>;
+  distinctCount?: InputMaybe<SwapOutputAssetBalanceHavingDistinctCountInput>;
+  max?: InputMaybe<SwapOutputAssetBalanceHavingMaxInput>;
+  min?: InputMaybe<SwapOutputAssetBalanceHavingMinInput>;
+  stddevPopulation?: InputMaybe<SwapOutputAssetBalanceHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<SwapOutputAssetBalanceHavingStddevSampleInput>;
+  sum?: InputMaybe<SwapOutputAssetBalanceHavingSumInput>;
+  variancePopulation?: InputMaybe<SwapOutputAssetBalanceHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<SwapOutputAssetBalanceHavingVarianceSampleInput>;
+};
+
+export type SwapOutputAssetBalanceHavingMaxInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapOutputAssetBalanceHavingMinInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapOutputAssetBalanceHavingStddevPopulationInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapOutputAssetBalanceHavingStddevSampleInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapOutputAssetBalanceHavingSumInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapOutputAssetBalanceHavingVariancePopulationInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapOutputAssetBalanceHavingVarianceSampleInput = {
+  amount?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type SwapOutputAssetBalanceMaxAggregates = {
+  __typename?: 'SwapOutputAssetBalanceMaxAggregates';
+  /** Maximum of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapOutputAssetBalanceMinAggregates = {
+  __typename?: 'SwapOutputAssetBalanceMinAggregates';
+  /** Minimum of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapOutputAssetBalanceStddevPopulationAggregates = {
+  __typename?: 'SwapOutputAssetBalanceStddevPopulationAggregates';
+  /** Population standard deviation of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapOutputAssetBalanceStddevSampleAggregates = {
+  __typename?: 'SwapOutputAssetBalanceStddevSampleAggregates';
+  /** Sample standard deviation of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapOutputAssetBalanceSumAggregates = {
+  __typename?: 'SwapOutputAssetBalanceSumAggregates';
+  /** Sum of amount across the matching connection */
+  amount: Scalars['BigFloat']['output'];
+};
+
+export type SwapOutputAssetBalanceVariancePopulationAggregates = {
+  __typename?: 'SwapOutputAssetBalanceVariancePopulationAggregates';
+  /** Population variance of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapOutputAssetBalanceVarianceSampleAggregates = {
+  __typename?: 'SwapOutputAssetBalanceVarianceSampleAggregates';
+  /** Sample variance of amount across the matching connection */
+  amount?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A connection to a list of `SwapOutputAssetBalance` values. */
+export type SwapOutputAssetBalancesConnection = {
+  __typename?: 'SwapOutputAssetBalancesConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<SwapOutputAssetBalanceAggregates>;
+  /** A list of edges which contains the `SwapOutputAssetBalance` and cursor to aid in pagination. */
+  edges: Array<SwapOutputAssetBalancesEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<SwapOutputAssetBalanceAggregates>>;
+  /** A list of `SwapOutputAssetBalance` objects. */
+  nodes: Array<Maybe<SwapOutputAssetBalance>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `SwapOutputAssetBalance` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `SwapOutputAssetBalance` values. */
+export type SwapOutputAssetBalancesConnectionGroupedAggregatesArgs = {
+  groupBy: Array<SwapOutputAssetBalanceGroupBy>;
+  having?: InputMaybe<SwapOutputAssetBalanceHavingInput>;
+};
+
+/** A `SwapOutputAssetBalance` edge in the connection. */
+export type SwapOutputAssetBalancesEdge = {
+  __typename?: 'SwapOutputAssetBalancesEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `SwapOutputAssetBalance` at the end of the edge. */
+  node?: Maybe<SwapOutputAssetBalance>;
+};
+
+/** Methods to use when ordering `SwapOutputAssetBalance`. */
+export enum SwapOutputAssetBalancesOrderBy {
+  AmountAsc = 'AMOUNT_ASC',
+  AmountDesc = 'AMOUNT_DESC',
+  AssetIdAsc = 'ASSET_ID_ASC',
+  AssetIdDesc = 'ASSET_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SwapIdAsc = 'SWAP_ID_ASC',
+  SwapIdDesc = 'SWAP_ID_DESC'
+}
+
+export type SwapStddevPopulationAggregates = {
+  __typename?: 'SwapStddevPopulationAggregates';
+  /** Population standard deviation of eventIndex across the matching connection */
+  eventIndex?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of hubAmountIn across the matching connection */
+  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of hubAmountOut across the matching connection */
+  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of swapIndex across the matching connection */
+  swapIndex?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapStddevSampleAggregates = {
+  __typename?: 'SwapStddevSampleAggregates';
+  /** Sample standard deviation of eventIndex across the matching connection */
+  eventIndex?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of hubAmountIn across the matching connection */
+  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of hubAmountOut across the matching connection */
+  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of swapIndex across the matching connection */
+  swapIndex?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapSumAggregates = {
+  __typename?: 'SwapSumAggregates';
+  /** Sum of eventIndex across the matching connection */
+  eventIndex: Scalars['BigInt']['output'];
+  /** Sum of hubAmountIn across the matching connection */
+  hubAmountIn: Scalars['BigFloat']['output'];
+  /** Sum of hubAmountOut across the matching connection */
+  hubAmountOut: Scalars['BigFloat']['output'];
+  /** Sum of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of swapIndex across the matching connection */
+  swapIndex: Scalars['BigInt']['output'];
+};
+
+export type SwapVariancePopulationAggregates = {
+  __typename?: 'SwapVariancePopulationAggregates';
+  /** Population variance of eventIndex across the matching connection */
+  eventIndex?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of hubAmountIn across the matching connection */
+  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of hubAmountOut across the matching connection */
+  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of swapIndex across the matching connection */
+  swapIndex?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type SwapVarianceSampleAggregates = {
+  __typename?: 'SwapVarianceSampleAggregates';
+  /** Sample variance of eventIndex across the matching connection */
+  eventIndex?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of hubAmountIn across the matching connection */
+  hubAmountIn?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of hubAmountOut across the matching connection */
+  hubAmountOut?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraChainBlockHeight across the matching connection */
+  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of relayChainBlockHeight across the matching connection */
+  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of swapIndex across the matching connection */
+  swapIndex?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A connection to a list of `Swap` values. */
+export type SwapsConnection = {
+  __typename?: 'SwapsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<SwapAggregates>;
+  /** A list of edges which contains the `Swap` and cursor to aid in pagination. */
+  edges: Array<SwapsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<SwapAggregates>>;
+  /** A list of `Swap` objects. */
+  nodes: Array<Maybe<Swap>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Swap` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `Swap` values. */
+export type SwapsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<SwapGroupBy>;
+  having?: InputMaybe<SwapHavingInput>;
+};
+
+/** A `Swap` edge in the connection. */
+export type SwapsEdge = {
+  __typename?: 'SwapsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `Swap` at the end of the edge. */
+  node?: Maybe<Swap>;
+};
+
+/** Methods to use when ordering `Swap`. */
+export enum SwapsOrderBy {
+  EventIndexAsc = 'EVENT_INDEX_ASC',
+  EventIndexDesc = 'EVENT_INDEX_DESC',
+  ExtrinsicHashAsc = 'EXTRINSIC_HASH_ASC',
+  ExtrinsicHashDesc = 'EXTRINSIC_HASH_DESC',
+  FillerIdAsc = 'FILLER_ID_ASC',
+  FillerIdDesc = 'FILLER_ID_DESC',
+  FillerTypeAsc = 'FILLER_TYPE_ASC',
+  FillerTypeDesc = 'FILLER_TYPE_DESC',
+  HubAmountInAsc = 'HUB_AMOUNT_IN_ASC',
+  HubAmountInDesc = 'HUB_AMOUNT_IN_DESC',
+  HubAmountOutAsc = 'HUB_AMOUNT_OUT_ASC',
+  HubAmountOutDesc = 'HUB_AMOUNT_OUT_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  OperationTypeAsc = 'OPERATION_TYPE_ASC',
+  OperationTypeDesc = 'OPERATION_TYPE_DESC',
+  ParaChainBlockHeightAsc = 'PARA_CHAIN_BLOCK_HEIGHT_ASC',
+  ParaChainBlockHeightDesc = 'PARA_CHAIN_BLOCK_HEIGHT_DESC',
+  ParaChainTimestampAsc = 'PARA_CHAIN_TIMESTAMP_ASC',
+  ParaChainTimestampDesc = 'PARA_CHAIN_TIMESTAMP_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  RelayChainBlockHeightAsc = 'RELAY_CHAIN_BLOCK_HEIGHT_ASC',
+  RelayChainBlockHeightDesc = 'RELAY_CHAIN_BLOCK_HEIGHT_DESC',
+  SwapperIdAsc = 'SWAPPER_ID_ASC',
+  SwapperIdDesc = 'SWAPPER_ID_DESC',
+  SwapFeesAverageAmountAsc = 'SWAP_FEES_AVERAGE_AMOUNT_ASC',
+  SwapFeesAverageAmountDesc = 'SWAP_FEES_AVERAGE_AMOUNT_DESC',
+  SwapFeesAverageAssetIdAsc = 'SWAP_FEES_AVERAGE_ASSET_ID_ASC',
+  SwapFeesAverageAssetIdDesc = 'SWAP_FEES_AVERAGE_ASSET_ID_DESC',
+  SwapFeesAverageIdAsc = 'SWAP_FEES_AVERAGE_ID_ASC',
+  SwapFeesAverageIdDesc = 'SWAP_FEES_AVERAGE_ID_DESC',
+  SwapFeesAverageRecipientIdAsc = 'SWAP_FEES_AVERAGE_RECIPIENT_ID_ASC',
+  SwapFeesAverageRecipientIdDesc = 'SWAP_FEES_AVERAGE_RECIPIENT_ID_DESC',
+  SwapFeesAverageSwapIdAsc = 'SWAP_FEES_AVERAGE_SWAP_ID_ASC',
+  SwapFeesAverageSwapIdDesc = 'SWAP_FEES_AVERAGE_SWAP_ID_DESC',
+  SwapFeesCountAsc = 'SWAP_FEES_COUNT_ASC',
+  SwapFeesCountDesc = 'SWAP_FEES_COUNT_DESC',
+  SwapFeesDistinctCountAmountAsc = 'SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC',
+  SwapFeesDistinctCountAmountDesc = 'SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC',
+  SwapFeesDistinctCountAssetIdAsc = 'SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC',
+  SwapFeesDistinctCountAssetIdDesc = 'SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC',
+  SwapFeesDistinctCountIdAsc = 'SWAP_FEES_DISTINCT_COUNT_ID_ASC',
+  SwapFeesDistinctCountIdDesc = 'SWAP_FEES_DISTINCT_COUNT_ID_DESC',
+  SwapFeesDistinctCountRecipientIdAsc = 'SWAP_FEES_DISTINCT_COUNT_RECIPIENT_ID_ASC',
+  SwapFeesDistinctCountRecipientIdDesc = 'SWAP_FEES_DISTINCT_COUNT_RECIPIENT_ID_DESC',
+  SwapFeesDistinctCountSwapIdAsc = 'SWAP_FEES_DISTINCT_COUNT_SWAP_ID_ASC',
+  SwapFeesDistinctCountSwapIdDesc = 'SWAP_FEES_DISTINCT_COUNT_SWAP_ID_DESC',
+  SwapFeesMaxAmountAsc = 'SWAP_FEES_MAX_AMOUNT_ASC',
+  SwapFeesMaxAmountDesc = 'SWAP_FEES_MAX_AMOUNT_DESC',
+  SwapFeesMaxAssetIdAsc = 'SWAP_FEES_MAX_ASSET_ID_ASC',
+  SwapFeesMaxAssetIdDesc = 'SWAP_FEES_MAX_ASSET_ID_DESC',
+  SwapFeesMaxIdAsc = 'SWAP_FEES_MAX_ID_ASC',
+  SwapFeesMaxIdDesc = 'SWAP_FEES_MAX_ID_DESC',
+  SwapFeesMaxRecipientIdAsc = 'SWAP_FEES_MAX_RECIPIENT_ID_ASC',
+  SwapFeesMaxRecipientIdDesc = 'SWAP_FEES_MAX_RECIPIENT_ID_DESC',
+  SwapFeesMaxSwapIdAsc = 'SWAP_FEES_MAX_SWAP_ID_ASC',
+  SwapFeesMaxSwapIdDesc = 'SWAP_FEES_MAX_SWAP_ID_DESC',
+  SwapFeesMinAmountAsc = 'SWAP_FEES_MIN_AMOUNT_ASC',
+  SwapFeesMinAmountDesc = 'SWAP_FEES_MIN_AMOUNT_DESC',
+  SwapFeesMinAssetIdAsc = 'SWAP_FEES_MIN_ASSET_ID_ASC',
+  SwapFeesMinAssetIdDesc = 'SWAP_FEES_MIN_ASSET_ID_DESC',
+  SwapFeesMinIdAsc = 'SWAP_FEES_MIN_ID_ASC',
+  SwapFeesMinIdDesc = 'SWAP_FEES_MIN_ID_DESC',
+  SwapFeesMinRecipientIdAsc = 'SWAP_FEES_MIN_RECIPIENT_ID_ASC',
+  SwapFeesMinRecipientIdDesc = 'SWAP_FEES_MIN_RECIPIENT_ID_DESC',
+  SwapFeesMinSwapIdAsc = 'SWAP_FEES_MIN_SWAP_ID_ASC',
+  SwapFeesMinSwapIdDesc = 'SWAP_FEES_MIN_SWAP_ID_DESC',
+  SwapFeesStddevPopulationAmountAsc = 'SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC',
+  SwapFeesStddevPopulationAmountDesc = 'SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC',
+  SwapFeesStddevPopulationAssetIdAsc = 'SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC',
+  SwapFeesStddevPopulationAssetIdDesc = 'SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC',
+  SwapFeesStddevPopulationIdAsc = 'SWAP_FEES_STDDEV_POPULATION_ID_ASC',
+  SwapFeesStddevPopulationIdDesc = 'SWAP_FEES_STDDEV_POPULATION_ID_DESC',
+  SwapFeesStddevPopulationRecipientIdAsc = 'SWAP_FEES_STDDEV_POPULATION_RECIPIENT_ID_ASC',
+  SwapFeesStddevPopulationRecipientIdDesc = 'SWAP_FEES_STDDEV_POPULATION_RECIPIENT_ID_DESC',
+  SwapFeesStddevPopulationSwapIdAsc = 'SWAP_FEES_STDDEV_POPULATION_SWAP_ID_ASC',
+  SwapFeesStddevPopulationSwapIdDesc = 'SWAP_FEES_STDDEV_POPULATION_SWAP_ID_DESC',
+  SwapFeesStddevSampleAmountAsc = 'SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC',
+  SwapFeesStddevSampleAmountDesc = 'SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC',
+  SwapFeesStddevSampleAssetIdAsc = 'SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC',
+  SwapFeesStddevSampleAssetIdDesc = 'SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC',
+  SwapFeesStddevSampleIdAsc = 'SWAP_FEES_STDDEV_SAMPLE_ID_ASC',
+  SwapFeesStddevSampleIdDesc = 'SWAP_FEES_STDDEV_SAMPLE_ID_DESC',
+  SwapFeesStddevSampleRecipientIdAsc = 'SWAP_FEES_STDDEV_SAMPLE_RECIPIENT_ID_ASC',
+  SwapFeesStddevSampleRecipientIdDesc = 'SWAP_FEES_STDDEV_SAMPLE_RECIPIENT_ID_DESC',
+  SwapFeesStddevSampleSwapIdAsc = 'SWAP_FEES_STDDEV_SAMPLE_SWAP_ID_ASC',
+  SwapFeesStddevSampleSwapIdDesc = 'SWAP_FEES_STDDEV_SAMPLE_SWAP_ID_DESC',
+  SwapFeesSumAmountAsc = 'SWAP_FEES_SUM_AMOUNT_ASC',
+  SwapFeesSumAmountDesc = 'SWAP_FEES_SUM_AMOUNT_DESC',
+  SwapFeesSumAssetIdAsc = 'SWAP_FEES_SUM_ASSET_ID_ASC',
+  SwapFeesSumAssetIdDesc = 'SWAP_FEES_SUM_ASSET_ID_DESC',
+  SwapFeesSumIdAsc = 'SWAP_FEES_SUM_ID_ASC',
+  SwapFeesSumIdDesc = 'SWAP_FEES_SUM_ID_DESC',
+  SwapFeesSumRecipientIdAsc = 'SWAP_FEES_SUM_RECIPIENT_ID_ASC',
+  SwapFeesSumRecipientIdDesc = 'SWAP_FEES_SUM_RECIPIENT_ID_DESC',
+  SwapFeesSumSwapIdAsc = 'SWAP_FEES_SUM_SWAP_ID_ASC',
+  SwapFeesSumSwapIdDesc = 'SWAP_FEES_SUM_SWAP_ID_DESC',
+  SwapFeesVariancePopulationAmountAsc = 'SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC',
+  SwapFeesVariancePopulationAmountDesc = 'SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC',
+  SwapFeesVariancePopulationAssetIdAsc = 'SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC',
+  SwapFeesVariancePopulationAssetIdDesc = 'SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC',
+  SwapFeesVariancePopulationIdAsc = 'SWAP_FEES_VARIANCE_POPULATION_ID_ASC',
+  SwapFeesVariancePopulationIdDesc = 'SWAP_FEES_VARIANCE_POPULATION_ID_DESC',
+  SwapFeesVariancePopulationRecipientIdAsc = 'SWAP_FEES_VARIANCE_POPULATION_RECIPIENT_ID_ASC',
+  SwapFeesVariancePopulationRecipientIdDesc = 'SWAP_FEES_VARIANCE_POPULATION_RECIPIENT_ID_DESC',
+  SwapFeesVariancePopulationSwapIdAsc = 'SWAP_FEES_VARIANCE_POPULATION_SWAP_ID_ASC',
+  SwapFeesVariancePopulationSwapIdDesc = 'SWAP_FEES_VARIANCE_POPULATION_SWAP_ID_DESC',
+  SwapFeesVarianceSampleAmountAsc = 'SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC',
+  SwapFeesVarianceSampleAmountDesc = 'SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC',
+  SwapFeesVarianceSampleAssetIdAsc = 'SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC',
+  SwapFeesVarianceSampleAssetIdDesc = 'SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC',
+  SwapFeesVarianceSampleIdAsc = 'SWAP_FEES_VARIANCE_SAMPLE_ID_ASC',
+  SwapFeesVarianceSampleIdDesc = 'SWAP_FEES_VARIANCE_SAMPLE_ID_DESC',
+  SwapFeesVarianceSampleRecipientIdAsc = 'SWAP_FEES_VARIANCE_SAMPLE_RECIPIENT_ID_ASC',
+  SwapFeesVarianceSampleRecipientIdDesc = 'SWAP_FEES_VARIANCE_SAMPLE_RECIPIENT_ID_DESC',
+  SwapFeesVarianceSampleSwapIdAsc = 'SWAP_FEES_VARIANCE_SAMPLE_SWAP_ID_ASC',
+  SwapFeesVarianceSampleSwapIdDesc = 'SWAP_FEES_VARIANCE_SAMPLE_SWAP_ID_DESC',
+  SwapIndexAsc = 'SWAP_INDEX_ASC',
+  SwapIndexDesc = 'SWAP_INDEX_DESC',
+  SwapInputAssetBalancesAverageAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC',
+  SwapInputAssetBalancesAverageAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC',
+  SwapInputAssetBalancesAverageAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC',
+  SwapInputAssetBalancesAverageAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC',
+  SwapInputAssetBalancesAverageIdAsc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_ID_ASC',
+  SwapInputAssetBalancesAverageIdDesc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_ID_DESC',
+  SwapInputAssetBalancesAverageSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_ASC',
+  SwapInputAssetBalancesAverageSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_DESC',
+  SwapInputAssetBalancesCountAsc = 'SWAP_INPUT_ASSET_BALANCES_COUNT_ASC',
+  SwapInputAssetBalancesCountDesc = 'SWAP_INPUT_ASSET_BALANCES_COUNT_DESC',
+  SwapInputAssetBalancesDistinctCountAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC',
+  SwapInputAssetBalancesDistinctCountAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC',
+  SwapInputAssetBalancesDistinctCountAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC',
+  SwapInputAssetBalancesDistinctCountAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC',
+  SwapInputAssetBalancesDistinctCountIdAsc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC',
+  SwapInputAssetBalancesDistinctCountIdDesc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_DESC',
+  SwapInputAssetBalancesDistinctCountSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_ASC',
+  SwapInputAssetBalancesDistinctCountSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_DESC',
+  SwapInputAssetBalancesMaxAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_MAX_AMOUNT_ASC',
+  SwapInputAssetBalancesMaxAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_MAX_AMOUNT_DESC',
+  SwapInputAssetBalancesMaxAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC',
+  SwapInputAssetBalancesMaxAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC',
+  SwapInputAssetBalancesMaxIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MAX_ID_ASC',
+  SwapInputAssetBalancesMaxIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MAX_ID_DESC',
+  SwapInputAssetBalancesMaxSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MAX_SWAP_ID_ASC',
+  SwapInputAssetBalancesMaxSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MAX_SWAP_ID_DESC',
+  SwapInputAssetBalancesMinAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_MIN_AMOUNT_ASC',
+  SwapInputAssetBalancesMinAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_MIN_AMOUNT_DESC',
+  SwapInputAssetBalancesMinAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC',
+  SwapInputAssetBalancesMinAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC',
+  SwapInputAssetBalancesMinIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MIN_ID_ASC',
+  SwapInputAssetBalancesMinIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MIN_ID_DESC',
+  SwapInputAssetBalancesMinSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_MIN_SWAP_ID_ASC',
+  SwapInputAssetBalancesMinSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_MIN_SWAP_ID_DESC',
+  SwapInputAssetBalancesStddevPopulationAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC',
+  SwapInputAssetBalancesStddevPopulationAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC',
+  SwapInputAssetBalancesStddevPopulationAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC',
+  SwapInputAssetBalancesStddevPopulationAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC',
+  SwapInputAssetBalancesStddevPopulationIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC',
+  SwapInputAssetBalancesStddevPopulationIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_DESC',
+  SwapInputAssetBalancesStddevPopulationSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_ASC',
+  SwapInputAssetBalancesStddevPopulationSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_DESC',
+  SwapInputAssetBalancesStddevSampleAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC',
+  SwapInputAssetBalancesStddevSampleAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC',
+  SwapInputAssetBalancesStddevSampleAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC',
+  SwapInputAssetBalancesStddevSampleAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC',
+  SwapInputAssetBalancesStddevSampleIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC',
+  SwapInputAssetBalancesStddevSampleIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_DESC',
+  SwapInputAssetBalancesStddevSampleSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_ASC',
+  SwapInputAssetBalancesStddevSampleSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_DESC',
+  SwapInputAssetBalancesSumAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_SUM_AMOUNT_ASC',
+  SwapInputAssetBalancesSumAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_SUM_AMOUNT_DESC',
+  SwapInputAssetBalancesSumAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC',
+  SwapInputAssetBalancesSumAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC',
+  SwapInputAssetBalancesSumIdAsc = 'SWAP_INPUT_ASSET_BALANCES_SUM_ID_ASC',
+  SwapInputAssetBalancesSumIdDesc = 'SWAP_INPUT_ASSET_BALANCES_SUM_ID_DESC',
+  SwapInputAssetBalancesSumSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_SUM_SWAP_ID_ASC',
+  SwapInputAssetBalancesSumSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_SUM_SWAP_ID_DESC',
+  SwapInputAssetBalancesVariancePopulationAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC',
+  SwapInputAssetBalancesVariancePopulationAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC',
+  SwapInputAssetBalancesVariancePopulationAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC',
+  SwapInputAssetBalancesVariancePopulationAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC',
+  SwapInputAssetBalancesVariancePopulationIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC',
+  SwapInputAssetBalancesVariancePopulationIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_DESC',
+  SwapInputAssetBalancesVariancePopulationSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_ASC',
+  SwapInputAssetBalancesVariancePopulationSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_DESC',
+  SwapInputAssetBalancesVarianceSampleAmountAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC',
+  SwapInputAssetBalancesVarianceSampleAmountDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC',
+  SwapInputAssetBalancesVarianceSampleAssetIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC',
+  SwapInputAssetBalancesVarianceSampleAssetIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC',
+  SwapInputAssetBalancesVarianceSampleIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC',
+  SwapInputAssetBalancesVarianceSampleIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_DESC',
+  SwapInputAssetBalancesVarianceSampleSwapIdAsc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_ASC',
+  SwapInputAssetBalancesVarianceSampleSwapIdDesc = 'SWAP_INPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_DESC',
+  SwapOutputAssetBalancesAverageAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC',
+  SwapOutputAssetBalancesAverageAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC',
+  SwapOutputAssetBalancesAverageAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC',
+  SwapOutputAssetBalancesAverageAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC',
+  SwapOutputAssetBalancesAverageIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ID_ASC',
+  SwapOutputAssetBalancesAverageIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_ID_DESC',
+  SwapOutputAssetBalancesAverageSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_ASC',
+  SwapOutputAssetBalancesAverageSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_AVERAGE_SWAP_ID_DESC',
+  SwapOutputAssetBalancesCountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_COUNT_ASC',
+  SwapOutputAssetBalancesCountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_COUNT_DESC',
+  SwapOutputAssetBalancesDistinctCountAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC',
+  SwapOutputAssetBalancesDistinctCountAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC',
+  SwapOutputAssetBalancesDistinctCountAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC',
+  SwapOutputAssetBalancesDistinctCountAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC',
+  SwapOutputAssetBalancesDistinctCountIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC',
+  SwapOutputAssetBalancesDistinctCountIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_DESC',
+  SwapOutputAssetBalancesDistinctCountSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_ASC',
+  SwapOutputAssetBalancesDistinctCountSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_SWAP_ID_DESC',
+  SwapOutputAssetBalancesMaxAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_ASC',
+  SwapOutputAssetBalancesMaxAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_DESC',
+  SwapOutputAssetBalancesMaxAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC',
+  SwapOutputAssetBalancesMaxAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC',
+  SwapOutputAssetBalancesMaxIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_ID_ASC',
+  SwapOutputAssetBalancesMaxIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_ID_DESC',
+  SwapOutputAssetBalancesMaxSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_SWAP_ID_ASC',
+  SwapOutputAssetBalancesMaxSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MAX_SWAP_ID_DESC',
+  SwapOutputAssetBalancesMinAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_ASC',
+  SwapOutputAssetBalancesMinAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_DESC',
+  SwapOutputAssetBalancesMinAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC',
+  SwapOutputAssetBalancesMinAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC',
+  SwapOutputAssetBalancesMinIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_ID_ASC',
+  SwapOutputAssetBalancesMinIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_ID_DESC',
+  SwapOutputAssetBalancesMinSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_SWAP_ID_ASC',
+  SwapOutputAssetBalancesMinSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_MIN_SWAP_ID_DESC',
+  SwapOutputAssetBalancesStddevPopulationAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC',
+  SwapOutputAssetBalancesStddevPopulationAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC',
+  SwapOutputAssetBalancesStddevPopulationAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC',
+  SwapOutputAssetBalancesStddevPopulationAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC',
+  SwapOutputAssetBalancesStddevPopulationIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC',
+  SwapOutputAssetBalancesStddevPopulationIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_DESC',
+  SwapOutputAssetBalancesStddevPopulationSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_ASC',
+  SwapOutputAssetBalancesStddevPopulationSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_SWAP_ID_DESC',
+  SwapOutputAssetBalancesStddevSampleAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC',
+  SwapOutputAssetBalancesStddevSampleAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC',
+  SwapOutputAssetBalancesStddevSampleAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC',
+  SwapOutputAssetBalancesStddevSampleAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC',
+  SwapOutputAssetBalancesStddevSampleIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC',
+  SwapOutputAssetBalancesStddevSampleIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_DESC',
+  SwapOutputAssetBalancesStddevSampleSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_ASC',
+  SwapOutputAssetBalancesStddevSampleSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_SWAP_ID_DESC',
+  SwapOutputAssetBalancesSumAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_ASC',
+  SwapOutputAssetBalancesSumAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_DESC',
+  SwapOutputAssetBalancesSumAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC',
+  SwapOutputAssetBalancesSumAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC',
+  SwapOutputAssetBalancesSumIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_ID_ASC',
+  SwapOutputAssetBalancesSumIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_ID_DESC',
+  SwapOutputAssetBalancesSumSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_SWAP_ID_ASC',
+  SwapOutputAssetBalancesSumSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_SUM_SWAP_ID_DESC',
+  SwapOutputAssetBalancesVariancePopulationAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC',
+  SwapOutputAssetBalancesVariancePopulationAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC',
+  SwapOutputAssetBalancesVariancePopulationAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC',
+  SwapOutputAssetBalancesVariancePopulationAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC',
+  SwapOutputAssetBalancesVariancePopulationIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC',
+  SwapOutputAssetBalancesVariancePopulationIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_DESC',
+  SwapOutputAssetBalancesVariancePopulationSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_ASC',
+  SwapOutputAssetBalancesVariancePopulationSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_SWAP_ID_DESC',
+  SwapOutputAssetBalancesVarianceSampleAmountAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC',
+  SwapOutputAssetBalancesVarianceSampleAmountDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC',
+  SwapOutputAssetBalancesVarianceSampleAssetIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC',
+  SwapOutputAssetBalancesVarianceSampleAssetIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC',
+  SwapOutputAssetBalancesVarianceSampleIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC',
+  SwapOutputAssetBalancesVarianceSampleIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_DESC',
+  SwapOutputAssetBalancesVarianceSampleSwapIdAsc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_ASC',
+  SwapOutputAssetBalancesVarianceSampleSwapIdDesc = 'SWAP_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_SWAP_ID_DESC'
+}
 
 export type Transfer = {
   __typename?: 'Transfer';
@@ -26232,6 +23536,8 @@ export type XykPool = {
   /** Reads a single `Account` that is related to this `XykPool`. */
   account?: Maybe<Account>;
   accountId?: Maybe<Scalars['String']['output']>;
+  /** Reads and enables pagination through a set of `Account`. */
+  accounts: AccountsConnection;
   /** Reads a single `Asset` that is related to this `XykPool`. */
   assetA?: Maybe<Asset>;
   assetABalance: Scalars['BigFloat']['output'];
@@ -26253,8 +23559,18 @@ export type XykPool = {
   xykPoolHistoricalPricesByPoolId: XykPoolHistoricalPricesConnection;
   /** Reads and enables pagination through a set of `XykPoolHistoricalVolume`. */
   xykPoolHistoricalVolumesByPoolId: XykPoolHistoricalVolumesConnection;
-  /** Reads and enables pagination through a set of `XykPoolOperation`. */
-  xykPoolOperationsByPoolId: XykPoolOperationsConnection;
+};
+
+
+export type XykPoolAccountsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AccountCondition>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
 
@@ -26291,18 +23607,6 @@ export type XykPoolXykPoolHistoricalVolumesByPoolIdArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<XykPoolHistoricalVolumesOrderBy>>;
-};
-
-
-export type XykPoolXykPoolOperationsByPoolIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<XykPoolOperationCondition>;
-  filter?: InputMaybe<XykPoolOperationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<XykPoolOperationsOrderBy>>;
 };
 
 export type XykPoolAggregates = {
@@ -28059,529 +25363,6 @@ export type XykPoolMinAggregates = {
   shareTokenId?: Maybe<Scalars['Int']['output']>;
 };
 
-export type XykPoolOperation = {
-  __typename?: 'XykPoolOperation';
-  /** Reads a single `Account` that is related to this `XykPoolOperation`. */
-  account?: Maybe<Account>;
-  accountId?: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Asset` that is related to this `XykPoolOperation`. */
-  assetIn?: Maybe<Asset>;
-  assetInAmount: Scalars['BigFloat']['output'];
-  assetInFee: Scalars['BigFloat']['output'];
-  assetInId?: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Asset` that is related to this `XykPoolOperation`. */
-  assetOut?: Maybe<Asset>;
-  assetOutAmount: Scalars['BigFloat']['output'];
-  assetOutFee: Scalars['BigFloat']['output'];
-  assetOutId?: Maybe<Scalars['String']['output']>;
-  extrinsicHash?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  indexInBlock: Scalars['Int']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
-  /** Reads a single `XykPool` that is related to this `XykPoolOperation`. */
-  pool?: Maybe<XykPool>;
-  poolId?: Maybe<Scalars['String']['output']>;
-  relayChainBlockHeight: Scalars['Int']['output'];
-  swapPrice: Scalars['BigFloat']['output'];
-  type: Scalars['String']['output'];
-};
-
-export type XykPoolOperationAggregates = {
-  __typename?: 'XykPoolOperationAggregates';
-  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  average?: Maybe<XykPoolOperationAverageAggregates>;
-  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  distinctCount?: Maybe<XykPoolOperationDistinctCountAggregates>;
-  keys?: Maybe<Array<Scalars['String']['output']>>;
-  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  max?: Maybe<XykPoolOperationMaxAggregates>;
-  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  min?: Maybe<XykPoolOperationMinAggregates>;
-  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevPopulation?: Maybe<XykPoolOperationStddevPopulationAggregates>;
-  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  stddevSample?: Maybe<XykPoolOperationStddevSampleAggregates>;
-  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  sum?: Maybe<XykPoolOperationSumAggregates>;
-  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  variancePopulation?: Maybe<XykPoolOperationVariancePopulationAggregates>;
-  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  varianceSample?: Maybe<XykPoolOperationVarianceSampleAggregates>;
-};
-
-export type XykPoolOperationAverageAggregates = {
-  __typename?: 'XykPoolOperationAverageAggregates';
-  /** Mean average of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-/**
- * A condition to be used against `XykPoolOperation` object types. All fields are
- * tested for equality and combined with a logical ‘and.’
- */
-export type XykPoolOperationCondition = {
-  /** Checks for equality with the object’s `accountId` field. */
-  accountId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `assetInAmount` field. */
-  assetInAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetInFee` field. */
-  assetInFee?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetInId` field. */
-  assetInId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `assetOutAmount` field. */
-  assetOutAmount?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetOutFee` field. */
-  assetOutFee?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `assetOutId` field. */
-  assetOutId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `extrinsicHash` field. */
-  extrinsicHash?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `indexInBlock` field. */
-  indexInBlock?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `poolId` field. */
-  poolId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayChainBlockHeight` field. */
-  relayChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `swapPrice` field. */
-  swapPrice?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `type` field. */
-  type?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type XykPoolOperationDistinctCountAggregates = {
-  __typename?: 'XykPoolOperationDistinctCountAggregates';
-  /** Distinct count of accountId across the matching connection */
-  accountId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetInId across the matching connection */
-  assetInId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of assetOutId across the matching connection */
-  assetOutId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of extrinsicHash across the matching connection */
-  extrinsicHash?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of id across the matching connection */
-  id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of poolId across the matching connection */
-  poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of type across the matching connection */
-  type?: Maybe<Scalars['BigInt']['output']>;
-};
-
-/** A filter to be used against `XykPoolOperation` object types. All fields are combined with a logical ‘and.’ */
-export type XykPoolOperationFilter = {
-  /** Filter by the object’s `accountId` field. */
-  accountId?: InputMaybe<StringFilter>;
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<XykPoolOperationFilter>>;
-  /** Filter by the object’s `assetInAmount` field. */
-  assetInAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetInFee` field. */
-  assetInFee?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetInId` field. */
-  assetInId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `assetOutAmount` field. */
-  assetOutAmount?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetOutFee` field. */
-  assetOutFee?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `assetOutId` field. */
-  assetOutId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `extrinsicHash` field. */
-  extrinsicHash?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `indexInBlock` field. */
-  indexInBlock?: InputMaybe<IntFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<XykPoolOperationFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<XykPoolOperationFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `poolId` field. */
-  poolId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayChainBlockHeight` field. */
-  relayChainBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `swapPrice` field. */
-  swapPrice?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `type` field. */
-  type?: InputMaybe<StringFilter>;
-};
-
-/** Grouping methods for `XykPoolOperation` for usage during aggregation. */
-export enum XykPoolOperationGroupBy {
-  AccountId = 'ACCOUNT_ID',
-  AssetInAmount = 'ASSET_IN_AMOUNT',
-  AssetInFee = 'ASSET_IN_FEE',
-  AssetInId = 'ASSET_IN_ID',
-  AssetOutAmount = 'ASSET_OUT_AMOUNT',
-  AssetOutFee = 'ASSET_OUT_FEE',
-  AssetOutId = 'ASSET_OUT_ID',
-  ExtrinsicHash = 'EXTRINSIC_HASH',
-  IndexInBlock = 'INDEX_IN_BLOCK',
-  ParaChainBlockHeight = 'PARA_CHAIN_BLOCK_HEIGHT',
-  PoolId = 'POOL_ID',
-  RelayChainBlockHeight = 'RELAY_CHAIN_BLOCK_HEIGHT',
-  SwapPrice = 'SWAP_PRICE',
-  Type = 'TYPE'
-}
-
-export type XykPoolOperationHavingAverageInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type XykPoolOperationHavingDistinctCountInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-/** Conditions for `XykPoolOperation` aggregates. */
-export type XykPoolOperationHavingInput = {
-  AND?: InputMaybe<Array<XykPoolOperationHavingInput>>;
-  OR?: InputMaybe<Array<XykPoolOperationHavingInput>>;
-  average?: InputMaybe<XykPoolOperationHavingAverageInput>;
-  distinctCount?: InputMaybe<XykPoolOperationHavingDistinctCountInput>;
-  max?: InputMaybe<XykPoolOperationHavingMaxInput>;
-  min?: InputMaybe<XykPoolOperationHavingMinInput>;
-  stddevPopulation?: InputMaybe<XykPoolOperationHavingStddevPopulationInput>;
-  stddevSample?: InputMaybe<XykPoolOperationHavingStddevSampleInput>;
-  sum?: InputMaybe<XykPoolOperationHavingSumInput>;
-  variancePopulation?: InputMaybe<XykPoolOperationHavingVariancePopulationInput>;
-  varianceSample?: InputMaybe<XykPoolOperationHavingVarianceSampleInput>;
-};
-
-export type XykPoolOperationHavingMaxInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type XykPoolOperationHavingMinInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type XykPoolOperationHavingStddevPopulationInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type XykPoolOperationHavingStddevSampleInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type XykPoolOperationHavingSumInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type XykPoolOperationHavingVariancePopulationInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type XykPoolOperationHavingVarianceSampleInput = {
-  assetInAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetInFee?: InputMaybe<HavingBigfloatFilter>;
-  assetOutAmount?: InputMaybe<HavingBigfloatFilter>;
-  assetOutFee?: InputMaybe<HavingBigfloatFilter>;
-  indexInBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayChainBlockHeight?: InputMaybe<HavingIntFilter>;
-  swapPrice?: InputMaybe<HavingBigfloatFilter>;
-};
-
-export type XykPoolOperationMaxAggregates = {
-  __typename?: 'XykPoolOperationMaxAggregates';
-  /** Maximum of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type XykPoolOperationMinAggregates = {
-  __typename?: 'XykPoolOperationMinAggregates';
-  /** Minimum of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type XykPoolOperationStddevPopulationAggregates = {
-  __typename?: 'XykPoolOperationStddevPopulationAggregates';
-  /** Population standard deviation of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type XykPoolOperationStddevSampleAggregates = {
-  __typename?: 'XykPoolOperationStddevSampleAggregates';
-  /** Sample standard deviation of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type XykPoolOperationSumAggregates = {
-  __typename?: 'XykPoolOperationSumAggregates';
-  /** Sum of assetInAmount across the matching connection */
-  assetInAmount: Scalars['BigFloat']['output'];
-  /** Sum of assetInFee across the matching connection */
-  assetInFee: Scalars['BigFloat']['output'];
-  /** Sum of assetOutAmount across the matching connection */
-  assetOutAmount: Scalars['BigFloat']['output'];
-  /** Sum of assetOutFee across the matching connection */
-  assetOutFee: Scalars['BigFloat']['output'];
-  /** Sum of indexInBlock across the matching connection */
-  indexInBlock: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of swapPrice across the matching connection */
-  swapPrice: Scalars['BigFloat']['output'];
-};
-
-export type XykPoolOperationVariancePopulationAggregates = {
-  __typename?: 'XykPoolOperationVariancePopulationAggregates';
-  /** Population variance of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-export type XykPoolOperationVarianceSampleAggregates = {
-  __typename?: 'XykPoolOperationVarianceSampleAggregates';
-  /** Sample variance of assetInAmount across the matching connection */
-  assetInAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetInFee across the matching connection */
-  assetInFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetOutAmount across the matching connection */
-  assetOutAmount?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of assetOutFee across the matching connection */
-  assetOutFee?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of indexInBlock across the matching connection */
-  indexInBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayChainBlockHeight across the matching connection */
-  relayChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of swapPrice across the matching connection */
-  swapPrice?: Maybe<Scalars['BigFloat']['output']>;
-};
-
-/** A connection to a list of `XykPoolOperation` values. */
-export type XykPoolOperationsConnection = {
-  __typename?: 'XykPoolOperationsConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<XykPoolOperationAggregates>;
-  /** A list of edges which contains the `XykPoolOperation` and cursor to aid in pagination. */
-  edges: Array<XykPoolOperationsEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<XykPoolOperationAggregates>>;
-  /** A list of `XykPoolOperation` objects. */
-  nodes: Array<Maybe<XykPoolOperation>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `XykPoolOperation` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-
-/** A connection to a list of `XykPoolOperation` values. */
-export type XykPoolOperationsConnectionGroupedAggregatesArgs = {
-  groupBy: Array<XykPoolOperationGroupBy>;
-  having?: InputMaybe<XykPoolOperationHavingInput>;
-};
-
-/** A `XykPoolOperation` edge in the connection. */
-export type XykPoolOperationsEdge = {
-  __typename?: 'XykPoolOperationsEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `XykPoolOperation` at the end of the edge. */
-  node?: Maybe<XykPoolOperation>;
-};
-
-/** Methods to use when ordering `XykPoolOperation`. */
-export enum XykPoolOperationsOrderBy {
-  AccountIdAsc = 'ACCOUNT_ID_ASC',
-  AccountIdDesc = 'ACCOUNT_ID_DESC',
-  AssetInAmountAsc = 'ASSET_IN_AMOUNT_ASC',
-  AssetInAmountDesc = 'ASSET_IN_AMOUNT_DESC',
-  AssetInFeeAsc = 'ASSET_IN_FEE_ASC',
-  AssetInFeeDesc = 'ASSET_IN_FEE_DESC',
-  AssetInIdAsc = 'ASSET_IN_ID_ASC',
-  AssetInIdDesc = 'ASSET_IN_ID_DESC',
-  AssetOutAmountAsc = 'ASSET_OUT_AMOUNT_ASC',
-  AssetOutAmountDesc = 'ASSET_OUT_AMOUNT_DESC',
-  AssetOutFeeAsc = 'ASSET_OUT_FEE_ASC',
-  AssetOutFeeDesc = 'ASSET_OUT_FEE_DESC',
-  AssetOutIdAsc = 'ASSET_OUT_ID_ASC',
-  AssetOutIdDesc = 'ASSET_OUT_ID_DESC',
-  ExtrinsicHashAsc = 'EXTRINSIC_HASH_ASC',
-  ExtrinsicHashDesc = 'EXTRINSIC_HASH_DESC',
-  IdAsc = 'ID_ASC',
-  IdDesc = 'ID_DESC',
-  IndexInBlockAsc = 'INDEX_IN_BLOCK_ASC',
-  IndexInBlockDesc = 'INDEX_IN_BLOCK_DESC',
-  Natural = 'NATURAL',
-  ParaChainBlockHeightAsc = 'PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  ParaChainBlockHeightDesc = 'PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  PoolIdAsc = 'POOL_ID_ASC',
-  PoolIdDesc = 'POOL_ID_DESC',
-  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayChainBlockHeightAsc = 'RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  RelayChainBlockHeightDesc = 'RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  SwapPriceAsc = 'SWAP_PRICE_ASC',
-  SwapPriceDesc = 'SWAP_PRICE_DESC',
-  TypeAsc = 'TYPE_ASC',
-  TypeDesc = 'TYPE_DESC'
-}
-
 export type XykPoolStddevPopulationAggregates = {
   __typename?: 'XykPoolStddevPopulationAggregates';
   /** Population standard deviation of assetABalance across the matching connection */
@@ -28718,6 +25499,98 @@ export type XykPoolsEdge = {
 
 /** Methods to use when ordering `XykPool`. */
 export enum XykPoolsOrderBy {
+  AccountsAverageIdAsc = 'ACCOUNTS_AVERAGE_ID_ASC',
+  AccountsAverageIdDesc = 'ACCOUNTS_AVERAGE_ID_DESC',
+  AccountsAverageLbpPoolIdAsc = 'ACCOUNTS_AVERAGE_LBP_POOL_ID_ASC',
+  AccountsAverageLbpPoolIdDesc = 'ACCOUNTS_AVERAGE_LBP_POOL_ID_DESC',
+  AccountsAverageOmnipoolIdAsc = 'ACCOUNTS_AVERAGE_OMNIPOOL_ID_ASC',
+  AccountsAverageOmnipoolIdDesc = 'ACCOUNTS_AVERAGE_OMNIPOOL_ID_DESC',
+  AccountsAverageStablepoolIdAsc = 'ACCOUNTS_AVERAGE_STABLEPOOL_ID_ASC',
+  AccountsAverageStablepoolIdDesc = 'ACCOUNTS_AVERAGE_STABLEPOOL_ID_DESC',
+  AccountsAverageXykPoolIdAsc = 'ACCOUNTS_AVERAGE_XYK_POOL_ID_ASC',
+  AccountsAverageXykPoolIdDesc = 'ACCOUNTS_AVERAGE_XYK_POOL_ID_DESC',
+  AccountsCountAsc = 'ACCOUNTS_COUNT_ASC',
+  AccountsCountDesc = 'ACCOUNTS_COUNT_DESC',
+  AccountsDistinctCountIdAsc = 'ACCOUNTS_DISTINCT_COUNT_ID_ASC',
+  AccountsDistinctCountIdDesc = 'ACCOUNTS_DISTINCT_COUNT_ID_DESC',
+  AccountsDistinctCountLbpPoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_LBP_POOL_ID_ASC',
+  AccountsDistinctCountLbpPoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_LBP_POOL_ID_DESC',
+  AccountsDistinctCountOmnipoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_OMNIPOOL_ID_ASC',
+  AccountsDistinctCountOmnipoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_OMNIPOOL_ID_DESC',
+  AccountsDistinctCountStablepoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_STABLEPOOL_ID_ASC',
+  AccountsDistinctCountStablepoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_STABLEPOOL_ID_DESC',
+  AccountsDistinctCountXykPoolIdAsc = 'ACCOUNTS_DISTINCT_COUNT_XYK_POOL_ID_ASC',
+  AccountsDistinctCountXykPoolIdDesc = 'ACCOUNTS_DISTINCT_COUNT_XYK_POOL_ID_DESC',
+  AccountsMaxIdAsc = 'ACCOUNTS_MAX_ID_ASC',
+  AccountsMaxIdDesc = 'ACCOUNTS_MAX_ID_DESC',
+  AccountsMaxLbpPoolIdAsc = 'ACCOUNTS_MAX_LBP_POOL_ID_ASC',
+  AccountsMaxLbpPoolIdDesc = 'ACCOUNTS_MAX_LBP_POOL_ID_DESC',
+  AccountsMaxOmnipoolIdAsc = 'ACCOUNTS_MAX_OMNIPOOL_ID_ASC',
+  AccountsMaxOmnipoolIdDesc = 'ACCOUNTS_MAX_OMNIPOOL_ID_DESC',
+  AccountsMaxStablepoolIdAsc = 'ACCOUNTS_MAX_STABLEPOOL_ID_ASC',
+  AccountsMaxStablepoolIdDesc = 'ACCOUNTS_MAX_STABLEPOOL_ID_DESC',
+  AccountsMaxXykPoolIdAsc = 'ACCOUNTS_MAX_XYK_POOL_ID_ASC',
+  AccountsMaxXykPoolIdDesc = 'ACCOUNTS_MAX_XYK_POOL_ID_DESC',
+  AccountsMinIdAsc = 'ACCOUNTS_MIN_ID_ASC',
+  AccountsMinIdDesc = 'ACCOUNTS_MIN_ID_DESC',
+  AccountsMinLbpPoolIdAsc = 'ACCOUNTS_MIN_LBP_POOL_ID_ASC',
+  AccountsMinLbpPoolIdDesc = 'ACCOUNTS_MIN_LBP_POOL_ID_DESC',
+  AccountsMinOmnipoolIdAsc = 'ACCOUNTS_MIN_OMNIPOOL_ID_ASC',
+  AccountsMinOmnipoolIdDesc = 'ACCOUNTS_MIN_OMNIPOOL_ID_DESC',
+  AccountsMinStablepoolIdAsc = 'ACCOUNTS_MIN_STABLEPOOL_ID_ASC',
+  AccountsMinStablepoolIdDesc = 'ACCOUNTS_MIN_STABLEPOOL_ID_DESC',
+  AccountsMinXykPoolIdAsc = 'ACCOUNTS_MIN_XYK_POOL_ID_ASC',
+  AccountsMinXykPoolIdDesc = 'ACCOUNTS_MIN_XYK_POOL_ID_DESC',
+  AccountsStddevPopulationIdAsc = 'ACCOUNTS_STDDEV_POPULATION_ID_ASC',
+  AccountsStddevPopulationIdDesc = 'ACCOUNTS_STDDEV_POPULATION_ID_DESC',
+  AccountsStddevPopulationLbpPoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_LBP_POOL_ID_ASC',
+  AccountsStddevPopulationLbpPoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_LBP_POOL_ID_DESC',
+  AccountsStddevPopulationOmnipoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_OMNIPOOL_ID_ASC',
+  AccountsStddevPopulationOmnipoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_OMNIPOOL_ID_DESC',
+  AccountsStddevPopulationStablepoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_STABLEPOOL_ID_ASC',
+  AccountsStddevPopulationStablepoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_STABLEPOOL_ID_DESC',
+  AccountsStddevPopulationXykPoolIdAsc = 'ACCOUNTS_STDDEV_POPULATION_XYK_POOL_ID_ASC',
+  AccountsStddevPopulationXykPoolIdDesc = 'ACCOUNTS_STDDEV_POPULATION_XYK_POOL_ID_DESC',
+  AccountsStddevSampleIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_ID_ASC',
+  AccountsStddevSampleIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_ID_DESC',
+  AccountsStddevSampleLbpPoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_LBP_POOL_ID_ASC',
+  AccountsStddevSampleLbpPoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_LBP_POOL_ID_DESC',
+  AccountsStddevSampleOmnipoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_OMNIPOOL_ID_ASC',
+  AccountsStddevSampleOmnipoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_OMNIPOOL_ID_DESC',
+  AccountsStddevSampleStablepoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_STABLEPOOL_ID_ASC',
+  AccountsStddevSampleStablepoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_STABLEPOOL_ID_DESC',
+  AccountsStddevSampleXykPoolIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_XYK_POOL_ID_ASC',
+  AccountsStddevSampleXykPoolIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_XYK_POOL_ID_DESC',
+  AccountsSumIdAsc = 'ACCOUNTS_SUM_ID_ASC',
+  AccountsSumIdDesc = 'ACCOUNTS_SUM_ID_DESC',
+  AccountsSumLbpPoolIdAsc = 'ACCOUNTS_SUM_LBP_POOL_ID_ASC',
+  AccountsSumLbpPoolIdDesc = 'ACCOUNTS_SUM_LBP_POOL_ID_DESC',
+  AccountsSumOmnipoolIdAsc = 'ACCOUNTS_SUM_OMNIPOOL_ID_ASC',
+  AccountsSumOmnipoolIdDesc = 'ACCOUNTS_SUM_OMNIPOOL_ID_DESC',
+  AccountsSumStablepoolIdAsc = 'ACCOUNTS_SUM_STABLEPOOL_ID_ASC',
+  AccountsSumStablepoolIdDesc = 'ACCOUNTS_SUM_STABLEPOOL_ID_DESC',
+  AccountsSumXykPoolIdAsc = 'ACCOUNTS_SUM_XYK_POOL_ID_ASC',
+  AccountsSumXykPoolIdDesc = 'ACCOUNTS_SUM_XYK_POOL_ID_DESC',
+  AccountsVariancePopulationIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_ID_ASC',
+  AccountsVariancePopulationIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_ID_DESC',
+  AccountsVariancePopulationLbpPoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_LBP_POOL_ID_ASC',
+  AccountsVariancePopulationLbpPoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_LBP_POOL_ID_DESC',
+  AccountsVariancePopulationOmnipoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_OMNIPOOL_ID_ASC',
+  AccountsVariancePopulationOmnipoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_OMNIPOOL_ID_DESC',
+  AccountsVariancePopulationStablepoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_STABLEPOOL_ID_ASC',
+  AccountsVariancePopulationStablepoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_STABLEPOOL_ID_DESC',
+  AccountsVariancePopulationXykPoolIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_XYK_POOL_ID_ASC',
+  AccountsVariancePopulationXykPoolIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_XYK_POOL_ID_DESC',
+  AccountsVarianceSampleIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_ASC',
+  AccountsVarianceSampleIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_DESC',
+  AccountsVarianceSampleLbpPoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_LBP_POOL_ID_ASC',
+  AccountsVarianceSampleLbpPoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_LBP_POOL_ID_DESC',
+  AccountsVarianceSampleOmnipoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_OMNIPOOL_ID_ASC',
+  AccountsVarianceSampleOmnipoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_OMNIPOOL_ID_DESC',
+  AccountsVarianceSampleStablepoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_STABLEPOOL_ID_ASC',
+  AccountsVarianceSampleStablepoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_STABLEPOOL_ID_DESC',
+  AccountsVarianceSampleXykPoolIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_XYK_POOL_ID_ASC',
+  AccountsVarianceSampleXykPoolIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_XYK_POOL_ID_DESC',
   AccountIdAsc = 'ACCOUNT_ID_ASC',
   AccountIdDesc = 'ACCOUNT_ID_DESC',
   AssetABalanceAsc = 'ASSET_A_BALANCE_ASC',
@@ -29380,279 +26253,7 @@ export enum XykPoolsOrderBy {
   XykPoolHistoricalVolumesByPoolIdVarianceSamplePoolIdAsc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
   XykPoolHistoricalVolumesByPoolIdVarianceSamplePoolIdDesc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
   XykPoolHistoricalVolumesByPoolIdVarianceSampleRelayChainBlockHeightAsc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolHistoricalVolumesByPoolIdVarianceSampleRelayChainBlockHeightDesc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdAverageAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdAverageAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdAverageAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdAverageAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdAverageAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdAverageAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdAverageAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdAverageAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdAverageAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdAverageAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdAverageAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdAverageAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdAverageAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdAverageAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdAverageExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdAverageExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdAverageIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ID_ASC',
-  XykPoolOperationsByPoolIdAverageIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_ID_DESC',
-  XykPoolOperationsByPoolIdAverageIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdAverageIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdAverageParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdAverageParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdAveragePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdAveragePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdAverageRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdAverageRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdAverageSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdAverageSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdAverageTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_TYPE_ASC',
-  XykPoolOperationsByPoolIdAverageTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_AVERAGE_TYPE_DESC',
-  XykPoolOperationsByPoolIdCountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_COUNT_ASC',
-  XykPoolOperationsByPoolIdCountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_COUNT_DESC',
-  XykPoolOperationsByPoolIdDistinctCountAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdDistinctCountAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdDistinctCountAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdDistinctCountAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdDistinctCountAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdDistinctCountAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdDistinctCountAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdDistinctCountAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdDistinctCountAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdDistinctCountAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdDistinctCountAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdDistinctCountAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdDistinctCountAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdDistinctCountAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdDistinctCountExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdDistinctCountExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdDistinctCountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ID_ASC',
-  XykPoolOperationsByPoolIdDistinctCountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_ID_DESC',
-  XykPoolOperationsByPoolIdDistinctCountIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdDistinctCountIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdDistinctCountParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdDistinctCountParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdDistinctCountPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdDistinctCountPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdDistinctCountRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdDistinctCountRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdDistinctCountSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdDistinctCountSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdDistinctCountTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_TYPE_ASC',
-  XykPoolOperationsByPoolIdDistinctCountTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_DISTINCT_COUNT_TYPE_DESC',
-  XykPoolOperationsByPoolIdMaxAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdMaxAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdMaxAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdMaxAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdMaxAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdMaxAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdMaxAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdMaxAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdMaxAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdMaxAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdMaxAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdMaxAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdMaxAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdMaxAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdMaxExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdMaxExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdMaxIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ID_ASC',
-  XykPoolOperationsByPoolIdMaxIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_ID_DESC',
-  XykPoolOperationsByPoolIdMaxIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdMaxIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdMaxParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdMaxParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdMaxPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdMaxPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdMaxRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdMaxRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdMaxSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdMaxSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdMaxTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_TYPE_ASC',
-  XykPoolOperationsByPoolIdMaxTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MAX_TYPE_DESC',
-  XykPoolOperationsByPoolIdMinAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdMinAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdMinAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdMinAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdMinAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdMinAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdMinAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdMinAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdMinAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdMinAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdMinAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdMinAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdMinAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdMinAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdMinExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdMinExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdMinIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ID_ASC',
-  XykPoolOperationsByPoolIdMinIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_ID_DESC',
-  XykPoolOperationsByPoolIdMinIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdMinIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdMinParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdMinParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdMinPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdMinPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdMinRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdMinRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdMinSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdMinSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdMinTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_TYPE_ASC',
-  XykPoolOperationsByPoolIdMinTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_MIN_TYPE_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ID_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_ID_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdStddevPopulationTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_TYPE_ASC',
-  XykPoolOperationsByPoolIdStddevPopulationTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_POPULATION_TYPE_DESC',
-  XykPoolOperationsByPoolIdStddevSampleAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdStddevSampleAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdStddevSampleAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdStddevSampleAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdStddevSampleAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdStddevSampleAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdStddevSampleAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdStddevSampleAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdStddevSampleAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdStddevSampleAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdStddevSampleAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdStddevSampleAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdStddevSampleAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdStddevSampleAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdStddevSampleExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdStddevSampleExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdStddevSampleIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ID_ASC',
-  XykPoolOperationsByPoolIdStddevSampleIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_ID_DESC',
-  XykPoolOperationsByPoolIdStddevSampleIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdStddevSampleIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdStddevSampleParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdStddevSampleParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdStddevSamplePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdStddevSamplePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdStddevSampleRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdStddevSampleRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdStddevSampleSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdStddevSampleSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdStddevSampleTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_TYPE_ASC',
-  XykPoolOperationsByPoolIdStddevSampleTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_STDDEV_SAMPLE_TYPE_DESC',
-  XykPoolOperationsByPoolIdSumAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdSumAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdSumAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdSumAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdSumAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdSumAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdSumAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdSumAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdSumAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdSumAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdSumAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdSumAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdSumAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdSumAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdSumExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdSumExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdSumIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ID_ASC',
-  XykPoolOperationsByPoolIdSumIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_ID_DESC',
-  XykPoolOperationsByPoolIdSumIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdSumIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdSumParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdSumParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdSumPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdSumPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdSumRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdSumRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdSumSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdSumSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdSumTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_TYPE_ASC',
-  XykPoolOperationsByPoolIdSumTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_SUM_TYPE_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ID_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_ID_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationPoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationPoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdVariancePopulationTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_TYPE_ASC',
-  XykPoolOperationsByPoolIdVariancePopulationTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_POPULATION_TYPE_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleAccountIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleAccountIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetInAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetInAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetInFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetInFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_FEE_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetInIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_ID_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetInIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_IN_ID_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetOutAmountAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetOutAmountDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_AMOUNT_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetOutFeeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetOutFeeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_FEE_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetOutIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleAssetOutIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_OUT_ID_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleExtrinsicHashAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleExtrinsicHashDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_EXTRINSIC_HASH_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ID_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_ID_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleIndexInBlockAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleIndexInBlockDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_INDEX_IN_BLOCK_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleParaChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleParaChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdVarianceSamplePoolIdAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  XykPoolOperationsByPoolIdVarianceSamplePoolIdDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleRelayChainBlockHeightAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleRelayChainBlockHeightDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleSwapPriceAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_SWAP_PRICE_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleSwapPriceDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_SWAP_PRICE_DESC',
-  XykPoolOperationsByPoolIdVarianceSampleTypeAsc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_TYPE_ASC',
-  XykPoolOperationsByPoolIdVarianceSampleTypeDesc = 'XYK_POOL_OPERATIONS_BY_POOL_ID_VARIANCE_SAMPLE_TYPE_DESC'
+  XykPoolHistoricalVolumesByPoolIdVarianceSampleRelayChainBlockHeightDesc = 'XYK_POOL_HISTORICAL_VOLUMES_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC'
 }
 
 export type _ProcessorStatus = {
@@ -29675,6 +26276,13 @@ export type GetXykPoolHistoricalDataQueryVariables = Exact<{
 
 
 export type GetXykPoolHistoricalDataQuery = { __typename?: 'Query', xykPoolHistoricalData?: { __typename?: 'XykPoolHistoricalDataConnection', nodes: Array<{ __typename?: 'XykPoolHistoricalDatum', assetABalance: any, assetAId?: string | null, assetBBalance: any, assetBId?: string | null, poolId?: string | null, paraChainBlockHeight: number } | null> } | null };
+
+export type GetXykPoolSwapsDataQueryVariables = Exact<{
+  filter?: InputMaybe<SwapFilter>;
+}>;
+
+
+export type GetXykPoolSwapsDataQuery = { __typename?: 'Query', swaps?: { __typename?: 'SwapsConnection', nodes: Array<{ __typename?: 'Swap', swapperId?: string | null, fillerId?: string | null, fillerType: string, swapFees: { __typename?: 'SwapFeesConnection', nodes: Array<{ __typename?: 'SwapFee', amount: any, assetId?: string | null, recipientId?: string | null } | null> }, swapInputAssetBalances: { __typename?: 'SwapInputAssetBalancesConnection', nodes: Array<{ __typename?: 'SwapInputAssetBalance', amount: any, assetId?: string | null } | null> }, swapOutputAssetBalances: { __typename?: 'SwapOutputAssetBalancesConnection', nodes: Array<{ __typename?: 'SwapOutputAssetBalance', amount: any, assetId?: string | null } | null> } } | null> } | null };
 
 
 export const GetLbppoolHistoricalData = gql`
@@ -29709,6 +26317,36 @@ export const GetXykPoolHistoricalData = gql`
       assetBId
       poolId
       paraChainBlockHeight
+    }
+  }
+}
+    `;
+export const GetXykPoolSwapsData = gql`
+    query GetXykPoolSwapsData($filter: SwapFilter) {
+  swaps(filter: $filter) {
+    nodes {
+      swapperId
+      fillerId
+      fillerType
+      swapFees {
+        nodes {
+          amount
+          assetId
+          recipientId
+        }
+      }
+      swapInputAssetBalances {
+        nodes {
+          amount
+          assetId
+        }
+      }
+      swapOutputAssetBalances {
+        nodes {
+          amount
+          assetId
+        }
+      }
     }
   }
 }
