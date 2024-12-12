@@ -13,7 +13,7 @@ import { NodeEnv } from './utils/types';
 
 dotenv.config({
   path: (() => {
-    let envFileName = '.env';
+    let envFileName = '.env.hydration';
 
     switch (process.env.NODE_ENV as NodeEnv) {
       case NodeEnv.TEST:
