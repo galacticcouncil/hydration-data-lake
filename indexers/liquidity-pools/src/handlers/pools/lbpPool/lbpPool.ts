@@ -1,14 +1,15 @@
-import { Block, ProcessorContext } from '../../processor';
+import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { LbpPool } from '../../model';
-import { getAccount } from '../accounts';
+import { LbpPool } from '../../../model';
+import { getAccount } from '../../accounts';
 import {
   LbpPoolCreatedData,
   LbpPoolUpdatedData,
-} from '../../parsers/batchBlocksParser/types';
-import { getAssetFreeBalance } from '../assets/balances';
-import { getAsset } from '../assets/assetRegistry';
-import parsers from '../../parsers';
+} from '../../../parsers/batchBlocksParser/types';
+import { getAssetFreeBalance } from '../../assets/balances';
+import { getAsset } from '../../assets/assetRegistry';
+import parsers from '../../../parsers';
+import { ProcessorStatusManager } from '../../../utils/processorStatusManager';
 
 export async function createLbpPool({
   ctx,

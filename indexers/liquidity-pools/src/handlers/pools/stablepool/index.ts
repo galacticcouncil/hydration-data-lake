@@ -1,8 +1,8 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import { EventName } from '../../parsers/types/events';
-import { getOrderedListByBlockNumber } from '../../utils/helpers';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
+import { EventName } from '../../../parsers/types/events';
+import { getOrderedListByBlockNumber } from '../../../utils/helpers';
 import { stablepoolCreated } from './stablepool';
 
 export async function handleStablepools(

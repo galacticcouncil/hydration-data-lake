@@ -1,5 +1,5 @@
-module.exports = class Data1733936810033 {
-    name = 'Data1733936810033'
+module.exports = class Data1734019428067 {
+    name = 'Data1734019428067'
 
     async up(db) {
         await db.query(`CREATE TABLE "asset" ("id" character varying NOT NULL, "asset_type" character varying(10) NOT NULL, "name" text, "symbol" text, "decimals" integer, "xcm_rate_limit" numeric, "is_sufficient" boolean NOT NULL, "existential_deposit" numeric NOT NULL, CONSTRAINT "PK_1209d107fe21482beaea51b745e" PRIMARY KEY ("id"))`)
@@ -91,7 +91,7 @@ module.exports = class Data1733936810033 {
         await db.query(`CREATE TABLE "historical_asset_volume" ("id" character varying NOT NULL, "volume_in" numeric NOT NULL, "volume_out" numeric NOT NULL, "total_volume_in" numeric NOT NULL, "total_volume_out" numeric NOT NULL, "relay_chain_block_height" integer NOT NULL, "para_chain_block_height" integer NOT NULL, "asset_id" character varying, CONSTRAINT "PK_0d17cca83941d6abc9a889092c8" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_7cb0b020dcebaad695ed2ae044" ON "historical_asset_volume" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_8e2e52f622baa36e7116e386f9" ON "historical_asset_volume" ("para_chain_block_height") `)
-        await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_actualised_at_block" integer NOT NULL, "initial_indexing_started_at_time" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at_time" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_actualised_at_block" integer NOT NULL, "pools_destroyed_check_point_at_block" integer NOT NULL, "initial_indexing_started_at_time" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at_time" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
         await db.query(`CREATE TABLE "stablepool_asset_historical_volume" ("id" character varying NOT NULL, "swap_fee" numeric NOT NULL, "swap_total_fees" numeric NOT NULL, "liq_fee" numeric NOT NULL, "liq_total_fees" numeric NOT NULL, "routed_liq_fee" numeric NOT NULL, "routed_liq_total_fees" numeric NOT NULL, "swap_volume_in" numeric NOT NULL, "swap_volume_out" numeric NOT NULL, "swap_total_volume_in" numeric NOT NULL, "swap_total_volume_out" numeric NOT NULL, "liq_added_amount" numeric NOT NULL, "liq_removed_amount" numeric NOT NULL, "liq_added_total_amount" numeric NOT NULL, "liq_removed_total_amount" numeric NOT NULL, "routed_liq_added_amount" numeric NOT NULL, "routed_liq_removed_amount" numeric NOT NULL, "routed_liq_added_total_amount" numeric NOT NULL, "routed_liq_removed_total_amount" numeric NOT NULL, "para_chain_block_height" integer NOT NULL, "volumes_collection_id" character varying, "asset_id" character varying, CONSTRAINT "PK_f29e4428893d4cea7bae0d936ce" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_81822becf0ad9be5c5cad9d00c" ON "stablepool_asset_historical_volume" ("volumes_collection_id") `)
         await db.query(`CREATE INDEX "IDX_f3b6d9097e92c733ba6d27f8a6" ON "stablepool_asset_historical_volume" ("asset_id") `)

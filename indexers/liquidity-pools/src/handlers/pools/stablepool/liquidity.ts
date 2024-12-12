@@ -1,18 +1,18 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   StableswapLiquidityAddedData,
   StableswapLiquidityRemovedData,
-} from '../../parsers/batchBlocksParser/types';
+} from '../../../parsers/batchBlocksParser/types';
 import {
   LiquidityActionType,
   StablepoolAssetLiquidityAmount,
   StablepoolLiquidityAction,
-} from '../../model';
+} from '../../../model';
 import { getStablepool } from './stablepool';
-import { EventName } from '../../parsers/types/events';
-import { getAsset } from '../assets/assetRegistry';
-import { handleStablepoolVolumeUpdates } from '../volumes/stablepoolVolume';
+import { EventName } from '../../../parsers/types/events';
+import { getAsset } from '../../assets/assetRegistry';
+import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
 
 export async function stablepoolLiquidityAddedRemoved(
   ctx: ProcessorContext<Store>,

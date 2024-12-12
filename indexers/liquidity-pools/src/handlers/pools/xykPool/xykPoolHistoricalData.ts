@@ -1,8 +1,8 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import parsers from '../../parsers';
-import { XykPoolHistoricalData } from '../../model';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
+import parsers from '../../../parsers';
+import { XykPoolHistoricalData } from '../../../model';
 import { getXykPool } from './xykPool';
 
 export async function handleXykPoolHistoricalData(

@@ -2,26 +2,28 @@ import { TypeormDatabase, Store } from '@subsquid/typeorm-store';
 
 import { processor, ProcessorContext } from './processor';
 import { BatchState } from './utils/batchState';
-import { handlePools } from './handlers/isolatedPool';
 import { handleTransfers } from './handlers/transfers';
 import { getParsedEventsData } from './parsers/batchBlocksParser';
 import { AppConfig } from './appConfig';
-import { handlePoolPrices } from './handlers/prices';
-import { handleOmnipoolAssets } from './handlers/omnipool';
-import { ensureOmnipool } from './handlers/omnipool/omnipool';
-import { handleBuySellOperations } from './handlers/operations';
-import { handleStablepools } from './handlers/stablepool';
+import { handleOmnipoolAssets } from './handlers/pools/omnipool';
+import { ensureOmnipool } from './handlers/pools/omnipool/omnipool';
+import { handleBuySellOperations } from './handlers/buySellOperations';
+import { handleStablepools } from './handlers/pools/stablepool';
 import { handleAssetRegistry } from './handlers/assets';
 import { StorageResolver } from './parsers/storageResolver';
-import { handleStablepoolHistoricalData } from './handlers/stablepool/historicalData';
-import { handleOmnipoolAssetHistoricalData } from './handlers/omnipool/historicalData';
-import { handleXykPoolHistoricalData } from './handlers/isolatedPool/xykPoolHistoricalData';
-import { handleLbpPoolHistoricalData } from './handlers/isolatedPool/lbpPoolHistoricalData';
+import { handleStablepoolHistoricalData } from './handlers/pools/stablepool/historicalData';
+import { handleOmnipoolAssetHistoricalData } from './handlers/pools/omnipool/historicalData';
 import {
   actualiseAssets,
   ensureNativeToken,
   prefetchAllAssets,
 } from './handlers/assets/assetRegistry';
+import { handleXykPoolHistoricalData } from './handlers/pools/xykPool/xykPoolHistoricalData';
+import { handleLbpPoolHistoricalData } from './handlers/pools/lbpPool/lbpPoolHistoricalData';
+import { handleXykPools } from './handlers/pools/xykPool';
+import { handleLbpPools } from './handlers/pools/lbpPool';
+import { ProcessorStatusManager } from './utils/processorStatusManager';
+import { ensurePoolsDestroyedStatus } from './handlers/pools/support';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -57,7 +59,14 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     parsedData
   );
 
-  await handlePools(ctxWithBatchState as ProcessorContext<Store>, parsedData);
+  await handleLbpPools(
+    ctxWithBatchState as ProcessorContext<Store>,
+    parsedData
+  );
+  await handleXykPools(
+    ctxWithBatchState as ProcessorContext<Store>,
+    parsedData
+  );
 
   await ensureOmnipool(ctxWithBatchState as ProcessorContext<Store>);
   await handleOmnipoolAssets(
@@ -110,4 +119,18 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     parsedData
   );
   console.timeEnd('handleLbpPoolHistoricalData');
+
+  await ensurePoolsDestroyedStatus(
+    ctxWithBatchState as ProcessorContext<Store>
+  );
+
+  const statusManager = ProcessorStatusManager.getInstance(
+    ctxWithBatchState as ProcessorContext<Store>
+  );
+  const currentStatus = await statusManager.getStatus();
+
+  if (ctx.isHead && !currentStatus.initialIndexingFinishedAtTime)
+    await statusManager.updateProcessorStatus({
+      initialIndexingFinishedAtTime: new Date(),
+    });
 });

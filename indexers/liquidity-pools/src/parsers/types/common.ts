@@ -43,6 +43,7 @@ import {
   StablepoolInfo,
   SystemAccountInfo,
   TokensAccountsAssetBalances,
+  TokensGetTokenTotalIssuanceInput,
   XykGetAssetsInput,
   XykGetShareTokenInput,
   XykPoolWithAssets,
@@ -130,6 +131,9 @@ export type StorageParserMethods = {
       assetId: number,
       block: BlockHeader
     ) => Promise<TokensAccountsAssetBalances | null>;
+    getTokenTotalIssuance: (
+      args: TokensGetTokenTotalIssuanceInput
+    ) => Promise<bigint | null>;
   };
   assetRegistry: {
     getAsset: (

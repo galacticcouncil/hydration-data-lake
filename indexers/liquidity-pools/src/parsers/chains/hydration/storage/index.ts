@@ -31,7 +31,10 @@ import {
 
 export default {
   system,
-  tokens,
+  tokens: {
+    ...tokens,
+    getTokenTotalIssuance: tokens.getTokenTotalIssuance,
+  },
   assetRegistry,
   parachainSystem,
   stableswap: {

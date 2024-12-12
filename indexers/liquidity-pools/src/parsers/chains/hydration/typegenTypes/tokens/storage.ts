@@ -1,6 +1,31 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v108 from '../v108'
 
+export const totalIssuance =  {
+    /**
+     *  The total issuance of a token type.
+     */
+    v108: new StorageType('Tokens.TotalIssuance', 'Default', [sts.number()], sts.bigint()) as TotalIssuanceV108,
+}
+
+/**
+ *  The total issuance of a token type.
+ */
+export interface TotalIssuanceV108  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): bigint
+    get(block: Block, key: number): Promise<(bigint | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(bigint | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (bigint | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (bigint | undefined)][]>
+}
+
 export const accounts =  {
     /**
      *  The balance of a token type under an account.

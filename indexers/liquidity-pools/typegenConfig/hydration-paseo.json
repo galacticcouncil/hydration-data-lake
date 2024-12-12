@@ -14,7 +14,7 @@
     },
     "Tokens": {
       "events": ["Transfer"],
-      "storage": ["Accounts"]
+      "storage": ["Accounts", "TotalIssuance"]
     },
     "ParachainSystem": {
       "calls": ["set_validation_data"],

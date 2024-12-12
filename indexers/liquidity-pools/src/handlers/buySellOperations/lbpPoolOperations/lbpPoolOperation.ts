@@ -2,25 +2,25 @@ import { SwapFillerType, TradeOperationType } from '../../../model';
 import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
-  XykBuyExecutedData,
-  XykSellExecutedData,
+  LbpBuyExecutedData,
+  LbpSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { handleXykPoolVolumeUpdates } from '../../volumes';
+import { handleLbpPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
-import { getXykPool } from '../../isolatedPool/xykPool';
 import { handleSellBuyAsSwap } from '../../swap/swap';
+import { getLbpPoolByAssets } from '../../pools/lbpPool/lbpPool';
 
-export async function xykBuyExecuted(
+export async function lpbBuyExecuted(
   ctx: ProcessorContext<Store>,
-  eventCallData: XykBuyExecutedData
+  eventCallData: LbpBuyExecutedData
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = await getXykPool({
+  const pool = await getLbpPoolByAssets({
     ctx,
-    id: eventParams.pool,
+    assetIds: [eventParams.assetIn, eventParams.assetOut],
     ensure: true,
     blockHeader: eventCallData.eventData.metadata.blockHeader,
   });
@@ -41,7 +41,7 @@ export async function xykBuyExecuted(
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       poolAccountId: pool.id,
-      poolType: SwapFillerType.XYK,
+      poolType: SwapFillerType.LBP,
       assetInId: `${eventParams.assetIn}`,
       assetOutId: `${eventParams.assetOut}`,
       amountIn: eventParams.buyPrice,
@@ -60,7 +60,7 @@ export async function xykBuyExecuted(
     },
   });
 
-  await handleXykPoolVolumeUpdates({
+  await handleLbpPoolVolumeUpdates({
     ctx,
     swap,
     pool,
@@ -76,17 +76,17 @@ export async function xykBuyExecuted(
   });
 }
 
-export async function xykSellExecuted(
+export async function lpbSellExecuted(
   ctx: ProcessorContext<Store>,
-  eventCallData: XykSellExecutedData
+  eventCallData: LbpSellExecutedData
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = await getXykPool({
+  const pool = await getLbpPoolByAssets({
     ctx,
-    id: eventParams.pool,
+    assetIds: [eventParams.assetIn, eventParams.assetOut],
     ensure: true,
     blockHeader: eventCallData.eventData.metadata.blockHeader,
   });
@@ -107,7 +107,7 @@ export async function xykSellExecuted(
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       poolAccountId: pool.id,
-      poolType: SwapFillerType.XYK,
+      poolType: SwapFillerType.LBP,
       assetInId: `${eventParams.assetIn}`,
       assetOutId: `${eventParams.assetOut}`,
       amountIn: eventParams.amount,
@@ -126,7 +126,7 @@ export async function xykSellExecuted(
     },
   });
 
-  await handleXykPoolVolumeUpdates({
+  await handleLbpPoolVolumeUpdates({
     ctx,
     swap,
     pool,

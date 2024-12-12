@@ -16,6 +16,9 @@ export class ProcessorStatus {
   @Column_("int4", {nullable: false})
   assetsActualisedAtBlock!: number
 
+  @Column_("int4", {nullable: false})
+  poolsDestroyedCheckPointAtBlock!: number
+
   @Column_("timestamp with time zone", {nullable: false})
   initialIndexingStartedAtTime!: Date
 

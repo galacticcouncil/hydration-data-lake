@@ -1,12 +1,10 @@
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import {
-  handleLbpPoolOperations,
-  handleXykPoolOperations,
-} from './isolatedPoolsOperations';
 import { handleOmnioolOperations } from './omnipoolOperations';
 import { handleStablepoolOperations } from './stablepoolOperations';
+import { handleLbpPoolOperations } from './lbpPoolOperations';
+import { handleXykPoolOperations } from './xykPoolOperations';
 
 export async function handleBuySellOperations(
   ctx: ProcessorContext<Store>,

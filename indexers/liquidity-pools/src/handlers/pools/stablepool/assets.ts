@@ -1,6 +1,6 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Stablepool, StablepoolAsset } from '../../model';
+import { Stablepool, StablepoolAsset } from '../../../model';
 
 export async function getAssetsByStablepool(
   ctx: ProcessorContext<Store>,

@@ -1,8 +1,8 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Omnipool, OmnipoolAsset } from '../../model';
-import { getAccount } from '../accounts';
-import { getAsset } from '../assets/assetRegistry';
+import { Omnipool, OmnipoolAsset } from '../../../model';
+import { getAccount } from '../../accounts';
+import { getAsset } from '../../assets/assetRegistry';
 
 export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
   if (ctx.batchState.state.omnipoolEntity) return;

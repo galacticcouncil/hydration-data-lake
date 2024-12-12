@@ -1,9 +1,9 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import parsers from '../../parsers';
-import { OmnipoolAssetHistoricalData } from '../../model';
-import { getAsset } from '../assets/assetRegistry';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
+import parsers from '../../../parsers';
+import { OmnipoolAssetHistoricalData } from '../../../model';
+import { getAsset } from '../../assets/assetRegistry';
 import { getOmnipoolAsset } from './omnipoolAssets';
 
 export async function handleOmnipoolAssetHistoricalData(

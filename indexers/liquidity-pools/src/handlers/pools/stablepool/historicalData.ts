@@ -1,15 +1,15 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import parsers from '../../parsers';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
+import parsers from '../../../parsers';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import { StableMath } from '@galacticcouncil/sdk';
 import {
   StablepoolAssetHistoricalData,
   StablepoolHistoricalData,
-} from '../../model';
+} from '../../../model';
 import { getStablepool } from './stablepool';
-import { getAsset } from '../assets/assetRegistry';
+import { getAsset } from '../../assets/assetRegistry';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
 async function getStablepoolDataPromise({

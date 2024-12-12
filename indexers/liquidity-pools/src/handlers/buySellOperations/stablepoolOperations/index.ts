@@ -11,8 +11,8 @@ import {
 } from '../../../parsers/batchBlocksParser/types';
 import { SwapFillerType, TradeOperationType } from '../../../model';
 import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
-import { getStablepool } from '../../stablepool/stablepool';
-import { stablepoolLiquidityAddedRemoved } from '../../stablepool/liquidity';
+import { getStablepool } from '../../pools/stablepool/stablepool';
+import { stablepoolLiquidityAddedRemoved } from '../../pools/stablepool/liquidity';
 import { handleSellBuyAsSwap } from '../../swap/swap';
 
 export async function handleStablepoolOperations(

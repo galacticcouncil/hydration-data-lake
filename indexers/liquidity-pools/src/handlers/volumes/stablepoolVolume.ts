@@ -14,7 +14,7 @@ import {
   getOldStablepoolAssetVolume,
   getPoolAssetLastVolumeFromCache,
 } from './index';
-import { getAssetsByStablepool } from '../stablepool/assets';
+import { getAssetsByStablepool } from '../pools/stablepool/assets';
 
 // TODO improve conditional usage with poolOperation and liquidityAction
 export async function handleStablepoolVolumeUpdates({

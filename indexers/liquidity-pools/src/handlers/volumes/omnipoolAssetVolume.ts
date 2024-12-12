@@ -9,7 +9,7 @@ import {
   getOldOmnipoolAssetVolume,
   getPoolAssetLastVolumeFromCache,
 } from './index';
-import { getOmnipoolAsset } from '../omnipool/omnipoolAssets';
+import { getOmnipoolAsset } from '../pools/omnipool/omnipoolAssets';
 
 export function initOmnipoolAssetVolume({
   swap,

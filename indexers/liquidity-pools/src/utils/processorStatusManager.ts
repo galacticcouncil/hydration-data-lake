@@ -35,6 +35,7 @@ export class ProcessorStatusManager {
     statusEntity = new ProcessorStatus({
       id: '1',
       assetsActualisedAtBlock: -1,
+      poolsDestroyedCheckPointAtBlock: -1,
       initialIndexingStartedAtTime: new Date(),
       initialIndexingFinishedAtTime: this.ctx.isHead ? new Date() : null,
     });
@@ -55,6 +56,9 @@ export class ProcessorStatusManager {
     if (payload.initialIndexingFinishedAtTime)
       status.initialIndexingFinishedAtTime =
         payload.initialIndexingFinishedAtTime;
+    if (payload.poolsDestroyedCheckPointAtBlock)
+      status.poolsDestroyedCheckPointAtBlock =
+        payload.poolsDestroyedCheckPointAtBlock;
 
     await this.ctx.store.save(status);
   }

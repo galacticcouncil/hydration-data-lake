@@ -131,3 +131,8 @@ export type LbpGetPoolDataInput = {
 export type LbpGetAllPoolsDataInput = {
   block: BlockHeader;
 };
+
+export type TokensGetTokenTotalIssuanceInput = {
+  tokenId: number;
+  block: BlockHeader;
+};

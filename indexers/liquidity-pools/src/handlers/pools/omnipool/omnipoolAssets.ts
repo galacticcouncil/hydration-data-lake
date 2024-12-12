@@ -1,11 +1,11 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { OmnipoolAsset } from '../../model';
+import { OmnipoolAsset } from '../../../model';
 import {
   OmnipoolTokenAddedData,
   OmnipoolTokenRemovedData,
-} from '../../parsers/batchBlocksParser/types';
-import { getAsset } from '../assets/assetRegistry';
+} from '../../../parsers/batchBlocksParser/types';
+import { getAsset } from '../../assets/assetRegistry';
 
 export async function getOmnipoolAsset(
   ctx: ProcessorContext<Store>,

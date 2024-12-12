@@ -1,14 +1,14 @@
-import { ProcessorContext } from '../../processor';
+import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, Stablepool, StablepoolAsset } from '../../model';
-import { getAccount } from '../accounts';
-import { StableswapPoolCreatedData } from '../../parsers/batchBlocksParser/types';
+import { Asset, Stablepool, StablepoolAsset } from '../../../model';
+import { getAccount } from '../../accounts';
+import { StableswapPoolCreatedData } from '../../../parsers/batchBlocksParser/types';
 
 import { StableMath } from '@galacticcouncil/sdk';
 import { blake2AsHex, encodeAddress } from '@polkadot/util-crypto';
-import { isNotNullOrUndefined } from '../../utils/helpers';
-import { getAsset } from '../assets/assetRegistry';
-import { getAssetFreeBalance } from '../assets/balances';
+import { isNotNullOrUndefined } from '../../../utils/helpers';
+import { getAsset } from '../../assets/assetRegistry';
+import { getAssetFreeBalance } from '../../assets/balances';
 
 export async function getStablepool(
   ctx: ProcessorContext<Store>,

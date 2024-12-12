@@ -31350,6 +31350,7 @@ type ProcessorStatusesConnection {
 type ProcessorStatus {
   id: String!
   assetsActualisedAtBlock: Int!
+  poolsDestroyedCheckPointAtBlock: Int!
   initialIndexingStartedAtTime: Datetime!
   initialIndexingFinishedAtTime: Datetime
 }
@@ -31415,6 +31416,9 @@ type ProcessorStatusAggregates {
 type ProcessorStatusSumAggregates {
   """Sum of assetsActualisedAtBlock across the matching connection"""
   assetsActualisedAtBlock: BigInt!
+
+  """Sum of poolsDestroyedCheckPointAtBlock across the matching connection"""
+  poolsDestroyedCheckPointAtBlock: BigInt!
 }
 
 type ProcessorStatusDistinctCountAggregates {
@@ -31425,6 +31429,11 @@ type ProcessorStatusDistinctCountAggregates {
   Distinct count of assetsActualisedAtBlock across the matching connection
   """
   assetsActualisedAtBlock: BigInt
+
+  """
+  Distinct count of poolsDestroyedCheckPointAtBlock across the matching connection
+  """
+  poolsDestroyedCheckPointAtBlock: BigInt
 
   """
   Distinct count of initialIndexingStartedAtTime across the matching connection
@@ -31440,16 +31449,31 @@ type ProcessorStatusDistinctCountAggregates {
 type ProcessorStatusMinAggregates {
   """Minimum of assetsActualisedAtBlock across the matching connection"""
   assetsActualisedAtBlock: Int
+
+  """
+  Minimum of poolsDestroyedCheckPointAtBlock across the matching connection
+  """
+  poolsDestroyedCheckPointAtBlock: Int
 }
 
 type ProcessorStatusMaxAggregates {
   """Maximum of assetsActualisedAtBlock across the matching connection"""
   assetsActualisedAtBlock: Int
+
+  """
+  Maximum of poolsDestroyedCheckPointAtBlock across the matching connection
+  """
+  poolsDestroyedCheckPointAtBlock: Int
 }
 
 type ProcessorStatusAverageAggregates {
   """Mean average of assetsActualisedAtBlock across the matching connection"""
   assetsActualisedAtBlock: BigFloat
+
+  """
+  Mean average of poolsDestroyedCheckPointAtBlock across the matching connection
+  """
+  poolsDestroyedCheckPointAtBlock: BigFloat
 }
 
 type ProcessorStatusStddevSampleAggregates {
@@ -31457,6 +31481,11 @@ type ProcessorStatusStddevSampleAggregates {
   Sample standard deviation of assetsActualisedAtBlock across the matching connection
   """
   assetsActualisedAtBlock: BigFloat
+
+  """
+  Sample standard deviation of poolsDestroyedCheckPointAtBlock across the matching connection
+  """
+  poolsDestroyedCheckPointAtBlock: BigFloat
 }
 
 type ProcessorStatusStddevPopulationAggregates {
@@ -31464,6 +31493,11 @@ type ProcessorStatusStddevPopulationAggregates {
   Population standard deviation of assetsActualisedAtBlock across the matching connection
   """
   assetsActualisedAtBlock: BigFloat
+
+  """
+  Population standard deviation of poolsDestroyedCheckPointAtBlock across the matching connection
+  """
+  poolsDestroyedCheckPointAtBlock: BigFloat
 }
 
 type ProcessorStatusVarianceSampleAggregates {
@@ -31471,6 +31505,11 @@ type ProcessorStatusVarianceSampleAggregates {
   Sample variance of assetsActualisedAtBlock across the matching connection
   """
   assetsActualisedAtBlock: BigFloat
+
+  """
+  Sample variance of poolsDestroyedCheckPointAtBlock across the matching connection
+  """
+  poolsDestroyedCheckPointAtBlock: BigFloat
 }
 
 type ProcessorStatusVariancePopulationAggregates {
@@ -31478,11 +31517,17 @@ type ProcessorStatusVariancePopulationAggregates {
   Population variance of assetsActualisedAtBlock across the matching connection
   """
   assetsActualisedAtBlock: BigFloat
+
+  """
+  Population variance of poolsDestroyedCheckPointAtBlock across the matching connection
+  """
+  poolsDestroyedCheckPointAtBlock: BigFloat
 }
 
 """Grouping methods for `ProcessorStatus` for usage during aggregation."""
 enum ProcessorStatusGroupBy {
   ASSETS_ACTUALISED_AT_BLOCK
+  POOLS_DESTROYED_CHECK_POINT_AT_BLOCK
   INITIAL_INDEXING_STARTED_AT_TIME
   INITIAL_INDEXING_STARTED_AT_TIME_TRUNCATED_TO_HOUR
   INITIAL_INDEXING_STARTED_AT_TIME_TRUNCATED_TO_DAY
@@ -31508,54 +31553,63 @@ input ProcessorStatusHavingInput {
 
 input ProcessorStatusHavingSumInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
 
 input ProcessorStatusHavingDistinctCountInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
 
 input ProcessorStatusHavingMinInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
 
 input ProcessorStatusHavingMaxInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
 
 input ProcessorStatusHavingAverageInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
 
 input ProcessorStatusHavingStddevSampleInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
 
 input ProcessorStatusHavingStddevPopulationInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
 
 input ProcessorStatusHavingVarianceSampleInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
 
 input ProcessorStatusHavingVariancePopulationInput {
   assetsActualisedAtBlock: HavingIntFilter
+  poolsDestroyedCheckPointAtBlock: HavingIntFilter
   initialIndexingStartedAtTime: HavingDatetimeFilter
   initialIndexingFinishedAtTime: HavingDatetimeFilter
 }
@@ -31567,6 +31621,8 @@ enum ProcessorStatusesOrderBy {
   ID_DESC
   ASSETS_ACTUALISED_AT_BLOCK_ASC
   ASSETS_ACTUALISED_AT_BLOCK_DESC
+  POOLS_DESTROYED_CHECK_POINT_AT_BLOCK_ASC
+  POOLS_DESTROYED_CHECK_POINT_AT_BLOCK_DESC
   INITIAL_INDEXING_STARTED_AT_TIME_ASC
   INITIAL_INDEXING_STARTED_AT_TIME_DESC
   INITIAL_INDEXING_FINISHED_AT_TIME_ASC
@@ -31585,6 +31641,11 @@ input ProcessorStatusCondition {
 
   """Checks for equality with the object’s `assetsActualisedAtBlock` field."""
   assetsActualisedAtBlock: Int
+
+  """
+  Checks for equality with the object’s `poolsDestroyedCheckPointAtBlock` field.
+  """
+  poolsDestroyedCheckPointAtBlock: Int
 
   """
   Checks for equality with the object’s `initialIndexingStartedAtTime` field.
@@ -31606,6 +31667,9 @@ input ProcessorStatusFilter {
 
   """Filter by the object’s `assetsActualisedAtBlock` field."""
   assetsActualisedAtBlock: IntFilter
+
+  """Filter by the object’s `poolsDestroyedCheckPointAtBlock` field."""
+  poolsDestroyedCheckPointAtBlock: IntFilter
 
   """Filter by the object’s `initialIndexingStartedAtTime` field."""
   initialIndexingStartedAtTime: DatetimeFilter

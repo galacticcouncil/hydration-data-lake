@@ -82,6 +82,7 @@ type ProcessorStatus @entity {
   "1"
   id: ID!
   assetsActualisedAtBlock: Int!
+  poolsDestroyedCheckPointAtBlock: Int!
   initialIndexingStartedAtTime: DateTime!
   initialIndexingFinishedAtTime: DateTime
 }

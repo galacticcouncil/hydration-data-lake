@@ -1,11 +1,14 @@
-import { Block, ProcessorContext } from '../../processor';
+import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { LbpPool, XykPool } from '../../model';
-import { getAccount } from '../accounts';
-import { XykPoolCreatedData } from '../../parsers/batchBlocksParser/types';
-import { getAssetFreeBalance } from '../assets/balances';
-import { getAsset } from '../assets/assetRegistry';
-import parsers from '../../parsers';
+import { LbpPool, XykPool } from '../../../model';
+import { getAccount } from '../../accounts';
+import {
+  XykPoolCreatedData,
+  XykPoolDestroyedData,
+} from '../../../parsers/batchBlocksParser/types';
+import { getAssetFreeBalance } from '../../assets/balances';
+import { getAsset } from '../../assets/assetRegistry';
+import parsers from '../../../parsers';
 
 export async function createXykPool({
   ctx,
@@ -201,6 +204,34 @@ export async function xykPoolCreated(
 
   ctx.batchState.state = {
     accounts: state.accounts,
+    xykPoolIdsToSave: state.xykPoolIdsToSave,
+    xykAllBatchPools: state.xykAllBatchPools,
+  };
+}
+
+export async function xykPoolDestroyed(
+  ctx: ProcessorContext<Store>,
+  eventCallData: XykPoolDestroyedData
+) {
+  const {
+    eventData: { params: eventParams, metadata: eventMetadata },
+  } = eventCallData;
+
+  const pool = await ctx.store.findOne(XykPool, {
+    where: { id: eventParams.pool },
+  });
+
+  if (!pool) return;
+
+  pool.isDestroyed = true;
+  pool.destroyedAtParaBlock = eventMetadata.blockHeader.height;
+
+  const state = ctx.batchState.state;
+
+  state.xykPoolIdsToSave.add(pool.id);
+  state.xykAllBatchPools.set(pool.id, pool);
+
+  ctx.batchState.state = {
     xykPoolIdsToSave: state.xykPoolIdsToSave,
     xykAllBatchPools: state.xykAllBatchPools,
   };
