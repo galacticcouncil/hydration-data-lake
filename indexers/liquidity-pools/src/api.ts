@@ -42,6 +42,9 @@ const postgraphileInstance = postgraphile(
   },
   'public',
   {
+    pgSettings: {
+      transaction_isolation: 'READ COMMITTED',
+    },
     graphiql: true,
     watchPg: true,
     showErrorStack: false,
