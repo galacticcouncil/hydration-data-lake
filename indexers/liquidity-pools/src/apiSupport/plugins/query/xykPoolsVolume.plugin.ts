@@ -63,7 +63,6 @@ export async function handleQueryXykPoolHistoricalVolumesByPeriod(
           assetBId: group[0].asset_b_id,
           assetBVolume: BigInt(0),
         };
-
         // Should not occur in normal conditions because SQL query will return
         // either 2 elements in the group or nothing.
         if (group.length === 1) return resp;
@@ -84,20 +83,16 @@ export async function handleQueryXykPoolHistoricalVolumesByPeriod(
         resp.assetAVolume =
           BigInt(group[1].asset_a_total_volume_in) +
           BigInt(group[1].asset_a_total_volume_out) -
-
           BigInt(group[0].asset_a_total_volume_in) -
           BigInt(group[0].asset_a_total_volume_out) +
-
           BigInt(group[0].asset_a_volume_in) +
           BigInt(group[0].asset_a_volume_out);
 
         resp.assetBVolume =
           BigInt(group[1].asset_b_total_volume_in) +
           BigInt(group[1].asset_b_total_volume_out) -
-
           BigInt(group[0].asset_b_total_volume_in) -
           BigInt(group[0].asset_b_total_volume_out) +
-
           BigInt(group[0].asset_b_volume_in) +
           BigInt(group[0].asset_b_volume_out);
         return resp;

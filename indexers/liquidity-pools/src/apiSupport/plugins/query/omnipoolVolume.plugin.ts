@@ -7,9 +7,10 @@ import {
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../sql/omnipoolAssetsVolume.sql';
+import { getAllOmnipoolAssets } from '../sql/omnipoolAssetsAll.sql';
 
 type OmnipoolAssetVolumesByPeriodFilter = {
-  omnipoolAssetIds: string[];
+  omnipoolAssetIds?: string[];
   startBlockNumber: number;
   endBlockNumber?: number;
 };
@@ -30,7 +31,8 @@ export async function handleQueryOmnipoolAssetHistoricalVolumesByPeriod(
   parentObject: any,
   args: { filter: OmnipoolAssetVolumesByPeriodFilter },
   context: QueryResolverContext,
-  info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
+  info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> },
+  omnipoolAddress: string
 ): Promise<XykPoolVolumesByPeriodResponse> {
   const pgClient: pg.Client = context.pgClient;
 
@@ -39,16 +41,34 @@ export async function handleQueryOmnipoolAssetHistoricalVolumesByPeriod(
   });
 
   const {
-    filter: { omnipoolAssetIds, startBlockNumber, endBlockNumber },
+    filter: {
+      omnipoolAssetIds: omnipoolAssetIdsFilter,
+      startBlockNumber,
+      endBlockNumber: endBlockNumberFilter,
+    },
   } = args;
 
   const squidStatus = (
     await pgClient.query(`SELECT height FROM squid_processor.status`)
   ).rows[0];
 
+  const endBlockNumber = endBlockNumberFilter ?? squidStatus.height;
+
+  let omnipoolAssetIds = omnipoolAssetIdsFilter;
+
+  if (!omnipoolAssetIds) {
+    const allOminipoolAssetsForBlocksRange = await pgClient.query<{
+      id: string;
+    }>(getAllOmnipoolAssets, [omnipoolAddress, endBlockNumber]);
+
+    omnipoolAssetIds = allOminipoolAssetsForBlocksRange.rows
+      .map((row) => row.id)
+      .filter((id) => id !== `${omnipoolAddress}-1`);
+  }
+
   const groupedResult = await pgClient.query(
     aggregateOmnipoolAssetsVolumesByBlocksRange,
-    [omnipoolAssetIds, startBlockNumber, endBlockNumber ?? squidStatus.height]
+    [omnipoolAssetIds, startBlockNumber, endBlockNumber]
   );
 
   const decoratedNodes = new Map<string, OmnipoolAssetVolumeAggregated>(
@@ -115,7 +135,7 @@ export const OmnipoolAssetVolumePlugin: Plugin = makeExtendSchemaPlugin(
     return {
       typeDefs: gql`
         input OmnipoolAssetVolumesByPeriodFilter {
-          omnipoolAssetIds: [String!]!
+          omnipoolAssetIds: [String!]
           startBlockNumber: Int!
           endBlockNumber: Int
         }
@@ -140,8 +160,19 @@ export const OmnipoolAssetVolumePlugin: Plugin = makeExtendSchemaPlugin(
       `,
       resolvers: {
         Query: {
-          omnipoolAssetHistoricalVolumesByPeriod:
-            handleQueryOmnipoolAssetHistoricalVolumesByPeriod,
+          omnipoolAssetHistoricalVolumesByPeriod: async (
+            parentObject: any,
+            args: { filter: OmnipoolAssetVolumesByPeriodFilter },
+            context: QueryResolverContext,
+            info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
+          ) =>
+            handleQueryOmnipoolAssetHistoricalVolumesByPeriod(
+              parentObject,
+              args,
+              context,
+              info,
+              options.omnipoolAddress
+            ),
         },
       },
     };

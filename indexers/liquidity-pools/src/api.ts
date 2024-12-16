@@ -70,6 +70,7 @@ const postgraphileInstance = postgraphile(
       : undefined,
     graphileBuildOptions: {
       stateSchemas: ['squid_processor'],
+      omnipoolAddress: appConfig.OMNIPOOL_ADDRESS,
     },
     allowExplain: true,
     exportGqlSchemaPath: getEnvPath('apiSupport/schema.graphql'),

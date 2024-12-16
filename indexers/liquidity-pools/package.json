@@ -10,7 +10,7 @@
     "build": "rm -rf lib && tsc",
     "node-pg-migrate": "node-pg-migrate",
     "postbuild": "cpx 'src/**/*.sql' lib && cpx 'src/**/*.graphql' lib",
-    "deploy-main": "sqd deploy --org galacticcouncil . -m deployment-xyk-pools-indexer.yaml",
+    "deploy-hydration": "sqd deploy --org galacticcouncil . -m deployment-hydration-indexer.yaml",
     "ingester-codegen:all": ". ./scripts/ingester-codegen.sh",
     "multi-typegen": ". ./scripts/typegen.sh",
     "api-codegen:dictionary-api": "graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts",
