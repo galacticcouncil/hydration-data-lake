@@ -219,6 +219,11 @@ export async function xykPoolDestroyed(
 
   const pool = await ctx.store.findOne(XykPool, {
     where: { id: eventParams.pool },
+    relations: {
+      assetA: true,
+      assetB: true,
+      account: true,
+    },
   });
 
   if (!pool) return;

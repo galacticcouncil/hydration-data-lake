@@ -50,7 +50,7 @@ export async function xykBuyExecuted(
         {
           amount: eventParams.feeAmount,
           assetId: `${eventParams.feeAsset}`,
-          recipientId: pool.account.id,
+          recipientId: pool.id,
         },
       ],
       operationType: TradeOperationType.ExactOut,
@@ -116,7 +116,7 @@ export async function xykSellExecuted(
         {
           amount: eventParams.feeAmount,
           assetId: `${eventParams.feeAsset}`,
-          recipientId: pool.account.id,
+          recipientId: pool.id,
         },
       ],
       operationType: TradeOperationType.ExactIn,
