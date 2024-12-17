@@ -18,3 +18,7 @@ export async function getAccount(
   }
   return acc;
 }
+
+export async function saveAllBatchAccounts(ctx: ProcessorContext<Store>) {
+  await ctx.store.save([...ctx.batchState.state.accounts.values()]);
+}

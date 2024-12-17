@@ -24,6 +24,7 @@ import { handleXykPools } from './handlers/pools/xykPool';
 import { handleLbpPools } from './handlers/pools/lbpPool';
 import { ProcessorStatusManager } from './utils/processorStatusManager';
 import { ensurePoolsDestroyedStatus } from './handlers/pools/support';
+import { saveAllBatchAccounts } from './handlers/accounts';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -124,13 +125,9 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     ctxWithBatchState as ProcessorContext<Store>
   );
 
-  const statusManager = ProcessorStatusManager.getInstance(
+  await saveAllBatchAccounts(ctxWithBatchState as ProcessorContext<Store>);
+
+  await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(
     ctxWithBatchState as ProcessorContext<Store>
   );
-  const currentStatus = await statusManager.getStatus();
-
-  if (ctx.isHead && !currentStatus.initialIndexingFinishedAtTime)
-    await statusManager.updateProcessorStatus({
-      initialIndexingFinishedAtTime: new Date(),
-    });
 });

@@ -16,6 +16,18 @@ export class ProcessorStatusManager {
     return ProcessorStatusManager.instance;
   }
 
+  static async updateInitialIndexingFinishedAtTime(
+    ctx: ProcessorContext<Store>
+  ) {
+    const statusManager = ProcessorStatusManager.getInstance(ctx);
+    const currentStatus = await statusManager.getStatus();
+
+    if (ctx.isHead && !currentStatus.initialIndexingFinishedAtTime)
+      await statusManager.updateProcessorStatus({
+        initialIndexingFinishedAtTime: new Date(),
+      });
+  }
+
   initCtx(ctx: ProcessorContext<Store>) {
     this.ctx = ctx;
   }
