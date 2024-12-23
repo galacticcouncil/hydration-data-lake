@@ -22,9 +22,10 @@ import { handleXykPoolHistoricalData } from './handlers/pools/xykPool/xykPoolHis
 import { handleLbpPoolHistoricalData } from './handlers/pools/lbpPool/lbpPoolHistoricalData';
 import { handleXykPools } from './handlers/pools/xykPool';
 import { handleLbpPools } from './handlers/pools/lbpPool';
-import { ProcessorStatusManager } from './utils/processorStatusManager';
+import { ProcessorStatusManager } from './processorStatusManager';
 import { ensurePoolsDestroyedStatus } from './handlers/pools/support';
 import { saveAllBatchAccounts } from './handlers/accounts';
+import { ChainActivityTraceManager } from './chainActivityTraceManager';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -38,6 +39,10 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   (ctxWithBatchState as ProcessorContext<Store>).batchState = new BatchState();
   (ctxWithBatchState as ProcessorContext<Store>).appConfig =
     AppConfig.getInstance();
+
+  await ChainActivityTraceManager.processExtrinsics(
+    ctxWithBatchState as ProcessorContext<Store>
+  );
 
   const parsedData = await getParsedEventsData(
     ctxWithBatchState as ProcessorContext<Store>
@@ -126,6 +131,10 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   );
 
   await saveAllBatchAccounts(ctxWithBatchState as ProcessorContext<Store>);
+
+  await ChainActivityTraceManager.saveActivityTraceEntities(
+    ctxWithBatchState as ProcessorContext<Store>
+  );
 
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(
     ctxWithBatchState as ProcessorContext<Store>

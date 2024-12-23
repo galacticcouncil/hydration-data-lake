@@ -37,12 +37,14 @@ export async function omnipoolBuySellExecuted(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
   } = eventCallData;
 
   const { swap } = await handleSellBuyAsSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
+      traceId: callData.traceId,
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,

@@ -5,6 +5,8 @@ import {Omnipool} from "./omnipool.model"
 import {Stablepool} from "./stablepool.model"
 import {Swap} from "./swap.model"
 import {Transfer} from "./transfer.model"
+import {ChainActivityTrace} from "./chainActivityTrace.model"
+import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
 
 @Entity_()
 export class Account {
@@ -45,4 +47,10 @@ export class Account {
 
   @OneToMany_(() => Transfer, e => e.from)
   transfersFrom!: Transfer[]
+
+  @OneToMany_(() => ChainActivityTrace, e => e.originator)
+  initiatedChainActivities!: ChainActivityTrace[]
+
+  @OneToMany_(() => AccountChainActivityTrace, e => e.account)
+  participatedChainActivities!: AccountChainActivityTrace[]
 }

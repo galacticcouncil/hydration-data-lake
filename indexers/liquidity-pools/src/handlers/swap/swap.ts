@@ -12,11 +12,14 @@ import {
 import { getAccount } from '../accounts';
 import { getAsset } from '../assets/assetRegistry';
 import { GetNewSwapResponse } from '../../utils/types';
+import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
 
 export async function getNewSwap({
   ctx,
   blockHeader,
   data: {
+    traceId,
+    operationId,
     swapIndex,
     swapperId,
     fillerId,
@@ -38,6 +41,8 @@ export async function getNewSwap({
   ctx: ProcessorContext<Store>;
   blockHeader: BlockHeader;
   data: {
+    traceId?: string;
+    operationId?: string;
     swapIndex: number;
     swapperId: string;
     fillerId: string;
@@ -58,6 +63,8 @@ export async function getNewSwap({
 }): Promise<GetNewSwapResponse> {
   const swap = new Swap({
     id: eventId,
+    traceId,
+    operationId,
     swapIndex,
     swapper: await getAccount(ctx, swapperId),
     filler: await getAccount(ctx, fillerId),
@@ -151,6 +158,8 @@ export async function handleSellBuyAsSwap({
   ctx,
   blockHeader,
   data: {
+    traceId,
+    operationId,
     eventId,
     extrinsicHash,
     eventIndex,
@@ -173,6 +182,8 @@ export async function handleSellBuyAsSwap({
   ctx: ProcessorContext<Store>;
   blockHeader: BlockHeader;
   data: {
+    traceId?: string;
+    operationId?: string;
     eventId: string;
     extrinsicHash: string;
     eventIndex: number;
@@ -200,6 +211,8 @@ export async function handleSellBuyAsSwap({
     ctx,
     blockHeader,
     data: {
+      traceId,
+      operationId,
       swapIndex: 0,
       swapperId: swapperAccountId,
       fillerId: poolAccountId,
@@ -246,6 +259,13 @@ export async function handleSellBuyAsSwap({
     swapInputs: state.swapInputs,
     swapOutputs: state.swapOutputs,
   };
+
+  if (traceId)
+    await ChainActivityTraceManager.addParticipantsToActivityTrace({
+      traceId,
+      participants: [swap.swapper, swap.filler],
+      ctx,
+    });
 
   return swapData;
 }

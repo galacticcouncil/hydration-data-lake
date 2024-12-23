@@ -23,3 +23,35 @@ export const createPool =  {
         })
     ),
 }
+
+export const sell =  {
+    name: 'LBP.sell',
+    /**
+     * See [`Pallet::sell`].
+     */
+    v257: new CallType(
+        'LBP.sell',
+        sts.struct({
+            assetIn: sts.number(),
+            assetOut: sts.number(),
+            amount: sts.bigint(),
+            maxLimit: sts.bigint(),
+        })
+    ),
+}
+
+export const buy =  {
+    name: 'LBP.buy',
+    /**
+     * See [`Pallet::buy`].
+     */
+    v257: new CallType(
+        'LBP.buy',
+        sts.struct({
+            assetOut: sts.number(),
+            assetIn: sts.number(),
+            amount: sts.bigint(),
+            maxLimit: sts.bigint(),
+        })
+    ),
+}

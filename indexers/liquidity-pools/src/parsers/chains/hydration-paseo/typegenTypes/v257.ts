@@ -253,6 +253,48 @@ export const WeightCurveType: sts.Type<WeightCurveType> = sts.closedEnum(() => {
     }
 })
 
+export const Trade: sts.Type<Trade> = sts.struct(() => {
+    return  {
+        pool: PoolType,
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+    }
+})
+
+export const PoolType: sts.Type<PoolType> = sts.closedEnum(() => {
+    return  {
+        LBP: sts.unit(),
+        Omnipool: sts.unit(),
+        Stableswap: sts.number(),
+        XYK: sts.unit(),
+    }
+})
+
+export type PoolType = PoolType_LBP | PoolType_Omnipool | PoolType_Stableswap | PoolType_XYK
+
+export interface PoolType_LBP {
+    __kind: 'LBP'
+}
+
+export interface PoolType_Omnipool {
+    __kind: 'Omnipool'
+}
+
+export interface PoolType_Stableswap {
+    __kind: 'Stableswap'
+    value: number
+}
+
+export interface PoolType_XYK {
+    __kind: 'XYK'
+}
+
+export interface Trade {
+    pool: PoolType
+    assetIn: number
+    assetOut: number
+}
+
 export const Pool: sts.Type<Pool> = sts.struct(() => {
     return  {
         owner: AccountId32,

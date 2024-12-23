@@ -1,7 +1,7 @@
 import { ParsedEventsCallsData } from '../parsers/batchBlocksParser/types';
 import lodashCamelCase from 'lodash.camelcase';
 import { AppConfig } from '../appConfig';
-import { NodeEnv } from './types';
+import { CallOriginPartsDecorated, CallOriginRaw, NodeEnv } from './types';
 import { join } from 'path';
 import { hexToString } from '@polkadot/util';
 
@@ -65,4 +65,23 @@ export function hexToStrWithNullCharCheck(str?: string) {
   if (!str) return str;
   const decorated = hexToString(str);
   return decorated.includes('\0') ? str : decorated;
+}
+
+export function getCallOriginParts(
+  originData: CallOriginRaw
+): CallOriginPartsDecorated {
+  const result: CallOriginPartsDecorated = {
+    kind: 'system',
+  };
+  switch (originData.__kind) {
+    case 'system': {
+      result.kind = 'system';
+      if (originData.value && originData.value.__kind === 'Signed') {
+        result.valueKind = 'Signed';
+        result.value = originData.value.value;
+      }
+    }
+  }
+
+  return result;
 }

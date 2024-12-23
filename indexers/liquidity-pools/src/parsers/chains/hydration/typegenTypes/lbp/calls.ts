@@ -55,3 +55,61 @@ export const createPool =  {
         })
     ),
 }
+
+export const sell =  {
+    name: 'LBP.sell',
+    /**
+     * Trade `asset_in` for `asset_out`.
+     * 
+     * Executes a swap of `asset_in` for `asset_out`. Price is determined by the pool and is
+     * affected by the amount and proportion of the pool assets and the weights.
+     * 
+     * Trading `fee` is distributed to the `fee_collector`.
+     * 
+     * Parameters:
+     * - `asset_in`: The identifier of the asset being transferred from the account to the pool.
+     * - `asset_out`: The identifier of the asset being transferred from the pool to the account.
+     * - `amount`: The amount of `asset_in`
+     * - `max_limit`: minimum amount of `asset_out` / amount of asset_out to be obtained from the pool in exchange for `asset_in`.
+     * 
+     * Emits `SellExecuted` when successful.
+     */
+    v176: new CallType(
+        'LBP.sell',
+        sts.struct({
+            assetIn: sts.number(),
+            assetOut: sts.number(),
+            amount: sts.bigint(),
+            maxLimit: sts.bigint(),
+        })
+    ),
+}
+
+export const buy =  {
+    name: 'LBP.buy',
+    /**
+     * Trade `asset_in` for `asset_out`.
+     * 
+     * Executes a swap of `asset_in` for `asset_out`. Price is determined by the pool and is
+     * affected by the amount and the proportion of the pool assets and the weights.
+     * 
+     * Trading `fee` is distributed to the `fee_collector`.
+     * 
+     * Parameters:
+     * - `asset_in`: The identifier of the asset being transferred from the account to the pool.
+     * - `asset_out`: The identifier of the asset being transferred from the pool to the account.
+     * - `amount`: The amount of `asset_out`.
+     * - `max_limit`: maximum amount of `asset_in` to be sold in exchange for `asset_out`.
+     * 
+     * Emits `BuyExecuted` when successful.
+     */
+    v176: new CallType(
+        'LBP.buy',
+        sts.struct({
+            assetOut: sts.number(),
+            assetIn: sts.number(),
+            amount: sts.bigint(),
+            maxLimit: sts.bigint(),
+        })
+    ),
+}

@@ -8,7 +8,17 @@ export async function initTransfer(
   ctx: ProcessorContext<Store>,
   data: TransferEvent
 ) {
-  let { id, assetId, extrinsicHash, amount, fee, blockNumber, from, to } = data;
+  let {
+    id,
+    assetId,
+    extrinsicHash,
+    amount,
+    fee,
+    blockNumber,
+    from,
+    to,
+    traceId,
+  } = data;
 
   return new Transfer({
     paraChainBlockHeight: blockNumber,
@@ -16,6 +26,7 @@ export async function initTransfer(
     to: await getAccount(ctx, to),
     txFee: fee,
     id,
+    traceId,
     assetId,
     extrinsicHash,
     amount,

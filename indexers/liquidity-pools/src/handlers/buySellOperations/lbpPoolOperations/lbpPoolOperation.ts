@@ -16,6 +16,7 @@ export async function lpbBuyExecuted(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
   } = eventCallData;
 
   const pool = await getLbpPoolByAssets({
@@ -36,6 +37,7 @@ export async function lpbBuyExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
+      traceId: callData.traceId,
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
@@ -82,6 +84,7 @@ export async function lpbSellExecuted(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
   } = eventCallData;
 
   const pool = await getLbpPoolByAssets({
@@ -102,6 +105,7 @@ export async function lpbSellExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
+      traceId: callData.traceId,
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,

@@ -2,6 +2,7 @@ import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { TokensTransferData } from '../../parsers/batchBlocksParser/types';
 import { initTransfer } from './utils';
+import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
 
 export async function handleTokensTransfer(
   ctx: ProcessorContext<Store>,
@@ -9,10 +10,12 @@ export async function handleTokensTransfer(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
   } = eventCallData;
 
   const transferEntity = await initTransfer(ctx, {
     id: eventMetadata.id,
+    traceId: callData.traceId,
     assetId: eventParams.currencyId,
     blockNumber: eventMetadata.blockHeader.height,
     timestamp: new Date(eventMetadata.blockHeader.timestamp || 0),
@@ -28,4 +31,11 @@ export async function handleTokensTransfer(
   ctx.batchState.state = {
     transfers,
   };
+
+  if (callData.traceId)
+    await ChainActivityTraceManager.addParticipantsToActivityTrace({
+      traceId: callData.traceId,
+      participants: [transferEntity.to, transferEntity.from],
+      ctx,
+    });
 }

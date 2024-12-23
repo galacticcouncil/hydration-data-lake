@@ -14,6 +14,9 @@ export class Transfer {
   @PrimaryColumn_()
   id!: string
 
+  @Column_("text", {nullable: true})
+  traceId!: string | undefined | null
+
   @Column_("int4", {nullable: false})
   paraChainBlockHeight!: number
 

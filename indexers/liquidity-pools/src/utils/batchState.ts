@@ -1,6 +1,12 @@
 import {
   Account,
+  AccountChainActivityTrace,
   Asset,
+  Block as BlockEntity,
+  Event as EventEntity,
+  Call as CallEntity,
+  ChainActivityTrace,
+  Extrinsic as ExtrinsicEntity,
   HistoricalAssetVolume,
   LbpPool,
   LbpPoolHistoricalData,
@@ -35,6 +41,14 @@ type ParachainBlockNumber = number;
 
 export type BatchStatePayload = {
   relayChainInfo: Map<ParachainBlockNumber, RelayChainInfo>;
+
+  batchBlocks: Map<string, BlockEntity>;
+  batchExtrinsics: Map<string, ExtrinsicEntity>;
+  batchCalls: Map<string, CallEntity>;
+  batchEvents: Map<string, EventEntity>;
+  chainActivityTraces: Map<string, ChainActivityTrace>;
+  accountChainActivityTraces: Map<string, AccountChainActivityTrace>;
+
   accounts: Map<string, Account>;
   transfers: Map<string, Transfer>;
   assetVolumes: Map<string, HistoricalAssetVolume>;
@@ -100,6 +114,14 @@ export type BatchStatePayload = {
 export class BatchState {
   private statePayload: BatchStatePayload = {
     relayChainInfo: new Map(),
+
+    batchBlocks: new Map(),
+    batchExtrinsics: new Map(),
+    batchCalls: new Map(),
+    batchEvents: new Map(),
+    chainActivityTraces: new Map(),
+    accountChainActivityTraces: new Map(),
+
     accounts: new Map(),
     transfers: new Map(),
     assetVolumes: new Map(),

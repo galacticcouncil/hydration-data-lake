@@ -26,6 +26,12 @@ enum AssetType {
   Erc20
 }
 
+enum TraceEntityType {
+  SWAP
+  TRANSFER
+  STABLEPOOL_LIQUIDITY_ACTION
+}
+
 type Account @entity {
   "Account pubkey"
   id: ID!
@@ -40,6 +46,12 @@ type Account @entity {
 
   transfersTo: [Transfer!] @derivedFrom(field: "to")
   transfersFrom: [Transfer!] @derivedFrom(field: "from")
+
+  initiatedChainActivities: [ChainActivityTrace!]
+    @derivedFrom(field: "originator")
+
+  participatedChainActivities: [AccountChainActivityTrace!]
+    @derivedFrom(field: "account")
 }
 
 type Asset @entity {
@@ -57,6 +69,7 @@ type Asset @entity {
 type Transfer @entity {
   "TxId"
   id: ID!
+  traceId: String
   paraChainBlockHeight: Int!
   assetId: Int! @index
   extrinsicHash: String @index
@@ -82,9 +95,104 @@ type ProcessorStatus @entity {
   "1"
   id: ID!
   assetsActualisedAtBlock: Int!
-  poolsDestroyedCheckPointAtBlock: Int!
+  poolsDestroyedCheckPointAtBlock: Int
   initialIndexingStartedAtTime: DateTime!
   initialIndexingFinishedAtTime: DateTime
+}
+
+# ======================================================================================================================
+# *** Chain Activity Tracing ***
+# ======================================================================================================================
+
+type Block @entity {
+  "0003396328-000002-70ca4"
+  id: ID!
+  extrinsics: [Extrinsic] @derivedFrom(field: "block")
+  calls: [Call] @derivedFrom(field: "block")
+  events: [Event] @derivedFrom(field: "block")
+  chainActivityTraces: [ChainActivityTrace]
+    @derivedFrom(field: "createdAtBlock")
+  relayChainBlockHeight: Int!
+  paraChainBlockHeight: Int! @index
+  paraChainBlockHash: String! @index
+  paraChainBlockTimestamp: DateTime! @index
+}
+
+type Extrinsic @entity {
+  "0003396328-000002-70ca4"
+  id: ID!
+  hash: String!
+  calls: [Call] @derivedFrom(field: "extrinsic")
+  paraChainBlockHeight: Int! @index
+  block: Block!
+}
+
+type Call @entity {
+  "0003396328-000002-70ca4-000003"
+  id: ID!
+  traceId: String!
+  name: String!
+  success: Boolean
+  originKind: String!
+  originValueKind: String
+  originValue: String
+  entityTypes: [TraceEntityType]
+  extrinsic: Extrinsic!
+  parent: Call
+  subcalls: [Call] @derivedFrom(field: "parent")
+  events: [Event] @derivedFrom(field: "call")
+  paraChainBlockHeight: Int! @index
+  block: Block!
+}
+
+type Event @entity {
+  "0006508857-000017-d2fd9"
+  id: ID!
+  traceId: String!
+  indexInBlock: Int!
+  name: String!
+  phase: String!
+  entityTypes: [TraceEntityType]
+  call: Call
+  paraChainBlockHeight: Int! @index
+  block: Block!
+}
+
+type ChainActivityTrace @entity {
+  # "extrinsic_id where particular ChainActivityTrace has bee initialised"
+  id: ID!
+
+  #  op-id://batch:111/batch:22/dca:<schedule_id>=2
+  #  op-id://batch:111/batch:22/otc:<order_id>=3
+  operationIds: [String!]
+
+  #  trace-id://origin:<call | event>/<extrinsic_id>/<call_id>/<call_id>/<call_id> - there is no id specific of specific entity. This trace id can be used for multiple DB entities.
+
+  #  trace-id://origin:call/0003396328-000002-70ca4/0003396328-000002-70ca4-000002/0003396328-000002-70ca4-000003/0003681428-fa806-000020
+  #  trace-id://origin:event/0003396328-70ca4-buyback/2
+
+  traceIds: [String!]!
+
+  #  list of participant addresses to particular ChainActivityTrace
+  participants: [AccountChainActivityTrace!]!
+    @derivedFrom(field: "chainActivityTrace")
+
+  # account who signed initial call of the extrinsic
+  originator: Account
+
+  rootTrace: ChainActivityTrace
+
+  relatedTraces: [ChainActivityTrace] @derivedFrom(field: "rootTrace")
+
+  createdAtParaChainBlockHeight: Int! @index
+  createdAtBlock: Block!
+}
+
+type AccountChainActivityTrace @entity {
+  # <Account.id>-<ChainActivityTrace.id>
+  id: ID!
+  account: Account!
+  chainActivityTrace: ChainActivityTrace!
 }
 
 # ======================================================================================================================
@@ -135,6 +243,8 @@ type SwapOutputAssetBalance @entity {
 type Swap @entity {
   "indexer event_id (e.g. <block_number>-<block_hash_partial>-<event_index> 0006516718-9965d-000107)"
   id: ID!
+  operationId: String
+  traceId: String
   "Swapped event index within Trade events sequence"
   swapIndex: Int! @index
   swapper: Account!

@@ -9,7 +9,7 @@ import {
 import { getAssetFreeBalance } from '../../assets/balances';
 import { getAsset } from '../../assets/assetRegistry';
 import parsers from '../../../parsers';
-import { ProcessorStatusManager } from '../../../utils/processorStatusManager';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
 
 export async function createLbpPool({
   ctx,

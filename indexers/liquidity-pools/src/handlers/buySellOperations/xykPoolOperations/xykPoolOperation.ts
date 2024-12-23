@@ -16,6 +16,7 @@ export async function xykBuyExecuted(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
   } = eventCallData;
 
   const pool = await getXykPool({
@@ -36,6 +37,7 @@ export async function xykBuyExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
+      traceId: callData.traceId,
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
@@ -82,6 +84,7 @@ export async function xykSellExecuted(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
   } = eventCallData;
 
   const pool = await getXykPool({
@@ -102,6 +105,7 @@ export async function xykSellExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
+      traceId: callData.traceId,
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,

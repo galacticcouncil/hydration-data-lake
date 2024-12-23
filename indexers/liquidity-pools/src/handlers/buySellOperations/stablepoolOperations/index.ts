@@ -71,6 +71,7 @@ export async function stablepoolBuySellExecuted(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
   } = eventCallData;
 
   // let assetInEntity = await getAsset({ ctx, id: eventParams.assetIn });
@@ -86,6 +87,7 @@ export async function stablepoolBuySellExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
+      traceId: callData.traceId,
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,

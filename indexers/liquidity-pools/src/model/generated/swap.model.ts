@@ -19,6 +19,12 @@ export class Swap {
   @PrimaryColumn_()
   id!: string
 
+  @Column_("text", {nullable: true})
+  operationId!: string | undefined | null
+
+  @Column_("text", {nullable: true})
+  traceId!: string | undefined | null
+
   /**
    * Swapped event index within Trade events sequence
    */

@@ -5,9 +5,11 @@ import {
   SwapOutputAssetBalance,
 } from '../model';
 import type * as base from '@subsquid/substrate-data';
+import { getCallOriginParts } from './helpers';
 
 export interface TransferEvent {
   id: string;
+  traceId?: string;
   assetId: number;
   blockNumber: number;
   timestamp: Date;
@@ -64,9 +66,38 @@ export enum ChainName {
   hydration_paseo = 'hydration_paseo',
 }
 
+export enum TraceIdOrigin {
+  call = 'call',
+  event = 'event',
+}
+export type EventPhase = 'ApplyExtrinsic' | 'Initialization' | 'Finalization';
+
+export enum TraceIdEventGroup {
+  init = 'init',
+  extrinsic = 'extrinsic',
+  finalization = 'finalization',
+  buyback = 'buyback',
+}
+
 export type GetNewSwapResponse = {
   swap: Swap;
   swapFees: SwapFee[];
   swapInputs: SwapInputAssetBalance[];
   swapOutputs: SwapOutputAssetBalance[];
+};
+
+export type CallOriginValueRaw = {
+  __kind: string;
+  value?: string;
+};
+
+export type CallOriginRaw = {
+  __kind: string;
+  value?: CallOriginValueRaw;
+};
+
+export type CallOriginPartsDecorated = {
+  kind: string;
+  valueKind?: string;
+  value?: string;
 };

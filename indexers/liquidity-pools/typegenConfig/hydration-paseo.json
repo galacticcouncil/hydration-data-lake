@@ -16,18 +16,21 @@
       "events": ["Transfer"],
       "storage": ["Accounts", "TotalIssuance"]
     },
+    "Router": {
+      "calls": ["sell", "buy"]
+    },
     "ParachainSystem": {
       "calls": ["set_validation_data"],
       "storage": ["LastRelayChainBlockNumber"]
     },
     "XYK": {
       "events": ["PoolCreated", "PoolDestroyed", "SellExecuted", "BuyExecuted"],
-      "calls": ["create_pool"],
-      "storage": ["PoolAssets"]
+      "calls": ["create_pool", "sell", "buy"],
+      "storage": ["PoolAssets", "ShareToken"]
     },
     "Omnipool": {
       "events": ["TokenAdded", "TokenRemoved", "SellExecuted", "BuyExecuted"],
-      "calls": [],
+      "calls": ["sell", "buy"],
       "storage": ["Assets"]
     },
     "Stableswap": {
@@ -38,11 +41,12 @@
         "LiquidityAdded",
         "LiquidityRemoved"
       ],
+      "calls": ["sell", "buy"],
       "storage": ["Pools"]
     },
     "LBP": {
       "events": ["PoolUpdated", "PoolCreated", "SellExecuted", "BuyExecuted"],
-      "calls": ["create_pool"],
+      "calls": ["create_pool", "sell", "buy"],
       "storage": ["PoolData"]
     },
     "System": {

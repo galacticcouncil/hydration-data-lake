@@ -15,3 +15,37 @@ export const createPool =  {
         })
     ),
 }
+
+export const sell =  {
+    name: 'XYK.sell',
+    /**
+     * See [`Pallet::sell`].
+     */
+    v257: new CallType(
+        'XYK.sell',
+        sts.struct({
+            assetIn: sts.number(),
+            assetOut: sts.number(),
+            amount: sts.bigint(),
+            maxLimit: sts.bigint(),
+            discount: sts.boolean(),
+        })
+    ),
+}
+
+export const buy =  {
+    name: 'XYK.buy',
+    /**
+     * See [`Pallet::buy`].
+     */
+    v257: new CallType(
+        'XYK.buy',
+        sts.struct({
+            assetOut: sts.number(),
+            assetIn: sts.number(),
+            amount: sts.bigint(),
+            maxLimit: sts.bigint(),
+            discount: sts.boolean(),
+        })
+    ),
+}

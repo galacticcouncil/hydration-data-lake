@@ -233,7 +233,19 @@ export class AppConfig {
         return [];
     }
 
-    const callsToListen = [calls.parachainSystem.setValidationData.name];
+    const callsToListen = [
+      calls.parachainSystem.setValidationData.name,
+      calls.router.sell.name,
+      calls.router.buy.name,
+      calls.lbp.buy.name,
+      calls.lbp.sell.name,
+      calls.xyk.buy.name,
+      calls.xyk.sell.name,
+      calls.stableswap.buy.name,
+      calls.stableswap.sell.name,
+      calls.omnipool.buy.name,
+      calls.omnipool.sell.name,
+    ];
 
     if (this.PROCESS_LBP_POOLS) {
       callsToListen.push(...[calls.lbp.createPool.name]);

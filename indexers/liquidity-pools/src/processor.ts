@@ -33,27 +33,37 @@ let processor = new SubstrateBatchProcessor()
   })
   .addCall({
     name: appConfig.getCallsToListen(),
+    stack: true,
   })
   .setFields({
     event: {
       args: true,
       name: true,
+      phase: true,
+      extrinsic: true,
     },
     extrinsic: {
       hash: true,
       fee: true,
+      events: true,
+      call: true,
+      calls: true,
+      stack: true,
     },
     block: {
       timestamp: true,
     },
     call: {
       name: true,
+      events: true,
       args: true,
       origin: true,
       success: true,
       error: true,
+      extrinsic: true,
     },
   })
+  .includeAllBlocks()
   .setBlockRange({
     from: appConfig.PROCESS_FROM_BLOCK,
     to: appConfig.PROCESS_TO_BLOCK > 0 ? appConfig.PROCESS_TO_BLOCK : undefined,

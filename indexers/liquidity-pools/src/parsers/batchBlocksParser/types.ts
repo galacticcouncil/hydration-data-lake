@@ -102,6 +102,8 @@ export type ParsedEventsCallsData =
 
 export type CallParsedData<T = undefined> = {
   name: string;
+  id?: string;
+  traceId?: string;
   // signer: string;
   args?: T;
 };
@@ -119,7 +121,7 @@ export type ParsedEventCallData<
   id: string;
   relayChainInfo: RelayChainInfo;
   eventData: E;
-  callData?: C;
+  callData: C;
 };
 
 export interface EventMetadata {

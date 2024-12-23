@@ -11,6 +11,7 @@ import { Store } from '@subsquid/typeorm-store';
 import parsers from '../';
 import { calls, events } from '../chains/hydration/typegenTypes'; // TODO fix for different CHAIN env value
 import { BlockHeader } from '@subsquid/substrate-processor';
+import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
 
 export class BatchBlocksParsedDataManager {
   private scope: BatchBlocksParsedDataScope;
@@ -126,15 +127,31 @@ export async function getParsedEventsData(
       ),
     };
 
-    for (let event of block.events) {
+    for (const event of block.events) {
       let call = null;
 
       try {
         call = event.getCall();
+
+        // console.log('event - ', event.name, event.id);
+        // console.dir(call.getParentCall(), { depth: null });
       } catch (e) {}
+
+      // try {
+      //   const ext = event.getExtrinsic();
+      //
+      //   console.dir(ext, { depth: null });
+      //
+      //   // console.log('event - ', event.name, event.id);
+      //   // console.dir(call.getParentCall(), { depth: null });
+      // } catch (e) {}
 
       const callMetadata = {
         name: call?.name ?? '_system',
+        id: call?.id,
+        traceId: call
+          ? await ChainActivityTraceManager.getTraceIdByCallId(call.id, ctx)
+          : await ChainActivityTraceManager.getTraceIdByEventId(event.id, ctx),
       };
 
       const eventMetadata = getEventMetadata(
@@ -142,6 +159,14 @@ export async function getParsedEventsData(
         block.header,
         event.extrinsic
       );
+
+      // console.log('\n\n\n');
+      // console.log(
+      //   eventMetadata.name,
+      //   eventMetadata.indexInBlock,
+      //   eventMetadata.blockHeader.height
+      // );
+      // console.dir(callMetadata, { depth: null });
 
       switch (event.name) {
         /**

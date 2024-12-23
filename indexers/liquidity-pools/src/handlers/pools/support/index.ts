@@ -1,13 +1,13 @@
 import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { ProcessorStatusManager } from '../../../utils/processorStatusManager';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
 import { AssetType, LbpPool, Stablepool } from '../../../model';
 import parsers from '../../../parsers';
 
 export async function ensurePoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
-  const poolsDestroyedCheckPointAtBlock = (
-    await ProcessorStatusManager.getInstance(ctx).getStatus()
-  ).poolsDestroyedCheckPointAtBlock;
+  const poolsDestroyedCheckPointAtBlock =
+    (await ProcessorStatusManager.getInstance(ctx).getStatus())
+      .poolsDestroyedCheckPointAtBlock ?? 0;
 
   if (ctx.blocks[0].header.height < poolsDestroyedCheckPointAtBlock + 3000)
     return;

@@ -6,7 +6,7 @@ import {
 } from '../../parsers/batchBlocksParser/types';
 import { Asset, AssetType } from '../../model';
 import parsers from '../../parsers';
-import { ProcessorStatusManager } from '../../utils/processorStatusManager';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 
 export async function getAsset({
   ctx,
