@@ -2,13 +2,16 @@
   "outDir": "../src/parsers/chains/hydration-paseo/typegenTypes/",
   "specVersions": "../typegenAssets/paseo-metadata.jsonl",
   "pallets": {
+    "Sudo": {
+      "calls": ["sudo", "sudo_unchecked_weight", "set_key", "sudo_as"]
+    },
     "AssetRegistry": {
       "events": ["Registered", "Updated"],
       "storage": ["Assets"]
     },
     "Balances": {
       "events": ["Transfer"],
-      "calls": [],
+      "calls": true,
       "storage": [],
       "constants": []
     },
@@ -32,6 +35,9 @@
       "events": ["TokenAdded", "TokenRemoved", "SellExecuted", "BuyExecuted"],
       "calls": ["sell", "buy"],
       "storage": ["Assets"]
+    },
+    "OmnipoolLiquidityMining": {
+      "calls": true
     },
     "Stableswap": {
       "events": [

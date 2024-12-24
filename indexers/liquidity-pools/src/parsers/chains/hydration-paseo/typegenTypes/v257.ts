@@ -295,6 +295,39 @@ export interface Trade {
     assetOut: number
 }
 
+export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
+    return  {
+        initialRewardPercentage: FixedU128,
+        scaleCoef: sts.number(),
+    }
+})
+
+export interface LoyaltyCurve {
+    initialRewardPercentage: FixedU128
+    scaleCoef: number
+}
+
+export type FixedU128 = bigint
+
+export const Perquintill = sts.bigint()
+
+export const AdjustmentDirection: sts.Type<AdjustmentDirection> = sts.closedEnum(() => {
+    return  {
+        Decrease: sts.unit(),
+        Increase: sts.unit(),
+    }
+})
+
+export type AdjustmentDirection = AdjustmentDirection_Decrease | AdjustmentDirection_Increase
+
+export interface AdjustmentDirection_Decrease {
+    __kind: 'Decrease'
+}
+
+export interface AdjustmentDirection_Increase {
+    __kind: 'Increase'
+}
+
 export const Pool: sts.Type<Pool> = sts.struct(() => {
     return  {
         owner: AccountId32,

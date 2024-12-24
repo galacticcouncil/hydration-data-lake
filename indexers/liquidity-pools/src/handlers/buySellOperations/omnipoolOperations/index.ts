@@ -44,7 +44,10 @@ export async function omnipoolBuySellExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
-      traceId: callData.traceId,
+      traceIds: [
+        ...(callData.traceId ? [callData.traceId] : []),
+        eventMetadata.traceId,
+      ],
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,

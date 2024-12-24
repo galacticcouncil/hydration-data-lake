@@ -245,7 +245,38 @@ export class AppConfig {
       calls.stableswap.sell.name,
       calls.omnipool.buy.name,
       calls.omnipool.sell.name,
+      calls.balances.forceSetBalance.name,
+      calls.balances.forceAdjustTotalIssuance.name,
+      calls.balances.forceTransfer.name,
+      calls.balances.forceUnreserve.name,
+      calls.balances.transferAll.name,
+      calls.balances.transferAllowDeath.name,
+      calls.balances.transferKeepAlive.name,
+      calls.balances.upgradeAccounts.name,
+
+      calls.omnipoolLiquidityMining.claimRewards.name,
+      calls.omnipoolLiquidityMining.createGlobalFarm.name,
+      calls.omnipoolLiquidityMining.createYieldFarm.name,
+      calls.omnipoolLiquidityMining.depositShares.name,
+      calls.omnipoolLiquidityMining.redepositShares.name,
+      calls.omnipoolLiquidityMining.resumeYieldFarm.name,
+      calls.omnipoolLiquidityMining.stopYieldFarm.name,
+      calls.omnipoolLiquidityMining.terminateGlobalFarm.name,
+      calls.omnipoolLiquidityMining.terminateYieldFarm.name,
+      calls.omnipoolLiquidityMining.updateGlobalFarm.name,
+      calls.omnipoolLiquidityMining.updateYieldFarm.name,
+      calls.omnipoolLiquidityMining.withdrawShares.name,
     ];
+
+    if (this.CHAIN === ChainName.hydration) {
+      callsToListen.push(hydrationCalls.sudo.sudo.name);
+      callsToListen.push(hydrationCalls.sudo.sudoAs.name);
+      callsToListen.push(hydrationCalls.sudo.setKey.name);
+      callsToListen.push(hydrationCalls.sudo.sudoUncheckedWeight.name);
+      callsToListen.push(hydrationCalls.balances.transfer.name);
+      callsToListen.push(hydrationCalls.balances.setBalanceDeprecated.name);
+      callsToListen.push(hydrationCalls.balances.setBalance.name);
+    }
 
     if (this.PROCESS_LBP_POOLS) {
       callsToListen.push(...[calls.lbp.createPool.name]);

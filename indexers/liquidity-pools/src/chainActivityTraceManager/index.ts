@@ -12,22 +12,13 @@ import {
 } from '../model';
 import { getCallOriginParts } from '../utils/helpers';
 import { getAccount } from '../handlers/accounts';
-import { EventPhase, TraceIdEventGroup, TraceIdOrigin } from '../utils/types';
+import { EventPhase, TraceIdEventGroup, TraceIdContext } from '../utils/types';
 
 export class ChainActivityTraceManager {
   static _traceIdPrefix = 'trace-id:';
   constructor(private ctx: ProcessorContext<Store>) {}
 
   static async processExtrinsics(ctx: ProcessorContext<Store>) {
-    /**
-     * TODO parse al extrinsics in blocks batch:
-     * - parse all extrinsics
-     * - get all subcalls
-     * - get parents of subcalls to build dependencies graph
-     * - generate traceIds for each call
-     * - save Extrinsic and Call entities with appropriate relationships
-     */
-
     const state = ctx.batchState.state;
 
     const blocksToSave: BlockEntity[] = [];
@@ -198,7 +189,7 @@ export class ChainActivityTraceManager {
 
         generateCallTraceId(
           rootCall.call,
-          this.traceIdPrefixWithOrigin(TraceIdOrigin.call),
+          this.traceIdPrefixWithContext(TraceIdContext.call),
           1
         );
 
@@ -234,7 +225,7 @@ export class ChainActivityTraceManager {
           eventEntity = new EventEntity({
             id: event.id,
             traceId: this.getTraceId(
-              this.traceIdPrefixWithOrigin(TraceIdOrigin.event),
+              this.traceIdPrefixWithContext(TraceIdContext.event),
               [
                 this.eventTraceIdRoot(blockEntity.id, event.name, event.phase),
                 event.index.toString(),
@@ -269,6 +260,7 @@ export class ChainActivityTraceManager {
 
     ctx.batchState.state = {
       batchExtrinsics: state.batchExtrinsics,
+      batchBlocks: state.batchBlocks,
       batchCalls: state.batchCalls,
       batchEvents: state.batchEvents,
       chainActivityTraces: state.chainActivityTraces,
@@ -334,8 +326,8 @@ export class ChainActivityTraceManager {
     await ctx.store.upsert([...state.accountChainActivityTraces.values()]);
   }
 
-  static traceIdPrefixWithOrigin(traceIdOrigin: TraceIdOrigin) {
-    return `${this._traceIdPrefix}//origin:${traceIdOrigin}`;
+  static traceIdPrefixWithContext(traceIdOrigin: TraceIdContext) {
+    return `${this._traceIdPrefix}//context:${traceIdOrigin}`;
   }
 
   static eventTraceIdRoot(
@@ -422,7 +414,7 @@ export class ChainActivityTraceManager {
 
   static getTraceIdRoot(src: string) {
     const match = src.match(
-      /trace-id:\/\/origin:(?:call|event)\/([a-zA-Z0-9-:]+)/
+      /trace-id:\/\/context:(?:call|event)\/([a-zA-Z0-9-:]+)/
     );
     return match ? match[1] : null;
   }

@@ -15,7 +15,10 @@ export async function handleTokensTransfer(
 
   const transferEntity = await initTransfer(ctx, {
     id: eventMetadata.id,
-    traceId: callData.traceId,
+    traceIds: [
+      ...(callData.traceId ? [callData.traceId] : []),
+      eventMetadata.traceId,
+    ],
     assetId: eventParams.currencyId,
     blockNumber: eventMetadata.blockHeader.height,
     timestamp: new Date(eventMetadata.blockHeader.timestamp || 0),
@@ -32,10 +35,12 @@ export async function handleTokensTransfer(
     transfers,
   };
 
-  if (callData.traceId)
-    await ChainActivityTraceManager.addParticipantsToActivityTrace({
-      traceId: callData.traceId,
-      participants: [transferEntity.to, transferEntity.from],
-      ctx,
-    });
+  if (transferEntity.traceIds && transferEntity.traceIds.length > 0)
+    for (const traceId of transferEntity.traceIds) {
+      await ChainActivityTraceManager.addParticipantsToActivityTrace({
+        traceId,
+        participants: [transferEntity.to, transferEntity.from],
+        ctx,
+      });
+    }
 }

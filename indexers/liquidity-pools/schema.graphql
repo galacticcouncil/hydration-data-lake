@@ -69,7 +69,7 @@ type Asset @entity {
 type Transfer @entity {
   "TxId"
   id: ID!
-  traceId: String
+  traceIds: [String!]
   paraChainBlockHeight: Int!
   assetId: Int! @index
   extrinsicHash: String @index
@@ -166,10 +166,12 @@ type ChainActivityTrace @entity {
   #  op-id://batch:111/batch:22/otc:<order_id>=3
   operationIds: [String!]
 
-  #  trace-id://origin:<call | event>/<extrinsic_id>/<call_id>/<call_id>/<call_id> - there is no id specific of specific entity. This trace id can be used for multiple DB entities.
+  #  There is no id specific of specific entity. This trace id can be used for multiple DB entities.
+  #  trace-id://context:<call>/<extrinsic_id>/<call_id>/<call_id>/<call_id>
+  #  trace-id://context:<event>/<block_id>:<group_name>/<event_index>
 
-  #  trace-id://origin:call/0003396328-000002-70ca4/0003396328-000002-70ca4-000002/0003396328-000002-70ca4-000003/0003681428-fa806-000020
-  #  trace-id://origin:event/0003396328-70ca4-buyback/2
+  #  trace-id://context:call/0003396328-000002-70ca4/0003396328-000002-70ca4-000002/0003396328-000002-70ca4-000003/0003681428-fa806-000020
+  #  trace-id://context:event/0003396328-70ca4:buyback/2
 
   traceIds: [String!]!
 
@@ -244,7 +246,7 @@ type Swap @entity {
   "indexer event_id (e.g. <block_number>-<block_hash_partial>-<event_index> 0006516718-9965d-000107)"
   id: ID!
   operationId: String
-  traceId: String
+  traceIds: [String!]
   "Swapped event index within Trade events sequence"
   swapIndex: Int! @index
   swapper: Account!
@@ -555,6 +557,7 @@ type StablepoolAssetHistoricalVolume @entity {
 type StablepoolLiquidityAction @entity {
   "poolId-paraChainBlockHeight-indexInBlock"
   id: ID!
+  traceIds: [String!]
   pool: Stablepool!
   sharesAmount: BigInt!
   feeAmount: BigInt!

@@ -126,6 +126,7 @@ export type ParsedEventCallData<
 
 export interface EventMetadata {
   id: EventId;
+  traceId: string;
   name: string;
   indexInBlock: number;
   blockHeader: Block;

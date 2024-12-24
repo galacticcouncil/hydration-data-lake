@@ -16,6 +16,9 @@ export class StablepoolLiquidityAction {
   @PrimaryColumn_()
   id!: string
 
+  @Column_("text", {array: true, nullable: true})
+  traceIds!: (string)[] | undefined | null
+
   @Index_()
   @ManyToOne_(() => Stablepool, {nullable: true})
   pool!: Stablepool

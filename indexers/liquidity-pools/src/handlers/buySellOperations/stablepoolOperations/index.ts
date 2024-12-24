@@ -87,7 +87,10 @@ export async function stablepoolBuySellExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
-      traceId: callData.traceId,
+      traceIds: [
+        ...(callData.traceId ? [callData.traceId] : []),
+        eventMetadata.traceId,
+      ],
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,

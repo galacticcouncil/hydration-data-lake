@@ -1,4 +1,6 @@
+export * as balances from './balances/calls'
 export * as omnipool from './omnipool/calls'
+export * as omnipoolLiquidityMining from './omnipool-liquidity-mining/calls'
 export * as router from './router/calls'
 export * as stableswap from './stableswap/calls'
 export * as lbp from './lbp/calls'

@@ -17,7 +17,7 @@ export async function initTransfer(
     blockNumber,
     from,
     to,
-    traceId,
+    traceIds,
   } = data;
 
   return new Transfer({
@@ -26,7 +26,7 @@ export async function initTransfer(
     to: await getAccount(ctx, to),
     txFee: fee,
     id,
-    traceId,
+    traceIds,
     assetId,
     extrinsicHash,
     amount,

@@ -20,6 +20,7 @@ export async function stablepoolLiquidityAddedRemoved(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
     relayChainInfo,
   } = eventCallData;
   const batchAssetLiquidityActionAmounts =
@@ -48,6 +49,10 @@ export async function stablepoolLiquidityAddedRemoved(
 
   const newAction = new StablepoolLiquidityAction({
     id: `${eventParams.poolId}-${eventMetadata.blockHeader.height}-${eventMetadata.indexInBlock}`,
+    traceIds: [
+      ...(callData.traceId ? [callData.traceId] : []),
+      eventMetadata.traceId,
+    ],
     pool,
     actionType,
     sharesAmount: eventParams.shares,

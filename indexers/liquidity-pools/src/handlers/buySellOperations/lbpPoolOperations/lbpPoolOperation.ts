@@ -37,7 +37,10 @@ export async function lpbBuyExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
-      traceId: callData.traceId,
+      traceIds: [
+        ...(callData.traceId ? [callData.traceId] : []),
+        eventMetadata.traceId,
+      ],
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
@@ -105,7 +108,10 @@ export async function lpbSellExecuted(
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
-      traceId: callData.traceId,
+      traceIds: [
+        ...(callData.traceId ? [callData.traceId] : []),
+        eventMetadata.traceId,
+      ],
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,

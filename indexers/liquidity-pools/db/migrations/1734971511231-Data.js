@@ -1,5 +1,5 @@
-module.exports = class Data1734970283825 {
-    name = 'Data1734970283825'
+module.exports = class Data1734971511231 {
+    name = 'Data1734971511231'
 
     async up(db) {
         await db.query(`CREATE TABLE "account_chain_activity_trace" ("id" character varying NOT NULL, "account_id" character varying, "chain_activity_trace_id" character varying, CONSTRAINT "PK_e832c7a98d7de349b5fccc0c34e" PRIMARY KEY ("id"))`)
@@ -27,8 +27,9 @@ module.exports = class Data1734970283825 {
         await db.query(`CREATE INDEX "IDX_2d4945fe7fc64351993ee410a1" ON "chain_activity_trace" ("created_at_para_chain_block_height") `)
         await db.query(`CREATE INDEX "IDX_3f3b01d8c3b64580481eed5cf8" ON "chain_activity_trace" ("created_at_block_id") `)
         await db.query(`ALTER TABLE "swap" ADD "operation_id" text`)
-        await db.query(`ALTER TABLE "swap" ADD "trace_id" text`)
-        await db.query(`ALTER TABLE "transfer" ADD "trace_id" text`)
+        await db.query(`ALTER TABLE "swap" ADD "trace_ids" text array`)
+        await db.query(`ALTER TABLE "transfer" ADD "trace_ids" text array`)
+        await db.query(`ALTER TABLE "stablepool_liquidity_action" ADD "trace_ids" text array`)
         await db.query(`ALTER TABLE "account_chain_activity_trace" ADD CONSTRAINT "FK_d192e6637a761ef190582d0355f" FOREIGN KEY ("account_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "account_chain_activity_trace" ADD CONSTRAINT "FK_b759ef6840440664835e4890fee" FOREIGN KEY ("chain_activity_trace_id") REFERENCES "chain_activity_trace"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "event" ADD CONSTRAINT "FK_83cf1bd59aa4521ed882fa51452" FOREIGN KEY ("call_id") REFERENCES "call"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -68,8 +69,9 @@ module.exports = class Data1734970283825 {
         await db.query(`DROP INDEX "public"."IDX_2d4945fe7fc64351993ee410a1"`)
         await db.query(`DROP INDEX "public"."IDX_3f3b01d8c3b64580481eed5cf8"`)
         await db.query(`ALTER TABLE "swap" DROP COLUMN "operation_id"`)
-        await db.query(`ALTER TABLE "swap" DROP COLUMN "trace_id"`)
-        await db.query(`ALTER TABLE "transfer" DROP COLUMN "trace_id"`)
+        await db.query(`ALTER TABLE "swap" DROP COLUMN "trace_ids"`)
+        await db.query(`ALTER TABLE "transfer" DROP COLUMN "trace_ids"`)
+        await db.query(`ALTER TABLE "stablepool_liquidity_action" DROP COLUMN "trace_ids"`)
         await db.query(`ALTER TABLE "account_chain_activity_trace" DROP CONSTRAINT "FK_d192e6637a761ef190582d0355f"`)
         await db.query(`ALTER TABLE "account_chain_activity_trace" DROP CONSTRAINT "FK_b759ef6840440664835e4890fee"`)
         await db.query(`ALTER TABLE "event" DROP CONSTRAINT "FK_83cf1bd59aa4521ed882fa51452"`)

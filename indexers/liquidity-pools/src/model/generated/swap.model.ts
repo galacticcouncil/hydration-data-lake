@@ -22,8 +22,8 @@ export class Swap {
   @Column_("text", {nullable: true})
   operationId!: string | undefined | null
 
-  @Column_("text", {nullable: true})
-  traceId!: string | undefined | null
+  @Column_("text", {array: true, nullable: true})
+  traceIds!: (string)[] | undefined | null
 
   /**
    * Swapped event index within Trade events sequence

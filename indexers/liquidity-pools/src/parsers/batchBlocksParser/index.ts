@@ -59,15 +59,22 @@ export class BatchBlocksParsedDataManager {
   }
 }
 
-function getEventMetadata(
-  event: Event,
-  blockHeader: Block,
-  extrinsic?: Extrinsic
-): EventMetadata {
+function getEventMetadata({
+  event,
+  blockHeader,
+  extrinsic,
+  traceId,
+}: {
+  event: Event;
+  blockHeader: Block;
+  extrinsic?: Extrinsic;
+  traceId: string;
+}): EventMetadata {
   return {
     id: event.id,
     indexInBlock: event.index,
     name: event.name,
+    traceId,
     blockHeader,
     extrinsic,
   };
@@ -132,41 +139,25 @@ export async function getParsedEventsData(
 
       try {
         call = event.getCall();
-
-        // console.log('event - ', event.name, event.id);
-        // console.dir(call.getParentCall(), { depth: null });
       } catch (e) {}
-
-      // try {
-      //   const ext = event.getExtrinsic();
-      //
-      //   console.dir(ext, { depth: null });
-      //
-      //   // console.log('event - ', event.name, event.id);
-      //   // console.dir(call.getParentCall(), { depth: null });
-      // } catch (e) {}
 
       const callMetadata = {
         name: call?.name ?? '_system',
         id: call?.id,
         traceId: call
           ? await ChainActivityTraceManager.getTraceIdByCallId(call.id, ctx)
-          : await ChainActivityTraceManager.getTraceIdByEventId(event.id, ctx),
+          : undefined,
       };
 
-      const eventMetadata = getEventMetadata(
+      const eventMetadata = getEventMetadata({
         event,
-        block.header,
-        event.extrinsic
-      );
-
-      // console.log('\n\n\n');
-      // console.log(
-      //   eventMetadata.name,
-      //   eventMetadata.indexInBlock,
-      //   eventMetadata.blockHeader.height
-      // );
-      // console.dir(callMetadata, { depth: null });
+        blockHeader: block.header,
+        extrinsic: event.extrinsic,
+        traceId: await ChainActivityTraceManager.getTraceIdByEventId(
+          event.id,
+          ctx
+        ),
+      });
 
       switch (event.name) {
         /**

@@ -9,7 +9,7 @@ import { getCallOriginParts } from './helpers';
 
 export interface TransferEvent {
   id: string;
-  traceId?: string;
+  traceIds: string[];
   assetId: number;
   blockNumber: number;
   timestamp: Date;
@@ -66,7 +66,7 @@ export enum ChainName {
   hydration_paseo = 'hydration_paseo',
 }
 
-export enum TraceIdOrigin {
+export enum TraceIdContext {
   call = 'call',
   event = 'event',
 }
