@@ -4,14 +4,21 @@ import {
   EventMetadata,
   ParsedEventsCallsData,
   EventDataType,
+  CallMetadata,
 } from './types';
 import { EventName, RelayChainInfo } from '../types/events';
-import { Block, Event, Extrinsic, ProcessorContext } from '../../processor';
+import {
+  Block,
+  Call,
+  Event,
+  Extrinsic,
+  ProcessorContext,
+} from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../';
 import { calls, events } from '../chains/hydration/typegenTypes'; // TODO fix for different CHAIN env value
-import { BlockHeader } from '@subsquid/substrate-processor';
 import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { EventDataParserHelper } from './eventDataParserHelper';
 
 export class BatchBlocksParsedDataManager {
   private scope: BatchBlocksParsedDataScope;
@@ -88,25 +95,6 @@ export async function getParsedEventsData(
 
   const batchState = ctx.batchState.state;
 
-  const addIdsForStoragePrefetch = (
-    key:
-      | 'lbpPoolAssetIdsForStoragePrefetch'
-      | 'xykPoolIdsForStoragePrefetch'
-      | 'omnipoolAssetIdsForStoragePrefetch'
-      | 'stablepoolIdsForStoragePrefetch',
-    blockHeader: BlockHeader,
-    value: any // TODO fix type
-  ) => {
-    if (!batchState[key].has(blockHeader.height)) {
-      batchState[key].set(blockHeader.height, {
-        blockHeader,
-        ids: new Set([value]),
-      });
-      return;
-    }
-    batchState[key].get(blockHeader.height)!.ids.add(value as never); // TODO fix type
-  };
-
   for (let block of ctx.blocks) {
     const relayChainInfo: RelayChainInfo = {
       parachainBlockNumber: 0,
@@ -135,13 +123,13 @@ export async function getParsedEventsData(
     };
 
     for (const event of block.events) {
-      let call = null;
+      let call: Call | null = null;
 
       try {
         call = event.getCall();
       } catch (e) {}
 
-      const callMetadata = {
+      const callMetadata: CallMetadata = {
         name: call?.name ?? '_system',
         id: call?.id,
         traceId: call
@@ -159,546 +147,392 @@ export async function getParsedEventsData(
         ),
       });
 
+      const parserHelper = new EventDataParserHelper({
+        relayChainInfo,
+        callMetadata,
+        eventMetadata,
+        call,
+        event,
+        batchState,
+      });
+
+      totalEventsNumber++;
       switch (event.name) {
         /**
-         * ==== LBP pools ====
+         * ============================= L B P =================================
+         */
+
+        /**
+         * ==== LBP Poll Created ====
          */
         case events.lbp.poolCreated.name: {
-          const callArgs = call
-            ? parsers.calls.lbp.parseCreatePoolArgs(call)
-            : undefined;
-          const eventParams = parsers.events.lbp.parsePoolCreatedParams(event);
+          const preparedData = parserHelper.parseLbpPoolCreatedData();
+          parsedDataManager.set(EventName.LBP_PoolCreated, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'lbpPoolAssetIdsForStoragePrefetch',
-            event.block,
-            `${eventParams.data.assets[0]}-${eventParams.data.assets[1]}`
+            `${preparedData.eventData.params.data.assets[0]}-${preparedData.eventData.params.data.assets[1]}`
           );
-
-          parsedDataManager.set(EventName.LBP_PoolCreated, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-              args: callArgs,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== LBP Poll Updated ====
+         */
         case events.lbp.poolUpdated.name: {
-          const eventParams = parsers.events.lbp.parsePoolUpdatedParams(event);
+          const preparedData = parserHelper.parseLbpPoolUpdatedData();
+          parsedDataManager.set(EventName.LBP_PoolUpdated, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'lbpPoolAssetIdsForStoragePrefetch',
-            event.block,
-            `${eventParams.data.assets[0]}-${eventParams.data.assets[1]}`
+            `${preparedData.eventData.params.data.assets[0]}-${preparedData.eventData.params.data.assets[1]}`
           );
-
-          parsedDataManager.set(EventName.LBP_PoolUpdated, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== LBP Buy Executed ====
+         */
         case events.lbp.buyExecuted.name: {
-          const eventParams = parsers.events.lbp.parseBuyExecutedParams(event);
+          const preparedData = parserHelper.parseLbpBuyExecutedData();
+          parsedDataManager.set(EventName.LBP_BuyExecuted, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'lbpPoolAssetIdsForStoragePrefetch',
-            event.block,
-            `${eventParams.assetIn}-${eventParams.assetOut}`
+            `${preparedData.eventData.params.assetIn}-${preparedData.eventData.params.assetOut}`
           );
-
-          parsedDataManager.set(EventName.LBP_BuyExecuted, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== LBP Sell Executed ====
+         */
         case events.lbp.sellExecuted.name: {
-          const eventParams = parsers.events.lbp.parseSellExecutedParams(event);
+          const preparedData = parserHelper.parseLbpSellExecutedData();
+          parsedDataManager.set(EventName.LBP_SellExecuted, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'lbpPoolAssetIdsForStoragePrefetch',
-            event.block,
-            `${eventParams.assetIn}-${eventParams.assetOut}`
+            `${preparedData.eventData.params.assetIn}-${preparedData.eventData.params.assetOut}`
           );
-
-          parsedDataManager.set(EventName.LBP_SellExecuted, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
 
         /**
-         * ==== XYK pools ====
+         * ============================= X Y K =================================
          */
 
+        /**
+         * ==== XYK Pool Created ====
+         */
         case events.xyk.poolCreated.name: {
-          const callArgs =
-            call && call.name === calls.xyk.createPool.name
-              ? parsers.calls.xyk.parseCreatePoolArgs(call)
-              : undefined;
-          const eventParams = parsers.events.xyk.parsePoolCreatedParams(event);
+          const preparedData = parserHelper.parseXykPoolCreatedData();
+          parsedDataManager.set(EventName.XYK_PoolCreated, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'xykPoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.pool
+            preparedData.eventData.params.pool
           );
-
-          parsedDataManager.set(EventName.XYK_PoolCreated, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-              args: callArgs,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== XYK Pool Destroyed ====
+         */
         case events.xyk.poolDestroyed.name: {
-          const eventParams =
-            parsers.events.xyk.parsePoolDestroyedParams(event);
+          const preparedData = parserHelper.parseXykPoolDestroyedData();
+          parsedDataManager.set(EventName.XYK_PoolDestroyed, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'xykPoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.pool
+            preparedData.eventData.params.pool
           );
-
-          parsedDataManager.set(EventName.XYK_PoolDestroyed, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== XYK Buy Executed ====
+         */
         case events.xyk.buyExecuted.name: {
-          const eventParams = parsers.events.xyk.parseBuyExecutedParams(event);
+          const preparedData = parserHelper.parseXykBuyExecutedData();
+          parsedDataManager.set(EventName.XYK_BuyExecuted, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'xykPoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.pool
+            preparedData.eventData.params.pool
           );
-
-          parsedDataManager.set(EventName.XYK_BuyExecuted, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== XYK Sell Executed ====
+         */
         case events.xyk.sellExecuted.name: {
-          const eventParams = parsers.events.xyk.parseSellExecutedParams(event);
+          const preparedData = parserHelper.parseXykSellExecutedData();
+          parsedDataManager.set(EventName.XYK_SellExecuted, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'xykPoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.pool
+            preparedData.eventData.params.pool
           );
-
-          parsedDataManager.set(EventName.XYK_SellExecuted, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
 
         /**
-         * ==== Omnipools ====
+         * ======================== O M N I P O O L ============================
          */
 
+        /**
+         * ==== Omnipool Token Added ====
+         */
         case events.omnipool.tokenAdded.name: {
-          const eventParams =
-            parsers.events.omnipool.parseTokenAddedParams(event);
+          const preparedData = parserHelper.parseOmnipoolTokenAddedData();
+          parsedDataManager.set(EventName.Omnipool_TokenAdded, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'omnipoolAssetIdsForStoragePrefetch',
-            event.block,
-            eventParams.assetId
+            preparedData.eventData.params.assetId
           );
-
-          parsedDataManager.set(EventName.Omnipool_TokenAdded, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== Omnipool Token Removed ====
+         */
         case events.omnipool.tokenRemoved.name: {
-          const eventParams =
-            parsers.events.omnipool.parseTokenRemovedParams(event);
+          const preparedData = parserHelper.parseOmnipoolTokenRemovedData();
+          parsedDataManager.set(EventName.Omnipool_TokenRemoved, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'omnipoolAssetIdsForStoragePrefetch',
-            event.block,
-            eventParams.assetId
+            preparedData.eventData.params.assetId
           );
-
-          parsedDataManager.set(EventName.Omnipool_TokenRemoved, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== Omnipool Buy Executed ====
+         */
         case events.omnipool.buyExecuted.name: {
-          const eventParams =
-            parsers.events.omnipool.parseBuyExecutedParams(event);
+          const preparedData = parserHelper.parseOmnipoolBuyExecutedData();
+          parsedDataManager.set(EventName.Omnipool_BuyExecuted, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'omnipoolAssetIdsForStoragePrefetch',
-            event.block,
-            eventParams.assetIn
+            preparedData.eventData.params.assetIn
           );
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'omnipoolAssetIdsForStoragePrefetch',
-            event.block,
-            eventParams.assetOut
+            preparedData.eventData.params.assetOut
           );
-
-          parsedDataManager.set(EventName.Omnipool_BuyExecuted, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
+        /**
+         * ==== Omnipool Sell Executed ====
+         */
         case events.omnipool.sellExecuted.name: {
-          const eventParams =
-            parsers.events.omnipool.parseSellExecutedParams(event);
+          const preparedData = parserHelper.parseOmnipoolSellExecutedData();
+          parsedDataManager.set(EventName.Omnipool_SellExecuted, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'omnipoolAssetIdsForStoragePrefetch',
-            event.block,
-            eventParams.assetIn
+            preparedData.eventData.params.assetIn
           );
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'omnipoolAssetIdsForStoragePrefetch',
-            event.block,
-            eventParams.assetOut
+            preparedData.eventData.params.assetOut
           );
-
-          parsedDataManager.set(EventName.Omnipool_SellExecuted, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
 
         /**
-         * ==== Stableswap ====
+         * ====================== S T A B L E S W A P ==========================
          */
 
+        /**
+         * ==== Stableswap Pool Created ====
+         */
         case events.stableswap.poolCreated.name: {
-          const eventParams =
-            parsers.events.stableswap.parsePoolCreatedParams(event);
+          const preparedData = parserHelper.parseStableswapPoolCreatedData();
+          parsedDataManager.set(EventName.Stableswap_PoolCreated, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'stablepoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.poolId
+            preparedData.eventData.params.poolId
           );
-
-          parsedDataManager.set(EventName.Stableswap_PoolCreated, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
-
+        /**
+         * ==== Stableswap Buy Executed ====
+         */
         case events.stableswap.buyExecuted.name: {
-          const eventParams =
-            parsers.events.stableswap.parseBuyExecutedParams(event);
+          const preparedData = parserHelper.parseStableswapBuyExecutedData();
+          parsedDataManager.set(EventName.Stableswap_BuyExecuted, preparedData);
 
-          addIdsForStoragePrefetch(
+          parserHelper.addIdsForStoragePrefetch(
             'stablepoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.poolId
+            preparedData.eventData.params.poolId
           );
-
-          parsedDataManager.set(EventName.Stableswap_BuyExecuted, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
           break;
         }
-
+        /**
+         * ==== Stableswap Sell Executed ====
+         */
         case events.stableswap.sellExecuted.name: {
-          const eventParams =
-            parsers.events.stableswap.parseSellExecutedParams(event);
-
-          addIdsForStoragePrefetch(
-            'stablepoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.poolId
+          const preparedData = parserHelper.parseStableswapSellExecutedData();
+          parsedDataManager.set(
+            EventName.Stableswap_SellExecuted,
+            preparedData
           );
 
-          parsedDataManager.set(EventName.Stableswap_SellExecuted, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
+          parserHelper.addIdsForStoragePrefetch(
+            'stablepoolIdsForStoragePrefetch',
+            preparedData.eventData.params.poolId
+          );
           break;
         }
-
+        /**
+         * ==== Stableswap Liquidity Added ====
+         */
         case events.stableswap.liquidityAdded.name: {
-          const eventParams =
-            parsers.events.stableswap.parseLiquidityAddedParams(event);
-
-          addIdsForStoragePrefetch(
-            'stablepoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.poolId
+          const preparedData = parserHelper.parseStableswapLiquidityAddedData();
+          parsedDataManager.set(
+            EventName.Stableswap_LiquidityAdded,
+            preparedData
           );
-
-          parsedDataManager.set(EventName.Stableswap_LiquidityAdded, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
+          parserHelper.addIdsForStoragePrefetch(
+            'stablepoolIdsForStoragePrefetch',
+            preparedData.eventData.params.poolId
+          );
           break;
         }
-
+        /**
+         * ==== Stableswap Liquidity Removed ====
+         */
         case events.stableswap.liquidityRemoved.name: {
-          const eventParams =
-            parsers.events.stableswap.parseLiquidityRemovedParams(event);
-
-          addIdsForStoragePrefetch(
-            'stablepoolIdsForStoragePrefetch',
-            event.block,
-            eventParams.poolId
+          const preparedData =
+            parserHelper.parseStableswapLiquidityRemovedData();
+          parsedDataManager.set(
+            EventName.Stableswap_LiquidityRemoved,
+            preparedData
           );
 
-          parsedDataManager.set(EventName.Stableswap_LiquidityRemoved, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
+          parserHelper.addIdsForStoragePrefetch(
+            'stablepoolIdsForStoragePrefetch',
+            preparedData.eventData.params.poolId
+          );
           break;
         }
 
         /**
-         * ==== Common ====
+         * ============================= D C A =================================
+         */
+
+        /**
+         * ==== DCA Scheduled ====
+         */
+        case events.dca.scheduled.name: {
+          const preparedData = parserHelper.parseDcaScheduledData();
+          parsedDataManager.set(EventName.DCA_Scheduled, preparedData);
+          break;
+        }
+        /**
+         * ==== DCA Completed ====
+         */
+        case events.dca.completed.name: {
+          const preparedData = parserHelper.parseDcaCompletedData();
+          parsedDataManager.set(EventName.DCA_Completed, preparedData);
+          break;
+        }
+        /**
+         * ==== DCA Terminated ====
+         */
+        case events.dca.terminated.name: {
+          const preparedData = parserHelper.parseDcaTerminatedData();
+          parsedDataManager.set(EventName.DCA_Terminated, preparedData);
+          break;
+        }
+        /**
+         * ==== DCA Trade Executed ====
+         */
+        case events.dca.tradeExecuted.name: {
+          const preparedData = parserHelper.parseDcaTradeExecutedData();
+          parsedDataManager.set(EventName.DCA_TradeExecuted, preparedData);
+          break;
+        }
+        /**
+         * ==== DCA Trade Failed ====
+         */
+        case events.dca.tradeFailed.name: {
+          const preparedData = parserHelper.parseDcaTradeFailedData();
+          parsedDataManager.set(EventName.DCA_TradeFailed, preparedData);
+          break;
+        }
+        /**
+         * ==== DCA Execution Planed ====
+         */
+        case events.dca.executionPlanned.name: {
+          const preparedData = parserHelper.parseDcaExecutionPlannedData();
+          parsedDataManager.set(EventName.DCA_ExecutionPlanned, preparedData);
+          break;
+        }
+
+        /**
+         * ==== DCA Randomness Generation Failed ====
+         */
+        case events.dca.randomnessGenerationFailed.name: {
+          const preparedData =
+            parserHelper.parseDcaRandomnessGenerationFailedData();
+          parsedDataManager.set(
+            EventName.DCA_RandomnessGenerationFailed,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ========================== T O K E N S ==============================
+         */
+
+        /**
+         * ==== Tokens Transfer ====
          */
         case events.tokens.transfer.name: {
-          const eventParams = parsers.events.tokens.parseTransferParams(event);
-
-          parsedDataManager.set(EventName.Tokens_Transfer, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
+          const preparedData = parserHelper.parseTokensTransferData();
+          parsedDataManager.set(EventName.Tokens_Transfer, preparedData);
           break;
         }
+
+        /**
+         * ======================== B A L A N C E S ============================
+         */
+
+        /**
+         * ==== Balances Transfer ====
+         */
         case events.balances.transfer.name: {
-          const eventParams =
-            parsers.events.balances.parseTransferParams(event);
-
-          parsedDataManager.set(EventName.Balances_Transfer, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
+          const preparedData = parserHelper.parseBalancesTransferData();
+          parsedDataManager.set(EventName.Balances_Transfer, preparedData);
           break;
         }
+
+        /**
+         * ================= A S S E T   R E G I S T R Y =======================
+         */
+
+        /**
+         * ==== AssetRegistry Registered ====
+         */
         case events.assetRegistry.registered.name: {
-          const eventParams =
-            parsers.events.assetRegistry.parseRegisteredParams(event);
-
-          parsedDataManager.set(EventName.AssetRegistry_Registered, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
+          const preparedData = parserHelper.parseAssetRegistryRegisteredData();
+          parsedDataManager.set(
+            EventName.AssetRegistry_Registered,
+            preparedData
+          );
           break;
         }
+        /**
+         * ==== AssetRegistry Updated ====
+         */
         case events.assetRegistry.updated.name: {
-          const eventParams =
-            parsers.events.assetRegistry.parseUpdatedParams(event);
-
-          parsedDataManager.set(EventName.AssetRegistry_Updated, {
-            relayChainInfo,
-            id: eventMetadata.id,
-            eventData: {
-              name: eventMetadata.name,
-              metadata: eventMetadata,
-              params: eventParams,
-            },
-            callData: {
-              ...callMetadata,
-            },
-          });
-          totalEventsNumber++;
+          const preparedData = parserHelper.parseAssetRegistryUpdatedData();
+          parsedDataManager.set(EventName.AssetRegistry_Updated, preparedData);
           break;
         }
         default:
+          totalEventsNumber--;
       }
     }
   }

@@ -9,6 +9,7 @@ import {
   Account,
   AccountChainActivityTrace,
   TraceEntityType,
+  EventGroup,
 } from '../model';
 import { getCallOriginParts } from '../utils/helpers';
 import { getAccount } from '../handlers/accounts';
@@ -90,10 +91,16 @@ export class ChainActivityTraceManager {
         >();
 
         for (const subcall of extrinsic.subcalls) {
-          const item: { call: Call; parent?: Call } = { call: subcall };
+          const subcallRawData: { call: Call; parent?: Call } = {
+            call: subcall,
+          };
 
           try {
-            item.parent = subcall.getParentCall();
+            const subcallParent = subcall.getParentCall();
+            subcallRawData.parent =
+              subcallParent && subcallParent.id !== subcall.id
+                ? subcallParent
+                : undefined;
           } catch (e) {}
 
           const callEntityOriginData = getCallOriginParts(subcall.origin);
@@ -102,6 +109,7 @@ export class ChainActivityTraceManager {
             : new CallEntity({
                 id: subcall.id,
                 name: subcall.name,
+                success: subcall.success,
                 entityTypes: this.getEntityTypesByCallName(subcall.name),
                 subcalls: [],
                 originKind: callEntityOriginData.kind,
@@ -114,30 +122,40 @@ export class ChainActivityTraceManager {
 
           let callParentEntity: CallEntity | undefined = undefined;
 
-          if (item.parent && callEntitiesMap.has(item.parent.id)) {
-            callParentEntity = callEntitiesMap.get(item.parent.id)!.call;
-          } else if (item.parent && !callEntitiesMap.has(item.parent.id)) {
+          if (
+            subcallRawData.parent &&
+            callEntitiesMap.has(subcallRawData.parent.id)
+          ) {
+            callParentEntity = callEntitiesMap.get(
+              subcallRawData.parent.id
+            )!.call;
+          } else if (
+            subcallRawData.parent &&
+            !callEntitiesMap.has(subcallRawData.parent.id)
+          ) {
             const callParentEntityOriginData = getCallOriginParts(
-              item.parent.origin
+              subcallRawData.parent.origin
             );
 
             callParentEntity = new CallEntity({
-              id: item.parent.id,
-              name: item.parent.name,
-              entityTypes: this.getEntityTypesByCallName(item.parent.name),
+              id: subcallRawData.parent.id,
+              name: subcallRawData.parent.name,
+              success: subcallRawData.parent.success,
+              entityTypes: this.getEntityTypesByCallName(
+                subcallRawData.parent.name
+              ),
               subcalls: [],
               originKind: callParentEntityOriginData.kind,
               originValueKind: callParentEntityOriginData.valueKind,
               originValue: callParentEntityOriginData.value,
               extrinsic: extrinsicEntity,
-              paraChainBlockHeight: item.parent.block.height,
+              paraChainBlockHeight: subcallRawData.parent.block.height,
               block: blockEntity,
             });
           }
 
           callEntity.parent = callParentEntity ?? null;
           if (!!callParentEntity) callParentEntity.subcalls.push(callEntity);
-
           callEntitiesMap.set(callEntity.id, {
             call: callEntity,
             parent: callParentEntity,
@@ -231,6 +249,7 @@ export class ChainActivityTraceManager {
                 event.index.toString(),
               ]
             ),
+            group: this.eventGroup(event.name, event.phase),
             indexInBlock: event.index,
             name: event.name,
             phase: event.phase,
@@ -318,12 +337,14 @@ export class ChainActivityTraceManager {
   static async saveActivityTraceEntities(ctx: ProcessorContext<Store>) {
     const state = ctx.batchState.state;
 
-    await ctx.store.upsert([...state.batchBlocks.values()]);
-    await ctx.store.upsert([...state.batchExtrinsics.values()]);
-    await ctx.store.upsert([...state.batchCalls.values()]);
-    await ctx.store.upsert([...state.batchEvents.values()]);
-    await ctx.store.upsert([...state.chainActivityTraces.values()]);
-    await ctx.store.upsert([...state.accountChainActivityTraces.values()]);
+    await ctx.store.upsert([...state.batchBlocks.values()].reverse());
+    await ctx.store.upsert([...state.batchExtrinsics.values()].reverse());
+    await ctx.store.upsert([...state.batchCalls.values()].reverse());
+    await ctx.store.upsert([...state.batchEvents.values()].reverse());
+    await ctx.store.upsert([...state.chainActivityTraces.values()].reverse());
+    await ctx.store.upsert(
+      [...state.accountChainActivityTraces.values()].reverse()
+    );
   }
 
   static traceIdPrefixWithContext(traceIdOrigin: TraceIdContext) {
@@ -346,14 +367,59 @@ export class ChainActivityTraceManager {
       switch (eventName) {
         // TODO Add conditional select of appropriate group
         default:
-          return `${rootSrc}:${TraceIdEventGroup.init}`;
+          return `${rootSrc}:${TraceIdEventGroup.initialization}`;
       }
     };
     const getGroupForFinalizationPhase = () => {
       switch (eventName) {
         // TODO Add conditional select of appropriate group
         default:
-          return `${rootSrc}:${TraceIdEventGroup.buyback}`;
+          return `${rootSrc}:${TraceIdEventGroup.finalization}`;
+      }
+    };
+
+    switch (phase) {
+      case 'Initialization':
+        return getGroupForInitializationPhase();
+      case 'ApplyExtrinsic':
+        return getGroupForApplyExtrinsicPhase();
+      case 'Finalization':
+        return getGroupForFinalizationPhase();
+      default:
+        throw new Error(`Unknown phase: ${eventName}`);
+    }
+  }
+
+  static eventGroup(eventName: string, phase: EventPhase): EventGroup {
+    const getGroupForApplyExtrinsicPhase = () => {
+      switch (eventName) {
+        // TODO Add conditional select of appropriate group
+        default:
+          return EventGroup.EXTRINSIC;
+      }
+    };
+    const getGroupForInitializationPhase = () => {
+      switch (eventName) {
+        case 'DCA.Scheduled':
+        case 'DCA.ExecutionStarted':
+        case 'DCA.ExecutionPlanned':
+        case 'DCA.TradeExecuted':
+        case 'DCA.TradeFailed':
+        case 'DCA.Terminated':
+        case 'DCA.Completed':
+        case 'DCA.RandomnessGenerationFailed':
+          return EventGroup.DCA;
+        default:
+          return EventGroup.INITIALIZATION;
+      }
+    };
+    const getGroupForFinalizationPhase = () => {
+      switch (eventName) {
+        case 'Omnipool.SellExecuted':
+        case 'Omnipool.BuyExecuted':
+          return EventGroup.BUY_BACK;
+        default:
+          return EventGroup.FINALIZATION;
       }
     };
 
@@ -423,7 +489,7 @@ export class ChainActivityTraceManager {
     callId: string,
     ctx: ProcessorContext<Store>
   ) {
-    const { batchCalls } = ctx.batchState.state;
+    const { batchCalls, batchExtrinsics, batchEvents } = ctx.batchState.state;
     const traceId = batchCalls.get(callId)?.traceId;
 
     if (traceId) return traceId;

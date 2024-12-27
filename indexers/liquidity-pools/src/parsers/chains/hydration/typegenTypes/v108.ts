@@ -45,171 +45,75 @@ export const AssetDetails: sts.Type<AssetDetails> = sts.struct(() => {
     }
 })
 
-export const Call: sts.Type<Call> = sts.closedEnum(() => {
+export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
-        AssetRegistry: AssetRegistryCall,
-        Authorship: AuthorshipCall,
-        Balances: BalancesCall,
-        Claims: ClaimsCall,
-        CollatorSelection: CollatorSelectionCall,
-        Council: CouncilCall,
-        CumulusXcm: CumulusXcmCall,
-        Currencies: CurrenciesCall,
-        Democracy: DemocracyCall,
-        DmpQueue: DmpQueueCall,
-        Elections: ElectionsCall,
-        Identity: IdentityCall,
-        MultiTransactionPayment: MultiTransactionPaymentCall,
-        Multisig: MultisigCall,
-        OrmlXcm: OrmlXcmCall,
-        ParachainSystem: ParachainSystemCall,
-        PolkadotXcm: PolkadotXcmCall,
-        Preimage: PreimageCall,
-        Proxy: ProxyCall,
-        Scheduler: SchedulerCall,
-        Session: SessionCall,
-        Sudo: SudoCall,
-        System: SystemCall,
-        TechnicalCommittee: TechnicalCommitteeCall,
-        Timestamp: TimestampCall,
-        Tips: TipsCall,
-        Tokens: TokensCall,
-        Treasury: TreasuryCall,
-        Utility: UtilityCall,
-        Vesting: VestingCall,
-        XTokens: XTokensCall,
+        Council: Type_159,
+        CumulusXcm: Type_162,
+        PolkadotXcm: Origin,
+        TechnicalCommittee: Type_160,
+        Void: Void,
+        system: RawOrigin,
     }
 })
 
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export const XTokensCall: sts.Type<XTokensCall> = sts.closedEnum(() => {
+export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
     return  {
-        transfer: sts.enumStruct({
-            currencyId: sts.number(),
-            amount: sts.bigint(),
-            dest: VersionedMultiLocation,
-            destWeight: sts.bigint(),
-        }),
-        transfer_multiasset: sts.enumStruct({
-            asset: VersionedMultiAsset,
-            dest: VersionedMultiLocation,
-            destWeight: sts.bigint(),
-        }),
-        transfer_multiasset_with_fee: sts.enumStruct({
-            asset: VersionedMultiAsset,
-            fee: VersionedMultiAsset,
-            dest: VersionedMultiLocation,
-            destWeight: sts.bigint(),
-        }),
-        transfer_multiassets: sts.enumStruct({
-            assets: VersionedMultiAssets,
-            feeItem: sts.number(),
-            dest: VersionedMultiLocation,
-            destWeight: sts.bigint(),
-        }),
-        transfer_multicurrencies: sts.enumStruct({
-            currencies: sts.array(() => sts.tuple(() => [sts.number(), sts.bigint()])),
-            feeItem: sts.number(),
-            dest: VersionedMultiLocation,
-            destWeight: sts.bigint(),
-        }),
-        transfer_with_fee: sts.enumStruct({
-            currencyId: sts.number(),
-            amount: sts.bigint(),
-            fee: sts.bigint(),
-            dest: VersionedMultiLocation,
-            destWeight: sts.bigint(),
-        }),
+        None: sts.unit(),
+        Root: sts.unit(),
+        Signed: AccountId32,
     }
 })
 
-export const VersionedMultiAssets: sts.Type<VersionedMultiAssets> = sts.closedEnum(() => {
+export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
+
+export interface RawOrigin_None {
+    __kind: 'None'
+}
+
+export interface RawOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface RawOrigin_Signed {
+    __kind: 'Signed'
+    value: AccountId32
+}
+
+export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {
-        V0: sts.array(() => V0MultiAsset),
-        V1: sts.array(() => V1MultiAsset),
     }
 })
 
-export const V1MultiAsset: sts.Type<V1MultiAsset> = sts.struct(() => {
+export type Void = never
+
+export const Type_160: sts.Type<Type_160> = sts.closedEnum(() => {
     return  {
-        id: V1AssetId,
-        fun: V1Fungibility,
+        Member: AccountId32,
+        Members: sts.tuple(() => [sts.number(), sts.number()]),
+        _Phantom: sts.unit(),
     }
 })
 
-export const V1Fungibility: sts.Type<V1Fungibility> = sts.closedEnum(() => {
+export type Type_160 = Type_160_Member | Type_160_Members | Type_160__Phantom
+
+export interface Type_160_Member {
+    __kind: 'Member'
+    value: AccountId32
+}
+
+export interface Type_160_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_160__Phantom {
+    __kind: '_Phantom'
+}
+
+export const Origin: sts.Type<Origin> = sts.closedEnum(() => {
     return  {
-        Fungible: sts.bigint(),
-        NonFungible: V1AssetInstance,
-    }
-})
-
-export const V1AssetInstance: sts.Type<V1AssetInstance> = sts.closedEnum(() => {
-    return  {
-        Array16: sts.bytes(),
-        Array32: sts.bytes(),
-        Array4: sts.bytes(),
-        Array8: sts.bytes(),
-        Blob: sts.bytes(),
-        Index: sts.bigint(),
-        Undefined: sts.unit(),
-    }
-})
-
-export type V1AssetInstance = V1AssetInstance_Array16 | V1AssetInstance_Array32 | V1AssetInstance_Array4 | V1AssetInstance_Array8 | V1AssetInstance_Blob | V1AssetInstance_Index | V1AssetInstance_Undefined
-
-export interface V1AssetInstance_Array16 {
-    __kind: 'Array16'
-    value: Bytes
-}
-
-export interface V1AssetInstance_Array32 {
-    __kind: 'Array32'
-    value: Bytes
-}
-
-export interface V1AssetInstance_Array4 {
-    __kind: 'Array4'
-    value: Bytes
-}
-
-export interface V1AssetInstance_Array8 {
-    __kind: 'Array8'
-    value: Bytes
-}
-
-export interface V1AssetInstance_Blob {
-    __kind: 'Blob'
-    value: Bytes
-}
-
-export interface V1AssetInstance_Index {
-    __kind: 'Index'
-    value: bigint
-}
-
-export interface V1AssetInstance_Undefined {
-    __kind: 'Undefined'
-}
-
-export type V1Fungibility = V1Fungibility_Fungible | V1Fungibility_NonFungible
-
-export interface V1Fungibility_Fungible {
-    __kind: 'Fungible'
-    value: bigint
-}
-
-export interface V1Fungibility_NonFungible {
-    __kind: 'NonFungible'
-    value: V1AssetInstance
-}
-
-export const V1AssetId: sts.Type<V1AssetId> = sts.closedEnum(() => {
-    return  {
-        Abstract: sts.bytes(),
-        Concrete: V1MultiLocation,
+        Response: V1MultiLocation,
+        Xcm: V1MultiLocation,
     }
 })
 
@@ -482,6 +386,264 @@ export interface V1MultiLocation {
     parents: number
     interior: V1Junctions
 }
+
+export type Origin = Origin_Response | Origin_Xcm
+
+export interface Origin_Response {
+    __kind: 'Response'
+    value: V1MultiLocation
+}
+
+export interface Origin_Xcm {
+    __kind: 'Xcm'
+    value: V1MultiLocation
+}
+
+export const Type_162: sts.Type<Type_162> = sts.closedEnum(() => {
+    return  {
+        Relay: sts.unit(),
+        SiblingParachain: Id,
+    }
+})
+
+export const Id = sts.number()
+
+export type Type_162 = Type_162_Relay | Type_162_SiblingParachain
+
+export interface Type_162_Relay {
+    __kind: 'Relay'
+}
+
+export interface Type_162_SiblingParachain {
+    __kind: 'SiblingParachain'
+    value: Id
+}
+
+export type Id = number
+
+export const Type_159: sts.Type<Type_159> = sts.closedEnum(() => {
+    return  {
+        Member: AccountId32,
+        Members: sts.tuple(() => [sts.number(), sts.number()]),
+        _Phantom: sts.unit(),
+    }
+})
+
+export type Type_159 = Type_159_Member | Type_159_Members | Type_159__Phantom
+
+export interface Type_159_Member {
+    __kind: 'Member'
+    value: AccountId32
+}
+
+export interface Type_159_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_159__Phantom {
+    __kind: '_Phantom'
+}
+
+export type OriginCaller = OriginCaller_Council | OriginCaller_CumulusXcm | OriginCaller_PolkadotXcm | OriginCaller_TechnicalCommittee | OriginCaller_Void | OriginCaller_system
+
+export interface OriginCaller_Council {
+    __kind: 'Council'
+    value: Type_159
+}
+
+export interface OriginCaller_CumulusXcm {
+    __kind: 'CumulusXcm'
+    value: Type_162
+}
+
+export interface OriginCaller_PolkadotXcm {
+    __kind: 'PolkadotXcm'
+    value: Origin
+}
+
+export interface OriginCaller_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: Type_160
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
+}
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export const Call: sts.Type<Call> = sts.closedEnum(() => {
+    return  {
+        AssetRegistry: AssetRegistryCall,
+        Authorship: AuthorshipCall,
+        Balances: BalancesCall,
+        Claims: ClaimsCall,
+        CollatorSelection: CollatorSelectionCall,
+        Council: CouncilCall,
+        CumulusXcm: CumulusXcmCall,
+        Currencies: CurrenciesCall,
+        Democracy: DemocracyCall,
+        DmpQueue: DmpQueueCall,
+        Elections: ElectionsCall,
+        Identity: IdentityCall,
+        MultiTransactionPayment: MultiTransactionPaymentCall,
+        Multisig: MultisigCall,
+        OrmlXcm: OrmlXcmCall,
+        ParachainSystem: ParachainSystemCall,
+        PolkadotXcm: PolkadotXcmCall,
+        Preimage: PreimageCall,
+        Proxy: ProxyCall,
+        Scheduler: SchedulerCall,
+        Session: SessionCall,
+        Sudo: SudoCall,
+        System: SystemCall,
+        TechnicalCommittee: TechnicalCommitteeCall,
+        Timestamp: TimestampCall,
+        Tips: TipsCall,
+        Tokens: TokensCall,
+        Treasury: TreasuryCall,
+        Utility: UtilityCall,
+        Vesting: VestingCall,
+        XTokens: XTokensCall,
+    }
+})
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const XTokensCall: sts.Type<XTokensCall> = sts.closedEnum(() => {
+    return  {
+        transfer: sts.enumStruct({
+            currencyId: sts.number(),
+            amount: sts.bigint(),
+            dest: VersionedMultiLocation,
+            destWeight: sts.bigint(),
+        }),
+        transfer_multiasset: sts.enumStruct({
+            asset: VersionedMultiAsset,
+            dest: VersionedMultiLocation,
+            destWeight: sts.bigint(),
+        }),
+        transfer_multiasset_with_fee: sts.enumStruct({
+            asset: VersionedMultiAsset,
+            fee: VersionedMultiAsset,
+            dest: VersionedMultiLocation,
+            destWeight: sts.bigint(),
+        }),
+        transfer_multiassets: sts.enumStruct({
+            assets: VersionedMultiAssets,
+            feeItem: sts.number(),
+            dest: VersionedMultiLocation,
+            destWeight: sts.bigint(),
+        }),
+        transfer_multicurrencies: sts.enumStruct({
+            currencies: sts.array(() => sts.tuple(() => [sts.number(), sts.bigint()])),
+            feeItem: sts.number(),
+            dest: VersionedMultiLocation,
+            destWeight: sts.bigint(),
+        }),
+        transfer_with_fee: sts.enumStruct({
+            currencyId: sts.number(),
+            amount: sts.bigint(),
+            fee: sts.bigint(),
+            dest: VersionedMultiLocation,
+            destWeight: sts.bigint(),
+        }),
+    }
+})
+
+export const VersionedMultiAssets: sts.Type<VersionedMultiAssets> = sts.closedEnum(() => {
+    return  {
+        V0: sts.array(() => V0MultiAsset),
+        V1: sts.array(() => V1MultiAsset),
+    }
+})
+
+export const V1MultiAsset: sts.Type<V1MultiAsset> = sts.struct(() => {
+    return  {
+        id: V1AssetId,
+        fun: V1Fungibility,
+    }
+})
+
+export const V1Fungibility: sts.Type<V1Fungibility> = sts.closedEnum(() => {
+    return  {
+        Fungible: sts.bigint(),
+        NonFungible: V1AssetInstance,
+    }
+})
+
+export const V1AssetInstance: sts.Type<V1AssetInstance> = sts.closedEnum(() => {
+    return  {
+        Array16: sts.bytes(),
+        Array32: sts.bytes(),
+        Array4: sts.bytes(),
+        Array8: sts.bytes(),
+        Blob: sts.bytes(),
+        Index: sts.bigint(),
+        Undefined: sts.unit(),
+    }
+})
+
+export type V1AssetInstance = V1AssetInstance_Array16 | V1AssetInstance_Array32 | V1AssetInstance_Array4 | V1AssetInstance_Array8 | V1AssetInstance_Blob | V1AssetInstance_Index | V1AssetInstance_Undefined
+
+export interface V1AssetInstance_Array16 {
+    __kind: 'Array16'
+    value: Bytes
+}
+
+export interface V1AssetInstance_Array32 {
+    __kind: 'Array32'
+    value: Bytes
+}
+
+export interface V1AssetInstance_Array4 {
+    __kind: 'Array4'
+    value: Bytes
+}
+
+export interface V1AssetInstance_Array8 {
+    __kind: 'Array8'
+    value: Bytes
+}
+
+export interface V1AssetInstance_Blob {
+    __kind: 'Blob'
+    value: Bytes
+}
+
+export interface V1AssetInstance_Index {
+    __kind: 'Index'
+    value: bigint
+}
+
+export interface V1AssetInstance_Undefined {
+    __kind: 'Undefined'
+}
+
+export type V1Fungibility = V1Fungibility_Fungible | V1Fungibility_NonFungible
+
+export interface V1Fungibility_Fungible {
+    __kind: 'Fungible'
+    value: bigint
+}
+
+export interface V1Fungibility_NonFungible {
+    __kind: 'NonFungible'
+    value: V1AssetInstance
+}
+
+export const V1AssetId: sts.Type<V1AssetId> = sts.closedEnum(() => {
+    return  {
+        Abstract: sts.bytes(),
+        Concrete: V1MultiLocation,
+    }
+})
 
 export type V1AssetId = V1AssetId_Abstract | V1AssetId_Concrete
 
@@ -1034,168 +1196,6 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
         }),
     }
 })
-
-export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
-    return  {
-        Council: Type_159,
-        CumulusXcm: Type_162,
-        PolkadotXcm: Origin,
-        TechnicalCommittee: Type_160,
-        Void: Void,
-        system: RawOrigin,
-    }
-})
-
-export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
-    return  {
-        None: sts.unit(),
-        Root: sts.unit(),
-        Signed: AccountId32,
-    }
-})
-
-export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
-
-export interface RawOrigin_None {
-    __kind: 'None'
-}
-
-export interface RawOrigin_Root {
-    __kind: 'Root'
-}
-
-export interface RawOrigin_Signed {
-    __kind: 'Signed'
-    value: AccountId32
-}
-
-export const Void: sts.Type<Void> = sts.closedEnum(() => {
-    return  {
-    }
-})
-
-export type Void = never
-
-export const Type_160: sts.Type<Type_160> = sts.closedEnum(() => {
-    return  {
-        Member: AccountId32,
-        Members: sts.tuple(() => [sts.number(), sts.number()]),
-        _Phantom: sts.unit(),
-    }
-})
-
-export type Type_160 = Type_160_Member | Type_160_Members | Type_160__Phantom
-
-export interface Type_160_Member {
-    __kind: 'Member'
-    value: AccountId32
-}
-
-export interface Type_160_Members {
-    __kind: 'Members'
-    value: [number, number]
-}
-
-export interface Type_160__Phantom {
-    __kind: '_Phantom'
-}
-
-export const Origin: sts.Type<Origin> = sts.closedEnum(() => {
-    return  {
-        Response: V1MultiLocation,
-        Xcm: V1MultiLocation,
-    }
-})
-
-export type Origin = Origin_Response | Origin_Xcm
-
-export interface Origin_Response {
-    __kind: 'Response'
-    value: V1MultiLocation
-}
-
-export interface Origin_Xcm {
-    __kind: 'Xcm'
-    value: V1MultiLocation
-}
-
-export const Type_162: sts.Type<Type_162> = sts.closedEnum(() => {
-    return  {
-        Relay: sts.unit(),
-        SiblingParachain: Id,
-    }
-})
-
-export const Id = sts.number()
-
-export type Type_162 = Type_162_Relay | Type_162_SiblingParachain
-
-export interface Type_162_Relay {
-    __kind: 'Relay'
-}
-
-export interface Type_162_SiblingParachain {
-    __kind: 'SiblingParachain'
-    value: Id
-}
-
-export type Id = number
-
-export const Type_159: sts.Type<Type_159> = sts.closedEnum(() => {
-    return  {
-        Member: AccountId32,
-        Members: sts.tuple(() => [sts.number(), sts.number()]),
-        _Phantom: sts.unit(),
-    }
-})
-
-export type Type_159 = Type_159_Member | Type_159_Members | Type_159__Phantom
-
-export interface Type_159_Member {
-    __kind: 'Member'
-    value: AccountId32
-}
-
-export interface Type_159_Members {
-    __kind: 'Members'
-    value: [number, number]
-}
-
-export interface Type_159__Phantom {
-    __kind: '_Phantom'
-}
-
-export type OriginCaller = OriginCaller_Council | OriginCaller_CumulusXcm | OriginCaller_PolkadotXcm | OriginCaller_TechnicalCommittee | OriginCaller_Void | OriginCaller_system
-
-export interface OriginCaller_Council {
-    __kind: 'Council'
-    value: Type_159
-}
-
-export interface OriginCaller_CumulusXcm {
-    __kind: 'CumulusXcm'
-    value: Type_162
-}
-
-export interface OriginCaller_PolkadotXcm {
-    __kind: 'PolkadotXcm'
-    value: Origin
-}
-
-export interface OriginCaller_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: Type_160
-}
-
-export interface OriginCaller_Void {
-    __kind: 'Void'
-    value: Void
-}
-
-export interface OriginCaller_system {
-    __kind: 'system'
-    value: RawOrigin
-}
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.

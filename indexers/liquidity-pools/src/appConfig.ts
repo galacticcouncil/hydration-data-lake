@@ -113,6 +113,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_STABLEPOOLS: boolean = true;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly PROCESS_DCA: boolean = true;
+
   @IsString()
   readonly OMNIPOOL_ADDRESS: string =
     '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000';
@@ -174,6 +177,15 @@ export class AppConfig {
       events.tokens.transfer.name,
       events.assetRegistry.registered.name,
       events.assetRegistry.updated.name,
+
+      events.dca.scheduled.name,
+      events.dca.completed.name,
+      events.dca.executionPlanned.name,
+      events.dca.executionStarted.name,
+      events.dca.tradeExecuted.name,
+      events.dca.tradeFailed.name,
+      events.dca.randomnessGenerationFailed.name,
+      events.dca.terminated.name,
     ];
 
     if (this.PROCESS_LBP_POOLS) {
@@ -234,6 +246,10 @@ export class AppConfig {
     }
 
     const callsToListen = [
+      calls.utility.forceBatch.name,
+      calls.utility.batch.name,
+      calls.utility.batchAll.name,
+
       calls.parachainSystem.setValidationData.name,
       calls.router.sell.name,
       calls.router.buy.name,
@@ -253,6 +269,12 @@ export class AppConfig {
       calls.balances.transferAllowDeath.name,
       calls.balances.transferKeepAlive.name,
       calls.balances.upgradeAccounts.name,
+
+      calls.tokens.transfer.name,
+      calls.tokens.transferAll.name,
+      calls.tokens.transferKeepAlive.name,
+      calls.tokens.forceTransfer.name,
+      calls.tokens.setBalance.name,
 
       calls.omnipoolLiquidityMining.claimRewards.name,
       calls.omnipoolLiquidityMining.createGlobalFarm.name,

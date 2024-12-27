@@ -1,4 +1,5 @@
 import {
+  DcaScheduleCallArgs,
   LbpCreatePoolCallArgs,
   RelaySystemSetValidationDataCallArgs,
   XykCreatePoolCallArgs,
@@ -8,6 +9,13 @@ import {
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
   BalancesTransferEventParams,
+  DcaCompletedEventParams,
+  DcaExecutionPlannedEventParams,
+  DcaRandomnessGenerationFailedEventParams,
+  DcaScheduledEventParams,
+  DcaTerminatedEventParams,
+  DcaTradeExecutedEventParams,
+  DcaTradeFailedEventParams,
   LbpBuyExecutedEventParams,
   LbpPoolCreatedEventParams,
   LbpPoolUpdatedEventParams,
@@ -32,6 +40,8 @@ import {
   AccountData,
   AssetDetails,
   AssetDetailsWithId,
+  DcaGetScheduleInput,
+  DcaScheduleData,
   GetPoolAssetInfoInput,
   LbpGetAllPoolsDataInput,
   LbpGetPoolDataInput,
@@ -48,6 +58,7 @@ import {
   XykGetShareTokenInput,
   XykPoolWithAssets,
 } from './storage';
+import { DcaScheduleOrderKind, SwapFillerType } from '../../model';
 
 export interface PoolData {
   owner: string;
@@ -68,6 +79,9 @@ export type CallParserMethods = {
   };
   xyk: {
     parseCreatePoolArgs: (call: Call) => XykCreatePoolCallArgs;
+  };
+  dca: {
+    parseScheduleArgs: (call: Call) => DcaScheduleCallArgs;
   };
   parachainSystem: {
     parseSetValidationDataArgs: (
@@ -106,6 +120,19 @@ export type EventParserMethods = {
     parseSellExecutedParams: (
       event: Event
     ) => StableswapSellExecutedEventParams;
+  };
+  dca: {
+    parseScheduledParams: (event: Event) => DcaScheduledEventParams;
+    parseExecutionPlannedParams: (
+      event: Event
+    ) => DcaExecutionPlannedEventParams;
+    parseTradeExecutedParams: (event: Event) => DcaTradeExecutedEventParams;
+    parseTradeFailedParams: (event: Event) => DcaTradeFailedEventParams;
+    parseTerminatedParams: (event: Event) => DcaTerminatedEventParams;
+    parseCompletedParams: (event: Event) => DcaCompletedEventParams;
+    parseRandomnessGenerationFailedParams: (
+      event: Event
+    ) => DcaRandomnessGenerationFailedEventParams;
   };
   tokens: {
     parseTransferParams: (event: Event) => TokensTransferEventParams;
@@ -182,10 +209,23 @@ export type StorageParserMethods = {
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;
   };
+  dca: {
+    getDcaSchedule: (
+      args: DcaGetScheduleInput
+    ) => Promise<DcaScheduleData | null>;
+  };
 };
 
 export type ParserMethods = {
   calls: CallParserMethods;
   events: EventParserMethods;
   storage: StorageParserMethods;
+};
+
+export type DispatchError = {
+  __kind: string;
+  value?: {
+    index: number;
+    error: string;
+  };
 };

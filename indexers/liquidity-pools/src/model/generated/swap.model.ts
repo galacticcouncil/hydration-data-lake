@@ -6,6 +6,7 @@ import {TradeOperationType} from "./_tradeOperationType"
 import {SwapFee} from "./swapFee.model"
 import {SwapInputAssetBalance} from "./swapInputAssetBalance.model"
 import {SwapOutputAssetBalance} from "./swapOutputAssetBalance.model"
+import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
 
 @Entity_()
 export class Swap {
@@ -75,6 +76,10 @@ export class Swap {
 
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => DcaScheduleExecution, {nullable: true})
+  dcaScheduleExecution!: DcaScheduleExecution | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})

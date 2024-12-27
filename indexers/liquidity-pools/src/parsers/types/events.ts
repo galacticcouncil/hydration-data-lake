@@ -1,5 +1,5 @@
-import { PoolData } from './common';
-import { AssetType, SwapFillerType, TradeOperationType } from '../../model';
+import { DispatchError, PoolData } from './common';
+import { AssetType } from '../../model';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -28,6 +28,15 @@ export enum EventName {
   'Stableswap_SellExecuted' = 'Stableswap.SellExecuted',
   'Stableswap_LiquidityAdded' = 'Stableswap.LiquidityAdded',
   'Stableswap_LiquidityRemoved' = 'Stableswap.LiquidityRemoved',
+
+  'DCA_ExecutionStarted' = 'DCA.ExecutionStarted',
+  'DCA_Scheduled' = 'DCA.Scheduled',
+  'DCA_ExecutionPlanned' = 'DCA.ExecutionPlanned',
+  'DCA_TradeExecuted' = 'DCA.TradeExecuted',
+  'DCA_TradeFailed' = 'DCA.TradeFailed',
+  'DCA_Terminated' = 'DCA.Terminated',
+  'DCA_Completed' = 'DCA.Completed',
+  'DCA_RandomnessGenerationFailed' = 'DCA.RandomnessGenerationFailed',
 
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
 }
@@ -222,4 +231,43 @@ export type AssetRegistryUpdatedEventParams = {
   symbol?: string;
   decimals?: number;
   isSufficient: boolean;
+};
+
+export type DcaScheduledEventParams = {
+  id: number;
+  who: string;
+};
+
+export type DcaExecutionPlannedEventParams = {
+  id: number;
+  who: string;
+  blockNumber: number;
+};
+
+export type DcaTradeExecutedEventParams = {
+  id: number;
+  who: string;
+  amountIn: bigint;
+  amountOut: bigint;
+};
+
+export type DcaTradeFailedEventParams = {
+  id: number;
+  who: string;
+  error?: DispatchError;
+};
+
+export type DcaTerminatedEventParams = {
+  id: number;
+  who: string;
+  error: DispatchError;
+};
+
+export type DcaCompletedEventParams = {
+  id: number;
+  who: string;
+};
+export type DcaRandomnessGenerationFailedEventParams = {
+  block: number;
+  error?: DispatchError;
 };

@@ -1,42 +1,5 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export const Call: sts.Type<Call> = sts.closedEnum(() => {
-    return  {
-        Authorship: AuthorshipCall,
-        Balances: BalancesCall,
-        CollatorSelection: CollatorSelectionCall,
-        ParachainSystem: ParachainSystemCall,
-        Session: SessionCall,
-        Sudo: SudoCall,
-        System: SystemCall,
-        Timestamp: TimestampCall,
-        Treasury: TreasuryCall,
-        Utility: UtilityCall,
-    }
-})
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
-    return  {
-        as_derivative: sts.enumStruct({
-            index: sts.number(),
-            call: Call,
-        }),
-        batch: sts.enumStruct({
-            calls: sts.array(() => Call),
-        }),
-        batch_all: sts.enumStruct({
-            calls: sts.array(() => Call),
-        }),
-        dispatch_as: sts.enumStruct({
-            asOrigin: OriginCaller,
-            call: Call,
-        }),
-    }
-})
-
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
         Void: Void,
@@ -87,6 +50,43 @@ export interface OriginCaller_system {
     __kind: 'system'
     value: RawOrigin
 }
+
+export const Call: sts.Type<Call> = sts.closedEnum(() => {
+    return  {
+        Authorship: AuthorshipCall,
+        Balances: BalancesCall,
+        CollatorSelection: CollatorSelectionCall,
+        ParachainSystem: ParachainSystemCall,
+        Session: SessionCall,
+        Sudo: SudoCall,
+        System: SystemCall,
+        Timestamp: TimestampCall,
+        Treasury: TreasuryCall,
+        Utility: UtilityCall,
+    }
+})
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
+    return  {
+        as_derivative: sts.enumStruct({
+            index: sts.number(),
+            call: Call,
+        }),
+        batch: sts.enumStruct({
+            calls: sts.array(() => Call),
+        }),
+        batch_all: sts.enumStruct({
+            calls: sts.array(() => Call),
+        }),
+        dispatch_as: sts.enumStruct({
+            asOrigin: OriginCaller,
+            call: Call,
+        }),
+    }
+})
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.

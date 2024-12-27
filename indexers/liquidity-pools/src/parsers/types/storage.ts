@@ -1,5 +1,6 @@
 import { AssetType } from '../../model';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import { DcaScheduleCallData } from './calls';
 
 export interface AccountData {
   free: bigint;
@@ -91,6 +92,8 @@ export type AccountDataMultiple = Array<{
   data: AccountData;
 }>;
 
+export type DcaScheduleData = DcaScheduleCallData;
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
@@ -134,5 +137,10 @@ export type LbpGetAllPoolsDataInput = {
 
 export type TokensGetTokenTotalIssuanceInput = {
   tokenId: number;
+  block: BlockHeader;
+};
+
+export type DcaGetScheduleInput = {
+  scheduleId: number;
   block: BlockHeader;
 };

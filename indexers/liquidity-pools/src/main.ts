@@ -26,6 +26,7 @@ import { ProcessorStatusManager } from './processorStatusManager';
 import { ensurePoolsDestroyedStatus } from './handlers/pools/support';
 import { saveAllBatchAccounts } from './handlers/accounts';
 import { ChainActivityTraceManager } from './chainActivityTraceManager';
+import { handleDcaSchedules } from './handlers/dca';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -86,6 +87,11 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   );
 
   await handleBuySellOperations(
+    ctxWithBatchState as ProcessorContext<Store>,
+    parsedData
+  );
+
+  await handleDcaSchedules(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );

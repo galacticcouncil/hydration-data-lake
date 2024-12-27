@@ -33,6 +33,11 @@ import {
   XykPoolHistoricalData,
   XykPoolHistoricalPrice,
   XykPoolHistoricalVolume,
+  DcaSchedule,
+  DcaScheduleOrderRoute,
+  DcaScheduleExecution,
+  DcaRandomnessGenerationFailedError,
+  DcaScheduleExecutionAction,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -109,6 +114,15 @@ export type BatchStatePayload = {
     number,
     { blockHeader: BlockHeader; ids: Set<number> }
   >;
+
+  dcaSchedules: Map<string, DcaSchedule>;
+  dcaScheduleOrderRoutes: Map<string, DcaScheduleOrderRoute>;
+  dcaScheduleExecutions: Map<string, DcaScheduleExecution>;
+  dcaScheduleExecutionActions: Map<string, DcaScheduleExecutionAction>;
+  dcaRandomnessGenerationFailedErrors: Map<
+    string,
+    DcaRandomnessGenerationFailedError
+  >;
 };
 
 export class BatchState {
@@ -166,6 +180,12 @@ export class BatchState {
     stablepoolAllHistoricalData: new Map(),
     stablepoolAssetsAllHistoricalData: new Map(),
     stablepoolIdsForStoragePrefetch: new Map(),
+
+    dcaSchedules: new Map(),
+    dcaScheduleOrderRoutes: new Map(),
+    dcaScheduleExecutions: new Map(),
+    dcaScheduleExecutionActions: new Map(),
+    dcaRandomnessGenerationFailedErrors: new Map(),
   };
 
   get state(): BatchStatePayload {

@@ -7,6 +7,7 @@ import {Swap} from "./swap.model"
 import {Transfer} from "./transfer.model"
 import {ChainActivityTrace} from "./chainActivityTrace.model"
 import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
+import {DcaSchedule} from "./dcaSchedule.model"
 
 @Entity_()
 export class Account {
@@ -53,4 +54,7 @@ export class Account {
 
   @OneToMany_(() => AccountChainActivityTrace, e => e.account)
   participatedChainActivities!: AccountChainActivityTrace[]
+
+  @OneToMany_(() => DcaSchedule, e => e.owner)
+  dcaSchedules!: DcaSchedule[]
 }

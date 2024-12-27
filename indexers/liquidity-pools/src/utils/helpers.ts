@@ -73,6 +73,8 @@ export function getCallOriginParts(
   const result: CallOriginPartsDecorated = {
     kind: 'system',
   };
+  if (!originData) return result;
+
   switch (originData.__kind) {
     case 'system': {
       result.kind = 'system';

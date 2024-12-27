@@ -17,6 +17,7 @@
     },
     "Tokens": {
       "events": ["Transfer"],
+      "calls": true,
       "storage": ["Accounts", "TotalIssuance"]
     },
     "Router": {
@@ -57,6 +58,14 @@
     },
     "System": {
       "storage": ["Account"]
+    },
+    "DCA": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "Utility": {
+      "calls": true
     }
   }
 }

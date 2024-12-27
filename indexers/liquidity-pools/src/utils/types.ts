@@ -73,10 +73,9 @@ export enum TraceIdContext {
 export type EventPhase = 'ApplyExtrinsic' | 'Initialization' | 'Finalization';
 
 export enum TraceIdEventGroup {
-  init = 'init',
-  extrinsic = 'extrinsic',
-  finalization = 'finalization',
-  buyback = 'buyback',
+  initialization = 'init',
+  extrinsic = 'ext',
+  finalization = 'fin',
 }
 
 export type GetNewSwapResponse = {

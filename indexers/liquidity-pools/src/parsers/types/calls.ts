@@ -1,3 +1,5 @@
+import { DcaScheduleOrderKind, SwapFillerType } from '../../model';
+
 export type LbpCreatePoolCallArgs = {
   poolOwner: string;
   assetA: number;
@@ -21,4 +23,36 @@ export type XykCreatePoolCallArgs = {
 
 export type RelaySystemSetValidationDataCallArgs = {
   relayParentNumber: number;
+};
+
+export type DcaScheduleOrderRouteData = {
+  poolKind: SwapFillerType;
+  assetInId: number;
+  assetOutId: number;
+};
+
+export type DcaScheduleOrderData = {
+  kind: DcaScheduleOrderKind;
+  assetInId: number;
+  assetOutId: number;
+  amountOut?: bigint | null;
+  amountIn?: bigint | null;
+  maxAmountIn?: bigint | null;
+  minAmountOut?: bigint | null;
+  routes: DcaScheduleOrderRouteData[];
+};
+
+export type DcaScheduleCallData = {
+  owner: string;
+  period?: number;
+  totalAmount: bigint;
+  slippage?: number;
+  maxRetries?: number;
+  stabilityThreshold?: number;
+  order: DcaScheduleOrderData;
+};
+
+export type DcaScheduleCallArgs = {
+  startExecutionBlock?: number;
+  scheduleData: DcaScheduleCallData;
 };

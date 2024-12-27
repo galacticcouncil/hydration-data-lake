@@ -1,4 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {EventGroup} from "./_eventGroup"
 import {TraceEntityType} from "./_traceEntityType"
 import {Call} from "./call.model"
 import {Block} from "./block.model"
@@ -23,6 +24,9 @@ export class Event {
 
   @Column_("text", {nullable: false})
   name!: string
+
+  @Column_("varchar", {length: 14, nullable: true})
+  group!: EventGroup | undefined | null
 
   @Column_("text", {nullable: false})
   phase!: string

@@ -52,6 +52,8 @@ type Account @entity {
 
   participatedChainActivities: [AccountChainActivityTrace!]
     @derivedFrom(field: "account")
+
+  dcaSchedules: [DcaSchedule!] @derivedFrom(field: "owner")
 }
 
 type Asset @entity {
@@ -100,6 +102,16 @@ type ProcessorStatus @entity {
   initialIndexingFinishedAtTime: DateTime
 }
 
+type DispatchErrorValue {
+  index: Int
+  error: String
+}
+
+type DispatchError {
+  kind: String
+  value: DispatchErrorValue
+}
+
 # ======================================================================================================================
 # *** Chain Activity Tracing ***
 # ======================================================================================================================
@@ -145,12 +157,21 @@ type Call @entity {
   block: Block!
 }
 
+enum EventGroup {
+  EXTRINSIC
+  INITIALIZATION
+  FINALIZATION
+  BUY_BACK
+  DCA
+}
+
 type Event @entity {
   "0006508857-000017-d2fd9"
   id: ID!
   traceId: String!
   indexInBlock: Int!
   name: String!
+  group: EventGroup
   phase: String!
   entityTypes: [TraceEntityType]
   call: Call
@@ -263,6 +284,7 @@ type Swap @entity {
   eventIndex: Int!
   extrinsicHash: String!
   relayChainBlockHeight: Int!
+  dcaScheduleExecution: DcaScheduleExecution
   paraChainBlockHeight: Int! @index
   paraChainTimestamp: DateTime! @index
 }
@@ -604,4 +626,96 @@ type StablepoolAssetHistoricalData @entity {
   frozen: BigInt
   flags: BigInt
   paraChainBlockHeight: Int! @index
+}
+
+# ======================================================================================================================
+# *** DCA ***
+# ======================================================================================================================
+
+enum DcaScheduleOrderKind {
+  BUY
+  SELL
+}
+
+enum DcaScheduleStatus {
+  OPEN
+  COMPLETED
+  TERMINATED
+}
+enum DcaScheduleExecutionStatus {
+  PLANNED
+  EXECUTED
+  FAILED
+}
+
+type DcaSchedule @entity {
+  "schedule_id as string"
+  id: ID!
+  operationId: String
+  traceIds: [String!]
+  startExecutionBlock: Int
+  owner: Account!
+  period: Int
+  totalAmount: BigInt
+  slippage: Int
+  maxRetries: Int
+  stabilityThreshold: Int
+  assetIn: Asset
+  assetOut: Asset
+  amountOut: BigInt
+  amountIn: BigInt
+  maxAmountIn: BigInt
+  minAmountOut: BigInt
+  orderKind: DcaScheduleOrderKind!
+  orderRoutes: [DcaScheduleOrderRoute] @derivedFrom(field: "schedule")
+
+  status: DcaScheduleStatus @index
+  statusUpdatedAtBlockHeight: Int
+  statusMemo: DispatchError
+  relayChainBlockHeight: Int!
+  paraChainBlockHeight: Int! @index
+
+  executions: [DcaScheduleExecution] @derivedFrom(field: "schedule")
+}
+type DcaScheduleOrderRoute @entity {
+  "<dca_schedule_id>-<asset_in_id>-<asset_out_id>"
+  id: ID!
+  schedule: DcaSchedule
+  poolKind: SwapFillerType
+  assetIn: Asset
+  assetOut: Asset
+}
+
+type DcaScheduleExecution @entity {
+  "<dca_schedule_id>-<block_height>"
+  id: ID!
+  schedule: DcaSchedule
+  status: DcaScheduleExecutionStatus @index
+  amountOut: BigInt
+  amountIn: BigInt
+  swaps: [Swap] @derivedFrom(field: "dcaScheduleExecution")
+  actions: [DcaScheduleExecutionAction] @derivedFrom(field: "scheduleExecution")
+}
+
+type DcaScheduleExecutionAction @entity {
+  "<dca_schedule_execution_id>-<dca_schedule_execution_status>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+  scheduleExecution: DcaScheduleExecution
+  status: DcaScheduleExecutionStatus @index
+  statusMemo: DispatchError
+  relayChainBlockHeight: Int!
+  paraChainBlockHeight: Int! @index
+}
+
+type DcaRandomnessGenerationFailedError @entity {
+  "<paraChainBlockHeight>-<indexInBlock>"
+  id: ID!
+  operationId: String
+  traceIds: [String!]
+  indexInBlock: Int!
+  relayChainBlockHeight: Int!
+  paraChainBlockHeight: Int! @index
+  error: DispatchError
 }
