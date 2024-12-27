@@ -680,7 +680,7 @@ type DcaSchedule @entity {
 type DcaScheduleOrderRoute @entity {
   "<dca_schedule_id>-<asset_in_id>-<asset_out_id>"
   id: ID!
-  schedule: DcaSchedule
+  schedule: DcaSchedule!
   poolKind: SwapFillerType
   assetIn: Asset
   assetOut: Asset
@@ -689,7 +689,7 @@ type DcaScheduleOrderRoute @entity {
 type DcaScheduleExecution @entity {
   "<dca_schedule_id>-<block_height>"
   id: ID!
-  schedule: DcaSchedule
+  schedule: DcaSchedule!
   status: DcaScheduleExecutionStatus @index
   amountOut: BigInt
   amountIn: BigInt
@@ -702,7 +702,7 @@ type DcaScheduleExecutionAction @entity {
   id: ID!
   operationId: String @index
   traceIds: [String!]
-  scheduleExecution: DcaScheduleExecution
+  scheduleExecution: DcaScheduleExecution!
   status: DcaScheduleExecutionStatus @index
   statusMemo: DispatchError
   relayChainBlockHeight: Int!

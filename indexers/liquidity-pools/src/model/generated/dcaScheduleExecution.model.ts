@@ -19,7 +19,7 @@ export class DcaScheduleExecution {
 
   @Index_()
   @ManyToOne_(() => DcaSchedule, {nullable: true})
-  schedule!: DcaSchedule | undefined | null
+  schedule!: DcaSchedule
 
   @Index_()
   @Column_("varchar", {length: 8, nullable: true})

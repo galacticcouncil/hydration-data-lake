@@ -17,7 +17,7 @@ export class DcaScheduleOrderRoute {
 
   @Index_()
   @ManyToOne_(() => DcaSchedule, {nullable: true})
-  schedule!: DcaSchedule | undefined | null
+  schedule!: DcaSchedule
 
   @Column_("varchar", {length: 10, nullable: true})
   poolKind!: SwapFillerType | undefined | null

@@ -21,14 +21,17 @@ import {
 } from '../../parsers/types/calls';
 import { FindOptionsRelations } from 'typeorm';
 import parsers from '../../parsers';
+import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
 
 export async function createDcaSchedule({
   ctx,
   blockHeader,
+  traceIds,
   scheduleData: { id, startExecutionBlock, scheduleData },
 }: {
   ctx: ProcessorContext<Store>;
   blockHeader: Block;
+  traceIds?: string[];
   scheduleData: DcaScheduledEventParams & DcaScheduleCallArgs;
 }) {
   const {
@@ -79,6 +82,7 @@ export async function createDcaSchedule({
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
+    traceIds: traceIds ?? [],
   });
 
   const orderRoutes: DcaScheduleOrderRoute[] = [];
@@ -113,6 +117,15 @@ export async function createDcaSchedule({
   }
   newSchedule.orderRoutes = orderRoutes;
 
+  if (newSchedule.traceIds && newSchedule.traceIds.length > 0)
+    for (const traceId of newSchedule.traceIds) {
+      await ChainActivityTraceManager.addParticipantsToActivityTrace({
+        traceId,
+        participants: [newSchedule.owner],
+        ctx,
+      });
+    }
+
   return newSchedule;
 }
 
@@ -145,7 +158,7 @@ export async function handleDcaScheduleCreated(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
-    callData: { args },
+    callData: { args, traceId: callTraceId },
   } = eventCallData;
 
   const callArgs = args ?? {
@@ -160,6 +173,7 @@ export async function handleDcaScheduleCreated(
   const newSchedule = await createDcaSchedule({
     ctx,
     blockHeader: eventMetadata.blockHeader,
+    traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     scheduleData: {
       ...eventParams,
       ...(callArgs as DcaScheduleCallArgs),

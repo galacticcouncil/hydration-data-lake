@@ -14,6 +14,7 @@ import {
 } from '../../model';
 import { getDcaSchedule } from './dcaSchedule';
 import { FindOptionsRelations } from 'typeorm';
+import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
 
 export async function getDcaScheduleExecution({
   ctx,
@@ -113,10 +114,18 @@ export async function handleDcaTradeExecuted(
     callData,
   } = eventCallData;
 
+  const traceIds = [
+    ...(callData.traceId ? [callData.traceId] : []),
+    eventMetadata.traceId,
+  ];
+
   const scheduleExecutionEntity = await getDcaScheduleExecution({
     ctx,
     id: `${eventParams.id}-${eventMetadata.blockHeader.height}`,
     relations: {
+      schedule: {
+        owner: true,
+      },
       swaps: true,
       actions: true,
     },
@@ -136,10 +145,7 @@ export async function handleDcaTradeExecuted(
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     paraChainBlockHeight: eventMetadata.blockHeader.height,
-    traceIds: [
-      ...(callData.traceId ? [callData.traceId] : []),
-      eventMetadata.traceId,
-    ],
+    traceIds,
   });
 
   scheduleExecutionEntity.actions = [
@@ -160,6 +166,15 @@ export async function handleDcaTradeExecuted(
     dcaScheduleExecutions: state.dcaScheduleExecutions,
     dcaScheduleExecutionActions: state.dcaScheduleExecutionActions,
   };
+
+  if (traceIds && traceIds.length > 0)
+    for (const traceId of traceIds) {
+      await ChainActivityTraceManager.addParticipantsToActivityTrace({
+        traceId,
+        participants: [scheduleExecutionEntity.schedule.owner],
+        ctx,
+      });
+    }
 }
 
 export async function handleDcaTradeFailed(
@@ -170,6 +185,11 @@ export async function handleDcaTradeFailed(
     eventData: { params: eventParams, metadata: eventMetadata },
     callData,
   } = eventCallData;
+
+  const traceIds = [
+    ...(callData.traceId ? [callData.traceId] : []),
+    eventMetadata.traceId,
+  ];
 
   const scheduleExecutionEntity = await getDcaScheduleExecution({
     ctx,
@@ -202,10 +222,7 @@ export async function handleDcaTradeFailed(
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     paraChainBlockHeight: eventMetadata.blockHeader.height,
-    traceIds: [
-      ...(callData.traceId ? [callData.traceId] : []),
-      eventMetadata.traceId,
-    ],
+    traceIds,
   });
 
   scheduleExecutionEntity.actions = [
@@ -225,4 +242,13 @@ export async function handleDcaTradeFailed(
     dcaScheduleExecutions: state.dcaScheduleExecutions,
     dcaScheduleExecutionActions: state.dcaScheduleExecutionActions,
   };
+
+  if (traceIds && traceIds.length > 0)
+    for (const traceId of traceIds) {
+      await ChainActivityTraceManager.addParticipantsToActivityTrace({
+        traceId,
+        participants: [scheduleExecutionEntity.schedule.owner],
+        ctx,
+      });
+    }
 }
