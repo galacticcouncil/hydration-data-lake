@@ -64,6 +64,11 @@
       "calls": true,
       "storage": true
     },
+    "OTC": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
     "Utility": {
       "calls": true
     }

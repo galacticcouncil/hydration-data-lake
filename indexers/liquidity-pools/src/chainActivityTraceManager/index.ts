@@ -333,6 +333,25 @@ export class ChainActivityTraceManager {
       );
     }
   }
+  static async addParticipantsToActivityTracesBulk({
+    traceIds,
+    participants,
+    ctx,
+  }: {
+    traceIds: string[] | undefined | null;
+    participants: Account[];
+    ctx: ProcessorContext<Store>;
+  }) {
+    if (!traceIds || traceIds.length === 0) return;
+
+    for (const traceId of traceIds) {
+      await ChainActivityTraceManager.addParticipantsToActivityTrace({
+        traceId,
+        participants,
+        ctx,
+      });
+    }
+  }
 
   static async saveActivityTraceEntities(ctx: ProcessorContext<Store>) {
     const state = ctx.batchState.state;

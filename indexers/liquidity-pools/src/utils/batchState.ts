@@ -38,6 +38,8 @@ import {
   DcaScheduleExecution,
   DcaRandomnessGenerationFailedError,
   DcaScheduleExecutionAction,
+  OtcOrder,
+  OtcOrderAction,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -123,6 +125,9 @@ export type BatchStatePayload = {
     string,
     DcaRandomnessGenerationFailedError
   >;
+
+  otcOrders: Map<string, OtcOrder>;
+  otcOrderActions: Map<string, OtcOrderAction>;
 };
 
 export class BatchState {
@@ -186,6 +191,9 @@ export class BatchState {
     dcaScheduleExecutions: new Map(),
     dcaScheduleExecutionActions: new Map(),
     dcaRandomnessGenerationFailedErrors: new Map(),
+
+    otcOrders: new Map(),
+    otcOrderActions: new Map(),
   };
 
   get state(): BatchStatePayload {

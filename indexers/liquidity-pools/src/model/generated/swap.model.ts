@@ -7,6 +7,7 @@ import {SwapFee} from "./swapFee.model"
 import {SwapInputAssetBalance} from "./swapInputAssetBalance.model"
 import {SwapOutputAssetBalance} from "./swapOutputAssetBalance.model"
 import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
+import {OtcOrderAction} from "./otcOrderAction.model"
 
 @Entity_()
 export class Swap {
@@ -80,6 +81,10 @@ export class Swap {
   @Index_()
   @ManyToOne_(() => DcaScheduleExecution, {nullable: true})
   dcaScheduleExecution!: DcaScheduleExecution | undefined | null
+
+  @Index_()
+  @ManyToOne_(() => OtcOrderAction, {nullable: true})
+  otcOrderFulfilment!: OtcOrderAction | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})

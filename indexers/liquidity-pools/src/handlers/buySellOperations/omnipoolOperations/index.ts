@@ -7,14 +7,22 @@ import {
   OmnipoolBuyExecutedData,
   OmnipoolSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { SwapFillerType, TradeOperationType } from '../../../model';
+import {
+  DcaScheduleExecution,
+  OmnipoolAsset,
+  SwapFillerType,
+  TradeOperationType,
+} from '../../../model';
 import { handleOmnipoolAssetVolumeUpdates } from '../../volumes';
 import { handleSellBuyAsSwap } from '../../swap/swap';
+import { In } from 'typeorm';
 
+// TODO improve performance of the function
 export async function handleOmnioolOperations(
   ctx: ProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
+  await prefetchEntities(ctx, parsedEvents);
   /**
    * BuyExecuted as SellExecuted events must be processed sequentially in the same
    * flow to avoid wrong calculations of accumulated volumes.
@@ -86,4 +94,50 @@ export async function omnipoolBuySellExecuted(
     ctx,
     swap,
   });
+}
+
+async function prefetchEntities(
+  ctx: ProcessorContext<Store>,
+  parsedEvents: BatchBlocksParsedDataManager
+) {
+  const omnipoolAssetsToPrefetch = [
+    ...new Set(
+      [
+        ...[
+          ...parsedEvents
+            .getSectionByEventName(EventName.Omnipool_BuyExecuted)
+            .values(),
+        ].map((event) => [
+          `${ctx.appConfig.OMNIPOOL_ADDRESS}-${event.eventData.params.assetIn}`,
+          `${ctx.appConfig.OMNIPOOL_ADDRESS}-${event.eventData.params.assetOut}`,
+        ]),
+        ...[
+          ...parsedEvents
+            .getSectionByEventName(EventName.Omnipool_SellExecuted)
+            .values(),
+        ].map((event) => [
+          `${ctx.appConfig.OMNIPOOL_ADDRESS}-${event.eventData.params.assetIn}`,
+          `${ctx.appConfig.OMNIPOOL_ADDRESS}-${event.eventData.params.assetOut}`,
+        ]),
+      ].flat()
+    ).values(),
+  ];
+
+  const state = ctx.batchState.state;
+
+  const prefetchedOmnipoolAssets = await ctx.store.find(OmnipoolAsset, {
+    where: { id: In(omnipoolAssetsToPrefetch) },
+    relations: { asset: true, pool: true },
+  });
+
+  if (omnipoolAssetsToPrefetch.length > 0)
+    state.omnipoolAssets = new Map(
+      [...state.omnipoolAssets.values(), ...prefetchedOmnipoolAssets].map(
+        (item) => [item.id, item]
+      )
+    );
+
+  ctx.batchState.state = {
+    omnipoolAssets: state.omnipoolAssets,
+  };
 }

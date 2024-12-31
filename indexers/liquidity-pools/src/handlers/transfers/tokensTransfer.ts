@@ -35,12 +35,9 @@ export async function handleTokensTransfer(
     transfers,
   };
 
-  if (transferEntity.traceIds && transferEntity.traceIds.length > 0)
-    for (const traceId of transferEntity.traceIds) {
-      await ChainActivityTraceManager.addParticipantsToActivityTrace({
-        traceId,
-        participants: [transferEntity.to, transferEntity.from],
-        ctx,
-      });
-    }
+  await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
+    participants: [transferEntity.to, transferEntity.from],
+    traceIds: transferEntity.traceIds,
+    ctx,
+  });
 }

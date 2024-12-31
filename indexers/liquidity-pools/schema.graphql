@@ -54,6 +54,7 @@ type Account @entity {
     @derivedFrom(field: "account")
 
   dcaSchedules: [DcaSchedule!] @derivedFrom(field: "owner")
+  otcOrders: [OtcOrder!] @derivedFrom(field: "owner")
 }
 
 type Asset @entity {
@@ -285,6 +286,7 @@ type Swap @entity {
   extrinsicHash: String!
   relayChainBlockHeight: Int!
   dcaScheduleExecution: DcaScheduleExecution
+  otcOrderFulfilment: OtcOrderAction
   paraChainBlockHeight: Int! @index
   paraChainTimestamp: DateTime! @index
 }
@@ -672,8 +674,8 @@ type DcaSchedule @entity {
   status: DcaScheduleStatus @index
   statusUpdatedAtBlockHeight: Int
   statusMemo: DispatchError
-  relayChainBlockHeight: Int!
-  paraChainBlockHeight: Int! @index
+  createdAtRelayBlockHeight: Int!
+  createdAtParaBlockHeight: Int! @index
 
   executions: [DcaScheduleExecution] @derivedFrom(field: "schedule")
 }
@@ -718,4 +720,55 @@ type DcaRandomnessGenerationFailedError @entity {
   relayChainBlockHeight: Int!
   paraChainBlockHeight: Int! @index
   error: DispatchError
+}
+
+# ======================================================================================================================
+# *** OTC ***
+# ======================================================================================================================
+
+enum OtcScheduleStatus {
+  OPEN
+  CANCELED
+  FILLED
+  PARTIALLY_FILLED
+}
+
+enum OtcOrderActionKind {
+  CREATED
+  CANCELED
+  FILLED
+  PARTIALLY_FILLED
+}
+
+type OtcOrder @entity {
+  "order_id as string"
+  id: ID!
+  owner: Account!
+  assetIn: Asset!
+  assetOut: Asset!
+  amountOut: BigInt!
+  amountIn: BigInt!
+  partiallyFillable: Boolean
+  status: OtcScheduleStatus @index
+  createdAtRelayBlockHeight: Int!
+  createdAtParaBlockHeight: Int! @index
+
+  actions: [OtcOrderAction] @derivedFrom(field: "order")
+}
+
+type OtcOrderAction @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+  kind: OtcOrderActionKind @index
+  order: OtcOrder!
+  amountIn: BigInt
+  amountOut: BigInt
+  fee: BigInt
+  filler: Account
+  eventIndex: Int!
+  swap: Swap
+  relayChainBlockHeight: Int!
+  paraChainBlockHeight: Int! @index
 }

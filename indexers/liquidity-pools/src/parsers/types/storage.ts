@@ -1,6 +1,9 @@
 import { AssetType } from '../../model';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { DcaScheduleCallData } from './calls';
+import { OtcOrderPlacedEventParams } from './events';
+import { sts } from '../chains/hydration/typegenTypes/support';
+import { AccountId32 } from '../chains/hydration/typegenTypes/v138';
 
 export interface AccountData {
   free: bigint;
@@ -94,6 +97,15 @@ export type AccountDataMultiple = Array<{
 
 export type DcaScheduleData = DcaScheduleCallData;
 
+export type OtcOrderData = {
+  owner: string;
+  assetIn: number;
+  assetOut: number;
+  amountIn: bigint;
+  amountOut: bigint;
+  partiallyFillable: boolean;
+};
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
@@ -142,5 +154,9 @@ export type TokensGetTokenTotalIssuanceInput = {
 
 export type DcaGetScheduleInput = {
   scheduleId: number;
+  block: BlockHeader;
+};
+export type OtcGetOrderInput = {
+  orderId: number;
   block: BlockHeader;
 };

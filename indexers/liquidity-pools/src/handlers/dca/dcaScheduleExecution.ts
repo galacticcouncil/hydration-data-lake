@@ -23,19 +23,23 @@ export async function getDcaScheduleExecution({
     swaps: true,
     actions: true,
   },
+  fetchFromDb = false,
 }: {
   ctx: ProcessorContext<Store>;
   id: string;
+  fetchFromDb?: boolean;
   relations?: FindOptionsRelations<DcaScheduleExecution>;
 }) {
   const batchState = ctx.batchState.state;
 
   let execution = batchState.dcaScheduleExecutions.get(id);
-  if (!execution)
-    execution = await ctx.store.findOne(DcaScheduleExecution, {
-      where: { id },
-      relations,
-    });
+
+  if (execution || (!execution && !fetchFromDb)) return execution ?? null;
+
+  execution = await ctx.store.findOne(DcaScheduleExecution, {
+    where: { id },
+    relations,
+  });
 
   return execution ?? null;
 }
@@ -167,14 +171,11 @@ export async function handleDcaTradeExecuted(
     dcaScheduleExecutionActions: state.dcaScheduleExecutionActions,
   };
 
-  if (traceIds && traceIds.length > 0)
-    for (const traceId of traceIds) {
-      await ChainActivityTraceManager.addParticipantsToActivityTrace({
-        traceId,
-        participants: [scheduleExecutionEntity.schedule.owner],
-        ctx,
-      });
-    }
+  await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
+    participants: [scheduleExecutionEntity.schedule.owner],
+    traceIds,
+    ctx,
+  });
 }
 
 export async function handleDcaTradeFailed(
@@ -196,6 +197,7 @@ export async function handleDcaTradeFailed(
     id: `${eventParams.id}-${eventMetadata.blockHeader.height}`,
     relations: {
       swaps: true,
+      schedule: { owner: true },
     },
   });
 
@@ -243,12 +245,9 @@ export async function handleDcaTradeFailed(
     dcaScheduleExecutionActions: state.dcaScheduleExecutionActions,
   };
 
-  if (traceIds && traceIds.length > 0)
-    for (const traceId of traceIds) {
-      await ChainActivityTraceManager.addParticipantsToActivityTrace({
-        traceId,
-        participants: [scheduleExecutionEntity.schedule.owner],
-        ctx,
-      });
-    }
+  await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
+    participants: [scheduleExecutionEntity.schedule.owner],
+    traceIds,
+    ctx,
+  });
 }

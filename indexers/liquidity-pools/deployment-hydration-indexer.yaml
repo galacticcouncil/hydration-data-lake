@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 407
+slot: 409
 description: Hydration pools indexer
 build:
 deploy:
@@ -19,6 +19,7 @@ deploy:
       PROCESS_OMNIPOOLS: true
       PROCESS_STABLEPOOLS: true
       PROCESS_DCA: true
+      PROCESS_OTC: true
       NODE_ENV: 'production'
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
 

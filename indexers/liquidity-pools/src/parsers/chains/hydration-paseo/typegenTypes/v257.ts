@@ -112,6 +112,26 @@ export const PoolInfo: sts.Type<PoolInfo> = sts.struct(() => {
     }
 })
 
+export interface Type_584 {
+    owner: AccountId32
+    assetIn: number
+    assetOut: number
+    amountIn: bigint
+    amountOut: bigint
+    partiallyFillable: boolean
+}
+
+export const Type_584: sts.Type<Type_584> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+        amountIn: sts.bigint(),
+        amountOut: sts.bigint(),
+        partiallyFillable: sts.boolean(),
+    }
+})
+
 export interface AssetState {
     hubReserve: bigint
     shares: bigint

@@ -1,5 +1,27 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export interface Order {
+    owner: AccountId32
+    assetIn: number
+    assetOut: number
+    amountIn: bigint
+    amountOut: bigint
+    partiallyFillable: boolean
+}
+
+export type AccountId32 = Bytes
+
+export const Order: sts.Type<Order> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+        amountIn: sts.bigint(),
+        amountOut: sts.bigint(),
+        partiallyFillable: sts.boolean(),
+    }
+})
+
 export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
     return  {
         initialRewardPercentage: FixedU128,
@@ -17,8 +39,6 @@ export type FixedU128 = bigint
 export const FixedU128 = sts.bigint()
 
 export const Perquintill = sts.bigint()
-
-export const AccountId32 = sts.bytes()
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
@@ -53,8 +73,6 @@ export interface RawOrigin_Signed {
     __kind: 'Signed'
     value: AccountId32
 }
-
-export type AccountId32 = Bytes
 
 export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {
@@ -9588,3 +9606,5 @@ export interface Call_XTokens {
     __kind: 'XTokens'
     value: XTokensCall
 }
+
+export const AccountId32 = sts.bytes()

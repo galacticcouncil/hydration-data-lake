@@ -4,6 +4,7 @@ import { AppConfig } from '../appConfig';
 import { CallOriginPartsDecorated, CallOriginRaw, NodeEnv } from './types';
 import { join } from 'path';
 import { hexToString } from '@polkadot/util';
+import v8 from 'v8';
 
 const appConfig = AppConfig.getInstance();
 
@@ -86,4 +87,22 @@ export function getCallOriginParts(
   }
 
   return result;
+}
+
+export function getTotalAvailableHeapSizeMb() {
+  const heapStatistics = v8.getHeapStatistics();
+  return heapStatistics.total_available_size / 1024 / 1024;
+}
+
+export function printV8MemoryHeap() {
+  const heapStatistics = v8.getHeapStatistics();
+
+  console.log(
+    `Total available heap size: ${
+      heapStatistics.total_available_size / 1024 / 1024
+    } MB`
+  );
+  console.log(
+    `Heap size limit: ${heapStatistics.heap_size_limit / 1024 / 1024} MB`
+  );
 }

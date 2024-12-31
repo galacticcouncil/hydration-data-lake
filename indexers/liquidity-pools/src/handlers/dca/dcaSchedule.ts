@@ -15,10 +15,7 @@ import {
   DcaTerminatedData,
 } from '../../parsers/batchBlocksParser/types';
 import { DcaScheduledEventParams } from '../../parsers/types/events';
-import {
-  DcaScheduleCallArgs,
-  DcaScheduleCallData,
-} from '../../parsers/types/calls';
+import { DcaScheduleCallArgs } from '../../parsers/types/calls';
 import { FindOptionsRelations } from 'typeorm';
 import parsers from '../../parsers';
 import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
@@ -78,8 +75,8 @@ export async function createDcaSchedule({
     minAmountOut: order.minAmountOut ?? null,
     orderKind: order.kind,
     status: DcaScheduleStatus.OPEN,
-    paraChainBlockHeight: blockHeader.height,
-    relayChainBlockHeight:
+    createdAtParaBlockHeight: blockHeader.height,
+    createdAtRelayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     traceIds: traceIds ?? [],
@@ -117,14 +114,11 @@ export async function createDcaSchedule({
   }
   newSchedule.orderRoutes = orderRoutes;
 
-  if (newSchedule.traceIds && newSchedule.traceIds.length > 0)
-    for (const traceId of newSchedule.traceIds) {
-      await ChainActivityTraceManager.addParticipantsToActivityTrace({
-        traceId,
-        participants: [newSchedule.owner],
-        ctx,
-      });
-    }
+  await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
+    traceIds: newSchedule.traceIds,
+    participants: [newSchedule.owner],
+    ctx,
+  });
 
   return newSchedule;
 }
@@ -135,19 +129,22 @@ export async function getDcaSchedule({
   relations = {
     owner: true,
   },
+  fetchFromDb = false,
 }: {
   ctx: ProcessorContext<Store>;
   id: string;
+  fetchFromDb?: boolean;
   relations?: FindOptionsRelations<DcaSchedule>;
 }) {
   const batchState = ctx.batchState.state;
 
   let schedule = batchState.dcaSchedules.get(id);
-  if (!schedule)
-    schedule = await ctx.store.findOne(DcaSchedule, {
-      where: { id },
-      relations,
-    });
+  if (schedule || (!schedule && !fetchFromDb)) return schedule ?? null;
+
+  schedule = await ctx.store.findOne(DcaSchedule, {
+    where: { id },
+    relations,
+  });
 
   return schedule ?? null;
 }

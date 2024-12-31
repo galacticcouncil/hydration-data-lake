@@ -483,6 +483,44 @@ export async function getParsedEventsData(
         }
 
         /**
+         * ============================= O T C =================================
+         */
+
+        /**
+         * ==== OTC Order Placed ====
+         */
+        case events.otc.placed.name: {
+          const preparedData = parserHelper.parseOtcOrderPlacedData();
+          parsedDataManager.set(EventName.OTC_Placed, preparedData);
+          break;
+        }
+
+        /**
+         * ==== OTC Order Cancelled ====
+         */
+        case events.otc.cancelled.name: {
+          const preparedData = parserHelper.parseOtcOrderCancelledData();
+          parsedDataManager.set(EventName.OTC_Cancelled, preparedData);
+          break;
+        }
+        /**
+         * ==== OTC Order Filled ====
+         */
+        case events.otc.filled.name: {
+          const preparedData = parserHelper.parseOtcOrderFilledData();
+          parsedDataManager.set(EventName.OTC_Filled, preparedData);
+          break;
+        }
+        /**
+         * ==== OTC Order Partially Filled ====
+         */
+        case events.otc.partiallyFilled.name: {
+          const preparedData = parserHelper.parseOtcOrderPartiallyFilledData();
+          parsedDataManager.set(EventName.OTC_PartiallyFilled, preparedData);
+          break;
+        }
+
+        /**
          * ========================== T O K E N S ==============================
          */
 

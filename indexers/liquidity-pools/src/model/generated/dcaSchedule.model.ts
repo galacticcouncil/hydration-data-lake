@@ -85,11 +85,11 @@ export class DcaSchedule {
   statusMemo!: DispatchError | undefined | null
 
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  createdAtRelayBlockHeight!: number
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  createdAtParaBlockHeight!: number
 
   @OneToMany_(() => DcaScheduleExecution, e => e.schedule)
   executions!: DcaScheduleExecution[]

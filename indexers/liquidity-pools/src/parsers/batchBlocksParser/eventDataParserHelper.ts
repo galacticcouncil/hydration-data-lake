@@ -545,6 +545,83 @@ export class EventDataParserHelper {
     };
   }
   /**
+   * ==== OTC Order Placed ====
+   */
+  parseOtcOrderPlacedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams = parsers.events.otc.parseOrderPlacedParams(event);
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== OTC Order Cancelled ====
+   */
+  parseOtcOrderCancelledData() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams = parsers.events.otc.parseOrderCancelledParams(event);
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== OTC Order Filled ====
+   */
+  parseOtcOrderFilledData() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams = parsers.events.otc.parseOrderFilledParams(event);
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== OTC Order Partially Filled ====
+   */
+  parseOtcOrderPartiallyFilledData() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams =
+      parsers.events.otc.parseOrderPartiallyFilledParams(event);
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
    * ==== Tokens Transfer ====
    */
   parseTokensTransferData() {

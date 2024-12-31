@@ -116,6 +116,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_DCA: boolean = true;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly PROCESS_OTC: boolean = true;
+
   @IsString()
   readonly OMNIPOOL_ADDRESS: string =
     '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000';
@@ -177,15 +180,6 @@ export class AppConfig {
       events.tokens.transfer.name,
       events.assetRegistry.registered.name,
       events.assetRegistry.updated.name,
-
-      events.dca.scheduled.name,
-      events.dca.completed.name,
-      events.dca.executionPlanned.name,
-      events.dca.executionStarted.name,
-      events.dca.tradeExecuted.name,
-      events.dca.tradeFailed.name,
-      events.dca.randomnessGenerationFailed.name,
-      events.dca.terminated.name,
     ];
 
     if (this.PROCESS_LBP_POOLS) {
@@ -226,6 +220,30 @@ export class AppConfig {
           events.stableswap.liquidityRemoved.name,
           events.stableswap.buyExecuted.name,
           events.stableswap.sellExecuted.name,
+        ]
+      );
+    }
+    if (this.PROCESS_DCA) {
+      eventsToListen.push(
+        ...[
+          events.dca.scheduled.name,
+          events.dca.completed.name,
+          events.dca.executionPlanned.name,
+          events.dca.executionStarted.name,
+          events.dca.tradeExecuted.name,
+          events.dca.tradeFailed.name,
+          events.dca.randomnessGenerationFailed.name,
+          events.dca.terminated.name,
+        ]
+      );
+    }
+    if (this.PROCESS_OTC) {
+      eventsToListen.push(
+        ...[
+          events.otc.placed.name,
+          events.otc.filled.name,
+          events.otc.cancelled.name,
+          events.otc.partiallyFilled.name,
         ]
       );
     }

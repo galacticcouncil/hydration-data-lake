@@ -40,6 +40,12 @@ import {
   DcaTradeExecutedData,
   DcaTradeFailedData,
 } from './dca';
+import {
+  OtcOrderCancelledData,
+  OtcOrderFilledData,
+  OtcOrderPartiallyFilledData,
+  OtcOrderPlacedData,
+} from './otc';
 
 export * from './assetRegistry';
 export * from './lbp';
@@ -49,6 +55,7 @@ export * from './dca';
 export * from './omnipool';
 export * from './stableswap';
 export * from './xyk';
+export * from './otc';
 
 export type EventId = string;
 
@@ -108,7 +115,15 @@ export type EventDataType<T> = T extends EventName.Tokens_Transfer
                                                       ? DcaCompletedData
                                                       : T extends EventName.DCA_RandomnessGenerationFailed
                                                         ? DcaRandomnessGenerationFailedData
-                                                        : never;
+                                                        : T extends EventName.OTC_Placed
+                                                          ? OtcOrderPlacedData
+                                                          : T extends EventName.OTC_Cancelled
+                                                            ? OtcOrderCancelledData
+                                                            : T extends EventName.OTC_Filled
+                                                              ? OtcOrderFilledData
+                                                              : T extends EventName.OTC_PartiallyFilled
+                                                                ? OtcOrderPartiallyFilledData
+                                                                : never;
 
 export type BatchBlocksParsedDataScope = Map<
   EventName,
@@ -143,7 +158,11 @@ export type ParsedEventsCallsData =
   | DcaTradeFailedData
   | DcaTerminatedData
   | DcaCompletedData
-  | DcaRandomnessGenerationFailedData;
+  | DcaRandomnessGenerationFailedData
+  | OtcOrderPlacedData
+  | OtcOrderCancelledData
+  | OtcOrderFilledData
+  | OtcOrderPartiallyFilledData;
 
 export interface CallMetadata {
   name: string;

@@ -260,14 +260,11 @@ export async function handleSellBuyAsSwap({
     swapOutputs: state.swapOutputs,
   };
 
-  if (traceIds && traceIds.length > 0)
-    for (const traceId of traceIds) {
-      await ChainActivityTraceManager.addParticipantsToActivityTrace({
-        traceId,
-        participants: [swap.swapper, swap.filler],
-        ctx,
-      });
-    }
+  await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
+    participants: [swap.swapper, swap.filler],
+    traceIds,
+    ctx,
+  });
 
   return swapData;
 }

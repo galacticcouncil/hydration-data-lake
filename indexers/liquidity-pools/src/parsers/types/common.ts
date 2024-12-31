@@ -24,6 +24,10 @@ import {
   OmnipoolSellExecutedEventParams,
   OmnipoolTokenAddedEventParams,
   OmnipoolTokenRemovedEventParams,
+  OtcOrderCancelledEventParams,
+  OtcOrderFilledEventParams,
+  OtcOrderPartiallyFilledEventParams,
+  OtcOrderPlacedEventParams,
   StableswapBuyExecutedEventParams,
   StableswapLiquidityAddedEventParams,
   StableswapLiquidityRemovedEventParams,
@@ -48,6 +52,8 @@ import {
   LbpPoolData,
   OmnipoolAssetData,
   OmnipoolGetAssetDataInput,
+  OtcGetOrderInput,
+  OtcOrderData,
   ParachainSystemLastRelayChainBlockNumber,
   StablepoolGetPoolDataInput,
   StablepoolInfo,
@@ -134,6 +140,14 @@ export type EventParserMethods = {
       event: Event
     ) => DcaRandomnessGenerationFailedEventParams;
   };
+  otc: {
+    parseOrderPlacedParams: (event: Event) => OtcOrderPlacedEventParams;
+    parseOrderCancelledParams: (event: Event) => OtcOrderCancelledEventParams;
+    parseOrderFilledParams: (event: Event) => OtcOrderFilledEventParams;
+    parseOrderPartiallyFilledParams: (
+      event: Event
+    ) => OtcOrderPartiallyFilledEventParams;
+  };
   tokens: {
     parseTransferParams: (event: Event) => TokensTransferEventParams;
   };
@@ -213,6 +227,9 @@ export type StorageParserMethods = {
     getDcaSchedule: (
       args: DcaGetScheduleInput
     ) => Promise<DcaScheduleData | null>;
+  };
+  otc: {
+    getOtcOrder: (args: OtcGetOrderInput) => Promise<OtcOrderData | null>;
   };
 };
 

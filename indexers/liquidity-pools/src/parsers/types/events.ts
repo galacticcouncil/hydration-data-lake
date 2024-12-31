@@ -38,6 +38,11 @@ export enum EventName {
   'DCA_Completed' = 'DCA.Completed',
   'DCA_RandomnessGenerationFailed' = 'DCA.RandomnessGenerationFailed',
 
+  'OTC_Placed' = 'OTC.Placed',
+  'OTC_Cancelled' = 'OTC.Cancelled',
+  'OTC_Filled' = 'OTC.Filled',
+  'OTC_PartiallyFilled' = 'OTC.PartiallyFilled',
+
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
 }
 
@@ -271,3 +276,26 @@ export type DcaRandomnessGenerationFailedEventParams = {
   block: number;
   error?: DispatchError;
 };
+
+export type OtcOrderPlacedEventParams = {
+  orderId: number;
+  assetIn: number;
+  assetOut: number;
+  amountIn: bigint;
+  amountOut: bigint;
+  partiallyFillable: boolean;
+};
+
+export type OtcOrderCancelledEventParams = {
+  orderId: number;
+};
+
+export type OtcOrderFilledEventParams = {
+  orderId: number;
+  amountIn: bigint;
+  amountOut: bigint;
+  who: string;
+  fee: bigint;
+};
+
+export type OtcOrderPartiallyFilledEventParams = OtcOrderFilledEventParams;

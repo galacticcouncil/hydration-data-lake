@@ -8,6 +8,7 @@ import {Transfer} from "./transfer.model"
 import {ChainActivityTrace} from "./chainActivityTrace.model"
 import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
 import {DcaSchedule} from "./dcaSchedule.model"
+import {OtcOrder} from "./otcOrder.model"
 
 @Entity_()
 export class Account {
@@ -57,4 +58,7 @@ export class Account {
 
   @OneToMany_(() => DcaSchedule, e => e.owner)
   dcaSchedules!: DcaSchedule[]
+
+  @OneToMany_(() => OtcOrder, e => e.owner)
+  otcOrders!: OtcOrder[]
 }

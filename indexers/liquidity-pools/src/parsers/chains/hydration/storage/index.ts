@@ -7,6 +7,7 @@ import stableswap from './stableswap';
 import xyk from './xyk';
 import lbp from './lbp';
 import dca from './dca';
+import otc from './otc';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -39,6 +40,7 @@ export default {
   assetRegistry,
   parachainSystem,
   dca,
+  otc,
   stableswap: {
     getPoolData: (
       args: StablepoolGetPoolDataInput
