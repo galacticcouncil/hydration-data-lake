@@ -57,7 +57,7 @@ module.exports = async ({ github, context }) => {
           res(true);
           return;
         }
-        if (attemptsCount > 130) {
+        if (attemptsCount > 350) {
           clearInterval(interval);
           rej(false);
           return;
