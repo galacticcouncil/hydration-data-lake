@@ -7,8 +7,8 @@ import {
 } from '../../../parsers/batchBlocksParser/types';
 import { handleLbpPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
-import { handleSellBuyAsSwap } from '../../swap/swap';
-import { getLbpPoolByAssets } from '../../pools/lbpPool/lbpPool';
+import { handleSwap } from '../../swap/swap';
+import { getOrCreateLbpPool } from '../../pools/lbpPool/lbpPool';
 
 export async function lpbBuyExecuted(
   ctx: ProcessorContext<Store>,
@@ -19,7 +19,7 @@ export async function lpbBuyExecuted(
     callData,
   } = eventCallData;
 
-  const pool = await getLbpPoolByAssets({
+  const pool = await getOrCreateLbpPool({
     ctx,
     assetIds: [eventParams.assetIn, eventParams.assetOut],
     ensure: true,
@@ -33,7 +33,7 @@ export async function lpbBuyExecuted(
     return;
   }
 
-  const { swap, swapInputs, swapOutputs } = await handleSellBuyAsSwap({
+  const { swap, swapInputs, swapOutputs } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -45,16 +45,24 @@ export async function lpbBuyExecuted(
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
-      poolAccountId: pool.id,
-      poolType: SwapFillerType.LBP,
-      assetInId: `${eventParams.assetIn}`,
-      assetOutId: `${eventParams.assetOut}`,
-      amountIn: eventParams.buyPrice,
-      amountOut: eventParams.amount,
+      fillerAccountId: pool.id,
+      swapFillerType: SwapFillerType.LBP,
+      inputs: [
+        {
+          amount: eventParams.buyPrice,
+          assetId: eventParams.assetIn,
+        },
+      ],
+      outputs: [
+        {
+          amount: eventParams.amount,
+          assetId: eventParams.assetOut,
+        },
+      ],
       fees: [
         {
           amount: eventParams.feeAmount,
-          assetId: `${eventParams.feeAsset}`,
+          assetId: eventParams.feeAsset,
           recipientId: pool.account.id,
         },
       ],
@@ -90,7 +98,7 @@ export async function lpbSellExecuted(
     callData,
   } = eventCallData;
 
-  const pool = await getLbpPoolByAssets({
+  const pool = await getOrCreateLbpPool({
     ctx,
     assetIds: [eventParams.assetIn, eventParams.assetOut],
     ensure: true,
@@ -104,7 +112,7 @@ export async function lpbSellExecuted(
     return;
   }
 
-  const { swap, swapInputs, swapOutputs } = await handleSellBuyAsSwap({
+  const { swap, swapInputs, swapOutputs } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -116,16 +124,24 @@ export async function lpbSellExecuted(
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
-      poolAccountId: pool.id,
-      poolType: SwapFillerType.LBP,
-      assetInId: `${eventParams.assetIn}`,
-      assetOutId: `${eventParams.assetOut}`,
-      amountIn: eventParams.amount,
-      amountOut: eventParams.salePrice,
+      fillerAccountId: pool.id,
+      swapFillerType: SwapFillerType.LBP,
+      inputs: [
+        {
+          amount: eventParams.amount,
+          assetId: eventParams.assetIn,
+        },
+      ],
+      outputs: [
+        {
+          amount: eventParams.salePrice,
+          assetId: eventParams.assetOut,
+        },
+      ],
       fees: [
         {
           amount: eventParams.feeAmount,
-          assetId: `${eventParams.feeAsset}`,
+          assetId: eventParams.feeAsset,
           recipientId: pool.account.id,
         },
       ],

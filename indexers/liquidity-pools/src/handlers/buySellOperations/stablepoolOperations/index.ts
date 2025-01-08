@@ -13,7 +13,7 @@ import { SwapFillerType, TradeOperationType } from '../../../model';
 import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
 import { getStablepool } from '../../pools/stablepool/stablepool';
 import { stablepoolLiquidityAddedRemoved } from '../../pools/stablepool/liquidity';
-import { handleSellBuyAsSwap } from '../../swap/swap';
+import { handleSwap } from '../../swap/swap';
 
 export async function handleStablepoolOperations(
   ctx: ProcessorContext<Store>,
@@ -36,7 +36,9 @@ export async function handleStablepoolOperations(
     ...parsedEvents
       .getSectionByEventName(EventName.Stableswap_LiquidityRemoved)
       .values(),
-  ])) {
+  ]).filter(
+    (event) => event.eventData.metadata.blockHeader.specVersion < 276
+  )) {
     switch (eventData.eventData.name) {
       case EventName.Stableswap_LiquidityAdded:
       case EventName.Stableswap_LiquidityRemoved:
@@ -83,7 +85,7 @@ export async function stablepoolBuySellExecuted(
     return;
   }
 
-  const { swap } = await handleSellBuyAsSwap({
+  const { swap } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -95,16 +97,24 @@ export async function stablepoolBuySellExecuted(
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
-      poolAccountId: pool.account.id,
-      poolType: SwapFillerType.Stableswap,
-      assetInId: `${eventParams.assetIn}`,
-      assetOutId: `${eventParams.assetOut}`,
-      amountIn: eventParams.amountIn,
-      amountOut: eventParams.amountOut,
+      fillerAccountId: pool.account.id,
+      swapFillerType: SwapFillerType.Stableswap,
+      inputs: [
+        {
+          amount: eventParams.amountIn,
+          assetId: eventParams.assetIn,
+        },
+      ],
+      outputs: [
+        {
+          amount: eventParams.amountOut,
+          assetId: eventParams.assetOut,
+        },
+      ],
       fees: [
         {
           amount: eventParams.fee,
-          assetId: `${eventParams.assetOut}`,
+          assetId: eventParams.assetOut,
           recipientId: pool.account.id,
         },
       ],

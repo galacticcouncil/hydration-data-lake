@@ -239,6 +239,62 @@ enum TradeOperationType {
   LiquidityAdd
   LiquidityRemove
 }
+enum SwappedExecutionTypeKind {
+  Batch
+  DCA
+  Omnipool
+  Router
+  Xcm
+  XcmExchange
+}
+
+type OperationStackElementBatch {
+  index: Int!
+  kind: SwappedExecutionTypeKind!
+  incrementalId: Int!
+}
+type OperationStackElementDca {
+  index: Int!
+  kind: SwappedExecutionTypeKind!
+  scheduleId: Int!
+  incrementalId: Int!
+}
+
+type OperationStackElementOmnipool {
+  index: Int!
+  kind: SwappedExecutionTypeKind!
+  incrementalId: Int!
+}
+type OperationStackElementRouter {
+  index: Int!
+  kind: SwappedExecutionTypeKind!
+  incrementalId: Int!
+}
+type OperationStackElementXcm {
+  index: Int!
+  kind: SwappedExecutionTypeKind!
+  incrementalId: Int!
+  message: String!
+}
+type OperationStackElementXcmExchange {
+  index: Int!
+  kind: SwappedExecutionTypeKind!
+  incrementalId: Int!
+}
+
+union OperationStackElement =
+  | OperationStackElementBatch
+  | OperationStackElementDca
+  | OperationStackElementOmnipool
+  | OperationStackElementRouter
+  | OperationStackElementXcm
+  | OperationStackElementXcmExchange
+
+type OperationStack @entity {
+  # <SwappedExecutionTypeKind>:<operation.value>/<SwappedExecutionTypeKind>:<operation.value[0]>:<operation.value[1]>/...
+  id: ID!
+  stackElements: [OperationStackElement!]!
+}
 
 type SwapFee @entity {
   "uuid"
@@ -514,6 +570,7 @@ type OmnipoolAssetHistoricalData @entity {
   relayChainBlockHeight: Int!
   paraChainBlockHeight: Int! @index
 }
+
 
 # ======================================================================================================================
 # *** Stablepool ***

@@ -14,7 +14,7 @@ import {
   TradeOperationType,
 } from '../../../model';
 import { handleOmnipoolAssetVolumeUpdates } from '../../volumes';
-import { handleSellBuyAsSwap } from '../../swap/swap';
+import { handleSwap } from '../../swap/swap';
 import { In } from 'typeorm';
 
 // TODO improve performance of the function
@@ -34,7 +34,9 @@ export async function handleOmnioolOperations(
     ...parsedEvents
       .getSectionByEventName(EventName.Omnipool_SellExecuted)
       .values(),
-  ])) {
+  ]).filter(
+    (event) => event.eventData.metadata.blockHeader.specVersion < 276
+  )) {
     await omnipoolBuySellExecuted(ctx, eventData);
   }
 }
@@ -48,7 +50,7 @@ export async function omnipoolBuySellExecuted(
     callData,
   } = eventCallData;
 
-  const { swap } = await handleSellBuyAsSwap({
+  const { swap } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -60,23 +62,33 @@ export async function omnipoolBuySellExecuted(
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
-      poolAccountId: ctx.appConfig.OMNIPOOL_ADDRESS,
-      poolType: SwapFillerType.Omnipool,
-      assetInId: `${eventParams.assetIn}`,
-      assetOutId: `${eventParams.assetOut}`,
-      amountIn: eventParams.amountIn,
-      amountOut: eventParams.amountOut,
+      fillerAccountId: ctx.appConfig.OMNIPOOL_ADDRESS,
+      swapFillerType: SwapFillerType.Omnipool,
+
       hubAmountIn: eventParams.hubAmountIn,
       hubAmountOut: eventParams.hubAmountOut,
+
+      inputs: [
+        {
+          amount: eventParams.amountIn,
+          assetId: eventParams.assetIn,
+        },
+      ],
+      outputs: [
+        {
+          amount: eventParams.amountOut,
+          assetId: eventParams.assetOut,
+        },
+      ],
       fees: [
         {
           amount: eventParams.assetFeeAmount,
-          assetId: `${eventParams.assetOut}`,
+          assetId: eventParams.assetOut,
           recipientId: ctx.appConfig.OMNIPOOL_ADDRESS,
         },
         {
-          amount: eventParams.assetFeeAmount,
-          assetId: ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
+          amount: eventParams.protocolFeeAmount,
+          assetId: +ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
           recipientId: ctx.appConfig.OMNIPOOL_ADDRESS,
         },
       ],

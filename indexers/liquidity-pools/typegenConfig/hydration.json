@@ -71,6 +71,11 @@
     },
     "Utility": {
       "calls": true
+    },
+    "AmmSupport": {
+      "events": true,
+      "calls": true,
+      "storage": true
     }
   }
 }

@@ -4,7 +4,7 @@ import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser
 import parsers from '../../../parsers';
 import { LbpPoolHistoricalData } from '../../../model';
 import { getAsset } from '../../assets/assetRegistry';
-import { getLbpPoolByAssets } from './lbpPool';
+import { getOrCreateLbpPool } from './lbpPool';
 import { getAccount } from '../../accounts';
 
 export async function handleLbpPoolHistoricalData(
@@ -23,7 +23,7 @@ export async function handleLbpPoolHistoricalData(
       )
       .flat()
       .map(async ({ assetIdsPair, blockHeader }) => {
-        const pool = await getLbpPoolByAssets({
+        const pool = await getOrCreateLbpPool({
           ctx,
           assetIds: assetIdsPair.split('-'),
         });

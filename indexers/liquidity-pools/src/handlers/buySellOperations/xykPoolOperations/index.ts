@@ -20,7 +20,9 @@ export async function handleXykPoolOperations(
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.XYK_BuyExecuted).values(),
     ...parsedEvents.getSectionByEventName(EventName.XYK_SellExecuted).values(),
-  ])) {
+  ]).filter(
+    (event) => event.eventData.metadata.blockHeader.specVersion < 276
+  )) {
     switch (eventData.eventData.name) {
       case EventName.XYK_BuyExecuted:
         await xykBuyExecuted(ctx, eventData as XykBuyExecutedData);

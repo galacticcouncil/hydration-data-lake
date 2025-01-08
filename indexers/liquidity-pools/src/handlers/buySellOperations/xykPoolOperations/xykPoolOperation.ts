@@ -7,8 +7,8 @@ import {
 } from '../../../parsers/batchBlocksParser/types';
 import { handleXykPoolVolumeUpdates } from '../../volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
-import { handleSellBuyAsSwap } from '../../swap/swap';
-import { getXykPool } from '../../pools/xykPool/xykPool';
+import { handleSwap } from '../../swap/swap';
+import { getOrCreateXykPool } from '../../pools/xykPool/xykPool';
 
 export async function xykBuyExecuted(
   ctx: ProcessorContext<Store>,
@@ -19,7 +19,7 @@ export async function xykBuyExecuted(
     callData,
   } = eventCallData;
 
-  const pool = await getXykPool({
+  const pool = await getOrCreateXykPool({
     ctx,
     id: eventParams.pool,
     ensure: true,
@@ -33,7 +33,7 @@ export async function xykBuyExecuted(
     return;
   }
 
-  const { swap, swapInputs, swapOutputs } = await handleSellBuyAsSwap({
+  const { swap, swapInputs, swapOutputs } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -45,16 +45,14 @@ export async function xykBuyExecuted(
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
-      poolAccountId: pool.id,
-      poolType: SwapFillerType.XYK,
-      assetInId: `${eventParams.assetIn}`,
-      assetOutId: `${eventParams.assetOut}`,
-      amountIn: eventParams.buyPrice,
-      amountOut: eventParams.amount,
+      fillerAccountId: pool.id,
+      swapFillerType: SwapFillerType.XYK,
+      inputs: [{ assetId: eventParams.assetIn, amount: eventParams.buyPrice }],
+      outputs: [{ assetId: eventParams.assetOut, amount: eventParams.amount }],
       fees: [
         {
           amount: eventParams.feeAmount,
-          assetId: `${eventParams.feeAsset}`,
+          assetId: eventParams.feeAsset,
           recipientId: pool.id,
         },
       ],
@@ -90,7 +88,7 @@ export async function xykSellExecuted(
     callData,
   } = eventCallData;
 
-  const pool = await getXykPool({
+  const pool = await getOrCreateXykPool({
     ctx,
     id: eventParams.pool,
     ensure: true,
@@ -104,7 +102,7 @@ export async function xykSellExecuted(
     return;
   }
 
-  const { swap, swapInputs, swapOutputs } = await handleSellBuyAsSwap({
+  const { swap, swapInputs, swapOutputs } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -116,16 +114,16 @@ export async function xykSellExecuted(
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
-      poolAccountId: pool.id,
-      poolType: SwapFillerType.XYK,
-      assetInId: `${eventParams.assetIn}`,
-      assetOutId: `${eventParams.assetOut}`,
-      amountIn: eventParams.amount,
-      amountOut: eventParams.salePrice,
+      fillerAccountId: pool.id,
+      swapFillerType: SwapFillerType.XYK,
+      inputs: [{ assetId: eventParams.assetIn, amount: eventParams.amount }],
+      outputs: [
+        { assetId: eventParams.assetOut, amount: eventParams.salePrice },
+      ],
       fees: [
         {
           amount: eventParams.feeAmount,
-          assetId: `${eventParams.feeAsset}`,
+          assetId: eventParams.feeAsset,
           recipientId: pool.id,
         },
       ],

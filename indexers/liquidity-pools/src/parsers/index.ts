@@ -7,6 +7,8 @@ export function getParsers(): ParserMethods {
       return require('./chains/hydration').default;
     case 'hydration_paseo':
       return require('./chains/hydration-paseo').default;
+    case 'hydration_paseo_next':
+      return require('./chains/hydration-paseo-next').default;
     default:
       throw new Error(`Unsupported chain ${process.env.CHAIN}`);
   }

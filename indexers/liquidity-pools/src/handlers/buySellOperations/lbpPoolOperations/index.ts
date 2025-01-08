@@ -20,7 +20,9 @@ export async function handleLbpPoolOperations(
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.LBP_BuyExecuted).values(),
     ...parsedEvents.getSectionByEventName(EventName.LBP_SellExecuted).values(),
-  ])) {
+  ]).filter(
+    (event) => event.eventData.metadata.blockHeader.specVersion < 276
+  )) {
     switch (eventData.eventData.name) {
       case EventName.LBP_BuyExecuted:
         await lpbBuyExecuted(ctx, eventData as LbpBuyExecutedData);

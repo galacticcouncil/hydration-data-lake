@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
 import { XykPoolHistoricalData } from '../../../model';
-import { getXykPool } from './xykPool';
+import { getOrCreateXykPool } from './xykPool';
 
 export async function handleXykPoolHistoricalData(
   ctx: ProcessorContext<Store>,
@@ -22,7 +22,7 @@ export async function handleXykPoolHistoricalData(
 
       .flat()
       .map(async ({ poolId, blockHeader }) => {
-        const pool = await getXykPool({
+        const pool = await getOrCreateXykPool({
           ctx,
           id: poolId,
           ensure: true,

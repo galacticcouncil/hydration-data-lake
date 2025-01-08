@@ -16,9 +16,25 @@ import {
 } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../';
-import { calls, events } from '../chains/hydration/typegenTypes'; // TODO fix for different CHAIN env value
+// import { calls, events } from '../chains/hydration/typegenTypes'; // TODO fix for different CHAIN env value
+// import { calls, events } from '../chains/hydration-paseo-next/typegenTypes';
+
+import {
+  calls as hydrationCalls,
+  events as hydrationEvents,
+} from '../chains/hydration/typegenTypes';
+import {
+  calls as hydrationPaseoCalls,
+  events as hydrationPaseoEvents,
+} from '../chains/hydration-paseo/typegenTypes';
+import {
+  calls as hydrationPaseoNextCalls,
+  events as hydrationPaseoNextEvents,
+} from '../chains/hydration-paseo-next/typegenTypes';
+
 import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
 import { EventDataParserHelper } from './eventDataParserHelper';
+import { ChainName } from '../../utils/types';
 
 export class BatchBlocksParsedDataManager {
   private scope: BatchBlocksParsedDataScope;
@@ -90,21 +106,39 @@ function getEventMetadata({
 export async function getParsedEventsData(
   ctx: ProcessorContext<Store>
 ): Promise<BatchBlocksParsedDataManager> {
+  let events = null;
+  let calls = null;
+
+  switch (ctx.appConfig.CHAIN) {
+    case ChainName.hydration:
+      events = hydrationEvents;
+      calls = hydrationCalls;
+      break;
+    case ChainName.hydration_paseo:
+      events = hydrationPaseoEvents;
+      calls = hydrationPaseoCalls;
+      break;
+    case ChainName.hydration_paseo_next:
+      events = hydrationPaseoNextEvents;
+      calls = hydrationPaseoNextCalls;
+      break;
+  }
+
   const parsedDataManager = new BatchBlocksParsedDataManager();
   let totalEventsNumber = 0;
 
   const batchState = ctx.batchState.state;
 
-  for (let block of ctx.blocks) {
+  for (const block of ctx.blocks) {
     const relayChainInfo: RelayChainInfo = {
       parachainBlockNumber: 0,
       relaychainBlockNumber: 0,
     };
 
-    for (let call of block.calls) {
+    for (const call of block.calls) {
       switch (call.name) {
         case calls.parachainSystem.setValidationData.name: {
-          let validationData =
+          const validationData =
             parsers.calls.parachainSystem.parseSetValidationDataArgs(call);
           relayChainInfo.relaychainBlockNumber =
             validationData.relayParentNumber;
@@ -569,6 +603,20 @@ export async function getParsedEventsData(
           parsedDataManager.set(EventName.AssetRegistry_Updated, preparedData);
           break;
         }
+
+        /**
+         * ===================== A M M   S U P P O R T =========================
+         */
+
+        /**
+         * ==== Swapped ====
+         */
+        case hydrationPaseoNextEvents.ammSupport.swapped.name: {
+          const preparedData = parserHelper.parseAmmSupportSwappedData();
+          parsedDataManager.set(EventName.AmmSupport_Swapped, preparedData);
+          break;
+        }
+
         default:
           totalEventsNumber--;
       }

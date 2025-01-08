@@ -106,7 +106,7 @@ export async function createLbpPool({
   return newPool;
 }
 
-export async function getLbpPoolByAssets({
+export async function getOrCreateLbpPool({
   ctx,
   assetIds,
   ensure = false,

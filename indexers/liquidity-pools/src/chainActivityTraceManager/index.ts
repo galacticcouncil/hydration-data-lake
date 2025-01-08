@@ -10,10 +10,12 @@ import {
   AccountChainActivityTrace,
   TraceEntityType,
   EventGroup,
+  DcaSchedule,
 } from '../model';
 import { getCallOriginParts } from '../utils/helpers';
 import { getAccount } from '../handlers/accounts';
 import { EventPhase, TraceIdEventGroup, TraceIdContext } from '../utils/types';
+import { FindOptionsRelations, In } from 'typeorm';
 
 export class ChainActivityTraceManager {
   static _traceIdPrefix = 'trace-id:';
@@ -353,19 +355,6 @@ export class ChainActivityTraceManager {
     }
   }
 
-  static async saveActivityTraceEntities(ctx: ProcessorContext<Store>) {
-    const state = ctx.batchState.state;
-
-    await ctx.store.upsert([...state.batchBlocks.values()].reverse());
-    await ctx.store.upsert([...state.batchExtrinsics.values()].reverse());
-    await ctx.store.upsert([...state.batchCalls.values()].reverse());
-    await ctx.store.upsert([...state.batchEvents.values()].reverse());
-    await ctx.store.upsert([...state.chainActivityTraces.values()].reverse());
-    await ctx.store.upsert(
-      [...state.accountChainActivityTraces.values()].reverse()
-    );
-  }
-
   static traceIdPrefixWithContext(traceIdOrigin: TraceIdContext) {
     return `${this._traceIdPrefix}//context:${traceIdOrigin}`;
   }
@@ -534,5 +523,75 @@ export class ChainActivityTraceManager {
     const traceId = batchEvents.get(eventId)!.traceId;
 
     return traceId;
+  }
+
+  static isEventTraceId(maybeId: string) {
+    if (!maybeId) return false;
+    return /trace-id:\/\/context:event/.test(maybeId);
+  }
+
+  static async saveActivityTraceEntities(ctx: ProcessorContext<Store>) {
+    const state = ctx.batchState.state;
+
+    await ctx.store.upsert([...state.batchBlocks.values()].reverse());
+    await ctx.store.upsert([...state.batchExtrinsics.values()].reverse());
+    await ctx.store.upsert([...state.batchCalls.values()].reverse());
+    await ctx.store.upsert([...state.batchEvents.values()].reverse());
+    await ctx.store.upsert([...state.chainActivityTraces.values()].reverse());
+    await ctx.store.upsert(
+      [...state.accountChainActivityTraces.values()].reverse()
+    );
+  }
+
+  static async getChainActivityTrace({
+    id,
+    ctx,
+    fetchFromDb = false,
+    relations = {},
+  }: {
+    id: string;
+    fetchFromDb?: boolean;
+    relations?: FindOptionsRelations<ChainActivityTrace>;
+    ctx: ProcessorContext<Store>;
+  }) {
+    const batchState = ctx.batchState.state;
+
+    let entity = batchState.chainActivityTraces.get(id);
+    if (entity || (!entity && !fetchFromDb)) return entity ?? null;
+
+    entity = await ctx.store.findOne(ChainActivityTrace, {
+      where: { id },
+      relations,
+    });
+
+    return entity ?? null;
+  }
+
+  static async addOperationIdToActivityTrace({
+    traceId,
+    operationId,
+    ctx,
+  }: {
+    traceId: string;
+    operationId: string;
+    ctx: ProcessorContext<Store>;
+  }) {
+    const chainActivityTraceId = this.getTraceIdRoot(traceId);
+
+    if (!chainActivityTraceId) return null;
+
+    const entity = await this.getChainActivityTrace({
+      id: chainActivityTraceId,
+      ctx,
+      fetchFromDb: true,
+    });
+
+    if (!entity) return null;
+
+    entity.operationIds = [
+      ...new Set([...(entity.operationIds || []), operationId]).values(),
+    ];
+
+    return entity;
   }
 }

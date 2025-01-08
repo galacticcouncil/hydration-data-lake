@@ -6,6 +6,7 @@ import {
 } from './calls';
 import { Call, Event } from '../../processor';
 import {
+  AmmSupportSwappedEventParams,
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
   BalancesTransferEventParams,
@@ -65,6 +66,7 @@ import {
   XykPoolWithAssets,
 } from './storage';
 import { DcaScheduleOrderKind, SwapFillerType } from '../../model';
+import ammSupport from '../chains/hydration-paseo-next/events/ammSupport';
 
 export interface PoolData {
   owner: string;
@@ -157,6 +159,9 @@ export type EventParserMethods = {
   assetRegistry: {
     parseRegisteredParams: (event: Event) => AssetRegistryRegisteredEventParams;
     parseUpdatedParams: (event: Event) => AssetRegistryUpdatedEventParams;
+  };
+  ammSupport: {
+    parseSwappedParams: (event: Event) => AmmSupportSwappedEventParams;
   };
 };
 export type StorageParserMethods = {

@@ -46,6 +46,7 @@ import {
   OtcOrderPartiallyFilledData,
   OtcOrderPlacedData,
 } from './otc';
+import { AmmSupportSwappedData } from './ammSupport';
 
 export * from './assetRegistry';
 export * from './lbp';
@@ -56,6 +57,7 @@ export * from './omnipool';
 export * from './stableswap';
 export * from './xyk';
 export * from './otc';
+export * from './ammSupport';
 
 export type EventId = string;
 
@@ -123,7 +125,9 @@ export type EventDataType<T> = T extends EventName.Tokens_Transfer
                                                               ? OtcOrderFilledData
                                                               : T extends EventName.OTC_PartiallyFilled
                                                                 ? OtcOrderPartiallyFilledData
-                                                                : never;
+                                                                : T extends EventName.AmmSupport_Swapped
+                                                                  ? AmmSupportSwappedData
+                                                                  : never;
 
 export type BatchBlocksParsedDataScope = Map<
   EventName,
@@ -162,7 +166,8 @@ export type ParsedEventsCallsData =
   | OtcOrderPlacedData
   | OtcOrderCancelledData
   | OtcOrderFilledData
-  | OtcOrderPartiallyFilledData;
+  | OtcOrderPartiallyFilledData
+  | AmmSupportSwappedData;
 
 export interface CallMetadata {
   name: string;

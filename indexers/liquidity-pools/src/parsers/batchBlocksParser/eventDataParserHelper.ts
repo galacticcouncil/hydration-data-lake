@@ -702,4 +702,25 @@ export class EventDataParserHelper {
       },
     };
   }
+
+  /**
+   * ==== AmmSupport Swapped ====
+   */
+  parseAmmSupportSwappedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams = parsers.events.ammSupport.parseSwappedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
 }

@@ -1,5 +1,10 @@
 import { DispatchError, PoolData } from './common';
-import { AssetType } from '../../model';
+import {
+  AssetType,
+  SwapFillerType,
+  SwappedExecutionTypeKind,
+  TradeOperationType,
+} from '../../model';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -299,3 +304,33 @@ export type OtcOrderFilledEventParams = {
 };
 
 export type OtcOrderPartiallyFilledEventParams = OtcOrderFilledEventParams;
+
+export type AmmSupportSwappedAssetAmount = {
+  assetId: number;
+  amount: bigint;
+};
+
+export type AmmSupportSwappedFee = AmmSupportSwappedAssetAmount & {
+  recipientId: string;
+};
+
+export type AmmSupportSwappedFillerType = {
+  kind: SwapFillerType;
+  value: string;
+};
+
+export type AmmSupportSwappedExecutionType = {
+  kind: SwappedExecutionTypeKind;
+  value: number | [number, number] | [string, number];
+};
+
+export type AmmSupportSwappedEventParams = {
+  swapper: string;
+  filler: string;
+  fillerType: AmmSupportSwappedFillerType;
+  inputs: AmmSupportSwappedAssetAmount[];
+  outputs: AmmSupportSwappedAssetAmount[];
+  fees: AmmSupportSwappedFee[];
+  operation: TradeOperationType;
+  operationStack: AmmSupportSwappedExecutionType[];
+};

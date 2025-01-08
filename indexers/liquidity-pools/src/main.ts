@@ -29,6 +29,8 @@ import { ChainActivityTraceManager } from './chainActivityTraceManager';
 import { handleDcaSchedules } from './handlers/dca';
 import { printV8MemoryHeap } from './utils/helpers';
 import { handleOtcOrders } from './handlers/otc';
+import { OperationStackManager } from './chainActivityTraceManager/operationStackManager';
+import { handleSupportSwappedEvents } from './handlers/swap';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -104,6 +106,13 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     parsedData
   );
   console.timeEnd('handleStablepools');
+
+  console.time('handleSupportSwappedEvents');
+  await handleSupportSwappedEvents(
+    ctxWithBatchState as ProcessorContext<Store>,
+    parsedData
+  );
+  console.timeEnd('handleSupportSwappedEvents');
 
   console.time('handleBuySellOperations');
   await handleBuySellOperations(

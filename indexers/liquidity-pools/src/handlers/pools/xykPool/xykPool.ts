@@ -101,7 +101,7 @@ export async function createXykPool({
   return newPool;
 }
 
-export async function getXykPool({
+export async function getOrCreateXykPool({
   ctx,
   id,
   ensure = false,
