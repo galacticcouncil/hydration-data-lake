@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../../processor';
+import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { Asset, Stablepool, StablepoolAsset } from '../../../model';
 import { getAccount } from '../../accounts';
@@ -9,11 +9,84 @@ import { blake2AsHex, encodeAddress } from '@polkadot/util-crypto';
 import { isNotNullOrUndefined } from '../../../utils/helpers';
 import { getAsset } from '../../assets/assetRegistry';
 import { getAssetFreeBalance } from '../../assets/balances';
+import parsers from '../../../parsers';
 
-export async function getStablepool(
-  ctx: ProcessorContext<Store>,
-  poolId: string | number
-) {
+export async function getNewStablepoolWithAssets({
+  poolId,
+  assetIds,
+  ctx,
+  blockHeader,
+}: {
+  poolId: number | string;
+  assetIds?: number[];
+  ctx: ProcessorContext<Store>;
+  blockHeader: Block;
+}) {
+  const newPool = new Stablepool({
+    id: `${poolId}`,
+    account: await getAccount(
+      ctx,
+      blake2AsHex(StableMath.getPoolAddress(+poolId))
+    ),
+    createdAt: new Date(blockHeader.timestamp ?? Date.now()),
+    createdAtParaBlock: blockHeader.height,
+    isDestroyed: false,
+  });
+
+  let poolAssetIds = assetIds;
+  if (!poolAssetIds) {
+    const poolStorageData = await parsers.storage.stableswap.getPoolData({
+      poolId: +poolId,
+      block: blockHeader,
+    });
+    if (!poolStorageData)
+      throw new Error(
+        `Storage data fro Stablepool with poolId ${poolId} can not be fetched.`
+      );
+
+    poolAssetIds = poolStorageData?.assets;
+  }
+
+  const assetsListPromise = poolAssetIds.map(
+    async (assetId) =>
+      new StablepoolAsset({
+        id: `${newPool.id}-${assetId}`,
+        pool: newPool,
+        amount: await getAssetFreeBalance(
+          blockHeader,
+          assetId,
+          newPool.account.id
+        ),
+        asset: (await getAsset({
+          ctx,
+          id: assetId,
+          ensure: true,
+          blockHeader,
+        }))!, // TODO fix types
+      })
+  );
+
+  const stablepoolAssets = (await Promise.all(assetsListPromise)).filter(
+    isNotNullOrUndefined
+  );
+
+  return {
+    pool: newPool,
+    poolAssets: stablepoolAssets,
+  };
+}
+
+export async function getOrCreateStablepool({
+  poolId,
+  ctx,
+  ensure,
+  blockHeader,
+}: {
+  ctx: ProcessorContext<Store>;
+  poolId: number | string;
+  ensure?: boolean;
+  blockHeader?: Block;
+}) {
   const batchState = ctx.batchState.state;
 
   let pool = batchState.stablepoolAllBatchPools.get(`${poolId}`);
@@ -24,7 +97,42 @@ export async function getStablepool(
     relations: { assets: { asset: true }, account: true },
   });
 
-  return pool ?? null;
+  if (pool || (!pool && !ensure)) return pool ?? null;
+
+  if (!blockHeader) return null;
+
+  const { pool: newPool, poolAssets } = await getNewStablepoolWithAssets({
+    poolId: poolId,
+    ctx,
+    blockHeader: blockHeader,
+  });
+
+  await ctx.store.upsert(newPool);
+
+  newPool.assets = poolAssets;
+
+  const state = ctx.batchState.state;
+
+  for (const asset of poolAssets) {
+    state.stablepoolAssetsAllBatch.set(+asset.asset.id, asset);
+    await ctx.store.upsert(asset);
+  }
+
+  state.stablepoolIdsToSave.add(newPool.id);
+
+  state.stablepoolAllBatchPools.set(newPool.id, newPool);
+
+  await ctx.store.save(newPool.account);
+  state.accounts.set(newPool.account.id, newPool.account);
+
+  ctx.batchState.state = {
+    accounts: state.accounts,
+    stablepoolAssetsAllBatch: state.stablepoolAssetsAllBatch,
+    stablepoolAllBatchPools: state.stablepoolAllBatchPools,
+    stablepoolIdsToSave: state.stablepoolIdsToSave,
+  };
+
+  return newPool;
 }
 
 export async function stablepoolCreated(
@@ -35,50 +143,28 @@ export async function stablepoolCreated(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const newPool = new Stablepool({
-    id: `${eventParams.poolId}`,
-    account: await getAccount(
-      ctx,
-      blake2AsHex(StableMath.getPoolAddress(eventParams.poolId))
-    ),
-    createdAt: new Date(eventMetadata.blockHeader.timestamp ?? Date.now()),
-    createdAtParaBlock: eventMetadata.blockHeader.height,
-    isDestroyed: false,
+  const { pool, poolAssets } = await getNewStablepoolWithAssets({
+    poolId: eventParams.poolId,
+    assetIds: eventParams.assets,
+    ctx,
+    blockHeader: eventMetadata.blockHeader,
   });
 
-  const assetsListPromise = eventParams.assets.map(
-    async (assetId) =>
-      new StablepoolAsset({
-        id: `${newPool.id}-${assetId}`,
-        pool: newPool,
-        amount: await getAssetFreeBalance(
-          eventMetadata.blockHeader,
-          assetId,
-          newPool.account.id
-        ),
-        asset: (await getAsset({
-          ctx,
-          id: assetId,
-          ensure: true,
-          blockHeader: eventMetadata.blockHeader,
-        }))!, // TODO fix types
-      })
-  );
+  pool.assets = poolAssets;
+  pool.account.stablepool = pool;
 
   const state = ctx.batchState.state;
 
-  for (const asset of (await Promise.all(assetsListPromise)).filter(
-    isNotNullOrUndefined
-  )) {
+  for (const asset of poolAssets) {
     state.stablepoolAssetsAllBatch.set(+asset.asset.id, asset);
   }
 
-  state.stablepoolIdsToSave.add(newPool.id);
+  state.stablepoolIdsToSave.add(pool.id);
 
-  state.stablepoolAllBatchPools.set(newPool.id, newPool);
+  state.stablepoolAllBatchPools.set(pool.id, pool);
 
-  await ctx.store.save(newPool.account);
-  state.accounts.set(newPool.account.id, newPool.account);
+  await ctx.store.save(pool.account);
+  state.accounts.set(pool.account.id, pool.account);
 
   ctx.batchState.state = {
     accounts: state.accounts,

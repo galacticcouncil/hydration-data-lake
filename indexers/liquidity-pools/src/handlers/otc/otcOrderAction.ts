@@ -1,19 +1,12 @@
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
-  DcaExecutionPlannedData,
-  DcaTradeExecutedData,
-  DcaTradeFailedData,
   OtcOrderFilledData,
   OtcOrderPartiallyFilledData,
 } from '../../parsers/batchBlocksParser/types';
 import {
   Account,
-  DcaScheduleExecution,
-  DcaScheduleExecutionAction,
-  DcaScheduleExecutionStatus,
-  DispatchError,
-  DispatchErrorValue,
+  ChainActivityTrace,
   OtcOrder,
   OtcOrderAction,
   OtcOrderActionKind,
@@ -21,9 +14,10 @@ import {
   Swap,
 } from '../../model';
 import { getOtcOrder } from './otcOrder';
-import { FindOptionsRelations } from 'typeorm';
 import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
 import { getAccount } from '../accounts';
+import { FindOptionsRelations } from 'typeorm';
+import { getSwap, getSwapForOtcOrderAction } from '../swap/swap';
 
 export function getNewOrderAction({
   operationId = null,
@@ -65,7 +59,60 @@ export function getNewOrderAction({
     filler,
     amountIn,
     amountOut,
+    order,
   });
+}
+
+export async function getOtcOrderActions({
+  id,
+  orderId,
+  kind,
+  fetchFromDb = true,
+  ctx,
+  relations = {},
+}: {
+  id?: string;
+  orderId?: string;
+  kind?: OtcOrderActionKind;
+  fetchFromDb?: boolean;
+  ctx: ProcessorContext<Store>;
+  relations?: FindOptionsRelations<OtcOrderAction>;
+}) {
+  if (!id && !orderId && !kind) return null;
+
+  const batchState = ctx.batchState.state;
+
+  let actions: OtcOrderAction[] = [];
+
+  if (id) {
+    actions = [...batchState.otcOrderActions.values()].filter(
+      (act) => act.id === id
+    );
+  } else if (orderId && kind) {
+    actions = [...batchState.otcOrderActions.values()].filter(
+      (act) => act.order.id === orderId && act.kind === kind
+    );
+  }
+  if (actions.length > 0 || (actions.length === 0 && !fetchFromDb))
+    return actions;
+
+  actions = await ctx.store.find(OtcOrderAction, {
+    where: {
+      ...(id ? { id } : {}),
+      ...(orderId ? { order: { id: orderId } } : {}),
+      ...(kind ? { kind } : {}),
+    },
+    relations,
+  });
+
+  if (actions && actions.length > 0) {
+    for (const action of actions) {
+      ctx.batchState.state.otcOrderActions.set(action.id, action);
+    }
+    return actions;
+  }
+
+  return [];
 }
 
 export async function handleOtcOrderFilled(
@@ -84,6 +131,13 @@ export async function handleOtcOrderFilled(
 
   if (!otcOrder) return;
 
+  const relatedSwap = [...ctx.batchState.state.swaps.values()].find(
+    (swap) =>
+      swap.paraChainBlockHeight === eventMetadata.blockHeader.height &&
+      swap.fillerContext?.otcOrder?.id === `${eventParams.orderId}` &&
+      swap.swapper.id === eventParams.who
+  );
+
   const newOrderAction = getNewOrderAction({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: otcOrder,
@@ -97,6 +151,7 @@ export async function handleOtcOrderFilled(
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     eventIndex: eventMetadata.indexInBlock,
+    swap: relatedSwap ?? null,
   });
 
   otcOrder.status = OtcScheduleStatus.FILLED;
@@ -106,6 +161,11 @@ export async function handleOtcOrderFilled(
 
   state.otcOrders.set(otcOrder.id, otcOrder);
   state.otcOrderActions.set(newOrderAction.id, newOrderAction);
+
+  if (relatedSwap) {
+    relatedSwap.otcOrderFulfilment = newOrderAction;
+    state.swaps.set(relatedSwap.id, relatedSwap);
+  }
 
   ctx.batchState.state = {
     otcOrders: state.otcOrders,
@@ -135,6 +195,13 @@ export async function handleOtcOrderPartiallyFilled(
 
   if (!otcOrder) return;
 
+  const relatedSwap = [...ctx.batchState.state.swaps.values()].find(
+    (swap) =>
+      swap.paraChainBlockHeight === eventMetadata.blockHeader.height &&
+      swap.fillerContext?.otcOrder?.id === `${eventParams.orderId}` &&
+      swap.swapper.id === eventParams.who
+  );
+
   const newOrderAction = getNewOrderAction({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: otcOrder,
@@ -148,6 +215,7 @@ export async function handleOtcOrderPartiallyFilled(
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     eventIndex: eventMetadata.indexInBlock,
+    swap: relatedSwap ?? null,
   });
 
   otcOrder.status = OtcScheduleStatus.PARTIALLY_FILLED;
@@ -157,6 +225,10 @@ export async function handleOtcOrderPartiallyFilled(
 
   state.otcOrders.set(otcOrder.id, otcOrder);
   state.otcOrderActions.set(newOrderAction.id, newOrderAction);
+  if (relatedSwap) {
+    relatedSwap.otcOrderFulfilment = newOrderAction;
+    state.swaps.set(relatedSwap.id, relatedSwap);
+  }
 
   ctx.batchState.state = {
     otcOrders: state.otcOrders,

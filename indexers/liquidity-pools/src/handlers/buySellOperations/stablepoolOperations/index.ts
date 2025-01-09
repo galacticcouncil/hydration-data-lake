@@ -11,7 +11,7 @@ import {
 } from '../../../parsers/batchBlocksParser/types';
 import { SwapFillerType, TradeOperationType } from '../../../model';
 import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
-import { getStablepool } from '../../pools/stablepool/stablepool';
+import { getOrCreateStablepool } from '../../pools/stablepool/stablepool';
 import { stablepoolLiquidityAddedRemoved } from '../../pools/stablepool/liquidity';
 import { handleSwap } from '../../swap/swap';
 
@@ -24,21 +24,23 @@ export async function handleStablepoolOperations(
    * flow to avoid wrong calculations of accumulated volumes.
    */
   for (const eventData of getOrderedListByBlockNumber([
-    ...parsedEvents
-      .getSectionByEventName(EventName.Stableswap_BuyExecuted)
-      .values(),
-    ...parsedEvents
-      .getSectionByEventName(EventName.Stableswap_SellExecuted)
-      .values(),
+    ...[
+      ...parsedEvents
+        .getSectionByEventName(EventName.Stableswap_BuyExecuted)
+        .values(),
+    ].filter((event) => event.eventData.metadata.blockHeader.specVersion < 276),
+    ...[
+      ...parsedEvents
+        .getSectionByEventName(EventName.Stableswap_SellExecuted)
+        .values(),
+    ].filter((event) => event.eventData.metadata.blockHeader.specVersion < 276),
     ...parsedEvents
       .getSectionByEventName(EventName.Stableswap_LiquidityAdded)
       .values(),
     ...parsedEvents
       .getSectionByEventName(EventName.Stableswap_LiquidityRemoved)
       .values(),
-  ]).filter(
-    (event) => event.eventData.metadata.blockHeader.specVersion < 276
-  )) {
+  ])) {
     switch (eventData.eventData.name) {
       case EventName.Stableswap_LiquidityAdded:
       case EventName.Stableswap_LiquidityRemoved:
@@ -78,7 +80,12 @@ export async function stablepoolBuySellExecuted(
 
   // let assetInEntity = await getAsset({ ctx, id: eventParams.assetIn });
   // let assetOutEntity = await getAsset({ ctx, id: eventParams.assetOut });
-  const pool = await getStablepool(ctx, eventParams.poolId);
+  const pool = await getOrCreateStablepool({
+    ctx,
+    poolId: eventParams.poolId,
+    ensure: true,
+    blockHeader: eventMetadata.blockHeader,
+  });
 
   if (!pool) {
     console.log(`Stablepool with ID ${eventParams.poolId} has not been found`);
@@ -98,7 +105,7 @@ export async function stablepoolBuySellExecuted(
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: pool.account.id,
-      swapFillerType: SwapFillerType.Stableswap,
+      fillerType: SwapFillerType.Stableswap,
       inputs: [
         {
           amount: eventParams.amountIn,

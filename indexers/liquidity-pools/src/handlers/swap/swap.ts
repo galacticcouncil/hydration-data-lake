@@ -4,6 +4,7 @@ import { BlockHeader } from '@subsquid/substrate-processor';
 import {
   Swap,
   SwapFee,
+  SwapFillerContext,
   SwapFillerType,
   SwapInputAssetBalance,
   SwapOutputAssetBalance,
@@ -20,16 +21,12 @@ import {
   AmmSupportSwappedAssetAmount,
   AmmSupportSwappedFee,
 } from '../../parsers/types/events';
-import { getOrCreateLbpPool } from '../pools/lbpPool/lbpPool';
-import { getOrCreateXykPool } from '../pools/xykPool/xykPool';
-import { getStablepool } from '../pools/stablepool/stablepool';
 import {
-  handleLbpPoolVolumeUpdates,
-  handleOmnipoolAssetVolumeUpdates,
-  handleXykPoolVolumeUpdates,
-} from '../volumes';
-import { handleAssetVolumeUpdates } from '../assets/volume';
-import { handleStablepoolVolumeUpdates } from '../volumes/stablepoolVolume';
+  getFillerContextData,
+  getOmnipoolHubAmountOnSwap,
+  supportSwapperEventPostHook,
+  supportSwapperEventPreHook,
+} from './helpers';
 
 export async function getSwap({
   ctx,
@@ -69,7 +66,49 @@ export async function getSwap({
     relations,
   });
 
-  return swap ?? null;
+  if (!swap) return null;
+  ctx.batchState.state.swaps.set(swap.id, swap);
+  return swap;
+}
+
+export async function getSwapForOtcOrderAction({
+  ctx,
+  otcOrderId,
+  traceId,
+  relations = {
+    swapper: true,
+    filler: true,
+    fees: true,
+    inputs: true,
+    outputs: true,
+  },
+  fetchFromDb = false,
+}: {
+  ctx: ProcessorContext<Store>;
+  otcOrderId: string;
+  traceId: string;
+  fetchFromDb?: boolean;
+  relations?: FindOptionsRelations<Swap>;
+}) {
+  const batchState = ctx.batchState.state;
+  let swap = [...batchState.swaps.values()].find(
+    (cachedSwap) =>
+      cachedSwap.traceIds?.includes(traceId) &&
+      cachedSwap.fillerContext?.otcOrder?.id === otcOrderId
+  );
+  if (swap || (!swap && !fetchFromDb)) return swap ?? null;
+
+  swap = await ctx.store.findOne(Swap, {
+    where: {
+      fillerContext: { otcOrder: { id: otcOrderId } },
+      traceIds: In([traceId]),
+    },
+    relations,
+  });
+
+  if (!swap) return null;
+  ctx.batchState.state.swaps.set(swap.id, swap);
+  return swap;
 }
 
 export async function getNewSwap({
@@ -82,6 +121,7 @@ export async function getNewSwap({
     swapperId,
     fillerId,
     fillerType,
+    fillerContext,
     operationType,
     fees,
     inputs,
@@ -105,6 +145,7 @@ export async function getNewSwap({
     swapperId: string;
     fillerId: string;
     fillerType: SwapFillerType;
+    fillerContext?: SwapFillerContext;
     operationType: TradeOperationType;
     fees: { assetId: number; amount: bigint; recipientId: string }[];
     inputs: { assetId: number; amount: bigint }[];
@@ -127,6 +168,7 @@ export async function getNewSwap({
     swapper: await getAccount(ctx, swapperId),
     filler: await getAccount(ctx, fillerId),
     fillerType,
+    fillerContext: fillerContext ?? null,
     operationType,
     hubAmountIn: hubAmountIn ?? null,
     hubAmountOut: hubAmountOut ?? null,
@@ -223,7 +265,8 @@ export async function handleSwap({
     eventIndex,
     swapperAccountId,
     fillerAccountId,
-    swapFillerType,
+    fillerType,
+    fillerContext,
     inputs,
     outputs,
     hubAmountIn,
@@ -245,7 +288,8 @@ export async function handleSwap({
     eventIndex: number;
     swapperAccountId: string;
     fillerAccountId: string;
-    swapFillerType: SwapFillerType;
+    fillerType: SwapFillerType;
+    fillerContext?: SwapFillerContext;
     fees: AmmSupportSwappedFee[];
     inputs: AmmSupportSwappedAssetAmount[];
     outputs: AmmSupportSwappedAssetAmount[];
@@ -294,7 +338,8 @@ export async function handleSwap({
       swapIndex: 0,
       swapperId: swapperAccountId,
       fillerId: fillerAccountId,
-      fillerType: swapFillerType,
+      fillerType,
+      fillerContext,
       operationType,
       eventId,
       eventIndex,
@@ -352,7 +397,20 @@ export async function handleSupportSwapperEvent(
     stack: eventParams.operationStack,
   });
 
-  const chainActivityTrace =
+  const chainActivityTraceId = ChainActivityTraceManager.getTraceIdRoot(
+    callTraceId ?? eventMetadata.traceId
+  );
+
+  let chainActivityTrace = null;
+
+  if (chainActivityTraceId)
+    chainActivityTrace = await ChainActivityTraceManager.getChainActivityTrace({
+      id: chainActivityTraceId,
+      ctx,
+      fetchFromDb: true,
+    });
+
+  if (newOperationStackEntity)
     await ChainActivityTraceManager.addOperationIdToActivityTrace({
       traceId: callTraceId ?? eventMetadata.traceId,
       operationId: newOperationStackEntity.id,
@@ -364,13 +422,13 @@ export async function handleSupportSwapperEvent(
     blockHeader: eventMetadata.blockHeader,
     data: {
       traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
-      operationId: newOperationStackEntity.id,
+      operationId: newOperationStackEntity?.id,
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.swapper,
       fillerAccountId: eventParams.filler,
-      swapFillerType: eventParams.fillerType.kind,
+      fillerType: eventParams.fillerType.kind,
       inputs: eventParams.inputs,
       outputs: eventParams.outputs,
       fees: eventParams.fees,
@@ -387,199 +445,48 @@ export async function handleSupportSwapperEvent(
     },
   });
 
+  const fillerContextData = await getFillerContextData(ctx, eventCallData);
+
+  const fillerContext = fillerContextData
+    ? new SwapFillerContext({
+        id: newSwapDetails.swap.id,
+        swap: newSwapDetails.swap,
+        ...fillerContextData,
+      })
+    : null;
+
   const state = ctx.batchState.state;
 
-  state.operationStacks.set(
-    newOperationStackEntity.id,
-    newOperationStackEntity
-  );
+  if (newOperationStackEntity)
+    state.operationStacks.set(
+      newOperationStackEntity.id,
+      newOperationStackEntity
+    );
+
+  if (fillerContext)
+    state.swapFillerContexts.set(fillerContext.id, fillerContext);
+
   if (chainActivityTrace)
     state.chainActivityTraces.set(chainActivityTrace.id, chainActivityTrace);
 
   ctx.batchState.state = {
     operationStacks: state.operationStacks,
     chainActivityTraces: state.chainActivityTraces,
+    swapFillerContexts: state.swapFillerContexts,
   };
 
-  await supportSwapperEventPostHook(newSwapDetails.swap, ctx, eventCallData);
-}
+  if (
+    (eventParams.fillerType.kind === SwapFillerType.OTC ||
+      eventParams.fillerType.kind === SwapFillerType.Stableswap ||
+      eventParams.fillerType.kind === SwapFillerType.XYK) &&
+    fillerContext
+  )
+    newSwapDetails.swap.fillerContext = fillerContext;
 
-function getOmnipoolHubAmountOnSwap({
-  fillerType,
-  swapInputs,
-  swapOutputs,
-  ctx,
-}: {
-  fillerType: SwapFillerType;
-  swapInputs: AmmSupportSwappedAssetAmount[];
-  swapOutputs: AmmSupportSwappedAssetAmount[];
-  ctx: ProcessorContext<Store>;
-}): {
-  hubAmountIn: bigint | undefined;
-  hubAmountOut: bigint | undefined;
-} {
-  const result: {
-    hubAmountIn: bigint | undefined;
-    hubAmountOut: bigint | undefined;
-  } = {
-    hubAmountIn: undefined,
-    hubAmountOut: undefined,
-  };
-
-  if (fillerType !== SwapFillerType.Omnipool) return result;
-  const hubAssetSwapDetails: {
-    amount: bigint;
-    position: 'input' | 'output' | 'none';
-  } = {
-    amount: 0n,
-    position: 'none',
-  };
-
-  for (const input of swapInputs) {
-    if (input.assetId !== +ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID) continue;
-    hubAssetSwapDetails.amount = input.amount;
-    hubAssetSwapDetails.position = 'input';
-  }
-  for (const output of swapOutputs) {
-    if (output.assetId !== +ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID) continue;
-    hubAssetSwapDetails.amount = output.amount;
-    hubAssetSwapDetails.position = 'output';
-  }
-
-  switch (hubAssetSwapDetails.position) {
-    case 'output':
-      result.hubAmountIn = hubAssetSwapDetails.amount;
-      break;
-    case 'input':
-      result.hubAmountOut = hubAssetSwapDetails.amount;
-      break;
-  }
-
-  return result;
-}
-
-export async function supportSwapperEventPreHook(
-  ctx: ProcessorContext<Store>,
-  eventCallData: AmmSupportSwappedData
-) {
-  const {
-    eventData: { params: eventParams, metadata: eventMetadata },
-  } = eventCallData;
-
-  switch (eventParams.fillerType.kind) {
-    case SwapFillerType.LBP: {
-      break;
-    }
-    case SwapFillerType.XYK: {
-      break;
-    }
-    case SwapFillerType.Stableswap: {
-      break;
-    }
-  }
-}
-
-export async function supportSwapperEventPostHook(
-  swap: Swap,
-  ctx: ProcessorContext<Store>,
-  eventCallData: AmmSupportSwappedData
-) {
-  const {
-    eventData: { params: eventParams, metadata: eventMetadata },
-  } = eventCallData;
-
-  switch (eventParams.fillerType.kind) {
-    case SwapFillerType.LBP: {
-      const pool = await getOrCreateLbpPool({
-        ctx,
-        assetIds: [
-          eventParams.inputs[0].assetId,
-          eventParams.outputs[0].assetId,
-        ],
-        ensure: true,
-        blockHeader: eventCallData.eventData.metadata.blockHeader,
-      });
-
-      if (!pool) {
-        console.log(
-          `No pool found for event: ${eventMetadata.name} ${eventMetadata.id}`
-        );
-        return;
-      }
-      ctx.batchState.state.lbpAllBatchPools.set(pool.id, pool);
-
-      await handleLbpPoolVolumeUpdates({
-        ctx,
-        swap,
-        pool,
-      });
-
-      await handleAssetVolumeUpdates(ctx, {
-        paraChainBlockHeight: swap.paraChainBlockHeight,
-        relayChainBlockHeight: swap.relayChainBlockHeight,
-        assetIn: swap.inputs[0].asset,
-        assetInAmount: swap.inputs[0].amount,
-        assetOut: swap.outputs[0].asset,
-        assetOutAmount: swap.outputs[0].amount,
-      });
-      break;
-    }
-    case SwapFillerType.XYK: {
-      const pool = await getOrCreateXykPool({
-        ctx,
-        id: eventParams.filler,
-        ensure: true,
-        blockHeader: eventCallData.eventData.metadata.blockHeader,
-      });
-
-      if (!pool) {
-        console.log(
-          `No XYK pool found for event: ${eventMetadata.name} ${eventMetadata.id}`
-        );
-        return;
-      }
-      ctx.batchState.state.xykAllBatchPools.set(pool.id, pool);
-
-      await handleXykPoolVolumeUpdates({
-        ctx,
-        swap,
-        pool,
-      });
-
-      await handleAssetVolumeUpdates(ctx, {
-        paraChainBlockHeight: swap.paraChainBlockHeight,
-        relayChainBlockHeight: swap.relayChainBlockHeight,
-        assetIn: swap.inputs[0].asset,
-        assetInAmount: swap.inputs[0].amount,
-        assetOut: swap.outputs[0].asset,
-        assetOutAmount: swap.outputs[0].amount,
-      });
-
-      break;
-    }
-    case SwapFillerType.Omnipool:
-      await handleOmnipoolAssetVolumeUpdates({
-        ctx,
-        swap,
-      });
-      break;
-    case SwapFillerType.Stableswap: {
-      const pool = await getStablepool(ctx, eventParams.filler);
-
-      if (!pool) {
-        console.log(
-          `Stablepool with ID ${eventParams.filler} has not been found`
-        );
-        return;
-      }
-      ctx.batchState.state.stablepoolAllBatchPools.set(pool.id, pool);
-
-      await handleStablepoolVolumeUpdates({
-        ctx,
-        swap,
-        pool,
-      });
-      break;
-    }
-  }
+  await supportSwapperEventPostHook({
+    swap: newSwapDetails.swap,
+    ctx,
+    eventCallData,
+    chainActivityTrace,
+  });
 }

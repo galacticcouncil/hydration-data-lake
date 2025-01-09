@@ -21,11 +21,11 @@ export class OmnipoolAsset {
   @ManyToOne_(() => Asset, {nullable: true})
   asset!: Asset
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  initialAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  initialAmount!: bigint | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  initialPrice!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  initialPrice!: bigint | undefined | null
 
   @Index_()
   @ManyToOne_(() => Omnipool, {nullable: true})

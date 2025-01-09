@@ -41,6 +41,7 @@ import {
   OtcOrder,
   OtcOrderAction,
   OperationStack,
+  SwapFillerContext,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -69,6 +70,7 @@ export type BatchStatePayload = {
   swapFees: Map<string, SwapFee>;
   swapInputs: Map<string, SwapInputAssetBalance>;
   swapOutputs: Map<string, SwapOutputAssetBalance>;
+  swapFillerContexts: Map<string, SwapFillerContext>;
 
   lbpPoolIdsToSave: Set<string>;
   lbpAllBatchPools: Map<string, LbpPool>;
@@ -155,6 +157,7 @@ export class BatchState {
     swapFees: new Map(),
     swapInputs: new Map(),
     swapOutputs: new Map(),
+    swapFillerContexts: new Map(),
 
     lbpPoolIdsToSave: new Set(),
     lbpAllBatchPools: new Map(),

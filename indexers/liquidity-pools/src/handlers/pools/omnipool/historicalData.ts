@@ -4,7 +4,7 @@ import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser
 import parsers from '../../../parsers';
 import { OmnipoolAssetHistoricalData } from '../../../model';
 import { getAsset } from '../../assets/assetRegistry';
-import { getOmnipoolAsset } from './omnipoolAssets';
+import { getOrCreateOmnipoolAsset } from './omnipoolAssets';
 
 export async function handleOmnipoolAssetHistoricalData(
   ctx: ProcessorContext<Store>,
@@ -40,7 +40,12 @@ export async function handleOmnipoolAssetHistoricalData(
 
         if (!ctx.batchState.state.omnipoolEntity) return null;
 
-        const omnipoolAsset = await getOmnipoolAsset(ctx, assetId);
+        const omnipoolAsset = await getOrCreateOmnipoolAsset({
+          ctx,
+          assetId,
+          ensure: true,
+          blockHeader,
+        });
 
         if (!omnipoolAsset) return null;
 

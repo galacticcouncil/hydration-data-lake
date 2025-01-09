@@ -9,7 +9,7 @@ import {
   StablepoolAssetLiquidityAmount,
   StablepoolLiquidityAction,
 } from '../../../model';
-import { getStablepool } from './stablepool';
+import { getOrCreateStablepool } from './stablepool';
 import { EventName } from '../../../parsers/types/events';
 import { getAsset } from '../../assets/assetRegistry';
 import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
@@ -27,7 +27,12 @@ export async function stablepoolLiquidityAddedRemoved(
     ctx.batchState.state.stablepoolAssetBatchLiquidityAmounts;
   const batchAssetLiquidityActions =
     ctx.batchState.state.stablepoolBatchLiquidityActions;
-  const pool = await getStablepool(ctx, eventParams.poolId);
+  const pool = await getOrCreateStablepool({
+    ctx,
+    poolId: eventParams.poolId,
+    ensure: true,
+    blockHeader: eventMetadata.blockHeader,
+  });
 
   if (!pool) return;
 

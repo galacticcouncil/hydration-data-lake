@@ -6,6 +6,8 @@ import balances from './balances';
 import tokens from './tokens';
 import assetRegistry from './assetRegistry';
 import ammSupport from './ammSupport';
+import otc from './otc';
+import dca from './dca';
 import { EventParserMethods } from '../../../types/common';
 
 export default {
@@ -17,4 +19,6 @@ export default {
   balances,
   assetRegistry,
   ammSupport,
+  otc,
+  dca,
 } as EventParserMethods;

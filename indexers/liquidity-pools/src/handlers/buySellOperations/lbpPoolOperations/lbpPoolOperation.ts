@@ -46,7 +46,7 @@ export async function lpbBuyExecuted(
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: pool.id,
-      swapFillerType: SwapFillerType.LBP,
+      fillerType: SwapFillerType.LBP,
       inputs: [
         {
           amount: eventParams.buyPrice,
@@ -125,7 +125,7 @@ export async function lpbSellExecuted(
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: pool.id,
-      swapFillerType: SwapFillerType.LBP,
+      fillerType: SwapFillerType.LBP,
       inputs: [
         {
           amount: eventParams.amount,

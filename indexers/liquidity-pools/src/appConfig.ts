@@ -1,12 +1,7 @@
 import { transformAndValidateSync } from 'class-transformer-validator';
 import 'reflect-metadata';
 import { Transform } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsString,
-  ValidationError,
-  IsPositive,
-} from 'class-validator';
+import { IsNotEmpty, IsString, ValidationError } from 'class-validator';
 import dotenv from 'dotenv';
 
 import {
@@ -41,7 +36,7 @@ dotenv.config({
         envFileName = envFileName + '.local';
     }
 
-    console.log(`${__dirname}/../${envFileName}`)
+    console.log(`${__dirname}/../${envFileName}`);
 
     return `${__dirname}/../${envFileName}`;
   })(),
@@ -276,8 +271,7 @@ export class AppConfig {
         calls = hydrationPaseoCalls;
         break;
       case ChainName.hydration_paseo_next:
-      case ChainName.hydration_paseo:
-        calls = hydrationPaseoCalls;
+        calls = hydrationPaseoNextCalls;
         break;
       default:
         return [];

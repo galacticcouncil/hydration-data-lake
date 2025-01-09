@@ -138,9 +138,7 @@ export async function getOrCreateLbpPool({
     },
   });
 
-  if (pool) return pool;
-
-  if (!pool && !ensure) return null;
+  if (pool || (!pool && !ensure)) return pool ?? null;
 
   /**
    * Following logic below is implemented and will be used only if indexer

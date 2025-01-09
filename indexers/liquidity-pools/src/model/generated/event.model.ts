@@ -31,7 +31,7 @@ export class Event {
   @Column_("text", {nullable: false})
   phase!: string
 
-  @Column_("varchar", {length: 27, array: true, nullable: true})
+  @Column_("varchar", {length: 38, array: true, nullable: true})
   entityTypes!: (TraceEntityType | undefined | null)[] | undefined | null
 
   @Index_()

@@ -392,6 +392,7 @@ export async function getParsedEventsData(
          * ==== Stableswap Buy Executed ====
          */
         case events.stableswap.buyExecuted.name: {
+          console.log('Stableswap buyExecuted');
           const preparedData = parserHelper.parseStableswapBuyExecutedData();
           parsedDataManager.set(EventName.Stableswap_BuyExecuted, preparedData);
 
@@ -405,6 +406,7 @@ export async function getParsedEventsData(
          * ==== Stableswap Sell Executed ====
          */
         case events.stableswap.sellExecuted.name: {
+          console.log('Stableswap sellExecuted');
           const preparedData = parserHelper.parseStableswapSellExecutedData();
           parsedDataManager.set(
             EventName.Stableswap_SellExecuted,
@@ -421,6 +423,8 @@ export async function getParsedEventsData(
          * ==== Stableswap Liquidity Added ====
          */
         case events.stableswap.liquidityAdded.name: {
+          console.log('Stableswap liquidityAdded');
+
           const preparedData = parserHelper.parseStableswapLiquidityAddedData();
           parsedDataManager.set(
             EventName.Stableswap_LiquidityAdded,
@@ -436,6 +440,8 @@ export async function getParsedEventsData(
          * ==== Stableswap Liquidity Removed ====
          */
         case events.stableswap.liquidityRemoved.name: {
+          console.log('Stableswap liquidityRemoved');
+
           const preparedData =
             parserHelper.parseStableswapLiquidityRemovedData();
           parsedDataManager.set(

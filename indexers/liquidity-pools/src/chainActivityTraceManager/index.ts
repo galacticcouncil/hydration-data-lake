@@ -16,6 +16,7 @@ import { getCallOriginParts } from '../utils/helpers';
 import { getAccount } from '../handlers/accounts';
 import { EventPhase, TraceIdEventGroup, TraceIdContext } from '../utils/types';
 import { FindOptionsRelations, In } from 'typeorm';
+import { EventName } from '../parsers/types/events';
 
 export class ChainActivityTraceManager {
   static _traceIdPrefix = 'trace-id:';
@@ -456,6 +457,15 @@ export class ChainActivityTraceManager {
       case 'Omnipool.sell':
       case 'Omnipool.buy':
         return [TraceEntityType.SWAP];
+      case 'OTC.place_order':
+      case 'OTC.cancel_order':
+        return [TraceEntityType.OTC_ORDER_ACTION];
+      case 'OTC.fill_order':
+      case 'OTC.partial_fill_order':
+        return [TraceEntityType.OTC_ORDER_ACTION, TraceEntityType.SWAP];
+      case 'DCA.schedule':
+      case 'DCA.terminate':
+        return [TraceEntityType.DCA_SCHEDULE];
     }
 
     return null;
@@ -463,20 +473,39 @@ export class ChainActivityTraceManager {
 
   static getEntityTypesByEventName(eventName: string) {
     switch (eventName) {
-      case 'XYK.SellExecuted':
-      case 'XYK.BuyExecuted':
-      case 'Lbp.SellExecuted':
-      case 'Lbp.BuyExecuted':
-      case 'Stableswap.SellExecuted':
-      case 'Stableswap.BuyExecuted':
-      case 'Omnipool.SellExecuted':
-      case 'Omnipool.BuyExecuted':
+      case EventName.XYK_SellExecuted:
+      case EventName.XYK_BuyExecuted:
+      case EventName.LBP_SellExecuted:
+      case EventName.LBP_BuyExecuted:
+      case EventName.Stableswap_SellExecuted:
+      case EventName.Stableswap_BuyExecuted:
+      case EventName.Omnipool_SellExecuted:
+      case EventName.Omnipool_BuyExecuted:
         return [TraceEntityType.SWAP];
-      case 'Tokens.Transfer':
-      case 'Balances.Transfer':
+      case EventName.Tokens_Transfer:
+      case EventName.Balances_Transfer:
         return [TraceEntityType.TRANSFER];
-      case 'Stableswap.LiquidityAdded':
+      case EventName.Stableswap_LiquidityAdded:
+      case EventName.Stableswap_LiquidityRemoved:
         return [TraceEntityType.STABLEPOOL_LIQUIDITY_ACTION];
+      case EventName.OTC_Placed:
+      case EventName.OTC_Cancelled:
+      case EventName.OTC_Filled:
+      case EventName.OTC_PartiallyFilled:
+        return [TraceEntityType.OTC_ORDER_ACTION];
+      case EventName.DCA_Scheduled:
+      case EventName.DCA_Completed:
+      case EventName.DCA_Terminated:
+        return [TraceEntityType.DCA_SCHEDULE];
+      case EventName.DCA_ExecutionPlanned:
+      case EventName.DCA_ExecutionStarted:
+      case EventName.DCA_TradeExecuted:
+      case EventName.DCA_TradeFailed:
+        return [TraceEntityType.DCA_SCHEDULE_EXECUTION_ACTION];
+      case EventName.DCA_RandomnessGenerationFailed:
+        return [TraceEntityType.DCA_RANDOMNESS_GENERATION_FAILED_ERROR];
+      case EventName.AmmSupport_Swapped:
+        return [TraceEntityType.SWAP];
     }
 
     return null;
@@ -530,6 +559,11 @@ export class ChainActivityTraceManager {
     return /trace-id:\/\/context:event/.test(maybeId);
   }
 
+  static isCallTraceId(maybeId: string) {
+    if (!maybeId) return false;
+    return /trace-id:\/\/context:call/.test(maybeId);
+  }
+
   static async saveActivityTraceEntities(ctx: ProcessorContext<Store>) {
     const state = ctx.batchState.state;
 
@@ -564,7 +598,40 @@ export class ChainActivityTraceManager {
       relations,
     });
 
-    return entity ?? null;
+    if (!entity) return null;
+    ctx.batchState.state.chainActivityTraces.set(id, entity);
+    return entity;
+  }
+
+  static async getChainActivityTraceByTraceIdsBatch({
+    ids,
+    ctx,
+    fetchFromDb = true,
+    relations,
+  }: {
+    ids: string[];
+    fetchFromDb?: boolean;
+    relations?: FindOptionsRelations<ChainActivityTrace>;
+    ctx: ProcessorContext<Store>;
+  }) {
+    const callTraceId = ids.find((id) => this.isCallTraceId(id));
+    const eventTraceId = ids.find((id) => this.isEventTraceId(id));
+
+    if (!callTraceId && !eventTraceId) return null;
+
+    const activityTraceId = this.getTraceIdRoot(callTraceId! || eventTraceId!);
+
+    if (!activityTraceId) return null;
+
+    return this.getChainActivityTrace({
+      id: activityTraceId,
+      ctx,
+      fetchFromDb,
+      relations: relations ?? {
+        relatedTraces: true,
+        rootTrace: true,
+      },
+    });
   }
 
   static async addOperationIdToActivityTrace({

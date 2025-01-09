@@ -22,10 +22,23 @@ export async function handleSupportSwappedEvents(
 
   await OperationStackManager.saveOperationStackEntities(ctx);
 
-  await ctx.store.save([...ctx.batchState.state.swaps.values()]);
+  await ctx.store.save(
+    [...ctx.batchState.state.swaps.values()].map((swap) => {
+      swap.fillerContext = null;
+      return swap;
+    })
+  );
   await ctx.store.save([...ctx.batchState.state.swapFees.values()]);
   await ctx.store.save([...ctx.batchState.state.swapInputs.values()]);
   await ctx.store.save([...ctx.batchState.state.swapOutputs.values()]);
+  await ctx.store.save([...ctx.batchState.state.swapFillerContexts.values()]);
+  await ctx.store.save(
+    [...ctx.batchState.state.swapFillerContexts.values()].map((fillerCtx) => {
+      const swap = fillerCtx.swap;
+      swap.fillerContext = fillerCtx;
+      return swap;
+    })
+  );
 
   await ctx.store.save([...ctx.batchState.state.assetVolumes.values()]);
   await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);

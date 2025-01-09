@@ -46,7 +46,7 @@ export async function xykBuyExecuted(
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: pool.id,
-      swapFillerType: SwapFillerType.XYK,
+      fillerType: SwapFillerType.XYK,
       inputs: [{ assetId: eventParams.assetIn, amount: eventParams.buyPrice }],
       outputs: [{ assetId: eventParams.assetOut, amount: eventParams.amount }],
       fees: [
@@ -115,7 +115,7 @@ export async function xykSellExecuted(
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: pool.id,
-      swapFillerType: SwapFillerType.XYK,
+      fillerType: SwapFillerType.XYK,
       inputs: [{ assetId: eventParams.assetIn, amount: eventParams.amount }],
       outputs: [
         { assetId: eventParams.assetOut, amount: eventParams.salePrice },

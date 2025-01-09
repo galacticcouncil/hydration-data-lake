@@ -63,7 +63,7 @@ export async function omnipoolBuySellExecuted(
       eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: ctx.appConfig.OMNIPOOL_ADDRESS,
-      swapFillerType: SwapFillerType.Omnipool,
+      fillerType: SwapFillerType.Omnipool,
 
       hubAmountIn: eventParams.hubAmountIn,
       hubAmountOut: eventParams.hubAmountOut,
@@ -105,6 +105,7 @@ export async function omnipoolBuySellExecuted(
   await handleOmnipoolAssetVolumeUpdates({
     ctx,
     swap,
+    blockHeader: eventMetadata.blockHeader,
   });
 }
 

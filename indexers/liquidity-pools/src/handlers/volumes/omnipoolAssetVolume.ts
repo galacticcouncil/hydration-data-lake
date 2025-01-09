@@ -3,13 +3,13 @@ import {
   OmnipoolAssetHistoricalVolume,
   Swap,
 } from '../../model';
-import { ProcessorContext } from '../../processor';
+import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   getOldOmnipoolAssetVolume,
   getPoolAssetLastVolumeFromCache,
 } from './index';
-import { getOmnipoolAsset } from '../pools/omnipool/omnipoolAssets';
+import { getOrCreateOmnipoolAsset } from '../pools/omnipool/omnipoolAssets';
 
 export function initOmnipoolAssetVolume({
   swap,
@@ -73,21 +73,27 @@ export function initOmnipoolAssetVolume({
 export async function handleOmnipoolAssetVolumeUpdates({
   ctx,
   swap,
+  blockHeader,
 }: {
   ctx: ProcessorContext<Store>;
   swap: Swap;
+  blockHeader: Block;
 }) {
   const omnipoolAssetVolumes = ctx.batchState.state.omnipoolAssetVolumes;
 
-  let omnipoolAssetInEntity = await getOmnipoolAsset(
+  const omnipoolAssetInEntity = await getOrCreateOmnipoolAsset({
     ctx,
-    swap.inputs[0].asset.id
-  );
+    assetId: swap.inputs[0].asset.id,
+    ensure: true,
+    blockHeader,
+  });
 
-  let omnipoolAssetOutEntity = await getOmnipoolAsset(
+  const omnipoolAssetOutEntity = await getOrCreateOmnipoolAsset({
     ctx,
-    swap.outputs[0].asset.id
-  );
+    assetId: swap.outputs[0].asset.id,
+    ensure: true,
+    blockHeader,
+  });
 
   if (!omnipoolAssetInEntity || !omnipoolAssetOutEntity) {
     console.log(

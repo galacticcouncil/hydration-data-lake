@@ -8,7 +8,7 @@ import {
   StablepoolAssetHistoricalData,
   StablepoolHistoricalData,
 } from '../../../model';
-import { getStablepool } from './stablepool';
+import { getOrCreateStablepool } from './stablepool';
 import { getAsset } from '../../assets/assetRegistry';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
@@ -44,7 +44,12 @@ async function getStablepoolDataPromise({
     }))
   );
 
-  const poolEntity = await getStablepool(ctx, poolId);
+  const poolEntity = await getOrCreateStablepool({
+    ctx,
+    poolId,
+    ensure: true,
+    blockHeader,
+  });
 
   if (!poolEntity) return null;
 

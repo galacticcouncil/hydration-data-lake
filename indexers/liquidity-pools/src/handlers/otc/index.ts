@@ -44,6 +44,7 @@ export async function handleOtcOrders(
 
   await ctx.store.save([...ctx.batchState.state.otcOrders.values()]);
   await ctx.store.save([...ctx.batchState.state.otcOrderActions.values()]);
+  await ctx.store.save([...ctx.batchState.state.swaps.values()]);
 }
 
 async function prefetchEntities(

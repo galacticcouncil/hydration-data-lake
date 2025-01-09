@@ -34,7 +34,7 @@ export class Call {
   @Column_("text", {nullable: true})
   originValue!: string | undefined | null
 
-  @Column_("varchar", {length: 27, array: true, nullable: true})
+  @Column_("varchar", {length: 38, array: true, nullable: true})
   entityTypes!: (TraceEntityType | undefined | null)[] | undefined | null
 
   @Index_()

@@ -9,37 +9,25 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseOrderPlacedParams(event: Event): OtcOrderPlacedEventParams {
-  if (events.otc.placed.v138.is(event)) {
-    return events.otc.placed.v138.decode(event);
+  if (events.otc.placed.v276.is(event)) {
+    return events.otc.placed.v276.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseOrderCancelledParams(event: Event): OtcOrderCancelledEventParams {
-  if (events.otc.cancelled.v138.is(event)) {
-    return events.otc.cancelled.v138.decode(event);
+  if (events.otc.cancelled.v276.is(event)) {
+    return events.otc.cancelled.v276.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseOrderFilledParams(event: Event): OtcOrderFilledEventParams {
-  if (events.otc.filled.v138.is(event)) {
-    const { orderId, amountIn, amountOut, who } =
-      events.otc.filled.v138.decode(event);
-
-    return {
-      orderId,
-      amountIn,
-      amountOut,
-      who,
-      fee: BigInt(0),
-    };
-  }
-  if (events.otc.filled.v253.is(event)) {
+  if (events.otc.filled.v276.is(event)) {
     const { orderId, amountIn, amountOut, who, fee } =
-      events.otc.filled.v253.decode(event);
+      events.otc.filled.v276.decode(event);
 
     return {
       orderId,
@@ -56,21 +44,9 @@ function parseOrderFilledParams(event: Event): OtcOrderFilledEventParams {
 function parseOrderPartiallyFilledParams(
   event: Event
 ): OtcOrderPartiallyFilledEventParams {
-  if (events.otc.partiallyFilled.v138.is(event)) {
-    const { orderId, amountIn, amountOut, who } =
-      events.otc.partiallyFilled.v138.decode(event);
-
-    return {
-      orderId,
-      amountIn,
-      amountOut,
-      who,
-      fee: BigInt(0),
-    };
-  }
-  if (events.otc.filled.v253.is(event)) {
+  if (events.otc.filled.v276.is(event)) {
     const { orderId, amountIn, amountOut, who, fee } =
-      events.otc.filled.v253.decode(event);
+      events.otc.filled.v276.decode(event);
 
     return {
       orderId,

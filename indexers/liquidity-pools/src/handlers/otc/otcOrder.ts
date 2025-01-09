@@ -77,7 +77,7 @@ export async function getOtcOrder({
     assetOut: true,
     actions: true,
   },
-  fetchFromDb = false,
+  fetchFromDb = true,
 }: {
   ctx: ProcessorContext<Store>;
   id: string;
@@ -94,7 +94,12 @@ export async function getOtcOrder({
     relations,
   });
 
-  return order ?? null;
+  if (order) {
+    ctx.batchState.state.otcOrders.set(order.id, order);
+    return order;
+  }
+
+  return null;
 }
 
 export async function handleOtcOrderPlaced(
@@ -134,6 +139,9 @@ export async function handleOtcOrderPlaced(
         ?.relaychainBlockNumber ?? 0,
     eventIndex: eventMetadata.indexInBlock,
   });
+
+  console.log('newOrderAction');
+  console.dir(newOrderAction, { depth: null });
 
   newOrder.actions = [...(newOrder.actions || []), newOrderAction];
 

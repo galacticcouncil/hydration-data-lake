@@ -26,7 +26,10 @@ export async function getAsset({
 
   asset = await ctx.store.findOne(Asset, { where: { id: `${id}` } });
 
-  if (asset) return asset;
+  if (asset) {
+    assetsAllBatch.set(asset.id, asset);
+    return asset;
+  }
 
   if (!asset && !ensure) return null;
 

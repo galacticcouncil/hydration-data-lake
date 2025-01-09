@@ -26,12 +26,6 @@ enum AssetType {
   Erc20
 }
 
-enum TraceEntityType {
-  SWAP
-  TRANSFER
-  STABLEPOOL_LIQUIDITY_ACTION
-}
-
 type Account @entity {
   "Account pubkey"
   id: ID!
@@ -116,6 +110,17 @@ type DispatchError {
 # ======================================================================================================================
 # *** Chain Activity Tracing ***
 # ======================================================================================================================
+
+
+enum TraceEntityType {
+  SWAP
+  TRANSFER
+  STABLEPOOL_LIQUIDITY_ACTION
+  OTC_ORDER_ACTION
+  DCA_SCHEDULE
+  DCA_SCHEDULE_EXECUTION_ACTION
+  DCA_RANDOMNESS_GENERATION_FAILED_ERROR
+}
 
 type Block @entity {
   "0003396328-000002-70ca4"
@@ -229,7 +234,6 @@ enum SwapFillerType {
   XYK
   LBP
   OTC
-  ICE
 }
 enum TradeOperationType {
   ExactIn
@@ -320,6 +324,15 @@ type SwapOutputAssetBalance @entity {
   amount: BigInt!
 }
 
+type SwapFillerContext @entity {
+  "swap_id"
+  id: ID!
+  swap: Swap!
+  stablepool: Stablepool
+  shareToken: Asset
+  otcOrder: OtcOrder
+}
+
 type Swap @entity {
   "indexer event_id (e.g. <block_number>-<block_hash_partial>-<event_index> 0006516718-9965d-000107)"
   id: ID!
@@ -330,6 +343,7 @@ type Swap @entity {
   swapper: Account!
   filler: Account!
   fillerType: SwapFillerType!
+  fillerContext: SwapFillerContext
   operationType: TradeOperationType!
   fees: [SwapFee!]! @derivedFrom(field: "swap")
   inputs: [SwapInputAssetBalance!]! @derivedFrom(field: "swap")
@@ -520,8 +534,8 @@ type OmnipoolAsset @entity {
   "OmnipoolId-AssetId"
   id: ID!
   asset: Asset!
-  initialAmount: BigInt!
-  initialPrice: BigInt!
+  initialAmount: BigInt
+  initialPrice: BigInt
   pool: Omnipool!
   createdAt: DateTime!
   createdAtParaBlock: Int!
@@ -570,7 +584,6 @@ type OmnipoolAssetHistoricalData @entity {
   relayChainBlockHeight: Int!
   paraChainBlockHeight: Int! @index
 }
-
 
 # ======================================================================================================================
 # *** Stablepool ***

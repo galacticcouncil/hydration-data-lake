@@ -43,8 +43,10 @@ export class OperationStackManager {
       }
     }
 
-    if (resultSegmentsList.length === 0)
+    if (resultSegmentsList.length === 0) {
+      console.dir(srcStack, { depth: null });
       throw Error(`OperationStack has been converted with error.`);
+    }
 
     return resultSegmentsList.join('/');
   }
@@ -106,6 +108,8 @@ export class OperationStackManager {
   }: {
     stack: AmmSupportSwappedExecutionType[];
   }) {
+    if (!stack || stack.length === 0) return null;
+
     const newEntity = new OperationStack({
       id: this.operationStackToString(stack),
       stackElements: stack.map(
