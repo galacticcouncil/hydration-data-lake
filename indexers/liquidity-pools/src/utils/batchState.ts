@@ -42,6 +42,7 @@ import {
   OtcOrderAction,
   OperationStack,
   SwapFillerContext,
+  ChainActivityTraceRelation,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -56,6 +57,7 @@ export type BatchStatePayload = {
   batchCalls: Map<string, CallEntity>;
   batchEvents: Map<string, EventEntity>;
   chainActivityTraces: Map<string, ChainActivityTrace>;
+  chainActivityTraceRelations: Map<string, ChainActivityTraceRelation>;
   accountChainActivityTraces: Map<string, AccountChainActivityTrace>;
   operationStacks: Map<string, OperationStack>;
 
@@ -143,6 +145,7 @@ export class BatchState {
     batchCalls: new Map(),
     batchEvents: new Map(),
     chainActivityTraces: new Map(),
+    chainActivityTraceRelations: new Map(),
     accountChainActivityTraces: new Map(),
     operationStacks: new Map(),
 

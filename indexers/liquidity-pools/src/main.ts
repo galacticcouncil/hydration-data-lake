@@ -26,7 +26,7 @@ import { ProcessorStatusManager } from './processorStatusManager';
 import { ensurePoolsDestroyedStatus } from './handlers/pools/support';
 import { saveAllBatchAccounts } from './handlers/accounts';
 import { ChainActivityTraceManager } from './chainActivityTraceManager';
-import { handleDcaSchedules } from './handlers/dca';
+import { handleDcaSchedules, saveDcaEntities } from './handlers/dca';
 import { printV8MemoryHeap } from './utils/helpers';
 import { handleOtcOrders } from './handlers/otc';
 import { OperationStackManager } from './chainActivityTraceManager/operationStackManager';
@@ -182,6 +182,8 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   await ChainActivityTraceManager.saveActivityTraceEntities(
     ctxWithBatchState as ProcessorContext<Store>
   );
+
+  await saveDcaEntities(ctxWithBatchState as ProcessorContext<Store>);
 
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(
     ctxWithBatchState as ProcessorContext<Store>

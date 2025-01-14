@@ -39,6 +39,7 @@ export class ChainActivityTraceManager {
           operationIds: [],
           traceIds: [],
           participants: [],
+          associatedAccountsFlat: [],
           createdAtParaChainBlockHeight: block.paraChainBlockHeight,
           createdAtBlock: block,
         });
@@ -174,11 +175,18 @@ export class ChainActivityTraceManager {
         if (
           rootCall.call.originValueKind === 'Signed' &&
           rootCall.call.originValue
-        )
+        ) {
           activityTraceEntity.originator = await getAccount(
             ctx,
             rootCall.call.originValue
           );
+          activityTraceEntity.associatedAccountsFlat = [
+            ...new Set([
+              ...(activityTraceEntity.associatedAccountsFlat || []),
+              rootCall.call.originValue,
+            ]).values(),
+          ];
+        }
 
         const callsSequenceToSave = new Map<
           number,
@@ -309,6 +317,10 @@ export class ChainActivityTraceManager {
 
     if (!chainActivityTrace) return;
 
+    const associatedAccountsFlat = new Set(
+      chainActivityTrace.associatedAccountsFlat
+    );
+
     const participantsToIgnore = new Set(
       [...state.accountChainActivityTraces.values()]
         .filter(
@@ -334,8 +346,16 @@ export class ChainActivityTraceManager {
         newAccountActivity.id,
         newAccountActivity
       );
+      associatedAccountsFlat.add(account.id);
     }
+
+    chainActivityTrace.associatedAccountsFlat = [
+      ...associatedAccountsFlat.values(),
+    ];
+
+    state.chainActivityTraces.set(chainActivityTrace.id, chainActivityTrace);
   }
+
   static async addParticipantsToActivityTracesBulk({
     traceIds,
     participants,
@@ -575,6 +595,9 @@ export class ChainActivityTraceManager {
     await ctx.store.upsert(
       [...state.accountChainActivityTraces.values()].reverse()
     );
+    await ctx.store.upsert(
+      [...state.chainActivityTraceRelations.values()].reverse()
+    );
   }
 
   static async getChainActivityTrace({
@@ -628,8 +651,8 @@ export class ChainActivityTraceManager {
       ctx,
       fetchFromDb,
       relations: relations ?? {
-        relatedTraces: true,
-        rootTrace: true,
+        childTraces: true,
+        parentTraces: true,
       },
     });
   }

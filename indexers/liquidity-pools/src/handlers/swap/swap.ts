@@ -24,7 +24,7 @@ import {
 import {
   getFillerContextData,
   getOmnipoolHubAmountOnSwap,
-  supportSwapperEventPostHook,
+  supportSwappedEventPostHook,
   supportSwapperEventPreHook,
 } from './helpers';
 
@@ -483,7 +483,7 @@ export async function handleSupportSwapperEvent(
   )
     newSwapDetails.swap.fillerContext = fillerContext;
 
-  await supportSwapperEventPostHook({
+  await supportSwappedEventPostHook({
     swap: newSwapDetails.swap,
     ctx,
     eventCallData,

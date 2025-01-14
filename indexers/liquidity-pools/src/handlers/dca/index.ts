@@ -73,7 +73,10 @@ export async function handleDcaSchedules(
   ])) {
     await handleDcaRandomnessGenerationFailed(ctx, eventData);
   }
+  await saveDcaEntities(ctx);
+}
 
+export async function saveDcaEntities(ctx: ProcessorContext<Store>) {
   await ctx.store.save([...ctx.batchState.state.dcaSchedules.values()]);
   await ctx.store.save([
     ...ctx.batchState.state.dcaScheduleOrderRoutes.values(),
@@ -168,7 +171,6 @@ async function prefetchEntities(
         schedule: {
           owner: true,
         },
-        swaps: true,
         actions: true,
       },
     }

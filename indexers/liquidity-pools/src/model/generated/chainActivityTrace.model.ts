@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
 import {Account} from "./account.model"
+import {ChainActivityTraceRelation} from "./chainActivityTraceRelation.model"
 import {Block} from "./block.model"
 
 @Entity_()
@@ -25,12 +26,14 @@ export class ChainActivityTrace {
   @ManyToOne_(() => Account, {nullable: true})
   originator!: Account | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => ChainActivityTrace, {nullable: true})
-  rootTrace!: ChainActivityTrace | undefined | null
+  @Column_("text", {array: true, nullable: true})
+  associatedAccountsFlat!: (string)[] | undefined | null
 
-  @OneToMany_(() => ChainActivityTrace, e => e.rootTrace)
-  relatedTraces!: ChainActivityTrace[]
+  @OneToMany_(() => ChainActivityTraceRelation, e => e.parentTrace)
+  childTraces!: ChainActivityTraceRelation[]
+
+  @OneToMany_(() => ChainActivityTraceRelation, e => e.childTrace)
+  parentTraces!: ChainActivityTraceRelation[]
 
   @Index_()
   @Column_("int4", {nullable: false})

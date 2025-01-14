@@ -1,4 +1,4 @@
-export enum OtcScheduleStatus {
+export enum OtcOrderStatus {
   OPEN = "OPEN",
   CANCELED = "CANCELED",
   FILLED = "FILLED",

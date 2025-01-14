@@ -111,7 +111,6 @@ type DispatchError {
 # *** Chain Activity Tracing ***
 # ======================================================================================================================
 
-
 enum TraceEntityType {
   SWAP
   TRANSFER
@@ -209,9 +208,11 @@ type ChainActivityTrace @entity {
   # account who signed initial call of the extrinsic
   originator: Account
 
-  rootTrace: ChainActivityTrace
+  # Scope of all accounts involved into particular activity trace. Required for easier filtering on API side.
+  associatedAccountsFlat: [String!]!
 
-  relatedTraces: [ChainActivityTrace] @derivedFrom(field: "rootTrace")
+  childTraces: [ChainActivityTraceRelation] @derivedFrom(field: "parentTrace")
+  parentTraces: [ChainActivityTraceRelation] @derivedFrom(field: "childTrace")
 
   createdAtParaChainBlockHeight: Int! @index
   createdAtBlock: Block!
@@ -222,6 +223,14 @@ type AccountChainActivityTrace @entity {
   id: ID!
   account: Account!
   chainActivityTrace: ChainActivityTrace!
+}
+
+type ChainActivityTraceRelation @entity {
+  # <child_trace_id>-<parent_trace_id>
+  id: ID!
+  childTrace: ChainActivityTrace!
+  parentTrace: ChainActivityTrace!
+  createdAtParaChainBlockHeight: Int!
 }
 
 # ======================================================================================================================
@@ -355,7 +364,7 @@ type Swap @entity {
   eventIndex: Int!
   extrinsicHash: String!
   relayChainBlockHeight: Int!
-  dcaScheduleExecution: DcaScheduleExecution
+  dcaScheduleExecutionAction: DcaScheduleExecutionAction
   otcOrderFulfilment: OtcOrderAction
   paraChainBlockHeight: Int! @index
   paraChainTimestamp: DateTime! @index
@@ -765,15 +774,15 @@ type DcaScheduleExecution @entity {
   status: DcaScheduleExecutionStatus @index
   amountOut: BigInt
   amountIn: BigInt
-  swaps: [Swap] @derivedFrom(field: "dcaScheduleExecution")
   actions: [DcaScheduleExecutionAction] @derivedFrom(field: "scheduleExecution")
 }
 
 type DcaScheduleExecutionAction @entity {
   "<dca_schedule_execution_id>-<dca_schedule_execution_status>"
   id: ID!
-  operationId: String @index
+  operationIds: [String]
   traceIds: [String!]
+  swaps: [Swap] @derivedFrom(field: "dcaScheduleExecutionAction")
   scheduleExecution: DcaScheduleExecution!
   status: DcaScheduleExecutionStatus @index
   statusMemo: DispatchError
@@ -796,7 +805,7 @@ type DcaRandomnessGenerationFailedError @entity {
 # *** OTC ***
 # ======================================================================================================================
 
-enum OtcScheduleStatus {
+enum OtcOrderStatus {
   OPEN
   CANCELED
   FILLED
@@ -819,7 +828,7 @@ type OtcOrder @entity {
   amountOut: BigInt!
   amountIn: BigInt!
   partiallyFillable: Boolean
-  status: OtcScheduleStatus @index
+  status: OtcOrderStatus @index
   createdAtRelayBlockHeight: Int!
   createdAtParaBlockHeight: Int! @index
 

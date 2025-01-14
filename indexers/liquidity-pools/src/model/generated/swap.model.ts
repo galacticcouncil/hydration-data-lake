@@ -7,7 +7,7 @@ import {TradeOperationType} from "./_tradeOperationType"
 import {SwapFee} from "./swapFee.model"
 import {SwapInputAssetBalance} from "./swapInputAssetBalance.model"
 import {SwapOutputAssetBalance} from "./swapOutputAssetBalance.model"
-import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
+import {DcaScheduleExecutionAction} from "./dcaScheduleExecutionAction.model"
 import {OtcOrderAction} from "./otcOrderAction.model"
 
 @Entity_()
@@ -84,8 +84,8 @@ export class Swap {
   relayChainBlockHeight!: number
 
   @Index_()
-  @ManyToOne_(() => DcaScheduleExecution, {nullable: true})
-  dcaScheduleExecution!: DcaScheduleExecution | undefined | null
+  @ManyToOne_(() => DcaScheduleExecutionAction, {nullable: true})
+  dcaScheduleExecutionAction!: DcaScheduleExecutionAction | undefined | null
 
   @Index_()
   @ManyToOne_(() => OtcOrderAction, {nullable: true})

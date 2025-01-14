@@ -51,6 +51,35 @@ export class OperationStackManager {
     return resultSegmentsList.join('/');
   }
 
+  static getDcaDataFromOperationId(
+    operationId: string
+  ): OperationStackElementDca | null {
+    const parsedSegments = operationId.split('/');
+    let index = 0;
+    for (const segment of parsedSegments) {
+      const segmentParts = segment.split(':');
+      if (segmentParts[0] === SwappedExecutionTypeKind.DCA)
+        return new OperationStackElementDca({
+          index,
+          kind: SwappedExecutionTypeKind.DCA,
+          scheduleId: +segmentParts[1],
+          incrementalId: +segmentParts[2],
+        });
+      index++;
+    }
+
+    return null;
+  }
+
+  static containsExecutionType(
+    operationId: string,
+    executionType: SwappedExecutionTypeKind
+  ): boolean {
+    if (!operationId) return false;
+    const regex = new RegExp(`${executionType}:`);
+    return regex.test(operationId);
+  }
+
   static getOperationStackElement(
     srcElement: AmmSupportSwappedExecutionType,
     index: number

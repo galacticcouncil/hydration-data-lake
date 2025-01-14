@@ -3,11 +3,14 @@ import { Store } from '@subsquid/typeorm-store';
 import { AmmSupportSwappedData } from '../../parsers/batchBlocksParser/types';
 import {
   ChainActivityTrace,
+  ChainActivityTraceRelation,
+  DcaSchedule,
   OtcOrderAction,
   OtcOrderActionKind,
   Swap,
   SwapFillerContext,
   SwapFillerType,
+  SwappedExecutionTypeKind,
 } from '../../model';
 import { getAsset } from '../assets/assetRegistry';
 import { getOrCreateStablepool } from '../pools/stablepool/stablepool';
@@ -23,6 +26,8 @@ import { handleAssetVolumeUpdates } from '../assets/volume';
 import { getOrCreateXykPool } from '../pools/xykPool/xykPool';
 import { handleStablepoolVolumeUpdates } from '../volumes/stablepoolVolume';
 import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { getDcaScheduleExecutionAction } from '../dca/dcaScheduleExecutionAction';
+import { OperationStackManager } from '../../chainActivityTraceManager/operationStackManager';
 
 export async function getFillerContextData(
   ctx: ProcessorContext<Store>,
@@ -168,7 +173,7 @@ export async function supportSwapperEventPreHook(
   }
 }
 
-export async function supportSwapperEventPostHook({
+export async function supportSwappedEventPostHook({
   swap,
   ctx,
   eventCallData,
@@ -311,11 +316,20 @@ export async function supportSwapperEventPostHook({
       )
         return;
 
-      chainActivityTrace.rootTrace = rootChainActivityTrace;
+      const newChainActivityTraceRelation = new ChainActivityTraceRelation({
+        id: `${chainActivityTrace.id}-${rootChainActivityTrace.id}`,
+        childTrace: chainActivityTrace,
+        parentTrace: rootChainActivityTrace,
+        createdAtParaChainBlockHeight:
+          eventCallData.eventData.metadata.blockHeader.height,
+      });
 
-      ctx.batchState.state.chainActivityTraces.set(
-        chainActivityTrace.id,
-        chainActivityTrace
+      // chainActivityTrace.childTraces = [...(chainActivityTrace.childTraces || []), newChainActivityTraceRelation];
+      // rootChainActivityTrace.childTraces = [...(chainActivityTrace.childTraces || []), newChainActivityTraceRelation];
+
+      ctx.batchState.state.chainActivityTraceRelations.set(
+        newChainActivityTraceRelation.id,
+        newChainActivityTraceRelation
       );
       break;
     }

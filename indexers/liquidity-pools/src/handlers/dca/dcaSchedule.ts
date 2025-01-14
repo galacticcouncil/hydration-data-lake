@@ -146,7 +146,9 @@ export async function getDcaSchedule({
     relations,
   });
 
-  return schedule ?? null;
+  if (!schedule) return null;
+  ctx.batchState.state.dcaSchedules.set(schedule.id, schedule);
+  return schedule;
 }
 
 export async function handleDcaScheduleCreated(

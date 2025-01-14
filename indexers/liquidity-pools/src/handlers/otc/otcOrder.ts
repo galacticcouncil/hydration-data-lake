@@ -1,7 +1,7 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { getAsset } from '../assets/assetRegistry';
-import { OtcOrder, OtcOrderActionKind, OtcScheduleStatus } from '../../model';
+import { OtcOrder, OtcOrderActionKind, OtcOrderStatus } from '../../model';
 import { getAccount } from '../accounts';
 import {
   OtcOrderCancelledData,
@@ -58,7 +58,7 @@ export async function createOtcOrder({
     amountIn: amountIn,
     amountOut: amountOut,
     partiallyFillable,
-    status: OtcScheduleStatus.OPEN,
+    status: OtcOrderStatus.OPEN,
     createdAtParaBlockHeight: blockHeader.height,
     createdAtRelayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(blockHeader.height)
@@ -140,9 +140,6 @@ export async function handleOtcOrderPlaced(
     eventIndex: eventMetadata.indexInBlock,
   });
 
-  console.log('newOrderAction');
-  console.dir(newOrderAction, { depth: null });
-
   newOrder.actions = [...(newOrder.actions || []), newOrderAction];
 
   newOrder.owner.otcOrders = [...(newOrder.owner.otcOrders || []), newOrder];
@@ -182,7 +179,7 @@ export async function handleOtcOrderCancelled(
 
   if (!orderEntity) return;
 
-  orderEntity.status = OtcScheduleStatus.CANCELED;
+  orderEntity.status = OtcOrderStatus.CANCELED;
 
   const newOrderAction = getNewOrderAction({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],

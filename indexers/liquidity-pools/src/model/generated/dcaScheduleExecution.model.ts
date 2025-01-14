@@ -2,7 +2,6 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {DcaSchedule} from "./dcaSchedule.model"
 import {DcaScheduleExecutionStatus} from "./_dcaScheduleExecutionStatus"
-import {Swap} from "./swap.model"
 import {DcaScheduleExecutionAction} from "./dcaScheduleExecutionAction.model"
 
 @Entity_()
@@ -30,9 +29,6 @@ export class DcaScheduleExecution {
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   amountIn!: bigint | undefined | null
-
-  @OneToMany_(() => Swap, e => e.dcaScheduleExecution)
-  swaps!: Swap[]
 
   @OneToMany_(() => DcaScheduleExecutionAction, e => e.scheduleExecution)
   actions!: DcaScheduleExecutionAction[]

@@ -7,7 +7,6 @@ import {
 } from '../../parsers/batchBlocksParser/types';
 import {
   DcaScheduleExecution,
-  DcaScheduleExecutionAction,
   DcaScheduleExecutionStatus,
   DispatchError,
   DispatchErrorValue,
@@ -15,12 +14,12 @@ import {
 import { getDcaSchedule } from './dcaSchedule';
 import { FindOptionsRelations } from 'typeorm';
 import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { processDcaScheduleExecutionAction } from './dcaScheduleExecutionAction';
 
 export async function getDcaScheduleExecution({
   ctx,
   id,
   relations = {
-    swaps: true,
     actions: true,
   },
   fetchFromDb = false,
@@ -41,7 +40,11 @@ export async function getDcaScheduleExecution({
     relations,
   });
 
-  return execution ?? null;
+  if (!execution) return null;
+
+  ctx.batchState.state.dcaScheduleExecutions.set(execution.id, execution);
+
+  return execution;
 }
 
 export async function handleDcaScheduleExecutionPlanned(
@@ -78,8 +81,29 @@ export async function handleDcaScheduleExecutionPlanned(
     schedule: scheduleEntity,
     status: DcaScheduleExecutionStatus.PLANNED,
   });
+  //
+  // const executionAction = new DcaScheduleExecutionAction({
+  //   id: `${plannedExecution.id}-${DcaScheduleExecutionStatus.PLANNED}`,
+  //   scheduleExecution: plannedExecution,
+  //   status: DcaScheduleExecutionStatus.PLANNED,
+  //   relayChainBlockHeight:
+  //     ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
+  //       ?.relaychainBlockNumber ?? 0,
+  //   paraChainBlockHeight: eventMetadata.blockHeader.height,
+  //   traceIds: [
+  //     ...(callData.traceId ? [callData.traceId] : []),
+  //     eventMetadata.traceId,
+  //   ],
+  // });
+  //
+  // plannedExecution.actions = [
+  //   ...(plannedExecution.actions || []),
+  //   executionAction,
+  // ];
 
-  const executionAction = new DcaScheduleExecutionAction({
+  const executionAction = await processDcaScheduleExecutionAction({
+    ctx,
+    who: eventParams.who,
     id: `${plannedExecution.id}-${DcaScheduleExecutionStatus.PLANNED}`,
     scheduleExecution: plannedExecution,
     status: DcaScheduleExecutionStatus.PLANNED,
@@ -101,11 +125,9 @@ export async function handleDcaScheduleExecutionPlanned(
   const state = ctx.batchState.state;
 
   state.dcaScheduleExecutions.set(plannedExecution.id, plannedExecution);
-  state.dcaScheduleExecutionActions.set(executionAction.id, executionAction);
 
   ctx.batchState.state = {
     dcaScheduleExecutions: state.dcaScheduleExecutions,
-    dcaScheduleExecutionActions: state.dcaScheduleExecutionActions,
   };
 }
 
@@ -130,7 +152,6 @@ export async function handleDcaTradeExecuted(
       schedule: {
         owner: true,
       },
-      swaps: true,
       actions: true,
     },
   });
@@ -141,7 +162,9 @@ export async function handleDcaTradeExecuted(
   scheduleExecutionEntity.amountIn = eventParams.amountIn;
   scheduleExecutionEntity.amountOut = eventParams.amountOut;
 
-  const executionAction = new DcaScheduleExecutionAction({
+  const executionAction = await processDcaScheduleExecutionAction({
+    ctx,
+    who: eventParams.who,
     id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.EXECUTED}`,
     scheduleExecution: scheduleExecutionEntity,
     status: DcaScheduleExecutionStatus.EXECUTED,
@@ -164,11 +187,8 @@ export async function handleDcaTradeExecuted(
     scheduleExecutionEntity
   );
 
-  state.dcaScheduleExecutionActions.set(executionAction.id, executionAction);
-
   ctx.batchState.state = {
     dcaScheduleExecutions: state.dcaScheduleExecutions,
-    dcaScheduleExecutionActions: state.dcaScheduleExecutionActions,
   };
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
@@ -196,7 +216,6 @@ export async function handleDcaTradeFailed(
     ctx,
     id: `${eventParams.id}-${eventMetadata.blockHeader.height}`,
     relations: {
-      swaps: true,
       schedule: { owner: true },
     },
   });
@@ -205,7 +224,31 @@ export async function handleDcaTradeFailed(
 
   scheduleExecutionEntity.status = DcaScheduleExecutionStatus.FAILED;
 
-  const executionAction = new DcaScheduleExecutionAction({
+  // const executionAction = new DcaScheduleExecutionAction({
+  //   id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.FAILED}`,
+  //   scheduleExecution: scheduleExecutionEntity,
+  //   status: DcaScheduleExecutionStatus.FAILED,
+  //   statusMemo: eventParams.error
+  //     ? new DispatchError({
+  //         kind: eventParams.error.__kind,
+  //         value: eventParams.error.value
+  //           ? new DispatchErrorValue({
+  //               index: eventParams.error.value?.index,
+  //               error: eventParams.error.value?.error,
+  //             })
+  //           : null,
+  //       })
+  //     : null,
+  //   relayChainBlockHeight:
+  //     ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
+  //       ?.relaychainBlockNumber ?? 0,
+  //   paraChainBlockHeight: eventMetadata.blockHeader.height,
+  //   traceIds,
+  // });
+
+  const executionAction = await processDcaScheduleExecutionAction({
+    ctx,
+    who: eventParams.who,
     id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.FAILED}`,
     scheduleExecution: scheduleExecutionEntity,
     status: DcaScheduleExecutionStatus.FAILED,
@@ -238,11 +281,9 @@ export async function handleDcaTradeFailed(
     scheduleExecutionEntity.id,
     scheduleExecutionEntity
   );
-  state.dcaScheduleExecutionActions.set(executionAction.id, executionAction);
 
   ctx.batchState.state = {
     dcaScheduleExecutions: state.dcaScheduleExecutions,
-    dcaScheduleExecutionActions: state.dcaScheduleExecutionActions,
   };
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({

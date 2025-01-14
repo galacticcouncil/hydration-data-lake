@@ -2,7 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
-import {OtcScheduleStatus} from "./_otcScheduleStatus"
+import {OtcOrderStatus} from "./_otcOrderStatus"
 import {OtcOrderAction} from "./otcOrderAction.model"
 
 @Entity_()
@@ -40,7 +40,7 @@ export class OtcOrder {
 
   @Index_()
   @Column_("varchar", {length: 16, nullable: true})
-  status!: OtcScheduleStatus | undefined | null
+  status!: OtcOrderStatus | undefined | null
 
   @Column_("int4", {nullable: false})
   createdAtRelayBlockHeight!: number

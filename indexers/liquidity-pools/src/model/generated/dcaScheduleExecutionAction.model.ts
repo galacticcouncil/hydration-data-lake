@@ -1,5 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
+import {Swap} from "./swap.model"
 import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
 import {DcaScheduleExecutionStatus} from "./_dcaScheduleExecutionStatus"
 import {DispatchError} from "./_dispatchError"
@@ -16,12 +17,14 @@ export class DcaScheduleExecutionAction {
   @PrimaryColumn_()
   id!: string
 
-  @Index_()
-  @Column_("text", {nullable: true})
-  operationId!: string | undefined | null
+  @Column_("text", {array: true, nullable: true})
+  operationIds!: (string | undefined | null)[] | undefined | null
 
   @Column_("text", {array: true, nullable: true})
   traceIds!: (string)[] | undefined | null
+
+  @OneToMany_(() => Swap, e => e.dcaScheduleExecutionAction)
+  swaps!: Swap[]
 
   @Index_()
   @ManyToOne_(() => DcaScheduleExecution, {nullable: true})

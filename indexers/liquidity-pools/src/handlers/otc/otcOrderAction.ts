@@ -6,18 +6,16 @@ import {
 } from '../../parsers/batchBlocksParser/types';
 import {
   Account,
-  ChainActivityTrace,
   OtcOrder,
   OtcOrderAction,
   OtcOrderActionKind,
-  OtcScheduleStatus,
+  OtcOrderStatus,
   Swap,
 } from '../../model';
 import { getOtcOrder } from './otcOrder';
 import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
 import { getAccount } from '../accounts';
 import { FindOptionsRelations } from 'typeorm';
-import { getSwap, getSwapForOtcOrderAction } from '../swap/swap';
 
 export function getNewOrderAction({
   operationId = null,
@@ -154,7 +152,7 @@ export async function handleOtcOrderFilled(
     swap: relatedSwap ?? null,
   });
 
-  otcOrder.status = OtcScheduleStatus.FILLED;
+  otcOrder.status = OtcOrderStatus.FILLED;
   otcOrder.actions = [...(otcOrder.actions || []), newOrderAction];
 
   const state = ctx.batchState.state;
@@ -218,7 +216,7 @@ export async function handleOtcOrderPartiallyFilled(
     swap: relatedSwap ?? null,
   });
 
-  otcOrder.status = OtcScheduleStatus.PARTIALLY_FILLED;
+  otcOrder.status = OtcOrderStatus.PARTIALLY_FILLED;
   otcOrder.actions = [...(otcOrder.actions || []), newOrderAction];
 
   const state = ctx.batchState.state;
