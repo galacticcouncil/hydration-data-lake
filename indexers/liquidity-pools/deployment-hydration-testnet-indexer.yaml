@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-testnet-pools
-slot: 103
+slot: 104
 description: Hydration Testnet pools indexer
 build:
 deploy:

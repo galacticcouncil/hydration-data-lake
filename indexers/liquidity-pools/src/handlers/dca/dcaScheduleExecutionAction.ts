@@ -104,6 +104,24 @@ export async function processDcaScheduleExecutionAction({
   });
 
   if (status === DcaScheduleExecutionStatus.EXECUTED) {
+    const dcaSchedule = await getDcaSchedule({
+      ctx,
+      id: scheduleExecution.id.split('-')[0],
+      fetchFromDb: true,
+    });
+
+    if (dcaSchedule) {
+      dcaSchedule.totalExecutedAmountIn =
+        (dcaSchedule.totalExecutedAmountIn || 0n) +
+        (scheduleExecution.amountIn || 0n);
+
+      dcaSchedule.totalExecutedAmountOut =
+        (dcaSchedule.totalExecutedAmountOut || 0n) +
+        (scheduleExecution.amountOut || 0n);
+
+      ctx.batchState.state.dcaSchedules.set(dcaSchedule.id, dcaSchedule);
+    }
+
     const relatedSwaps = [...ctx.batchState.state.swaps.values()].filter(
       (swap) =>
         swap.paraChainBlockHeight === paraChainBlockHeight &&

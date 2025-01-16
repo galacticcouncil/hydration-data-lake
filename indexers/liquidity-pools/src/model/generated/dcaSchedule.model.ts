@@ -74,6 +74,12 @@ export class DcaSchedule {
   @OneToMany_(() => DcaScheduleOrderRoute, e => e.schedule)
   orderRoutes!: DcaScheduleOrderRoute[]
 
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  totalExecutedAmountIn!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  totalExecutedAmountOut!: bigint | undefined | null
+
   @Index_()
   @Column_("varchar", {length: 10, nullable: true})
   status!: DcaScheduleStatus | undefined | null

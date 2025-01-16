@@ -155,6 +155,11 @@ export async function handleOtcOrderFilled(
   otcOrder.status = OtcOrderStatus.FILLED;
   otcOrder.actions = [...(otcOrder.actions || []), newOrderAction];
 
+  otcOrder.totalFilledAmountIn =
+    (otcOrder.totalFilledAmountIn || 0n) + eventParams.amountIn;
+  otcOrder.totalFilledAmountOut =
+    (otcOrder.totalFilledAmountOut || 0n) + eventParams.amountOut;
+
   const state = ctx.batchState.state;
 
   state.otcOrders.set(otcOrder.id, otcOrder);
@@ -218,6 +223,11 @@ export async function handleOtcOrderPartiallyFilled(
 
   otcOrder.status = OtcOrderStatus.PARTIALLY_FILLED;
   otcOrder.actions = [...(otcOrder.actions || []), newOrderAction];
+
+  otcOrder.totalFilledAmountIn =
+    (otcOrder.totalFilledAmountIn || 0n) + eventParams.amountIn;
+  otcOrder.totalFilledAmountOut =
+    (otcOrder.totalFilledAmountOut || 0n) + eventParams.amountOut;
 
   const state = ctx.batchState.state;
 

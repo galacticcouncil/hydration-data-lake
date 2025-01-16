@@ -750,6 +750,9 @@ type DcaSchedule @entity {
   orderKind: DcaScheduleOrderKind!
   orderRoutes: [DcaScheduleOrderRoute] @derivedFrom(field: "schedule")
 
+  totalExecutedAmountIn: BigInt
+  totalExecutedAmountOut: BigInt
+
   status: DcaScheduleStatus @index
   statusUpdatedAtBlockHeight: Int
   statusMemo: DispatchError
@@ -831,6 +834,9 @@ type OtcOrder @entity {
   status: OtcOrderStatus @index
   createdAtRelayBlockHeight: Int!
   createdAtParaBlockHeight: Int! @index
+
+  totalFilledAmountIn: BigInt
+  totalFilledAmountOut: BigInt
 
   actions: [OtcOrderAction] @derivedFrom(field: "order")
 }

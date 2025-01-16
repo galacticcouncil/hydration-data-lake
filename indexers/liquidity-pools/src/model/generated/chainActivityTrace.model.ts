@@ -26,8 +26,8 @@ export class ChainActivityTrace {
   @ManyToOne_(() => Account, {nullable: true})
   originator!: Account | undefined | null
 
-  @Column_("text", {array: true, nullable: true})
-  associatedAccountsFlat!: (string)[] | undefined | null
+  @Column_("text", {array: true, nullable: false})
+  associatedAccountsFlat!: (string)[]
 
   @OneToMany_(() => ChainActivityTraceRelation, e => e.parentTrace)
   childTraces!: ChainActivityTraceRelation[]

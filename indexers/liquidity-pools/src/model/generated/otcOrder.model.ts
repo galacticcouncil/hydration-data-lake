@@ -49,6 +49,12 @@ export class OtcOrder {
   @Column_("int4", {nullable: false})
   createdAtParaBlockHeight!: number
 
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  totalFilledAmountIn!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  totalFilledAmountOut!: bigint | undefined | null
+
   @OneToMany_(() => OtcOrderAction, e => e.order)
   actions!: OtcOrderAction[]
 }
