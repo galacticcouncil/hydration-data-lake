@@ -2,7 +2,6 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, I
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {SwapFillerType} from "./_swapFillerType"
-import {SwapFillerContext} from "./swapFillerContext.model"
 import {TradeOperationType} from "./_tradeOperationType"
 import {SwapFee} from "./swapFee.model"
 import {SwapInputAssetBalance} from "./swapInputAssetBalance.model"
@@ -46,10 +45,6 @@ export class Swap {
   @Column_("varchar", {length: 10, nullable: false})
   fillerType!: SwapFillerType
 
-  @Index_()
-  @ManyToOne_(() => SwapFillerContext, {nullable: true})
-  fillerContext!: SwapFillerContext | undefined | null
-
   @Column_("varchar", {length: 15, nullable: false})
   operationType!: TradeOperationType
 
@@ -61,18 +56,6 @@ export class Swap {
 
   @OneToMany_(() => SwapOutputAssetBalance, e => e.swap)
   outputs!: SwapOutputAssetBalance[]
-
-  /**
-   * actual for fillerType: Omnipool
-   */
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  hubAmountIn!: bigint | undefined | null
-
-  /**
-   * actual for fillerType: Omnipool
-   */
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  hubAmountOut!: bigint | undefined | null
 
   @Column_("int4", {nullable: false})
   eventIndex!: number

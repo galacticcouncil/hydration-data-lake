@@ -2,13 +2,14 @@ import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
-import { getOrderedListByBlockNumber } from '../../../utils/helpers';
+import {
+  getOrderedListByBlockNumber,
+} from '../../../utils/helpers';
 import {
   OmnipoolBuyExecutedData,
   OmnipoolSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
 import {
-  DcaScheduleExecution,
   OmnipoolAsset,
   SwapFillerType,
   TradeOperationType,
@@ -50,10 +51,14 @@ export async function omnipoolBuySellExecuted(
     callData,
   } = eventCallData;
 
-  const { swap } = await handleSwap({
+  const swapInHubId = `${eventMetadata.id}-01`;
+  const swapOutHubId = `${eventMetadata.id}-02`;
+
+  const { swap: swapInHub } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
+      swapId: swapInHubId,
       traceIds: [
         ...(callData.traceId ? [callData.traceId] : []),
         eventMetadata.traceId,
@@ -65,9 +70,6 @@ export async function omnipoolBuySellExecuted(
       fillerAccountId: ctx.appConfig.OMNIPOOL_ADDRESS,
       fillerType: SwapFillerType.Omnipool,
 
-      hubAmountIn: eventParams.hubAmountIn,
-      hubAmountOut: eventParams.hubAmountOut,
-
       inputs: [
         {
           amount: eventParams.amountIn,
@@ -76,16 +78,11 @@ export async function omnipoolBuySellExecuted(
       ],
       outputs: [
         {
-          amount: eventParams.amountOut,
-          assetId: eventParams.assetOut,
+          amount: eventParams.hubAmountIn,
+          assetId: 1,
         },
       ],
       fees: [
-        {
-          amount: eventParams.assetFeeAmount,
-          assetId: eventParams.assetOut,
-          recipientId: ctx.appConfig.OMNIPOOL_ADDRESS,
-        },
         {
           amount: eventParams.protocolFeeAmount,
           assetId: +ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
@@ -101,10 +98,59 @@ export async function omnipoolBuySellExecuted(
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });
+  const { swap: swapOutHub } = await handleSwap({
+    ctx,
+    blockHeader: eventMetadata.blockHeader,
+    data: {
+      swapId: swapOutHubId,
+      traceIds: [
+        ...(callData.traceId ? [callData.traceId] : []),
+        eventMetadata.traceId,
+      ],
+      eventId: eventMetadata.id,
+      extrinsicHash: eventMetadata.extrinsic?.hash || '',
+      eventIndex: eventMetadata.indexInBlock,
+      swapperAccountId: eventParams.who,
+      fillerAccountId: ctx.appConfig.OMNIPOOL_ADDRESS,
+      fillerType: SwapFillerType.Omnipool,
+
+      inputs: [
+        {
+          amount: eventParams.hubAmountOut,
+          assetId: 1,
+        },
+      ],
+      outputs: [
+        {
+          amount: eventParams.amountOut,
+          assetId: eventParams.assetOut,
+        },
+      ],
+      fees: [
+        {
+          amount: eventParams.assetFeeAmount,
+          assetId: eventParams.assetOut,
+          recipientId: ctx.appConfig.OMNIPOOL_ADDRESS,
+        },
+      ],
+      operationType:
+        eventMetadata.name === EventName.Omnipool_BuyExecuted
+          ? TradeOperationType.ExactOut
+          : TradeOperationType.ExactIn,
+      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
+    },
+  });
 
   await handleOmnipoolAssetVolumeUpdates({
     ctx,
-    swap,
+    swap: swapInHub,
+    blockHeader: eventMetadata.blockHeader,
+  });
+  await handleOmnipoolAssetVolumeUpdates({
+    ctx,
+    swap: swapOutHub,
     blockHeader: eventMetadata.blockHeader,
   });
 }

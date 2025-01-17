@@ -26,9 +26,19 @@ enum AssetType {
   Erc20
 }
 
+enum AccountType {
+  User
+  Omnipool
+  Stablepool
+  XYK
+  LBP
+}
+
 type Account @entity {
   "Account pubkey"
   id: ID!
+
+  accountType: AccountType!
 
   lbpPool: LbpPool
   xykPool: XykPool
@@ -333,15 +343,6 @@ type SwapOutputAssetBalance @entity {
   amount: BigInt!
 }
 
-type SwapFillerContext @entity {
-  "swap_id"
-  id: ID!
-  swap: Swap!
-  stablepool: Stablepool
-  shareToken: Asset
-  otcOrder: OtcOrder
-}
-
 type Swap @entity {
   "indexer event_id (e.g. <block_number>-<block_hash_partial>-<event_index> 0006516718-9965d-000107)"
   id: ID!
@@ -352,15 +353,10 @@ type Swap @entity {
   swapper: Account!
   filler: Account!
   fillerType: SwapFillerType!
-  fillerContext: SwapFillerContext
   operationType: TradeOperationType!
   fees: [SwapFee!]! @derivedFrom(field: "swap")
   inputs: [SwapInputAssetBalance!]! @derivedFrom(field: "swap")
   outputs: [SwapOutputAssetBalance!]! @derivedFrom(field: "swap")
-  "actual for fillerType: Omnipool"
-  hubAmountIn: BigInt
-  "actual for fillerType: Omnipool"
-  hubAmountOut: BigInt
   eventIndex: Int!
   extrinsicHash: String!
   relayChainBlockHeight: Int!

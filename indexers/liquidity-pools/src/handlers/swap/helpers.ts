@@ -4,18 +4,16 @@ import { AmmSupportSwappedData } from '../../parsers/batchBlocksParser/types';
 import {
   ChainActivityTrace,
   ChainActivityTraceRelation,
-  DcaSchedule,
   OtcOrderAction,
   OtcOrderActionKind,
   Swap,
-  SwapFillerContext,
   SwapFillerType,
-  SwappedExecutionTypeKind,
 } from '../../model';
-import { getAsset } from '../assets/assetRegistry';
 import { getOrCreateStablepool } from '../pools/stablepool/stablepool';
-import { getOtcOrder } from '../otc/otcOrder';
-import { AmmSupportSwappedAssetAmount } from '../../parsers/types/events';
+import {
+  AmmSupportSwappedAssetAmount,
+  AmmSupportSwappedFillerType,
+} from '../../parsers/types/events';
 import { getOrCreateLbpPool } from '../pools/lbpPool/lbpPool';
 import {
   handleLbpPoolVolumeUpdates,
@@ -26,72 +24,32 @@ import { handleAssetVolumeUpdates } from '../assets/volume';
 import { getOrCreateXykPool } from '../pools/xykPool/xykPool';
 import { handleStablepoolVolumeUpdates } from '../volumes/stablepoolVolume';
 import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
-import { getDcaScheduleExecutionAction } from '../dca/dcaScheduleExecutionAction';
-import { OperationStackManager } from '../../chainActivityTraceManager/operationStackManager';
+import { SwapFillerContextDetails } from '../../utils/types';
 
 export async function getFillerContextData(
   ctx: ProcessorContext<Store>,
   eventCallData: AmmSupportSwappedData
-): Promise<Partial<
-  Pick<SwapFillerContext, 'shareToken' | 'otcOrder' | 'stablepool'>
-> | null> {
+): Promise<SwapFillerContextDetails | null> {
   const {
-    eventData: { params: eventParams, metadata: eventMetadata },
+    eventData: { params: eventParams },
   } = eventCallData;
 
   if (!eventParams.fillerType.value) return null;
 
   switch (eventParams.fillerType.kind) {
     case SwapFillerType.XYK: {
-      const shareToken = await getAsset({
-        id: `${eventParams.fillerType.value}`,
-        ctx,
-        ensure: true,
-        blockHeader: eventMetadata.blockHeader,
-      });
-
-      if (!shareToken) {
-        console.log(
-          `Asset ${eventParams.fillerType.value} for swap filler cannot be found.`
-        );
-        return null;
-      }
       return {
-        shareToken,
+        xykSharedTokenId: `${eventParams.fillerType.value}`,
       };
     }
     case SwapFillerType.Stableswap: {
-      const stablepool = await getOrCreateStablepool({
-        poolId: eventParams.fillerType.value,
-        ctx,
-        ensure: true,
-        blockHeader: eventMetadata.blockHeader,
-      });
-
-      if (!stablepool) {
-        console.log(
-          `Stablepool ${eventParams.fillerType.value} cannot be found.`
-        );
-        return null;
-      }
       return {
-        stablepool,
+        stablepoolId: `${eventParams.fillerType.value}`,
       };
     }
     case SwapFillerType.OTC: {
-      const otcOrder = await getOtcOrder({
-        id: eventParams.fillerType.value,
-        ctx,
-      });
-
-      if (!otcOrder) {
-        console.log(
-          `OTC order ${eventParams.fillerType.value} cannot be found.`
-        );
-        return null;
-      }
       return {
-        otcOrder,
+        otcOrderId: `${eventParams.fillerType.value}`,
       };
     }
   }
@@ -153,7 +111,6 @@ export function getOmnipoolHubAmountOnSwap({
 }
 
 export async function supportSwapperEventPreHook(
-  ctx: ProcessorContext<Store>,
   eventCallData: AmmSupportSwappedData
 ) {
   const {
@@ -289,16 +246,18 @@ export async function supportSwappedEventPostHook({
     }
     case SwapFillerType.OTC: {
       if (
-        !chainActivityTrace ||
-        !swap.fillerContext ||
-        !swap.fillerContext.otcOrder
+        !ctx.batchState.state.swapFillerContexts.has(swap.id) ||
+        !ctx.batchState.state.swapFillerContexts.get(swap.id)?.otcOrderId
       )
         return;
 
       const createOrderAction = await ctx.store.findOne(OtcOrderAction, {
         where: {
           kind: OtcOrderActionKind.CREATED,
-          order: { id: swap.fillerContext!.otcOrder!.id },
+          order: {
+            id: ctx.batchState.state.swapFillerContexts.get(swap.id)!
+              .otcOrderId,
+          },
         },
       });
 
@@ -312,6 +271,7 @@ export async function supportSwappedEventPostHook({
 
       if (
         !rootChainActivityTrace ||
+        !chainActivityTrace ||
         rootChainActivityTrace.id === chainActivityTrace.id
       )
         return;
@@ -323,9 +283,6 @@ export async function supportSwappedEventPostHook({
         createdAtParaChainBlockHeight:
           eventCallData.eventData.metadata.blockHeader.height,
       });
-
-      // chainActivityTrace.childTraces = [...(chainActivityTrace.childTraces || []), newChainActivityTraceRelation];
-      // rootChainActivityTrace.childTraces = [...(chainActivityTrace.childTraces || []), newChainActivityTraceRelation];
 
       ctx.batchState.state.chainActivityTraceRelations.set(
         newChainActivityTraceRelation.id,

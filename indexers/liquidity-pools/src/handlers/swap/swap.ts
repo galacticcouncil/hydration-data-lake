@@ -4,7 +4,6 @@ import { BlockHeader } from '@subsquid/substrate-processor';
 import {
   Swap,
   SwapFee,
-  SwapFillerContext,
   SwapFillerType,
   SwapInputAssetBalance,
   SwapOutputAssetBalance,
@@ -23,7 +22,6 @@ import {
 } from '../../parsers/types/events';
 import {
   getFillerContextData,
-  getOmnipoolHubAmountOnSwap,
   supportSwappedEventPostHook,
   supportSwapperEventPreHook,
 } from './helpers';
@@ -71,63 +69,21 @@ export async function getSwap({
   return swap;
 }
 
-export async function getSwapForOtcOrderAction({
-  ctx,
-  otcOrderId,
-  traceId,
-  relations = {
-    swapper: true,
-    filler: true,
-    fees: true,
-    inputs: true,
-    outputs: true,
-  },
-  fetchFromDb = false,
-}: {
-  ctx: ProcessorContext<Store>;
-  otcOrderId: string;
-  traceId: string;
-  fetchFromDb?: boolean;
-  relations?: FindOptionsRelations<Swap>;
-}) {
-  const batchState = ctx.batchState.state;
-  let swap = [...batchState.swaps.values()].find(
-    (cachedSwap) =>
-      cachedSwap.traceIds?.includes(traceId) &&
-      cachedSwap.fillerContext?.otcOrder?.id === otcOrderId
-  );
-  if (swap || (!swap && !fetchFromDb)) return swap ?? null;
-
-  swap = await ctx.store.findOne(Swap, {
-    where: {
-      fillerContext: { otcOrder: { id: otcOrderId } },
-      traceIds: In([traceId]),
-    },
-    relations,
-  });
-
-  if (!swap) return null;
-  ctx.batchState.state.swaps.set(swap.id, swap);
-  return swap;
-}
-
 export async function getNewSwap({
   ctx,
   blockHeader,
   data: {
+    swapId,
     traceIds,
     operationId,
     swapIndex,
     swapperId,
     fillerId,
     fillerType,
-    fillerContext,
     operationType,
     fees,
     inputs,
     outputs,
-    hubAmountIn,
-    hubAmountOut,
     eventId,
     eventIndex,
     extrinsicHash,
@@ -139,19 +95,17 @@ export async function getNewSwap({
   ctx: ProcessorContext<Store>;
   blockHeader: BlockHeader;
   data: {
+    swapId?: string;
     traceIds: string[];
     operationId?: string;
     swapIndex: number;
     swapperId: string;
     fillerId: string;
     fillerType: SwapFillerType;
-    fillerContext?: SwapFillerContext;
     operationType: TradeOperationType;
     fees: { assetId: number; amount: bigint; recipientId: string }[];
     inputs: { assetId: number; amount: bigint }[];
     outputs: { assetId: number; amount: bigint }[];
-    hubAmountIn?: bigint;
-    hubAmountOut?: bigint;
     eventId: string;
     eventIndex: number;
     extrinsicHash: string;
@@ -161,17 +115,14 @@ export async function getNewSwap({
   };
 }): Promise<GetNewSwapResponse> {
   const swap = new Swap({
-    id: eventId,
+    id: swapId ?? eventId,
     traceIds,
     operationId,
     swapIndex,
     swapper: await getAccount(ctx, swapperId),
     filler: await getAccount(ctx, fillerId),
     fillerType,
-    fillerContext: fillerContext ?? null,
     operationType,
-    hubAmountIn: hubAmountIn ?? null,
-    hubAmountOut: hubAmountOut ?? null,
     eventIndex,
     relayChainBlockHeight,
     paraChainBlockHeight,
@@ -258,6 +209,7 @@ export async function handleSwap({
   ctx,
   blockHeader,
   data: {
+    swapId,
     traceIds,
     operationId,
     eventId,
@@ -266,11 +218,8 @@ export async function handleSwap({
     swapperAccountId,
     fillerAccountId,
     fillerType,
-    fillerContext,
     inputs,
     outputs,
-    hubAmountIn,
-    hubAmountOut,
     fees,
     operationType,
     relayChainBlockHeight,
@@ -281,6 +230,7 @@ export async function handleSwap({
   ctx: ProcessorContext<Store>;
   blockHeader: BlockHeader;
   data: {
+    swapId?: string;
     traceIds: string[];
     operationId?: string;
     eventId: string;
@@ -289,12 +239,9 @@ export async function handleSwap({
     swapperAccountId: string;
     fillerAccountId: string;
     fillerType: SwapFillerType;
-    fillerContext?: SwapFillerContext;
     fees: AmmSupportSwappedFee[];
     inputs: AmmSupportSwappedAssetAmount[];
     outputs: AmmSupportSwappedAssetAmount[];
-    hubAmountIn?: bigint;
-    hubAmountOut?: bigint;
     operationType: TradeOperationType;
     relayChainBlockHeight: number;
     paraChainBlockHeight: number;
@@ -333,13 +280,13 @@ export async function handleSwap({
     ctx,
     blockHeader,
     data: {
+      swapId,
       traceIds,
       operationId,
       swapIndex: 0,
       swapperId: swapperAccountId,
       fillerId: fillerAccountId,
       fillerType,
-      fillerContext,
       operationType,
       eventId,
       eventIndex,
@@ -348,8 +295,6 @@ export async function handleSwap({
       extrinsicHash,
       paraChainTimestamp: new Date(timestamp),
       fees,
-      hubAmountIn,
-      hubAmountOut,
       inputs,
       outputs,
     },
@@ -386,7 +331,7 @@ export async function handleSupportSwapperEvent(
   ctx: ProcessorContext<Store>,
   eventCallData: AmmSupportSwappedData
 ) {
-  await supportSwapperEventPreHook(ctx, eventCallData);
+  await supportSwapperEventPreHook(eventCallData);
 
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
@@ -436,35 +381,21 @@ export async function handleSupportSwapperEvent(
       relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
       paraChainBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
-      ...getOmnipoolHubAmountOnSwap({
-        fillerType: eventParams.fillerType.kind,
-        swapInputs: eventParams.inputs,
-        swapOutputs: eventParams.outputs,
-        ctx,
-      }),
     },
   });
 
+  const state = ctx.batchState.state;
+
   const fillerContextData = await getFillerContextData(ctx, eventCallData);
 
-  const fillerContext = fillerContextData
-    ? new SwapFillerContext({
-        id: newSwapDetails.swap.id,
-        swap: newSwapDetails.swap,
-        ...fillerContextData,
-      })
-    : null;
-
-  const state = ctx.batchState.state;
+  if (fillerContextData)
+    state.swapFillerContexts.set(newSwapDetails.swap.id, fillerContextData);
 
   if (newOperationStackEntity)
     state.operationStacks.set(
       newOperationStackEntity.id,
       newOperationStackEntity
     );
-
-  if (fillerContext)
-    state.swapFillerContexts.set(fillerContext.id, fillerContext);
 
   if (chainActivityTrace)
     state.chainActivityTraces.set(chainActivityTrace.id, chainActivityTrace);
@@ -474,14 +405,6 @@ export async function handleSupportSwapperEvent(
     chainActivityTraces: state.chainActivityTraces,
     swapFillerContexts: state.swapFillerContexts,
   };
-
-  if (
-    (eventParams.fillerType.kind === SwapFillerType.OTC ||
-      eventParams.fillerType.kind === SwapFillerType.Stableswap ||
-      eventParams.fillerType.kind === SwapFillerType.XYK) &&
-    fillerContext
-  )
-    newSwapDetails.swap.fillerContext = fillerContext;
 
   await supportSwappedEventPostHook({
     swap: newSwapDetails.swap,

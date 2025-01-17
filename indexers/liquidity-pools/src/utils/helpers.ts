@@ -5,6 +5,7 @@ import { CallOriginPartsDecorated, CallOriginRaw, NodeEnv } from './types';
 import { join } from 'path';
 import { hexToString } from '@polkadot/util';
 import v8 from 'v8';
+import { SwapFillerType } from '../model';
 
 const appConfig = AppConfig.getInstance();
 

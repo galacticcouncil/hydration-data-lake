@@ -41,11 +41,11 @@ import {
   OtcOrder,
   OtcOrderAction,
   OperationStack,
-  SwapFillerContext,
   ChainActivityTraceRelation,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import { SwapFillerContextDetails } from './types';
 
 type ParachainBlockNumber = number;
 
@@ -72,7 +72,7 @@ export type BatchStatePayload = {
   swapFees: Map<string, SwapFee>;
   swapInputs: Map<string, SwapInputAssetBalance>;
   swapOutputs: Map<string, SwapOutputAssetBalance>;
-  swapFillerContexts: Map<string, SwapFillerContext>;
+  swapFillerContexts: Map<string, SwapFillerContextDetails>;
 
   lbpPoolIdsToSave: Set<string>;
   lbpAllBatchPools: Map<string, LbpPool>;

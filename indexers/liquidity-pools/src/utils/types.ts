@@ -101,3 +101,9 @@ export type CallOriginPartsDecorated = {
   valueKind?: string;
   value?: string;
 };
+
+export type SwapFillerContextDetails = {
+  xykSharedTokenId?: string;
+  stablepoolId?: string;
+  otcOrderId?: string;
+};

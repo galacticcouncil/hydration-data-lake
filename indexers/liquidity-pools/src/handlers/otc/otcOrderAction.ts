@@ -132,7 +132,9 @@ export async function handleOtcOrderFilled(
   const relatedSwap = [...ctx.batchState.state.swaps.values()].find(
     (swap) =>
       swap.paraChainBlockHeight === eventMetadata.blockHeader.height &&
-      swap.fillerContext?.otcOrder?.id === `${eventParams.orderId}` &&
+      ctx.batchState.state.swapFillerContexts.has(swap.id) &&
+      ctx.batchState.state.swapFillerContexts.get(swap.id)?.otcOrderId ===
+        `${eventParams.orderId}` &&
       swap.swapper.id === eventParams.who
   );
 
@@ -201,7 +203,9 @@ export async function handleOtcOrderPartiallyFilled(
   const relatedSwap = [...ctx.batchState.state.swaps.values()].find(
     (swap) =>
       swap.paraChainBlockHeight === eventMetadata.blockHeader.height &&
-      swap.fillerContext?.otcOrder?.id === `${eventParams.orderId}` &&
+      ctx.batchState.state.swapFillerContexts.has(swap.id) &&
+      ctx.batchState.state.swapFillerContexts.get(swap.id)?.otcOrderId ===
+        `${eventParams.orderId}` &&
       swap.swapper.id === eventParams.who
   );
 

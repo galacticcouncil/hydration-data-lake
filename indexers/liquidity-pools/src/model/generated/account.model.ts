@@ -1,4 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {AccountType} from "./_accountType"
 import {LbpPool} from "./lbpPool.model"
 import {XykPool} from "./xykPool.model"
 import {Omnipool} from "./omnipool.model"
@@ -21,6 +22,9 @@ export class Account {
    */
   @PrimaryColumn_()
   id!: string
+
+  @Column_("varchar", {length: 10, nullable: false})
+  accountType!: AccountType
 
   @Index_()
   @ManyToOne_(() => LbpPool, {nullable: true})
