@@ -103,9 +103,4 @@ async function prefetchEntities(
         (item) => [item.id, item]
       )
     );
-
-  ctx.batchState.state = {
-    otcOrders: state.otcOrders,
-    otcOrderActions: state.otcOrderActions,
-  };
 }

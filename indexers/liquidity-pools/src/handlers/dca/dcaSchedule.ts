@@ -193,12 +193,6 @@ export async function handleDcaScheduleCreated(
 
   for (const orderRoute of newSchedule.orderRoutes)
     state.dcaScheduleOrderRoutes.set(orderRoute.id, orderRoute);
-
-  ctx.batchState.state = {
-    accounts: state.accounts,
-    dcaSchedules: state.dcaSchedules,
-    dcaScheduleOrderRoutes: state.dcaScheduleOrderRoutes,
-  };
 }
 
 export async function handleDcaScheduleCompleted(
@@ -222,10 +216,6 @@ export async function handleDcaScheduleCompleted(
   const state = ctx.batchState.state;
 
   state.dcaSchedules.set(scheduleEntity.id, scheduleEntity);
-
-  ctx.batchState.state = {
-    dcaSchedules: state.dcaSchedules,
-  };
 }
 
 export async function handleDcaScheduleTerminated(
@@ -260,8 +250,4 @@ export async function handleDcaScheduleTerminated(
   const state = ctx.batchState.state;
 
   state.dcaSchedules.set(scheduleEntity.id, scheduleEntity);
-
-  ctx.batchState.state = {
-    dcaSchedules: state.dcaSchedules,
-  };
 }

@@ -248,34 +248,6 @@ export async function handleSwap({
     timestamp: number;
   };
 }): Promise<GetNewSwapResponse> {
-  // const eventTraceId = traceIds.find((tId) =>
-  //   ChainActivityTraceManager.isEventTraceId(tId)
-  // );
-  //
-  // if (!eventTraceId)
-  //   throw Error(`Swap with eventId ${eventId} does not contain eventTraceId`);
-  //
-  // const existingSwap = await getSwap({
-  //   eventTraceId,
-  //   ctx,
-  //   relations: {
-  //     swapper: true,
-  //     filler: true,
-  //     fees: { asset: true, recipient: true },
-  //     inputs: { asset: true },
-  //     outputs: { asset: true },
-  //   },
-  // });
-  //
-  // if (existingSwap) {
-  //   return {
-  //     swap: existingSwap,
-  //     swapFees: existingSwap.fees,
-  //     swapOutputs: existingSwap.outputs,
-  //     swapInputs: existingSwap.inputs,
-  //   };
-  // }
-
   const swapData = await getNewSwap({
     ctx,
     blockHeader,
@@ -310,13 +282,6 @@ export async function handleSwap({
     state.swapInputs.set(swapInput.id, swapInput);
   for (const swapOutput of swapOutputs)
     state.swapOutputs.set(swapOutput.id, swapOutput);
-
-  ctx.batchState.state = {
-    swaps: state.swaps,
-    swapFees: state.swapFees,
-    swapInputs: state.swapInputs,
-    swapOutputs: state.swapOutputs,
-  };
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     participants: [swap.swapper, swap.filler],
@@ -404,12 +369,6 @@ export async function handleSupportSwapperEvent(
 
   if (chainActivityTrace)
     state.chainActivityTraces.set(chainActivityTrace.id, chainActivityTrace);
-
-  ctx.batchState.state = {
-    // operationStacks: state.operationStacks,
-    chainActivityTraces: state.chainActivityTraces,
-    swapFillerContexts: state.swapFillerContexts,
-  };
 
   await supportSwappedEventPostHook({
     swap: newSwapDetails.swap,

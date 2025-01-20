@@ -24,7 +24,7 @@ export async function handleStablepools(
       ctx.batchState.state.stablepoolIdsToSave.has(pool.id)
     )
   );
-  ctx.batchState.state = { stablepoolIdsToSave: new Set() };
+  ctx.batchState.state.stablepoolIdsToSave = new Set();
 
   await ctx.store.save([
     ...ctx.batchState.state.stablepoolAssetsAllBatch.values(),

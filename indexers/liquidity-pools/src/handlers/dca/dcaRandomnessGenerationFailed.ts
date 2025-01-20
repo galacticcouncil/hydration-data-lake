@@ -46,9 +46,4 @@ export async function handleDcaRandomnessGenerationFailed(
     newFailReport.id,
     newFailReport
   );
-
-  ctx.batchState.state = {
-    dcaRandomnessGenerationFailedErrors:
-      state.dcaRandomnessGenerationFailedErrors,
-  };
 }

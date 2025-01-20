@@ -57,10 +57,6 @@ export async function getOrCreateOmnipoolAsset({
 
   batchState.omnipoolAssets.set(omnipoolAsset.id, omnipoolAsset);
 
-  ctx.batchState.state = {
-    omnipoolAssets: batchState.omnipoolAssets,
-  };
-
   return omnipoolAsset;
 }
 
@@ -105,11 +101,6 @@ export async function omnipoolTokenAdded(
 
   state.omnipoolAssetIdsToSave.add(omnipoolAssetEntity.id);
   state.omnipoolAssets.set(omnipoolAssetEntity.id, omnipoolAssetEntity);
-
-  ctx.batchState.state = {
-    omnipoolAssetIdsToSave: state.omnipoolAssetIdsToSave,
-    omnipoolAssets: state.omnipoolAssets,
-  };
 }
 
 export async function omnipoolTokenRemoved(
@@ -134,12 +125,9 @@ export async function omnipoolTokenRemoved(
   omnipoolAssetEntity.removedAmount = eventParams.amount;
   omnipoolAssetEntity.hubWithdrawn = eventParams.hubWithdrawn;
 
-  const assetIdsToSave = ctx.batchState.state.omnipoolAssetIdsToSave;
-  const allAssets = ctx.batchState.state.omnipoolAssets;
-
-  assetIdsToSave.add(omnipoolAssetEntity.id);
-  allAssets.set(omnipoolAssetEntity.id, omnipoolAssetEntity);
-
-  ctx.batchState.state = { omnipoolAssetIdsToSave: assetIdsToSave };
-  ctx.batchState.state = { omnipoolAssets: allAssets };
+  ctx.batchState.state.omnipoolAssetIdsToSave.add(omnipoolAssetEntity.id);
+  ctx.batchState.state.omnipoolAssets.set(
+    omnipoolAssetEntity.id,
+    omnipoolAssetEntity
+  );
 }

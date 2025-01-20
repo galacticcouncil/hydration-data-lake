@@ -150,12 +150,6 @@ export async function handleOtcOrderPlaced(
   state.otcOrders.set(newOrder.id, newOrder);
   state.otcOrderActions.set(newOrderAction.id, newOrderAction);
 
-  ctx.batchState.state = {
-    accounts: state.accounts,
-    otcOrders: state.otcOrders,
-    otcOrderActions: state.otcOrderActions,
-  };
-
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newOrderAction.traceIds,
     participants: [newOrder.owner],
@@ -198,11 +192,6 @@ export async function handleOtcOrderCancelled(
 
   state.otcOrders.set(orderEntity.id, orderEntity);
   state.otcOrderActions.set(newOrderAction.id, newOrderAction);
-
-  ctx.batchState.state = {
-    otcOrders: state.otcOrders,
-    otcOrderActions: state.otcOrderActions,
-  };
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newOrderAction.traceIds,

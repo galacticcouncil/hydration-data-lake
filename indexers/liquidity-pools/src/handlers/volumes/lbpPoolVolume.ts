@@ -131,5 +131,4 @@ export async function handleLbpPoolVolumeUpdates({
   const newVolume = initLbpPoolVolume(swap, pool, currentVolume, oldVolume);
 
   lbpPoolVolumes.set(newVolume.id, newVolume);
-  ctx.batchState.state = { lbpPoolVolumes };
 }

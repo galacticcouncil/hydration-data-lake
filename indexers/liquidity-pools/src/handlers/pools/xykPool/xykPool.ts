@@ -172,10 +172,6 @@ export async function getOrCreateXykPool({
   const state = ctx.batchState.state;
   state.xykAllBatchPools.set(newPool.id, newPool);
   state.accounts.set(newPool.account.id, newPool.account);
-  ctx.batchState.state = {
-    xykAllBatchPools: state.xykAllBatchPools,
-    accounts: state.accounts,
-  };
 
   return newPool;
 }
@@ -213,12 +209,6 @@ export async function xykPoolCreated(
   state.xykPoolIdsToSave.add(newPool.id);
   state.xykAllBatchPools.set(newPool.id, newPool);
   state.accounts.set(newPool.account.id, newPool.account);
-
-  ctx.batchState.state = {
-    accounts: state.accounts,
-    xykPoolIdsToSave: state.xykPoolIdsToSave,
-    xykAllBatchPools: state.xykAllBatchPools,
-  };
 }
 
 export async function xykPoolDestroyed(
@@ -247,9 +237,4 @@ export async function xykPoolDestroyed(
 
   state.xykPoolIdsToSave.add(pool.id);
   state.xykAllBatchPools.set(pool.id, pool);
-
-  ctx.batchState.state = {
-    xykPoolIdsToSave: state.xykPoolIdsToSave,
-    xykAllBatchPools: state.xykAllBatchPools,
-  };
 }

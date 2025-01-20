@@ -210,11 +210,6 @@ export async function getOrCreateLbpPool({
   state.lbpAllBatchPools.set(newPool.id, newPool);
   state.accounts.set(newPool.account.id, newPool.account);
 
-  ctx.batchState.state = {
-    lbpAllBatchPools: state.lbpAllBatchPools,
-    accounts: state.accounts,
-  };
-
   return newPool;
 }
 
@@ -256,12 +251,6 @@ export async function lpbPoolCreated(
   state.lbpPoolIdsToSave.add(newPool.id);
   state.lbpAllBatchPools.set(newPool.id, newPool);
   state.accounts.set(newPool.account.id, newPool.account);
-
-  ctx.batchState.state = {
-    accounts: state.accounts,
-    lbpPoolIdsToSave: state.lbpPoolIdsToSave,
-    lbpAllBatchPools: state.lbpAllBatchPools,
-  };
 }
 
 export async function lpbPoolUpdated(
@@ -292,10 +281,8 @@ export async function lpbPoolUpdated(
   existingPoolData.startBlockNumber = eventParams.data.start;
   existingPoolData.endBlockNumber = eventParams.data.end;
 
-  const poolsToSave = ctx.batchState.state.lbpPoolIdsToSave;
-  poolsToSave.add(existingPoolData.id);
-  ctx.batchState.state = { lbpPoolIdsToSave: poolsToSave };
+  ctx.batchState.state.lbpPoolIdsToSave.add(existingPoolData.id);
 
   allPools.set(eventParams.pool, existingPoolData);
-  ctx.batchState.state = { lbpAllBatchPools: allPools };
+  ctx.batchState.state.lbpAllBatchPools = allPools;
 }

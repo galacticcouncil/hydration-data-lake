@@ -12,16 +12,14 @@ export async function handleLbpPools(
 ) {
   if (!ctx.appConfig.PROCESS_LBP_POOLS) return;
 
-  ctx.batchState.state = {
-    lbpAllBatchPools: new Map(
-      (
-        await ctx.store.find(LbpPool, {
-          where: {},
-          relations: { account: true, assetA: true, assetB: true },
-        })
-      ).map((p) => [p.id, p])
-    ),
-  };
+  ctx.batchState.state.lbpAllBatchPools = new Map(
+    (
+      await ctx.store.find(LbpPool, {
+        where: {},
+        relations: { account: true, assetA: true, assetB: true },
+      })
+    ).map((p) => [p.id, p])
+  );
 
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.LBP_PoolCreated).values(),
@@ -35,12 +33,10 @@ export async function handleLbpPools(
     await lpbPoolUpdated(ctx, eventData);
   }
 
-
-
   await ctx.store.save(
     [...ctx.batchState.state.lbpAllBatchPools.values()].filter((pool) =>
       ctx.batchState.state.lbpPoolIdsToSave.has(pool.id)
     )
   );
-  ctx.batchState.state = { lbpPoolIdsToSave: new Set() };
+  ctx.batchState.state.lbpPoolIdsToSave = new Set();
 }

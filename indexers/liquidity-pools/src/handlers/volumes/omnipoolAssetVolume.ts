@@ -125,5 +125,4 @@ export async function handleOmnipoolAssetVolumeUpdates({
     omnipoolAssetVolumes.set(newVolume.id, newVolume);
   }
 
-  ctx.batchState.state = { omnipoolAssetVolumes };
 }

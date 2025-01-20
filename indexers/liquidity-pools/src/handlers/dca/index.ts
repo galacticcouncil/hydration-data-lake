@@ -2,10 +2,7 @@ import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
-import {
-  getOrderedListByBlockNumber,
-  getTotalAvailableHeapSizeMb,
-} from '../../utils/helpers';
+import { getOrderedListByBlockNumber } from '../../utils/helpers';
 import {
   handleDcaScheduleCompleted,
   handleDcaScheduleCreated,
@@ -193,9 +190,4 @@ async function prefetchEntities(
         ...prefetchedScheduleExecutions,
       ].map((item) => [item.id, item])
     );
-
-  ctx.batchState.state = {
-    dcaSchedules: state.dcaSchedules,
-    dcaScheduleExecutions: state.dcaScheduleExecutions,
-  };
 }

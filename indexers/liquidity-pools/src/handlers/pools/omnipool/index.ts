@@ -32,5 +32,5 @@ export async function handleOmnipoolAssets(
       ctx.batchState.state.omnipoolAssetIdsToSave.has(asset.id)
     )
   );
-  ctx.batchState.state = { omnipoolAssetIdsToSave: new Set() };
+  ctx.batchState.state.omnipoolAssetIdsToSave = new Set();
 }

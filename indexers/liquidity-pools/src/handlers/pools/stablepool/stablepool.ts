@@ -127,13 +127,6 @@ export async function getOrCreateStablepool({
   newPool.account.stablepool = newPool;
   state.accounts.set(newPool.account.id, newPool.account);
 
-  ctx.batchState.state = {
-    accounts: state.accounts,
-    stablepoolAssetsAllBatch: state.stablepoolAssetsAllBatch,
-    stablepoolAllBatchPools: state.stablepoolAllBatchPools,
-    stablepoolIdsToSave: state.stablepoolIdsToSave,
-  };
-
   return newPool;
 }
 
@@ -167,11 +160,4 @@ export async function stablepoolCreated(
 
   await ctx.store.save(pool.account);
   state.accounts.set(pool.account.id, pool.account);
-
-  ctx.batchState.state = {
-    accounts: state.accounts,
-    stablepoolAssetsAllBatch: state.stablepoolAssetsAllBatch,
-    stablepoolAllBatchPools: state.stablepoolAllBatchPools,
-    stablepoolIdsToSave: state.stablepoolIdsToSave,
-  };
 }

@@ -63,10 +63,4 @@ export async function handleLbpPoolPrices(ctx: ProcessorContext<Store>) {
     lbpAllBatchPools.set(priceItem.pool.id, pool);
     lbpPoolIdsToSave.add(priceItem.pool.id);
   }
-
-  ctx.batchState.state = {
-    lbpPoolHistoricalPrices,
-    lbpAllBatchPools,
-    lbpPoolIdsToSave,
-  };
 }

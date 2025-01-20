@@ -91,8 +91,6 @@ export async function handleAssetVolumeUpdates(
 
   assetVolumesState.set(assetInVolume.id, assetInVolume);
   assetVolumesState.set(assetOutVolume.id, assetOutVolume);
-
-  ctx.batchState.state = { assetVolumes: assetVolumesState };
 }
 
 export function getLastAssetVolumeFromCache(

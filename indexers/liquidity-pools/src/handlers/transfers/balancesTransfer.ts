@@ -29,11 +29,7 @@ export async function handleBalancesTransfer(
     fee: eventMetadata.extrinsic?.fee || BigInt(0),
   });
 
-  const transfers = ctx.batchState.state.transfers;
-  transfers.set(transferEntity.id, transferEntity);
-  ctx.batchState.state = {
-    transfers,
-  };
+  ctx.batchState.state.transfers.set(transferEntity.id, transferEntity);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     participants: [transferEntity.to, transferEntity.from],

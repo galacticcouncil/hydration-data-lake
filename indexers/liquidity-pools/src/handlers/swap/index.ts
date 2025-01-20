@@ -4,7 +4,6 @@ import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../utils/helpers';
 import { handleSupportSwapperEvent } from './swap';
-import { OperationStackManager } from '../../chainActivityTracingManagers/operationStackManager';
 
 export async function handleSupportSwappedEvents(
   ctx: ProcessorContext<Store>,

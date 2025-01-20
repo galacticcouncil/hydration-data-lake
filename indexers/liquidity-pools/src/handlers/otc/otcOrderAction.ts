@@ -172,11 +172,6 @@ export async function handleOtcOrderFilled(
     state.swaps.set(relatedSwap.id, relatedSwap);
   }
 
-  ctx.batchState.state = {
-    otcOrders: state.otcOrders,
-    otcOrderActions: state.otcOrderActions,
-  };
-
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newOrderAction.traceIds,
     participants: [newOrderAction.filler!],
@@ -241,11 +236,6 @@ export async function handleOtcOrderPartiallyFilled(
     relatedSwap.otcOrderFulfilment = newOrderAction;
     state.swaps.set(relatedSwap.id, relatedSwap);
   }
-
-  ctx.batchState.state = {
-    otcOrders: state.otcOrders,
-    otcOrderActions: state.otcOrderActions,
-  };
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newOrderAction.traceIds,

@@ -149,12 +149,10 @@ export async function getParsedEventsData(
       }
     }
 
-    ctx.batchState.state = {
-      relayChainInfo: ctx.batchState.state.relayChainInfo.set(
-        relayChainInfo.parachainBlockNumber,
-        relayChainInfo
-      ),
-    };
+    ctx.batchState.state.relayChainInfo.set(
+      relayChainInfo.parachainBlockNumber,
+      relayChainInfo
+    );
 
     for (const event of block.events) {
       let call: Call | null = null;
@@ -628,13 +626,6 @@ export async function getParsedEventsData(
       }
     }
   }
-
-  ctx.batchState.state = {
-    stablepoolIdsForStoragePrefetch: batchState.stablepoolIdsForStoragePrefetch,
-    omnipoolAssetIdsForStoragePrefetch:
-      batchState.omnipoolAssetIdsForStoragePrefetch,
-    xykPoolIdsForStoragePrefetch: batchState.xykPoolIdsForStoragePrefetch,
-  };
 
   ctx.log.info(
     `Parsed ${totalEventsNumber} events from ${ctx.blocks.length} blocks [${ctx.blocks[0].header.height} / ${ctx.blocks[ctx.blocks.length - 1].header.height}].`

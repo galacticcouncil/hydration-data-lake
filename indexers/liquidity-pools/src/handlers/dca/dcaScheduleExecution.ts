@@ -125,10 +125,6 @@ export async function handleDcaScheduleExecutionPlanned(
   const state = ctx.batchState.state;
 
   state.dcaScheduleExecutions.set(plannedExecution.id, plannedExecution);
-
-  ctx.batchState.state = {
-    dcaScheduleExecutions: state.dcaScheduleExecutions,
-  };
 }
 
 export async function handleDcaTradeExecuted(
@@ -186,10 +182,6 @@ export async function handleDcaTradeExecuted(
     scheduleExecutionEntity.id,
     scheduleExecutionEntity
   );
-
-  ctx.batchState.state = {
-    dcaScheduleExecutions: state.dcaScheduleExecutions,
-  };
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     participants: [scheduleExecutionEntity.schedule.owner],
@@ -281,10 +273,6 @@ export async function handleDcaTradeFailed(
     scheduleExecutionEntity.id,
     scheduleExecutionEntity
   );
-
-  ctx.batchState.state = {
-    dcaScheduleExecutions: state.dcaScheduleExecutions,
-  };
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     participants: [scheduleExecutionEntity.schedule.owner],

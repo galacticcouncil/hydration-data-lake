@@ -14,9 +14,7 @@ export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
     })) ?? null;
 
   if (!!omnipoolEntity) {
-    ctx.batchState.state = {
-      omnipoolEntity,
-    };
+    ctx.batchState.state.omnipoolEntity = omnipoolEntity;
     return;
   }
 
@@ -58,11 +56,9 @@ export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
   omnipoolEntity.account.omnipool = omnipoolEntity;
   await ctx.store.save(omnipoolEntity.account);
 
-  const state = ctx.batchState.state;
-  state.accounts.set(omnipoolEntity.account.id, omnipoolEntity.account);
-
-  ctx.batchState.state = {
-    omnipoolEntity,
-    accounts: state.accounts,
-  };
+  ctx.batchState.state.omnipoolEntity = omnipoolEntity;
+  ctx.batchState.state.accounts.set(
+    omnipoolEntity.account.id,
+    omnipoolEntity.account
+  );
 }

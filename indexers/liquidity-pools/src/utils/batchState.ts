@@ -136,7 +136,7 @@ export type BatchStatePayload = {
 };
 
 export class BatchState {
-  private statePayload: BatchStatePayload = {
+  public state: BatchStatePayload = {
     relayChainInfo: new Map(),
 
     batchBlocks: new Map(),
@@ -203,12 +203,4 @@ export class BatchState {
     otcOrders: new Map(),
     otcOrderActions: new Map(),
   };
-
-  get state(): BatchStatePayload {
-    return { ...this.statePayload };
-  }
-
-  set state(partialState: Partial<BatchStatePayload>) {
-    this.statePayload = { ...this.statePayload, ...partialState };
-  }
 }

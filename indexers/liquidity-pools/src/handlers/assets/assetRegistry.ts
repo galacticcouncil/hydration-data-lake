@@ -61,22 +61,17 @@ export async function getAsset({
   await ctx.store.save(newAsset);
 
   assetsAllBatch.set(newAsset.id, newAsset);
-  ctx.batchState.state = {
-    assetsAllBatch,
-  };
 
   return newAsset;
 }
 
 export async function prefetchAllAssets(ctx: ProcessorContext<Store>) {
-  ctx.batchState.state = {
-    assetsAllBatch: new Map(
-      (await ctx.store.find(Asset, { where: {} })).map((asset) => [
-        asset.id,
-        asset,
-      ])
-    ),
-  };
+  ctx.batchState.state.assetsAllBatch = new Map(
+    (await ctx.store.find(Asset, { where: {} })).map((asset) => [
+      asset.id,
+      asset,
+    ])
+  );
 }
 
 export async function ensureNativeToken(ctx: ProcessorContext<Store>) {
@@ -97,9 +92,6 @@ export async function ensureNativeToken(ctx: ProcessorContext<Store>) {
   await ctx.store.upsert(nativeToken);
   const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
   assetsAllBatch.set(nativeToken.id, nativeToken);
-  ctx.batchState.state = {
-    assetsAllBatch,
-  };
 }
 
 export async function assetRegistered(
@@ -136,10 +128,6 @@ export async function assetRegistered(
   const state = ctx.batchState.state;
   state.assetsAllBatch.set(newAsset.id, newAsset);
   state.assetIdsToSave.add(newAsset.id);
-  ctx.batchState.state = {
-    assetsAllBatch: state.assetsAllBatch,
-    assetIdsToSave: state.assetIdsToSave,
-  };
 }
 
 export async function assetUpdated(
@@ -182,10 +170,6 @@ export async function assetUpdated(
   const state = ctx.batchState.state;
   state.assetsAllBatch.set(asset.id, asset);
   state.assetIdsToSave.add(asset.id);
-  ctx.batchState.state = {
-    assetsAllBatch: state.assetsAllBatch,
-    assetIdsToSave: state.assetIdsToSave,
-  };
 }
 
 export async function actualiseAssets(ctx: ProcessorContext<Store>) {
@@ -235,10 +219,6 @@ export async function actualiseAssets(ctx: ProcessorContext<Store>) {
   }
 
   await ctx.store.upsert(assetsToUpdate);
-
-  ctx.batchState.state = {
-    assetsAllBatch: allExistingAssets,
-  };
 
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     assetsActualisedAtBlock: ctx.blocks[0].header.height,

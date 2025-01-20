@@ -36,9 +36,6 @@ export async function handleAssetRegistry(
     });
 
     existingAssets.forEach((asset) => assetsAllBatch.set(asset.id, asset));
-    ctx.batchState.state = {
-      assetsAllBatch
-    }
   }
 
   for (const eventData of getOrderedListByBlockNumber(updatedAssetsList)) {
@@ -50,7 +47,7 @@ export async function handleAssetRegistry(
       ctx.batchState.state.assetIdsToSave.has(asset.id)
     )
   );
-  ctx.batchState.state = { assetIdsToSave: new Set() };
+  ctx.batchState.state.assetIdsToSave = new Set();
 }
 
 export function initAssetVolume(

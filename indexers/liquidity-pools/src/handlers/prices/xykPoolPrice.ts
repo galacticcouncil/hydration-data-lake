@@ -62,10 +62,4 @@ export async function handleXykPoolPrices(ctx: ProcessorContext<Store>) {
     xykAllBatchPools.set(priceItem.pool.id, pool);
     xykPoolIdsToSave.add(priceItem.pool.id);
   }
-
-  ctx.batchState.state = {
-    xykPoolHistoricalPrices,
-    xykAllBatchPools,
-    xykPoolIdsToSave,
-  };
 }

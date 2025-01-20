@@ -199,8 +199,4 @@ async function prefetchEntities(
         (item) => [item.id, item]
       )
     );
-
-  ctx.batchState.state = {
-    omnipoolAssets: state.omnipoolAssets,
-  };
 }

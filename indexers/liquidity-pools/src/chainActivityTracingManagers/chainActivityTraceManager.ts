@@ -286,14 +286,6 @@ export class ChainActivityTraceManager {
         }
       }
     }
-
-    ctx.batchState.state = {
-      batchExtrinsics: state.batchExtrinsics,
-      batchBlocks: state.batchBlocks,
-      batchCalls: state.batchCalls,
-      batchEvents: state.batchEvents,
-      chainActivityTraces: state.chainActivityTraces,
-    };
   }
 
   static async addParticipantsToActivityTrace({

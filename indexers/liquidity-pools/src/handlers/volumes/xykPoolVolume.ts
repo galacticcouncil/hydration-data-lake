@@ -131,5 +131,4 @@ export async function handleXykPoolVolumeUpdates({
   const newVolume = initXykPoolVolume(swap, pool, currentVolume, oldVolume);
 
   xykPoolVolumes.set(newVolume.id, newVolume);
-  ctx.batchState.state = { xykPoolVolumes };
 }

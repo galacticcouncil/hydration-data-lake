@@ -98,12 +98,6 @@ export async function handleStablepoolVolumeUpdates({
     stablepoolAssetVolumes.set(newVolume.id, newVolume);
     if (liquidityAction) stablepoolAssetVolumeIdsToSave.add(newVolume.id);
   }
-
-  ctx.batchState.state = {
-    stablepoolAssetVolumes,
-    stablepoolAssetVolumeIdsToSave,
-    stablepoolVolumeCollections,
-  };
 }
 
 // TODO improve conditional usage with swap and liquidityAction

@@ -140,11 +140,6 @@ export async function handleStablepoolHistoricalData(
     }
   }
 
-  ctx.batchState.state = {
-    stablepoolAllHistoricalData,
-    stablepoolAssetsAllHistoricalData,
-  };
-
   await ctx.store.save([...stablepoolAllHistoricalData.values()]);
   await ctx.store.save([...stablepoolAssetsAllHistoricalData.values()]);
 }

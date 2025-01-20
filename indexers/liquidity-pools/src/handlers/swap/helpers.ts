@@ -10,10 +10,7 @@ import {
   SwapFillerType,
 } from '../../model';
 import { getOrCreateStablepool } from '../pools/stablepool/stablepool';
-import {
-  AmmSupportSwappedAssetAmount,
-  AmmSupportSwappedFillerType,
-} from '../../parsers/types/events';
+import { AmmSupportSwappedAssetAmount } from '../../parsers/types/events';
 import { getOrCreateLbpPool } from '../pools/lbpPool/lbpPool';
 import {
   handleLbpPoolVolumeUpdates,
