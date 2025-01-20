@@ -10,7 +10,6 @@ import {
   AccountChainActivityTrace,
   TraceEntityType,
   EventGroup,
-  DcaSchedule,
 } from '../model';
 import { getCallOriginParts } from '../utils/helpers';
 import { getAccount } from '../handlers/accounts';

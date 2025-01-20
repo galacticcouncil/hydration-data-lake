@@ -4,7 +4,7 @@ import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../utils/helpers';
 import { handleSupportSwapperEvent } from './swap';
-import { OperationStackManager } from '../../chainActivityTraceManager/operationStackManager';
+import { OperationStackManager } from '../../chainActivityTracingManagers/operationStackManager';
 
 export async function handleSupportSwappedEvents(
   ctx: ProcessorContext<Store>,
@@ -20,7 +20,7 @@ export async function handleSupportSwappedEvents(
     await handleSupportSwapperEvent(ctx, eventData);
   }
 
-  await OperationStackManager.saveOperationStackEntities(ctx);
+  // await OperationStackManager.saveOperationStackEntities(ctx);
 
   await ctx.store.save([...ctx.batchState.state.swaps.values()]);
   await ctx.store.save([...ctx.batchState.state.swapFees.values()]);

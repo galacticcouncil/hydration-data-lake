@@ -25,7 +25,7 @@ import { handleLbpPools } from './handlers/pools/lbpPool';
 import { ProcessorStatusManager } from './processorStatusManager';
 import { ensurePoolsDestroyedStatus } from './handlers/pools/support';
 import { saveAllBatchAccounts } from './handlers/accounts';
-import { ChainActivityTraceManager } from './chainActivityTraceManager';
+import { ChainActivityTraceManager } from './chainActivityTracingManagers';
 import { handleDcaSchedules, saveDcaEntities } from './handlers/dca';
 import { printV8MemoryHeap } from './utils/helpers';
 import { handleOtcOrders } from './handlers/otc';

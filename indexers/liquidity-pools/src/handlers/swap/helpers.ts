@@ -23,7 +23,7 @@ import {
 import { handleAssetVolumeUpdates } from '../assets/volume';
 import { getOrCreateXykPool } from '../pools/xykPool/xykPool';
 import { handleStablepoolVolumeUpdates } from '../volumes/stablepoolVolume';
-import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { SwapFillerContextDetails } from '../../utils/types';
 
 export async function getFillerContextData(

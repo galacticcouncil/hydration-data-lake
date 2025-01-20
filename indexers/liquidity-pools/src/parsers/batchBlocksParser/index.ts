@@ -32,7 +32,7 @@ import {
   events as hydrationPaseoNextEvents,
 } from '../chains/hydration-paseo-next/typegenTypes';
 
-import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { EventDataParserHelper } from './eventDataParserHelper';
 import { ChainName } from '../../utils/types';
 

@@ -18,7 +18,7 @@ import { DcaScheduledEventParams } from '../../parsers/types/events';
 import { DcaScheduleCallArgs } from '../../parsers/types/calls';
 import { FindOptionsRelations } from 'typeorm';
 import parsers from '../../parsers';
-import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 
 export async function createDcaSchedule({
   ctx,

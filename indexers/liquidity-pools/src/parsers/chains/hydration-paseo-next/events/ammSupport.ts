@@ -7,9 +7,9 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 import {
   SwapFillerType,
-  SwappedExecutionTypeKind,
   TradeOperationType,
 } from '../../../../model';
+import { SwappedExecutionTypeKind } from '../../../../utils/types';
 
 function parseSwappedParams(event: Event): AmmSupportSwappedEventParams {
   if (events.ammSupport.swapped.v278.is(event)) {

@@ -7,11 +7,11 @@ import {
   DcaScheduleExecutionStatus,
   DispatchError,
   Swap,
-  SwappedExecutionTypeKind,
 } from '../../model';
 import { FindOptionsRelations } from 'typeorm';
 import { getDcaSchedule } from './dcaSchedule';
-import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { SwappedExecutionTypeKind } from '../../utils/types';
 
 export async function getDcaScheduleExecutionAction({
   ctx,

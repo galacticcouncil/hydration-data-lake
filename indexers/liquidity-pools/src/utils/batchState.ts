@@ -40,7 +40,6 @@ import {
   DcaScheduleExecutionAction,
   OtcOrder,
   OtcOrderAction,
-  OperationStack,
   ChainActivityTraceRelation,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
@@ -59,7 +58,7 @@ export type BatchStatePayload = {
   chainActivityTraces: Map<string, ChainActivityTrace>;
   chainActivityTraceRelations: Map<string, ChainActivityTraceRelation>;
   accountChainActivityTraces: Map<string, AccountChainActivityTrace>;
-  operationStacks: Map<string, OperationStack>;
+  // operationStacks: Map<string, OperationStack>;
 
   accounts: Map<string, Account>;
   transfers: Map<string, Transfer>;
@@ -147,7 +146,7 @@ export class BatchState {
     chainActivityTraces: new Map(),
     chainActivityTraceRelations: new Map(),
     accountChainActivityTraces: new Map(),
-    operationStacks: new Map(),
+    // operationStacks: new Map(),
 
     accounts: new Map(),
     transfers: new Map(),

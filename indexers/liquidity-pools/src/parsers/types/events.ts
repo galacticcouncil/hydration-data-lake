@@ -2,9 +2,9 @@ import { DispatchError, PoolData } from './common';
 import {
   AssetType,
   SwapFillerType,
-  SwappedExecutionTypeKind,
   TradeOperationType,
 } from '../../model';
+import { SwappedExecutionTypeKind } from '../../utils/types';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',

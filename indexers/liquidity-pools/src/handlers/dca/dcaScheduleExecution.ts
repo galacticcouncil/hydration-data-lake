@@ -13,7 +13,7 @@ import {
 } from '../../model';
 import { getDcaSchedule } from './dcaSchedule';
 import { FindOptionsRelations } from 'typeorm';
-import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { processDcaScheduleExecutionAction } from './dcaScheduleExecutionAction';
 
 export async function getDcaScheduleExecution({

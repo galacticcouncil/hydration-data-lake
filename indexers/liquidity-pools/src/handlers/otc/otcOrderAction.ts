@@ -13,7 +13,7 @@ import {
   Swap,
 } from '../../model';
 import { getOtcOrder } from './otcOrder';
-import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { getAccount } from '../accounts';
 import { FindOptionsRelations } from 'typeorm';
 

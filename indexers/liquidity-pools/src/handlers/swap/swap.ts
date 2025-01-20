@@ -12,9 +12,9 @@ import {
 import { getAccount } from '../accounts';
 import { getAsset } from '../assets/assetRegistry';
 import { GetNewSwapResponse } from '../../utils/types';
-import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { AmmSupportSwappedData } from '../../parsers/batchBlocksParser/types';
-import { OperationStackManager } from '../../chainActivityTraceManager/operationStackManager';
+import { OperationStackManager } from '../../chainActivityTracingManagers/operationStackManager';
 import { FindOptionsRelations, In } from 'typeorm';
 import {
   AmmSupportSwappedAssetAmount,
@@ -338,9 +338,14 @@ export async function handleSupportSwapperEvent(
     callData: { traceId: callTraceId },
   } = eventCallData;
 
-  const newOperationStackEntity = OperationStackManager.getNewOperationStack({
-    stack: eventParams.operationStack,
-  });
+  // const newOperationStackEntity = OperationStackManager.getNewOperationStack({
+  //   stack: eventParams.operationStack,
+  // });
+
+  const newOperationStackId =
+    eventParams.operationStack && eventParams.operationStack.length > 0
+      ? OperationStackManager.operationStackToString(eventParams.operationStack)
+      : undefined;
 
   const chainActivityTraceId = ChainActivityTraceManager.getTraceIdRoot(
     callTraceId ?? eventMetadata.traceId
@@ -355,10 +360,10 @@ export async function handleSupportSwapperEvent(
       fetchFromDb: true,
     });
 
-  if (newOperationStackEntity)
+  if (newOperationStackId)
     await ChainActivityTraceManager.addOperationIdToActivityTrace({
       traceId: callTraceId ?? eventMetadata.traceId,
-      operationId: newOperationStackEntity.id,
+      operationId: newOperationStackId,
       ctx,
     });
 
@@ -367,7 +372,7 @@ export async function handleSupportSwapperEvent(
     blockHeader: eventMetadata.blockHeader,
     data: {
       traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
-      operationId: newOperationStackEntity?.id,
+      operationId: newOperationStackId,
       eventId: eventMetadata.id,
       extrinsicHash: eventMetadata.extrinsic?.hash || '',
       eventIndex: eventMetadata.indexInBlock,
@@ -391,17 +396,17 @@ export async function handleSupportSwapperEvent(
   if (fillerContextData)
     state.swapFillerContexts.set(newSwapDetails.swap.id, fillerContextData);
 
-  if (newOperationStackEntity)
-    state.operationStacks.set(
-      newOperationStackEntity.id,
-      newOperationStackEntity
-    );
+  // if (newOperationStackEntity)
+  //   state.operationStacks.set(
+  //     newOperationStackEntity.id,
+  //     newOperationStackEntity
+  //   );
 
   if (chainActivityTrace)
     state.chainActivityTraces.set(chainActivityTrace.id, chainActivityTrace);
 
   ctx.batchState.state = {
-    operationStacks: state.operationStacks,
+    // operationStacks: state.operationStacks,
     chainActivityTraces: state.chainActivityTraces,
     swapFillerContexts: state.swapFillerContexts,
   };

@@ -10,7 +10,7 @@ import {
 import { OtcOrderPlacedEventParams } from '../../parsers/types/events';
 import { FindOptionsRelations } from 'typeorm';
 import parsers from '../../parsers';
-import { ChainActivityTraceManager } from '../../chainActivityTraceManager';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { getNewOrderAction } from './otcOrderAction';
 
 export async function createOtcOrder({
