@@ -144,6 +144,9 @@ export class AppConfig {
   @IsString()
   readonly STORAGE_DICTIONARY_STABLEPOOL_URL: string = '';
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly UNIFIED_EVENTS_GENESIS_SPEC_VERSION: number = -1;
+
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       AppConfig.instance = new AppConfig();

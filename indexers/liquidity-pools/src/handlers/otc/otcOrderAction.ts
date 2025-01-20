@@ -145,7 +145,7 @@ export async function handleOtcOrderFilled(
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
-    filler: await getAccount(ctx, eventParams.who),
+    filler: await getAccount({ ctx, id: eventParams.who }),
     paraChainBlockHeight: eventMetadata.blockHeader.height,
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
@@ -216,7 +216,7 @@ export async function handleOtcOrderPartiallyFilled(
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
-    filler: await getAccount(ctx, eventParams.who),
+    filler: await getAccount({ ctx, id: eventParams.who }),
     paraChainBlockHeight: eventMetadata.blockHeader.height,
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)

@@ -6,6 +6,8 @@ import { join } from 'path';
 import { hexToString } from '@polkadot/util';
 import v8 from 'v8';
 import { SwapFillerType } from '../model';
+import { ProcessorContext } from '../processor';
+import { Store } from '@subsquid/typeorm-store';
 
 const appConfig = AppConfig.getInstance();
 
@@ -106,4 +108,12 @@ export function printV8MemoryHeap() {
   console.log(
     `Heap size limit: ${heapStatistics.heap_size_limit / 1024 / 1024} MB`
   );
+}
+
+export function isUnifiedEventsSupportSpecVersion(
+  version: number,
+  supportGenesisVersion: number
+): boolean {
+  if (!supportGenesisVersion || supportGenesisVersion < 0) return true;
+  return version < supportGenesisVersion;
 }

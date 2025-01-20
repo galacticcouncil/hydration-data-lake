@@ -1,6 +1,6 @@
 import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Omnipool, OmnipoolAsset } from '../../../model';
+import { AccountType, Omnipool, OmnipoolAsset } from '../../../model';
 import { getAccount } from '../../accounts';
 import { getAsset } from '../../assets/assetRegistry';
 
@@ -31,10 +31,12 @@ export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
 
   omnipoolEntity = new Omnipool();
   omnipoolEntity.id = ctx.appConfig.OMNIPOOL_ADDRESS;
-  omnipoolEntity.account = await getAccount(
+  omnipoolEntity.account = await getAccount({
     ctx,
-    ctx.appConfig.OMNIPOOL_ADDRESS
-  );
+    id: ctx.appConfig.OMNIPOOL_ADDRESS,
+    accountType: AccountType.Omnipool,
+    ensureAccountType: true,
+  });
   omnipoolEntity.createdAt = new Date();
   omnipoolEntity.createdAtParaBlock = ctx.blocks[0].header.height;
   omnipoolEntity.isDestroyed = false;

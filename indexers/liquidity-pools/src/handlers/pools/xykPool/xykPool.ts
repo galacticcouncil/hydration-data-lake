@@ -1,6 +1,6 @@
 import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { LbpPool, XykPool } from '../../../model';
+import { AccountType, XykPool } from '../../../model';
 import { getAccount } from '../../accounts';
 import {
   XykPoolCreatedData,
@@ -86,7 +86,12 @@ export async function createXykPool({
 
   const newPool = new XykPool({
     id: poolAddress,
-    account: await getAccount(ctx, poolAddress),
+    account: await getAccount({
+      ctx,
+      id: poolAddress,
+      accountType: AccountType.XYK,
+      ensureAccountType: true,
+    }),
     assetA: assetAEntity,
     assetB: assetBEntity,
     shareTokenId: shareTokenIdEnsured,

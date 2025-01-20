@@ -61,7 +61,7 @@ export async function createDcaSchedule({
   const newSchedule = new DcaSchedule({
     id: id.toString(),
     startExecutionBlock: startExecutionBlock ?? null,
-    owner: await getAccount(ctx, owner),
+    owner: await getAccount({ ctx, id: owner }),
     period: period ?? null,
     totalAmount: totalAmount ?? null,
     slippage: slippage ?? null,

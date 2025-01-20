@@ -2,7 +2,10 @@ import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
-import { getOrderedListByBlockNumber } from '../../../utils/helpers';
+import {
+  getOrderedListByBlockNumber,
+  isUnifiedEventsSupportSpecVersion,
+} from '../../../utils/helpers';
 import {
   StableswapBuyExecutedData,
   StableswapLiquidityAddedData,
@@ -28,12 +31,22 @@ export async function handleStablepoolOperations(
       ...parsedEvents
         .getSectionByEventName(EventName.Stableswap_BuyExecuted)
         .values(),
-    ].filter((event) => event.eventData.metadata.blockHeader.specVersion < 276),
+    ].filter((event) =>
+      isUnifiedEventsSupportSpecVersion(
+        event.eventData.metadata.blockHeader.specVersion,
+        ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+      )
+    ),
     ...[
       ...parsedEvents
         .getSectionByEventName(EventName.Stableswap_SellExecuted)
         .values(),
-    ].filter((event) => event.eventData.metadata.blockHeader.specVersion < 276),
+    ].filter((event) =>
+      isUnifiedEventsSupportSpecVersion(
+        event.eventData.metadata.blockHeader.specVersion,
+        ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+      )
+    ),
     ...parsedEvents
       .getSectionByEventName(EventName.Stableswap_LiquidityAdded)
       .values(),

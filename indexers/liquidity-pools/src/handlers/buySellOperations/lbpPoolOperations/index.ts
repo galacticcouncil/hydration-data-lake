@@ -2,7 +2,10 @@ import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
-import { getOrderedListByBlockNumber } from '../../../utils/helpers';
+import {
+  getOrderedListByBlockNumber,
+  isUnifiedEventsSupportSpecVersion,
+} from '../../../utils/helpers';
 import { lpbBuyExecuted, lpbSellExecuted } from './lbpPoolOperation';
 import {
   LbpBuyExecutedData,
@@ -20,8 +23,11 @@ export async function handleLbpPoolOperations(
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.LBP_BuyExecuted).values(),
     ...parsedEvents.getSectionByEventName(EventName.LBP_SellExecuted).values(),
-  ]).filter(
-    (event) => event.eventData.metadata.blockHeader.specVersion < 276
+  ]).filter((event) =>
+    isUnifiedEventsSupportSpecVersion(
+      event.eventData.metadata.blockHeader.specVersion,
+      ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+    )
   )) {
     switch (eventData.eventData.name) {
       case EventName.LBP_BuyExecuted:

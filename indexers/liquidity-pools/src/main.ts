@@ -29,7 +29,6 @@ import { ChainActivityTraceManager } from './chainActivityTraceManager';
 import { handleDcaSchedules, saveDcaEntities } from './handlers/dca';
 import { printV8MemoryHeap } from './utils/helpers';
 import { handleOtcOrders } from './handlers/otc';
-import { OperationStackManager } from './chainActivityTraceManager/operationStackManager';
 import { handleSupportSwappedEvents } from './handlers/swap';
 
 console.log(
@@ -61,117 +60,117 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
 
-  console.time('prefetchAllAssets');
+  // console.time('prefetchAllAssets');
   await prefetchAllAssets(ctxWithBatchState as ProcessorContext<Store>);
-  console.timeEnd('prefetchAllAssets');
+  // console.timeEnd('prefetchAllAssets');
 
   await ensureNativeToken(ctxWithBatchState as ProcessorContext<Store>);
 
-  console.time('actualiseAssets');
+  // console.time('actualiseAssets');
   await actualiseAssets(ctxWithBatchState as ProcessorContext<Store>);
-  console.timeEnd('actualiseAssets');
+  // console.timeEnd('actualiseAssets');
 
-  console.time('handleAssetRegistry');
+  // console.time('handleAssetRegistry');
   await handleAssetRegistry(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleAssetRegistry');
+  // console.timeEnd('handleAssetRegistry');
 
-  console.time('handleLbpPools');
+  // console.time('handleLbpPools');
   await handleLbpPools(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleLbpPools');
+  // console.timeEnd('handleLbpPools');
 
-  console.time('handleXykPools');
+  // console.time('handleXykPools');
   await handleXykPools(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleXykPools');
+  // console.timeEnd('handleXykPools');
 
-  console.time('handleOmnipoolAssets');
+  // console.time('handleOmnipoolAssets');
   await ensureOmnipool(ctxWithBatchState as ProcessorContext<Store>);
   await handleOmnipoolAssets(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleOmnipoolAssets');
+  // console.timeEnd('handleOmnipoolAssets');
 
-  console.time('handleStablepools');
+  // console.time('handleStablepools');
   await handleStablepools(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleStablepools');
+  // console.timeEnd('handleStablepools');
 
-  console.time('handleSupportSwappedEvents');
+  // console.time('handleSupportSwappedEvents');
   await handleSupportSwappedEvents(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleSupportSwappedEvents');
+  // console.timeEnd('handleSupportSwappedEvents');
 
-  console.time('handleBuySellOperations');
+  // console.time('handleBuySellOperations');
   await handleBuySellOperations(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleBuySellOperations');
+  // console.timeEnd('handleBuySellOperations');
 
-  console.time('handleDcaSchedules');
+  // console.time('handleDcaSchedules');
   await handleDcaSchedules(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleDcaSchedules');
+  // console.timeEnd('handleDcaSchedules');
 
-  console.time('handleOtcOrders');
+  // console.time('handleOtcOrders');
   await handleOtcOrders(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleOtcOrders');
+  // console.timeEnd('handleOtcOrders');
 
   // if (ctx.isHead)
   //   await handlePoolPrices(ctxWithBatchState as ProcessorContext<Store>);
 
-  console.time('handleTransfers');
+  // console.time('handleTransfers');
   await handleTransfers(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleTransfers');
+  // console.timeEnd('handleTransfers');
 
-  console.time('handleStablepoolHistoricalData');
+  // console.time('handleStablepoolHistoricalData');
   await handleStablepoolHistoricalData(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleStablepoolHistoricalData');
+  // console.timeEnd('handleStablepoolHistoricalData');
 
-  console.time('handleOmnipoolAssetHistoricalData');
+  // console.time('handleOmnipoolAssetHistoricalData');
   await handleOmnipoolAssetHistoricalData(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleOmnipoolAssetHistoricalData');
+  // console.timeEnd('handleOmnipoolAssetHistoricalData');
 
-  console.time('handleXykPoolHistoricalData');
+  // console.time('handleXykPoolHistoricalData');
   await handleXykPoolHistoricalData(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleXykPoolHistoricalData');
+  // console.timeEnd('handleXykPoolHistoricalData');
 
-  console.time('handleLbpPoolHistoricalData');
+  // console.time('handleLbpPoolHistoricalData');
   await handleLbpPoolHistoricalData(
     ctxWithBatchState as ProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleLbpPoolHistoricalData');
+  // console.timeEnd('handleLbpPoolHistoricalData');
 
   await ensurePoolsDestroyedStatus(
     ctxWithBatchState as ProcessorContext<Store>

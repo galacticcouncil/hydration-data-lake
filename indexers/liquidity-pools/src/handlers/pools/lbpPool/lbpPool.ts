@@ -1,6 +1,6 @@
 import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { LbpPool } from '../../../model';
+import { AccountType, LbpPool } from '../../../model';
 import { getAccount } from '../../accounts';
 import {
   LbpPoolCreatedData,
@@ -9,7 +9,6 @@ import {
 import { getAssetFreeBalance } from '../../assets/balances';
 import { getAsset } from '../../assets/assetRegistry';
 import parsers from '../../../parsers';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
 
 export async function createLbpPool({
   ctx,
@@ -86,17 +85,22 @@ export async function createLbpPool({
 
   const newPool = new LbpPool({
     id: poolAddress,
-    account: await getAccount(ctx, poolAddress),
+    account: await getAccount({
+      ctx,
+      id: poolAddress,
+      accountType: AccountType.LBP,
+      ensureAccountType: true,
+    }),
     assetA: assetAEntity,
     assetB: assetBEntity,
     assetABalance: newPoolsAssetBalances.assetABalance,
     assetBBalance: newPoolsAssetBalances.assetBBalance,
     createdAt: new Date(blockHeader.timestamp ?? Date.now()),
     createdAtParaBlock: blockHeader.height,
-    owner: await getAccount(ctx, ownerAddress),
+    owner: await getAccount({ ctx, id: ownerAddress }),
     startBlockNumber: startBlockNumber ?? null,
     endBlockNumber: endBlockNumber ?? null,
-    feeCollector: await getAccount(ctx, feeCollectorAddress),
+    feeCollector: await getAccount({ ctx, id: feeCollectorAddress }),
     fee: fee,
     initialWeight: initialWeight,
     finalWeight: finalWeight,
@@ -138,7 +142,12 @@ export async function getOrCreateLbpPool({
     },
   });
 
-  if (pool || (!pool && !ensure)) return pool ?? null;
+  if (pool) {
+    ctx.batchState.state.lbpAllBatchPools.set(pool.id, pool);
+    return pool;
+  }
+
+  if (!pool && !ensure) return pool ?? null;
 
   /**
    * Following logic below is implemented and will be used only if indexer
@@ -269,11 +278,14 @@ export async function lpbPoolUpdated(
 
   if (!existingPoolData) return;
 
-  existingPoolData.owner = await getAccount(ctx, eventParams.data.owner);
-  existingPoolData.feeCollector = await getAccount(
+  existingPoolData.owner = await getAccount({
     ctx,
-    eventParams.data.feeCollector
-  );
+    id: eventParams.data.owner,
+  });
+  existingPoolData.feeCollector = await getAccount({
+    ctx,
+    id: eventParams.data.feeCollector,
+  });
   existingPoolData.initialWeight = eventParams.data.initialWeight;
   existingPoolData.finalWeight = eventParams.data.finalWeight;
   existingPoolData.repayTarget = eventParams.data.repayTarget;

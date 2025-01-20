@@ -4,6 +4,7 @@ import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser
 import { EventName } from '../../../parsers/types/events';
 import {
   getOrderedListByBlockNumber,
+  isUnifiedEventsSupportSpecVersion,
 } from '../../../utils/helpers';
 import {
   OmnipoolBuyExecutedData,
@@ -35,8 +36,11 @@ export async function handleOmnioolOperations(
     ...parsedEvents
       .getSectionByEventName(EventName.Omnipool_SellExecuted)
       .values(),
-  ]).filter(
-    (event) => event.eventData.metadata.blockHeader.specVersion < 276
+  ]).filter((event) =>
+    isUnifiedEventsSupportSpecVersion(
+      event.eventData.metadata.blockHeader.specVersion,
+      ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+    )
   )) {
     await omnipoolBuySellExecuted(ctx, eventData);
   }

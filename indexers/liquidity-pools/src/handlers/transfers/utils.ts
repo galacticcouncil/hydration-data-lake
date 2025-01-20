@@ -22,8 +22,8 @@ export async function initTransfer(
 
   return new Transfer({
     paraChainBlockHeight: blockNumber,
-    from: await getAccount(ctx, from),
-    to: await getAccount(ctx, to),
+    from: await getAccount({ ctx, id: from }),
+    to: await getAccount({ ctx, id: to }),
     txFee: fee,
     id,
     traceIds,

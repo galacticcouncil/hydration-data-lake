@@ -176,10 +176,10 @@ export class ChainActivityTraceManager {
           rootCall.call.originValueKind === 'Signed' &&
           rootCall.call.originValue
         ) {
-          activityTraceEntity.originator = await getAccount(
+          activityTraceEntity.originator = await getAccount({
             ctx,
-            rootCall.call.originValue
-          );
+            id: rootCall.call.originValue,
+          });
           activityTraceEntity.associatedAccountsFlat = [
             ...new Set([
               ...(activityTraceEntity.associatedAccountsFlat || []),

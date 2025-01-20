@@ -1,11 +1,11 @@
 import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, Stablepool, StablepoolAsset } from '../../../model';
+import { AccountType, Stablepool, StablepoolAsset } from '../../../model';
 import { getAccount } from '../../accounts';
 import { StableswapPoolCreatedData } from '../../../parsers/batchBlocksParser/types';
 
 import { StableMath } from '@galacticcouncil/sdk';
-import { blake2AsHex, encodeAddress } from '@polkadot/util-crypto';
+import { blake2AsHex } from '@polkadot/util-crypto';
 import { isNotNullOrUndefined } from '../../../utils/helpers';
 import { getAsset } from '../../assets/assetRegistry';
 import { getAssetFreeBalance } from '../../assets/balances';
@@ -24,10 +24,12 @@ export async function getNewStablepoolWithAssets({
 }) {
   const newPool = new Stablepool({
     id: `${poolId}`,
-    account: await getAccount(
+    account: await getAccount({
       ctx,
-      blake2AsHex(StableMath.getPoolAddress(+poolId))
-    ),
+      id: blake2AsHex(StableMath.getPoolAddress(+poolId)),
+      accountType: AccountType.Stablepool,
+      ensureAccountType: true,
+    }),
     createdAt: new Date(blockHeader.timestamp ?? Date.now()),
     createdAtParaBlock: blockHeader.height,
     isDestroyed: false,
@@ -117,12 +119,12 @@ export async function getOrCreateStablepool({
     state.stablepoolAssetsAllBatch.set(+asset.asset.id, asset);
     await ctx.store.upsert(asset);
   }
+  await ctx.store.save(newPool.account);
 
   state.stablepoolIdsToSave.add(newPool.id);
-
   state.stablepoolAllBatchPools.set(newPool.id, newPool);
 
-  await ctx.store.save(newPool.account);
+  newPool.account.stablepool = newPool;
   state.accounts.set(newPool.account.id, newPool.account);
 
   ctx.batchState.state = {

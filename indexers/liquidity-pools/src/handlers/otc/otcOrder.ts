@@ -52,7 +52,7 @@ export async function createOtcOrder({
 
   const newOrder = new OtcOrder({
     id: orderId.toString(),
-    owner: await getAccount(ctx, ownerAddress),
+    owner: await getAccount({ ctx, id: ownerAddress }),
     assetIn,
     assetOut,
     amountIn: amountIn,

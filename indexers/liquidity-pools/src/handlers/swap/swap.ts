@@ -119,8 +119,8 @@ export async function getNewSwap({
     traceIds,
     operationId,
     swapIndex,
-    swapper: await getAccount(ctx, swapperId),
-    filler: await getAccount(ctx, fillerId),
+    swapper: await getAccount({ ctx, id: swapperId }),
+    filler: await getAccount({ ctx, id: fillerId }),
     fillerType,
     operationType,
     eventIndex,
@@ -143,7 +143,7 @@ export async function getNewSwap({
     });
     if (!asset) throw Error(`Asset ${fee.assetId} is not existing.`);
 
-    const recipient = await getAccount(ctx, fee.recipientId);
+    const recipient = await getAccount({ ctx, id: fee.recipientId });
     if (!recipient) throw Error(`Account ${fee.recipientId} is not existing.`);
 
     feeEntities.push(
@@ -248,33 +248,33 @@ export async function handleSwap({
     timestamp: number;
   };
 }): Promise<GetNewSwapResponse> {
-  const eventTraceId = traceIds.find((tId) =>
-    ChainActivityTraceManager.isEventTraceId(tId)
-  );
-
-  if (!eventTraceId)
-    throw Error(`Swap with eventId ${eventId} does not contain eventTraceId`);
-
-  const existingSwap = await getSwap({
-    eventTraceId,
-    ctx,
-    relations: {
-      swapper: true,
-      filler: true,
-      fees: { asset: true, recipient: true },
-      inputs: { asset: true },
-      outputs: { asset: true },
-    },
-  });
-
-  if (existingSwap) {
-    return {
-      swap: existingSwap,
-      swapFees: existingSwap.fees,
-      swapOutputs: existingSwap.outputs,
-      swapInputs: existingSwap.inputs,
-    };
-  }
+  // const eventTraceId = traceIds.find((tId) =>
+  //   ChainActivityTraceManager.isEventTraceId(tId)
+  // );
+  //
+  // if (!eventTraceId)
+  //   throw Error(`Swap with eventId ${eventId} does not contain eventTraceId`);
+  //
+  // const existingSwap = await getSwap({
+  //   eventTraceId,
+  //   ctx,
+  //   relations: {
+  //     swapper: true,
+  //     filler: true,
+  //     fees: { asset: true, recipient: true },
+  //     inputs: { asset: true },
+  //     outputs: { asset: true },
+  //   },
+  // });
+  //
+  // if (existingSwap) {
+  //   return {
+  //     swap: existingSwap,
+  //     swapFees: existingSwap.fees,
+  //     swapOutputs: existingSwap.outputs,
+  //     swapInputs: existingSwap.inputs,
+  //   };
+  // }
 
   const swapData = await getNewSwap({
     ctx,

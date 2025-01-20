@@ -77,7 +77,7 @@ export async function handleLbpPoolHistoricalData(
           assetABalance: assetsData.get(assetAEntity.id)?.free ?? BigInt(0),
           assetBBalance: assetsData.get(assetBEntity.id)?.free ?? BigInt(0),
 
-          owner: await getAccount(ctx, poolStorageData.owner),
+          owner: await getAccount({ ctx, id: poolStorageData.owner }),
           start: poolStorageData.start,
           end: poolStorageData.end,
           initialWeight: poolStorageData.initialWeight,
@@ -85,7 +85,7 @@ export async function handleLbpPoolHistoricalData(
           weightCurve: poolStorageData.weightCurve.__kind,
           fee: poolStorageData.fee,
           feeCollector: poolStorageData.feeCollector
-            ? await getAccount(ctx, poolStorageData.feeCollector)
+            ? await getAccount({ ctx, id: poolStorageData.feeCollector })
             : null,
           repayTarget: poolStorageData.repayTarget,
 
