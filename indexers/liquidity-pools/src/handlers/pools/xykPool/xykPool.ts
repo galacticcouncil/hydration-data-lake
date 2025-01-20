@@ -84,6 +84,15 @@ export async function createXykPool({
   }
   if (!shareTokenIdEnsured) return null;
 
+  const sharedTokenEntity = await getAsset({
+    ctx,
+    id: shareTokenIdEnsured,
+    ensure: true,
+    blockHeader: blockHeader,
+  });
+
+  if (!sharedTokenEntity) return null;
+
   const newPool = new XykPool({
     id: poolAddress,
     account: await getAccount({
@@ -94,7 +103,7 @@ export async function createXykPool({
     }),
     assetA: assetAEntity,
     assetB: assetBEntity,
-    shareTokenId: shareTokenIdEnsured,
+    shareToken: sharedTokenEntity,
     assetABalance: newPoolsAssetBalances.assetABalance,
     assetBBalance: newPoolsAssetBalances.assetBBalance,
     initialSharesAmount: initialSharesAmount ?? BigInt(0),

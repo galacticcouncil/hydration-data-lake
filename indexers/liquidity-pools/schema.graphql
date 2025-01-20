@@ -461,7 +461,7 @@ type XykPool @entity {
   account: Account!
   assetA: Asset!
   assetB: Asset!
-  shareTokenId: Int!
+  shareToken: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
   initialSharesAmount: BigInt!

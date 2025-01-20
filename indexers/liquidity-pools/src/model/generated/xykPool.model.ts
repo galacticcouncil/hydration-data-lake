@@ -27,8 +27,9 @@ export class XykPool {
   @ManyToOne_(() => Asset, {nullable: true})
   assetB!: Asset
 
-  @Column_("int4", {nullable: false})
-  shareTokenId!: number
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  shareToken!: Asset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetABalance!: bigint
