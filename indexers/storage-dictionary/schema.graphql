@@ -1,0 +1,157 @@
+# ======================================================================================================================
+# *** Common entities and types ***
+# ======================================================================================================================
+
+type SubProcessorStatus @entity {
+  "sub_processor_schema_name"
+  id: ID!
+  fromBlock: Int!
+  toBlock: Int!
+  height: Int!
+  assetsActualisedAtBlock: Int
+}
+
+type AccountBalances {
+  free: BigInt!
+  reserved: BigInt!
+  miscFrozen: BigInt
+  feeFrozen: BigInt
+  frozen: BigInt
+  flags: BigInt
+}
+
+type Tradability {
+  bits: Int!
+}
+
+type OmnipoolAssetState {
+  hubReserve: BigInt!
+  shares: BigInt!
+  protocolShares: BigInt!
+  cap: BigInt!
+  tradable: Tradability
+}
+
+enum AssetType {
+  Bond
+  External
+  StableSwap
+  Token
+  XYK
+  Erc20
+}
+
+type Asset @entity {
+  "Asset ID"
+  id: ID!
+  assetType: AssetType!
+  name: String
+  symbol: String
+  decimals: Int
+  xcmRateLimit: BigInt
+  isSufficient: Boolean!
+  existentialDeposit: BigInt!
+}
+
+# ======================================================================================================================
+# *** LBP Pool ***
+# ======================================================================================================================
+
+type LbpPool @entity {
+  "xykPoolAddress-paraChainBlockHeight"
+  id: ID!
+  "XYK pool address"
+  poolAddress: String! @index
+  assetAId: Int! @index
+  assetBId: Int! @index
+  owner: String!
+  start: Int
+  end: Int
+  initialWeight: Int!
+  finalWeight: Int!
+  weightCurve: String!
+  fee: [Int!]!
+  feeCollector: String
+  repayTarget: BigInt!
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
+  assets: [LbpPoolAssetsData!]! @derivedFrom(field: "pool")
+}
+type LbpPoolAssetsData @entity {
+  "xykPoolAddress-assetId-paraChainBlockHeight"
+  id: ID!
+  pool: LbpPool!
+  assetId: Int! @index
+  balances: AccountBalances!
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
+}
+
+# ======================================================================================================================
+# *** XYK Pool ***
+# ======================================================================================================================
+
+type XykPool @entity {
+  "xykPoolAddress-paraChainBlockHeight"
+  id: ID!
+  "XYK pool address"
+  poolAddress: String! @index
+  assetAId: Int! @index
+  assetBId: Int! @index
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
+  assets: [XykPoolAssetsData!]! @derivedFrom(field: "pool")
+}
+type XykPoolAssetsData @entity {
+  "xykPoolAddress-assetId-paraChainBlockHeight"
+  id: ID!
+  pool: XykPool!
+  assetId: Int! @index
+  balances: AccountBalances!
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
+}
+
+# ======================================================================================================================
+# *** Omnipool ***
+# ======================================================================================================================
+
+type OmnipoolAssetData @entity {
+  "omnipooAddress-assetId-paraChainBlockHeight"
+  id: ID!
+  poolAddress: String! @index
+  assetId: Int! @index
+  balances: AccountBalances!
+  assetState: OmnipoolAssetState!
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
+}
+
+# ======================================================================================================================
+# *** Stablepool ***
+# ======================================================================================================================
+
+type Stablepool @entity {
+  "stablepoolId-paraChainBlockHeight"
+  id: ID!
+  poolId: Int! @index
+  poolAddress: String! @index
+  initialAmplification: Int!
+  finalAmplification: Int!
+  initialBlock: Int!
+  finalBlock: Int!
+  fee: Int!
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
+  assets: [StablepoolAssetData!]! @derivedFrom(field: "pool")
+}
+
+type StablepoolAssetData @entity {
+  "stablepoolId-assetId-paraChainBlockHeight"
+  id: ID!
+  pool: Stablepool!
+  assetId: Int!
+  balances: AccountBalances!
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
+}

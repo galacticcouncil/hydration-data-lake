@@ -1,0 +1,84 @@
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
+import * as marshal from "./marshal"
+import {Account} from "./account.model"
+import {SwapFillerType} from "./_swapFillerType"
+import {TradeOperationType} from "./_tradeOperationType"
+import {SwapFee} from "./swapFee.model"
+import {SwapInputAssetBalance} from "./swapInputAssetBalance.model"
+import {SwapOutputAssetBalance} from "./swapOutputAssetBalance.model"
+import {DcaScheduleExecutionAction} from "./dcaScheduleExecutionAction.model"
+import {OtcOrderAction} from "./otcOrderAction.model"
+
+@Entity_()
+export class Swap {
+  constructor(props?: Partial<Swap>) {
+    Object.assign(this, props)
+  }
+
+  /**
+   * indexer event_id (e.g. <block_number>-<block_hash_partial>-<event_index> 0006516718-9965d-000107)
+   */
+  @PrimaryColumn_()
+  id!: string
+
+  @Column_("text", {nullable: true})
+  operationId!: string | undefined | null
+
+  @Column_("text", {array: true, nullable: true})
+  traceIds!: (string)[] | undefined | null
+
+  /**
+   * Swapped event index within Trade events sequence
+   */
+  @Index_()
+  @Column_("int4", {nullable: false})
+  swapIndex!: number
+
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  swapper!: Account
+
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  filler!: Account
+
+  @Column_("varchar", {length: 10, nullable: false})
+  fillerType!: SwapFillerType
+
+  @Column_("varchar", {length: 15, nullable: false})
+  operationType!: TradeOperationType
+
+  @OneToMany_(() => SwapFee, e => e.swap)
+  fees!: SwapFee[]
+
+  @OneToMany_(() => SwapInputAssetBalance, e => e.swap)
+  inputs!: SwapInputAssetBalance[]
+
+  @OneToMany_(() => SwapOutputAssetBalance, e => e.swap)
+  outputs!: SwapOutputAssetBalance[]
+
+  @Column_("int4", {nullable: false})
+  eventIndex!: number
+
+  @Column_("text", {nullable: false})
+  extrinsicHash!: string
+
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => DcaScheduleExecutionAction, {nullable: true})
+  dcaScheduleExecutionAction!: DcaScheduleExecutionAction | undefined | null
+
+  @Index_()
+  @ManyToOne_(() => OtcOrderAction, {nullable: true})
+  otcOrderFulfilment!: OtcOrderAction | undefined | null
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
+
+  @Index_()
+  @Column_("timestamp with time zone", {nullable: false})
+  paraChainTimestamp!: Date
+}

@@ -1,0 +1,327 @@
+version: "3.7"
+
+x-chain-name: &chain-name "hydration"
+x-postgres-db: &postgres-db "storage_dictionary_db"
+x-postgres-user: &postgres-user "postgres"
+x-postgres-password: &postgres-password "postgres"
+
+x-lbp-pools-storage-dict-api-port: &lbp-pools-storage-dict-api-port 8090
+x-xyk-pools-storage-dict-api-port: &xyk-pools-storage-dict-api-port 8091
+x-omnipools-storage-dict-api-port: &omnipools-storage-dict-api-port 8092
+x-stablepools-storage-dict-api-port: &stablepools-storage-dict-api-port 8093
+
+x-storage-dictionary-db-creds: &storage-dictionary-db-creds
+  DB_PORT: 5432
+  DB_NAME: *postgres-db
+  DB_USER: *postgres-user
+  DB_PASS: *postgres-password
+
+x-processor-unit-envs: &processor-unit-envs
+  NODE_ENV: "self-hosted"
+  CHAIN: *chain-name
+  <<: *storage-dictionary-db-creds
+  RPC_URL: "wss://archive.rpc.hydration.cloud"
+  IGNORE_ARCHIVE_DATA_SOURCE: "false"
+  GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
+  OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+  PROCESS_LBP_POOLS: "false"
+  PROCESS_XYK_POOLS: "false"
+  PROCESS_OMNIPOOLS: "false"
+  PROCESS_STABLEPOOLS: "false"
+  INDEXER_MAX_SUB_BATCH_SIZE: 1500
+  SUB_BATCH_MAX_TIMEOUT_MS: 500
+  INDEXER_SUB_PROCESSORS_NUMBER: 2
+  ASSETS_TRACKER_PROCESSOR: "false"
+
+x-common-db-setup: &common-db-setup
+  image: postgres:15
+  environment:
+    POSTGRES_DB: *postgres-db
+    POSTGRES_USER: *postgres-user
+    POSTGRES_PASSWORD: *postgres-password
+  networks:
+    - default
+  deploy:
+    restart_policy:
+      condition: on-failure
+
+x-common-processor-setup: &common-processor-setup
+  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
+  networks:
+    - default
+  deploy:
+    restart_policy:
+      condition: on-failure
+
+x-common-api-setup: &common-api-setup
+  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
+  networks:
+    - default
+  command:
+    - sh
+    - -c
+    - "sqd api:prod"
+  deploy:
+    restart_policy:
+      condition: on-failure
+
+# =================================================================================
+# =========================== LBP POOLS SERVICES SETUP ============================
+# =================================================================================
+
+x-lbp-pools-services-setup: &lbp-pools-services-setup
+  lbp-pools-storage-dict-db:
+    <<: *common-db-setup
+    volumes:
+      - lbppools-storage-dict-db:/var/lib/postgresql/data
+
+  lbp-pools-storage-dict-processor-1:
+    <<: *common-processor-setup
+    depends_on:
+      - lbp-pools-storage-dict-db
+    environment:
+      <<: *processor-unit-envs
+      DB_HOST: "lbp-pools-storage-dict-db"
+      PROCESS_FROM_BLOCK: 3681428 # First event related with LBP pools has been occurred
+      PROCESS_TO_BLOCK: 5100000
+      PROCESS_LBP_POOLS: "true"
+      STATE_SCHEMA_NAME: "lbp_pools_storage_dict_processor_1"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "lbp_pools_storage_dict_processor_2"
+    command:
+      - sh
+      - -c
+      - "sleep 30 && sqd migration:apply && sqd process:prod"
+
+  lbp-pools-storage-dict-processor-2:
+    <<: *common-processor-setup
+    depends_on:
+      - lbp-pools-storage-dict-processor-1
+    environment:
+      <<: *processor-unit-envs
+      DB_HOST: "lbp-pools-storage-dict-db"
+      PROCESS_FROM_BLOCK: 5100001 # The end of a blocks batch which processing by lbp-pools-storage-dict-processor-1 processor
+      PROCESS_TO_BLOCK: -1
+      PROCESS_LBP_POOLS: "true"
+      STATE_SCHEMA_NAME: "lbp_pools_storage_dict_processor_2"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "lbp_pools_storage_dict_processor_2"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  lbp-pools-storage-dict-api:
+    <<: *common-api-setup
+    depends_on:
+      - lbp-pools-storage-dict-processor-2
+    ports:
+      - "8090:8090"
+    environment:
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      GQL_PORT: *lbp-pools-storage-dict-api-port
+      <<: *storage-dictionary-db-creds
+      DB_HOST: "lbp-pools-storage-dict-db"
+      SUB_PROCESSORS_RANGES: "lbp_pools_storage_dict_processor_1:3681428:5100000;lbp_pools_storage_dict_processor_2:5100001:-1"
+
+# =================================================================================
+# =========================== XYK POOLS SERVICES SETUP ============================
+# =================================================================================
+
+x-xyk-pools-services-setup: &xyk-pools-services-setup
+  xyk-pools-storage-dict-db:
+    <<: *common-db-setup
+    volumes:
+      - xykpools-storage-dict-db:/var/lib/postgresql/data
+
+  xyk-pools-storage-dict-processor-1:
+    <<: *common-processor-setup
+    depends_on:
+      - xyk-pools-storage-dict-db
+    environment:
+      <<: *processor-unit-envs
+      DB_HOST: "xyk-pools-storage-dict-db"
+      PROCESS_FROM_BLOCK: 3934550 # First event related with XYK pools has been occurred
+      PROCESS_TO_BLOCK: 5200000
+      PROCESS_XYK_POOLS: "true"
+      STATE_SCHEMA_NAME: "xyk_pools_storage_dict_processor_1"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pools_storage_dict_processor_2"
+    command:
+      - sh
+      - -c
+      - "sleep 30 && sqd migration:apply && sqd process:prod"
+
+  xyk-pools-storage-dict-processor-2:
+    <<: *common-processor-setup
+    depends_on:
+      - xyk-pools-storage-dict-processor-1
+    environment:
+      <<: *processor-unit-envs
+      DB_HOST: "xyk-pools-storage-dict-db"
+      PROCESS_FROM_BLOCK: 5200001 # The end of a blocks batch which processing by xyk-pools-storage-dict-processor-1 processor
+      PROCESS_TO_BLOCK: -1
+      PROCESS_XYK_POOLS: "true"
+      STATE_SCHEMA_NAME: "xyk_pools_storage_dict_processor_2"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pools_storage_dict_processor_2"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  xyk-pools-storage-dict-api:
+    <<: *common-api-setup
+    depends_on:
+      - xyk-pools-storage-dict-processor-1
+    ports:
+      - "8091:8091"
+    environment:
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      GQL_PORT: *xyk-pools-storage-dict-api-port
+      <<: *storage-dictionary-db-creds
+      DB_HOST: "xyk-pools-storage-dict-db"
+      SUB_PROCESSORS_RANGES: "xyk_pools_storage_dict_processor_1:3934550:5200000;xyk_pools_storage_dict_processor_2:5200001:-1"
+
+# =================================================================================
+# =========================== OMNIPOOLS SERVICES SETUP ============================
+# =================================================================================
+
+x-omnipools-services-setup: &omnipools-services-setup
+  omnipools-storage-dict-db:
+    <<: *common-db-setup
+    volumes:
+      - omnipools-storage-dict-db:/var/lib/postgresql/data
+
+  omnipools-storage-dict-processor-1:
+    <<: *common-processor-setup
+    depends_on:
+      - omnipools-storage-dict-db
+    environment:
+      <<: *processor-unit-envs
+      DB_HOST: "omnipools-storage-dict-db"
+      PROCESS_FROM_BLOCK: 1708100 # First event related with Omnipool has been occurred
+      PROCESS_TO_BLOCK: 4100000
+      PROCESS_OMNIPOOLS: "true"
+      STATE_SCHEMA_NAME: "omnipools_storage_dict_processor_1"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipools_storage_dict_processor_2"
+    command:
+      - sh
+      - -c
+      - "sleep 30 && sqd migration:apply && sqd process:prod"
+
+  omnipools-storage-dict-processor-2:
+    <<: *common-processor-setup
+    depends_on:
+      - omnipools-storage-dict-processor-1
+    environment:
+      <<: *processor-unit-envs
+      DB_HOST: "omnipools-storage-dict-db"
+      PROCESS_FROM_BLOCK: 4100001 # The end of a blocks batch which processing by xyk-pools-storage-dict-processor-1 processor
+      PROCESS_TO_BLOCK: -1
+      PROCESS_OMNIPOOLS: "true"
+      STATE_SCHEMA_NAME: "omnipools_storage_dict_processor_2"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipools_storage_dict_processor_2"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  omnipools-storage-dict-api:
+    <<: *common-api-setup
+    depends_on:
+      - omnipools-storage-dict-processor-1
+    ports:
+      - "8092:8092"
+    environment:
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      GQL_PORT: *omnipools-storage-dict-api-port
+      <<: *storage-dictionary-db-creds
+      DB_HOST: "omnipools-storage-dict-db"
+      SUB_PROCESSORS_RANGES: "omnipools_storage_dict_processor_1:1708100:4100000;omnipools_storage_dict_processor_2:4100001:-1"
+
+# =================================================================================
+# ========================== STABLEPOOLS SERVICES SETUP ===========================
+# =================================================================================
+x-stablepools-services-setup: &stablepools-services-setup
+  stablepools-storage-dict-db:
+    <<: *common-db-setup
+    volumes:
+      - stablepools-storage-dict-db:/var/lib/postgresql/data
+
+  stablepools-storage-dict-processor-1:
+    <<: *common-processor-setup
+    depends_on:
+      - stablepools-storage-dict-db
+    environment:
+      <<: *processor-unit-envs
+      DB_HOST: "stablepools-storage-dict-db"
+      PROCESS_FROM_BLOCK: 3640100 # First event related with Stablepool has been occurred
+      PROCESS_TO_BLOCK: 5000000
+      PROCESS_OMNIPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepools_storage_dict_processor_1"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepools_storage_dict_processor_2"
+    command:
+      - sh
+      - -c
+      - "sleep 30 && sqd migration:apply && sqd process:prod"
+
+  stablepools-storage-dict-processor-2:
+    <<: *common-processor-setup
+    depends_on:
+      - stablepools-storage-dict-processor-1
+    environment:
+      <<: *processor-unit-envs
+      DB_HOST: "stablepools-storage-dict-db"
+      PROCESS_FROM_BLOCK: 5000001 # The end of a blocks batch which processing by xyk-pools-storage-dict-processor-1 processor
+      PROCESS_TO_BLOCK: -1
+      PROCESS_OMNIPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepools_storage_dict_processor_2"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepools_storage_dict_processor_2"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  stablepools-storage-dict-api:
+    <<: *common-api-setup
+    depends_on:
+      - stablepools-storage-dict-processor-1
+    ports:
+      - "8093:8093"
+    environment:
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      GQL_PORT: *stablepools-storage-dict-api-port
+      <<: *storage-dictionary-db-creds
+      DB_HOST: "stablepools-storage-dict-db"
+      SUB_PROCESSORS_RANGES: "stablepools_storage_dict_processor_1:3640100:5000000;stablepools_storage_dict_processor_2:5000001:-1"
+
+# =================================================================================
+# ============================ M A I N   S E T U P ================================
+# =================================================================================
+networks:
+  default:
+    driver: overlay
+
+volumes:
+  lbppools-storage-dict-db:
+    driver: local
+  xykpools-storage-dict-db:
+    driver: local
+  omnipools-storage-dict-db:
+    driver: local
+  stablepools-storage-dict-db:
+    driver: local
+
+services:
+  <<: *lbp-pools-services-setup
+
+  <<: *xyk-pools-services-setup
+
+  <<: *omnipools-services-setup
+
+  <<: *stablepools-services-setup

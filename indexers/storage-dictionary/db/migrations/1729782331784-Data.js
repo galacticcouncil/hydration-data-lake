@@ -1,0 +1,53 @@
+module.exports = class Data1729782331784 {
+    name = 'Data1729782331784'
+
+    async up(db) {
+        await db.query(`CREATE TABLE "xyk_pool_assets_data" ("id" character varying NOT NULL, "asset_id" integer NOT NULL, "balances" jsonb NOT NULL, "para_chain_block_height" integer NOT NULL, "pool_id" character varying, CONSTRAINT "PK_b9c96ce0beb1c2d56a9c8a7d172" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_1e2d3cc1781e30744eb0e5f18a" ON "xyk_pool_assets_data" ("pool_id") `)
+        await db.query(`CREATE INDEX "IDX_10af0b728789e1dadb99044ea0" ON "xyk_pool_assets_data" ("asset_id") `)
+        await db.query(`CREATE INDEX "IDX_7082cba8efd60f62019cff65b3" ON "xyk_pool_assets_data" ("para_chain_block_height") `)
+        await db.query(`CREATE TABLE "xyk_pool" ("id" character varying NOT NULL, "pool_address" text NOT NULL, "asset_a_id" integer NOT NULL, "asset_b_id" integer NOT NULL, "para_chain_block_height" integer NOT NULL, CONSTRAINT "PK_f85fcc3780ea2a35656e221df0e" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_c200b9ac5b22aa7109890f40ca" ON "xyk_pool" ("pool_address") `)
+        await db.query(`CREATE INDEX "IDX_3d4236925353865ae75d838255" ON "xyk_pool" ("asset_a_id") `)
+        await db.query(`CREATE INDEX "IDX_bf48afc165d389bd567bb100ac" ON "xyk_pool" ("asset_b_id") `)
+        await db.query(`CREATE INDEX "IDX_e058925f2e53745adc9587f4bc" ON "xyk_pool" ("para_chain_block_height") `)
+        await db.query(`CREATE TABLE "omnipool_asset_data" ("id" character varying NOT NULL, "pool_address" text NOT NULL, "asset_id" integer NOT NULL, "balances" jsonb NOT NULL, "asset_state" jsonb NOT NULL, "para_chain_block_height" integer NOT NULL, CONSTRAINT "PK_a8e058d3bb473fb398c42134d26" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_96dcaf48f20bf6b83449668fcc" ON "omnipool_asset_data" ("pool_address") `)
+        await db.query(`CREATE INDEX "IDX_49122230f19dd18eae0ebacdbf" ON "omnipool_asset_data" ("asset_id") `)
+        await db.query(`CREATE INDEX "IDX_1ec4666b1362f2db6bf341f234" ON "omnipool_asset_data" ("para_chain_block_height") `)
+        await db.query(`CREATE TABLE "stablepool_asset_data" ("id" character varying NOT NULL, "asset_id" integer NOT NULL, "balances" jsonb NOT NULL, "para_chain_block_height" integer NOT NULL, "pool_id" character varying, CONSTRAINT "PK_3975550c9a835b82cc6bede085f" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_ed62fb4afc0d93db56693b26de" ON "stablepool_asset_data" ("pool_id") `)
+        await db.query(`CREATE INDEX "IDX_4b3a16b3467420b14f4f63bba5" ON "stablepool_asset_data" ("para_chain_block_height") `)
+        await db.query(`CREATE TABLE "stablepool" ("id" character varying NOT NULL, "pool_id" integer NOT NULL, "pool_address" text NOT NULL, "initial_amplification" integer NOT NULL, "final_amplification" integer NOT NULL, "initial_block" integer NOT NULL, "final_block" integer NOT NULL, "fee" integer NOT NULL, "para_chain_block_height" integer NOT NULL, CONSTRAINT "PK_88547c6e0b453563a7945d5038d" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_6e832b2760f72d8c130c4f46d6" ON "stablepool" ("pool_id") `)
+        await db.query(`CREATE INDEX "IDX_352d4e85d50a53c535f37826d2" ON "stablepool" ("pool_address") `)
+        await db.query(`CREATE INDEX "IDX_05406667d13a15a779744fd385" ON "stablepool" ("para_chain_block_height") `)
+        await db.query(`ALTER TABLE "xyk_pool_assets_data" ADD CONSTRAINT "FK_1e2d3cc1781e30744eb0e5f18a8" FOREIGN KEY ("pool_id") REFERENCES "xyk_pool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "stablepool_asset_data" ADD CONSTRAINT "FK_ed62fb4afc0d93db56693b26dec" FOREIGN KEY ("pool_id") REFERENCES "stablepool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    }
+
+    async down(db) {
+        await db.query(`DROP TABLE "xyk_pool_assets_data"`)
+        await db.query(`DROP INDEX "public"."IDX_1e2d3cc1781e30744eb0e5f18a"`)
+        await db.query(`DROP INDEX "public"."IDX_10af0b728789e1dadb99044ea0"`)
+        await db.query(`DROP INDEX "public"."IDX_7082cba8efd60f62019cff65b3"`)
+        await db.query(`DROP TABLE "xyk_pool"`)
+        await db.query(`DROP INDEX "public"."IDX_c200b9ac5b22aa7109890f40ca"`)
+        await db.query(`DROP INDEX "public"."IDX_3d4236925353865ae75d838255"`)
+        await db.query(`DROP INDEX "public"."IDX_bf48afc165d389bd567bb100ac"`)
+        await db.query(`DROP INDEX "public"."IDX_e058925f2e53745adc9587f4bc"`)
+        await db.query(`DROP TABLE "omnipool_asset_data"`)
+        await db.query(`DROP INDEX "public"."IDX_96dcaf48f20bf6b83449668fcc"`)
+        await db.query(`DROP INDEX "public"."IDX_49122230f19dd18eae0ebacdbf"`)
+        await db.query(`DROP INDEX "public"."IDX_1ec4666b1362f2db6bf341f234"`)
+        await db.query(`DROP TABLE "stablepool_asset_data"`)
+        await db.query(`DROP INDEX "public"."IDX_ed62fb4afc0d93db56693b26de"`)
+        await db.query(`DROP INDEX "public"."IDX_4b3a16b3467420b14f4f63bba5"`)
+        await db.query(`DROP TABLE "stablepool"`)
+        await db.query(`DROP INDEX "public"."IDX_6e832b2760f72d8c130c4f46d6"`)
+        await db.query(`DROP INDEX "public"."IDX_352d4e85d50a53c535f37826d2"`)
+        await db.query(`DROP INDEX "public"."IDX_05406667d13a15a779744fd385"`)
+        await db.query(`ALTER TABLE "xyk_pool_assets_data" DROP CONSTRAINT "FK_1e2d3cc1781e30744eb0e5f18a8"`)
+        await db.query(`ALTER TABLE "stablepool_asset_data" DROP CONSTRAINT "FK_ed62fb4afc0d93db56693b26dec"`)
+    }
+}
