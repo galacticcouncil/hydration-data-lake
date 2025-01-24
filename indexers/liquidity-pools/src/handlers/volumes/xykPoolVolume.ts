@@ -1,4 +1,4 @@
-import { Swap, XykPool, XykPoolHistoricalVolume } from '../../model';
+import { Swap, Xykpool, XykpoolHistoricalVolume } from '../../model';
 import { calculateAveragePrice } from '../prices/utils';
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
@@ -6,11 +6,11 @@ import { getLastVolumeFromCache, getOldXykVolume } from './index';
 
 export function initXykPoolVolume(
   swap: Swap,
-  pool: XykPool,
-  currentVolume: XykPoolHistoricalVolume | undefined,
-  oldVolume: XykPoolHistoricalVolume | undefined
+  pool: Xykpool,
+  currentVolume: XykpoolHistoricalVolume | undefined,
+  oldVolume: XykpoolHistoricalVolume | undefined
 ) {
-  const newVolume = new XykPoolHistoricalVolume({
+  const newVolume = new XykpoolHistoricalVolume({
     id: swap.filler.id + '-' + swap.paraChainBlockHeight,
     pool: pool,
     assetA: pool.assetA,
@@ -112,7 +112,7 @@ export async function handleXykPoolVolumeUpdates({
   swap,
 }: {
   ctx: ProcessorContext<Store>;
-  pool: XykPool;
+  pool: Xykpool;
   swap: Swap;
 }) {
   const xykPoolVolumes = ctx.batchState.state.xykPoolVolumes;
@@ -125,7 +125,7 @@ export async function handleXykPoolVolumeUpdates({
     (getLastVolumeFromCache(
       ctx.batchState.state.xykPoolVolumes,
       swap.filler.id
-    ) as XykPoolHistoricalVolume | undefined) ||
+    ) as XykpoolHistoricalVolume | undefined) ||
     (await getOldXykVolume(ctx, swap.filler.id));
 
   const newVolume = initXykPoolVolume(swap, pool, currentVolume, oldVolume);

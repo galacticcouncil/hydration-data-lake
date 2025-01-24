@@ -1,18 +1,19 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
-import {Swap} from "./swap.model"
 import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
-import {DcaScheduleExecutionStatus} from "./_dcaScheduleExecutionStatus"
+import {Swap} from "./swap.model"
+import {DcaScheduleExecutionEventType} from "./_dcaScheduleExecutionEventType"
 import {DispatchError} from "./_dispatchError"
+import {Block} from "./block.model"
 
 @Entity_()
-export class DcaScheduleExecutionAction {
-  constructor(props?: Partial<DcaScheduleExecutionAction>) {
+export class DcaScheduleExecutionEvent {
+  constructor(props?: Partial<DcaScheduleExecutionEvent>) {
     Object.assign(this, props)
   }
 
   /**
-   * <dca_schedule_execution_id>-<dca_schedule_execution_status>
+   * <dcaScheduleExecutionId>-<dcaScheduleExecutionStatus>
    */
   @PrimaryColumn_()
   id!: string
@@ -23,24 +24,28 @@ export class DcaScheduleExecutionAction {
   @Column_("text", {array: true, nullable: true})
   traceIds!: (string)[] | undefined | null
 
-  @OneToMany_(() => Swap, e => e.dcaScheduleExecutionAction)
-  swaps!: Swap[]
-
   @Index_()
   @ManyToOne_(() => DcaScheduleExecution, {nullable: true})
   scheduleExecution!: DcaScheduleExecution
 
+  @OneToMany_(() => Swap, e => e.dcaScheduleExecutionAction)
+  swaps!: Swap[]
+
   @Index_()
-  @Column_("varchar", {length: 8, nullable: true})
-  status!: DcaScheduleExecutionStatus | undefined | null
+  @Column_("varchar", {length: 7, nullable: true})
+  eventType!: DcaScheduleExecutionEventType | undefined | null
 
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new DispatchError(undefined, obj)}, nullable: true})
-  statusMemo!: DispatchError | undefined | null
+  memo!: DispatchError | undefined | null
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
 
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
 
   @Index_()
-  @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

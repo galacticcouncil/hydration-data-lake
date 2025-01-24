@@ -2,7 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {DcaSchedule} from "./dcaSchedule.model"
 import {DcaScheduleExecutionStatus} from "./_dcaScheduleExecutionStatus"
-import {DcaScheduleExecutionAction} from "./dcaScheduleExecutionAction.model"
+import {DcaScheduleExecutionEvent} from "./dcaScheduleExecutionEvent.model"
 
 @Entity_()
 export class DcaScheduleExecution {
@@ -11,7 +11,7 @@ export class DcaScheduleExecution {
   }
 
   /**
-   * <dca_schedule_id>-<block_height>
+   * <dcaScheduleId>-<blockHeight>
    */
   @PrimaryColumn_()
   id!: string
@@ -30,6 +30,6 @@ export class DcaScheduleExecution {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   amountIn!: bigint | undefined | null
 
-  @OneToMany_(() => DcaScheduleExecutionAction, e => e.scheduleExecution)
-  actions!: DcaScheduleExecutionAction[]
+  @OneToMany_(() => DcaScheduleExecutionEvent, e => e.scheduleExecution)
+  events!: DcaScheduleExecutionEvent[]
 }

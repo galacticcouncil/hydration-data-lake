@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
+import {Block} from "./block.model"
 
 @Entity_()
 export class HistoricalAssetVolume {
@@ -9,7 +10,7 @@ export class HistoricalAssetVolume {
   }
 
   /**
-   * AssetId-paraChainBlockHeight
+   * <assetId>-<paraChainBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
@@ -30,10 +31,14 @@ export class HistoricalAssetVolume {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   totalVolumeOut!: bigint
 
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
+
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
 
   @Index_()
-  @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

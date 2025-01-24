@@ -217,8 +217,8 @@ export type JsonFilter = {
   notIn?: InputMaybe<Array<Scalars['JSON']['input']>>;
 };
 
-export type LbpPool = {
-  __typename?: 'LbpPool';
+export type Lbppool = {
+  __typename?: 'Lbppool';
   assetAId: Scalars['Int']['output'];
   assetBId: Scalars['Int']['output'];
   end?: Maybe<Scalars['Int']['output']>;
@@ -396,8 +396,8 @@ export type LbpPoolAssetsDatum = {
   balances: Scalars['JSON']['output'];
   id: Scalars['String']['output'];
   paraChainBlockHeight: Scalars['Int']['output'];
-  /** Reads a single `LbpPool` that is related to this `LbpPoolAssetsDatum`. */
-  pool?: Maybe<LbpPool>;
+  /** Reads a single `Lbppool` that is related to this `LbpPoolAssetsDatum`. */
+  pool?: Maybe<Lbppool>;
   poolId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -559,7 +559,7 @@ export type LbpPoolAverageAggregates = {
   start?: Maybe<Scalars['BigFloat']['output']>;
 };
 
-/** A condition to be used against `LbpPool` object types. All fields are tested for equality and combined with a logical ‘and.’ */
+/** A condition to be used against `Lbppool` object types. All fields are tested for equality and combined with a logical ‘and.’ */
 export type LbpPoolCondition = {
   /** Checks for equality with the object’s `assetAId` field. */
   assetAId?: InputMaybe<Scalars['Int']['input']>;
@@ -623,7 +623,7 @@ export type LbpPoolDistinctCountAggregates = {
   weightCurve?: Maybe<Scalars['BigInt']['output']>;
 };
 
-/** A filter to be used against `LbpPool` object types. All fields are combined with a logical ‘and.’ */
+/** A filter to be used against `Lbppool` object types. All fields are combined with a logical ‘and.’ */
 export type LbpPoolFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<LbpPoolFilter>>;
@@ -661,7 +661,7 @@ export type LbpPoolFilter = {
   weightCurve?: InputMaybe<StringFilter>;
 };
 
-/** Grouping methods for `LbpPool` for usage during aggregation. */
+/** Grouping methods for `Lbppool` for usage during aggregation. */
 export enum LbpPoolGroupBy {
   AssetAId = 'ASSET_A_ID',
   AssetBId = 'ASSET_B_ID',
@@ -700,7 +700,7 @@ export type LbpPoolHavingDistinctCountInput = {
   start?: InputMaybe<HavingIntFilter>;
 };
 
-/** Conditions for `LbpPool` aggregates. */
+/** Conditions for `Lbppool` aggregates. */
 export type LbpPoolHavingInput = {
   AND?: InputMaybe<Array<LbpPoolHavingInput>>;
   OR?: InputMaybe<Array<LbpPoolHavingInput>>;
@@ -932,40 +932,40 @@ export type LbpPoolVarianceSampleAggregates = {
   start?: Maybe<Scalars['BigFloat']['output']>;
 };
 
-/** A connection to a list of `LbpPool` values. */
+/** A connection to a list of `Lbppool` values. */
 export type LbpPoolsConnection = {
   __typename?: 'LbpPoolsConnection';
   /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
   aggregates?: Maybe<LbpPoolAggregates>;
-  /** A list of edges which contains the `LbpPool` and cursor to aid in pagination. */
+  /** A list of edges which contains the `Lbppool` and cursor to aid in pagination. */
   edges: Array<LbpPoolsEdge>;
   /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
   groupedAggregates?: Maybe<Array<LbpPoolAggregates>>;
-  /** A list of `LbpPool` objects. */
-  nodes: Array<Maybe<LbpPool>>;
+  /** A list of `Lbppool` objects. */
+  nodes: Array<Maybe<Lbppool>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** The count of *all* `LbpPool` you could get from the connection. */
+  /** The count of *all* `Lbppool` you could get from the connection. */
   totalCount: Scalars['Int']['output'];
 };
 
 
-/** A connection to a list of `LbpPool` values. */
+/** A connection to a list of `Lbppool` values. */
 export type LbpPoolsConnectionGroupedAggregatesArgs = {
   groupBy: Array<LbpPoolGroupBy>;
   having?: InputMaybe<LbpPoolHavingInput>;
 };
 
-/** A `LbpPool` edge in the connection. */
+/** A `Lbppool` edge in the connection. */
 export type LbpPoolsEdge = {
   __typename?: 'LbpPoolsEdge';
   /** A cursor for use in pagination. */
   cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `LbpPool` at the end of the edge. */
-  node?: Maybe<LbpPool>;
+  /** The `Lbppool` at the end of the edge. */
+  node?: Maybe<Lbppool>;
 };
 
-/** Methods to use when ordering `LbpPool`. */
+/** Methods to use when ordering `Lbppool`. */
 export enum LbpPoolsOrderBy {
   AssetAIdAsc = 'ASSET_A_ID_ASC',
   AssetAIdDesc = 'ASSET_A_ID_DESC',
@@ -1639,11 +1639,11 @@ export type Query = {
   __typename?: 'Query';
   _apiSupport?: Maybe<ApiSupportResponse>;
   _squidStatus: Array<_ProcessorStatus>;
-  lbpPool?: Maybe<LbpPool>;
+  lbpPool?: Maybe<Lbppool>;
   /** Reads and enables pagination through a set of `LbpPoolAssetsDatum`. */
   lbpPoolAssetsData?: Maybe<LbpPoolAssetsDataConnection>;
   lbpPoolAssetsDatum?: Maybe<LbpPoolAssetsDatum>;
-  /** Reads and enables pagination through a set of `LbpPool`. */
+  /** Reads and enables pagination through a set of `Lbppool`. */
   lbpPools?: Maybe<LbpPoolsConnection>;
   migration?: Maybe<Migration>;
   /** Reads and enables pagination through a set of `Migration`. */
@@ -1665,11 +1665,11 @@ export type Query = {
   subProcessorStatus?: Maybe<SubProcessorStatus>;
   /** Reads and enables pagination through a set of `SubProcessorStatus`. */
   subProcessorStatuses?: Maybe<SubProcessorStatusesConnection>;
-  xykPool?: Maybe<XykPool>;
+  xykPool?: Maybe<Xykpool>;
   /** Reads and enables pagination through a set of `XykPoolAssetsDatum`. */
   xykPoolAssetsData?: Maybe<XykPoolAssetsDataConnection>;
   xykPoolAssetsDatum?: Maybe<XykPoolAssetsDatum>;
-  /** Reads and enables pagination through a set of `XykPool`. */
+  /** Reads and enables pagination through a set of `Xykpool`. */
   xykPools?: Maybe<XykPoolsConnection>;
 };
 
@@ -3022,8 +3022,8 @@ export type Tradability = {
   bits: Scalars['Int']['output'];
 };
 
-export type XykPool = {
-  __typename?: 'XykPool';
+export type Xykpool = {
+  __typename?: 'Xykpool';
   assetAId: Scalars['Int']['output'];
   assetBId: Scalars['Int']['output'];
   id: Scalars['String']['output'];
@@ -3192,8 +3192,8 @@ export type XykPoolAssetsDatum = {
   balances: Scalars['JSON']['output'];
   id: Scalars['String']['output'];
   paraChainBlockHeight: Scalars['Int']['output'];
-  /** Reads a single `XykPool` that is related to this `XykPoolAssetsDatum`. */
-  pool?: Maybe<XykPool>;
+  /** Reads a single `Xykpool` that is related to this `XykPoolAssetsDatum`. */
+  pool?: Maybe<Xykpool>;
   poolId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -3345,7 +3345,7 @@ export type XykPoolAverageAggregates = {
   paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
-/** A condition to be used against `XykPool` object types. All fields are tested for equality and combined with a logical ‘and.’ */
+/** A condition to be used against `Xykpool` object types. All fields are tested for equality and combined with a logical ‘and.’ */
 export type XykPoolCondition = {
   /** Checks for equality with the object’s `assetAId` field. */
   assetAId?: InputMaybe<Scalars['Int']['input']>;
@@ -3373,7 +3373,7 @@ export type XykPoolDistinctCountAggregates = {
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
 };
 
-/** A filter to be used against `XykPool` object types. All fields are combined with a logical ‘and.’ */
+/** A filter to be used against `Xykpool` object types. All fields are combined with a logical ‘and.’ */
 export type XykPoolFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<XykPoolFilter>>;
@@ -3393,7 +3393,7 @@ export type XykPoolFilter = {
   poolAddress?: InputMaybe<StringFilter>;
 };
 
-/** Grouping methods for `XykPool` for usage during aggregation. */
+/** Grouping methods for `Xykpool` for usage during aggregation. */
 export enum XykPoolGroupBy {
   AssetAId = 'ASSET_A_ID',
   AssetBId = 'ASSET_B_ID',
@@ -3413,7 +3413,7 @@ export type XykPoolHavingDistinctCountInput = {
   paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
-/** Conditions for `XykPool` aggregates. */
+/** Conditions for `Xykpool` aggregates. */
 export type XykPoolHavingInput = {
   AND?: InputMaybe<Array<XykPoolHavingInput>>;
   OR?: InputMaybe<Array<XykPoolHavingInput>>;
@@ -3540,40 +3540,40 @@ export type XykPoolVarianceSampleAggregates = {
   paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
-/** A connection to a list of `XykPool` values. */
+/** A connection to a list of `Xykpool` values. */
 export type XykPoolsConnection = {
   __typename?: 'XykPoolsConnection';
   /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
   aggregates?: Maybe<XykPoolAggregates>;
-  /** A list of edges which contains the `XykPool` and cursor to aid in pagination. */
+  /** A list of edges which contains the `Xykpool` and cursor to aid in pagination. */
   edges: Array<XykPoolsEdge>;
   /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
   groupedAggregates?: Maybe<Array<XykPoolAggregates>>;
-  /** A list of `XykPool` objects. */
-  nodes: Array<Maybe<XykPool>>;
+  /** A list of `Xykpool` objects. */
+  nodes: Array<Maybe<Xykpool>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** The count of *all* `XykPool` you could get from the connection. */
+  /** The count of *all* `Xykpool` you could get from the connection. */
   totalCount: Scalars['Int']['output'];
 };
 
 
-/** A connection to a list of `XykPool` values. */
+/** A connection to a list of `Xykpool` values. */
 export type XykPoolsConnectionGroupedAggregatesArgs = {
   groupBy: Array<XykPoolGroupBy>;
   having?: InputMaybe<XykPoolHavingInput>;
 };
 
-/** A `XykPool` edge in the connection. */
+/** A `Xykpool` edge in the connection. */
 export type XykPoolsEdge = {
   __typename?: 'XykPoolsEdge';
   /** A cursor for use in pagination. */
   cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `XykPool` at the end of the edge. */
-  node?: Maybe<XykPool>;
+  /** The `Xykpool` at the end of the edge. */
+  node?: Maybe<Xykpool>;
 };
 
-/** Methods to use when ordering `XykPool`. */
+/** Methods to use when ordering `Xykpool`. */
 export enum XykPoolsOrderBy {
   AssetAIdAsc = 'ASSET_A_ID_ASC',
   AssetAIdDesc = 'ASSET_A_ID_DESC',
@@ -3709,7 +3709,7 @@ export type GetLbpPoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetLbpPoolBlocksStorageStateQuery = { __typename?: 'Query', lbpPools?: { __typename?: 'LbpPoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'LbpPool', id: string, poolAddress: string, assetAId: number, assetBId: number, owner: string, repayTarget: any, weightCurve: string, initialWeight: number, finalWeight: number, feeCollector?: string | null, fee: Array<number | null>, start?: number | null, end?: number | null, paraChainBlockHeight: number, lbpPoolAssetsDataByPoolId: { __typename?: 'LbpPoolAssetsDataConnection', nodes: Array<{ __typename?: 'LbpPoolAssetsDatum', id: string, assetId: number, poolId?: string | null, balances: any, paraChainBlockHeight: number } | null> } } | null> } | null };
+export type GetLbpPoolBlocksStorageStateQuery = { __typename?: 'Query', lbpPools?: { __typename?: 'LbpPoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Lbppool', id: string, poolAddress: string, assetAId: number, assetBId: number, owner: string, repayTarget: any, weightCurve: string, initialWeight: number, finalWeight: number, feeCollector?: string | null, fee: Array<number | null>, start?: number | null, end?: number | null, paraChainBlockHeight: number, lbpPoolAssetsDataByPoolId: { __typename?: 'LbpPoolAssetsDataConnection', nodes: Array<{ __typename?: 'LbpPoolAssetsDatum', id: string, assetId: number, poolId?: string | null, balances: any, paraChainBlockHeight: number } | null> } } | null> } | null };
 
 export type GetXykPoolBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<XykPoolFilter>;
@@ -3719,7 +3719,7 @@ export type GetXykPoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetXykPoolBlocksStorageStateQuery = { __typename?: 'Query', xykPools?: { __typename?: 'XykPoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'XykPool', assetAId: number, assetBId: number, id: string, paraChainBlockHeight: number, poolAddress: string, xykPoolAssetsDataByPoolId: { __typename?: 'XykPoolAssetsDataConnection', nodes: Array<{ __typename?: 'XykPoolAssetsDatum', assetId: number, balances: any, id: string, paraChainBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
+export type GetXykPoolBlocksStorageStateQuery = { __typename?: 'Query', xykPools?: { __typename?: 'XykPoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Xykpool', assetAId: number, assetBId: number, id: string, paraChainBlockHeight: number, poolAddress: string, xykPoolAssetsDataByPoolId: { __typename?: 'XykPoolAssetsDataConnection', nodes: Array<{ __typename?: 'XykPoolAssetsDatum', assetId: number, balances: any, id: string, paraChainBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
 
 export type GetStablepoolBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<StablepoolFilter>;

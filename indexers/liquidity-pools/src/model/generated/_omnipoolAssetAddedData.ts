@@ -1,0 +1,62 @@
+import assert from "assert"
+import * as marshal from "./marshal"
+
+export class OmnipoolAssetAddedData {
+  private _initialAmount!: bigint | undefined | null
+  private _initialPrice!: bigint | undefined | null
+  private _paraChainBlockHeight!: number
+  private _relayChainBlockHeight!: number
+
+  constructor(props?: Partial<Omit<OmnipoolAssetAddedData, 'toJSON'>>, json?: any) {
+    Object.assign(this, props)
+    if (json != null) {
+      this._initialAmount = json.initialAmount == null ? undefined : marshal.bigint.fromJSON(json.initialAmount)
+      this._initialPrice = json.initialPrice == null ? undefined : marshal.bigint.fromJSON(json.initialPrice)
+      this._paraChainBlockHeight = marshal.int.fromJSON(json.paraChainBlockHeight)
+      this._relayChainBlockHeight = marshal.int.fromJSON(json.relayChainBlockHeight)
+    }
+  }
+
+  get initialAmount(): bigint | undefined | null {
+    return this._initialAmount
+  }
+
+  set initialAmount(value: bigint | undefined | null) {
+    this._initialAmount = value
+  }
+
+  get initialPrice(): bigint | undefined | null {
+    return this._initialPrice
+  }
+
+  set initialPrice(value: bigint | undefined | null) {
+    this._initialPrice = value
+  }
+
+  get paraChainBlockHeight(): number {
+    assert(this._paraChainBlockHeight != null, 'uninitialized access')
+    return this._paraChainBlockHeight
+  }
+
+  set paraChainBlockHeight(value: number) {
+    this._paraChainBlockHeight = value
+  }
+
+  get relayChainBlockHeight(): number {
+    assert(this._relayChainBlockHeight != null, 'uninitialized access')
+    return this._relayChainBlockHeight
+  }
+
+  set relayChainBlockHeight(value: number) {
+    this._relayChainBlockHeight = value
+  }
+
+  toJSON(): object {
+    return {
+      initialAmount: this.initialAmount == null ? undefined : marshal.bigint.toJSON(this.initialAmount),
+      initialPrice: this.initialPrice == null ? undefined : marshal.bigint.toJSON(this.initialPrice),
+      paraChainBlockHeight: this.paraChainBlockHeight,
+      relayChainBlockHeight: this.relayChainBlockHeight,
+    }
+  }
+}

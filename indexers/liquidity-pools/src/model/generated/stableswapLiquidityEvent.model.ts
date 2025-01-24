@@ -1,17 +1,18 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
-import {Stablepool} from "./stablepool.model"
-import {StablepoolAssetLiquidityAmount} from "./stablepoolAssetLiquidityAmount.model"
-import {LiquidityActionType} from "./_liquidityActionType"
+import {Stableswap} from "./stableswap.model"
+import {StableswapAssetLiquidityAmount} from "./stableswapAssetLiquidityAmount.model"
+import {LiquidityActionEvent} from "./_liquidityActionEvent"
+import {Event} from "./event.model"
 
 @Entity_()
-export class StablepoolLiquidityAction {
-  constructor(props?: Partial<StablepoolLiquidityAction>) {
+export class StableswapLiquidityEvent {
+  constructor(props?: Partial<StableswapLiquidityEvent>) {
     Object.assign(this, props)
   }
 
   /**
-   * poolId-paraChainBlockHeight-indexInBlock
+   * <stableswapId>-<eventId>
    */
   @PrimaryColumn_()
   id!: string
@@ -20,8 +21,8 @@ export class StablepoolLiquidityAction {
   traceIds!: (string)[] | undefined | null
 
   @Index_()
-  @ManyToOne_(() => Stablepool, {nullable: true})
-  pool!: Stablepool
+  @ManyToOne_(() => Stableswap, {nullable: true})
+  pool!: Stableswap
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   sharesAmount!: bigint
@@ -29,20 +30,24 @@ export class StablepoolLiquidityAction {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   feeAmount!: bigint
 
-  @OneToMany_(() => StablepoolAssetLiquidityAmount, e => e.liquidityAction)
-  assetAmounts!: StablepoolAssetLiquidityAmount[]
+  @OneToMany_(() => StableswapAssetLiquidityAmount, e => e.liquidityAction)
+  assetAmounts!: StableswapAssetLiquidityAmount[]
 
   @Column_("varchar", {length: 6, nullable: false})
-  actionType!: LiquidityActionType
+  actionType!: LiquidityActionEvent
 
   @Index_()
   @Column_("int4", {nullable: false})
   indexInBlock!: number
 
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
+
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
 
   @Index_()
-  @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  @ManyToOne_(() => Event, {nullable: true})
+  event!: Event
 }

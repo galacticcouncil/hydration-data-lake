@@ -1,11 +1,11 @@
 import {
   Asset,
-  LiquidityActionType,
+  LiquidityActionEvent,
   Stablepool,
-  StablepoolAssetHistoricalVolume,
-  StablepoolAssetLiquidityAmount,
-  StablepoolHistoricalVolume,
-  StablepoolLiquidityAction,
+  StableswapAssetHistoricalVolume,
+  StableswapAssetLiquidityAmount,
+  StableswapHistoricalVolume,
+  StableswapLiquidityEvent,
   Swap,
 } from '../../model';
 import { ProcessorContext } from '../../processor';
@@ -26,7 +26,7 @@ export async function handleStablepoolVolumeUpdates({
   ctx: ProcessorContext<Store>;
   pool: Stablepool;
   swap?: Swap;
-  liquidityAction?: StablepoolLiquidityAction;
+  liquidityAction?: StableswapLiquidityEvent;
 }) {
   if (!swap && !liquidityAction) return;
 
@@ -51,7 +51,7 @@ export async function handleStablepoolVolumeUpdates({
   );
 
   if (!volumesCollection) {
-    volumesCollection = new StablepoolHistoricalVolume({
+    volumesCollection = new StableswapHistoricalVolume({
       id: `${pool.id}-${paraChainBlockHeight}`,
       pool,
       relayChainBlockHeight,
@@ -70,7 +70,7 @@ export async function handleStablepoolVolumeUpdates({
       (getPoolAssetLastVolumeFromCache(
         stablepoolAssetVolumes,
         `${pool.id}-${asset.id}`
-      ) as StablepoolAssetHistoricalVolume | undefined) ||
+      ) as StableswapAssetHistoricalVolume | undefined) ||
       (await getOldStablepoolAssetVolume(ctx, asset.id, pool.id));
 
     const newVolume = initStablepoolAssetVolume({
@@ -113,14 +113,14 @@ export function initStablepoolAssetVolume({
 }: {
   swap?: Swap;
   liquidityActionData?: {
-    actionData: StablepoolLiquidityAction;
-    assetData?: StablepoolAssetLiquidityAmount;
+    actionData: StableswapLiquidityEvent;
+    assetData?: StableswapAssetLiquidityAmount;
   };
   asset: Asset;
   pool: Stablepool;
-  volumesCollection: StablepoolHistoricalVolume;
-  currentVolume?: StablepoolAssetHistoricalVolume | undefined;
-  oldVolume?: StablepoolAssetHistoricalVolume | undefined;
+  volumesCollection: StableswapHistoricalVolume;
+  currentVolume?: StableswapAssetHistoricalVolume | undefined;
+  oldVolume?: StableswapAssetHistoricalVolume | undefined;
   ctx: ProcessorContext<Store>;
 }) {
   if (!swap && !liquidityActionData) return;
@@ -130,7 +130,7 @@ export function initStablepoolAssetVolume({
     ? swap.paraChainBlockHeight
     : liquidityActionData!.actionData.paraChainBlockHeight;
 
-  const newVolume = new StablepoolAssetHistoricalVolume({
+  const newVolume = new StableswapAssetHistoricalVolume({
     id: `${poolId}-${asset.id}-${paraChainBlockHeight}`,
     asset,
     volumesCollection,
@@ -221,21 +221,21 @@ export function initStablepoolAssetVolume({
 
   if (liquidityActionData) {
     liqAddedAmount =
-      liquidityActionData.actionData.actionType === LiquidityActionType.ADD &&
+      liquidityActionData.actionData.actionType === LiquidityActionEvent.Add &&
       liquidityActionData.assetData
         ? liquidityActionData.assetData.amount
         : BigInt(0);
     liqRemovedAmount =
       liquidityActionData.actionData.actionType ===
-        LiquidityActionType.REMOVE && liquidityActionData.assetData
+        LiquidityActionEvent.REMOVE && liquidityActionData.assetData
         ? liquidityActionData.assetData.amount
         : BigInt(0);
     liqFee =
-      liquidityActionData.actionData.actionType === LiquidityActionType.REMOVE
+      liquidityActionData.actionData.actionType === LiquidityActionEvent.Remove
         ? liquidityActionData.actionData.feeAmount
         : BigInt(0);
     routedLiqAddedAmount =
-      liquidityActionData.actionData.actionType === LiquidityActionType.ADD &&
+      liquidityActionData.actionData.actionType === LiquidityActionEvent.Add &&
       isRoutedStablepoolLiquidityAction({
         liquidityAction: liquidityActionData.actionData,
         ctx,
@@ -245,7 +245,7 @@ export function initStablepoolAssetVolume({
         : BigInt(0);
     routedLiqRemovedAmount =
       liquidityActionData.actionData.actionType ===
-        LiquidityActionType.REMOVE &&
+        LiquidityActionEvent.Remove &&
       isRoutedStablepoolLiquidityAction({
         liquidityAction: liquidityActionData.actionData,
         ctx,
@@ -284,10 +284,10 @@ export function isRoutedStablepoolLiquidityAction({
   liquidityAction,
   ctx,
 }: {
-  liquidityAction: StablepoolLiquidityAction;
+  liquidityAction: StableswapLiquidityEvent;
   ctx: ProcessorContext<Store>;
 }) {
-  if (liquidityAction.actionType !== LiquidityActionType.REMOVE) return false;
+  // if (liquidityAction.actionType !== LiquidityActionEvent.REMOVE) return false; // TODO check this
 
   return !![...ctx.batchState.state.swaps.values()].find((swap) => {
     const swapOutputsMap = new Map(

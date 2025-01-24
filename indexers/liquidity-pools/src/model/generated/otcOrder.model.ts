@@ -3,7 +3,8 @@ import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {OtcOrderStatus} from "./_otcOrderStatus"
-import {OtcOrderAction} from "./otcOrderAction.model"
+import {OtcOrderEvent} from "./otcOrderEvent.model"
+import {Block} from "./block.model"
 
 @Entity_()
 export class OtcOrder {
@@ -12,7 +13,7 @@ export class OtcOrder {
   }
 
   /**
-   * order_id as string
+   * <orderId> as string
    */
   @PrimaryColumn_()
   id!: string
@@ -39,15 +40,8 @@ export class OtcOrder {
   partiallyFillable!: boolean | undefined | null
 
   @Index_()
-  @Column_("varchar", {length: 16, nullable: true})
+  @Column_("varchar", {length: 15, nullable: true})
   status!: OtcOrderStatus | undefined | null
-
-  @Column_("int4", {nullable: false})
-  createdAtRelayBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  createdAtParaBlockHeight!: number
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   totalFilledAmountIn!: bigint | undefined | null
@@ -55,6 +49,17 @@ export class OtcOrder {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   totalFilledAmountOut!: bigint | undefined | null
 
-  @OneToMany_(() => OtcOrderAction, e => e.order)
-  actions!: OtcOrderAction[]
+  @OneToMany_(() => OtcOrderEvent, e => e.order)
+  events!: OtcOrderEvent[]
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
+
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

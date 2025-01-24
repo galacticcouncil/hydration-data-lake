@@ -5,8 +5,8 @@ import parsers from '../../../parsers';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import { StableMath } from '@galacticcouncil/sdk';
 import {
-  StablepoolAssetHistoricalData,
-  StablepoolHistoricalData,
+  StableswapAssetHistoricalData,
+  StableswapHistoricalData,
 } from '../../../model';
 import { getOrCreateStablepool } from './stablepool';
 import { getAsset } from '../../assets/assetRegistry';
@@ -21,8 +21,8 @@ async function getStablepoolDataPromise({
   poolId: number;
   blockHeader: BlockHeader;
 }): Promise<{
-  poolData: StablepoolHistoricalData;
-  assetsData: StablepoolAssetHistoricalData[];
+  poolData: StableswapHistoricalData;
+  assetsData: StableswapAssetHistoricalData[];
 } | null> {
   //TODO add using pool data from current batch cache
   const poolStorageData = await parsers.storage.stableswap.getPoolData({
@@ -53,13 +53,13 @@ async function getStablepoolDataPromise({
 
   if (!poolEntity) return null;
 
-  const poolHistoricalDataEntity = new StablepoolHistoricalData({
+  const poolHistoricalDataEntity = new StableswapHistoricalData({
     id: `${poolId}-${blockHeader.height}`,
     pool: poolEntity,
     initialAmplification: poolStorageData.initialAmplification,
     finalAmplification: poolStorageData.finalAmplification,
-    initialBlock: poolStorageData.initialBlock,
-    finalBlock: poolStorageData.finalBlock,
+    initialAmplificationChangeAt: poolStorageData.initialBlock,
+    finalAmplificationChangeAt: poolStorageData.finalBlock,
     fee: poolStorageData.fee,
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(blockHeader.height)
@@ -82,7 +82,7 @@ async function getStablepoolDataPromise({
     if (!asset) continue;
 
     poolAssetHistoricalDataEntities.push(
-      new StablepoolAssetHistoricalData({
+      new StableswapAssetHistoricalData({
         id: `${poolId}-${assetId}-${blockHeader.height}`,
         asset,
         poolHistoricalData: poolHistoricalDataEntity,

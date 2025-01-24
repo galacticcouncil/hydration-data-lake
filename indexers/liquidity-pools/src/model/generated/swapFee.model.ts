@@ -11,7 +11,7 @@ export class SwapFee {
   }
 
   /**
-   * uuid
+   * <swapId>-<itemIndex> e.g. 0006516718-9965d-000107-0
    */
   @PrimaryColumn_()
   id!: string

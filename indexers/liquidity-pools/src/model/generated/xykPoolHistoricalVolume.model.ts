@@ -1,11 +1,12 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {XykPool} from "./xykPool.model"
+import {Xykpool} from "./xykpool.model"
 import {Asset} from "./asset.model"
+import {Block} from "./block.model"
 
 @Entity_()
-export class XykPoolHistoricalVolume {
-  constructor(props?: Partial<XykPoolHistoricalVolume>) {
+export class XykpoolHistoricalVolume {
+  constructor(props?: Partial<XykpoolHistoricalVolume>) {
     Object.assign(this, props)
   }
 
@@ -16,8 +17,8 @@ export class XykPoolHistoricalVolume {
   id!: string
 
   @Index_()
-  @ManyToOne_(() => XykPool, {nullable: true})
-  pool!: XykPool
+  @ManyToOne_(() => Xykpool, {nullable: true})
+  pool!: Xykpool
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
@@ -66,10 +67,14 @@ export class XykPoolHistoricalVolume {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetBTotalVolumeOut!: bigint
 
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
+
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
 
   @Index_()
-  @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

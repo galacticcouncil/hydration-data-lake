@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../../utils/helpers';
-import { XykPool } from '../../../model';
+import { Xykpool } from '../../../model';
 import { xykPoolCreated, xykPoolDestroyed } from './xykPool';
 
 export async function handleXykPools(
@@ -13,7 +13,7 @@ export async function handleXykPools(
   if (!ctx.appConfig.PROCESS_XYK_POOLS) return;
   ctx.batchState.state.xykAllBatchPools = new Map(
     (
-      await ctx.store.find(XykPool, {
+      await ctx.store.find(Xykpool, {
         where: {},
         relations: { assetA: true, assetB: true, account: true },
       })

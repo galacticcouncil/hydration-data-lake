@@ -1,8 +1,8 @@
 import {
-  LbpPoolHistoricalVolume,
+  LbppoolHistoricalVolume,
   OmnipoolAssetHistoricalVolume,
-  StablepoolAssetHistoricalVolume,
-  XykPoolHistoricalVolume,
+  StableswapAssetHistoricalVolume,
+  XykpoolHistoricalVolume,
 } from '../../model';
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
@@ -17,7 +17,7 @@ export async function getOldLbpVolume(
   ctx: ProcessorContext<Store>,
   poolId: string
 ) {
-  return await ctx.store.findOne(LbpPoolHistoricalVolume, {
+  return await ctx.store.findOne(LbppoolHistoricalVolume, {
     where: {
       pool: { id: poolId },
     },
@@ -36,7 +36,7 @@ export async function getOldXykVolume(
   ctx: ProcessorContext<Store>,
   poolId: string
 ) {
-  return await ctx.store.findOne(XykPoolHistoricalVolume, {
+  return await ctx.store.findOne(XykpoolHistoricalVolume, {
     where: {
       pool: { id: poolId },
     },
@@ -73,7 +73,7 @@ export async function getOldStablepoolAssetVolume(
   assetId: string | number,
   poolId: string
 ) {
-  return await ctx.store.findOne(StablepoolAssetHistoricalVolume, {
+  return await ctx.store.findOne(StableswapAssetHistoricalVolume, {
     where: {
       asset: { id: `${assetId}` },
       volumesCollection: { pool: { id: poolId } },
@@ -89,7 +89,7 @@ export async function getOldStablepoolAssetVolume(
 }
 
 export function getLastVolumeFromCache(
-  volume: Map<string, LbpPoolHistoricalVolume | XykPoolHistoricalVolume>,
+  volume: Map<string, LbppoolHistoricalVolume | XykpoolHistoricalVolume>,
   poolId: string
 ) {
   return volume.get(

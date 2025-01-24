@@ -79,10 +79,10 @@ export async function handleDcaScheduleExecutionPlanned(
   plannedExecution = new DcaScheduleExecution({
     id: executionId,
     schedule: scheduleEntity,
-    status: DcaScheduleExecutionStatus.PLANNED,
+    status: DcaScheduleExecutionStatus.Planned,
   });
   //
-  // const executionAction = new DcaScheduleExecutionAction({
+  // const executionAction = new DcaScheduleExecutionEvent({
   //   id: `${plannedExecution.id}-${DcaScheduleExecutionStatus.PLANNED}`,
   //   scheduleExecution: plannedExecution,
   //   status: DcaScheduleExecutionStatus.PLANNED,
@@ -104,9 +104,9 @@ export async function handleDcaScheduleExecutionPlanned(
   const executionAction = await processDcaScheduleExecutionAction({
     ctx,
     who: eventParams.who,
-    id: `${plannedExecution.id}-${DcaScheduleExecutionStatus.PLANNED}`,
+    id: `${plannedExecution.id}-${DcaScheduleExecutionStatus.Planned}`,
     scheduleExecution: plannedExecution,
-    status: DcaScheduleExecutionStatus.PLANNED,
+    status: DcaScheduleExecutionStatus.Planned,
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
@@ -154,16 +154,16 @@ export async function handleDcaTradeExecuted(
 
   if (!scheduleExecutionEntity) return;
 
-  scheduleExecutionEntity.status = DcaScheduleExecutionStatus.EXECUTED;
+  scheduleExecutionEntity.status = DcaScheduleExecutionStatus.Executed;
   scheduleExecutionEntity.amountIn = eventParams.amountIn;
   scheduleExecutionEntity.amountOut = eventParams.amountOut;
 
   const executionAction = await processDcaScheduleExecutionAction({
     ctx,
     who: eventParams.who,
-    id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.EXECUTED}`,
+    id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.Executed}`,
     scheduleExecution: scheduleExecutionEntity,
-    status: DcaScheduleExecutionStatus.EXECUTED,
+    status: DcaScheduleExecutionStatus.Executed,
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
@@ -214,9 +214,9 @@ export async function handleDcaTradeFailed(
 
   if (!scheduleExecutionEntity) return;
 
-  scheduleExecutionEntity.status = DcaScheduleExecutionStatus.FAILED;
+  scheduleExecutionEntity.status = DcaScheduleExecutionStatus.Failed;
 
-  // const executionAction = new DcaScheduleExecutionAction({
+  // const executionAction = new DcaScheduleExecutionEvent({
   //   id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.FAILED}`,
   //   scheduleExecution: scheduleExecutionEntity,
   //   status: DcaScheduleExecutionStatus.FAILED,
@@ -241,9 +241,9 @@ export async function handleDcaTradeFailed(
   const executionAction = await processDcaScheduleExecutionAction({
     ctx,
     who: eventParams.who,
-    id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.FAILED}`,
+    id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.Failed}`,
     scheduleExecution: scheduleExecutionEntity,
-    status: DcaScheduleExecutionStatus.FAILED,
+    status: DcaScheduleExecutionStatus.Failed,
     statusMemo: eventParams.error
       ? new DispatchError({
           kind: eventParams.error.__kind,

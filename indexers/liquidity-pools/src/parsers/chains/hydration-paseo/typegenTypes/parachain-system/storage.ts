@@ -6,7 +6,7 @@ export const lastRelayChainBlockNumber =  {
      * 
      *  This is updated in `on_finalize`.
      */
-    v257: new StorageType('ParachainSystem.LastRelayChainBlockNumber', 'Default', [], sts.number()) as LastRelayChainBlockNumberV257,
+    v276: new StorageType('ParachainSystem.LastRelayChainBlockNumber', 'Default', [], sts.number()) as LastRelayChainBlockNumberV276,
 }
 
 /**
@@ -14,7 +14,7 @@ export const lastRelayChainBlockNumber =  {
  * 
  *  This is updated in `on_finalize`.
  */
-export interface LastRelayChainBlockNumberV257  {
+export interface LastRelayChainBlockNumberV276  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): number
     get(block: Block): Promise<(number | undefined)>

@@ -12,7 +12,7 @@ export class Block {
   }
 
   /**
-   * 0003396328-000002-70ca4
+   * <blockHeight>-<blockHash prefix> e.g. 0003396328-70ca4
    */
   @PrimaryColumn_()
   id!: string
@@ -26,21 +26,24 @@ export class Block {
   @OneToMany_(() => Event, e => e.block)
   events!: Event[]
 
-  @OneToMany_(() => ChainActivityTrace, e => e.createdAtBlock)
+  @OneToMany_(() => ChainActivityTrace, e => e.block)
   chainActivityTraces!: ChainActivityTrace[]
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  height!: number
+
+  @Index_()
+  @Column_("text", {nullable: false})
+  hash!: string
+
+  @Index_()
+  @Column_("timestamp with time zone", {nullable: false})
+  timestamp!: Date
 
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
 
-  @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
-
-  @Index_()
-  @Column_("text", {nullable: false})
-  paraChainBlockHash!: string
-
-  @Index_()
-  @Column_("timestamp with time zone", {nullable: false})
-  paraChainBlockTimestamp!: Date
+  relayChainBlockHash!: number
 }

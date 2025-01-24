@@ -2,7 +2,7 @@ import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
-import { LbpPoolHistoricalData } from '../../../model';
+import { LbppoolHistoricalData } from '../../../model';
 import { getAsset } from '../../assets/assetRegistry';
 import { getOrCreateLbpPool } from './lbpPool';
 import { getAccount } from '../../accounts';
@@ -69,7 +69,7 @@ export async function handleLbpPoolHistoricalData(
 
         if (!assetAEntity || !assetBEntity) return null;
 
-        const poolHistoricalDataEntity = new LbpPoolHistoricalData({
+        const poolHistoricalDataEntity = new LbppoolHistoricalData({
           id: `${pool.account.id}-${blockHeader.height}`,
           pool: pool,
           assetA: assetAEntity,

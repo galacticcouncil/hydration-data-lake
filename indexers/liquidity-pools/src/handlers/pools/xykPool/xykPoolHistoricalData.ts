@@ -2,7 +2,7 @@ import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
-import { XykPoolHistoricalData } from '../../../model';
+import { XykpoolHistoricalData } from '../../../model';
 import { getOrCreateXykPool } from './xykPool';
 
 export async function handleXykPoolHistoricalData(
@@ -48,7 +48,7 @@ export async function handleXykPoolHistoricalData(
             .map((assetData) => [`${assetData.assetId}`, assetData.data])
         );
 
-        const poolHistoricalDataEntity = new XykPoolHistoricalData({
+        const poolHistoricalDataEntity = new XykpoolHistoricalData({
           id: `${poolId}-${blockHeader.height}`,
           pool,
           assetA: pool.assetA,

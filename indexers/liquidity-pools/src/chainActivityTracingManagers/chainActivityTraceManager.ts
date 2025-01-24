@@ -415,7 +415,7 @@ export class ChainActivityTraceManager {
       switch (eventName) {
         // TODO Add conditional select of appropriate group
         default:
-          return EventGroup.EXTRINSIC;
+          return EventGroup.Extrinsic;
       }
     };
     const getGroupForInitializationPhase = () => {
@@ -428,18 +428,18 @@ export class ChainActivityTraceManager {
         case 'DCA.Terminated':
         case 'DCA.Completed':
         case 'DCA.RandomnessGenerationFailed':
-          return EventGroup.DCA;
+          return EventGroup.Dca;
         default:
-          return EventGroup.INITIALIZATION;
+          return EventGroup.Initialization;
       }
     };
     const getGroupForFinalizationPhase = () => {
       switch (eventName) {
         case 'Omnipool.SellExecuted':
         case 'Omnipool.BuyExecuted':
-          return EventGroup.BUY_BACK;
+          return EventGroup.Buyback;
         default:
-          return EventGroup.FINALIZATION;
+          return EventGroup.Finalization;
       }
     };
 
@@ -498,7 +498,7 @@ export class ChainActivityTraceManager {
         return [TraceEntityType.TRANSFER];
       case EventName.Stableswap_LiquidityAdded:
       case EventName.Stableswap_LiquidityRemoved:
-        return [TraceEntityType.STABLEPOOL_LIQUIDITY_ACTION];
+        return [TraceEntityType.STABLESWAP_LIQUIDITY_ACTION];
       case EventName.OTC_Placed:
       case EventName.OTC_Cancelled:
       case EventName.OTC_Filled:
@@ -512,7 +512,7 @@ export class ChainActivityTraceManager {
       case EventName.DCA_ExecutionStarted:
       case EventName.DCA_TradeExecuted:
       case EventName.DCA_TradeFailed:
-        return [TraceEntityType.DCA_SCHEDULE_EXECUTION_ACTION];
+        return [TraceEntityType.DCA_SCHEDULE_EXECUTION_EVENT];
       case EventName.DCA_RandomnessGenerationFailed:
         return [TraceEntityType.DCA_RANDOMNESS_GENERATION_FAILED_ERROR];
       case EventName.AmmSupport_Swapped:

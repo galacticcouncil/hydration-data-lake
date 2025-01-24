@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import {
   ChainActivityTraceRelation,
   DcaScheduleExecution,
-  DcaScheduleExecutionAction,
+  DcaScheduleExecutionEvent,
   DcaScheduleExecutionStatus,
   DispatchError,
   Swap,
@@ -27,7 +27,7 @@ export async function getDcaScheduleExecutionAction({
   id?: string;
   executionId?: string;
   fetchFromDb?: boolean;
-  relations?: FindOptionsRelations<DcaScheduleExecutionAction>;
+  relations?: FindOptionsRelations<DcaScheduleExecutionEvent>;
 }) {
   if (!id && !executionId) return null;
   const batchState = ctx.batchState.state;
@@ -44,7 +44,7 @@ export async function getDcaScheduleExecutionAction({
   if (executionAction || (!executionAction && !fetchFromDb))
     return executionAction ?? null;
 
-  executionAction = await ctx.store.findOne(DcaScheduleExecutionAction, {
+  executionAction = await ctx.store.findOne(DcaScheduleExecutionEvent, {
     where: {
       ...(id ? { id } : {}),
       ...(executionId ? { scheduleExecution: { id: executionId } } : {}),
@@ -92,7 +92,7 @@ export async function processDcaScheduleExecutionAction({
 
   if (executionAction) return executionAction;
 
-  executionAction = new DcaScheduleExecutionAction({
+  executionAction = new DcaScheduleExecutionEvent({
     id,
     scheduleExecution,
     status,
@@ -103,7 +103,7 @@ export async function processDcaScheduleExecutionAction({
     statusMemo: statusMemo ?? null,
   });
 
-  if (status === DcaScheduleExecutionStatus.EXECUTED) {
+  if (status === DcaScheduleExecutionStatus.Executed) {
     const dcaSchedule = await getDcaSchedule({
       ctx,
       id: scheduleExecution.id.split('-')[0],
@@ -167,7 +167,7 @@ async function processChainActivityTracesOnDcaExecutionAction({
   scheduleId,
   ctx,
 }: {
-  executionAction: DcaScheduleExecutionAction;
+  executionAction: DcaScheduleExecutionEvent;
   swap: Swap;
   scheduleId: string;
   ctx: ProcessorContext<Store>;
@@ -206,7 +206,7 @@ async function processChainActivityTracesOnDcaExecutionAction({
     return;
 
   const newChainActivityTraceRelation = new ChainActivityTraceRelation({
-    id: `${swapChainActivityTrace.id}-${rootChainActivityTrace.id}`,
+    id: `${rootChainActivityTrace.id}-${swapChainActivityTrace.id}`,
     childTrace: swapChainActivityTrace,
     parentTrace: rootChainActivityTrace,
     createdAtParaChainBlockHeight: swap.paraChainBlockHeight,

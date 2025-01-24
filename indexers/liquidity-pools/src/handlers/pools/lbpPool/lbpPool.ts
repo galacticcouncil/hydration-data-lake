@@ -1,6 +1,6 @@
 import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AccountType, LbpPool } from '../../../model';
+import { AccountType, Lbppool } from '../../../model';
 import { getAccount } from '../../accounts';
 import {
   LbpPoolCreatedData,
@@ -83,7 +83,7 @@ export async function createLbpPool({
     );
   }
 
-  const newPool = new LbpPool({
+  const newPool = new Lbppool({
     id: poolAddress,
     account: await getAccount({
       ctx,
@@ -120,7 +120,7 @@ export async function getOrCreateLbpPool({
   assetIds: number[] | string[];
   ensure?: boolean;
   blockHeader?: Block;
-}): Promise<LbpPool | null> {
+}): Promise<Lbppool | null> {
   const batchState = ctx.batchState.state;
 
   let pool = [...batchState.lbpAllBatchPools.values()].find(
@@ -130,7 +130,7 @@ export async function getOrCreateLbpPool({
   );
   if (pool) return pool;
 
-  pool = await ctx.store.findOne(LbpPool, {
+  pool = await ctx.store.findOne(Lbppool, {
     where: [
       { assetA: { id: `${assetIds[0]}` }, assetB: { id: `${assetIds[1]}` } },
       { assetB: { id: `${assetIds[0]}` }, assetA: { id: `${assetIds[1]}` } },

@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { getAsset } from '../assets/assetRegistry';
 import {
   DcaSchedule,
-  DcaScheduleOrderRoute,
+  DcaScheduleOrderRouteHop,
   DcaScheduleStatus,
   DispatchError,
   DispatchErrorValue,
@@ -73,8 +73,8 @@ export async function createDcaSchedule({
     amountOut: order.amountOut ?? null,
     maxAmountIn: order.maxAmountIn ?? null,
     minAmountOut: order.minAmountOut ?? null,
-    orderKind: order.kind,
-    status: DcaScheduleStatus.OPEN,
+    orderType: order.kind,
+    status: DcaScheduleStatus.Open,
     createdAtParaBlockHeight: blockHeader.height,
     createdAtRelayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(blockHeader.height)
@@ -82,7 +82,7 @@ export async function createDcaSchedule({
     traceIds: traceIds ?? [],
   });
 
-  const orderRoutes: DcaScheduleOrderRoute[] = [];
+  const orderRouteHops: DcaScheduleOrderRouteHop[] = [];
 
   for (const orderRoute of order.routes) {
     const routeAssetIn = await getAsset({
@@ -102,8 +102,8 @@ export async function createDcaSchedule({
         `Asset ${!assetIn ? order.assetInId : order.assetOutId} has not been found and created.`
       );
 
-    orderRoutes.push(
-      new DcaScheduleOrderRoute({
+    orderRouteHops.push(
+      new DcaScheduleOrderRouteHop({
         id: `${newSchedule.id}-${orderRoute.assetInId}-${orderRoute.assetOutId}`,
         schedule: newSchedule,
         poolKind: orderRoute.poolKind,
@@ -112,7 +112,7 @@ export async function createDcaSchedule({
       })
     );
   }
-  newSchedule.orderRoutes = orderRoutes;
+  newSchedule.orderRouteHops = orderRouteHops;
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newSchedule.traceIds,
@@ -191,7 +191,7 @@ export async function handleDcaScheduleCreated(
   state.accounts.set(newSchedule.owner.id, newSchedule.owner);
   state.dcaSchedules.set(newSchedule.id, newSchedule);
 
-  for (const orderRoute of newSchedule.orderRoutes)
+  for (const orderRoute of newSchedule.orderRouteHops)
     state.dcaScheduleOrderRoutes.set(orderRoute.id, orderRoute);
 }
 
@@ -210,7 +210,7 @@ export async function handleDcaScheduleCompleted(
 
   if (!scheduleEntity) return;
 
-  scheduleEntity.status = DcaScheduleStatus.COMPLETED;
+  scheduleEntity.status = DcaScheduleStatus.Completed;
   scheduleEntity.statusUpdatedAtBlockHeight = eventMetadata.blockHeader.height;
 
   const state = ctx.batchState.state;
@@ -233,7 +233,7 @@ export async function handleDcaScheduleTerminated(
 
   if (!scheduleEntity) return;
 
-  scheduleEntity.status = DcaScheduleStatus.TERMINATED;
+  scheduleEntity.status = DcaScheduleStatus.Terminated;
   scheduleEntity.statusUpdatedAtBlockHeight = eventMetadata.blockHeader.height;
   scheduleEntity.statusMemo = eventParams.error
     ? new DispatchError({

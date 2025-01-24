@@ -1,6 +1,6 @@
 import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Stablepool, StablepoolAsset } from '../../../model';
+import { Stablepool, StableswapAsset } from '../../../model';
 
 export async function getAssetsByStablepool(
   ctx: ProcessorContext<Store>,
@@ -11,7 +11,7 @@ export async function getAssetsByStablepool(
   const cachedAssets = [...batchState.stablepoolAssetsAllBatch.values()].filter(
     (asset) => asset.pool.id === poolId
   );
-  const persistentAssets = await ctx.store.find(StablepoolAsset, {
+  const persistentAssets = await ctx.store.find(StableswapAsset, {
     where: { pool: { id: `${poolId}` } },
     relations: {
       pool: true,

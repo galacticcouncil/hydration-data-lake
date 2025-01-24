@@ -1,5 +1,5 @@
 export enum DcaScheduleExecutionStatus {
-  PLANNED = "PLANNED",
-  EXECUTED = "EXECUTED",
-  FAILED = "FAILED",
+  Planned = "Planned",
+  Executed = "Executed",
+  Failed = "Failed",
 }

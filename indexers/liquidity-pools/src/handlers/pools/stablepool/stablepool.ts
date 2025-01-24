@@ -1,6 +1,6 @@
 import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AccountType, Stablepool, StablepoolAsset } from '../../../model';
+import { AccountType, Stablepool, StableswapAsset } from '../../../model';
 import { getAccount } from '../../accounts';
 import { StableswapPoolCreatedData } from '../../../parsers/batchBlocksParser/types';
 
@@ -51,7 +51,7 @@ export async function getNewStablepoolWithAssets({
 
   const assetsListPromise = poolAssetIds.map(
     async (assetId) =>
-      new StablepoolAsset({
+      new StableswapAsset({
         id: `${newPool.id}-${assetId}`,
         pool: newPool,
         amount: await getAssetFreeBalance(
@@ -124,7 +124,7 @@ export async function getOrCreateStablepool({
   state.stablepoolIdsToSave.add(newPool.id);
   state.stablepoolAllBatchPools.set(newPool.id, newPool);
 
-  newPool.account.stablepool = newPool;
+  newPool.account.stableswap = newPool;
   state.accounts.set(newPool.account.id, newPool.account);
 
   return newPool;
@@ -146,7 +146,7 @@ export async function stablepoolCreated(
   });
 
   pool.assets = poolAssets;
-  pool.account.stablepool = pool;
+  pool.account.stableswap = pool;
 
   const state = ctx.batchState.state;
 

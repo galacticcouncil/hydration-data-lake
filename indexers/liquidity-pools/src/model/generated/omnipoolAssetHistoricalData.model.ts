@@ -2,6 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {OmnipoolAsset} from "./omnipoolAsset.model"
 import {Asset} from "./asset.model"
+import {Block} from "./block.model"
 
 @Entity_()
 export class OmnipoolAssetHistoricalData {
@@ -10,7 +11,7 @@ export class OmnipoolAssetHistoricalData {
   }
 
   /**
-   * OmnipoolAssetId-paraChainBlockHeight
+   * <omnipoolAssetId>-<paraChainBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)
    */
   @PrimaryColumn_()
   id!: string
@@ -24,39 +25,28 @@ export class OmnipoolAssetHistoricalData {
   asset!: Asset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  stateCap!: bigint
+  assetCap!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  stateShares!: bigint
+  assetShares!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  stateHubReserve!: bigint
+  assetHubReserve!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  stateProtocolShares!: bigint
+  assetProtocolShares!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  balanceFree!: bigint
+  freeBalance!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  balanceFlags!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  balanceFrozen!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  balanceReserved!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  balanceFeeFrozen!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  balanceMiscFrozen!: bigint
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
 
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
 
   @Index_()
-  @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

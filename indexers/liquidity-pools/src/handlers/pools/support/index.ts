@@ -1,7 +1,7 @@
 import { ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { AssetType, LbpPool, Stablepool } from '../../../model';
+import { AssetType, Lbppool, Stablepool } from '../../../model';
 import parsers from '../../../parsers';
 
 export async function ensurePoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
@@ -25,7 +25,7 @@ export async function ensurePoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
 }
 
 async function handleLbpPoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
-  const lbpPoolsToProcess = await ctx.store.find(LbpPool, {
+  const lbpPoolsToProcess = await ctx.store.find(Lbppool, {
     where: {
       isDestroyed: false,
     },

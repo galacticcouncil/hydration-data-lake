@@ -4,7 +4,7 @@ import {
   DcaScheduleOrderData,
   DcaScheduleOrderRouteData,
 } from '../../types/calls';
-import { DcaScheduleOrderKind, SwapFillerType } from '../../../model';
+import { DcaScheduleOrderType, SwapFillerType } from '../../../model';
 
 export function decorateDcaSchedule(scheduleRaw: Schedule) {
   const {
@@ -37,7 +37,7 @@ export function decorateDcaSchedule(scheduleRaw: Schedule) {
   }));
 
   const orderData: DcaScheduleOrderData = {
-    kind: order.__kind as DcaScheduleOrderKind,
+    kind: order.__kind as DcaScheduleOrderType,
     assetInId: order.assetIn,
     assetOutId: order.assetOut,
     amountOut,

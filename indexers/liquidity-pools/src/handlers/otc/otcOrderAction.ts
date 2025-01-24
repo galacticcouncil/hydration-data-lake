@@ -8,7 +8,7 @@ import {
   Account,
   OtcOrder,
   OtcOrderAction,
-  OtcOrderActionKind,
+  OtcOrderActionType,
   OtcOrderStatus,
   Swap,
 } from '../../model';
@@ -33,7 +33,7 @@ export function getNewOrderAction({
 }: {
   operationId?: string | null;
   traceIds: string[];
-  kind: OtcOrderActionKind;
+  kind: OtcOrderActionType;
   order: OtcOrder;
   amountIn?: bigint | null;
   amountOut?: bigint | null;
@@ -71,7 +71,7 @@ export async function getOtcOrderActions({
 }: {
   id?: string;
   orderId?: string;
-  kind?: OtcOrderActionKind;
+  kind?: OtcOrderActionType;
   fetchFromDb?: boolean;
   ctx: ProcessorContext<Store>;
   relations?: FindOptionsRelations<OtcOrderAction>;
@@ -141,7 +141,7 @@ export async function handleOtcOrderFilled(
   const newOrderAction = getNewOrderAction({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: otcOrder,
-    kind: OtcOrderActionKind.FILLED,
+    kind: OtcOrderActionType.FILLED,
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
@@ -207,7 +207,7 @@ export async function handleOtcOrderPartiallyFilled(
   const newOrderAction = getNewOrderAction({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: otcOrder,
-    kind: OtcOrderActionKind.PARTIALLY_FILLED,
+    kind: OtcOrderActionType.PARTIALLY_FILLED,
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,

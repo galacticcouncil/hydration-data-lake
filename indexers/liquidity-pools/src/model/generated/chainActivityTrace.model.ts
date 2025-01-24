@@ -1,6 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import {Account} from "./account.model"
+import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
 import {ChainActivityTraceRelation} from "./chainActivityTraceRelation.model"
 import {Block} from "./block.model"
 
@@ -19,15 +19,15 @@ export class ChainActivityTrace {
   @Column_("text", {array: true, nullable: false})
   traceIds!: (string)[]
 
-  @OneToMany_(() => AccountChainActivityTrace, e => e.chainActivityTrace)
-  participants!: AccountChainActivityTrace[]
-
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})
   originator!: Account | undefined | null
 
+  @OneToMany_(() => AccountChainActivityTrace, e => e.chainActivityTrace)
+  participants!: AccountChainActivityTrace[]
+
   @Column_("text", {array: true, nullable: false})
-  associatedAccountsFlat!: (string)[]
+  participantAccounts!: (string)[]
 
   @OneToMany_(() => ChainActivityTraceRelation, e => e.parentTrace)
   childTraces!: ChainActivityTraceRelation[]
@@ -37,9 +37,12 @@ export class ChainActivityTrace {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  createdAtParaChainBlockHeight!: number
+  paraChainBlockHeight!: number
+
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})
-  createdAtBlock!: Block
+  block!: Block
 }

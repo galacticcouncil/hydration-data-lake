@@ -1,23 +1,23 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {Swap} from "./swap.model"
+import {StableswapLiquidityEvent} from "./stableswapLiquidityEvent.model"
 import {Asset} from "./asset.model"
 
 @Entity_()
-export class SwapInputAssetBalance {
-  constructor(props?: Partial<SwapInputAssetBalance>) {
+export class StableswapAssetLiquidityAmount {
+  constructor(props?: Partial<StableswapAssetLiquidityAmount>) {
     Object.assign(this, props)
   }
 
   /**
-   * uuid
+   * <stableswapId>-<eventId>-<assetId>
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => Swap, {nullable: true})
-  swap!: Swap
+  @ManyToOne_(() => StableswapLiquidityEvent, {nullable: true})
+  liquidityAction!: StableswapLiquidityEvent
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})

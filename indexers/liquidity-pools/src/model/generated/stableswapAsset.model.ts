@@ -1,23 +1,23 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {StablepoolLiquidityAction} from "./stablepoolLiquidityAction.model"
+import {Stableswap} from "./stableswap.model"
 import {Asset} from "./asset.model"
 
 @Entity_()
-export class StablepoolAssetLiquidityAmount {
-  constructor(props?: Partial<StablepoolAssetLiquidityAmount>) {
+export class StableswapAsset {
+  constructor(props?: Partial<StableswapAsset>) {
     Object.assign(this, props)
   }
 
   /**
-   * poolId-assetId-paraChainBlockHeight-indexInBlock
+   * <stableswapId>-<assetId> (e.g. 101-19)
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => StablepoolLiquidityAction, {nullable: true})
-  liquidityAction!: StablepoolLiquidityAction
+  @ManyToOne_(() => Stableswap, {nullable: true})
+  pool!: Stableswap
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})

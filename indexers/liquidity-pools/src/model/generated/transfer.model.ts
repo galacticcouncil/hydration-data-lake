@@ -1,6 +1,8 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
+import {Asset} from "./asset.model"
 import {Account} from "./account.model"
+import {Event} from "./event.model"
 
 @Entity_()
 export class Transfer {
@@ -9,7 +11,7 @@ export class Transfer {
   }
 
   /**
-   * TxId
+   * <eventId> (e.g. 0000059948-e5832-000007)
    */
   @PrimaryColumn_()
   id!: string
@@ -17,16 +19,9 @@ export class Transfer {
   @Column_("text", {array: true, nullable: true})
   traceIds!: (string)[] | undefined | null
 
-  @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
-
   @Index_()
-  @Column_("int4", {nullable: false})
-  assetId!: number
-
-  @Index_()
-  @Column_("text", {nullable: true})
-  extrinsicHash!: string | undefined | null
+  @ManyToOne_(() => Asset, {nullable: true})
+  asset!: Asset
 
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})
@@ -41,4 +36,19 @@ export class Transfer {
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   txFee!: bigint
+
+  @Index_()
+  @Column_("timestamp with time zone", {nullable: false})
+  paraChainTimestamp!: Date
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
+
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => Event, {nullable: true})
+  event!: Event
 }

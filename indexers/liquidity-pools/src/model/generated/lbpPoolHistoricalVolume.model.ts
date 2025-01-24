@@ -1,11 +1,12 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {LbpPool} from "./lbpPool.model"
+import {Lbppool} from "./lbppool.model"
 import {Asset} from "./asset.model"
+import {Block} from "./block.model"
 
 @Entity_()
-export class LbpPoolHistoricalVolume {
-  constructor(props?: Partial<LbpPoolHistoricalVolume>) {
+export class LbppoolHistoricalVolume {
+  constructor(props?: Partial<LbppoolHistoricalVolume>) {
     Object.assign(this, props)
   }
 
@@ -16,8 +17,8 @@ export class LbpPoolHistoricalVolume {
   id!: string
 
   @Index_()
-  @ManyToOne_(() => LbpPool, {nullable: true})
-  pool!: LbpPool
+  @ManyToOne_(() => Lbppool, {nullable: true})
+  pool!: Lbppool
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
@@ -66,10 +67,14 @@ export class LbpPoolHistoricalVolume {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetBTotalVolumeOut!: bigint
 
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
+
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
 
   @Index_()
-  @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

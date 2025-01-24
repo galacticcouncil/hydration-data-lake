@@ -1,12 +1,13 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {LbpPool} from "./lbpPool.model"
+import {Lbppool} from "./lbppool.model"
 import {Asset} from "./asset.model"
 import {Account} from "./account.model"
+import {Block} from "./block.model"
 
 @Entity_()
-export class LbpPoolHistoricalData {
-  constructor(props?: Partial<LbpPoolHistoricalData>) {
+export class LbppoolHistoricalData {
+  constructor(props?: Partial<LbppoolHistoricalData>) {
     Object.assign(this, props)
   }
 
@@ -17,8 +18,8 @@ export class LbpPoolHistoricalData {
   id!: string
 
   @Index_()
-  @ManyToOne_(() => LbpPool, {nullable: true})
-  pool!: LbpPool
+  @ManyToOne_(() => Lbppool, {nullable: true})
+  pool!: Lbppool
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
@@ -38,11 +39,15 @@ export class LbpPoolHistoricalData {
   @ManyToOne_(() => Account, {nullable: true})
   owner!: Account
 
-  @Column_("int4", {nullable: true})
-  start!: number | undefined | null
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  feeCollector!: Account | undefined | null
 
   @Column_("int4", {nullable: true})
-  end!: number | undefined | null
+  startBlockNumber!: number | undefined | null
+
+  @Column_("int4", {nullable: true})
+  endBlockNumber!: number | undefined | null
 
   @Column_("int4", {nullable: false})
   initialWeight!: number
@@ -50,23 +55,23 @@ export class LbpPoolHistoricalData {
   @Column_("int4", {nullable: false})
   finalWeight!: number
 
-  @Column_("text", {nullable: false})
-  weightCurve!: string
-
   @Column_("int4", {array: true, nullable: false})
   fee!: (number)[]
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  feeCollector!: Account | undefined | null
-
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   repayTarget!: bigint
+
+  @Column_("text", {nullable: false})
+  weightCurve!: string
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraChainBlockHeight!: number
 
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
 
   @Index_()
-  @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

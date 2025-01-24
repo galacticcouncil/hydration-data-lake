@@ -5,9 +5,9 @@ import {
   StableswapLiquidityRemovedData,
 } from '../../../parsers/batchBlocksParser/types';
 import {
-  LiquidityActionType,
-  StablepoolAssetLiquidityAmount,
-  StablepoolLiquidityAction,
+  LiquidityActionEvent,
+  StableswapAssetLiquidityAmount,
+  StableswapLiquidityEvent,
 } from '../../../model';
 import { getOrCreateStablepool } from './stablepool';
 import { EventName } from '../../../parsers/types/events';
@@ -41,8 +41,8 @@ export async function stablepoolLiquidityAddedRemoved(
 
   const actionType =
     eventMetadata.name === EventName.Stableswap_LiquidityAdded
-      ? LiquidityActionType.ADD
-      : LiquidityActionType.REMOVE;
+      ? LiquidityActionEvent.Add
+      : LiquidityActionEvent.Remove;
 
   if (eventMetadata.name === EventName.Stableswap_LiquidityAdded) {
     assetAmounts = (eventCallData as StableswapLiquidityAddedData).eventData
@@ -52,8 +52,8 @@ export async function stablepoolLiquidityAddedRemoved(
       .params.amounts;
   }
 
-  const newAction = new StablepoolLiquidityAction({
-    id: `${eventParams.poolId}-${eventMetadata.blockHeader.height}-${eventMetadata.indexInBlock}`,
+  const newAction = new StableswapLiquidityEvent({
+    id: `${eventParams.poolId}-${eventMetadata.id}`,
     traceIds: [
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
@@ -70,7 +70,7 @@ export async function stablepoolLiquidityAddedRemoved(
   const newAmountsList = [];
 
   for (const assetAmount of assetAmounts) {
-    const amountEntityId = `${eventParams.poolId}-${assetAmount.assetId}-${eventMetadata.blockHeader.height}-${eventMetadata.indexInBlock}`;
+    const amountEntityId = `${newAction.id}-${assetAmount.assetId}`;
     const asset = await getAsset({
       ctx,
       id: assetAmount.assetId,
@@ -81,7 +81,7 @@ export async function stablepoolLiquidityAddedRemoved(
     if (!asset) continue; // TODO add error handling
 
     newAmountsList.push(
-      new StablepoolAssetLiquidityAmount({
+      new StableswapAssetLiquidityAmount({
         id: amountEntityId,
         liquidityAction: newAction,
         amount: assetAmount.amount,

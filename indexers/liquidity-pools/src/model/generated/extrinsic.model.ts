@@ -9,7 +9,7 @@ export class Extrinsic {
   }
 
   /**
-   * 0003396328-000002-70ca4
+   * <blockHeight>-<blockHash prefix>-<indexInBlock> e.g. 0000065722-4721a-000002
    */
   @PrimaryColumn_()
   id!: string
@@ -17,12 +17,18 @@ export class Extrinsic {
   @Column_("text", {nullable: false})
   hash!: string
 
+  @Column_("int4", {nullable: false})
+  indexInBlock!: number
+
   @OneToMany_(() => Call, e => e.extrinsic)
   calls!: Call[]
 
   @Index_()
   @Column_("int4", {nullable: false})
   paraChainBlockHeight!: number
+
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})

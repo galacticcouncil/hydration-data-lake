@@ -1,13 +1,15 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {AccountType} from "./_accountType"
-import {LbpPool} from "./lbpPool.model"
-import {XykPool} from "./xykPool.model"
+import {AccountAssetBalanceData} from "./accountAssetBalanceData.model"
+import {AccountAssetBalanceHistoricalData} from "./accountAssetBalanceHistoricalData.model"
+import {Lbppool} from "./lbppool.model"
+import {Xykpool} from "./xykpool.model"
 import {Omnipool} from "./omnipool.model"
-import {Stablepool} from "./stablepool.model"
-import {Swap} from "./swap.model"
-import {Transfer} from "./transfer.model"
+import {Stableswap} from "./stableswap.model"
 import {ChainActivityTrace} from "./chainActivityTrace.model"
 import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
+import {Swap} from "./swap.model"
+import {Transfer} from "./transfer.model"
 import {DcaSchedule} from "./dcaSchedule.model"
 import {OtcOrder} from "./otcOrder.model"
 
@@ -18,7 +20,7 @@ export class Account {
   }
 
   /**
-   * Account pubkey
+   * <address>
    */
   @PrimaryColumn_()
   id!: string
@@ -26,21 +28,33 @@ export class Account {
   @Column_("varchar", {length: 10, nullable: false})
   accountType!: AccountType
 
-  @Index_()
-  @ManyToOne_(() => LbpPool, {nullable: true})
-  lbpPool!: LbpPool | undefined | null
+  @OneToMany_(() => AccountAssetBalanceData, e => e.account)
+  assetBalanceData!: AccountAssetBalanceData[]
+
+  @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
+  assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]
 
   @Index_()
-  @ManyToOne_(() => XykPool, {nullable: true})
-  xykPool!: XykPool | undefined | null
+  @ManyToOne_(() => Lbppool, {nullable: true})
+  lbppool!: Lbppool | undefined | null
+
+  @Index_()
+  @ManyToOne_(() => Xykpool, {nullable: true})
+  xykpool!: Xykpool | undefined | null
 
   @Index_()
   @ManyToOne_(() => Omnipool, {nullable: true})
   omnipool!: Omnipool | undefined | null
 
   @Index_()
-  @ManyToOne_(() => Stablepool, {nullable: true})
-  stablepool!: Stablepool | undefined | null
+  @ManyToOne_(() => Stableswap, {nullable: true})
+  stableswap!: Stableswap | undefined | null
+
+  @OneToMany_(() => ChainActivityTrace, e => e.originator)
+  initiatedActions!: ChainActivityTrace[]
+
+  @OneToMany_(() => AccountChainActivityTrace, e => e.account)
+  participatedActions!: AccountChainActivityTrace[]
 
   @OneToMany_(() => Swap, e => e.swapper)
   initiatedSwaps!: Swap[]
@@ -53,12 +67,6 @@ export class Account {
 
   @OneToMany_(() => Transfer, e => e.from)
   transfersFrom!: Transfer[]
-
-  @OneToMany_(() => ChainActivityTrace, e => e.originator)
-  initiatedChainActivities!: ChainActivityTrace[]
-
-  @OneToMany_(() => AccountChainActivityTrace, e => e.account)
-  participatedChainActivities!: AccountChainActivityTrace[]
 
   @OneToMany_(() => DcaSchedule, e => e.owner)
   dcaSchedules!: DcaSchedule[]

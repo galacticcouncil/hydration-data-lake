@@ -4,13 +4,13 @@ import {SwapFillerType} from "./_swapFillerType"
 import {Asset} from "./asset.model"
 
 @Entity_()
-export class DcaScheduleOrderRoute {
-  constructor(props?: Partial<DcaScheduleOrderRoute>) {
+export class DcaScheduleOrderRouteHop {
+  constructor(props?: Partial<DcaScheduleOrderRouteHop>) {
     Object.assign(this, props)
   }
 
   /**
-   * <dca_schedule_id>-<asset_in_id>-<asset_out_id>
+   * <dcaScheduleId>-<assetInId>-<assetOutId>
    */
   @PrimaryColumn_()
   id!: string

@@ -1,4 +1,4 @@
-import { LbpPool, LbpPoolHistoricalVolume, Swap } from '../../model';
+import { Lbppool, LbppoolHistoricalVolume, Swap } from '../../model';
 import { calculateAveragePrice } from '../prices/utils';
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
@@ -6,11 +6,11 @@ import { getLastVolumeFromCache, getOldLbpVolume } from './index';
 
 export function initLbpPoolVolume(
   swap: Swap,
-  pool: LbpPool,
-  currentVolume: LbpPoolHistoricalVolume | undefined,
-  oldVolume: LbpPoolHistoricalVolume | undefined
+  pool: Lbppool,
+  currentVolume: LbppoolHistoricalVolume | undefined,
+  oldVolume: LbppoolHistoricalVolume | undefined
 ) {
-  const newVolume = new LbpPoolHistoricalVolume({
+  const newVolume = new LbppoolHistoricalVolume({
     id: pool.id + '-' + swap.paraChainBlockHeight,
     pool: pool,
     assetA: pool.assetA,
@@ -112,7 +112,7 @@ export async function handleLbpPoolVolumeUpdates({
   swap,
 }: {
   ctx: ProcessorContext<Store>;
-  pool: LbpPool;
+  pool: Lbppool;
   swap: Swap;
 }) {
   const lbpPoolVolumes = ctx.batchState.state.lbpPoolVolumes;
@@ -125,7 +125,7 @@ export async function handleLbpPoolVolumeUpdates({
     (getLastVolumeFromCache(
       ctx.batchState.state.lbpPoolVolumes,
       swap.filler.id
-    ) as LbpPoolHistoricalVolume | undefined) ||
+    ) as LbppoolHistoricalVolume | undefined) ||
     (await getOldLbpVolume(ctx, swap.filler.id));
 
   const newVolume = initLbpPoolVolume(swap, pool, currentVolume, oldVolume);

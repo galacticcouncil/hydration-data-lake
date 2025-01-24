@@ -4,7 +4,7 @@ import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser
 import { EventName } from '../../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../../utils/helpers';
 import { lpbPoolCreated, lpbPoolUpdated } from './lbpPool';
-import { LbpPool } from '../../../model';
+import { Lbppool } from '../../../model';
 
 export async function handleLbpPools(
   ctx: ProcessorContext<Store>,
@@ -14,7 +14,7 @@ export async function handleLbpPools(
 
   ctx.batchState.state.lbpAllBatchPools = new Map(
     (
-      await ctx.store.find(LbpPool, {
+      await ctx.store.find(Lbppool, {
         where: {},
         relations: { account: true, assetA: true, assetB: true },
       })

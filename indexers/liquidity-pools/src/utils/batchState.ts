@@ -8,36 +8,36 @@ import {
   ChainActivityTrace,
   Extrinsic as ExtrinsicEntity,
   HistoricalAssetVolume,
-  LbpPool,
-  LbpPoolHistoricalData,
-  LbpPoolHistoricalPrice,
-  LbpPoolHistoricalVolume,
+  Lbppool,
+  LbppoolHistoricalData,
+  LbppoolHistoricalPrice,
+  LbppoolHistoricalVolume,
   Omnipool,
   OmnipoolAsset,
   OmnipoolAssetHistoricalData,
   OmnipoolAssetHistoricalVolume,
   Stablepool,
-  StablepoolAsset,
-  StablepoolAssetHistoricalData,
-  StablepoolAssetHistoricalVolume,
-  StablepoolAssetLiquidityAmount,
-  StablepoolHistoricalData,
-  StablepoolHistoricalVolume,
-  StablepoolLiquidityAction,
+  StableswapAsset,
+  StableswapAssetHistoricalData,
+  StableswapAssetHistoricalVolume,
+  StableswapAssetLiquidityAmount,
+  StableswapHistoricalData,
+  StableswapHistoricalVolume,
+  StableswapLiquidityEvent,
   Swap,
   SwapFee,
   SwapInputAssetBalance,
   SwapOutputAssetBalance,
   Transfer,
-  XykPool,
-  XykPoolHistoricalData,
-  XykPoolHistoricalPrice,
-  XykPoolHistoricalVolume,
+  Xykpool,
+  XykpoolHistoricalData,
+  XykpoolHistoricalPrice,
+  XykpoolHistoricalVolume,
   DcaSchedule,
-  DcaScheduleOrderRoute,
+  DcaScheduleOrderRouteHop,
   DcaScheduleExecution,
   DcaRandomnessGenerationFailedError,
-  DcaScheduleExecutionAction,
+  DcaScheduleExecutionEvent,
   OtcOrder,
   OtcOrderAction,
   ChainActivityTraceRelation,
@@ -74,24 +74,24 @@ export type BatchStatePayload = {
   swapFillerContexts: Map<string, SwapFillerContextDetails>;
 
   lbpPoolIdsToSave: Set<string>;
-  lbpAllBatchPools: Map<string, LbpPool>;
-  lbpPoolVolumes: Map<string, LbpPoolHistoricalVolume>;
-  lbpPoolHistoricalPrices: Map<string, LbpPoolHistoricalPrice>;
+  lbpAllBatchPools: Map<string, Lbppool>;
+  lbpPoolVolumes: Map<string, LbppoolHistoricalVolume>;
+  lbpPoolHistoricalPrices: Map<string, LbppoolHistoricalPrice>;
   lbpPoolAssetIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<string> } // ... ids: Set<"assetAId-assetBId">
   >;
-  lbpPoolAllHistoricalData: LbpPoolHistoricalData[];
+  lbpPoolAllHistoricalData: LbppoolHistoricalData[];
 
   xykPoolIdsToSave: Set<string>;
-  xykAllBatchPools: Map<string, XykPool>;
-  xykPoolVolumes: Map<string, XykPoolHistoricalVolume>;
-  xykPoolHistoricalPrices: Map<string, XykPoolHistoricalPrice>;
+  xykAllBatchPools: Map<string, Xykpool>;
+  xykPoolVolumes: Map<string, XykpoolHistoricalVolume>;
+  xykPoolHistoricalPrices: Map<string, XykpoolHistoricalPrice>;
   xykPoolIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<string> }
   >;
-  xykPoolAllHistoricalData: XykPoolHistoricalData[];
+  xykPoolAllHistoricalData: XykpoolHistoricalData[];
 
   omnipoolEntity: Omnipool | null;
   omnipoolAssets: Map<string, OmnipoolAsset>;
@@ -104,28 +104,28 @@ export type BatchStatePayload = {
   omnipoolAssetAllHistoricalData: OmnipoolAssetHistoricalData[];
 
   stablepoolIdsToSave: Set<string>;
-  stablepoolAssetsAllBatch: Map<number, StablepoolAsset>;
+  stablepoolAssetsAllBatch: Map<number, StableswapAsset>;
   stablepoolAllBatchPools: Map<string, Stablepool>;
-  stablepoolVolumeCollections: Map<string, StablepoolHistoricalVolume>;
-  stablepoolAssetVolumes: Map<string, StablepoolAssetHistoricalVolume>;
+  stablepoolVolumeCollections: Map<string, StableswapHistoricalVolume>;
+  stablepoolAssetVolumes: Map<string, StableswapAssetHistoricalVolume>;
   stablepoolAssetVolumeIdsToSave: Set<string>;
   stablepoolAssetBatchLiquidityAmounts: Map<
     string,
-    StablepoolAssetLiquidityAmount
+    StableswapAssetLiquidityAmount
   >;
-  stablepoolBatchLiquidityActions: Map<string, StablepoolLiquidityAction>;
+  stablepoolBatchLiquidityActions: Map<string, StableswapLiquidityEvent>;
 
-  stablepoolAllHistoricalData: Map<string, StablepoolHistoricalData>;
-  stablepoolAssetsAllHistoricalData: Map<string, StablepoolAssetHistoricalData>;
+  stablepoolAllHistoricalData: Map<string, StableswapHistoricalData>;
+  stablepoolAssetsAllHistoricalData: Map<string, StableswapAssetHistoricalData>;
   stablepoolIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<number> }
   >;
 
   dcaSchedules: Map<string, DcaSchedule>;
-  dcaScheduleOrderRoutes: Map<string, DcaScheduleOrderRoute>;
+  dcaScheduleOrderRoutes: Map<string, DcaScheduleOrderRouteHop>;
   dcaScheduleExecutions: Map<string, DcaScheduleExecution>;
-  dcaScheduleExecutionActions: Map<string, DcaScheduleExecutionAction>;
+  dcaScheduleExecutionActions: Map<string, DcaScheduleExecutionEvent>;
   dcaRandomnessGenerationFailedErrors: Map<
     string,
     DcaRandomnessGenerationFailedError

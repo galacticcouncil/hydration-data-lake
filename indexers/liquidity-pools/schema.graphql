@@ -2,23 +2,24 @@
 # *** Common entities ***
 # ======================================================================================================================
 
-enum SwapType {
-  BUY
-  SELL
+enum LiquidityActionEvent {
+  Add
+  Remove
 }
 
-# Unused???
-enum PoolOperationType {
-  BUY
-  SELL
+type ProcessorStatus @entity {
+  "static value - 1"
+  id: ID!
+  assetsLastUpdatedAtBlock: Int! # assetsActualisedAtBlock -> assetsLastUpdatedAtBlock
+  poolsDestroyedUpdatedAtBlock: Int # poolsDestroyedCheckPointAtBlock -> poolsDestroyedUpdatedAtBlock
+  initialIndexingStartedAt: DateTime! # initialIndexingStartedAtTime -> initialIndexingStartedAt
+  initialIndexingFinishedAt: DateTime # initialIndexingFinishedAtTime -> initialIndexingFinishedAt
 }
 
-enum LiquidityActionType {
-  ADD
-  REMOVE
-}
+# ======================================================================================================================
+# *** Asset ***
+# ======================================================================================================================
 
-# Use one pattern i.e. ALLCAPS for enum variants (viz ADD REMOVE)
 enum AssetType {
   Bond
   External
@@ -28,50 +29,8 @@ enum AssetType {
   Erc20
 }
 
-# Use one pattern i.e. ALLCAPS for enum variants (viz ADD REMOVE)
-enum AccountType {
-  User
-  Omnipool
-  Stablepool
-  XYK
-  LBP
-}
-
-type Account @entity {
-  "Account pubkey"
-  id: ID!
-
-  accountType: AccountType!
-
-  # Use one name and variant of case for all occurances of one thing i.e. Xykpool if you must
-  # Stableswap as entity and type of token (same as in runtime as this will be used alongside it should follow naming)
-  lbpPool: LbpPool
-  xykPool: XykPool
-  omnipool: Omnipool
-  stablepool: Stablepool
-
-  initiatedSwaps: [Swap!]! @derivedFrom(field: "swapper")
-  filledSwaps: [Swap!]! @derivedFrom(field: "filler")
-
-  transfersTo: [Transfer!] @derivedFrom(field: "to")
-  transfersFrom: [Transfer!] @derivedFrom(field: "from")
-
-  # initiatedActions
-  initiatedChainActivities: [ChainActivityTrace!]
-    @derivedFrom(field: "originator")
-
-  # participatedActions
-  participatedChainActivities: [AccountChainActivityTrace!]
-    @derivedFrom(field: "account")
-
-  dcaSchedules: [DcaSchedule!] @derivedFrom(field: "owner")
-  otcOrders: [OtcOrder!] @derivedFrom(field: "owner")
-
-  # TODO: add proxy and multisig tracking
-}
-
 type Asset @entity {
-  "Asset ID"
+  "assetId"
   id: ID!
   assetType: AssetType!
   name: String
@@ -79,55 +38,102 @@ type Asset @entity {
   decimals: Int
   xcmRateLimit: BigInt
   isSufficient: Boolean!
-  existentialDeposit: BigInt!
+  existentialDeposit: BigInt! # default backup value
   # note: existentialDeposit is probably taken 1:1 from the runtime,
   # real existential deposit will be calculated realtime based on the current price
 }
 
-type Transfer @entity {
-  "TxId"
-  id: ID!
-  traceIds: [String!] # Does this in any way relate to the traceIds in the ChainActivityTrace? Should we link it?
-  paraChainBlockHeight: Int!
-  # TODO: Add relayChainBlockHeight or block as entity link which would include the
-  # paraChainBlockHeight, paraChainBlockHash, paraChainBlockTimestamp, relayChainBlockHeight, relayChainBlockHash, relayChainBlockTimestamp, etc.
-  assetId: Int! @index # entity link or just the ID? In these cases we could do BOTH for easy filtering and also easy manipulation if neccessary.
-  extrinsicHash: String @index # extrinsic hash is not unique indentificator, add link to extrinsic entity and provide full id?
-  from: Account!
-  to: Account!
-  amount: BigInt!
-  txFee: BigInt!
-}
-
 type HistoricalAssetVolume @entity {
-  "AssetId-paraChainBlockHeight"
+  "<assetId>-<paraChainBlockHeight>"
   id: ID!
   asset: Asset!
   volumeIn: BigInt!
   volumeOut: BigInt!
   totalVolumeIn: BigInt!
   totalVolumeOut: BigInt!
-  relayChainBlockHeight: Int! # add link to block entity?
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type ProcessorStatus @entity {
-  "1"
+# ======================================================================================================================
+# *** Account ***
+# ======================================================================================================================
+
+enum AccountType {
+  User
+  Omnipool
+  Stableswap
+  Xykpool
+  Lbppool
+}
+
+type AccountAssetBalanceHistoricalData @entity {
+  "<address>-<assetId>-<paraChainBlockHeight>"
   id: ID!
-  assetsActualisedAtBlock: Int! # assetsLastUpdatedAtBlock
-  poolsDestroyedCheckPointAtBlock: Int #poolsDestroyedUpdatedAtBlock
-  initialIndexingStartedAtTime: DateTime! # initialIndexingStartedAt
-  initialIndexingFinishedAtTime: DateTime # initialIndexingFinishedAt
+  account: Account!
+  asset: Asset!
+
+  decoratedFree: BigInt!
+  decoratedLocked: BigInt!
+  free: BigInt!
+  locked: BigInt!
+  flags: BigInt!
+  frozen: BigInt!
+  reserved: BigInt!
+  feeFrozen: BigInt!
+  miscFrozen: BigInt!
+
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
+}
+type AccountAssetBalanceData @entity {
+  "<address>-<assetId>"
+  id: ID!
+  account: Account!
+  asset: Asset!
+
+  decoratedFree: BigInt!
+  decoratedLocked: BigInt!
+  free: BigInt!
+  locked: BigInt!
+  flags: BigInt!
+  frozen: BigInt!
+  reserved: BigInt!
+  feeFrozen: BigInt!
+  miscFrozen: BigInt!
 }
 
-type DispatchErrorValue {
-  index: Int
-  error: String
-}
-# <= Why is this not single entity? =>
-type DispatchError {
-  kind: String
-  value: DispatchErrorValue
+type Account @entity {
+  "<address>"
+  id: ID!
+  accountType: AccountType!
+
+  assetBalanceData: [AccountAssetBalanceData] @derivedFrom(field: "account")
+  assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
+    @derivedFrom(field: "account")
+
+  lbppool: Lbppool
+  xykpool: Xykpool
+  omnipool: Omnipool
+  stableswap: Stableswap
+
+  initiatedActions: [ChainActivityTrace!] @derivedFrom(field: "originator")
+  participatedActions: [AccountChainActivityTrace!]
+    @derivedFrom(field: "account")
+
+  initiatedSwaps: [Swap!]! @derivedFrom(field: "swapper")
+  filledSwaps: [Swap!]! @derivedFrom(field: "filler")
+
+  transfersTo: [Transfer!] @derivedFrom(field: "to")
+  transfersFrom: [Transfer!] @derivedFrom(field: "from")
+
+  dcaSchedules: [DcaSchedule!] @derivedFrom(field: "owner")
+  otcOrders: [OtcOrder!] @derivedFrom(field: "owner")
+
+  # TODO: add proxy and multisig tracking
 }
 
 # ======================================================================================================================
@@ -135,203 +141,200 @@ type DispatchError {
 # ======================================================================================================================
 
 enum TraceEntityType {
-  SWAP
-  TRANSFER
-  STABLEPOOL_LIQUIDITY_ACTION # STABLESWAP_LIQUIDITY_ACTION
-  OTC_ORDER_ACTION
-  DCA_SCHEDULE # What does this mean?
-  DCA_SCHEDULE_EXECUTION_ACTION # ACTION?
-  DCA_RANDOMNESS_GENERATION_FAILED_ERROR # This seems weird here?
-} # Do we need all of these?
-type Block
-  @entity { # Add more realychain block info (block hash, timestamp, etc.)
-  "0003396328-000002-70ca4"
+  Swap
+  Transfer
+  StableswapLiquidityEvent
+  OtcOrderEvent
+  DcaSchedule
+  DcaScheduleExecutionEvent
+}
+
+type Block @entity {
+  "<blockHeight>-<blockHash prefix> e.g. 0003396328-70ca4"
   id: ID!
   extrinsics: [Extrinsic] @derivedFrom(field: "block")
   calls: [Call] @derivedFrom(field: "block")
   events: [Event] @derivedFrom(field: "block")
-  chainActivityTraces: [ChainActivityTrace]
-    @derivedFrom(field: "createdAtBlock")
+  chainActivityTraces: [ChainActivityTrace] @derivedFrom(field: "block")
+
+  height: Int! @index
+  hash: String! @index
+  timestamp: DateTime! @index
+
   relayChainBlockHeight: Int!
-  paraChainBlockHeight: Int! @index
-  paraChainBlockHash: String! @index
-  paraChainBlockTimestamp: DateTime! @index
+  relayChainBlockHash: Int!
 }
 
 type Extrinsic @entity {
-  "0003396328-000002-70ca4"
+  "<blockHeight>-<blockHash prefix>-<indexInBlock> e.g. 0000065722-4721a-000002"
   id: ID!
   hash: String!
+  indexInBlock: Int!
   calls: [Call] @derivedFrom(field: "extrinsic")
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
   block: Block!
 }
 
 type Call @entity {
-  "0003396328-000002-70ca4-000003"
+  # <blockHeight>-<blockHash prefix>-<extrinsicIndexInBlock>
+  #     in case extrinsic contains single call without subcalls
+  #     (e.g. 0000172149-553f2-000002)
+  # or
+  # <blockHeight>-<blockHash prefix>-<extrinsicIndexInBlock>-<callIndexInParentCall>
+  #     in case extrinsic contains multiple calls or single call with sub-calls
+  #     (e.g. 0000172149-553f2-000002-000000)
   id: ID!
-  traceId: String! # link to entity?
-  name: String!
+  traceId: String!
+
+  args: String
   success: Boolean
+  name: String!
   originKind: String!
   originValueKind: String
   originValue: String
   entityTypes: [TraceEntityType]
-  extrinsic: Extrinsic!
-  parent: Call
+
   subcalls: [Call] @derivedFrom(field: "parent")
   events: [Event] @derivedFrom(field: "call")
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
   block: Block!
+  extrinsic: Extrinsic!
+  parent: Call
 }
 
 enum EventGroup {
-  EXTRINSIC
-  INITIALIZATION
-  FINALIZATION
-  BUY_BACK # -> BUYBACK
-  DCA
+  Extrinsic
+  Initialization
+  Finalization
+  Buyback
+  Dca
 }
 
 type Event @entity {
-  "0006508857-000017-d2fd9"
+  "<blockHeight>-<blockHashPrefix>-<indexInBlock> (e.g. 0000059948-e5832-000007)"
   id: ID!
-  traceId: String! # link to entity?
-  indexInBlock: Int! # what is this?
+  traceId: String!
+
+  args: String
+  indexInBlock: Int!
   name: String!
   group: EventGroup
   phase: String!
   entityTypes: [TraceEntityType]
-  call: Call
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
   block: Block!
+  call: Call
 }
 
 type ChainActivityTrace @entity {
-  # "extrinsic_id where particular ChainActivityTrace has bee initialised"
+  # "<extrinsicId> where particular ChainActivityTrace has bee initialised"
+  # or
+  # <blockHeight>-<TraceIdEventGroup> where eventGroup can be <ext | init | fin>
   id: ID!
 
-  #  op-id://batch:111/batch:22/dca:<schedule_id>=2
-  #  op-id://batch:111/batch:22/otc:<order_id>=3
+  #  Batch:1419/Router:1420/Omnipool:1421
+  #  Omnipool:20554
   operationIds: [String!]
 
-  #  There is no id specific of specific entity. This trace id can be used for multiple DB entities.
+  #  There is no id for specific entity. This trace id can be used for multiple DB entities.
   #  trace-id://context:<call>/<extrinsic_id>/<call_id>/<call_id>/<call_id>
   #  trace-id://context:<event>/<block_id>:<group_name>/<event_index>
 
   #  trace-id://context:call/0003396328-000002-70ca4/0003396328-000002-70ca4-000002/0003396328-000002-70ca4-000003/0003681428-fa806-000020
   #  trace-id://context:event/0003396328-70ca4:buyback/2
-
   traceIds: [String!]!
+
+  # account who signed initial call of the extrinsic
+  originator: Account
 
   #  list of participant addresses to particular ChainActivityTrace
   participants: [AccountChainActivityTrace!]!
     @derivedFrom(field: "chainActivityTrace")
 
-  # account who signed initial call of the extrinsic
-  originator: Account # ^ move up
   # Scope of all accounts involved into particular activity trace. Required for easier filtering on API side.
-  associatedAccountsFlat: [String!]! # participantAccounts
+  participantAccounts: [String!]! # associatedAccountsFlat -> participantAccounts
   childTraces: [ChainActivityTraceRelation] @derivedFrom(field: "parentTrace")
   parentTraces: [ChainActivityTraceRelation] @derivedFrom(field: "childTrace")
 
-  createdAtParaChainBlockHeight: Int! @index # createdAtBlockHeight
-  createdAtBlock: Block!
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
 type AccountChainActivityTrace @entity {
-  # <Account.id>-<ChainActivityTrace.id>
+  # <address>-<chainActivityTraceId>
   id: ID!
   account: Account!
   chainActivityTrace: ChainActivityTrace!
 }
 
 type ChainActivityTraceRelation @entity {
-  # <child_trace_id>-<parent_trace_id>
+  "<parentTraceId>-<childTraceId>"
   id: ID!
-  childTrace: ChainActivityTrace!
+
   parentTrace: ChainActivityTrace!
-  createdAtParaChainBlockHeight: Int!
+  childTrace: ChainActivityTrace!
+
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** Transfer ***
+# ======================================================================================================================
+
+type Transfer @entity {
+  "<eventId> (e.g. 0000059948-e5832-000007)"
+  id: ID!
+  traceIds: [String!]
+
+  asset: Asset!
+
+  from: Account!
+  to: Account!
+  amount: BigInt!
+  txFee: BigInt!
+
+  paraChainTimestamp: DateTime! @index
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  event: Event!
 }
 
 # ======================================================================================================================
 # *** Swapped - Unified Trade event ***
 # ======================================================================================================================
+enum SwapAssetBalanceType {
+  Input
+  Output
+}
 
-enum SwapFillerType { # Use one pattern i.e. ALLCAPS for enum variants (viz ADD REMOVE)
+enum SwapFillerType {
   Omnipool
   Stableswap
   XYK
   LBP
   OTC
 }
-enum TradeOperationType { # Use one pattern i.e. ALLCAPS for enum variants (viz ADD REMOVE EXACT_IN)
+
+enum TradeOperationType {
   ExactIn
   ExactOut
-  ExactLimitIn # I don't think we use this
-  ExactLimitOut # I don't think we use this
+  ExactLimitIn
+  ExactLimitOut
   LiquidityAdd
   LiquidityRemove
 }
-#enum SwappedExecutionTypeKind {
-#  Batch
-#  DCA
-#  Omnipool
-#  Router
-#  Xcm
-#  XcmExchange
-#}
-#
-#type OperationStackElementBatch {
-#  index: Int!
-#  kind: SwappedExecutionTypeKind!
-#  incrementalId: Int!
-#}
-#type OperationStackElementDca {
-#  index: Int!
-#  kind: SwappedExecutionTypeKind!
-#  scheduleId: Int!
-#  incrementalId: Int!
-#}
-#
-#type OperationStackElementOmnipool {
-#  index: Int!
-#  kind: SwappedExecutionTypeKind!
-#  incrementalId: Int!
-#}
-#type OperationStackElementRouter {
-#  index: Int!
-#  kind: SwappedExecutionTypeKind!
-#  incrementalId: Int!
-#}
-#type OperationStackElementXcm {
-#  index: Int!
-#  kind: SwappedExecutionTypeKind!
-#  incrementalId: Int!
-#  message: String!
-#}
-#type OperationStackElementXcmExchange {
-#  index: Int!
-#  kind: SwappedExecutionTypeKind!
-#  incrementalId: Int!
-#}
-#
-#union OperationStackElement =
-#  | OperationStackElementBatch
-#  | OperationStackElementDca
-#  | OperationStackElementOmnipool
-#  | OperationStackElementRouter
-#  | OperationStackElementXcm
-#  | OperationStackElementXcmExchange
-#
-#type OperationStack @entity {
-#  # <SwappedExecutionTypeKind>:<operation.value>/<SwappedExecutionTypeKind>:<operation.value[0]>:<operation.value[1]>/...
-#  id: ID!
-#  stackElements: [OperationStackElement!]!
-#}
 
 type SwapFee @entity {
-  "uuid"
+  "<swapId>-<itemIndex> e.g. 0006516718-9965d-000107-0"
   id: ID!
   swap: Swap!
   asset: Asset!
@@ -339,93 +342,107 @@ type SwapFee @entity {
   recipient: Account!
 }
 
-# Just SwapInput ?
-type SwapInputAssetBalance @entity {
-  "uuid"
+type SwapAssetBalance @entity {
+  "<swapId>-<SwapAssetBalanceType>-<itemIndex> e.g. 0006516718-9965d-000107-INPUT-0"
   id: ID!
   swap: Swap!
-  asset: Asset!
-  amount: BigInt!
-}
-
-# Just SwapOutput ? Do we need 2 entities?
-type SwapOutputAssetBalance @entity {
-  "uuid"
-  id: ID!
-  swap: Swap!
+  assetBalanceType: SwapAssetBalanceType!
   asset: Asset!
   amount: BigInt!
 }
 
 type Swap @entity {
-  # reorder params to be more logical
-  "indexer event_id (e.g. <block_number>-<block_hash_partial>-<event_index> 0006516718-9965d-000107)"
+  "<eventId> (e.g. 0006516718-9965d-000107)"
   id: ID!
   operationId: String
   traceIds: [String!]
-  "Swapped event index within Trade events sequence"
-  swapIndex: Int! @index
+
   swapper: Account!
   filler: Account!
   fillerType: SwapFillerType!
   operationType: TradeOperationType!
+
+  inputs: [SwapAssetBalance!]! @derivedFrom(field: "swap")
+  outputs: [SwapAssetBalance!]! @derivedFrom(field: "swap")
   fees: [SwapFee!]! @derivedFrom(field: "swap")
-  inputs: [SwapInputAssetBalance!]! @derivedFrom(field: "swap")
-  outputs: [SwapOutputAssetBalance!]! @derivedFrom(field: "swap")
-  eventIndex: Int!
-  extrinsicHash: String!
-  relayChainBlockHeight: Int!
-  dcaScheduleExecutionAction: DcaScheduleExecutionAction
-  otcOrderFulfilment: OtcOrderAction
-  paraChainBlockHeight: Int! @index
+
+  dcaScheduleExecutionAction: DcaScheduleExecutionEvent
+  otcOrderFulfilment: OtcOrderEvent
+
   paraChainTimestamp: DateTime! @index
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  event: Event!
 }
 
 # ======================================================================================================================
 # *** LBP Pool ***
 # ======================================================================================================================
 
-# Either sort the fields alphabetically or by relevance I saw before relevance order and now alphabetical
-type LbpPool @entity {
+type Lbppool @entity {
+  "<poolAccountAddress>"
   id: ID!
+
   account: Account!
   assetA: Asset!
   assetB: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
-  createdAt: DateTime!
-  createdAtParaBlock: Int!
-  isDestroyed: Boolean
-  destroyedAtParaBlock: Int
+  owner: Account
+  feeCollector: Account
   startBlockNumber: Int
   endBlockNumber: Int
+  initialWeight: Int
+  finalWeight: Int
   fee: [Int]
-  feeCollector: Account
   repayTarget: BigInt
-  initialWeight: Int # if relevance move after start/end block
-  finalWeight: Int # if relevance move after start/end block
-  owner: Account # if relevance move up
-  historicalBlockPrices: [LbpPoolHistoricalPrice!]! @derivedFrom(field: "pool")
-  historicalVolume: [LbpPoolHistoricalVolume!]! @derivedFrom(field: "pool")
-  historicalData: [LbpPoolHistoricalData!]! @derivedFrom(field: "pool")
+
+  createdAtParaChainBlockHeight: Int! @index
+  createdAtRelayChainBlockHeight: Int!
+  createdAtBlock: Block!
+  isDestroyed: Boolean
+  lifeStates: [StableswapLifeState!]!
+
+  historicalBlockPrices: [LbppoolHistoricalPrice!]! @derivedFrom(field: "pool")
+  historicalVolume: [LbppoolHistoricalVolume!]! @derivedFrom(field: "pool")
+  historicalData: [LbppoolHistoricalData!]! @derivedFrom(field: "pool")
 }
 
-type LbpPoolHistoricalPrice @entity {
-  "PoolId-paraChainBlockHeight"
+type LbppoolCreatedData {
+  assetABalance: BigInt!
+  assetBBalance: BigInt!
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+type LbppoolDestroyedData {
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+
+type LbppoolLifeState {
+  created: LbppoolCreatedData!
+  destroyed: LbppoolDestroyedData
+}
+
+type LbppoolHistoricalPrice @entity {
+  "<lbppoolId>-<paraChainBlockHeight>"
   id: ID!
-  pool: LbpPool!
+  pool: Lbppool!
   assetA: Asset!
   assetB: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
-  relayChainBlockHeight: Int!
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type LbpPoolHistoricalVolume @entity {
+type LbppoolHistoricalVolume @entity {
   "PoolId-paraChainBlockHeight"
   id: ID!
-  pool: LbpPool!
+  pool: Lbppool!
+
   assetA: Asset!
   assetB: Asset!
   averagePrice: Float!
@@ -441,71 +458,97 @@ type LbpPoolHistoricalVolume @entity {
   assetBVolumeOut: BigInt!
   assetBTotalVolumeIn: BigInt!
   assetBTotalVolumeOut: BigInt!
-  relayChainBlockHeight: Int!
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type LbpPoolHistoricalData @entity {
+type LbppoolHistoricalData @entity {
   "poolAddress-assetId-paraChainBlockHeight"
   id: ID!
-  pool: LbpPool!
+  pool: Lbppool!
+
   assetA: Asset!
   assetB: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
-
   owner: Account!
-  start: Int
-  end: Int
+  feeCollector: Account
+  startBlockNumber: Int
+  endBlockNumber: Int
   initialWeight: Int!
   finalWeight: Int!
-  weightCurve: String!
   fee: [Int!]!
-  feeCollector: Account
   repayTarget: BigInt!
+  weightCurve: String!
 
-  relayChainBlockHeight: Int!
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
 # ======================================================================================================================
 # *** XYK Pool ***
 # ======================================================================================================================
 
-type XykPool @entity {
+type Xykpool @entity {
+  "<address>"
   id: ID!
+
   account: Account!
   assetA: Asset!
   assetB: Asset!
-  shareToken: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
+  shareToken: Asset!
   initialSharesAmount: BigInt!
-  createdAt: DateTime!
-  createdAtParaBlock: Int!
+
+  createdAtParaChainBlockHeight: Int! @index
+  createdAtRelayChainBlockHeight: Int!
+  createdAtBlock: Block!
   isDestroyed: Boolean
-  destroyedAtParaBlock: Int
-  historicalBlockPrices: [XykPoolHistoricalPrice!]! @derivedFrom(field: "pool")
-  historicalVolume: [XykPoolHistoricalVolume!]! @derivedFrom(field: "pool")
-  historicalData: [XykPoolHistoricalData!]! @derivedFrom(field: "pool")
+  lifeStates: [XykpoolLifeState!]!
+
+  historicalBlockPrices: [XykpoolHistoricalPrice!]! @derivedFrom(field: "pool")
+  historicalVolume: [XykpoolHistoricalVolume!]! @derivedFrom(field: "pool")
+  historicalData: [XykpoolHistoricalData!]! @derivedFrom(field: "pool")
 }
 
-type XykPoolHistoricalPrice @entity {
+type XykpoolCreatedData {
+  initialSharesAmount: BigInt!
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+type XykpoolDestroyedData {
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+
+type XykpoolLifeState {
+  created: StableswapCreatedData!
+  destroyed: StableswapDestroyedData
+}
+
+type XykpoolHistoricalPrice @entity {
   "PoolId-paraChainBlockHeight"
   id: ID!
-  pool: XykPool!
+  pool: Xykpool!
   assetA: Asset!
   assetB: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
-  relayChainBlockHeight: Int!
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type XykPoolHistoricalVolume @entity {
+type XykpoolHistoricalVolume @entity {
   "PoolId-paraChainBlockHeight"
   id: ID!
-  pool: XykPool!
+  pool: Xykpool!
+
   assetA: Asset!
   assetB: Asset!
   averagePrice: Float!
@@ -521,20 +564,25 @@ type XykPoolHistoricalVolume @entity {
   assetBVolumeOut: BigInt!
   assetBTotalVolumeIn: BigInt!
   assetBTotalVolumeOut: BigInt!
-  relayChainBlockHeight: Int!
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type XykPoolHistoricalData @entity {
+type XykpoolHistoricalData @entity {
   "poolAddress-assetId-paraChainBlockHeight"
   id: ID!
-  pool: XykPool!
+  pool: Xykpool!
+
   assetA: Asset!
   assetB: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
+
+  paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int!
-  paraChainBlockHeight: Int! @index # link to entity?
+  block: Block!
 }
 
 # ======================================================================================================================
@@ -544,34 +592,53 @@ type XykPoolHistoricalData @entity {
 type Omnipool @entity {
   id: ID!
   account: Account!
-  createdAt: DateTime!
-  createdAtParaBlock: Int!
+
   isDestroyed: Boolean
-  destroyedAtParaBlock: Int
+  destroyedAtParaBlockHeight: Int
+  destroyedAtParaBlock: Block
+
   assets: [OmnipoolAsset!]! @derivedFrom(field: "pool")
 }
 
 type OmnipoolAsset @entity {
-  "OmnipoolId-AssetId"
+  "<omnipoolId>-<assetId> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-100)"
   id: ID!
-  asset: Asset!
-  initialAmount: BigInt
-  initialPrice: BigInt
+
   pool: Omnipool!
-  createdAt: DateTime!
-  createdAtParaBlock: Int!
-  isRemoved: Boolean # NOTE: Possibly can be re-added
-  removedAtParaBlock: Int
-  removedAmount: BigInt # What does this mean? If it's tied to removal can we just link to [removedEvent] instead?
-  hubWithdrawn: BigInt # What does this mean? If it's tied to removal can we just link to [removedEvent] instead?
+  asset: Asset!
+
+  addedAtParaChainBlockHeight: Int! @index
+  addedAtRelayChainBlockHeight: Int!
+  addedAtBlock: Block!
+  isRemoved: Boolean
+  lifeStates: [OmnipoolAssetLifeState!]!
+
   historicalVolume: [OmnipoolAssetHistoricalVolume!]!
     @derivedFrom(field: "omnipoolAsset")
   historicalData: [OmnipoolAssetHistoricalData!]!
     @derivedFrom(field: "omnipoolAsset")
 }
 
+type OmnipoolAssetAddedData {
+  initialAmount: BigInt # latest data from last asset adding
+  initialPrice: BigInt # latest data from last asset adding
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+type OmnipoolAssetRemovedData {
+  removedAmount: BigInt
+  hubWithdrawn: BigInt
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+
+type OmnipoolAssetLifeState {
+  added: OmnipoolAssetAddedData!
+  removed: OmnipoolAssetRemovedData
+}
+
 type OmnipoolAssetHistoricalVolume @entity {
-  "OmnipoolAssetId-paraChainBlockHeight"
+  "<omnipoolAssetId>-<paraChainBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
   omnipoolAsset: OmnipoolAsset!
   assetVolumeIn: BigInt!
@@ -580,167 +647,221 @@ type OmnipoolAssetHistoricalVolume @entity {
   assetTotalVolumeOut: BigInt!
   assetFee: BigInt!
   assetTotalFees: BigInt!
-  relayChainBlockHeight: Int!
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
 type OmnipoolAssetHistoricalData @entity {
-  "OmnipoolAssetId-paraChainBlockHeight"
+  "<omnipoolAssetId>-<paraChainBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
   omnipoolAsset: OmnipoolAsset!
   asset: Asset!
 
-  stateCap: BigInt! # What does this mean? AssetCap?
-  stateShares: BigInt! # AssetShares?
-  stateHubReserve: BigInt! # AssetHubReserve?
-  stateProtocolShares: BigInt! # AssetProtocolShares?
-  balanceFree: BigInt! # freeBalance?
-  balanceFlags: BigInt! # AssetFlags? move up if yes
-  balanceFrozen: BigInt! # not sure if any of these down are possible. Would check with Martin to be sure
-  balanceReserved: BigInt!
-  balanceFeeFrozen: BigInt!
-  balanceMiscFrozen: BigInt!
+  #>>>check for assetTradebility
 
-  relayChainBlockHeight: Int!
+  # >>> stateCap -> assetCap
+  assetCap: BigInt! # What does this mean? AssetCap?
+  assetShares: BigInt! # AssetShares?
+  assetHubReserve: BigInt! # AssetHubReserve?
+  assetProtocolShares: BigInt! # AssetProtocolShares?
+  freeBalance: BigInt! # freeBalance? -> freeBalance
+  # remove fields below ->
+  #  balanceFlags: BigInt! # AssetFlags? move up if yes
+  #  balanceFrozen: BigInt! # not sure if any of these down are possible. Would check with Martin to be sure
+  #  balanceReserved: BigInt!
+  #  balanceFeeFrozen: BigInt!
+  #  balanceMiscFrozen: BigInt!
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
 # ======================================================================================================================
-# *** Stablepool ***
+# *** Stableswap ***
 # ======================================================================================================================
 
-type Stablepool
-  @entity { # Stableswap
+type Stableswap @entity {
+  "poolId (e.g. 102)"
   id: ID!
   account: Account!
-  createdAt: DateTime!
-  createdAtParaBlock: Int! # block entity link
+
+  createdAtParaChainBlockHeight: Int! @index
+  createdAtRelayChainBlockHeight: Int!
+  createdAtBlock: Block!
   isDestroyed: Boolean
-  destroyedAtParaBlock: Int
-  assets: [StablepoolAsset!]! @derivedFrom(field: "pool")
+  lifeStates: [StableswapLifeState!]!
+
+  assets: [StableswapAsset!]! @derivedFrom(field: "pool")
 }
 
-type StablepoolAsset @entity {
-  "stablepoolId-assetId"
+type StableswapCreatedData {
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+type StableswapDestroyedData {
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+
+type StableswapLifeState {
+  created: StableswapCreatedData!
+  destroyed: StableswapDestroyedData
+}
+
+type StableswapAsset @entity {
+  "<stableswapId>-<assetId> (e.g. 101-19)"
   id: ID!
-  pool: Stablepool!
+  pool: Stableswap!
   asset: Asset!
   amount: BigInt!
 }
 
-type StablepoolHistoricalVolume @entity {
-  "stablepoolId-paraChainBlockHeight"
+type StableswapHistoricalVolume @entity {
+  "<stableswapId>-<paraChainBlockHeight>"
   id: ID!
-  pool: Stablepool!
-  assetVolumes: [StablepoolAssetHistoricalVolume!]!
+  pool: Stableswap!
+  assetVolumes: [StableswapAssetHistoricalVolume!]!
     @derivedFrom(field: "volumesCollection")
-  relayChainBlockHeight: Int!
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type StablepoolAssetHistoricalVolume @entity {
-  "stablepoolId-assetId-paraChainBlockHeight"
+type StableswapAssetHistoricalVolume @entity {
+  "<stableswapId>-<assetId>-<paraChainBlockHeight> (e.g. 100-10-101332)"
   id: ID!
-  volumesCollection: StablepoolHistoricalVolume!
+  volumesCollection: StableswapHistoricalVolume!
   asset: Asset!
 
   swapFee: BigInt!
   swapTotalFees: BigInt!
-  liqFee: BigInt! # liquidityFee
-  liqTotalFees: BigInt!
-  routedLiqFee: BigInt! # what is this? Isn't this just liquidityFee?
-  routedLiqTotalFees: BigInt!
+  liquidityFee: BigInt!
+  liquidityTotalFees: BigInt!
+  #  routedLiqFee: BigInt! # what is this? Isn't this just liquidityFee?
+  #  routedLiqTotalFees: BigInt!
 
   swapVolumeIn: BigInt!
   swapVolumeOut: BigInt!
   swapTotalVolumeIn: BigInt!
   swapTotalVolumeOut: BigInt!
 
-  liqAddedAmount: BigInt!
-  liqRemovedAmount: BigInt!
-  liqAddedTotalAmount: BigInt!
-  liqRemovedTotalAmount: BigInt!
+  # remove fields below
+  #  liqAddedAmount: BigInt!
+  #  liqRemovedAmount: BigInt!
+  #  liqAddedTotalAmount: BigInt!
+  #  liqRemovedTotalAmount: BigInt!
+  #
+  # move values from routed... to swap...
+  #  routedLiqAddedAmount: BigInt! # what is this? Why is it just in stableswap?
+  #  routedLiqRemovedAmount: BigInt!
+  #  routedLiqAddedTotalAmount: BigInt!
+  #  routedLiqRemovedTotalAmount: BigInt!
 
-  routedLiqAddedAmount: BigInt! # what is this? Why is it just in stableswap?
-  routedLiqRemovedAmount: BigInt!
-  routedLiqAddedTotalAmount: BigInt!
-  routedLiqRemovedTotalAmount: BigInt!
-
-  paraChainBlockHeight: Int! @index # link to block entity
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type StablepoolLiquidityAction @entity {
-  "poolId-paraChainBlockHeight-indexInBlock"
+type StableswapLiquidityEvent @entity {
+  "<stableswapId>-<eventId>"
   id: ID!
   traceIds: [String!]
-  pool: Stablepool!
+
+  pool: Stableswap!
+
   sharesAmount: BigInt!
-  feeAmount: BigInt! # this is only used here we should have naming consistency also I believe this could be array?
-  assetAmounts: [StablepoolAssetLiquidityAmount!]!
+  feeAmount: BigInt!
+  assetAmounts: [StableswapAssetLiquidityAmount!]!
     @derivedFrom(field: "liquidityAction")
-  actionType: LiquidityActionType!
+  actionType: LiquidityActionEvent!
+
   indexInBlock: Int! @index
+  paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int!
-  paraChainBlockHeight: Int! @index # link to block entity
+  event: Event!
 }
 
-# Maybe we should use the same pattern for all pools instead of using assetA and assetB?
-# This would then be just some generic asset amount type not backlinked to stablepool (This should be automatic no?)
-type StablepoolAssetLiquidityAmount @entity {
-  "poolId-assetId-paraChainBlockHeight-indexInBlock"
+type StableswapAssetLiquidityAmount @entity {
+  "<stableswapId>-<eventId>-<assetId>"
   id: ID!
-  liquidityAction: StablepoolLiquidityAction!
+  liquidityAction: StableswapLiquidityEvent!
   asset: Asset!
   amount: BigInt!
 }
 
-type StablepoolHistoricalData @entity {
-  "stablepoolId-paraChainBlockHeight"
+type StableswapHistoricalData @entity {
+  "<stableswapId>-<paraChainBlockHeight>"
   id: ID!
-  pool: Stablepool!
-  assetsData: [StablepoolAssetHistoricalData!]!
+  pool: Stableswap!
+  assetsData: [StableswapAssetHistoricalData!]!
     @derivedFrom(field: "poolHistoricalData")
+
   initialAmplification: Int!
   finalAmplification: Int!
-  initialBlock: Int! # initialAmplificationChangeAt
-  finalBlock: Int! # finalAmplificationChangeAt
-  fee: Int! # is this amount or percentage
-  relayChainBlockHeight: Int!
+  initialAmplificationChangeAt: Int! # initialBlock -> initialAmplificationChangeAt
+  finalAmplificationChangeAt: Int! # finalBlock -> finalAmplificationChangeAt
+  fee: Int!
+
   paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type StablepoolAssetHistoricalData @entity {
-  "stablepoolId-assetId-paraChainBlockHeight"
+type StableswapAssetHistoricalData @entity {
+  "<stablepoolId>-<assetId>-<paraChainBlockHeight>"
   id: ID!
   asset: Asset!
-  poolHistoricalData: StablepoolHistoricalData!
-  free: BigInt!
-  reserved: BigInt!
-  miscFrozen: BigInt
-  feeFrozen: BigInt
-  frozen: BigInt
-  flags: BigInt # here it's flags, in omnipool it's balanceFlags consistency pls
-  paraChainBlockHeight: Int! @index # link to block entity
+  poolHistoricalData: StableswapHistoricalData!
+
+  freeBalance: BigInt!
+  # remove fields below
+  #  free: BigInt!
+  #  reserved: BigInt!
+  #  miscFrozen: BigInt
+  #  feeFrozen: BigInt
+  #  frozen: BigInt
+  #  flags: BigInt # here it's flags, in omnipool it's balanceFlags consistency pls
+
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
 # ======================================================================================================================
 # *** DCA ***
 # ======================================================================================================================
 
-enum DcaScheduleOrderKind { # DcaScheduleOrderType (consistency)
-  BUY
-  SELL
+enum DcaScheduleOrderType {
+  Buy
+  Sell
 }
 
 enum DcaScheduleStatus {
-  OPEN # STARTED
-  COMPLETED
-  TERMINATED
+  Open
+  Completed
+  Terminated
 }
+
 enum DcaScheduleExecutionStatus {
-  PLANNED
-  EXECUTED
-  FAILED
+  Planned
+  Executed
+  Failed
+}
+
+enum DcaScheduleExecutionEventType {
+  Plan
+  Execute
+  Fail
+}
+
+type DispatchError {
+  kind: String
+  index: Int
+  error: String
 }
 
 type DcaSchedule @entity {
@@ -748,37 +869,39 @@ type DcaSchedule @entity {
   id: ID!
   operationId: String
   traceIds: [String!]
+
+  owner: Account!
   startExecutionBlock: Int
-  owner: Account! # move up
   period: Int
   totalAmount: BigInt
   slippage: Int
   maxRetries: Int
   stabilityThreshold: Int
+
   assetIn: Asset
+  amountIn: BigInt
+  maxAmountIn: BigInt
   assetOut: Asset
   amountOut: BigInt
-  amountIn: BigInt # sort
-  maxAmountIn: BigInt
   minAmountOut: BigInt
-  orderKind: DcaScheduleOrderKind! # orderType
-  orderRoutes: [DcaScheduleOrderRoute] @derivedFrom(field: "schedule")
+  orderType: DcaScheduleOrderType!
+  orderRouteHops: [DcaScheduleOrderRouteHop] @derivedFrom(field: "schedule")
+  executions: [DcaScheduleExecution] @derivedFrom(field: "schedule")
 
   totalExecutedAmountIn: BigInt
   totalExecutedAmountOut: BigInt
 
   status: DcaScheduleStatus @index
-  statusUpdatedAtBlockHeight: Int # Link to block entity statusUpdatedAtBlock
   statusMemo: DispatchError
-  createdAtRelayBlockHeight: Int!
-  createdAtParaBlockHeight: Int! @index
+  statusUpdatedAtBlockHeight: Int
 
-  executions: [DcaScheduleExecution] @derivedFrom(field: "schedule")
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-# do we need different route entity for DcaSchedule?
-type DcaScheduleOrderRoute @entity {
-  "<dca_schedule_id>-<asset_in_id>-<asset_out_id>"
+type DcaScheduleOrderRouteHop @entity {
+  "<dcaScheduleId>-<assetInId>-<assetOutId>"
   id: ID!
   schedule: DcaSchedule!
   poolKind: SwapFillerType
@@ -787,40 +910,31 @@ type DcaScheduleOrderRoute @entity {
 }
 
 type DcaScheduleExecution @entity {
-  "<dca_schedule_id>-<block_height>"
+  "<dcaScheduleId>-<blockHeight>"
   id: ID!
   schedule: DcaSchedule!
   status: DcaScheduleExecutionStatus @index
   amountOut: BigInt
   amountIn: BigInt
-  actions: [DcaScheduleExecutionAction] @derivedFrom(field: "scheduleExecution")
+  events: [DcaScheduleExecutionEvent] @derivedFrom(field: "scheduleExecution")
 }
 
 # How can we have multiple exection actions for one execution? Can't we merge this to one entity?
 
-type DcaScheduleExecutionAction @entity {
-  "<dca_schedule_execution_id>-<dca_schedule_execution_status>"
+type DcaScheduleExecutionEvent @entity {
+  "<dcaScheduleExecutionId>-<dcaScheduleExecutionStatus>"
   id: ID!
   operationIds: [String]
   traceIds: [String!]
-  swaps: [Swap] @derivedFrom(field: "dcaScheduleExecutionAction")
   scheduleExecution: DcaScheduleExecution!
-  status: DcaScheduleExecutionStatus @index
-  statusMemo: DispatchError
-  relayChainBlockHeight: Int!
-  paraChainBlockHeight: Int! @index
-}
 
-type DcaRandomnessGenerationFailedError @entity {
-  # this is just error state for DCA execution doesn't need to be separate entity we can store status as failed and add error
-  "<paraChainBlockHeight>-<indexInBlock>"
-  id: ID!
-  operationId: String
-  traceIds: [String!]
-  indexInBlock: Int!
-  relayChainBlockHeight: Int!
+  swaps: [Swap] @derivedFrom(field: "dcaScheduleExecutionAction")
+  eventType: DcaScheduleExecutionEventType @index
+  memo: DispatchError
+
   paraChainBlockHeight: Int! @index
-  error: DispatchError
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
 # ======================================================================================================================
@@ -828,22 +942,23 @@ type DcaRandomnessGenerationFailedError @entity {
 # ======================================================================================================================
 
 enum OtcOrderStatus {
-  OPEN
-  CANCELED
-  FILLED
-  PARTIALLY_FILLED
+  Open
+  Canceled
+  Filled
+  PartiallyFilled
 }
 
-enum OtcOrderActionKind { # OtcOrderActionType
-  CREATED
-  CANCELED
-  FILLED
-  PARTIALLY_FILLED
+enum OtcOrderEventType {
+  Creat
+  Cancel
+  Fill
+  PartiallyFill
 }
 
 type OtcOrder @entity {
-  "order_id as string"
+  "<orderId> as string"
   id: ID!
+
   owner: Account!
   assetIn: Asset!
   assetOut: Asset!
@@ -851,28 +966,34 @@ type OtcOrder @entity {
   amountIn: BigInt!
   partiallyFillable: Boolean
   status: OtcOrderStatus @index
-  createdAtRelayBlockHeight: Int!
-  createdAtParaBlockHeight: Int! @index
 
   totalFilledAmountIn: BigInt
   totalFilledAmountOut: BigInt
 
-  actions: [OtcOrderAction] @derivedFrom(field: "order")
+  events: [OtcOrderEvent] @derivedFrom(field: "order")
+
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  block: Block!
 }
 
-type OtcOrderAction @entity {
+type OtcOrderEvent @entity {
   "<otc_order_id>-<event_id>"
   id: ID!
   operationId: String @index
   traceIds: [String!]
-  kind: OtcOrderActionKind @index
   order: OtcOrder!
+
+  eventType: OtcOrderEventType @index
   amountIn: BigInt
   amountOut: BigInt
   fee: BigInt
-  filler: Account
   eventIndex: Int!
+
+  filler: Account
   swap: Swap
+
+  paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int!
-  paraChainBlockHeight: Int! @index # link to block entity?
+  event: Event!
 }

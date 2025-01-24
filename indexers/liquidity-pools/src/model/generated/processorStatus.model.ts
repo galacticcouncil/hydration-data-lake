@@ -8,20 +8,20 @@ export class ProcessorStatus {
   }
 
   /**
-   * 1
+   * static value - 1
    */
   @PrimaryColumn_()
   id!: string
 
   @Column_("int4", {nullable: false})
-  assetsActualisedAtBlock!: number
+  assetsLastUpdatedAtBlock!: number
 
   @Column_("int4", {nullable: true})
-  poolsDestroyedCheckPointAtBlock!: number | undefined | null
+  poolsDestroyedUpdatedAtBlock!: number | undefined | null
 
   @Column_("timestamp with time zone", {nullable: false})
-  initialIndexingStartedAtTime!: Date
+  initialIndexingStartedAt!: Date
 
   @Column_("timestamp with time zone", {nullable: true})
-  initialIndexingFinishedAtTime!: Date | undefined | null
+  initialIndexingFinishedAt!: Date | undefined | null
 }

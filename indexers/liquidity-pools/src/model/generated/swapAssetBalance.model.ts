@@ -1,16 +1,17 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Swap} from "./swap.model"
+import {SwapAssetBalanceType} from "./_swapAssetBalanceType"
 import {Asset} from "./asset.model"
 
 @Entity_()
-export class SwapOutputAssetBalance {
-  constructor(props?: Partial<SwapOutputAssetBalance>) {
+export class SwapAssetBalance {
+  constructor(props?: Partial<SwapAssetBalance>) {
     Object.assign(this, props)
   }
 
   /**
-   * uuid
+   * <swapId>-<SwapAssetBalanceType>-<itemIndex> e.g. 0006516718-9965d-000107-INPUT-0
    */
   @PrimaryColumn_()
   id!: string
@@ -18,6 +19,9 @@ export class SwapOutputAssetBalance {
   @Index_()
   @ManyToOne_(() => Swap, {nullable: true})
   swap!: Swap
+
+  @Column_("varchar", {length: 6, nullable: false})
+  assetBalanceType!: SwapAssetBalanceType
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})

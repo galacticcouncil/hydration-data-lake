@@ -353,7 +353,7 @@ type Query {
   ): DcaScheduleExecutionsConnection
 
   """
-  Reads and enables pagination through a set of `DcaScheduleExecutionAction`.
+  Reads and enables pagination through a set of `DcaScheduleExecutionEvent`.
   """
   dcaScheduleExecutionActions(
     """Only read the first `n` values of the set."""
@@ -374,7 +374,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `DcaScheduleExecutionAction`."""
+    """The method to use when ordering `DcaScheduleExecutionEvent`."""
     orderBy: [DcaScheduleExecutionActionsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -388,7 +388,7 @@ type Query {
     filter: DcaScheduleExecutionActionFilter
   ): DcaScheduleExecutionActionsConnection
 
-  """Reads and enables pagination through a set of `DcaScheduleOrderRoute`."""
+  """Reads and enables pagination through a set of `DcaScheduleOrderRouteHop`."""
   dcaScheduleOrderRoutes(
     """Only read the first `n` values of the set."""
     first: Int
@@ -408,7 +408,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `DcaScheduleOrderRoute`."""
+    """The method to use when ordering `DcaScheduleOrderRouteHop`."""
     orderBy: [DcaScheduleOrderRoutesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -524,7 +524,7 @@ type Query {
     filter: HistoricalAssetVolumeFilter
   ): HistoricalAssetVolumesConnection
 
-  """Reads and enables pagination through a set of `LbpPool`."""
+  """Reads and enables pagination through a set of `Lbppool`."""
   lbpPools(
     """Only read the first `n` values of the set."""
     first: Int
@@ -544,7 +544,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPool`."""
+    """The method to use when ordering `Lbppool`."""
     orderBy: [LbpPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -595,7 +595,7 @@ type Query {
   ): LbpPoolHistoricalDataConnection
 
   """
-  Reads and enables pagination through a set of `LbpPoolHistoricalPrice`.
+  Reads and enables pagination through a set of `LbppoolHistoricalPrice`.
   """
   lbpPoolHistoricalPrices(
     """Only read the first `n` values of the set."""
@@ -616,7 +616,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPoolHistoricalPrice`."""
+    """The method to use when ordering `LbppoolHistoricalPrice`."""
     orderBy: [LbpPoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -631,7 +631,7 @@ type Query {
   ): LbpPoolHistoricalPricesConnection
 
   """
-  Reads and enables pagination through a set of `LbpPoolHistoricalVolume`.
+  Reads and enables pagination through a set of `LbppoolHistoricalVolume`.
   """
   lbpPoolHistoricalVolumes(
     """Only read the first `n` values of the set."""
@@ -652,7 +652,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPoolHistoricalVolume`."""
+    """The method to use when ordering `LbppoolHistoricalVolume`."""
     orderBy: [LbpPoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1010,7 +1010,7 @@ type Query {
     filter: StablepoolFilter
   ): StablepoolsConnection
 
-  """Reads and enables pagination through a set of `StablepoolAsset`."""
+  """Reads and enables pagination through a set of `StableswapAsset`."""
   stablepoolAssets(
     """Only read the first `n` values of the set."""
     first: Int
@@ -1030,7 +1030,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAsset`."""
+    """The method to use when ordering `StableswapAsset`."""
     orderBy: [StablepoolAssetsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1081,7 +1081,7 @@ type Query {
   ): StablepoolAssetHistoricalDataConnection
 
   """
-  Reads and enables pagination through a set of `StablepoolAssetHistoricalVolume`.
+  Reads and enables pagination through a set of `StableswapAssetHistoricalVolume`.
   """
   stablepoolAssetHistoricalVolumes(
     """Only read the first `n` values of the set."""
@@ -1102,7 +1102,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAssetHistoricalVolume`."""
+    """The method to use when ordering `StableswapAssetHistoricalVolume`."""
     orderBy: [StablepoolAssetHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1117,7 +1117,7 @@ type Query {
   ): StablepoolAssetHistoricalVolumesConnection
 
   """
-  Reads and enables pagination through a set of `StablepoolAssetLiquidityAmount`.
+  Reads and enables pagination through a set of `StableswapAssetLiquidityAmount`.
   """
   stablepoolAssetLiquidityAmounts(
     """Only read the first `n` values of the set."""
@@ -1138,7 +1138,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAssetLiquidityAmount`."""
+    """The method to use when ordering `StableswapAssetLiquidityAmount`."""
     orderBy: [StablepoolAssetLiquidityAmountsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1189,7 +1189,7 @@ type Query {
   ): StablepoolHistoricalDataConnection
 
   """
-  Reads and enables pagination through a set of `StablepoolHistoricalVolume`.
+  Reads and enables pagination through a set of `StableswapHistoricalVolume`.
   """
   stablepoolHistoricalVolumes(
     """Only read the first `n` values of the set."""
@@ -1210,7 +1210,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolHistoricalVolume`."""
+    """The method to use when ordering `StableswapHistoricalVolume`."""
     orderBy: [StablepoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1225,7 +1225,7 @@ type Query {
   ): StablepoolHistoricalVolumesConnection
 
   """
-  Reads and enables pagination through a set of `StablepoolLiquidityAction`.
+  Reads and enables pagination through a set of `StableswapLiquidityEvent`.
   """
   stablepoolLiquidityActions(
     """Only read the first `n` values of the set."""
@@ -1246,7 +1246,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolLiquidityAction`."""
+    """The method to use when ordering `StableswapLiquidityEvent`."""
     orderBy: [StablepoolLiquidityActionsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1466,7 +1466,7 @@ type Query {
     filter: TransferFilter
   ): TransfersConnection
 
-  """Reads and enables pagination through a set of `XykPool`."""
+  """Reads and enables pagination through a set of `Xykpool`."""
   xykPools(
     """Only read the first `n` values of the set."""
     first: Int
@@ -1486,7 +1486,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPool`."""
+    """The method to use when ordering `Xykpool`."""
     orderBy: [XykPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1537,7 +1537,7 @@ type Query {
   ): XykPoolHistoricalDataConnection
 
   """
-  Reads and enables pagination through a set of `XykPoolHistoricalPrice`.
+  Reads and enables pagination through a set of `XykpoolHistoricalPrice`.
   """
   xykPoolHistoricalPrices(
     """Only read the first `n` values of the set."""
@@ -1558,7 +1558,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPoolHistoricalPrice`."""
+    """The method to use when ordering `XykpoolHistoricalPrice`."""
     orderBy: [XykPoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1573,7 +1573,7 @@ type Query {
   ): XykPoolHistoricalPricesConnection
 
   """
-  Reads and enables pagination through a set of `XykPoolHistoricalVolume`.
+  Reads and enables pagination through a set of `XykpoolHistoricalVolume`.
   """
   xykPoolHistoricalVolumes(
     """Only read the first `n` values of the set."""
@@ -1594,7 +1594,7 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPoolHistoricalVolume`."""
+    """The method to use when ordering `XykpoolHistoricalVolume`."""
     orderBy: [XykPoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1617,15 +1617,15 @@ type Query {
   dcaRandomnessGenerationFailedError(id: String!): DcaRandomnessGenerationFailedError
   dcaSchedule(id: String!): DcaSchedule
   dcaScheduleExecution(id: String!): DcaScheduleExecution
-  dcaScheduleExecutionAction(id: String!): DcaScheduleExecutionAction
-  dcaScheduleOrderRoute(id: String!): DcaScheduleOrderRoute
+  dcaScheduleExecutionAction(id: String!): DcaScheduleExecutionEvent
+  dcaScheduleOrderRoute(id: String!): DcaScheduleOrderRouteHop
   event(id: String!): Event
   extrinsic(id: String!): Extrinsic
   historicalAssetVolume(id: String!): HistoricalAssetVolume
-  lbpPool(id: String!): LbpPool
+  lbpPool(id: String!): Lbppool
   lbpPoolHistoricalDatum(id: String!): LbpPoolHistoricalDatum
-  lbpPoolHistoricalPrice(id: String!): LbpPoolHistoricalPrice
-  lbpPoolHistoricalVolume(id: String!): LbpPoolHistoricalVolume
+  lbpPoolHistoricalPrice(id: String!): LbppoolHistoricalPrice
+  lbpPoolHistoricalVolume(id: String!): LbppoolHistoricalVolume
   migration(id: Int!): Migration
   omnipool(id: String!): Omnipool
   omnipoolAsset(id: String!): OmnipoolAsset
@@ -1636,23 +1636,23 @@ type Query {
   otcOrderAction(id: String!): OtcOrderAction
   processorStatus(id: String!): ProcessorStatus
   stablepool(id: String!): Stablepool
-  stablepoolAsset(id: String!): StablepoolAsset
+  stablepoolAsset(id: String!): StableswapAsset
   stablepoolAssetHistoricalDatum(id: String!): StablepoolAssetHistoricalDatum
-  stablepoolAssetHistoricalVolume(id: String!): StablepoolAssetHistoricalVolume
-  stablepoolAssetLiquidityAmount(id: String!): StablepoolAssetLiquidityAmount
+  stablepoolAssetHistoricalVolume(id: String!): StableswapAssetHistoricalVolume
+  stablepoolAssetLiquidityAmount(id: String!): StableswapAssetLiquidityAmount
   stablepoolHistoricalDatum(id: String!): StablepoolHistoricalDatum
-  stablepoolHistoricalVolume(id: String!): StablepoolHistoricalVolume
-  stablepoolLiquidityAction(id: String!): StablepoolLiquidityAction
+  stablepoolHistoricalVolume(id: String!): StableswapHistoricalVolume
+  stablepoolLiquidityAction(id: String!): StableswapLiquidityEvent
   swap(id: String!): Swap
   swapFee(id: String!): SwapFee
   swapFillerContext(id: String!): SwapFillerContext
   swapInputAssetBalance(id: String!): SwapInputAssetBalance
   swapOutputAssetBalance(id: String!): SwapOutputAssetBalance
   transfer(id: String!): Transfer
-  xykPool(id: String!): XykPool
+  xykPool(id: String!): Xykpool
   xykPoolHistoricalDatum(id: String!): XykPoolHistoricalDatum
-  xykPoolHistoricalPrice(id: String!): XykPoolHistoricalPrice
-  xykPoolHistoricalVolume(id: String!): XykPoolHistoricalVolume
+  xykPoolHistoricalPrice(id: String!): XykpoolHistoricalPrice
+  xykPoolHistoricalVolume(id: String!): XykpoolHistoricalVolume
   _squidStatus: [_ProcessorStatus!]!
   xykPoolHistoricalVolumesByPeriod(filter: XykPoolVolumesByPeriodFilter!): XykPoolVolumesByPeriodResponse!
   omnipoolAssetHistoricalVolumesByPeriod(filter: OmnipoolAssetVolumesByPeriodFilter!): OmnipoolAssetVolumesByPeriodResponse!
@@ -1700,11 +1700,11 @@ type Account {
   stablepoolId: String
   accountType: String!
 
-  """Reads a single `LbpPool` that is related to this `Account`."""
-  lbpPool: LbpPool
+  """Reads a single `Lbppool` that is related to this `Account`."""
+  lbpPool: Lbppool
 
-  """Reads a single `XykPool` that is related to this `Account`."""
-  xykPool: XykPool
+  """Reads a single `Xykpool` that is related to this `Account`."""
+  xykPool: Xykpool
 
   """Reads a single `Omnipool` that is related to this `Account`."""
   omnipool: Omnipool
@@ -1784,7 +1784,7 @@ type Account {
     filter: LbpPoolHistoricalDatumFilter
   ): LbpPoolHistoricalDataConnection!
 
-  """Reads and enables pagination through a set of `LbpPool`."""
+  """Reads and enables pagination through a set of `Lbppool`."""
   lbpPools(
     """Only read the first `n` values of the set."""
     first: Int
@@ -1804,7 +1804,7 @@ type Account {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPool`."""
+    """The method to use when ordering `Lbppool`."""
     orderBy: [LbpPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1818,7 +1818,7 @@ type Account {
     filter: LbpPoolFilter
   ): LbpPoolsConnection!
 
-  """Reads and enables pagination through a set of `LbpPool`."""
+  """Reads and enables pagination through a set of `Lbppool`."""
   lbpPoolsByFeeCollectorId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -1838,7 +1838,7 @@ type Account {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPool`."""
+    """The method to use when ordering `Lbppool`."""
     orderBy: [LbpPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1852,7 +1852,7 @@ type Account {
     filter: LbpPoolFilter
   ): LbpPoolsConnection!
 
-  """Reads and enables pagination through a set of `LbpPool`."""
+  """Reads and enables pagination through a set of `Lbppool`."""
   lbpPoolsByOwnerId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -1872,7 +1872,7 @@ type Account {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPool`."""
+    """The method to use when ordering `Lbppool`."""
     orderBy: [LbpPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -1886,7 +1886,7 @@ type Account {
     filter: LbpPoolFilter
   ): LbpPoolsConnection!
 
-  """Reads and enables pagination through a set of `XykPool`."""
+  """Reads and enables pagination through a set of `Xykpool`."""
   xykPools(
     """Only read the first `n` values of the set."""
     first: Int
@@ -1906,7 +1906,7 @@ type Account {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPool`."""
+    """The method to use when ordering `Xykpool`."""
     orderBy: [XykPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2331,7 +2331,7 @@ type Account {
   ): OtcOrderActionsConnection!
 }
 
-type LbpPool {
+type Lbppool {
   id: String!
   assetABalance: BigFloat!
   assetBBalance: BigFloat!
@@ -2351,23 +2351,23 @@ type LbpPool {
   feeCollectorId: String
   ownerId: String
 
-  """Reads a single `Account` that is related to this `LbpPool`."""
+  """Reads a single `Account` that is related to this `Lbppool`."""
   account: Account
 
-  """Reads a single `Asset` that is related to this `LbpPool`."""
+  """Reads a single `Asset` that is related to this `Lbppool`."""
   assetA: Asset
 
-  """Reads a single `Asset` that is related to this `LbpPool`."""
+  """Reads a single `Asset` that is related to this `Lbppool`."""
   assetB: Asset
 
-  """Reads a single `Account` that is related to this `LbpPool`."""
+  """Reads a single `Account` that is related to this `Lbppool`."""
   feeCollector: Account
 
-  """Reads a single `Account` that is related to this `LbpPool`."""
+  """Reads a single `Account` that is related to this `Lbppool`."""
   owner: Account
 
   """
-  Reads and enables pagination through a set of `LbpPoolHistoricalPrice`.
+  Reads and enables pagination through a set of `LbppoolHistoricalPrice`.
   """
   lbpPoolHistoricalPricesByPoolId(
     """Only read the first `n` values of the set."""
@@ -2388,7 +2388,7 @@ type LbpPool {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPoolHistoricalPrice`."""
+    """The method to use when ordering `LbppoolHistoricalPrice`."""
     orderBy: [LbpPoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2403,7 +2403,7 @@ type LbpPool {
   ): LbpPoolHistoricalPricesConnection!
 
   """
-  Reads and enables pagination through a set of `LbpPoolHistoricalVolume`.
+  Reads and enables pagination through a set of `LbppoolHistoricalVolume`.
   """
   lbpPoolHistoricalVolumesByPoolId(
     """Only read the first `n` values of the set."""
@@ -2424,7 +2424,7 @@ type LbpPool {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPoolHistoricalVolume`."""
+    """The method to use when ordering `LbppoolHistoricalVolume`."""
     orderBy: [LbpPoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2531,7 +2531,7 @@ type Asset {
   existentialDeposit: BigFloat!
 
   """
-  Reads and enables pagination through a set of `LbpPoolHistoricalPrice`.
+  Reads and enables pagination through a set of `LbppoolHistoricalPrice`.
   """
   lbpPoolHistoricalPricesByAssetAId(
     """Only read the first `n` values of the set."""
@@ -2552,7 +2552,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPoolHistoricalPrice`."""
+    """The method to use when ordering `LbppoolHistoricalPrice`."""
     orderBy: [LbpPoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2567,7 +2567,7 @@ type Asset {
   ): LbpPoolHistoricalPricesConnection!
 
   """
-  Reads and enables pagination through a set of `LbpPoolHistoricalPrice`.
+  Reads and enables pagination through a set of `LbppoolHistoricalPrice`.
   """
   lbpPoolHistoricalPricesByAssetBId(
     """Only read the first `n` values of the set."""
@@ -2588,7 +2588,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPoolHistoricalPrice`."""
+    """The method to use when ordering `LbppoolHistoricalPrice`."""
     orderBy: [LbpPoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2603,7 +2603,7 @@ type Asset {
   ): LbpPoolHistoricalPricesConnection!
 
   """
-  Reads and enables pagination through a set of `LbpPoolHistoricalVolume`.
+  Reads and enables pagination through a set of `LbppoolHistoricalVolume`.
   """
   lbpPoolHistoricalVolumesByAssetAId(
     """Only read the first `n` values of the set."""
@@ -2624,7 +2624,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPoolHistoricalVolume`."""
+    """The method to use when ordering `LbppoolHistoricalVolume`."""
     orderBy: [LbpPoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2639,7 +2639,7 @@ type Asset {
   ): LbpPoolHistoricalVolumesConnection!
 
   """
-  Reads and enables pagination through a set of `LbpPoolHistoricalVolume`.
+  Reads and enables pagination through a set of `LbppoolHistoricalVolume`.
   """
   lbpPoolHistoricalVolumesByAssetBId(
     """Only read the first `n` values of the set."""
@@ -2660,7 +2660,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPoolHistoricalVolume`."""
+    """The method to use when ordering `LbppoolHistoricalVolume`."""
     orderBy: [LbpPoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2746,7 +2746,7 @@ type Asset {
     filter: LbpPoolHistoricalDatumFilter
   ): LbpPoolHistoricalDataConnection!
 
-  """Reads and enables pagination through a set of `LbpPool`."""
+  """Reads and enables pagination through a set of `Lbppool`."""
   lbpPoolsByAssetAId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -2766,7 +2766,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPool`."""
+    """The method to use when ordering `Lbppool`."""
     orderBy: [LbpPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2780,7 +2780,7 @@ type Asset {
     filter: LbpPoolFilter
   ): LbpPoolsConnection!
 
-  """Reads and enables pagination through a set of `LbpPool`."""
+  """Reads and enables pagination through a set of `Lbppool`."""
   lbpPoolsByAssetBId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -2800,7 +2800,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `LbpPool`."""
+    """The method to use when ordering `Lbppool`."""
     orderBy: [LbpPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2815,7 +2815,7 @@ type Asset {
   ): LbpPoolsConnection!
 
   """
-  Reads and enables pagination through a set of `XykPoolHistoricalPrice`.
+  Reads and enables pagination through a set of `XykpoolHistoricalPrice`.
   """
   xykPoolHistoricalPricesByAssetAId(
     """Only read the first `n` values of the set."""
@@ -2836,7 +2836,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPoolHistoricalPrice`."""
+    """The method to use when ordering `XykpoolHistoricalPrice`."""
     orderBy: [XykPoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2851,7 +2851,7 @@ type Asset {
   ): XykPoolHistoricalPricesConnection!
 
   """
-  Reads and enables pagination through a set of `XykPoolHistoricalPrice`.
+  Reads and enables pagination through a set of `XykpoolHistoricalPrice`.
   """
   xykPoolHistoricalPricesByAssetBId(
     """Only read the first `n` values of the set."""
@@ -2872,7 +2872,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPoolHistoricalPrice`."""
+    """The method to use when ordering `XykpoolHistoricalPrice`."""
     orderBy: [XykPoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2887,7 +2887,7 @@ type Asset {
   ): XykPoolHistoricalPricesConnection!
 
   """
-  Reads and enables pagination through a set of `XykPoolHistoricalVolume`.
+  Reads and enables pagination through a set of `XykpoolHistoricalVolume`.
   """
   xykPoolHistoricalVolumesByAssetAId(
     """Only read the first `n` values of the set."""
@@ -2908,7 +2908,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPoolHistoricalVolume`."""
+    """The method to use when ordering `XykpoolHistoricalVolume`."""
     orderBy: [XykPoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -2923,7 +2923,7 @@ type Asset {
   ): XykPoolHistoricalVolumesConnection!
 
   """
-  Reads and enables pagination through a set of `XykPoolHistoricalVolume`.
+  Reads and enables pagination through a set of `XykpoolHistoricalVolume`.
   """
   xykPoolHistoricalVolumesByAssetBId(
     """Only read the first `n` values of the set."""
@@ -2944,7 +2944,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPoolHistoricalVolume`."""
+    """The method to use when ordering `XykpoolHistoricalVolume`."""
     orderBy: [XykPoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3030,7 +3030,7 @@ type Asset {
     filter: XykPoolHistoricalDatumFilter
   ): XykPoolHistoricalDataConnection!
 
-  """Reads and enables pagination through a set of `XykPool`."""
+  """Reads and enables pagination through a set of `Xykpool`."""
   xykPoolsByAssetAId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -3050,7 +3050,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPool`."""
+    """The method to use when ordering `Xykpool`."""
     orderBy: [XykPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3064,7 +3064,7 @@ type Asset {
     filter: XykPoolFilter
   ): XykPoolsConnection!
 
-  """Reads and enables pagination through a set of `XykPool`."""
+  """Reads and enables pagination through a set of `Xykpool`."""
   xykPoolsByAssetBId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -3084,7 +3084,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPool`."""
+    """The method to use when ordering `Xykpool`."""
     orderBy: [XykPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3098,7 +3098,7 @@ type Asset {
     filter: XykPoolFilter
   ): XykPoolsConnection!
 
-  """Reads and enables pagination through a set of `XykPool`."""
+  """Reads and enables pagination through a set of `Xykpool`."""
   xykPoolsByShareTokenId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -3118,7 +3118,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPool`."""
+    """The method to use when ordering `Xykpool`."""
     orderBy: [XykPoolsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3202,7 +3202,7 @@ type Asset {
     filter: OmnipoolAssetFilter
   ): OmnipoolAssetsConnection!
 
-  """Reads and enables pagination through a set of `StablepoolAsset`."""
+  """Reads and enables pagination through a set of `StableswapAsset`."""
   stablepoolAssets(
     """Only read the first `n` values of the set."""
     first: Int
@@ -3222,7 +3222,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAsset`."""
+    """The method to use when ordering `StableswapAsset`."""
     orderBy: [StablepoolAssetsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3375,7 +3375,7 @@ type Asset {
   ): HistoricalAssetVolumesConnection!
 
   """
-  Reads and enables pagination through a set of `StablepoolAssetHistoricalVolume`.
+  Reads and enables pagination through a set of `StableswapAssetHistoricalVolume`.
   """
   stablepoolAssetHistoricalVolumes(
     """Only read the first `n` values of the set."""
@@ -3396,7 +3396,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAssetHistoricalVolume`."""
+    """The method to use when ordering `StableswapAssetHistoricalVolume`."""
     orderBy: [StablepoolAssetHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3411,7 +3411,7 @@ type Asset {
   ): StablepoolAssetHistoricalVolumesConnection!
 
   """
-  Reads and enables pagination through a set of `StablepoolAssetLiquidityAmount`.
+  Reads and enables pagination through a set of `StableswapAssetLiquidityAmount`.
   """
   stablepoolAssetLiquidityAmounts(
     """Only read the first `n` values of the set."""
@@ -3432,7 +3432,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAssetLiquidityAmount`."""
+    """The method to use when ordering `StableswapAssetLiquidityAmount`."""
     orderBy: [StablepoolAssetLiquidityAmountsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3550,7 +3550,7 @@ type Asset {
     filter: DcaScheduleFilter
   ): DcaSchedulesConnection!
 
-  """Reads and enables pagination through a set of `DcaScheduleOrderRoute`."""
+  """Reads and enables pagination through a set of `DcaScheduleOrderRouteHop`."""
   dcaScheduleOrderRoutesByAssetInId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -3570,7 +3570,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `DcaScheduleOrderRoute`."""
+    """The method to use when ordering `DcaScheduleOrderRouteHop`."""
     orderBy: [DcaScheduleOrderRoutesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3584,7 +3584,7 @@ type Asset {
     filter: DcaScheduleOrderRouteFilter
   ): DcaScheduleOrderRoutesConnection!
 
-  """Reads and enables pagination through a set of `DcaScheduleOrderRoute`."""
+  """Reads and enables pagination through a set of `DcaScheduleOrderRouteHop`."""
   dcaScheduleOrderRoutesByAssetOutId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -3604,7 +3604,7 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `DcaScheduleOrderRoute`."""
+    """The method to use when ordering `DcaScheduleOrderRouteHop`."""
     orderBy: [DcaScheduleOrderRoutesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -3721,13 +3721,13 @@ type Asset {
   ): SwapFillerContextsConnection!
 }
 
-"""A connection to a list of `LbpPoolHistoricalPrice` values."""
+"""A connection to a list of `LbppoolHistoricalPrice` values."""
 type LbpPoolHistoricalPricesConnection {
-  """A list of `LbpPoolHistoricalPrice` objects."""
-  nodes: [LbpPoolHistoricalPrice]!
+  """A list of `LbppoolHistoricalPrice` objects."""
+  nodes: [LbppoolHistoricalPrice]!
 
   """
-  A list of edges which contains the `LbpPoolHistoricalPrice` and cursor to aid in pagination.
+  A list of edges which contains the `LbppoolHistoricalPrice` and cursor to aid in pagination.
   """
   edges: [LbpPoolHistoricalPricesEdge!]!
 
@@ -3735,7 +3735,7 @@ type LbpPoolHistoricalPricesConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `LbpPoolHistoricalPrice` you could get from the connection.
+  The count of *all* `LbppoolHistoricalPrice` you could get from the connection.
   """
   totalCount: Int!
 
@@ -3749,7 +3749,7 @@ type LbpPoolHistoricalPricesConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `LbpPoolHistoricalPrice` for these aggregates.
+    The method to use when grouping `LbppoolHistoricalPrice` for these aggregates.
     """
     groupBy: [LbpPoolHistoricalPriceGroupBy!]!
 
@@ -3758,7 +3758,7 @@ type LbpPoolHistoricalPricesConnection {
   ): [LbpPoolHistoricalPriceAggregates!]
 }
 
-type LbpPoolHistoricalPrice {
+type LbppoolHistoricalPrice {
   id: String!
   assetABalance: BigFloat!
   assetBBalance: BigFloat!
@@ -3769,28 +3769,28 @@ type LbpPoolHistoricalPrice {
   assetBId: String
 
   """
-  Reads a single `LbpPool` that is related to this `LbpPoolHistoricalPrice`.
+  Reads a single `Lbppool` that is related to this `LbppoolHistoricalPrice`.
   """
-  pool: LbpPool
+  pool: Lbppool
 
   """
-  Reads a single `Asset` that is related to this `LbpPoolHistoricalPrice`.
+  Reads a single `Asset` that is related to this `LbppoolHistoricalPrice`.
   """
   assetA: Asset
 
   """
-  Reads a single `Asset` that is related to this `LbpPoolHistoricalPrice`.
+  Reads a single `Asset` that is related to this `LbppoolHistoricalPrice`.
   """
   assetB: Asset
 }
 
-"""A `LbpPoolHistoricalPrice` edge in the connection."""
+"""A `LbppoolHistoricalPrice` edge in the connection."""
 type LbpPoolHistoricalPricesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `LbpPoolHistoricalPrice` at the end of the edge."""
-  node: LbpPoolHistoricalPrice
+  """The `LbppoolHistoricalPrice` at the end of the edge."""
+  node: LbppoolHistoricalPrice
 }
 
 """A location in a connection that can be used for resuming pagination."""
@@ -4028,7 +4028,7 @@ type LbpPoolHistoricalPriceVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `LbpPoolHistoricalPrice` for usage during aggregation.
+Grouping methods for `LbppoolHistoricalPrice` for usage during aggregation.
 """
 enum LbpPoolHistoricalPriceGroupBy {
   ASSET_A_BALANCE
@@ -4040,7 +4040,7 @@ enum LbpPoolHistoricalPriceGroupBy {
   ASSET_B_ID
 }
 
-"""Conditions for `LbpPoolHistoricalPrice` aggregates."""
+"""Conditions for `LbppoolHistoricalPrice` aggregates."""
 input LbpPoolHistoricalPriceHavingInput {
   AND: [LbpPoolHistoricalPriceHavingInput!]
   OR: [LbpPoolHistoricalPriceHavingInput!]
@@ -4136,7 +4136,7 @@ input LbpPoolHistoricalPriceHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `LbpPoolHistoricalPrice`."""
+"""Methods to use when ordering `LbppoolHistoricalPrice`."""
 enum LbpPoolHistoricalPricesOrderBy {
   NATURAL
   ID_ASC
@@ -4160,7 +4160,7 @@ enum LbpPoolHistoricalPricesOrderBy {
 }
 
 """
-A condition to be used against `LbpPoolHistoricalPrice` object types. All fields
+A condition to be used against `LbppoolHistoricalPrice` object types. All fields
 are tested for equality and combined with a logical ‘and.’
 """
 input LbpPoolHistoricalPriceCondition {
@@ -4190,7 +4190,7 @@ input LbpPoolHistoricalPriceCondition {
 }
 
 """
-A filter to be used against `LbpPoolHistoricalPrice` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `LbppoolHistoricalPrice` object types. All fields are combined with a logical ‘and.’
 """
 input LbpPoolHistoricalPriceFilter {
   """Filter by the object’s `id` field."""
@@ -4443,13 +4443,13 @@ input IntFilter {
   greaterThanOrEqualTo: Int
 }
 
-"""A connection to a list of `LbpPoolHistoricalVolume` values."""
+"""A connection to a list of `LbppoolHistoricalVolume` values."""
 type LbpPoolHistoricalVolumesConnection {
-  """A list of `LbpPoolHistoricalVolume` objects."""
-  nodes: [LbpPoolHistoricalVolume]!
+  """A list of `LbppoolHistoricalVolume` objects."""
+  nodes: [LbppoolHistoricalVolume]!
 
   """
-  A list of edges which contains the `LbpPoolHistoricalVolume` and cursor to aid in pagination.
+  A list of edges which contains the `LbppoolHistoricalVolume` and cursor to aid in pagination.
   """
   edges: [LbpPoolHistoricalVolumesEdge!]!
 
@@ -4457,7 +4457,7 @@ type LbpPoolHistoricalVolumesConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `LbpPoolHistoricalVolume` you could get from the connection.
+  The count of *all* `LbppoolHistoricalVolume` you could get from the connection.
   """
   totalCount: Int!
 
@@ -4471,7 +4471,7 @@ type LbpPoolHistoricalVolumesConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `LbpPoolHistoricalVolume` for these aggregates.
+    The method to use when grouping `LbppoolHistoricalVolume` for these aggregates.
     """
     groupBy: [LbpPoolHistoricalVolumeGroupBy!]!
 
@@ -4480,7 +4480,7 @@ type LbpPoolHistoricalVolumesConnection {
   ): [LbpPoolHistoricalVolumeAggregates!]
 }
 
-type LbpPoolHistoricalVolume {
+type LbppoolHistoricalVolume {
   id: String!
   averagePrice: BigFloat!
   assetAVolumeIn: BigFloat!
@@ -4502,28 +4502,28 @@ type LbpPoolHistoricalVolume {
   assetBId: String
 
   """
-  Reads a single `LbpPool` that is related to this `LbpPoolHistoricalVolume`.
+  Reads a single `Lbppool` that is related to this `LbppoolHistoricalVolume`.
   """
-  pool: LbpPool
+  pool: Lbppool
 
   """
-  Reads a single `Asset` that is related to this `LbpPoolHistoricalVolume`.
+  Reads a single `Asset` that is related to this `LbppoolHistoricalVolume`.
   """
   assetA: Asset
 
   """
-  Reads a single `Asset` that is related to this `LbpPoolHistoricalVolume`.
+  Reads a single `Asset` that is related to this `LbppoolHistoricalVolume`.
   """
   assetB: Asset
 }
 
-"""A `LbpPoolHistoricalVolume` edge in the connection."""
+"""A `LbppoolHistoricalVolume` edge in the connection."""
 type LbpPoolHistoricalVolumesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `LbpPoolHistoricalVolume` at the end of the edge."""
-  node: LbpPoolHistoricalVolume
+  """The `LbppoolHistoricalVolume` at the end of the edge."""
+  node: LbppoolHistoricalVolume
 }
 
 type LbpPoolHistoricalVolumeAggregates {
@@ -5081,7 +5081,7 @@ type LbpPoolHistoricalVolumeVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `LbpPoolHistoricalVolume` for usage during aggregation.
+Grouping methods for `LbppoolHistoricalVolume` for usage during aggregation.
 """
 enum LbpPoolHistoricalVolumeGroupBy {
   AVERAGE_PRICE
@@ -5104,7 +5104,7 @@ enum LbpPoolHistoricalVolumeGroupBy {
   ASSET_B_ID
 }
 
-"""Conditions for `LbpPoolHistoricalVolume` aggregates."""
+"""Conditions for `LbppoolHistoricalVolume` aggregates."""
 input LbpPoolHistoricalVolumeHavingInput {
   AND: [LbpPoolHistoricalVolumeHavingInput!]
   OR: [LbpPoolHistoricalVolumeHavingInput!]
@@ -5281,7 +5281,7 @@ input LbpPoolHistoricalVolumeHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `LbpPoolHistoricalVolume`."""
+"""Methods to use when ordering `LbppoolHistoricalVolume`."""
 enum LbpPoolHistoricalVolumesOrderBy {
   NATURAL
   ID_ASC
@@ -5327,7 +5327,7 @@ enum LbpPoolHistoricalVolumesOrderBy {
 }
 
 """
-A condition to be used against `LbpPoolHistoricalVolume` object types. All
+A condition to be used against `LbppoolHistoricalVolume` object types. All
 fields are tested for equality and combined with a logical ‘and.’
 """
 input LbpPoolHistoricalVolumeCondition {
@@ -5390,7 +5390,7 @@ input LbpPoolHistoricalVolumeCondition {
 }
 
 """
-A filter to be used against `LbpPoolHistoricalVolume` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `LbppoolHistoricalVolume` object types. All fields are combined with a logical ‘and.’
 """
 input LbpPoolHistoricalVolumeFilter {
   """Filter by the object’s `id` field."""
@@ -5517,9 +5517,9 @@ type LbpPoolHistoricalDatum {
   feeCollectorId: String
 
   """
-  Reads a single `LbpPool` that is related to this `LbpPoolHistoricalDatum`.
+  Reads a single `Lbppool` that is related to this `LbpPoolHistoricalDatum`.
   """
-  pool: LbpPool
+  pool: Lbppool
 
   """
   Reads a single `Asset` that is related to this `LbpPoolHistoricalDatum`.
@@ -6290,20 +6290,20 @@ input IntListFilter {
   anyGreaterThanOrEqualTo: Int
 }
 
-"""A connection to a list of `LbpPool` values."""
+"""A connection to a list of `Lbppool` values."""
 type LbpPoolsConnection {
-  """A list of `LbpPool` objects."""
-  nodes: [LbpPool]!
+  """A list of `Lbppool` objects."""
+  nodes: [Lbppool]!
 
   """
-  A list of edges which contains the `LbpPool` and cursor to aid in pagination.
+  A list of edges which contains the `Lbppool` and cursor to aid in pagination.
   """
   edges: [LbpPoolsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* `LbpPool` you could get from the connection."""
+  """The count of *all* `Lbppool` you could get from the connection."""
   totalCount: Int!
 
   """
@@ -6315,7 +6315,7 @@ type LbpPoolsConnection {
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
-    """The method to use when grouping `LbpPool` for these aggregates."""
+    """The method to use when grouping `Lbppool` for these aggregates."""
     groupBy: [LbpPoolGroupBy!]!
 
     """Conditions on the grouped aggregates."""
@@ -6323,13 +6323,13 @@ type LbpPoolsConnection {
   ): [LbpPoolAggregates!]
 }
 
-"""A `LbpPool` edge in the connection."""
+"""A `Lbppool` edge in the connection."""
 type LbpPoolsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `LbpPool` at the end of the edge."""
-  node: LbpPool
+  """The `Lbppool` at the end of the edge."""
+  node: Lbppool
 }
 
 type LbpPoolAggregates {
@@ -6709,7 +6709,7 @@ type LbpPoolVariancePopulationAggregates {
   finalWeight: BigFloat
 }
 
-"""Grouping methods for `LbpPool` for usage during aggregation."""
+"""Grouping methods for `Lbppool` for usage during aggregation."""
 enum LbpPoolGroupBy {
   ASSET_A_BALANCE
   ASSET_B_BALANCE
@@ -6732,7 +6732,7 @@ enum LbpPoolGroupBy {
   OWNER_ID
 }
 
-"""Conditions for `LbpPool` aggregates."""
+"""Conditions for `Lbppool` aggregates."""
 input LbpPoolHavingInput {
   AND: [LbpPoolHavingInput!]
   OR: [LbpPoolHavingInput!]
@@ -6873,7 +6873,7 @@ input LbpPoolHavingVariancePopulationInput {
   finalWeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `LbpPool`."""
+"""Methods to use when ordering `Lbppool`."""
 enum LbpPoolsOrderBy {
   NATURAL
   ID_ASC
@@ -7825,7 +7825,7 @@ enum LbpPoolsOrderBy {
 }
 
 """
-A condition to be used against `LbpPool` object types. All fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `Lbppool` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input LbpPoolCondition {
   """Checks for equality with the object’s `id` field."""
@@ -7884,7 +7884,7 @@ input LbpPoolCondition {
 }
 
 """
-A filter to be used against `LbpPool` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `Lbppool` object types. All fields are combined with a logical ‘and.’
 """
 input LbpPoolFilter {
   """Filter by the object’s `id` field."""
@@ -8035,13 +8035,13 @@ input BooleanFilter {
   greaterThanOrEqualTo: Boolean
 }
 
-"""A connection to a list of `XykPoolHistoricalPrice` values."""
+"""A connection to a list of `XykpoolHistoricalPrice` values."""
 type XykPoolHistoricalPricesConnection {
-  """A list of `XykPoolHistoricalPrice` objects."""
-  nodes: [XykPoolHistoricalPrice]!
+  """A list of `XykpoolHistoricalPrice` objects."""
+  nodes: [XykpoolHistoricalPrice]!
 
   """
-  A list of edges which contains the `XykPoolHistoricalPrice` and cursor to aid in pagination.
+  A list of edges which contains the `XykpoolHistoricalPrice` and cursor to aid in pagination.
   """
   edges: [XykPoolHistoricalPricesEdge!]!
 
@@ -8049,7 +8049,7 @@ type XykPoolHistoricalPricesConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `XykPoolHistoricalPrice` you could get from the connection.
+  The count of *all* `XykpoolHistoricalPrice` you could get from the connection.
   """
   totalCount: Int!
 
@@ -8063,7 +8063,7 @@ type XykPoolHistoricalPricesConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `XykPoolHistoricalPrice` for these aggregates.
+    The method to use when grouping `XykpoolHistoricalPrice` for these aggregates.
     """
     groupBy: [XykPoolHistoricalPriceGroupBy!]!
 
@@ -8072,7 +8072,7 @@ type XykPoolHistoricalPricesConnection {
   ): [XykPoolHistoricalPriceAggregates!]
 }
 
-type XykPoolHistoricalPrice {
+type XykpoolHistoricalPrice {
   id: String!
   assetABalance: BigFloat!
   assetBBalance: BigFloat!
@@ -8083,22 +8083,22 @@ type XykPoolHistoricalPrice {
   assetBId: String
 
   """
-  Reads a single `XykPool` that is related to this `XykPoolHistoricalPrice`.
+  Reads a single `Xykpool` that is related to this `XykpoolHistoricalPrice`.
   """
-  pool: XykPool
+  pool: Xykpool
 
   """
-  Reads a single `Asset` that is related to this `XykPoolHistoricalPrice`.
+  Reads a single `Asset` that is related to this `XykpoolHistoricalPrice`.
   """
   assetA: Asset
 
   """
-  Reads a single `Asset` that is related to this `XykPoolHistoricalPrice`.
+  Reads a single `Asset` that is related to this `XykpoolHistoricalPrice`.
   """
   assetB: Asset
 }
 
-type XykPool {
+type Xykpool {
   id: String!
   assetABalance: BigFloat!
   assetBBalance: BigFloat!
@@ -8112,20 +8112,20 @@ type XykPool {
   assetBId: String
   shareTokenId: String
 
-  """Reads a single `Account` that is related to this `XykPool`."""
+  """Reads a single `Account` that is related to this `Xykpool`."""
   account: Account
 
-  """Reads a single `Asset` that is related to this `XykPool`."""
+  """Reads a single `Asset` that is related to this `Xykpool`."""
   assetA: Asset
 
-  """Reads a single `Asset` that is related to this `XykPool`."""
+  """Reads a single `Asset` that is related to this `Xykpool`."""
   assetB: Asset
 
-  """Reads a single `Asset` that is related to this `XykPool`."""
+  """Reads a single `Asset` that is related to this `Xykpool`."""
   shareToken: Asset
 
   """
-  Reads and enables pagination through a set of `XykPoolHistoricalPrice`.
+  Reads and enables pagination through a set of `XykpoolHistoricalPrice`.
   """
   xykPoolHistoricalPricesByPoolId(
     """Only read the first `n` values of the set."""
@@ -8146,7 +8146,7 @@ type XykPool {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPoolHistoricalPrice`."""
+    """The method to use when ordering `XykpoolHistoricalPrice`."""
     orderBy: [XykPoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -8161,7 +8161,7 @@ type XykPool {
   ): XykPoolHistoricalPricesConnection!
 
   """
-  Reads and enables pagination through a set of `XykPoolHistoricalVolume`.
+  Reads and enables pagination through a set of `XykpoolHistoricalVolume`.
   """
   xykPoolHistoricalVolumesByPoolId(
     """Only read the first `n` values of the set."""
@@ -8182,7 +8182,7 @@ type XykPool {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `XykPoolHistoricalVolume`."""
+    """The method to use when ordering `XykpoolHistoricalVolume`."""
     orderBy: [XykPoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -8267,7 +8267,7 @@ type XykPool {
   ): AccountsConnection!
 }
 
-"""Methods to use when ordering `XykPoolHistoricalPrice`."""
+"""Methods to use when ordering `XykpoolHistoricalPrice`."""
 enum XykPoolHistoricalPricesOrderBy {
   NATURAL
   ID_ASC
@@ -8291,7 +8291,7 @@ enum XykPoolHistoricalPricesOrderBy {
 }
 
 """
-A condition to be used against `XykPoolHistoricalPrice` object types. All fields
+A condition to be used against `XykpoolHistoricalPrice` object types. All fields
 are tested for equality and combined with a logical ‘and.’
 """
 input XykPoolHistoricalPriceCondition {
@@ -8321,7 +8321,7 @@ input XykPoolHistoricalPriceCondition {
 }
 
 """
-A filter to be used against `XykPoolHistoricalPrice` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `XykpoolHistoricalPrice` object types. All fields are combined with a logical ‘and.’
 """
 input XykPoolHistoricalPriceFilter {
   """Filter by the object’s `id` field."""
@@ -8358,13 +8358,13 @@ input XykPoolHistoricalPriceFilter {
   not: XykPoolHistoricalPriceFilter
 }
 
-"""A connection to a list of `XykPoolHistoricalVolume` values."""
+"""A connection to a list of `XykpoolHistoricalVolume` values."""
 type XykPoolHistoricalVolumesConnection {
-  """A list of `XykPoolHistoricalVolume` objects."""
-  nodes: [XykPoolHistoricalVolume]!
+  """A list of `XykpoolHistoricalVolume` objects."""
+  nodes: [XykpoolHistoricalVolume]!
 
   """
-  A list of edges which contains the `XykPoolHistoricalVolume` and cursor to aid in pagination.
+  A list of edges which contains the `XykpoolHistoricalVolume` and cursor to aid in pagination.
   """
   edges: [XykPoolHistoricalVolumesEdge!]!
 
@@ -8372,7 +8372,7 @@ type XykPoolHistoricalVolumesConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `XykPoolHistoricalVolume` you could get from the connection.
+  The count of *all* `XykpoolHistoricalVolume` you could get from the connection.
   """
   totalCount: Int!
 
@@ -8386,7 +8386,7 @@ type XykPoolHistoricalVolumesConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `XykPoolHistoricalVolume` for these aggregates.
+    The method to use when grouping `XykpoolHistoricalVolume` for these aggregates.
     """
     groupBy: [XykPoolHistoricalVolumeGroupBy!]!
 
@@ -8395,7 +8395,7 @@ type XykPoolHistoricalVolumesConnection {
   ): [XykPoolHistoricalVolumeAggregates!]
 }
 
-type XykPoolHistoricalVolume {
+type XykpoolHistoricalVolume {
   id: String!
   averagePrice: BigFloat!
   assetAVolumeIn: BigFloat!
@@ -8417,28 +8417,28 @@ type XykPoolHistoricalVolume {
   assetBId: String
 
   """
-  Reads a single `XykPool` that is related to this `XykPoolHistoricalVolume`.
+  Reads a single `Xykpool` that is related to this `XykpoolHistoricalVolume`.
   """
-  pool: XykPool
+  pool: Xykpool
 
   """
-  Reads a single `Asset` that is related to this `XykPoolHistoricalVolume`.
+  Reads a single `Asset` that is related to this `XykpoolHistoricalVolume`.
   """
   assetA: Asset
 
   """
-  Reads a single `Asset` that is related to this `XykPoolHistoricalVolume`.
+  Reads a single `Asset` that is related to this `XykpoolHistoricalVolume`.
   """
   assetB: Asset
 }
 
-"""A `XykPoolHistoricalVolume` edge in the connection."""
+"""A `XykpoolHistoricalVolume` edge in the connection."""
 type XykPoolHistoricalVolumesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `XykPoolHistoricalVolume` at the end of the edge."""
-  node: XykPoolHistoricalVolume
+  """The `XykpoolHistoricalVolume` at the end of the edge."""
+  node: XykpoolHistoricalVolume
 }
 
 type XykPoolHistoricalVolumeAggregates {
@@ -8996,7 +8996,7 @@ type XykPoolHistoricalVolumeVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `XykPoolHistoricalVolume` for usage during aggregation.
+Grouping methods for `XykpoolHistoricalVolume` for usage during aggregation.
 """
 enum XykPoolHistoricalVolumeGroupBy {
   AVERAGE_PRICE
@@ -9019,7 +9019,7 @@ enum XykPoolHistoricalVolumeGroupBy {
   ASSET_B_ID
 }
 
-"""Conditions for `XykPoolHistoricalVolume` aggregates."""
+"""Conditions for `XykpoolHistoricalVolume` aggregates."""
 input XykPoolHistoricalVolumeHavingInput {
   AND: [XykPoolHistoricalVolumeHavingInput!]
   OR: [XykPoolHistoricalVolumeHavingInput!]
@@ -9196,7 +9196,7 @@ input XykPoolHistoricalVolumeHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `XykPoolHistoricalVolume`."""
+"""Methods to use when ordering `XykpoolHistoricalVolume`."""
 enum XykPoolHistoricalVolumesOrderBy {
   NATURAL
   ID_ASC
@@ -9242,7 +9242,7 @@ enum XykPoolHistoricalVolumesOrderBy {
 }
 
 """
-A condition to be used against `XykPoolHistoricalVolume` object types. All
+A condition to be used against `XykpoolHistoricalVolume` object types. All
 fields are tested for equality and combined with a logical ‘and.’
 """
 input XykPoolHistoricalVolumeCondition {
@@ -9305,7 +9305,7 @@ input XykPoolHistoricalVolumeCondition {
 }
 
 """
-A filter to be used against `XykPoolHistoricalVolume` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `XykpoolHistoricalVolume` object types. All fields are combined with a logical ‘and.’
 """
 input XykPoolHistoricalVolumeFilter {
   """Filter by the object’s `id` field."""
@@ -9423,9 +9423,9 @@ type XykPoolHistoricalDatum {
   assetBId: String
 
   """
-  Reads a single `XykPool` that is related to this `XykPoolHistoricalDatum`.
+  Reads a single `Xykpool` that is related to this `XykPoolHistoricalDatum`.
   """
-  pool: XykPool
+  pool: Xykpool
 
   """
   Reads a single `Asset` that is related to this `XykPoolHistoricalDatum`.
@@ -13980,13 +13980,13 @@ input AccountFilter {
   not: AccountFilter
 }
 
-"""A `XykPoolHistoricalPrice` edge in the connection."""
+"""A `XykpoolHistoricalPrice` edge in the connection."""
 type XykPoolHistoricalPricesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `XykPoolHistoricalPrice` at the end of the edge."""
-  node: XykPoolHistoricalPrice
+  """The `XykpoolHistoricalPrice` at the end of the edge."""
+  node: XykpoolHistoricalPrice
 }
 
 type XykPoolHistoricalPriceAggregates {
@@ -14199,7 +14199,7 @@ type XykPoolHistoricalPriceVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `XykPoolHistoricalPrice` for usage during aggregation.
+Grouping methods for `XykpoolHistoricalPrice` for usage during aggregation.
 """
 enum XykPoolHistoricalPriceGroupBy {
   ASSET_A_BALANCE
@@ -14211,7 +14211,7 @@ enum XykPoolHistoricalPriceGroupBy {
   ASSET_B_ID
 }
 
-"""Conditions for `XykPoolHistoricalPrice` aggregates."""
+"""Conditions for `XykpoolHistoricalPrice` aggregates."""
 input XykPoolHistoricalPriceHavingInput {
   AND: [XykPoolHistoricalPriceHavingInput!]
   OR: [XykPoolHistoricalPriceHavingInput!]
@@ -14289,20 +14289,20 @@ input XykPoolHistoricalPriceHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""A connection to a list of `XykPool` values."""
+"""A connection to a list of `Xykpool` values."""
 type XykPoolsConnection {
-  """A list of `XykPool` objects."""
-  nodes: [XykPool]!
+  """A list of `Xykpool` objects."""
+  nodes: [Xykpool]!
 
   """
-  A list of edges which contains the `XykPool` and cursor to aid in pagination.
+  A list of edges which contains the `Xykpool` and cursor to aid in pagination.
   """
   edges: [XykPoolsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* `XykPool` you could get from the connection."""
+  """The count of *all* `Xykpool` you could get from the connection."""
   totalCount: Int!
 
   """
@@ -14314,7 +14314,7 @@ type XykPoolsConnection {
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
-    """The method to use when grouping `XykPool` for these aggregates."""
+    """The method to use when grouping `Xykpool` for these aggregates."""
     groupBy: [XykPoolGroupBy!]!
 
     """Conditions on the grouped aggregates."""
@@ -14322,13 +14322,13 @@ type XykPoolsConnection {
   ): [XykPoolAggregates!]
 }
 
-"""A `XykPool` edge in the connection."""
+"""A `Xykpool` edge in the connection."""
 type XykPoolsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `XykPool` at the end of the edge."""
-  node: XykPool
+  """The `Xykpool` at the end of the edge."""
+  node: Xykpool
 }
 
 type XykPoolAggregates {
@@ -14580,7 +14580,7 @@ type XykPoolVariancePopulationAggregates {
   destroyedAtParaBlock: BigFloat
 }
 
-"""Grouping methods for `XykPool` for usage during aggregation."""
+"""Grouping methods for `Xykpool` for usage during aggregation."""
 enum XykPoolGroupBy {
   ASSET_A_BALANCE
   ASSET_B_BALANCE
@@ -14597,7 +14597,7 @@ enum XykPoolGroupBy {
   SHARE_TOKEN_ID
 }
 
-"""Conditions for `XykPool` aggregates."""
+"""Conditions for `Xykpool` aggregates."""
 input XykPoolHavingInput {
   AND: [XykPoolHavingInput!]
   OR: [XykPoolHavingInput!]
@@ -14693,7 +14693,7 @@ input XykPoolHavingVariancePopulationInput {
   destroyedAtParaBlock: HavingIntFilter
 }
 
-"""Methods to use when ordering `XykPool`."""
+"""Methods to use when ordering `Xykpool`."""
 enum XykPoolsOrderBy {
   NATURAL
   ID_ASC
@@ -15471,7 +15471,7 @@ enum XykPoolsOrderBy {
 }
 
 """
-A condition to be used against `XykPool` object types. All fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `Xykpool` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input XykPoolCondition {
   """Checks for equality with the object’s `id` field."""
@@ -15512,7 +15512,7 @@ input XykPoolCondition {
 }
 
 """
-A filter to be used against `XykPool` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `Xykpool` object types. All fields are combined with a logical ‘and.’
 """
 input XykPoolFilter {
   """Filter by the object’s `id` field."""
@@ -18213,13 +18213,13 @@ input OmnipoolAssetHistoricalDataHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""A connection to a list of `StablepoolAsset` values."""
+"""A connection to a list of `StableswapAsset` values."""
 type StablepoolAssetsConnection {
-  """A list of `StablepoolAsset` objects."""
-  nodes: [StablepoolAsset]!
+  """A list of `StableswapAsset` objects."""
+  nodes: [StableswapAsset]!
 
   """
-  A list of edges which contains the `StablepoolAsset` and cursor to aid in pagination.
+  A list of edges which contains the `StableswapAsset` and cursor to aid in pagination.
   """
   edges: [StablepoolAssetsEdge!]!
 
@@ -18227,7 +18227,7 @@ type StablepoolAssetsConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `StablepoolAsset` you could get from the connection.
+  The count of *all* `StableswapAsset` you could get from the connection.
   """
   totalCount: Int!
 
@@ -18241,7 +18241,7 @@ type StablepoolAssetsConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `StablepoolAsset` for these aggregates.
+    The method to use when grouping `StableswapAsset` for these aggregates.
     """
     groupBy: [StablepoolAssetGroupBy!]!
 
@@ -18250,16 +18250,16 @@ type StablepoolAssetsConnection {
   ): [StablepoolAssetAggregates!]
 }
 
-type StablepoolAsset {
+type StableswapAsset {
   id: String!
   amount: BigFloat!
   poolId: String
   assetId: String
 
-  """Reads a single `Stablepool` that is related to this `StablepoolAsset`."""
+  """Reads a single `Stablepool` that is related to this `StableswapAsset`."""
   pool: Stablepool
 
-  """Reads a single `Asset` that is related to this `StablepoolAsset`."""
+  """Reads a single `Asset` that is related to this `StableswapAsset`."""
   asset: Asset
 }
 
@@ -18274,7 +18274,7 @@ type Stablepool {
   """Reads a single `Account` that is related to this `Stablepool`."""
   account: Account
 
-  """Reads and enables pagination through a set of `StablepoolAsset`."""
+  """Reads and enables pagination through a set of `StableswapAsset`."""
   stablepoolAssetsByPoolId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -18294,7 +18294,7 @@ type Stablepool {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAsset`."""
+    """The method to use when ordering `StableswapAsset`."""
     orderBy: [StablepoolAssetsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -18343,7 +18343,7 @@ type Stablepool {
   ): AccountsConnection!
 
   """
-  Reads and enables pagination through a set of `StablepoolHistoricalVolume`.
+  Reads and enables pagination through a set of `StableswapHistoricalVolume`.
   """
   stablepoolHistoricalVolumesByPoolId(
     """Only read the first `n` values of the set."""
@@ -18364,7 +18364,7 @@ type Stablepool {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolHistoricalVolume`."""
+    """The method to use when ordering `StableswapHistoricalVolume`."""
     orderBy: [StablepoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -18379,7 +18379,7 @@ type Stablepool {
   ): StablepoolHistoricalVolumesConnection!
 
   """
-  Reads and enables pagination through a set of `StablepoolLiquidityAction`.
+  Reads and enables pagination through a set of `StableswapLiquidityEvent`.
   """
   stablepoolLiquidityActionsByPoolId(
     """Only read the first `n` values of the set."""
@@ -18400,7 +18400,7 @@ type Stablepool {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolLiquidityAction`."""
+    """The method to use when ordering `StableswapLiquidityEvent`."""
     orderBy: [StablepoolLiquidityActionsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -18485,7 +18485,7 @@ type Stablepool {
   ): SwapFillerContextsConnection!
 }
 
-"""Methods to use when ordering `StablepoolAsset`."""
+"""Methods to use when ordering `StableswapAsset`."""
 enum StablepoolAssetsOrderBy {
   NATURAL
   ID_ASC
@@ -18501,7 +18501,7 @@ enum StablepoolAssetsOrderBy {
 }
 
 """
-A condition to be used against `StablepoolAsset` object types. All fields are
+A condition to be used against `StableswapAsset` object types. All fields are
 tested for equality and combined with a logical ‘and.’
 """
 input StablepoolAssetCondition {
@@ -18519,7 +18519,7 @@ input StablepoolAssetCondition {
 }
 
 """
-A filter to be used against `StablepoolAsset` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `StableswapAsset` object types. All fields are combined with a logical ‘and.’
 """
 input StablepoolAssetFilter {
   """Filter by the object’s `id` field."""
@@ -18544,13 +18544,13 @@ input StablepoolAssetFilter {
   not: StablepoolAssetFilter
 }
 
-"""A connection to a list of `StablepoolHistoricalVolume` values."""
+"""A connection to a list of `StableswapHistoricalVolume` values."""
 type StablepoolHistoricalVolumesConnection {
-  """A list of `StablepoolHistoricalVolume` objects."""
-  nodes: [StablepoolHistoricalVolume]!
+  """A list of `StableswapHistoricalVolume` objects."""
+  nodes: [StableswapHistoricalVolume]!
 
   """
-  A list of edges which contains the `StablepoolHistoricalVolume` and cursor to aid in pagination.
+  A list of edges which contains the `StableswapHistoricalVolume` and cursor to aid in pagination.
   """
   edges: [StablepoolHistoricalVolumesEdge!]!
 
@@ -18558,7 +18558,7 @@ type StablepoolHistoricalVolumesConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `StablepoolHistoricalVolume` you could get from the connection.
+  The count of *all* `StableswapHistoricalVolume` you could get from the connection.
   """
   totalCount: Int!
 
@@ -18572,7 +18572,7 @@ type StablepoolHistoricalVolumesConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `StablepoolHistoricalVolume` for these aggregates.
+    The method to use when grouping `StableswapHistoricalVolume` for these aggregates.
     """
     groupBy: [StablepoolHistoricalVolumeGroupBy!]!
 
@@ -18581,19 +18581,19 @@ type StablepoolHistoricalVolumesConnection {
   ): [StablepoolHistoricalVolumeAggregates!]
 }
 
-type StablepoolHistoricalVolume {
+type StableswapHistoricalVolume {
   id: String!
   relayChainBlockHeight: Int!
   paraChainBlockHeight: Int!
   poolId: String
 
   """
-  Reads a single `Stablepool` that is related to this `StablepoolHistoricalVolume`.
+  Reads a single `Stablepool` that is related to this `StableswapHistoricalVolume`.
   """
   pool: Stablepool
 
   """
-  Reads and enables pagination through a set of `StablepoolAssetHistoricalVolume`.
+  Reads and enables pagination through a set of `StableswapAssetHistoricalVolume`.
   """
   stablepoolAssetHistoricalVolumesByVolumesCollectionId(
     """Only read the first `n` values of the set."""
@@ -18614,7 +18614,7 @@ type StablepoolHistoricalVolume {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAssetHistoricalVolume`."""
+    """The method to use when ordering `StableswapAssetHistoricalVolume`."""
     orderBy: [StablepoolAssetHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -18629,13 +18629,13 @@ type StablepoolHistoricalVolume {
   ): StablepoolAssetHistoricalVolumesConnection!
 }
 
-"""A connection to a list of `StablepoolAssetHistoricalVolume` values."""
+"""A connection to a list of `StableswapAssetHistoricalVolume` values."""
 type StablepoolAssetHistoricalVolumesConnection {
-  """A list of `StablepoolAssetHistoricalVolume` objects."""
-  nodes: [StablepoolAssetHistoricalVolume]!
+  """A list of `StableswapAssetHistoricalVolume` objects."""
+  nodes: [StableswapAssetHistoricalVolume]!
 
   """
-  A list of edges which contains the `StablepoolAssetHistoricalVolume` and cursor to aid in pagination.
+  A list of edges which contains the `StableswapAssetHistoricalVolume` and cursor to aid in pagination.
   """
   edges: [StablepoolAssetHistoricalVolumesEdge!]!
 
@@ -18643,7 +18643,7 @@ type StablepoolAssetHistoricalVolumesConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `StablepoolAssetHistoricalVolume` you could get from the connection.
+  The count of *all* `StableswapAssetHistoricalVolume` you could get from the connection.
   """
   totalCount: Int!
 
@@ -18657,7 +18657,7 @@ type StablepoolAssetHistoricalVolumesConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `StablepoolAssetHistoricalVolume` for these aggregates.
+    The method to use when grouping `StableswapAssetHistoricalVolume` for these aggregates.
     """
     groupBy: [StablepoolAssetHistoricalVolumeGroupBy!]!
 
@@ -18666,7 +18666,7 @@ type StablepoolAssetHistoricalVolumesConnection {
   ): [StablepoolAssetHistoricalVolumeAggregates!]
 }
 
-type StablepoolAssetHistoricalVolume {
+type StableswapAssetHistoricalVolume {
   id: String!
   swapFee: BigFloat!
   swapTotalFees: BigFloat!
@@ -18691,23 +18691,23 @@ type StablepoolAssetHistoricalVolume {
   assetId: String
 
   """
-  Reads a single `StablepoolHistoricalVolume` that is related to this `StablepoolAssetHistoricalVolume`.
+  Reads a single `StableswapHistoricalVolume` that is related to this `StableswapAssetHistoricalVolume`.
   """
-  volumesCollection: StablepoolHistoricalVolume
+  volumesCollection: StableswapHistoricalVolume
 
   """
-  Reads a single `Asset` that is related to this `StablepoolAssetHistoricalVolume`.
+  Reads a single `Asset` that is related to this `StableswapAssetHistoricalVolume`.
   """
   asset: Asset
 }
 
-"""A `StablepoolAssetHistoricalVolume` edge in the connection."""
+"""A `StableswapAssetHistoricalVolume` edge in the connection."""
 type StablepoolAssetHistoricalVolumesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `StablepoolAssetHistoricalVolume` at the end of the edge."""
-  node: StablepoolAssetHistoricalVolume
+  """The `StableswapAssetHistoricalVolume` at the end of the edge."""
+  node: StableswapAssetHistoricalVolume
 }
 
 type StablepoolAssetHistoricalVolumeAggregates {
@@ -19408,7 +19408,7 @@ type StablepoolAssetHistoricalVolumeVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `StablepoolAssetHistoricalVolume` for usage during aggregation.
+Grouping methods for `StableswapAssetHistoricalVolume` for usage during aggregation.
 """
 enum StablepoolAssetHistoricalVolumeGroupBy {
   SWAP_FEE
@@ -19434,7 +19434,7 @@ enum StablepoolAssetHistoricalVolumeGroupBy {
   ASSET_ID
 }
 
-"""Conditions for `StablepoolAssetHistoricalVolume` aggregates."""
+"""Conditions for `StableswapAssetHistoricalVolume` aggregates."""
 input StablepoolAssetHistoricalVolumeHavingInput {
   AND: [StablepoolAssetHistoricalVolumeHavingInput!]
   OR: [StablepoolAssetHistoricalVolumeHavingInput!]
@@ -19647,7 +19647,7 @@ input StablepoolAssetHistoricalVolumeHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `StablepoolAssetHistoricalVolume`."""
+"""Methods to use when ordering `StableswapAssetHistoricalVolume`."""
 enum StablepoolAssetHistoricalVolumesOrderBy {
   NATURAL
   ID_ASC
@@ -19699,7 +19699,7 @@ enum StablepoolAssetHistoricalVolumesOrderBy {
 }
 
 """
-A condition to be used against `StablepoolAssetHistoricalVolume` object types.
+A condition to be used against `StableswapAssetHistoricalVolume` object types.
 All fields are tested for equality and combined with a logical ‘and.’
 """
 input StablepoolAssetHistoricalVolumeCondition {
@@ -19775,7 +19775,7 @@ input StablepoolAssetHistoricalVolumeCondition {
 }
 
 """
-A filter to be used against `StablepoolAssetHistoricalVolume` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `StableswapAssetHistoricalVolume` object types. All fields are combined with a logical ‘and.’
 """
 input StablepoolAssetHistoricalVolumeFilter {
   """Filter by the object’s `id` field."""
@@ -19854,13 +19854,13 @@ input StablepoolAssetHistoricalVolumeFilter {
   not: StablepoolAssetHistoricalVolumeFilter
 }
 
-"""A `StablepoolHistoricalVolume` edge in the connection."""
+"""A `StableswapHistoricalVolume` edge in the connection."""
 type StablepoolHistoricalVolumesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `StablepoolHistoricalVolume` at the end of the edge."""
-  node: StablepoolHistoricalVolume
+  """The `StableswapHistoricalVolume` at the end of the edge."""
+  node: StableswapHistoricalVolume
 }
 
 type StablepoolHistoricalVolumeAggregates {
@@ -20005,7 +20005,7 @@ type StablepoolHistoricalVolumeVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `StablepoolHistoricalVolume` for usage during aggregation.
+Grouping methods for `StableswapHistoricalVolume` for usage during aggregation.
 """
 enum StablepoolHistoricalVolumeGroupBy {
   RELAY_CHAIN_BLOCK_HEIGHT
@@ -20013,7 +20013,7 @@ enum StablepoolHistoricalVolumeGroupBy {
   POOL_ID
 }
 
-"""Conditions for `StablepoolHistoricalVolume` aggregates."""
+"""Conditions for `StableswapHistoricalVolume` aggregates."""
 input StablepoolHistoricalVolumeHavingInput {
   AND: [StablepoolHistoricalVolumeHavingInput!]
   OR: [StablepoolHistoricalVolumeHavingInput!]
@@ -20073,7 +20073,7 @@ input StablepoolHistoricalVolumeHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `StablepoolHistoricalVolume`."""
+"""Methods to use when ordering `StableswapHistoricalVolume`."""
 enum StablepoolHistoricalVolumesOrderBy {
   NATURAL
   ID_ASC
@@ -20487,7 +20487,7 @@ enum StablepoolHistoricalVolumesOrderBy {
 }
 
 """
-A condition to be used against `StablepoolHistoricalVolume` object types. All
+A condition to be used against `StableswapHistoricalVolume` object types. All
 fields are tested for equality and combined with a logical ‘and.’
 """
 input StablepoolHistoricalVolumeCondition {
@@ -20505,7 +20505,7 @@ input StablepoolHistoricalVolumeCondition {
 }
 
 """
-A filter to be used against `StablepoolHistoricalVolume` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `StableswapHistoricalVolume` object types. All fields are combined with a logical ‘and.’
 """
 input StablepoolHistoricalVolumeFilter {
   """Filter by the object’s `id` field."""
@@ -20530,13 +20530,13 @@ input StablepoolHistoricalVolumeFilter {
   not: StablepoolHistoricalVolumeFilter
 }
 
-"""A connection to a list of `StablepoolLiquidityAction` values."""
+"""A connection to a list of `StableswapLiquidityEvent` values."""
 type StablepoolLiquidityActionsConnection {
-  """A list of `StablepoolLiquidityAction` objects."""
-  nodes: [StablepoolLiquidityAction]!
+  """A list of `StableswapLiquidityEvent` objects."""
+  nodes: [StableswapLiquidityEvent]!
 
   """
-  A list of edges which contains the `StablepoolLiquidityAction` and cursor to aid in pagination.
+  A list of edges which contains the `StableswapLiquidityEvent` and cursor to aid in pagination.
   """
   edges: [StablepoolLiquidityActionsEdge!]!
 
@@ -20544,7 +20544,7 @@ type StablepoolLiquidityActionsConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `StablepoolLiquidityAction` you could get from the connection.
+  The count of *all* `StableswapLiquidityEvent` you could get from the connection.
   """
   totalCount: Int!
 
@@ -20558,7 +20558,7 @@ type StablepoolLiquidityActionsConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `StablepoolLiquidityAction` for these aggregates.
+    The method to use when grouping `StableswapLiquidityEvent` for these aggregates.
     """
     groupBy: [StablepoolLiquidityActionGroupBy!]!
 
@@ -20567,7 +20567,7 @@ type StablepoolLiquidityActionsConnection {
   ): [StablepoolLiquidityActionAggregates!]
 }
 
-type StablepoolLiquidityAction {
+type StableswapLiquidityEvent {
   id: String!
   sharesAmount: BigFloat!
   feeAmount: BigFloat!
@@ -20579,12 +20579,12 @@ type StablepoolLiquidityAction {
   traceIds: [String]
 
   """
-  Reads a single `Stablepool` that is related to this `StablepoolLiquidityAction`.
+  Reads a single `Stablepool` that is related to this `StableswapLiquidityEvent`.
   """
   pool: Stablepool
 
   """
-  Reads and enables pagination through a set of `StablepoolAssetLiquidityAmount`.
+  Reads and enables pagination through a set of `StableswapAssetLiquidityAmount`.
   """
   stablepoolAssetLiquidityAmountsByLiquidityActionId(
     """Only read the first `n` values of the set."""
@@ -20605,7 +20605,7 @@ type StablepoolLiquidityAction {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `StablepoolAssetLiquidityAmount`."""
+    """The method to use when ordering `StableswapAssetLiquidityAmount`."""
     orderBy: [StablepoolAssetLiquidityAmountsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -20620,13 +20620,13 @@ type StablepoolLiquidityAction {
   ): StablepoolAssetLiquidityAmountsConnection!
 }
 
-"""A connection to a list of `StablepoolAssetLiquidityAmount` values."""
+"""A connection to a list of `StableswapAssetLiquidityAmount` values."""
 type StablepoolAssetLiquidityAmountsConnection {
-  """A list of `StablepoolAssetLiquidityAmount` objects."""
-  nodes: [StablepoolAssetLiquidityAmount]!
+  """A list of `StableswapAssetLiquidityAmount` objects."""
+  nodes: [StableswapAssetLiquidityAmount]!
 
   """
-  A list of edges which contains the `StablepoolAssetLiquidityAmount` and cursor to aid in pagination.
+  A list of edges which contains the `StableswapAssetLiquidityAmount` and cursor to aid in pagination.
   """
   edges: [StablepoolAssetLiquidityAmountsEdge!]!
 
@@ -20634,7 +20634,7 @@ type StablepoolAssetLiquidityAmountsConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `StablepoolAssetLiquidityAmount` you could get from the connection.
+  The count of *all* `StableswapAssetLiquidityAmount` you could get from the connection.
   """
   totalCount: Int!
 
@@ -20648,7 +20648,7 @@ type StablepoolAssetLiquidityAmountsConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `StablepoolAssetLiquidityAmount` for these aggregates.
+    The method to use when grouping `StableswapAssetLiquidityAmount` for these aggregates.
     """
     groupBy: [StablepoolAssetLiquidityAmountGroupBy!]!
 
@@ -20657,30 +20657,30 @@ type StablepoolAssetLiquidityAmountsConnection {
   ): [StablepoolAssetLiquidityAmountAggregates!]
 }
 
-type StablepoolAssetLiquidityAmount {
+type StableswapAssetLiquidityAmount {
   id: String!
   amount: BigFloat!
   liquidityActionId: String
   assetId: String
 
   """
-  Reads a single `StablepoolLiquidityAction` that is related to this `StablepoolAssetLiquidityAmount`.
+  Reads a single `StableswapLiquidityEvent` that is related to this `StableswapAssetLiquidityAmount`.
   """
-  liquidityAction: StablepoolLiquidityAction
+  liquidityAction: StableswapLiquidityEvent
 
   """
-  Reads a single `Asset` that is related to this `StablepoolAssetLiquidityAmount`.
+  Reads a single `Asset` that is related to this `StableswapAssetLiquidityAmount`.
   """
   asset: Asset
 }
 
-"""A `StablepoolAssetLiquidityAmount` edge in the connection."""
+"""A `StableswapAssetLiquidityAmount` edge in the connection."""
 type StablepoolAssetLiquidityAmountsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `StablepoolAssetLiquidityAmount` at the end of the edge."""
-  node: StablepoolAssetLiquidityAmount
+  """The `StableswapAssetLiquidityAmount` at the end of the edge."""
+  node: StableswapAssetLiquidityAmount
 }
 
 type StablepoolAssetLiquidityAmountAggregates {
@@ -20787,7 +20787,7 @@ type StablepoolAssetLiquidityAmountVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `StablepoolAssetLiquidityAmount` for usage during aggregation.
+Grouping methods for `StableswapAssetLiquidityAmount` for usage during aggregation.
 """
 enum StablepoolAssetLiquidityAmountGroupBy {
   AMOUNT
@@ -20795,7 +20795,7 @@ enum StablepoolAssetLiquidityAmountGroupBy {
   ASSET_ID
 }
 
-"""Conditions for `StablepoolAssetLiquidityAmount` aggregates."""
+"""Conditions for `StableswapAssetLiquidityAmount` aggregates."""
 input StablepoolAssetLiquidityAmountHavingInput {
   AND: [StablepoolAssetLiquidityAmountHavingInput!]
   OR: [StablepoolAssetLiquidityAmountHavingInput!]
@@ -20846,7 +20846,7 @@ input StablepoolAssetLiquidityAmountHavingVariancePopulationInput {
   amount: HavingBigfloatFilter
 }
 
-"""Methods to use when ordering `StablepoolAssetLiquidityAmount`."""
+"""Methods to use when ordering `StableswapAssetLiquidityAmount`."""
 enum StablepoolAssetLiquidityAmountsOrderBy {
   NATURAL
   ID_ASC
@@ -20862,7 +20862,7 @@ enum StablepoolAssetLiquidityAmountsOrderBy {
 }
 
 """
-A condition to be used against `StablepoolAssetLiquidityAmount` object types.
+A condition to be used against `StableswapAssetLiquidityAmount` object types.
 All fields are tested for equality and combined with a logical ‘and.’
 """
 input StablepoolAssetLiquidityAmountCondition {
@@ -20880,7 +20880,7 @@ input StablepoolAssetLiquidityAmountCondition {
 }
 
 """
-A filter to be used against `StablepoolAssetLiquidityAmount` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `StableswapAssetLiquidityAmount` object types. All fields are combined with a logical ‘and.’
 """
 input StablepoolAssetLiquidityAmountFilter {
   """Filter by the object’s `id` field."""
@@ -20905,13 +20905,13 @@ input StablepoolAssetLiquidityAmountFilter {
   not: StablepoolAssetLiquidityAmountFilter
 }
 
-"""A `StablepoolLiquidityAction` edge in the connection."""
+"""A `StableswapLiquidityEvent` edge in the connection."""
 type StablepoolLiquidityActionsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `StablepoolLiquidityAction` at the end of the edge."""
-  node: StablepoolLiquidityAction
+  """The `StableswapLiquidityEvent` at the end of the edge."""
+  node: StableswapLiquidityEvent
 }
 
 type StablepoolLiquidityActionAggregates {
@@ -21153,7 +21153,7 @@ type StablepoolLiquidityActionVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `StablepoolLiquidityAction` for usage during aggregation.
+Grouping methods for `StableswapLiquidityEvent` for usage during aggregation.
 """
 enum StablepoolLiquidityActionGroupBy {
   SHARES_AMOUNT
@@ -21166,7 +21166,7 @@ enum StablepoolLiquidityActionGroupBy {
   TRACE_IDS
 }
 
-"""Conditions for `StablepoolLiquidityAction` aggregates."""
+"""Conditions for `StableswapLiquidityEvent` aggregates."""
 input StablepoolLiquidityActionHavingInput {
   AND: [StablepoolLiquidityActionHavingInput!]
   OR: [StablepoolLiquidityActionHavingInput!]
@@ -21253,7 +21253,7 @@ input StablepoolLiquidityActionHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `StablepoolLiquidityAction`."""
+"""Methods to use when ordering `StableswapLiquidityEvent`."""
 enum StablepoolLiquidityActionsOrderBy {
   NATURAL
   ID_ASC
@@ -21353,7 +21353,7 @@ enum StablepoolLiquidityActionsOrderBy {
 }
 
 """
-A condition to be used against `StablepoolLiquidityAction` object types. All
+A condition to be used against `StableswapLiquidityEvent` object types. All
 fields are tested for equality and combined with a logical ‘and.’
 """
 input StablepoolLiquidityActionCondition {
@@ -21386,7 +21386,7 @@ input StablepoolLiquidityActionCondition {
 }
 
 """
-A filter to be used against `StablepoolLiquidityAction` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `StableswapLiquidityEvent` object types. All fields are combined with a logical ‘and.’
 """
 input StablepoolLiquidityActionFilter {
   """Filter by the object’s `id` field."""
@@ -22938,9 +22938,9 @@ type Swap {
   filler: Account
 
   """
-  Reads a single `DcaScheduleExecutionAction` that is related to this `Swap`.
+  Reads a single `DcaScheduleExecutionEvent` that is related to this `Swap`.
   """
-  dcaScheduleExecutionAction: DcaScheduleExecutionAction
+  dcaScheduleExecutionAction: DcaScheduleExecutionEvent
 
   """Reads a single `OtcOrderAction` that is related to this `Swap`."""
   otcOrderFulfilment: OtcOrderAction
@@ -23118,7 +23118,7 @@ type Swap {
   ): SwapFillerContextsConnection!
 }
 
-type DcaScheduleExecutionAction {
+type DcaScheduleExecutionEvent {
   id: String!
   traceIds: [String]
   status: String
@@ -23129,7 +23129,7 @@ type DcaScheduleExecutionAction {
   operationIds: [String]
 
   """
-  Reads a single `DcaScheduleExecution` that is related to this `DcaScheduleExecutionAction`.
+  Reads a single `DcaScheduleExecution` that is related to this `DcaScheduleExecutionEvent`.
   """
   scheduleExecution: DcaScheduleExecution
 
@@ -23186,7 +23186,7 @@ type DcaScheduleExecution {
   schedule: DcaSchedule
 
   """
-  Reads and enables pagination through a set of `DcaScheduleExecutionAction`.
+  Reads and enables pagination through a set of `DcaScheduleExecutionEvent`.
   """
   dcaScheduleExecutionActionsByScheduleExecutionId(
     """Only read the first `n` values of the set."""
@@ -23207,7 +23207,7 @@ type DcaScheduleExecution {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `DcaScheduleExecutionAction`."""
+    """The method to use when ordering `DcaScheduleExecutionEvent`."""
     orderBy: [DcaScheduleExecutionActionsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -23257,7 +23257,7 @@ type DcaSchedule {
   """Reads a single `Asset` that is related to this `DcaSchedule`."""
   assetOut: Asset
 
-  """Reads and enables pagination through a set of `DcaScheduleOrderRoute`."""
+  """Reads and enables pagination through a set of `DcaScheduleOrderRouteHop`."""
   dcaScheduleOrderRoutesByScheduleId(
     """Only read the first `n` values of the set."""
     first: Int
@@ -23277,7 +23277,7 @@ type DcaSchedule {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `DcaScheduleOrderRoute`."""
+    """The method to use when ordering `DcaScheduleOrderRouteHop`."""
     orderBy: [DcaScheduleOrderRoutesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
@@ -23326,13 +23326,13 @@ type DcaSchedule {
   ): DcaScheduleExecutionsConnection!
 }
 
-"""A connection to a list of `DcaScheduleOrderRoute` values."""
+"""A connection to a list of `DcaScheduleOrderRouteHop` values."""
 type DcaScheduleOrderRoutesConnection {
-  """A list of `DcaScheduleOrderRoute` objects."""
-  nodes: [DcaScheduleOrderRoute]!
+  """A list of `DcaScheduleOrderRouteHop` objects."""
+  nodes: [DcaScheduleOrderRouteHop]!
 
   """
-  A list of edges which contains the `DcaScheduleOrderRoute` and cursor to aid in pagination.
+  A list of edges which contains the `DcaScheduleOrderRouteHop` and cursor to aid in pagination.
   """
   edges: [DcaScheduleOrderRoutesEdge!]!
 
@@ -23340,7 +23340,7 @@ type DcaScheduleOrderRoutesConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `DcaScheduleOrderRoute` you could get from the connection.
+  The count of *all* `DcaScheduleOrderRouteHop` you could get from the connection.
   """
   totalCount: Int!
 
@@ -23354,7 +23354,7 @@ type DcaScheduleOrderRoutesConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `DcaScheduleOrderRoute` for these aggregates.
+    The method to use when grouping `DcaScheduleOrderRouteHop` for these aggregates.
     """
     groupBy: [DcaScheduleOrderRouteGroupBy!]!
 
@@ -23363,7 +23363,7 @@ type DcaScheduleOrderRoutesConnection {
   ): [DcaScheduleOrderRouteAggregates!]
 }
 
-type DcaScheduleOrderRoute {
+type DcaScheduleOrderRouteHop {
   id: String!
   poolKind: String
   scheduleId: String
@@ -23371,28 +23371,28 @@ type DcaScheduleOrderRoute {
   assetOutId: String
 
   """
-  Reads a single `DcaSchedule` that is related to this `DcaScheduleOrderRoute`.
+  Reads a single `DcaSchedule` that is related to this `DcaScheduleOrderRouteHop`.
   """
   schedule: DcaSchedule
 
   """
-  Reads a single `Asset` that is related to this `DcaScheduleOrderRoute`.
+  Reads a single `Asset` that is related to this `DcaScheduleOrderRouteHop`.
   """
   assetIn: Asset
 
   """
-  Reads a single `Asset` that is related to this `DcaScheduleOrderRoute`.
+  Reads a single `Asset` that is related to this `DcaScheduleOrderRouteHop`.
   """
   assetOut: Asset
 }
 
-"""A `DcaScheduleOrderRoute` edge in the connection."""
+"""A `DcaScheduleOrderRouteHop` edge in the connection."""
 type DcaScheduleOrderRoutesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `DcaScheduleOrderRoute` at the end of the edge."""
-  node: DcaScheduleOrderRoute
+  """The `DcaScheduleOrderRouteHop` at the end of the edge."""
+  node: DcaScheduleOrderRouteHop
 }
 
 type DcaScheduleOrderRouteAggregates {
@@ -23422,7 +23422,7 @@ type DcaScheduleOrderRouteDistinctCountAggregates {
 }
 
 """
-Grouping methods for `DcaScheduleOrderRoute` for usage during aggregation.
+Grouping methods for `DcaScheduleOrderRouteHop` for usage during aggregation.
 """
 enum DcaScheduleOrderRouteGroupBy {
   POOL_KIND
@@ -23431,13 +23431,13 @@ enum DcaScheduleOrderRouteGroupBy {
   ASSET_OUT_ID
 }
 
-"""Conditions for `DcaScheduleOrderRoute` aggregates."""
+"""Conditions for `DcaScheduleOrderRouteHop` aggregates."""
 input DcaScheduleOrderRouteHavingInput {
   AND: [DcaScheduleOrderRouteHavingInput!]
   OR: [DcaScheduleOrderRouteHavingInput!]
 }
 
-"""Methods to use when ordering `DcaScheduleOrderRoute`."""
+"""Methods to use when ordering `DcaScheduleOrderRouteHop`."""
 enum DcaScheduleOrderRoutesOrderBy {
   NATURAL
   ID_ASC
@@ -23455,7 +23455,7 @@ enum DcaScheduleOrderRoutesOrderBy {
 }
 
 """
-A condition to be used against `DcaScheduleOrderRoute` object types. All fields
+A condition to be used against `DcaScheduleOrderRouteHop` object types. All fields
 are tested for equality and combined with a logical ‘and.’
 """
 input DcaScheduleOrderRouteCondition {
@@ -23476,7 +23476,7 @@ input DcaScheduleOrderRouteCondition {
 }
 
 """
-A filter to be used against `DcaScheduleOrderRoute` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `DcaScheduleOrderRouteHop` object types. All fields are combined with a logical ‘and.’
 """
 input DcaScheduleOrderRouteFilter {
   """Filter by the object’s `id` field."""
@@ -23967,13 +23967,13 @@ input DcaScheduleExecutionFilter {
   not: DcaScheduleExecutionFilter
 }
 
-"""A connection to a list of `DcaScheduleExecutionAction` values."""
+"""A connection to a list of `DcaScheduleExecutionEvent` values."""
 type DcaScheduleExecutionActionsConnection {
-  """A list of `DcaScheduleExecutionAction` objects."""
-  nodes: [DcaScheduleExecutionAction]!
+  """A list of `DcaScheduleExecutionEvent` objects."""
+  nodes: [DcaScheduleExecutionEvent]!
 
   """
-  A list of edges which contains the `DcaScheduleExecutionAction` and cursor to aid in pagination.
+  A list of edges which contains the `DcaScheduleExecutionEvent` and cursor to aid in pagination.
   """
   edges: [DcaScheduleExecutionActionsEdge!]!
 
@@ -23981,7 +23981,7 @@ type DcaScheduleExecutionActionsConnection {
   pageInfo: PageInfo!
 
   """
-  The count of *all* `DcaScheduleExecutionAction` you could get from the connection.
+  The count of *all* `DcaScheduleExecutionEvent` you could get from the connection.
   """
   totalCount: Int!
 
@@ -23995,7 +23995,7 @@ type DcaScheduleExecutionActionsConnection {
   """
   groupedAggregates(
     """
-    The method to use when grouping `DcaScheduleExecutionAction` for these aggregates.
+    The method to use when grouping `DcaScheduleExecutionEvent` for these aggregates.
     """
     groupBy: [DcaScheduleExecutionActionGroupBy!]!
 
@@ -24004,13 +24004,13 @@ type DcaScheduleExecutionActionsConnection {
   ): [DcaScheduleExecutionActionAggregates!]
 }
 
-"""A `DcaScheduleExecutionAction` edge in the connection."""
+"""A `DcaScheduleExecutionEvent` edge in the connection."""
 type DcaScheduleExecutionActionsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `DcaScheduleExecutionAction` at the end of the edge."""
-  node: DcaScheduleExecutionAction
+  """The `DcaScheduleExecutionEvent` at the end of the edge."""
+  node: DcaScheduleExecutionEvent
 }
 
 type DcaScheduleExecutionActionAggregates {
@@ -24167,7 +24167,7 @@ type DcaScheduleExecutionActionVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `DcaScheduleExecutionAction` for usage during aggregation.
+Grouping methods for `DcaScheduleExecutionEvent` for usage during aggregation.
 """
 enum DcaScheduleExecutionActionGroupBy {
   TRACE_IDS
@@ -24179,7 +24179,7 @@ enum DcaScheduleExecutionActionGroupBy {
   OPERATION_IDS
 }
 
-"""Conditions for `DcaScheduleExecutionAction` aggregates."""
+"""Conditions for `DcaScheduleExecutionEvent` aggregates."""
 input DcaScheduleExecutionActionHavingInput {
   AND: [DcaScheduleExecutionActionHavingInput!]
   OR: [DcaScheduleExecutionActionHavingInput!]
@@ -24239,7 +24239,7 @@ input DcaScheduleExecutionActionHavingVariancePopulationInput {
   paraChainBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `DcaScheduleExecutionAction`."""
+"""Methods to use when ordering `DcaScheduleExecutionEvent`."""
 enum DcaScheduleExecutionActionsOrderBy {
   NATURAL
   ID_ASC
@@ -24535,7 +24535,7 @@ enum DcaScheduleExecutionActionsOrderBy {
 }
 
 """
-A condition to be used against `DcaScheduleExecutionAction` object types. All
+A condition to be used against `DcaScheduleExecutionEvent` object types. All
 fields are tested for equality and combined with a logical ‘and.’
 """
 input DcaScheduleExecutionActionCondition {
@@ -24565,7 +24565,7 @@ input DcaScheduleExecutionActionCondition {
 }
 
 """
-A filter to be used against `DcaScheduleExecutionAction` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `DcaScheduleExecutionEvent` object types. All fields are combined with a logical ‘and.’
 """
 input DcaScheduleExecutionActionFilter {
   """Filter by the object’s `id` field."""
@@ -27704,13 +27704,13 @@ input SwapFillerContextHavingInput {
   OR: [SwapFillerContextHavingInput!]
 }
 
-"""A `StablepoolAsset` edge in the connection."""
+"""A `StableswapAsset` edge in the connection."""
 type StablepoolAssetsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `StablepoolAsset` at the end of the edge."""
-  node: StablepoolAsset
+  """The `StableswapAsset` at the end of the edge."""
+  node: StableswapAsset
 }
 
 type StablepoolAssetAggregates {
@@ -27816,14 +27816,14 @@ type StablepoolAssetVariancePopulationAggregates {
   amount: BigFloat
 }
 
-"""Grouping methods for `StablepoolAsset` for usage during aggregation."""
+"""Grouping methods for `StableswapAsset` for usage during aggregation."""
 enum StablepoolAssetGroupBy {
   AMOUNT
   POOL_ID
   ASSET_ID
 }
 
-"""Conditions for `StablepoolAsset` aggregates."""
+"""Conditions for `StableswapAsset` aggregates."""
 input StablepoolAssetHavingInput {
   AND: [StablepoolAssetHavingInput!]
   OR: [StablepoolAssetHavingInput!]

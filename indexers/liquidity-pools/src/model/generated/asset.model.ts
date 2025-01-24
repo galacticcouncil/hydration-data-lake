@@ -9,7 +9,7 @@ export class Asset {
   }
 
   /**
-   * Asset ID
+   * assetId
    */
   @PrimaryColumn_()
   id!: string

@@ -2,16 +2,21 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
-import {LbpPoolHistoricalPrice} from "./lbpPoolHistoricalPrice.model"
-import {LbpPoolHistoricalVolume} from "./lbpPoolHistoricalVolume.model"
-import {LbpPoolHistoricalData} from "./lbpPoolHistoricalData.model"
+import {Block} from "./block.model"
+import {StableswapLifeState} from "./_stableswapLifeState"
+import {LbppoolHistoricalPrice} from "./lbppoolHistoricalPrice.model"
+import {LbppoolHistoricalVolume} from "./lbppoolHistoricalVolume.model"
+import {LbppoolHistoricalData} from "./lbppoolHistoricalData.model"
 
 @Entity_()
-export class LbpPool {
-  constructor(props?: Partial<LbpPool>) {
+export class Lbppool {
+  constructor(props?: Partial<Lbppool>) {
     Object.assign(this, props)
   }
 
+  /**
+   * <poolAccountAddress>
+   */
   @PrimaryColumn_()
   id!: string
 
@@ -33,17 +38,13 @@ export class LbpPool {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetBBalance!: bigint
 
-  @Column_("timestamp with time zone", {nullable: false})
-  createdAt!: Date
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  owner!: Account | undefined | null
 
-  @Column_("int4", {nullable: false})
-  createdAtParaBlock!: number
-
-  @Column_("bool", {nullable: true})
-  isDestroyed!: boolean | undefined | null
-
-  @Column_("int4", {nullable: true})
-  destroyedAtParaBlock!: number | undefined | null
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  feeCollector!: Account | undefined | null
 
   @Column_("int4", {nullable: true})
   startBlockNumber!: number | undefined | null
@@ -51,32 +52,41 @@ export class LbpPool {
   @Column_("int4", {nullable: true})
   endBlockNumber!: number | undefined | null
 
-  @Column_("int4", {array: true, nullable: true})
-  fee!: (number | undefined | null)[] | undefined | null
-
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  feeCollector!: Account | undefined | null
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  repayTarget!: bigint | undefined | null
-
   @Column_("int4", {nullable: true})
   initialWeight!: number | undefined | null
 
   @Column_("int4", {nullable: true})
   finalWeight!: number | undefined | null
 
+  @Column_("int4", {array: true, nullable: true})
+  fee!: (number | undefined | null)[] | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  repayTarget!: bigint | undefined | null
+
   @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  owner!: Account | undefined | null
+  @Column_("int4", {nullable: false})
+  createdAtParaChainBlockHeight!: number
 
-  @OneToMany_(() => LbpPoolHistoricalPrice, e => e.pool)
-  historicalBlockPrices!: LbpPoolHistoricalPrice[]
+  @Column_("int4", {nullable: false})
+  createdAtRelayChainBlockHeight!: number
 
-  @OneToMany_(() => LbpPoolHistoricalVolume, e => e.pool)
-  historicalVolume!: LbpPoolHistoricalVolume[]
+  @Index_()
+  @ManyToOne_(() => Block, {nullable: true})
+  createdAtBlock!: Block
 
-  @OneToMany_(() => LbpPoolHistoricalData, e => e.pool)
-  historicalData!: LbpPoolHistoricalData[]
+  @Column_("bool", {nullable: true})
+  isDestroyed!: boolean | undefined | null
+
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new StableswapLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
+  lifeStates!: (StableswapLifeState)[]
+
+  @OneToMany_(() => LbppoolHistoricalPrice, e => e.pool)
+  historicalBlockPrices!: LbppoolHistoricalPrice[]
+
+  @OneToMany_(() => LbppoolHistoricalVolume, e => e.pool)
+  historicalVolume!: LbppoolHistoricalVolume[]
+
+  @OneToMany_(() => LbppoolHistoricalData, e => e.pool)
+  historicalData!: LbppoolHistoricalData[]
 }

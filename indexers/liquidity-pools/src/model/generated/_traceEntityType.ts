@@ -1,9 +1,8 @@
 export enum TraceEntityType {
-  SWAP = "SWAP",
-  TRANSFER = "TRANSFER",
-  STABLEPOOL_LIQUIDITY_ACTION = "STABLEPOOL_LIQUIDITY_ACTION",
-  OTC_ORDER_ACTION = "OTC_ORDER_ACTION",
-  DCA_SCHEDULE = "DCA_SCHEDULE",
-  DCA_SCHEDULE_EXECUTION_ACTION = "DCA_SCHEDULE_EXECUTION_ACTION",
-  DCA_RANDOMNESS_GENERATION_FAILED_ERROR = "DCA_RANDOMNESS_GENERATION_FAILED_ERROR",
+  Swap = "Swap",
+  Transfer = "Transfer",
+  StableswapLiquidityEvent = "StableswapLiquidityEvent",
+  OtcOrderEvent = "OtcOrderEvent",
+  DcaSchedule = "DcaSchedule",
+  DcaScheduleExecutionEvent = "DcaScheduleExecutionEvent",
 }

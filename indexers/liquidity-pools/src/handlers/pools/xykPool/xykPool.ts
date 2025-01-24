@@ -1,6 +1,6 @@
 import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AccountType, XykPool } from '../../../model';
+import { AccountType, Xykpool } from '../../../model';
 import { getAccount } from '../../accounts';
 import {
   XykPoolCreatedData,
@@ -93,7 +93,7 @@ export async function createXykPool({
 
   if (!sharedTokenEntity) return null;
 
-  const newPool = new XykPool({
+  const newPool = new Xykpool({
     id: poolAddress,
     account: await getAccount({
       ctx,
@@ -125,13 +125,13 @@ export async function getOrCreateXykPool({
   id: string;
   ensure?: boolean;
   blockHeader?: Block;
-}): Promise<XykPool | null> {
+}): Promise<Xykpool | null> {
   const batchState = ctx.batchState.state;
 
   let pool = batchState.xykAllBatchPools.get(id);
   if (pool) return pool;
 
-  pool = await ctx.store.findOne(XykPool, {
+  pool = await ctx.store.findOne(Xykpool, {
     where: { id },
     relations: { assetA: true, assetB: true, account: true },
   });
@@ -219,7 +219,7 @@ export async function xykPoolDestroyed(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = await ctx.store.findOne(XykPool, {
+  const pool = await ctx.store.findOne(Xykpool, {
     where: { id: eventParams.pool },
     relations: {
       assetA: true,

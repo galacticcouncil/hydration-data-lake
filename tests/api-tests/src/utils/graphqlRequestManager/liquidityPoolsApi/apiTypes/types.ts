@@ -16481,8 +16481,8 @@ export type Query = {
   /** Reads and enables pagination through a set of `StablepoolHistoricalVolume`. */
   stablepoolHistoricalVolumes?: Maybe<StablepoolHistoricalVolumesConnection>;
   stablepoolHistoricalVolumesByPeriod: StablepoolVolumesByPeriodResponse;
-  stablepoolLiquidityAction?: Maybe<StablepoolLiquidityAction>;
-  /** Reads and enables pagination through a set of `StablepoolLiquidityAction`. */
+  stablepoolLiquidityAction?: Maybe<StableswapLiquidityEvent>;
+  /** Reads and enables pagination through a set of `StableswapLiquidityEvent`. */
   stablepoolLiquidityActions?: Maybe<StablepoolLiquidityActionsConnection>;
   /** Reads and enables pagination through a set of `Stablepool`. */
   stablepools?: Maybe<StablepoolsConnection>;
@@ -17128,7 +17128,7 @@ export type Stablepool = {
   stablepoolHistoricalDataByPoolId: StablepoolHistoricalDataConnection;
   /** Reads and enables pagination through a set of `StablepoolHistoricalVolume`. */
   stablepoolHistoricalVolumesByPoolId: StablepoolHistoricalVolumesConnection;
-  /** Reads and enables pagination through a set of `StablepoolLiquidityAction`. */
+  /** Reads and enables pagination through a set of `StableswapLiquidityEvent`. */
   stablepoolLiquidityActionsByPoolId: StablepoolLiquidityActionsConnection;
 };
 
@@ -18700,8 +18700,8 @@ export type StablepoolAssetLiquidityAmount = {
   asset?: Maybe<Asset>;
   assetId?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  /** Reads a single `StablepoolLiquidityAction` that is related to this `StablepoolAssetLiquidityAmount`. */
-  liquidityAction?: Maybe<StablepoolLiquidityAction>;
+  /** Reads a single `StableswapLiquidityEvent` that is related to this `StablepoolAssetLiquidityAmount`. */
+  liquidityAction?: Maybe<StableswapLiquidityEvent>;
   liquidityActionId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -20491,14 +20491,14 @@ export enum StablepoolHistoricalVolumesOrderBy {
   StablepoolAssetHistoricalVolumesByVolumesCollectionIdVarianceSampleVolumesCollectionIdDesc = 'STABLEPOOL_ASSET_HISTORICAL_VOLUMES_BY_VOLUMES_COLLECTION_ID_VARIANCE_SAMPLE_VOLUMES_COLLECTION_ID_DESC'
 }
 
-export type StablepoolLiquidityAction = {
-  __typename?: 'StablepoolLiquidityAction';
+export type StableswapLiquidityEvent = {
+  __typename?: 'StableswapLiquidityEvent';
   actionType: Scalars['String']['output'];
   feeAmount: Scalars['BigFloat']['output'];
   id: Scalars['String']['output'];
   indexInBlock: Scalars['Int']['output'];
   paraChainBlockHeight: Scalars['Int']['output'];
-  /** Reads a single `Stablepool` that is related to this `StablepoolLiquidityAction`. */
+  /** Reads a single `Stablepool` that is related to this `StableswapLiquidityEvent`. */
   pool?: Maybe<Stablepool>;
   poolId?: Maybe<Scalars['String']['output']>;
   relayChainBlockHeight: Scalars['Int']['output'];
@@ -20557,7 +20557,7 @@ export type StablepoolLiquidityActionAverageAggregates = {
 };
 
 /**
- * A condition to be used against `StablepoolLiquidityAction` object types. All
+ * A condition to be used against `StableswapLiquidityEvent` object types. All
  * fields are tested for equality and combined with a logical ‘and.’
  */
 export type StablepoolLiquidityActionCondition = {
@@ -20599,7 +20599,7 @@ export type StablepoolLiquidityActionDistinctCountAggregates = {
   sharesAmount?: Maybe<Scalars['BigInt']['output']>;
 };
 
-/** A filter to be used against `StablepoolLiquidityAction` object types. All fields are combined with a logical ‘and.’ */
+/** A filter to be used against `StableswapLiquidityEvent` object types. All fields are combined with a logical ‘and.’ */
 export type StablepoolLiquidityActionFilter = {
   /** Filter by the object’s `actionType` field. */
   actionType?: InputMaybe<StringFilter>;
@@ -20625,7 +20625,7 @@ export type StablepoolLiquidityActionFilter = {
   sharesAmount?: InputMaybe<BigFloatFilter>;
 };
 
-/** Grouping methods for `StablepoolLiquidityAction` for usage during aggregation. */
+/** Grouping methods for `StableswapLiquidityEvent` for usage during aggregation. */
 export enum StablepoolLiquidityActionGroupBy {
   ActionType = 'ACTION_TYPE',
   FeeAmount = 'FEE_AMOUNT',
@@ -20652,7 +20652,7 @@ export type StablepoolLiquidityActionHavingDistinctCountInput = {
   sharesAmount?: InputMaybe<HavingBigfloatFilter>;
 };
 
-/** Conditions for `StablepoolLiquidityAction` aggregates. */
+/** Conditions for `StableswapLiquidityEvent` aggregates. */
 export type StablepoolLiquidityActionHavingInput = {
   AND?: InputMaybe<Array<StablepoolLiquidityActionHavingInput>>;
   OR?: InputMaybe<Array<StablepoolLiquidityActionHavingInput>>;
@@ -20821,40 +20821,40 @@ export type StablepoolLiquidityActionVarianceSampleAggregates = {
   sharesAmount?: Maybe<Scalars['BigFloat']['output']>;
 };
 
-/** A connection to a list of `StablepoolLiquidityAction` values. */
+/** A connection to a list of `StableswapLiquidityEvent` values. */
 export type StablepoolLiquidityActionsConnection = {
   __typename?: 'StablepoolLiquidityActionsConnection';
   /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
   aggregates?: Maybe<StablepoolLiquidityActionAggregates>;
-  /** A list of edges which contains the `StablepoolLiquidityAction` and cursor to aid in pagination. */
+  /** A list of edges which contains the `StableswapLiquidityEvent` and cursor to aid in pagination. */
   edges: Array<StablepoolLiquidityActionsEdge>;
   /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
   groupedAggregates?: Maybe<Array<StablepoolLiquidityActionAggregates>>;
-  /** A list of `StablepoolLiquidityAction` objects. */
-  nodes: Array<Maybe<StablepoolLiquidityAction>>;
+  /** A list of `StableswapLiquidityEvent` objects. */
+  nodes: Array<Maybe<StableswapLiquidityEvent>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** The count of *all* `StablepoolLiquidityAction` you could get from the connection. */
+  /** The count of *all* `StableswapLiquidityEvent` you could get from the connection. */
   totalCount: Scalars['Int']['output'];
 };
 
 
-/** A connection to a list of `StablepoolLiquidityAction` values. */
+/** A connection to a list of `StableswapLiquidityEvent` values. */
 export type StablepoolLiquidityActionsConnectionGroupedAggregatesArgs = {
   groupBy: Array<StablepoolLiquidityActionGroupBy>;
   having?: InputMaybe<StablepoolLiquidityActionHavingInput>;
 };
 
-/** A `StablepoolLiquidityAction` edge in the connection. */
+/** A `StableswapLiquidityEvent` edge in the connection. */
 export type StablepoolLiquidityActionsEdge = {
   __typename?: 'StablepoolLiquidityActionsEdge';
   /** A cursor for use in pagination. */
   cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `StablepoolLiquidityAction` at the end of the edge. */
-  node?: Maybe<StablepoolLiquidityAction>;
+  /** The `StableswapLiquidityEvent` at the end of the edge. */
+  node?: Maybe<StableswapLiquidityEvent>;
 };
 
-/** Methods to use when ordering `StablepoolLiquidityAction`. */
+/** Methods to use when ordering `StableswapLiquidityEvent`. */
 export enum StablepoolLiquidityActionsOrderBy {
   ActionTypeAsc = 'ACTION_TYPE_ASC',
   ActionTypeDesc = 'ACTION_TYPE_DESC',

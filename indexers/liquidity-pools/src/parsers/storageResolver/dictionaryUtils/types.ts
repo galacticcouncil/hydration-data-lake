@@ -1,8 +1,8 @@
 import {
-  LbpPool as LbpPoolGlq,
+  Lbppool as LbpPoolGlq,
   OmnipoolAssetDatum,
   Stablepool as StablepoolGql,
-  XykPool as XykPoolGlq,
+  Xykpool as XykPoolGlq,
 } from './apiTypes/types';
 
 export type PaginationConfig = {

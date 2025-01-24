@@ -1,4 +1,4 @@
-import { DcaScheduleOrderKind, SwapFillerType } from '../../model';
+import { DcaScheduleOrderType, SwapFillerType } from '../../model';
 
 export type LbpCreatePoolCallArgs = {
   poolOwner: string;
@@ -32,7 +32,7 @@ export type DcaScheduleOrderRouteData = {
 };
 
 export type DcaScheduleOrderData = {
-  kind: DcaScheduleOrderKind;
+  kind: DcaScheduleOrderType;
   assetInId: number;
   assetOutId: number;
   amountOut?: bigint | null;

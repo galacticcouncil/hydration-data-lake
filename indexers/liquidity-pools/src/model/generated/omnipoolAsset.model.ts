@@ -1,7 +1,9 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
-import {Asset} from "./asset.model"
 import {Omnipool} from "./omnipool.model"
+import {Asset} from "./asset.model"
+import {Block} from "./block.model"
+import {OmnipoolAssetLifeState} from "./_omnipoolAssetLifeState"
 import {OmnipoolAssetHistoricalVolume} from "./omnipoolAssetHistoricalVolume.model"
 import {OmnipoolAssetHistoricalData} from "./omnipoolAssetHistoricalData.model"
 
@@ -12,42 +14,35 @@ export class OmnipoolAsset {
   }
 
   /**
-   * OmnipoolId-AssetId
+   * <omnipoolId>-<assetId> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-100)
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  asset!: Asset
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  initialAmount!: bigint | undefined | null
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  initialPrice!: bigint | undefined | null
-
-  @Index_()
   @ManyToOne_(() => Omnipool, {nullable: true})
   pool!: Omnipool
 
-  @Column_("timestamp with time zone", {nullable: false})
-  createdAt!: Date
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  asset!: Asset
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  addedAtParaChainBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  createdAtParaBlock!: number
+  addedAtRelayChainBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => Block, {nullable: true})
+  addedAtBlock!: Block
 
   @Column_("bool", {nullable: true})
   isRemoved!: boolean | undefined | null
 
-  @Column_("int4", {nullable: true})
-  removedAtParaBlock!: number | undefined | null
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  removedAmount!: bigint | undefined | null
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  hubWithdrawn!: bigint | undefined | null
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new OmnipoolAssetLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
+  lifeStates!: (OmnipoolAssetLifeState)[]
 
   @OneToMany_(() => OmnipoolAssetHistoricalVolume, e => e.omnipoolAsset)
   historicalVolume!: OmnipoolAssetHistoricalVolume[]

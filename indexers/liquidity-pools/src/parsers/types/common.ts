@@ -65,7 +65,7 @@ import {
   XykGetShareTokenInput,
   XykPoolWithAssets,
 } from './storage';
-import { DcaScheduleOrderKind, SwapFillerType } from '../../model';
+import { DcaScheduleOrderType, SwapFillerType } from '../../model';
 import ammSupport from '../chains/hydration-paseo-next/events/ammSupport';
 
 export interface PoolData {

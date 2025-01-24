@@ -2,11 +2,12 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
-import {DcaScheduleOrderKind} from "./_dcaScheduleOrderKind"
-import {DcaScheduleOrderRoute} from "./dcaScheduleOrderRoute.model"
+import {DcaScheduleOrderType} from "./_dcaScheduleOrderType"
+import {DcaScheduleOrderRouteHop} from "./dcaScheduleOrderRouteHop.model"
+import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
 import {DcaScheduleStatus} from "./_dcaScheduleStatus"
 import {DispatchError} from "./_dispatchError"
-import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
+import {Block} from "./block.model"
 
 @Entity_()
 export class DcaSchedule {
@@ -26,12 +27,12 @@ export class DcaSchedule {
   @Column_("text", {array: true, nullable: true})
   traceIds!: (string)[] | undefined | null
 
-  @Column_("int4", {nullable: true})
-  startExecutionBlock!: number | undefined | null
-
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})
   owner!: Account
+
+  @Column_("int4", {nullable: true})
+  startExecutionBlock!: number | undefined | null
 
   @Column_("int4", {nullable: true})
   period!: number | undefined | null
@@ -52,6 +53,12 @@ export class DcaSchedule {
   @ManyToOne_(() => Asset, {nullable: true})
   assetIn!: Asset | undefined | null
 
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  amountIn!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  maxAmountIn!: bigint | undefined | null
+
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
   assetOut!: Asset | undefined | null
@@ -60,19 +67,16 @@ export class DcaSchedule {
   amountOut!: bigint | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  amountIn!: bigint | undefined | null
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  maxAmountIn!: bigint | undefined | null
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   minAmountOut!: bigint | undefined | null
 
   @Column_("varchar", {length: 4, nullable: false})
-  orderKind!: DcaScheduleOrderKind
+  orderType!: DcaScheduleOrderType
 
-  @OneToMany_(() => DcaScheduleOrderRoute, e => e.schedule)
-  orderRoutes!: DcaScheduleOrderRoute[]
+  @OneToMany_(() => DcaScheduleOrderRouteHop, e => e.schedule)
+  orderRouteHops!: DcaScheduleOrderRouteHop[]
+
+  @OneToMany_(() => DcaScheduleExecution, e => e.schedule)
+  executions!: DcaScheduleExecution[]
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   totalExecutedAmountIn!: bigint | undefined | null
@@ -84,19 +88,20 @@ export class DcaSchedule {
   @Column_("varchar", {length: 10, nullable: true})
   status!: DcaScheduleStatus | undefined | null
 
-  @Column_("int4", {nullable: true})
-  statusUpdatedAtBlockHeight!: number | undefined | null
-
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new DispatchError(undefined, obj)}, nullable: true})
   statusMemo!: DispatchError | undefined | null
 
-  @Column_("int4", {nullable: false})
-  createdAtRelayBlockHeight!: number
+  @Column_("int4", {nullable: true})
+  statusUpdatedAtBlockHeight!: number | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})
-  createdAtParaBlockHeight!: number
+  paraChainBlockHeight!: number
 
-  @OneToMany_(() => DcaScheduleExecution, e => e.schedule)
-  executions!: DcaScheduleExecution[]
+  @Column_("int4", {nullable: false})
+  relayChainBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

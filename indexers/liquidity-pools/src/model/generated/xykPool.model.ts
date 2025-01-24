@@ -2,16 +2,21 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
-import {XykPoolHistoricalPrice} from "./xykPoolHistoricalPrice.model"
-import {XykPoolHistoricalVolume} from "./xykPoolHistoricalVolume.model"
-import {XykPoolHistoricalData} from "./xykPoolHistoricalData.model"
+import {Block} from "./block.model"
+import {XykpoolLifeState} from "./_xykpoolLifeState"
+import {XykpoolHistoricalPrice} from "./xykpoolHistoricalPrice.model"
+import {XykpoolHistoricalVolume} from "./xykpoolHistoricalVolume.model"
+import {XykpoolHistoricalData} from "./xykpoolHistoricalData.model"
 
 @Entity_()
-export class XykPool {
-  constructor(props?: Partial<XykPool>) {
+export class Xykpool {
+  constructor(props?: Partial<Xykpool>) {
     Object.assign(this, props)
   }
 
+  /**
+   * <address>
+   */
   @PrimaryColumn_()
   id!: string
 
@@ -27,37 +32,42 @@ export class XykPool {
   @ManyToOne_(() => Asset, {nullable: true})
   assetB!: Asset
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  shareToken!: Asset
-
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetABalance!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetBBalance!: bigint
 
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  shareToken!: Asset
+
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   initialSharesAmount!: bigint
 
-  @Column_("timestamp with time zone", {nullable: false})
-  createdAt!: Date
+  @Index_()
+  @Column_("int4", {nullable: false})
+  createdAtParaChainBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  createdAtParaBlock!: number
+  createdAtRelayChainBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => Block, {nullable: true})
+  createdAtBlock!: Block
 
   @Column_("bool", {nullable: true})
   isDestroyed!: boolean | undefined | null
 
-  @Column_("int4", {nullable: true})
-  destroyedAtParaBlock!: number | undefined | null
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new XykpoolLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
+  lifeStates!: (XykpoolLifeState)[]
 
-  @OneToMany_(() => XykPoolHistoricalPrice, e => e.pool)
-  historicalBlockPrices!: XykPoolHistoricalPrice[]
+  @OneToMany_(() => XykpoolHistoricalPrice, e => e.pool)
+  historicalBlockPrices!: XykpoolHistoricalPrice[]
 
-  @OneToMany_(() => XykPoolHistoricalVolume, e => e.pool)
-  historicalVolume!: XykPoolHistoricalVolume[]
+  @OneToMany_(() => XykpoolHistoricalVolume, e => e.pool)
+  historicalVolume!: XykpoolHistoricalVolume[]
 
-  @OneToMany_(() => XykPoolHistoricalData, e => e.pool)
-  historicalData!: XykPoolHistoricalData[]
+  @OneToMany_(() => XykpoolHistoricalData, e => e.pool)
+  historicalData!: XykpoolHistoricalData[]
 }
