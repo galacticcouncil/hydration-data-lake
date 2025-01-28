@@ -1,30 +1,39 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { AssetType, Lbppool, Stablepool } from '../../../model';
+import {
+  AssetType,
+  Lbppool,
+  LbppoolDestroyedData,
+  Stableswap,
+  StableswapDestroyedData,
+} from '../../../model';
 import parsers from '../../../parsers';
+import { addStableswapDestroyedLifeState } from '../stableswap/stablepool';
+import { addLbppoolDestroyedLifeState } from '../lbpPool/lbpPool';
 
-export async function ensurePoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
-  const poolsDestroyedCheckPointAtBlock =
+export async function ensurePoolsDestroyedStatus(
+  ctx: SqdProcessorContext<Store>
+) {
+  const poolsDestroyedUpdatedAtBlock =
     (await ProcessorStatusManager.getInstance(ctx).getStatus())
-      .poolsDestroyedCheckPointAtBlock ?? 0;
+      .poolsDestroyedUpdatedAtBlock ?? 0;
 
-  if (ctx.blocks[0].header.height < poolsDestroyedCheckPointAtBlock + 3000)
-    return;
+  if (ctx.blocks[0].header.height < poolsDestroyedUpdatedAtBlock + 3000) return;
 
   try {
-    await handleLbpPoolsDestroyedStatus(ctx);
+    await handleLbppoolsDestroyedStatus(ctx);
     await handleStableoolsDestroyedStatus(ctx);
   } catch (e) {
     console.log(e);
   }
 
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
-    poolsDestroyedCheckPointAtBlock: ctx.blocks[0].header.height,
+    poolsDestroyedUpdatedAtBlock: ctx.blocks[0].header.height,
   });
 }
 
-async function handleLbpPoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
+async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
   const lbpPoolsToProcess = await ctx.store.find(Lbppool, {
     where: {
       isDestroyed: false,
@@ -73,7 +82,16 @@ async function handleLbpPoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
     if (!pool) continue;
 
     pool.isDestroyed = true;
-    pool.destroyedAtParaBlock = ctx.blocks[0].header.height;
+    pool.lifeStates = addLbppoolDestroyedLifeState({
+      existingStates: pool.lifeStates,
+      destroyedState: new LbppoolDestroyedData({
+        paraChainBlockHeight: ctx.blocks[0].header.height,
+        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          ctx.blocks[0].header.height
+        ).height,
+      }),
+    });
+
     state.lbpPoolIdsToSave.add(pool.id);
     state.lbpAllBatchPools.set(pool.id, pool);
   }
@@ -85,8 +103,10 @@ async function handleLbpPoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
   );
 }
 
-async function handleStableoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
-  const stablepoolsToProcess = await ctx.store.find(Stablepool, {
+async function handleStableoolsDestroyedStatus(
+  ctx: SqdProcessorContext<Store>
+) {
+  const stableswapsToProcess = await ctx.store.find(Stableswap, {
     where: {
       isDestroyed: false,
     },
@@ -95,14 +115,15 @@ async function handleStableoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
     },
   });
 
-  if (stablepoolsToProcess.length === 0) return;
+  if (stableswapsToProcess.length === 0) return;
 
   const poolSharedTokensTotalIssuance = await Promise.all(
-    stablepoolsToProcess
+    stableswapsToProcess
       // This filter is required, because stablepools can have 0 total issuance just after creation but will get later.
       // TODO must be reimplemented by better way
       .filter(
-        (p) => p.createdAtParaBlock > ctx.blocks[0].header.height + 10_000
+        (p) =>
+          p.createdAtParaChainBlockHeight > ctx.blocks[0].header.height + 10_000
       )
       .map(async ({ id, account }) => {
         return {
@@ -120,18 +141,28 @@ async function handleStableoolsDestroyedStatus(ctx: ProcessorContext<Store>) {
   for (const poolData of poolSharedTokensTotalIssuance.filter((p) => !!p)) {
     if (poolData.totalIssuance && poolData.totalIssuance !== 0n) continue;
 
-    const pool = stablepoolsToProcess.find((p) => p.id === poolData.poolId);
+    const pool = stableswapsToProcess.find((p) => p.id === poolData.poolId);
     if (!pool) continue;
 
     pool.isDestroyed = true;
-    pool.destroyedAtParaBlock = ctx.blocks[0].header.height;
-    state.stablepoolIdsToSave.add(pool.id);
-    state.stablepoolAllBatchPools.set(pool.id, pool);
+
+    pool.lifeStates = addStableswapDestroyedLifeState({
+      existingStates: pool.lifeStates,
+      destroyedState: new StableswapDestroyedData({
+        paraChainBlockHeight: ctx.blocks[0].header.height,
+        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          ctx.blocks[0].header.height
+        ).height,
+      }),
+    });
+
+    state.stableswapIdsToSave.add(pool.id);
+    state.stableswapAllBatchPools.set(pool.id, pool);
   }
 
   await ctx.store.save(
-    [...ctx.batchState.state.stablepoolAllBatchPools.values()].filter((pool) =>
-      ctx.batchState.state.stablepoolIdsToSave.has(pool.id)
+    [...ctx.batchState.state.stableswapAllBatchPools.values()].filter((pool) =>
+      ctx.batchState.state.stableswapIdsToSave.has(pool.id)
     )
   );
 }

@@ -1,12 +1,12 @@
 import { events } from '../typegenTypes';
-import { Event } from '../../../../processor';
+import { SqdEvent } from '../../../../processor';
 import { TokensTransferEventParams } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
-function parseTransferParams(event: Event): TokensTransferEventParams {
-  if (events.tokens.transfer.v257.is(event)) {
+function parseTransferParams(event: SqdEvent): TokensTransferEventParams {
+  if (events.tokens.transfer.v276.is(event)) {
     const { currencyId, to, from, amount } =
-      events.tokens.transfer.v257.decode(event);
+      events.tokens.transfer.v276.decode(event);
     return {
       currencyId,
       to,

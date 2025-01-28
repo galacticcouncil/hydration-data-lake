@@ -5,7 +5,7 @@ import stableswap from './stableswap';
 import balances from './balances';
 import tokens from './tokens';
 import assetRegistry from './assetRegistry';
-import ammSupport from './ammSupport';
+import broadcast from './broadcast';
 import otc from './otc';
 import dca from './dca';
 import { EventParserMethods } from '../../../types/common';
@@ -18,7 +18,7 @@ export default {
   tokens,
   balances,
   assetRegistry,
-  ammSupport,
+  broadcast,
   otc,
   dca,
 } as EventParserMethods;

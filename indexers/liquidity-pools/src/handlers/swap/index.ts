@@ -1,20 +1,37 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
-import { getOrderedListByBlockNumber } from '../../utils/helpers';
+import {
+  getOrderedListByBlockNumber,
+  isUnifiedEventsSupportSpecVersion,
+} from '../../utils/helpers';
 import { handleSupportSwapperEvent } from './swap';
 
 export async function handleSupportSwappedEvents(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
+  console.log(
+    'handleSupportSwappedEvents - ',
+    [
+      ...parsedEvents
+        .getSectionByEventName(EventName.Broadcast_Swapped)
+        .values(),
+    ].filter((event) =>
+      isUnifiedEventsSupportSpecVersion(
+        event.eventData.metadata.blockHeader.specVersion,
+        ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+      )
+    ).length
+  );
   for (const eventData of getOrderedListByBlockNumber([
-    ...parsedEvents
-      .getSectionByEventName(EventName.AmmSupport_Swapped)
-      .values(),
-  ]).filter(
-    (event) => event.eventData.metadata.blockHeader.specVersion >= 276
+    ...parsedEvents.getSectionByEventName(EventName.Broadcast_Swapped).values(),
+  ]).filter((event) =>
+    isUnifiedEventsSupportSpecVersion(
+      event.eventData.metadata.blockHeader.specVersion,
+      ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+    )
   )) {
     await handleSupportSwapperEvent(ctx, eventData);
   }

@@ -7,7 +7,7 @@ import {
 } from '@urql/core';
 import { retryExchange } from '@urql/exchange-retry';
 import { ProcessingPallets } from './types';
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
@@ -16,7 +16,7 @@ export class QueriesHelper {
   private gqlClientUrlsMap: Map<ProcessingPallets, string>;
   private gqlClients: Map<ProcessingPallets, GqlClient> = new Map();
 
-  constructor({ batchCtx }: { batchCtx: ProcessorContext<Store> }) {
+  constructor({ batchCtx }: { batchCtx: SqdProcessorContext<Store> }) {
     this.gqlClientUrlsMap = new Map([
       [
         ProcessingPallets.XYK,

@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
 import * as v138 from '../v138'
 import * as v257 from '../v257'
+import * as v282 from '../v282'
 
 export const createGlobalFarm =  {
     name: 'OmnipoolLiquidityMining.create_global_farm',
@@ -425,6 +426,28 @@ export const addLiquidityAndJoinFarms =  {
             amount: sts.bigint(),
         })
     ),
+    /**
+     * This function allows user to add liquidity then use that shares to join multiple farms.
+     * 
+     * Parameters:
+     * - `origin`: owner of the omnipool position to deposit into the liquidity mining.
+     * - `farm_entries`: list of farms to join.
+     * - `asset`: id of the asset to be deposited into the liquidity mining.
+     * - `amount`: amount of the asset to be deposited into the liquidity mining.
+     * - `min_shares_limit`: The min amount of delta share asset the user should receive in the position
+     * 
+     * Emits `SharesDeposited` event for the first farm entry
+     * Emits `SharesRedeposited` event for each farm entry after the first one
+     */
+    v282: new CallType(
+        'OmnipoolLiquidityMining.add_liquidity_and_join_farms',
+        sts.struct({
+            farmEntries: sts.array(() => sts.tuple(() => [sts.number(), sts.number()])),
+            asset: sts.number(),
+            amount: sts.bigint(),
+            minSharesLimit: sts.option(() => sts.bigint()),
+        })
+    ),
 }
 
 export const exitFarms =  {
@@ -451,6 +474,36 @@ export const exitFarms =  {
         sts.struct({
             depositId: sts.bigint(),
             yieldFarmIds: sts.array(() => sts.number()),
+        })
+    ),
+}
+
+export const addLiquidityStableswapOmnipoolAndJoinFarms =  {
+    name: 'OmnipoolLiquidityMining.add_liquidity_stableswap_omnipool_and_join_farms',
+    /**
+     * This function allows user to add liquidity to stableswap pool,
+     * then adding the stable shares as liquidity to omnipool
+     * then use that omnipool shares to join multiple farms.
+     * 
+     * If farm entries are not specified (empty vectoo), then the liquidities are still added to the pools
+     * 
+     * Parameters:
+     * - `origin`: owner of the omnipool position to deposit into the liquidity mining.
+     * - `stable_pool_id`: id of the stableswap pool to add liquidity to.
+     * - `stable_asset_amounts`: amount of each asset to be deposited into the stableswap pool.
+     * - `farm_entries`: list of farms to join.
+     * 
+     * Emits `LiquidityAdded` events from both pool
+     * Emits `SharesDeposited` event for the first farm entry
+     * Emits `SharesRedeposited` event for each farm entry after the first one
+     * 
+     */
+    v282: new CallType(
+        'OmnipoolLiquidityMining.add_liquidity_stableswap_omnipool_and_join_farms',
+        sts.struct({
+            stablePoolId: sts.number(),
+            stableAssetAmounts: sts.array(() => v282.AssetAmount),
+            farmEntries: sts.option(() => sts.array(() => sts.tuple(() => [sts.number(), sts.number()]))),
         })
     ),
 }

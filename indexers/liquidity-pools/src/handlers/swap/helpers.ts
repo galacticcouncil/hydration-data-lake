@@ -1,19 +1,19 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AmmSupportSwappedData } from '../../parsers/batchBlocksParser/types';
+import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
 import {
   ChainActivityTrace,
   ChainActivityTraceRelation,
-  OtcOrderAction,
-  OtcOrderActionType,
+  OtcOrderEvent,
+  OtcOrderEventName,
   Swap,
   SwapFillerType,
 } from '../../model';
-import { getOrCreateStablepool } from '../pools/stablepool/stablepool';
-import { AmmSupportSwappedAssetAmount } from '../../parsers/types/events';
-import { getOrCreateLbpPool } from '../pools/lbpPool/lbpPool';
+import { getOrCreateStableswap } from '../pools/stableswap/stablepool';
+import { BroadcastSwappedAssetAmount } from '../../parsers/types/events';
+import { getOrCreateLbppool } from '../pools/lbpPool/lbpPool';
 import {
-  handleLbpPoolVolumeUpdates,
+  handleLbppoolVolumeUpdates,
   handleOmnipoolAssetVolumeUpdates,
   handleXykPoolVolumeUpdates,
 } from '../volumes';
@@ -24,8 +24,8 @@ import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { SwapFillerContextDetails } from '../../utils/types';
 
 export async function getFillerContextData(
-  ctx: ProcessorContext<Store>,
-  eventCallData: AmmSupportSwappedData
+  ctx: SqdProcessorContext<Store>,
+  eventCallData: BroadcastSwappedData
 ): Promise<SwapFillerContextDetails | null> {
   const {
     eventData: { params: eventParams },
@@ -60,9 +60,9 @@ export function getOmnipoolHubAmountOnSwap({
   ctx,
 }: {
   fillerType: SwapFillerType;
-  swapInputs: AmmSupportSwappedAssetAmount[];
-  swapOutputs: AmmSupportSwappedAssetAmount[];
-  ctx: ProcessorContext<Store>;
+  swapInputs: BroadcastSwappedAssetAmount[];
+  swapOutputs: BroadcastSwappedAssetAmount[];
+  ctx: SqdProcessorContext<Store>;
 }): {
   hubAmountIn: bigint | undefined;
   hubAmountOut: bigint | undefined;
@@ -108,7 +108,7 @@ export function getOmnipoolHubAmountOnSwap({
 }
 
 export async function supportSwapperEventPreHook(
-  eventCallData: AmmSupportSwappedData
+  eventCallData: BroadcastSwappedData
 ) {
   const {
     eventData: { params: eventParams },
@@ -134,8 +134,8 @@ export async function supportSwappedEventPostHook({
   chainActivityTrace,
 }: {
   swap: Swap;
-  ctx: ProcessorContext<Store>;
-  eventCallData: AmmSupportSwappedData;
+  ctx: SqdProcessorContext<Store>;
+  eventCallData: BroadcastSwappedData;
   chainActivityTrace?: ChainActivityTrace | null;
 }) {
   const {
@@ -144,7 +144,7 @@ export async function supportSwappedEventPostHook({
 
   switch (eventParams.fillerType.kind) {
     case SwapFillerType.LBP: {
-      const pool = await getOrCreateLbpPool({
+      const pool = await getOrCreateLbppool({
         ctx,
         assetIds: [
           eventParams.inputs[0].assetId,
@@ -162,7 +162,7 @@ export async function supportSwappedEventPostHook({
       }
       ctx.batchState.state.lbpAllBatchPools.set(pool.id, pool);
 
-      await handleLbpPoolVolumeUpdates({
+      await handleLbppoolVolumeUpdates({
         ctx,
         swap,
         pool,
@@ -219,7 +219,7 @@ export async function supportSwappedEventPostHook({
       });
       break;
     case SwapFillerType.Stableswap: {
-      const pool = await getOrCreateStablepool({
+      const pool = await getOrCreateStableswap({
         ctx,
         poolId: +eventParams.fillerType.value,
         ensure: true,
@@ -228,11 +228,11 @@ export async function supportSwappedEventPostHook({
 
       if (!pool) {
         console.log(
-          `Stablepool with ID ${eventParams.filler} has not been found`
+          `Stableswap with ID ${eventParams.filler} has not been found`
         );
         return;
       }
-      ctx.batchState.state.stablepoolAllBatchPools.set(pool.id, pool);
+      ctx.batchState.state.stableswapAllBatchPools.set(pool.id, pool);
 
       await handleStablepoolVolumeUpdates({
         ctx,
@@ -248,9 +248,9 @@ export async function supportSwappedEventPostHook({
       )
         return;
 
-      const createOrderAction = await ctx.store.findOne(OtcOrderAction, {
+      const createOrderAction = await ctx.store.findOne(OtcOrderEvent, {
         where: {
-          kind: OtcOrderActionType.CREATED,
+          eventName: OtcOrderEventName.Created,
           order: {
             id: ctx.batchState.state.swapFillerContexts.get(swap.id)!
               .otcOrderId,
@@ -277,8 +277,14 @@ export async function supportSwappedEventPostHook({
         id: `${rootChainActivityTrace.id}-${chainActivityTrace.id}`,
         childTrace: chainActivityTrace,
         parentTrace: rootChainActivityTrace,
-        createdAtParaChainBlockHeight:
+        paraChainBlockHeight:
           eventCallData.eventData.metadata.blockHeader.height,
+        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          eventCallData.eventData.metadata.blockHeader.height
+        ).height,
+        block: ctx.batchState.state.batchBlocks.get(
+          eventCallData.eventData.metadata.blockHeader.id
+        ),
       });
 
       ctx.batchState.state.chainActivityTraceRelations.set(

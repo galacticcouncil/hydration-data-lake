@@ -1,10 +1,10 @@
 import { Asset, HistoricalAssetVolume } from '../../model';
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { initAssetVolume } from './index';
 
 export async function handleAssetVolumeUpdates(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   swapDetails: {
     paraChainBlockHeight: number;
     relayChainBlockHeight: number;

@@ -6,19 +6,21 @@ import parachainSystem from './parachainSystem';
 import stableswap from './stableswap';
 import xyk from './xyk';
 import lbp from './lbp';
+import dca from './dca';
+import otc from './otc';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
 import {
   AccountData,
-  OmnipoolAssetData,
-  OmnipoolGetAssetDataInput,
   GetPoolAssetInfoInput,
-  StablepoolGetPoolDataInput,
-  StablepoolInfo,
-  XykPoolWithAssets,
-  XykGetAssetsInput,
   LbpGetPoolDataInput,
   LbpPoolData,
+  OmnipoolAssetData,
+  OmnipoolGetAssetDataInput,
+  StablepoolGetPoolDataInput,
+  StablepoolInfo,
+  XykGetAssetsInput,
+  XykPoolWithAssets,
 } from '../../../types/storage';
 import { getAccountBalances } from '../../../../handlers/assets/balances';
 import { StorageParserMethods } from '../../../types/common';
@@ -31,9 +33,14 @@ import {
 
 export default {
   system,
-  tokens,
+  tokens: {
+    ...tokens,
+    getTokenTotalIssuance: tokens.getTokenTotalIssuance,
+  },
   assetRegistry,
   parachainSystem,
+  dca,
+  otc,
   stableswap: {
     getPoolData: (
       args: StablepoolGetPoolDataInput
@@ -117,6 +124,7 @@ export default {
       }),
   },
   xyk: {
+    getShareToken: xyk.getShareToken,
     getPoolAssets: (
       args: XykGetAssetsInput
     ): Promise<XykPoolWithAssets | null> =>
@@ -168,6 +176,7 @@ export default {
         method: 'getPoolData',
         fallbackFns: [lbp.getPoolData],
       }),
+    getAllPoolsData: lbp.getAllPoolsData,
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ): Promise<AccountData | null> =>

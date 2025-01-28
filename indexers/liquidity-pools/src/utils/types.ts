@@ -1,11 +1,5 @@
-import {
-  Swap,
-  SwapFee,
-  SwapInputAssetBalance,
-  SwapOutputAssetBalance,
-} from '../model';
+import { Swap, SwapFee, SwapAssetBalance } from '../model';
 import type * as base from '@subsquid/substrate-data';
-import { getCallOriginParts } from './helpers';
 
 export interface TransferEvent {
   id: string;
@@ -13,7 +7,6 @@ export interface TransferEvent {
   assetId: number;
   blockNumber: number;
   timestamp: Date;
-  extrinsicHash?: string;
   from: string;
   to: string;
   amount: bigint;
@@ -64,7 +57,7 @@ export enum NodeEnv {
 export enum ChainName {
   hydration = 'hydration',
   hydration_paseo = 'hydration_paseo',
-  hydration_paseo_next = 'hydration_paseo_next',
+  // hydration_paseo_next = 'hydration_paseo_next',
 }
 
 export enum TraceIdContext {
@@ -82,8 +75,8 @@ export enum TraceIdEventGroup {
 export type GetNewSwapResponse = {
   swap: Swap;
   swapFees: SwapFee[];
-  swapInputs: SwapInputAssetBalance[];
-  swapOutputs: SwapOutputAssetBalance[];
+  swapInputs: SwapAssetBalance[];
+  swapOutputs: SwapAssetBalance[];
 };
 
 export type CallOriginValueRaw = {

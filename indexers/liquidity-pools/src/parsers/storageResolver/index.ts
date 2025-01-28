@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { StorageDictionaryManager } from './dictionaryUtils/storageDictionaryManager';
 import { ProcessingPallets } from './dictionaryUtils/types';
@@ -29,7 +29,7 @@ export class StorageResolver {
     blockNumberFrom,
     blockNumberTo,
   }: {
-    ctx: ProcessorContext<Store>;
+    ctx: SqdProcessorContext<Store>;
     blockNumberFrom: number;
     blockNumberTo: number;
   }) {

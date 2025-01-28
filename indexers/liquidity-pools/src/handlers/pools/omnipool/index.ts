@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
@@ -6,7 +6,7 @@ import { getOrderedListByBlockNumber } from '../../../utils/helpers';
 import { omnipoolTokenAdded, omnipoolTokenRemoved } from './omnipoolAssets';
 
 export async function handleOmnipoolAssets(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (!ctx.appConfig.PROCESS_OMNIPOOLS) return;

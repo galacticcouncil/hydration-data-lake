@@ -5,14 +5,15 @@ import {
   ParsedEventsCallsData,
   EventDataType,
   CallMetadata,
+  StoragePrefetchIdsGroup,
 } from './types';
 import { EventName, RelayChainInfo } from '../types/events';
 import {
-  Block,
-  Call,
-  Event,
-  Extrinsic,
-  ProcessorContext,
+  SqdBlock,
+  SqdCall,
+  SqdEvent,
+  SqdExtrinsic,
+  SqdProcessorContext,
 } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../';
@@ -27,14 +28,15 @@ import {
   calls as hydrationPaseoCalls,
   events as hydrationPaseoEvents,
 } from '../chains/hydration-paseo/typegenTypes';
-import {
-  calls as hydrationPaseoNextCalls,
-  events as hydrationPaseoNextEvents,
-} from '../chains/hydration-paseo-next/typegenTypes';
+// import {
+//   calls as hydrationPaseoNextCalls,
+//   events as hydrationPaseoNextEvents,
+// } from '../chains/hydration-paseo-next/typegenTypes';
 
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { EventDataParserHelper } from './eventDataParserHelper';
 import { ChainName } from '../../utils/types';
+import { SwapFillerType } from '../../model';
 
 export class BatchBlocksParsedDataManager {
   private scope: BatchBlocksParsedDataScope;
@@ -88,9 +90,9 @@ function getEventMetadata({
   extrinsic,
   traceId,
 }: {
-  event: Event;
-  blockHeader: Block;
-  extrinsic?: Extrinsic;
+  event: SqdEvent;
+  blockHeader: SqdBlock;
+  extrinsic?: SqdExtrinsic;
   traceId: string;
 }): EventMetadata {
   return {
@@ -104,7 +106,7 @@ function getEventMetadata({
 }
 
 export async function getParsedEventsData(
-  ctx: ProcessorContext<Store>
+  ctx: SqdProcessorContext<Store>
 ): Promise<BatchBlocksParsedDataManager> {
   let events = null;
   let calls = null;
@@ -118,10 +120,11 @@ export async function getParsedEventsData(
       events = hydrationPaseoEvents;
       calls = hydrationPaseoCalls;
       break;
-    case ChainName.hydration_paseo_next:
-      events = hydrationPaseoNextEvents;
-      calls = hydrationPaseoNextCalls;
-      break;
+
+    // case ChainName.hydration_paseo_next:
+    //   events = hydrationPaseoNextEvents;
+    //   calls = hydrationPaseoNextCalls;
+    //   break;
   }
 
   const parsedDataManager = new BatchBlocksParsedDataManager();
@@ -130,32 +133,12 @@ export async function getParsedEventsData(
   const batchState = ctx.batchState.state;
 
   for (const block of ctx.blocks) {
-    const relayChainInfo: RelayChainInfo = {
-      parachainBlockNumber: 0,
-      relaychainBlockNumber: 0,
-    };
-
-    for (const call of block.calls) {
-      switch (call.name) {
-        case calls.parachainSystem.setValidationData.name: {
-          const validationData =
-            parsers.calls.parachainSystem.parseSetValidationDataArgs(call);
-          relayChainInfo.relaychainBlockNumber =
-            validationData.relayParentNumber;
-          relayChainInfo.parachainBlockNumber = block.header.height;
-          break;
-        }
-        default:
-      }
-    }
-
-    ctx.batchState.state.relayChainInfo.set(
-      relayChainInfo.parachainBlockNumber,
-      relayChainInfo
-    );
+    const relayChainInfo = ctx.batchState.state.relayChainInfo.get(
+      block.header.height
+    )!;
 
     for (const event of block.events) {
-      let call: Call | null = null;
+      let call: SqdCall | null = null;
 
       try {
         call = event.getCall();
@@ -202,7 +185,7 @@ export async function getParsedEventsData(
           parsedDataManager.set(EventName.LBP_PoolCreated, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
-            'lbpPoolAssetIdsForStoragePrefetch',
+            'lbppoolAssetIdsForStoragePrefetch',
             `${preparedData.eventData.params.data.assets[0]}-${preparedData.eventData.params.data.assets[1]}`
           );
           break;
@@ -215,7 +198,7 @@ export async function getParsedEventsData(
           parsedDataManager.set(EventName.LBP_PoolUpdated, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
-            'lbpPoolAssetIdsForStoragePrefetch',
+            'lbppoolAssetIdsForStoragePrefetch',
             `${preparedData.eventData.params.data.assets[0]}-${preparedData.eventData.params.data.assets[1]}`
           );
           break;
@@ -228,7 +211,7 @@ export async function getParsedEventsData(
           parsedDataManager.set(EventName.LBP_BuyExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
-            'lbpPoolAssetIdsForStoragePrefetch',
+            'lbppoolAssetIdsForStoragePrefetch',
             `${preparedData.eventData.params.assetIn}-${preparedData.eventData.params.assetOut}`
           );
           break;
@@ -241,7 +224,7 @@ export async function getParsedEventsData(
           parsedDataManager.set(EventName.LBP_SellExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
-            'lbpPoolAssetIdsForStoragePrefetch',
+            'lbppoolAssetIdsForStoragePrefetch',
             `${preparedData.eventData.params.assetIn}-${preparedData.eventData.params.assetOut}`
           );
           break;
@@ -381,7 +364,7 @@ export async function getParsedEventsData(
           parsedDataManager.set(EventName.Stableswap_PoolCreated, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
-            'stablepoolIdsForStoragePrefetch',
+            'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
           break;
@@ -390,12 +373,11 @@ export async function getParsedEventsData(
          * ==== Stableswap Buy Executed ====
          */
         case events.stableswap.buyExecuted.name: {
-          console.log('Stableswap buyExecuted');
           const preparedData = parserHelper.parseStableswapBuyExecutedData();
           parsedDataManager.set(EventName.Stableswap_BuyExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
-            'stablepoolIdsForStoragePrefetch',
+            'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
           break;
@@ -404,7 +386,6 @@ export async function getParsedEventsData(
          * ==== Stableswap Sell Executed ====
          */
         case events.stableswap.sellExecuted.name: {
-          console.log('Stableswap sellExecuted');
           const preparedData = parserHelper.parseStableswapSellExecutedData();
           parsedDataManager.set(
             EventName.Stableswap_SellExecuted,
@@ -412,7 +393,7 @@ export async function getParsedEventsData(
           );
 
           parserHelper.addIdsForStoragePrefetch(
-            'stablepoolIdsForStoragePrefetch',
+            'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
           break;
@@ -421,15 +402,13 @@ export async function getParsedEventsData(
          * ==== Stableswap Liquidity Added ====
          */
         case events.stableswap.liquidityAdded.name: {
-          console.log('Stableswap liquidityAdded');
-
           const preparedData = parserHelper.parseStableswapLiquidityAddedData();
           parsedDataManager.set(
             EventName.Stableswap_LiquidityAdded,
             preparedData
           );
           parserHelper.addIdsForStoragePrefetch(
-            'stablepoolIdsForStoragePrefetch',
+            'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
           break;
@@ -438,8 +417,6 @@ export async function getParsedEventsData(
          * ==== Stableswap Liquidity Removed ====
          */
         case events.stableswap.liquidityRemoved.name: {
-          console.log('Stableswap liquidityRemoved');
-
           const preparedData =
             parserHelper.parseStableswapLiquidityRemovedData();
           parsedDataManager.set(
@@ -448,7 +425,7 @@ export async function getParsedEventsData(
           );
 
           parserHelper.addIdsForStoragePrefetch(
-            'stablepoolIdsForStoragePrefetch',
+            'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
           break;
@@ -609,15 +586,56 @@ export async function getParsedEventsData(
         }
 
         /**
-         * ===================== A M M   S U P P O R T =========================
+         * ======================= B R O A D C A S T ===========================
          */
 
         /**
          * ==== Swapped ====
          */
-        case hydrationPaseoNextEvents.ammSupport.swapped.name: {
-          const preparedData = parserHelper.parseAmmSupportSwappedData();
-          parsedDataManager.set(EventName.AmmSupport_Swapped, preparedData);
+        case events.broadcast.swapped.name: {
+          const preparedData = parserHelper.parseBroadcastSwappedData();
+          parsedDataManager.set(EventName.Broadcast_Swapped, preparedData);
+
+          switch (preparedData.eventData.params.fillerType.kind) {
+            case SwapFillerType.LBP:
+              parserHelper.addIdsForStoragePrefetch(
+                'lbppoolAssetIdsForStoragePrefetch',
+                preparedData.eventData.params.filler
+              );
+              break;
+            case SwapFillerType.XYK:
+              parserHelper.addIdsForStoragePrefetch(
+                'xykPoolIdsForStoragePrefetch',
+                preparedData.eventData.params.filler
+              );
+              break;
+            case SwapFillerType.Omnipool:
+              for (const assetId of [
+                ...preparedData.eventData.params.inputs.map(
+                  (inputData) => inputData.assetId
+                ),
+                ...preparedData.eventData.params.outputs.map(
+                  (outputData) => outputData.assetId
+                ),
+                ...preparedData.eventData.params.fees.map(
+                  (feeData) => feeData.assetId
+                ),
+                1,
+              ]) {
+                parserHelper.addIdsForStoragePrefetch(
+                  'omnipoolAssetIdsForStoragePrefetch',
+                  assetId
+                );
+              }
+              break;
+            case SwapFillerType.Stableswap:
+              parserHelper.addIdsForStoragePrefetch(
+                'stableswapIdsForStoragePrefetch',
+                preparedData.eventData.params.fillerType.value
+              );
+              break;
+          }
+
           break;
         }
 
@@ -630,5 +648,6 @@ export async function getParsedEventsData(
   ctx.log.info(
     `Parsed ${totalEventsNumber} events from ${ctx.blocks.length} blocks [${ctx.blocks[0].header.height} / ${ctx.blocks[ctx.blocks.length - 1].header.height}].`
   );
+
   return parsedDataManager;
 }

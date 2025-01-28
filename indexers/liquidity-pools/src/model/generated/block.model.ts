@@ -43,7 +43,4 @@ export class Block {
 
   @Column_("int4", {nullable: false})
   relayChainBlockHeight!: number
-
-  @Column_("int4", {nullable: false})
-  relayChainBlockHash!: number
 }

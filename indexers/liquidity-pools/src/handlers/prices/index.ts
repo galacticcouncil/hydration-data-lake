@@ -1,9 +1,9 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { handleLbpPoolPrices } from './lbpPoolPrice';
 import { handleXykPoolPrices } from './xykPoolPrice';
 
-export async function handlePoolPrices(ctx: ProcessorContext<Store>) {
+export async function handlePoolPrices(ctx: SqdProcessorContext<Store>) {
   if (ctx.appConfig.PROCESS_LBP_POOLS) await handleLbpPoolPrices(ctx);
   if (ctx.appConfig.PROCESS_XYK_POOLS) await handleXykPoolPrices(ctx);
 

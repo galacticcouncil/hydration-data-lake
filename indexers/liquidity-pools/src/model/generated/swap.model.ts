@@ -27,6 +27,9 @@ export class Swap {
   @Column_("text", {array: true, nullable: true})
   traceIds!: (string)[] | undefined | null
 
+  @Column_("int4", {nullable: true})
+  swapIndex!: number | undefined | null
+
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})
   swapper!: Account

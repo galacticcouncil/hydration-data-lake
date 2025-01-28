@@ -9,8 +9,8 @@ async function getPoolData({
   poolId,
   block,
 }: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
-  if (storage.stableswap.pools.v257.is(block)) {
-    const resp = await storage.stableswap.pools.v257.get(block, poolId);
+  if (storage.stableswap.pools.v276.is(block)) {
+    const resp = await storage.stableswap.pools.v276.get(block, poolId);
     return resp ?? null;
   }
 

@@ -1,9 +1,9 @@
 import { events } from '../typegenTypes';
-import { Event } from '../../../../processor';
+import { SqdEvent } from '../../../../processor';
 import { BalancesTransferEventParams } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
-function parseTransferParams(event: Event): BalancesTransferEventParams {
+function parseTransferParams(event: SqdEvent): BalancesTransferEventParams {
   if (events.balances.transfer.v100.is(event)) {
     const [from, to, amount] = events.balances.transfer.v100.decode(event);
     return {

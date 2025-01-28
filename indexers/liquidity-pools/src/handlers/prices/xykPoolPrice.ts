@@ -1,10 +1,10 @@
 import { XykpoolHistoricalPrice } from '../../model';
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { isNotNullOrUndefined } from '../../utils/helpers';
 import { getAssetFreeBalance } from '../assets/balances';
 
-export async function handleXykPoolPrices(ctx: ProcessorContext<Store>) {
+export async function handleXykPoolPrices(ctx: SqdProcessorContext<Store>) {
   const poolPricesRaw = [];
   const xykAllBatchPools = ctx.batchState.state.xykAllBatchPools;
 
@@ -19,7 +19,7 @@ export async function handleXykPoolPrices(ctx: ProcessorContext<Store>) {
       [...xykAllBatchPools.values()].map(
         async (p) =>
           new Promise<XykpoolHistoricalPrice | null>((resolve) => {
-            if (p.createdAtParaBlock > block.header.height) {
+            if (p.createdAtParaChainBlockHeight > block.header.height) {
               resolve(null);
               return;
             }
@@ -39,6 +39,7 @@ export async function handleXykPoolPrices(ctx: ProcessorContext<Store>) {
                   paraChainBlockHeight: block.header.height,
                   relayChainBlockHeight:
                     currentBlockRelayChainInfo.relaychainBlockNumber || 0,
+                  block: ctx.batchState.state.batchBlocks.get(block.header.id),
                 })
               );
             });

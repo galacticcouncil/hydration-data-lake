@@ -6,16 +6,16 @@ import { postgraphile, makePluginHook } from 'postgraphile';
 import FilterPlugin from 'postgraphile-plugin-connection-filter';
 import { ProcessorStatusPlugin } from './apiSupport/plugins/query/processorStatus.plugin';
 import { AppConfig } from './appConfig';
-import { XykPoolsVolumePlugin } from './apiSupport/plugins/query/xykPoolsVolume.plugin';
+import { XykpoolsVolumePlugin } from './apiSupport/plugins/query/xykPoolsVolume.plugin';
 import PgPubsub from '@graphile/pg-pubsub';
 import TypeOverrides from 'pg/lib/type-overrides';
 import { runMigrations } from './apiSupport/apiMigrations/runMigrations';
-import { XykPoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/xykPoolsVolumeSubscriptions.plugin';
+import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/xykPoolsVolumeSubscriptions.plugin';
 import { getEnvPath } from './utils/helpers';
 import { OmnipoolAssetVolumePlugin } from './apiSupport/plugins/query/omnipoolVolume.plugin';
 import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/omnipoolAssetVolumeSubscriptions.plugin';
-import { StablepoolVolumePlugin } from './apiSupport/plugins/query/stablepoolVolume.plugin';
-import { StablepoolVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stablepoolVolumeSubscriptions.plugin';
+import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswapVolume.plugin';
+import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stableswapVolumeSubscriptions.plugin';
 import { NodeEnv } from './utils/types';
 
 const pgTypes = new TypeOverrides();
@@ -57,12 +57,12 @@ const postgraphileInstance = postgraphile(
       FilterPlugin,
       SimplifyInflectorPlugin,
       ProcessorStatusPlugin,
-      XykPoolsVolumePlugin,
-      XykPoolsVolumeSubscriptionsPlugin,
+      XykpoolsVolumePlugin,
+      XykpoolsVolumeSubscriptionsPlugin,
       OmnipoolAssetVolumePlugin,
       OmnipoolAssetVolumeSubscriptionsPlugin,
-      StablepoolVolumePlugin,
-      StablepoolVolumeSubscriptionsPlugin,
+      StableswapVolumePlugin,
+      StableswapVolumeSubscriptionsPlugin,
     ],
     disableQueryLog: appConfig.NODE_ENV !== NodeEnv.DEV,
     externalUrlBase: process.env.BASE_PATH

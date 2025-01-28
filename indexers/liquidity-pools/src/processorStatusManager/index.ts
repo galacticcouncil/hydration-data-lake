@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../processor';
+import { SqdProcessorContext } from '../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { ProcessorStatus } from '../model';
 
@@ -6,9 +6,9 @@ export class ProcessorStatusManager {
   private static instance: ProcessorStatusManager;
   currentStatusEntity: ProcessorStatus | null = null;
 
-  constructor(private ctx: ProcessorContext<Store>) {}
+  constructor(private ctx: SqdProcessorContext<Store>) {}
 
-  static getInstance(ctx: ProcessorContext<Store>): ProcessorStatusManager {
+  static getInstance(ctx: SqdProcessorContext<Store>): ProcessorStatusManager {
     if (!ProcessorStatusManager.instance) {
       ProcessorStatusManager.instance = new ProcessorStatusManager(ctx);
     }
@@ -17,18 +17,18 @@ export class ProcessorStatusManager {
   }
 
   static async updateInitialIndexingFinishedAtTime(
-    ctx: ProcessorContext<Store>
+    ctx: SqdProcessorContext<Store>
   ) {
     const statusManager = ProcessorStatusManager.getInstance(ctx);
     const currentStatus = await statusManager.getStatus();
 
-    if (ctx.isHead && !currentStatus.initialIndexingFinishedAtTime)
+    if (ctx.isHead && !currentStatus.initialIndexingFinishedAt)
       await statusManager.updateProcessorStatus({
-        initialIndexingFinishedAtTime: new Date(),
+        initialIndexingFinishedAt: new Date(),
       });
   }
 
-  initCtx(ctx: ProcessorContext<Store>) {
+  initCtx(ctx: SqdProcessorContext<Store>) {
     this.ctx = ctx;
   }
 
@@ -46,10 +46,10 @@ export class ProcessorStatusManager {
 
     statusEntity = new ProcessorStatus({
       id: '1',
-      assetsActualisedAtBlock: -1,
-      poolsDestroyedCheckPointAtBlock: -1,
-      initialIndexingStartedAtTime: new Date(),
-      initialIndexingFinishedAtTime: this.ctx.isHead ? new Date() : null,
+      assetsLastUpdatedAtBlock: -1,
+      poolsDestroyedUpdatedAtBlock: -1,
+      initialIndexingStartedAt: new Date(),
+      initialIndexingFinishedAt: this.ctx.isHead ? new Date() : null,
     });
 
     if (ensure) await this.ctx.store.save(statusEntity);
@@ -60,17 +60,15 @@ export class ProcessorStatusManager {
   async updateProcessorStatus(payload: Omit<Partial<ProcessorStatus>, 'id'>) {
     const status = await this.getStatus();
 
-    if (payload.assetsActualisedAtBlock)
-      status.assetsActualisedAtBlock = payload.assetsActualisedAtBlock;
-    if (payload.initialIndexingStartedAtTime)
-      status.initialIndexingStartedAtTime =
-        payload.initialIndexingStartedAtTime;
-    if (payload.initialIndexingFinishedAtTime)
-      status.initialIndexingFinishedAtTime =
-        payload.initialIndexingFinishedAtTime;
-    if (payload.poolsDestroyedCheckPointAtBlock)
-      status.poolsDestroyedCheckPointAtBlock =
-        payload.poolsDestroyedCheckPointAtBlock;
+    if (payload.assetsLastUpdatedAtBlock)
+      status.assetsLastUpdatedAtBlock = payload.assetsLastUpdatedAtBlock;
+    if (payload.initialIndexingStartedAt)
+      status.initialIndexingStartedAt = payload.initialIndexingStartedAt;
+    if (payload.initialIndexingFinishedAt)
+      status.initialIndexingFinishedAt = payload.initialIndexingFinishedAt;
+    if (payload.poolsDestroyedUpdatedAtBlock)
+      status.poolsDestroyedUpdatedAtBlock =
+        payload.poolsDestroyedUpdatedAtBlock;
 
     await this.ctx.store.save(status);
   }

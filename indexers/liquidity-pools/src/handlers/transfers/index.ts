@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EventName } from '../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../utils/helpers';
@@ -8,7 +8,7 @@ import { handleTokensTransfer } from './tokensTransfer';
 import { isPoolTransfer } from './utils';
 
 export async function handleTransfers(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   const allPoolsIds = [

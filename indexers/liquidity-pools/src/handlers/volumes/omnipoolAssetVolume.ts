@@ -3,7 +3,7 @@ import {
   OmnipoolAssetHistoricalVolume,
   Swap,
 } from '../../model';
-import { Block, ProcessorContext } from '../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   getOldOmnipoolAssetVolume,
@@ -40,6 +40,7 @@ export function initOmnipoolAssetVolume({
       BigInt(0),
     relayChainBlockHeight: swap.relayChainBlockHeight,
     paraChainBlockHeight: swap.paraChainBlockHeight,
+    block: swap.event.block,
   });
 
   const assetVolumeIn =
@@ -57,7 +58,7 @@ export function initOmnipoolAssetVolume({
       ? swap.outputs[0].amount
       : BigInt(0);
 
-  // Block volumes
+  // SqdBlock volumes
   newVolume.assetVolumeIn += assetVolumeIn;
   newVolume.assetVolumeOut += assetVolumeOut;
   newVolume.assetFee += assetFee;
@@ -75,9 +76,9 @@ export async function handleOmnipoolAssetVolumeUpdates({
   swap,
   blockHeader,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   swap: Swap;
-  blockHeader: Block;
+  blockHeader: SqdBlock;
 }) {
   const omnipoolAssetVolumes = ctx.batchState.state.omnipoolAssetVolumes;
 
@@ -124,5 +125,4 @@ export async function handleOmnipoolAssetVolumeUpdates({
 
     omnipoolAssetVolumes.set(newVolume.id, newVolume);
   }
-
 }

@@ -2,7 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
 import {Swap} from "./swap.model"
-import {DcaScheduleExecutionEventType} from "./_dcaScheduleExecutionEventType"
+import {DcaScheduleExecutionEventName} from "./_dcaScheduleExecutionEventName"
 import {DispatchError} from "./_dispatchError"
 import {Block} from "./block.model"
 
@@ -32,8 +32,8 @@ export class DcaScheduleExecutionEvent {
   swaps!: Swap[]
 
   @Index_()
-  @Column_("varchar", {length: 7, nullable: true})
-  eventType!: DcaScheduleExecutionEventType | undefined | null
+  @Column_("varchar", {length: 8, nullable: true})
+  eventName!: DcaScheduleExecutionEventName | undefined | null
 
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new DispatchError(undefined, obj)}, nullable: true})
   memo!: DispatchError | undefined | null

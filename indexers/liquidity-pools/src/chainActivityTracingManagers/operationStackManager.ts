@@ -1,10 +1,10 @@
-import { AmmSupportSwappedExecutionType } from '../parsers/types/events';
+import { BroadcastSwappedExecutionType } from '../parsers/types/events';
 import * as crypto from 'node:crypto';
 import { SwappedExecutionTypeKind } from '../utils/types';
 
 export class OperationStackManager {
   static operationStackToString(
-    srcStack: AmmSupportSwappedExecutionType[]
+    srcStack: BroadcastSwappedExecutionType[]
   ): string {
     const resultSegmentsList = [];
 
@@ -140,7 +140,7 @@ export class OperationStackManager {
   //   return newEntity;
   // }
   //
-  // static async saveOperationStackEntities(ctx: ProcessorContext<Store>) {
+  // static async saveOperationStackEntities(ctx: SqdProcessorContext<Store>) {
   //   const state = ctx.batchState.state;
   //
   //   await ctx.store.upsert([...state.operationStacks.values()].reverse());

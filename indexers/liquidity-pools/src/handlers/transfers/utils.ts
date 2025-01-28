@@ -1,34 +1,52 @@
-import { ProcessorContext } from '../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { TransferEvent } from '../../utils/types';
 import { Transfer } from '../../model';
 import { getAccount } from '../accounts';
+import { getAsset } from '../assets/assetRegistry';
 
-export async function initTransfer(
-  ctx: ProcessorContext<Store>,
-  data: TransferEvent
-) {
-  let {
+export async function initTransfer({
+  ctx,
+  data,
+  blockHeader,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  data: TransferEvent;
+  blockHeader?: SqdBlock;
+}) {
+  const {
     id,
     assetId,
-    extrinsicHash,
     amount,
     fee,
     blockNumber,
     from,
     to,
     traceIds,
+    timestamp,
   } = data;
 
+  const assetEntity = await getAsset({
+    ctx,
+    id: assetId,
+    ensure: true,
+    blockHeader,
+  });
+
+  if (!assetEntity) throw Error(`Asset ${assetId} cannot be found`);
+
   return new Transfer({
-    paraChainBlockHeight: blockNumber,
     from: await getAccount({ ctx, id: from }),
     to: await getAccount({ ctx, id: to }),
     txFee: fee,
+    asset: assetEntity,
+    paraChainBlockHeight: blockNumber,
+    paraChainTimestamp: timestamp ?? new Date(),
+    relayChainBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(blockNumber).height,
+    event: ctx.batchState.state.batchEvents.get(id),
     id,
     traceIds,
-    assetId,
-    extrinsicHash,
     amount,
   });
 }

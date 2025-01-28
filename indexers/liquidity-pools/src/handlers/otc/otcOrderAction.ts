@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   OtcOrderFilledData,
@@ -7,8 +7,8 @@ import {
 import {
   Account,
   OtcOrder,
-  OtcOrderAction,
-  OtcOrderActionType,
+  OtcOrderEvent,
+  OtcOrderEventName,
   OtcOrderStatus,
   Swap,
 } from '../../model';
@@ -17,11 +17,11 @@ import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { getAccount } from '../accounts';
 import { FindOptionsRelations } from 'typeorm';
 
-export function getNewOrderAction({
+export function getNewOrderEvent({
   operationId = null,
   traceIds = [],
   order,
-  kind,
+  eventName,
   paraChainBlockHeight,
   relayChainBlockHeight,
   eventIndex,
@@ -33,7 +33,7 @@ export function getNewOrderAction({
 }: {
   operationId?: string | null;
   traceIds: string[];
-  kind: OtcOrderActionType;
+  eventName: OtcOrderEventName;
   order: OtcOrder;
   amountIn?: bigint | null;
   amountOut?: bigint | null;
@@ -44,11 +44,11 @@ export function getNewOrderAction({
   relayChainBlockHeight: number;
   paraChainBlockHeight: number;
 }) {
-  return new OtcOrderAction({
+  return new OtcOrderEvent({
     id: `${order.id}-${eventIndex}`,
     operationId,
     traceIds,
-    kind,
+    eventName,
     eventIndex,
     relayChainBlockHeight,
     paraChainBlockHeight,
@@ -64,48 +64,48 @@ export function getNewOrderAction({
 export async function getOtcOrderActions({
   id,
   orderId,
-  kind,
+  eventName,
   fetchFromDb = true,
   ctx,
   relations = {},
 }: {
   id?: string;
   orderId?: string;
-  kind?: OtcOrderActionType;
+  eventName?: OtcOrderEventName;
   fetchFromDb?: boolean;
-  ctx: ProcessorContext<Store>;
-  relations?: FindOptionsRelations<OtcOrderAction>;
+  ctx: SqdProcessorContext<Store>;
+  relations?: FindOptionsRelations<OtcOrderEvent>;
 }) {
-  if (!id && !orderId && !kind) return null;
+  if (!id && !orderId && !eventName) return null;
 
   const batchState = ctx.batchState.state;
 
-  let actions: OtcOrderAction[] = [];
+  let actions: OtcOrderEvent[] = [];
 
   if (id) {
-    actions = [...batchState.otcOrderActions.values()].filter(
+    actions = [...batchState.otcOrderEvents.values()].filter(
       (act) => act.id === id
     );
-  } else if (orderId && kind) {
-    actions = [...batchState.otcOrderActions.values()].filter(
-      (act) => act.order.id === orderId && act.kind === kind
+  } else if (orderId && eventName) {
+    actions = [...batchState.otcOrderEvents.values()].filter(
+      (act) => act.order.id === orderId && act.eventName === eventName
     );
   }
   if (actions.length > 0 || (actions.length === 0 && !fetchFromDb))
     return actions;
 
-  actions = await ctx.store.find(OtcOrderAction, {
+  actions = await ctx.store.find(OtcOrderEvent, {
     where: {
       ...(id ? { id } : {}),
       ...(orderId ? { order: { id: orderId } } : {}),
-      ...(kind ? { kind } : {}),
+      ...(eventName ? { eventName } : {}),
     },
     relations,
   });
 
   if (actions && actions.length > 0) {
     for (const action of actions) {
-      ctx.batchState.state.otcOrderActions.set(action.id, action);
+      ctx.batchState.state.otcOrderEvents.set(action.id, action);
     }
     return actions;
   }
@@ -114,7 +114,7 @@ export async function getOtcOrderActions({
 }
 
 export async function handleOtcOrderFilled(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: OtcOrderFilledData
 ) {
   const {
@@ -138,10 +138,10 @@ export async function handleOtcOrderFilled(
       swap.swapper.id === eventParams.who
   );
 
-  const newOrderAction = getNewOrderAction({
+  const newOrderEvent = getNewOrderEvent({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: otcOrder,
-    kind: OtcOrderActionType.FILLED,
+    eventName: OtcOrderEventName.Filled,
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
@@ -154,8 +154,8 @@ export async function handleOtcOrderFilled(
     swap: relatedSwap ?? null,
   });
 
-  otcOrder.status = OtcOrderStatus.FILLED;
-  otcOrder.actions = [...(otcOrder.actions || []), newOrderAction];
+  otcOrder.status = OtcOrderStatus.Filled;
+  otcOrder.events = [...(otcOrder.events || []), newOrderEvent];
 
   otcOrder.totalFilledAmountIn =
     (otcOrder.totalFilledAmountIn || 0n) + eventParams.amountIn;
@@ -165,22 +165,22 @@ export async function handleOtcOrderFilled(
   const state = ctx.batchState.state;
 
   state.otcOrders.set(otcOrder.id, otcOrder);
-  state.otcOrderActions.set(newOrderAction.id, newOrderAction);
+  state.otcOrderEvents.set(newOrderEvent.id, newOrderEvent);
 
   if (relatedSwap) {
-    relatedSwap.otcOrderFulfilment = newOrderAction;
+    relatedSwap.otcOrderFulfilment = newOrderEvent;
     state.swaps.set(relatedSwap.id, relatedSwap);
   }
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    traceIds: newOrderAction.traceIds,
-    participants: [newOrderAction.filler!],
+    traceIds: newOrderEvent.traceIds,
+    participants: [newOrderEvent.filler!],
     ctx,
   });
 }
 
 export async function handleOtcOrderPartiallyFilled(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: OtcOrderPartiallyFilledData
 ) {
   const {
@@ -204,10 +204,10 @@ export async function handleOtcOrderPartiallyFilled(
       swap.swapper.id === eventParams.who
   );
 
-  const newOrderAction = getNewOrderAction({
+  const newOrderEvent = getNewOrderEvent({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: otcOrder,
-    kind: OtcOrderActionType.PARTIALLY_FILLED,
+    eventName: OtcOrderEventName.PartiallyFilled,
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
@@ -220,8 +220,8 @@ export async function handleOtcOrderPartiallyFilled(
     swap: relatedSwap ?? null,
   });
 
-  otcOrder.status = OtcOrderStatus.PARTIALLY_FILLED;
-  otcOrder.actions = [...(otcOrder.actions || []), newOrderAction];
+  otcOrder.status = OtcOrderStatus.PartiallyFilled;
+  otcOrder.events = [...(otcOrder.events || []), newOrderEvent];
 
   otcOrder.totalFilledAmountIn =
     (otcOrder.totalFilledAmountIn || 0n) + eventParams.amountIn;
@@ -231,15 +231,15 @@ export async function handleOtcOrderPartiallyFilled(
   const state = ctx.batchState.state;
 
   state.otcOrders.set(otcOrder.id, otcOrder);
-  state.otcOrderActions.set(newOrderAction.id, newOrderAction);
+  state.otcOrderEvents.set(newOrderEvent.id, newOrderEvent);
   if (relatedSwap) {
-    relatedSwap.otcOrderFulfilment = newOrderAction;
+    relatedSwap.otcOrderFulfilment = newOrderEvent;
     state.swaps.set(relatedSwap.id, relatedSwap);
   }
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    traceIds: newOrderAction.traceIds,
-    participants: [newOrderAction.filler!],
+    traceIds: newOrderEvent.traceIds,
+    participants: [newOrderEvent.filler!],
     ctx,
   });
 }

@@ -142,3 +142,27 @@ export interface ScheduleIdsPerBlockV160  {
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (number[] | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (number[] | undefined)][]>
 }
+
+export const scheduleExecutionBlock =  {
+    /**
+     *  Keep tracking the blocknumber when the schedule is planned to be executed
+     */
+    v282: new StorageType('DCA.ScheduleExecutionBlock', 'Optional', [sts.number()], sts.number()) as ScheduleExecutionBlockV282,
+}
+
+/**
+ *  Keep tracking the blocknumber when the schedule is planned to be executed
+ */
+export interface ScheduleExecutionBlockV282  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(number | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(number | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (number | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (number | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (number | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (number | undefined)][]>
+}

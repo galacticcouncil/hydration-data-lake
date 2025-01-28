@@ -1,14 +1,14 @@
-import { Call } from '../../../../processor';
+import { SqdCall } from '../../../../processor';
 import { RelaySystemSetValidationDataCallArgs } from '../../../types/calls';
 import { calls } from '../typegenTypes';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseSetValidationDataArgs(
-  call: Call
+  call: SqdCall
 ): RelaySystemSetValidationDataCallArgs {
-  if (calls.parachainSystem.setValidationData.v257.is(call)) {
+  if (calls.parachainSystem.setValidationData.v276.is(call)) {
     const decodedData =
-      calls.parachainSystem.setValidationData.v257.decode(call);
+      calls.parachainSystem.setValidationData.v276.decode(call);
 
     return {
       relayParentNumber: decodedData.data.validationData.relayParentNumber,

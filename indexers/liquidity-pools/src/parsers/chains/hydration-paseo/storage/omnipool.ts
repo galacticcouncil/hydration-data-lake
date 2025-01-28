@@ -9,8 +9,8 @@ async function getOmnipoolAssetData({
   assetId,
   block,
 }: OmnipoolGetAssetDataInput): Promise<OmnipoolAssetData | null> {
-  if (storage.omnipool.assets.v257.is(block)) {
-    const resp = await storage.omnipool.assets.v257.get(block, assetId);
+  if (storage.omnipool.assets.v276.is(block)) {
+    const resp = await storage.omnipool.assets.v276.get(block, assetId);
     return resp ?? null;
   }
 

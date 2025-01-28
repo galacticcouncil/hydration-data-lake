@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   DcaExecutionPlannedData,
@@ -7,31 +7,30 @@ import {
 } from '../../parsers/batchBlocksParser/types';
 import {
   DcaScheduleExecution,
+  DcaScheduleExecutionEvent,
+  DcaScheduleExecutionEventName,
   DcaScheduleExecutionStatus,
   DispatchError,
-  DispatchErrorValue,
 } from '../../model';
 import { getDcaSchedule } from './dcaSchedule';
 import { FindOptionsRelations } from 'typeorm';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import { processDcaScheduleExecutionAction } from './dcaScheduleExecutionAction';
+import { processDcaScheduleExecutionEvent } from './dcaScheduleExecutionAction';
 
 export async function getDcaScheduleExecution({
   ctx,
   id,
   relations = {
-    actions: true,
+    events: true,
   },
   fetchFromDb = false,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   id: string;
   fetchFromDb?: boolean;
   relations?: FindOptionsRelations<DcaScheduleExecution>;
 }) {
-  const batchState = ctx.batchState.state;
-
-  let execution = batchState.dcaScheduleExecutions.get(id);
+  let execution = ctx.batchState.state.dcaScheduleExecutions.get(id);
 
   if (execution || (!execution && !fetchFromDb)) return execution ?? null;
 
@@ -48,7 +47,7 @@ export async function getDcaScheduleExecution({
 }
 
 export async function handleDcaScheduleExecutionPlanned(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: DcaExecutionPlannedData
 ) {
   const {
@@ -81,35 +80,16 @@ export async function handleDcaScheduleExecutionPlanned(
     schedule: scheduleEntity,
     status: DcaScheduleExecutionStatus.Planned,
   });
-  //
-  // const executionAction = new DcaScheduleExecutionEvent({
-  //   id: `${plannedExecution.id}-${DcaScheduleExecutionStatus.PLANNED}`,
-  //   scheduleExecution: plannedExecution,
-  //   status: DcaScheduleExecutionStatus.PLANNED,
-  //   relayChainBlockHeight:
-  //     ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
-  //       ?.relaychainBlockNumber ?? 0,
-  //   paraChainBlockHeight: eventMetadata.blockHeader.height,
-  //   traceIds: [
-  //     ...(callData.traceId ? [callData.traceId] : []),
-  //     eventMetadata.traceId,
-  //   ],
-  // });
-  //
-  // plannedExecution.actions = [
-  //   ...(plannedExecution.actions || []),
-  //   executionAction,
-  // ];
 
-  const executionAction = await processDcaScheduleExecutionAction({
+  const executionAction = await processDcaScheduleExecutionEvent({
     ctx,
     who: eventParams.who,
-    id: `${plannedExecution.id}-${DcaScheduleExecutionStatus.Planned}`,
+    id: `${plannedExecution.id}-${DcaScheduleExecutionEventName.Planned}`,
     scheduleExecution: plannedExecution,
-    status: DcaScheduleExecutionStatus.Planned,
-    relayChainBlockHeight:
-      ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
-        ?.relaychainBlockNumber ?? 0,
+    eventName: DcaScheduleExecutionEventName.Planned,
+    relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      eventMetadata.blockHeader.height
+    ).height,
     paraChainBlockHeight: eventMetadata.blockHeader.height,
     traceIds: [
       ...(callData.traceId ? [callData.traceId] : []),
@@ -117,18 +97,19 @@ export async function handleDcaScheduleExecutionPlanned(
     ],
   });
 
-  plannedExecution.actions = [
-    ...(plannedExecution.actions || []),
+  plannedExecution.events = [
+    ...(plannedExecution.events || []),
     executionAction,
   ];
 
-  const state = ctx.batchState.state;
-
-  state.dcaScheduleExecutions.set(plannedExecution.id, plannedExecution);
+  ctx.batchState.state.dcaScheduleExecutions.set(
+    plannedExecution.id,
+    plannedExecution
+  );
 }
 
 export async function handleDcaTradeExecuted(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: DcaTradeExecutedData
 ) {
   const {
@@ -148,7 +129,7 @@ export async function handleDcaTradeExecuted(
       schedule: {
         owner: true,
       },
-      actions: true,
+      events: true,
     },
   });
 
@@ -158,22 +139,22 @@ export async function handleDcaTradeExecuted(
   scheduleExecutionEntity.amountIn = eventParams.amountIn;
   scheduleExecutionEntity.amountOut = eventParams.amountOut;
 
-  const executionAction = await processDcaScheduleExecutionAction({
+  const executionEvents = await processDcaScheduleExecutionEvent({
     ctx,
     who: eventParams.who,
-    id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.Executed}`,
+    id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionEventName.Executed}`,
     scheduleExecution: scheduleExecutionEntity,
-    status: DcaScheduleExecutionStatus.Executed,
-    relayChainBlockHeight:
-      ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
-        ?.relaychainBlockNumber ?? 0,
+    eventName: DcaScheduleExecutionEventName.Executed,
+    relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      eventMetadata.blockHeader.height
+    ).height,
     paraChainBlockHeight: eventMetadata.blockHeader.height,
     traceIds,
   });
 
-  scheduleExecutionEntity.actions = [
-    ...(scheduleExecutionEntity.actions || []),
-    executionAction,
+  scheduleExecutionEntity.events = [
+    ...(scheduleExecutionEntity.events || []),
+    executionEvents,
   ];
 
   const state = ctx.batchState.state;
@@ -191,7 +172,7 @@ export async function handleDcaTradeExecuted(
 }
 
 export async function handleDcaTradeFailed(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: DcaTradeFailedData
 ) {
   const {
@@ -216,54 +197,28 @@ export async function handleDcaTradeFailed(
 
   scheduleExecutionEntity.status = DcaScheduleExecutionStatus.Failed;
 
-  // const executionAction = new DcaScheduleExecutionEvent({
-  //   id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.FAILED}`,
-  //   scheduleExecution: scheduleExecutionEntity,
-  //   status: DcaScheduleExecutionStatus.FAILED,
-  //   statusMemo: eventParams.error
-  //     ? new DispatchError({
-  //         kind: eventParams.error.__kind,
-  //         value: eventParams.error.value
-  //           ? new DispatchErrorValue({
-  //               index: eventParams.error.value?.index,
-  //               error: eventParams.error.value?.error,
-  //             })
-  //           : null,
-  //       })
-  //     : null,
-  //   relayChainBlockHeight:
-  //     ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
-  //       ?.relaychainBlockNumber ?? 0,
-  //   paraChainBlockHeight: eventMetadata.blockHeader.height,
-  //   traceIds,
-  // });
-
-  const executionAction = await processDcaScheduleExecutionAction({
+  const executionAction = await processDcaScheduleExecutionEvent({
     ctx,
     who: eventParams.who,
-    id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionStatus.Failed}`,
+    id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionEventName.Failed}`,
     scheduleExecution: scheduleExecutionEntity,
-    status: DcaScheduleExecutionStatus.Failed,
-    statusMemo: eventParams.error
+    eventName: DcaScheduleExecutionEventName.Failed,
+    memo: eventParams.error
       ? new DispatchError({
           kind: eventParams.error.__kind,
-          value: eventParams.error.value
-            ? new DispatchErrorValue({
-                index: eventParams.error.value?.index,
-                error: eventParams.error.value?.error,
-              })
-            : null,
+          index: eventParams.error.value?.index,
+          error: eventParams.error.value?.error,
         })
       : null,
-    relayChainBlockHeight:
-      ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
-        ?.relaychainBlockNumber ?? 0,
+    relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      eventMetadata.blockHeader.height
+    ).height,
     paraChainBlockHeight: eventMetadata.blockHeader.height,
     traceIds,
   });
 
-  scheduleExecutionEntity.actions = [
-    ...(scheduleExecutionEntity.actions || []),
+  scheduleExecutionEntity.events = [
+    ...(scheduleExecutionEntity.events || []),
     executionAction,
   ];
 

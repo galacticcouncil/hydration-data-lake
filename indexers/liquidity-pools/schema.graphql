@@ -162,7 +162,6 @@ type Block @entity {
   timestamp: DateTime! @index
 
   relayChainBlockHeight: Int!
-  relayChainBlockHash: Int!
 }
 
 type Extrinsic @entity {
@@ -316,6 +315,11 @@ enum SwapAssetBalanceType {
   Output
 }
 
+enum SwapFeeDestinationType {
+  Account
+  Burned
+}
+
 enum SwapFillerType {
   Omnipool
   Stableswap
@@ -339,11 +343,12 @@ type SwapFee @entity {
   swap: Swap!
   asset: Asset!
   amount: BigInt!
-  recipient: Account!
+  destinationType: SwapFeeDestinationType!
+  recipient: Account
 }
 
 type SwapAssetBalance @entity {
-  "<swapId>-<SwapAssetBalanceType>-<itemIndex> e.g. 0006516718-9965d-000107-INPUT-0"
+  "<swapId>-<assetId>-<SwapAssetBalanceType> e.g. 0006516718-9965d-000107-0-INPUT"
   id: ID!
   swap: Swap!
   assetBalanceType: SwapAssetBalanceType!
@@ -356,6 +361,7 @@ type Swap @entity {
   id: ID!
   operationId: String
   traceIds: [String!]
+  swapIndex: Int
 
   swapper: Account!
   filler: Account!
@@ -401,7 +407,7 @@ type Lbppool @entity {
   createdAtRelayChainBlockHeight: Int!
   createdAtBlock: Block!
   isDestroyed: Boolean
-  lifeStates: [StableswapLifeState!]!
+  lifeStates: [LbppoolLifeState!]!
 
   historicalBlockPrices: [LbppoolHistoricalPrice!]! @derivedFrom(field: "pool")
   historicalVolume: [LbppoolHistoricalVolume!]! @derivedFrom(field: "pool")
@@ -409,8 +415,8 @@ type Lbppool @entity {
 }
 
 type LbppoolCreatedData {
-  assetABalance: BigInt!
-  assetBBalance: BigInt!
+  assetABalance: String!
+  assetBBalance: String!
   paraChainBlockHeight: Int!
   relayChainBlockHeight: Int!
 }
@@ -502,7 +508,6 @@ type Xykpool @entity {
   assetABalance: BigInt!
   assetBBalance: BigInt!
   shareToken: Asset!
-  initialSharesAmount: BigInt!
 
   createdAtParaChainBlockHeight: Int! @index
   createdAtRelayChainBlockHeight: Int!
@@ -516,7 +521,7 @@ type Xykpool @entity {
 }
 
 type XykpoolCreatedData {
-  initialSharesAmount: BigInt!
+  initialSharesAmount: String!
   paraChainBlockHeight: Int!
   relayChainBlockHeight: Int!
 }
@@ -526,8 +531,8 @@ type XykpoolDestroyedData {
 }
 
 type XykpoolLifeState {
-  created: StableswapCreatedData!
-  destroyed: StableswapDestroyedData
+  created: XykpoolCreatedData!
+  destroyed: XykpoolDestroyedData
 }
 
 type XykpoolHistoricalPrice @entity {
@@ -620,14 +625,14 @@ type OmnipoolAsset @entity {
 }
 
 type OmnipoolAssetAddedData {
-  initialAmount: BigInt # latest data from last asset adding
-  initialPrice: BigInt # latest data from last asset adding
+  initialAmount: String # latest data from last asset adding
+  initialPrice: String # latest data from last asset adding
   paraChainBlockHeight: Int!
   relayChainBlockHeight: Int!
 }
 type OmnipoolAssetRemovedData {
-  removedAmount: BigInt
-  hubWithdrawn: BigInt
+  removedAmount: String
+  hubWithdrawn: String
   paraChainBlockHeight: Int!
   relayChainBlockHeight: Int!
 }
@@ -739,8 +744,8 @@ type StableswapAssetHistoricalVolume @entity {
 
   swapFee: BigInt!
   swapTotalFees: BigInt!
-  liquidityFee: BigInt!
-  liquidityTotalFees: BigInt!
+  #  liquidityFee: BigInt!
+  #  liquidityTotalFees: BigInt!
   #  routedLiqFee: BigInt! # what is this? Isn't this just liquidityFee?
   #  routedLiqTotalFees: BigInt!
 
@@ -857,6 +862,11 @@ enum DcaScheduleExecutionEventType {
   Execute
   Fail
 }
+enum DcaScheduleExecutionEventName {
+  Planned
+  Executed
+  Failed
+}
 
 type DispatchError {
   kind: String
@@ -929,7 +939,7 @@ type DcaScheduleExecutionEvent @entity {
   scheduleExecution: DcaScheduleExecution!
 
   swaps: [Swap] @derivedFrom(field: "dcaScheduleExecutionAction")
-  eventType: DcaScheduleExecutionEventType @index
+  eventName: DcaScheduleExecutionEventName @index
   memo: DispatchError
 
   paraChainBlockHeight: Int! @index
@@ -948,11 +958,11 @@ enum OtcOrderStatus {
   PartiallyFilled
 }
 
-enum OtcOrderEventType {
-  Creat
-  Cancel
-  Fill
-  PartiallyFill
+enum OtcOrderEventName {
+  Created
+  Canceled
+  Filled
+  PartiallyFilled
 }
 
 type OtcOrder @entity {
@@ -984,7 +994,7 @@ type OtcOrderEvent @entity {
   traceIds: [String!]
   order: OtcOrder!
 
-  eventType: OtcOrderEventType @index
+  eventName: OtcOrderEventName @index
   amountIn: BigInt
   amountOut: BigInt
   fee: BigInt

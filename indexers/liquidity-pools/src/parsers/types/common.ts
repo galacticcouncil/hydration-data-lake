@@ -4,9 +4,9 @@ import {
   RelaySystemSetValidationDataCallArgs,
   XykCreatePoolCallArgs,
 } from './calls';
-import { Call, Event } from '../../processor';
+import { SqdCall, SqdEvent } from '../../processor';
 import {
-  AmmSupportSwappedEventParams,
+  BroadcastSwappedEventParams,
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
   BalancesTransferEventParams,
@@ -66,7 +66,7 @@ import {
   XykPoolWithAssets,
 } from './storage';
 import { DcaScheduleOrderType, SwapFillerType } from '../../model';
-import ammSupport from '../chains/hydration-paseo-next/events/ammSupport';
+import broadcast from '../chains/hydration-paseo-next/events/broadcast';
 
 export interface PoolData {
   owner: string;
@@ -83,85 +83,97 @@ export interface PoolData {
 
 export type CallParserMethods = {
   lbp: {
-    parseCreatePoolArgs: (call: Call) => LbpCreatePoolCallArgs;
+    parseCreatePoolArgs: (call: SqdCall) => LbpCreatePoolCallArgs;
   };
   xyk: {
-    parseCreatePoolArgs: (call: Call) => XykCreatePoolCallArgs;
+    parseCreatePoolArgs: (call: SqdCall) => XykCreatePoolCallArgs;
   };
   dca: {
-    parseScheduleArgs: (call: Call) => DcaScheduleCallArgs;
+    parseScheduleArgs: (call: SqdCall) => DcaScheduleCallArgs;
   };
   parachainSystem: {
     parseSetValidationDataArgs: (
-      call: Call
+      call: SqdCall
     ) => RelaySystemSetValidationDataCallArgs;
   };
 };
 export type EventParserMethods = {
   lbp: {
-    parsePoolCreatedParams: (event: Event) => LbpPoolCreatedEventParams;
-    parsePoolUpdatedParams: (event: Event) => LbpPoolUpdatedEventParams;
-    parseBuyExecutedParams: (event: Event) => LbpBuyExecutedEventParams;
-    parseSellExecutedParams: (event: Event) => LbpSellExecutedEventParams;
+    parsePoolCreatedParams: (event: SqdEvent) => LbpPoolCreatedEventParams;
+    parsePoolUpdatedParams: (event: SqdEvent) => LbpPoolUpdatedEventParams;
+    parseBuyExecutedParams: (event: SqdEvent) => LbpBuyExecutedEventParams;
+    parseSellExecutedParams: (event: SqdEvent) => LbpSellExecutedEventParams;
   };
   xyk: {
-    parsePoolCreatedParams: (event: Event) => XykPoolCreatedEventParams;
-    parsePoolDestroyedParams: (event: Event) => XykPoolDestroyedEventParams;
-    parseBuyExecutedParams: (event: Event) => XykBuyExecutedEventParams;
-    parseSellExecutedParams: (event: Event) => XykSellExecutedEventParams;
+    parsePoolCreatedParams: (event: SqdEvent) => XykPoolCreatedEventParams;
+    parsePoolDestroyedParams: (event: SqdEvent) => XykPoolDestroyedEventParams;
+    parseBuyExecutedParams: (event: SqdEvent) => XykBuyExecutedEventParams;
+    parseSellExecutedParams: (event: SqdEvent) => XykSellExecutedEventParams;
   };
   omnipool: {
-    parseTokenAddedParams: (event: Event) => OmnipoolTokenAddedEventParams;
-    parseTokenRemovedParams: (event: Event) => OmnipoolTokenRemovedEventParams;
-    parseBuyExecutedParams: (event: Event) => OmnipoolBuyExecutedEventParams;
-    parseSellExecutedParams: (event: Event) => OmnipoolSellExecutedEventParams;
+    parseTokenAddedParams: (event: SqdEvent) => OmnipoolTokenAddedEventParams;
+    parseTokenRemovedParams: (
+      event: SqdEvent
+    ) => OmnipoolTokenRemovedEventParams;
+    parseBuyExecutedParams: (event: SqdEvent) => OmnipoolBuyExecutedEventParams;
+    parseSellExecutedParams: (
+      event: SqdEvent
+    ) => OmnipoolSellExecutedEventParams;
   };
   stableswap: {
-    parsePoolCreatedParams: (event: Event) => StableswapPoolCreatedEventParams;
+    parsePoolCreatedParams: (
+      event: SqdEvent
+    ) => StableswapPoolCreatedEventParams;
     parseLiquidityAddedParams: (
-      event: Event
+      event: SqdEvent
     ) => StableswapLiquidityAddedEventParams;
     parseLiquidityRemovedParams: (
-      event: Event
+      event: SqdEvent
     ) => StableswapLiquidityRemovedEventParams;
-    parseBuyExecutedParams: (event: Event) => StableswapBuyExecutedEventParams;
+    parseBuyExecutedParams: (
+      event: SqdEvent
+    ) => StableswapBuyExecutedEventParams;
     parseSellExecutedParams: (
-      event: Event
+      event: SqdEvent
     ) => StableswapSellExecutedEventParams;
   };
   dca: {
-    parseScheduledParams: (event: Event) => DcaScheduledEventParams;
+    parseScheduledParams: (event: SqdEvent) => DcaScheduledEventParams;
     parseExecutionPlannedParams: (
-      event: Event
+      event: SqdEvent
     ) => DcaExecutionPlannedEventParams;
-    parseTradeExecutedParams: (event: Event) => DcaTradeExecutedEventParams;
-    parseTradeFailedParams: (event: Event) => DcaTradeFailedEventParams;
-    parseTerminatedParams: (event: Event) => DcaTerminatedEventParams;
-    parseCompletedParams: (event: Event) => DcaCompletedEventParams;
+    parseTradeExecutedParams: (event: SqdEvent) => DcaTradeExecutedEventParams;
+    parseTradeFailedParams: (event: SqdEvent) => DcaTradeFailedEventParams;
+    parseTerminatedParams: (event: SqdEvent) => DcaTerminatedEventParams;
+    parseCompletedParams: (event: SqdEvent) => DcaCompletedEventParams;
     parseRandomnessGenerationFailedParams: (
-      event: Event
+      event: SqdEvent
     ) => DcaRandomnessGenerationFailedEventParams;
   };
   otc: {
-    parseOrderPlacedParams: (event: Event) => OtcOrderPlacedEventParams;
-    parseOrderCancelledParams: (event: Event) => OtcOrderCancelledEventParams;
-    parseOrderFilledParams: (event: Event) => OtcOrderFilledEventParams;
+    parseOrderPlacedParams: (event: SqdEvent) => OtcOrderPlacedEventParams;
+    parseOrderCancelledParams: (
+      event: SqdEvent
+    ) => OtcOrderCancelledEventParams;
+    parseOrderFilledParams: (event: SqdEvent) => OtcOrderFilledEventParams;
     parseOrderPartiallyFilledParams: (
-      event: Event
+      event: SqdEvent
     ) => OtcOrderPartiallyFilledEventParams;
   };
   tokens: {
-    parseTransferParams: (event: Event) => TokensTransferEventParams;
+    parseTransferParams: (event: SqdEvent) => TokensTransferEventParams;
   };
   balances: {
-    parseTransferParams: (event: Event) => BalancesTransferEventParams;
+    parseTransferParams: (event: SqdEvent) => BalancesTransferEventParams;
   };
   assetRegistry: {
-    parseRegisteredParams: (event: Event) => AssetRegistryRegisteredEventParams;
-    parseUpdatedParams: (event: Event) => AssetRegistryUpdatedEventParams;
+    parseRegisteredParams: (
+      event: SqdEvent
+    ) => AssetRegistryRegisteredEventParams;
+    parseUpdatedParams: (event: SqdEvent) => AssetRegistryUpdatedEventParams;
   };
-  ammSupport: {
-    parseSwappedParams: (event: Event) => AmmSupportSwappedEventParams;
+  broadcast: {
+    parseSwappedParams: (event: SqdEvent) => BroadcastSwappedEventParams;
   };
 };
 export type StorageParserMethods = {

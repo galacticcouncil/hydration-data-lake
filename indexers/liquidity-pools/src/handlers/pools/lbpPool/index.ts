@@ -1,13 +1,13 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../../utils/helpers';
-import { lpbPoolCreated, lpbPoolUpdated } from './lbpPool';
+import { lpbpoolCreated, lpbpoolUpdated } from './lbpPool';
 import { Lbppool } from '../../../model';
 
 export async function handleLbpPools(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (!ctx.appConfig.PROCESS_LBP_POOLS) return;
@@ -24,13 +24,13 @@ export async function handleLbpPools(
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.LBP_PoolCreated).values(),
   ])) {
-    await lpbPoolCreated(ctx, eventData);
+    await lpbpoolCreated(ctx, eventData);
   }
 
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.LBP_PoolUpdated).values(),
   ])) {
-    await lpbPoolUpdated(ctx, eventData);
+    await lpbpoolUpdated(ctx, eventData);
   }
 
   await ctx.store.save(

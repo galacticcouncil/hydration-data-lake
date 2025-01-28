@@ -1,10 +1,10 @@
-import { Call } from '../../../../processor';
+import { SqdCall } from '../../../../processor';
 import { LbpCreatePoolCallArgs } from '../../../types/calls';
 import { calls } from '../typegenTypes';
 import { UnknownVersionError } from '../../../../utils/errors';
 
-function parseCreatePoolArgs(call: Call): LbpCreatePoolCallArgs {
-  if (calls.lbp.createPool.v257.is(call)) {
+function parseCreatePoolArgs(call: SqdCall): LbpCreatePoolCallArgs {
+  if (calls.lbp.createPool.v276.is(call)) {
     const {
       assetA,
       assetB,
@@ -16,7 +16,7 @@ function parseCreatePoolArgs(call: Call): LbpCreatePoolCallArgs {
       finalWeight,
       repayTarget,
       poolOwner,
-    } = calls.lbp.createPool.v257.decode(call);
+    } = calls.lbp.createPool.v276.decode(call);
 
     return {
       assetA,

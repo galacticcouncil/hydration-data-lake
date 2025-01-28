@@ -1,35 +1,40 @@
-import { Call, ProcessorContext } from '../processor';
+import { SqdCall, SqdProcessorContext } from '../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   Extrinsic as ExtrinsicEntity,
-  Call as CallEntity,
-  Event as EventEntity,
-  Block as BlockEntity,
+  Call,
+  Event,
+  Block,
   ChainActivityTrace,
   Account,
   AccountChainActivityTrace,
   TraceEntityType,
   EventGroup,
 } from '../model';
-import { getCallOriginParts } from '../utils/helpers';
+import { getCallOriginParts, jsonToString } from '../utils/helpers';
 import { getAccount } from '../handlers/accounts';
-import { EventPhase, TraceIdEventGroup, TraceIdContext } from '../utils/types';
-import { FindOptionsRelations, In } from 'typeorm';
-import { EventName } from '../parsers/types/events';
+import {
+  EventPhase,
+  TraceIdEventGroup,
+  TraceIdContext,
+  ChainName,
+} from '../utils/types';
+import { FindOptionsRelations } from 'typeorm';
+import { EventName, RelayChainInfo } from '../parsers/types/events';
 
 export class ChainActivityTraceManager {
   static _traceIdPrefix = 'trace-id:';
-  constructor(private ctx: ProcessorContext<Store>) {}
+  constructor(private ctx: SqdProcessorContext<Store>) {}
 
-  static async processExtrinsics(ctx: ProcessorContext<Store>) {
+  static async processExtrinsics(ctx: SqdProcessorContext<Store>) {
     const state = ctx.batchState.state;
 
-    const blocksToSave: BlockEntity[] = [];
+    const blocksToSave: Block[] = [];
     const extrinsicsToSave: ExtrinsicEntity[] = [];
-    const callsToSave: CallEntity[] = [];
+    const callsToSave: Call[] = [];
     const tracesToSave: ChainActivityTrace[] = [];
 
-    const getOrCreateChainActivityTrace = (id: string, block: BlockEntity) => {
+    const getOrCreateChainActivityTrace = (id: string, block: Block) => {
       let activityTraceEntity = state.chainActivityTraces.get(id);
 
       if (!activityTraceEntity) {
@@ -38,9 +43,10 @@ export class ChainActivityTraceManager {
           operationIds: [],
           traceIds: [],
           participants: [],
-          associatedAccountsFlat: [],
-          createdAtParaChainBlockHeight: block.paraChainBlockHeight,
-          createdAtBlock: block,
+          participantAccounts: [],
+          paraChainBlockHeight: block.height,
+          relayChainBlockHeight: block.relayChainBlockHeight,
+          block,
         });
         state.chainActivityTraces.set(
           activityTraceEntity.id,
@@ -53,15 +59,19 @@ export class ChainActivityTraceManager {
     };
 
     for (const block of ctx.blocks) {
+      const relayChainInfo = ctx.batchState.state.relayChainInfo.get(
+        block.header.height
+      )!;
+
       let blockEntity = state.batchBlocks.get(block.header.id);
 
       if (!blockEntity) {
-        blockEntity = new BlockEntity({
+        blockEntity = new Block({
           id: block.header.id,
-          relayChainBlockHeight: block.header.height,
-          paraChainBlockHeight: block.header.height,
-          paraChainBlockHash: block.header.hash,
-          paraChainBlockTimestamp: block.header.timestamp
+          relayChainBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
+          height: block.header.height,
+          hash: block.header.hash,
+          timestamp: block.header.timestamp
             ? new Date(block.header.timestamp)
             : new Date(),
         });
@@ -76,25 +86,27 @@ export class ChainActivityTraceManager {
           extrinsicEntity = new ExtrinsicEntity({
             id: extrinsic.id,
             hash: extrinsic.hash,
-            paraChainBlockHeight: blockEntity.paraChainBlockHeight,
+            indexInBlock: extrinsic.index,
+            paraChainBlockHeight: blockEntity.height,
+            relayChainBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
             block: blockEntity,
           });
           state.batchExtrinsics.set(extrinsicEntity.id, extrinsicEntity);
           extrinsicsToSave.push(extrinsicEntity);
         }
 
-        let activityTraceEntity = getOrCreateChainActivityTrace(
+        const activityTraceEntity = getOrCreateChainActivityTrace(
           extrinsic.id,
           blockEntity
         );
 
         const callEntitiesMap = new Map<
           string,
-          { call: CallEntity; parent?: CallEntity }
+          { call: Call; parent?: Call }
         >();
 
         for (const subcall of extrinsic.subcalls) {
-          const subcallRawData: { call: Call; parent?: Call } = {
+          const subcallRawData: { call: SqdCall; parent?: SqdCall } = {
             call: subcall,
           };
 
@@ -109,21 +121,24 @@ export class ChainActivityTraceManager {
           const callEntityOriginData = getCallOriginParts(subcall.origin);
           const callEntity = callEntitiesMap.has(subcall.id)
             ? callEntitiesMap.get(subcall.id)!.call
-            : new CallEntity({
+            : new Call({
                 id: subcall.id,
                 name: subcall.name,
                 success: subcall.success,
                 entityTypes: this.getEntityTypesByCallName(subcall.name),
+                args: jsonToString(subcall.args),
                 subcalls: [],
                 originKind: callEntityOriginData.kind,
                 originValueKind: callEntityOriginData.valueKind,
                 originValue: callEntityOriginData.value,
                 extrinsic: extrinsicEntity,
                 paraChainBlockHeight: subcall.block.height,
+                relayChainBlockHeight:
+                  relayChainInfo?.relaychainBlockNumber ?? 0,
                 block: blockEntity,
               });
 
-          let callParentEntity: CallEntity | undefined = undefined;
+          let callParentEntity: Call | undefined = undefined;
 
           if (
             subcallRawData.parent &&
@@ -140,7 +155,7 @@ export class ChainActivityTraceManager {
               subcallRawData.parent.origin
             );
 
-            callParentEntity = new CallEntity({
+            callParentEntity = new Call({
               id: subcallRawData.parent.id,
               name: subcallRawData.parent.name,
               success: subcallRawData.parent.success,
@@ -148,11 +163,13 @@ export class ChainActivityTraceManager {
                 subcallRawData.parent.name
               ),
               subcalls: [],
+              args: jsonToString(subcallRawData.parent.args),
               originKind: callParentEntityOriginData.kind,
               originValueKind: callParentEntityOriginData.valueKind,
               originValue: callParentEntityOriginData.value,
               extrinsic: extrinsicEntity,
               paraChainBlockHeight: subcallRawData.parent.block.height,
+              relayChainBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
               block: blockEntity,
             });
           }
@@ -179,9 +196,9 @@ export class ChainActivityTraceManager {
             ctx,
             id: rootCall.call.originValue,
           });
-          activityTraceEntity.associatedAccountsFlat = [
+          activityTraceEntity.participantAccounts = [
             ...new Set([
-              ...(activityTraceEntity.associatedAccountsFlat || []),
+              ...(activityTraceEntity.participantAccounts || []),
               rootCall.call.originValue,
             ]).values(),
           ];
@@ -189,11 +206,11 @@ export class ChainActivityTraceManager {
 
         const callsSequenceToSave = new Map<
           number,
-          { index: number; list: CallEntity[] }
+          { index: number; list: Call[] }
         >();
 
         const generateCallTraceId = (
-          call: CallEntity,
+          call: Call,
           parentIdPrefix: string,
           levelIndex: number
         ) => {
@@ -250,7 +267,7 @@ export class ChainActivityTraceManager {
             eventCall = state.batchCalls.get(eventCallId);
           } catch (e) {}
 
-          eventEntity = new EventEntity({
+          eventEntity = new Event({
             id: event.id,
             traceId: this.getTraceId(
               this.traceIdPrefixWithContext(TraceIdContext.event),
@@ -259,6 +276,7 @@ export class ChainActivityTraceManager {
                 event.index.toString(),
               ]
             ),
+            args: jsonToString(event.args),
             group: this.eventGroup(event.name, event.phase),
             indexInBlock: event.index,
             name: event.name,
@@ -266,6 +284,7 @@ export class ChainActivityTraceManager {
             entityTypes: this.getEntityTypesByEventName(event.name),
             call: eventCall,
             paraChainBlockHeight: block.header.height,
+            relayChainBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
             block: blockEntity,
           });
           state.batchEvents.set(eventEntity.id, eventEntity);
@@ -295,7 +314,7 @@ export class ChainActivityTraceManager {
   }: {
     traceId: string;
     participants: Account[];
-    ctx: ProcessorContext<Store>;
+    ctx: SqdProcessorContext<Store>;
   }) {
     if (participants.length === 0) return;
     const state = ctx.batchState.state;
@@ -309,7 +328,7 @@ export class ChainActivityTraceManager {
     if (!chainActivityTrace) return;
 
     const associatedAccountsFlat = new Set(
-      chainActivityTrace.associatedAccountsFlat
+      chainActivityTrace.participantAccounts
     );
 
     const participantsToIgnore = new Set(
@@ -340,7 +359,7 @@ export class ChainActivityTraceManager {
       associatedAccountsFlat.add(account.id);
     }
 
-    chainActivityTrace.associatedAccountsFlat = [
+    chainActivityTrace.participantAccounts = [
       ...associatedAccountsFlat.values(),
     ];
 
@@ -354,7 +373,7 @@ export class ChainActivityTraceManager {
   }: {
     traceIds: string[] | undefined | null;
     participants: Account[];
-    ctx: ProcessorContext<Store>;
+    ctx: SqdProcessorContext<Store>;
   }) {
     if (!traceIds || traceIds.length === 0) return;
 
@@ -467,16 +486,16 @@ export class ChainActivityTraceManager {
       case 'Stableswap.buy':
       case 'Omnipool.sell':
       case 'Omnipool.buy':
-        return [TraceEntityType.SWAP];
+        return [TraceEntityType.Swap];
       case 'OTC.place_order':
       case 'OTC.cancel_order':
-        return [TraceEntityType.OTC_ORDER_ACTION];
+        return [TraceEntityType.OtcOrderEvent];
       case 'OTC.fill_order':
       case 'OTC.partial_fill_order':
-        return [TraceEntityType.OTC_ORDER_ACTION, TraceEntityType.SWAP];
+        return [TraceEntityType.OtcOrderEvent, TraceEntityType.Swap];
       case 'DCA.schedule':
       case 'DCA.terminate':
-        return [TraceEntityType.DCA_SCHEDULE];
+        return [TraceEntityType.DcaSchedule];
     }
 
     return null;
@@ -492,31 +511,31 @@ export class ChainActivityTraceManager {
       case EventName.Stableswap_BuyExecuted:
       case EventName.Omnipool_SellExecuted:
       case EventName.Omnipool_BuyExecuted:
-        return [TraceEntityType.SWAP];
+        return [TraceEntityType.Swap];
       case EventName.Tokens_Transfer:
       case EventName.Balances_Transfer:
-        return [TraceEntityType.TRANSFER];
+        return [TraceEntityType.Transfer];
       case EventName.Stableswap_LiquidityAdded:
       case EventName.Stableswap_LiquidityRemoved:
-        return [TraceEntityType.STABLESWAP_LIQUIDITY_ACTION];
+        return [TraceEntityType.StableswapLiquidityEvent];
       case EventName.OTC_Placed:
       case EventName.OTC_Cancelled:
       case EventName.OTC_Filled:
       case EventName.OTC_PartiallyFilled:
-        return [TraceEntityType.OTC_ORDER_ACTION];
+        return [TraceEntityType.OtcOrderEvent];
       case EventName.DCA_Scheduled:
       case EventName.DCA_Completed:
       case EventName.DCA_Terminated:
-        return [TraceEntityType.DCA_SCHEDULE];
+        return [TraceEntityType.DcaSchedule];
       case EventName.DCA_ExecutionPlanned:
       case EventName.DCA_ExecutionStarted:
       case EventName.DCA_TradeExecuted:
       case EventName.DCA_TradeFailed:
-        return [TraceEntityType.DCA_SCHEDULE_EXECUTION_EVENT];
-      case EventName.DCA_RandomnessGenerationFailed:
-        return [TraceEntityType.DCA_RANDOMNESS_GENERATION_FAILED_ERROR];
-      case EventName.AmmSupport_Swapped:
-        return [TraceEntityType.SWAP];
+        return [TraceEntityType.DcaScheduleExecutionEvent];
+      // case EventName.DCA_RandomnessGenerationFailed:
+      //   return [TraceEntityType.DcaRandomnessGenerationFailedError];
+      case EventName.Broadcast_Swapped:
+        return [TraceEntityType.Swap];
     }
 
     return null;
@@ -535,14 +554,14 @@ export class ChainActivityTraceManager {
 
   static async getTraceIdByCallId(
     callId: string,
-    ctx: ProcessorContext<Store>
+    ctx: SqdProcessorContext<Store>
   ) {
     const { batchCalls, batchExtrinsics, batchEvents } = ctx.batchState.state;
     const traceId = batchCalls.get(callId)?.traceId;
 
     if (traceId) return traceId;
 
-    const savedCall = await ctx.store.findOne(CallEntity, {
+    const savedCall = await ctx.store.findOne(Call, {
       where: {
         id: callId,
       },
@@ -557,7 +576,7 @@ export class ChainActivityTraceManager {
 
   static async getTraceIdByEventId(
     eventId: string,
-    ctx: ProcessorContext<Store>
+    ctx: SqdProcessorContext<Store>
   ) {
     const { batchEvents } = ctx.batchState.state;
     const traceId = batchEvents.get(eventId)!.traceId;
@@ -575,7 +594,7 @@ export class ChainActivityTraceManager {
     return /trace-id:\/\/context:call/.test(maybeId);
   }
 
-  static async saveActivityTraceEntities(ctx: ProcessorContext<Store>) {
+  static async saveActivityTraceEntities(ctx: SqdProcessorContext<Store>) {
     const state = ctx.batchState.state;
 
     await ctx.store.upsert([...state.batchBlocks.values()].reverse());
@@ -600,7 +619,7 @@ export class ChainActivityTraceManager {
     id: string;
     fetchFromDb?: boolean;
     relations?: FindOptionsRelations<ChainActivityTrace>;
-    ctx: ProcessorContext<Store>;
+    ctx: SqdProcessorContext<Store>;
   }) {
     const batchState = ctx.batchState.state;
 
@@ -626,7 +645,7 @@ export class ChainActivityTraceManager {
     ids: string[];
     fetchFromDb?: boolean;
     relations?: FindOptionsRelations<ChainActivityTrace>;
-    ctx: ProcessorContext<Store>;
+    ctx: SqdProcessorContext<Store>;
   }) {
     const callTraceId = ids.find((id) => this.isCallTraceId(id));
     const eventTraceId = ids.find((id) => this.isEventTraceId(id));
@@ -655,7 +674,7 @@ export class ChainActivityTraceManager {
   }: {
     traceId: string;
     operationId: string;
-    ctx: ProcessorContext<Store>;
+    ctx: SqdProcessorContext<Store>;
   }) {
     const chainActivityTraceId = this.getTraceIdRoot(traceId);
 

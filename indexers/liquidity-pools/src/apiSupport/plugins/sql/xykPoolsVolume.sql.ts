@@ -16,7 +16,7 @@ export const aggregateXykPoolVolumesByBlocksRange = `
             para_chain_block_height,
             ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY para_chain_block_height ASC) AS rank
         FROM 
-            xyk_pool_historical_volume
+            xykpool_historical_volume
         WHERE 
             pool_id = ANY($1)
         AND 
@@ -41,7 +41,7 @@ export const aggregateXykPoolVolumesByBlocksRange = `
             para_chain_block_height,
             ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY para_chain_block_height DESC) AS rank
         FROM 
-            xyk_pool_historical_volume
+            xykpool_historical_volume
         WHERE 
             pool_id = ANY($1)
         AND 
@@ -72,7 +72,7 @@ export const getAssetIdsByPoolIds = `
       asset_a_id, 
       asset_b_id 
   FROM 
-      xyk_pool 
+      xykpool 
   WHERE 
       id = ANY($1);
 `;

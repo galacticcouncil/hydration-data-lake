@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   AccountBalances as AccountBalancesGql,
@@ -15,7 +15,7 @@ import {
   OmnipoolAssetDataOrderBy,
   OmnipoolAssetDatum,
   OmnipoolAssetDatumFilter,
-  Stablepool as StablepoolGql,
+  Stableswap as StablepoolGql,
   StablepoolFilter,
   StablepoolsOrderBy,
   Xykpool as XykPoolGlq,
@@ -60,7 +60,7 @@ export type BatchStorageStateSectionNode<T> = T extends ProcessingPallets.XYK
         : never;
 
 export class StorageDictionaryManager extends QueriesHelper {
-  protected batchCtx: ProcessorContext<Store>;
+  protected batchCtx: SqdProcessorContext<Store>;
 
   batchStorageState: Map<
     ProcessingPallets,
@@ -72,12 +72,12 @@ export class StorageDictionaryManager extends QueriesHelper {
     [ProcessingPallets.STABLESWAP, new Map()],
   ]);
 
-  constructor({ batchCtx }: { batchCtx: ProcessorContext<Store> }) {
+  constructor({ batchCtx }: { batchCtx: SqdProcessorContext<Store> }) {
     super({ batchCtx });
     this.batchCtx = batchCtx;
   }
 
-  setBatchContext(batchCtx: ProcessorContext<Store>) {
+  setBatchContext(batchCtx: SqdProcessorContext<Store>) {
     this.batchCtx = batchCtx;
   }
 
@@ -109,18 +109,18 @@ export class StorageDictionaryManager extends QueriesHelper {
       offset,
     }: PaginationConfig) => {
       let filter: InputMaybe<LbpPoolFilter> = { or: [] };
-      const lbpPoolAssetIdsForStoragePrefetch =
-        this.batchCtx.batchState.state.lbpPoolAssetIdsForStoragePrefetch;
+      const lbppoolAssetIdsForStoragePrefetch =
+        this.batchCtx.batchState.state.lbppoolAssetIdsForStoragePrefetch;
 
-      if (lbpPoolAssetIdsForStoragePrefetch.size === 0)
+      if (lbppoolAssetIdsForStoragePrefetch.size === 0)
         return {
           data: [],
           totalCount: 0,
         };
 
-      if (lbpPoolAssetIdsForStoragePrefetch.size > 2) {
+      if (lbppoolAssetIdsForStoragePrefetch.size > 2) {
         const filterParams = this.getGenericFilterParams<string>(
-          lbpPoolAssetIdsForStoragePrefetch
+          lbppoolAssetIdsForStoragePrefetch
         );
         filter = {
           or: [...filterParams.ids.values()]
@@ -164,7 +164,7 @@ export class StorageDictionaryManager extends QueriesHelper {
             .flat(),
         };
       } else {
-        lbpPoolAssetIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
+        lbppoolAssetIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
           poolIds.ids.forEach((idsPair) => {
             const [assetA, assetB] = idsPair.split('-');
             filter!.or!.push(
@@ -358,18 +358,18 @@ export class StorageDictionaryManager extends QueriesHelper {
       offset,
     }: PaginationConfig) => {
       let filter: InputMaybe<StablepoolFilter> = { or: [] };
-      const stablepoolIdsForStoragePrefetch =
-        this.batchCtx.batchState.state.stablepoolIdsForStoragePrefetch;
+      const stableswapIdsForStoragePrefetch =
+        this.batchCtx.batchState.state.stableswapIdsForStoragePrefetch;
 
-      if (stablepoolIdsForStoragePrefetch.size === 0)
+      if (stableswapIdsForStoragePrefetch.size === 0)
         return {
           data: [],
           totalCount: 0,
         };
 
-      if (stablepoolIdsForStoragePrefetch.size > 30) {
+      if (stableswapIdsForStoragePrefetch.size > 30) {
         const filterParams = this.getGenericFilterParams<number>(
-          stablepoolIdsForStoragePrefetch
+          stableswapIdsForStoragePrefetch
         );
         filter = {
           poolId: {
@@ -390,7 +390,7 @@ export class StorageDictionaryManager extends QueriesHelper {
           ],
         };
       } else {
-        stablepoolIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
+        stableswapIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
           filter!.or!.push({
             paraChainBlockHeight: { equalTo: blockNumber },
             poolId: { in: [...poolIds.ids.values()] },
@@ -425,7 +425,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     const allLbpPoolStorageFetchPromise = async () => {
       if (
         !this.batchCtx.appConfig.PROCESS_LBP_POOLS ||
-        this.batchCtx.batchState.state.lbpPoolAssetIdsForStoragePrefetch
+        this.batchCtx.batchState.state.lbppoolAssetIdsForStoragePrefetch
           .size === 0
       )
         return [];
@@ -479,7 +479,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     const allStablepoolStorageFetchPromise = async () => {
       if (
         !this.batchCtx.appConfig.PROCESS_STABLEPOOLS ||
-        this.batchCtx.batchState.state.stablepoolIdsForStoragePrefetch.size ===
+        this.batchCtx.batchState.state.stableswapIdsForStoragePrefetch.size ===
           0
       )
         return [];

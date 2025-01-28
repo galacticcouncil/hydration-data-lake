@@ -5,9 +5,6 @@ import { CallOriginPartsDecorated, CallOriginRaw, NodeEnv } from './types';
 import { join } from 'path';
 import { hexToString } from '@polkadot/util';
 import v8 from 'v8';
-import { SwapFillerType } from '../model';
-import { ProcessorContext } from '../processor';
-import { Store } from '@subsquid/typeorm-store';
 
 const appConfig = AppConfig.getInstance();
 
@@ -115,5 +112,14 @@ export function isUnifiedEventsSupportSpecVersion(
   supportGenesisVersion: number
 ): boolean {
   if (!supportGenesisVersion || supportGenesisVersion < 0) return true;
-  return version < supportGenesisVersion;
+  return version >= supportGenesisVersion;
+}
+
+export function jsonToString(src: any, fallbackResult = null) {
+  if (!src) return fallbackResult;
+  try {
+    return JSON.stringify(src);
+  } catch (e) {
+    return fallbackResult;
+  }
 }

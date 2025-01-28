@@ -16,7 +16,7 @@ import {
   OmnipoolAsset,
   OmnipoolAssetHistoricalData,
   OmnipoolAssetHistoricalVolume,
-  Stablepool,
+  Stableswap,
   StableswapAsset,
   StableswapAssetHistoricalData,
   StableswapAssetHistoricalVolume,
@@ -26,8 +26,7 @@ import {
   StableswapLiquidityEvent,
   Swap,
   SwapFee,
-  SwapInputAssetBalance,
-  SwapOutputAssetBalance,
+  SwapAssetBalance,
   Transfer,
   Xykpool,
   XykpoolHistoricalData,
@@ -36,10 +35,9 @@ import {
   DcaSchedule,
   DcaScheduleOrderRouteHop,
   DcaScheduleExecution,
-  DcaRandomnessGenerationFailedError,
   DcaScheduleExecutionEvent,
   OtcOrder,
-  OtcOrderAction,
+  OtcOrderEvent,
   ChainActivityTraceRelation,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
@@ -69,15 +67,15 @@ export type BatchStatePayload = {
 
   swaps: Map<string, Swap>;
   swapFees: Map<string, SwapFee>;
-  swapInputs: Map<string, SwapInputAssetBalance>;
-  swapOutputs: Map<string, SwapOutputAssetBalance>;
+  swapInputs: Map<string, SwapAssetBalance>;
+  swapOutputs: Map<string, SwapAssetBalance>;
   swapFillerContexts: Map<string, SwapFillerContextDetails>;
 
   lbpPoolIdsToSave: Set<string>;
   lbpAllBatchPools: Map<string, Lbppool>;
   lbpPoolVolumes: Map<string, LbppoolHistoricalVolume>;
   lbpPoolHistoricalPrices: Map<string, LbppoolHistoricalPrice>;
-  lbpPoolAssetIdsForStoragePrefetch: Map<
+  lbppoolAssetIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<string> } // ... ids: Set<"assetAId-assetBId">
   >;
@@ -103,9 +101,9 @@ export type BatchStatePayload = {
   >;
   omnipoolAssetAllHistoricalData: OmnipoolAssetHistoricalData[];
 
-  stablepoolIdsToSave: Set<string>;
-  stablepoolAssetsAllBatch: Map<number, StableswapAsset>;
-  stablepoolAllBatchPools: Map<string, Stablepool>;
+  stableswapIdsToSave: Set<string>;
+  stableswapAssetsAllBatch: Map<number, StableswapAsset>;
+  stableswapAllBatchPools: Map<string, Stableswap>;
   stablepoolVolumeCollections: Map<string, StableswapHistoricalVolume>;
   stablepoolAssetVolumes: Map<string, StableswapAssetHistoricalVolume>;
   stablepoolAssetVolumeIdsToSave: Set<string>;
@@ -117,7 +115,7 @@ export type BatchStatePayload = {
 
   stablepoolAllHistoricalData: Map<string, StableswapHistoricalData>;
   stablepoolAssetsAllHistoricalData: Map<string, StableswapAssetHistoricalData>;
-  stablepoolIdsForStoragePrefetch: Map<
+  stableswapIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<number> }
   >;
@@ -126,13 +124,9 @@ export type BatchStatePayload = {
   dcaScheduleOrderRoutes: Map<string, DcaScheduleOrderRouteHop>;
   dcaScheduleExecutions: Map<string, DcaScheduleExecution>;
   dcaScheduleExecutionActions: Map<string, DcaScheduleExecutionEvent>;
-  dcaRandomnessGenerationFailedErrors: Map<
-    string,
-    DcaRandomnessGenerationFailedError
-  >;
 
   otcOrders: Map<string, OtcOrder>;
-  otcOrderActions: Map<string, OtcOrderAction>;
+  otcOrderEvents: Map<string, OtcOrderEvent>;
 };
 
 export class BatchState {
@@ -165,7 +159,7 @@ export class BatchState {
     lbpAllBatchPools: new Map(),
     lbpPoolVolumes: new Map(),
     lbpPoolHistoricalPrices: new Map(),
-    lbpPoolAssetIdsForStoragePrefetch: new Map(),
+    lbppoolAssetIdsForStoragePrefetch: new Map(),
     lbpPoolAllHistoricalData: [],
 
     xykPoolIdsToSave: new Set(),
@@ -182,9 +176,9 @@ export class BatchState {
     omnipoolAssetIdsForStoragePrefetch: new Map(),
     omnipoolAssetAllHistoricalData: [],
 
-    stablepoolIdsToSave: new Set(),
-    stablepoolAllBatchPools: new Map(),
-    stablepoolAssetsAllBatch: new Map(),
+    stableswapIdsToSave: new Set(),
+    stableswapAllBatchPools: new Map(),
+    stableswapAssetsAllBatch: new Map(),
     stablepoolAssetVolumes: new Map(),
     stablepoolAssetVolumeIdsToSave: new Set(),
     stablepoolVolumeCollections: new Map(),
@@ -192,15 +186,24 @@ export class BatchState {
     stablepoolBatchLiquidityActions: new Map(),
     stablepoolAllHistoricalData: new Map(),
     stablepoolAssetsAllHistoricalData: new Map(),
-    stablepoolIdsForStoragePrefetch: new Map(),
+    stableswapIdsForStoragePrefetch: new Map(),
 
     dcaSchedules: new Map(),
     dcaScheduleOrderRoutes: new Map(),
     dcaScheduleExecutions: new Map(),
     dcaScheduleExecutionActions: new Map(),
-    dcaRandomnessGenerationFailedErrors: new Map(),
 
     otcOrders: new Map(),
-    otcOrderActions: new Map(),
+    otcOrderEvents: new Map(),
   };
+
+  getRelayChainBlockDataFromCache(paraBlockHeight: number): {
+    height: number;
+  } {
+    const blockData = this.state.relayChainInfo.get(paraBlockHeight);
+
+    return {
+      height: blockData?.relaychainBlockNumber ?? 0,
+    };
+  }
 }

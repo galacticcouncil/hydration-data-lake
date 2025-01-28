@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-paseo-pools
-slot: 202
+slot: 301
 description: Hydration Paseo pools indexer
 build:
 deploy:
@@ -22,6 +22,7 @@ deploy:
       GQL_PORT: 8080
       NODE_ENV: 'production'
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+      UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
 
       USE_STORAGE_DICTIONARY: false
       STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql'

@@ -1,21 +1,21 @@
-DROP FUNCTION IF EXISTS public.notify_xyk_pool_volume CASCADE;
+DROP FUNCTION IF EXISTS public.notify_xykpool_volume CASCADE;
 DROP FUNCTION IF EXISTS public.notify_omnipool_asset_volume CASCADE;
-DROP FUNCTION IF EXISTS public.notify_stablepool_volume CASCADE;
+DROP FUNCTION IF EXISTS public.notify_stableswap_volume CASCADE;
 
-CREATE FUNCTION public.notify_xyk_pool_volume ()
+CREATE FUNCTION public.notify_xykpool_volume ()
   RETURNS TRIGGER
   AS $$
 BEGIN
   CASE TG_OP
   WHEN 'INSERT' THEN
     PERFORM
-      public.notify ('state_changed', 'created', 'xyk_pool_historical_volume', NEW.id); RETURN NEW;
+      public.notify ('state_changed', 'created', 'xykpool_historical_volume', NEW.id); RETURN NEW;
   WHEN 'UPDATE' THEN
     PERFORM
-      public.notify ('state_changed', 'updated', 'xyk_pool_historical_volume', NEW.id); RETURN NEW;
+      public.notify ('state_changed', 'updated', 'xykpool_historical_volume', NEW.id); RETURN NEW;
   WHEN 'DELETE' THEN
     PERFORM
-      public.notify ('state_changed', 'deleted', 'xyk_pool_historical_volume', OLD.id); RETURN OLD;
+      public.notify ('state_changed', 'deleted', 'xykpool_historical_volume', OLD.id); RETURN OLD;
   END CASE;
 END
 $$ VOLATILE
@@ -42,37 +42,37 @@ $$ VOLATILE
 LANGUAGE plpgsql;
 
 
-CREATE FUNCTION public.notify_stablepool_volume ()
+CREATE FUNCTION public.notify_stableswap_volume ()
   RETURNS TRIGGER
   AS $$
 BEGIN
   CASE TG_OP
   WHEN 'INSERT' THEN
     PERFORM
-      public.notify ('state_changed', 'created', 'stablepool_historical_volume', NEW.id); RETURN NEW;
+      public.notify ('state_changed', 'created', 'stableswap_historical_volume', NEW.id); RETURN NEW;
   WHEN 'UPDATE' THEN
     PERFORM
-      public.notify ('state_changed', 'updated', 'stablepool_historical_volume', NEW.id); RETURN NEW;
+      public.notify ('state_changed', 'updated', 'stableswap_historical_volume', NEW.id); RETURN NEW;
   WHEN 'DELETE' THEN
     PERFORM
-      public.notify ('state_changed', 'deleted', 'stablepool_historical_volume', OLD.id); RETURN OLD;
+      public.notify ('state_changed', 'deleted', 'stableswap_historical_volume', OLD.id); RETURN OLD;
   END CASE;
 END
 $$ VOLATILE
 LANGUAGE plpgsql;
 
 
-CREATE TRIGGER _500_gql_update_xyk_pool_historical_volume
-  AFTER INSERT OR UPDATE OR DELETE ON public.xyk_pool_historical_volume
+CREATE TRIGGER _500_gql_update_xykpool_historical_volume
+  AFTER INSERT OR UPDATE OR DELETE ON public.xykpool_historical_volume
   FOR EACH ROW
-  EXECUTE PROCEDURE public.notify_xyk_pool_volume ();
+  EXECUTE PROCEDURE public.notify_xykpool_volume ();
 
 CREATE TRIGGER _500_gql_update_omnipool_asset_historical_volume
   AFTER INSERT OR UPDATE OR DELETE ON public.omnipool_asset_historical_volume
   FOR EACH ROW
   EXECUTE PROCEDURE public.notify_omnipool_asset_volume ();
 
-CREATE TRIGGER _500_gql_update_stablepool_historical_volume
-  AFTER INSERT OR UPDATE OR DELETE ON public.stablepool_historical_volume
+CREATE TRIGGER _500_gql_update_stableswap_historical_volume
+  AFTER INSERT OR UPDATE OR DELETE ON public.stableswap_historical_volume
   FOR EACH ROW
-  EXECUTE PROCEDURE public.notify_stablepool_volume ();
+  EXECUTE PROCEDURE public.notify_stableswap_volume ();

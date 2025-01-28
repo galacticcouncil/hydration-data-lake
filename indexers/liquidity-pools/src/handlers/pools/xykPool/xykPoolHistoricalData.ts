@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
@@ -6,7 +6,7 @@ import { XykpoolHistoricalData } from '../../../model';
 import { getOrCreateXykPool } from './xykPool';
 
 export async function handleXykPoolHistoricalData(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (!ctx.appConfig.PROCESS_XYK_POOLS) return;
@@ -59,6 +59,7 @@ export async function handleXykPoolHistoricalData(
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,
           paraChainBlockHeight: blockHeader.height,
+          block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
         });
 
         return poolHistoricalDataEntity;

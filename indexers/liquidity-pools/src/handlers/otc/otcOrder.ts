@@ -1,7 +1,7 @@
-import { Block, ProcessorContext } from '../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { getAsset } from '../assets/assetRegistry';
-import { OtcOrder, OtcOrderActionType, OtcOrderStatus } from '../../model';
+import { OtcOrder, OtcOrderEventName, OtcOrderStatus } from '../../model';
 import { getAccount } from '../accounts';
 import {
   OtcOrderCancelledData,
@@ -11,15 +11,15 @@ import { OtcOrderPlacedEventParams } from '../../parsers/types/events';
 import { FindOptionsRelations } from 'typeorm';
 import parsers from '../../parsers';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import { getNewOrderAction } from './otcOrderAction';
+import { getNewOrderEvent } from './otcOrderAction';
 
 export async function createOtcOrder({
   ctx,
   blockHeader,
   orderDetails,
 }: {
-  ctx: ProcessorContext<Store>;
-  blockHeader: Block;
+  ctx: SqdProcessorContext<Store>;
+  blockHeader: SqdBlock;
   orderDetails: OtcOrderPlacedEventParams & { ownerAddress: string };
 }) {
   const {
@@ -58,11 +58,11 @@ export async function createOtcOrder({
     amountIn: amountIn,
     amountOut: amountOut,
     partiallyFillable,
-    status: OtcOrderStatus.OPEN,
-    createdAtParaBlockHeight: blockHeader.height,
-    createdAtRelayBlockHeight:
-      ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-        ?.relaychainBlockNumber ?? 0,
+    status: OtcOrderStatus.Open,
+    paraChainBlockHeight: blockHeader.height,
+    relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      blockHeader.height
+    ).height,
   });
 
   return newOrder;
@@ -75,11 +75,11 @@ export async function getOtcOrder({
     owner: true,
     assetIn: true,
     assetOut: true,
-    actions: true,
+    events: true,
   },
   fetchFromDb = true,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   id: string;
   fetchFromDb?: boolean;
   relations?: FindOptionsRelations<OtcOrder>;
@@ -103,7 +103,7 @@ export async function getOtcOrder({
 }
 
 export async function handleOtcOrderPlaced(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: OtcOrderPlacedData
 ) {
   const {
@@ -129,10 +129,10 @@ export async function handleOtcOrderPlaced(
 
   if (!newOrder) return;
 
-  const newOrderAction = getNewOrderAction({
+  const newOrderEvent = getNewOrderEvent({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: newOrder,
-    kind: OtcOrderActionType.CREATED,
+    eventName: OtcOrderEventName.Created,
     paraChainBlockHeight: eventMetadata.blockHeader.height,
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
@@ -140,7 +140,7 @@ export async function handleOtcOrderPlaced(
     eventIndex: eventMetadata.indexInBlock,
   });
 
-  newOrder.actions = [...(newOrder.actions || []), newOrderAction];
+  newOrder.events = [...(newOrder.events || []), newOrderEvent];
 
   newOrder.owner.otcOrders = [...(newOrder.owner.otcOrders || []), newOrder];
 
@@ -148,17 +148,17 @@ export async function handleOtcOrderPlaced(
 
   state.accounts.set(newOrder.owner.id, newOrder.owner);
   state.otcOrders.set(newOrder.id, newOrder);
-  state.otcOrderActions.set(newOrderAction.id, newOrderAction);
+  state.otcOrderEvents.set(newOrderEvent.id, newOrderEvent);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    traceIds: newOrderAction.traceIds,
+    traceIds: newOrderEvent.traceIds,
     participants: [newOrder.owner],
     ctx,
   });
 }
 
 export async function handleOtcOrderCancelled(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: OtcOrderCancelledData
 ) {
   const {
@@ -173,12 +173,12 @@ export async function handleOtcOrderCancelled(
 
   if (!orderEntity) return;
 
-  orderEntity.status = OtcOrderStatus.CANCELED;
+  orderEntity.status = OtcOrderStatus.Canceled;
 
-  const newOrderAction = getNewOrderAction({
+  const newOrderEvent = getNewOrderEvent({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: orderEntity,
-    kind: OtcOrderActionType.CANCELED,
+    eventName: OtcOrderEventName.Canceled,
     paraChainBlockHeight: eventMetadata.blockHeader.height,
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
@@ -186,15 +186,15 @@ export async function handleOtcOrderCancelled(
     eventIndex: eventMetadata.indexInBlock,
   });
 
-  orderEntity.actions = [...(orderEntity.actions || []), newOrderAction];
+  orderEntity.events = [...(orderEntity.events || []), newOrderEvent];
 
   const state = ctx.batchState.state;
 
   state.otcOrders.set(orderEntity.id, orderEntity);
-  state.otcOrderActions.set(newOrderAction.id, newOrderAction);
+  state.otcOrderEvents.set(newOrderEvent.id, newOrderEvent);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    traceIds: newOrderAction.traceIds,
+    traceIds: newOrderEvent.traceIds,
     participants: [orderEntity.owner],
     ctx,
   });

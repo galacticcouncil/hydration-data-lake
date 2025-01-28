@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
@@ -7,7 +7,7 @@ import { getAsset } from '../../assets/assetRegistry';
 import { getOrCreateOmnipoolAsset } from './omnipoolAssets';
 
 export async function handleOmnipoolAssetHistoricalData(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (!ctx.appConfig.PROCESS_OMNIPOOLS) return;
@@ -63,22 +63,25 @@ export async function handleOmnipoolAssetHistoricalData(
           asset,
           omnipoolAsset,
 
-          stateCap: assetStateStorageData.cap,
-          stateShares: assetStateStorageData.shares,
-          stateHubReserve: assetStateStorageData.hubReserve,
-          stateProtocolShares: assetStateStorageData.protocolShares,
+          assetCap: assetStateStorageData.cap,
+          assetShares: assetStateStorageData.shares,
+          assetHubReserve: assetStateStorageData.hubReserve,
+          assetProtocolShares: assetStateStorageData.protocolShares,
 
-          balanceFree: assetsBalances.free,
-          balanceFlags: assetsBalances.flags,
-          balanceFrozen: assetsBalances.frozen,
-          balanceReserved: assetsBalances.reserved,
-          balanceFeeFrozen: assetsBalances.feeFrozen,
-          balanceMiscFrozen: assetsBalances.miscFrozen,
+          freeBalance: assetsBalances.free,
 
-          relayChainBlockHeight:
-            ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-              ?.relaychainBlockNumber ?? 0,
+          // balanceFree: assetsBalances.free,
+          // balanceFlags: assetsBalances.flags,
+          // balanceFrozen: assetsBalances.frozen,
+          // balanceReserved: assetsBalances.reserved,
+          // balanceFeeFrozen: assetsBalances.feeFrozen,
+          // balanceMiscFrozen: assetsBalances.miscFrozen,
+
+          relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+            blockHeader.height
+          ).height,
           paraChainBlockHeight: blockHeader.height,
+          block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
         });
 
         return newEntity;

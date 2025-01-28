@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
@@ -12,6 +12,7 @@ import {
 } from '../../../parsers/batchBlocksParser/types';
 import {
   OmnipoolAsset,
+  SwapFeeDestinationType,
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
@@ -21,7 +22,7 @@ import { In } from 'typeorm';
 
 // TODO improve performance of the function
 export async function handleOmnioolOperations(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   await prefetchEntities(ctx, parsedEvents);
@@ -36,18 +37,24 @@ export async function handleOmnioolOperations(
     ...parsedEvents
       .getSectionByEventName(EventName.Omnipool_SellExecuted)
       .values(),
-  ]).filter((event) =>
-    isUnifiedEventsSupportSpecVersion(
-      event.eventData.metadata.blockHeader.specVersion,
-      ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
-    )
+  ]).filter(
+    (event) =>
+      !isUnifiedEventsSupportSpecVersion(
+        event.eventData.metadata.blockHeader.specVersion,
+        ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+      )
   )) {
+    // console.log(
+    //   'handleOmnioolOperations - ',
+    //   eventData.eventData.metadata.blockHeader.specVersion,
+    //   eventData.eventData.metadata.blockHeader.height
+    // );
     await omnipoolBuySellExecuted(ctx, eventData);
   }
 }
 
 export async function omnipoolBuySellExecuted(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: OmnipoolBuyExecutedData | OmnipoolSellExecutedData
 ) {
   const {
@@ -67,9 +74,8 @@ export async function omnipoolBuySellExecuted(
         ...(callData.traceId ? [callData.traceId] : []),
         eventMetadata.traceId,
       ],
+      swapIndex: 0,
       eventId: eventMetadata.id,
-      extrinsicHash: eventMetadata.extrinsic?.hash || '',
-      eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: ctx.appConfig.OMNIPOOL_ADDRESS,
       fillerType: SwapFillerType.Omnipool,
@@ -90,6 +96,7 @@ export async function omnipoolBuySellExecuted(
         {
           amount: eventParams.protocolFeeAmount,
           assetId: +ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
+          destinationType: SwapFeeDestinationType.Account,
           recipientId: ctx.appConfig.OMNIPOOL_ADDRESS,
         },
       ],
@@ -97,7 +104,6 @@ export async function omnipoolBuySellExecuted(
         eventMetadata.name === EventName.Omnipool_BuyExecuted
           ? TradeOperationType.ExactOut
           : TradeOperationType.ExactIn,
-      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
       paraChainBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
@@ -112,8 +118,7 @@ export async function omnipoolBuySellExecuted(
         eventMetadata.traceId,
       ],
       eventId: eventMetadata.id,
-      extrinsicHash: eventMetadata.extrinsic?.hash || '',
-      eventIndex: eventMetadata.indexInBlock,
+      swapIndex: 1,
       swapperAccountId: eventParams.who,
       fillerAccountId: ctx.appConfig.OMNIPOOL_ADDRESS,
       fillerType: SwapFillerType.Omnipool,
@@ -134,6 +139,7 @@ export async function omnipoolBuySellExecuted(
         {
           amount: eventParams.assetFeeAmount,
           assetId: eventParams.assetOut,
+          destinationType: SwapFeeDestinationType.Account,
           recipientId: ctx.appConfig.OMNIPOOL_ADDRESS,
         },
       ],
@@ -141,7 +147,6 @@ export async function omnipoolBuySellExecuted(
         eventMetadata.name === EventName.Omnipool_BuyExecuted
           ? TradeOperationType.ExactOut
           : TradeOperationType.ExactIn,
-      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
       paraChainBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
@@ -160,7 +165,7 @@ export async function omnipoolBuySellExecuted(
 }
 
 async function prefetchEntities(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   const omnipoolAssetsToPrefetch = [

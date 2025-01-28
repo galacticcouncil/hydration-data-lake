@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { Asset, HistoricalAssetVolume } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
@@ -8,7 +8,7 @@ import { assetRegistered, assetUpdated } from './assetRegistry';
 import { In } from 'typeorm';
 
 export async function handleAssetRegistry(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   for (const eventData of getOrderedListByBlockNumber([

@@ -1,4 +1,4 @@
-import { Block, ProcessorContext } from '../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { getAsset } from '../assets/assetRegistry';
 import {
@@ -6,7 +6,6 @@ import {
   DcaScheduleOrderRouteHop,
   DcaScheduleStatus,
   DispatchError,
-  DispatchErrorValue,
 } from '../../model';
 import { getAccount } from '../accounts';
 import {
@@ -26,8 +25,8 @@ export async function createDcaSchedule({
   traceIds,
   scheduleData: { id, startExecutionBlock, scheduleData },
 }: {
-  ctx: ProcessorContext<Store>;
-  blockHeader: Block;
+  ctx: SqdProcessorContext<Store>;
+  blockHeader: SqdBlock;
   traceIds?: string[];
   scheduleData: DcaScheduledEventParams & DcaScheduleCallArgs;
 }) {
@@ -75,8 +74,8 @@ export async function createDcaSchedule({
     minAmountOut: order.minAmountOut ?? null,
     orderType: order.kind,
     status: DcaScheduleStatus.Open,
-    createdAtParaBlockHeight: blockHeader.height,
-    createdAtRelayBlockHeight:
+    paraChainBlockHeight: blockHeader.height,
+    relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     traceIds: traceIds ?? [],
@@ -131,7 +130,7 @@ export async function getDcaSchedule({
   },
   fetchFromDb = false,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   id: string;
   fetchFromDb?: boolean;
   relations?: FindOptionsRelations<DcaSchedule>;
@@ -152,7 +151,7 @@ export async function getDcaSchedule({
 }
 
 export async function handleDcaScheduleCreated(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: DcaScheduledData
 ) {
   const {
@@ -196,7 +195,7 @@ export async function handleDcaScheduleCreated(
 }
 
 export async function handleDcaScheduleCompleted(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: DcaCompletedData
 ) {
   const {
@@ -219,7 +218,7 @@ export async function handleDcaScheduleCompleted(
 }
 
 export async function handleDcaScheduleTerminated(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: DcaTerminatedData
 ) {
   const {
@@ -238,12 +237,8 @@ export async function handleDcaScheduleTerminated(
   scheduleEntity.statusMemo = eventParams.error
     ? new DispatchError({
         kind: eventParams.error.__kind,
-        value: eventParams.error.value
-          ? new DispatchErrorValue({
-              index: eventParams.error.value?.index,
-              error: eventParams.error.value?.error,
-            })
-          : null,
+        index: eventParams.error.value?.index,
+        error: eventParams.error.value?.error,
       })
     : null;
 

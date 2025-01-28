@@ -1,7 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
 import * as marshal from "./marshal"
 import {OtcOrder} from "./otcOrder.model"
-import {OtcOrderEventType} from "./_otcOrderEventType"
+import {OtcOrderEventName} from "./_otcOrderEventName"
 import {Account} from "./account.model"
 import {Swap} from "./swap.model"
 import {Event} from "./event.model"
@@ -30,8 +30,8 @@ export class OtcOrderEvent {
   order!: OtcOrder
 
   @Index_()
-  @Column_("varchar", {length: 13, nullable: true})
-  eventType!: OtcOrderEventType | undefined | null
+  @Column_("varchar", {length: 15, nullable: true})
+  eventName!: OtcOrderEventName | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   amountIn!: bigint | undefined | null

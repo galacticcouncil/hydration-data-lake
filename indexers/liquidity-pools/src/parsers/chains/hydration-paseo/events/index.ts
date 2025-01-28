@@ -1,10 +1,12 @@
 import lbp from './lbp';
+import dca from './dca';
 import xyk from './xyk';
 import omnipool from './omnipool';
 import stableswap from './stableswap';
 import balances from './balances';
 import tokens from './tokens';
 import assetRegistry from './assetRegistry';
+import broadcast from './broadcast';
 import { EventParserMethods } from '../../../types/common';
 
 export default {
@@ -15,4 +17,6 @@ export default {
   tokens,
   balances,
   assetRegistry,
+  broadcast,
+  dca,
 } as EventParserMethods;

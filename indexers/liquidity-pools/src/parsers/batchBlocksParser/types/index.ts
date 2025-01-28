@@ -1,5 +1,5 @@
 import { EventName, RelayChainInfo } from '../../types/events';
-import { Block, Extrinsic } from '../../../processor';
+import { SqdBlock, SqdExtrinsic } from '../../../processor';
 import {
   AssetRegistryRegisteredData,
   AssetRegistryUpdatedData,
@@ -46,7 +46,7 @@ import {
   OtcOrderPartiallyFilledData,
   OtcOrderPlacedData,
 } from './otc';
-import { AmmSupportSwappedData } from './ammSupport';
+import { BroadcastSwappedData } from './broadcast';
 
 export * from './assetRegistry';
 export * from './lbp';
@@ -57,9 +57,15 @@ export * from './omnipool';
 export * from './stableswap';
 export * from './xyk';
 export * from './otc';
-export * from './ammSupport';
+export * from './broadcast';
 
 export type EventId = string;
+
+export type StoragePrefetchIdsGroup =
+  | 'lbppoolAssetIdsForStoragePrefetch'
+  | 'xykPoolIdsForStoragePrefetch'
+  | 'omnipoolAssetIdsForStoragePrefetch'
+  | 'stableswapIdsForStoragePrefetch';
 
 export type EventDataType<T> = T extends EventName.Tokens_Transfer
   ? TokensTransferData
@@ -125,8 +131,8 @@ export type EventDataType<T> = T extends EventName.Tokens_Transfer
                                                               ? OtcOrderFilledData
                                                               : T extends EventName.OTC_PartiallyFilled
                                                                 ? OtcOrderPartiallyFilledData
-                                                                : T extends EventName.AmmSupport_Swapped
-                                                                  ? AmmSupportSwappedData
+                                                                : T extends EventName.Broadcast_Swapped
+                                                                  ? BroadcastSwappedData
                                                                   : never;
 
 export type BatchBlocksParsedDataScope = Map<
@@ -167,7 +173,7 @@ export type ParsedEventsCallsData =
   | OtcOrderCancelledData
   | OtcOrderFilledData
   | OtcOrderPartiallyFilledData
-  | AmmSupportSwappedData;
+  | BroadcastSwappedData;
 
 export interface CallMetadata {
   name: string;
@@ -201,6 +207,6 @@ export interface EventMetadata {
   traceId: string;
   name: string;
   indexInBlock: number;
-  blockHeader: Block;
-  extrinsic?: Extrinsic;
+  blockHeader: SqdBlock;
+  extrinsic?: SqdExtrinsic;
 }

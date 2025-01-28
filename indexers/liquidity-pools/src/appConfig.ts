@@ -12,10 +12,6 @@ import {
   calls as hydrationPaseoCalls,
   events as hydrationPaseoEvents,
 } from './parsers/chains/hydration-paseo/typegenTypes';
-import {
-  calls as hydrationPaseoNextCalls,
-  events as hydrationPaseoNextEvents,
-} from './parsers/chains/hydration-paseo-next/typegenTypes';
 import { ChainName, NodeEnv } from './utils/types';
 
 dotenv.config({
@@ -25,8 +21,8 @@ dotenv.config({
     if (process.env.CHAIN === 'hydration') envFileName = '.env.hydration';
     if (process.env.CHAIN === 'hydration_paseo')
       envFileName = '.env.hydration-paseo';
-    if (process.env.CHAIN === 'hydration_paseo_next')
-      envFileName = '.env.hydration-paseo-next';
+    // if (process.env.CHAIN === 'hydration_paseo_next')
+    //   envFileName = '.env.hydration-paseo-next';
 
     switch (process.env.NODE_ENV as NodeEnv) {
       case NodeEnv.TEST:
@@ -177,9 +173,9 @@ export class AppConfig {
       case ChainName.hydration_paseo:
         events = hydrationPaseoEvents;
         break;
-      case ChainName.hydration_paseo_next:
-        events = hydrationPaseoNextEvents;
-        break;
+      // case ChainName.hydration_paseo_next:
+      //   events = hydrationPaseoNextEvents;
+      //   break;
       default:
         return [];
     }
@@ -189,11 +185,12 @@ export class AppConfig {
       events.tokens.transfer.name,
       events.assetRegistry.registered.name,
       events.assetRegistry.updated.name,
+      events.broadcast.swapped.name,
     ];
 
-    if (this.CHAIN === ChainName.hydration_paseo_next) {
-      eventsToListen.push(hydrationPaseoNextEvents.ammSupport.swapped.name);
-    }
+    // if (this.CHAIN === ChainName.hydration_paseo_next) {
+    //   eventsToListen.push(hydrationPaseoNextEvents.ammSupport.swapped.name);
+    // }
 
     if (this.PROCESS_LBP_POOLS) {
       eventsToListen.push(
@@ -273,9 +270,9 @@ export class AppConfig {
       case ChainName.hydration_paseo:
         calls = hydrationPaseoCalls;
         break;
-      case ChainName.hydration_paseo_next:
-        calls = hydrationPaseoNextCalls;
-        break;
+      // case ChainName.hydration_paseo_next:
+      //   calls = hydrationPaseoNextCalls;
+      //   break;
       default:
         return [];
     }

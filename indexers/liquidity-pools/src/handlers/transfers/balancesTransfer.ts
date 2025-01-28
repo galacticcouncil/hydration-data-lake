@@ -1,11 +1,11 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BalancesTransferData } from '../../parsers/batchBlocksParser/types';
 import { initTransfer } from './utils';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 
 export async function handleBalancesTransfer(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: BalancesTransferData
 ) {
   const {
@@ -13,20 +13,23 @@ export async function handleBalancesTransfer(
     callData,
   } = eventCallData;
 
-  const transferEntity = await initTransfer(ctx, {
-    id: eventMetadata.id,
-    traceIds: [
-      ...(callData.traceId ? [callData.traceId] : []),
-      eventMetadata.traceId,
-    ],
-    assetId: 0,
-    blockNumber: eventMetadata.blockHeader.height,
-    timestamp: new Date(eventMetadata.blockHeader.timestamp || 0),
-    extrinsicHash: eventMetadata.extrinsic?.hash,
-    from: eventParams.from,
-    to: eventParams.to,
-    amount: eventParams.amount,
-    fee: eventMetadata.extrinsic?.fee || BigInt(0),
+  const transferEntity = await initTransfer({
+    ctx,
+    blockHeader: eventMetadata.blockHeader,
+    data: {
+      id: eventMetadata.id,
+      traceIds: [
+        ...(callData.traceId ? [callData.traceId] : []),
+        eventMetadata.traceId,
+      ],
+      assetId: 0,
+      blockNumber: eventMetadata.blockHeader.height,
+      timestamp: new Date(eventMetadata.blockHeader.timestamp || 0),
+      from: eventParams.from,
+      to: eventParams.to,
+      amount: eventParams.amount,
+      fee: eventMetadata.extrinsic?.fee || BigInt(0),
+    },
   });
 
   ctx.batchState.state.transfers.set(transferEntity.id, transferEntity);

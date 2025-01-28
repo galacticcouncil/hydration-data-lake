@@ -2,6 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Swap} from "./swap.model"
 import {Asset} from "./asset.model"
+import {SwapFeeDestinationType} from "./_swapFeeDestinationType"
 import {Account} from "./account.model"
 
 @Entity_()
@@ -27,7 +28,10 @@ export class SwapFee {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   amount!: bigint
 
+  @Column_("varchar", {length: 7, nullable: false})
+  destinationType!: SwapFeeDestinationType
+
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})
-  recipient!: Account
+  recipient!: Account | undefined | null
 }

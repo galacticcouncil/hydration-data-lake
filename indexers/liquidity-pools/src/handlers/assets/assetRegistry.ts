@@ -1,4 +1,4 @@
-import { Block, ProcessorContext } from '../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   AssetRegistryRegisteredData,
@@ -14,10 +14,10 @@ export async function getAsset({
   ensure = false,
   blockHeader,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   id: string | number;
   ensure?: boolean;
-  blockHeader?: Block;
+  blockHeader?: SqdBlock;
 }): Promise<Asset | null> {
   const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
 
@@ -65,7 +65,7 @@ export async function getAsset({
   return newAsset;
 }
 
-export async function prefetchAllAssets(ctx: ProcessorContext<Store>) {
+export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAllBatch = new Map(
     (await ctx.store.find(Asset, { where: {} })).map((asset) => [
       asset.id,
@@ -74,7 +74,7 @@ export async function prefetchAllAssets(ctx: ProcessorContext<Store>) {
   );
 }
 
-export async function ensureNativeToken(ctx: ProcessorContext<Store>) {
+export async function ensureNativeToken(ctx: SqdProcessorContext<Store>) {
   let nativeToken = await getAsset({ ctx, id: 0 });
   if (nativeToken) return;
 
@@ -95,7 +95,7 @@ export async function ensureNativeToken(ctx: ProcessorContext<Store>) {
 }
 
 export async function assetRegistered(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: AssetRegistryRegisteredData
 ) {
   const {
@@ -131,7 +131,7 @@ export async function assetRegistered(
 }
 
 export async function assetUpdated(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: AssetRegistryUpdatedData
 ) {
   const {
@@ -172,12 +172,12 @@ export async function assetUpdated(
   state.assetIdsToSave.add(asset.id);
 }
 
-export async function actualiseAssets(ctx: ProcessorContext<Store>) {
+export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   if (!ctx.isHead) return;
 
   const latestActualisationPoint = (
     await ProcessorStatusManager.getInstance(ctx).getStatus()
-  ).assetsActualisedAtBlock;
+  ).assetsLastUpdatedAtBlock;
 
   if (ctx.blocks[0].header.height < latestActualisationPoint + 3000) return;
 
@@ -221,6 +221,6 @@ export async function actualiseAssets(ctx: ProcessorContext<Store>) {
   await ctx.store.upsert(assetsToUpdate);
 
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
-    assetsActualisedAtBlock: ctx.blocks[0].header.height,
+    assetsLastUpdatedAtBlock: ctx.blocks[0].header.height,
   });
 }

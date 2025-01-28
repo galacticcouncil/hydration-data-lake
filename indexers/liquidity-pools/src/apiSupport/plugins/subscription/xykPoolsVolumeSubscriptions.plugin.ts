@@ -1,14 +1,14 @@
 import { gql, makeExtendSchemaPlugin, Plugin, embed } from 'postgraphile';
 import {
   QueryResolverContext,
-  XykPoolHistoricalVolumeGqlResponse,
+  XykpoolHistoricalVolumeGqlResponse,
 } from '../../types';
 import { convertObjectPropsSnakeCaseToCamelCase } from '../../../utils/helpers';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type { QueryBuilder, SQL } from 'graphile-build-pg';
 
-function xykPoolHistoricalVolumeSelectGraphQLResult({
+function xykpoolHistoricalVolumeSelectGraphQLResult({
   sql,
   event,
   tableAlias,
@@ -79,12 +79,12 @@ function xykPoolHistoricalVolumeSelectGraphQLResult({
   );
 }
 
-export const XykPoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
+export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
   (build, options) => {
     const schemas: string[] = options.stateSchemas || ['squid_processor'];
     const { pgSql: sql } = build;
 
-    const xykPoolHistoricalVolumeSubscriptionFilter = (
+    const xykpoolHistoricalVolumeSubscriptionFilter = (
       event: any,
       args: any
     ) => {
@@ -102,15 +102,15 @@ export const XykPoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
 
     return {
       typeDefs: gql`
-        input XykPoolHistoricalVolumeSubscriptionFilter {
+        input XykpoolHistoricalVolumeSubscriptionFilter {
           poolIds: [String!]
         }
 
-        type XykPoolHistoricalVolumeSubscriptionPayload {
-          node: XykPoolHistoricalVolumeEntity
+        type XykpoolHistoricalVolumeSubscriptionPayload {
+          node: XykpoolHistoricalVolumeEntity
           event: String
         }
-        type XykPoolHistoricalVolumeEntity {
+        type XykpoolHistoricalVolumeEntity {
           id: String!
           poolId: String!
           assetAId: String!
@@ -133,18 +133,18 @@ export const XykPoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         extend type Subscription {
-          xykPoolHistoricalVolume(
-            filter: XykPoolHistoricalVolumeSubscriptionFilter
-          ): XykPoolHistoricalVolumeSubscriptionPayload
+          xykpoolHistoricalVolume(
+            filter: XykpoolHistoricalVolumeSubscriptionFilter
+          ): XykpoolHistoricalVolumeSubscriptionPayload
             @pgSubscription(
-              topic: "postgraphile:state_changed:xyk_pool_historical_volume"
-              filter: ${embed(xykPoolHistoricalVolumeSubscriptionFilter)}
+              topic: "postgraphile:state_changed:xykpool_historical_volume"
+              filter: ${embed(xykpoolHistoricalVolumeSubscriptionFilter)}
             )
         }
       `,
       resolvers: {
         Subscription: {
-          xykPoolHistoricalVolume: async (
+          xykpoolHistoricalVolume: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,
@@ -152,9 +152,9 @@ export const XykPoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
           ) => {
             const rows =
               await resolveInfo.graphile.selectGraphQLResultFromTable(
-                sql.fragment`public.xyk_pool_historical_volume`,
+                sql.fragment`public.xykpool_historical_volume`,
                 (tableAlias: SQL, sqlBuilder: QueryBuilder) => {
-                  xykPoolHistoricalVolumeSelectGraphQLResult({
+                  xykpoolHistoricalVolumeSelectGraphQLResult({
                     sql,
                     event,
                     tableAlias,
@@ -188,7 +188,7 @@ export const XykPoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
                 averagePrice: decoratedRow.averagePrice,
                 relayChainBlockHeight: decoratedRow.relayChainBlockHeight,
                 paraChainBlockHeight: decoratedRow.paraChainBlockHeight,
-              } as XykPoolHistoricalVolumeGqlResponse,
+              } as XykpoolHistoricalVolumeGqlResponse,
               event: event.__node__[0],
             };
           },

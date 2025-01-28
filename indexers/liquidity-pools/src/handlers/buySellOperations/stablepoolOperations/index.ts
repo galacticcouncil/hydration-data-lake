@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
@@ -12,51 +12,63 @@ import {
   StableswapLiquidityRemovedData,
   StableswapSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { SwapFillerType, TradeOperationType } from '../../../model';
+import {
+  SwapFeeDestinationType,
+  SwapFillerType,
+  TradeOperationType,
+} from '../../../model';
 import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
-import { getOrCreateStablepool } from '../../pools/stablepool/stablepool';
-import { stablepoolLiquidityAddedRemoved } from '../../pools/stablepool/liquidity';
+import { getOrCreateStableswap } from '../../pools/stableswap/stablepool';
+import { stablepoolLiquidityAddedRemoved } from '../../pools/stableswap/liquidity';
 import { handleSwap } from '../../swap/swap';
 
 export async function handleStablepoolOperations(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   /**
    * BuyExecuted as SellExecuted events must be processed sequentially in the same
    * flow to avoid wrong calculations of accumulated volumes.
    */
-  for (const eventData of getOrderedListByBlockNumber([
-    ...[
+  for (const eventData of getOrderedListByBlockNumber(
+    [
       ...parsedEvents
         .getSectionByEventName(EventName.Stableswap_BuyExecuted)
         .values(),
-    ].filter((event) =>
-      isUnifiedEventsSupportSpecVersion(
-        event.eventData.metadata.blockHeader.specVersion,
-        ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
-      )
-    ),
-    ...[
       ...parsedEvents
         .getSectionByEventName(EventName.Stableswap_SellExecuted)
         .values(),
-    ].filter((event) =>
-      isUnifiedEventsSupportSpecVersion(
-        event.eventData.metadata.blockHeader.specVersion,
-        ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
-      )
-    ),
-    ...parsedEvents
-      .getSectionByEventName(EventName.Stableswap_LiquidityAdded)
-      .values(),
-    ...parsedEvents
-      .getSectionByEventName(EventName.Stableswap_LiquidityRemoved)
-      .values(),
-  ])) {
+      ...parsedEvents
+        .getSectionByEventName(EventName.Stableswap_LiquidityAdded)
+        .values(),
+      ...parsedEvents
+        .getSectionByEventName(EventName.Stableswap_LiquidityRemoved)
+        .values(),
+    ].filter(
+      (event) =>
+        !isUnifiedEventsSupportSpecVersion(
+          event.eventData.metadata.blockHeader.specVersion,
+          ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+        )
+    )
+  )) {
+    // console.log(
+    //   'handleStablepoolOperations - ',
+    //   eventData.eventData.metadata.blockHeader.specVersion,
+    //   eventData.eventData.metadata.blockHeader.height
+    // );
     switch (eventData.eventData.name) {
       case EventName.Stableswap_LiquidityAdded:
       case EventName.Stableswap_LiquidityRemoved:
+        /**
+         * We need process Stablepool liquidity events together with sell/buy
+         * events, because before release of Broadcast.Swapped event, add/remove
+         * liquidity can be a part of omnipool trades. To avoid wrong volume
+         * calculations and total value aggregation, buy/sell and
+         * add/remove liquidity should be processed in the same sequence.
+         * After release of Broadcast.Swapped liquidity event are processing
+         * separately.
+         */
         await stablepoolLiquidityAddedRemoved(
           ctx,
           eventData as
@@ -83,7 +95,7 @@ export async function handleStablepoolOperations(
 }
 
 export async function stablepoolBuySellExecuted(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: StableswapBuyExecutedData | StableswapSellExecutedData
 ) {
   const {
@@ -93,7 +105,7 @@ export async function stablepoolBuySellExecuted(
 
   // let assetInEntity = await getAsset({ ctx, id: eventParams.assetIn });
   // let assetOutEntity = await getAsset({ ctx, id: eventParams.assetOut });
-  const pool = await getOrCreateStablepool({
+  const pool = await getOrCreateStableswap({
     ctx,
     poolId: eventParams.poolId,
     ensure: true,
@@ -101,7 +113,7 @@ export async function stablepoolBuySellExecuted(
   });
 
   if (!pool) {
-    console.log(`Stablepool with ID ${eventParams.poolId} has not been found`);
+    console.log(`Stableswap with ID ${eventParams.poolId} has not been found`);
     return;
   }
 
@@ -114,8 +126,6 @@ export async function stablepoolBuySellExecuted(
         eventMetadata.traceId,
       ],
       eventId: eventMetadata.id,
-      extrinsicHash: eventMetadata.extrinsic?.hash || '',
-      eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: pool.account.id,
       fillerType: SwapFillerType.Stableswap,
@@ -135,6 +145,7 @@ export async function stablepoolBuySellExecuted(
         {
           amount: eventParams.fee,
           assetId: eventParams.assetOut,
+          destinationType: SwapFeeDestinationType.Account,
           recipientId: pool.account.id,
         },
       ],
@@ -142,14 +153,13 @@ export async function stablepoolBuySellExecuted(
         eventMetadata.name === EventName.Stableswap_BuyExecuted
           ? TradeOperationType.ExactOut
           : TradeOperationType.ExactIn,
-      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
       paraChainBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });
 
-  const stablepoolAllBatchPools = ctx.batchState.state.stablepoolAllBatchPools;
-  stablepoolAllBatchPools.set(pool.id, pool);
+  const stableswapAllBatchPools = ctx.batchState.state.stableswapAllBatchPools;
+  stableswapAllBatchPools.set(pool.id, pool);
 
   await handleStablepoolVolumeUpdates({
     ctx,

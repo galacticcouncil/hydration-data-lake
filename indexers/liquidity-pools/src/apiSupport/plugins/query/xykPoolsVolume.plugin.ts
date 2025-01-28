@@ -4,7 +4,7 @@ import {
   aggregateXykPoolVolumesByBlocksRange,
   getAssetIdsByPoolIds,
 } from '../sql/xykPoolsVolume.sql';
-import { QueryResolverContext, XykPoolHistoricalVolumeRaw } from '../../types';
+import { QueryResolverContext, XykpoolHistoricalVolumeRaw } from '../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 
@@ -55,7 +55,7 @@ export async function handleQueryXykPoolHistoricalVolumesByPeriod(
   const decoratedNodes = new Map<string, XykPoolVolumeAggregated>(
     groupedResult.rows
       .map((item) => item.grouped_result.flat())
-      .map((group: Array<XykPoolHistoricalVolumeRaw>) => {
+      .map((group: Array<XykpoolHistoricalVolumeRaw>) => {
         const resp: XykPoolVolumeAggregated = {
           poolId: group[0].pool_id,
           assetAId: group[0].asset_a_id,
@@ -120,7 +120,7 @@ export async function handleQueryXykPoolHistoricalVolumesByPeriod(
   };
 }
 
-export const XykPoolsVolumePlugin: Plugin = makeExtendSchemaPlugin(
+export const XykpoolsVolumePlugin: Plugin = makeExtendSchemaPlugin(
   (build, options) => {
     const schemas: string[] = options.stateSchemas || ['squid_processor'];
 

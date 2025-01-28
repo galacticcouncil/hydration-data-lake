@@ -1,5 +1,5 @@
 import { events } from '../typegenTypes';
-import { Event } from '../../../../processor';
+import { SqdEvent } from '../../../../processor';
 import {
   DcaCompletedEventParams,
   DcaExecutionPlannedEventParams,
@@ -11,7 +11,7 @@ import {
 } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
-function parseScheduledParams(event: Event): DcaScheduledEventParams {
+function parseScheduledParams(event: SqdEvent): DcaScheduledEventParams {
   if (events.dca.scheduled.v160.is(event)) {
     const { id, who } = events.dca.scheduled.v160.decode(event);
     return {
@@ -33,7 +33,7 @@ function parseScheduledParams(event: Event): DcaScheduledEventParams {
 }
 
 function parseExecutionPlannedParams(
-  event: Event
+  event: SqdEvent
 ): DcaExecutionPlannedEventParams {
   if (events.dca.executionPlanned.v160.is(event)) {
     const {
@@ -51,7 +51,9 @@ function parseExecutionPlannedParams(
   throw new UnknownVersionError(event.name);
 }
 
-function parseTradeExecutedParams(event: Event): DcaTradeExecutedEventParams {
+function parseTradeExecutedParams(
+  event: SqdEvent
+): DcaTradeExecutedEventParams {
   if (events.dca.tradeExecuted.v160.is(event)) {
     const { id, who, amountIn, amountOut } =
       events.dca.tradeExecuted.v160.decode(event);
@@ -66,7 +68,7 @@ function parseTradeExecutedParams(event: Event): DcaTradeExecutedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-function parseTradeFailedParams(event: Event): DcaTradeFailedEventParams {
+function parseTradeFailedParams(event: SqdEvent): DcaTradeFailedEventParams {
   if (events.dca.tradeFailed.v160.is(event)) {
     const { id, who, error } = events.dca.tradeFailed.v160.decode(event);
     return {
@@ -89,7 +91,7 @@ function parseTradeFailedParams(event: Event): DcaTradeFailedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-function parseTerminatedParams(event: Event): DcaTerminatedEventParams {
+function parseTerminatedParams(event: SqdEvent): DcaTerminatedEventParams {
   if (events.dca.terminated.v160.is(event)) {
     const { id, who, error } = events.dca.terminated.v160.decode(event);
     return {
@@ -112,7 +114,7 @@ function parseTerminatedParams(event: Event): DcaTerminatedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-function parseCompletedParams(event: Event): DcaCompletedEventParams {
+function parseCompletedParams(event: SqdEvent): DcaCompletedEventParams {
   if (events.dca.completed.v160.is(event)) {
     const { id, who } = events.dca.completed.v160.decode(event);
     return {
@@ -125,7 +127,7 @@ function parseCompletedParams(event: Event): DcaCompletedEventParams {
 }
 
 function parseRandomnessGenerationFailedParams(
-  event: Event
+  event: SqdEvent
 ): DcaRandomnessGenerationFailedEventParams {
   if (events.dca.randomnessGenerationFailed.v160.is(event)) {
     const { block, error } =

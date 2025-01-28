@@ -1,10 +1,10 @@
-import { Call } from '../../../../processor';
+import { SqdCall } from '../../../../processor';
 import { RelaySystemSetValidationDataCallArgs } from '../../../types/calls';
 import { calls } from '../typegenTypes';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseSetValidationDataArgs(
-  call: Call
+  call: SqdCall
 ): RelaySystemSetValidationDataCallArgs {
   if (calls.parachainSystem.setValidationData.v100.is(call)) {
     const decodedData =

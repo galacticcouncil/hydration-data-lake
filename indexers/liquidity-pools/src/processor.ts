@@ -13,6 +13,8 @@ import { BatchState } from './utils/batchState';
 import { AppConfig } from './appConfig';
 const appConfig = AppConfig.getInstance();
 
+console.log('appConfig.RPC_URL', appConfig.RPC_URL);
+
 let processor = new SubstrateBatchProcessor()
   .setRpcEndpoint({
     // Set via .env for local runs or via secrets when deploying to Subsquid Cloud
@@ -49,6 +51,7 @@ let processor = new SubstrateBatchProcessor()
       call: true,
       calls: true,
       stack: true,
+      index: true,
     },
     block: {
       timestamp: true,
@@ -76,12 +79,15 @@ if (appConfig.GATEWAY_HYDRATION_HTTPS && !appConfig.IGNORE_ARCHIVE_DATA_SOURCE)
 
 export { processor };
 
-export type Fields = SubstrateBatchProcessorFields<typeof processor>;
-export type Block = BlockHeader<Fields>;
-export type Event = _Event<Fields>;
-export type Call = _Call<Fields>;
-export type Extrinsic = _Extrinsic<Fields>;
-export type ProcessorContext<Store> = DataHandlerContext<Store, Fields> & {
+export type SqdFields = SubstrateBatchProcessorFields<typeof processor>;
+export type SqdBlock = BlockHeader<SqdFields>;
+export type SqdEvent = _Event<SqdFields>;
+export type SqdCall = _Call<SqdFields>;
+export type SqdExtrinsic = _Extrinsic<SqdFields>;
+export type SqdProcessorContext<Store> = DataHandlerContext<
+  Store,
+  SqdFields
+> & {
   batchState: BatchState;
   appConfig: AppConfig;
 };

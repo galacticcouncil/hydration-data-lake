@@ -4,17 +4,17 @@ import {
   StableswapAssetHistoricalVolume,
   XykpoolHistoricalVolume,
 } from '../../model';
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 export { handleXykPoolVolumeUpdates, initXykPoolVolume } from './xykPoolVolume';
-export { handleLbpPoolVolumeUpdates, initLbpPoolVolume } from './lbpPoolVolume';
+export { handleLbppoolVolumeUpdates, initLbppoolVolume } from './lbppoolVolume';
 export {
   handleOmnipoolAssetVolumeUpdates,
   initOmnipoolAssetVolume,
 } from './omnipoolAssetVolume';
 
 export async function getOldLbpVolume(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   poolId: string
 ) {
   return await ctx.store.findOne(LbppoolHistoricalVolume, {
@@ -33,7 +33,7 @@ export async function getOldLbpVolume(
 }
 
 export async function getOldXykVolume(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   poolId: string
 ) {
   return await ctx.store.findOne(XykpoolHistoricalVolume, {
@@ -52,7 +52,7 @@ export async function getOldXykVolume(
 }
 
 export async function getOldOmnipoolAssetVolume(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   omnipoolAssetId: string
 ) {
   return await ctx.store.findOne(OmnipoolAssetHistoricalVolume, {
@@ -69,7 +69,7 @@ export async function getOldOmnipoolAssetVolume(
 }
 
 export async function getOldStablepoolAssetVolume(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   assetId: string | number,
   poolId: string
 ) {

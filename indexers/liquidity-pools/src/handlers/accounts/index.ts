@@ -1,5 +1,5 @@
 import { Account, AccountType } from '../../model';
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { FindOptionsRelations } from 'typeorm';
 
@@ -12,7 +12,7 @@ export async function getAccount({
     dcaSchedules: true,
   },
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   id: string;
   accountType?: AccountType;
   ensureAccountType?: boolean;
@@ -45,6 +45,6 @@ export async function getAccount({
   return acc;
 }
 
-export async function saveAllBatchAccounts(ctx: ProcessorContext<Store>) {
+export async function saveAllBatchAccounts(ctx: SqdProcessorContext<Store>) {
   await ctx.store.save([...ctx.batchState.state.accounts.values()]);
 }

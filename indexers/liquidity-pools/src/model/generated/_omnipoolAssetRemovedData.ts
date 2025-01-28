@@ -2,34 +2,34 @@ import assert from "assert"
 import * as marshal from "./marshal"
 
 export class OmnipoolAssetRemovedData {
-  private _removedAmount!: bigint | undefined | null
-  private _hubWithdrawn!: bigint | undefined | null
+  private _removedAmount!: string | undefined | null
+  private _hubWithdrawn!: string | undefined | null
   private _paraChainBlockHeight!: number
   private _relayChainBlockHeight!: number
 
   constructor(props?: Partial<Omit<OmnipoolAssetRemovedData, 'toJSON'>>, json?: any) {
     Object.assign(this, props)
     if (json != null) {
-      this._removedAmount = json.removedAmount == null ? undefined : marshal.bigint.fromJSON(json.removedAmount)
-      this._hubWithdrawn = json.hubWithdrawn == null ? undefined : marshal.bigint.fromJSON(json.hubWithdrawn)
+      this._removedAmount = json.removedAmount == null ? undefined : marshal.string.fromJSON(json.removedAmount)
+      this._hubWithdrawn = json.hubWithdrawn == null ? undefined : marshal.string.fromJSON(json.hubWithdrawn)
       this._paraChainBlockHeight = marshal.int.fromJSON(json.paraChainBlockHeight)
       this._relayChainBlockHeight = marshal.int.fromJSON(json.relayChainBlockHeight)
     }
   }
 
-  get removedAmount(): bigint | undefined | null {
+  get removedAmount(): string | undefined | null {
     return this._removedAmount
   }
 
-  set removedAmount(value: bigint | undefined | null) {
+  set removedAmount(value: string | undefined | null) {
     this._removedAmount = value
   }
 
-  get hubWithdrawn(): bigint | undefined | null {
+  get hubWithdrawn(): string | undefined | null {
     return this._hubWithdrawn
   }
 
-  set hubWithdrawn(value: bigint | undefined | null) {
+  set hubWithdrawn(value: string | undefined | null) {
     this._hubWithdrawn = value
   }
 
@@ -53,8 +53,8 @@ export class OmnipoolAssetRemovedData {
 
   toJSON(): object {
     return {
-      removedAmount: this.removedAmount == null ? undefined : marshal.bigint.toJSON(this.removedAmount),
-      hubWithdrawn: this.hubWithdrawn == null ? undefined : marshal.bigint.toJSON(this.hubWithdrawn),
+      removedAmount: this.removedAmount,
+      hubWithdrawn: this.hubWithdrawn,
       paraChainBlockHeight: this.paraChainBlockHeight,
       relayChainBlockHeight: this.relayChainBlockHeight,
     }

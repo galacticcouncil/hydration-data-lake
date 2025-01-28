@@ -1,15 +1,16 @@
 import { events } from '../typegenTypes';
-import { Event } from '../../../../processor';
+import { SqdEvent } from '../../../../processor';
 import {
   StableswapBuyExecutedEventParams,
   StableswapLiquidityAddedEventParams,
   StableswapLiquidityRemovedEventParams,
-  StableswapPoolCreatedEventParams, StableswapSellExecutedEventParams,
+  StableswapPoolCreatedEventParams,
+  StableswapSellExecutedEventParams,
 } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parsePoolCreatedParams(
-  event: Event
+  event: SqdEvent
 ): StableswapPoolCreatedEventParams {
   if (events.stableswap.poolCreated.v183.is(event)) {
     return events.stableswap.poolCreated.v183.decode(event);
@@ -19,7 +20,7 @@ function parsePoolCreatedParams(
 }
 
 function parseLiquidityAddedParams(
-  event: Event
+  event: SqdEvent
 ): StableswapLiquidityAddedEventParams {
   if (events.stableswap.liquidityAdded.v183.is(event)) {
     return events.stableswap.liquidityAdded.v183.decode(event);
@@ -29,7 +30,7 @@ function parseLiquidityAddedParams(
 }
 
 function parseLiquidityRemovedParams(
-  event: Event
+  event: SqdEvent
 ): StableswapLiquidityRemovedEventParams {
   if (events.stableswap.liquidityRemoved.v183.is(event)) {
     return events.stableswap.liquidityRemoved.v183.decode(event);
@@ -39,7 +40,7 @@ function parseLiquidityRemovedParams(
 }
 
 function parseBuyExecutedParams(
-  event: Event
+  event: SqdEvent
 ): StableswapBuyExecutedEventParams {
   if (events.stableswap.buyExecuted.v183.is(event)) {
     return events.stableswap.buyExecuted.v183.decode(event);
@@ -49,7 +50,7 @@ function parseBuyExecutedParams(
 }
 
 function parseSellExecutedParams(
-  event: Event
+  event: SqdEvent
 ): StableswapSellExecutedEventParams {
   if (events.stableswap.sellExecuted.v183.is(event)) {
     return events.stableswap.sellExecuted.v183.decode(event);

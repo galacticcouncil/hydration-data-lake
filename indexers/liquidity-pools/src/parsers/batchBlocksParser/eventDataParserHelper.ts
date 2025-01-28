@@ -1,6 +1,6 @@
 import { RelayChainInfo } from '../types/events';
-import { CallMetadata, EventMetadata } from './types';
-import { Call, Event, ProcessorContext } from '../../processor';
+import { CallMetadata, EventMetadata, StoragePrefetchIdsGroup } from './types';
+import { SqdCall, SqdEvent } from '../../processor';
 import parsers from '../index';
 import { BatchStatePayload } from '../../utils/batchState';
 import { calls, events } from '../chains/hydration/typegenTypes'; // TODO fix for different CHAIN env value
@@ -9,8 +9,8 @@ export class EventDataParserHelper {
   private readonly relayChainInfo: RelayChainInfo;
   private readonly callMetadata: CallMetadata;
   private readonly eventMetadata: EventMetadata;
-  private readonly event: Event;
-  private readonly call?: Call | null;
+  private readonly event: SqdEvent;
+  private readonly call?: SqdCall | null;
   private readonly batchState: BatchStatePayload;
 
   constructor({
@@ -22,8 +22,8 @@ export class EventDataParserHelper {
     batchState,
   }: {
     batchState: BatchStatePayload;
-    call?: Call | null;
-    event: Event;
+    call?: SqdCall | null;
+    event: SqdEvent;
     relayChainInfo: RelayChainInfo;
     callMetadata: CallMetadata;
     eventMetadata: EventMetadata;
@@ -37,11 +37,7 @@ export class EventDataParserHelper {
   }
 
   addIdsForStoragePrefetch(
-    key:
-      | 'lbpPoolAssetIdsForStoragePrefetch'
-      | 'xykPoolIdsForStoragePrefetch'
-      | 'omnipoolAssetIdsForStoragePrefetch'
-      | 'stablepoolIdsForStoragePrefetch',
+    key: StoragePrefetchIdsGroup,
     value: any // TODO fix type
   ) {
     if (!this.batchState[key].has(this.event.block.height)) {
@@ -83,7 +79,7 @@ export class EventDataParserHelper {
    * ==== LBP Poll Updated ====
    */
   parseLbpPoolUpdatedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
     const eventParams = parsers.events.lbp.parsePoolUpdatedParams(event);
     return {
       relayChainInfo,
@@ -102,7 +98,7 @@ export class EventDataParserHelper {
    * ==== LBP Buy Executed ====
    */
   parseLbpBuyExecutedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
     const eventParams = parsers.events.lbp.parseBuyExecutedParams(event);
     return {
       relayChainInfo,
@@ -704,11 +700,11 @@ export class EventDataParserHelper {
   }
 
   /**
-   * ==== AmmSupport Swapped ====
+   * ==== Broadcast Swapped ====
    */
-  parseAmmSupportSwappedData() {
+  parseBroadcastSwappedData() {
     const { relayChainInfo, eventMetadata, callMetadata, event } = this;
-    const eventParams = parsers.events.ammSupport.parseSwappedParams(event);
+    const eventParams = parsers.events.broadcast.parseSwappedParams(event);
 
     return {
       relayChainInfo,

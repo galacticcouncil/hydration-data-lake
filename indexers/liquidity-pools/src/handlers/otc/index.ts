@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
@@ -8,11 +8,11 @@ import {
   handleOtcOrderFilled,
   handleOtcOrderPartiallyFilled,
 } from './otcOrderAction';
-import { OtcOrder, OtcOrderAction } from '../../model';
+import { OtcOrder, OtcOrderEvent } from '../../model';
 import { In } from 'typeorm';
 
 export async function handleOtcOrders(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (!ctx.appConfig.PROCESS_OTC) return;
@@ -43,12 +43,12 @@ export async function handleOtcOrders(
   }
 
   await ctx.store.save([...ctx.batchState.state.otcOrders.values()]);
-  await ctx.store.save([...ctx.batchState.state.otcOrderActions.values()]);
+  await ctx.store.save([...ctx.batchState.state.otcOrderEvents.values()]);
   await ctx.store.save([...ctx.batchState.state.swaps.values()]);
 }
 
 async function prefetchEntities(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   const orderIds = [
@@ -76,13 +76,13 @@ async function prefetchEntities(
       owner: true,
       assetIn: true,
       assetOut: true,
-      actions: true,
+      events: true,
     },
   });
 
   const state = ctx.batchState.state;
 
-  let prefetchedOrderActions: OtcOrderAction[] = [];
+  let prefetchedOrderActions: OtcOrderEvent[] = [];
 
   if (prefetchedOrders.length > 0) {
     state.otcOrders = new Map(
@@ -93,13 +93,13 @@ async function prefetchEntities(
     );
 
     prefetchedOrderActions = prefetchedOrders
-      .map((order) => order.actions)
+      .map((order) => order.events)
       .flat();
   }
 
   if (prefetchedOrderActions.length > 0)
-    state.otcOrderActions = new Map(
-      [...state.otcOrderActions.values(), ...prefetchedOrderActions].map(
+    state.otcOrderEvents = new Map(
+      [...state.otcOrderEvents.values(), ...prefetchedOrderActions].map(
         (item) => [item.id, item]
       )
     );

@@ -1,5 +1,5 @@
 import { events } from '../typegenTypes';
-import { Event } from '../../../../processor';
+import { SqdEvent } from '../../../../processor';
 import {
   LbpBuyExecutedEventParams,
   LbpPoolCreatedEventParams,
@@ -8,7 +8,7 @@ import {
 } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
-function parsePoolCreatedParams(event: Event): LbpPoolCreatedEventParams {
+function parsePoolCreatedParams(event: SqdEvent): LbpPoolCreatedEventParams {
   if (events.lbp.poolCreated.v176.is(event)) {
     return events.lbp.poolCreated.v176.decode(event);
   }
@@ -16,7 +16,7 @@ function parsePoolCreatedParams(event: Event): LbpPoolCreatedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-function parsePoolUpdatedParams(event: Event): LbpPoolUpdatedEventParams {
+function parsePoolUpdatedParams(event: SqdEvent): LbpPoolUpdatedEventParams {
   if (events.lbp.poolUpdated.v176.is(event)) {
     return events.lbp.poolUpdated.v176.decode(event);
   }
@@ -24,7 +24,7 @@ function parsePoolUpdatedParams(event: Event): LbpPoolUpdatedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-function parseBuyExecutedParams(event: Event): LbpBuyExecutedEventParams {
+function parseBuyExecutedParams(event: SqdEvent): LbpBuyExecutedEventParams {
   if (events.lbp.buyExecuted.v176.is(event)) {
     return events.lbp.buyExecuted.v176.decode(event);
   }
@@ -32,7 +32,7 @@ function parseBuyExecutedParams(event: Event): LbpBuyExecutedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-function parseSellExecutedParams(event: Event): LbpSellExecutedEventParams {
+function parseSellExecutedParams(event: SqdEvent): LbpSellExecutedEventParams {
   if (events.lbp.sellExecuted.v176.is(event)) {
     return events.lbp.sellExecuted.v176.decode(event);
   }

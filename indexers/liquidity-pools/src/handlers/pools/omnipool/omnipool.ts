@@ -1,10 +1,17 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AccountType, Omnipool, OmnipoolAsset } from '../../../model';
+import {
+  AccountType,
+  Omnipool,
+  OmnipoolAsset,
+  OmnipoolAssetAddedData,
+  OmnipoolAssetLifeState,
+} from '../../../model';
 import { getAccount } from '../../accounts';
 import { getAsset } from '../../assets/assetRegistry';
+import { addOmnipoolAssetAddedLifeState } from './omnipoolAssets';
 
-export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
+export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   if (ctx.batchState.state.omnipoolEntity) return;
 
   let omnipoolEntity =
@@ -35,19 +42,29 @@ export async function ensureOmnipool(ctx: ProcessorContext<Store>) {
     accountType: AccountType.Omnipool,
     ensureAccountType: true,
   });
-  omnipoolEntity.createdAt = new Date();
-  omnipoolEntity.createdAtParaBlock = ctx.blocks[0].header.height;
   omnipoolEntity.isDestroyed = false;
 
   const internalOmnipoolToken = new OmnipoolAsset({
     id: `${omnipoolEntity.id}-${ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID}`,
     asset: lrnaAssetEntity,
-    initialAmount: BigInt(0),
-    initialPrice: BigInt(0),
     pool: omnipoolEntity,
-    createdAt: new Date(),
-    createdAtParaBlock: ctx.blocks[0].header.height,
+    addedAtParaChainBlockHeight: ctx.blocks[0].header.height,
+    addedAtRelayChainBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(
+        ctx.blocks[0].header.height
+      ).height,
+    addedAtBlock: ctx.batchState.state.batchBlocks.get(ctx.blocks[0].header.id),
     isRemoved: false,
+    lifeStates: addOmnipoolAssetAddedLifeState({
+      assetAddedState: new OmnipoolAssetAddedData({
+        initialAmount: '0',
+        initialPrice: '0',
+        paraChainBlockHeight: ctx.blocks[0].header.height,
+        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          ctx.blocks[0].header.height
+        ).height,
+      }),
+    }),
   });
 
   await ctx.store.save(omnipoolEntity);

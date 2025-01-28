@@ -5,7 +5,6 @@ import {
   LbpPoolData,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { BlockHeader } from '@subsquid/substrate-processor';
 
 async function getPoolData({
   poolAddress,

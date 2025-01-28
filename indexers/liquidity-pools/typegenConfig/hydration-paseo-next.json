@@ -72,7 +72,7 @@
     "Utility": {
       "calls": true
     },
-    "AmmSupport": {
+    "Broadcast": {
       "events": true,
       "calls": true,
       "storage": true

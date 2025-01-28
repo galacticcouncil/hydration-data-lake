@@ -1,37 +1,5 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type ExecutionType = ExecutionType_Batch | ExecutionType_DCA | ExecutionType_Omnipool | ExecutionType_Router | ExecutionType_Xcm | ExecutionType_XcmExchange
-
-export interface ExecutionType_Batch {
-    __kind: 'Batch'
-    value: number
-}
-
-export interface ExecutionType_DCA {
-    __kind: 'DCA'
-    value: [number, number]
-}
-
-export interface ExecutionType_Omnipool {
-    __kind: 'Omnipool'
-    value: number
-}
-
-export interface ExecutionType_Router {
-    __kind: 'Router'
-    value: number
-}
-
-export interface ExecutionType_Xcm {
-    __kind: 'Xcm'
-    value: [Bytes, number]
-}
-
-export interface ExecutionType_XcmExchange {
-    __kind: 'XcmExchange'
-    value: number
-}
-
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -64,6 +32,8 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
         Signed: AccountId32,
     }
 })
+
+export const AccountId32 = sts.bytes()
 
 export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
 
@@ -15366,109 +15336,3 @@ export interface Call_XYKWarehouseLM {
     __kind: 'XYKWarehouseLM'
     value: XYKWarehouseLMCall
 }
-
-export const ExecutionType: sts.Type<ExecutionType> = sts.closedEnum(() => {
-    return  {
-        Batch: sts.number(),
-        DCA: sts.tuple(() => [sts.number(), sts.number()]),
-        Omnipool: sts.number(),
-        Router: sts.number(),
-        Xcm: sts.tuple(() => [sts.bytes(), sts.number()]),
-        XcmExchange: sts.number(),
-    }
-})
-
-export const Fee: sts.Type<Fee> = sts.struct(() => {
-    return  {
-        asset: sts.number(),
-        amount: sts.bigint(),
-        recipient: AccountId32,
-    }
-})
-
-export interface Fee {
-    asset: number
-    amount: bigint
-    recipient: AccountId32
-}
-
-export const Asset: sts.Type<Asset> = sts.struct(() => {
-    return  {
-        asset: sts.number(),
-        amount: sts.bigint(),
-    }
-})
-
-export interface Asset {
-    asset: number
-    amount: bigint
-}
-
-export const TradeOperation: sts.Type<TradeOperation> = sts.closedEnum(() => {
-    return  {
-        ExactIn: sts.unit(),
-        ExactOut: sts.unit(),
-        Limit: sts.unit(),
-        LiquidityAdd: sts.unit(),
-        LiquidityRemove: sts.unit(),
-    }
-})
-
-export type TradeOperation = TradeOperation_ExactIn | TradeOperation_ExactOut | TradeOperation_Limit | TradeOperation_LiquidityAdd | TradeOperation_LiquidityRemove
-
-export interface TradeOperation_ExactIn {
-    __kind: 'ExactIn'
-}
-
-export interface TradeOperation_ExactOut {
-    __kind: 'ExactOut'
-}
-
-export interface TradeOperation_Limit {
-    __kind: 'Limit'
-}
-
-export interface TradeOperation_LiquidityAdd {
-    __kind: 'LiquidityAdd'
-}
-
-export interface TradeOperation_LiquidityRemove {
-    __kind: 'LiquidityRemove'
-}
-
-export const Filler: sts.Type<Filler> = sts.closedEnum(() => {
-    return  {
-        LBP: sts.unit(),
-        OTC: sts.number(),
-        Omnipool: sts.unit(),
-        Stableswap: sts.number(),
-        XYK: sts.number(),
-    }
-})
-
-export type Filler = Filler_LBP | Filler_OTC | Filler_Omnipool | Filler_Stableswap | Filler_XYK
-
-export interface Filler_LBP {
-    __kind: 'LBP'
-}
-
-export interface Filler_OTC {
-    __kind: 'OTC'
-    value: number
-}
-
-export interface Filler_Omnipool {
-    __kind: 'Omnipool'
-}
-
-export interface Filler_Stableswap {
-    __kind: 'Stableswap'
-    value: number
-}
-
-export interface Filler_XYK {
-    __kind: 'XYK'
-    value: number
-}
-
-export const AccountId32 = sts.bytes()

@@ -1656,11 +1656,11 @@ export type Query = {
    * which can only query top level fields if they are in a particular form.
    */
   query: Query;
-  stablepool?: Maybe<Stablepool>;
+  stablepool?: Maybe<Stableswap>;
   /** Reads and enables pagination through a set of `StablepoolAssetDatum`. */
   stablepoolAssetData?: Maybe<StablepoolAssetDataConnection>;
   stablepoolAssetDatum?: Maybe<StablepoolAssetDatum>;
-  /** Reads and enables pagination through a set of `Stablepool`. */
+  /** Reads and enables pagination through a set of `Stableswap`. */
   stablepools?: Maybe<StablepoolsConnection>;
   subProcessorStatus?: Maybe<SubProcessorStatus>;
   /** Reads and enables pagination through a set of `SubProcessorStatus`. */
@@ -1850,8 +1850,8 @@ export type SquidStatusSubscriptionPayload = {
   node: _ProcessorStatus;
 };
 
-export type Stablepool = {
-  __typename?: 'Stablepool';
+export type Stableswap = {
+  __typename?: 'Stableswap';
   fee: Scalars['Int']['output'];
   finalAmplification: Scalars['Int']['output'];
   finalBlock: Scalars['Int']['output'];
@@ -2024,8 +2024,8 @@ export type StablepoolAssetDatum = {
   balances: Scalars['JSON']['output'];
   id: Scalars['String']['output'];
   paraChainBlockHeight: Scalars['Int']['output'];
-  /** Reads a single `Stablepool` that is related to this `StablepoolAssetDatum`. */
-  pool?: Maybe<Stablepool>;
+  /** Reads a single `Stableswap` that is related to this `StablepoolAssetDatum`. */
+  pool?: Maybe<Stableswap>;
   poolId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -2186,7 +2186,7 @@ export type StablepoolAverageAggregates = {
 };
 
 /**
- * A condition to be used against `Stablepool` object types. All fields are tested
+ * A condition to be used against `Stableswap` object types. All fields are tested
  * for equality and combined with a logical ‘and.’
  */
 export type StablepoolCondition = {
@@ -2232,7 +2232,7 @@ export type StablepoolDistinctCountAggregates = {
   poolId?: Maybe<Scalars['BigInt']['output']>;
 };
 
-/** A filter to be used against `Stablepool` object types. All fields are combined with a logical ‘and.’ */
+/** A filter to be used against `Stableswap` object types. All fields are combined with a logical ‘and.’ */
 export type StablepoolFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<StablepoolFilter>>;
@@ -2260,7 +2260,7 @@ export type StablepoolFilter = {
   poolId?: InputMaybe<IntFilter>;
 };
 
-/** Grouping methods for `Stablepool` for usage during aggregation. */
+/** Grouping methods for `Stableswap` for usage during aggregation. */
 export enum StablepoolGroupBy {
   Fee = 'FEE',
   FinalAmplification = 'FINAL_AMPLIFICATION',
@@ -2292,7 +2292,7 @@ export type StablepoolHavingDistinctCountInput = {
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
-/** Conditions for `Stablepool` aggregates. */
+/** Conditions for `Stableswap` aggregates. */
 export type StablepoolHavingInput = {
   AND?: InputMaybe<Array<StablepoolHavingInput>>;
   OR?: InputMaybe<Array<StablepoolHavingInput>>;
@@ -2503,40 +2503,40 @@ export type StablepoolVarianceSampleAggregates = {
   poolId?: Maybe<Scalars['BigFloat']['output']>;
 };
 
-/** A connection to a list of `Stablepool` values. */
+/** A connection to a list of `Stableswap` values. */
 export type StablepoolsConnection = {
   __typename?: 'StablepoolsConnection';
   /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
   aggregates?: Maybe<StablepoolAggregates>;
-  /** A list of edges which contains the `Stablepool` and cursor to aid in pagination. */
+  /** A list of edges which contains the `Stableswap` and cursor to aid in pagination. */
   edges: Array<StablepoolsEdge>;
   /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
   groupedAggregates?: Maybe<Array<StablepoolAggregates>>;
-  /** A list of `Stablepool` objects. */
-  nodes: Array<Maybe<Stablepool>>;
+  /** A list of `Stableswap` objects. */
+  nodes: Array<Maybe<Stableswap>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** The count of *all* `Stablepool` you could get from the connection. */
+  /** The count of *all* `Stableswap` you could get from the connection. */
   totalCount: Scalars['Int']['output'];
 };
 
 
-/** A connection to a list of `Stablepool` values. */
+/** A connection to a list of `Stableswap` values. */
 export type StablepoolsConnectionGroupedAggregatesArgs = {
   groupBy: Array<StablepoolGroupBy>;
   having?: InputMaybe<StablepoolHavingInput>;
 };
 
-/** A `Stablepool` edge in the connection. */
+/** A `Stableswap` edge in the connection. */
 export type StablepoolsEdge = {
   __typename?: 'StablepoolsEdge';
   /** A cursor for use in pagination. */
   cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Stablepool` at the end of the edge. */
-  node?: Maybe<Stablepool>;
+  /** The `Stableswap` at the end of the edge. */
+  node?: Maybe<Stableswap>;
 };
 
-/** Methods to use when ordering `Stablepool`. */
+/** Methods to use when ordering `Stableswap`. */
 export enum StablepoolsOrderBy {
   FeeAsc = 'FEE_ASC',
   FeeDesc = 'FEE_DESC',
@@ -3729,7 +3729,7 @@ export type GetStablepoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetStablepoolBlocksStorageStateQuery = { __typename?: 'Query', stablepools?: { __typename?: 'StablepoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Stablepool', fee: number, finalAmplification: number, finalBlock: number, id: string, initialAmplification: number, initialBlock: number, paraChainBlockHeight: number, poolAddress: string, poolId: number, stablepoolAssetDataByPoolId: { __typename?: 'StablepoolAssetDataConnection', nodes: Array<{ __typename?: 'StablepoolAssetDatum', assetId: number, balances: any, id: string, paraChainBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
+export type GetStablepoolBlocksStorageStateQuery = { __typename?: 'Query', stablepools?: { __typename?: 'StablepoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Stableswap', fee: number, finalAmplification: number, finalBlock: number, id: string, initialAmplification: number, initialBlock: number, paraChainBlockHeight: number, poolAddress: string, poolId: number, stablepoolAssetDataByPoolId: { __typename?: 'StablepoolAssetDataConnection', nodes: Array<{ __typename?: 'StablepoolAssetDatum', assetId: number, balances: any, id: string, paraChainBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
 
 
 export const GetOmnipoolBlocksStorageState = gql`

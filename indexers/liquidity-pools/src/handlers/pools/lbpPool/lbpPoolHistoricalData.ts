@@ -1,20 +1,20 @@
-import { ProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
 import { LbppoolHistoricalData } from '../../../model';
 import { getAsset } from '../../assets/assetRegistry';
-import { getOrCreateLbpPool } from './lbpPool';
+import { getOrCreateLbppool } from './lbpPool';
 import { getAccount } from '../../accounts';
 
-export async function handleLbpPoolHistoricalData(
-  ctx: ProcessorContext<Store>,
+export async function handleLbppoolHistoricalData(
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (!ctx.appConfig.PROCESS_LBP_POOLS) return;
 
   const predefinedEntities = await Promise.all(
-    [...ctx.batchState.state.lbpPoolAssetIdsForStoragePrefetch.entries()]
+    [...ctx.batchState.state.lbppoolAssetIdsForStoragePrefetch.entries()]
       .map(([blockNumber, { blockHeader, ids }]) =>
         [...ids.values()].map((assetIdsPair) => ({
           blockHeader: blockHeader,
@@ -23,7 +23,7 @@ export async function handleLbpPoolHistoricalData(
       )
       .flat()
       .map(async ({ assetIdsPair, blockHeader }) => {
-        const pool = await getOrCreateLbpPool({
+        const pool = await getOrCreateLbppool({
           ctx,
           assetIds: assetIdsPair.split('-'),
         });
@@ -78,8 +78,8 @@ export async function handleLbpPoolHistoricalData(
           assetBBalance: assetsData.get(assetBEntity.id)?.free ?? BigInt(0),
 
           owner: await getAccount({ ctx, id: poolStorageData.owner }),
-          start: poolStorageData.start,
-          end: poolStorageData.end,
+          startBlockNumber: poolStorageData.start,
+          endBlockNumber: poolStorageData.end,
           initialWeight: poolStorageData.initialWeight,
           finalWeight: poolStorageData.finalWeight,
           weightCurve: poolStorageData.weightCurve.__kind,
@@ -89,10 +89,11 @@ export async function handleLbpPoolHistoricalData(
             : null,
           repayTarget: poolStorageData.repayTarget,
 
-          relayChainBlockHeight:
-            ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-              ?.relaychainBlockNumber ?? 0,
+          relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+            blockHeader.height
+          ).height,
           paraChainBlockHeight: blockHeader.height,
+          block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
         });
 
         return poolHistoricalDataEntity;

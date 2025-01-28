@@ -1,6 +1,12 @@
-import { Block, ProcessorContext } from '../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AccountType, Lbppool } from '../../../model';
+import {
+  AccountType,
+  Lbppool,
+  LbppoolCreatedData,
+  LbppoolDestroyedData,
+  LbppoolLifeState,
+} from '../../../model';
 import { getAccount } from '../../accounts';
 import {
   LbpPoolCreatedData,
@@ -10,7 +16,7 @@ import { getAssetFreeBalance } from '../../assets/balances';
 import { getAsset } from '../../assets/assetRegistry';
 import parsers from '../../../parsers';
 
-export async function createLbpPool({
+export async function createLbppool({
   ctx,
   blockHeader,
   poolData: {
@@ -28,8 +34,8 @@ export async function createLbpPool({
     finalWeight,
   },
 }: {
-  ctx: ProcessorContext<Store>;
-  blockHeader: Block;
+  ctx: SqdProcessorContext<Store>;
+  blockHeader: SqdBlock;
   poolData: {
     assetAId: string | number;
     assetBId: string | number;
@@ -88,16 +94,14 @@ export async function createLbpPool({
     account: await getAccount({
       ctx,
       id: poolAddress,
-      accountType: AccountType.LBP,
+      accountType: AccountType.Lbppool,
       ensureAccountType: true,
     }),
     assetA: assetAEntity,
     assetB: assetBEntity,
+    owner: await getAccount({ ctx, id: ownerAddress }),
     assetABalance: newPoolsAssetBalances.assetABalance,
     assetBBalance: newPoolsAssetBalances.assetBBalance,
-    createdAt: new Date(blockHeader.timestamp ?? Date.now()),
-    createdAtParaBlock: blockHeader.height,
-    owner: await getAccount({ ctx, id: ownerAddress }),
     startBlockNumber: startBlockNumber ?? null,
     endBlockNumber: endBlockNumber ?? null,
     feeCollector: await getAccount({ ctx, id: feeCollectorAddress }),
@@ -105,25 +109,37 @@ export async function createLbpPool({
     initialWeight: initialWeight,
     finalWeight: finalWeight,
     isDestroyed: false,
+    lifeStates: addLbppoolCreatedLifeState({
+      createdState: new LbppoolCreatedData({
+        assetABalance: newPoolsAssetBalances.assetABalance?.toString() ?? '0',
+        assetBBalance: newPoolsAssetBalances.assetBBalance?.toString() ?? '0',
+        paraChainBlockHeight: blockHeader.height,
+        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          blockHeader.height
+        ).height,
+      }),
+    }),
+    createdAtParaChainBlockHeight: blockHeader.height,
+    createdAtRelayChainBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
+    createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
   return newPool;
 }
 
-export async function getOrCreateLbpPool({
+export async function getOrCreateLbppool({
   ctx,
   assetIds,
   ensure = false,
   blockHeader,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   assetIds: number[] | string[];
   ensure?: boolean;
-  blockHeader?: Block;
+  blockHeader?: SqdBlock;
 }): Promise<Lbppool | null> {
-  const batchState = ctx.batchState.state;
-
-  let pool = [...batchState.lbpAllBatchPools.values()].find(
+  let pool = [...ctx.batchState.state.lbpAllBatchPools.values()].find(
     (p) =>
       (p.assetA.id === `${assetIds[0]}` && p.assetB.id === `${assetIds[1]}`) ||
       (p.assetB.id === `${assetIds[0]}` && p.assetA.id === `${assetIds[1]}`)
@@ -183,7 +199,7 @@ export async function getOrCreateLbpPool({
     feeCollector,
   } = newPoolStorageData;
 
-  const newPool = await createLbpPool({
+  const newPool = await createLbppool({
     ctx,
     blockHeader: blockHeader,
     poolData: {
@@ -203,7 +219,7 @@ export async function getOrCreateLbpPool({
   if (!newPool) return null;
 
   await ctx.store.upsert(newPool);
-  newPool.account.lbpPool = newPool;
+  newPool.account.lbppool = newPool;
   await ctx.store.upsert(newPool.account);
 
   const state = ctx.batchState.state;
@@ -213,8 +229,8 @@ export async function getOrCreateLbpPool({
   return newPool;
 }
 
-export async function lpbPoolCreated(
-  ctx: ProcessorContext<Store>,
+export async function lpbpoolCreated(
+  ctx: SqdProcessorContext<Store>,
   eventCallData: LbpPoolCreatedData
 ) {
   //TODO add check for existing pool with the same ID
@@ -223,7 +239,7 @@ export async function lpbPoolCreated(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const newPool = await createLbpPool({
+  const newPool = await createLbppool({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     poolData: {
@@ -244,7 +260,7 @@ export async function lpbPoolCreated(
 
   if (!newPool) return null;
 
-  newPool.account.lbpPool = newPool;
+  newPool.account.lbppool = newPool;
 
   const state = ctx.batchState.state;
 
@@ -253,17 +269,17 @@ export async function lpbPoolCreated(
   state.accounts.set(newPool.account.id, newPool.account);
 }
 
-export async function lpbPoolUpdated(
-  ctx: ProcessorContext<Store>,
+export async function lpbpoolUpdated(
+  ctx: SqdProcessorContext<Store>,
   eventCallData: LbpPoolUpdatedData
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const allPools = ctx.batchState.state.lbpAllBatchPools;
-
-  const existingPoolData = allPools.get(eventParams.pool);
+  const existingPoolData = ctx.batchState.state.lbpAllBatchPools.get(
+    eventParams.pool
+  );
 
   if (!existingPoolData) return;
 
@@ -283,6 +299,52 @@ export async function lpbPoolUpdated(
 
   ctx.batchState.state.lbpPoolIdsToSave.add(existingPoolData.id);
 
-  allPools.set(eventParams.pool, existingPoolData);
-  ctx.batchState.state.lbpAllBatchPools = allPools;
+  ctx.batchState.state.lbpAllBatchPools.set(eventParams.pool, existingPoolData);
+}
+
+export function addLbppoolCreatedLifeState({
+  existingStates = [],
+  createdState,
+}: {
+  existingStates?: LbppoolLifeState[];
+  createdState: LbppoolCreatedData;
+}): LbppoolLifeState[] {
+  const existingState = existingStates.find(
+    (state) =>
+      state.created.paraChainBlockHeight === createdState.paraChainBlockHeight
+  );
+
+  if (existingState) return existingStates;
+
+  return [
+    ...existingStates,
+    new LbppoolLifeState({
+      created: createdState,
+      destroyed: null,
+    }),
+  ];
+}
+
+export function addLbppoolDestroyedLifeState({
+  existingStates = [],
+  destroyedState,
+}: {
+  existingStates?: LbppoolLifeState[];
+  destroyedState: LbppoolDestroyedData;
+}): LbppoolLifeState[] {
+  const latestOpenState = existingStates.find((state) => !state.destroyed);
+
+  if (!latestOpenState) return existingStates;
+
+  return [
+    ...existingStates.filter(
+      (state) =>
+        state.created.paraChainBlockHeight !==
+        latestOpenState.created.paraChainBlockHeight
+    ),
+    new LbppoolLifeState({
+      created: latestOpenState.created,
+      destroyed: destroyedState,
+    }),
+  ];
 }

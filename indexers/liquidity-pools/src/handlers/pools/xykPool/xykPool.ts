@@ -1,6 +1,12 @@
-import { Block, ProcessorContext } from '../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AccountType, Xykpool } from '../../../model';
+import {
+  AccountType,
+  Xykpool,
+  XykpoolCreatedData,
+  XykpoolDestroyedData,
+  XykpoolLifeState,
+} from '../../../model';
 import { getAccount } from '../../accounts';
 import {
   XykPoolCreatedData,
@@ -23,8 +29,8 @@ export async function createXykPool({
     shareTokenId,
   },
 }: {
-  ctx: ProcessorContext<Store>;
-  blockHeader: Block;
+  ctx: SqdProcessorContext<Store>;
+  blockHeader: SqdBlock;
   poolData: {
     poolAddress: string;
     assetAId: string | number;
@@ -98,7 +104,7 @@ export async function createXykPool({
     account: await getAccount({
       ctx,
       id: poolAddress,
-      accountType: AccountType.XYK,
+      accountType: AccountType.Xykpool,
       ensureAccountType: true,
     }),
     assetA: assetAEntity,
@@ -106,10 +112,22 @@ export async function createXykPool({
     shareToken: sharedTokenEntity,
     assetABalance: newPoolsAssetBalances.assetABalance,
     assetBBalance: newPoolsAssetBalances.assetBBalance,
-    initialSharesAmount: initialSharesAmount ?? BigInt(0),
-    createdAt: new Date(blockHeader.timestamp ?? Date.now()),
-    createdAtParaBlock: blockHeader.height,
     isDestroyed: false,
+    lifeStates: addXykpoolCreatedLifeState({
+      createdState: new XykpoolCreatedData({
+        initialSharesAmount: initialSharesAmount
+          ? initialSharesAmount.toString()
+          : '0',
+        paraChainBlockHeight: blockHeader.height,
+        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          blockHeader.height
+        ).height,
+      }),
+    }),
+    createdAtParaChainBlockHeight: blockHeader.height,
+    createdAtRelayChainBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
+    createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
   return newPool;
@@ -121,10 +139,10 @@ export async function getOrCreateXykPool({
   ensure = false,
   blockHeader,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   id: string;
   ensure?: boolean;
-  blockHeader?: Block;
+  blockHeader?: SqdBlock;
 }): Promise<Xykpool | null> {
   const batchState = ctx.batchState.state;
 
@@ -166,7 +184,7 @@ export async function getOrCreateXykPool({
   if (!newPool) return null;
 
   await ctx.store.upsert(newPool);
-  newPool.account.xykPool = newPool;
+  newPool.account.xykpool = newPool;
   await ctx.store.upsert(newPool.account);
 
   const state = ctx.batchState.state;
@@ -177,7 +195,7 @@ export async function getOrCreateXykPool({
 }
 
 export async function xykPoolCreated(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: XykPoolCreatedData
 ) {
   //TODO add check for existing pool with the same ID
@@ -202,7 +220,7 @@ export async function xykPoolCreated(
 
   if (!newPool) return;
 
-  newPool.account.xykPool = newPool;
+  newPool.account.xykpool = newPool;
 
   const state = ctx.batchState.state;
 
@@ -212,7 +230,7 @@ export async function xykPoolCreated(
 }
 
 export async function xykPoolDestroyed(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: XykPoolDestroyedData
 ) {
   const {
@@ -231,10 +249,65 @@ export async function xykPoolDestroyed(
   if (!pool) return;
 
   pool.isDestroyed = true;
-  pool.destroyedAtParaBlock = eventMetadata.blockHeader.height;
+  pool.lifeStates = addXykpoolDestroyedLifeState({
+    existingStates: pool.lifeStates,
+    destroyedState: new XykpoolDestroyedData({
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        eventMetadata.blockHeader.height
+      ).height,
+    }),
+  });
 
   const state = ctx.batchState.state;
 
   state.xykPoolIdsToSave.add(pool.id);
   state.xykAllBatchPools.set(pool.id, pool);
+}
+
+export function addXykpoolCreatedLifeState({
+  existingStates = [],
+  createdState,
+}: {
+  existingStates?: XykpoolLifeState[];
+  createdState: XykpoolCreatedData;
+}): XykpoolLifeState[] {
+  const existingState = existingStates.find(
+    (state) =>
+      state.created.paraChainBlockHeight === createdState.paraChainBlockHeight
+  );
+
+  if (existingState) return existingStates;
+
+  return [
+    ...existingStates,
+    new XykpoolLifeState({
+      created: createdState,
+      destroyed: null,
+    }),
+  ];
+}
+
+export function addXykpoolDestroyedLifeState({
+  existingStates = [],
+  destroyedState,
+}: {
+  existingStates?: XykpoolLifeState[];
+  destroyedState: XykpoolDestroyedData;
+}): XykpoolLifeState[] {
+  const latestOpenState = existingStates.find((state) => !state.destroyed);
+
+  if (!latestOpenState) return existingStates;
+
+  return [
+    ...existingStates.filter(
+      (state) =>
+        state.created.paraChainBlockHeight !==
+        latestOpenState.created.paraChainBlockHeight
+    ),
+    new XykpoolLifeState({
+      created: latestOpenState.created,
+      destroyed: destroyedState,
+    }),
+  ];
 }

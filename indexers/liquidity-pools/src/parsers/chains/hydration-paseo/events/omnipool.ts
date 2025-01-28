@@ -1,5 +1,5 @@
 import { events } from '../typegenTypes';
-import { Event } from '../../../../processor';
+import { SqdEvent } from '../../../../processor';
 import {
   OmnipoolBuyExecutedEventParams,
   OmnipoolSellExecutedEventParams,
@@ -8,37 +8,39 @@ import {
 } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
-function parseTokenAddedParams(event: Event): OmnipoolTokenAddedEventParams {
-  if (events.omnipool.tokenAdded.v257.is(event)) {
-    return events.omnipool.tokenAdded.v257.decode(event);
+function parseTokenAddedParams(event: SqdEvent): OmnipoolTokenAddedEventParams {
+  if (events.omnipool.tokenAdded.v276.is(event)) {
+    return events.omnipool.tokenAdded.v276.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseTokenRemovedParams(
-  event: Event
+  event: SqdEvent
 ): OmnipoolTokenRemovedEventParams {
-  if (events.omnipool.tokenRemoved.v257.is(event)) {
-    return events.omnipool.tokenRemoved.v257.decode(event);
+  if (events.omnipool.tokenRemoved.v276.is(event)) {
+    return events.omnipool.tokenRemoved.v276.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
-function parseBuyExecutedParams(event: Event): OmnipoolBuyExecutedEventParams {
-  if (events.omnipool.buyExecuted.v257.is(event)) {
-    return events.omnipool.buyExecuted.v257.decode(event);
+function parseBuyExecutedParams(
+  event: SqdEvent
+): OmnipoolBuyExecutedEventParams {
+  if (events.omnipool.buyExecuted.v276.is(event)) {
+    return events.omnipool.buyExecuted.v276.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseSellExecutedParams(
-  event: Event
+  event: SqdEvent
 ): OmnipoolSellExecutedEventParams {
-  if (events.omnipool.sellExecuted.v257.is(event)) {
-    return events.omnipool.sellExecuted.v257.decode(event);
+  if (events.omnipool.sellExecuted.v276.is(event)) {
+    return events.omnipool.sellExecuted.v276.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

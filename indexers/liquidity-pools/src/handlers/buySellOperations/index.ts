@@ -1,4 +1,4 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { handleOmnioolOperations } from './omnipoolOperations';
@@ -7,7 +7,7 @@ import { handleLbpPoolOperations } from './lbpPoolOperations';
 import { handleXykPoolOperations } from './xykPoolOperations';
 
 export async function handleBuySellOperations(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (ctx.appConfig.PROCESS_LBP_POOLS)
@@ -24,8 +24,10 @@ export async function handleBuySellOperations(
 
   await ctx.store.save([...ctx.batchState.state.swaps.values()]);
   await ctx.store.save([...ctx.batchState.state.swapFees.values()]);
-  await ctx.store.save([...ctx.batchState.state.swapInputs.values()]);
-  await ctx.store.save([...ctx.batchState.state.swapOutputs.values()]);
+  await ctx.store.save([
+    ...ctx.batchState.state.swapInputs.values(),
+    ...ctx.batchState.state.swapOutputs.values(),
+  ]);
 
   await ctx.store.save([...ctx.batchState.state.assetVolumes.values()]);
   await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);

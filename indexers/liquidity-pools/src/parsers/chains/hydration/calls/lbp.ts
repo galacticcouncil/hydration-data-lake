@@ -1,9 +1,9 @@
-import { Call } from '../../../../processor';
+import { SqdCall } from '../../../../processor';
 import { LbpCreatePoolCallArgs } from '../../../types/calls';
 import { calls } from '../typegenTypes';
 import { UnknownVersionError } from '../../../../utils/errors';
 
-function parseCreatePoolArgs(call: Call): LbpCreatePoolCallArgs {
+function parseCreatePoolArgs(call: SqdCall): LbpCreatePoolCallArgs {
   if (calls.lbp.createPool.v176.is(call)) {
     const {
       assetA,

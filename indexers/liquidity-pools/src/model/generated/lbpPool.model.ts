@@ -3,7 +3,7 @@ import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
-import {StableswapLifeState} from "./_stableswapLifeState"
+import {LbppoolLifeState} from "./_lbppoolLifeState"
 import {LbppoolHistoricalPrice} from "./lbppoolHistoricalPrice.model"
 import {LbppoolHistoricalVolume} from "./lbppoolHistoricalVolume.model"
 import {LbppoolHistoricalData} from "./lbppoolHistoricalData.model"
@@ -78,8 +78,8 @@ export class Lbppool {
   @Column_("bool", {nullable: true})
   isDestroyed!: boolean | undefined | null
 
-  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new StableswapLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
-  lifeStates!: (StableswapLifeState)[]
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new LbppoolLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
+  lifeStates!: (LbppoolLifeState)[]
 
   @OneToMany_(() => LbppoolHistoricalPrice, e => e.pool)
   historicalBlockPrices!: LbppoolHistoricalPrice[]

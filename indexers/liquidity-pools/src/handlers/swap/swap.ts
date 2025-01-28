@@ -1,24 +1,25 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
   Swap,
   SwapFee,
   SwapFillerType,
-  SwapInputAssetBalance,
-  SwapOutputAssetBalance,
+  SwapAssetBalance,
   TradeOperationType,
+  SwapAssetBalanceType,
+  SwapFeeDestinationType,
 } from '../../model';
 import { getAccount } from '../accounts';
 import { getAsset } from '../assets/assetRegistry';
 import { GetNewSwapResponse } from '../../utils/types';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import { AmmSupportSwappedData } from '../../parsers/batchBlocksParser/types';
+import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
 import { OperationStackManager } from '../../chainActivityTracingManagers/operationStackManager';
 import { FindOptionsRelations, In } from 'typeorm';
 import {
-  AmmSupportSwappedAssetAmount,
-  AmmSupportSwappedFee,
+  BroadcastSwappedAssetAmount,
+  BroadcastSwappedFee,
 } from '../../parsers/types/events';
 import {
   getFillerContextData,
@@ -39,7 +40,7 @@ export async function getSwap({
   },
   fetchFromDb = false,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   id?: string;
   eventTraceId?: string;
   fetchFromDb?: boolean;
@@ -85,14 +86,11 @@ export async function getNewSwap({
     inputs,
     outputs,
     eventId,
-    eventIndex,
-    extrinsicHash,
-    relayChainBlockHeight,
     paraChainBlockHeight,
     paraChainTimestamp,
   },
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   blockHeader: BlockHeader;
   data: {
     swapId?: string;
@@ -103,13 +101,10 @@ export async function getNewSwap({
     fillerId: string;
     fillerType: SwapFillerType;
     operationType: TradeOperationType;
-    fees: { assetId: number; amount: bigint; recipientId: string }[];
-    inputs: { assetId: number; amount: bigint }[];
-    outputs: { assetId: number; amount: bigint }[];
+    fees: BroadcastSwappedFee[];
+    inputs: BroadcastSwappedAssetAmount[];
+    outputs: BroadcastSwappedAssetAmount[];
     eventId: string;
-    eventIndex: number;
-    extrinsicHash: string;
-    relayChainBlockHeight: number;
     paraChainBlockHeight: number;
     paraChainTimestamp: Date;
   };
@@ -123,16 +118,17 @@ export async function getNewSwap({
     filler: await getAccount({ ctx, id: fillerId }),
     fillerType,
     operationType,
-    eventIndex,
-    relayChainBlockHeight,
     paraChainBlockHeight,
     paraChainTimestamp,
-    extrinsicHash,
+    relayChainBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(paraChainBlockHeight)
+        .height,
+    event: ctx.batchState.state.batchEvents.get(eventId),
   });
 
   const feeEntities: SwapFee[] = [];
-  const inputsEntities: SwapInputAssetBalance[] = [];
-  const outputEntities: SwapOutputAssetBalance[] = [];
+  const inputsEntities: SwapAssetBalance[] = [];
+  const outputEntities: SwapAssetBalance[] = [];
 
   for (const fee of fees) {
     const asset = await getAsset({
@@ -143,16 +139,19 @@ export async function getNewSwap({
     });
     if (!asset) throw Error(`Asset ${fee.assetId} is not existing.`);
 
-    const recipient = await getAccount({ ctx, id: fee.recipientId });
-    if (!recipient) throw Error(`Account ${fee.recipientId} is not existing.`);
+    const recipient =
+      fee.destinationType === SwapFeeDestinationType.Account
+        ? await getAccount({ ctx, id: fee.recipientId! })
+        : null;
 
     feeEntities.push(
       new SwapFee({
         id: `${swap.id}-${asset.id}`,
+        amount: fee.amount,
+        destinationType: fee.destinationType,
         swap,
         asset,
         recipient,
-        amount: fee.amount,
       })
     );
   }
@@ -166,11 +165,12 @@ export async function getNewSwap({
     if (!asset) throw Error(`Asset ${input.assetId} is not existing.`);
 
     inputsEntities.push(
-      new SwapInputAssetBalance({
-        id: `${swap.id}-${asset.id}-input`,
+      new SwapAssetBalance({
+        id: `${swap.id}-${asset.id}-${SwapAssetBalanceType.Input}`,
+        assetBalanceType: SwapAssetBalanceType.Input,
+        amount: input.amount,
         swap,
         asset,
-        amount: input.amount,
       })
     );
   }
@@ -184,11 +184,12 @@ export async function getNewSwap({
     if (!asset) throw Error(`Asset ${output.assetId} is not existing.`);
 
     outputEntities.push(
-      new SwapOutputAssetBalance({
-        id: `${swap.id}-${asset.id}-output`,
+      new SwapAssetBalance({
+        id: `${swap.id}-${asset.id}-${SwapAssetBalanceType.Output}`,
+        assetBalanceType: SwapAssetBalanceType.Input,
+        amount: output.amount,
         swap,
         asset,
-        amount: output.amount,
       })
     );
   }
@@ -213,8 +214,7 @@ export async function handleSwap({
     traceIds,
     operationId,
     eventId,
-    extrinsicHash,
-    eventIndex,
+    swapIndex = 0,
     swapperAccountId,
     fillerAccountId,
     fillerType,
@@ -222,28 +222,25 @@ export async function handleSwap({
     outputs,
     fees,
     operationType,
-    relayChainBlockHeight,
     paraChainBlockHeight,
     timestamp,
   },
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   blockHeader: BlockHeader;
   data: {
     swapId?: string;
     traceIds: string[];
     operationId?: string;
     eventId: string;
-    extrinsicHash: string;
-    eventIndex: number;
+    swapIndex?: number;
     swapperAccountId: string;
     fillerAccountId: string;
     fillerType: SwapFillerType;
-    fees: AmmSupportSwappedFee[];
-    inputs: AmmSupportSwappedAssetAmount[];
-    outputs: AmmSupportSwappedAssetAmount[];
+    fees: BroadcastSwappedFee[];
+    inputs: BroadcastSwappedAssetAmount[];
+    outputs: BroadcastSwappedAssetAmount[];
     operationType: TradeOperationType;
-    relayChainBlockHeight: number;
     paraChainBlockHeight: number;
     timestamp: number;
   };
@@ -255,16 +252,13 @@ export async function handleSwap({
       swapId,
       traceIds,
       operationId,
-      swapIndex: 0,
+      swapIndex,
       swapperId: swapperAccountId,
       fillerId: fillerAccountId,
       fillerType,
       operationType,
       eventId,
-      eventIndex,
-      relayChainBlockHeight,
       paraChainBlockHeight,
-      extrinsicHash,
       paraChainTimestamp: new Date(timestamp),
       fees,
       inputs,
@@ -284,7 +278,11 @@ export async function handleSwap({
     state.swapOutputs.set(swapOutput.id, swapOutput);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [swap.swapper, swap.filler],
+    participants: [
+      swap.swapper,
+      swap.filler,
+      ...swapFees.map((fee) => fee.recipient ?? null).filter((i) => !!i),
+    ],
     traceIds,
     ctx,
   });
@@ -293,11 +291,10 @@ export async function handleSwap({
 }
 
 export async function handleSupportSwapperEvent(
-  ctx: ProcessorContext<Store>,
-  eventCallData: AmmSupportSwappedData
+  ctx: SqdProcessorContext<Store>,
+  eventCallData: BroadcastSwappedData
 ) {
   await supportSwapperEventPreHook(eventCallData);
-
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
     callData: { traceId: callTraceId },
@@ -339,8 +336,8 @@ export async function handleSupportSwapperEvent(
       traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
       operationId: newOperationStackId,
       eventId: eventMetadata.id,
-      extrinsicHash: eventMetadata.extrinsic?.hash || '',
-      eventIndex: eventMetadata.indexInBlock,
+      // extrinsicHash: eventMetadata.extrinsic?.hash || '',
+      // eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.swapper,
       fillerAccountId: eventParams.filler,
       fillerType: eventParams.fillerType.kind,
@@ -348,7 +345,6 @@ export async function handleSupportSwapperEvent(
       outputs: eventParams.outputs,
       fees: eventParams.fees,
       operationType: eventParams.operation,
-      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
       paraChainBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },

@@ -42,9 +42,6 @@ export class Xykpool {
   @ManyToOne_(() => Asset, {nullable: true})
   shareToken!: Asset
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  initialSharesAmount!: bigint
-
   @Index_()
   @Column_("int4", {nullable: false})
   createdAtParaChainBlockHeight!: number

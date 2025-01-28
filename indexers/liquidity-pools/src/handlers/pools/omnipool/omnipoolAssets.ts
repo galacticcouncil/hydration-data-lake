@@ -1,6 +1,11 @@
-import { Block, ProcessorContext } from '../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { OmnipoolAsset } from '../../../model';
+import {
+  OmnipoolAsset,
+  OmnipoolAssetAddedData,
+  OmnipoolAssetLifeState,
+  OmnipoolAssetRemovedData,
+} from '../../../model';
 import {
   OmnipoolTokenAddedData,
   OmnipoolTokenRemovedData,
@@ -13,10 +18,10 @@ export async function getOrCreateOmnipoolAsset({
   ensure = false,
   blockHeader,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   assetId: number | string;
   ensure?: boolean;
-  blockHeader?: Block;
+  blockHeader?: SqdBlock;
 }) {
   const batchState = ctx.batchState.state;
 
@@ -48,9 +53,22 @@ export async function getOrCreateOmnipoolAsset({
     id: `${ctx.batchState.state.omnipoolEntity!.id}-${assetId}`,
     asset: assetEntity,
     pool: ctx.batchState.state.omnipoolEntity!,
-    createdAt: new Date(blockHeader.timestamp ?? Date.now()),
-    createdAtParaBlock: blockHeader.height,
+
+    addedAtParaChainBlockHeight: blockHeader.height,
+    addedAtRelayChainBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
+    addedAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
     isRemoved: false,
+    lifeStates: addOmnipoolAssetAddedLifeState({
+      assetAddedState: new OmnipoolAssetAddedData({
+        initialAmount: '0', // TODO fix values
+        initialPrice: '0',
+        paraChainBlockHeight: blockHeader.height,
+        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          blockHeader.height
+        ).height,
+      }),
+    }),
   });
 
   await ctx.store.upsert(omnipoolAsset);
@@ -61,7 +79,7 @@ export async function getOrCreateOmnipoolAsset({
 }
 
 export async function omnipoolTokenAdded(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: OmnipoolTokenAddedData
 ) {
   const {
@@ -71,8 +89,8 @@ export async function omnipoolTokenAdded(
   let omnipoolAssetEntity = await getOrCreateOmnipoolAsset({
     ctx,
     assetId: eventParams.assetId,
-    ensure: true,
-    blockHeader: eventMetadata.blockHeader,
+    // ensure: true,
+    // blockHeader: eventMetadata.blockHeader,
   });
 
   if (omnipoolAssetEntity) return;
@@ -89,12 +107,27 @@ export async function omnipoolTokenAdded(
   omnipoolAssetEntity = new OmnipoolAsset({
     id: `${ctx.batchState.state.omnipoolEntity!.id}-${eventParams.assetId}`,
     asset: assetEntity,
-    initialAmount: eventParams.initialAmount,
-    initialPrice: eventParams.initialPrice,
     pool: ctx.batchState.state.omnipoolEntity!,
-    createdAt: new Date(),
-    createdAtParaBlock: eventMetadata.blockHeader.height,
+
+    addedAtParaChainBlockHeight: eventMetadata.blockHeader.height,
+    addedAtRelayChainBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(
+        eventMetadata.blockHeader.height
+      ).height,
+    addedAtBlock: ctx.batchState.state.batchBlocks.get(
+      eventMetadata.blockHeader.id
+    ),
     isRemoved: false,
+    lifeStates: addOmnipoolAssetAddedLifeState({
+      assetAddedState: new OmnipoolAssetAddedData({
+        initialAmount: eventParams.initialAmount.toString(),
+        initialPrice: eventParams.initialPrice.toString(),
+        paraChainBlockHeight: eventMetadata.blockHeader.height,
+        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          eventMetadata.blockHeader.height
+        ).height,
+      }),
+    }),
   });
 
   const state = ctx.batchState.state;
@@ -104,7 +137,7 @@ export async function omnipoolTokenAdded(
 }
 
 export async function omnipoolTokenRemoved(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: OmnipoolTokenRemovedData
 ) {
   const {
@@ -121,13 +154,68 @@ export async function omnipoolTokenRemoved(
   if (!omnipoolAssetEntity) return;
 
   omnipoolAssetEntity.isRemoved = true;
-  omnipoolAssetEntity.removedAtParaBlock = eventMetadata.blockHeader.height;
-  omnipoolAssetEntity.removedAmount = eventParams.amount;
-  omnipoolAssetEntity.hubWithdrawn = eventParams.hubWithdrawn;
+  omnipoolAssetEntity.lifeStates = addOmnipoolAssetRemovedLifeState({
+    existingStates: omnipoolAssetEntity.lifeStates,
+    assetRemovedState: new OmnipoolAssetRemovedData({
+      removedAmount: eventParams.amount.toString(),
+      hubWithdrawn: eventParams.hubWithdrawn.toString(),
+      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        eventMetadata.blockHeader.height
+      ).height,
+    }),
+  });
 
   ctx.batchState.state.omnipoolAssetIdsToSave.add(omnipoolAssetEntity.id);
   ctx.batchState.state.omnipoolAssets.set(
     omnipoolAssetEntity.id,
     omnipoolAssetEntity
   );
+}
+
+export function addOmnipoolAssetAddedLifeState({
+  existingStates = [],
+  assetAddedState,
+}: {
+  existingStates?: OmnipoolAssetLifeState[];
+  assetAddedState: OmnipoolAssetAddedData;
+}): OmnipoolAssetLifeState[] {
+  const existingState = existingStates.find(
+    (state) =>
+      state.added.paraChainBlockHeight === assetAddedState.paraChainBlockHeight
+  );
+
+  if (existingState) return existingStates;
+
+  return [
+    ...existingStates,
+    new OmnipoolAssetLifeState({
+      added: assetAddedState,
+      removed: null,
+    }),
+  ];
+}
+
+export function addOmnipoolAssetRemovedLifeState({
+  existingStates = [],
+  assetRemovedState,
+}: {
+  existingStates?: OmnipoolAssetLifeState[];
+  assetRemovedState: OmnipoolAssetRemovedData;
+}): OmnipoolAssetLifeState[] {
+  const latestOpenState = existingStates.find((state) => !state.removed);
+
+  if (!latestOpenState) return existingStates;
+
+  return [
+    ...existingStates.filter(
+      (state) =>
+        state.added.paraChainBlockHeight !==
+        latestOpenState.added.paraChainBlockHeight
+    ),
+    new OmnipoolAssetLifeState({
+      added: latestOpenState.added,
+      removed: assetRemovedState,
+    }),
+  ];
 }

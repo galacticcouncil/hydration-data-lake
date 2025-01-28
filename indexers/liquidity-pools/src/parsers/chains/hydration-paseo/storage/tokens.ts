@@ -1,6 +1,9 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { storage } from '../typegenTypes/';
-import { TokensAccountsAssetBalances } from '../../../types/storage';
+import {
+  TokensAccountsAssetBalances,
+  TokensGetTokenTotalIssuanceInput,
+} from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 async function getTokensAccountsAssetBalances(
@@ -8,8 +11,8 @@ async function getTokensAccountsAssetBalances(
   assetId: number,
   block: BlockHeader
 ): Promise<TokensAccountsAssetBalances | null> {
-  if (storage.tokens.accounts.v257.is(block)) {
-    const resp = await storage.tokens.accounts.v257.get(
+  if (storage.tokens.accounts.v276.is(block)) {
+    const resp = await storage.tokens.accounts.v276.get(
       block,
       account,
       assetId
@@ -20,4 +23,16 @@ async function getTokensAccountsAssetBalances(
   throw new UnknownVersionError('storage.tokens.accounts');
 }
 
-export default { getTokensAccountsAssetBalances };
+async function getTokenTotalIssuance({
+  tokenId,
+  block,
+}: TokensGetTokenTotalIssuanceInput): Promise<bigint | null> {
+  if (storage.tokens.totalIssuance.v276.is(block)) {
+    const resp = await storage.tokens.totalIssuance.v276.get(block, tokenId);
+    return resp ?? null;
+  }
+
+  throw new UnknownVersionError('storage.tokens.totalIssuance');
+}
+
+export default { getTokensAccountsAssetBalances, getTokenTotalIssuance };

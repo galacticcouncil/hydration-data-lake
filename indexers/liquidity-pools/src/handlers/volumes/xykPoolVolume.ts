@@ -1,6 +1,6 @@
 import { Swap, Xykpool, XykpoolHistoricalVolume } from '../../model';
 import { calculateAveragePrice } from '../prices/utils';
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { getLastVolumeFromCache, getOldXykVolume } from './index';
 
@@ -44,6 +44,7 @@ export function initXykPoolVolume(
       BigInt(0),
     relayChainBlockHeight: swap.relayChainBlockHeight,
     paraChainBlockHeight: swap.paraChainBlockHeight,
+    block: swap.event.block,
   });
 
   const swapAssetInData = swap.inputs[0];
@@ -111,7 +112,7 @@ export async function handleXykPoolVolumeUpdates({
   pool,
   swap,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   pool: Xykpool;
   swap: Swap;
 }) {

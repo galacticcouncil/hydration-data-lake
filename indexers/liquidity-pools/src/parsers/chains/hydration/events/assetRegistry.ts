@@ -1,5 +1,5 @@
 import { events } from '../typegenTypes';
-import { Event } from '../../../../processor';
+import { SqdEvent } from '../../../../processor';
 import {
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
@@ -9,7 +9,7 @@ import { AssetType } from '../../../../model';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseRegisteredParams(
-  event: Event
+  event: SqdEvent
 ): AssetRegistryRegisteredEventParams {
   if (events.assetRegistry.registered.v108.is(event)) {
     const [assetId, assetName, assetType] =
@@ -94,7 +94,7 @@ function parseRegisteredParams(
   throw new UnknownVersionError(event.name);
 }
 
-function parseUpdatedParams(event: Event): AssetRegistryUpdatedEventParams {
+function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
   if (events.assetRegistry.updated.v108.is(event)) {
     const [assetId, assetName, assetType] =
       events.assetRegistry.updated.v108.decode(event);

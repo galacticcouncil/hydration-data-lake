@@ -1,7 +1,7 @@
 import {
   Lbppool as LbpPoolGlq,
   OmnipoolAssetDatum,
-  Stablepool as StablepoolGql,
+  Stableswap as StablepoolGql,
   Xykpool as XykPoolGlq,
 } from './apiTypes/types';
 

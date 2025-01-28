@@ -1,5 +1,9 @@
-import { SwapFillerType, TradeOperationType } from '../../../model';
-import { ProcessorContext } from '../../../processor';
+import {
+  SwapFeeDestinationType,
+  SwapFillerType,
+  TradeOperationType,
+} from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   XykBuyExecutedData,
@@ -11,7 +15,7 @@ import { handleSwap } from '../../swap/swap';
 import { getOrCreateXykPool } from '../../pools/xykPool/xykPool';
 
 export async function xykBuyExecuted(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: XykBuyExecutedData
 ) {
   const {
@@ -42,8 +46,6 @@ export async function xykBuyExecuted(
         eventMetadata.traceId,
       ],
       eventId: eventMetadata.id,
-      extrinsicHash: eventMetadata.extrinsic?.hash || '',
-      eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: pool.id,
       fillerType: SwapFillerType.XYK,
@@ -53,11 +55,11 @@ export async function xykBuyExecuted(
         {
           amount: eventParams.feeAmount,
           assetId: eventParams.feeAsset,
+          destinationType: SwapFeeDestinationType.Account,
           recipientId: pool.id,
         },
       ],
       operationType: TradeOperationType.ExactOut,
-      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
       paraChainBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
@@ -80,7 +82,7 @@ export async function xykBuyExecuted(
 }
 
 export async function xykSellExecuted(
-  ctx: ProcessorContext<Store>,
+  ctx: SqdProcessorContext<Store>,
   eventCallData: XykSellExecutedData
 ) {
   const {
@@ -111,8 +113,6 @@ export async function xykSellExecuted(
         eventMetadata.traceId,
       ],
       eventId: eventMetadata.id,
-      extrinsicHash: eventMetadata.extrinsic?.hash || '',
-      eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.who,
       fillerAccountId: pool.id,
       fillerType: SwapFillerType.XYK,
@@ -124,11 +124,11 @@ export async function xykSellExecuted(
         {
           amount: eventParams.feeAmount,
           assetId: eventParams.feeAsset,
+          destinationType: SwapFeeDestinationType.Account,
           recipientId: pool.id,
         },
       ],
       operationType: TradeOperationType.ExactIn,
-      relayChainBlockHeight: eventCallData.relayChainInfo.relaychainBlockNumber,
       paraChainBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },

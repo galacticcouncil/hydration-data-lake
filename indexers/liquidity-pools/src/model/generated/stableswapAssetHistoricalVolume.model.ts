@@ -31,12 +31,6 @@ export class StableswapAssetHistoricalVolume {
   swapTotalFees!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  liquidityFee!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  liquidityTotalFees!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   swapVolumeIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})

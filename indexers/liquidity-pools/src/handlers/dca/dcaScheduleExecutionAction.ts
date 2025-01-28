@@ -1,10 +1,10 @@
-import { ProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   ChainActivityTraceRelation,
   DcaScheduleExecution,
   DcaScheduleExecutionEvent,
-  DcaScheduleExecutionStatus,
+  DcaScheduleExecutionEventName,
   DispatchError,
   Swap,
 } from '../../model';
@@ -23,7 +23,7 @@ export async function getDcaScheduleExecutionAction({
   },
   fetchFromDb = false,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   id?: string;
   executionId?: string;
   fetchFromDb?: boolean;
@@ -62,23 +62,23 @@ export async function getDcaScheduleExecutionAction({
   return executionAction;
 }
 
-export async function processDcaScheduleExecutionAction({
+export async function processDcaScheduleExecutionEvent({
   ctx,
   id,
-  status,
-  statusMemo,
+  eventName,
+  memo,
   scheduleExecution,
   traceIds,
   operationIds,
   relayChainBlockHeight,
   paraChainBlockHeight,
 }: {
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
   scheduleExecution: DcaScheduleExecution;
   who: string;
   id: string;
-  status: DcaScheduleExecutionStatus;
-  statusMemo?: DispatchError | null;
+  eventName: DcaScheduleExecutionEventName;
+  memo?: DispatchError | null;
   relayChainBlockHeight: number;
   paraChainBlockHeight: number;
   traceIds: string[];
@@ -95,15 +95,15 @@ export async function processDcaScheduleExecutionAction({
   executionAction = new DcaScheduleExecutionEvent({
     id,
     scheduleExecution,
-    status,
+    eventName,
     relayChainBlockHeight,
     paraChainBlockHeight,
     traceIds,
     operationIds: operationIds ?? null,
-    statusMemo: statusMemo ?? null,
+    memo: memo ?? null,
   });
 
-  if (status === DcaScheduleExecutionStatus.Executed) {
+  if (eventName === DcaScheduleExecutionEventName.Executed) {
     const dcaSchedule = await getDcaSchedule({
       ctx,
       id: scheduleExecution.id.split('-')[0],
@@ -134,7 +134,7 @@ export async function processDcaScheduleExecutionAction({
 
     if (relatedSwaps && relatedSwaps.length > 0) {
       for (const relatedSwap of relatedSwaps) {
-        await processChainActivityTracesOnDcaExecutionAction({
+        await processChainActivityTracesOnDcaExecutionEvent({
           executionAction,
           swap: relatedSwap,
           scheduleId: scheduleExecution.id.split('-')[0],
@@ -162,7 +162,7 @@ export async function processDcaScheduleExecutionAction({
   return executionAction;
 }
 
-async function processChainActivityTracesOnDcaExecutionAction({
+async function processChainActivityTracesOnDcaExecutionEvent({
   swap,
   scheduleId,
   ctx,
@@ -170,7 +170,7 @@ async function processChainActivityTracesOnDcaExecutionAction({
   executionAction: DcaScheduleExecutionEvent;
   swap: Swap;
   scheduleId: string;
-  ctx: ProcessorContext<Store>;
+  ctx: SqdProcessorContext<Store>;
 }) {
   const dcaSchedule = await getDcaSchedule({
     ctx,
@@ -209,7 +209,9 @@ async function processChainActivityTracesOnDcaExecutionAction({
     id: `${rootChainActivityTrace.id}-${swapChainActivityTrace.id}`,
     childTrace: swapChainActivityTrace,
     parentTrace: rootChainActivityTrace,
-    createdAtParaChainBlockHeight: swap.paraChainBlockHeight,
+    paraChainBlockHeight: swap.paraChainBlockHeight,
+    relayChainBlockHeight: swap.relayChainBlockHeight,
+    block: swap.event.block,
   });
 
   ctx.batchState.state.chainActivityTraceRelations.set(

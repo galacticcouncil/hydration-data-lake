@@ -11,7 +11,7 @@ export class SwapAssetBalance {
   }
 
   /**
-   * <swapId>-<SwapAssetBalanceType>-<itemIndex> e.g. 0006516718-9965d-000107-INPUT-0
+   * <swapId>-<assetId>-<SwapAssetBalanceType> e.g. 0006516718-9965d-000107-0-INPUT
    */
   @PrimaryColumn_()
   id!: string

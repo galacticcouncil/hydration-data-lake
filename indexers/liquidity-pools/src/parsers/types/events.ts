@@ -1,6 +1,7 @@
 import { DispatchError, PoolData } from './common';
 import {
   AssetType,
+  SwapFeeDestinationType,
   SwapFillerType,
   TradeOperationType,
 } from '../../model';
@@ -49,6 +50,7 @@ export enum EventName {
   'OTC_PartiallyFilled' = 'OTC.PartiallyFilled',
 
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
+  'Broadcast_Swapped' = 'Broadcast.Swapped',
 }
 
 export type RelayChainInfo = {
@@ -305,32 +307,33 @@ export type OtcOrderFilledEventParams = {
 
 export type OtcOrderPartiallyFilledEventParams = OtcOrderFilledEventParams;
 
-export type AmmSupportSwappedAssetAmount = {
+export type BroadcastSwappedAssetAmount = {
   assetId: number;
   amount: bigint;
 };
 
-export type AmmSupportSwappedFee = AmmSupportSwappedAssetAmount & {
-  recipientId: string;
+export type BroadcastSwappedFee = BroadcastSwappedAssetAmount & {
+  destinationType: SwapFeeDestinationType;
+  recipientId?: string;
 };
 
-export type AmmSupportSwappedFillerType = {
+export type BroadcastSwappedFillerType = {
   kind: SwapFillerType;
   value: string;
 };
 
-export type AmmSupportSwappedExecutionType = {
+export type BroadcastSwappedExecutionType = {
   kind: SwappedExecutionTypeKind;
   value: number | [number, number] | [string, number];
 };
 
-export type AmmSupportSwappedEventParams = {
+export type BroadcastSwappedEventParams = {
   swapper: string;
   filler: string;
-  fillerType: AmmSupportSwappedFillerType;
-  inputs: AmmSupportSwappedAssetAmount[];
-  outputs: AmmSupportSwappedAssetAmount[];
-  fees: AmmSupportSwappedFee[];
+  fillerType: BroadcastSwappedFillerType;
+  inputs: BroadcastSwappedAssetAmount[];
+  outputs: BroadcastSwappedAssetAmount[];
+  fees: BroadcastSwappedFee[];
   operation: TradeOperationType;
-  operationStack: AmmSupportSwappedExecutionType[];
+  operationStack: BroadcastSwappedExecutionType[];
 };
