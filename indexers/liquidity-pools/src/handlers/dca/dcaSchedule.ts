@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { getAsset } from '../assets/assetRegistry';
 import {
   DcaSchedule,
+  DcaScheduleEventName,
   DcaScheduleOrderRouteHop,
   DcaScheduleStatus,
   DispatchError,
@@ -18,15 +19,18 @@ import { DcaScheduleCallArgs } from '../../parsers/types/calls';
 import { FindOptionsRelations } from 'typeorm';
 import parsers from '../../parsers';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { processDcaScheduleEvent } from './dcaScheduleEvents';
 
 export async function createDcaSchedule({
   ctx,
   blockHeader,
+  eventId,
   traceIds,
   scheduleData: { id, startExecutionBlock, scheduleData },
 }: {
   ctx: SqdProcessorContext<Store>;
   blockHeader: SqdBlock;
+  eventId: string;
   traceIds?: string[];
   scheduleData: DcaScheduledEventParams & DcaScheduleCallArgs;
 }) {
@@ -78,6 +82,7 @@ export async function createDcaSchedule({
     relayChainBlockHeight:
       ctx.batchState.state.relayChainInfo.get(blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
+    event: ctx.batchState.state.batchEvents.get(eventId),
     traceIds: traceIds ?? [],
   });
 
@@ -171,6 +176,7 @@ export async function handleDcaScheduleCreated(
   const newSchedule = await createDcaSchedule({
     ctx,
     blockHeader: eventMetadata.blockHeader,
+    eventId: eventMetadata.id,
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     scheduleData: {
       ...eventParams,
@@ -180,10 +186,21 @@ export async function handleDcaScheduleCreated(
 
   if (!newSchedule) return;
 
+  const scheduleEvent = await processDcaScheduleEvent({
+    ctx,
+    schedule: newSchedule,
+    eventId: eventMetadata.id,
+    eventName: DcaScheduleEventName.Created,
+    traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
+    blockHeader: eventMetadata.blockHeader,
+  });
+
   newSchedule.owner.dcaSchedules = [
     ...(newSchedule.owner.dcaSchedules || []),
     newSchedule,
   ];
+
+  newSchedule.events = [...(newSchedule.events || []), scheduleEvent];
 
   const state = ctx.batchState.state;
 
@@ -200,6 +217,7 @@ export async function handleDcaScheduleCompleted(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData: { traceId: callTraceId },
   } = eventCallData;
 
   const scheduleEntity = await getDcaSchedule({
@@ -210,7 +228,17 @@ export async function handleDcaScheduleCompleted(
   if (!scheduleEntity) return;
 
   scheduleEntity.status = DcaScheduleStatus.Completed;
-  scheduleEntity.statusUpdatedAtBlockHeight = eventMetadata.blockHeader.height;
+
+  const scheduleEvent = await processDcaScheduleEvent({
+    ctx,
+    schedule: scheduleEntity,
+    eventId: eventMetadata.id,
+    eventName: DcaScheduleEventName.Completed,
+    traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
+    blockHeader: eventMetadata.blockHeader,
+  });
+
+  scheduleEntity.events = [...(scheduleEntity.events || []), scheduleEvent];
 
   const state = ctx.batchState.state;
 
@@ -223,6 +251,7 @@ export async function handleDcaScheduleTerminated(
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
+    callData: { traceId: callTraceId },
   } = eventCallData;
 
   const scheduleEntity = await getDcaSchedule({
@@ -233,14 +262,24 @@ export async function handleDcaScheduleTerminated(
   if (!scheduleEntity) return;
 
   scheduleEntity.status = DcaScheduleStatus.Terminated;
-  scheduleEntity.statusUpdatedAtBlockHeight = eventMetadata.blockHeader.height;
-  scheduleEntity.statusMemo = eventParams.error
-    ? new DispatchError({
-        kind: eventParams.error.__kind,
-        index: eventParams.error.value?.index,
-        error: eventParams.error.value?.error,
-      })
-    : null;
+
+  const scheduleEvent = await processDcaScheduleEvent({
+    ctx,
+    schedule: scheduleEntity,
+    eventId: eventMetadata.id,
+    eventName: DcaScheduleEventName.Terminated,
+    memo: eventParams.error
+      ? new DispatchError({
+          kind: eventParams.error.__kind,
+          index: eventParams.error.value?.index,
+          error: eventParams.error.value?.error,
+        })
+      : null,
+    traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
+    blockHeader: eventMetadata.blockHeader,
+  });
+
+  scheduleEntity.events = [...(scheduleEntity.events || []), scheduleEvent];
 
   const state = ctx.batchState.state;
 

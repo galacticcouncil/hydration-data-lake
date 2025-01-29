@@ -1,12 +1,16 @@
 import gql from 'graphql-tag';
-import { LbpPoolHistoricalDatumFilter } from './types';
+import {
+  LbppoolHistoricalDatumFilter,
+  SwapFilter,
+  XykpoolHistoricalDatumFilter,
+} from './types';
 
 export const GET_LBPPOOL_HISTORICAL_DATA = gql`
-  query GetLbppoolHistoricalData($filter: LbpPoolHistoricalDatumFilter) {
-    lbpPoolHistoricalData(filter: $filter) {
+  query GetLbppoolHistoricalData($filter: LbppoolHistoricalDatumFilter) {
+    lbppoolHistoricalData(filter: $filter) {
       nodes {
-        start
-        end
+        startBlockNumber
+        endBlockNumber
         initialWeight
         finalWeight
         feeCollectorId
@@ -25,8 +29,8 @@ export const GET_LBPPOOL_HISTORICAL_DATA = gql`
 `;
 
 export const GET_XYK_POOL_HISTORICAL_DATA = gql`
-  query GetXykPoolHistoricalData($filter: XykPoolHistoricalDatumFilter) {
-    xykPoolHistoricalData(filter: $filter) {
+  query GetXykpoolHistoricalData($filter: XykpoolHistoricalDatumFilter) {
+    xykpoolHistoricalData(filter: $filter) {
       nodes {
         assetABalance
         assetAId
@@ -40,7 +44,7 @@ export const GET_XYK_POOL_HISTORICAL_DATA = gql`
 `;
 
 export const GET_XYK_POOL_SWAP_DATA = gql`
-  query GetXykPoolSwapsData($filter: SwapFilter) {
+  query GetXykpoolSwapsData($filter: SwapFilter) {
     swaps(filter: $filter) {
       nodes {
         swapperId
@@ -49,20 +53,26 @@ export const GET_XYK_POOL_SWAP_DATA = gql`
         swapFees {
           nodes {
             amount
-            assetId
+            asset {
+              id
+            }
             recipientId
           }
         }
         swapInputAssetBalances {
           nodes {
             amount
-            assetId
+            asset {
+              id
+            }
           }
         }
         swapOutputAssetBalances {
           nodes {
             amount
-            assetId
+            asset {
+              id
+            }
           }
         }
       }

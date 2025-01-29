@@ -15,7 +15,7 @@ import {
 import { getDcaSchedule } from './dcaSchedule';
 import { FindOptionsRelations } from 'typeorm';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import { processDcaScheduleExecutionEvent } from './dcaScheduleExecutionAction';
+import { processDcaScheduleExecutionEvent } from './dcaScheduleExecutionEvents';
 
 export async function getDcaScheduleExecution({
   ctx,
@@ -85,6 +85,7 @@ export async function handleDcaScheduleExecutionPlanned(
     ctx,
     who: eventParams.who,
     id: `${plannedExecution.id}-${DcaScheduleExecutionEventName.Planned}`,
+    eventId: eventMetadata.id,
     scheduleExecution: plannedExecution,
     eventName: DcaScheduleExecutionEventName.Planned,
     relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
@@ -143,6 +144,7 @@ export async function handleDcaTradeExecuted(
     ctx,
     who: eventParams.who,
     id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionEventName.Executed}`,
+    eventId: eventMetadata.id,
     scheduleExecution: scheduleExecutionEntity,
     eventName: DcaScheduleExecutionEventName.Executed,
     relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
@@ -201,6 +203,7 @@ export async function handleDcaTradeFailed(
     ctx,
     who: eventParams.who,
     id: `${scheduleExecutionEntity.id}-${DcaScheduleExecutionEventName.Failed}`,
+    eventId: eventMetadata.id,
     scheduleExecution: scheduleExecutionEntity,
     eventName: DcaScheduleExecutionEventName.Failed,
     memo: eventParams.error

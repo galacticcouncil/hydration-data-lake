@@ -70,11 +70,12 @@ export async function saveDcaEntities(ctx: SqdProcessorContext<Store>) {
   await ctx.store.save([
     ...ctx.batchState.state.dcaScheduleOrderRoutes.values(),
   ]);
+  await ctx.store.save([...ctx.batchState.state.dcaScheduleEvents.values()]);
   await ctx.store.save([
     ...ctx.batchState.state.dcaScheduleExecutions.values(),
   ]);
   await ctx.store.save([
-    ...ctx.batchState.state.dcaScheduleExecutionActions.values(),
+    ...ctx.batchState.state.dcaScheduleExecutionEvents.values(),
   ]);
 }
 

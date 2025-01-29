@@ -13,7 +13,7 @@ import { getDcaSchedule } from './dcaSchedule';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { SwappedExecutionTypeKind } from '../../utils/types';
 
-export async function getDcaScheduleExecutionAction({
+export async function getDcaScheduleExecutionEvent({
   ctx,
   id,
   executionId,
@@ -34,9 +34,9 @@ export async function getDcaScheduleExecutionAction({
 
   let executionAction = null;
   if (id) {
-    executionAction = batchState.dcaScheduleExecutionActions.get(id);
+    executionAction = batchState.dcaScheduleExecutionEvents.get(id);
   } else if (executionId) {
-    executionAction = [...batchState.dcaScheduleExecutionActions.values()].find(
+    executionAction = [...batchState.dcaScheduleExecutionEvents.values()].find(
       (action) => action.scheduleExecution.id === executionId
     );
   }
@@ -54,7 +54,7 @@ export async function getDcaScheduleExecutionAction({
 
   if (!executionAction) return null;
 
-  ctx.batchState.state.dcaScheduleExecutionActions.set(
+  ctx.batchState.state.dcaScheduleExecutionEvents.set(
     executionAction.id,
     executionAction
   );
@@ -65,6 +65,7 @@ export async function getDcaScheduleExecutionAction({
 export async function processDcaScheduleExecutionEvent({
   ctx,
   id,
+  eventId,
   eventName,
   memo,
   scheduleExecution,
@@ -77,6 +78,7 @@ export async function processDcaScheduleExecutionEvent({
   scheduleExecution: DcaScheduleExecution;
   who: string;
   id: string;
+  eventId: string;
   eventName: DcaScheduleExecutionEventName;
   memo?: DispatchError | null;
   relayChainBlockHeight: number;
@@ -84,23 +86,24 @@ export async function processDcaScheduleExecutionEvent({
   traceIds: string[];
   operationIds?: string[];
 }) {
-  let executionAction = await getDcaScheduleExecutionAction({
+  let executionEvent = await getDcaScheduleExecutionEvent({
     ctx,
     id,
     fetchFromDb: false,
   });
 
-  if (executionAction) return executionAction;
+  if (executionEvent) return executionEvent;
 
-  executionAction = new DcaScheduleExecutionEvent({
+  executionEvent = new DcaScheduleExecutionEvent({
     id,
+    traceIds,
     scheduleExecution,
     eventName,
-    relayChainBlockHeight,
-    paraChainBlockHeight,
-    traceIds,
     operationIds: operationIds ?? null,
     memo: memo ?? null,
+    relayChainBlockHeight,
+    paraChainBlockHeight,
+    event: ctx.batchState.state.batchEvents.get(eventId),
   });
 
   if (eventName === DcaScheduleExecutionEventName.Executed) {
@@ -135,31 +138,31 @@ export async function processDcaScheduleExecutionEvent({
     if (relatedSwaps && relatedSwaps.length > 0) {
       for (const relatedSwap of relatedSwaps) {
         await processChainActivityTracesOnDcaExecutionEvent({
-          executionAction,
+          executionEvent,
           swap: relatedSwap,
           scheduleId: scheduleExecution.id.split('-')[0],
           ctx,
         });
 
-        executionAction.swaps = [...(executionAction.swaps || []), relatedSwap];
-        executionAction.operationIds = [
+        executionEvent.swaps = [...(executionEvent.swaps || []), relatedSwap];
+        executionEvent.operationIds = [
           ...new Set([
-            ...(executionAction.operationIds || []),
+            ...(executionEvent.operationIds || []),
             relatedSwap.operationId,
           ]).values(),
         ];
-        relatedSwap.dcaScheduleExecutionAction = executionAction;
+        relatedSwap.dcaScheduleExecutionAction = executionEvent;
         ctx.batchState.state.swaps.set(relatedSwap.id, relatedSwap);
       }
     }
   }
 
-  ctx.batchState.state.dcaScheduleExecutionActions.set(
-    executionAction.id,
-    executionAction
+  ctx.batchState.state.dcaScheduleExecutionEvents.set(
+    executionEvent.id,
+    executionEvent
   );
 
-  return executionAction;
+  return executionEvent;
 }
 
 async function processChainActivityTracesOnDcaExecutionEvent({
@@ -167,7 +170,7 @@ async function processChainActivityTracesOnDcaExecutionEvent({
   scheduleId,
   ctx,
 }: {
-  executionAction: DcaScheduleExecutionEvent;
+  executionEvent: DcaScheduleExecutionEvent;
   swap: Swap;
   scheduleId: string;
   ctx: SqdProcessorContext<Store>;

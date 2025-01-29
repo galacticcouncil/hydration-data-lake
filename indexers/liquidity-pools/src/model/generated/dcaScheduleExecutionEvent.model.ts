@@ -4,7 +4,7 @@ import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
 import {Swap} from "./swap.model"
 import {DcaScheduleExecutionEventName} from "./_dcaScheduleExecutionEventName"
 import {DispatchError} from "./_dispatchError"
-import {Block} from "./block.model"
+import {Event} from "./event.model"
 
 @Entity_()
 export class DcaScheduleExecutionEvent {
@@ -46,6 +46,6 @@ export class DcaScheduleExecutionEvent {
   relayChainBlockHeight!: number
 
   @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @ManyToOne_(() => Event, {nullable: true})
+  event!: Event
 }

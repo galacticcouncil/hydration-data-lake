@@ -186,7 +186,7 @@ export async function getNewSwap({
     outputEntities.push(
       new SwapAssetBalance({
         id: `${swap.id}-${asset.id}-${SwapAssetBalanceType.Output}`,
-        assetBalanceType: SwapAssetBalanceType.Input,
+        assetBalanceType: SwapAssetBalanceType.Output,
         amount: output.amount,
         swap,
         asset,

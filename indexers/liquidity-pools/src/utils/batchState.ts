@@ -39,6 +39,7 @@ import {
   OtcOrder,
   OtcOrderEvent,
   ChainActivityTraceRelation,
+  DcaScheduleEvent,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -121,9 +122,10 @@ export type BatchStatePayload = {
   >;
 
   dcaSchedules: Map<string, DcaSchedule>;
+  dcaScheduleEvents: Map<string, DcaScheduleEvent>;
   dcaScheduleOrderRoutes: Map<string, DcaScheduleOrderRouteHop>;
   dcaScheduleExecutions: Map<string, DcaScheduleExecution>;
-  dcaScheduleExecutionActions: Map<string, DcaScheduleExecutionEvent>;
+  dcaScheduleExecutionEvents: Map<string, DcaScheduleExecutionEvent>;
 
   otcOrders: Map<string, OtcOrder>;
   otcOrderEvents: Map<string, OtcOrderEvent>;
@@ -189,9 +191,10 @@ export class BatchState {
     stableswapIdsForStoragePrefetch: new Map(),
 
     dcaSchedules: new Map(),
+    dcaScheduleEvents: new Map(),
     dcaScheduleOrderRoutes: new Map(),
     dcaScheduleExecutions: new Map(),
-    dcaScheduleExecutionActions: new Map(),
+    dcaScheduleExecutionEvents: new Map(),
 
     otcOrders: new Map(),
     otcOrderEvents: new Map(),

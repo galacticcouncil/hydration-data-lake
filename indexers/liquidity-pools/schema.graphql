@@ -666,19 +666,11 @@ type OmnipoolAssetHistoricalData @entity {
 
   #>>>check for assetTradebility
 
-  # >>> stateCap -> assetCap
   assetCap: BigInt! # What does this mean? AssetCap?
   assetShares: BigInt! # AssetShares?
   assetHubReserve: BigInt! # AssetHubReserve?
   assetProtocolShares: BigInt! # AssetProtocolShares?
   freeBalance: BigInt! # freeBalance? -> freeBalance
-  # remove fields below ->
-  #  balanceFlags: BigInt! # AssetFlags? move up if yes
-  #  balanceFrozen: BigInt! # not sure if any of these down are possible. Would check with Martin to be sure
-  #  balanceReserved: BigInt!
-  #  balanceFeeFrozen: BigInt!
-  #  balanceMiscFrozen: BigInt!
-
   paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int!
   block: Block!
@@ -744,27 +736,10 @@ type StableswapAssetHistoricalVolume @entity {
 
   swapFee: BigInt!
   swapTotalFees: BigInt!
-  #  liquidityFee: BigInt!
-  #  liquidityTotalFees: BigInt!
-  #  routedLiqFee: BigInt! # what is this? Isn't this just liquidityFee?
-  #  routedLiqTotalFees: BigInt!
-
   swapVolumeIn: BigInt!
   swapVolumeOut: BigInt!
   swapTotalVolumeIn: BigInt!
   swapTotalVolumeOut: BigInt!
-
-  # remove fields below
-  #  liqAddedAmount: BigInt!
-  #  liqRemovedAmount: BigInt!
-  #  liqAddedTotalAmount: BigInt!
-  #  liqRemovedTotalAmount: BigInt!
-  #
-  # move values from routed... to swap...
-  #  routedLiqAddedAmount: BigInt! # what is this? Why is it just in stableswap?
-  #  routedLiqRemovedAmount: BigInt!
-  #  routedLiqAddedTotalAmount: BigInt!
-  #  routedLiqRemovedTotalAmount: BigInt!
 
   paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int!
@@ -857,11 +832,12 @@ enum DcaScheduleExecutionStatus {
   Failed
 }
 
-enum DcaScheduleExecutionEventType {
-  Plan
-  Execute
-  Fail
+enum DcaScheduleEventName {
+  Created
+  Completed
+  Terminated
 }
+
 enum DcaScheduleExecutionEventName {
   Planned
   Executed
@@ -880,6 +856,7 @@ type DcaSchedule @entity {
   operationId: String
   traceIds: [String!]
 
+  status: DcaScheduleStatus @index
   owner: Account!
   startExecutionBlock: Int
   period: Int
@@ -887,6 +864,9 @@ type DcaSchedule @entity {
   slippage: Int
   maxRetries: Int
   stabilityThreshold: Int
+
+  totalExecutedAmountIn: BigInt
+  totalExecutedAmountOut: BigInt
 
   assetIn: Asset
   amountIn: BigInt
@@ -897,17 +877,11 @@ type DcaSchedule @entity {
   orderType: DcaScheduleOrderType!
   orderRouteHops: [DcaScheduleOrderRouteHop] @derivedFrom(field: "schedule")
   executions: [DcaScheduleExecution] @derivedFrom(field: "schedule")
-
-  totalExecutedAmountIn: BigInt
-  totalExecutedAmountOut: BigInt
-
-  status: DcaScheduleStatus @index
-  statusMemo: DispatchError
-  statusUpdatedAtBlockHeight: Int
+  events: [DcaScheduleEvent!]! @derivedFrom(field: "schedule")
 
   paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int!
-  block: Block!
+  event: Event!
 }
 
 type DcaScheduleOrderRouteHop @entity {
@@ -917,6 +891,19 @@ type DcaScheduleOrderRouteHop @entity {
   poolKind: SwapFillerType
   assetIn: Asset
   assetOut: Asset
+}
+
+type DcaScheduleEvent @entity {
+  "<dcaScheduleId>-<eventId>"
+  id: ID!
+  traceIds: [String!]
+  schedule: DcaSchedule!
+  eventName: DcaScheduleEventName! @index
+  memo: DispatchError
+
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int!
+  event: Event!
 }
 
 type DcaScheduleExecution @entity {
@@ -944,7 +931,7 @@ type DcaScheduleExecutionEvent @entity {
 
   paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int!
-  block: Block!
+  event: Event!
 }
 
 # ======================================================================================================================

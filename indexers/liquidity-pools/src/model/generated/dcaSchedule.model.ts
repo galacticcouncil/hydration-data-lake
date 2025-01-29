@@ -1,13 +1,13 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
+import {DcaScheduleStatus} from "./_dcaScheduleStatus"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {DcaScheduleOrderType} from "./_dcaScheduleOrderType"
 import {DcaScheduleOrderRouteHop} from "./dcaScheduleOrderRouteHop.model"
 import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
-import {DcaScheduleStatus} from "./_dcaScheduleStatus"
-import {DispatchError} from "./_dispatchError"
-import {Block} from "./block.model"
+import {DcaScheduleEvent} from "./dcaScheduleEvent.model"
+import {Event} from "./event.model"
 
 @Entity_()
 export class DcaSchedule {
@@ -26,6 +26,10 @@ export class DcaSchedule {
 
   @Column_("text", {array: true, nullable: true})
   traceIds!: (string)[] | undefined | null
+
+  @Index_()
+  @Column_("varchar", {length: 10, nullable: true})
+  status!: DcaScheduleStatus | undefined | null
 
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})
@@ -48,6 +52,12 @@ export class DcaSchedule {
 
   @Column_("int4", {nullable: true})
   stabilityThreshold!: number | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  totalExecutedAmountIn!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  totalExecutedAmountOut!: bigint | undefined | null
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
@@ -78,21 +88,8 @@ export class DcaSchedule {
   @OneToMany_(() => DcaScheduleExecution, e => e.schedule)
   executions!: DcaScheduleExecution[]
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  totalExecutedAmountIn!: bigint | undefined | null
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  totalExecutedAmountOut!: bigint | undefined | null
-
-  @Index_()
-  @Column_("varchar", {length: 10, nullable: true})
-  status!: DcaScheduleStatus | undefined | null
-
-  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new DispatchError(undefined, obj)}, nullable: true})
-  statusMemo!: DispatchError | undefined | null
-
-  @Column_("int4", {nullable: true})
-  statusUpdatedAtBlockHeight!: number | undefined | null
+  @OneToMany_(() => DcaScheduleEvent, e => e.schedule)
+  events!: DcaScheduleEvent[]
 
   @Index_()
   @Column_("int4", {nullable: false})
@@ -102,6 +99,6 @@ export class DcaSchedule {
   relayChainBlockHeight!: number
 
   @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @ManyToOne_(() => Event, {nullable: true})
+  event!: Event
 }
