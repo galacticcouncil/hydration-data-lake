@@ -10,7 +10,7 @@ export class StableswapHistoricalData {
   }
 
   /**
-   * <stableswapId>-<paraChainBlockHeight>
+   * <stableswapId>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
@@ -29,20 +29,20 @@ export class StableswapHistoricalData {
   finalAmplification!: number
 
   @Column_("int4", {nullable: false})
-  initialAmplificationChangeAt!: number
+  initialAmplificationChangeAtBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  finalAmplificationChangeAt!: number
+  finalAmplificationChangeAtBlockHeight!: number
 
   @Column_("int4", {nullable: false})
   fee!: number
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})

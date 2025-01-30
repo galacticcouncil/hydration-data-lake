@@ -11,7 +11,7 @@ export function initXykPoolVolume(
   oldVolume: XykpoolHistoricalVolume | undefined
 ) {
   const newVolume = new XykpoolHistoricalVolume({
-    id: swap.filler.id + '-' + swap.paraChainBlockHeight,
+    id: swap.filler.id + '-' + swap.paraBlockHeight,
     pool: pool,
     assetA: pool.assetA,
     assetB: pool.assetB,
@@ -42,8 +42,8 @@ export function initXykPoolVolume(
       currentVolume?.assetBTotalVolumeOut ||
       oldVolume?.assetBTotalVolumeOut ||
       BigInt(0),
-    relayChainBlockHeight: swap.relayChainBlockHeight,
-    paraChainBlockHeight: swap.paraChainBlockHeight,
+    relayBlockHeight: swap.relayBlockHeight,
+    paraBlockHeight: swap.paraBlockHeight,
     block: swap.event.block,
   });
 
@@ -118,7 +118,7 @@ export async function handleXykPoolVolumeUpdates({
 }) {
   const xykPoolVolumes = ctx.batchState.state.xykPoolVolumes;
   const currentVolume = xykPoolVolumes.get(
-    swap.filler.id + '-' + swap.paraChainBlockHeight
+    swap.filler.id + '-' + swap.paraBlockHeight
   );
 
   const oldVolume =

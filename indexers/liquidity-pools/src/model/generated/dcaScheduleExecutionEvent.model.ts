@@ -2,7 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
 import {Swap} from "./swap.model"
-import {DcaScheduleExecutionEventName} from "./_dcaScheduleExecutionEventName"
+import {DcaScheduleExecutionStatus} from "./_dcaScheduleExecutionStatus"
 import {DispatchError} from "./_dispatchError"
 import {Event} from "./event.model"
 
@@ -28,22 +28,22 @@ export class DcaScheduleExecutionEvent {
   @ManyToOne_(() => DcaScheduleExecution, {nullable: true})
   scheduleExecution!: DcaScheduleExecution
 
-  @OneToMany_(() => Swap, e => e.dcaScheduleExecutionAction)
+  @OneToMany_(() => Swap, e => e.dcaScheduleExecutionEvent)
   swaps!: Swap[]
 
   @Index_()
   @Column_("varchar", {length: 8, nullable: true})
-  eventName!: DcaScheduleExecutionEventName | undefined | null
+  eventName!: DcaScheduleExecutionStatus | undefined | null
 
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new DispatchError(undefined, obj)}, nullable: true})
-  memo!: DispatchError | undefined | null
+  errorState!: DispatchError | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Event, {nullable: true})

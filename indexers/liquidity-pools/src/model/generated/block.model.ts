@@ -42,5 +42,5 @@ export class Block {
   timestamp!: Date
 
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 }

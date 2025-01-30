@@ -59,8 +59,8 @@ export async function createOtcOrder({
     amountOut: amountOut,
     partiallyFillable,
     status: OtcOrderStatus.Open,
-    paraChainBlockHeight: blockHeader.height,
-    relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+    paraBlockHeight: blockHeader.height,
+    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
   });
@@ -133,8 +133,8 @@ export async function handleOtcOrderPlaced(
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: newOrder,
     eventName: OtcOrderEventName.Created,
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
-    relayChainBlockHeight:
+    paraBlockHeight: eventMetadata.blockHeader.height,
+    relayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     eventIndex: eventMetadata.indexInBlock,
@@ -179,8 +179,8 @@ export async function handleOtcOrderCancelled(
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: orderEntity,
     eventName: OtcOrderEventName.Canceled,
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
-    relayChainBlockHeight:
+    paraBlockHeight: eventMetadata.blockHeader.height,
+    relayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     eventIndex: eventMetadata.indexInBlock,

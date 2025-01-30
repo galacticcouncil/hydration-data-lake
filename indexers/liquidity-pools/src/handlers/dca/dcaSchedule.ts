@@ -3,9 +3,8 @@ import { Store } from '@subsquid/typeorm-store';
 import { getAsset } from '../assets/assetRegistry';
 import {
   DcaSchedule,
-  DcaScheduleEventName,
-  DcaScheduleOrderRouteHop,
   DcaScheduleStatus,
+  DcaScheduleOrderRouteHop,
   DispatchError,
 } from '../../model';
 import { getAccount } from '../accounts';
@@ -77,9 +76,9 @@ export async function createDcaSchedule({
     maxAmountIn: order.maxAmountIn ?? null,
     minAmountOut: order.minAmountOut ?? null,
     orderType: order.kind,
-    status: DcaScheduleStatus.Open,
-    paraChainBlockHeight: blockHeader.height,
-    relayChainBlockHeight:
+    status: DcaScheduleStatus.Created,
+    paraBlockHeight: blockHeader.height,
+    relayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     event: ctx.batchState.state.batchEvents.get(eventId),
@@ -190,7 +189,7 @@ export async function handleDcaScheduleCreated(
     ctx,
     schedule: newSchedule,
     eventId: eventMetadata.id,
-    eventName: DcaScheduleEventName.Created,
+    eventName: DcaScheduleStatus.Created,
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     blockHeader: eventMetadata.blockHeader,
   });
@@ -233,7 +232,7 @@ export async function handleDcaScheduleCompleted(
     ctx,
     schedule: scheduleEntity,
     eventId: eventMetadata.id,
-    eventName: DcaScheduleEventName.Completed,
+    eventName: DcaScheduleStatus.Completed,
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     blockHeader: eventMetadata.blockHeader,
   });
@@ -267,8 +266,8 @@ export async function handleDcaScheduleTerminated(
     ctx,
     schedule: scheduleEntity,
     eventId: eventMetadata.id,
-    eventName: DcaScheduleEventName.Terminated,
-    memo: eventParams.error
+    eventName: DcaScheduleStatus.Terminated,
+    errorState: eventParams.error
       ? new DispatchError({
           kind: eventParams.error.__kind,
           index: eventParams.error.value?.index,

@@ -153,7 +153,7 @@ export async function stablepoolBuySellExecuted(
         eventMetadata.name === EventName.Stableswap_BuyExecuted
           ? TradeOperationType.ExactOut
           : TradeOperationType.ExactIn,
-      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      paraBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });

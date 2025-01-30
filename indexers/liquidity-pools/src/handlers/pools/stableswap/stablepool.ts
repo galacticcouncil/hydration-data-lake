@@ -29,6 +29,16 @@ export async function getNewStableswapWithAssets({
   ctx: SqdProcessorContext<Store>;
   blockHeader: SqdBlock;
 }) {
+  const poolShareToken = await getAsset({
+    ctx,
+    id: poolId,
+    ensure: true,
+    blockHeader,
+  });
+
+  if (!poolShareToken)
+    throw Error(`Asset ${poolId} can not be found or created.`);
+
   const newPool = new Stableswap({
     id: `${poolId}`,
     account: await getAccount({
@@ -37,16 +47,17 @@ export async function getNewStableswapWithAssets({
       accountType: AccountType.Stableswap,
       ensureAccountType: true,
     }),
-
-    createdAtParaChainBlockHeight: blockHeader.height,
-    createdAtRelayChainBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
+    shareToken: poolShareToken,
+    createdAtParaBlockHeight: blockHeader.height,
+    createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      blockHeader.height
+    ).height,
     createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
     isDestroyed: false,
     lifeStates: addStableswapCreatedLifeState({
       createdState: new StableswapCreatedData({
-        paraChainBlockHeight: blockHeader.height,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        paraBlockHeight: blockHeader.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           blockHeader.height
         ).height,
       }),
@@ -189,8 +200,7 @@ export function addStableswapCreatedLifeState({
   createdState: StableswapCreatedData;
 }): StableswapLifeState[] {
   const existingState = existingStates.find(
-    (state) =>
-      state.created.paraChainBlockHeight === createdState.paraChainBlockHeight
+    (state) => state.created.paraBlockHeight === createdState.paraBlockHeight
   );
 
   if (existingState) return existingStates;
@@ -218,8 +228,8 @@ export function addStableswapDestroyedLifeState({
   return [
     ...existingStates.filter(
       (state) =>
-        state.created.paraChainBlockHeight !==
-        latestOpenState.created.paraChainBlockHeight
+        state.created.paraBlockHeight !==
+        latestOpenState.created.paraBlockHeight
     ),
     new StableswapLifeState({
       created: latestOpenState.created,

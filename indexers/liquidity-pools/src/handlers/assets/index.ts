@@ -52,21 +52,21 @@ export async function handleAssetRegistry(
 
 export function initAssetVolume(
   asset: Asset,
-  paraChainBlockHeight: number,
-  relayChainBlockHeight: number,
+  paraBlockHeight: number,
+  relayBlockHeight: number,
   volumeIn: bigint,
   volumeOut: bigint,
   totalVolumeIn: bigint,
   totalVolumeOut: bigint
 ) {
   return new HistoricalAssetVolume({
-    id: asset.id + '-' + paraChainBlockHeight,
+    id: asset.id + '-' + paraBlockHeight,
     asset,
     volumeIn,
     volumeOut,
     totalVolumeIn,
     totalVolumeOut,
-    relayChainBlockHeight,
-    paraChainBlockHeight,
+    relayBlockHeight,
+    paraBlockHeight,
   });
 }

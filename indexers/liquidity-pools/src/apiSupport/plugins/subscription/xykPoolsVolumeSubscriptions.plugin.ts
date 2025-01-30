@@ -128,8 +128,8 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
           assetATotalFees: BigInt!
           assetBTotalFees: BigInt!
           averagePrice: BigInt!
-          paraChainBlockHeight: Int!
-          relayChainBlockHeight: Int!
+          paraBlockHeight: Int!
+          relayBlockHeight: Int!
         }
 
         extend type Subscription {
@@ -186,8 +186,8 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
                 assetATotalFees: BigInt(decoratedRow.assetATotalFees),
                 assetBTotalFees: BigInt(decoratedRow.assetBTotalFees),
                 averagePrice: decoratedRow.averagePrice,
-                relayChainBlockHeight: decoratedRow.relayChainBlockHeight,
-                paraChainBlockHeight: decoratedRow.paraChainBlockHeight,
+                relayBlockHeight: decoratedRow.relayBlockHeight,
+                paraBlockHeight: decoratedRow.paraBlockHeight,
               } as XykpoolHistoricalVolumeGqlResponse,
               event: event.__node__[0],
             };

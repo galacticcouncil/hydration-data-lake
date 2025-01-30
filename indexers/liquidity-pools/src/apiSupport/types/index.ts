@@ -39,8 +39,8 @@ export type XykpoolHistoricalVolumeGqlResponse = {
   assetATotalFees: bigint;
   assetBTotalFees: bigint;
   averagePrice: bigint;
-  relayChainBlockHeight: number;
-  paraChainBlockHeight: number;
+  relayBlockHeight: number;
+  paraBlockHeight: number;
 };
 
 export type OmnipoolAssetHistoricalVolumeRaw = {
@@ -64,8 +64,8 @@ export type OmnipoolAssetHistoricalVolumeGqlResponse = {
   assetTotalVolumeOut: number;
   assetFee: number;
   assetTotalFees: number;
-  relayChainBlockHeight: number;
-  paraChainBlockHeight: number;
+  relayBlockHeight: number;
+  paraBlockHeight: number;
 };
 
 export type StableswapHistoricalVolumeRaw = {
@@ -78,8 +78,8 @@ export type StableswapHistoricalVolumeGqlResponse = {
   id: string;
   poolId: string;
   assetVolumes: StableswapAssetHistoricalVolumeGqlResponse[];
-  relayChainBlockHeight: number;
-  paraChainBlockHeight: number;
+  relayBlockHeight: number;
+  paraBlockHeight: number;
 };
 
 export type StableswapAssetHistoricalVolumeRaw = {
@@ -129,8 +129,8 @@ export type StableswapAssetHistoricalVolumeGqlResponse = {
   // routedLiqRemovedAmount: number;
   // routedLiqAddedTotalAmount: number;
   // routedLiqRemovedTotalAmount: number;
-  paraChainBlockHeight: number;
-  relayChainBlockHeight: number;
+  paraBlockHeight: number;
+  relayBlockHeight: number;
 };
 
 export interface QueryResolverContext {

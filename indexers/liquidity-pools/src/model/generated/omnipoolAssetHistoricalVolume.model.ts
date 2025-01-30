@@ -10,7 +10,7 @@ export class OmnipoolAssetHistoricalVolume {
   }
 
   /**
-   * <omnipoolAssetId>-<paraChainBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)
+   * <omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)
    */
   @PrimaryColumn_()
   id!: string
@@ -39,10 +39,10 @@ export class OmnipoolAssetHistoricalVolume {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})

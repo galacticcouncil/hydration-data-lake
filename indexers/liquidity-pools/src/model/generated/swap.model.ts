@@ -55,22 +55,22 @@ export class Swap {
 
   @Index_()
   @ManyToOne_(() => DcaScheduleExecutionEvent, {nullable: true})
-  dcaScheduleExecutionAction!: DcaScheduleExecutionEvent | undefined | null
+  dcaScheduleExecutionEvent!: DcaScheduleExecutionEvent | undefined | null
 
   @Index_()
   @ManyToOne_(() => OtcOrderEvent, {nullable: true})
-  otcOrderFulfilment!: OtcOrderEvent | undefined | null
+  otcOrderFulfillment!: OtcOrderEvent | undefined | null
 
   @Index_()
   @Column_("timestamp with time zone", {nullable: false})
-  paraChainTimestamp!: Date
+  paraTimestamp!: Date
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Event, {nullable: true})

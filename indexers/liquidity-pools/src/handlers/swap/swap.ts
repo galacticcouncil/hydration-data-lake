@@ -86,8 +86,8 @@ export async function getNewSwap({
     inputs,
     outputs,
     eventId,
-    paraChainBlockHeight,
-    paraChainTimestamp,
+    paraBlockHeight,
+    paraTimestamp,
   },
 }: {
   ctx: SqdProcessorContext<Store>;
@@ -105,8 +105,8 @@ export async function getNewSwap({
     inputs: BroadcastSwappedAssetAmount[];
     outputs: BroadcastSwappedAssetAmount[];
     eventId: string;
-    paraChainBlockHeight: number;
-    paraChainTimestamp: Date;
+    paraBlockHeight: number;
+    paraTimestamp: Date;
   };
 }): Promise<GetNewSwapResponse> {
   const swap = new Swap({
@@ -118,10 +118,10 @@ export async function getNewSwap({
     filler: await getAccount({ ctx, id: fillerId }),
     fillerType,
     operationType,
-    paraChainBlockHeight,
-    paraChainTimestamp,
-    relayChainBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(paraChainBlockHeight)
+    paraBlockHeight,
+    paraTimestamp,
+    relayBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight)
         .height,
     event: ctx.batchState.state.batchEvents.get(eventId),
   });
@@ -222,7 +222,7 @@ export async function handleSwap({
     outputs,
     fees,
     operationType,
-    paraChainBlockHeight,
+    paraBlockHeight,
     timestamp,
   },
 }: {
@@ -241,7 +241,7 @@ export async function handleSwap({
     inputs: BroadcastSwappedAssetAmount[];
     outputs: BroadcastSwappedAssetAmount[];
     operationType: TradeOperationType;
-    paraChainBlockHeight: number;
+    paraBlockHeight: number;
     timestamp: number;
   };
 }): Promise<GetNewSwapResponse> {
@@ -258,8 +258,8 @@ export async function handleSwap({
       fillerType,
       operationType,
       eventId,
-      paraChainBlockHeight,
-      paraChainTimestamp: new Date(timestamp),
+      paraBlockHeight,
+      paraTimestamp: new Date(timestamp),
       fees,
       inputs,
       outputs,
@@ -345,7 +345,7 @@ export async function handleSupportSwapperEvent(
       outputs: eventParams.outputs,
       fees: eventParams.fees,
       operationType: eventParams.operation,
-      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      paraBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });

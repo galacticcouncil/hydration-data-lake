@@ -89,10 +89,10 @@ export async function handleLbppoolHistoricalData(
             : null,
           repayTarget: poolStorageData.repayTarget,
 
-          relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
             blockHeader.height
           ).height,
-          paraChainBlockHeight: blockHeader.height,
+          paraBlockHeight: blockHeader.height,
           block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
         });
 

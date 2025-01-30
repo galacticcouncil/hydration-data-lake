@@ -22,8 +22,8 @@ export function getNewOrderEvent({
   traceIds = [],
   order,
   eventName,
-  paraChainBlockHeight,
-  relayChainBlockHeight,
+  paraBlockHeight,
+  relayBlockHeight,
   eventIndex,
   filler,
   swap = null,
@@ -41,8 +41,8 @@ export function getNewOrderEvent({
   filler?: Account | null;
   eventIndex: number;
   swap?: Swap | null;
-  relayChainBlockHeight: number;
-  paraChainBlockHeight: number;
+  relayBlockHeight: number;
+  paraBlockHeight: number;
 }) {
   return new OtcOrderEvent({
     id: `${order.id}-${eventIndex}`,
@@ -50,8 +50,8 @@ export function getNewOrderEvent({
     traceIds,
     eventName,
     eventIndex,
-    relayChainBlockHeight,
-    paraChainBlockHeight,
+    relayBlockHeight,
+    paraBlockHeight,
     swap,
     fee,
     filler,
@@ -131,7 +131,7 @@ export async function handleOtcOrderFilled(
 
   const relatedSwap = [...ctx.batchState.state.swaps.values()].find(
     (swap) =>
-      swap.paraChainBlockHeight === eventMetadata.blockHeader.height &&
+      swap.paraBlockHeight === eventMetadata.blockHeader.height &&
       ctx.batchState.state.swapFillerContexts.has(swap.id) &&
       ctx.batchState.state.swapFillerContexts.get(swap.id)?.otcOrderId ===
         `${eventParams.orderId}` &&
@@ -146,8 +146,8 @@ export async function handleOtcOrderFilled(
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
     filler: await getAccount({ ctx, id: eventParams.who }),
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
-    relayChainBlockHeight:
+    paraBlockHeight: eventMetadata.blockHeader.height,
+    relayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     eventIndex: eventMetadata.indexInBlock,
@@ -168,7 +168,7 @@ export async function handleOtcOrderFilled(
   state.otcOrderEvents.set(newOrderEvent.id, newOrderEvent);
 
   if (relatedSwap) {
-    relatedSwap.otcOrderFulfilment = newOrderEvent;
+    relatedSwap.otcOrderFulfillment = newOrderEvent;
     state.swaps.set(relatedSwap.id, relatedSwap);
   }
 
@@ -197,7 +197,7 @@ export async function handleOtcOrderPartiallyFilled(
 
   const relatedSwap = [...ctx.batchState.state.swaps.values()].find(
     (swap) =>
-      swap.paraChainBlockHeight === eventMetadata.blockHeader.height &&
+      swap.paraBlockHeight === eventMetadata.blockHeader.height &&
       ctx.batchState.state.swapFillerContexts.has(swap.id) &&
       ctx.batchState.state.swapFillerContexts.get(swap.id)?.otcOrderId ===
         `${eventParams.orderId}` &&
@@ -212,8 +212,8 @@ export async function handleOtcOrderPartiallyFilled(
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
     filler: await getAccount({ ctx, id: eventParams.who }),
-    paraChainBlockHeight: eventMetadata.blockHeader.height,
-    relayChainBlockHeight:
+    paraBlockHeight: eventMetadata.blockHeader.height,
+    relayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)
         ?.relaychainBlockNumber ?? 0,
     eventIndex: eventMetadata.indexInBlock,
@@ -233,7 +233,7 @@ export async function handleOtcOrderPartiallyFilled(
   state.otcOrders.set(otcOrder.id, otcOrder);
   state.otcOrderEvents.set(newOrderEvent.id, newOrderEvent);
   if (relatedSwap) {
-    relatedSwap.otcOrderFulfilment = newOrderEvent;
+    relatedSwap.otcOrderFulfillment = newOrderEvent;
     state.swaps.set(relatedSwap.id, relatedSwap);
   }
 

@@ -48,8 +48,8 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
     id: `${omnipoolEntity.id}-${ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID}`,
     asset: lrnaAssetEntity,
     pool: omnipoolEntity,
-    addedAtParaChainBlockHeight: ctx.blocks[0].header.height,
-    addedAtRelayChainBlockHeight:
+    addedAtParaBlockHeight: ctx.blocks[0].header.height,
+    addedAtRelayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(
         ctx.blocks[0].header.height
       ).height,
@@ -59,8 +59,8 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
       assetAddedState: new OmnipoolAssetAddedData({
         initialAmount: '0',
         initialPrice: '0',
-        paraChainBlockHeight: ctx.blocks[0].header.height,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        paraBlockHeight: ctx.blocks[0].header.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           ctx.blocks[0].header.height
         ).height,
       }),

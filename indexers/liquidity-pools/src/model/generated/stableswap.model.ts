@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
+import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 import {StableswapLifeState} from "./_stableswapLifeState"
 import {StableswapAsset} from "./stableswapAsset.model"
@@ -12,7 +13,7 @@ export class Stableswap {
   }
 
   /**
-   * poolId (e.g. 102)
+   * poolId - share token ID (e.g. 102)
    */
   @PrimaryColumn_()
   id!: string
@@ -22,11 +23,15 @@ export class Stableswap {
   account!: Account
 
   @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  shareToken!: Asset
+
+  @Index_()
   @Column_("int4", {nullable: false})
-  createdAtParaChainBlockHeight!: number
+  createdAtParaBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  createdAtRelayChainBlockHeight!: number
+  createdAtRelayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})

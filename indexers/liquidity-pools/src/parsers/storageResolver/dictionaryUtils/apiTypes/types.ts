@@ -230,7 +230,7 @@ export type Lbppool = {
   /** Reads and enables pagination through a set of `LbpPoolAssetsDatum`. */
   lbpPoolAssetsDataByPoolId: LbpPoolAssetsDataConnection;
   owner: Scalars['String']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
   poolAddress: Scalars['String']['output'];
   repayTarget: Scalars['BigFloat']['output'];
   start?: Maybe<Scalars['Int']['output']>;
@@ -315,12 +315,12 @@ export enum LbpPoolAssetsDataGroupBy {
 
 export type LbpPoolAssetsDataHavingAverageInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbpPoolAssetsDataHavingDistinctCountInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `LbpPoolAssetsDatum` aggregates. */
@@ -340,37 +340,37 @@ export type LbpPoolAssetsDataHavingInput = {
 
 export type LbpPoolAssetsDataHavingMaxInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbpPoolAssetsDataHavingMinInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbpPoolAssetsDataHavingStddevPopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbpPoolAssetsDataHavingStddevSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbpPoolAssetsDataHavingSumInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbpPoolAssetsDataHavingVariancePopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbpPoolAssetsDataHavingVarianceSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `LbpPoolAssetsDatum`. */
@@ -395,7 +395,7 @@ export type LbpPoolAssetsDatum = {
   assetId: Scalars['Int']['output'];
   balances: Scalars['JSON']['output'];
   id: Scalars['String']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
   /** Reads a single `Lbppool` that is related to this `LbpPoolAssetsDatum`. */
   pool?: Maybe<Lbppool>;
   poolId?: Maybe<Scalars['String']['output']>;
@@ -428,8 +428,8 @@ export type LbpPoolAssetsDatumAverageAggregates = {
   __typename?: 'LbpPoolAssetsDatumAverageAggregates';
   /** Mean average of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -443,8 +443,8 @@ export type LbpPoolAssetsDatumCondition = {
   balances?: InputMaybe<Scalars['JSON']['input']>;
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -457,8 +457,8 @@ export type LbpPoolAssetsDatumDistinctCountAggregates = {
   balances?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -477,8 +477,8 @@ export type LbpPoolAssetsDatumFilter = {
   not?: InputMaybe<LbpPoolAssetsDatumFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<LbpPoolAssetsDatumFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<StringFilter>;
 };
@@ -487,56 +487,56 @@ export type LbpPoolAssetsDatumMaxAggregates = {
   __typename?: 'LbpPoolAssetsDatumMaxAggregates';
   /** Maximum of assetId across the matching connection */
   assetId?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type LbpPoolAssetsDatumMinAggregates = {
   __typename?: 'LbpPoolAssetsDatumMinAggregates';
   /** Minimum of assetId across the matching connection */
   assetId?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type LbpPoolAssetsDatumStddevPopulationAggregates = {
   __typename?: 'LbpPoolAssetsDatumStddevPopulationAggregates';
   /** Population standard deviation of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type LbpPoolAssetsDatumStddevSampleAggregates = {
   __typename?: 'LbpPoolAssetsDatumStddevSampleAggregates';
   /** Sample standard deviation of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type LbpPoolAssetsDatumSumAggregates = {
   __typename?: 'LbpPoolAssetsDatumSumAggregates';
   /** Sum of assetId across the matching connection */
   assetId: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type LbpPoolAssetsDatumVariancePopulationAggregates = {
   __typename?: 'LbpPoolAssetsDatumVariancePopulationAggregates';
   /** Population variance of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type LbpPoolAssetsDatumVarianceSampleAggregates = {
   __typename?: 'LbpPoolAssetsDatumVarianceSampleAggregates';
   /** Sample variance of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type LbpPoolAverageAggregates = {
@@ -551,8 +551,8 @@ export type LbpPoolAverageAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of start across the matching connection */
@@ -579,8 +579,8 @@ export type LbpPoolCondition = {
   initialWeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `owner` field. */
   owner?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `repayTarget` field. */
@@ -611,8 +611,8 @@ export type LbpPoolDistinctCountAggregates = {
   initialWeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of owner across the matching connection */
   owner?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolAddress across the matching connection */
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of repayTarget across the matching connection */
@@ -649,8 +649,8 @@ export type LbpPoolFilter = {
   or?: InputMaybe<Array<LbpPoolFilter>>;
   /** Filter by the object’s `owner` field. */
   owner?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<StringFilter>;
   /** Filter by the object’s `repayTarget` field. */
@@ -684,7 +684,7 @@ export type LbpPoolHavingAverageInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -695,7 +695,7 @@ export type LbpPoolHavingDistinctCountInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -721,7 +721,7 @@ export type LbpPoolHavingMaxInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -732,7 +732,7 @@ export type LbpPoolHavingMinInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -743,7 +743,7 @@ export type LbpPoolHavingStddevPopulationInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -754,7 +754,7 @@ export type LbpPoolHavingStddevSampleInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -765,7 +765,7 @@ export type LbpPoolHavingSumInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -776,7 +776,7 @@ export type LbpPoolHavingVariancePopulationInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -787,7 +787,7 @@ export type LbpPoolHavingVarianceSampleInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
@@ -804,8 +804,8 @@ export type LbpPoolMaxAggregates = {
   finalWeight?: Maybe<Scalars['Int']['output']>;
   /** Maximum of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
   /** Maximum of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Maximum of start across the matching connection */
@@ -824,8 +824,8 @@ export type LbpPoolMinAggregates = {
   finalWeight?: Maybe<Scalars['Int']['output']>;
   /** Minimum of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
   /** Minimum of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Minimum of start across the matching connection */
@@ -844,8 +844,8 @@ export type LbpPoolStddevPopulationAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of start across the matching connection */
@@ -864,8 +864,8 @@ export type LbpPoolStddevSampleAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of start across the matching connection */
@@ -884,8 +884,8 @@ export type LbpPoolSumAggregates = {
   finalWeight: Scalars['BigInt']['output'];
   /** Sum of initialWeight across the matching connection */
   initialWeight: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
   /** Sum of repayTarget across the matching connection */
   repayTarget: Scalars['BigFloat']['output'];
   /** Sum of start across the matching connection */
@@ -904,8 +904,8 @@ export type LbpPoolVariancePopulationAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of start across the matching connection */
@@ -924,8 +924,8 @@ export type LbpPoolVarianceSampleAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of start across the matching connection */
@@ -1381,12 +1381,12 @@ export enum OmnipoolAssetDataGroupBy {
 
 export type OmnipoolAssetDataHavingAverageInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingDistinctCountInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `OmnipoolAssetDatum` aggregates. */
@@ -1406,37 +1406,37 @@ export type OmnipoolAssetDataHavingInput = {
 
 export type OmnipoolAssetDataHavingMaxInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingMinInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingStddevPopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingStddevSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingSumInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingVariancePopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingVarianceSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `OmnipoolAssetDatum`. */
@@ -1464,7 +1464,7 @@ export type OmnipoolAssetDatum = {
   assetState: Scalars['JSON']['output'];
   balances: Scalars['JSON']['output'];
   id: Scalars['String']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
   poolAddress: Scalars['String']['output'];
 };
 
@@ -1495,8 +1495,8 @@ export type OmnipoolAssetDatumAverageAggregates = {
   __typename?: 'OmnipoolAssetDatumAverageAggregates';
   /** Mean average of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -1512,8 +1512,8 @@ export type OmnipoolAssetDatumCondition = {
   balances?: InputMaybe<Scalars['JSON']['input']>;
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<Scalars['String']['input']>;
 };
@@ -1528,8 +1528,8 @@ export type OmnipoolAssetDatumDistinctCountAggregates = {
   balances?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolAddress across the matching connection */
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -1550,8 +1550,8 @@ export type OmnipoolAssetDatumFilter = {
   not?: InputMaybe<OmnipoolAssetDatumFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<OmnipoolAssetDatumFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<StringFilter>;
 };
@@ -1560,56 +1560,56 @@ export type OmnipoolAssetDatumMaxAggregates = {
   __typename?: 'OmnipoolAssetDatumMaxAggregates';
   /** Maximum of assetId across the matching connection */
   assetId?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type OmnipoolAssetDatumMinAggregates = {
   __typename?: 'OmnipoolAssetDatumMinAggregates';
   /** Minimum of assetId across the matching connection */
   assetId?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type OmnipoolAssetDatumStddevPopulationAggregates = {
   __typename?: 'OmnipoolAssetDatumStddevPopulationAggregates';
   /** Population standard deviation of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolAssetDatumStddevSampleAggregates = {
   __typename?: 'OmnipoolAssetDatumStddevSampleAggregates';
   /** Sample standard deviation of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolAssetDatumSumAggregates = {
   __typename?: 'OmnipoolAssetDatumSumAggregates';
   /** Sum of assetId across the matching connection */
   assetId: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type OmnipoolAssetDatumVariancePopulationAggregates = {
   __typename?: 'OmnipoolAssetDatumVariancePopulationAggregates';
   /** Population variance of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolAssetDatumVarianceSampleAggregates = {
   __typename?: 'OmnipoolAssetDatumVarianceSampleAggregates';
   /** Sample variance of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolAssetState = {
@@ -1858,7 +1858,7 @@ export type Stableswap = {
   id: Scalars['String']['output'];
   initialAmplification: Scalars['Int']['output'];
   initialBlock: Scalars['Int']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
   poolAddress: Scalars['String']['output'];
   poolId: Scalars['Int']['output'];
   /** Reads and enables pagination through a set of `StablepoolAssetDatum`. */
@@ -1943,12 +1943,12 @@ export enum StablepoolAssetDataGroupBy {
 
 export type StablepoolAssetDataHavingAverageInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StablepoolAssetDataHavingDistinctCountInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `StablepoolAssetDatum` aggregates. */
@@ -1968,37 +1968,37 @@ export type StablepoolAssetDataHavingInput = {
 
 export type StablepoolAssetDataHavingMaxInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StablepoolAssetDataHavingMinInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StablepoolAssetDataHavingStddevPopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StablepoolAssetDataHavingStddevSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StablepoolAssetDataHavingSumInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StablepoolAssetDataHavingVariancePopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StablepoolAssetDataHavingVarianceSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `StablepoolAssetDatum`. */
@@ -2023,7 +2023,7 @@ export type StablepoolAssetDatum = {
   assetId: Scalars['Int']['output'];
   balances: Scalars['JSON']['output'];
   id: Scalars['String']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
   /** Reads a single `Stableswap` that is related to this `StablepoolAssetDatum`. */
   pool?: Maybe<Stableswap>;
   poolId?: Maybe<Scalars['String']['output']>;
@@ -2056,8 +2056,8 @@ export type StablepoolAssetDatumAverageAggregates = {
   __typename?: 'StablepoolAssetDatumAverageAggregates';
   /** Mean average of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -2071,8 +2071,8 @@ export type StablepoolAssetDatumCondition = {
   balances?: InputMaybe<Scalars['JSON']['input']>;
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2085,8 +2085,8 @@ export type StablepoolAssetDatumDistinctCountAggregates = {
   balances?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -2105,8 +2105,8 @@ export type StablepoolAssetDatumFilter = {
   not?: InputMaybe<StablepoolAssetDatumFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<StablepoolAssetDatumFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<StringFilter>;
 };
@@ -2115,56 +2115,56 @@ export type StablepoolAssetDatumMaxAggregates = {
   __typename?: 'StablepoolAssetDatumMaxAggregates';
   /** Maximum of assetId across the matching connection */
   assetId?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type StablepoolAssetDatumMinAggregates = {
   __typename?: 'StablepoolAssetDatumMinAggregates';
   /** Minimum of assetId across the matching connection */
   assetId?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type StablepoolAssetDatumStddevPopulationAggregates = {
   __typename?: 'StablepoolAssetDatumStddevPopulationAggregates';
   /** Population standard deviation of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StablepoolAssetDatumStddevSampleAggregates = {
   __typename?: 'StablepoolAssetDatumStddevSampleAggregates';
   /** Sample standard deviation of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StablepoolAssetDatumSumAggregates = {
   __typename?: 'StablepoolAssetDatumSumAggregates';
   /** Sum of assetId across the matching connection */
   assetId: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type StablepoolAssetDatumVariancePopulationAggregates = {
   __typename?: 'StablepoolAssetDatumVariancePopulationAggregates';
   /** Population variance of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StablepoolAssetDatumVarianceSampleAggregates = {
   __typename?: 'StablepoolAssetDatumVarianceSampleAggregates';
   /** Sample variance of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StablepoolAverageAggregates = {
@@ -2179,8 +2179,8 @@ export type StablepoolAverageAggregates = {
   initialAmplification?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of initialBlock across the matching connection */
   initialBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -2202,8 +2202,8 @@ export type StablepoolCondition = {
   initialAmplification?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `initialBlock` field. */
   initialBlock?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
@@ -2224,8 +2224,8 @@ export type StablepoolDistinctCountAggregates = {
   initialAmplification?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of initialBlock across the matching connection */
   initialBlock?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolAddress across the matching connection */
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
@@ -2252,8 +2252,8 @@ export type StablepoolFilter = {
   not?: InputMaybe<StablepoolFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<StablepoolFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<StringFilter>;
   /** Filter by the object’s `poolId` field. */
@@ -2278,7 +2278,7 @@ export type StablepoolHavingAverageInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2288,7 +2288,7 @@ export type StablepoolHavingDistinctCountInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2313,7 +2313,7 @@ export type StablepoolHavingMaxInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2323,7 +2323,7 @@ export type StablepoolHavingMinInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2333,7 +2333,7 @@ export type StablepoolHavingStddevPopulationInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2343,7 +2343,7 @@ export type StablepoolHavingStddevSampleInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2353,7 +2353,7 @@ export type StablepoolHavingSumInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2363,7 +2363,7 @@ export type StablepoolHavingVariancePopulationInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2373,7 +2373,7 @@ export type StablepoolHavingVarianceSampleInput = {
   finalBlock?: InputMaybe<HavingIntFilter>;
   initialAmplification?: InputMaybe<HavingIntFilter>;
   initialBlock?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2389,8 +2389,8 @@ export type StablepoolMaxAggregates = {
   initialAmplification?: Maybe<Scalars['Int']['output']>;
   /** Maximum of initialBlock across the matching connection */
   initialBlock?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
   /** Maximum of poolId across the matching connection */
   poolId?: Maybe<Scalars['Int']['output']>;
 };
@@ -2407,8 +2407,8 @@ export type StablepoolMinAggregates = {
   initialAmplification?: Maybe<Scalars['Int']['output']>;
   /** Minimum of initialBlock across the matching connection */
   initialBlock?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
   /** Minimum of poolId across the matching connection */
   poolId?: Maybe<Scalars['Int']['output']>;
 };
@@ -2425,8 +2425,8 @@ export type StablepoolStddevPopulationAggregates = {
   initialAmplification?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of initialBlock across the matching connection */
   initialBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -2443,8 +2443,8 @@ export type StablepoolStddevSampleAggregates = {
   initialAmplification?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of initialBlock across the matching connection */
   initialBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -2461,8 +2461,8 @@ export type StablepoolSumAggregates = {
   initialAmplification: Scalars['BigInt']['output'];
   /** Sum of initialBlock across the matching connection */
   initialBlock: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
   /** Sum of poolId across the matching connection */
   poolId: Scalars['BigInt']['output'];
 };
@@ -2479,8 +2479,8 @@ export type StablepoolVariancePopulationAggregates = {
   initialAmplification?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of initialBlock across the matching connection */
   initialBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -2497,8 +2497,8 @@ export type StablepoolVarianceSampleAggregates = {
   initialAmplification?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of initialBlock across the matching connection */
   initialBlock?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -3027,7 +3027,7 @@ export type Xykpool = {
   assetAId: Scalars['Int']['output'];
   assetBId: Scalars['Int']['output'];
   id: Scalars['String']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
   poolAddress: Scalars['String']['output'];
   /** Reads and enables pagination through a set of `XykPoolAssetsDatum`. */
   xykPoolAssetsDataByPoolId: XykPoolAssetsDataConnection;
@@ -3111,12 +3111,12 @@ export enum XykPoolAssetsDataGroupBy {
 
 export type XykPoolAssetsDataHavingAverageInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolAssetsDataHavingDistinctCountInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `XykPoolAssetsDatum` aggregates. */
@@ -3136,37 +3136,37 @@ export type XykPoolAssetsDataHavingInput = {
 
 export type XykPoolAssetsDataHavingMaxInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolAssetsDataHavingMinInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolAssetsDataHavingStddevPopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolAssetsDataHavingStddevSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolAssetsDataHavingSumInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolAssetsDataHavingVariancePopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolAssetsDataHavingVarianceSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `XykPoolAssetsDatum`. */
@@ -3191,7 +3191,7 @@ export type XykPoolAssetsDatum = {
   assetId: Scalars['Int']['output'];
   balances: Scalars['JSON']['output'];
   id: Scalars['String']['output'];
-  paraChainBlockHeight: Scalars['Int']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
   /** Reads a single `Xykpool` that is related to this `XykPoolAssetsDatum`. */
   pool?: Maybe<Xykpool>;
   poolId?: Maybe<Scalars['String']['output']>;
@@ -3224,8 +3224,8 @@ export type XykPoolAssetsDatumAverageAggregates = {
   __typename?: 'XykPoolAssetsDatumAverageAggregates';
   /** Mean average of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -3239,8 +3239,8 @@ export type XykPoolAssetsDatumCondition = {
   balances?: InputMaybe<Scalars['JSON']['input']>;
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -3253,8 +3253,8 @@ export type XykPoolAssetsDatumDistinctCountAggregates = {
   balances?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -3273,8 +3273,8 @@ export type XykPoolAssetsDatumFilter = {
   not?: InputMaybe<XykPoolAssetsDatumFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<XykPoolAssetsDatumFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<StringFilter>;
 };
@@ -3283,56 +3283,56 @@ export type XykPoolAssetsDatumMaxAggregates = {
   __typename?: 'XykPoolAssetsDatumMaxAggregates';
   /** Maximum of assetId across the matching connection */
   assetId?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type XykPoolAssetsDatumMinAggregates = {
   __typename?: 'XykPoolAssetsDatumMinAggregates';
   /** Minimum of assetId across the matching connection */
   assetId?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type XykPoolAssetsDatumStddevPopulationAggregates = {
   __typename?: 'XykPoolAssetsDatumStddevPopulationAggregates';
   /** Population standard deviation of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykPoolAssetsDatumStddevSampleAggregates = {
   __typename?: 'XykPoolAssetsDatumStddevSampleAggregates';
   /** Sample standard deviation of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykPoolAssetsDatumSumAggregates = {
   __typename?: 'XykPoolAssetsDatumSumAggregates';
   /** Sum of assetId across the matching connection */
   assetId: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type XykPoolAssetsDatumVariancePopulationAggregates = {
   __typename?: 'XykPoolAssetsDatumVariancePopulationAggregates';
   /** Population variance of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykPoolAssetsDatumVarianceSampleAggregates = {
   __typename?: 'XykPoolAssetsDatumVarianceSampleAggregates';
   /** Sample variance of assetId across the matching connection */
   assetId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykPoolAverageAggregates = {
@@ -3341,8 +3341,8 @@ export type XykPoolAverageAggregates = {
   assetAId?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of assetBId across the matching connection */
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A condition to be used against `Xykpool` object types. All fields are tested for equality and combined with a logical ‘and.’ */
@@ -3353,8 +3353,8 @@ export type XykPoolCondition = {
   assetBId?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<Scalars['String']['input']>;
 };
@@ -3367,8 +3367,8 @@ export type XykPoolDistinctCountAggregates = {
   assetBId?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolAddress across the matching connection */
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -3387,8 +3387,8 @@ export type XykPoolFilter = {
   not?: InputMaybe<XykPoolFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<XykPoolFilter>>;
-  /** Filter by the object’s `paraChainBlockHeight` field. */
-  paraChainBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<StringFilter>;
 };
@@ -3404,13 +3404,13 @@ export enum XykPoolGroupBy {
 export type XykPoolHavingAverageInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolHavingDistinctCountInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `Xykpool` aggregates. */
@@ -3431,43 +3431,43 @@ export type XykPoolHavingInput = {
 export type XykPoolHavingMaxInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolHavingMinInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolHavingStddevPopulationInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolHavingStddevSampleInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolHavingSumInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolHavingVariancePopulationInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolHavingVarianceSampleInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
-  paraChainBlockHeight?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykPoolMaxAggregates = {
@@ -3476,8 +3476,8 @@ export type XykPoolMaxAggregates = {
   assetAId?: Maybe<Scalars['Int']['output']>;
   /** Maximum of assetBId across the matching connection */
   assetBId?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type XykPoolMinAggregates = {
@@ -3486,8 +3486,8 @@ export type XykPoolMinAggregates = {
   assetAId?: Maybe<Scalars['Int']['output']>;
   /** Minimum of assetBId across the matching connection */
   assetBId?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type XykPoolStddevPopulationAggregates = {
@@ -3496,8 +3496,8 @@ export type XykPoolStddevPopulationAggregates = {
   assetAId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of assetBId across the matching connection */
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykPoolStddevSampleAggregates = {
@@ -3506,8 +3506,8 @@ export type XykPoolStddevSampleAggregates = {
   assetAId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of assetBId across the matching connection */
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykPoolSumAggregates = {
@@ -3516,8 +3516,8 @@ export type XykPoolSumAggregates = {
   assetAId: Scalars['BigInt']['output'];
   /** Sum of assetBId across the matching connection */
   assetBId: Scalars['BigInt']['output'];
-  /** Sum of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type XykPoolVariancePopulationAggregates = {
@@ -3526,8 +3526,8 @@ export type XykPoolVariancePopulationAggregates = {
   assetAId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of assetBId across the matching connection */
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykPoolVarianceSampleAggregates = {
@@ -3536,8 +3536,8 @@ export type XykPoolVarianceSampleAggregates = {
   assetAId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of assetBId across the matching connection */
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of paraChainBlockHeight across the matching connection */
-  paraChainBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A connection to a list of `Xykpool` values. */
@@ -3699,7 +3699,7 @@ export type GetOmnipoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetOmnipoolBlocksStorageStateQuery = { __typename?: 'Query', omnipoolAssetData?: { __typename?: 'OmnipoolAssetDataConnection', totalCount: number, nodes: Array<{ __typename?: 'OmnipoolAssetDatum', assetId: number, assetState: any, balances: any, id: string, paraChainBlockHeight: number, poolAddress: string } | null> } | null };
+export type GetOmnipoolBlocksStorageStateQuery = { __typename?: 'Query', omnipoolAssetData?: { __typename?: 'OmnipoolAssetDataConnection', totalCount: number, nodes: Array<{ __typename?: 'OmnipoolAssetDatum', assetId: number, assetState: any, balances: any, id: string, paraBlockHeight: number, poolAddress: string } | null> } | null };
 
 export type GetLbpPoolBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<LbpPoolFilter>;
@@ -3709,7 +3709,7 @@ export type GetLbpPoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetLbpPoolBlocksStorageStateQuery = { __typename?: 'Query', lbpPools?: { __typename?: 'LbpPoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Lbppool', id: string, poolAddress: string, assetAId: number, assetBId: number, owner: string, repayTarget: any, weightCurve: string, initialWeight: number, finalWeight: number, feeCollector?: string | null, fee: Array<number | null>, start?: number | null, end?: number | null, paraChainBlockHeight: number, lbpPoolAssetsDataByPoolId: { __typename?: 'LbpPoolAssetsDataConnection', nodes: Array<{ __typename?: 'LbpPoolAssetsDatum', id: string, assetId: number, poolId?: string | null, balances: any, paraChainBlockHeight: number } | null> } } | null> } | null };
+export type GetLbpPoolBlocksStorageStateQuery = { __typename?: 'Query', lbpPools?: { __typename?: 'LbpPoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Lbppool', id: string, poolAddress: string, assetAId: number, assetBId: number, owner: string, repayTarget: any, weightCurve: string, initialWeight: number, finalWeight: number, feeCollector?: string | null, fee: Array<number | null>, start?: number | null, end?: number | null, paraBlockHeight: number, lbpPoolAssetsDataByPoolId: { __typename?: 'LbpPoolAssetsDataConnection', nodes: Array<{ __typename?: 'LbpPoolAssetsDatum', id: string, assetId: number, poolId?: string | null, balances: any, paraBlockHeight: number } | null> } } | null> } | null };
 
 export type GetXykPoolBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<XykPoolFilter>;
@@ -3719,7 +3719,7 @@ export type GetXykPoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetXykPoolBlocksStorageStateQuery = { __typename?: 'Query', xykPools?: { __typename?: 'XykPoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Xykpool', assetAId: number, assetBId: number, id: string, paraChainBlockHeight: number, poolAddress: string, xykPoolAssetsDataByPoolId: { __typename?: 'XykPoolAssetsDataConnection', nodes: Array<{ __typename?: 'XykPoolAssetsDatum', assetId: number, balances: any, id: string, paraChainBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
+export type GetXykPoolBlocksStorageStateQuery = { __typename?: 'Query', xykPools?: { __typename?: 'XykPoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Xykpool', assetAId: number, assetBId: number, id: string, paraBlockHeight: number, poolAddress: string, xykPoolAssetsDataByPoolId: { __typename?: 'XykPoolAssetsDataConnection', nodes: Array<{ __typename?: 'XykPoolAssetsDatum', assetId: number, balances: any, id: string, paraBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
 
 export type GetStablepoolBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<StablepoolFilter>;
@@ -3729,7 +3729,7 @@ export type GetStablepoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetStablepoolBlocksStorageStateQuery = { __typename?: 'Query', stablepools?: { __typename?: 'StablepoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Stableswap', fee: number, finalAmplification: number, finalBlock: number, id: string, initialAmplification: number, initialBlock: number, paraChainBlockHeight: number, poolAddress: string, poolId: number, stablepoolAssetDataByPoolId: { __typename?: 'StablepoolAssetDataConnection', nodes: Array<{ __typename?: 'StablepoolAssetDatum', assetId: number, balances: any, id: string, paraChainBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
+export type GetStablepoolBlocksStorageStateQuery = { __typename?: 'Query', stablepools?: { __typename?: 'StablepoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Stableswap', fee: number, finalAmplification: number, finalBlock: number, id: string, initialAmplification: number, initialBlock: number, paraBlockHeight: number, poolAddress: string, poolId: number, stablepoolAssetDataByPoolId: { __typename?: 'StablepoolAssetDataConnection', nodes: Array<{ __typename?: 'StablepoolAssetDatum', assetId: number, balances: any, id: string, paraBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
 
 
 export const GetOmnipoolBlocksStorageState = gql`
@@ -3745,7 +3745,7 @@ export const GetOmnipoolBlocksStorageState = gql`
       assetState
       balances
       id
-      paraChainBlockHeight
+      paraBlockHeight
       poolAddress
     }
     totalCount
@@ -3769,14 +3769,14 @@ export const GetLbpPoolBlocksStorageState = gql`
       fee
       start
       end
-      paraChainBlockHeight
+      paraBlockHeight
       lbpPoolAssetsDataByPoolId {
         nodes {
           id
           assetId
           poolId
           balances
-          paraChainBlockHeight
+          paraBlockHeight
         }
       }
     }
@@ -3791,14 +3791,14 @@ export const GetXykPoolBlocksStorageState = gql`
       assetAId
       assetBId
       id
-      paraChainBlockHeight
+      paraBlockHeight
       poolAddress
       xykPoolAssetsDataByPoolId {
         nodes {
           assetId
           balances
           id
-          paraChainBlockHeight
+          paraBlockHeight
           poolId
         }
       }
@@ -3817,7 +3817,7 @@ export const GetStablepoolBlocksStorageState = gql`
       id
       initialAmplification
       initialBlock
-      paraChainBlockHeight
+      paraBlockHeight
       poolAddress
       poolId
       stablepoolAssetDataByPoolId {
@@ -3825,7 +3825,7 @@ export const GetStablepoolBlocksStorageState = gql`
           assetId
           balances
           id
-          paraChainBlockHeight
+          paraBlockHeight
           poolId
         }
       }

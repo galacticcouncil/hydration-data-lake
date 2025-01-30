@@ -113,14 +113,14 @@ export async function createLbppool({
       createdState: new LbppoolCreatedData({
         assetABalance: newPoolsAssetBalances.assetABalance?.toString() ?? '0',
         assetBBalance: newPoolsAssetBalances.assetBBalance?.toString() ?? '0',
-        paraChainBlockHeight: blockHeader.height,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        paraBlockHeight: blockHeader.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           blockHeader.height
         ).height,
       }),
     }),
-    createdAtParaChainBlockHeight: blockHeader.height,
-    createdAtRelayChainBlockHeight:
+    createdAtParaBlockHeight: blockHeader.height,
+    createdAtRelayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
     createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
@@ -311,7 +311,7 @@ export function addLbppoolCreatedLifeState({
 }): LbppoolLifeState[] {
   const existingState = existingStates.find(
     (state) =>
-      state.created.paraChainBlockHeight === createdState.paraChainBlockHeight
+      state.created.paraBlockHeight === createdState.paraBlockHeight
   );
 
   if (existingState) return existingStates;
@@ -339,8 +339,8 @@ export function addLbppoolDestroyedLifeState({
   return [
     ...existingStates.filter(
       (state) =>
-        state.created.paraChainBlockHeight !==
-        latestOpenState.created.paraChainBlockHeight
+        state.created.paraBlockHeight !==
+        latestOpenState.created.paraBlockHeight
     ),
     new LbppoolLifeState({
       created: latestOpenState.created,

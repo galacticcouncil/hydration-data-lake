@@ -55,10 +55,10 @@ export async function handleXykPoolHistoricalData(
           assetB: pool.assetB,
           assetABalance: assetsData.get(pool.assetA.id)?.free ?? BigInt(0),
           assetBBalance: assetsData.get(pool.assetB.id)?.free ?? BigInt(0),
-          relayChainBlockHeight:
+          relayBlockHeight:
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,
-          paraChainBlockHeight: blockHeader.height,
+          paraBlockHeight: blockHeader.height,
           block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
         });
 

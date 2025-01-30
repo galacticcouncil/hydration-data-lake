@@ -11,7 +11,7 @@ export function initLbppoolVolume(
   oldVolume: LbppoolHistoricalVolume | undefined
 ) {
   const newVolume = new LbppoolHistoricalVolume({
-    id: pool.id + '-' + swap.paraChainBlockHeight,
+    id: pool.id + '-' + swap.paraBlockHeight,
     pool: pool,
     assetA: pool.assetA,
     assetB: pool.assetB,
@@ -42,8 +42,8 @@ export function initLbppoolVolume(
       currentVolume?.assetBTotalVolumeOut ||
       oldVolume?.assetBTotalVolumeOut ||
       BigInt(0),
-    relayChainBlockHeight: swap.relayChainBlockHeight,
-    paraChainBlockHeight: swap.paraChainBlockHeight,
+    relayBlockHeight: swap.relayBlockHeight,
+    paraBlockHeight: swap.paraBlockHeight,
     block: swap.event.block,
   });
 
@@ -116,7 +116,7 @@ export async function handleLbppoolVolumeUpdates({
 }) {
   const lbpPoolVolumes = ctx.batchState.state.lbpPoolVolumes;
   const currentVolume = lbpPoolVolumes.get(
-    swap.filler.id + '-' + swap.paraChainBlockHeight
+    swap.filler.id + '-' + swap.paraBlockHeight
   );
 
   const oldVolume =

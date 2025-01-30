@@ -11,7 +11,7 @@ export class AccountAssetBalanceHistoricalData {
   }
 
   /**
-   * <address>-<assetId>-<paraChainBlockHeight>
+   * <address>-<assetId>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
@@ -53,10 +53,10 @@ export class AccountAssetBalanceHistoricalData {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})

@@ -1,5 +1,5 @@
 export enum DcaScheduleStatus {
-  Open = "Open",
+  Created = "Created",
   Completed = "Completed",
   Terminated = "Terminated",
 }

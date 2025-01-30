@@ -130,14 +130,14 @@ export class StorageDictionaryManager extends QueriesHelper {
                 {
                   assetAId: { equalTo: +assetA },
                   assetBId: { equalTo: +assetB },
-                  paraChainBlockHeight: {
+                  paraBlockHeight: {
                     greaterThanOrEqualTo: filterParams.fromBlockNumber,
                   },
                   and: [
                     {
                       assetAId: { equalTo: +assetA },
                       assetBId: { equalTo: +assetB },
-                      paraChainBlockHeight: {
+                      paraBlockHeight: {
                         lessThanOrEqualTo: filterParams.toBlockNumber,
                       },
                     },
@@ -146,14 +146,14 @@ export class StorageDictionaryManager extends QueriesHelper {
                 {
                   assetAId: { equalTo: +assetB },
                   assetBId: { equalTo: +assetA },
-                  paraChainBlockHeight: {
+                  paraBlockHeight: {
                     greaterThanOrEqualTo: filterParams.fromBlockNumber,
                   },
                   and: [
                     {
                       assetAId: { equalTo: +assetA },
                       assetBId: { equalTo: +assetB },
-                      paraChainBlockHeight: {
+                      paraBlockHeight: {
                         lessThanOrEqualTo: filterParams.toBlockNumber,
                       },
                     },
@@ -170,12 +170,12 @@ export class StorageDictionaryManager extends QueriesHelper {
             filter!.or!.push(
               ...[
                 {
-                  paraChainBlockHeight: { equalTo: blockNumber },
+                  paraBlockHeight: { equalTo: blockNumber },
                   assetAId: { equalTo: +assetA },
                   assetBId: { equalTo: +assetB },
                 },
                 {
-                  paraChainBlockHeight: { equalTo: blockNumber },
+                  paraBlockHeight: { equalTo: blockNumber },
                   assetAId: { equalTo: +assetB },
                   assetBId: { equalTo: +assetA },
                 },
@@ -234,7 +234,7 @@ export class StorageDictionaryManager extends QueriesHelper {
           poolAddress: {
             in: filterParams.ids,
           },
-          paraChainBlockHeight: {
+          paraBlockHeight: {
             greaterThanOrEqualTo: filterParams.fromBlockNumber,
           },
           and: [
@@ -242,7 +242,7 @@ export class StorageDictionaryManager extends QueriesHelper {
               poolAddress: {
                 in: [...new Set(filterParams.ids).values()],
               },
-              paraChainBlockHeight: {
+              paraBlockHeight: {
                 lessThanOrEqualTo: filterParams.toBlockNumber,
               },
             },
@@ -251,7 +251,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       } else {
         xykPoolIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
           filter!.or!.push({
-            paraChainBlockHeight: { equalTo: blockNumber },
+            paraBlockHeight: { equalTo: blockNumber },
             poolAddress: { in: [...poolIds.ids.values()] },
           });
         });
@@ -306,7 +306,7 @@ export class StorageDictionaryManager extends QueriesHelper {
           assetId: {
             in: filterParams.ids,
           },
-          paraChainBlockHeight: {
+          paraBlockHeight: {
             greaterThanOrEqualTo: filterParams.fromBlockNumber,
           },
           and: [
@@ -314,7 +314,7 @@ export class StorageDictionaryManager extends QueriesHelper {
               assetId: {
                 in: [...new Set(filterParams.ids).values()],
               },
-              paraChainBlockHeight: {
+              paraBlockHeight: {
                 lessThanOrEqualTo: filterParams.toBlockNumber,
               },
             },
@@ -323,7 +323,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       } else {
         omnipoolAssetIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
           filter!.or!.push({
-            paraChainBlockHeight: { equalTo: blockNumber },
+            paraBlockHeight: { equalTo: blockNumber },
             assetId: { in: [...poolIds.ids.values()] },
           });
         });
@@ -375,7 +375,7 @@ export class StorageDictionaryManager extends QueriesHelper {
           poolId: {
             in: [...new Set(filterParams.ids).values()],
           },
-          paraChainBlockHeight: {
+          paraBlockHeight: {
             greaterThanOrEqualTo: filterParams.fromBlockNumber,
           },
           and: [
@@ -383,7 +383,7 @@ export class StorageDictionaryManager extends QueriesHelper {
               poolId: {
                 in: [...new Set(filterParams.ids).values()],
               },
-              paraChainBlockHeight: {
+              paraBlockHeight: {
                 lessThanOrEqualTo: filterParams.toBlockNumber,
               },
             },
@@ -392,7 +392,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       } else {
         stableswapIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
           filter!.or!.push({
-            paraChainBlockHeight: { equalTo: blockNumber },
+            paraBlockHeight: { equalTo: blockNumber },
             poolId: { in: [...poolIds.ids.values()] },
           });
         });

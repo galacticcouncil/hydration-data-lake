@@ -1,7 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {DcaSchedule} from "./dcaSchedule.model"
-import {DcaScheduleEventName} from "./_dcaScheduleEventName"
+import {DcaScheduleStatus} from "./_dcaScheduleStatus"
 import {DispatchError} from "./_dispatchError"
 import {Event} from "./event.model"
 
@@ -26,17 +26,17 @@ export class DcaScheduleEvent {
 
   @Index_()
   @Column_("varchar", {length: 10, nullable: false})
-  eventName!: DcaScheduleEventName
+  eventName!: DcaScheduleStatus
 
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new DispatchError(undefined, obj)}, nullable: true})
-  memo!: DispatchError | undefined | null
+  errorState!: DispatchError | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Event, {nullable: true})

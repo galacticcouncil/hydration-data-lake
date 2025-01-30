@@ -104,7 +104,7 @@ export async function omnipoolBuySellExecuted(
         eventMetadata.name === EventName.Omnipool_BuyExecuted
           ? TradeOperationType.ExactOut
           : TradeOperationType.ExactIn,
-      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      paraBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });
@@ -147,7 +147,7 @@ export async function omnipoolBuySellExecuted(
         eventMetadata.name === EventName.Omnipool_BuyExecuted
           ? TradeOperationType.ExactOut
           : TradeOperationType.ExactIn,
-      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      paraBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });

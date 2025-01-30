@@ -28,7 +28,7 @@ export const GET_OMNIPOOL_BLOCKS_STORAGE_STATE = gql`
         assetState
         balances
         id
-        paraChainBlockHeight
+        paraBlockHeight
         poolAddress
       }
       totalCount
@@ -63,14 +63,14 @@ export const GET_LBPPOOL_BLOCKS_STORAGE_STATE = gql`
         fee
         start
         end
-        paraChainBlockHeight
+        paraBlockHeight
         lbpPoolAssetsDataByPoolId {
           nodes {
             id
             assetId
             poolId
             balances
-            paraChainBlockHeight
+            paraBlockHeight
           }
         }
       }
@@ -96,14 +96,14 @@ export const GET_XYKPOOL_BLOCKS_STORAGE_STATE = gql`
         assetAId
         assetBId
         id
-        paraChainBlockHeight
+        paraBlockHeight
         poolAddress
         xykPoolAssetsDataByPoolId {
           nodes {
             assetId
             balances
             id
-            paraChainBlockHeight
+            paraBlockHeight
             poolId
           }
         }
@@ -133,7 +133,7 @@ export const GET_STABLEPOOL_BLOCKS_STORAGE_STATE = gql`
         id
         initialAmplification
         initialBlock
-        paraChainBlockHeight
+        paraBlockHeight
         poolAddress
         poolId
         stablepoolAssetDataByPoolId {
@@ -141,7 +141,7 @@ export const GET_STABLEPOOL_BLOCKS_STORAGE_STATE = gql`
             assetId
             balances
             id
-            paraChainBlockHeight
+            paraBlockHeight
             poolId
           }
         }

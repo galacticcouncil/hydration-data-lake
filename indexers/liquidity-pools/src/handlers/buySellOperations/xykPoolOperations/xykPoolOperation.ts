@@ -60,7 +60,7 @@ export async function xykBuyExecuted(
         },
       ],
       operationType: TradeOperationType.ExactOut,
-      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      paraBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });
@@ -72,8 +72,8 @@ export async function xykBuyExecuted(
   });
 
   await handleAssetVolumeUpdates(ctx, {
-    paraChainBlockHeight: swap.paraChainBlockHeight,
-    relayChainBlockHeight: swap.relayChainBlockHeight,
+    paraBlockHeight: swap.paraBlockHeight,
+    relayBlockHeight: swap.relayBlockHeight,
     assetIn: swapInputs[0].asset,
     assetInAmount: swapInputs[0].amount,
     assetOut: swapOutputs[0].asset,
@@ -129,7 +129,7 @@ export async function xykSellExecuted(
         },
       ],
       operationType: TradeOperationType.ExactIn,
-      paraChainBlockHeight: eventMetadata.blockHeader.height,
+      paraBlockHeight: eventMetadata.blockHeader.height,
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });
@@ -141,8 +141,8 @@ export async function xykSellExecuted(
   });
 
   await handleAssetVolumeUpdates(ctx, {
-    paraChainBlockHeight: swap.paraChainBlockHeight,
-    relayChainBlockHeight: swap.relayChainBlockHeight,
+    paraBlockHeight: swap.paraBlockHeight,
+    relayBlockHeight: swap.relayBlockHeight,
     assetIn: swapInputs[0].asset,
     assetInAmount: swapInputs[0].amount,
     assetOut: swapOutputs[0].asset,

@@ -6,8 +6,8 @@ import { initAssetVolume } from './index';
 export async function handleAssetVolumeUpdates(
   ctx: SqdProcessorContext<Store>,
   swapDetails: {
-    paraChainBlockHeight: number;
-    relayChainBlockHeight: number;
+    paraBlockHeight: number;
+    relayBlockHeight: number;
     assetIn: Asset;
     assetOut: Asset;
     assetInAmount: bigint;
@@ -18,10 +18,10 @@ export async function handleAssetVolumeUpdates(
 
   // Find current block volume
   const currentAssetInVolume = assetVolumesState.get(
-    swapDetails.assetIn.id + '-' + swapDetails.paraChainBlockHeight
+    swapDetails.assetIn.id + '-' + swapDetails.paraBlockHeight
   );
   const currentAssetOutVolume = assetVolumesState.get(
-    swapDetails.assetOut.id + '-' + swapDetails.paraChainBlockHeight
+    swapDetails.assetOut.id + '-' + swapDetails.paraBlockHeight
   );
 
   // If not found find last volume in cache
@@ -44,7 +44,7 @@ export async function handleAssetVolumeUpdates(
       },
       relations: { asset: true },
       order: {
-        paraChainBlockHeight: 'DESC',
+        paraBlockHeight: 'DESC',
       },
     }));
 
@@ -58,15 +58,15 @@ export async function handleAssetVolumeUpdates(
       },
       relations: { asset: true },
       order: {
-        paraChainBlockHeight: 'DESC',
+        paraBlockHeight: 'DESC',
       },
     }));
 
   // Create new entry
   const assetInVolume = initAssetVolume(
     swapDetails.assetIn,
-    swapDetails.paraChainBlockHeight,
-    swapDetails.relayChainBlockHeight,
+    swapDetails.paraBlockHeight,
+    swapDetails.relayBlockHeight,
     currentAssetInVolume?.volumeIn || BigInt(0),
     BigInt(0),
     oldAssetInVolume?.totalVolumeIn || BigInt(0),
@@ -75,8 +75,8 @@ export async function handleAssetVolumeUpdates(
 
   const assetOutVolume = initAssetVolume(
     swapDetails.assetOut,
-    swapDetails.paraChainBlockHeight,
-    swapDetails.relayChainBlockHeight,
+    swapDetails.paraBlockHeight,
+    swapDetails.relayBlockHeight,
     BigInt(0),
     currentAssetOutVolume?.volumeOut || BigInt(0),
     BigInt(0),

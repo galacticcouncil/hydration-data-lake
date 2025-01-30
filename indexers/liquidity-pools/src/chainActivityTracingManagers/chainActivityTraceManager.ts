@@ -44,8 +44,8 @@ export class ChainActivityTraceManager {
           traceIds: [],
           participants: [],
           participantAccounts: [],
-          paraChainBlockHeight: block.height,
-          relayChainBlockHeight: block.relayChainBlockHeight,
+          paraBlockHeight: block.height,
+          relayBlockHeight: block.relayBlockHeight,
           block,
         });
         state.chainActivityTraces.set(
@@ -68,7 +68,7 @@ export class ChainActivityTraceManager {
       if (!blockEntity) {
         blockEntity = new Block({
           id: block.header.id,
-          relayChainBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
+          relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
           height: block.header.height,
           hash: block.header.hash,
           timestamp: block.header.timestamp
@@ -87,8 +87,8 @@ export class ChainActivityTraceManager {
             id: extrinsic.id,
             hash: extrinsic.hash,
             indexInBlock: extrinsic.index,
-            paraChainBlockHeight: blockEntity.height,
-            relayChainBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
+            paraBlockHeight: blockEntity.height,
+            relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
             block: blockEntity,
           });
           state.batchExtrinsics.set(extrinsicEntity.id, extrinsicEntity);
@@ -132,8 +132,8 @@ export class ChainActivityTraceManager {
                 originValueKind: callEntityOriginData.valueKind,
                 originValue: callEntityOriginData.value,
                 extrinsic: extrinsicEntity,
-                paraChainBlockHeight: subcall.block.height,
-                relayChainBlockHeight:
+                paraBlockHeight: subcall.block.height,
+                relayBlockHeight:
                   relayChainInfo?.relaychainBlockNumber ?? 0,
                 block: blockEntity,
               });
@@ -168,8 +168,8 @@ export class ChainActivityTraceManager {
               originValueKind: callParentEntityOriginData.valueKind,
               originValue: callParentEntityOriginData.value,
               extrinsic: extrinsicEntity,
-              paraChainBlockHeight: subcallRawData.parent.block.height,
-              relayChainBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
+              paraBlockHeight: subcallRawData.parent.block.height,
+              relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
               block: blockEntity,
             });
           }
@@ -283,8 +283,8 @@ export class ChainActivityTraceManager {
             phase: event.phase,
             entityTypes: this.getEntityTypesByEventName(event.name),
             call: eventCall,
-            paraChainBlockHeight: block.header.height,
-            relayChainBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
+            paraBlockHeight: block.header.height,
+            relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
             block: blockEntity,
           });
           state.batchEvents.set(eventEntity.id, eventEntity);

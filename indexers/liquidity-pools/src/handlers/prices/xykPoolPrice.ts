@@ -19,7 +19,7 @@ export async function handleXykPoolPrices(ctx: SqdProcessorContext<Store>) {
       [...xykAllBatchPools.values()].map(
         async (p) =>
           new Promise<XykpoolHistoricalPrice | null>((resolve) => {
-            if (p.createdAtParaChainBlockHeight > block.header.height) {
+            if (p.createdAtParaBlockHeight > block.header.height) {
               resolve(null);
               return;
             }
@@ -36,8 +36,8 @@ export async function handleXykPoolPrices(ctx: SqdProcessorContext<Store>) {
                   assetABalance: assetABalance,
                   assetBBalance: assetBBalance,
                   pool: p,
-                  paraChainBlockHeight: block.header.height,
-                  relayChainBlockHeight:
+                  paraBlockHeight: block.header.height,
+                  relayBlockHeight:
                     currentBlockRelayChainInfo.relaychainBlockNumber || 0,
                   block: ctx.batchState.state.batchBlocks.get(block.header.id),
                 })

@@ -44,7 +44,7 @@ type Asset @entity {
 }
 
 type HistoricalAssetVolume @entity {
-  "<assetId>-<paraChainBlockHeight>"
+  "<assetId>-<paraBlockHeight>"
   id: ID!
   asset: Asset!
   volumeIn: BigInt!
@@ -52,8 +52,8 @@ type HistoricalAssetVolume @entity {
   totalVolumeIn: BigInt!
   totalVolumeOut: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -70,7 +70,7 @@ enum AccountType {
 }
 
 type AccountAssetBalanceHistoricalData @entity {
-  "<address>-<assetId>-<paraChainBlockHeight>"
+  "<address>-<assetId>-<paraBlockHeight>"
   id: ID!
   account: Account!
   asset: Asset!
@@ -85,25 +85,9 @@ type AccountAssetBalanceHistoricalData @entity {
   feeFrozen: BigInt!
   miscFrozen: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
-}
-type AccountAssetBalanceData @entity {
-  "<address>-<assetId>"
-  id: ID!
-  account: Account!
-  asset: Asset!
-
-  decoratedFree: BigInt!
-  decoratedLocked: BigInt!
-  free: BigInt!
-  locked: BigInt!
-  flags: BigInt!
-  frozen: BigInt!
-  reserved: BigInt!
-  feeFrozen: BigInt!
-  miscFrozen: BigInt!
 }
 
 type Account @entity {
@@ -111,7 +95,6 @@ type Account @entity {
   id: ID!
   accountType: AccountType!
 
-  assetBalanceData: [AccountAssetBalanceData] @derivedFrom(field: "account")
   assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
     @derivedFrom(field: "account")
 
@@ -161,7 +144,7 @@ type Block @entity {
   hash: String! @index
   timestamp: DateTime! @index
 
-  relayChainBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 
 type Extrinsic @entity {
@@ -171,8 +154,8 @@ type Extrinsic @entity {
   indexInBlock: Int!
   calls: [Call] @derivedFrom(field: "extrinsic")
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -198,8 +181,8 @@ type Call @entity {
   subcalls: [Call] @derivedFrom(field: "parent")
   events: [Event] @derivedFrom(field: "call")
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
   extrinsic: Extrinsic!
   parent: Call
@@ -225,8 +208,8 @@ type Event @entity {
   phase: String!
   entityTypes: [TraceEntityType]
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
   call: Call
 }
@@ -261,8 +244,8 @@ type ChainActivityTrace @entity {
   childTraces: [ChainActivityTraceRelation] @derivedFrom(field: "parentTrace")
   parentTraces: [ChainActivityTraceRelation] @derivedFrom(field: "childTrace")
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -280,8 +263,8 @@ type ChainActivityTraceRelation @entity {
   parentTrace: ChainActivityTrace!
   childTrace: ChainActivityTrace!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -301,9 +284,9 @@ type Transfer @entity {
   amount: BigInt!
   txFee: BigInt!
 
-  paraChainTimestamp: DateTime! @index
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraTimestamp: DateTime! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -372,12 +355,12 @@ type Swap @entity {
   outputs: [SwapAssetBalance!]! @derivedFrom(field: "swap")
   fees: [SwapFee!]! @derivedFrom(field: "swap")
 
-  dcaScheduleExecutionAction: DcaScheduleExecutionEvent
-  otcOrderFulfilment: OtcOrderEvent
+  dcaScheduleExecutionEvent: DcaScheduleExecutionEvent
+  otcOrderFulfillment: OtcOrderEvent
 
-  paraChainTimestamp: DateTime! @index
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraTimestamp: DateTime! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -403,8 +386,8 @@ type Lbppool @entity {
   fee: [Int]
   repayTarget: BigInt
 
-  createdAtParaChainBlockHeight: Int! @index
-  createdAtRelayChainBlockHeight: Int!
+  createdAtParaBlockHeight: Int! @index
+  createdAtRelayBlockHeight: Int!
   createdAtBlock: Block!
   isDestroyed: Boolean
   lifeStates: [LbppoolLifeState!]!
@@ -417,12 +400,14 @@ type Lbppool @entity {
 type LbppoolCreatedData {
   assetABalance: String!
   assetBBalance: String!
-  paraChainBlockHeight: Int!
-  relayChainBlockHeight: Int!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 type LbppoolDestroyedData {
-  paraChainBlockHeight: Int!
-  relayChainBlockHeight: Int!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 
 type LbppoolLifeState {
@@ -431,7 +416,7 @@ type LbppoolLifeState {
 }
 
 type LbppoolHistoricalPrice @entity {
-  "<lbppoolId>-<paraChainBlockHeight>"
+  "<lbppoolId>-<paraBlockHeight>"
   id: ID!
   pool: Lbppool!
   assetA: Asset!
@@ -439,13 +424,13 @@ type LbppoolHistoricalPrice @entity {
   assetABalance: BigInt!
   assetBBalance: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
 type LbppoolHistoricalVolume @entity {
-  "PoolId-paraChainBlockHeight"
+  "PoolId-paraBlockHeight"
   id: ID!
   pool: Lbppool!
 
@@ -465,13 +450,13 @@ type LbppoolHistoricalVolume @entity {
   assetBTotalVolumeIn: BigInt!
   assetBTotalVolumeOut: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
 type LbppoolHistoricalData @entity {
-  "poolAddress-assetId-paraChainBlockHeight"
+  "poolAddress-assetId-paraBlockHeight"
   id: ID!
   pool: Lbppool!
 
@@ -489,8 +474,8 @@ type LbppoolHistoricalData @entity {
   repayTarget: BigInt!
   weightCurve: String!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -509,8 +494,8 @@ type Xykpool @entity {
   assetBBalance: BigInt!
   shareToken: Asset!
 
-  createdAtParaChainBlockHeight: Int! @index
-  createdAtRelayChainBlockHeight: Int!
+  createdAtParaBlockHeight: Int! @index
+  createdAtRelayBlockHeight: Int!
   createdAtBlock: Block!
   isDestroyed: Boolean
   lifeStates: [XykpoolLifeState!]!
@@ -522,12 +507,14 @@ type Xykpool @entity {
 
 type XykpoolCreatedData {
   initialSharesAmount: String!
-  paraChainBlockHeight: Int!
-  relayChainBlockHeight: Int!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 type XykpoolDestroyedData {
-  paraChainBlockHeight: Int!
-  relayChainBlockHeight: Int!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 
 type XykpoolLifeState {
@@ -536,7 +523,7 @@ type XykpoolLifeState {
 }
 
 type XykpoolHistoricalPrice @entity {
-  "PoolId-paraChainBlockHeight"
+  "PoolId-paraBlockHeight"
   id: ID!
   pool: Xykpool!
   assetA: Asset!
@@ -544,13 +531,13 @@ type XykpoolHistoricalPrice @entity {
   assetABalance: BigInt!
   assetBBalance: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
 type XykpoolHistoricalVolume @entity {
-  "PoolId-paraChainBlockHeight"
+  "PoolId-paraBlockHeight"
   id: ID!
   pool: Xykpool!
 
@@ -570,13 +557,13 @@ type XykpoolHistoricalVolume @entity {
   assetBTotalVolumeIn: BigInt!
   assetBTotalVolumeOut: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
 type XykpoolHistoricalData @entity {
-  "poolAddress-assetId-paraChainBlockHeight"
+  "poolAddress-assetId-paraBlockHeight"
   id: ID!
   pool: Xykpool!
 
@@ -585,8 +572,8 @@ type XykpoolHistoricalData @entity {
   assetABalance: BigInt!
   assetBBalance: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -600,7 +587,7 @@ type Omnipool @entity {
 
   isDestroyed: Boolean
   destroyedAtParaBlockHeight: Int
-  destroyedAtParaBlock: Block
+  destroyedAtBlock: Block
 
   assets: [OmnipoolAsset!]! @derivedFrom(field: "pool")
 }
@@ -612,8 +599,8 @@ type OmnipoolAsset @entity {
   pool: Omnipool!
   asset: Asset!
 
-  addedAtParaChainBlockHeight: Int! @index
-  addedAtRelayChainBlockHeight: Int!
+  addedAtParaBlockHeight: Int! @index
+  addedAtRelayBlockHeight: Int!
   addedAtBlock: Block!
   isRemoved: Boolean
   lifeStates: [OmnipoolAssetLifeState!]!
@@ -625,16 +612,18 @@ type OmnipoolAsset @entity {
 }
 
 type OmnipoolAssetAddedData {
-  initialAmount: String # latest data from last asset adding
-  initialPrice: String # latest data from last asset adding
-  paraChainBlockHeight: Int!
-  relayChainBlockHeight: Int!
+  initialAmount: String
+  initialPrice: String
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 type OmnipoolAssetRemovedData {
   removedAmount: String
   hubWithdrawn: String
-  paraChainBlockHeight: Int!
-  relayChainBlockHeight: Int!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 
 type OmnipoolAssetLifeState {
@@ -643,7 +632,7 @@ type OmnipoolAssetLifeState {
 }
 
 type OmnipoolAssetHistoricalVolume @entity {
-  "<omnipoolAssetId>-<paraChainBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
+  "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
   omnipoolAsset: OmnipoolAsset!
   assetVolumeIn: BigInt!
@@ -653,13 +642,13 @@ type OmnipoolAssetHistoricalVolume @entity {
   assetFee: BigInt!
   assetTotalFees: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
 type OmnipoolAssetHistoricalData @entity {
-  "<omnipoolAssetId>-<paraChainBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
+  "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
   omnipoolAsset: OmnipoolAsset!
   asset: Asset!
@@ -671,8 +660,8 @@ type OmnipoolAssetHistoricalData @entity {
   assetHubReserve: BigInt! # AssetHubReserve?
   assetProtocolShares: BigInt! # AssetProtocolShares?
   freeBalance: BigInt! # freeBalance? -> freeBalance
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -681,12 +670,13 @@ type OmnipoolAssetHistoricalData @entity {
 # ======================================================================================================================
 
 type Stableswap @entity {
-  "poolId (e.g. 102)"
+  "poolId - share token ID (e.g. 102)"
   id: ID!
   account: Account!
+  shareToken: Asset!
 
-  createdAtParaChainBlockHeight: Int! @index
-  createdAtRelayChainBlockHeight: Int!
+  createdAtParaBlockHeight: Int! @index
+  createdAtRelayBlockHeight: Int!
   createdAtBlock: Block!
   isDestroyed: Boolean
   lifeStates: [StableswapLifeState!]!
@@ -695,12 +685,14 @@ type Stableswap @entity {
 }
 
 type StableswapCreatedData {
-  paraChainBlockHeight: Int!
-  relayChainBlockHeight: Int!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 type StableswapDestroyedData {
-  paraChainBlockHeight: Int!
-  relayChainBlockHeight: Int!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 
 type StableswapLifeState {
@@ -717,19 +709,19 @@ type StableswapAsset @entity {
 }
 
 type StableswapHistoricalVolume @entity {
-  "<stableswapId>-<paraChainBlockHeight>"
+  "<stableswapId>-<paraBlockHeight>"
   id: ID!
   pool: Stableswap!
   assetVolumes: [StableswapAssetHistoricalVolume!]!
     @derivedFrom(field: "volumesCollection")
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
 type StableswapAssetHistoricalVolume @entity {
-  "<stableswapId>-<assetId>-<paraChainBlockHeight> (e.g. 100-10-101332)"
+  "<stableswapId>-<assetId>-<paraBlockHeight> (e.g. 100-10-101332)"
   id: ID!
   volumesCollection: StableswapHistoricalVolume!
   asset: Asset!
@@ -741,8 +733,8 @@ type StableswapAssetHistoricalVolume @entity {
   swapTotalVolumeIn: BigInt!
   swapTotalVolumeOut: BigInt!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -760,8 +752,8 @@ type StableswapLiquidityEvent @entity {
   actionType: LiquidityActionEvent!
 
   indexInBlock: Int! @index
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -774,7 +766,7 @@ type StableswapAssetLiquidityAmount @entity {
 }
 
 type StableswapHistoricalData @entity {
-  "<stableswapId>-<paraChainBlockHeight>"
+  "<stableswapId>-<paraBlockHeight>"
   id: ID!
   pool: Stableswap!
   assetsData: [StableswapAssetHistoricalData!]!
@@ -782,32 +774,24 @@ type StableswapHistoricalData @entity {
 
   initialAmplification: Int!
   finalAmplification: Int!
-  initialAmplificationChangeAt: Int! # initialBlock -> initialAmplificationChangeAt
-  finalAmplificationChangeAt: Int! # finalBlock -> finalAmplificationChangeAt
+  initialAmplificationChangeAtBlockHeight: Int!
+  finalAmplificationChangeAtBlockHeight: Int!
   fee: Int!
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
 type StableswapAssetHistoricalData @entity {
-  "<stablepoolId>-<assetId>-<paraChainBlockHeight>"
+  "<stablepoolId>-<assetId>-<paraBlockHeight>"
   id: ID!
   asset: Asset!
   poolHistoricalData: StableswapHistoricalData!
-
   freeBalance: BigInt!
-  # remove fields below
-  #  free: BigInt!
-  #  reserved: BigInt!
-  #  miscFrozen: BigInt
-  #  feeFrozen: BigInt
-  #  frozen: BigInt
-  #  flags: BigInt # here it's flags, in omnipool it's balanceFlags consistency pls
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -821,24 +805,12 @@ enum DcaScheduleOrderType {
 }
 
 enum DcaScheduleStatus {
-  Open
-  Completed
-  Terminated
-}
-
-enum DcaScheduleExecutionStatus {
-  Planned
-  Executed
-  Failed
-}
-
-enum DcaScheduleEventName {
   Created
   Completed
   Terminated
 }
 
-enum DcaScheduleExecutionEventName {
+enum DcaScheduleExecutionStatus {
   Planned
   Executed
   Failed
@@ -879,8 +851,8 @@ type DcaSchedule @entity {
   executions: [DcaScheduleExecution] @derivedFrom(field: "schedule")
   events: [DcaScheduleEvent!]! @derivedFrom(field: "schedule")
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -898,11 +870,11 @@ type DcaScheduleEvent @entity {
   id: ID!
   traceIds: [String!]
   schedule: DcaSchedule!
-  eventName: DcaScheduleEventName! @index
-  memo: DispatchError
+  eventName: DcaScheduleStatus! @index
+  errorState: DispatchError
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -925,12 +897,12 @@ type DcaScheduleExecutionEvent @entity {
   traceIds: [String!]
   scheduleExecution: DcaScheduleExecution!
 
-  swaps: [Swap] @derivedFrom(field: "dcaScheduleExecutionAction")
-  eventName: DcaScheduleExecutionEventName @index
-  memo: DispatchError
+  swaps: [Swap] @derivedFrom(field: "dcaScheduleExecutionEvent")
+  eventName: DcaScheduleExecutionStatus @index
+  errorState: DispatchError
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -969,8 +941,8 @@ type OtcOrder @entity {
 
   events: [OtcOrderEvent] @derivedFrom(field: "order")
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -990,7 +962,7 @@ type OtcOrderEvent @entity {
   filler: Account
   swap: Swap
 
-  paraChainBlockHeight: Int! @index
-  relayChainBlockHeight: Int!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
   event: Event!
 }

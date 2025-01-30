@@ -100,8 +100,8 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
           assetTotalVolumeOut: BigInt!
           assetFee: BigInt!
           assetTotalFees: BigInt!
-          paraChainBlockHeight: Int!
-          relayChainBlockHeight: Int!
+          paraBlockHeight: Int!
+          relayBlockHeight: Int!
         }
 
         extend type Subscription {
@@ -149,8 +149,8 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
                 assetTotalVolumeOut: decoratedRow.assetTotalVolumeOut,
                 assetFee: decoratedRow.assetFee,
                 assetTotalFees: decoratedRow.assetTotalFees,
-                relayChainBlockHeight: decoratedRow.relayChainBlockHeight,
-                paraChainBlockHeight: decoratedRow.paraChainBlockHeight,
+                relayBlockHeight: decoratedRow.relayBlockHeight,
+                paraBlockHeight: decoratedRow.paraBlockHeight,
               } as OmnipoolAssetHistoricalVolumeGqlResponse,
               event: event.__node__[0],
             };

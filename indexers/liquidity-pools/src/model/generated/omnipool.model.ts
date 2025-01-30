@@ -24,7 +24,7 @@ export class Omnipool {
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})
-  destroyedAtParaBlock!: Block | undefined | null
+  destroyedAtBlock!: Block | undefined | null
 
   @OneToMany_(() => OmnipoolAsset, e => e.pool)
   assets!: OmnipoolAsset[]

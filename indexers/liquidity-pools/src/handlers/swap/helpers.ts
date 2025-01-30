@@ -169,8 +169,8 @@ export async function supportSwappedEventPostHook({
       });
 
       await handleAssetVolumeUpdates(ctx, {
-        paraChainBlockHeight: swap.paraChainBlockHeight,
-        relayChainBlockHeight: swap.relayChainBlockHeight,
+        paraBlockHeight: swap.paraBlockHeight,
+        relayBlockHeight: swap.relayBlockHeight,
         assetIn: swap.inputs[0].asset,
         assetInAmount: swap.inputs[0].amount,
         assetOut: swap.outputs[0].asset,
@@ -201,8 +201,8 @@ export async function supportSwappedEventPostHook({
       });
 
       await handleAssetVolumeUpdates(ctx, {
-        paraChainBlockHeight: swap.paraChainBlockHeight,
-        relayChainBlockHeight: swap.relayChainBlockHeight,
+        paraBlockHeight: swap.paraBlockHeight,
+        relayBlockHeight: swap.relayBlockHeight,
         assetIn: swap.inputs[0].asset,
         assetInAmount: swap.inputs[0].amount,
         assetOut: swap.outputs[0].asset,
@@ -277,9 +277,9 @@ export async function supportSwappedEventPostHook({
         id: `${rootChainActivityTrace.id}-${chainActivityTrace.id}`,
         childTrace: chainActivityTrace,
         parentTrace: rootChainActivityTrace,
-        paraChainBlockHeight:
+        paraBlockHeight:
           eventCallData.eventData.metadata.blockHeader.height,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           eventCallData.eventData.metadata.blockHeader.height
         ).height,
         block: ctx.batchState.state.batchBlocks.get(

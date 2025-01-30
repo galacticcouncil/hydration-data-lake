@@ -29,10 +29,10 @@ export class OmnipoolAsset {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  addedAtParaChainBlockHeight!: number
+  addedAtParaBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  addedAtRelayChainBlockHeight!: number
+  addedAtRelayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})

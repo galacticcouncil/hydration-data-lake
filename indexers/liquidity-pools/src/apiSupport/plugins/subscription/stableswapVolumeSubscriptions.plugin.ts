@@ -192,16 +192,16 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
 #            routedLiqRemovedAmount: BigInt!
 #            routedLiqAddedTotalAmount: BigInt!
 #            routedLiqRemovedTotalAmount: BigInt!
-            paraChainBlockHeight: Int!
-            relayChainBlockHeight: Int!
+            paraBlockHeight: Int!
+            relayBlockHeight: Int!
         }
 
         type StableswapHistoricalVolumeEntity {
           id: String!
           poolId: String!
           assetVolumes: [StableswapAssetHistoricalVolumeEntity]!
-          paraChainBlockHeight: Int!
-          relayChainBlockHeight: Int!
+          paraBlockHeight: Int!
+          relayBlockHeight: Int!
         }
 
         extend type Subscription {
@@ -262,10 +262,10 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
                     assetVol || {}
                   )
                 ),
-                relayChainBlockHeight:
-                  decoratedStablepoolHistVolRow.relayChainBlockHeight,
-                paraChainBlockHeight:
-                  decoratedStablepoolHistVolRow.paraChainBlockHeight,
+                relayBlockHeight:
+                  decoratedStablepoolHistVolRow.relayBlockHeight,
+                paraBlockHeight:
+                  decoratedStablepoolHistVolRow.paraBlockHeight,
               } as StableswapHistoricalVolumeGqlResponse,
               event: event.__node__[0],
             };

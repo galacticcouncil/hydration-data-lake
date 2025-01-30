@@ -112,8 +112,8 @@ export async function stablepoolLiquidityAddedRemoved(
     sharesAmount: eventParams.shares,
     feeAmount: fee,
     indexInBlock: eventMetadata.indexInBlock,
-    relayChainBlockHeight: relayChainInfo.relaychainBlockNumber,
-    paraChainBlockHeight: relayChainInfo.parachainBlockNumber,
+    relayBlockHeight: relayChainInfo.relaychainBlockNumber,
+    paraBlockHeight: relayChainInfo.parachainBlockNumber,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });
 

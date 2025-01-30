@@ -85,8 +85,8 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
     pool.lifeStates = addLbppoolDestroyedLifeState({
       existingStates: pool.lifeStates,
       destroyedState: new LbppoolDestroyedData({
-        paraChainBlockHeight: ctx.blocks[0].header.height,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        paraBlockHeight: ctx.blocks[0].header.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           ctx.blocks[0].header.height
         ).height,
       }),
@@ -123,7 +123,7 @@ async function handleStableoolsDestroyedStatus(
       // TODO must be reimplemented by better way
       .filter(
         (p) =>
-          p.createdAtParaChainBlockHeight > ctx.blocks[0].header.height + 10_000
+          p.createdAtParaBlockHeight > ctx.blocks[0].header.height + 10_000
       )
       .map(async ({ id, account }) => {
         return {
@@ -149,8 +149,8 @@ async function handleStableoolsDestroyedStatus(
     pool.lifeStates = addStableswapDestroyedLifeState({
       existingStates: pool.lifeStates,
       destroyedState: new StableswapDestroyedData({
-        paraChainBlockHeight: ctx.blocks[0].header.height,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        paraBlockHeight: ctx.blocks[0].header.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           ctx.blocks[0].header.height
         ).height,
       }),

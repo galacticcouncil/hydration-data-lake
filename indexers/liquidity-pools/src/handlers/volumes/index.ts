@@ -27,7 +27,7 @@ export async function getOldLbpVolume(
       assetB: true,
     },
     order: {
-      paraChainBlockHeight: 'DESC',
+      paraBlockHeight: 'DESC',
     },
   });
 }
@@ -46,7 +46,7 @@ export async function getOldXykVolume(
       assetB: true,
     },
     order: {
-      paraChainBlockHeight: 'DESC',
+      paraBlockHeight: 'DESC',
     },
   });
 }
@@ -63,7 +63,7 @@ export async function getOldOmnipoolAssetVolume(
       omnipoolAsset: { asset: true },
     },
     order: {
-      paraChainBlockHeight: 'DESC',
+      paraBlockHeight: 'DESC',
     },
   });
 }
@@ -83,7 +83,7 @@ export async function getOldStablepoolAssetVolume(
       volumesCollection: true,
     },
     order: {
-      paraChainBlockHeight: 'DESC',
+      paraBlockHeight: 'DESC',
     },
   });
 }

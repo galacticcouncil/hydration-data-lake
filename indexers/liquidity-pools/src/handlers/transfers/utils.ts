@@ -40,9 +40,9 @@ export async function initTransfer({
     to: await getAccount({ ctx, id: to }),
     txFee: fee,
     asset: assetEntity,
-    paraChainBlockHeight: blockNumber,
-    paraChainTimestamp: timestamp ?? new Date(),
-    relayChainBlockHeight:
+    paraBlockHeight: blockNumber,
+    paraTimestamp: timestamp ?? new Date(),
+    relayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(blockNumber).height,
     event: ctx.batchState.state.batchEvents.get(id),
     id,

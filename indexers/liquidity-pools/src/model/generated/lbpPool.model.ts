@@ -66,10 +66,10 @@ export class Lbppool {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  createdAtParaChainBlockHeight!: number
+  createdAtParaBlockHeight!: number
 
   @Column_("int4", {nullable: false})
-  createdAtRelayChainBlockHeight!: number
+  createdAtRelayBlockHeight!: number
 
   @Index_()
   @ManyToOne_(() => Block, {nullable: true})

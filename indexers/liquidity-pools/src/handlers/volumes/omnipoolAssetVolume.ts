@@ -23,7 +23,7 @@ export function initOmnipoolAssetVolume({
   oldVolume?: OmnipoolAssetHistoricalVolume | undefined;
 }) {
   const newVolume = new OmnipoolAssetHistoricalVolume({
-    id: omnipoolAsset.id + '-' + swap.paraChainBlockHeight,
+    id: omnipoolAsset.id + '-' + swap.paraBlockHeight,
     omnipoolAsset: omnipoolAsset,
     assetVolumeIn: currentVolume?.assetVolumeIn || BigInt(0),
     assetVolumeOut: currentVolume?.assetVolumeOut || BigInt(0),
@@ -38,8 +38,8 @@ export function initOmnipoolAssetVolume({
       currentVolume?.assetTotalVolumeOut ||
       oldVolume?.assetTotalVolumeOut ||
       BigInt(0),
-    relayChainBlockHeight: swap.relayChainBlockHeight,
-    paraChainBlockHeight: swap.paraChainBlockHeight,
+    relayBlockHeight: swap.relayBlockHeight,
+    paraBlockHeight: swap.paraBlockHeight,
     block: swap.event.block,
   });
 
@@ -105,7 +105,7 @@ export async function handleOmnipoolAssetVolumeUpdates({
 
   for (const omnipoolAsset of [omnipoolAssetInEntity, omnipoolAssetOutEntity]) {
     const currentVolume = omnipoolAssetVolumes.get(
-      `${omnipoolAsset.id}-${swap.paraChainBlockHeight}`
+      `${omnipoolAsset.id}-${swap.paraBlockHeight}`
     );
 
     const oldVolume =

@@ -1,6 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {AccountType} from "./_accountType"
-import {AccountAssetBalanceData} from "./accountAssetBalanceData.model"
 import {AccountAssetBalanceHistoricalData} from "./accountAssetBalanceHistoricalData.model"
 import {Lbppool} from "./lbppool.model"
 import {Xykpool} from "./xykpool.model"
@@ -27,9 +26,6 @@ export class Account {
 
   @Column_("varchar", {length: 10, nullable: false})
   accountType!: AccountType
-
-  @OneToMany_(() => AccountAssetBalanceData, e => e.account)
-  assetBalanceData!: AccountAssetBalanceData[]
 
   @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
   assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]

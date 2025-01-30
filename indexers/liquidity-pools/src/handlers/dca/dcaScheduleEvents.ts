@@ -4,10 +4,10 @@ import {
   ChainActivityTraceRelation,
   DcaSchedule,
   DcaScheduleEvent,
-  DcaScheduleEventName,
+  DcaScheduleStatus,
   DcaScheduleExecution,
   DcaScheduleExecutionEvent,
-  DcaScheduleExecutionEventName,
+  DcaScheduleExecutionStatus,
   DispatchError,
   Swap,
 } from '../../model';
@@ -75,7 +75,7 @@ export async function processDcaScheduleEvent({
   ctx,
   eventId,
   eventName,
-  memo,
+  errorState,
   schedule,
   traceIds,
   blockHeader,
@@ -84,8 +84,8 @@ export async function processDcaScheduleEvent({
   traceIds: string[];
   schedule: DcaSchedule;
   eventId: string;
-  eventName: DcaScheduleEventName;
-  memo?: DispatchError | null;
+  eventName: DcaScheduleStatus;
+  errorState?: DispatchError | null;
   blockHeader: BlockHeader;
 }) {
   let executionEvent = await getDcaScheduleEvent({
@@ -102,11 +102,11 @@ export async function processDcaScheduleEvent({
     traceIds,
     schedule,
     eventName,
-    memo: memo ?? null,
-    relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+    errorState: errorState ?? null,
+    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    paraChainBlockHeight: blockHeader.height,
+    paraBlockHeight: blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventId),
   });
 

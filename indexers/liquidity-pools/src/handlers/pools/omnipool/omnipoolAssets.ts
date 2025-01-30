@@ -54,8 +54,8 @@ export async function getOrCreateOmnipoolAsset({
     asset: assetEntity,
     pool: ctx.batchState.state.omnipoolEntity!,
 
-    addedAtParaChainBlockHeight: blockHeader.height,
-    addedAtRelayChainBlockHeight:
+    addedAtParaBlockHeight: blockHeader.height,
+    addedAtRelayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
     addedAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
     isRemoved: false,
@@ -63,8 +63,8 @@ export async function getOrCreateOmnipoolAsset({
       assetAddedState: new OmnipoolAssetAddedData({
         initialAmount: '0', // TODO fix values
         initialPrice: '0',
-        paraChainBlockHeight: blockHeader.height,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        paraBlockHeight: blockHeader.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           blockHeader.height
         ).height,
       }),
@@ -109,8 +109,8 @@ export async function omnipoolTokenAdded(
     asset: assetEntity,
     pool: ctx.batchState.state.omnipoolEntity!,
 
-    addedAtParaChainBlockHeight: eventMetadata.blockHeader.height,
-    addedAtRelayChainBlockHeight:
+    addedAtParaBlockHeight: eventMetadata.blockHeader.height,
+    addedAtRelayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height,
@@ -122,8 +122,8 @@ export async function omnipoolTokenAdded(
       assetAddedState: new OmnipoolAssetAddedData({
         initialAmount: eventParams.initialAmount.toString(),
         initialPrice: eventParams.initialPrice.toString(),
-        paraChainBlockHeight: eventMetadata.blockHeader.height,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        paraBlockHeight: eventMetadata.blockHeader.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           eventMetadata.blockHeader.height
         ).height,
       }),
@@ -159,8 +159,8 @@ export async function omnipoolTokenRemoved(
     assetRemovedState: new OmnipoolAssetRemovedData({
       removedAmount: eventParams.amount.toString(),
       hubWithdrawn: eventParams.hubWithdrawn.toString(),
-      paraChainBlockHeight: eventMetadata.blockHeader.height,
-      relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      paraBlockHeight: eventMetadata.blockHeader.height,
+      relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height,
     }),
@@ -182,7 +182,7 @@ export function addOmnipoolAssetAddedLifeState({
 }): OmnipoolAssetLifeState[] {
   const existingState = existingStates.find(
     (state) =>
-      state.added.paraChainBlockHeight === assetAddedState.paraChainBlockHeight
+      state.added.paraBlockHeight === assetAddedState.paraBlockHeight
   );
 
   if (existingState) return existingStates;
@@ -210,8 +210,8 @@ export function addOmnipoolAssetRemovedLifeState({
   return [
     ...existingStates.filter(
       (state) =>
-        state.added.paraChainBlockHeight !==
-        latestOpenState.added.paraChainBlockHeight
+        state.added.paraBlockHeight !==
+        latestOpenState.added.paraBlockHeight
     ),
     new OmnipoolAssetLifeState({
       added: latestOpenState.added,

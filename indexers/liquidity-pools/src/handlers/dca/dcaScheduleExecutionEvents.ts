@@ -4,7 +4,7 @@ import {
   ChainActivityTraceRelation,
   DcaScheduleExecution,
   DcaScheduleExecutionEvent,
-  DcaScheduleExecutionEventName,
+  DcaScheduleExecutionStatus,
   DispatchError,
   Swap,
 } from '../../model';
@@ -67,22 +67,22 @@ export async function processDcaScheduleExecutionEvent({
   id,
   eventId,
   eventName,
-  memo,
+  errorState,
   scheduleExecution,
   traceIds,
   operationIds,
-  relayChainBlockHeight,
-  paraChainBlockHeight,
+  relayBlockHeight,
+  paraBlockHeight,
 }: {
   ctx: SqdProcessorContext<Store>;
   scheduleExecution: DcaScheduleExecution;
   who: string;
   id: string;
   eventId: string;
-  eventName: DcaScheduleExecutionEventName;
-  memo?: DispatchError | null;
-  relayChainBlockHeight: number;
-  paraChainBlockHeight: number;
+  eventName: DcaScheduleExecutionStatus;
+  errorState?: DispatchError | null;
+  relayBlockHeight: number;
+  paraBlockHeight: number;
   traceIds: string[];
   operationIds?: string[];
 }) {
@@ -100,13 +100,13 @@ export async function processDcaScheduleExecutionEvent({
     scheduleExecution,
     eventName,
     operationIds: operationIds ?? null,
-    memo: memo ?? null,
-    relayChainBlockHeight,
-    paraChainBlockHeight,
+    errorState: errorState ?? null,
+    relayBlockHeight,
+    paraBlockHeight,
     event: ctx.batchState.state.batchEvents.get(eventId),
   });
 
-  if (eventName === DcaScheduleExecutionEventName.Executed) {
+  if (eventName === DcaScheduleExecutionStatus.Executed) {
     const dcaSchedule = await getDcaSchedule({
       ctx,
       id: scheduleExecution.id.split('-')[0],
@@ -127,7 +127,7 @@ export async function processDcaScheduleExecutionEvent({
 
     const relatedSwaps = [...ctx.batchState.state.swaps.values()].filter(
       (swap) =>
-        swap.paraChainBlockHeight === paraChainBlockHeight &&
+        swap.paraBlockHeight === paraBlockHeight &&
         !!swap.operationId &&
         swap.operationId.length > 0 &&
         swap.operationId.includes(
@@ -151,7 +151,7 @@ export async function processDcaScheduleExecutionEvent({
             relatedSwap.operationId,
           ]).values(),
         ];
-        relatedSwap.dcaScheduleExecutionAction = executionEvent;
+        relatedSwap.dcaScheduleExecutionEvent = executionEvent;
         ctx.batchState.state.swaps.set(relatedSwap.id, relatedSwap);
       }
     }
@@ -212,8 +212,8 @@ async function processChainActivityTracesOnDcaExecutionEvent({
     id: `${rootChainActivityTrace.id}-${swapChainActivityTrace.id}`,
     childTrace: swapChainActivityTrace,
     parentTrace: rootChainActivityTrace,
-    paraChainBlockHeight: swap.paraChainBlockHeight,
-    relayChainBlockHeight: swap.relayChainBlockHeight,
+    paraBlockHeight: swap.paraBlockHeight,
+    relayBlockHeight: swap.relayBlockHeight,
     block: swap.event.block,
   });
 

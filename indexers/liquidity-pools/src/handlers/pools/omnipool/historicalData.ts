@@ -77,10 +77,10 @@ export async function handleOmnipoolAssetHistoricalData(
           // balanceFeeFrozen: assetsBalances.feeFrozen,
           // balanceMiscFrozen: assetsBalances.miscFrozen,
 
-          relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
             blockHeader.height
           ).height,
-          paraChainBlockHeight: blockHeader.height,
+          paraBlockHeight: blockHeader.height,
           block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
         });
 

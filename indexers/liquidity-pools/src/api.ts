@@ -17,6 +17,7 @@ import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/plugins/sub
 import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswapVolume.plugin';
 import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stableswapVolumeSubscriptions.plugin';
 import { NodeEnv } from './utils/types';
+import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -63,6 +64,9 @@ const postgraphileInstance = postgraphile(
       OmnipoolAssetVolumeSubscriptionsPlugin,
       StableswapVolumePlugin,
       StableswapVolumeSubscriptionsPlugin,
+      makePgSmartTagsFromFilePlugin(
+        getEnvPath('apiSupport/postgraphile.tags.json5')
+      ),
     ],
     disableQueryLog: appConfig.NODE_ENV !== NodeEnv.DEV,
     externalUrlBase: process.env.BASE_PATH
@@ -71,6 +75,7 @@ const postgraphileInstance = postgraphile(
     graphileBuildOptions: {
       stateSchemas: ['squid_processor'],
       omnipoolAddress: appConfig.OMNIPOOL_ADDRESS,
+      enableSmartTags: true,
     },
     allowExplain: true,
     exportGqlSchemaPath: getEnvPath('apiSupport/schema.graphql'),

@@ -30,13 +30,13 @@ export async function handleStablepoolVolumeUpdates({
 }) {
   if (!swap && !liquidityAction) return;
 
-  const paraChainBlockHeight = swap
-    ? swap.paraChainBlockHeight
-    : liquidityAction!.paraChainBlockHeight;
+  const paraBlockHeight = swap
+    ? swap.paraBlockHeight
+    : liquidityAction!.paraBlockHeight;
 
-  const relayChainBlockHeight = swap
-    ? swap.relayChainBlockHeight
-    : liquidityAction!.relayChainBlockHeight;
+  const relayBlockHeight = swap
+    ? swap.relayBlockHeight
+    : liquidityAction!.relayBlockHeight;
 
   let allAssetsToProcess: Asset[] = await getAssetsByStablepool(ctx, pool.id);
 
@@ -47,22 +47,22 @@ export async function handleStablepoolVolumeUpdates({
     ctx.batchState.state.stablepoolAssetVolumeIdsToSave;
 
   let volumesCollection = stablepoolVolumeCollections.get(
-    pool.id + '-' + paraChainBlockHeight
+    pool.id + '-' + paraBlockHeight
   );
 
   if (!volumesCollection) {
     volumesCollection = new StableswapHistoricalVolume({
-      id: `${pool.id}-${paraChainBlockHeight}`,
+      id: `${pool.id}-${paraBlockHeight}`,
       pool,
-      relayChainBlockHeight,
-      paraChainBlockHeight,
+      relayBlockHeight,
+      paraBlockHeight,
     });
     stablepoolVolumeCollections.set(volumesCollection.id, volumesCollection);
   }
 
   for (const asset of allAssetsToProcess) {
     const currentAssetVolume = stablepoolAssetVolumes.get(
-      `${pool.id}-${asset.id}-${paraChainBlockHeight}`
+      `${pool.id}-${asset.id}-${paraBlockHeight}`
     );
 
     const oldVolume =
@@ -126,16 +126,16 @@ export function initStablepoolAssetVolume({
   if (!swap && !liquidityActionData) return;
 
   const poolId = pool.id;
-  const paraChainBlockHeight = swap
-    ? swap.paraChainBlockHeight
-    : liquidityActionData!.actionData.paraChainBlockHeight;
+  const paraBlockHeight = swap
+    ? swap.paraBlockHeight
+    : liquidityActionData!.actionData.paraBlockHeight;
 
   const block = swap
     ? swap.event.block
     : liquidityActionData?.actionData.event.block;
 
   const newVolume = new StableswapAssetHistoricalVolume({
-    id: `${poolId}-${asset.id}-${paraChainBlockHeight}`,
+    id: `${poolId}-${asset.id}-${paraBlockHeight}`,
     asset,
     volumesCollection,
     swapFee: currentVolume?.swapFee || BigInt(0),
@@ -182,10 +182,10 @@ export function initStablepoolAssetVolume({
     //   currentVolume?.routedLiqRemovedTotalAmount ||
     //   oldVolume?.routedLiqRemovedTotalAmount ||
     //   BigInt(0),
-    relayChainBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(paraChainBlockHeight)
+    relayBlockHeight:
+      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight)
         .height,
-    paraChainBlockHeight,
+    paraBlockHeight,
     block,
   });
 
@@ -327,7 +327,7 @@ export function isRoutedStablepoolLiquidityAction({
     );
 
     return (
-      swap.paraChainBlockHeight === liquidityAction.paraChainBlockHeight &&
+      swap.paraBlockHeight === liquidityAction.paraBlockHeight &&
       swapOutputsMap.has(liquidityAction.pool.id) &&
       swapOutputsMap.get(liquidityAction.pool.id)!.amount ===
         liquidityAction.sharesAmount

@@ -58,13 +58,13 @@ async function getStableswapDataPromise({
     pool: poolEntity,
     initialAmplification: poolStorageData.initialAmplification,
     finalAmplification: poolStorageData.finalAmplification,
-    initialAmplificationChangeAt: poolStorageData.initialBlock,
-    finalAmplificationChangeAt: poolStorageData.finalBlock,
+    initialAmplificationChangeAtBlockHeight: poolStorageData.initialBlock,
+    finalAmplificationChangeAtBlockHeight: poolStorageData.finalBlock,
     fee: poolStorageData.fee,
-    relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    paraChainBlockHeight: blockHeader.height,
+    paraBlockHeight: blockHeader.height,
     block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
@@ -93,10 +93,10 @@ async function getStableswapDataPromise({
         // feeFrozen: data!.feeFrozen,
         // frozen: data!.frozen,
         // flags: data!.flags,
-        relayChainBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           blockHeader.height
         ).height,
-        paraChainBlockHeight: blockHeader.height,
+        paraBlockHeight: blockHeader.height,
         block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
       })
     );
