@@ -1,0 +1,998 @@
+# ======================================================================================================================
+# *** Common entities ***
+# ======================================================================================================================
+
+enum LiquidityActionEvent {
+  Add
+  Remove
+}
+
+type ProcessorStatus @entity {
+  "static value - 1"
+  id: ID!
+  assetsLastUpdatedAtBlock: Int! # assetsActualisedAtBlock -> assetsLastUpdatedAtBlock
+  poolsDestroyedUpdatedAtBlock: Int # poolsDestroyedCheckPointAtBlock -> poolsDestroyedUpdatedAtBlock
+  initialIndexingStartedAt: DateTime! # initialIndexingStartedAtTime -> initialIndexingStartedAt
+  initialIndexingFinishedAt: DateTime # initialIndexingFinishedAtTime -> initialIndexingFinishedAt
+}
+
+# ======================================================================================================================
+# *** Asset ***
+# ======================================================================================================================
+
+enum AssetType {
+  Bond
+  External
+  StableSwap
+  Token
+  XYK
+  Erc20
+}
+
+type Asset @entity {
+  "assetId"
+  id: ID!
+  assetType: AssetType!
+  name: String
+  symbol: String
+  decimals: Int
+  xcmRateLimit: BigInt
+  isSufficient: Boolean!
+  existentialDeposit: BigInt! # default backup value
+  # note: existentialDeposit is probably taken 1:1 from the runtime,
+  # real existential deposit will be calculated realtime based on the current price
+}
+
+type HistoricalAssetVolume @entity {
+  "<assetId>-<paraBlockHeight>"
+  id: ID!
+  asset: Asset!
+  volumeIn: BigInt!
+  volumeOut: BigInt!
+  totalVolumeIn: BigInt!
+  totalVolumeOut: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** Account ***
+# ======================================================================================================================
+
+enum AccountType {
+  User
+  Omnipool
+  Stableswap
+  Xykpool
+  Lbppool
+}
+
+type AccountAssetBalanceHistoricalData @entity {
+  "<address>-<assetId>-<paraBlockHeight>"
+  id: ID!
+  account: Account!
+  asset: Asset!
+
+  decoratedFree: BigInt!
+  decoratedLocked: BigInt!
+  free: BigInt!
+  locked: BigInt!
+  flags: BigInt!
+  frozen: BigInt!
+  reserved: BigInt!
+  feeFrozen: BigInt!
+  miscFrozen: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type Account @entity {
+  "<address>"
+  id: ID!
+  accountType: AccountType!
+
+  assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
+    @derivedFrom(field: "account")
+
+  lbppool: Lbppool
+  xykpool: Xykpool
+  omnipool: Omnipool
+  stableswap: Stableswap
+
+  initiatedActions: [ChainActivityTrace!] @derivedFrom(field: "originator")
+  participatedActions: [AccountChainActivityTrace!]
+    @derivedFrom(field: "account")
+
+  initiatedSwaps: [Swap!]! @derivedFrom(field: "swapper")
+  filledSwaps: [Swap!]! @derivedFrom(field: "filler")
+
+  transfersTo: [Transfer!] @derivedFrom(field: "to")
+  transfersFrom: [Transfer!] @derivedFrom(field: "from")
+
+  dcaSchedules: [DcaSchedule!] @derivedFrom(field: "owner")
+  otcOrders: [OtcOrder!] @derivedFrom(field: "owner")
+
+  # TODO: add proxy and multisig tracking
+}
+
+# ======================================================================================================================
+# *** Chain Activity Tracing ***
+# ======================================================================================================================
+
+enum TraceEntityType {
+  Swap
+  Transfer
+  StableswapLiquidityEvent
+  OtcOrderEvent
+  DcaSchedule
+  DcaScheduleExecutionEvent
+}
+
+type Block @entity {
+  "<blockHeight>-<blockHash prefix> e.g. 0003396328-70ca4"
+  id: ID!
+  extrinsics: [Extrinsic] @derivedFrom(field: "block")
+  calls: [Call] @derivedFrom(field: "block")
+  events: [Event] @derivedFrom(field: "block")
+  chainActivityTraces: [ChainActivityTrace] @derivedFrom(field: "block")
+
+  height: Int! @index
+  hash: String! @index
+  timestamp: DateTime! @index
+
+  relayBlockHeight: Int!
+}
+
+type Extrinsic @entity {
+  "<blockHeight>-<blockHash prefix>-<indexInBlock> e.g. 0000065722-4721a-000002"
+  id: ID!
+  hash: String!
+  indexInBlock: Int!
+  calls: [Call] @derivedFrom(field: "extrinsic")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type Call @entity {
+  # <blockHeight>-<blockHash prefix>-<extrinsicIndexInBlock>
+  #     in case extrinsic contains single call without subcalls
+  #     (e.g. 0000172149-553f2-000002)
+  # or
+  # <blockHeight>-<blockHash prefix>-<extrinsicIndexInBlock>-<callIndexInParentCall>
+  #     in case extrinsic contains multiple calls or single call with sub-calls
+  #     (e.g. 0000172149-553f2-000002-000000)
+  id: ID!
+  traceId: String!
+
+  args: String
+  success: Boolean
+  name: String!
+  originKind: String!
+  originValueKind: String
+  originValue: String
+  entityTypes: [TraceEntityType]
+
+  subcalls: [Call] @derivedFrom(field: "parent")
+  events: [Event] @derivedFrom(field: "call")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+  extrinsic: Extrinsic!
+  parent: Call
+}
+
+enum EventGroup {
+  Extrinsic
+  Initialization
+  Finalization
+  Buyback
+  Dca
+}
+
+type Event @entity {
+  "<blockHeight>-<blockHashPrefix>-<indexInBlock> (e.g. 0000059948-e5832-000007)"
+  id: ID!
+  traceId: String!
+
+  args: String
+  indexInBlock: Int!
+  name: String!
+  group: EventGroup
+  phase: String!
+  entityTypes: [TraceEntityType]
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+  call: Call
+}
+
+type ChainActivityTrace @entity {
+  # "<extrinsicId> where particular ChainActivityTrace has bee initialised"
+  # or
+  # <blockHeight>-<TraceIdEventGroup> where eventGroup can be <ext | init | fin>
+  id: ID!
+
+  #  Batch:1419/Router:1420/Omnipool:1421
+  #  Omnipool:20554
+  operationIds: [String!]
+
+  #  There is no id for specific entity. This trace id can be used for multiple DB entities.
+  #  trace-id://context:<call>/<extrinsic_id>/<call_id>/<call_id>/<call_id>
+  #  trace-id://context:<event>/<block_id>:<group_name>/<event_index>
+
+  #  trace-id://context:call/0003396328-000002-70ca4/0003396328-000002-70ca4-000002/0003396328-000002-70ca4-000003/0003681428-fa806-000020
+  #  trace-id://context:event/0003396328-70ca4:buyback/2
+  traceIds: [String!]!
+
+  # account who signed initial call of the extrinsic
+  originator: Account
+
+  #  list of participant addresses to particular ChainActivityTrace
+  participants: [AccountChainActivityTrace!]!
+    @derivedFrom(field: "chainActivityTrace")
+
+  # Scope of all accounts involved into particular activity trace. Required for easier filtering on API side.
+  participantAccounts: [String!]! # associatedAccountsFlat -> participantAccounts
+  childTraces: [ChainActivityTraceRelation] @derivedFrom(field: "parentTrace")
+  parentTraces: [ChainActivityTraceRelation] @derivedFrom(field: "childTrace")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type AccountChainActivityTrace @entity {
+  # <address>-<chainActivityTraceId>
+  id: ID!
+  account: Account!
+  chainActivityTrace: ChainActivityTrace!
+}
+
+type ChainActivityTraceRelation @entity {
+  "<parentTraceId>-<childTraceId>"
+  id: ID!
+
+  parentTrace: ChainActivityTrace!
+  childTrace: ChainActivityTrace!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** Transfer ***
+# ======================================================================================================================
+
+type Transfer @entity {
+  "<eventId> (e.g. 0000059948-e5832-000007)"
+  id: ID!
+  traceIds: [String!]
+
+  asset: Asset!
+
+  from: Account!
+  to: Account!
+  amount: BigInt!
+  txFee: BigInt!
+
+  paraTimestamp: DateTime! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+# ======================================================================================================================
+# *** Swapped - Unified Trade event ***
+# ======================================================================================================================
+enum SwapAssetBalanceType {
+  Input
+  Output
+}
+
+enum SwapFeeDestinationType {
+  Account
+  Burned
+}
+
+enum SwapFillerType {
+  Omnipool
+  Stableswap
+  XYK
+  LBP
+  OTC
+}
+
+enum TradeOperationType {
+  ExactIn
+  ExactOut
+  ExactLimitIn
+  ExactLimitOut
+  LiquidityAdd
+  LiquidityRemove
+}
+
+type SwapFee @entity {
+  "<swapId>-<assetId>-<recipientId || destinationType> e.g. 0006516718-9965d-000107-0"
+  id: ID!
+  swap: Swap!
+  asset: Asset!
+  amount: BigInt!
+  destinationType: SwapFeeDestinationType!
+  recipient: Account
+}
+
+type SwapAssetBalance @entity {
+  "<swapId>-<assetId>-<SwapAssetBalanceType> e.g. 0006516718-9965d-000107-0-INPUT"
+  id: ID!
+  swap: Swap!
+  assetBalanceType: SwapAssetBalanceType!
+  asset: Asset!
+  amount: BigInt!
+}
+
+type Swap @entity {
+  "<eventId> (e.g. 0006516718-9965d-000107)"
+  id: ID!
+  operationId: String
+  traceIds: [String!]
+  swapIndex: Int
+
+  swapper: Account!
+  filler: Account!
+  fillerType: SwapFillerType!
+  operationType: TradeOperationType!
+
+  inputs: [SwapAssetBalance!]! @derivedFrom(field: "swap")
+  outputs: [SwapAssetBalance!]! @derivedFrom(field: "swap")
+  fees: [SwapFee!]! @derivedFrom(field: "swap")
+
+  "List of all asset IDs involved in the swap, including those used for fees."
+  allInvolvedAssetIds: [String!]!
+
+  dcaScheduleExecutionEvent: DcaScheduleExecutionEvent
+  otcOrderFulfillment: OtcOrderEvent
+  routeTrade: RouteTrade
+
+  paraTimestamp: DateTime! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type RouteTradeAssetBalance @entity {
+  "<routeTradeId>-<assetId>-<SwapAssetBalanceType> e.g. 6516718-3094-0-INPUT"
+  id: ID!
+  routeTrade: RouteTrade!
+  assetBalanceType: SwapAssetBalanceType!
+  asset: Asset!
+  amount: BigInt!
+}
+
+type RouteTrade @entity {
+  "<blockHeight>-<routerIncrementalId || swapId> (e.g. 6516718-3094 || 6516718-0006516718-9965d-000107)"
+  id: ID!
+  routeId: String
+  inputs: [RouteTradeAssetBalance] @derivedFrom(field: "routeTrade")
+  outputs: [RouteTradeAssetBalance] @derivedFrom(field: "routeTrade")
+  allInvolvedAssetIds: [String!]!
+  participantSwappers: [String!]!
+  participantFillers: [String!]!
+  feeRecipients: [String!]!
+  swaps: [Swap!]! @derivedFrom(field: "routeTrade")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** LBP Pool ***
+# ======================================================================================================================
+
+type Lbppool @entity {
+  "<poolAccountAddress>"
+  id: ID!
+
+  account: Account!
+  assetA: Asset!
+  assetB: Asset!
+  assetABalance: BigInt!
+  assetBBalance: BigInt!
+  owner: Account
+  feeCollector: Account
+  startBlockNumber: Int
+  endBlockNumber: Int
+  initialWeight: Int
+  finalWeight: Int
+  fee: [Int]
+  repayTarget: BigInt
+
+  createdAtParaBlockHeight: Int! @index
+  createdAtRelayBlockHeight: Int!
+  createdAtBlock: Block!
+  isDestroyed: Boolean
+  lifeStates: [LbppoolLifeState!]!
+
+  historicalBlockPrices: [LbppoolHistoricalPrice!]! @derivedFrom(field: "pool")
+  historicalVolume: [LbppoolHistoricalVolume!]! @derivedFrom(field: "pool")
+  historicalData: [LbppoolHistoricalData!]! @derivedFrom(field: "pool")
+}
+
+type LbppoolCreatedData {
+  assetABalance: String!
+  assetBBalance: String!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+type LbppoolDestroyedData {
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+
+type LbppoolLifeState {
+  created: LbppoolCreatedData!
+  destroyed: LbppoolDestroyedData
+}
+
+type LbppoolHistoricalPrice @entity {
+  "<lbppoolId>-<paraBlockHeight>"
+  id: ID!
+  pool: Lbppool!
+  assetA: Asset!
+  assetB: Asset!
+  assetABalance: BigInt!
+  assetBBalance: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type LbppoolHistoricalVolume @entity {
+  "PoolId-paraBlockHeight"
+  id: ID!
+  pool: Lbppool!
+
+  assetA: Asset!
+  assetB: Asset!
+  averagePrice: Float!
+  assetAVolumeIn: BigInt!
+  assetAVolumeOut: BigInt!
+  assetATotalVolumeIn: BigInt!
+  assetATotalVolumeOut: BigInt!
+  assetAFee: BigInt!
+  assetBFee: BigInt!
+  assetATotalFees: BigInt!
+  assetBTotalFees: BigInt!
+  assetBVolumeIn: BigInt!
+  assetBVolumeOut: BigInt!
+  assetBTotalVolumeIn: BigInt!
+  assetBTotalVolumeOut: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type LbppoolHistoricalData @entity {
+  "poolAddress-assetId-paraBlockHeight"
+  id: ID!
+  pool: Lbppool!
+
+  assetA: Asset!
+  assetB: Asset!
+  assetABalance: BigInt!
+  assetBBalance: BigInt!
+  owner: Account!
+  feeCollector: Account
+  startBlockNumber: Int
+  endBlockNumber: Int
+  initialWeight: Int!
+  finalWeight: Int!
+  fee: [Int!]!
+  repayTarget: BigInt!
+  weightCurve: String!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** XYK Pool ***
+# ======================================================================================================================
+
+type Xykpool @entity {
+  "<address>"
+  id: ID!
+
+  account: Account!
+  assetA: Asset!
+  assetB: Asset!
+  assetABalance: BigInt!
+  assetBBalance: BigInt!
+  shareToken: Asset!
+
+  createdAtParaBlockHeight: Int! @index
+  createdAtRelayBlockHeight: Int!
+  createdAtBlock: Block!
+  isDestroyed: Boolean
+  lifeStates: [XykpoolLifeState!]!
+
+  historicalBlockPrices: [XykpoolHistoricalPrice!]! @derivedFrom(field: "pool")
+  historicalVolume: [XykpoolHistoricalVolume!]! @derivedFrom(field: "pool")
+  historicalData: [XykpoolHistoricalData!]! @derivedFrom(field: "pool")
+}
+
+type XykpoolCreatedData {
+  initialSharesAmount: String!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+type XykpoolDestroyedData {
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+
+type XykpoolLifeState {
+  created: XykpoolCreatedData!
+  destroyed: XykpoolDestroyedData
+}
+
+type XykpoolHistoricalPrice @entity {
+  "PoolId-paraBlockHeight"
+  id: ID!
+  pool: Xykpool!
+  assetA: Asset!
+  assetB: Asset!
+  assetABalance: BigInt!
+  assetBBalance: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type XykpoolHistoricalVolume @entity {
+  "PoolId-paraBlockHeight"
+  id: ID!
+  pool: Xykpool!
+
+  assetA: Asset!
+  assetB: Asset!
+  averagePrice: Float!
+  assetAVolumeIn: BigInt!
+  assetAVolumeOut: BigInt!
+  assetATotalVolumeIn: BigInt!
+  assetATotalVolumeOut: BigInt!
+  assetAFee: BigInt!
+  assetBFee: BigInt!
+  assetATotalFees: BigInt!
+  assetBTotalFees: BigInt!
+  assetBVolumeIn: BigInt!
+  assetBVolumeOut: BigInt!
+  assetBTotalVolumeIn: BigInt!
+  assetBTotalVolumeOut: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type XykpoolHistoricalData @entity {
+  "poolAddress-assetId-paraBlockHeight"
+  id: ID!
+  pool: Xykpool!
+
+  assetA: Asset!
+  assetB: Asset!
+  assetABalance: BigInt!
+  assetBBalance: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** Omnipool ***
+# ======================================================================================================================
+
+type Omnipool @entity {
+  id: ID!
+  account: Account!
+
+  isDestroyed: Boolean
+  destroyedAtParaBlockHeight: Int
+  destroyedAtBlock: Block
+
+  assets: [OmnipoolAsset!]! @derivedFrom(field: "pool")
+}
+
+type OmnipoolAsset @entity {
+  "<omnipoolId>-<assetId> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-100)"
+  id: ID!
+
+  pool: Omnipool!
+  asset: Asset!
+
+  addedAtParaBlockHeight: Int! @index
+  addedAtRelayBlockHeight: Int!
+  addedAtBlock: Block!
+  isRemoved: Boolean
+  lifeStates: [OmnipoolAssetLifeState!]!
+
+  historicalVolume: [OmnipoolAssetHistoricalVolume!]!
+    @derivedFrom(field: "omnipoolAsset")
+  historicalData: [OmnipoolAssetHistoricalData!]!
+    @derivedFrom(field: "omnipoolAsset")
+}
+
+type OmnipoolAssetAddedData {
+  initialAmount: String
+  initialPrice: String
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+type OmnipoolAssetRemovedData {
+  removedAmount: String
+  hubWithdrawn: String
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+
+type OmnipoolAssetLifeState {
+  added: OmnipoolAssetAddedData!
+  removed: OmnipoolAssetRemovedData
+}
+
+type OmnipoolAssetHistoricalVolume @entity {
+  "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
+  id: ID!
+  omnipoolAsset: OmnipoolAsset!
+  assetVolumeIn: BigInt!
+  assetVolumeOut: BigInt!
+  assetTotalVolumeIn: BigInt!
+  assetTotalVolumeOut: BigInt!
+  assetFee: BigInt!
+  assetTotalFees: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type OmnipoolAssetHistoricalData @entity {
+  "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
+  id: ID!
+  omnipoolAsset: OmnipoolAsset!
+  asset: Asset!
+
+  #>>>check for assetTradebility
+
+  assetCap: BigInt! # What does this mean? AssetCap?
+  assetShares: BigInt! # AssetShares?
+  assetHubReserve: BigInt! # AssetHubReserve?
+  assetProtocolShares: BigInt! # AssetProtocolShares?
+  freeBalance: BigInt! # freeBalance? -> freeBalance
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** Stableswap ***
+# ======================================================================================================================
+
+type Stableswap @entity {
+  "poolId - share token ID (e.g. 102)"
+  id: ID!
+  account: Account!
+  shareToken: Asset!
+
+  createdAtParaBlockHeight: Int! @index
+  createdAtRelayBlockHeight: Int!
+  createdAtBlock: Block!
+  isDestroyed: Boolean
+  lifeStates: [StableswapLifeState!]!
+
+  assets: [StableswapAsset!]! @derivedFrom(field: "pool")
+}
+
+type StableswapCreatedData {
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+type StableswapDestroyedData {
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+
+type StableswapLifeState {
+  created: StableswapCreatedData!
+  destroyed: StableswapDestroyedData
+}
+
+type StableswapAsset @entity {
+  "<stableswapId>-<assetId> (e.g. 101-19)"
+  id: ID!
+  pool: Stableswap!
+  asset: Asset!
+  amount: BigInt!
+}
+
+type StableswapHistoricalVolume @entity {
+  "<stableswapId>-<paraBlockHeight>"
+  id: ID!
+  pool: Stableswap!
+  assetVolumes: [StableswapAssetHistoricalVolume!]!
+    @derivedFrom(field: "volumesCollection")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type StableswapAssetHistoricalVolume @entity {
+  "<stableswapId>-<assetId>-<paraBlockHeight> (e.g. 100-10-101332)"
+  id: ID!
+  volumesCollection: StableswapHistoricalVolume!
+  asset: Asset!
+
+  swapFee: BigInt!
+  swapTotalFees: BigInt!
+  swapVolumeIn: BigInt!
+  swapVolumeOut: BigInt!
+  swapTotalVolumeIn: BigInt!
+  swapTotalVolumeOut: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type StableswapLiquidityEvent @entity {
+  "<stableswapId>-<eventId>"
+  id: ID!
+  traceIds: [String!]
+
+  pool: Stableswap!
+
+  sharesAmount: BigInt!
+  feeAmount: BigInt!
+  assetAmounts: [StableswapAssetLiquidityAmount!]!
+    @derivedFrom(field: "liquidityAction")
+  actionType: LiquidityActionEvent!
+
+  indexInBlock: Int! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type StableswapAssetLiquidityAmount @entity {
+  "<stableswapId>-<eventId>-<assetId>"
+  id: ID!
+  liquidityAction: StableswapLiquidityEvent!
+  asset: Asset!
+  amount: BigInt!
+}
+
+type StableswapHistoricalData @entity {
+  "<stableswapId>-<paraBlockHeight>"
+  id: ID!
+  pool: Stableswap!
+  assetsData: [StableswapAssetHistoricalData!]!
+    @derivedFrom(field: "poolHistoricalData")
+
+  initialAmplification: Int!
+  finalAmplification: Int!
+  initialAmplificationChangeAtBlockHeight: Int!
+  finalAmplificationChangeAtBlockHeight: Int!
+  fee: Int!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type StableswapAssetHistoricalData @entity {
+  "<stablepoolId>-<assetId>-<paraBlockHeight>"
+  id: ID!
+  asset: Asset!
+  poolHistoricalData: StableswapHistoricalData!
+  freeBalance: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** DCA ***
+# ======================================================================================================================
+
+enum DcaScheduleOrderType {
+  Buy
+  Sell
+}
+
+enum DcaScheduleStatus {
+  Created
+  Completed
+  Terminated
+}
+
+enum DcaScheduleExecutionStatus {
+  Planned
+  Executed
+  Failed
+}
+
+type DispatchError {
+  kind: String
+  index: Int
+  error: String
+}
+
+type DcaSchedule @entity {
+  "schedule_id as string"
+  id: ID!
+  operationId: String
+  traceIds: [String!]
+
+  status: DcaScheduleStatus @index
+  owner: Account!
+  startExecutionBlock: Int
+  period: Int
+  totalAmount: BigInt
+  slippage: Int
+  maxRetries: Int
+  stabilityThreshold: Int
+
+  totalExecutedAmountIn: BigInt
+  totalExecutedAmountOut: BigInt
+
+  assetIn: Asset
+  amountIn: BigInt
+  maxAmountIn: BigInt
+  assetOut: Asset
+  amountOut: BigInt
+  minAmountOut: BigInt
+  orderType: DcaScheduleOrderType!
+  orderRouteHops: [DcaScheduleOrderRouteHop] @derivedFrom(field: "schedule")
+  executions: [DcaScheduleExecution] @derivedFrom(field: "schedule")
+  events: [DcaScheduleEvent!]! @derivedFrom(field: "schedule")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type DcaScheduleOrderRouteHop @entity {
+  "<dcaScheduleId>-<assetInId>-<assetOutId>"
+  id: ID!
+  schedule: DcaSchedule!
+  poolKind: SwapFillerType
+  assetIn: Asset
+  assetOut: Asset
+}
+
+type DcaScheduleEvent @entity {
+  "<dcaScheduleId>-<eventId>"
+  id: ID!
+  traceIds: [String!]
+  schedule: DcaSchedule!
+  eventName: DcaScheduleStatus! @index
+  errorState: DispatchError
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type DcaScheduleExecution @entity {
+  "<dcaScheduleId>-<blockHeight>"
+  id: ID!
+  schedule: DcaSchedule!
+  status: DcaScheduleExecutionStatus @index
+  amountOut: BigInt
+  amountIn: BigInt
+  events: [DcaScheduleExecutionEvent] @derivedFrom(field: "scheduleExecution")
+}
+
+# How can we have multiple exection actions for one execution? Can't we merge this to one entity?
+
+type DcaScheduleExecutionEvent @entity {
+  "<dcaScheduleExecutionId>-<dcaScheduleExecutionStatus>"
+  id: ID!
+  operationIds: [String]
+  traceIds: [String!]
+  scheduleExecution: DcaScheduleExecution!
+
+  swaps: [Swap] @derivedFrom(field: "dcaScheduleExecutionEvent")
+  eventName: DcaScheduleExecutionStatus @index
+  errorState: DispatchError
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+# ======================================================================================================================
+# *** OTC ***
+# ======================================================================================================================
+
+enum OtcOrderStatus {
+  Open
+  Canceled
+  Filled
+  PartiallyFilled
+}
+
+enum OtcOrderEventName {
+  Created
+  Canceled
+  Filled
+  PartiallyFilled
+}
+
+type OtcOrder @entity {
+  "<orderId> as string"
+  id: ID!
+
+  owner: Account!
+  assetIn: Asset!
+  assetOut: Asset!
+  amountOut: BigInt!
+  amountIn: BigInt!
+  partiallyFillable: Boolean
+  status: OtcOrderStatus @index
+
+  totalFilledAmountIn: BigInt
+  totalFilledAmountOut: BigInt
+
+  events: [OtcOrderEvent] @derivedFrom(field: "order")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type OtcOrderEvent @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+  order: OtcOrder!
+
+  eventName: OtcOrderEventName @index
+  amountIn: BigInt
+  amountOut: BigInt
+  fee: BigInt
+  eventIndex: Int!
+
+  filler: Account
+  swap: Swap
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}

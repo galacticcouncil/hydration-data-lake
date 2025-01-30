@@ -1,0 +1,129 @@
+name: "Reusable :: Build and Publish Docker images"
+
+on:
+  workflow_call:
+    secrets:
+      GHCR_AUTH_TOKEN:
+        required: true
+
+jobs:
+  extract-image-tag-from-branch-name:
+    name: "Extract tag from branch name"
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.image-tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Sanitize branch name"
+        id: branch-name-as-tag
+        shell: bash
+        run: |
+          sudo chmod +x ./scripts/ci/gh-actions-get-branch-name.sh
+          BRANCH_NAME=$(./scripts/ci/gh-actions-get-branch-name.sh "$GITHUB_EVENT_NAME" "$GITHUB_REF" "$GITHUB_BASE_REF")
+          echo "name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Set IMAGE_TAG based on branch
+        id: image-tag
+        env:
+          BRANCH_NAME: ${{ steps.branch-name-as-tag.outputs.name }}
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "tag=wip-${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-push-liquidity-pools-indexer-image:
+    name: "Build and push Liquidity Pools indexer image"
+    runs-on: ubuntu-latest
+    needs: extract-image-tag-from-branch-name
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up docker qemu
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          driver-opts: network=host
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: "mckrava"
+          password: ${{ secrets.GHCR_AUTH_TOKEN }}
+
+      - name: Set Docker metadata for Liquidity Pools indexer
+        id: liquidity-pools-ind-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/mckrava/liquidity-pools-indexer
+          tags: |
+            ${{ needs.extract-image-tag-from-branch-name.outputs.tag }}
+            ${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.description=Hydration Liquidity Pools indexer image
+            org.opencontainers.image.licenses=Apache License
+            org.opencontainers.image.title=liquidity-pools-indexer
+
+      - name: Build and push Docker image of Liquidity Pools indexer
+        id: liquidity-pools-indexer-push
+        uses: docker/build-push-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+          context: ./indexers/liquidity-pools/
+          push: true
+          tags: ${{ steps.liquidity-pools-ind-meta.outputs.tags }}
+          labels: ${{ steps.liquidity-pools-ind-meta.outputs.labels }}
+
+  build-and-push-storage-dictionary-indexer-image:
+    name: "Build and push Storage dictionary indexer image"
+    runs-on: ubuntu-latest
+    needs: extract-image-tag-from-branch-name
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up docker qemu
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          driver-opts: network=host
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: "mckrava"
+          password: ${{ secrets.GHCR_AUTH_TOKEN }}
+
+      - name: Set Docker metadata for Storage Dictionary indexer
+        id: storage-dictionary-ind-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/mckrava/storage-dictionary-indexer
+          tags: |
+            ${{ needs.extract-image-tag-from-branch-name.outputs.tag }}
+            ${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.description=Hydration Storage Dictionary indexer image
+            org.opencontainers.image.licenses=Apache License
+            org.opencontainers.image.title=storage-dictionary-indexer
+
+      - name: Build and push Docker image of Storage Dictionary indexer
+        id: storage-dictionary-indexer-push
+        uses: docker/build-push-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+          context: ./indexers/storage-dictionary/
+          push: true
+          tags: ${{ steps.storage-dictionary-ind-meta.outputs.tags }}
+          labels: ${{ steps.storage-dictionary-ind-meta.outputs.labels }}

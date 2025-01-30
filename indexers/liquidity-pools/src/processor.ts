@@ -1,0 +1,93 @@
+import { assertNotNull } from '@subsquid/util-internal';
+import {
+  BlockHeader,
+  DataHandlerContext,
+  SubstrateBatchProcessor,
+  SubstrateBatchProcessorFields,
+  Event as _Event,
+  Call as _Call,
+  Extrinsic as _Extrinsic,
+} from '@subsquid/substrate-processor';
+
+import { BatchState } from './utils/batchState';
+import { AppConfig } from './appConfig';
+const appConfig = AppConfig.getInstance();
+
+console.log('appConfig.RPC_URL', appConfig.RPC_URL);
+
+let processor = new SubstrateBatchProcessor()
+  .setRpcEndpoint({
+    // Set via .env for local runs or via secrets when deploying to Subsquid Cloud
+    // https://docs.subsquid.io/deploy-squid/env-variables/
+    // See https://docs.subsquid.io/substrate-indexing/setup/general/#set-data-source
+    url: assertNotNull(appConfig.RPC_URL, 'No RPC endpoint supplied'),
+    capacity: appConfig.RPC_CAPACITY,
+    rateLimit: appConfig.RPC_RATE_LIMIT,
+    maxBatchCallSize: appConfig.RPC_MAX_BATCH_CALL_SIZE,
+    requestTimeout: appConfig.RPC_REQUEST_TIMEOUT,
+
+    // More RPC connection options at https://docs.subsquid.io/substrate-indexing/setup/general/#set-data-source
+  })
+  .addEvent({
+    name: appConfig.getEventsToListen(),
+    call: true,
+    extrinsic: true,
+  })
+  .addCall({
+    name: appConfig.getCallsToListen(),
+    stack: true,
+  })
+  .setFields({
+    event: {
+      args: true,
+      name: true,
+      phase: true,
+      extrinsic: true,
+    },
+    extrinsic: {
+      hash: true,
+      fee: true,
+      events: true,
+      call: true,
+      calls: true,
+      stack: true,
+      index: true,
+    },
+    block: {
+      timestamp: true,
+    },
+    call: {
+      name: true,
+      events: true,
+      args: true,
+      origin: true,
+      success: true,
+      error: true,
+      extrinsic: true,
+    },
+  })
+  .includeAllBlocks()
+  .setBlockRange({
+    from: appConfig.PROCESS_FROM_BLOCK,
+    to: appConfig.PROCESS_TO_BLOCK > 0 ? appConfig.PROCESS_TO_BLOCK : undefined,
+  });
+
+if (appConfig.GATEWAY_HYDRATION_HTTPS && !appConfig.IGNORE_ARCHIVE_DATA_SOURCE)
+  // Lookup archive by the network name in Subsquid registry
+  // See https://docs.subsquid.io/substrate-indexing/supported-networks/
+  processor = processor.setGateway(appConfig.GATEWAY_HYDRATION_HTTPS);
+
+export { processor };
+
+export type SqdFields = SubstrateBatchProcessorFields<typeof processor>;
+export type SqdBlock = BlockHeader<SqdFields>;
+export type SqdEvent = _Event<SqdFields>;
+export type SqdCall = _Call<SqdFields>;
+export type SqdExtrinsic = _Extrinsic<SqdFields>;
+export type SqdProcessorContext<Store> = DataHandlerContext<
+  Store,
+  SqdFields
+> & {
+  batchState: BatchState;
+  appConfig: AppConfig;
+};

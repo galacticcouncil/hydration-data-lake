@@ -1,0 +1,58 @@
+//https://postgraphile.org/postgraphile/next/smart-tags
+//https://postgraphile.org/postgraphile/next/smart-tags-file
+
+{
+  version: 1,
+  config: {
+    class: {
+      swap_asset_balance: {
+        tags: {
+          name: 'swap_input_output_asset_balance',
+          fieldName: 'swap_input_output_asset_balance',
+        },
+      },
+      route_trade_asset_balance: {
+        tags: {
+          name: 'route_trade_input_output_asset_balance',
+          fieldName: 'route_trade_input_output_asset_balance',
+        },
+      },
+      swap_inputs: {
+        tags: {
+          foreignKey: [
+            '(swap_id) references swap (id)|@fieldName swap|@foreignFieldName swapInputs',
+            '(asset_id) references asset (id)|@fieldName asset|@foreignFieldName swapInputs',
+          ],
+          omit: ['all'],
+        },
+      },
+      swap_outputs: {
+        tags: {
+          foreignKey: [
+            '(swap_id) references swap (id)|@fieldName swap|@foreignFieldName swapOutputs',
+            '(asset_id) references asset (id)|@fieldName asset|@foreignFieldName swapOutputs',
+          ],
+          omit: ['all'],
+        },
+      },
+      route_trade_inputs: {
+        tags: {
+          foreignKey: [
+            '(route_trade_id) references route_trade (id)|@fieldName route_trade|@foreignFieldName routeTradeInputs',
+            '(asset_id) references asset (id)|@fieldName asset|@foreignFieldName routeTradeInputs',
+          ],
+          omit: ['all'],
+        },
+      },
+      route_trade_outputs: {
+        tags: {
+          foreignKey: [
+            '(route_trade_id) references route_trade (id)|@fieldName route_trade|@foreignFieldName routeTradeOutputs',
+            '(asset_id) references asset (id)|@fieldName asset|@foreignFieldName routeTradeOutputs',
+          ],
+          omit: ['all'],
+        },
+      },
+    },
+  },
+}

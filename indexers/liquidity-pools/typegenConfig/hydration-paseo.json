@@ -1,0 +1,81 @@
+{
+  "outDir": "../src/parsers/chains/hydration-paseo/typegenTypes/",
+  "specVersions": "../typegenAssets/paseo-metadata.jsonl",
+  "pallets": {
+    "Sudo": {
+      "calls": ["sudo", "sudo_unchecked_weight", "set_key", "sudo_as"]
+    },
+    "AssetRegistry": {
+      "events": ["Registered", "Updated"],
+      "storage": ["Assets"]
+    },
+    "Balances": {
+      "events": ["Transfer"],
+      "calls": true,
+      "storage": [],
+      "constants": []
+    },
+    "Tokens": {
+      "events": ["Transfer"],
+      "calls": true,
+      "storage": ["Accounts", "TotalIssuance"]
+    },
+    "Router": {
+      "calls": ["sell", "buy"]
+    },
+    "ParachainSystem": {
+      "calls": ["set_validation_data"],
+      "storage": ["LastRelayChainBlockNumber"]
+    },
+    "XYK": {
+      "events": ["PoolCreated", "PoolDestroyed", "SellExecuted", "BuyExecuted"],
+      "calls": ["create_pool", "sell", "buy"],
+      "storage": ["PoolAssets", "ShareToken"]
+    },
+    "Omnipool": {
+      "events": ["TokenAdded", "TokenRemoved", "SellExecuted", "BuyExecuted"],
+      "calls": ["sell", "buy"],
+      "storage": ["Assets"]
+    },
+    "OmnipoolLiquidityMining": {
+      "calls": true
+    },
+    "Stableswap": {
+      "events": [
+        "PoolCreated",
+        "SellExecuted",
+        "BuyExecuted",
+        "LiquidityAdded",
+        "LiquidityRemoved"
+      ],
+      "calls": ["sell", "buy"],
+      "storage": ["Pools"]
+    },
+    "LBP": {
+      "events": ["PoolUpdated", "PoolCreated", "SellExecuted", "BuyExecuted"],
+      "calls": ["create_pool", "sell", "buy"],
+      "storage": ["PoolData"]
+    },
+    "System": {
+      "storage": ["Account"]
+    },
+    "DCA": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "OTC": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "Utility": {
+      "calls": true
+    },
+    "Broadcast": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    }
+  }
+}

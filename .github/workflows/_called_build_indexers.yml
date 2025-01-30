@@ -1,0 +1,81 @@
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
+# Build indexers production ready files. Build results will be saved as artifacts with names, passed
+# in "liquidity-pools-build-artifact-name" and "dictionary-build-artifact-name" inputs.
+
+name: "Reusable :: Build Indexers"
+
+on:
+  workflow_call:
+    inputs:
+      liquidity-pools-build-artifact-name:
+        required: true
+        type: string
+      dictionary-build-artifact-name:
+        required: true
+        type: string
+    secrets:
+      gh_token:
+        required: true
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "Restore cached Node modules"
+        id: cache-node-modules-indexers
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: cache-node-modules-indexers-${{ hashFiles('package-lock.json') }}
+
+      - name: "Install Node modules"
+        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: "Extract branch name"
+        id: extract-branch-name
+        shell: bash
+        run: |
+          sudo chmod +x ./scripts/ci/gh-actions-get-branch-name.sh
+          echo "##[set-output name=name;]$(./scripts/ci/gh-actions-get-branch-name.sh "$GITHUB_EVENT_NAME" "$GITHUB_REF" "$GITHUB_BASE_REF")"
+
+      - name: "Sanitize branch name"
+        id: branch-name-sanitized
+        env:
+          BRANCH_NAME: ${{ steps.extract-branch-name.outputs.name }}
+        shell: bash
+        run: |
+          sudo chmod +x ./scripts/ci/gh-actions-branch-name-serialize.sh
+          echo "##[set-output name=name;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "$BRANCH_NAME")"
+
+      - name: "Build Liquidity pools indexer"
+        run: |
+          cd indexers/liquidity-pools
+          npm run build
+
+      - name: "Build Storage dictionary indexer"
+        run: |
+          cd indexers/storage-dictionary
+          npm run build
+
+      - name: "Upload Liquidity pools indexer build files"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.liquidity-pools-build-artifact-name }}
+          path: ./indexers/liquidity-pools/lib
+
+      - name: "Upload Storage dictionary build files"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.dictionary-build-artifact-name }}
+          path: ./indexers/storage-dictionary/lib

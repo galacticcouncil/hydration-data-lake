@@ -1,0 +1,1 @@
+TODO add description about Omnipool Asset concept (Omnipool Asset != Asset)
