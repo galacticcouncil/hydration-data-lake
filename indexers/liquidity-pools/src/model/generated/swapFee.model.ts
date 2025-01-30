@@ -12,7 +12,7 @@ export class SwapFee {
   }
 
   /**
-   * <swapId>-<itemIndex> e.g. 0006516718-9965d-000107-0
+   * <swapId>-<assetId>-<recipientId || destinationType> e.g. 0006516718-9965d-000107-0
    */
   @PrimaryColumn_()
   id!: string

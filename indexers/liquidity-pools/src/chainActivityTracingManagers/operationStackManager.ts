@@ -39,6 +39,28 @@ export class OperationStackManager {
     return resultSegmentsList.join('/');
   }
 
+  static containsExecutionType(
+    operationId: string,
+    executionType: SwappedExecutionTypeKind
+  ): boolean {
+    if (!operationId) return false;
+    const regex = new RegExp(`${executionType}:`);
+    return regex.test(operationId);
+  }
+
+  static getRouterIncrementalIdFromOperationId(
+    operationId: string
+  ): string | null {
+    const parsedSegments = operationId.split('/');
+    for (const segment of parsedSegments) {
+      const segmentParts = segment.split(':');
+      if (segmentParts[0] === SwappedExecutionTypeKind.Router)
+        return segmentParts[1];
+    }
+
+    return null;
+  }
+
   // TODO should be refactored
   //
   // static getDcaDataFromOperationId(

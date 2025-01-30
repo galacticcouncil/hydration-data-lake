@@ -321,7 +321,7 @@ enum TradeOperationType {
 }
 
 type SwapFee @entity {
-  "<swapId>-<itemIndex> e.g. 0006516718-9965d-000107-0"
+  "<swapId>-<assetId>-<recipientId || destinationType> e.g. 0006516718-9965d-000107-0"
   id: ID!
   swap: Swap!
   asset: Asset!
@@ -355,13 +355,43 @@ type Swap @entity {
   outputs: [SwapAssetBalance!]! @derivedFrom(field: "swap")
   fees: [SwapFee!]! @derivedFrom(field: "swap")
 
+  "List of all asset IDs involved in the swap, including those used for fees."
+  allInvolvedAssetIds: [String!]!
+
   dcaScheduleExecutionEvent: DcaScheduleExecutionEvent
   otcOrderFulfillment: OtcOrderEvent
+  routeTrade: RouteTrade
 
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   event: Event!
+}
+
+type RouteTradeAssetBalance @entity {
+  "<routeTradeId>-<assetId>-<SwapAssetBalanceType> e.g. 6516718-3094-0-INPUT"
+  id: ID!
+  routeTrade: RouteTrade!
+  assetBalanceType: SwapAssetBalanceType!
+  asset: Asset!
+  amount: BigInt!
+}
+
+type RouteTrade @entity {
+  "<blockHeight>-<routerIncrementalId || swapId> (e.g. 6516718-3094 || 6516718-0006516718-9965d-000107)"
+  id: ID!
+  routeId: String
+  inputs: [RouteTradeAssetBalance] @derivedFrom(field: "routeTrade")
+  outputs: [RouteTradeAssetBalance] @derivedFrom(field: "routeTrade")
+  allInvolvedAssetIds: [String!]!
+  participantSwappers: [String!]!
+  participantFillers: [String!]!
+  feeRecipients: [String!]!
+  swaps: [Swap!]! @derivedFrom(field: "routeTrade")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
 }
 
 # ======================================================================================================================

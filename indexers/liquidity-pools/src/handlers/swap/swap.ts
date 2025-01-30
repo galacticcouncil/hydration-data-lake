@@ -26,6 +26,7 @@ import {
   supportSwappedEventPostHook,
   supportSwapperEventPreHook,
 } from './helpers';
+import { processRouteTradeHop } from './routeTrade';
 
 export async function getSwap({
   ctx,
@@ -116,13 +117,19 @@ export async function getNewSwap({
     swapIndex,
     swapper: await getAccount({ ctx, id: swapperId }),
     filler: await getAccount({ ctx, id: fillerId }),
+    allInvolvedAssetIds: [
+      ...new Set([
+        ...inputs.map((input) => input.assetId),
+        ...outputs.map((output) => output.assetId),
+        ...fees.map((fee) => fee.assetId),
+      ]).values(),
+    ].map((id) => `${id}`),
     fillerType,
     operationType,
     paraBlockHeight,
     paraTimestamp,
     relayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight)
-        .height,
+      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
     event: ctx.batchState.state.batchEvents.get(eventId),
   });
 
@@ -146,7 +153,7 @@ export async function getNewSwap({
 
     feeEntities.push(
       new SwapFee({
-        id: `${swap.id}-${asset.id}`,
+        id: `${swap.id}-${asset.id}${recipient ? `-${recipient.id}` : `-${fee.destinationType}`}`,
         amount: fee.amount,
         destinationType: fee.destinationType,
         swap,
@@ -213,8 +220,9 @@ export async function handleSwap({
     swapId,
     traceIds,
     operationId,
+    customRouteId,
     eventId,
-    swapIndex = 0,
+    swapIndex,
     swapperAccountId,
     fillerAccountId,
     fillerType,
@@ -232,6 +240,7 @@ export async function handleSwap({
     swapId?: string;
     traceIds: string[];
     operationId?: string;
+    customRouteId?: string;
     eventId: string;
     swapIndex?: number;
     swapperAccountId: string;
@@ -252,7 +261,7 @@ export async function handleSwap({
       swapId,
       traceIds,
       operationId,
-      swapIndex,
+      swapIndex: swapIndex ?? 0,
       swapperId: swapperAccountId,
       fillerId: fillerAccountId,
       fillerType,
@@ -267,6 +276,15 @@ export async function handleSwap({
   });
 
   const { swap, swapFees, swapOutputs, swapInputs } = swapData;
+
+  const routeTrade = processRouteTradeHop({
+    swap,
+    ctx,
+    customRouteId,
+  });
+
+  swap.routeTrade = routeTrade;
+  swap.swapIndex = swapIndex ?? routeTrade.swaps.length - 1;
 
   const state = ctx.batchState.state;
 

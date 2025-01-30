@@ -22,6 +22,12 @@ export async function handleBuySellOperations(
   if (ctx.appConfig.PROCESS_STABLEPOOLS)
     await handleStablepoolOperations(ctx, parsedEvents);
 
+  await ctx.store.save([...ctx.batchState.state.routeTrades.values()]);
+  await ctx.store.save([
+    ...ctx.batchState.state.routeTradesInputs.values(),
+    ...ctx.batchState.state.routeTradesOutputs.values(),
+  ]);
+
   await ctx.store.save([...ctx.batchState.state.swaps.values()]);
   await ctx.store.save([...ctx.batchState.state.swapFees.values()]);
   await ctx.store.save([

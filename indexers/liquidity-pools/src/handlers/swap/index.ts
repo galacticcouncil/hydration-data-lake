@@ -12,19 +12,6 @@ export async function handleSupportSwappedEvents(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
-  console.log(
-    'handleSupportSwappedEvents - ',
-    [
-      ...parsedEvents
-        .getSectionByEventName(EventName.Broadcast_Swapped)
-        .values(),
-    ].filter((event) =>
-      isUnifiedEventsSupportSpecVersion(
-        event.eventData.metadata.blockHeader.specVersion,
-        ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
-      )
-    ).length
-  );
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.Broadcast_Swapped).values(),
   ]).filter((event) =>
@@ -38,10 +25,18 @@ export async function handleSupportSwappedEvents(
 
   // await OperationStackManager.saveOperationStackEntities(ctx);
 
+  await ctx.store.save([...ctx.batchState.state.routeTrades.values()]);
+  await ctx.store.save([
+    ...ctx.batchState.state.routeTradesInputs.values(),
+    ...ctx.batchState.state.routeTradesOutputs.values(),
+  ]);
+
   await ctx.store.save([...ctx.batchState.state.swaps.values()]);
   await ctx.store.save([...ctx.batchState.state.swapFees.values()]);
-  await ctx.store.save([...ctx.batchState.state.swapInputs.values()]);
-  await ctx.store.save([...ctx.batchState.state.swapOutputs.values()]);
+  await ctx.store.save([
+    ...ctx.batchState.state.swapInputs.values(),
+    ...ctx.batchState.state.swapOutputs.values(),
+  ]);
 
   await ctx.store.save([...ctx.batchState.state.assetVolumes.values()]);
   await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);

@@ -7,6 +7,7 @@ import {SwapAssetBalance} from "./swapAssetBalance.model"
 import {SwapFee} from "./swapFee.model"
 import {DcaScheduleExecutionEvent} from "./dcaScheduleExecutionEvent.model"
 import {OtcOrderEvent} from "./otcOrderEvent.model"
+import {RouteTrade} from "./routeTrade.model"
 import {Event} from "./event.model"
 
 @Entity_()
@@ -53,6 +54,12 @@ export class Swap {
   @OneToMany_(() => SwapFee, e => e.swap)
   fees!: SwapFee[]
 
+  /**
+   * List of all asset IDs involved in the swap, including those used for fees.
+   */
+  @Column_("text", {array: true, nullable: false})
+  allInvolvedAssetIds!: (string)[]
+
   @Index_()
   @ManyToOne_(() => DcaScheduleExecutionEvent, {nullable: true})
   dcaScheduleExecutionEvent!: DcaScheduleExecutionEvent | undefined | null
@@ -60,6 +67,10 @@ export class Swap {
   @Index_()
   @ManyToOne_(() => OtcOrderEvent, {nullable: true})
   otcOrderFulfillment!: OtcOrderEvent | undefined | null
+
+  @Index_()
+  @ManyToOne_(() => RouteTrade, {nullable: true})
+  routeTrade!: RouteTrade | undefined | null
 
   @Index_()
   @Column_("timestamp with time zone", {nullable: false})
