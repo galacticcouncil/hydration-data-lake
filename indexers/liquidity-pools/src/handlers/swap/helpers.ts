@@ -5,7 +5,7 @@ import {
   ChainActivityTrace,
   ChainActivityTraceRelation,
   OtcOrderEvent,
-  OtcOrderEventName,
+  OtcOrderStatus,
   Swap,
   SwapFillerType,
 } from '../../model';
@@ -250,7 +250,7 @@ export async function supportSwappedEventPostHook({
 
       const createOrderAction = await ctx.store.findOne(OtcOrderEvent, {
         where: {
-          eventName: OtcOrderEventName.Created,
+          eventName: OtcOrderStatus.Created,
           order: {
             id: ctx.batchState.state.swapFillerContexts.get(swap.id)!
               .otcOrderId,
@@ -277,8 +277,7 @@ export async function supportSwappedEventPostHook({
         id: `${rootChainActivityTrace.id}-${chainActivityTrace.id}`,
         childTrace: chainActivityTrace,
         parentTrace: rootChainActivityTrace,
-        paraBlockHeight:
-          eventCallData.eventData.metadata.blockHeader.height,
+        paraBlockHeight: eventCallData.eventData.metadata.blockHeader.height,
         relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           eventCallData.eventData.metadata.blockHeader.height
         ).height,

@@ -16,7 +16,7 @@ export class DcaSchedule {
   }
 
   /**
-   * schedule_id as string
+   * <scheduleId> - DCA schedule as a string
    */
   @PrimaryColumn_()
   id!: string

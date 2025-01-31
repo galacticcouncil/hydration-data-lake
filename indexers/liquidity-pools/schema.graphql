@@ -10,10 +10,10 @@ enum LiquidityActionEvent {
 type ProcessorStatus @entity {
   "static value - 1"
   id: ID!
-  assetsLastUpdatedAtBlock: Int! # assetsActualisedAtBlock -> assetsLastUpdatedAtBlock
-  poolsDestroyedUpdatedAtBlock: Int # poolsDestroyedCheckPointAtBlock -> poolsDestroyedUpdatedAtBlock
-  initialIndexingStartedAt: DateTime! # initialIndexingStartedAtTime -> initialIndexingStartedAt
-  initialIndexingFinishedAt: DateTime # initialIndexingFinishedAtTime -> initialIndexingFinishedAt
+  assetsLastUpdatedAtBlock: Int!
+  poolsDestroyedUpdatedAtBlock: Int
+  initialIndexingStartedAt: DateTime!
+  initialIndexingFinishedAt: DateTime
 }
 
 # ======================================================================================================================
@@ -38,7 +38,7 @@ type Asset @entity {
   decimals: Int
   xcmRateLimit: BigInt
   isSufficient: Boolean!
-  existentialDeposit: BigInt! # default backup value
+  existentialDeposit: BigInt!
   # note: existentialDeposit is probably taken 1:1 from the runtime,
   # real existential deposit will be calculated realtime based on the current price
 }
@@ -685,11 +685,12 @@ type OmnipoolAssetHistoricalData @entity {
 
   #>>>check for assetTradebility
 
-  assetCap: BigInt! # What does this mean? AssetCap?
-  assetShares: BigInt! # AssetShares?
-  assetHubReserve: BigInt! # AssetHubReserve?
-  assetProtocolShares: BigInt! # AssetProtocolShares?
-  freeBalance: BigInt! # freeBalance? -> freeBalance
+  assetCap: BigInt!
+  assetShares: BigInt!
+  assetHubReserve: BigInt!
+  assetProtocolShares: BigInt!
+  freeBalance: BigInt!
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   block: Block!
@@ -853,7 +854,7 @@ type DispatchError {
 }
 
 type DcaSchedule @entity {
-  "schedule_id as string"
+  "<scheduleId> - DCA schedule as a string"
   id: ID!
   operationId: String
   traceIds: [String!]
@@ -918,8 +919,6 @@ type DcaScheduleExecution @entity {
   events: [DcaScheduleExecutionEvent] @derivedFrom(field: "scheduleExecution")
 }
 
-# How can we have multiple exection actions for one execution? Can't we merge this to one entity?
-
 type DcaScheduleExecutionEvent @entity {
   "<dcaScheduleExecutionId>-<dcaScheduleExecutionStatus>"
   id: ID!
@@ -941,15 +940,8 @@ type DcaScheduleExecutionEvent @entity {
 # ======================================================================================================================
 
 enum OtcOrderStatus {
-  Open
-  Canceled
-  Filled
-  PartiallyFilled
-}
-
-enum OtcOrderEventName {
   Created
-  Canceled
+  Cancelled
   Filled
   PartiallyFilled
 }
@@ -983,7 +975,7 @@ type OtcOrderEvent @entity {
   traceIds: [String!]
   order: OtcOrder!
 
-  eventName: OtcOrderEventName @index
+  eventName: OtcOrderStatus @index
   amountIn: BigInt
   amountOut: BigInt
   fee: BigInt

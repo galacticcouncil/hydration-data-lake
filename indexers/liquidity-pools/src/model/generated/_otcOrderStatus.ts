@@ -1,6 +1,6 @@
 export enum OtcOrderStatus {
-  Open = "Open",
-  Canceled = "Canceled",
+  Created = "Created",
+  Cancelled = "Cancelled",
   Filled = "Filled",
   PartiallyFilled = "PartiallyFilled",
 }

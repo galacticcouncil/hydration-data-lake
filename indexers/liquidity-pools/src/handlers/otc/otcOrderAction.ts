@@ -8,7 +8,6 @@ import {
   Account,
   OtcOrder,
   OtcOrderEvent,
-  OtcOrderEventName,
   OtcOrderStatus,
   Swap,
 } from '../../model';
@@ -33,7 +32,7 @@ export function getNewOrderEvent({
 }: {
   operationId?: string | null;
   traceIds: string[];
-  eventName: OtcOrderEventName;
+  eventName: OtcOrderStatus;
   order: OtcOrder;
   amountIn?: bigint | null;
   amountOut?: bigint | null;
@@ -71,7 +70,7 @@ export async function getOtcOrderActions({
 }: {
   id?: string;
   orderId?: string;
-  eventName?: OtcOrderEventName;
+  eventName?: OtcOrderStatus;
   fetchFromDb?: boolean;
   ctx: SqdProcessorContext<Store>;
   relations?: FindOptionsRelations<OtcOrderEvent>;
@@ -141,7 +140,7 @@ export async function handleOtcOrderFilled(
   const newOrderEvent = getNewOrderEvent({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: otcOrder,
-    eventName: OtcOrderEventName.Filled,
+    eventName: OtcOrderStatus.Filled,
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
@@ -207,7 +206,7 @@ export async function handleOtcOrderPartiallyFilled(
   const newOrderEvent = getNewOrderEvent({
     traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
     order: otcOrder,
-    eventName: OtcOrderEventName.PartiallyFilled,
+    eventName: OtcOrderStatus.PartiallyFilled,
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,

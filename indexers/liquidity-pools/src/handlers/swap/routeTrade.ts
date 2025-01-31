@@ -8,6 +8,7 @@ import {
 } from '../../model';
 import { OperationStackManager } from '../../chainActivityTracingManagers';
 import { SwappedExecutionTypeKind } from '../../utils/types';
+import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
 
 export function getRouteTradeFromCache({
   ctx,

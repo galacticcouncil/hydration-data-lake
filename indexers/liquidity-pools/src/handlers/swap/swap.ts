@@ -9,6 +9,7 @@ import {
   TradeOperationType,
   SwapAssetBalanceType,
   SwapFeeDestinationType,
+  RouteTrade,
 } from '../../model';
 import { getAccount } from '../accounts';
 import { getAsset } from '../assets/assetRegistry';
@@ -27,6 +28,7 @@ import {
   supportSwapperEventPreHook,
 } from './helpers';
 import { processRouteTradeHop } from './routeTrade';
+import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
 
 export async function getSwap({
   ctx,
@@ -220,7 +222,7 @@ export async function handleSwap({
     swapId,
     traceIds,
     operationId,
-    customRouteId,
+    // customRouteId,
     eventId,
     swapIndex,
     swapperAccountId,
@@ -240,7 +242,7 @@ export async function handleSwap({
     swapId?: string;
     traceIds: string[];
     operationId?: string;
-    customRouteId?: string;
+    // customRouteId?: string;
     eventId: string;
     swapIndex?: number;
     swapperAccountId: string;
@@ -277,14 +279,22 @@ export async function handleSwap({
 
   const { swap, swapFees, swapOutputs, swapInputs } = swapData;
 
-  const routeTrade = processRouteTradeHop({
-    swap,
-    ctx,
-    customRouteId,
-  });
+  let routeTrade: RouteTrade | null = null;
+
+  if (
+    !isUnifiedEventsSupportSpecVersion(
+      blockHeader.specVersion,
+      ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+    )
+  )
+    routeTrade = processRouteTradeHop({
+      swap,
+      ctx,
+      // customRouteId,
+    });
 
   swap.routeTrade = routeTrade;
-  swap.swapIndex = swapIndex ?? routeTrade.swaps.length - 1;
+  swap.swapIndex = swapIndex ?? (routeTrade ? routeTrade.swaps.length - 1 : 0);
 
   const state = ctx.batchState.state;
 
@@ -354,8 +364,6 @@ export async function handleSupportSwapperEvent(
       traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
       operationId: newOperationStackId,
       eventId: eventMetadata.id,
-      // extrinsicHash: eventMetadata.extrinsic?.hash || '',
-      // eventIndex: eventMetadata.indexInBlock,
       swapperAccountId: eventParams.swapper,
       fillerAccountId: eventParams.filler,
       fillerType: eventParams.fillerType.kind,
