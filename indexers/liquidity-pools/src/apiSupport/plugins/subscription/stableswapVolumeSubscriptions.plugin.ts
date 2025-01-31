@@ -65,19 +65,6 @@ function stableswapAssetHistoricalVolumeSelectGraphQLResult({
     sql.fragment`${tableAlias}.swap_total_fees`,
     'swap_total_fees'
   );
-  // sqlBuilder.select(sql.fragment`${tableAlias}.liq_fee`, 'liq_fee');
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.liq_total_fees`,
-  //   'liq_total_fees'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.routed_liq_fee`,
-  //   'routed_liq_fee'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.routed_liq_total_fees`,
-  //   'routed_liq_total_fees'
-  // );
   sqlBuilder.select(
     sql.fragment`${tableAlias}.swap_volume_in`,
     'swap_volume_in'
@@ -94,38 +81,6 @@ function stableswapAssetHistoricalVolumeSelectGraphQLResult({
     sql.fragment`${tableAlias}.swap_total_volume_out`,
     'swap_total_volume_out'
   );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.liq_added_amount`,
-  //   'liq_added_amount'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.liq_removed_amount`,
-  //   'liq_removed_amount'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.liq_added_total_amount`,
-  //   'liq_added_total_amount'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.liq_removed_total_amount`,
-  //   'liq_removed_total_amount'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.routed_liq_added_amount`,
-  //   'routed_liq_added_amount'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.routed_liq_removed_amount`,
-  //   'routed_liq_removed_amount'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.routed_liq_added_total_amount`,
-  //   'routed_liq_added_total_amount'
-  // );
-  // sqlBuilder.select(
-  //   sql.fragment`${tableAlias}.routed_liq_removed_total_amount`,
-  //   'routed_liq_removed_total_amount'
-  // );
   sqlBuilder.select(
     sql.fragment`${tableAlias}.para_chain_block_height`,
     'para_chain_block_height'
@@ -176,22 +131,10 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
             assetId: Int!
             swapFee: BigInt!
             swapTotalFees: BigInt!
-#            liqFee: BigInt!
-#            liqTotalFees: BigInt!
-#            routedLiqFee: BigInt!
-#            routedLiqTotalFees: BigInt!
             swapVolumeIn: BigInt!
             swapVolumeOut: BigInt!
             swapTotalVolumeIn: BigInt!
             swapTotalVolumeOut: BigInt!
-#            liqAddedAmount: BigInt!
-#            liqRemovedAmount: BigInt!
-#            liqAddedTotalAmount: BigInt!
-#            liqRemovedTotalAmount: BigInt!
-#            routedLiqAddedAmount: BigInt!
-#            routedLiqRemovedAmount: BigInt!
-#            routedLiqAddedTotalAmount: BigInt!
-#            routedLiqRemovedTotalAmount: BigInt!
             paraBlockHeight: Int!
             relayBlockHeight: Int!
         }
@@ -264,8 +207,7 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
                 ),
                 relayBlockHeight:
                   decoratedStablepoolHistVolRow.relayBlockHeight,
-                paraBlockHeight:
-                  decoratedStablepoolHistVolRow.paraBlockHeight,
+                paraBlockHeight: decoratedStablepoolHistVolRow.paraBlockHeight,
               } as StableswapHistoricalVolumeGqlResponse,
               event: event.__node__[0],
             };

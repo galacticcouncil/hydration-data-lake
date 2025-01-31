@@ -141,15 +141,6 @@ export function initStablepoolAssetVolume({
     swapFee: currentVolume?.swapFee || BigInt(0),
     swapTotalFees:
       currentVolume?.swapTotalFees || oldVolume?.swapTotalFees || BigInt(0),
-    // liquidityFee: currentVolume?.liquidityFee || BigInt(0),
-    // liquidityTotalFees:
-    //   currentVolume?.liquidityTotalFees || oldVolume?.liquidityTotalFees || BigInt(0),
-    // routedLiqFee: currentVolume?.routedLiqFee || BigInt(0),
-    // routedLiqTotalFees:
-    //   currentVolume?.routedLiqTotalFees ||
-    //   oldVolume?.routedLiqTotalFees ||
-    //   BigInt(0),
-
     swapVolumeIn: currentVolume?.swapVolumeIn || BigInt(0),
     swapVolumeOut: currentVolume?.swapVolumeOut || BigInt(0),
     swapTotalVolumeIn:
@@ -161,42 +152,17 @@ export function initStablepoolAssetVolume({
       oldVolume?.swapTotalVolumeOut ||
       BigInt(0),
 
-    // liqAddedAmount: currentVolume?.liqAddedAmount || BigInt(0),
-    // liqRemovedAmount: currentVolume?.liqRemovedAmount || BigInt(0),
-    // liqAddedTotalAmount:
-    //   currentVolume?.liqAddedTotalAmount ||
-    //   oldVolume?.liqAddedTotalAmount ||
-    //   BigInt(0),
-    // liqRemovedTotalAmount:
-    //   currentVolume?.liqRemovedTotalAmount ||
-    //   oldVolume?.liqRemovedTotalAmount ||
-    //   BigInt(0),
-    //
-    // routedLiqAddedAmount: currentVolume?.routedLiqAddedAmount || BigInt(0),
-    // routedLiqRemovedAmount: currentVolume?.routedLiqRemovedAmount || BigInt(0),
-    // routedLiqAddedTotalAmount:
-    //   currentVolume?.routedLiqAddedTotalAmount ||
-    //   oldVolume?.routedLiqAddedTotalAmount ||
-    //   BigInt(0),
-    // routedLiqRemovedTotalAmount:
-    //   currentVolume?.routedLiqRemovedTotalAmount ||
-    //   oldVolume?.routedLiqRemovedTotalAmount ||
-    //   BigInt(0),
     relayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight)
-        .height,
+      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
     paraBlockHeight,
     block,
   });
 
   let swapVolumeIn = BigInt(0);
   let swapVolumeOut = BigInt(0);
-  // let liqAddedAmount = BigInt(0);
-  // let liqRemovedAmount = BigInt(0);
   let routedLiqAddedAmount = BigInt(0);
   let routedLiqRemovedAmount = BigInt(0);
   let swapFee = BigInt(0);
-  // let liqFee = BigInt(0);
   let routedLiqFee = BigInt(0);
 
   if (swap) {
@@ -241,20 +207,6 @@ export function initStablepoolAssetVolume({
       liquidityAction: liquidityActionData.actionData,
       ctx,
     });
-    // liqAddedAmount =
-    //   liquidityActionData.actionData.actionType === LiquidityActionEvent.Add &&
-    //   liquidityActionData.assetData
-    //     ? liquidityActionData.assetData.amount
-    //     : BigInt(0);
-    // liqRemovedAmount =
-    //   liquidityActionData.actionData.actionType ===
-    //     LiquidityActionEvent.Remove && liquidityActionData.assetData
-    //     ? liquidityActionData.assetData.amount
-    //     : BigInt(0);
-    // liqFee =
-    //   liquidityActionData.actionData.actionType === LiquidityActionEvent.Remove
-    //     ? liquidityActionData.actionData.feeAmount
-    //     : BigInt(0);
 
     routedLiqFee =
       isRoutedLiqAction &&
@@ -287,28 +239,6 @@ export function initStablepoolAssetVolume({
     newVolume.swapTotalFees += routedLiqFee;
   }
 
-  // Block volumes
-  // newVolume.swapVolumeIn += swapVolumeIn;
-  // newVolume.swapVolumeOut += swapVolumeOut;
-  // newVolume.liqAddedAmount += liqAddedAmount;
-  // newVolume.liqRemovedAmount += liqRemovedAmount;
-  // newVolume.routedLiqAddedAmount += routedLiqAddedAmount;
-  // newVolume.routedLiqRemovedAmount += routedLiqRemovedAmount;
-  // newVolume.swapFee += swapFee;
-  // newVolume.liqFee += liqFee;
-  // newVolume.routedLiqFee += routedLiqFee;
-
-  // Total volumes
-  // newVolume.swapTotalVolumeIn += swapVolumeIn;
-  // newVolume.swapTotalVolumeOut += swapVolumeOut;
-  // newVolume.liqAddedTotalAmount += liqAddedAmount;
-  // newVolume.liqRemovedTotalAmount += liqRemovedAmount;
-  // newVolume.routedLiqAddedTotalAmount += routedLiqAddedAmount;
-  // newVolume.routedLiqRemovedTotalAmount += routedLiqRemovedAmount;
-  // newVolume.swapTotalFees += swapFee;
-  // newVolume.liqTotalFees += liqFee;
-  // newVolume.routedLiqTotalFees += routedLiqFee;
-
   return newVolume;
 }
 
@@ -319,8 +249,6 @@ export function isRoutedStablepoolLiquidityAction({
   liquidityAction: StableswapLiquidityEvent;
   ctx: SqdProcessorContext<Store>;
 }) {
-  // if (liquidityAction.actionType !== LiquidityActionEvent.REMOVE) return false; // TODO check this
-
   return !![...ctx.batchState.state.swaps.values()].find((swap) => {
     const swapOutputsMap = new Map(
       swap.outputs.map((output) => [output.asset.id, output])

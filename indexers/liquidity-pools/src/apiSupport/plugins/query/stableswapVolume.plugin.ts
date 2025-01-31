@@ -1,19 +1,16 @@
-import { gql, makeExtendSchemaPlugin, Plugin, embed } from 'postgraphile';
+import { gql, makeExtendSchemaPlugin, Plugin } from 'postgraphile';
 import type * as pg from 'pg';
 import {
-  OmnipoolAssetHistoricalVolumeRaw,
   QueryResolverContext,
   StableswapAssetHistoricalVolumeRaw,
   StableswapHistoricalVolumeRaw,
 } from '../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
-import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../sql/omnipoolAssetsVolume.sql';
 import {
   aggregateStablepoolVolumesByBlocksRange,
   getAssetIdsByStableswapIds,
 } from '../sql/stableswapVolumes.sql';
-import { getAssetIdsByPoolIds } from '../sql/xykPoolsVolume.sql';
 
 type StableswapVolumesByPeriodFilter = {
   poolIds: string[];
@@ -24,13 +21,7 @@ type StableswapVolumesByPeriodFilter = {
 type StablepoolAssetVolumeAggregated = {
   assetId: number;
   swapFee: bigint;
-  // liqFee: bigint;
-  // routedLiqFee: bigint;
   swapVolume: bigint;
-  // liqAddedVolume: bigint;
-  // liqRemovedVolume: bigint;
-  // routedLiqAddedVolume: bigint;
-  // routedLiqRemovedVolume: bigint;
 };
 
 type StableswapVolumeAggregated = {
@@ -99,17 +90,9 @@ export async function handleQueryStableswapHistoricalVolumesByPeriod(
             (assetData) => ({
               assetId: +assetData.asset_id,
               swapFee: BigInt(assetData.swap_fee),
-              // liqFee: BigInt(assetData.liq_fee),
-              // routedLiqFee: BigInt(assetData.routed_liq_fee),
               swapVolume:
                 BigInt(assetData.swap_volume_in) +
                 BigInt(assetData.swap_volume_out),
-              // liqAddedVolume: BigInt(assetData.liq_added_amount),
-              // liqRemovedVolume: BigInt(assetData.liq_removed_amount),
-              // routedLiqAddedVolume: BigInt(assetData.routed_liq_added_amount),
-              // routedLiqRemovedVolume: BigInt(
-              //   assetData.routed_liq_removed_amount
-              // ),
             })
           );
           return resp;
@@ -129,14 +112,6 @@ export async function handleQueryStableswapHistoricalVolumesByPeriod(
               BigInt(endEntityAssetVol.swap_total_fees) -
               BigInt(startEntityAssetVol.swap_total_fees) +
               BigInt(startEntityAssetVol.swap_fee),
-            // liqFee:
-            //   BigInt(endEntityAssetVol.liq_total_fees) -
-            //   BigInt(startEntityAssetVol.liq_total_fees) +
-            //   BigInt(startEntityAssetVol.liq_fee),
-            // routedLiqFee:
-            //   BigInt(endEntityAssetVol.routed_liq_total_fees) -
-            //   BigInt(startEntityAssetVol.routed_liq_total_fees) +
-            //   BigInt(startEntityAssetVol.routed_liq_fee),
             swapVolume:
               BigInt(endEntityAssetVol.swap_total_volume_in) +
               BigInt(endEntityAssetVol.swap_total_volume_out) -
@@ -144,22 +119,6 @@ export async function handleQueryStableswapHistoricalVolumesByPeriod(
               BigInt(startEntityAssetVol.swap_total_volume_out) +
               BigInt(startEntityAssetVol.swap_volume_in) +
               BigInt(startEntityAssetVol.swap_volume_out),
-            // liqAddedVolume:
-            //   BigInt(endEntityAssetVol.liq_added_total_amount) -
-            //   BigInt(startEntityAssetVol.liq_added_total_amount) +
-            //   BigInt(startEntityAssetVol.liq_added_amount),
-            // liqRemovedVolume:
-            //   BigInt(endEntityAssetVol.liq_removed_total_amount) -
-            //   BigInt(startEntityAssetVol.liq_removed_total_amount) +
-            //   BigInt(startEntityAssetVol.liq_removed_amount),
-            // routedLiqAddedVolume:
-            //   BigInt(endEntityAssetVol.routed_liq_added_total_amount) -
-            //   BigInt(startEntityAssetVol.routed_liq_added_total_amount) +
-            //   BigInt(startEntityAssetVol.routed_liq_added_amount),
-            // routedLiqRemovedVolume:
-            //   BigInt(endEntityAssetVol.routed_liq_removed_total_amount) -
-            //   BigInt(startEntityAssetVol.routed_liq_removed_total_amount) +
-            //   BigInt(startEntityAssetVol.routed_liq_removed_amount),
           });
         }
 
@@ -179,12 +138,6 @@ export async function handleQueryStableswapHistoricalVolumesByPeriod(
         assetId: +assetId,
         swapFee: BigInt(0),
         swapVolume: BigInt(0),
-        // liqFee: BigInt(0),
-        // routedLiqFee: BigInt(0),
-        // liqAddedVolume: BigInt(0),
-        // liqRemovedVolume: BigInt(0),
-        // routedLiqAddedVolume: BigInt(0),
-        // routedLiqRemovedVolume: BigInt(0),
       })),
     });
   }
@@ -209,12 +162,6 @@ export const StableswapVolumePlugin: Plugin = makeExtendSchemaPlugin(
           assetId: Int!
           swapFee: BigFloat!
           swapVolume: BigFloat!
-          #          liqFee: BigFloat!
-          #          routedLiqFee: BigFloat!
-          #          liqAddedVolume: BigFloat!
-          #          liqRemovedVolume: BigFloat!
-          #          routedLiqAddedVolume: BigFloat!
-          #          routedLiqRemovedVolume: BigFloat!
         }
 
         type StableswapVolumeAggregated {
