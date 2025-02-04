@@ -135,9 +135,6 @@ export async function processDcaScheduleExecutionEvent({
         )
     );
 
-    console.log('relatedSwaps - ');
-    console.dir(relatedSwaps, { depth: null });
-
     if (relatedSwaps && relatedSwaps.length > 0) {
       for (const relatedSwap of relatedSwaps) {
         await processChainActivityTracesOnDcaExecutionEvent({

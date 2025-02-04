@@ -1,11 +1,11 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
-import {RouteTradeAssetBalance} from "./routeTradeAssetBalance.model"
+import {RoutedTradeAssetBalance} from "./routedTradeAssetBalance.model"
 import {Swap} from "./swap.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class RouteTrade {
-  constructor(props?: Partial<RouteTrade>) {
+export class RoutedTrade {
+  constructor(props?: Partial<RoutedTrade>) {
     Object.assign(this, props)
   }
 
@@ -18,11 +18,11 @@ export class RouteTrade {
   @Column_("text", {nullable: true})
   routeId!: string | undefined | null
 
-  @OneToMany_(() => RouteTradeAssetBalance, e => e.routeTrade)
-  inputs!: RouteTradeAssetBalance[]
+  @OneToMany_(() => RoutedTradeAssetBalance, e => e.routedTrade)
+  inputs!: RoutedTradeAssetBalance[]
 
-  @OneToMany_(() => RouteTradeAssetBalance, e => e.routeTrade)
-  outputs!: RouteTradeAssetBalance[]
+  @OneToMany_(() => RoutedTradeAssetBalance, e => e.routedTrade)
+  outputs!: RoutedTradeAssetBalance[]
 
   @Column_("text", {array: true, nullable: false})
   allInvolvedAssetIds!: (string)[]
@@ -36,7 +36,7 @@ export class RouteTrade {
   @Column_("text", {array: true, nullable: false})
   feeRecipients!: (string)[]
 
-  @OneToMany_(() => Swap, e => e.routeTrade)
+  @OneToMany_(() => Swap, e => e.routedTrade)
   swaps!: Swap[]
 
   @Index_()

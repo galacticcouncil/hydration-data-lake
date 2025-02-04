@@ -18,7 +18,7 @@ import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswapVol
 import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stableswapVolumeSubscriptions.plugin';
 import { NodeEnv } from './utils/types';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
-import { RouteTradesSubscriptionsPlugin } from './apiSupport/plugins/subscription/routeTradesSubscriptions/routeTradesSubscriptions.plugin';
+import { RoutedTradesSubscriptionsPlugin } from './apiSupport/plugins/subscription/routedTradesSubscriptions/routedTradesSubscriptions.plugin';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -65,7 +65,7 @@ const postgraphileInstance = postgraphile(
       OmnipoolAssetVolumeSubscriptionsPlugin,
       StableswapVolumePlugin,
       StableswapVolumeSubscriptionsPlugin,
-      RouteTradesSubscriptionsPlugin,
+      RoutedTradesSubscriptionsPlugin,
       makePgSmartTagsFromFilePlugin(
         getEnvPath('apiSupport/postgraphile.tags.json5')
       ),

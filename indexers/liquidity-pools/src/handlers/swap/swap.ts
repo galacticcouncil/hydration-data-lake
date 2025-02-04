@@ -9,7 +9,7 @@ import {
   TradeOperationType,
   SwapAssetBalanceType,
   SwapFeeDestinationType,
-  RouteTrade,
+  RoutedTrade,
 } from '../../model';
 import { getAccount } from '../accounts';
 import { getAsset } from '../assets/assetRegistry';
@@ -27,7 +27,7 @@ import {
   supportSwappedEventPostHook,
   supportSwapperEventPreHook,
 } from './helpers';
-import { processRouteTradeHop } from './routeTrade';
+import { processRouteTradeHop } from './routedTrade';
 import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
 
 export async function getSwap({
@@ -279,7 +279,7 @@ export async function handleSwap({
 
   const { swap, swapFees, swapOutputs, swapInputs } = swapData;
 
-  let routeTrade: RouteTrade | null = null;
+  let routedTrade: RoutedTrade | null = null;
 
   if (
     isUnifiedEventsSupportSpecVersion(
@@ -287,14 +287,14 @@ export async function handleSwap({
       ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
     )
   )
-    routeTrade = processRouteTradeHop({
+    routedTrade = processRouteTradeHop({
       swap,
       ctx,
       // customRouteId,
     });
 
-  swap.routeTrade = routeTrade;
-  swap.swapIndex = swapIndex ?? (routeTrade ? routeTrade.swaps.length - 1 : 0);
+  swap.routedTrade = routedTrade;
+  swap.swapIndex = swapIndex ?? (routedTrade ? routedTrade.swaps.length - 1 : 0);
 
   const state = ctx.batchState.state;
 

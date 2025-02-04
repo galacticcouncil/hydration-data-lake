@@ -1,6 +1,6 @@
 import type { QueryBuilder, SQL } from 'graphile-build-pg';
 
-export function routeTradeSelectGraphQLResult({
+export function routedTradeSelectGraphQLResult({
   sql,
   event,
   tableAlias,
@@ -43,7 +43,7 @@ export function routeTradeSelectGraphQLResult({
   sqlBuilder.select(sql.fragment`${tableAlias}.block_id`, 'block_id');
 }
 
-export function routeTradeAssetBalanceSelectGraphQLResult({
+export function routedTradeAssetBalanceSelectGraphQLResult({
   sql,
   event,
   tableAlias,
@@ -55,7 +55,7 @@ export function routeTradeAssetBalanceSelectGraphQLResult({
   sqlBuilder: QueryBuilder;
 }) {
   sqlBuilder.where(
-    sql.fragment`${tableAlias}.route_trade_id = ${sql.value(event.__node__.node_id)}`
+    sql.fragment`${tableAlias}.routed_trade_id = ${sql.value(event.__node__.node_id)}`
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.asset_id`, 'asset_id');
   sqlBuilder.select(sql.fragment`${tableAlias}.amount`, 'amount');
@@ -76,12 +76,12 @@ export function routeTradeSwapsSelectGraphQLResult({
   sqlBuilder: QueryBuilder;
 }) {
   sqlBuilder.where(
-    sql.fragment`${tableAlias}.route_trade_id = ${sql.value(event.__node__.node_id)}`
+    sql.fragment`${tableAlias}.routed_trade_id = ${sql.value(event.__node__.node_id)}`
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.id`, 'id');
 }
 
-export function routeTradesSubscriptionFilter(event: any, args: any) {
+export function routedTradesSubscriptionFilter(event: any, args: any) {
   if (!args || !args.filter) return true;
 
   const filterArgs = args.filter;

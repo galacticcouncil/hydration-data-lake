@@ -1,29 +1,29 @@
 import { gql, makeExtendSchemaPlugin, Plugin, embed } from 'postgraphile';
 import {
   QueryResolverContext,
-  RouteTradeAssetBalanceRaw,
-  RouteTradeGqlResponse,
-  RouteTradeSwapRaw,
+  RoutedTradeAssetBalanceRaw,
+  RoutedTradeGqlResponse,
+  RoutedTradeSwapRaw,
 } from '../../../types';
 import { convertObjectPropsSnakeCaseToCamelCase } from '../../../../utils/helpers';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type { QueryBuilder, SQL } from 'graphile-build-pg';
 import {
-  routeTradeAssetBalanceSelectGraphQLResult,
-  routeTradeSelectGraphQLResult,
-  routeTradesSubscriptionFilter,
+  routedTradeAssetBalanceSelectGraphQLResult,
+  routedTradeSelectGraphQLResult,
+  routedTradesSubscriptionFilter,
   routeTradeSwapsSelectGraphQLResult,
 } from './utils';
 
-export const RouteTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
+export const RoutedTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
   (build, options) => {
     const schemas: string[] = options.stateSchemas || ['squid_processor'];
     const { pgSql: sql } = build;
 
     return {
       typeDefs: gql`
-        input RouteTradeSubscriptionFilter {
+        input RoutedTradeSubscriptionFilter {
             assetIds: [String!]
             participantIds: [String!]
             swapperIds: [String!]
@@ -31,17 +31,17 @@ export const RouteTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
             feeRecipientIds: [String!]
         }
 
-        type RouteTradeSubscriptionPayload {
-          node: RouteTradeEntity
+        type RoutedTradeSubscriptionPayload {
+          node: RoutedTradeEntity
           event: String
         }
 
-        type RouteTradeAssetBalanceResponse {
+        type RoutedTradeAssetBalanceResponse {
             assetId: String!
             amount: BigInt!
         }
         
-        type RouteTradeEntity {
+        type RoutedTradeEntity {
           id: String!
           routeId: String
           allInvolvedAssetIds: [String!]!
@@ -49,8 +49,8 @@ export const RouteTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
           participantFillers: [String!]!
           feeRecipients: [String!]!
           swapIds: [String!]!
-          inputs: [RouteTradeAssetBalanceResponse!]!
-          outputs: [RouteTradeAssetBalanceResponse!]!
+          inputs: [RoutedTradeAssetBalanceResponse!]!
+          outputs: [RoutedTradeAssetBalanceResponse!]!
           
           paraBlockHeight: Int!
           relayBlockHeight: Int!
@@ -58,28 +58,28 @@ export const RouteTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         extend type Subscription {
-          routeTrade(
-            filter: RouteTradeSubscriptionFilter
-          ): RouteTradeSubscriptionPayload
+          routedTrade(
+            filter: RoutedTradeSubscriptionFilter
+          ): RoutedTradeSubscriptionPayload
             @pgSubscription(
-              topic: "postgraphile:state_changed:route_trade"
-              filter: ${embed(routeTradesSubscriptionFilter)}
+              topic: "postgraphile:state_changed:routed_trade"
+              filter: ${embed(routedTradesSubscriptionFilter)}
             )
         }
       `,
       resolvers: {
         Subscription: {
-          routeTrade: async (
+          routedTrade: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,
             resolveInfo: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
           ) => {
-            const routeTradeRows =
+            const routedTradeRows =
               await resolveInfo.graphile.selectGraphQLResultFromTable(
-                sql.fragment`public.route_trade`,
+                sql.fragment`public.routed_trade`,
                 (tableAlias: SQL, sqlBuilder: QueryBuilder) => {
-                  routeTradeSelectGraphQLResult({
+                  routedTradeSelectGraphQLResult({
                     sql,
                     event,
                     tableAlias,
@@ -87,11 +87,11 @@ export const RouteTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
                   });
                 }
               );
-            const routeTradeAssetBalancesRows =
+            const routedTradeAssetBalancesRows =
               await resolveInfo.graphile.selectGraphQLResultFromTable(
-                sql.fragment`public.route_trade_asset_balance`,
+                sql.fragment`public.routed_trade_asset_balance`,
                 (tableAlias: SQL, sqlBuilder: QueryBuilder) => {
-                  routeTradeAssetBalanceSelectGraphQLResult({
+                  routedTradeAssetBalanceSelectGraphQLResult({
                     sql,
                     event,
                     tableAlias,
@@ -99,7 +99,7 @@ export const RouteTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
                   });
                 }
               );
-            const routeTradeSwapsRows =
+            const routedTradeSwapsRows =
               await resolveInfo.graphile.selectGraphQLResultFromTable(
                 sql.fragment`public.swap`,
                 (tableAlias: SQL, sqlBuilder: QueryBuilder) => {
@@ -112,42 +112,42 @@ export const RouteTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
                 }
               );
 
-            const routeTradeDecoratedRow =
-              convertObjectPropsSnakeCaseToCamelCase(routeTradeRows[0] || {});
+            const routedTradeDecoratedRow =
+              convertObjectPropsSnakeCaseToCamelCase(routedTradeRows[0] || {});
 
             return {
               node: {
-                id: routeTradeDecoratedRow.id,
-                routeId: routeTradeDecoratedRow.routeId,
-                allInvolvedAssetIds: routeTradeDecoratedRow.allInvolvedAssetIds,
-                participantSwappers: routeTradeDecoratedRow.participantSwappers,
-                participantFillers: routeTradeDecoratedRow.participantFillers,
-                feeRecipients: routeTradeDecoratedRow.feeRecipients,
-                paraBlockHeight: routeTradeDecoratedRow.paraBlockHeight,
-                relayBlockHeight: routeTradeDecoratedRow.relayBlockHeight,
-                blockId: routeTradeDecoratedRow.blockId,
-                swapIds: routeTradeSwapsRows.map(
-                  (swap: RouteTradeSwapRaw) => swap.id
+                id: routedTradeDecoratedRow.id,
+                routeId: routedTradeDecoratedRow.routeId,
+                allInvolvedAssetIds: routedTradeDecoratedRow.allInvolvedAssetIds,
+                participantSwappers: routedTradeDecoratedRow.participantSwappers,
+                participantFillers: routedTradeDecoratedRow.participantFillers,
+                feeRecipients: routedTradeDecoratedRow.feeRecipients,
+                paraBlockHeight: routedTradeDecoratedRow.paraBlockHeight,
+                relayBlockHeight: routedTradeDecoratedRow.relayBlockHeight,
+                blockId: routedTradeDecoratedRow.blockId,
+                swapIds: routedTradeSwapsRows.map(
+                  (swap: RoutedTradeSwapRaw) => swap.id
                 ),
-                inputs: routeTradeAssetBalancesRows
+                inputs: routedTradeAssetBalancesRows
                   .filter(
-                    (item: RouteTradeAssetBalanceRaw) =>
+                    (item: RoutedTradeAssetBalanceRaw) =>
                       item.asset_balance_type === 'Input'
                   )
-                  .map((input: RouteTradeAssetBalanceRaw) => ({
+                  .map((input: RoutedTradeAssetBalanceRaw) => ({
                     assetId: input.asset_id,
                     amount: input.amount,
                   })),
-                outputs: routeTradeAssetBalancesRows
+                outputs: routedTradeAssetBalancesRows
                   .filter(
-                    (item: RouteTradeAssetBalanceRaw) =>
+                    (item: RoutedTradeAssetBalanceRaw) =>
                       item.asset_balance_type === 'Output'
                   )
-                  .map((input: RouteTradeAssetBalanceRaw) => ({
+                  .map((input: RoutedTradeAssetBalanceRaw) => ({
                     assetId: input.asset_id,
                     amount: input.amount,
                   })),
-              } as RouteTradeGqlResponse,
+              } as RoutedTradeGqlResponse,
               event: event.__node__.event_name,
             };
           },

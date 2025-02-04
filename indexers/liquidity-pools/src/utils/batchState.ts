@@ -40,8 +40,8 @@ import {
   OtcOrderEvent,
   ChainActivityTraceRelation,
   DcaScheduleEvent,
-  RouteTrade,
-  RouteTradeAssetBalance,
+  RoutedTrade,
+  RoutedTradeAssetBalance,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -73,9 +73,9 @@ export type BatchStatePayload = {
   swapInputs: Map<string, SwapAssetBalance>;
   swapOutputs: Map<string, SwapAssetBalance>;
   swapFillerContexts: Map<string, SwapFillerContextDetails>;
-  routeTrades: Map<string, RouteTrade>;
-  routeTradesInputs: Map<string, RouteTradeAssetBalance>;
-  routeTradesOutputs: Map<string, RouteTradeAssetBalance>;
+  routeTrades: Map<string, RoutedTrade>;
+  routeTradesInputs: Map<string, RoutedTradeAssetBalance>;
+  routeTradesOutputs: Map<string, RoutedTradeAssetBalance>;
 
   lbpPoolIdsToSave: Set<string>;
   lbpAllBatchPools: Map<string, Lbppool>;

@@ -11,7 +11,7 @@
           fieldName: 'swap_input_output_asset_balance',
         },
       },
-      route_trade_asset_balance: {
+      routed_trade_asset_balance: {
         tags: {
           name: 'route_trade_input_output_asset_balance',
           fieldName: 'route_trade_input_output_asset_balance',
@@ -35,19 +35,19 @@
           omit: ['all'],
         },
       },
-      route_trade_inputs: {
+      routed_trade_inputs: {
         tags: {
           foreignKey: [
-            '(route_trade_id) references route_trade (id)|@fieldName route_trade|@foreignFieldName routeTradeInputs',
+            '(routed_trade_id) references routed_trade (id)|@fieldName routed_trade|@foreignFieldName routeTradeInputs',
             '(asset_id) references asset (id)|@fieldName asset|@foreignFieldName routeTradeInputs',
           ],
           omit: ['all'],
         },
       },
-      route_trade_outputs: {
+      routed_trade_outputs: {
         tags: {
           foreignKey: [
-            '(route_trade_id) references route_trade (id)|@fieldName route_trade|@foreignFieldName routeTradeOutputs',
+            '(routed_trade_id) references routed_trade (id)|@fieldName routed_trade|@foreignFieldName routeTradeOutputs',
             '(asset_id) references asset (id)|@fieldName asset|@foreignFieldName routeTradeOutputs',
           ],
           omit: ['all'],

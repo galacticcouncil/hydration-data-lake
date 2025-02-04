@@ -978,8 +978,8 @@ type Query {
     filter: ProcessorStatusFilter
   ): ProcessorStatusesConnection
 
-  """Reads and enables pagination through a set of `RouteTrade`."""
-  routeTrades(
+  """Reads and enables pagination through a set of `RoutedTrade`."""
+  routedTrades(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -998,19 +998,19 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `RouteTrade`."""
-    orderBy: [RouteTradesOrderBy!] = [PRIMARY_KEY_ASC]
+    """The method to use when ordering `RoutedTrade`."""
+    orderBy: [RoutedTradesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: RouteTradeCondition
+    condition: RoutedTradeCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: RouteTradeFilter
-  ): RouteTradesConnection
+    filter: RoutedTradeFilter
+  ): RoutedTradesConnection
 
   """
   Reads and enables pagination through a set of `RouteTradeInputOutputAssetBalance`.
@@ -1639,7 +1639,7 @@ type Query {
   otcOrder(id: String!): OtcOrder
   otcOrderEvent(id: String!): OtcOrderEvent
   processorStatus(id: String!): ProcessorStatus
-  routeTrade(id: String!): RouteTrade
+  routedTrade(id: String!): RoutedTrade
   routeTradeInputOutputAssetBalance(id: String!): RouteTradeInputOutputAssetBalance
   stableswap(id: String!): Stableswap
   stableswapAsset(id: String!): StableswapAsset
@@ -3839,7 +3839,9 @@ type Asset {
     filter: StableswapAssetHistoricalDatumFilter
   ): StableswapAssetHistoricalDataConnection!
 
-  """Reads and enables pagination through a set of `RouteTradeInputRecord`."""
+  """
+  Reads and enables pagination through a set of `RoutedTradeInputRecord`.
+  """
   routeTradeInputs(
     """Only read the first `n` values of the set."""
     first: Int
@@ -3859,21 +3861,21 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `RouteTradeInputRecord`."""
-    orderBy: [RouteTradeInputRecordsOrderBy!] = [NATURAL]
+    """The method to use when ordering `RoutedTradeInputRecord`."""
+    orderBy: [RoutedTradeInputRecordsOrderBy!] = [NATURAL]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: RouteTradeInputRecordCondition
+    condition: RoutedTradeInputRecordCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: RouteTradeInputRecordFilter
-  ): RouteTradeInputRecordsConnection!
+    filter: RoutedTradeInputRecordFilter
+  ): RoutedTradeInputRecordsConnection!
 
-  """Reads and enables pagination through a set of `RouteTradeOutput`."""
+  """Reads and enables pagination through a set of `RoutedTradeOutput`."""
   routeTradeOutputs(
     """Only read the first `n` values of the set."""
     first: Int
@@ -3893,19 +3895,19 @@ type Asset {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `RouteTradeOutput`."""
-    orderBy: [RouteTradeOutputsOrderBy!] = [NATURAL]
+    """The method to use when ordering `RoutedTradeOutput`."""
+    orderBy: [RoutedTradeOutputsOrderBy!] = [NATURAL]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: RouteTradeOutputCondition
+    condition: RoutedTradeOutputCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: RouteTradeOutputFilter
-  ): RouteTradeOutputsConnection!
+    filter: RoutedTradeOutputFilter
+  ): RoutedTradeOutputsConnection!
 
   """Reads and enables pagination through a set of `SwapInputRecord`."""
   swapInputs(
@@ -4683,8 +4685,8 @@ type Block {
     filter: OtcOrderFilter
   ): OtcOrdersConnection!
 
-  """Reads and enables pagination through a set of `RouteTrade`."""
-  routeTrades(
+  """Reads and enables pagination through a set of `RoutedTrade`."""
+  routedTrades(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -4703,19 +4705,19 @@ type Block {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `RouteTrade`."""
-    orderBy: [RouteTradesOrderBy!] = [PRIMARY_KEY_ASC]
+    """The method to use when ordering `RoutedTrade`."""
+    orderBy: [RoutedTradesOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: RouteTradeCondition
+    condition: RoutedTradeCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: RouteTradeFilter
-  ): RouteTradesConnection!
+    filter: RoutedTradeFilter
+  ): RoutedTradesConnection!
 
   """
   Reads and enables pagination through a set of `ChainActivityTraceRelation`.
@@ -7386,8 +7388,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_SUM_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_SUM_FEE_ASC
   OTC_ORDER_EVENTS_SUM_FEE_DESC
-  OTC_ORDER_EVENTS_SUM_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_SUM_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_SUM_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_SUM_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_SUM_RELAY_BLOCK_HEIGHT_ASC
@@ -7414,8 +7414,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_DISTINCT_COUNT_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_FEE_ASC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_FEE_DESC
-  OTC_ORDER_EVENTS_DISTINCT_COUNT_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_DISTINCT_COUNT_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
@@ -7442,8 +7440,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_MIN_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_MIN_FEE_ASC
   OTC_ORDER_EVENTS_MIN_FEE_DESC
-  OTC_ORDER_EVENTS_MIN_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_MIN_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_MIN_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_MIN_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_MIN_RELAY_BLOCK_HEIGHT_ASC
@@ -7470,8 +7466,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_MAX_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_MAX_FEE_ASC
   OTC_ORDER_EVENTS_MAX_FEE_DESC
-  OTC_ORDER_EVENTS_MAX_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_MAX_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_MAX_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_MAX_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_MAX_RELAY_BLOCK_HEIGHT_ASC
@@ -7498,8 +7492,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_AVERAGE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_AVERAGE_FEE_ASC
   OTC_ORDER_EVENTS_AVERAGE_FEE_DESC
-  OTC_ORDER_EVENTS_AVERAGE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_AVERAGE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_AVERAGE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_AVERAGE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
@@ -7526,8 +7518,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_FEE_ASC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_FEE_DESC
-  OTC_ORDER_EVENTS_STDDEV_SAMPLE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_STDDEV_SAMPLE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
@@ -7554,8 +7544,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_STDDEV_POPULATION_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_FEE_ASC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_FEE_DESC
-  OTC_ORDER_EVENTS_STDDEV_POPULATION_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_STDDEV_POPULATION_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
@@ -7582,8 +7570,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_FEE_ASC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_FEE_DESC
-  OTC_ORDER_EVENTS_VARIANCE_SAMPLE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_VARIANCE_SAMPLE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
@@ -7610,8 +7596,6 @@ enum EventsOrderBy {
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_FEE_ASC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_FEE_DESC
-  OTC_ORDER_EVENTS_VARIANCE_POPULATION_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_VARIANCE_POPULATION_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
@@ -7654,8 +7638,8 @@ enum EventsOrderBy {
   SWAPS_SUM_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_SUM_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_SUM_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_SUM_ROUTE_TRADE_ID_ASC
-  SWAPS_SUM_ROUTE_TRADE_ID_DESC
+  SWAPS_SUM_ROUTED_TRADE_ID_ASC
+  SWAPS_SUM_ROUTED_TRADE_ID_DESC
   SWAPS_SUM_EVENT_ID_ASC
   SWAPS_SUM_EVENT_ID_DESC
   SWAPS_DISTINCT_COUNT_ID_ASC
@@ -7686,8 +7670,8 @@ enum EventsOrderBy {
   SWAPS_DISTINCT_COUNT_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  SWAPS_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  SWAPS_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  SWAPS_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   SWAPS_DISTINCT_COUNT_EVENT_ID_ASC
   SWAPS_DISTINCT_COUNT_EVENT_ID_DESC
   SWAPS_MIN_ID_ASC
@@ -7718,8 +7702,8 @@ enum EventsOrderBy {
   SWAPS_MIN_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_MIN_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_MIN_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_MIN_ROUTE_TRADE_ID_ASC
-  SWAPS_MIN_ROUTE_TRADE_ID_DESC
+  SWAPS_MIN_ROUTED_TRADE_ID_ASC
+  SWAPS_MIN_ROUTED_TRADE_ID_DESC
   SWAPS_MIN_EVENT_ID_ASC
   SWAPS_MIN_EVENT_ID_DESC
   SWAPS_MAX_ID_ASC
@@ -7750,8 +7734,8 @@ enum EventsOrderBy {
   SWAPS_MAX_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_MAX_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_MAX_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_MAX_ROUTE_TRADE_ID_ASC
-  SWAPS_MAX_ROUTE_TRADE_ID_DESC
+  SWAPS_MAX_ROUTED_TRADE_ID_ASC
+  SWAPS_MAX_ROUTED_TRADE_ID_DESC
   SWAPS_MAX_EVENT_ID_ASC
   SWAPS_MAX_EVENT_ID_DESC
   SWAPS_AVERAGE_ID_ASC
@@ -7782,8 +7766,8 @@ enum EventsOrderBy {
   SWAPS_AVERAGE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_AVERAGE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_AVERAGE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_AVERAGE_ROUTE_TRADE_ID_ASC
-  SWAPS_AVERAGE_ROUTE_TRADE_ID_DESC
+  SWAPS_AVERAGE_ROUTED_TRADE_ID_ASC
+  SWAPS_AVERAGE_ROUTED_TRADE_ID_DESC
   SWAPS_AVERAGE_EVENT_ID_ASC
   SWAPS_AVERAGE_EVENT_ID_DESC
   SWAPS_STDDEV_SAMPLE_ID_ASC
@@ -7814,8 +7798,8 @@ enum EventsOrderBy {
   SWAPS_STDDEV_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_STDDEV_SAMPLE_EVENT_ID_ASC
   SWAPS_STDDEV_SAMPLE_EVENT_ID_DESC
   SWAPS_STDDEV_POPULATION_ID_ASC
@@ -7846,8 +7830,8 @@ enum EventsOrderBy {
   SWAPS_STDDEV_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_STDDEV_POPULATION_EVENT_ID_ASC
   SWAPS_STDDEV_POPULATION_EVENT_ID_DESC
   SWAPS_VARIANCE_SAMPLE_ID_ASC
@@ -7878,8 +7862,8 @@ enum EventsOrderBy {
   SWAPS_VARIANCE_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_VARIANCE_SAMPLE_EVENT_ID_ASC
   SWAPS_VARIANCE_SAMPLE_EVENT_ID_DESC
   SWAPS_VARIANCE_POPULATION_ID_ASC
@@ -7910,8 +7894,8 @@ enum EventsOrderBy {
   SWAPS_VARIANCE_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_VARIANCE_POPULATION_EVENT_ID_ASC
   SWAPS_VARIANCE_POPULATION_EVENT_ID_DESC
   TRANSFERS_COUNT_ASC
@@ -9140,7 +9124,7 @@ type Swap {
   fillerId: String
   dcaScheduleExecutionEventId: String
   otcOrderFulfillmentId: String
-  routeTradeId: String
+  routedTradeId: String
   eventId: String
 
   """Reads a single `Account` that is related to this `Swap`."""
@@ -9157,8 +9141,8 @@ type Swap {
   """Reads a single `OtcOrderEvent` that is related to this `Swap`."""
   otcOrderFulfillment: OtcOrderEvent
 
-  """Reads a single `RouteTrade` that is related to this `Swap`."""
-  routeTrade: RouteTrade
+  """Reads a single `RoutedTrade` that is related to this `Swap`."""
+  routedTrade: RoutedTrade
 
   """Reads a single `Event` that is related to this `Swap`."""
   event: Event
@@ -9344,7 +9328,6 @@ type OtcOrderEvent {
   amountIn: BigFloat
   amountOut: BigFloat
   fee: BigFloat
-  eventIndex: Int!
   paraBlockHeight: Int!
   relayBlockHeight: Int!
   orderId: String
@@ -9562,9 +9545,6 @@ type OtcOrderEventSumAggregates {
   """Sum of fee across the matching connection"""
   fee: BigFloat!
 
-  """Sum of eventIndex across the matching connection"""
-  eventIndex: BigInt!
-
   """Sum of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigInt!
 
@@ -9593,9 +9573,6 @@ type OtcOrderEventDistinctCountAggregates {
 
   """Distinct count of fee across the matching connection"""
   fee: BigInt
-
-  """Distinct count of eventIndex across the matching connection"""
-  eventIndex: BigInt
 
   """Distinct count of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigInt
@@ -9626,9 +9603,6 @@ type OtcOrderEventMinAggregates {
   """Minimum of fee across the matching connection"""
   fee: BigFloat
 
-  """Minimum of eventIndex across the matching connection"""
-  eventIndex: Int
-
   """Minimum of paraBlockHeight across the matching connection"""
   paraBlockHeight: Int
 
@@ -9645,9 +9619,6 @@ type OtcOrderEventMaxAggregates {
 
   """Maximum of fee across the matching connection"""
   fee: BigFloat
-
-  """Maximum of eventIndex across the matching connection"""
-  eventIndex: Int
 
   """Maximum of paraBlockHeight across the matching connection"""
   paraBlockHeight: Int
@@ -9666,9 +9637,6 @@ type OtcOrderEventAverageAggregates {
   """Mean average of fee across the matching connection"""
   fee: BigFloat
 
-  """Mean average of eventIndex across the matching connection"""
-  eventIndex: BigFloat
-
   """Mean average of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
 
@@ -9685,9 +9653,6 @@ type OtcOrderEventStddevSampleAggregates {
 
   """Sample standard deviation of fee across the matching connection"""
   fee: BigFloat
-
-  """Sample standard deviation of eventIndex across the matching connection"""
-  eventIndex: BigFloat
 
   """
   Sample standard deviation of paraBlockHeight across the matching connection
@@ -9715,11 +9680,6 @@ type OtcOrderEventStddevPopulationAggregates {
   fee: BigFloat
 
   """
-  Population standard deviation of eventIndex across the matching connection
-  """
-  eventIndex: BigFloat
-
-  """
   Population standard deviation of paraBlockHeight across the matching connection
   """
   paraBlockHeight: BigFloat
@@ -9740,9 +9700,6 @@ type OtcOrderEventVarianceSampleAggregates {
   """Sample variance of fee across the matching connection"""
   fee: BigFloat
 
-  """Sample variance of eventIndex across the matching connection"""
-  eventIndex: BigFloat
-
   """Sample variance of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
 
@@ -9760,9 +9717,6 @@ type OtcOrderEventVariancePopulationAggregates {
   """Population variance of fee across the matching connection"""
   fee: BigFloat
 
-  """Population variance of eventIndex across the matching connection"""
-  eventIndex: BigFloat
-
   """Population variance of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
 
@@ -9778,7 +9732,6 @@ enum OtcOrderEventGroupBy {
   AMOUNT_IN
   AMOUNT_OUT
   FEE
-  EVENT_INDEX
   PARA_BLOCK_HEIGHT
   RELAY_BLOCK_HEIGHT
   ORDER_ID
@@ -9806,7 +9759,6 @@ input OtcOrderEventHavingSumInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9824,7 +9776,6 @@ input OtcOrderEventHavingDistinctCountInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9833,7 +9784,6 @@ input OtcOrderEventHavingMinInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9842,7 +9792,6 @@ input OtcOrderEventHavingMaxInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9851,7 +9800,6 @@ input OtcOrderEventHavingAverageInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9860,7 +9808,6 @@ input OtcOrderEventHavingStddevSampleInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9869,7 +9816,6 @@ input OtcOrderEventHavingStddevPopulationInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9878,7 +9824,6 @@ input OtcOrderEventHavingVarianceSampleInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9887,7 +9832,6 @@ input OtcOrderEventHavingVariancePopulationInput {
   amountIn: HavingBigfloatFilter
   amountOut: HavingBigfloatFilter
   fee: HavingBigfloatFilter
-  eventIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -9909,8 +9853,6 @@ enum OtcOrderEventsOrderBy {
   AMOUNT_OUT_DESC
   FEE_ASC
   FEE_DESC
-  EVENT_INDEX_ASC
-  EVENT_INDEX_DESC
   PARA_BLOCK_HEIGHT_ASC
   PARA_BLOCK_HEIGHT_DESC
   RELAY_BLOCK_HEIGHT_ASC
@@ -9955,8 +9897,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_SUM_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_ID_ASC
@@ -9987,8 +9929,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_DISTINCT_COUNT_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_ID_ASC
@@ -10019,8 +9961,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MIN_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_ID_ASC
@@ -10051,8 +9993,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_MAX_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_ID_ASC
@@ -10083,8 +10025,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_AVERAGE_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_ID_ASC
@@ -10115,8 +10057,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_SAMPLE_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_ID_ASC
@@ -10147,8 +10089,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_STDDEV_POPULATION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_ID_ASC
@@ -10179,8 +10121,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_SAMPLE_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_ID_ASC
@@ -10211,8 +10153,8 @@ enum OtcOrderEventsOrderBy {
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_EVENT_ID_ASC
   SWAPS_BY_OTC_ORDER_FULFILLMENT_ID_VARIANCE_POPULATION_EVENT_ID_DESC
 }
@@ -10242,9 +10184,6 @@ input OtcOrderEventCondition {
 
   """Checks for equality with the object’s `fee` field."""
   fee: BigFloat
-
-  """Checks for equality with the object’s `eventIndex` field."""
-  eventIndex: Int
 
   """Checks for equality with the object’s `paraBlockHeight` field."""
   paraBlockHeight: Int
@@ -10289,9 +10228,6 @@ input OtcOrderEventFilter {
 
   """Filter by the object’s `fee` field."""
   fee: BigFloatFilter
-
-  """Filter by the object’s `eventIndex` field."""
-  eventIndex: IntFilter
 
   """Filter by the object’s `paraBlockHeight` field."""
   paraBlockHeight: IntFilter
@@ -10394,8 +10330,8 @@ enum SwapsOrderBy {
   DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   OTC_ORDER_FULFILLMENT_ID_ASC
   OTC_ORDER_FULFILLMENT_ID_DESC
-  ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_ID_DESC
+  ROUTED_TRADE_ID_ASC
+  ROUTED_TRADE_ID_DESC
   EVENT_ID_ASC
   EVENT_ID_DESC
   PRIMARY_KEY_ASC
@@ -10618,8 +10554,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_SUM_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_SUM_FEE_ASC
   OTC_ORDER_EVENTS_SUM_FEE_DESC
-  OTC_ORDER_EVENTS_SUM_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_SUM_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_SUM_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_SUM_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_SUM_RELAY_BLOCK_HEIGHT_ASC
@@ -10646,8 +10580,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_DISTINCT_COUNT_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_FEE_ASC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_FEE_DESC
-  OTC_ORDER_EVENTS_DISTINCT_COUNT_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_DISTINCT_COUNT_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
@@ -10674,8 +10606,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_MIN_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_MIN_FEE_ASC
   OTC_ORDER_EVENTS_MIN_FEE_DESC
-  OTC_ORDER_EVENTS_MIN_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_MIN_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_MIN_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_MIN_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_MIN_RELAY_BLOCK_HEIGHT_ASC
@@ -10702,8 +10632,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_MAX_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_MAX_FEE_ASC
   OTC_ORDER_EVENTS_MAX_FEE_DESC
-  OTC_ORDER_EVENTS_MAX_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_MAX_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_MAX_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_MAX_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_MAX_RELAY_BLOCK_HEIGHT_ASC
@@ -10730,8 +10658,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_AVERAGE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_AVERAGE_FEE_ASC
   OTC_ORDER_EVENTS_AVERAGE_FEE_DESC
-  OTC_ORDER_EVENTS_AVERAGE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_AVERAGE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_AVERAGE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_AVERAGE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
@@ -10758,8 +10684,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_FEE_ASC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_FEE_DESC
-  OTC_ORDER_EVENTS_STDDEV_SAMPLE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_STDDEV_SAMPLE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
@@ -10786,8 +10710,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_STDDEV_POPULATION_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_FEE_ASC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_FEE_DESC
-  OTC_ORDER_EVENTS_STDDEV_POPULATION_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_STDDEV_POPULATION_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
@@ -10814,8 +10736,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_FEE_ASC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_FEE_DESC
-  OTC_ORDER_EVENTS_VARIANCE_SAMPLE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_VARIANCE_SAMPLE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
@@ -10842,8 +10762,6 @@ enum SwapsOrderBy {
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_FEE_ASC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_FEE_DESC
-  OTC_ORDER_EVENTS_VARIANCE_POPULATION_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_VARIANCE_POPULATION_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
@@ -11090,8 +11008,8 @@ input SwapCondition {
   """Checks for equality with the object’s `otcOrderFulfillmentId` field."""
   otcOrderFulfillmentId: String
 
-  """Checks for equality with the object’s `routeTradeId` field."""
-  routeTradeId: String
+  """Checks for equality with the object’s `routedTradeId` field."""
+  routedTradeId: String
 
   """Checks for equality with the object’s `eventId` field."""
   eventId: String
@@ -11143,8 +11061,8 @@ input SwapFilter {
   """Filter by the object’s `otcOrderFulfillmentId` field."""
   otcOrderFulfillmentId: StringFilter
 
-  """Filter by the object’s `routeTradeId` field."""
-  routeTradeId: StringFilter
+  """Filter by the object’s `routedTradeId` field."""
+  routedTradeId: StringFilter
 
   """Filter by the object’s `eventId` field."""
   eventId: StringFilter
@@ -11201,7 +11119,7 @@ input DatetimeFilter {
   greaterThanOrEqualTo: Datetime
 }
 
-type RouteTrade {
+type RoutedTrade {
   id: String!
   routeId: String
   allInvolvedAssetIds: [String]!
@@ -11212,7 +11130,7 @@ type RouteTrade {
   relayBlockHeight: Int!
   blockId: String
 
-  """Reads a single `Block` that is related to this `RouteTrade`."""
+  """Reads a single `Block` that is related to this `RoutedTrade`."""
   block: Block
 
   """
@@ -11285,7 +11203,9 @@ type RouteTrade {
     filter: SwapFilter
   ): SwapsConnection!
 
-  """Reads and enables pagination through a set of `RouteTradeInputRecord`."""
+  """
+  Reads and enables pagination through a set of `RoutedTradeInputRecord`.
+  """
   routeTradeInputs(
     """Only read the first `n` values of the set."""
     first: Int
@@ -11305,21 +11225,21 @@ type RouteTrade {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `RouteTradeInputRecord`."""
-    orderBy: [RouteTradeInputRecordsOrderBy!] = [NATURAL]
+    """The method to use when ordering `RoutedTradeInputRecord`."""
+    orderBy: [RoutedTradeInputRecordsOrderBy!] = [NATURAL]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: RouteTradeInputRecordCondition
+    condition: RoutedTradeInputRecordCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: RouteTradeInputRecordFilter
-  ): RouteTradeInputRecordsConnection!
+    filter: RoutedTradeInputRecordFilter
+  ): RoutedTradeInputRecordsConnection!
 
-  """Reads and enables pagination through a set of `RouteTradeOutput`."""
+  """Reads and enables pagination through a set of `RoutedTradeOutput`."""
   routeTradeOutputs(
     """Only read the first `n` values of the set."""
     first: Int
@@ -11339,19 +11259,19 @@ type RouteTrade {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `RouteTradeOutput`."""
-    orderBy: [RouteTradeOutputsOrderBy!] = [NATURAL]
+    """The method to use when ordering `RoutedTradeOutput`."""
+    orderBy: [RoutedTradeOutputsOrderBy!] = [NATURAL]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: RouteTradeOutputCondition
+    condition: RoutedTradeOutputCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: RouteTradeOutputFilter
-  ): RouteTradeOutputsConnection!
+    filter: RoutedTradeOutputFilter
+  ): RoutedTradeOutputsConnection!
 }
 
 """A connection to a list of `RouteTradeInputOutputAssetBalance` values."""
@@ -11395,13 +11315,13 @@ type RouteTradeInputOutputAssetBalance {
   id: String!
   assetBalanceType: String!
   amount: BigFloat!
-  routeTradeId: String
+  routedTradeId: String
   assetId: String
 
   """
-  Reads a single `RouteTrade` that is related to this `RouteTradeInputOutputAssetBalance`.
+  Reads a single `RoutedTrade` that is related to this `RouteTradeInputOutputAssetBalance`.
   """
-  routeTrade: RouteTrade
+  routedTrade: RoutedTrade
 
   """
   Reads a single `Asset` that is related to this `RouteTradeInputOutputAssetBalance`.
@@ -11482,8 +11402,8 @@ type RouteTradeInputOutputAssetBalanceDistinctCountAggregates {
   """Distinct count of amount across the matching connection"""
   amount: BigInt
 
-  """Distinct count of routeTradeId across the matching connection"""
-  routeTradeId: BigInt
+  """Distinct count of routedTradeId across the matching connection"""
+  routedTradeId: BigInt
 
   """Distinct count of assetId across the matching connection"""
   assetId: BigInt
@@ -11530,7 +11450,7 @@ Grouping methods for `RouteTradeInputOutputAssetBalance` for usage during aggreg
 enum RouteTradeInputOutputAssetBalanceGroupBy {
   ASSET_BALANCE_TYPE
   AMOUNT
-  ROUTE_TRADE_ID
+  ROUTED_TRADE_ID
   ASSET_ID
 }
 
@@ -11594,8 +11514,8 @@ enum RouteTradeInputOutputAssetBalancesOrderBy {
   ASSET_BALANCE_TYPE_DESC
   AMOUNT_ASC
   AMOUNT_DESC
-  ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_ID_DESC
+  ROUTED_TRADE_ID_ASC
+  ROUTED_TRADE_ID_DESC
   ASSET_ID_ASC
   ASSET_ID_DESC
   PRIMARY_KEY_ASC
@@ -11616,8 +11536,8 @@ input RouteTradeInputOutputAssetBalanceCondition {
   """Checks for equality with the object’s `amount` field."""
   amount: BigFloat
 
-  """Checks for equality with the object’s `routeTradeId` field."""
-  routeTradeId: String
+  """Checks for equality with the object’s `routedTradeId` field."""
+  routedTradeId: String
 
   """Checks for equality with the object’s `assetId` field."""
   assetId: String
@@ -11636,8 +11556,8 @@ input RouteTradeInputOutputAssetBalanceFilter {
   """Filter by the object’s `amount` field."""
   amount: BigFloatFilter
 
-  """Filter by the object’s `routeTradeId` field."""
-  routeTradeId: StringFilter
+  """Filter by the object’s `routedTradeId` field."""
+  routedTradeId: StringFilter
 
   """Filter by the object’s `assetId` field."""
   assetId: StringFilter
@@ -11652,125 +11572,125 @@ input RouteTradeInputOutputAssetBalanceFilter {
   not: RouteTradeInputOutputAssetBalanceFilter
 }
 
-"""A connection to a list of `RouteTradeInputRecord` values."""
-type RouteTradeInputRecordsConnection {
-  """A list of `RouteTradeInputRecord` objects."""
-  nodes: [RouteTradeInputRecord]!
+"""A connection to a list of `RoutedTradeInputRecord` values."""
+type RoutedTradeInputRecordsConnection {
+  """A list of `RoutedTradeInputRecord` objects."""
+  nodes: [RoutedTradeInputRecord]!
 
   """
-  A list of edges which contains the `RouteTradeInputRecord` and cursor to aid in pagination.
+  A list of edges which contains the `RoutedTradeInputRecord` and cursor to aid in pagination.
   """
-  edges: [RouteTradeInputRecordsEdge!]!
+  edges: [RoutedTradeInputRecordsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """
-  The count of *all* `RouteTradeInputRecord` you could get from the connection.
+  The count of *all* `RoutedTradeInputRecord` you could get from the connection.
   """
   totalCount: Int!
 
   """
   Aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  aggregates: RouteTradeInputRecordAggregates
+  aggregates: RoutedTradeInputRecordAggregates
 
   """
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
     """
-    The method to use when grouping `RouteTradeInputRecord` for these aggregates.
+    The method to use when grouping `RoutedTradeInputRecord` for these aggregates.
     """
-    groupBy: [RouteTradeInputsGroupBy!]!
+    groupBy: [RoutedTradeInputsGroupBy!]!
 
     """Conditions on the grouped aggregates."""
-    having: RouteTradeInputsHavingInput
-  ): [RouteTradeInputRecordAggregates!]
+    having: RoutedTradeInputsHavingInput
+  ): [RoutedTradeInputRecordAggregates!]
 }
 
-type RouteTradeInputRecord {
+type RoutedTradeInputRecord {
   id: String
   assetBalanceType: String
   amount: BigFloat
-  routeTradeId: String
+  routedTradeId: String
   assetId: String
 
   """
-  Reads a single `RouteTrade` that is related to this `RouteTradeInputRecord`.
+  Reads a single `RoutedTrade` that is related to this `RoutedTradeInputRecord`.
   """
-  route_trade: RouteTrade
+  routed_trade: RoutedTrade
 
   """
-  Reads a single `Asset` that is related to this `RouteTradeInputRecord`.
+  Reads a single `Asset` that is related to this `RoutedTradeInputRecord`.
   """
   asset: Asset
 }
 
-"""A `RouteTradeInputRecord` edge in the connection."""
-type RouteTradeInputRecordsEdge {
+"""A `RoutedTradeInputRecord` edge in the connection."""
+type RoutedTradeInputRecordsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `RouteTradeInputRecord` at the end of the edge."""
-  node: RouteTradeInputRecord
+  """The `RoutedTradeInputRecord` at the end of the edge."""
+  node: RoutedTradeInputRecord
 }
 
-type RouteTradeInputRecordAggregates {
+type RoutedTradeInputRecordAggregates {
   keys: [String!]
 
   """
   Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  sum: RouteTradeInputRecordSumAggregates
+  sum: RoutedTradeInputRecordSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: RouteTradeInputRecordDistinctCountAggregates
+  distinctCount: RoutedTradeInputRecordDistinctCountAggregates
 
   """
   Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  min: RouteTradeInputRecordMinAggregates
+  min: RoutedTradeInputRecordMinAggregates
 
   """
   Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  max: RouteTradeInputRecordMaxAggregates
+  max: RoutedTradeInputRecordMaxAggregates
 
   """
   Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  average: RouteTradeInputRecordAverageAggregates
+  average: RoutedTradeInputRecordAverageAggregates
 
   """
   Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevSample: RouteTradeInputRecordStddevSampleAggregates
+  stddevSample: RoutedTradeInputRecordStddevSampleAggregates
 
   """
   Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevPopulation: RouteTradeInputRecordStddevPopulationAggregates
+  stddevPopulation: RoutedTradeInputRecordStddevPopulationAggregates
 
   """
   Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  varianceSample: RouteTradeInputRecordVarianceSampleAggregates
+  varianceSample: RoutedTradeInputRecordVarianceSampleAggregates
 
   """
   Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  variancePopulation: RouteTradeInputRecordVariancePopulationAggregates
+  variancePopulation: RoutedTradeInputRecordVariancePopulationAggregates
 }
 
-type RouteTradeInputRecordSumAggregates {
+type RoutedTradeInputRecordSumAggregates {
   """Sum of amount across the matching connection"""
   amount: BigFloat!
 }
 
-type RouteTradeInputRecordDistinctCountAggregates {
+type RoutedTradeInputRecordDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
@@ -11780,112 +11700,112 @@ type RouteTradeInputRecordDistinctCountAggregates {
   """Distinct count of amount across the matching connection"""
   amount: BigInt
 
-  """Distinct count of routeTradeId across the matching connection"""
-  routeTradeId: BigInt
+  """Distinct count of routedTradeId across the matching connection"""
+  routedTradeId: BigInt
 
   """Distinct count of assetId across the matching connection"""
   assetId: BigInt
 }
 
-type RouteTradeInputRecordMinAggregates {
+type RoutedTradeInputRecordMinAggregates {
   """Minimum of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeInputRecordMaxAggregates {
+type RoutedTradeInputRecordMaxAggregates {
   """Maximum of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeInputRecordAverageAggregates {
+type RoutedTradeInputRecordAverageAggregates {
   """Mean average of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeInputRecordStddevSampleAggregates {
+type RoutedTradeInputRecordStddevSampleAggregates {
   """Sample standard deviation of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeInputRecordStddevPopulationAggregates {
+type RoutedTradeInputRecordStddevPopulationAggregates {
   """Population standard deviation of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeInputRecordVarianceSampleAggregates {
+type RoutedTradeInputRecordVarianceSampleAggregates {
   """Sample variance of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeInputRecordVariancePopulationAggregates {
+type RoutedTradeInputRecordVariancePopulationAggregates {
   """Population variance of amount across the matching connection"""
   amount: BigFloat
 }
 
 """
-Grouping methods for `RouteTradeInputRecord` for usage during aggregation.
+Grouping methods for `RoutedTradeInputRecord` for usage during aggregation.
 """
-enum RouteTradeInputsGroupBy {
+enum RoutedTradeInputsGroupBy {
   ID
   ASSET_BALANCE_TYPE
   AMOUNT
-  ROUTE_TRADE_ID
+  ROUTED_TRADE_ID
   ASSET_ID
 }
 
-"""Conditions for `RouteTradeInputRecord` aggregates."""
-input RouteTradeInputsHavingInput {
-  AND: [RouteTradeInputsHavingInput!]
-  OR: [RouteTradeInputsHavingInput!]
-  sum: RouteTradeInputsHavingSumInput
-  distinctCount: RouteTradeInputsHavingDistinctCountInput
-  min: RouteTradeInputsHavingMinInput
-  max: RouteTradeInputsHavingMaxInput
-  average: RouteTradeInputsHavingAverageInput
-  stddevSample: RouteTradeInputsHavingStddevSampleInput
-  stddevPopulation: RouteTradeInputsHavingStddevPopulationInput
-  varianceSample: RouteTradeInputsHavingVarianceSampleInput
-  variancePopulation: RouteTradeInputsHavingVariancePopulationInput
+"""Conditions for `RoutedTradeInputRecord` aggregates."""
+input RoutedTradeInputsHavingInput {
+  AND: [RoutedTradeInputsHavingInput!]
+  OR: [RoutedTradeInputsHavingInput!]
+  sum: RoutedTradeInputsHavingSumInput
+  distinctCount: RoutedTradeInputsHavingDistinctCountInput
+  min: RoutedTradeInputsHavingMinInput
+  max: RoutedTradeInputsHavingMaxInput
+  average: RoutedTradeInputsHavingAverageInput
+  stddevSample: RoutedTradeInputsHavingStddevSampleInput
+  stddevPopulation: RoutedTradeInputsHavingStddevPopulationInput
+  varianceSample: RoutedTradeInputsHavingVarianceSampleInput
+  variancePopulation: RoutedTradeInputsHavingVariancePopulationInput
 }
 
-input RouteTradeInputsHavingSumInput {
+input RoutedTradeInputsHavingSumInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeInputsHavingDistinctCountInput {
+input RoutedTradeInputsHavingDistinctCountInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeInputsHavingMinInput {
+input RoutedTradeInputsHavingMinInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeInputsHavingMaxInput {
+input RoutedTradeInputsHavingMaxInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeInputsHavingAverageInput {
+input RoutedTradeInputsHavingAverageInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeInputsHavingStddevSampleInput {
+input RoutedTradeInputsHavingStddevSampleInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeInputsHavingStddevPopulationInput {
+input RoutedTradeInputsHavingStddevPopulationInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeInputsHavingVarianceSampleInput {
+input RoutedTradeInputsHavingVarianceSampleInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeInputsHavingVariancePopulationInput {
+input RoutedTradeInputsHavingVariancePopulationInput {
   amount: HavingBigfloatFilter
 }
 
-"""Methods to use when ordering `RouteTradeInputRecord`."""
-enum RouteTradeInputRecordsOrderBy {
+"""Methods to use when ordering `RoutedTradeInputRecord`."""
+enum RoutedTradeInputRecordsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
@@ -11893,17 +11813,17 @@ enum RouteTradeInputRecordsOrderBy {
   ASSET_BALANCE_TYPE_DESC
   AMOUNT_ASC
   AMOUNT_DESC
-  ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_ID_DESC
+  ROUTED_TRADE_ID_ASC
+  ROUTED_TRADE_ID_DESC
   ASSET_ID_ASC
   ASSET_ID_DESC
 }
 
 """
-A condition to be used against `RouteTradeInputRecord` object types. All fields
+A condition to be used against `RoutedTradeInputRecord` object types. All fields
 are tested for equality and combined with a logical ‘and.’
 """
-input RouteTradeInputRecordCondition {
+input RoutedTradeInputRecordCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
@@ -11913,17 +11833,17 @@ input RouteTradeInputRecordCondition {
   """Checks for equality with the object’s `amount` field."""
   amount: BigFloat
 
-  """Checks for equality with the object’s `routeTradeId` field."""
-  routeTradeId: String
+  """Checks for equality with the object’s `routedTradeId` field."""
+  routedTradeId: String
 
   """Checks for equality with the object’s `assetId` field."""
   assetId: String
 }
 
 """
-A filter to be used against `RouteTradeInputRecord` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `RoutedTradeInputRecord` object types. All fields are combined with a logical ‘and.’
 """
-input RouteTradeInputRecordFilter {
+input RoutedTradeInputRecordFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
@@ -11933,139 +11853,139 @@ input RouteTradeInputRecordFilter {
   """Filter by the object’s `amount` field."""
   amount: BigFloatFilter
 
-  """Filter by the object’s `routeTradeId` field."""
-  routeTradeId: StringFilter
+  """Filter by the object’s `routedTradeId` field."""
+  routedTradeId: StringFilter
 
   """Filter by the object’s `assetId` field."""
   assetId: StringFilter
 
   """Checks for all expressions in this list."""
-  and: [RouteTradeInputRecordFilter!]
+  and: [RoutedTradeInputRecordFilter!]
 
   """Checks for any expressions in this list."""
-  or: [RouteTradeInputRecordFilter!]
+  or: [RoutedTradeInputRecordFilter!]
 
   """Negates the expression."""
-  not: RouteTradeInputRecordFilter
+  not: RoutedTradeInputRecordFilter
 }
 
-"""A connection to a list of `RouteTradeOutput` values."""
-type RouteTradeOutputsConnection {
-  """A list of `RouteTradeOutput` objects."""
-  nodes: [RouteTradeOutput]!
+"""A connection to a list of `RoutedTradeOutput` values."""
+type RoutedTradeOutputsConnection {
+  """A list of `RoutedTradeOutput` objects."""
+  nodes: [RoutedTradeOutput]!
 
   """
-  A list of edges which contains the `RouteTradeOutput` and cursor to aid in pagination.
+  A list of edges which contains the `RoutedTradeOutput` and cursor to aid in pagination.
   """
-  edges: [RouteTradeOutputsEdge!]!
+  edges: [RoutedTradeOutputsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """
-  The count of *all* `RouteTradeOutput` you could get from the connection.
+  The count of *all* `RoutedTradeOutput` you could get from the connection.
   """
   totalCount: Int!
 
   """
   Aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  aggregates: RouteTradeOutputAggregates
+  aggregates: RoutedTradeOutputAggregates
 
   """
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
     """
-    The method to use when grouping `RouteTradeOutput` for these aggregates.
+    The method to use when grouping `RoutedTradeOutput` for these aggregates.
     """
-    groupBy: [RouteTradeOutputsGroupBy!]!
+    groupBy: [RoutedTradeOutputsGroupBy!]!
 
     """Conditions on the grouped aggregates."""
-    having: RouteTradeOutputsHavingInput
-  ): [RouteTradeOutputAggregates!]
+    having: RoutedTradeOutputsHavingInput
+  ): [RoutedTradeOutputAggregates!]
 }
 
-type RouteTradeOutput {
+type RoutedTradeOutput {
   id: String
   assetBalanceType: String
   amount: BigFloat
-  routeTradeId: String
+  routedTradeId: String
   assetId: String
 
   """
-  Reads a single `RouteTrade` that is related to this `RouteTradeOutput`.
+  Reads a single `RoutedTrade` that is related to this `RoutedTradeOutput`.
   """
-  route_trade: RouteTrade
+  routed_trade: RoutedTrade
 
-  """Reads a single `Asset` that is related to this `RouteTradeOutput`."""
+  """Reads a single `Asset` that is related to this `RoutedTradeOutput`."""
   asset: Asset
 }
 
-"""A `RouteTradeOutput` edge in the connection."""
-type RouteTradeOutputsEdge {
+"""A `RoutedTradeOutput` edge in the connection."""
+type RoutedTradeOutputsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `RouteTradeOutput` at the end of the edge."""
-  node: RouteTradeOutput
+  """The `RoutedTradeOutput` at the end of the edge."""
+  node: RoutedTradeOutput
 }
 
-type RouteTradeOutputAggregates {
+type RoutedTradeOutputAggregates {
   keys: [String!]
 
   """
   Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  sum: RouteTradeOutputSumAggregates
+  sum: RoutedTradeOutputSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: RouteTradeOutputDistinctCountAggregates
+  distinctCount: RoutedTradeOutputDistinctCountAggregates
 
   """
   Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  min: RouteTradeOutputMinAggregates
+  min: RoutedTradeOutputMinAggregates
 
   """
   Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  max: RouteTradeOutputMaxAggregates
+  max: RoutedTradeOutputMaxAggregates
 
   """
   Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  average: RouteTradeOutputAverageAggregates
+  average: RoutedTradeOutputAverageAggregates
 
   """
   Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevSample: RouteTradeOutputStddevSampleAggregates
+  stddevSample: RoutedTradeOutputStddevSampleAggregates
 
   """
   Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevPopulation: RouteTradeOutputStddevPopulationAggregates
+  stddevPopulation: RoutedTradeOutputStddevPopulationAggregates
 
   """
   Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  varianceSample: RouteTradeOutputVarianceSampleAggregates
+  varianceSample: RoutedTradeOutputVarianceSampleAggregates
 
   """
   Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  variancePopulation: RouteTradeOutputVariancePopulationAggregates
+  variancePopulation: RoutedTradeOutputVariancePopulationAggregates
 }
 
-type RouteTradeOutputSumAggregates {
+type RoutedTradeOutputSumAggregates {
   """Sum of amount across the matching connection"""
   amount: BigFloat!
 }
 
-type RouteTradeOutputDistinctCountAggregates {
+type RoutedTradeOutputDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
@@ -12075,110 +11995,110 @@ type RouteTradeOutputDistinctCountAggregates {
   """Distinct count of amount across the matching connection"""
   amount: BigInt
 
-  """Distinct count of routeTradeId across the matching connection"""
-  routeTradeId: BigInt
+  """Distinct count of routedTradeId across the matching connection"""
+  routedTradeId: BigInt
 
   """Distinct count of assetId across the matching connection"""
   assetId: BigInt
 }
 
-type RouteTradeOutputMinAggregates {
+type RoutedTradeOutputMinAggregates {
   """Minimum of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeOutputMaxAggregates {
+type RoutedTradeOutputMaxAggregates {
   """Maximum of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeOutputAverageAggregates {
+type RoutedTradeOutputAverageAggregates {
   """Mean average of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeOutputStddevSampleAggregates {
+type RoutedTradeOutputStddevSampleAggregates {
   """Sample standard deviation of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeOutputStddevPopulationAggregates {
+type RoutedTradeOutputStddevPopulationAggregates {
   """Population standard deviation of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeOutputVarianceSampleAggregates {
+type RoutedTradeOutputVarianceSampleAggregates {
   """Sample variance of amount across the matching connection"""
   amount: BigFloat
 }
 
-type RouteTradeOutputVariancePopulationAggregates {
+type RoutedTradeOutputVariancePopulationAggregates {
   """Population variance of amount across the matching connection"""
   amount: BigFloat
 }
 
-"""Grouping methods for `RouteTradeOutput` for usage during aggregation."""
-enum RouteTradeOutputsGroupBy {
+"""Grouping methods for `RoutedTradeOutput` for usage during aggregation."""
+enum RoutedTradeOutputsGroupBy {
   ID
   ASSET_BALANCE_TYPE
   AMOUNT
-  ROUTE_TRADE_ID
+  ROUTED_TRADE_ID
   ASSET_ID
 }
 
-"""Conditions for `RouteTradeOutput` aggregates."""
-input RouteTradeOutputsHavingInput {
-  AND: [RouteTradeOutputsHavingInput!]
-  OR: [RouteTradeOutputsHavingInput!]
-  sum: RouteTradeOutputsHavingSumInput
-  distinctCount: RouteTradeOutputsHavingDistinctCountInput
-  min: RouteTradeOutputsHavingMinInput
-  max: RouteTradeOutputsHavingMaxInput
-  average: RouteTradeOutputsHavingAverageInput
-  stddevSample: RouteTradeOutputsHavingStddevSampleInput
-  stddevPopulation: RouteTradeOutputsHavingStddevPopulationInput
-  varianceSample: RouteTradeOutputsHavingVarianceSampleInput
-  variancePopulation: RouteTradeOutputsHavingVariancePopulationInput
+"""Conditions for `RoutedTradeOutput` aggregates."""
+input RoutedTradeOutputsHavingInput {
+  AND: [RoutedTradeOutputsHavingInput!]
+  OR: [RoutedTradeOutputsHavingInput!]
+  sum: RoutedTradeOutputsHavingSumInput
+  distinctCount: RoutedTradeOutputsHavingDistinctCountInput
+  min: RoutedTradeOutputsHavingMinInput
+  max: RoutedTradeOutputsHavingMaxInput
+  average: RoutedTradeOutputsHavingAverageInput
+  stddevSample: RoutedTradeOutputsHavingStddevSampleInput
+  stddevPopulation: RoutedTradeOutputsHavingStddevPopulationInput
+  varianceSample: RoutedTradeOutputsHavingVarianceSampleInput
+  variancePopulation: RoutedTradeOutputsHavingVariancePopulationInput
 }
 
-input RouteTradeOutputsHavingSumInput {
+input RoutedTradeOutputsHavingSumInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeOutputsHavingDistinctCountInput {
+input RoutedTradeOutputsHavingDistinctCountInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeOutputsHavingMinInput {
+input RoutedTradeOutputsHavingMinInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeOutputsHavingMaxInput {
+input RoutedTradeOutputsHavingMaxInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeOutputsHavingAverageInput {
+input RoutedTradeOutputsHavingAverageInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeOutputsHavingStddevSampleInput {
+input RoutedTradeOutputsHavingStddevSampleInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeOutputsHavingStddevPopulationInput {
+input RoutedTradeOutputsHavingStddevPopulationInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeOutputsHavingVarianceSampleInput {
+input RoutedTradeOutputsHavingVarianceSampleInput {
   amount: HavingBigfloatFilter
 }
 
-input RouteTradeOutputsHavingVariancePopulationInput {
+input RoutedTradeOutputsHavingVariancePopulationInput {
   amount: HavingBigfloatFilter
 }
 
-"""Methods to use when ordering `RouteTradeOutput`."""
-enum RouteTradeOutputsOrderBy {
+"""Methods to use when ordering `RoutedTradeOutput`."""
+enum RoutedTradeOutputsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
@@ -12186,17 +12106,17 @@ enum RouteTradeOutputsOrderBy {
   ASSET_BALANCE_TYPE_DESC
   AMOUNT_ASC
   AMOUNT_DESC
-  ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_ID_DESC
+  ROUTED_TRADE_ID_ASC
+  ROUTED_TRADE_ID_DESC
   ASSET_ID_ASC
   ASSET_ID_DESC
 }
 
 """
-A condition to be used against `RouteTradeOutput` object types. All fields are
+A condition to be used against `RoutedTradeOutput` object types. All fields are
 tested for equality and combined with a logical ‘and.’
 """
-input RouteTradeOutputCondition {
+input RoutedTradeOutputCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
@@ -12206,17 +12126,17 @@ input RouteTradeOutputCondition {
   """Checks for equality with the object’s `amount` field."""
   amount: BigFloat
 
-  """Checks for equality with the object’s `routeTradeId` field."""
-  routeTradeId: String
+  """Checks for equality with the object’s `routedTradeId` field."""
+  routedTradeId: String
 
   """Checks for equality with the object’s `assetId` field."""
   assetId: String
 }
 
 """
-A filter to be used against `RouteTradeOutput` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `RoutedTradeOutput` object types. All fields are combined with a logical ‘and.’
 """
-input RouteTradeOutputFilter {
+input RoutedTradeOutputFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
@@ -12226,20 +12146,20 @@ input RouteTradeOutputFilter {
   """Filter by the object’s `amount` field."""
   amount: BigFloatFilter
 
-  """Filter by the object’s `routeTradeId` field."""
-  routeTradeId: StringFilter
+  """Filter by the object’s `routedTradeId` field."""
+  routedTradeId: StringFilter
 
   """Filter by the object’s `assetId` field."""
   assetId: StringFilter
 
   """Checks for all expressions in this list."""
-  and: [RouteTradeOutputFilter!]
+  and: [RoutedTradeOutputFilter!]
 
   """Checks for any expressions in this list."""
-  or: [RouteTradeOutputFilter!]
+  or: [RoutedTradeOutputFilter!]
 
   """Negates the expression."""
-  not: RouteTradeOutputFilter
+  not: RoutedTradeOutputFilter
 }
 
 """A connection to a list of `SwapInputOutputAssetBalance` values."""
@@ -13535,8 +13455,8 @@ type SwapDistinctCountAggregates {
   """Distinct count of otcOrderFulfillmentId across the matching connection"""
   otcOrderFulfillmentId: BigInt
 
-  """Distinct count of routeTradeId across the matching connection"""
-  routeTradeId: BigInt
+  """Distinct count of routedTradeId across the matching connection"""
+  routedTradeId: BigInt
 
   """Distinct count of eventId across the matching connection"""
   eventId: BigInt
@@ -13646,7 +13566,7 @@ enum SwapGroupBy {
   FILLER_ID
   DCA_SCHEDULE_EXECUTION_EVENT_ID
   OTC_ORDER_FULFILLMENT_ID
-  ROUTE_TRADE_ID
+  ROUTED_TRADE_ID
   EVENT_ID
 }
 
@@ -14023,8 +13943,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_SUM_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_SUM_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_SUM_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_SUM_ROUTE_TRADE_ID_ASC
-  SWAPS_SUM_ROUTE_TRADE_ID_DESC
+  SWAPS_SUM_ROUTED_TRADE_ID_ASC
+  SWAPS_SUM_ROUTED_TRADE_ID_DESC
   SWAPS_SUM_EVENT_ID_ASC
   SWAPS_SUM_EVENT_ID_DESC
   SWAPS_DISTINCT_COUNT_ID_ASC
@@ -14055,8 +13975,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_DISTINCT_COUNT_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  SWAPS_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  SWAPS_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  SWAPS_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   SWAPS_DISTINCT_COUNT_EVENT_ID_ASC
   SWAPS_DISTINCT_COUNT_EVENT_ID_DESC
   SWAPS_MIN_ID_ASC
@@ -14087,8 +14007,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_MIN_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_MIN_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_MIN_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_MIN_ROUTE_TRADE_ID_ASC
-  SWAPS_MIN_ROUTE_TRADE_ID_DESC
+  SWAPS_MIN_ROUTED_TRADE_ID_ASC
+  SWAPS_MIN_ROUTED_TRADE_ID_DESC
   SWAPS_MIN_EVENT_ID_ASC
   SWAPS_MIN_EVENT_ID_DESC
   SWAPS_MAX_ID_ASC
@@ -14119,8 +14039,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_MAX_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_MAX_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_MAX_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_MAX_ROUTE_TRADE_ID_ASC
-  SWAPS_MAX_ROUTE_TRADE_ID_DESC
+  SWAPS_MAX_ROUTED_TRADE_ID_ASC
+  SWAPS_MAX_ROUTED_TRADE_ID_DESC
   SWAPS_MAX_EVENT_ID_ASC
   SWAPS_MAX_EVENT_ID_DESC
   SWAPS_AVERAGE_ID_ASC
@@ -14151,8 +14071,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_AVERAGE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_AVERAGE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_AVERAGE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_AVERAGE_ROUTE_TRADE_ID_ASC
-  SWAPS_AVERAGE_ROUTE_TRADE_ID_DESC
+  SWAPS_AVERAGE_ROUTED_TRADE_ID_ASC
+  SWAPS_AVERAGE_ROUTED_TRADE_ID_DESC
   SWAPS_AVERAGE_EVENT_ID_ASC
   SWAPS_AVERAGE_EVENT_ID_DESC
   SWAPS_STDDEV_SAMPLE_ID_ASC
@@ -14183,8 +14103,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_STDDEV_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_STDDEV_SAMPLE_EVENT_ID_ASC
   SWAPS_STDDEV_SAMPLE_EVENT_ID_DESC
   SWAPS_STDDEV_POPULATION_ID_ASC
@@ -14215,8 +14135,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_STDDEV_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_STDDEV_POPULATION_EVENT_ID_ASC
   SWAPS_STDDEV_POPULATION_EVENT_ID_DESC
   SWAPS_VARIANCE_SAMPLE_ID_ASC
@@ -14247,8 +14167,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_VARIANCE_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_VARIANCE_SAMPLE_EVENT_ID_ASC
   SWAPS_VARIANCE_SAMPLE_EVENT_ID_DESC
   SWAPS_VARIANCE_POPULATION_ID_ASC
@@ -14279,8 +14199,8 @@ enum DcaScheduleExecutionEventsOrderBy {
   SWAPS_VARIANCE_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_VARIANCE_POPULATION_EVENT_ID_ASC
   SWAPS_VARIANCE_POPULATION_EVENT_ID_DESC
 }
@@ -20661,8 +20581,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_SUM_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_SUM_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_SUM_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_SUM_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_SUM_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_SUM_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_SUM_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_SUM_RELAY_BLOCK_HEIGHT_ASC
@@ -20689,8 +20607,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_DISTINCT_COUNT_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_DISTINCT_COUNT_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_DISTINCT_COUNT_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_DISTINCT_COUNT_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_DISTINCT_COUNT_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
@@ -20717,8 +20633,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_MIN_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MIN_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MIN_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_MIN_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_MIN_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MIN_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MIN_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MIN_RELAY_BLOCK_HEIGHT_ASC
@@ -20745,8 +20659,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_MAX_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MAX_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MAX_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_MAX_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_MAX_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MAX_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MAX_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_MAX_RELAY_BLOCK_HEIGHT_ASC
@@ -20773,8 +20685,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_AVERAGE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_AVERAGE_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_AVERAGE_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_AVERAGE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_AVERAGE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_AVERAGE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
@@ -20801,8 +20711,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_SAMPLE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_SAMPLE_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_SAMPLE_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_SAMPLE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_SAMPLE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
@@ -20829,8 +20737,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_POPULATION_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_POPULATION_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_POPULATION_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_POPULATION_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_POPULATION_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
@@ -20857,8 +20763,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_SAMPLE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_SAMPLE_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_SAMPLE_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_SAMPLE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_SAMPLE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
@@ -20885,8 +20789,6 @@ enum AccountsOrderBy {
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_POPULATION_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_POPULATION_FEE_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_POPULATION_FEE_DESC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_POPULATION_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_POPULATION_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_FILLER_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
@@ -20929,8 +20831,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_SUM_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_SUM_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_SUM_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_SUM_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_SUM_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_SUM_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_SUM_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_SUM_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_SUM_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_ID_ASC
@@ -20961,8 +20863,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_DISTINCT_COUNT_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_MIN_ID_ASC
@@ -20993,8 +20895,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_MIN_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_MIN_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_MIN_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_MIN_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_MIN_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_MIN_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_MIN_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_MIN_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_MIN_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_MAX_ID_ASC
@@ -21025,8 +20927,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_MAX_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_MAX_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_MAX_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_MAX_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_MAX_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_MAX_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_MAX_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_MAX_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_MAX_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_AVERAGE_ID_ASC
@@ -21057,8 +20959,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_AVERAGE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_AVERAGE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_AVERAGE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_AVERAGE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_AVERAGE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_AVERAGE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_AVERAGE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_AVERAGE_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_AVERAGE_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_ID_ASC
@@ -21089,8 +20991,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_STDDEV_SAMPLE_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_ID_ASC
@@ -21121,8 +21023,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_STDDEV_POPULATION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_ID_ASC
@@ -21153,8 +21055,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_VARIANCE_SAMPLE_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_ID_ASC
@@ -21185,8 +21087,8 @@ enum AccountsOrderBy {
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_EVENT_ID_ASC
   SWAPS_BY_SWAPPER_ID_VARIANCE_POPULATION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_COUNT_ASC
@@ -21219,8 +21121,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_SUM_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_SUM_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_SUM_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_SUM_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_SUM_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_SUM_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_SUM_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_SUM_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_SUM_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_ID_ASC
@@ -21251,8 +21153,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_DISTINCT_COUNT_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_MIN_ID_ASC
@@ -21283,8 +21185,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_MIN_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_MIN_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_MIN_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_MIN_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_MIN_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_MIN_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_MIN_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_MIN_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_MIN_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_MAX_ID_ASC
@@ -21315,8 +21217,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_MAX_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_MAX_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_MAX_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_MAX_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_MAX_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_MAX_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_MAX_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_MAX_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_MAX_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_AVERAGE_ID_ASC
@@ -21347,8 +21249,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_AVERAGE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_AVERAGE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_AVERAGE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_AVERAGE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_AVERAGE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_AVERAGE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_AVERAGE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_AVERAGE_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_AVERAGE_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_ID_ASC
@@ -21379,8 +21281,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_STDDEV_SAMPLE_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_ID_ASC
@@ -21411,8 +21313,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_STDDEV_POPULATION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_ID_ASC
@@ -21443,8 +21345,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_VARIANCE_SAMPLE_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_ID_ASC
@@ -21475,8 +21377,8 @@ enum AccountsOrderBy {
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_EVENT_ID_ASC
   SWAPS_BY_FILLER_ID_VARIANCE_POPULATION_EVENT_ID_DESC
   TRANSFERS_BY_FROM_ID_COUNT_ASC
@@ -38120,8 +38022,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_SUM_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_SUM_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_SUM_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_SUM_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_SUM_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_SUM_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_SUM_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_SUM_RELAY_BLOCK_HEIGHT_ASC
@@ -38148,8 +38048,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_DISTINCT_COUNT_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_DISTINCT_COUNT_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_DISTINCT_COUNT_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_DISTINCT_COUNT_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_DISTINCT_COUNT_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
@@ -38176,8 +38074,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_MIN_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MIN_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MIN_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_MIN_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_MIN_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MIN_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MIN_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MIN_RELAY_BLOCK_HEIGHT_ASC
@@ -38204,8 +38100,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_MAX_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MAX_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MAX_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_MAX_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_MAX_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MAX_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MAX_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_MAX_RELAY_BLOCK_HEIGHT_ASC
@@ -38232,8 +38126,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_AVERAGE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_AVERAGE_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_AVERAGE_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_AVERAGE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_AVERAGE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_AVERAGE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
@@ -38260,8 +38152,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_SAMPLE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_SAMPLE_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_SAMPLE_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_SAMPLE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_SAMPLE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
@@ -38288,8 +38178,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_POPULATION_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_POPULATION_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_POPULATION_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_POPULATION_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_POPULATION_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
@@ -38316,8 +38204,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_SAMPLE_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_SAMPLE_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_SAMPLE_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_SAMPLE_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_SAMPLE_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
@@ -38344,8 +38230,6 @@ enum OtcOrdersOrderBy {
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_POPULATION_AMOUNT_OUT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_POPULATION_FEE_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_POPULATION_FEE_DESC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_POPULATION_EVENT_INDEX_ASC
-  OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_POPULATION_EVENT_INDEX_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
   OTC_ORDER_EVENTS_BY_ORDER_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
@@ -38458,98 +38342,98 @@ input OtcOrderFilter {
   not: OtcOrderFilter
 }
 
-"""A connection to a list of `RouteTrade` values."""
-type RouteTradesConnection {
-  """A list of `RouteTrade` objects."""
-  nodes: [RouteTrade]!
+"""A connection to a list of `RoutedTrade` values."""
+type RoutedTradesConnection {
+  """A list of `RoutedTrade` objects."""
+  nodes: [RoutedTrade]!
 
   """
-  A list of edges which contains the `RouteTrade` and cursor to aid in pagination.
+  A list of edges which contains the `RoutedTrade` and cursor to aid in pagination.
   """
-  edges: [RouteTradesEdge!]!
+  edges: [RoutedTradesEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
-  """The count of *all* `RouteTrade` you could get from the connection."""
+  """The count of *all* `RoutedTrade` you could get from the connection."""
   totalCount: Int!
 
   """
   Aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  aggregates: RouteTradeAggregates
+  aggregates: RoutedTradeAggregates
 
   """
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
-    """The method to use when grouping `RouteTrade` for these aggregates."""
-    groupBy: [RouteTradeGroupBy!]!
+    """The method to use when grouping `RoutedTrade` for these aggregates."""
+    groupBy: [RoutedTradeGroupBy!]!
 
     """Conditions on the grouped aggregates."""
-    having: RouteTradeHavingInput
-  ): [RouteTradeAggregates!]
+    having: RoutedTradeHavingInput
+  ): [RoutedTradeAggregates!]
 }
 
-"""A `RouteTrade` edge in the connection."""
-type RouteTradesEdge {
+"""A `RoutedTrade` edge in the connection."""
+type RoutedTradesEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `RouteTrade` at the end of the edge."""
-  node: RouteTrade
+  """The `RoutedTrade` at the end of the edge."""
+  node: RoutedTrade
 }
 
-type RouteTradeAggregates {
+type RoutedTradeAggregates {
   keys: [String!]
 
   """
   Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  sum: RouteTradeSumAggregates
+  sum: RoutedTradeSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: RouteTradeDistinctCountAggregates
+  distinctCount: RoutedTradeDistinctCountAggregates
 
   """
   Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  min: RouteTradeMinAggregates
+  min: RoutedTradeMinAggregates
 
   """
   Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  max: RouteTradeMaxAggregates
+  max: RoutedTradeMaxAggregates
 
   """
   Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  average: RouteTradeAverageAggregates
+  average: RoutedTradeAverageAggregates
 
   """
   Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevSample: RouteTradeStddevSampleAggregates
+  stddevSample: RoutedTradeStddevSampleAggregates
 
   """
   Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevPopulation: RouteTradeStddevPopulationAggregates
+  stddevPopulation: RoutedTradeStddevPopulationAggregates
 
   """
   Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  varianceSample: RouteTradeVarianceSampleAggregates
+  varianceSample: RoutedTradeVarianceSampleAggregates
 
   """
   Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  variancePopulation: RouteTradeVariancePopulationAggregates
+  variancePopulation: RoutedTradeVariancePopulationAggregates
 }
 
-type RouteTradeSumAggregates {
+type RoutedTradeSumAggregates {
   """Sum of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigInt!
 
@@ -38557,7 +38441,7 @@ type RouteTradeSumAggregates {
   relayBlockHeight: BigInt!
 }
 
-type RouteTradeDistinctCountAggregates {
+type RoutedTradeDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
@@ -38586,7 +38470,7 @@ type RouteTradeDistinctCountAggregates {
   blockId: BigInt
 }
 
-type RouteTradeMinAggregates {
+type RoutedTradeMinAggregates {
   """Minimum of paraBlockHeight across the matching connection"""
   paraBlockHeight: Int
 
@@ -38594,7 +38478,7 @@ type RouteTradeMinAggregates {
   relayBlockHeight: Int
 }
 
-type RouteTradeMaxAggregates {
+type RoutedTradeMaxAggregates {
   """Maximum of paraBlockHeight across the matching connection"""
   paraBlockHeight: Int
 
@@ -38602,7 +38486,7 @@ type RouteTradeMaxAggregates {
   relayBlockHeight: Int
 }
 
-type RouteTradeAverageAggregates {
+type RoutedTradeAverageAggregates {
   """Mean average of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
 
@@ -38610,7 +38494,7 @@ type RouteTradeAverageAggregates {
   relayBlockHeight: BigFloat
 }
 
-type RouteTradeStddevSampleAggregates {
+type RoutedTradeStddevSampleAggregates {
   """
   Sample standard deviation of paraBlockHeight across the matching connection
   """
@@ -38622,7 +38506,7 @@ type RouteTradeStddevSampleAggregates {
   relayBlockHeight: BigFloat
 }
 
-type RouteTradeStddevPopulationAggregates {
+type RoutedTradeStddevPopulationAggregates {
   """
   Population standard deviation of paraBlockHeight across the matching connection
   """
@@ -38634,7 +38518,7 @@ type RouteTradeStddevPopulationAggregates {
   relayBlockHeight: BigFloat
 }
 
-type RouteTradeVarianceSampleAggregates {
+type RoutedTradeVarianceSampleAggregates {
   """Sample variance of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
 
@@ -38642,7 +38526,7 @@ type RouteTradeVarianceSampleAggregates {
   relayBlockHeight: BigFloat
 }
 
-type RouteTradeVariancePopulationAggregates {
+type RoutedTradeVariancePopulationAggregates {
   """Population variance of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
 
@@ -38650,8 +38534,8 @@ type RouteTradeVariancePopulationAggregates {
   relayBlockHeight: BigFloat
 }
 
-"""Grouping methods for `RouteTrade` for usage during aggregation."""
-enum RouteTradeGroupBy {
+"""Grouping methods for `RoutedTrade` for usage during aggregation."""
+enum RoutedTradeGroupBy {
   ROUTE_ID
   ALL_INVOLVED_ASSET_IDS
   PARTICIPANT_SWAPPERS
@@ -38662,68 +38546,68 @@ enum RouteTradeGroupBy {
   BLOCK_ID
 }
 
-"""Conditions for `RouteTrade` aggregates."""
-input RouteTradeHavingInput {
-  AND: [RouteTradeHavingInput!]
-  OR: [RouteTradeHavingInput!]
-  sum: RouteTradeHavingSumInput
-  distinctCount: RouteTradeHavingDistinctCountInput
-  min: RouteTradeHavingMinInput
-  max: RouteTradeHavingMaxInput
-  average: RouteTradeHavingAverageInput
-  stddevSample: RouteTradeHavingStddevSampleInput
-  stddevPopulation: RouteTradeHavingStddevPopulationInput
-  varianceSample: RouteTradeHavingVarianceSampleInput
-  variancePopulation: RouteTradeHavingVariancePopulationInput
+"""Conditions for `RoutedTrade` aggregates."""
+input RoutedTradeHavingInput {
+  AND: [RoutedTradeHavingInput!]
+  OR: [RoutedTradeHavingInput!]
+  sum: RoutedTradeHavingSumInput
+  distinctCount: RoutedTradeHavingDistinctCountInput
+  min: RoutedTradeHavingMinInput
+  max: RoutedTradeHavingMaxInput
+  average: RoutedTradeHavingAverageInput
+  stddevSample: RoutedTradeHavingStddevSampleInput
+  stddevPopulation: RoutedTradeHavingStddevPopulationInput
+  varianceSample: RoutedTradeHavingVarianceSampleInput
+  variancePopulation: RoutedTradeHavingVariancePopulationInput
 }
 
-input RouteTradeHavingSumInput {
+input RoutedTradeHavingSumInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-input RouteTradeHavingDistinctCountInput {
+input RoutedTradeHavingDistinctCountInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-input RouteTradeHavingMinInput {
+input RoutedTradeHavingMinInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-input RouteTradeHavingMaxInput {
+input RoutedTradeHavingMaxInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-input RouteTradeHavingAverageInput {
+input RoutedTradeHavingAverageInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-input RouteTradeHavingStddevSampleInput {
+input RoutedTradeHavingStddevSampleInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-input RouteTradeHavingStddevPopulationInput {
+input RoutedTradeHavingStddevPopulationInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-input RouteTradeHavingVarianceSampleInput {
+input RoutedTradeHavingVarianceSampleInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-input RouteTradeHavingVariancePopulationInput {
+input RoutedTradeHavingVariancePopulationInput {
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `RouteTrade`."""
-enum RouteTradesOrderBy {
+"""Methods to use when ordering `RoutedTrade`."""
+enum RoutedTradesOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
@@ -38753,8 +38637,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC
@@ -38763,8 +38647,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ID_ASC
@@ -38773,8 +38657,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ID_ASC
@@ -38783,8 +38667,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ID_ASC
@@ -38793,8 +38677,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC
@@ -38803,8 +38687,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC
@@ -38813,8 +38697,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC
@@ -38823,8 +38707,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC
@@ -38833,8 +38717,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC
   SWAPS_COUNT_ASC
@@ -38867,8 +38751,8 @@ enum RouteTradesOrderBy {
   SWAPS_SUM_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_SUM_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_SUM_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_SUM_ROUTE_TRADE_ID_ASC
-  SWAPS_SUM_ROUTE_TRADE_ID_DESC
+  SWAPS_SUM_ROUTED_TRADE_ID_ASC
+  SWAPS_SUM_ROUTED_TRADE_ID_DESC
   SWAPS_SUM_EVENT_ID_ASC
   SWAPS_SUM_EVENT_ID_DESC
   SWAPS_DISTINCT_COUNT_ID_ASC
@@ -38899,8 +38783,8 @@ enum RouteTradesOrderBy {
   SWAPS_DISTINCT_COUNT_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_DISTINCT_COUNT_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  SWAPS_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  SWAPS_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  SWAPS_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   SWAPS_DISTINCT_COUNT_EVENT_ID_ASC
   SWAPS_DISTINCT_COUNT_EVENT_ID_DESC
   SWAPS_MIN_ID_ASC
@@ -38931,8 +38815,8 @@ enum RouteTradesOrderBy {
   SWAPS_MIN_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_MIN_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_MIN_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_MIN_ROUTE_TRADE_ID_ASC
-  SWAPS_MIN_ROUTE_TRADE_ID_DESC
+  SWAPS_MIN_ROUTED_TRADE_ID_ASC
+  SWAPS_MIN_ROUTED_TRADE_ID_DESC
   SWAPS_MIN_EVENT_ID_ASC
   SWAPS_MIN_EVENT_ID_DESC
   SWAPS_MAX_ID_ASC
@@ -38963,8 +38847,8 @@ enum RouteTradesOrderBy {
   SWAPS_MAX_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_MAX_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_MAX_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_MAX_ROUTE_TRADE_ID_ASC
-  SWAPS_MAX_ROUTE_TRADE_ID_DESC
+  SWAPS_MAX_ROUTED_TRADE_ID_ASC
+  SWAPS_MAX_ROUTED_TRADE_ID_DESC
   SWAPS_MAX_EVENT_ID_ASC
   SWAPS_MAX_EVENT_ID_DESC
   SWAPS_AVERAGE_ID_ASC
@@ -38995,8 +38879,8 @@ enum RouteTradesOrderBy {
   SWAPS_AVERAGE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_AVERAGE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_AVERAGE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_AVERAGE_ROUTE_TRADE_ID_ASC
-  SWAPS_AVERAGE_ROUTE_TRADE_ID_DESC
+  SWAPS_AVERAGE_ROUTED_TRADE_ID_ASC
+  SWAPS_AVERAGE_ROUTED_TRADE_ID_DESC
   SWAPS_AVERAGE_EVENT_ID_ASC
   SWAPS_AVERAGE_EVENT_ID_DESC
   SWAPS_STDDEV_SAMPLE_ID_ASC
@@ -39027,8 +38911,8 @@ enum RouteTradesOrderBy {
   SWAPS_STDDEV_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_STDDEV_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_STDDEV_SAMPLE_EVENT_ID_ASC
   SWAPS_STDDEV_SAMPLE_EVENT_ID_DESC
   SWAPS_STDDEV_POPULATION_ID_ASC
@@ -39059,8 +38943,8 @@ enum RouteTradesOrderBy {
   SWAPS_STDDEV_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_STDDEV_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_STDDEV_POPULATION_EVENT_ID_ASC
   SWAPS_STDDEV_POPULATION_EVENT_ID_DESC
   SWAPS_VARIANCE_SAMPLE_ID_ASC
@@ -39091,8 +38975,8 @@ enum RouteTradesOrderBy {
   SWAPS_VARIANCE_SAMPLE_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_VARIANCE_SAMPLE_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  SWAPS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  SWAPS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  SWAPS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   SWAPS_VARIANCE_SAMPLE_EVENT_ID_ASC
   SWAPS_VARIANCE_SAMPLE_EVENT_ID_DESC
   SWAPS_VARIANCE_POPULATION_ID_ASC
@@ -39123,8 +39007,8 @@ enum RouteTradesOrderBy {
   SWAPS_VARIANCE_POPULATION_DCA_SCHEDULE_EXECUTION_EVENT_ID_DESC
   SWAPS_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_ASC
   SWAPS_VARIANCE_POPULATION_OTC_ORDER_FULFILLMENT_ID_DESC
-  SWAPS_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  SWAPS_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  SWAPS_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  SWAPS_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   SWAPS_VARIANCE_POPULATION_EVENT_ID_ASC
   SWAPS_VARIANCE_POPULATION_EVENT_ID_DESC
   ROUTE_TRADE_INPUTS_COUNT_ASC
@@ -39135,8 +39019,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_SUM_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_SUM_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_SUM_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_SUM_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_SUM_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_SUM_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_SUM_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_SUM_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_SUM_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ID_ASC
@@ -39145,8 +39029,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_MIN_ID_ASC
@@ -39155,8 +39039,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_MIN_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_MIN_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_MIN_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_MIN_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_MIN_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_MIN_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_MIN_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_MIN_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_MIN_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_MAX_ID_ASC
@@ -39165,8 +39049,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_MAX_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_MAX_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_MAX_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_MAX_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_MAX_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_MAX_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_MAX_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_MAX_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_MAX_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_AVERAGE_ID_ASC
@@ -39175,8 +39059,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_AVERAGE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_AVERAGE_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_AVERAGE_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_AVERAGE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_AVERAGE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_AVERAGE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_AVERAGE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_AVERAGE_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_AVERAGE_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ID_ASC
@@ -39185,8 +39069,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ID_ASC
@@ -39195,8 +39079,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ID_ASC
@@ -39205,8 +39089,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ID_ASC
@@ -39215,8 +39099,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_COUNT_ASC
@@ -39227,8 +39111,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_SUM_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_SUM_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_SUM_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_SUM_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_SUM_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_SUM_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_SUM_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_SUM_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_SUM_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ID_ASC
@@ -39237,8 +39121,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_MIN_ID_ASC
@@ -39247,8 +39131,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_MIN_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_MIN_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_MIN_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_MIN_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_MIN_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_MIN_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_MIN_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_MIN_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_MIN_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_MAX_ID_ASC
@@ -39257,8 +39141,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_MAX_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_MAX_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_MAX_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_MAX_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_MAX_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_MAX_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_MAX_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_MAX_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_MAX_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_AVERAGE_ID_ASC
@@ -39267,8 +39151,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_AVERAGE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_AVERAGE_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_AVERAGE_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_AVERAGE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_AVERAGE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_AVERAGE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_AVERAGE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_AVERAGE_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_AVERAGE_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ID_ASC
@@ -39277,8 +39161,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ID_ASC
@@ -39287,8 +39171,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ID_ASC
@@ -39297,8 +39181,8 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ID_ASC
@@ -39307,17 +39191,17 @@ enum RouteTradesOrderBy {
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ASSET_ID_DESC
 }
 
 """
-A condition to be used against `RouteTrade` object types. All fields are tested
+A condition to be used against `RoutedTrade` object types. All fields are tested
 for equality and combined with a logical ‘and.’
 """
-input RouteTradeCondition {
+input RoutedTradeCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
@@ -39347,9 +39231,9 @@ input RouteTradeCondition {
 }
 
 """
-A filter to be used against `RouteTrade` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `RoutedTrade` object types. All fields are combined with a logical ‘and.’
 """
-input RouteTradeFilter {
+input RoutedTradeFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
@@ -39378,13 +39262,13 @@ input RouteTradeFilter {
   blockId: StringFilter
 
   """Checks for all expressions in this list."""
-  and: [RouteTradeFilter!]
+  and: [RoutedTradeFilter!]
 
   """Checks for any expressions in this list."""
-  or: [RouteTradeFilter!]
+  or: [RoutedTradeFilter!]
 
   """Negates the expression."""
-  not: RouteTradeFilter
+  not: RoutedTradeFilter
 }
 
 """A connection to a list of `ChainActivityTraceRelation` values."""
@@ -49085,8 +48969,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_SUM_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ID_ASC
@@ -49095,8 +48979,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_DISTINCT_COUNT_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ID_ASC
@@ -49105,8 +48989,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MIN_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ID_ASC
@@ -49115,8 +48999,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_MAX_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ID_ASC
@@ -49125,8 +49009,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_AVERAGE_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ID_ASC
@@ -49135,8 +49019,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ID_ASC
@@ -49145,8 +49029,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_STDDEV_POPULATION_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ID_ASC
@@ -49155,8 +49039,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ID_ASC
@@ -49165,8 +49049,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_INPUT_OUTPUT_ASSET_BALANCES_VARIANCE_POPULATION_ASSET_ID_DESC
   TRANSFERS_COUNT_ASC
@@ -49961,8 +49845,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_SUM_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_SUM_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_SUM_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_SUM_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_SUM_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_SUM_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_SUM_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_SUM_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_SUM_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ID_ASC
@@ -49971,8 +49855,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_DISTINCT_COUNT_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_MIN_ID_ASC
@@ -49981,8 +49865,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_MIN_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_MIN_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_MIN_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_MIN_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_MIN_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_MIN_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_MIN_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_MIN_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_MIN_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_MAX_ID_ASC
@@ -49991,8 +49875,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_MAX_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_MAX_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_MAX_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_MAX_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_MAX_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_MAX_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_MAX_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_MAX_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_MAX_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_AVERAGE_ID_ASC
@@ -50001,8 +49885,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_AVERAGE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_AVERAGE_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_AVERAGE_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_AVERAGE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_AVERAGE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_AVERAGE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_AVERAGE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_AVERAGE_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_AVERAGE_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ID_ASC
@@ -50011,8 +49895,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_STDDEV_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ID_ASC
@@ -50021,8 +49905,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_STDDEV_POPULATION_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ID_ASC
@@ -50031,8 +49915,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_VARIANCE_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ID_ASC
@@ -50041,8 +49925,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_INPUTS_VARIANCE_POPULATION_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_COUNT_ASC
@@ -50053,8 +49937,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_SUM_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_SUM_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_SUM_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_SUM_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_SUM_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_SUM_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_SUM_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_SUM_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_SUM_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ID_ASC
@@ -50063,8 +49947,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_DISTINCT_COUNT_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_MIN_ID_ASC
@@ -50073,8 +49957,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_MIN_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_MIN_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_MIN_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_MIN_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_MIN_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_MIN_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_MIN_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_MIN_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_MIN_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_MAX_ID_ASC
@@ -50083,8 +49967,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_MAX_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_MAX_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_MAX_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_MAX_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_MAX_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_MAX_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_MAX_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_MAX_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_MAX_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_AVERAGE_ID_ASC
@@ -50093,8 +49977,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_AVERAGE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_AVERAGE_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_AVERAGE_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_AVERAGE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_AVERAGE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_AVERAGE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_AVERAGE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_AVERAGE_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_AVERAGE_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ID_ASC
@@ -50103,8 +49987,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_STDDEV_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ID_ASC
@@ -50113,8 +49997,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_STDDEV_POPULATION_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ID_ASC
@@ -50123,8 +50007,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_VARIANCE_SAMPLE_ASSET_ID_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ID_ASC
@@ -50133,8 +50017,8 @@ enum AssetsOrderBy {
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ASSET_BALANCE_TYPE_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_AMOUNT_ASC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_AMOUNT_DESC
-  ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ROUTE_TRADE_ID_ASC
-  ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ROUTE_TRADE_ID_DESC
+  ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ROUTED_TRADE_ID_ASC
+  ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ROUTED_TRADE_ID_DESC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ASSET_ID_ASC
   ROUTE_TRADE_OUTPUTS_VARIANCE_POPULATION_ASSET_ID_DESC
   SWAP_INPUTS_COUNT_ASC
@@ -54638,170 +54522,170 @@ enum BlocksOrderBy {
   OTC_ORDERS_VARIANCE_POPULATION_ASSET_OUT_ID_DESC
   OTC_ORDERS_VARIANCE_POPULATION_BLOCK_ID_ASC
   OTC_ORDERS_VARIANCE_POPULATION_BLOCK_ID_DESC
-  ROUTE_TRADES_COUNT_ASC
-  ROUTE_TRADES_COUNT_DESC
-  ROUTE_TRADES_SUM_ID_ASC
-  ROUTE_TRADES_SUM_ID_DESC
-  ROUTE_TRADES_SUM_ROUTE_ID_ASC
-  ROUTE_TRADES_SUM_ROUTE_ID_DESC
-  ROUTE_TRADES_SUM_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_SUM_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_SUM_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_SUM_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_SUM_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_SUM_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_SUM_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_SUM_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_SUM_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_SUM_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_SUM_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_SUM_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_SUM_BLOCK_ID_ASC
-  ROUTE_TRADES_SUM_BLOCK_ID_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_ID_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_ID_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_ROUTE_ID_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_ROUTE_ID_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_DISTINCT_COUNT_BLOCK_ID_ASC
-  ROUTE_TRADES_DISTINCT_COUNT_BLOCK_ID_DESC
-  ROUTE_TRADES_MIN_ID_ASC
-  ROUTE_TRADES_MIN_ID_DESC
-  ROUTE_TRADES_MIN_ROUTE_ID_ASC
-  ROUTE_TRADES_MIN_ROUTE_ID_DESC
-  ROUTE_TRADES_MIN_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_MIN_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_MIN_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_MIN_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_MIN_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_MIN_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_MIN_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_MIN_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_MIN_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_MIN_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_MIN_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_MIN_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_MIN_BLOCK_ID_ASC
-  ROUTE_TRADES_MIN_BLOCK_ID_DESC
-  ROUTE_TRADES_MAX_ID_ASC
-  ROUTE_TRADES_MAX_ID_DESC
-  ROUTE_TRADES_MAX_ROUTE_ID_ASC
-  ROUTE_TRADES_MAX_ROUTE_ID_DESC
-  ROUTE_TRADES_MAX_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_MAX_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_MAX_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_MAX_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_MAX_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_MAX_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_MAX_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_MAX_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_MAX_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_MAX_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_MAX_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_MAX_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_MAX_BLOCK_ID_ASC
-  ROUTE_TRADES_MAX_BLOCK_ID_DESC
-  ROUTE_TRADES_AVERAGE_ID_ASC
-  ROUTE_TRADES_AVERAGE_ID_DESC
-  ROUTE_TRADES_AVERAGE_ROUTE_ID_ASC
-  ROUTE_TRADES_AVERAGE_ROUTE_ID_DESC
-  ROUTE_TRADES_AVERAGE_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_AVERAGE_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_AVERAGE_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_AVERAGE_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_AVERAGE_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_AVERAGE_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_AVERAGE_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_AVERAGE_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_AVERAGE_BLOCK_ID_ASC
-  ROUTE_TRADES_AVERAGE_BLOCK_ID_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_ID_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_ID_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_ROUTE_ID_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_ROUTE_ID_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_STDDEV_SAMPLE_BLOCK_ID_ASC
-  ROUTE_TRADES_STDDEV_SAMPLE_BLOCK_ID_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_ID_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_ID_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_ROUTE_ID_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_ROUTE_ID_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_STDDEV_POPULATION_BLOCK_ID_ASC
-  ROUTE_TRADES_STDDEV_POPULATION_BLOCK_ID_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_ID_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_ID_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_ROUTE_ID_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_ROUTE_ID_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_VARIANCE_SAMPLE_BLOCK_ID_ASC
-  ROUTE_TRADES_VARIANCE_SAMPLE_BLOCK_ID_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_ID_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_ID_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_ROUTE_ID_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_ROUTE_ID_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_ALL_INVOLVED_ASSET_IDS_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_ALL_INVOLVED_ASSET_IDS_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_PARTICIPANT_SWAPPERS_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_PARTICIPANT_SWAPPERS_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_PARTICIPANT_FILLERS_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_PARTICIPANT_FILLERS_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_FEE_RECIPIENTS_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_FEE_RECIPIENTS_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
-  ROUTE_TRADES_VARIANCE_POPULATION_BLOCK_ID_ASC
-  ROUTE_TRADES_VARIANCE_POPULATION_BLOCK_ID_DESC
+  ROUTED_TRADES_COUNT_ASC
+  ROUTED_TRADES_COUNT_DESC
+  ROUTED_TRADES_SUM_ID_ASC
+  ROUTED_TRADES_SUM_ID_DESC
+  ROUTED_TRADES_SUM_ROUTE_ID_ASC
+  ROUTED_TRADES_SUM_ROUTE_ID_DESC
+  ROUTED_TRADES_SUM_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_SUM_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_SUM_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_SUM_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_SUM_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_SUM_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_SUM_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_SUM_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_SUM_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_SUM_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_SUM_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_SUM_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_SUM_BLOCK_ID_ASC
+  ROUTED_TRADES_SUM_BLOCK_ID_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_ID_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_ID_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_ROUTE_ID_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_ROUTE_ID_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_DISTINCT_COUNT_BLOCK_ID_ASC
+  ROUTED_TRADES_DISTINCT_COUNT_BLOCK_ID_DESC
+  ROUTED_TRADES_MIN_ID_ASC
+  ROUTED_TRADES_MIN_ID_DESC
+  ROUTED_TRADES_MIN_ROUTE_ID_ASC
+  ROUTED_TRADES_MIN_ROUTE_ID_DESC
+  ROUTED_TRADES_MIN_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_MIN_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_MIN_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_MIN_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_MIN_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_MIN_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_MIN_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_MIN_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_MIN_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_MIN_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_MIN_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_MIN_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_MIN_BLOCK_ID_ASC
+  ROUTED_TRADES_MIN_BLOCK_ID_DESC
+  ROUTED_TRADES_MAX_ID_ASC
+  ROUTED_TRADES_MAX_ID_DESC
+  ROUTED_TRADES_MAX_ROUTE_ID_ASC
+  ROUTED_TRADES_MAX_ROUTE_ID_DESC
+  ROUTED_TRADES_MAX_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_MAX_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_MAX_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_MAX_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_MAX_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_MAX_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_MAX_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_MAX_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_MAX_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_MAX_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_MAX_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_MAX_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_MAX_BLOCK_ID_ASC
+  ROUTED_TRADES_MAX_BLOCK_ID_DESC
+  ROUTED_TRADES_AVERAGE_ID_ASC
+  ROUTED_TRADES_AVERAGE_ID_DESC
+  ROUTED_TRADES_AVERAGE_ROUTE_ID_ASC
+  ROUTED_TRADES_AVERAGE_ROUTE_ID_DESC
+  ROUTED_TRADES_AVERAGE_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_AVERAGE_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_AVERAGE_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_AVERAGE_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_AVERAGE_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_AVERAGE_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_AVERAGE_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_AVERAGE_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_AVERAGE_BLOCK_ID_ASC
+  ROUTED_TRADES_AVERAGE_BLOCK_ID_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_ID_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_ID_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_ROUTE_ID_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_ROUTE_ID_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_STDDEV_SAMPLE_BLOCK_ID_ASC
+  ROUTED_TRADES_STDDEV_SAMPLE_BLOCK_ID_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_ID_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_ID_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_ROUTE_ID_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_ROUTE_ID_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_STDDEV_POPULATION_BLOCK_ID_ASC
+  ROUTED_TRADES_STDDEV_POPULATION_BLOCK_ID_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_ID_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_ID_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_ROUTE_ID_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_ROUTE_ID_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  ROUTED_TRADES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_ID_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_ID_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_ROUTE_ID_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_ROUTE_ID_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_ALL_INVOLVED_ASSET_IDS_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_ALL_INVOLVED_ASSET_IDS_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_PARTICIPANT_SWAPPERS_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_PARTICIPANT_SWAPPERS_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_PARTICIPANT_FILLERS_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_PARTICIPANT_FILLERS_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_FEE_RECIPIENTS_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_FEE_RECIPIENTS_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  ROUTED_TRADES_VARIANCE_POPULATION_BLOCK_ID_ASC
+  ROUTED_TRADES_VARIANCE_POPULATION_BLOCK_ID_DESC
   CHAIN_ACTIVITY_TRACE_RELATIONS_COUNT_ASC
   CHAIN_ACTIVITY_TRACE_RELATIONS_COUNT_DESC
   CHAIN_ACTIVITY_TRACE_RELATIONS_SUM_ID_ASC
@@ -56725,7 +56609,7 @@ type Subscription {
   xykpoolHistoricalVolume(filter: XykpoolHistoricalVolumeSubscriptionFilter): XykpoolHistoricalVolumeSubscriptionPayload
   omnipoolAssetHistoricalVolume(filter: OmnipoolAssetHistoricalVolumeSubscriptionFilter): OmnipoolAssetHistoricalVolumeSubscriptionPayload
   stableswapHistoricalVolume(filter: StableswapHistoricalVolumeSubscriptionFilter): StableswapHistoricalVolumeSubscriptionPayload
-  routeTrade(filter: RouteTradeSubscriptionFilter): RouteTradeSubscriptionPayload
+  routedTrade(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
 }
 
 type SquidStatusSubscriptionPayload {
@@ -56817,12 +56701,12 @@ input StableswapHistoricalVolumeSubscriptionFilter {
   poolIds: [String!]
 }
 
-type RouteTradeSubscriptionPayload {
-  node: RouteTradeEntity
+type RoutedTradeSubscriptionPayload {
+  node: RoutedTradeEntity
   event: String
 }
 
-type RouteTradeEntity {
+type RoutedTradeEntity {
   id: String!
   routeId: String
   allInvolvedAssetIds: [String!]!
@@ -56830,19 +56714,19 @@ type RouteTradeEntity {
   participantFillers: [String!]!
   feeRecipients: [String!]!
   swapIds: [String!]!
-  inputs: [RouteTradeAssetBalanceResponse!]!
-  outputs: [RouteTradeAssetBalanceResponse!]!
+  inputs: [RoutedTradeAssetBalanceResponse!]!
+  outputs: [RoutedTradeAssetBalanceResponse!]!
   paraBlockHeight: Int!
   relayBlockHeight: Int!
   blockId: String!
 }
 
-type RouteTradeAssetBalanceResponse {
+type RoutedTradeAssetBalanceResponse {
   assetId: String!
   amount: BigInt!
 }
 
-input RouteTradeSubscriptionFilter {
+input RoutedTradeSubscriptionFilter {
   assetIds: [String!]
   participantIds: [String!]
   swapperIds: [String!]

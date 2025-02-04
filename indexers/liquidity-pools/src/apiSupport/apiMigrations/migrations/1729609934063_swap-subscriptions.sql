@@ -1,6 +1,6 @@
-DROP FUNCTION IF EXISTS public.notify_route_trade CASCADE;
+DROP FUNCTION IF EXISTS public.notify_routed_trade CASCADE;
 
-CREATE FUNCTION public.notify_route_trade ()
+CREATE FUNCTION public.notify_routed_trade ()
   RETURNS TRIGGER
   AS $$
 BEGIN
@@ -10,7 +10,7 @@ BEGIN
             public.notify (
                 'state_changed',
                 'created',
-                'route_trade',
+                'routed_trade',
                 NEW.id,
                 jsonb_build_object(
                   'all_involved_asset_ids', NEW.all_involved_asset_ids,
@@ -26,7 +26,7 @@ BEGIN
             public.notify (
                 'state_changed',
                 'updated',
-                'route_trade',
+                'routed_trade',
                 NEW.id,
                 jsonb_build_object(
                   'all_involved_asset_ids', NEW.all_involved_asset_ids,
@@ -42,7 +42,7 @@ BEGIN
             public.notify (
                 'state_changed',
                 'deleted',
-                'route_trade',
+                'routed_trade',
                 OLD.id,
                 jsonb_build_object(
                   'all_involved_asset_ids', OLD.all_involved_asset_ids,
@@ -60,6 +60,6 @@ LANGUAGE plpgsql;
 
 
 CREATE TRIGGER _500_gql_update_route_trade
-  AFTER INSERT OR UPDATE OR DELETE ON public.route_trade
+  AFTER INSERT OR UPDATE OR DELETE ON public.routed_trade
   FOR EACH ROW
-  EXECUTE PROCEDURE public.notify_route_trade ();
+  EXECUTE PROCEDURE public.notify_routed_trade ();

@@ -360,7 +360,7 @@ type Swap @entity {
 
   dcaScheduleExecutionEvent: DcaScheduleExecutionEvent
   otcOrderFulfillment: OtcOrderEvent
-  routeTrade: RouteTrade
+  routedTrade: RoutedTrade
 
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
@@ -368,26 +368,26 @@ type Swap @entity {
   event: Event!
 }
 
-type RouteTradeAssetBalance @entity {
+type RoutedTradeAssetBalance @entity {
   "<routeTradeId>-<assetId>-<SwapAssetBalanceType> e.g. 6516718-3094-0-INPUT"
   id: ID!
-  routeTrade: RouteTrade!
+  routedTrade: RoutedTrade!
   assetBalanceType: SwapAssetBalanceType!
   asset: Asset!
   amount: BigInt!
 }
 
-type RouteTrade @entity {
+type RoutedTrade @entity {
   "<blockHeight>-<routerIncrementalId || swapId> (e.g. 6516718-3094 || 6516718-0006516718-9965d-000107)"
   id: ID!
   routeId: String
-  inputs: [RouteTradeAssetBalance] @derivedFrom(field: "routeTrade")
-  outputs: [RouteTradeAssetBalance] @derivedFrom(field: "routeTrade")
+  inputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
+  outputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
   allInvolvedAssetIds: [String!]!
   participantSwappers: [String!]!
   participantFillers: [String!]!
   feeRecipients: [String!]!
-  swaps: [Swap!]! @derivedFrom(field: "routeTrade")
+  swaps: [Swap!]! @derivedFrom(field: "routedTrade")
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

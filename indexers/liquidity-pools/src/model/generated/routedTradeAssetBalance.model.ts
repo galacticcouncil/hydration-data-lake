@@ -1,12 +1,12 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {RouteTrade} from "./routeTrade.model"
+import {RoutedTrade} from "./routedTrade.model"
 import {SwapAssetBalanceType} from "./_swapAssetBalanceType"
 import {Asset} from "./asset.model"
 
 @Entity_()
-export class RouteTradeAssetBalance {
-  constructor(props?: Partial<RouteTradeAssetBalance>) {
+export class RoutedTradeAssetBalance {
+  constructor(props?: Partial<RoutedTradeAssetBalance>) {
     Object.assign(this, props)
   }
 
@@ -17,8 +17,8 @@ export class RouteTradeAssetBalance {
   id!: string
 
   @Index_()
-  @ManyToOne_(() => RouteTrade, {nullable: true})
-  routeTrade!: RouteTrade
+  @ManyToOne_(() => RoutedTrade, {nullable: true})
+  routedTrade!: RoutedTrade
 
   @Column_("varchar", {length: 6, nullable: false})
   assetBalanceType!: SwapAssetBalanceType

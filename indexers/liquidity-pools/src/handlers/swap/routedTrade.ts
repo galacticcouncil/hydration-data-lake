@@ -1,14 +1,13 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
-  RouteTrade,
-  RouteTradeAssetBalance,
+  RoutedTrade,
+  RoutedTradeAssetBalance,
   Swap,
   SwapAssetBalanceType,
 } from '../../model';
 import { OperationStackManager } from '../../chainActivityTracingManagers';
 import { SwappedExecutionTypeKind } from '../../utils/types';
-import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
 
 export function getRouteTradeFromCache({
   ctx,
@@ -112,9 +111,9 @@ export function processRouteTradeHop({
     routeTradeEntity.outputs = [];
 
     for (const swapOutput of swap.outputs) {
-      const tradeOutput = new RouteTradeAssetBalance({
+      const tradeOutput = new RoutedTradeAssetBalance({
         id: `${routeTradeEntity.id}-${swapOutput.asset.id}-${SwapAssetBalanceType.Output}`,
-        routeTrade: routeTradeEntity,
+        routedTrade: routeTradeEntity,
         assetBalanceType: SwapAssetBalanceType.Output,
         asset: swapOutput.asset,
         amount: swapOutput.amount,
@@ -130,7 +129,7 @@ export function processRouteTradeHop({
 
   const newRouteTradeEntityId = `${swap.paraBlockHeight}-${routeId ?? swap.id}`;
 
-  routeTradeEntity = new RouteTrade({
+  routeTradeEntity = new RoutedTrade({
     id: newRouteTradeEntityId,
     routeId,
     swaps: [swap],
@@ -146,9 +145,9 @@ export function processRouteTradeHop({
   });
 
   routeTradeEntity.inputs = swap.inputs.map((swapInput) => {
-    const tradeInput = new RouteTradeAssetBalance({
+    const tradeInput = new RoutedTradeAssetBalance({
       id: `${newRouteTradeEntityId}-${swapInput.asset.id}-${SwapAssetBalanceType.Input}`,
-      routeTrade: routeTradeEntity,
+      routedTrade: routeTradeEntity,
       assetBalanceType: SwapAssetBalanceType.Input,
       asset: swapInput.asset,
       amount: swapInput.amount,
@@ -158,9 +157,9 @@ export function processRouteTradeHop({
   });
 
   routeTradeEntity.outputs = swap.outputs.map((swapOutput) => {
-    const tradeOutput = new RouteTradeAssetBalance({
+    const tradeOutput = new RoutedTradeAssetBalance({
       id: `${newRouteTradeEntityId}-${swapOutput.asset.id}-${SwapAssetBalanceType.Output}`,
-      routeTrade: routeTradeEntity,
+      routedTrade: routeTradeEntity,
       assetBalanceType: SwapAssetBalanceType.Output,
       asset: swapOutput.asset,
       amount: swapOutput.amount,

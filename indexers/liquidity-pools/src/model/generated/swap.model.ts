@@ -7,7 +7,7 @@ import {SwapAssetBalance} from "./swapAssetBalance.model"
 import {SwapFee} from "./swapFee.model"
 import {DcaScheduleExecutionEvent} from "./dcaScheduleExecutionEvent.model"
 import {OtcOrderEvent} from "./otcOrderEvent.model"
-import {RouteTrade} from "./routeTrade.model"
+import {RoutedTrade} from "./routedTrade.model"
 import {Event} from "./event.model"
 
 @Entity_()
@@ -69,8 +69,8 @@ export class Swap {
   otcOrderFulfillment!: OtcOrderEvent | undefined | null
 
   @Index_()
-  @ManyToOne_(() => RouteTrade, {nullable: true})
-  routeTrade!: RouteTrade | undefined | null
+  @ManyToOne_(() => RoutedTrade, {nullable: true})
+  routedTrade!: RoutedTrade | undefined | null
 
   @Index_()
   @Column_("timestamp with time zone", {nullable: false})

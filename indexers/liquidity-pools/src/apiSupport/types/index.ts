@@ -122,16 +122,16 @@ export interface QueryResolverContext {
   } | null;
 }
 
-export type RouteTradeAssetBalanceRaw = {
+export type RoutedTradeAssetBalanceRaw = {
   asset_id: string;
   amount: number;
   asset_balance_type: string;
 };
-export type RouteTradeSwapRaw = {
+export type RoutedTradeSwapRaw = {
   id: string;
 };
 
-export type RouteTradeRaw = {
+export type RoutedTradeRaw = {
   id: string;
   route_id?: string | null;
   all_involved_asset_ids: string[];
@@ -139,18 +139,18 @@ export type RouteTradeRaw = {
   participant_fillers: string[];
   fee_recipients: string[];
   swap_ids: string[];
-  inputs: RouteTradeAssetBalanceRaw[];
-  outputs: RouteTradeAssetBalanceRaw[];
+  inputs: RoutedTradeAssetBalanceRaw[];
+  outputs: RoutedTradeAssetBalanceRaw[];
   para_block_height: number;
   relay_block_height: number;
   block_id: string;
 };
 
-export type RouteTradeAssetBalanceGqlResponse = {
+export type RoutedTradeAssetBalanceGqlResponse = {
   assetId: string;
   amount: number;
 };
-export type RouteTradeGqlResponse = {
+export type RoutedTradeGqlResponse = {
   id: string;
   routeId?: string | null;
   allInvolvedAssetIds: string[];
@@ -158,22 +158,9 @@ export type RouteTradeGqlResponse = {
   participantFillers: string[];
   feeRecipients: string[];
   swapIds: string[];
-  inputs: RouteTradeAssetBalanceGqlResponse[];
-  outputs: RouteTradeAssetBalanceGqlResponse[];
+  inputs: RoutedTradeAssetBalanceGqlResponse[];
+  outputs: RoutedTradeAssetBalanceGqlResponse[];
   paraBlockHeight: number;
   relayBlockHeight: number;
   blockId: string;
 };
-
-// routeId: String
-// allInvolvedAssetIds: [String!]!
-// participantSwappers: [String!]!
-// participantFillers: [String!]!
-// feeRecipients: [String!]!
-// swapIds: [String!]!
-// inputs: [RouteTradeAssetBalanceResponse!]!
-// outputs: [RouteTradeAssetBalanceResponse!]!
-//
-// paraBlockHeight: Int!
-// relayBlockHeight: Int!
-// blockId: String!
