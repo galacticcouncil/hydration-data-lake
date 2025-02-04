@@ -26,17 +26,17 @@ function stableswapHistoricalVolumeSelectGraphQLResult({
   sqlBuilder: QueryBuilder;
 }) {
   sqlBuilder.where(
-    sql.fragment`${tableAlias}.id = ${sql.value(event.__node__[2])}`
+    sql.fragment`${tableAlias}.id = ${sql.value(event.__node__.node_id)}`
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.id`, 'id');
   sqlBuilder.select(sql.fragment`${tableAlias}.pool_id`, 'pool_id');
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.relay_chain_block_height`,
-    'relay_chain_block_height'
+    sql.fragment`${tableAlias}.relay_block_height`,
+    'relay_block_height'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.para_chain_block_height`,
-    'para_chain_block_height'
+    sql.fragment`${tableAlias}.para_block_height`,
+    'para_block_height'
   );
 }
 
@@ -52,7 +52,7 @@ function stableswapAssetHistoricalVolumeSelectGraphQLResult({
   sqlBuilder: QueryBuilder;
 }) {
   sqlBuilder.where(
-    sql.fragment`${tableAlias}.volumes_collection_id = ${sql.value(event.__node__[2])}`
+    sql.fragment`${tableAlias}.volumes_collection_id = ${sql.value(event.__node__.node_id)}`
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.id`, 'id');
   sqlBuilder.select(
@@ -82,12 +82,12 @@ function stableswapAssetHistoricalVolumeSelectGraphQLResult({
     'swap_total_volume_out'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.para_chain_block_height`,
-    'para_chain_block_height'
+    sql.fragment`${tableAlias}.para_block_height`,
+    'para_block_height'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.relay_chain_block_height`,
-    'relay_chain_block_height'
+    sql.fragment`${tableAlias}.relay_block_height`,
+    'relay_block_height'
   );
 }
 
@@ -110,7 +110,7 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
         return true;
 
       return new Set(args.filter.poolIds).has(
-        event.__node__[2].match(/^([0-9]+)-[0-9]+$/)[1]
+        event.__node__.node_id.match(/^([0-9]+)-[0-9]+$/)[1]
       );
     };
 
@@ -209,7 +209,7 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
                   decoratedStablepoolHistVolRow.relayBlockHeight,
                 paraBlockHeight: decoratedStablepoolHistVolRow.paraBlockHeight,
               } as StableswapHistoricalVolumeGqlResponse,
-              event: event.__node__[0],
+              event: event.__node__.event_name,
             };
           },
         },

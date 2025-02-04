@@ -18,8 +18,8 @@ export type XykpoolHistoricalVolumeRaw = {
   asset_a_total_fees: number;
   asset_b_total_fees: number;
   average_price: number;
-  relay_chain_block_height: number;
-  para_chain_block_height: number;
+  relay_block_height: number;
+  para_block_height: number;
 };
 export type XykpoolHistoricalVolumeGqlResponse = {
   id: string;
@@ -52,8 +52,8 @@ export type OmnipoolAssetHistoricalVolumeRaw = {
   asset_total_volume_out: number;
   asset_fee: number;
   asset_total_fees: number;
-  relay_chain_block_height: number;
-  para_chain_block_height: number;
+  relay_block_height: number;
+  para_block_height: number;
 };
 export type OmnipoolAssetHistoricalVolumeGqlResponse = {
   id: string;
@@ -71,8 +71,8 @@ export type OmnipoolAssetHistoricalVolumeGqlResponse = {
 export type StableswapHistoricalVolumeRaw = {
   id: string;
   pool_id: string;
-  relay_chain_block_height: number;
-  para_chain_block_height: number;
+  relay_block_height: number;
+  para_block_height: number;
 };
 export type StableswapHistoricalVolumeGqlResponse = {
   id: string;
@@ -88,24 +88,12 @@ export type StableswapAssetHistoricalVolumeRaw = {
   asset_id: string;
   swap_fee: number;
   swap_total_fees: number;
-  // liq_fee: number;
-  // liq_total_fees: number;
-  // routed_liq_fee: number;
-  // routed_liq_total_fees: number;
   swap_volume_in: number;
   swap_volume_out: number;
   swap_total_volume_in: number;
   swap_total_volume_out: number;
-  // liq_added_amount: number;
-  // liq_removed_amount: number;
-  // liq_added_total_amount: number;
-  // liq_removed_total_amount: number;
-  // routed_liq_added_amount: number;
-  // routed_liq_removed_amount: number;
-  // routed_liq_added_total_amount: number;
-  // routed_liq_removed_total_amount: number;
-  para_chain_block_height: number;
-  relay_chain_block_height: number;
+  para_block_height: number;
+  relay_block_height: number;
 };
 export type StableswapAssetHistoricalVolumeGqlResponse = {
   id: string;
@@ -113,22 +101,10 @@ export type StableswapAssetHistoricalVolumeGqlResponse = {
   assetId: string;
   swapFee: number;
   swapTotalFees: number;
-  // liqFee: number;
-  // liqTotalFees: number;
-  // routedLiqFee: number;
-  // routedLiqTotalFees: number;
   swapVolumeIn: number;
   swapVolumeOut: number;
   swapTotalVolumeIn: number;
   swapTotalVolumeOut: number;
-  // liqAddedAmount: number;
-  // liqRemovedAmount: number;
-  // liqAddedTotalAmount: number;
-  // liqRemovedTotalAmount: number;
-  // routedLiqAddedAmount: number;
-  // routedLiqRemovedAmount: number;
-  // routedLiqAddedTotalAmount: number;
-  // routedLiqRemovedTotalAmount: number;
   paraBlockHeight: number;
   relayBlockHeight: number;
 };
@@ -145,3 +121,59 @@ export interface QueryResolverContext {
     iss: string;
   } | null;
 }
+
+export type RouteTradeAssetBalanceRaw = {
+  asset_id: string;
+  amount: number;
+  asset_balance_type: string;
+};
+export type RouteTradeSwapRaw = {
+  id: string;
+};
+
+export type RouteTradeRaw = {
+  id: string;
+  route_id?: string | null;
+  all_involved_asset_ids: string[];
+  participant_swappers: string[];
+  participant_fillers: string[];
+  fee_recipients: string[];
+  swap_ids: string[];
+  inputs: RouteTradeAssetBalanceRaw[];
+  outputs: RouteTradeAssetBalanceRaw[];
+  para_block_height: number;
+  relay_block_height: number;
+  block_id: string;
+};
+
+export type RouteTradeAssetBalanceGqlResponse = {
+  assetId: string;
+  amount: number;
+};
+export type RouteTradeGqlResponse = {
+  id: string;
+  routeId?: string | null;
+  allInvolvedAssetIds: string[];
+  participantSwappers: string[];
+  participantFillers: string[];
+  feeRecipients: string[];
+  swapIds: string[];
+  inputs: RouteTradeAssetBalanceGqlResponse[];
+  outputs: RouteTradeAssetBalanceGqlResponse[];
+  paraBlockHeight: number;
+  relayBlockHeight: number;
+  blockId: string;
+};
+
+// routeId: String
+// allInvolvedAssetIds: [String!]!
+// participantSwappers: [String!]!
+// participantFillers: [String!]!
+// feeRecipients: [String!]!
+// swapIds: [String!]!
+// inputs: [RouteTradeAssetBalanceResponse!]!
+// outputs: [RouteTradeAssetBalanceResponse!]!
+//
+// paraBlockHeight: Int!
+// relayBlockHeight: Int!
+// blockId: String!

@@ -83,8 +83,8 @@ export async function handleQueryStableswapHistoricalVolumesByPeriod(
         };
 
         if (
-          group.start_entity.para_chain_block_height ===
-          group.end_entity.para_chain_block_height
+          group.start_entity.para_block_height ===
+          group.end_entity.para_block_height
         ) {
           resp.assetVolumes = group.start_entity_asset_volumes.map(
             (assetData) => ({

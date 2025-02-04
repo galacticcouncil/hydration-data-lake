@@ -7,15 +7,15 @@ CREATE FUNCTION public.notify_xykpool_volume ()
   AS $$
 BEGIN
   CASE TG_OP
-  WHEN 'INSERT' THEN
-    PERFORM
-      public.notify ('state_changed', 'created', 'xykpool_historical_volume', NEW.id); RETURN NEW;
-  WHEN 'UPDATE' THEN
-    PERFORM
-      public.notify ('state_changed', 'updated', 'xykpool_historical_volume', NEW.id); RETURN NEW;
-  WHEN 'DELETE' THEN
-    PERFORM
-      public.notify ('state_changed', 'deleted', 'xykpool_historical_volume', OLD.id); RETURN OLD;
+      WHEN 'INSERT' THEN
+        PERFORM
+          public.notify ('state_changed', 'created', 'xykpool_historical_volume', NEW.id); RETURN NEW;
+      WHEN 'UPDATE' THEN
+        PERFORM
+          public.notify ('state_changed', 'updated', 'xykpool_historical_volume', NEW.id); RETURN NEW;
+      WHEN 'DELETE' THEN
+        PERFORM
+          public.notify ('state_changed', 'deleted', 'xykpool_historical_volume', OLD.id); RETURN OLD;
   END CASE;
 END
 $$ VOLATILE
@@ -27,15 +27,15 @@ CREATE FUNCTION public.notify_omnipool_asset_volume ()
   AS $$
 BEGIN
   CASE TG_OP
-  WHEN 'INSERT' THEN
-    PERFORM
-      public.notify ('state_changed', 'created', 'omnipool_asset_historical_volume', NEW.id); RETURN NEW;
-  WHEN 'UPDATE' THEN
-    PERFORM
-      public.notify ('state_changed', 'updated', 'omnipool_asset_historical_volume', NEW.id); RETURN NEW;
-  WHEN 'DELETE' THEN
-    PERFORM
-      public.notify ('state_changed', 'deleted', 'omnipool_asset_historical_volume', OLD.id); RETURN OLD;
+      WHEN 'INSERT' THEN
+        PERFORM
+          public.notify ('state_changed', 'created', 'omnipool_asset_historical_volume', NEW.id); RETURN NEW;
+      WHEN 'UPDATE' THEN
+        PERFORM
+          public.notify ('state_changed', 'updated', 'omnipool_asset_historical_volume', NEW.id); RETURN NEW;
+      WHEN 'DELETE' THEN
+        PERFORM
+          public.notify ('state_changed', 'deleted', 'omnipool_asset_historical_volume', OLD.id); RETURN OLD;
   END CASE;
 END
 $$ VOLATILE
@@ -47,15 +47,15 @@ CREATE FUNCTION public.notify_stableswap_volume ()
   AS $$
 BEGIN
   CASE TG_OP
-  WHEN 'INSERT' THEN
-    PERFORM
-      public.notify ('state_changed', 'created', 'stableswap_historical_volume', NEW.id); RETURN NEW;
-  WHEN 'UPDATE' THEN
-    PERFORM
-      public.notify ('state_changed', 'updated', 'stableswap_historical_volume', NEW.id); RETURN NEW;
-  WHEN 'DELETE' THEN
-    PERFORM
-      public.notify ('state_changed', 'deleted', 'stableswap_historical_volume', OLD.id); RETURN OLD;
+      WHEN 'INSERT' THEN
+        PERFORM
+          public.notify ('state_changed', 'created', 'stableswap_historical_volume', NEW.id); RETURN NEW;
+      WHEN 'UPDATE' THEN
+        PERFORM
+          public.notify ('state_changed', 'updated', 'stableswap_historical_volume', NEW.id); RETURN NEW;
+      WHEN 'DELETE' THEN
+        PERFORM
+          public.notify ('state_changed', 'deleted', 'stableswap_historical_volume', OLD.id); RETURN OLD;
   END CASE;
 END
 $$ VOLATILE

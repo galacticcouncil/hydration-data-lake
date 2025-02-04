@@ -87,7 +87,7 @@ export async function handleQueryOmnipoolAssetHistoricalVolumesByPeriod(
         if (group.length === 1) return resp;
 
         if (
-          group[0].para_chain_block_height === group[1].para_chain_block_height
+          group[0].para_block_height === group[1].para_block_height
         ) {
           resp.assetVolume =
             BigInt(group[0].asset_volume_in) +

@@ -10,16 +10,16 @@ export const aggregateOmnipoolAssetsVolumesByBlocksRange = `
             asset_fee,
             asset_total_fees,
             asset_total_volume_out,
-            para_chain_block_height,
-            ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_chain_block_height ASC) AS rank
+            para_block_height,
+            ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_block_height ASC) AS rank
         FROM 
             omnipool_asset_historical_volume
         WHERE 
             omnipool_asset_id = ANY($1)
         AND 
-            para_chain_block_height >= $2
+            para_block_height >= $2
         AND 
-            para_chain_block_height <= $3
+            para_block_height <= $3
     ),
     omnipool_asset_end_block AS (
         SELECT 
@@ -32,16 +32,16 @@ export const aggregateOmnipoolAssetsVolumesByBlocksRange = `
             asset_fee,
             asset_total_fees,
             asset_total_volume_out,
-            para_chain_block_height,
-            ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_chain_block_height DESC) AS rank
+            para_block_height,
+            ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_block_height DESC) AS rank
         FROM 
             omnipool_asset_historical_volume
         WHERE 
             omnipool_asset_id = ANY($1)
         AND 
-            para_chain_block_height <= $3
+            para_block_height <= $3
         AND 
-            para_chain_block_height >= $2
+            para_block_height >= $2
     )
     SELECT 
         json_agg(ARRAY[start_entity, end_entity]) AS grouped_result

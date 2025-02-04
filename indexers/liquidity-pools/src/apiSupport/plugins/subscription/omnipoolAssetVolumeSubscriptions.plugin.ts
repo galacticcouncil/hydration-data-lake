@@ -20,7 +20,7 @@ function omnipoolAssetHistoricalVolumeSelectGraphQLResult({
   sqlBuilder: QueryBuilder;
 }) {
   sqlBuilder.where(
-    sql.fragment`${tableAlias}.id = ${sql.value(event.__node__[2])}`
+    sql.fragment`${tableAlias}.id = ${sql.value(event.__node__.node_id)}`
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.id`, 'id');
   sqlBuilder.select(
@@ -49,12 +49,12 @@ function omnipoolAssetHistoricalVolumeSelectGraphQLResult({
     'asset_total_fees'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.relay_chain_block_height`,
-    'relay_chain_block_height'
+    sql.fragment`${tableAlias}.relay_block_height`,
+    'relay_block_height'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.para_chain_block_height`,
-    'para_chain_block_height'
+    sql.fragment`${tableAlias}.para_block_height`,
+    'para_block_height'
   );
 }
 
@@ -77,7 +77,7 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
         return true;
 
       return new Set(args.filter.omnipoolAssetIds).has(
-        event.__node__[2].match(/^([a-zA-Z0-9]+-[0-9]+)-[0-9]+$/)[1]
+        event.__node__.node_id.match(/^([a-zA-Z0-9]+-[0-9]+)-[0-9]+$/)[1]
       );
     };
 
@@ -152,7 +152,7 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
                 relayBlockHeight: decoratedRow.relayBlockHeight,
                 paraBlockHeight: decoratedRow.paraBlockHeight,
               } as OmnipoolAssetHistoricalVolumeGqlResponse,
-              event: event.__node__[0],
+              event: event.__node__.event_name,
             };
           },
         },

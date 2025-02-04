@@ -20,7 +20,7 @@ function xykpoolHistoricalVolumeSelectGraphQLResult({
   sqlBuilder: QueryBuilder;
 }) {
   sqlBuilder.where(
-    sql.fragment`${tableAlias}.id = ${sql.value(event.__node__[2])}`
+    sql.fragment`${tableAlias}.id = ${sql.value(event.__node__.node_id)}`
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.id`, 'id');
   sqlBuilder.select(sql.fragment`${tableAlias}.pool_id`, 'pool_id');
@@ -70,12 +70,12 @@ function xykpoolHistoricalVolumeSelectGraphQLResult({
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.average_price`, 'average_price');
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.para_chain_block_height`,
-    'para_chain_block_height'
+    sql.fragment`${tableAlias}.para_block_height`,
+    'para_block_height'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.relay_chain_block_height`,
-    'relay_chain_block_height'
+    sql.fragment`${tableAlias}.relay_block_height`,
+    'relay_block_height'
   );
 }
 
@@ -97,7 +97,9 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
       )
         return true;
 
-      return new Set(args.filter.poolIds).has(event.__node__[2].split('-')[0]);
+      return new Set(args.filter.poolIds).has(
+        event.__node__.node_id.split('-')[0]
+      );
     };
 
     return {
@@ -189,7 +191,7 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
                 relayBlockHeight: decoratedRow.relayBlockHeight,
                 paraBlockHeight: decoratedRow.paraBlockHeight,
               } as XykpoolHistoricalVolumeGqlResponse,
-              event: event.__node__[0],
+              event: event.__node__.event_name,
             };
           },
         },
