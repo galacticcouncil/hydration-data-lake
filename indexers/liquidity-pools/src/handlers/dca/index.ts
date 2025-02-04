@@ -77,6 +77,7 @@ export async function saveDcaEntities(ctx: SqdProcessorContext<Store>) {
   await ctx.store.save([
     ...ctx.batchState.state.dcaScheduleExecutionEvents.values(),
   ]);
+  await ctx.store.save([...ctx.batchState.state.swaps.values()]);
 }
 
 async function prefetchEntities(
@@ -158,7 +159,11 @@ async function prefetchEntities(
         schedule: {
           owner: true,
         },
-        events: true,
+        events: {
+          scheduleExecution: true,
+          swaps: true,
+          event: true,
+        },
       },
     }
   );

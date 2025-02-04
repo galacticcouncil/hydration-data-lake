@@ -42,9 +42,6 @@ export class OtcOrderEvent {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   fee!: bigint | undefined | null
 
-  @Column_("int4", {nullable: false})
-  eventIndex!: number
-
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})
   filler!: Account | undefined | null

@@ -1,5 +1,5 @@
-module.exports = class Data1738337194017 {
-    name = 'Data1738337194017'
+module.exports = class Data1738679770018 {
+    name = 'Data1738679770018'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -140,7 +140,7 @@ module.exports = class Data1738337194017 {
         await db.query(`CREATE INDEX "IDX_7329c1f404d46516062d62a6ea" ON "otc_order" ("status") `)
         await db.query(`CREATE INDEX "IDX_a43414db0dc3af4e401ab32aa5" ON "otc_order" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_3cd6d4024f40ac8c356542bdd2" ON "otc_order" ("block_id") `)
-        await db.query(`CREATE TABLE "otc_order_event" ("id" character varying NOT NULL, "operation_id" text, "trace_ids" text array, "event_name" character varying(15), "amount_in" numeric, "amount_out" numeric, "fee" numeric, "event_index" integer NOT NULL, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "order_id" character varying, "filler_id" character varying, "swap_id" character varying, "event_id" character varying, CONSTRAINT "PK_2d73db3b0c38a924be9e0320ed3" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "otc_order_event" ("id" character varying NOT NULL, "operation_id" text, "trace_ids" text array, "event_name" character varying(15), "amount_in" numeric, "amount_out" numeric, "fee" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "order_id" character varying, "filler_id" character varying, "swap_id" character varying, "event_id" character varying, CONSTRAINT "PK_2d73db3b0c38a924be9e0320ed3" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_fc8247eb6cde837e43a7859aaa" ON "otc_order_event" ("operation_id") `)
         await db.query(`CREATE INDEX "IDX_09c0199552c2cecc73771aee4a" ON "otc_order_event" ("order_id") `)
         await db.query(`CREATE INDEX "IDX_fb73f16252101cfd709f5caf9a" ON "otc_order_event" ("event_name") `)

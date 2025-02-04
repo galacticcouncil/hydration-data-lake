@@ -683,7 +683,7 @@ type OmnipoolAssetHistoricalData @entity {
   omnipoolAsset: OmnipoolAsset!
   asset: Asset!
 
-  #>>>check for assetTradebility
+  #>>>check for assetTradability
 
   assetCap: BigInt!
   assetShares: BigInt!
@@ -979,7 +979,6 @@ type OtcOrderEvent @entity {
   amountIn: BigInt
   amountOut: BigInt
   fee: BigInt
-  eventIndex: Int!
 
   filler: Account
   swap: Swap

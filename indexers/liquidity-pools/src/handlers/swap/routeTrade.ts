@@ -45,14 +45,22 @@ export function processRouteTradeHop({
 
   if (
     swap.operationId &&
-    OperationStackManager.containsExecutionType(
+    (OperationStackManager.containsExecutionType(
       swap.operationId,
       SwappedExecutionTypeKind.Router
-    )
+    ) ||
+      OperationStackManager.containsExecutionType(
+        swap.operationId,
+        SwappedExecutionTypeKind.Omnipool
+      ))
   ) {
-    routeId = OperationStackManager.getRouterIncrementalIdFromOperationId(
-      swap.operationId
-    );
+    routeId =
+      OperationStackManager.getRouterIncrementalIdFromOperationId(
+        swap.operationId
+      ) ||
+      OperationStackManager.getOminpoolIncrementalIdFromOperationId(
+        swap.operationId
+      );
 
     if (routeId)
       routeTradeEntity = getRouteTradeFromCache({

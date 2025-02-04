@@ -3,13 +3,14 @@ import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../utils/helpers';
-import { handleOtcOrderCancelled, handleOtcOrderPlaced } from './otcOrder';
-import {
-  handleOtcOrderFilled,
-  handleOtcOrderPartiallyFilled,
-} from './otcOrderAction';
 import { OtcOrder, OtcOrderEvent } from '../../model';
 import { In } from 'typeorm';
+import {
+  handleOtcOrderCancelled,
+  handleOtcOrderFilled,
+  handleOtcOrderPartiallyFilled,
+  handleOtcOrderPlaced,
+} from './otcOrderEvents';
 
 export async function handleOtcOrders(
   ctx: SqdProcessorContext<Store>,
@@ -76,7 +77,13 @@ async function prefetchEntities(
       owner: true,
       assetIn: true,
       assetOut: true,
-      events: true,
+      block: true,
+      events: {
+        filler: true,
+        order: true,
+        swap: true,
+        event: true,
+      },
     },
   });
 

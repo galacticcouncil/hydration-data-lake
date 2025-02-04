@@ -1,21 +1,12 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
-  ChainActivityTraceRelation,
   DcaSchedule,
   DcaScheduleEvent,
   DcaScheduleStatus,
-  DcaScheduleExecution,
-  DcaScheduleExecutionEvent,
-  DcaScheduleExecutionStatus,
   DispatchError,
-  Swap,
 } from '../../model';
 import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
-import { getDcaSchedule } from './dcaSchedule';
-import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import { SwappedExecutionTypeKind } from '../../utils/types';
-import { Entity } from '@subsquid/typeorm-store/src/store';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
 export async function getDcaScheduleEvent({

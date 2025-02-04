@@ -60,6 +60,18 @@ export class OperationStackManager {
 
     return null;
   }
+  static getOminpoolIncrementalIdFromOperationId(
+    operationId: string
+  ): string | null {
+    const parsedSegments = operationId.split('/');
+    for (const segment of parsedSegments) {
+      const segmentParts = segment.split(':');
+      if (segmentParts[0] === SwappedExecutionTypeKind.Omnipool)
+        return segmentParts[1];
+    }
+
+    return null;
+  }
 
   // TODO should be refactored
   //

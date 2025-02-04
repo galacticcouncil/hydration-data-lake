@@ -282,7 +282,7 @@ export async function handleSwap({
   let routeTrade: RouteTrade | null = null;
 
   if (
-    !isUnifiedEventsSupportSpecVersion(
+    isUnifiedEventsSupportSpecVersion(
       blockHeader.specVersion,
       ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
     )

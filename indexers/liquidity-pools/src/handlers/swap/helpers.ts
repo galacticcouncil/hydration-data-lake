@@ -20,7 +20,6 @@ import {
 import { handleAssetVolumeUpdates } from '../assets/volume';
 import { getOrCreateXykPool } from '../pools/xykPool/xykPool';
 import { handleStablepoolVolumeUpdates } from '../volumes/stablepoolVolume';
-import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { SwapFillerContextDetails } from '../../utils/types';
 
 export async function getFillerContextData(
@@ -242,54 +241,54 @@ export async function supportSwappedEventPostHook({
       break;
     }
     case SwapFillerType.OTC: {
-      if (
-        !ctx.batchState.state.swapFillerContexts.has(swap.id) ||
-        !ctx.batchState.state.swapFillerContexts.get(swap.id)?.otcOrderId
-      )
-        return;
-
-      const createOrderAction = await ctx.store.findOne(OtcOrderEvent, {
-        where: {
-          eventName: OtcOrderStatus.Created,
-          order: {
-            id: ctx.batchState.state.swapFillerContexts.get(swap.id)!
-              .otcOrderId,
-          },
-        },
-      });
-
-      if (!createOrderAction || !createOrderAction.traceIds) return;
-
-      const rootChainActivityTrace =
-        await ChainActivityTraceManager.getChainActivityTraceByTraceIdsBatch({
-          ids: createOrderAction.traceIds,
-          ctx,
-        });
-
-      if (
-        !rootChainActivityTrace ||
-        !chainActivityTrace ||
-        rootChainActivityTrace.id === chainActivityTrace.id
-      )
-        return;
-
-      const newChainActivityTraceRelation = new ChainActivityTraceRelation({
-        id: `${rootChainActivityTrace.id}-${chainActivityTrace.id}`,
-        childTrace: chainActivityTrace,
-        parentTrace: rootChainActivityTrace,
-        paraBlockHeight: eventCallData.eventData.metadata.blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          eventCallData.eventData.metadata.blockHeader.height
-        ).height,
-        block: ctx.batchState.state.batchBlocks.get(
-          eventCallData.eventData.metadata.blockHeader.id
-        ),
-      });
-
-      ctx.batchState.state.chainActivityTraceRelations.set(
-        newChainActivityTraceRelation.id,
-        newChainActivityTraceRelation
-      );
+      // if (
+      //   !ctx.batchState.state.swapFillerContexts.has(swap.id) ||
+      //   !ctx.batchState.state.swapFillerContexts.get(swap.id)?.otcOrderId
+      // )
+      //   return;
+      //
+      // const createOrderEvent = (
+      //   (await getOtcOrderEvents({
+      //     orderId: ctx.batchState.state.swapFillerContexts.get(swap.id)!
+      //       .otcOrderId,
+      //     eventName: OtcOrderStatus.Created,
+      //     fetchFromDb: true,
+      //     ctx,
+      //   })) || []
+      // ).find((event) => event.eventName === OtcOrderStatus.Created);
+      //
+      // if (!createOrderEvent || !createOrderEvent.traceIds) return;
+      //
+      // const rootChainActivityTrace =
+      //   await ChainActivityTraceManager.getChainActivityTraceByTraceIdsBatch({
+      //     ids: createOrderEvent.traceIds,
+      //     ctx,
+      //   });
+      //
+      // if (
+      //   !rootChainActivityTrace ||
+      //   !chainActivityTrace ||
+      //   rootChainActivityTrace.id === chainActivityTrace.id
+      // )
+      //   return;
+      //
+      // const newChainActivityTraceRelation = new ChainActivityTraceRelation({
+      //   id: `${rootChainActivityTrace.id}-${chainActivityTrace.id}`,
+      //   childTrace: chainActivityTrace,
+      //   parentTrace: rootChainActivityTrace,
+      //   paraBlockHeight: eventCallData.eventData.metadata.blockHeader.height,
+      //   relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      //     eventCallData.eventData.metadata.blockHeader.height
+      //   ).height,
+      //   block: ctx.batchState.state.batchBlocks.get(
+      //     eventCallData.eventData.metadata.blockHeader.id
+      //   ),
+      // });
+      //
+      // ctx.batchState.state.chainActivityTraceRelations.set(
+      //   newChainActivityTraceRelation.id,
+      //   newChainActivityTraceRelation
+      // );
       break;
     }
   }
