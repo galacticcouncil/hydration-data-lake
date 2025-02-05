@@ -82,9 +82,6 @@ export async function getOtcOrderEvents({
       (act) => act.id === id
     );
   } else if (orderId && eventName) {
-    // console.dir(batchState.otcOrders, { depth: null });
-    // console.dir(batchState.otcOrderEvents, { depth: null });
-
     events = [...batchState.otcOrderEvents.values()].filter(
       (event) => event.order.id === orderId && event.eventName === eventName
     );
@@ -131,6 +128,12 @@ export async function processChainActivityTracesRelationshipsOnOtcOrderEvent({
       eventName: OtcOrderStatus.Created,
       fetchFromDb: true,
       ctx,
+      relations: {
+        filler: true,
+        order: true,
+        swap: true,
+        event: true,
+      },
     })) || []
   ).find((event) => event.eventName === OtcOrderStatus.Created);
 
