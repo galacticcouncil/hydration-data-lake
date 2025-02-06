@@ -10,15 +10,15 @@ import { XykpoolsVolumePlugin } from './apiSupport/plugins/query/xykPoolsVolume.
 import PgPubsub from '@graphile/pg-pubsub';
 import TypeOverrides from 'pg/lib/type-overrides';
 import { runMigrations } from './apiSupport/apiMigrations/runMigrations';
-import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/xykPoolsVolumeSubscriptions.plugin';
+import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/xykPoolVolumeSubscriptions';
 import { getEnvPath } from './utils/helpers';
 import { OmnipoolAssetVolumePlugin } from './apiSupport/plugins/query/omnipoolVolume.plugin';
-import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/omnipoolAssetVolumeSubscriptions.plugin';
+import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/omnipoolAssetVolumeSubscriptions';
 import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswapVolume.plugin';
-import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stableswapVolumeSubscriptions.plugin';
+import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stableswapVolumeSubscriptions';
 import { NodeEnv } from './utils/types';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
-import { RoutedTradesSubscriptionsPlugin } from './apiSupport/plugins/subscription/routedTradesSubscriptions/routedTradesSubscriptions.plugin';
+import { RoutedTradesSubscriptionsPlugin } from './apiSupport/plugins/subscription/routedTradesSubscriptions';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
