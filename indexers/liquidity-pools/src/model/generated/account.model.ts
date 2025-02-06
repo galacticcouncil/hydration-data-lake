@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {AccountType} from "./_accountType"
 import {AccountAssetBalanceHistoricalData} from "./accountAssetBalanceHistoricalData.model"
+import {HistoricalAccountSwapFee} from "./historicalAccountSwapFee.model"
 import {Lbppool} from "./lbppool.model"
 import {Xykpool} from "./xykpool.model"
 import {Omnipool} from "./omnipool.model"
@@ -29,6 +30,9 @@ export class Account {
 
   @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
   assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]
+
+  @OneToMany_(() => HistoricalAccountSwapFee, e => e.account)
+  historicalAccountSwapFees!: HistoricalAccountSwapFee[]
 
   @Index_()
   @ManyToOne_(() => Lbppool, {nullable: true})

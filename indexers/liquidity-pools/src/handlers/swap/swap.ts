@@ -24,11 +24,13 @@ import {
 } from '../../parsers/types/events';
 import {
   getFillerContextData,
+  handleSwapFeeHistoricalData,
   supportSwappedEventPostHook,
   supportSwapperEventPreHook,
 } from './helpers';
 import { processRouteTradeHop } from './routedTrade';
 import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
+import { handleAccountAssetSwapFee } from '../accounts/historicalAccountSwapFee';
 
 export async function getSwap({
   ctx,
@@ -294,7 +296,17 @@ export async function handleSwap({
     });
 
   swap.routedTrade = routedTrade;
-  swap.swapIndex = swapIndex ?? (routedTrade ? routedTrade.swaps.length - 1 : 0);
+  swap.swapIndex =
+    swapIndex ?? (routedTrade ? routedTrade.swaps.length - 1 : 0);
+
+  for (const fee of swapFees.filter((fee) => !!fee.recipient))
+    await handleSwapFeeHistoricalData({
+      ctx,
+      feeAmount: fee.amount,
+      asset: fee.asset,
+      account: fee.recipient!,
+      block: swap.event.block,
+    });
 
   const state = ctx.batchState.state;
 

@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-paseo-pools
-slot: 306
+slot: 307
 description: Hydration Paseo pools indexer
 build:
 deploy:

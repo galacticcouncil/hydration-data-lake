@@ -526,6 +526,114 @@ type Query {
     filter: ExtrinsicFilter
   ): ExtrinsicsConnection
 
+  """
+  Reads and enables pagination through a set of `HistoricalAccountAssetSwapFee`.
+  """
+  historicalAccountAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountAssetSwapFee`."""
+    orderBy: [HistoricalAccountAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountAssetSwapFeeFilter
+  ): HistoricalAccountAssetSwapFeesConnection
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountSwapFee`.
+  """
+  historicalAccountSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountSwapFee`."""
+    orderBy: [HistoricalAccountSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountSwapFeeFilter
+  ): HistoricalAccountSwapFeesConnection
+
+  """
+  Reads and enables pagination through a set of `HistoricalAssetSwapFee`.
+  """
+  historicalAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAssetSwapFee`."""
+    orderBy: [HistoricalAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAssetSwapFeeFilter
+  ): HistoricalAssetSwapFeesConnection
+
   """Reads and enables pagination through a set of `HistoricalAssetVolume`."""
   historicalAssetVolumes(
     """Only read the first `n` values of the set."""
@@ -1626,6 +1734,9 @@ type Query {
   dcaScheduleOrderRouteHop(id: String!): DcaScheduleOrderRouteHop
   event(id: String!): Event
   extrinsic(id: String!): Extrinsic
+  historicalAccountAssetSwapFee(id: String!): HistoricalAccountAssetSwapFee
+  historicalAccountSwapFee(id: String!): HistoricalAccountSwapFee
+  historicalAssetSwapFee(id: String!): HistoricalAssetSwapFee
   historicalAssetVolume(id: String!): HistoricalAssetVolume
   lbppool(id: String!): Lbppool
   lbppoolHistoricalDatum(id: String!): LbppoolHistoricalDatum
@@ -1751,6 +1862,78 @@ type Account {
     """
     filter: AccountAssetBalanceHistoricalDatumFilter
   ): AccountAssetBalanceHistoricalDataConnection!
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountAssetSwapFee`.
+  """
+  historicalAccountAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountAssetSwapFee`."""
+    orderBy: [HistoricalAccountAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountAssetSwapFeeFilter
+  ): HistoricalAccountAssetSwapFeesConnection!
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountSwapFee`.
+  """
+  historicalAccountSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountSwapFee`."""
+    orderBy: [HistoricalAccountSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountSwapFeeFilter
+  ): HistoricalAccountSwapFeesConnection!
 
   """
   Reads and enables pagination through a set of `LbppoolHistoricalDatum`.
@@ -2608,6 +2791,42 @@ type Asset {
     """
     filter: AccountAssetBalanceHistoricalDatumFilter
   ): AccountAssetBalanceHistoricalDataConnection!
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountAssetSwapFee`.
+  """
+  historicalAccountAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountAssetSwapFee`."""
+    orderBy: [HistoricalAccountAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountAssetSwapFeeFilter
+  ): HistoricalAccountAssetSwapFeesConnection!
 
   """
   Reads and enables pagination through a set of `LbppoolHistoricalPrice`.
@@ -3732,6 +3951,42 @@ type Asset {
   ): HistoricalAssetVolumesConnection!
 
   """
+  Reads and enables pagination through a set of `HistoricalAssetSwapFee`.
+  """
+  historicalAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAssetSwapFee`."""
+    orderBy: [HistoricalAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAssetSwapFeeFilter
+  ): HistoricalAssetSwapFeesConnection!
+
+  """
   Reads and enables pagination through a set of `StableswapAssetHistoricalVolume`.
   """
   stableswapAssetHistoricalVolumes(
@@ -4192,6 +4447,78 @@ type Block {
     """
     filter: AccountAssetBalanceHistoricalDatumFilter
   ): AccountAssetBalanceHistoricalDataConnection!
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountAssetSwapFee`.
+  """
+  historicalAccountAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountAssetSwapFee`."""
+    orderBy: [HistoricalAccountAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountAssetSwapFeeFilter
+  ): HistoricalAccountAssetSwapFeesConnection!
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountSwapFee`.
+  """
+  historicalAccountSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountSwapFee`."""
+    orderBy: [HistoricalAccountSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountSwapFeeFilter
+  ): HistoricalAccountSwapFeesConnection!
 
   """
   Reads and enables pagination through a set of `LbppoolHistoricalPrice`.
@@ -4822,6 +5149,42 @@ type Block {
     """
     filter: HistoricalAssetVolumeFilter
   ): HistoricalAssetVolumesConnection!
+
+  """
+  Reads and enables pagination through a set of `HistoricalAssetSwapFee`.
+  """
+  historicalAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAssetSwapFee`."""
+    orderBy: [HistoricalAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAssetSwapFeeFilter
+  ): HistoricalAssetSwapFeesConnection!
 
   """
   Reads and enables pagination through a set of `StableswapAssetHistoricalVolume`.
@@ -17607,6 +17970,262 @@ enum AccountsOrderBy {
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_ASSET_ID_DESC
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_ASC
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_COUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_COUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_COUNT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_COUNT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_DESC
   LBPPOOL_HISTORICAL_DATA_BY_OWNER_ID_COUNT_ASC
   LBPPOOL_HISTORICAL_DATA_BY_OWNER_ID_COUNT_DESC
   LBPPOOL_HISTORICAL_DATA_BY_OWNER_ID_SUM_ID_ASC
@@ -26285,6 +26904,1016 @@ input AccountAssetBalanceHistoricalDatumFilter {
 
   """Negates the expression."""
   not: AccountAssetBalanceHistoricalDatumFilter
+}
+
+"""A connection to a list of `HistoricalAccountAssetSwapFee` values."""
+type HistoricalAccountAssetSwapFeesConnection {
+  """A list of `HistoricalAccountAssetSwapFee` objects."""
+  nodes: [HistoricalAccountAssetSwapFee]!
+
+  """
+  A list of edges which contains the `HistoricalAccountAssetSwapFee` and cursor to aid in pagination.
+  """
+  edges: [HistoricalAccountAssetSwapFeesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `HistoricalAccountAssetSwapFee` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: HistoricalAccountAssetSwapFeeAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `HistoricalAccountAssetSwapFee` for these aggregates.
+    """
+    groupBy: [HistoricalAccountAssetSwapFeeGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: HistoricalAccountAssetSwapFeeHavingInput
+  ): [HistoricalAccountAssetSwapFeeAggregates!]
+}
+
+type HistoricalAccountAssetSwapFee {
+  id: String!
+  amount: BigFloat!
+  totalAmount: BigFloat!
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+  collectionId: String
+  accountId: String
+  assetId: String
+  blockId: String
+
+  """
+  Reads a single `HistoricalAccountSwapFee` that is related to this `HistoricalAccountAssetSwapFee`.
+  """
+  collection: HistoricalAccountSwapFee
+
+  """
+  Reads a single `Account` that is related to this `HistoricalAccountAssetSwapFee`.
+  """
+  account: Account
+
+  """
+  Reads a single `Asset` that is related to this `HistoricalAccountAssetSwapFee`.
+  """
+  asset: Asset
+
+  """
+  Reads a single `Block` that is related to this `HistoricalAccountAssetSwapFee`.
+  """
+  block: Block
+}
+
+type HistoricalAccountSwapFee {
+  id: String!
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+  accountId: String
+  blockId: String
+
+  """
+  Reads a single `Account` that is related to this `HistoricalAccountSwapFee`.
+  """
+  account: Account
+
+  """
+  Reads a single `Block` that is related to this `HistoricalAccountSwapFee`.
+  """
+  block: Block
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountAssetSwapFee`.
+  """
+  historicalAccountAssetSwapFeesByCollectionId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountAssetSwapFee`."""
+    orderBy: [HistoricalAccountAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountAssetSwapFeeFilter
+  ): HistoricalAccountAssetSwapFeesConnection!
+}
+
+"""Methods to use when ordering `HistoricalAccountAssetSwapFee`."""
+enum HistoricalAccountAssetSwapFeesOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  AMOUNT_ASC
+  AMOUNT_DESC
+  TOTAL_AMOUNT_ASC
+  TOTAL_AMOUNT_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  RELAY_BLOCK_HEIGHT_ASC
+  RELAY_BLOCK_HEIGHT_DESC
+  COLLECTION_ID_ASC
+  COLLECTION_ID_DESC
+  ACCOUNT_ID_ASC
+  ACCOUNT_ID_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  BLOCK_ID_ASC
+  BLOCK_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `HistoricalAccountAssetSwapFee` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input HistoricalAccountAssetSwapFeeCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `amount` field."""
+  amount: BigFloat
+
+  """Checks for equality with the object’s `totalAmount` field."""
+  totalAmount: BigFloat
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+
+  """Checks for equality with the object’s `relayBlockHeight` field."""
+  relayBlockHeight: Int
+
+  """Checks for equality with the object’s `collectionId` field."""
+  collectionId: String
+
+  """Checks for equality with the object’s `accountId` field."""
+  accountId: String
+
+  """Checks for equality with the object’s `assetId` field."""
+  assetId: String
+
+  """Checks for equality with the object’s `blockId` field."""
+  blockId: String
+}
+
+"""
+A filter to be used against `HistoricalAccountAssetSwapFee` object types. All fields are combined with a logical ‘and.’
+"""
+input HistoricalAccountAssetSwapFeeFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `amount` field."""
+  amount: BigFloatFilter
+
+  """Filter by the object’s `totalAmount` field."""
+  totalAmount: BigFloatFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Filter by the object’s `relayBlockHeight` field."""
+  relayBlockHeight: IntFilter
+
+  """Filter by the object’s `collectionId` field."""
+  collectionId: StringFilter
+
+  """Filter by the object’s `accountId` field."""
+  accountId: StringFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: StringFilter
+
+  """Filter by the object’s `blockId` field."""
+  blockId: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [HistoricalAccountAssetSwapFeeFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [HistoricalAccountAssetSwapFeeFilter!]
+
+  """Negates the expression."""
+  not: HistoricalAccountAssetSwapFeeFilter
+}
+
+"""A `HistoricalAccountAssetSwapFee` edge in the connection."""
+type HistoricalAccountAssetSwapFeesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `HistoricalAccountAssetSwapFee` at the end of the edge."""
+  node: HistoricalAccountAssetSwapFee
+}
+
+type HistoricalAccountAssetSwapFeeAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: HistoricalAccountAssetSwapFeeSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: HistoricalAccountAssetSwapFeeDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: HistoricalAccountAssetSwapFeeMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: HistoricalAccountAssetSwapFeeMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: HistoricalAccountAssetSwapFeeAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: HistoricalAccountAssetSwapFeeStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: HistoricalAccountAssetSwapFeeStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: HistoricalAccountAssetSwapFeeVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: HistoricalAccountAssetSwapFeeVariancePopulationAggregates
+}
+
+type HistoricalAccountAssetSwapFeeSumAggregates {
+  """Sum of amount across the matching connection"""
+  amount: BigFloat!
+
+  """Sum of totalAmount across the matching connection"""
+  totalAmount: BigFloat!
+
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+
+  """Sum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigInt!
+}
+
+type HistoricalAccountAssetSwapFeeDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of amount across the matching connection"""
+  amount: BigInt
+
+  """Distinct count of totalAmount across the matching connection"""
+  totalAmount: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+
+  """Distinct count of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigInt
+
+  """Distinct count of collectionId across the matching connection"""
+  collectionId: BigInt
+
+  """Distinct count of accountId across the matching connection"""
+  accountId: BigInt
+
+  """Distinct count of assetId across the matching connection"""
+  assetId: BigInt
+
+  """Distinct count of blockId across the matching connection"""
+  blockId: BigInt
+}
+
+type HistoricalAccountAssetSwapFeeMinAggregates {
+  """Minimum of amount across the matching connection"""
+  amount: BigFloat
+
+  """Minimum of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+
+  """Minimum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: Int
+}
+
+type HistoricalAccountAssetSwapFeeMaxAggregates {
+  """Maximum of amount across the matching connection"""
+  amount: BigFloat
+
+  """Maximum of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+
+  """Maximum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: Int
+}
+
+type HistoricalAccountAssetSwapFeeAverageAggregates {
+  """Mean average of amount across the matching connection"""
+  amount: BigFloat
+
+  """Mean average of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Mean average of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAccountAssetSwapFeeStddevSampleAggregates {
+  """Sample standard deviation of amount across the matching connection"""
+  amount: BigFloat
+
+  """
+  Sample standard deviation of totalAmount across the matching connection
+  """
+  totalAmount: BigFloat
+
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayBlockHeight across the matching connection
+  """
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAccountAssetSwapFeeStddevPopulationAggregates {
+  """Population standard deviation of amount across the matching connection"""
+  amount: BigFloat
+
+  """
+  Population standard deviation of totalAmount across the matching connection
+  """
+  totalAmount: BigFloat
+
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayBlockHeight across the matching connection
+  """
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAccountAssetSwapFeeVarianceSampleAggregates {
+  """Sample variance of amount across the matching connection"""
+  amount: BigFloat
+
+  """Sample variance of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Sample variance of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAccountAssetSwapFeeVariancePopulationAggregates {
+  """Population variance of amount across the matching connection"""
+  amount: BigFloat
+
+  """Population variance of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Population variance of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `HistoricalAccountAssetSwapFee` for usage during aggregation.
+"""
+enum HistoricalAccountAssetSwapFeeGroupBy {
+  AMOUNT
+  TOTAL_AMOUNT
+  PARA_BLOCK_HEIGHT
+  RELAY_BLOCK_HEIGHT
+  COLLECTION_ID
+  ACCOUNT_ID
+  ASSET_ID
+  BLOCK_ID
+}
+
+"""Conditions for `HistoricalAccountAssetSwapFee` aggregates."""
+input HistoricalAccountAssetSwapFeeHavingInput {
+  AND: [HistoricalAccountAssetSwapFeeHavingInput!]
+  OR: [HistoricalAccountAssetSwapFeeHavingInput!]
+  sum: HistoricalAccountAssetSwapFeeHavingSumInput
+  distinctCount: HistoricalAccountAssetSwapFeeHavingDistinctCountInput
+  min: HistoricalAccountAssetSwapFeeHavingMinInput
+  max: HistoricalAccountAssetSwapFeeHavingMaxInput
+  average: HistoricalAccountAssetSwapFeeHavingAverageInput
+  stddevSample: HistoricalAccountAssetSwapFeeHavingStddevSampleInput
+  stddevPopulation: HistoricalAccountAssetSwapFeeHavingStddevPopulationInput
+  varianceSample: HistoricalAccountAssetSwapFeeHavingVarianceSampleInput
+  variancePopulation: HistoricalAccountAssetSwapFeeHavingVariancePopulationInput
+}
+
+input HistoricalAccountAssetSwapFeeHavingSumInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountAssetSwapFeeHavingDistinctCountInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountAssetSwapFeeHavingMinInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountAssetSwapFeeHavingMaxInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountAssetSwapFeeHavingAverageInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountAssetSwapFeeHavingStddevSampleInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountAssetSwapFeeHavingStddevPopulationInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountAssetSwapFeeHavingVarianceSampleInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountAssetSwapFeeHavingVariancePopulationInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+"""A connection to a list of `HistoricalAccountSwapFee` values."""
+type HistoricalAccountSwapFeesConnection {
+  """A list of `HistoricalAccountSwapFee` objects."""
+  nodes: [HistoricalAccountSwapFee]!
+
+  """
+  A list of edges which contains the `HistoricalAccountSwapFee` and cursor to aid in pagination.
+  """
+  edges: [HistoricalAccountSwapFeesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `HistoricalAccountSwapFee` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: HistoricalAccountSwapFeeAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `HistoricalAccountSwapFee` for these aggregates.
+    """
+    groupBy: [HistoricalAccountSwapFeeGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: HistoricalAccountSwapFeeHavingInput
+  ): [HistoricalAccountSwapFeeAggregates!]
+}
+
+"""A `HistoricalAccountSwapFee` edge in the connection."""
+type HistoricalAccountSwapFeesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `HistoricalAccountSwapFee` at the end of the edge."""
+  node: HistoricalAccountSwapFee
+}
+
+type HistoricalAccountSwapFeeAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: HistoricalAccountSwapFeeSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: HistoricalAccountSwapFeeDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: HistoricalAccountSwapFeeMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: HistoricalAccountSwapFeeMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: HistoricalAccountSwapFeeAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: HistoricalAccountSwapFeeStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: HistoricalAccountSwapFeeStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: HistoricalAccountSwapFeeVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: HistoricalAccountSwapFeeVariancePopulationAggregates
+}
+
+type HistoricalAccountSwapFeeSumAggregates {
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+
+  """Sum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigInt!
+}
+
+type HistoricalAccountSwapFeeDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+
+  """Distinct count of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigInt
+
+  """Distinct count of accountId across the matching connection"""
+  accountId: BigInt
+
+  """Distinct count of blockId across the matching connection"""
+  blockId: BigInt
+}
+
+type HistoricalAccountSwapFeeMinAggregates {
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+
+  """Minimum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: Int
+}
+
+type HistoricalAccountSwapFeeMaxAggregates {
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+
+  """Maximum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: Int
+}
+
+type HistoricalAccountSwapFeeAverageAggregates {
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Mean average of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAccountSwapFeeStddevSampleAggregates {
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayBlockHeight across the matching connection
+  """
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAccountSwapFeeStddevPopulationAggregates {
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayBlockHeight across the matching connection
+  """
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAccountSwapFeeVarianceSampleAggregates {
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Sample variance of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAccountSwapFeeVariancePopulationAggregates {
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Population variance of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `HistoricalAccountSwapFee` for usage during aggregation.
+"""
+enum HistoricalAccountSwapFeeGroupBy {
+  PARA_BLOCK_HEIGHT
+  RELAY_BLOCK_HEIGHT
+  ACCOUNT_ID
+  BLOCK_ID
+}
+
+"""Conditions for `HistoricalAccountSwapFee` aggregates."""
+input HistoricalAccountSwapFeeHavingInput {
+  AND: [HistoricalAccountSwapFeeHavingInput!]
+  OR: [HistoricalAccountSwapFeeHavingInput!]
+  sum: HistoricalAccountSwapFeeHavingSumInput
+  distinctCount: HistoricalAccountSwapFeeHavingDistinctCountInput
+  min: HistoricalAccountSwapFeeHavingMinInput
+  max: HistoricalAccountSwapFeeHavingMaxInput
+  average: HistoricalAccountSwapFeeHavingAverageInput
+  stddevSample: HistoricalAccountSwapFeeHavingStddevSampleInput
+  stddevPopulation: HistoricalAccountSwapFeeHavingStddevPopulationInput
+  varianceSample: HistoricalAccountSwapFeeHavingVarianceSampleInput
+  variancePopulation: HistoricalAccountSwapFeeHavingVariancePopulationInput
+}
+
+input HistoricalAccountSwapFeeHavingSumInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountSwapFeeHavingDistinctCountInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountSwapFeeHavingMinInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountSwapFeeHavingMaxInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountSwapFeeHavingAverageInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountSwapFeeHavingStddevSampleInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountSwapFeeHavingStddevPopulationInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountSwapFeeHavingVarianceSampleInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAccountSwapFeeHavingVariancePopulationInput {
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `HistoricalAccountSwapFee`."""
+enum HistoricalAccountSwapFeesOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  RELAY_BLOCK_HEIGHT_ASC
+  RELAY_BLOCK_HEIGHT_DESC
+  ACCOUNT_ID_ASC
+  ACCOUNT_ID_DESC
+  BLOCK_ID_ASC
+  BLOCK_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_COUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_COUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_SUM_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_DISTINCT_COUNT_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MIN_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_MAX_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_AVERAGE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_STDDEV_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_BY_COLLECTION_ID_VARIANCE_POPULATION_BLOCK_ID_DESC
+}
+
+"""
+A condition to be used against `HistoricalAccountSwapFee` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input HistoricalAccountSwapFeeCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+
+  """Checks for equality with the object’s `relayBlockHeight` field."""
+  relayBlockHeight: Int
+
+  """Checks for equality with the object’s `accountId` field."""
+  accountId: String
+
+  """Checks for equality with the object’s `blockId` field."""
+  blockId: String
+}
+
+"""
+A filter to be used against `HistoricalAccountSwapFee` object types. All fields are combined with a logical ‘and.’
+"""
+input HistoricalAccountSwapFeeFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Filter by the object’s `relayBlockHeight` field."""
+  relayBlockHeight: IntFilter
+
+  """Filter by the object’s `accountId` field."""
+  accountId: StringFilter
+
+  """Filter by the object’s `blockId` field."""
+  blockId: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [HistoricalAccountSwapFeeFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [HistoricalAccountSwapFeeFilter!]
+
+  """Negates the expression."""
+  not: HistoricalAccountSwapFeeFilter
 }
 
 """A connection to a list of `LbppoolHistoricalPrice` values."""
@@ -41068,6 +42697,441 @@ input HistoricalAssetVolumeFilter {
   not: HistoricalAssetVolumeFilter
 }
 
+"""A connection to a list of `HistoricalAssetSwapFee` values."""
+type HistoricalAssetSwapFeesConnection {
+  """A list of `HistoricalAssetSwapFee` objects."""
+  nodes: [HistoricalAssetSwapFee]!
+
+  """
+  A list of edges which contains the `HistoricalAssetSwapFee` and cursor to aid in pagination.
+  """
+  edges: [HistoricalAssetSwapFeesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `HistoricalAssetSwapFee` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: HistoricalAssetSwapFeeAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `HistoricalAssetSwapFee` for these aggregates.
+    """
+    groupBy: [HistoricalAssetSwapFeeGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: HistoricalAssetSwapFeeHavingInput
+  ): [HistoricalAssetSwapFeeAggregates!]
+}
+
+type HistoricalAssetSwapFee {
+  id: String!
+  amount: BigFloat!
+  totalAmount: BigFloat!
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+  assetId: String
+  blockId: String
+
+  """
+  Reads a single `Asset` that is related to this `HistoricalAssetSwapFee`.
+  """
+  asset: Asset
+
+  """
+  Reads a single `Block` that is related to this `HistoricalAssetSwapFee`.
+  """
+  block: Block
+}
+
+"""A `HistoricalAssetSwapFee` edge in the connection."""
+type HistoricalAssetSwapFeesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `HistoricalAssetSwapFee` at the end of the edge."""
+  node: HistoricalAssetSwapFee
+}
+
+type HistoricalAssetSwapFeeAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: HistoricalAssetSwapFeeSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: HistoricalAssetSwapFeeDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: HistoricalAssetSwapFeeMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: HistoricalAssetSwapFeeMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: HistoricalAssetSwapFeeAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: HistoricalAssetSwapFeeStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: HistoricalAssetSwapFeeStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: HistoricalAssetSwapFeeVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: HistoricalAssetSwapFeeVariancePopulationAggregates
+}
+
+type HistoricalAssetSwapFeeSumAggregates {
+  """Sum of amount across the matching connection"""
+  amount: BigFloat!
+
+  """Sum of totalAmount across the matching connection"""
+  totalAmount: BigFloat!
+
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+
+  """Sum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigInt!
+}
+
+type HistoricalAssetSwapFeeDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of amount across the matching connection"""
+  amount: BigInt
+
+  """Distinct count of totalAmount across the matching connection"""
+  totalAmount: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+
+  """Distinct count of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigInt
+
+  """Distinct count of assetId across the matching connection"""
+  assetId: BigInt
+
+  """Distinct count of blockId across the matching connection"""
+  blockId: BigInt
+}
+
+type HistoricalAssetSwapFeeMinAggregates {
+  """Minimum of amount across the matching connection"""
+  amount: BigFloat
+
+  """Minimum of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+
+  """Minimum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: Int
+}
+
+type HistoricalAssetSwapFeeMaxAggregates {
+  """Maximum of amount across the matching connection"""
+  amount: BigFloat
+
+  """Maximum of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+
+  """Maximum of relayBlockHeight across the matching connection"""
+  relayBlockHeight: Int
+}
+
+type HistoricalAssetSwapFeeAverageAggregates {
+  """Mean average of amount across the matching connection"""
+  amount: BigFloat
+
+  """Mean average of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Mean average of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAssetSwapFeeStddevSampleAggregates {
+  """Sample standard deviation of amount across the matching connection"""
+  amount: BigFloat
+
+  """
+  Sample standard deviation of totalAmount across the matching connection
+  """
+  totalAmount: BigFloat
+
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayBlockHeight across the matching connection
+  """
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAssetSwapFeeStddevPopulationAggregates {
+  """Population standard deviation of amount across the matching connection"""
+  amount: BigFloat
+
+  """
+  Population standard deviation of totalAmount across the matching connection
+  """
+  totalAmount: BigFloat
+
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayBlockHeight across the matching connection
+  """
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAssetSwapFeeVarianceSampleAggregates {
+  """Sample variance of amount across the matching connection"""
+  amount: BigFloat
+
+  """Sample variance of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Sample variance of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+type HistoricalAssetSwapFeeVariancePopulationAggregates {
+  """Population variance of amount across the matching connection"""
+  amount: BigFloat
+
+  """Population variance of totalAmount across the matching connection"""
+  totalAmount: BigFloat
+
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+
+  """Population variance of relayBlockHeight across the matching connection"""
+  relayBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `HistoricalAssetSwapFee` for usage during aggregation.
+"""
+enum HistoricalAssetSwapFeeGroupBy {
+  AMOUNT
+  TOTAL_AMOUNT
+  PARA_BLOCK_HEIGHT
+  RELAY_BLOCK_HEIGHT
+  ASSET_ID
+  BLOCK_ID
+}
+
+"""Conditions for `HistoricalAssetSwapFee` aggregates."""
+input HistoricalAssetSwapFeeHavingInput {
+  AND: [HistoricalAssetSwapFeeHavingInput!]
+  OR: [HistoricalAssetSwapFeeHavingInput!]
+  sum: HistoricalAssetSwapFeeHavingSumInput
+  distinctCount: HistoricalAssetSwapFeeHavingDistinctCountInput
+  min: HistoricalAssetSwapFeeHavingMinInput
+  max: HistoricalAssetSwapFeeHavingMaxInput
+  average: HistoricalAssetSwapFeeHavingAverageInput
+  stddevSample: HistoricalAssetSwapFeeHavingStddevSampleInput
+  stddevPopulation: HistoricalAssetSwapFeeHavingStddevPopulationInput
+  varianceSample: HistoricalAssetSwapFeeHavingVarianceSampleInput
+  variancePopulation: HistoricalAssetSwapFeeHavingVariancePopulationInput
+}
+
+input HistoricalAssetSwapFeeHavingSumInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetSwapFeeHavingDistinctCountInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetSwapFeeHavingMinInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetSwapFeeHavingMaxInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetSwapFeeHavingAverageInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetSwapFeeHavingStddevSampleInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetSwapFeeHavingStddevPopulationInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetSwapFeeHavingVarianceSampleInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetSwapFeeHavingVariancePopulationInput {
+  amount: HavingBigfloatFilter
+  totalAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+  relayBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `HistoricalAssetSwapFee`."""
+enum HistoricalAssetSwapFeesOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  AMOUNT_ASC
+  AMOUNT_DESC
+  TOTAL_AMOUNT_ASC
+  TOTAL_AMOUNT_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  RELAY_BLOCK_HEIGHT_ASC
+  RELAY_BLOCK_HEIGHT_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  BLOCK_ID_ASC
+  BLOCK_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `HistoricalAssetSwapFee` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input HistoricalAssetSwapFeeCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `amount` field."""
+  amount: BigFloat
+
+  """Checks for equality with the object’s `totalAmount` field."""
+  totalAmount: BigFloat
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+
+  """Checks for equality with the object’s `relayBlockHeight` field."""
+  relayBlockHeight: Int
+
+  """Checks for equality with the object’s `assetId` field."""
+  assetId: String
+
+  """Checks for equality with the object’s `blockId` field."""
+  blockId: String
+}
+
+"""
+A filter to be used against `HistoricalAssetSwapFee` object types. All fields are combined with a logical ‘and.’
+"""
+input HistoricalAssetSwapFeeFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `amount` field."""
+  amount: BigFloatFilter
+
+  """Filter by the object’s `totalAmount` field."""
+  totalAmount: BigFloatFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Filter by the object’s `relayBlockHeight` field."""
+  relayBlockHeight: IntFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: StringFilter
+
+  """Filter by the object’s `blockId` field."""
+  blockId: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [HistoricalAssetSwapFeeFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [HistoricalAssetSwapFeeFilter!]
+
+  """Negates the expression."""
+  not: HistoricalAssetSwapFeeFilter
+}
+
 """A `AccountAssetBalanceHistoricalDatum` edge in the connection."""
 type AccountAssetBalanceHistoricalDataEdge {
   """A cursor for use in pagination."""
@@ -42279,6 +44343,170 @@ enum AssetsOrderBy {
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_ASSET_ID_DESC
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_ASC
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_COUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_COUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_DESC
   LBPPOOL_HISTORICAL_PRICES_BY_ASSET_AID_COUNT_ASC
   LBPPOOL_HISTORICAL_PRICES_BY_ASSET_AID_COUNT_DESC
   LBPPOOL_HISTORICAL_PRICES_BY_ASSET_AID_SUM_ID_ASC
@@ -49417,6 +51645,134 @@ enum AssetsOrderBy {
   HISTORICAL_ASSET_VOLUMES_VARIANCE_POPULATION_ASSET_ID_DESC
   HISTORICAL_ASSET_VOLUMES_VARIANCE_POPULATION_BLOCK_ID_ASC
   HISTORICAL_ASSET_VOLUMES_VARIANCE_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_COUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_COUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_DESC
   STABLESWAP_ASSET_HISTORICAL_VOLUMES_COUNT_ASC
   STABLESWAP_ASSET_HISTORICAL_VOLUMES_COUNT_DESC
   STABLESWAP_ASSET_HISTORICAL_VOLUMES_SUM_ID_ASC
@@ -51398,6 +53754,262 @@ enum BlocksOrderBy {
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_ASSET_ID_DESC
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_ASC
   ACCOUNT_ASSET_BALANCE_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_COUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_COUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_SUM_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MIN_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_MAX_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_COLLECTION_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_COLLECTION_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_COUNT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_COUNT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_SUM_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MIN_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_MAX_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_AVERAGE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_ACCOUNT_ID_DESC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ACCOUNT_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_DESC
   LBPPOOL_HISTORICAL_PRICES_COUNT_ASC
   LBPPOOL_HISTORICAL_PRICES_COUNT_DESC
   LBPPOOL_HISTORICAL_PRICES_SUM_ID_ASC
@@ -55106,6 +57718,134 @@ enum BlocksOrderBy {
   HISTORICAL_ASSET_VOLUMES_VARIANCE_POPULATION_ASSET_ID_DESC
   HISTORICAL_ASSET_VOLUMES_VARIANCE_POPULATION_BLOCK_ID_ASC
   HISTORICAL_ASSET_VOLUMES_VARIANCE_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_COUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_COUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_SUM_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_DISTINCT_COUNT_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MIN_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_MAX_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_AVERAGE_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_STDDEV_POPULATION_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_TOTAL_AMOUNT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_ASSET_ID_DESC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_ASC
+  HISTORICAL_ASSET_SWAP_FEES_VARIANCE_POPULATION_BLOCK_ID_DESC
   STABLESWAP_ASSET_HISTORICAL_VOLUMES_COUNT_ASC
   STABLESWAP_ASSET_HISTORICAL_VOLUMES_COUNT_DESC
   STABLESWAP_ASSET_HISTORICAL_VOLUMES_SUM_ID_ASC

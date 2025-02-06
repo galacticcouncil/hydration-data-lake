@@ -2,15 +2,14 @@ import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
 import {
+  Account,
+  Asset,
+  Block,
   ChainActivityTrace,
-  ChainActivityTraceRelation,
-  OtcOrderEvent,
-  OtcOrderStatus,
   Swap,
   SwapFillerType,
 } from '../../model';
 import { getOrCreateStableswap } from '../pools/stableswap/stablepool';
-import { BroadcastSwappedAssetAmount } from '../../parsers/types/events';
 import { getOrCreateLbppool } from '../pools/lbpPool/lbpPool';
 import {
   handleLbppoolVolumeUpdates,
@@ -21,6 +20,8 @@ import { handleAssetVolumeUpdates } from '../assets/volume';
 import { getOrCreateXykPool } from '../pools/xykPool/xykPool';
 import { handleStablepoolVolumeUpdates } from '../volumes/stablepoolVolume';
 import { SwapFillerContextDetails } from '../../utils/types';
+import { handleAccountAssetSwapFee } from '../accounts/historicalAccountSwapFee';
+import { handleAssetSwapFee } from '../assets/historicalAssetSwapFee';
 
 export async function getFillerContextData(
   ctx: SqdProcessorContext<Store>,
@@ -50,60 +51,6 @@ export async function getFillerContextData(
     }
   }
   return null;
-}
-
-export function getOmnipoolHubAmountOnSwap({
-  fillerType,
-  swapInputs,
-  swapOutputs,
-  ctx,
-}: {
-  fillerType: SwapFillerType;
-  swapInputs: BroadcastSwappedAssetAmount[];
-  swapOutputs: BroadcastSwappedAssetAmount[];
-  ctx: SqdProcessorContext<Store>;
-}): {
-  hubAmountIn: bigint | undefined;
-  hubAmountOut: bigint | undefined;
-} {
-  const result: {
-    hubAmountIn: bigint | undefined;
-    hubAmountOut: bigint | undefined;
-  } = {
-    hubAmountIn: undefined,
-    hubAmountOut: undefined,
-  };
-
-  if (fillerType !== SwapFillerType.Omnipool) return result;
-  const hubAssetSwapDetails: {
-    amount: bigint;
-    position: 'input' | 'output' | 'none';
-  } = {
-    amount: 0n,
-    position: 'none',
-  };
-
-  for (const input of swapInputs) {
-    if (input.assetId !== +ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID) continue;
-    hubAssetSwapDetails.amount = input.amount;
-    hubAssetSwapDetails.position = 'input';
-  }
-  for (const output of swapOutputs) {
-    if (output.assetId !== +ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID) continue;
-    hubAssetSwapDetails.amount = output.amount;
-    hubAssetSwapDetails.position = 'output';
-  }
-
-  switch (hubAssetSwapDetails.position) {
-    case 'output':
-      result.hubAmountIn = hubAssetSwapDetails.amount;
-      break;
-    case 'input':
-      result.hubAmountOut = hubAssetSwapDetails.amount;
-      break;
-  }
-
-  return result;
 }
 
 export async function supportSwapperEventPreHook(
@@ -240,56 +187,33 @@ export async function supportSwappedEventPostHook({
       });
       break;
     }
-    case SwapFillerType.OTC: {
-      // if (
-      //   !ctx.batchState.state.swapFillerContexts.has(swap.id) ||
-      //   !ctx.batchState.state.swapFillerContexts.get(swap.id)?.otcOrderId
-      // )
-      //   return;
-      //
-      // const createOrderEvent = (
-      //   (await getOtcOrderEvents({
-      //     orderId: ctx.batchState.state.swapFillerContexts.get(swap.id)!
-      //       .otcOrderId,
-      //     eventName: OtcOrderStatus.Created,
-      //     fetchFromDb: true,
-      //     ctx,
-      //   })) || []
-      // ).find((event) => event.eventName === OtcOrderStatus.Created);
-      //
-      // if (!createOrderEvent || !createOrderEvent.traceIds) return;
-      //
-      // const rootChainActivityTrace =
-      //   await ChainActivityTraceManager.getChainActivityTraceByTraceIdsBatch({
-      //     ids: createOrderEvent.traceIds,
-      //     ctx,
-      //   });
-      //
-      // if (
-      //   !rootChainActivityTrace ||
-      //   !chainActivityTrace ||
-      //   rootChainActivityTrace.id === chainActivityTrace.id
-      // )
-      //   return;
-      //
-      // const newChainActivityTraceRelation = new ChainActivityTraceRelation({
-      //   id: `${rootChainActivityTrace.id}-${chainActivityTrace.id}`,
-      //   childTrace: chainActivityTrace,
-      //   parentTrace: rootChainActivityTrace,
-      //   paraBlockHeight: eventCallData.eventData.metadata.blockHeader.height,
-      //   relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      //     eventCallData.eventData.metadata.blockHeader.height
-      //   ).height,
-      //   block: ctx.batchState.state.batchBlocks.get(
-      //     eventCallData.eventData.metadata.blockHeader.id
-      //   ),
-      // });
-      //
-      // ctx.batchState.state.chainActivityTraceRelations.set(
-      //   newChainActivityTraceRelation.id,
-      //   newChainActivityTraceRelation
-      // );
-      break;
-    }
   }
+}
+export async function handleSwapFeeHistoricalData({
+  ctx,
+  feeAmount,
+  asset,
+  account,
+  block,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  block: Block;
+  account: Account;
+  asset: Asset;
+  feeAmount: bigint;
+}) {
+  await handleAccountAssetSwapFee({
+    ctx,
+    feeAmount,
+    asset,
+    account,
+    block,
+  });
+
+  await handleAssetSwapFee({
+    ctx,
+    feeAmount,
+    asset,
+    block,
+  });
 }

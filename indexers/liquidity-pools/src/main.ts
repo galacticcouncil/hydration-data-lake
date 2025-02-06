@@ -32,6 +32,7 @@ import { handleOtcOrders } from './handlers/otc';
 import { handleSupportSwappedEvents } from './handlers/swap';
 import { handleStablepoolLiquidityEvents } from './handlers/pools/stableswap/liquidity';
 import { handleRelayChainBlocks } from './handlers/relayChain';
+import { HistoricalDataManager } from './handlers/historicalData';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -208,6 +209,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   console.time('saveAllBatchAccounts');
   await saveAllBatchAccounts(ctxWithBatchState as SqdProcessorContext<Store>);
   console.timeEnd('saveAllBatchAccounts');
+
+  console.time('saveHistoricalDataBulk');
+  await HistoricalDataManager.saveHistoricalDataBulk(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
+  console.timeEnd('saveHistoricalDataBulk');
 
   console.time('saveActivityTraceEntities');
   await ChainActivityTraceManager.saveActivityTraceEntities(

@@ -57,6 +57,18 @@ type HistoricalAssetVolume @entity {
   block: Block!
 }
 
+type HistoricalAssetSwapFee @entity {
+  "<assetId>-<paraBlockHeight>"
+  id: ID!
+  asset: Asset!
+  amount: BigInt!
+  totalAmount: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
 # ======================================================================================================================
 # *** Account ***
 # ======================================================================================================================
@@ -98,6 +110,9 @@ type Account @entity {
   assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
     @derivedFrom(field: "account")
 
+  historicalAccountSwapFees: [HistoricalAccountSwapFee]
+    @derivedFrom(field: "account")
+
   lbppool: Lbppool
   xykpool: Xykpool
   omnipool: Omnipool
@@ -117,6 +132,32 @@ type Account @entity {
   otcOrders: [OtcOrder!] @derivedFrom(field: "owner")
 
   # TODO: add proxy and multisig tracking
+}
+
+type HistoricalAccountAssetSwapFee @entity {
+  "<historicalAccountSwapFeeId>-<paraBlockHeight>"
+  id: ID!
+  collection: HistoricalAccountSwapFee!
+  account: Account!
+  asset: Asset!
+
+  amount: BigInt!
+  totalAmount: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type HistoricalAccountSwapFee @entity {
+  "<address>-<paraBlockHeight>"
+  id: ID!
+  account: Account!
+  fees: [HistoricalAccountAssetSwapFee!]! @derivedFrom(field: "collection")
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
 }
 
 # ======================================================================================================================

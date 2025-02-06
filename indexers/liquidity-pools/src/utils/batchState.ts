@@ -42,6 +42,9 @@ import {
   DcaScheduleEvent,
   RoutedTrade,
   RoutedTradeAssetBalance,
+  HistoricalAccountSwapFee,
+  HistoricalAccountAssetSwapFee,
+  HistoricalAssetSwapFee,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -134,6 +137,10 @@ export type BatchStatePayload = {
 
   otcOrders: Map<string, OtcOrder>;
   otcOrderEvents: Map<string, OtcOrderEvent>;
+
+  historicalAssetSwapFees: Map<string, HistoricalAssetSwapFee>;
+  historicalAccountSwapFees: Map<string, HistoricalAccountSwapFee>;
+  historicalAccountAssetSwapFees: Map<string, HistoricalAccountAssetSwapFee>;
 };
 
 export class BatchState {
@@ -206,6 +213,10 @@ export class BatchState {
 
     otcOrders: new Map(),
     otcOrderEvents: new Map(),
+
+    historicalAssetSwapFees: new Map(),
+    historicalAccountSwapFees: new Map(),
+    historicalAccountAssetSwapFees: new Map(),
   };
 
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {
