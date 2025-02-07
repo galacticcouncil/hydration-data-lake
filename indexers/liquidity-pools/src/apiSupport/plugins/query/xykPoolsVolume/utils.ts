@@ -1,48 +1,22 @@
-import { gql, makeExtendSchemaPlugin, Plugin, embed } from 'postgraphile';
 import type * as pg from 'pg';
 import {
   aggregateXykPoolVolumesByBlocksRange,
   getAssetIdsByPoolIds,
-} from '../sql/xykPoolsVolume.sql';
-import { QueryResolverContext, XykpoolHistoricalVolumeRaw } from '../../types';
-import { GraphQLResolveInfo } from 'graphql/type/definition';
-import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
+} from '../../sql/xykPoolsVolume.sql';
+import { XykpoolHistoricalVolumeRaw } from '../../../types';
+import { XykPoolVolumeAggregated } from './resolvers/xykPoolHistoricalVolumesByPeriod.resolver';
 
-type XykPoolVolumesByPeriodFilter = {
+export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
+  poolIds,
+  startBlockNumber,
+  endBlockNumber,
+  pgClient,
+}: {
   poolIds: string[];
   startBlockNumber: number;
   endBlockNumber?: number;
-};
-
-type XykPoolVolumeAggregated = {
-  poolId: string;
-  assetAId: number;
-  assetAVolume: bigint;
-  assetBId: number;
-  assetBVolume: bigint;
-};
-
-type XykPoolVolumesByPeriodResponse = {
-  nodes: XykPoolVolumeAggregated[];
-  totalCount: number;
-};
-
-export async function handleQueryXykPoolHistoricalVolumesByPeriod(
-  parentObject: any,
-  args: { filter: XykPoolVolumesByPeriodFilter },
-  context: QueryResolverContext,
-  info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
-): Promise<XykPoolVolumesByPeriodResponse> {
-  const pgClient: pg.Client = context.pgClient;
-
-  pgClient.setTypeParser(1700, function (val) {
-    return val;
-  });
-
-  const {
-    filter: { poolIds, startBlockNumber, endBlockNumber },
-  } = args;
-
+  pgClient: pg.Client;
+}): Promise<Map<string, XykPoolVolumeAggregated>> {
   const squidStatus = (
     await pgClient.query(`SELECT height FROM squid_processor.status`)
   ).rows[0];
@@ -67,9 +41,7 @@ export async function handleQueryXykPoolHistoricalVolumesByPeriod(
         // either 2 elements in the group or nothing.
         if (group.length === 1) return resp;
 
-        if (
-          group[0].para_block_height === group[1].para_block_height
-        ) {
+        if (group[0].para_block_height === group[1].para_block_height) {
           resp.assetAVolume =
             BigInt(group[0].asset_a_volume_in) +
             BigInt(group[0].asset_a_volume_out);
@@ -114,49 +86,5 @@ export async function handleQueryXykPoolHistoricalVolumesByPeriod(
     });
   }
 
-  return {
-    nodes: [...decoratedNodes.values()],
-    totalCount: decoratedNodes.size,
-  };
+  return decoratedNodes;
 }
-
-export const XykpoolsVolumePlugin: Plugin = makeExtendSchemaPlugin(
-  (build, options) => {
-    const schemas: string[] = options.stateSchemas || ['squid_processor'];
-
-    return {
-      typeDefs: gql`
-        input XykPoolVolumesByPeriodFilter {
-          poolIds: [String!]!
-          startBlockNumber: Int!
-          endBlockNumber: Int
-        }
-
-        type XykPoolVolumeAggregated {
-          poolId: String!
-          assetAId: Int!
-          assetBId: Int!
-          assetAVolume: BigFloat!
-          assetBVolume: BigFloat!
-        }
-
-        type XykPoolVolumesByPeriodResponse {
-          nodes: [XykPoolVolumeAggregated]!
-          totalCount: Int!
-        }
-
-        extend type Query {
-          xykPoolHistoricalVolumesByPeriod(
-            filter: XykPoolVolumesByPeriodFilter!
-          ): XykPoolVolumesByPeriodResponse!
-        }
-      `,
-      resolvers: {
-        Query: {
-          xykPoolHistoricalVolumesByPeriod:
-            handleQueryXykPoolHistoricalVolumesByPeriod,
-        },
-      },
-    };
-  }
-);

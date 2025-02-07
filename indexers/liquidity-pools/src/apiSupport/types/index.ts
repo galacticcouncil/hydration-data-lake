@@ -164,3 +164,12 @@ export type RoutedTradeGqlResponse = {
   relayBlockHeight: number;
   blockId: string;
 };
+
+export enum AggregationTimeRangeLabel {
+  '1H' = '1H',
+  '24H' = '24H',
+  '1W' = '1W',
+  '1M' = '1M',
+  '1Y' = '1Y',
+  'ALL' = 'ALL',
+}

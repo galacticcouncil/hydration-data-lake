@@ -70,19 +70,3 @@ export function xykpoolHistoricalVolumeSelectGraphQLResult({
     'relay_block_height'
   );
 }
-
-export function xykpoolHistoricalVolumeSubscriptionFilter(
-  event: any,
-  args: any
-) {
-  if (
-    !args ||
-    !args.filter ||
-    !args.filter.poolIds ||
-    !Array.isArray(args.filter.poolIds) ||
-    args.filter.poolIds.length === 0
-  )
-    return true;
-
-  return new Set(args.filter.poolIds).has(event.__node__.node_id.split('-')[0]);
-}

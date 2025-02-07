@@ -226,6 +226,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   await saveDcaEntities(ctxWithBatchState as SqdProcessorContext<Store>);
   console.timeEnd('saveDcaEntities');
 
+  console.time('handleHistoricalVolumesBatchEntriesLists');
+  await HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
+  console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
+
   console.time('updateInitialIndexingFinishedAtTime');
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(
     ctxWithBatchState as SqdProcessorContext<Store>

@@ -6,7 +6,7 @@ import { postgraphile, makePluginHook } from 'postgraphile';
 import FilterPlugin from 'postgraphile-plugin-connection-filter';
 import { ProcessorStatusPlugin } from './apiSupport/plugins/query/processorStatus.plugin';
 import { AppConfig } from './appConfig';
-import { XykpoolsVolumePlugin } from './apiSupport/plugins/query/xykPoolsVolume.plugin';
+import { XykpoolsVolumePlugin } from './apiSupport/plugins/query/xykPoolsVolume';
 import PgPubsub from '@graphile/pg-pubsub';
 import TypeOverrides from 'pg/lib/type-overrides';
 import { runMigrations } from './apiSupport/apiMigrations/runMigrations';

@@ -2,8 +2,8 @@ import { gql, makeExtendSchemaPlugin, Plugin, embed } from 'postgraphile';
 import { QueryResolverContext } from '../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
-import { routedTradesSubscriptionFilter } from './utils';
 import { routedTradeSubscriptionResolver } from './resolvers';
+import { routedTradesSubscriptionFilter } from './filters';
 
 export const RoutedTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
   (build, options) => {

@@ -526,6 +526,18 @@ type LbppoolHistoricalVolume @entity {
   block: Block!
 }
 
+#
+# Support entity for API subscription lbppoolHistoricalVolumeByPeriod
+#
+type BatchLbppoolHistVolsList @entity {
+  "<batchStartParaBlockHeight> (e.g. 101312)"
+  id: ID!
+  poolIds: [String!]
+
+  batchStartParaBlockHeight: Int! @index
+  batchEndParaBlockHeight: Int! @index
+}
+
 type LbppoolHistoricalData @entity {
   "poolAddress-assetId-paraBlockHeight"
   id: ID!
@@ -633,6 +645,18 @@ type XykpoolHistoricalVolume @entity {
   block: Block!
 }
 
+#
+# Support entity for API subscription xykpoolHistoricalVolumeByPeriod
+#
+type BatchXykpoolHistVolsList @entity {
+  "<batchStartParaBlockHeight> (e.g. 101312)"
+  id: ID!
+  poolIds: [String!]
+
+  batchStartParaBlockHeight: Int! @index
+  batchEndParaBlockHeight: Int! @index
+}
+
 type XykpoolHistoricalData @entity {
   "poolAddress-assetId-paraBlockHeight"
   id: ID!
@@ -716,6 +740,18 @@ type OmnipoolAssetHistoricalVolume @entity {
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   block: Block!
+}
+
+#
+# Support entity for API subscription omnipoolAssetHistoricalVolumeByPeriod
+#
+type BatchOmnipoolAssetHistVolsList @entity {
+  "<batchStartParaBlockHeight> (e.g. 101312)"
+  id: ID!
+  omnipoolAssetIds: [String!]
+
+  batchStartParaBlockHeight: Int! @index
+  batchEndParaBlockHeight: Int! @index
 }
 
 type OmnipoolAssetHistoricalData @entity {
@@ -808,6 +844,18 @@ type StableswapAssetHistoricalVolume @entity {
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   block: Block!
+}
+
+#
+# Support entity for API subscription stableswapAssetHistoricalVolumeByPeriod
+#
+type BatchStableswapHistVolsList @entity {
+  "<batchStartParaBlockHeight> (e.g. 101312)"
+  id: ID!
+  poolIds: [String!]
+
+  batchStartParaBlockHeight: Int! @index
+  batchEndParaBlockHeight: Int! @index
 }
 
 type StableswapLiquidityEvent @entity {
