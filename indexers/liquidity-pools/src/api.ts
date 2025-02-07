@@ -12,13 +12,14 @@ import TypeOverrides from 'pg/lib/type-overrides';
 import { runMigrations } from './apiSupport/apiMigrations/runMigrations';
 import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/xykPoolVolumeSubscriptions';
 import { getEnvPath } from './utils/helpers';
-import { OmnipoolAssetVolumePlugin } from './apiSupport/plugins/query/omnipoolVolume.plugin';
+import { OmnipoolAssetVolumePlugin } from './apiSupport/plugins/query/omnipoolVolume';
 import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/omnipoolAssetVolumeSubscriptions';
 import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswapVolume.plugin';
 import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stableswapVolumeSubscriptions';
 import { NodeEnv } from './utils/types';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
 import { RoutedTradesSubscriptionsPlugin } from './apiSupport/plugins/subscription/routedTradesSubscriptions';
+import { CommonApiTypesDefinitionPlugin } from './apiSupport/plugins/query/commonApiTypesDefinition.plugin';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -55,6 +56,7 @@ const postgraphileInstance = postgraphile(
     subscriptions: true,
     pluginHook: makePluginHook([PgPubsub]),
     appendPlugins: [
+      CommonApiTypesDefinitionPlugin,
       AggregatesPluggin,
       FilterPlugin,
       SimplifyInflectorPlugin,

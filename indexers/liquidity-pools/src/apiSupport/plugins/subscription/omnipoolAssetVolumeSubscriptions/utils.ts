@@ -49,21 +49,3 @@ export function omnipoolAssetHistoricalVolumeSelectGraphQLResult({
     'para_block_height'
   );
 }
-
-export function omnipoolAssetHistoricalVolumeSubscriptionFilter(
-  event: any,
-  args: any
-) {
-  if (
-    !args ||
-    !args.filter ||
-    !args.filter.omnipoolAssetIds ||
-    !Array.isArray(args.filter.omnipoolAssetIds) ||
-    args.filter.omnipoolAssetIds.length === 0
-  )
-    return true;
-
-  return new Set(args.filter.omnipoolAssetIds).has(
-    event.__node__.node_id.match(/^([a-zA-Z0-9]+-[0-9]+)-[0-9]+$/)[1]
-  );
-}

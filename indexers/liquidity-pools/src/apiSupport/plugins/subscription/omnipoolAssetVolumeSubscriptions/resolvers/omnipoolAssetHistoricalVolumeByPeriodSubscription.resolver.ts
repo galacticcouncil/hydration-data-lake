@@ -5,25 +5,26 @@ import {
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
-import { getLatestXykpoolHistoricalVolumesBatchEntriesList } from '../../../sql/xykPoolsVolumeByPeriod.sql';
 import { AggregationTimeRange } from '../../../../utils';
-import { handleXykPoolHistoricalVolumesByPeriodAggregation } from '../../../query/xykPoolsVolume/utils';
 import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,
 } from '../../../sql/block.sql';
+import { getLatestOmnipoolAssetHistoricalVolumesBatchEntriesList } from '../../../sql/omnipoolAssetsVolumeByPeriod.sql';
+import { handleOmnipoolAssetHistoricalVolumesByPeriodAggregation } from '../../../query/omnipoolVolume/utils';
 
-export async function xykpoolHistoricalVolumeByPeriodSubscriptionResolver(
+export async function omnipoolAssetHistoricalVolumeByPeriodSubscriptionResolver(
   event: any,
   args: any,
   context: QueryResolverContext,
   resolveInfo: GraphQLResolveInfo & { graphile: GraphileHelpers<any> },
-  sql: any
+  sql: any,
+  omnipoolAddress: string
 ) {
   const pgClient: pg.Client = context.pgClient;
 
   const {
-    filter: { poolIds, period },
+    filter: { omnipoolAssetIds, period },
   } = args;
 
   const requestedRange = new AggregationTimeRange(
@@ -44,7 +45,7 @@ export async function xykpoolHistoricalVolumeByPeriodSubscriptionResolver(
   ]);
 
   const latestVolumesBatchEntitiesList = await pgClient.query(
-    getLatestXykpoolHistoricalVolumesBatchEntriesList
+    getLatestOmnipoolAssetHistoricalVolumesBatchEntriesList
   );
 
   if (!startBlock || !startBlock.rows || !startBlock.rows.length)
@@ -60,17 +61,18 @@ export async function xykpoolHistoricalVolumeByPeriodSubscriptionResolver(
     return response;
 
   const involvedPoolIdsSet = new Set(
-    latestVolumesBatchEntitiesList.rows[0].pool_ids
+    latestVolumesBatchEntitiesList.rows[0].asset_ids
   );
-  const involvedRequestedPoolIds = poolIds.filter((id: string) =>
+  const involvedRequestedAssetIds = omnipoolAssetIds.filter((id: string) =>
     involvedPoolIdsSet.has(id)
   );
 
   const decoratedNodes =
-    await handleXykPoolHistoricalVolumesByPeriodAggregation({
-      poolIds: involvedRequestedPoolIds,
+    await handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
+      assetIds: involvedRequestedAssetIds,
       startBlockNumber: startBlock.rows[0].height,
       endBlockNumber: stopBlock.rows[0].height,
+      omnipoolAddress,
       pgClient,
     });
 

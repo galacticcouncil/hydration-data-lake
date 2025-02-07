@@ -749,6 +749,7 @@ type BatchOmnipoolAssetHistVolsList @entity {
   "<batchStartParaBlockHeight> (e.g. 101312)"
   id: ID!
   omnipoolAssetIds: [String!]
+  assetIds: [String!]
 
   batchStartParaBlockHeight: Int! @index
   batchEndParaBlockHeight: Int! @index

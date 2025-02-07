@@ -2,8 +2,14 @@ import { gql, makeExtendSchemaPlugin, Plugin, embed } from 'postgraphile';
 import { QueryResolverContext } from '../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
-import { omnipoolAssetHistoricalVolumeSubscriptionFilter } from './utils';
-import { omnipoolAssetHistoricalVolumeSubscriptionResolver } from './resolvers';
+import {
+  omnipoolAssetHistoricalVolumeSubscriptionResolver,
+  omnipoolAssetHistoricalVolumeByPeriodSubscriptionResolver,
+} from './resolvers';
+import {
+  omnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter,
+  omnipoolAssetHistoricalVolumeSubscriptionFilter,
+} from './filters';
 
 export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
   makeExtendSchemaPlugin((build, options) => {
@@ -13,13 +19,23 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
     return {
       typeDefs: gql`
         input OmnipoolAssetHistoricalVolumeSubscriptionFilter {
-          omnipoolAssetIds: [String!]
+          assetIds: [String!]
+        }
+        
+        input OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter {
+          assetIds: [String!]
+          period: AggregationTimeRange
         }
 
         type OmnipoolAssetHistoricalVolumeSubscriptionPayload {
           node: OmnipoolAssetHistoricalVolumeEntity
           event: String
         }
+        type OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload {
+          nodes: [OmnipoolAssetVolumeAggregated!]
+          event: String
+        }
+        
         type OmnipoolAssetHistoricalVolumeEntity {
           id: String!
           omnipoolAssetId: String!
@@ -41,6 +57,14 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
               topic: "postgraphile:state_changed:omnipool_asset_historical_volume"
               filter: ${embed(omnipoolAssetHistoricalVolumeSubscriptionFilter)}
             )
+
+          omnipoolAssetHistoricalVolumeByPeriod(
+              filter: OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter
+          ): OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload
+            @pgSubscription(
+                topic: "postgraphile:state_changed:batch_omnipool_asset_hist_vols_list"
+                filter: ${embed(omnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter)}
+            ),
         }
       `,
       resolvers: {
@@ -57,6 +81,20 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
               _context,
               resolveInfo,
               sql
+            ),
+          omnipoolAssetHistoricalVolumeByPeriod: async (
+            event: any,
+            _args: any,
+            _context: QueryResolverContext,
+            resolveInfo: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
+          ) =>
+            omnipoolAssetHistoricalVolumeByPeriodSubscriptionResolver(
+              event,
+              _args,
+              _context,
+              resolveInfo,
+              sql,
+              options.omnipoolAddress
             ),
         },
       },

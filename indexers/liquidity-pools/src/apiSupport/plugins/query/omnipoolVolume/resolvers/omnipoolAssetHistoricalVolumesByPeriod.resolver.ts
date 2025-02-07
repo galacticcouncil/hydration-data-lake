@@ -1,21 +1,19 @@
-import {
-  QueryResolverContext,
-  XykpoolHistoricalVolumeRaw,
-} from '../../../../types';
+import { QueryResolverContext } from '../../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
-import { handleXykPoolHistoricalVolumesByPeriodAggregation } from '../utils';
 import {
-  XykPoolVolumesByPeriodFilter,
+  OmnipoolAssetVolumesByPeriodFilter,
   XykPoolVolumesByPeriodResponse,
 } from './types';
+import { handleOmnipoolAssetHistoricalVolumesByPeriodAggregation } from '../utils';
 
-export async function xykPoolHistoricalVolumesByPeriodResolver(
+export async function omnipoolAssetHistoricalVolumesByPeriodResolver(
   parentObject: any,
-  args: { filter: XykPoolVolumesByPeriodFilter },
+  args: { filter: OmnipoolAssetVolumesByPeriodFilter },
   context: QueryResolverContext,
-  info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
+  info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> },
+  omnipoolAddress: string
 ): Promise<XykPoolVolumesByPeriodResponse> {
   const pgClient: pg.Client = context.pgClient;
 
@@ -24,14 +22,15 @@ export async function xykPoolHistoricalVolumesByPeriodResolver(
   });
 
   const {
-    filter: { poolIds, startBlockNumber, endBlockNumber },
+    filter: { assetIds, startBlockNumber, endBlockNumber },
   } = args;
 
   const decoratedNodes =
-    await handleXykPoolHistoricalVolumesByPeriodAggregation({
-      poolIds,
+    await handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
+      omnipoolAddress,
       startBlockNumber,
       endBlockNumber,
+      assetIds,
       pgClient,
     });
 

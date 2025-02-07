@@ -4,7 +4,7 @@ import {
   getAssetIdsByPoolIds,
 } from '../../sql/xykPoolsVolume.sql';
 import { XykpoolHistoricalVolumeRaw } from '../../../types';
-import { XykPoolVolumeAggregated } from './resolvers/xykPoolHistoricalVolumesByPeriod.resolver';
+import { XykPoolVolumeAggregated } from './resolvers';
 
 export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
   poolIds,

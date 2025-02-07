@@ -39,13 +39,12 @@ export class HistoricalDataManager {
       ).values(),
     ];
 
-    const omnipoolAssetHistoricalVolumeEntries = [
-      ...new Set(
-        [...ctx.batchState.state.omnipoolAssetVolumes.values()].map(
-          (item) => item.omnipoolAsset.id
-        )
-      ).values(),
-    ];
+    const omnipoolAssetHistoricalVolumeEntries = new Map(
+      [...ctx.batchState.state.omnipoolAssetVolumes.values()].map((item) => [
+        item.omnipoolAsset.id,
+        item.omnipoolAsset.asset.id,
+      ])
+    );
 
     const stableswapHistoricalVolumeEntries = [
       ...new Set(
@@ -77,11 +76,12 @@ export class HistoricalDataManager {
         })
       );
 
-    if (omnipoolAssetHistoricalVolumeEntries.length)
+    if (omnipoolAssetHistoricalVolumeEntries.size)
       await ctx.store.save(
         new BatchOmnipoolAssetHistVolsList({
           id: `${ctx.blocks[0].header.height}`,
-          omnipoolAssetIds: omnipoolAssetHistoricalVolumeEntries,
+          omnipoolAssetIds: [...omnipoolAssetHistoricalVolumeEntries.keys()],
+          assetIds: [...omnipoolAssetHistoricalVolumeEntries.values()],
           batchStartParaBlockHeight: ctx.blocks[0].header.height,
           batchEndParaBlockHeight:
             ctx.blocks[ctx.blocks.length - 1].header.height,

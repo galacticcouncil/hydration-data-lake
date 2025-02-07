@@ -2,8 +2,10 @@ import { gql, makeExtendSchemaPlugin, Plugin, embed } from 'postgraphile';
 import { QueryResolverContext } from '../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
-import { xykpoolHistoricalVolumeSubscriptionResolver } from './resolvers';
-import { xykpoolHistoricalVolumeByPeriodSubscriptionResolver } from './resolvers/xykpoolHistoricalVolumeByPeriodSubscription.resolver';
+import {
+  xykpoolHistoricalVolumeSubscriptionResolver,
+  xykpoolHistoricalVolumeByPeriodSubscriptionResolver,
+} from './resolvers';
 import {
   xykpoolHistoricalVolumeByPeriodSubscriptionFilter,
   xykpoolHistoricalVolumeSubscriptionFilter,
@@ -16,15 +18,6 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
 
     return {
       typeDefs: gql`
-        enum AggregationTimeRange {
-          _1H_
-          _24H_
-          _1W_
-          _1M_
-          _1Y_
-          _ALL_
-        }
-          
         input XykpoolHistoricalVolumeSubscriptionFilter {
           poolIds: [String!]
         }          
@@ -81,14 +74,6 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
         }
       `,
       resolvers: {
-        AggregationTimeRange: {
-          _1H_: '1H',
-          _24H_: '24H',
-          _1W_: '1W',
-          _1M_: '1M',
-          _1Y_: '1Y',
-          _ALL_: 'ALL',
-        },
         Subscription: {
           xykpoolHistoricalVolume: async (
             event: any,

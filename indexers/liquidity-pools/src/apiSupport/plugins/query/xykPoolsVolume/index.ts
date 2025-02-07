@@ -13,14 +13,6 @@ export const XykpoolsVolumePlugin: Plugin = makeExtendSchemaPlugin(
           endBlockNumber: Int
         }
 
-        type XykPoolVolumeAggregated {
-          poolId: String!
-          assetAId: Int!
-          assetBId: Int!
-          assetAVolume: BigFloat!
-          assetBVolume: BigFloat!
-        }
-
         type XykPoolVolumesByPeriodResponse {
           nodes: [XykPoolVolumeAggregated]!
           totalCount: Int!

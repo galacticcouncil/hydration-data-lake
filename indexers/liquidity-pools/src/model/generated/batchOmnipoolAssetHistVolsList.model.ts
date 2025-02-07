@@ -15,6 +15,9 @@ export class BatchOmnipoolAssetHistVolsList {
   @Column_("text", {array: true, nullable: true})
   omnipoolAssetIds!: (string)[] | undefined | null
 
+  @Column_("text", {array: true, nullable: true})
+  assetIds!: (string)[] | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   batchStartParaBlockHeight!: number
