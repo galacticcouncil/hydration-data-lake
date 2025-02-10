@@ -3,13 +3,13 @@ import {
   GetLbppoolHistoricalData,
   GetLbppoolHistoricalDataQuery,
   GetLbppoolHistoricalDataQueryVariables,
-  GetXykPoolHistoricalData,
-  GetXykPoolHistoricalDataQuery,
-  GetXykPoolHistoricalDataQueryVariables,
-  GetXykPoolSwapsData,
-  GetXykPoolSwapsDataQuery,
-  GetXykPoolSwapsDataQueryVariables,
-} from './apiTypes/types';
+  GetXykpoolHistoricalData,
+  GetXykpoolHistoricalDataQuery,
+  GetXykpoolHistoricalDataQueryVariables,
+  GetXykpoolSwapsData,
+  GetXykpoolSwapsDataQuery,
+  GetXykpoolSwapsDataQueryVariables,
+} from './apiTypes';
 
 export class LiquidityPoolsGQLManager extends QueriesHelper {
   constructor() {
@@ -30,13 +30,13 @@ export class LiquidityPoolsGQLManager extends QueriesHelper {
       query: GetLbppoolHistoricalData,
       variables: {
         filter: {
-          paraChainBlockHeight: { equalTo: blockNumber },
+          paraBlockHeight: { equalTo: blockNumber },
           poolId: { equalTo: poolAddress },
         },
       },
     });
 
-    return resp.data?.lbpPoolHistoricalData?.nodes[0] ?? null;
+    return resp.data?.lbppoolHistoricalData?.nodes[0] ?? null;
   }
 
   async getXykPoolHistoricalDatumAtBlock({
@@ -47,19 +47,19 @@ export class LiquidityPoolsGQLManager extends QueriesHelper {
     poolAddress: string;
   }) {
     const resp = await this.gqlRequest<
-      GetXykPoolHistoricalDataQuery,
-      GetXykPoolHistoricalDataQueryVariables
+      GetXykpoolHistoricalDataQuery,
+      GetXykpoolHistoricalDataQueryVariables
     >({
-      query: GetXykPoolHistoricalData,
+      query: GetXykpoolHistoricalData,
       variables: {
         filter: {
-          paraChainBlockHeight: { equalTo: blockNumber },
+          paraBlockHeight: { equalTo: blockNumber },
           poolId: { equalTo: poolAddress },
         },
       },
     });
 
-    return resp.data?.xykPoolHistoricalData?.nodes[0] ?? null;
+    return resp.data?.xykpoolHistoricalData?.nodes[0] ?? null;
   }
 
   async getXykPoolSwapAtBlock({
@@ -70,13 +70,13 @@ export class LiquidityPoolsGQLManager extends QueriesHelper {
     poolAddress: string;
   }) {
     const resp = await this.gqlRequest<
-      GetXykPoolSwapsDataQuery,
-      GetXykPoolSwapsDataQueryVariables
+      GetXykpoolSwapsDataQuery,
+      GetXykpoolSwapsDataQueryVariables
     >({
-      query: GetXykPoolSwapsData,
+      query: GetXykpoolSwapsData,
       variables: {
         filter: {
-          paraChainBlockHeight: { equalTo: blockNumber },
+          paraBlockHeight: { equalTo: blockNumber },
           fillerId: { equalTo: poolAddress },
         },
       },

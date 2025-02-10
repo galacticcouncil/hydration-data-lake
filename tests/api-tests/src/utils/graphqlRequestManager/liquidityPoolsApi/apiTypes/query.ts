@@ -3,7 +3,7 @@ import {
   LbppoolHistoricalDatumFilter,
   SwapFilter,
   XykpoolHistoricalDatumFilter,
-} from './types';
+} from './index';
 
 export const GET_LBPPOOL_HISTORICAL_DATA = gql`
   query GetLbppoolHistoricalData($filter: LbppoolHistoricalDatumFilter) {
@@ -22,7 +22,7 @@ export const GET_LBPPOOL_HISTORICAL_DATA = gql`
         assetBId
         assetABalance
         assetBBalance
-        paraChainBlockHeight
+        paraBlockHeight
       }
     }
   }
@@ -37,7 +37,7 @@ export const GET_XYK_POOL_HISTORICAL_DATA = gql`
         assetBBalance
         assetBId
         poolId
-        paraChainBlockHeight
+        paraBlockHeight
       }
     }
   }
@@ -59,7 +59,7 @@ export const GET_XYK_POOL_SWAP_DATA = gql`
             recipientId
           }
         }
-        swapInputAssetBalances {
+        swapInputs {
           nodes {
             amount
             asset {
@@ -67,7 +67,7 @@ export const GET_XYK_POOL_SWAP_DATA = gql`
             }
           }
         }
-        swapOutputAssetBalances {
+        swapOutputs {
           nodes {
             amount
             asset {

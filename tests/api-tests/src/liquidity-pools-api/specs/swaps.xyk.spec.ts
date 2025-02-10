@@ -30,13 +30,11 @@ describe('Validation of indexed data against blockchain storage state', () => {
 
         expect(!!apiResult && apiResult.swapFees.nodes.length > 0).toBe(true);
 
-        expect(
-          !!apiResult && apiResult.swapInputAssetBalances.nodes.length > 0
-        ).toBe(true);
+        expect(!!apiResult && apiResult.swapInputs.nodes.length > 0).toBe(true);
 
-        expect(
-          !!apiResult && apiResult.swapOutputAssetBalances.nodes.length > 0
-        ).toBe(true);
+        expect(!!apiResult && apiResult.swapOutputs.nodes.length > 0).toBe(
+          true
+        );
 
         if (!apiResult) return null;
 
@@ -45,17 +43,17 @@ describe('Validation of indexed data against blockchain storage state', () => {
           fillerId: apiResult.fillerId,
           fillerType: apiResult.fillerType,
           swapFee: {
-            assetId: apiResult.swapFees.nodes[0]?.assetId,
+            assetId: apiResult.swapFees.nodes[0]?.asset?.id,
             amount: BigInt(apiResult.swapFees.nodes[0]?.amount),
             recipientId: apiResult.swapFees.nodes[0]?.recipientId,
           },
           swapInputAssetBalances: {
-            amount: BigInt(apiResult.swapInputAssetBalances.nodes[0]?.amount),
-            assetId: apiResult.swapInputAssetBalances.nodes[0]?.assetId,
+            amount: BigInt(apiResult.swapInputs.nodes[0]?.amount),
+            assetId: apiResult.swapInputs.nodes[0]?.asset?.id,
           },
           swapOutputAssetBalances: {
-            amount: BigInt(apiResult.swapOutputAssetBalances.nodes[0]?.amount),
-            assetId: apiResult.swapOutputAssetBalances.nodes[0]?.assetId,
+            amount: BigInt(apiResult.swapOutputs.nodes[0]?.amount),
+            assetId: apiResult.swapOutputs.nodes[0]?.asset?.id,
           },
         };
 

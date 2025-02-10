@@ -81,7 +81,7 @@ describe('Validation of indexed data against blockchain storage state', () => {
             removeStringSeparators(assertBBalancesDecorated.free)
           ),
           poolId: poolAddress,
-          paraChainBlockHeight: blockHeight,
+          paraBlockHeight: blockHeight,
         };
 
         expect(apiResultTestUnit).toStrictEqual(rpcResultTestUnit);

@@ -86,10 +86,10 @@ describe('Validation of indexed data against blockchain storage state', () => {
         };
 
         const rpcResultTestUnit = {
-          start: poolDataDecorated.start
+          startBlockNumber: poolDataDecorated.start
             ? +removeStringSeparators(poolDataDecorated.start)
             : null,
-          end: poolDataDecorated.end
+          endBlockNumber: poolDataDecorated.end
             ? +removeStringSeparators(poolDataDecorated.end)
             : null,
           initialWeight: +removeStringSeparators(
@@ -116,7 +116,7 @@ describe('Validation of indexed data against blockchain storage state', () => {
           assetBBalance: BigInt(
             removeStringSeparators(assertBBalancesDecorated.free)
           ),
-          paraChainBlockHeight: blockHeight,
+          paraBlockHeight: blockHeight,
         };
 
         expect(apiResultTestUnit).toStrictEqual(rpcResultTestUnit);
