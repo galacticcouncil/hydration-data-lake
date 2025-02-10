@@ -2,8 +2,14 @@ import { gql, makeExtendSchemaPlugin, Plugin, embed } from 'postgraphile';
 import { QueryResolverContext } from '../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
-import { stablepoolHistoricalVolumeSubscriptionFilter } from './utils';
-import { stableswapHistoricalVolumeSubscriptionResolver } from './resolvers/';
+import {
+  stableswapHistoricalVolumeByPeriodSubscriptionResolver,
+  stableswapHistoricalVolumeSubscriptionResolver,
+} from './resolvers/';
+import {
+  stablepoolHistoricalVolumeSubscriptionFilter,
+  stableswapHistoricalVolumeByPeriodSubscriptionFilter,
+} from './filters';
 
 export const StableswapVolumeSubscriptionsPlugin: Plugin =
   makeExtendSchemaPlugin((build, options) => {
@@ -15,10 +21,18 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
         input StableswapHistoricalVolumeSubscriptionFilter {
           poolIds: [String!]
         }
+        input StableswapHistoricalVolumeByPeriodSubscriptionFilter {
+          poolIds: [String!]
+          period: AggregationTimeRange
+        }
 
         type StableswapHistoricalVolumeSubscriptionPayload {
           node: StableswapHistoricalVolumeEntity
           event: String
+        }
+        type StableswapHistoricalVolumeByPeriodSubscriptionPayload {
+            nodes: [StableswapVolumeAggregated!]
+            event: String
         }
 
         type StableswapAssetHistoricalVolumeEntity {
@@ -51,6 +65,13 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
               topic: "postgraphile:state_changed:stableswap_historical_volume"
               filter: ${embed(stablepoolHistoricalVolumeSubscriptionFilter)}
             )
+          stableswapHistoricalVolumeByPeriod(
+              filter: StableswapHistoricalVolumeByPeriodSubscriptionFilter
+          ): StableswapHistoricalVolumeByPeriodSubscriptionPayload
+            @pgSubscription(
+                topic: "postgraphile:state_changed:batch_stableswap_hist_vols_list"
+                filter: ${embed(stableswapHistoricalVolumeByPeriodSubscriptionFilter)}
+            ),
         }
       `,
       resolvers: {
@@ -62,6 +83,20 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
             resolveInfo: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
           ) =>
             stableswapHistoricalVolumeSubscriptionResolver(
+              event,
+              _args,
+              _context,
+              resolveInfo,
+              sql
+            ),
+
+          stableswapHistoricalVolumeByPeriod: async (
+            event: any,
+            _args: any,
+            _context: QueryResolverContext,
+            resolveInfo: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
+          ) =>
+            stableswapHistoricalVolumeByPeriodSubscriptionResolver(
               event,
               _args,
               _context,

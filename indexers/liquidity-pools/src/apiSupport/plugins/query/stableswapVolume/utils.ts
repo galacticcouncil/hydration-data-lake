@@ -1,67 +1,24 @@
-import { gql, makeExtendSchemaPlugin, Plugin } from 'postgraphile';
 import type * as pg from 'pg';
 import {
-  QueryResolverContext,
-  StableswapAssetHistoricalVolumeRaw,
-  StableswapHistoricalVolumeRaw,
-} from '../../types';
-import { GraphQLResolveInfo } from 'graphql/type/definition';
-import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
+  AggregateStablepoolVolumesByBlocksRangeSqlResult,
+  StableswapVolumeAggregated,
+} from './resolvers';
 import {
   aggregateStablepoolVolumesByBlocksRange,
   getAssetIdsByStableswapIds,
-} from '../sql/stableswapVolumes.sql';
+} from '../../sql/stableswapVolumes.sql';
 
-type StableswapVolumesByPeriodFilter = {
+export async function handleStableswapHistoricalVolumesByPeriodAggregation({
+  poolIds,
+  startBlockNumber,
+  endBlockNumber,
+  pgClient,
+}: {
   poolIds: string[];
   startBlockNumber: number;
   endBlockNumber?: number;
-};
-
-type StablepoolAssetVolumeAggregated = {
-  assetId: number;
-  swapFee: bigint;
-  swapVolume: bigint;
-};
-
-type StableswapVolumeAggregated = {
-  poolId: string;
-  assetVolumes: StablepoolAssetVolumeAggregated[];
-};
-
-type StableswapVolumesByPeriodResponse = {
-  nodes: StableswapVolumeAggregated[];
-  totalCount: number;
-};
-
-type AggregateStablepoolVolumesGroupedResult = {
-  pool_id: string;
-  start_entity: StableswapHistoricalVolumeRaw;
-  end_entity: StableswapHistoricalVolumeRaw;
-  start_entity_asset_volumes: StableswapAssetHistoricalVolumeRaw[];
-  end_entity_asset_volumes: StableswapAssetHistoricalVolumeRaw[];
-};
-
-type AggregateStablepoolVolumesByBlocksRangeSqlResult = {
-  grouped_result: AggregateStablepoolVolumesGroupedResult[];
-};
-
-export async function handleQueryStableswapHistoricalVolumesByPeriod(
-  parentObject: any,
-  args: { filter: StableswapVolumesByPeriodFilter },
-  context: QueryResolverContext,
-  info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
-): Promise<StableswapVolumesByPeriodResponse> {
-  const pgClient: pg.Client = context.pgClient;
-
-  pgClient.setTypeParser(1700, function (val) {
-    return val;
-  });
-
-  const {
-    filter: { poolIds, startBlockNumber, endBlockNumber },
-  } = args;
-
+  pgClient: pg.Client;
+}): Promise<Map<string, StableswapVolumeAggregated>> {
   const squidStatus = (
     await pgClient.query(`SELECT height FROM squid_processor.status`)
   ).rows[0];
@@ -142,50 +99,5 @@ export async function handleQueryStableswapHistoricalVolumesByPeriod(
     });
   }
 
-  return {
-    nodes: [...decoratedNodes.values()],
-    totalCount: decoratedNodes.size,
-  };
+  return decoratedNodes;
 }
-
-export const StableswapVolumePlugin: Plugin = makeExtendSchemaPlugin(
-  (build, options) => {
-    return {
-      typeDefs: gql`
-        input StableswapVolumesByPeriodFilter {
-          poolIds: [String!]!
-          startBlockNumber: Int!
-          endBlockNumber: Int
-        }
-
-        type StablepoolAssetVolumeAggregated {
-          assetId: Int!
-          swapFee: BigFloat!
-          swapVolume: BigFloat!
-        }
-
-        type StableswapVolumeAggregated {
-          poolId: String!
-          assetVolumes: [StablepoolAssetVolumeAggregated!]!
-        }
-
-        type StableswapVolumesByPeriodResponse {
-          nodes: [StableswapVolumeAggregated]!
-          totalCount: Int!
-        }
-
-        extend type Query {
-          stableswapHistoricalVolumesByPeriod(
-            filter: StableswapVolumesByPeriodFilter!
-          ): StableswapVolumesByPeriodResponse!
-        }
-      `,
-      resolvers: {
-        Query: {
-          stableswapHistoricalVolumesByPeriod:
-            handleQueryStableswapHistoricalVolumesByPeriod,
-        },
-      },
-    };
-  }
-);

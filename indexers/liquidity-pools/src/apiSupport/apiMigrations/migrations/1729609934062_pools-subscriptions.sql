@@ -103,7 +103,7 @@ CASE TG_OP
             'batch_omnipool_asset_hist_vols_list',
             NEW.id,
             jsonb_build_object(
-              'asset_ids', NEW.pool_ids
+              'asset_ids', NEW.asset_ids
             ));
         RETURN NEW;
 
@@ -115,7 +115,7 @@ CASE TG_OP
             'batch_omnipool_asset_hist_vols_list',
             NEW.id,
             jsonb_build_object(
-              'asset_ids', NEW.pool_ids
+              'asset_ids', NEW.asset_ids
             ));
         RETURN NEW;
 
@@ -127,7 +127,7 @@ CASE TG_OP
             'batch_omnipool_asset_hist_vols_list',
             OLD.id,
             jsonb_build_object(
-              'asset_ids', OLD.pool_ids
+              'asset_ids', OLD.asset_ids
             ));
         RETURN OLD;
 

@@ -14,7 +14,7 @@ import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscrip
 import { getEnvPath } from './utils/helpers';
 import { OmnipoolAssetVolumePlugin } from './apiSupport/plugins/query/omnipoolVolume';
 import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/omnipoolAssetVolumeSubscriptions';
-import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswapVolume.plugin';
+import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswapVolume';
 import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stableswapVolumeSubscriptions';
 import { NodeEnv } from './utils/types';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';

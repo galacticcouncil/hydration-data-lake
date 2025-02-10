@@ -28,6 +28,17 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           assetVolume: BigFloat!
           assetFeeVolume: BigFloat!
         }
+
+        type StablepoolAssetVolumeAggregated {
+          assetId: Int!
+          swapFee: BigFloat!
+          swapVolume: BigFloat!
+        }
+
+        type StableswapVolumeAggregated {
+          poolId: String!
+          assetVolumes: [StablepoolAssetVolumeAggregated!]!
+        }
       `,
       resolvers: {
         AggregationTimeRange: {

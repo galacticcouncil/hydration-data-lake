@@ -527,7 +527,12 @@ type LbppoolHistoricalVolume @entity {
 }
 
 #
-# Support entity for API subscription lbppoolHistoricalVolumeByPeriod
+# BatchLbppoolHistVolsList is a support entity for the LbppoolHistoricalVolume API subscription.
+# It contains all LBP pool IDs involved in volume aggregations (LbppoolHistoricalVolume)
+# within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
+# processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
+# blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
+# are saved, rather than after each individual volume aggregation, optimizing event handling and consistency.
 #
 type BatchLbppoolHistVolsList @entity {
   "<batchStartParaBlockHeight> (e.g. 101312)"
@@ -646,7 +651,12 @@ type XykpoolHistoricalVolume @entity {
 }
 
 #
-# Support entity for API subscription xykpoolHistoricalVolumeByPeriod
+# BatchXykpoolHistVolsList is a support entity for the XykpoolHistoricalVolume API subscription.
+# It contains all XYK pool IDs involved in volume aggregations (XykpoolHistoricalVolume)
+# within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
+# processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
+# blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
+# are saved, rather than after each individual volume aggregation, optimizing event handling and consistency.
 #
 type BatchXykpoolHistVolsList @entity {
   "<batchStartParaBlockHeight> (e.g. 101312)"
@@ -743,7 +753,12 @@ type OmnipoolAssetHistoricalVolume @entity {
 }
 
 #
-# Support entity for API subscription omnipoolAssetHistoricalVolumeByPeriod
+# BatchOmnipoolAssetHistVolsList is a support entity for the OmnipoolAssetHistoricalVolumeByPeriod API subscription.
+# It contains all OmnipoolAsset IDs and Asset IDs involved in volume aggregations (OmnipoolAssetHistoricalVolume)
+# within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
+# processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
+# blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
+# are saved, rather than after each individual volume aggregation, optimizing event handling and consistency.
 #
 type BatchOmnipoolAssetHistVolsList @entity {
   "<batchStartParaBlockHeight> (e.g. 101312)"
@@ -848,7 +863,12 @@ type StableswapAssetHistoricalVolume @entity {
 }
 
 #
-# Support entity for API subscription stableswapAssetHistoricalVolumeByPeriod
+# BatchStableswapHistVolsList is a support entity for the StableswapAssetHistoricalVolume API subscription.
+# It contains all Stableswap pool IDs involved in volume aggregations (StableswapAssetHistoricalVolume)
+# within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
+# processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
+# blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
+# are saved, rather than after each individual volume aggregation, optimizing event handling and consistency.
 #
 type BatchStableswapHistVolsList @entity {
   "<batchStartParaBlockHeight> (e.g. 101312)"

@@ -147,9 +147,9 @@ type Query {
   ): AssetsConnection
 
   """
-  Reads and enables pagination through a set of `BatchLbppoolHistVolsList`.
+  Reads and enables pagination through a set of `BatchLbppoolHistoricalVolumesList`.
   """
-  batchLbppoolHistVolsLists(
+  batchLbppoolHistoricalVolumesLists(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -168,24 +168,24 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `BatchLbppoolHistVolsList`."""
-    orderBy: [BatchLbppoolHistVolsListsOrderBy!] = [PRIMARY_KEY_ASC]
+    """The method to use when ordering `BatchLbppoolHistoricalVolumesList`."""
+    orderBy: [BatchLbppoolHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: BatchLbppoolHistVolsListCondition
+    condition: BatchLbppoolHistoricalVolumesListCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: BatchLbppoolHistVolsListFilter
-  ): BatchLbppoolHistVolsListsConnection
+    filter: BatchLbppoolHistoricalVolumesListFilter
+  ): BatchLbppoolHistoricalVolumesListsConnection
 
   """
-  Reads and enables pagination through a set of `BatchOmnipoolAssetHistVolsList`.
+  Reads and enables pagination through a set of `BatchOmnipoolAssetHistoricalVolumesList`.
   """
-  batchOmnipoolAssetHistVolsLists(
+  batchOmnipoolAssetHistoricalVolumesLists(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -204,24 +204,26 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `BatchOmnipoolAssetHistVolsList`."""
-    orderBy: [BatchOmnipoolAssetHistVolsListsOrderBy!] = [PRIMARY_KEY_ASC]
+    """
+    The method to use when ordering `BatchOmnipoolAssetHistoricalVolumesList`.
+    """
+    orderBy: [BatchOmnipoolAssetHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: BatchOmnipoolAssetHistVolsListCondition
+    condition: BatchOmnipoolAssetHistoricalVolumesListCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: BatchOmnipoolAssetHistVolsListFilter
-  ): BatchOmnipoolAssetHistVolsListsConnection
+    filter: BatchOmnipoolAssetHistoricalVolumesListFilter
+  ): BatchOmnipoolAssetHistoricalVolumesListsConnection
 
   """
-  Reads and enables pagination through a set of `BatchStableswapHistVolsList`.
+  Reads and enables pagination through a set of `BatchStableswapHistoricalVolumesList`.
   """
-  batchStableswapHistVolsLists(
+  batchStableswapHistoricalVolumesLists(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -240,24 +242,26 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `BatchStableswapHistVolsList`."""
-    orderBy: [BatchStableswapHistVolsListsOrderBy!] = [PRIMARY_KEY_ASC]
+    """
+    The method to use when ordering `BatchStableswapHistoricalVolumesList`.
+    """
+    orderBy: [BatchStableswapHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: BatchStableswapHistVolsListCondition
+    condition: BatchStableswapHistoricalVolumesListCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: BatchStableswapHistVolsListFilter
-  ): BatchStableswapHistVolsListsConnection
+    filter: BatchStableswapHistoricalVolumesListFilter
+  ): BatchStableswapHistoricalVolumesListsConnection
 
   """
-  Reads and enables pagination through a set of `BatchXykpoolHistVolsList`.
+  Reads and enables pagination through a set of `BatchXykpoolHistoricalVolumesList`.
   """
-  batchXykpoolHistVolsLists(
+  batchXykpoolHistoricalVolumesLists(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -276,19 +280,19 @@ type Query {
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
-    """The method to use when ordering `BatchXykpoolHistVolsList`."""
-    orderBy: [BatchXykpoolHistVolsListsOrderBy!] = [PRIMARY_KEY_ASC]
+    """The method to use when ordering `BatchXykpoolHistoricalVolumesList`."""
+    orderBy: [BatchXykpoolHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: BatchXykpoolHistVolsListCondition
+    condition: BatchXykpoolHistoricalVolumesListCondition
 
     """
     A filter to be used in determining which values should be returned by the collection.
     """
-    filter: BatchXykpoolHistVolsListFilter
-  ): BatchXykpoolHistVolsListsConnection
+    filter: BatchXykpoolHistoricalVolumesListFilter
+  ): BatchXykpoolHistoricalVolumesListsConnection
 
   """Reads and enables pagination through a set of `Block`."""
   blocks(
@@ -1867,10 +1871,10 @@ type Query {
   accountAssetBalanceHistoricalDatum(id: String!): AccountAssetBalanceHistoricalDatum
   accountChainActivityTrace(id: String!): AccountChainActivityTrace
   asset(id: String!): Asset
-  batchLbppoolHistVolsList(id: String!): BatchLbppoolHistVolsList
-  batchOmnipoolAssetHistVolsList(id: String!): BatchOmnipoolAssetHistVolsList
-  batchStableswapHistVolsList(id: String!): BatchStableswapHistVolsList
-  batchXykpoolHistVolsList(id: String!): BatchXykpoolHistVolsList
+  batchLbppoolHistoricalVolumesList(id: String!): BatchLbppoolHistoricalVolumesList
+  batchOmnipoolAssetHistoricalVolumesList(id: String!): BatchOmnipoolAssetHistoricalVolumesList
+  batchStableswapHistoricalVolumesList(id: String!): BatchStableswapHistoricalVolumesList
+  batchXykpoolHistoricalVolumesList(id: String!): BatchXykpoolHistoricalVolumesList
   block(id: String!): Block
   call(id: String!): Call
   chainActivityTrace(id: String!): ChainActivityTrace
@@ -52778,109 +52782,109 @@ input AssetFilter {
   not: AssetFilter
 }
 
-"""A connection to a list of `BatchLbppoolHistVolsList` values."""
-type BatchLbppoolHistVolsListsConnection {
-  """A list of `BatchLbppoolHistVolsList` objects."""
-  nodes: [BatchLbppoolHistVolsList]!
+"""A connection to a list of `BatchLbppoolHistoricalVolumesList` values."""
+type BatchLbppoolHistoricalVolumesListsConnection {
+  """A list of `BatchLbppoolHistoricalVolumesList` objects."""
+  nodes: [BatchLbppoolHistoricalVolumesList]!
 
   """
-  A list of edges which contains the `BatchLbppoolHistVolsList` and cursor to aid in pagination.
+  A list of edges which contains the `BatchLbppoolHistoricalVolumesList` and cursor to aid in pagination.
   """
-  edges: [BatchLbppoolHistVolsListsEdge!]!
+  edges: [BatchLbppoolHistoricalVolumesListsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """
-  The count of *all* `BatchLbppoolHistVolsList` you could get from the connection.
+  The count of *all* `BatchLbppoolHistoricalVolumesList` you could get from the connection.
   """
   totalCount: Int!
 
   """
   Aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  aggregates: BatchLbppoolHistVolsListAggregates
+  aggregates: BatchLbppoolHistoricalVolumesListAggregates
 
   """
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
     """
-    The method to use when grouping `BatchLbppoolHistVolsList` for these aggregates.
+    The method to use when grouping `BatchLbppoolHistoricalVolumesList` for these aggregates.
     """
-    groupBy: [BatchLbppoolHistVolsListGroupBy!]!
+    groupBy: [BatchLbppoolHistoricalVolumesListGroupBy!]!
 
     """Conditions on the grouped aggregates."""
-    having: BatchLbppoolHistVolsListHavingInput
-  ): [BatchLbppoolHistVolsListAggregates!]
+    having: BatchLbppoolHistoricalVolumesListHavingInput
+  ): [BatchLbppoolHistoricalVolumesListAggregates!]
 }
 
-type BatchLbppoolHistVolsList {
+type BatchLbppoolHistoricalVolumesList {
   id: String!
   poolIds: [String]
   batchStartParaBlockHeight: Int!
   batchEndParaBlockHeight: Int!
 }
 
-"""A `BatchLbppoolHistVolsList` edge in the connection."""
-type BatchLbppoolHistVolsListsEdge {
+"""A `BatchLbppoolHistoricalVolumesList` edge in the connection."""
+type BatchLbppoolHistoricalVolumesListsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `BatchLbppoolHistVolsList` at the end of the edge."""
-  node: BatchLbppoolHistVolsList
+  """The `BatchLbppoolHistoricalVolumesList` at the end of the edge."""
+  node: BatchLbppoolHistoricalVolumesList
 }
 
-type BatchLbppoolHistVolsListAggregates {
+type BatchLbppoolHistoricalVolumesListAggregates {
   keys: [String!]
 
   """
   Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  sum: BatchLbppoolHistVolsListSumAggregates
+  sum: BatchLbppoolHistoricalVolumesListSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: BatchLbppoolHistVolsListDistinctCountAggregates
+  distinctCount: BatchLbppoolHistoricalVolumesListDistinctCountAggregates
 
   """
   Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  min: BatchLbppoolHistVolsListMinAggregates
+  min: BatchLbppoolHistoricalVolumesListMinAggregates
 
   """
   Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  max: BatchLbppoolHistVolsListMaxAggregates
+  max: BatchLbppoolHistoricalVolumesListMaxAggregates
 
   """
   Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  average: BatchLbppoolHistVolsListAverageAggregates
+  average: BatchLbppoolHistoricalVolumesListAverageAggregates
 
   """
   Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevSample: BatchLbppoolHistVolsListStddevSampleAggregates
+  stddevSample: BatchLbppoolHistoricalVolumesListStddevSampleAggregates
 
   """
   Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevPopulation: BatchLbppoolHistVolsListStddevPopulationAggregates
+  stddevPopulation: BatchLbppoolHistoricalVolumesListStddevPopulationAggregates
 
   """
   Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  varianceSample: BatchLbppoolHistVolsListVarianceSampleAggregates
+  varianceSample: BatchLbppoolHistoricalVolumesListVarianceSampleAggregates
 
   """
   Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  variancePopulation: BatchLbppoolHistVolsListVariancePopulationAggregates
+  variancePopulation: BatchLbppoolHistoricalVolumesListVariancePopulationAggregates
 }
 
-type BatchLbppoolHistVolsListSumAggregates {
+type BatchLbppoolHistoricalVolumesListSumAggregates {
   """Sum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: BigInt!
 
@@ -52888,7 +52892,7 @@ type BatchLbppoolHistVolsListSumAggregates {
   batchEndParaBlockHeight: BigInt!
 }
 
-type BatchLbppoolHistVolsListDistinctCountAggregates {
+type BatchLbppoolHistoricalVolumesListDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
@@ -52906,7 +52910,7 @@ type BatchLbppoolHistVolsListDistinctCountAggregates {
   batchEndParaBlockHeight: BigInt
 }
 
-type BatchLbppoolHistVolsListMinAggregates {
+type BatchLbppoolHistoricalVolumesListMinAggregates {
   """Minimum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: Int
 
@@ -52914,7 +52918,7 @@ type BatchLbppoolHistVolsListMinAggregates {
   batchEndParaBlockHeight: Int
 }
 
-type BatchLbppoolHistVolsListMaxAggregates {
+type BatchLbppoolHistoricalVolumesListMaxAggregates {
   """Maximum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: Int
 
@@ -52922,7 +52926,7 @@ type BatchLbppoolHistVolsListMaxAggregates {
   batchEndParaBlockHeight: Int
 }
 
-type BatchLbppoolHistVolsListAverageAggregates {
+type BatchLbppoolHistoricalVolumesListAverageAggregates {
   """
   Mean average of batchStartParaBlockHeight across the matching connection
   """
@@ -52932,7 +52936,7 @@ type BatchLbppoolHistVolsListAverageAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchLbppoolHistVolsListStddevSampleAggregates {
+type BatchLbppoolHistoricalVolumesListStddevSampleAggregates {
   """
   Sample standard deviation of batchStartParaBlockHeight across the matching connection
   """
@@ -52944,7 +52948,7 @@ type BatchLbppoolHistVolsListStddevSampleAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchLbppoolHistVolsListStddevPopulationAggregates {
+type BatchLbppoolHistoricalVolumesListStddevPopulationAggregates {
   """
   Population standard deviation of batchStartParaBlockHeight across the matching connection
   """
@@ -52956,7 +52960,7 @@ type BatchLbppoolHistVolsListStddevPopulationAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchLbppoolHistVolsListVarianceSampleAggregates {
+type BatchLbppoolHistoricalVolumesListVarianceSampleAggregates {
   """
   Sample variance of batchStartParaBlockHeight across the matching connection
   """
@@ -52968,7 +52972,7 @@ type BatchLbppoolHistVolsListVarianceSampleAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchLbppoolHistVolsListVariancePopulationAggregates {
+type BatchLbppoolHistoricalVolumesListVariancePopulationAggregates {
   """
   Population variance of batchStartParaBlockHeight across the matching connection
   """
@@ -52981,76 +52985,76 @@ type BatchLbppoolHistVolsListVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `BatchLbppoolHistVolsList` for usage during aggregation.
+Grouping methods for `BatchLbppoolHistoricalVolumesList` for usage during aggregation.
 """
-enum BatchLbppoolHistVolsListGroupBy {
+enum BatchLbppoolHistoricalVolumesListGroupBy {
   POOL_IDS
   BATCH_START_PARA_BLOCK_HEIGHT
   BATCH_END_PARA_BLOCK_HEIGHT
 }
 
-"""Conditions for `BatchLbppoolHistVolsList` aggregates."""
-input BatchLbppoolHistVolsListHavingInput {
-  AND: [BatchLbppoolHistVolsListHavingInput!]
-  OR: [BatchLbppoolHistVolsListHavingInput!]
-  sum: BatchLbppoolHistVolsListHavingSumInput
-  distinctCount: BatchLbppoolHistVolsListHavingDistinctCountInput
-  min: BatchLbppoolHistVolsListHavingMinInput
-  max: BatchLbppoolHistVolsListHavingMaxInput
-  average: BatchLbppoolHistVolsListHavingAverageInput
-  stddevSample: BatchLbppoolHistVolsListHavingStddevSampleInput
-  stddevPopulation: BatchLbppoolHistVolsListHavingStddevPopulationInput
-  varianceSample: BatchLbppoolHistVolsListHavingVarianceSampleInput
-  variancePopulation: BatchLbppoolHistVolsListHavingVariancePopulationInput
+"""Conditions for `BatchLbppoolHistoricalVolumesList` aggregates."""
+input BatchLbppoolHistoricalVolumesListHavingInput {
+  AND: [BatchLbppoolHistoricalVolumesListHavingInput!]
+  OR: [BatchLbppoolHistoricalVolumesListHavingInput!]
+  sum: BatchLbppoolHistoricalVolumesListHavingSumInput
+  distinctCount: BatchLbppoolHistoricalVolumesListHavingDistinctCountInput
+  min: BatchLbppoolHistoricalVolumesListHavingMinInput
+  max: BatchLbppoolHistoricalVolumesListHavingMaxInput
+  average: BatchLbppoolHistoricalVolumesListHavingAverageInput
+  stddevSample: BatchLbppoolHistoricalVolumesListHavingStddevSampleInput
+  stddevPopulation: BatchLbppoolHistoricalVolumesListHavingStddevPopulationInput
+  varianceSample: BatchLbppoolHistoricalVolumesListHavingVarianceSampleInput
+  variancePopulation: BatchLbppoolHistoricalVolumesListHavingVariancePopulationInput
 }
 
-input BatchLbppoolHistVolsListHavingSumInput {
+input BatchLbppoolHistoricalVolumesListHavingSumInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchLbppoolHistVolsListHavingDistinctCountInput {
+input BatchLbppoolHistoricalVolumesListHavingDistinctCountInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchLbppoolHistVolsListHavingMinInput {
+input BatchLbppoolHistoricalVolumesListHavingMinInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchLbppoolHistVolsListHavingMaxInput {
+input BatchLbppoolHistoricalVolumesListHavingMaxInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchLbppoolHistVolsListHavingAverageInput {
+input BatchLbppoolHistoricalVolumesListHavingAverageInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchLbppoolHistVolsListHavingStddevSampleInput {
+input BatchLbppoolHistoricalVolumesListHavingStddevSampleInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchLbppoolHistVolsListHavingStddevPopulationInput {
+input BatchLbppoolHistoricalVolumesListHavingStddevPopulationInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchLbppoolHistVolsListHavingVarianceSampleInput {
+input BatchLbppoolHistoricalVolumesListHavingVarianceSampleInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchLbppoolHistVolsListHavingVariancePopulationInput {
+input BatchLbppoolHistoricalVolumesListHavingVariancePopulationInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `BatchLbppoolHistVolsList`."""
-enum BatchLbppoolHistVolsListsOrderBy {
+"""Methods to use when ordering `BatchLbppoolHistoricalVolumesList`."""
+enum BatchLbppoolHistoricalVolumesListsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
@@ -53065,10 +53069,10 @@ enum BatchLbppoolHistVolsListsOrderBy {
 }
 
 """
-A condition to be used against `BatchLbppoolHistVolsList` object types. All
-fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `BatchLbppoolHistoricalVolumesList` object types.
+All fields are tested for equality and combined with a logical ‘and.’
 """
-input BatchLbppoolHistVolsListCondition {
+input BatchLbppoolHistoricalVolumesListCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
@@ -53085,9 +53089,9 @@ input BatchLbppoolHistVolsListCondition {
 }
 
 """
-A filter to be used against `BatchLbppoolHistVolsList` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `BatchLbppoolHistoricalVolumesList` object types. All fields are combined with a logical ‘and.’
 """
-input BatchLbppoolHistVolsListFilter {
+input BatchLbppoolHistoricalVolumesListFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
@@ -53101,118 +53105,121 @@ input BatchLbppoolHistVolsListFilter {
   batchEndParaBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
-  and: [BatchLbppoolHistVolsListFilter!]
+  and: [BatchLbppoolHistoricalVolumesListFilter!]
 
   """Checks for any expressions in this list."""
-  or: [BatchLbppoolHistVolsListFilter!]
+  or: [BatchLbppoolHistoricalVolumesListFilter!]
 
   """Negates the expression."""
-  not: BatchLbppoolHistVolsListFilter
+  not: BatchLbppoolHistoricalVolumesListFilter
 }
 
-"""A connection to a list of `BatchOmnipoolAssetHistVolsList` values."""
-type BatchOmnipoolAssetHistVolsListsConnection {
-  """A list of `BatchOmnipoolAssetHistVolsList` objects."""
-  nodes: [BatchOmnipoolAssetHistVolsList]!
+"""
+A connection to a list of `BatchOmnipoolAssetHistoricalVolumesList` values.
+"""
+type BatchOmnipoolAssetHistoricalVolumesListsConnection {
+  """A list of `BatchOmnipoolAssetHistoricalVolumesList` objects."""
+  nodes: [BatchOmnipoolAssetHistoricalVolumesList]!
 
   """
-  A list of edges which contains the `BatchOmnipoolAssetHistVolsList` and cursor to aid in pagination.
+  A list of edges which contains the `BatchOmnipoolAssetHistoricalVolumesList` and cursor to aid in pagination.
   """
-  edges: [BatchOmnipoolAssetHistVolsListsEdge!]!
+  edges: [BatchOmnipoolAssetHistoricalVolumesListsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """
-  The count of *all* `BatchOmnipoolAssetHistVolsList` you could get from the connection.
+  The count of *all* `BatchOmnipoolAssetHistoricalVolumesList` you could get from the connection.
   """
   totalCount: Int!
 
   """
   Aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  aggregates: BatchOmnipoolAssetHistVolsListAggregates
+  aggregates: BatchOmnipoolAssetHistoricalVolumesListAggregates
 
   """
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
     """
-    The method to use when grouping `BatchOmnipoolAssetHistVolsList` for these aggregates.
+    The method to use when grouping `BatchOmnipoolAssetHistoricalVolumesList` for these aggregates.
     """
-    groupBy: [BatchOmnipoolAssetHistVolsListGroupBy!]!
+    groupBy: [BatchOmnipoolAssetHistoricalVolumesListGroupBy!]!
 
     """Conditions on the grouped aggregates."""
-    having: BatchOmnipoolAssetHistVolsListHavingInput
-  ): [BatchOmnipoolAssetHistVolsListAggregates!]
+    having: BatchOmnipoolAssetHistoricalVolumesListHavingInput
+  ): [BatchOmnipoolAssetHistoricalVolumesListAggregates!]
 }
 
-type BatchOmnipoolAssetHistVolsList {
+type BatchOmnipoolAssetHistoricalVolumesList {
   id: String!
   omnipoolAssetIds: [String]
+  assetIds: [String]
   batchStartParaBlockHeight: Int!
   batchEndParaBlockHeight: Int!
 }
 
-"""A `BatchOmnipoolAssetHistVolsList` edge in the connection."""
-type BatchOmnipoolAssetHistVolsListsEdge {
+"""A `BatchOmnipoolAssetHistoricalVolumesList` edge in the connection."""
+type BatchOmnipoolAssetHistoricalVolumesListsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `BatchOmnipoolAssetHistVolsList` at the end of the edge."""
-  node: BatchOmnipoolAssetHistVolsList
+  """The `BatchOmnipoolAssetHistoricalVolumesList` at the end of the edge."""
+  node: BatchOmnipoolAssetHistoricalVolumesList
 }
 
-type BatchOmnipoolAssetHistVolsListAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListAggregates {
   keys: [String!]
 
   """
   Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  sum: BatchOmnipoolAssetHistVolsListSumAggregates
+  sum: BatchOmnipoolAssetHistoricalVolumesListSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: BatchOmnipoolAssetHistVolsListDistinctCountAggregates
+  distinctCount: BatchOmnipoolAssetHistoricalVolumesListDistinctCountAggregates
 
   """
   Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  min: BatchOmnipoolAssetHistVolsListMinAggregates
+  min: BatchOmnipoolAssetHistoricalVolumesListMinAggregates
 
   """
   Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  max: BatchOmnipoolAssetHistVolsListMaxAggregates
+  max: BatchOmnipoolAssetHistoricalVolumesListMaxAggregates
 
   """
   Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  average: BatchOmnipoolAssetHistVolsListAverageAggregates
+  average: BatchOmnipoolAssetHistoricalVolumesListAverageAggregates
 
   """
   Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevSample: BatchOmnipoolAssetHistVolsListStddevSampleAggregates
+  stddevSample: BatchOmnipoolAssetHistoricalVolumesListStddevSampleAggregates
 
   """
   Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevPopulation: BatchOmnipoolAssetHistVolsListStddevPopulationAggregates
+  stddevPopulation: BatchOmnipoolAssetHistoricalVolumesListStddevPopulationAggregates
 
   """
   Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  varianceSample: BatchOmnipoolAssetHistVolsListVarianceSampleAggregates
+  varianceSample: BatchOmnipoolAssetHistoricalVolumesListVarianceSampleAggregates
 
   """
   Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  variancePopulation: BatchOmnipoolAssetHistVolsListVariancePopulationAggregates
+  variancePopulation: BatchOmnipoolAssetHistoricalVolumesListVariancePopulationAggregates
 }
 
-type BatchOmnipoolAssetHistVolsListSumAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListSumAggregates {
   """Sum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: BigInt!
 
@@ -53220,13 +53227,16 @@ type BatchOmnipoolAssetHistVolsListSumAggregates {
   batchEndParaBlockHeight: BigInt!
 }
 
-type BatchOmnipoolAssetHistVolsListDistinctCountAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
   """Distinct count of omnipoolAssetIds across the matching connection"""
   omnipoolAssetIds: BigInt
 
+  """Distinct count of assetIds across the matching connection"""
+  assetIds: BigInt
+
   """
   Distinct count of batchStartParaBlockHeight across the matching connection
   """
@@ -53238,7 +53248,7 @@ type BatchOmnipoolAssetHistVolsListDistinctCountAggregates {
   batchEndParaBlockHeight: BigInt
 }
 
-type BatchOmnipoolAssetHistVolsListMinAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListMinAggregates {
   """Minimum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: Int
 
@@ -53246,7 +53256,7 @@ type BatchOmnipoolAssetHistVolsListMinAggregates {
   batchEndParaBlockHeight: Int
 }
 
-type BatchOmnipoolAssetHistVolsListMaxAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListMaxAggregates {
   """Maximum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: Int
 
@@ -53254,7 +53264,7 @@ type BatchOmnipoolAssetHistVolsListMaxAggregates {
   batchEndParaBlockHeight: Int
 }
 
-type BatchOmnipoolAssetHistVolsListAverageAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListAverageAggregates {
   """
   Mean average of batchStartParaBlockHeight across the matching connection
   """
@@ -53264,7 +53274,7 @@ type BatchOmnipoolAssetHistVolsListAverageAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchOmnipoolAssetHistVolsListStddevSampleAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListStddevSampleAggregates {
   """
   Sample standard deviation of batchStartParaBlockHeight across the matching connection
   """
@@ -53276,7 +53286,7 @@ type BatchOmnipoolAssetHistVolsListStddevSampleAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchOmnipoolAssetHistVolsListStddevPopulationAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListStddevPopulationAggregates {
   """
   Population standard deviation of batchStartParaBlockHeight across the matching connection
   """
@@ -53288,7 +53298,7 @@ type BatchOmnipoolAssetHistVolsListStddevPopulationAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchOmnipoolAssetHistVolsListVarianceSampleAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListVarianceSampleAggregates {
   """
   Sample variance of batchStartParaBlockHeight across the matching connection
   """
@@ -53300,7 +53310,7 @@ type BatchOmnipoolAssetHistVolsListVarianceSampleAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchOmnipoolAssetHistVolsListVariancePopulationAggregates {
+type BatchOmnipoolAssetHistoricalVolumesListVariancePopulationAggregates {
   """
   Population variance of batchStartParaBlockHeight across the matching connection
   """
@@ -53313,81 +53323,86 @@ type BatchOmnipoolAssetHistVolsListVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `BatchOmnipoolAssetHistVolsList` for usage during aggregation.
+Grouping methods for `BatchOmnipoolAssetHistoricalVolumesList` for usage during aggregation.
 """
-enum BatchOmnipoolAssetHistVolsListGroupBy {
+enum BatchOmnipoolAssetHistoricalVolumesListGroupBy {
   OMNIPOOL_ASSET_IDS
+  ASSET_IDS
   BATCH_START_PARA_BLOCK_HEIGHT
   BATCH_END_PARA_BLOCK_HEIGHT
 }
 
-"""Conditions for `BatchOmnipoolAssetHistVolsList` aggregates."""
-input BatchOmnipoolAssetHistVolsListHavingInput {
-  AND: [BatchOmnipoolAssetHistVolsListHavingInput!]
-  OR: [BatchOmnipoolAssetHistVolsListHavingInput!]
-  sum: BatchOmnipoolAssetHistVolsListHavingSumInput
-  distinctCount: BatchOmnipoolAssetHistVolsListHavingDistinctCountInput
-  min: BatchOmnipoolAssetHistVolsListHavingMinInput
-  max: BatchOmnipoolAssetHistVolsListHavingMaxInput
-  average: BatchOmnipoolAssetHistVolsListHavingAverageInput
-  stddevSample: BatchOmnipoolAssetHistVolsListHavingStddevSampleInput
-  stddevPopulation: BatchOmnipoolAssetHistVolsListHavingStddevPopulationInput
-  varianceSample: BatchOmnipoolAssetHistVolsListHavingVarianceSampleInput
-  variancePopulation: BatchOmnipoolAssetHistVolsListHavingVariancePopulationInput
+"""Conditions for `BatchOmnipoolAssetHistoricalVolumesList` aggregates."""
+input BatchOmnipoolAssetHistoricalVolumesListHavingInput {
+  AND: [BatchOmnipoolAssetHistoricalVolumesListHavingInput!]
+  OR: [BatchOmnipoolAssetHistoricalVolumesListHavingInput!]
+  sum: BatchOmnipoolAssetHistoricalVolumesListHavingSumInput
+  distinctCount: BatchOmnipoolAssetHistoricalVolumesListHavingDistinctCountInput
+  min: BatchOmnipoolAssetHistoricalVolumesListHavingMinInput
+  max: BatchOmnipoolAssetHistoricalVolumesListHavingMaxInput
+  average: BatchOmnipoolAssetHistoricalVolumesListHavingAverageInput
+  stddevSample: BatchOmnipoolAssetHistoricalVolumesListHavingStddevSampleInput
+  stddevPopulation: BatchOmnipoolAssetHistoricalVolumesListHavingStddevPopulationInput
+  varianceSample: BatchOmnipoolAssetHistoricalVolumesListHavingVarianceSampleInput
+  variancePopulation: BatchOmnipoolAssetHistoricalVolumesListHavingVariancePopulationInput
 }
 
-input BatchOmnipoolAssetHistVolsListHavingSumInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingSumInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchOmnipoolAssetHistVolsListHavingDistinctCountInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingDistinctCountInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchOmnipoolAssetHistVolsListHavingMinInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingMinInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchOmnipoolAssetHistVolsListHavingMaxInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingMaxInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchOmnipoolAssetHistVolsListHavingAverageInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingAverageInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchOmnipoolAssetHistVolsListHavingStddevSampleInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingStddevSampleInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchOmnipoolAssetHistVolsListHavingStddevPopulationInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingStddevPopulationInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchOmnipoolAssetHistVolsListHavingVarianceSampleInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingVarianceSampleInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchOmnipoolAssetHistVolsListHavingVariancePopulationInput {
+input BatchOmnipoolAssetHistoricalVolumesListHavingVariancePopulationInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `BatchOmnipoolAssetHistVolsList`."""
-enum BatchOmnipoolAssetHistVolsListsOrderBy {
+"""
+Methods to use when ordering `BatchOmnipoolAssetHistoricalVolumesList`.
+"""
+enum BatchOmnipoolAssetHistoricalVolumesListsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
   OMNIPOOL_ASSET_IDS_ASC
   OMNIPOOL_ASSET_IDS_DESC
+  ASSET_IDS_ASC
+  ASSET_IDS_DESC
   BATCH_START_PARA_BLOCK_HEIGHT_ASC
   BATCH_START_PARA_BLOCK_HEIGHT_DESC
   BATCH_END_PARA_BLOCK_HEIGHT_ASC
@@ -53397,16 +53412,19 @@ enum BatchOmnipoolAssetHistVolsListsOrderBy {
 }
 
 """
-A condition to be used against `BatchOmnipoolAssetHistVolsList` object types.
-All fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `BatchOmnipoolAssetHistoricalVolumesList` object
+types. All fields are tested for equality and combined with a logical ‘and.’
 """
-input BatchOmnipoolAssetHistVolsListCondition {
+input BatchOmnipoolAssetHistoricalVolumesListCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
   """Checks for equality with the object’s `omnipoolAssetIds` field."""
   omnipoolAssetIds: [String]
 
+  """Checks for equality with the object’s `assetIds` field."""
+  assetIds: [String]
+
   """
   Checks for equality with the object’s `batchStartParaBlockHeight` field.
   """
@@ -53417,15 +53435,18 @@ input BatchOmnipoolAssetHistVolsListCondition {
 }
 
 """
-A filter to be used against `BatchOmnipoolAssetHistVolsList` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `BatchOmnipoolAssetHistoricalVolumesList` object types. All fields are combined with a logical ‘and.’
 """
-input BatchOmnipoolAssetHistVolsListFilter {
+input BatchOmnipoolAssetHistoricalVolumesListFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
   """Filter by the object’s `omnipoolAssetIds` field."""
   omnipoolAssetIds: StringListFilter
 
+  """Filter by the object’s `assetIds` field."""
+  assetIds: StringListFilter
+
   """Filter by the object’s `batchStartParaBlockHeight` field."""
   batchStartParaBlockHeight: IntFilter
 
@@ -53433,118 +53454,120 @@ input BatchOmnipoolAssetHistVolsListFilter {
   batchEndParaBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
-  and: [BatchOmnipoolAssetHistVolsListFilter!]
+  and: [BatchOmnipoolAssetHistoricalVolumesListFilter!]
 
   """Checks for any expressions in this list."""
-  or: [BatchOmnipoolAssetHistVolsListFilter!]
+  or: [BatchOmnipoolAssetHistoricalVolumesListFilter!]
 
   """Negates the expression."""
-  not: BatchOmnipoolAssetHistVolsListFilter
+  not: BatchOmnipoolAssetHistoricalVolumesListFilter
 }
 
-"""A connection to a list of `BatchStableswapHistVolsList` values."""
-type BatchStableswapHistVolsListsConnection {
-  """A list of `BatchStableswapHistVolsList` objects."""
-  nodes: [BatchStableswapHistVolsList]!
+"""
+A connection to a list of `BatchStableswapHistoricalVolumesList` values.
+"""
+type BatchStableswapHistoricalVolumesListsConnection {
+  """A list of `BatchStableswapHistoricalVolumesList` objects."""
+  nodes: [BatchStableswapHistoricalVolumesList]!
 
   """
-  A list of edges which contains the `BatchStableswapHistVolsList` and cursor to aid in pagination.
+  A list of edges which contains the `BatchStableswapHistoricalVolumesList` and cursor to aid in pagination.
   """
-  edges: [BatchStableswapHistVolsListsEdge!]!
+  edges: [BatchStableswapHistoricalVolumesListsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """
-  The count of *all* `BatchStableswapHistVolsList` you could get from the connection.
+  The count of *all* `BatchStableswapHistoricalVolumesList` you could get from the connection.
   """
   totalCount: Int!
 
   """
   Aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  aggregates: BatchStableswapHistVolsListAggregates
+  aggregates: BatchStableswapHistoricalVolumesListAggregates
 
   """
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
     """
-    The method to use when grouping `BatchStableswapHistVolsList` for these aggregates.
+    The method to use when grouping `BatchStableswapHistoricalVolumesList` for these aggregates.
     """
-    groupBy: [BatchStableswapHistVolsListGroupBy!]!
+    groupBy: [BatchStableswapHistoricalVolumesListGroupBy!]!
 
     """Conditions on the grouped aggregates."""
-    having: BatchStableswapHistVolsListHavingInput
-  ): [BatchStableswapHistVolsListAggregates!]
+    having: BatchStableswapHistoricalVolumesListHavingInput
+  ): [BatchStableswapHistoricalVolumesListAggregates!]
 }
 
-type BatchStableswapHistVolsList {
+type BatchStableswapHistoricalVolumesList {
   id: String!
   poolIds: [String]
   batchStartParaBlockHeight: Int!
   batchEndParaBlockHeight: Int!
 }
 
-"""A `BatchStableswapHistVolsList` edge in the connection."""
-type BatchStableswapHistVolsListsEdge {
+"""A `BatchStableswapHistoricalVolumesList` edge in the connection."""
+type BatchStableswapHistoricalVolumesListsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `BatchStableswapHistVolsList` at the end of the edge."""
-  node: BatchStableswapHistVolsList
+  """The `BatchStableswapHistoricalVolumesList` at the end of the edge."""
+  node: BatchStableswapHistoricalVolumesList
 }
 
-type BatchStableswapHistVolsListAggregates {
+type BatchStableswapHistoricalVolumesListAggregates {
   keys: [String!]
 
   """
   Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  sum: BatchStableswapHistVolsListSumAggregates
+  sum: BatchStableswapHistoricalVolumesListSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: BatchStableswapHistVolsListDistinctCountAggregates
+  distinctCount: BatchStableswapHistoricalVolumesListDistinctCountAggregates
 
   """
   Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  min: BatchStableswapHistVolsListMinAggregates
+  min: BatchStableswapHistoricalVolumesListMinAggregates
 
   """
   Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  max: BatchStableswapHistVolsListMaxAggregates
+  max: BatchStableswapHistoricalVolumesListMaxAggregates
 
   """
   Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  average: BatchStableswapHistVolsListAverageAggregates
+  average: BatchStableswapHistoricalVolumesListAverageAggregates
 
   """
   Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevSample: BatchStableswapHistVolsListStddevSampleAggregates
+  stddevSample: BatchStableswapHistoricalVolumesListStddevSampleAggregates
 
   """
   Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevPopulation: BatchStableswapHistVolsListStddevPopulationAggregates
+  stddevPopulation: BatchStableswapHistoricalVolumesListStddevPopulationAggregates
 
   """
   Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  varianceSample: BatchStableswapHistVolsListVarianceSampleAggregates
+  varianceSample: BatchStableswapHistoricalVolumesListVarianceSampleAggregates
 
   """
   Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  variancePopulation: BatchStableswapHistVolsListVariancePopulationAggregates
+  variancePopulation: BatchStableswapHistoricalVolumesListVariancePopulationAggregates
 }
 
-type BatchStableswapHistVolsListSumAggregates {
+type BatchStableswapHistoricalVolumesListSumAggregates {
   """Sum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: BigInt!
 
@@ -53552,7 +53575,7 @@ type BatchStableswapHistVolsListSumAggregates {
   batchEndParaBlockHeight: BigInt!
 }
 
-type BatchStableswapHistVolsListDistinctCountAggregates {
+type BatchStableswapHistoricalVolumesListDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
@@ -53570,7 +53593,7 @@ type BatchStableswapHistVolsListDistinctCountAggregates {
   batchEndParaBlockHeight: BigInt
 }
 
-type BatchStableswapHistVolsListMinAggregates {
+type BatchStableswapHistoricalVolumesListMinAggregates {
   """Minimum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: Int
 
@@ -53578,7 +53601,7 @@ type BatchStableswapHistVolsListMinAggregates {
   batchEndParaBlockHeight: Int
 }
 
-type BatchStableswapHistVolsListMaxAggregates {
+type BatchStableswapHistoricalVolumesListMaxAggregates {
   """Maximum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: Int
 
@@ -53586,7 +53609,7 @@ type BatchStableswapHistVolsListMaxAggregates {
   batchEndParaBlockHeight: Int
 }
 
-type BatchStableswapHistVolsListAverageAggregates {
+type BatchStableswapHistoricalVolumesListAverageAggregates {
   """
   Mean average of batchStartParaBlockHeight across the matching connection
   """
@@ -53596,7 +53619,7 @@ type BatchStableswapHistVolsListAverageAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchStableswapHistVolsListStddevSampleAggregates {
+type BatchStableswapHistoricalVolumesListStddevSampleAggregates {
   """
   Sample standard deviation of batchStartParaBlockHeight across the matching connection
   """
@@ -53608,7 +53631,7 @@ type BatchStableswapHistVolsListStddevSampleAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchStableswapHistVolsListStddevPopulationAggregates {
+type BatchStableswapHistoricalVolumesListStddevPopulationAggregates {
   """
   Population standard deviation of batchStartParaBlockHeight across the matching connection
   """
@@ -53620,7 +53643,7 @@ type BatchStableswapHistVolsListStddevPopulationAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchStableswapHistVolsListVarianceSampleAggregates {
+type BatchStableswapHistoricalVolumesListVarianceSampleAggregates {
   """
   Sample variance of batchStartParaBlockHeight across the matching connection
   """
@@ -53632,7 +53655,7 @@ type BatchStableswapHistVolsListVarianceSampleAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchStableswapHistVolsListVariancePopulationAggregates {
+type BatchStableswapHistoricalVolumesListVariancePopulationAggregates {
   """
   Population variance of batchStartParaBlockHeight across the matching connection
   """
@@ -53645,76 +53668,76 @@ type BatchStableswapHistVolsListVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `BatchStableswapHistVolsList` for usage during aggregation.
+Grouping methods for `BatchStableswapHistoricalVolumesList` for usage during aggregation.
 """
-enum BatchStableswapHistVolsListGroupBy {
+enum BatchStableswapHistoricalVolumesListGroupBy {
   POOL_IDS
   BATCH_START_PARA_BLOCK_HEIGHT
   BATCH_END_PARA_BLOCK_HEIGHT
 }
 
-"""Conditions for `BatchStableswapHistVolsList` aggregates."""
-input BatchStableswapHistVolsListHavingInput {
-  AND: [BatchStableswapHistVolsListHavingInput!]
-  OR: [BatchStableswapHistVolsListHavingInput!]
-  sum: BatchStableswapHistVolsListHavingSumInput
-  distinctCount: BatchStableswapHistVolsListHavingDistinctCountInput
-  min: BatchStableswapHistVolsListHavingMinInput
-  max: BatchStableswapHistVolsListHavingMaxInput
-  average: BatchStableswapHistVolsListHavingAverageInput
-  stddevSample: BatchStableswapHistVolsListHavingStddevSampleInput
-  stddevPopulation: BatchStableswapHistVolsListHavingStddevPopulationInput
-  varianceSample: BatchStableswapHistVolsListHavingVarianceSampleInput
-  variancePopulation: BatchStableswapHistVolsListHavingVariancePopulationInput
+"""Conditions for `BatchStableswapHistoricalVolumesList` aggregates."""
+input BatchStableswapHistoricalVolumesListHavingInput {
+  AND: [BatchStableswapHistoricalVolumesListHavingInput!]
+  OR: [BatchStableswapHistoricalVolumesListHavingInput!]
+  sum: BatchStableswapHistoricalVolumesListHavingSumInput
+  distinctCount: BatchStableswapHistoricalVolumesListHavingDistinctCountInput
+  min: BatchStableswapHistoricalVolumesListHavingMinInput
+  max: BatchStableswapHistoricalVolumesListHavingMaxInput
+  average: BatchStableswapHistoricalVolumesListHavingAverageInput
+  stddevSample: BatchStableswapHistoricalVolumesListHavingStddevSampleInput
+  stddevPopulation: BatchStableswapHistoricalVolumesListHavingStddevPopulationInput
+  varianceSample: BatchStableswapHistoricalVolumesListHavingVarianceSampleInput
+  variancePopulation: BatchStableswapHistoricalVolumesListHavingVariancePopulationInput
 }
 
-input BatchStableswapHistVolsListHavingSumInput {
+input BatchStableswapHistoricalVolumesListHavingSumInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchStableswapHistVolsListHavingDistinctCountInput {
+input BatchStableswapHistoricalVolumesListHavingDistinctCountInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchStableswapHistVolsListHavingMinInput {
+input BatchStableswapHistoricalVolumesListHavingMinInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchStableswapHistVolsListHavingMaxInput {
+input BatchStableswapHistoricalVolumesListHavingMaxInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchStableswapHistVolsListHavingAverageInput {
+input BatchStableswapHistoricalVolumesListHavingAverageInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchStableswapHistVolsListHavingStddevSampleInput {
+input BatchStableswapHistoricalVolumesListHavingStddevSampleInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchStableswapHistVolsListHavingStddevPopulationInput {
+input BatchStableswapHistoricalVolumesListHavingStddevPopulationInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchStableswapHistVolsListHavingVarianceSampleInput {
+input BatchStableswapHistoricalVolumesListHavingVarianceSampleInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchStableswapHistVolsListHavingVariancePopulationInput {
+input BatchStableswapHistoricalVolumesListHavingVariancePopulationInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `BatchStableswapHistVolsList`."""
-enum BatchStableswapHistVolsListsOrderBy {
+"""Methods to use when ordering `BatchStableswapHistoricalVolumesList`."""
+enum BatchStableswapHistoricalVolumesListsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
@@ -53729,10 +53752,10 @@ enum BatchStableswapHistVolsListsOrderBy {
 }
 
 """
-A condition to be used against `BatchStableswapHistVolsList` object types. All
-fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `BatchStableswapHistoricalVolumesList` object
+types. All fields are tested for equality and combined with a logical ‘and.’
 """
-input BatchStableswapHistVolsListCondition {
+input BatchStableswapHistoricalVolumesListCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
@@ -53749,9 +53772,9 @@ input BatchStableswapHistVolsListCondition {
 }
 
 """
-A filter to be used against `BatchStableswapHistVolsList` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `BatchStableswapHistoricalVolumesList` object types. All fields are combined with a logical ‘and.’
 """
-input BatchStableswapHistVolsListFilter {
+input BatchStableswapHistoricalVolumesListFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
@@ -53765,118 +53788,118 @@ input BatchStableswapHistVolsListFilter {
   batchEndParaBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
-  and: [BatchStableswapHistVolsListFilter!]
+  and: [BatchStableswapHistoricalVolumesListFilter!]
 
   """Checks for any expressions in this list."""
-  or: [BatchStableswapHistVolsListFilter!]
+  or: [BatchStableswapHistoricalVolumesListFilter!]
 
   """Negates the expression."""
-  not: BatchStableswapHistVolsListFilter
+  not: BatchStableswapHistoricalVolumesListFilter
 }
 
-"""A connection to a list of `BatchXykpoolHistVolsList` values."""
-type BatchXykpoolHistVolsListsConnection {
-  """A list of `BatchXykpoolHistVolsList` objects."""
-  nodes: [BatchXykpoolHistVolsList]!
+"""A connection to a list of `BatchXykpoolHistoricalVolumesList` values."""
+type BatchXykpoolHistoricalVolumesListsConnection {
+  """A list of `BatchXykpoolHistoricalVolumesList` objects."""
+  nodes: [BatchXykpoolHistoricalVolumesList]!
 
   """
-  A list of edges which contains the `BatchXykpoolHistVolsList` and cursor to aid in pagination.
+  A list of edges which contains the `BatchXykpoolHistoricalVolumesList` and cursor to aid in pagination.
   """
-  edges: [BatchXykpoolHistVolsListsEdge!]!
+  edges: [BatchXykpoolHistoricalVolumesListsEdge!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """
-  The count of *all* `BatchXykpoolHistVolsList` you could get from the connection.
+  The count of *all* `BatchXykpoolHistoricalVolumesList` you could get from the connection.
   """
   totalCount: Int!
 
   """
   Aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  aggregates: BatchXykpoolHistVolsListAggregates
+  aggregates: BatchXykpoolHistoricalVolumesListAggregates
 
   """
   Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
   groupedAggregates(
     """
-    The method to use when grouping `BatchXykpoolHistVolsList` for these aggregates.
+    The method to use when grouping `BatchXykpoolHistoricalVolumesList` for these aggregates.
     """
-    groupBy: [BatchXykpoolHistVolsListGroupBy!]!
+    groupBy: [BatchXykpoolHistoricalVolumesListGroupBy!]!
 
     """Conditions on the grouped aggregates."""
-    having: BatchXykpoolHistVolsListHavingInput
-  ): [BatchXykpoolHistVolsListAggregates!]
+    having: BatchXykpoolHistoricalVolumesListHavingInput
+  ): [BatchXykpoolHistoricalVolumesListAggregates!]
 }
 
-type BatchXykpoolHistVolsList {
+type BatchXykpoolHistoricalVolumesList {
   id: String!
   poolIds: [String]
   batchStartParaBlockHeight: Int!
   batchEndParaBlockHeight: Int!
 }
 
-"""A `BatchXykpoolHistVolsList` edge in the connection."""
-type BatchXykpoolHistVolsListsEdge {
+"""A `BatchXykpoolHistoricalVolumesList` edge in the connection."""
+type BatchXykpoolHistoricalVolumesListsEdge {
   """A cursor for use in pagination."""
   cursor: Cursor
 
-  """The `BatchXykpoolHistVolsList` at the end of the edge."""
-  node: BatchXykpoolHistVolsList
+  """The `BatchXykpoolHistoricalVolumesList` at the end of the edge."""
+  node: BatchXykpoolHistoricalVolumesList
 }
 
-type BatchXykpoolHistVolsListAggregates {
+type BatchXykpoolHistoricalVolumesListAggregates {
   keys: [String!]
 
   """
   Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  sum: BatchXykpoolHistVolsListSumAggregates
+  sum: BatchXykpoolHistoricalVolumesListSumAggregates
 
   """
   Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  distinctCount: BatchXykpoolHistVolsListDistinctCountAggregates
+  distinctCount: BatchXykpoolHistoricalVolumesListDistinctCountAggregates
 
   """
   Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  min: BatchXykpoolHistVolsListMinAggregates
+  min: BatchXykpoolHistoricalVolumesListMinAggregates
 
   """
   Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  max: BatchXykpoolHistVolsListMaxAggregates
+  max: BatchXykpoolHistoricalVolumesListMaxAggregates
 
   """
   Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  average: BatchXykpoolHistVolsListAverageAggregates
+  average: BatchXykpoolHistoricalVolumesListAverageAggregates
 
   """
   Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevSample: BatchXykpoolHistVolsListStddevSampleAggregates
+  stddevSample: BatchXykpoolHistoricalVolumesListStddevSampleAggregates
 
   """
   Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  stddevPopulation: BatchXykpoolHistVolsListStddevPopulationAggregates
+  stddevPopulation: BatchXykpoolHistoricalVolumesListStddevPopulationAggregates
 
   """
   Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  varianceSample: BatchXykpoolHistVolsListVarianceSampleAggregates
+  varianceSample: BatchXykpoolHistoricalVolumesListVarianceSampleAggregates
 
   """
   Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
   """
-  variancePopulation: BatchXykpoolHistVolsListVariancePopulationAggregates
+  variancePopulation: BatchXykpoolHistoricalVolumesListVariancePopulationAggregates
 }
 
-type BatchXykpoolHistVolsListSumAggregates {
+type BatchXykpoolHistoricalVolumesListSumAggregates {
   """Sum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: BigInt!
 
@@ -53884,7 +53907,7 @@ type BatchXykpoolHistVolsListSumAggregates {
   batchEndParaBlockHeight: BigInt!
 }
 
-type BatchXykpoolHistVolsListDistinctCountAggregates {
+type BatchXykpoolHistoricalVolumesListDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
@@ -53902,7 +53925,7 @@ type BatchXykpoolHistVolsListDistinctCountAggregates {
   batchEndParaBlockHeight: BigInt
 }
 
-type BatchXykpoolHistVolsListMinAggregates {
+type BatchXykpoolHistoricalVolumesListMinAggregates {
   """Minimum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: Int
 
@@ -53910,7 +53933,7 @@ type BatchXykpoolHistVolsListMinAggregates {
   batchEndParaBlockHeight: Int
 }
 
-type BatchXykpoolHistVolsListMaxAggregates {
+type BatchXykpoolHistoricalVolumesListMaxAggregates {
   """Maximum of batchStartParaBlockHeight across the matching connection"""
   batchStartParaBlockHeight: Int
 
@@ -53918,7 +53941,7 @@ type BatchXykpoolHistVolsListMaxAggregates {
   batchEndParaBlockHeight: Int
 }
 
-type BatchXykpoolHistVolsListAverageAggregates {
+type BatchXykpoolHistoricalVolumesListAverageAggregates {
   """
   Mean average of batchStartParaBlockHeight across the matching connection
   """
@@ -53928,7 +53951,7 @@ type BatchXykpoolHistVolsListAverageAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchXykpoolHistVolsListStddevSampleAggregates {
+type BatchXykpoolHistoricalVolumesListStddevSampleAggregates {
   """
   Sample standard deviation of batchStartParaBlockHeight across the matching connection
   """
@@ -53940,7 +53963,7 @@ type BatchXykpoolHistVolsListStddevSampleAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchXykpoolHistVolsListStddevPopulationAggregates {
+type BatchXykpoolHistoricalVolumesListStddevPopulationAggregates {
   """
   Population standard deviation of batchStartParaBlockHeight across the matching connection
   """
@@ -53952,7 +53975,7 @@ type BatchXykpoolHistVolsListStddevPopulationAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchXykpoolHistVolsListVarianceSampleAggregates {
+type BatchXykpoolHistoricalVolumesListVarianceSampleAggregates {
   """
   Sample variance of batchStartParaBlockHeight across the matching connection
   """
@@ -53964,7 +53987,7 @@ type BatchXykpoolHistVolsListVarianceSampleAggregates {
   batchEndParaBlockHeight: BigFloat
 }
 
-type BatchXykpoolHistVolsListVariancePopulationAggregates {
+type BatchXykpoolHistoricalVolumesListVariancePopulationAggregates {
   """
   Population variance of batchStartParaBlockHeight across the matching connection
   """
@@ -53977,76 +54000,76 @@ type BatchXykpoolHistVolsListVariancePopulationAggregates {
 }
 
 """
-Grouping methods for `BatchXykpoolHistVolsList` for usage during aggregation.
+Grouping methods for `BatchXykpoolHistoricalVolumesList` for usage during aggregation.
 """
-enum BatchXykpoolHistVolsListGroupBy {
+enum BatchXykpoolHistoricalVolumesListGroupBy {
   POOL_IDS
   BATCH_START_PARA_BLOCK_HEIGHT
   BATCH_END_PARA_BLOCK_HEIGHT
 }
 
-"""Conditions for `BatchXykpoolHistVolsList` aggregates."""
-input BatchXykpoolHistVolsListHavingInput {
-  AND: [BatchXykpoolHistVolsListHavingInput!]
-  OR: [BatchXykpoolHistVolsListHavingInput!]
-  sum: BatchXykpoolHistVolsListHavingSumInput
-  distinctCount: BatchXykpoolHistVolsListHavingDistinctCountInput
-  min: BatchXykpoolHistVolsListHavingMinInput
-  max: BatchXykpoolHistVolsListHavingMaxInput
-  average: BatchXykpoolHistVolsListHavingAverageInput
-  stddevSample: BatchXykpoolHistVolsListHavingStddevSampleInput
-  stddevPopulation: BatchXykpoolHistVolsListHavingStddevPopulationInput
-  varianceSample: BatchXykpoolHistVolsListHavingVarianceSampleInput
-  variancePopulation: BatchXykpoolHistVolsListHavingVariancePopulationInput
+"""Conditions for `BatchXykpoolHistoricalVolumesList` aggregates."""
+input BatchXykpoolHistoricalVolumesListHavingInput {
+  AND: [BatchXykpoolHistoricalVolumesListHavingInput!]
+  OR: [BatchXykpoolHistoricalVolumesListHavingInput!]
+  sum: BatchXykpoolHistoricalVolumesListHavingSumInput
+  distinctCount: BatchXykpoolHistoricalVolumesListHavingDistinctCountInput
+  min: BatchXykpoolHistoricalVolumesListHavingMinInput
+  max: BatchXykpoolHistoricalVolumesListHavingMaxInput
+  average: BatchXykpoolHistoricalVolumesListHavingAverageInput
+  stddevSample: BatchXykpoolHistoricalVolumesListHavingStddevSampleInput
+  stddevPopulation: BatchXykpoolHistoricalVolumesListHavingStddevPopulationInput
+  varianceSample: BatchXykpoolHistoricalVolumesListHavingVarianceSampleInput
+  variancePopulation: BatchXykpoolHistoricalVolumesListHavingVariancePopulationInput
 }
 
-input BatchXykpoolHistVolsListHavingSumInput {
+input BatchXykpoolHistoricalVolumesListHavingSumInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchXykpoolHistVolsListHavingDistinctCountInput {
+input BatchXykpoolHistoricalVolumesListHavingDistinctCountInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchXykpoolHistVolsListHavingMinInput {
+input BatchXykpoolHistoricalVolumesListHavingMinInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchXykpoolHistVolsListHavingMaxInput {
+input BatchXykpoolHistoricalVolumesListHavingMaxInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchXykpoolHistVolsListHavingAverageInput {
+input BatchXykpoolHistoricalVolumesListHavingAverageInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchXykpoolHistVolsListHavingStddevSampleInput {
+input BatchXykpoolHistoricalVolumesListHavingStddevSampleInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchXykpoolHistVolsListHavingStddevPopulationInput {
+input BatchXykpoolHistoricalVolumesListHavingStddevPopulationInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchXykpoolHistVolsListHavingVarianceSampleInput {
+input BatchXykpoolHistoricalVolumesListHavingVarianceSampleInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-input BatchXykpoolHistVolsListHavingVariancePopulationInput {
+input BatchXykpoolHistoricalVolumesListHavingVariancePopulationInput {
   batchStartParaBlockHeight: HavingIntFilter
   batchEndParaBlockHeight: HavingIntFilter
 }
 
-"""Methods to use when ordering `BatchXykpoolHistVolsList`."""
-enum BatchXykpoolHistVolsListsOrderBy {
+"""Methods to use when ordering `BatchXykpoolHistoricalVolumesList`."""
+enum BatchXykpoolHistoricalVolumesListsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
@@ -54061,10 +54084,10 @@ enum BatchXykpoolHistVolsListsOrderBy {
 }
 
 """
-A condition to be used against `BatchXykpoolHistVolsList` object types. All
-fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `BatchXykpoolHistoricalVolumesList` object types.
+All fields are tested for equality and combined with a logical ‘and.’
 """
-input BatchXykpoolHistVolsListCondition {
+input BatchXykpoolHistoricalVolumesListCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
 
@@ -54081,9 +54104,9 @@ input BatchXykpoolHistVolsListCondition {
 }
 
 """
-A filter to be used against `BatchXykpoolHistVolsList` object types. All fields are combined with a logical ‘and.’
+A filter to be used against `BatchXykpoolHistoricalVolumesList` object types. All fields are combined with a logical ‘and.’
 """
-input BatchXykpoolHistVolsListFilter {
+input BatchXykpoolHistoricalVolumesListFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
 
@@ -54097,13 +54120,13 @@ input BatchXykpoolHistVolsListFilter {
   batchEndParaBlockHeight: IntFilter
 
   """Checks for all expressions in this list."""
-  and: [BatchXykpoolHistVolsListFilter!]
+  and: [BatchXykpoolHistoricalVolumesListFilter!]
 
   """Checks for any expressions in this list."""
-  or: [BatchXykpoolHistVolsListFilter!]
+  or: [BatchXykpoolHistoricalVolumesListFilter!]
 
   """Negates the expression."""
-  not: BatchXykpoolHistVolsListFilter
+  not: BatchXykpoolHistoricalVolumesListFilter
 }
 
 """A connection to a list of `Block` values."""
@@ -60750,7 +60773,7 @@ type OmnipoolAssetVolumeAggregated {
 }
 
 input OmnipoolAssetVolumesByPeriodFilter {
-  omnipoolAssetIds: [String!]
+  assetIds: [String!]
   startBlockNumber: Int!
   endBlockNumber: Int
 }
@@ -60825,7 +60848,9 @@ type Subscription {
   xykpoolHistoricalVolume(filter: XykpoolHistoricalVolumeSubscriptionFilter): XykpoolHistoricalVolumeSubscriptionPayload
   xykpoolHistoricalVolumeByPeriod(filter: XykpoolHistoricalVolumeByPeriodSubscriptionFilter): XykpoolHistoricalVolumeByPeriodSubscriptionPayload
   omnipoolAssetHistoricalVolume(filter: OmnipoolAssetHistoricalVolumeSubscriptionFilter): OmnipoolAssetHistoricalVolumeSubscriptionPayload
+  omnipoolAssetHistoricalVolumeByPeriod(filter: OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter): OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload
   stableswapHistoricalVolume(filter: StableswapHistoricalVolumeSubscriptionFilter): StableswapHistoricalVolumeSubscriptionPayload
+  stableswapHistoricalVolumeByPeriod(filter: StableswapHistoricalVolumeByPeriodSubscriptionFilter): StableswapHistoricalVolumeByPeriodSubscriptionPayload
   routedTrade(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
 }
 
@@ -60903,7 +60928,17 @@ type OmnipoolAssetHistoricalVolumeEntity {
 }
 
 input OmnipoolAssetHistoricalVolumeSubscriptionFilter {
-  omnipoolAssetIds: [String!]
+  assetIds: [String!]
+}
+
+type OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload {
+  nodes: [OmnipoolAssetVolumeAggregated!]
+  event: String
+}
+
+input OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter {
+  assetIds: [String!]
+  period: AggregationTimeRange
 }
 
 type StableswapHistoricalVolumeSubscriptionPayload {
@@ -60935,6 +60970,16 @@ type StableswapAssetHistoricalVolumeEntity {
 
 input StableswapHistoricalVolumeSubscriptionFilter {
   poolIds: [String!]
+}
+
+type StableswapHistoricalVolumeByPeriodSubscriptionPayload {
+  nodes: [StableswapVolumeAggregated!]
+  event: String
+}
+
+input StableswapHistoricalVolumeByPeriodSubscriptionFilter {
+  poolIds: [String!]
+  period: AggregationTimeRange
 }
 
 type RoutedTradeSubscriptionPayload {

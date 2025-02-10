@@ -1,5 +1,5 @@
-module.exports = class Data1738940994663 {
-    name = 'Data1738940994663'
+module.exports = class Data1738957419460 {
+    name = 'Data1738957419460'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -212,7 +212,7 @@ module.exports = class Data1738940994663 {
         await db.query(`CREATE TABLE "batch_xykpool_hist_vols_list" ("id" character varying NOT NULL, "pool_ids" text array, "batch_start_para_block_height" integer NOT NULL, "batch_end_para_block_height" integer NOT NULL, CONSTRAINT "PK_773c6007c43309f34e460b0b002" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_6a2cdf49bbbfb7a3a6fc035b4f" ON "batch_xykpool_hist_vols_list" ("batch_start_para_block_height") `)
         await db.query(`CREATE INDEX "IDX_f87efa62b733ff8b175e0674c6" ON "batch_xykpool_hist_vols_list" ("batch_end_para_block_height") `)
-        await db.query(`CREATE TABLE "batch_omnipool_asset_hist_vols_list" ("id" character varying NOT NULL, "omnipool_asset_ids" text array, "batch_start_para_block_height" integer NOT NULL, "batch_end_para_block_height" integer NOT NULL, CONSTRAINT "PK_1fce3072fbf094340ecdd7ae0bd" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "batch_omnipool_asset_hist_vols_list" ("id" character varying NOT NULL, "omnipool_asset_ids" text array, "asset_ids" text array, "batch_start_para_block_height" integer NOT NULL, "batch_end_para_block_height" integer NOT NULL, CONSTRAINT "PK_1fce3072fbf094340ecdd7ae0bd" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_fdab2dfef241c0d81fe0b5c033" ON "batch_omnipool_asset_hist_vols_list" ("batch_start_para_block_height") `)
         await db.query(`CREATE INDEX "IDX_bae57809624f235fb833bfc2db" ON "batch_omnipool_asset_hist_vols_list" ("batch_end_para_block_height") `)
         await db.query(`CREATE TABLE "stableswap_asset_historical_volume" ("id" character varying NOT NULL, "swap_fee" numeric NOT NULL, "swap_total_fees" numeric NOT NULL, "swap_volume_in" numeric NOT NULL, "swap_volume_out" numeric NOT NULL, "swap_total_volume_in" numeric NOT NULL, "swap_total_volume_out" numeric NOT NULL, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "volumes_collection_id" character varying, "asset_id" character varying, "block_id" character varying, CONSTRAINT "PK_b007ad1364bdd7113c0deb92812" PRIMARY KEY ("id"))`)

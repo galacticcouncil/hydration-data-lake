@@ -53,6 +53,30 @@
           omit: ['all'],
         },
       },
+      batch_lbppool_hist_vols_list: {
+        tags: {
+          name: 'batch_lbppool_historical_volumes_list',
+          fieldName: 'batch_lbppool_historical_volumes_list',
+        },
+      },
+      batch_omnipool_asset_hist_vols_list: {
+        tags: {
+          name: 'batch_omnipool_asset_historical_volumes_list',
+          fieldName: 'batch_omnipool_asset_historical_volumes_list',
+        },
+      },
+      batch_stableswap_hist_vols_list: {
+        tags: {
+          name: 'batch_stableswap_historical_volumes_list',
+          fieldName: 'batch_stableswap_historical_volumes_list',
+        },
+      },
+      batch_xykpool_hist_vols_list: {
+        tags: {
+          name: 'batch_xykpool_historical_volumes_list',
+          fieldName: 'batch_xykpool_historical_volumes_list',
+        },
+      },
     },
   },
 }

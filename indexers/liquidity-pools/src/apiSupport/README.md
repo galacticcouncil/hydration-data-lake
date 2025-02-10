@@ -17,6 +17,21 @@ To ensure a consistent and coherent field set, the API employs decorators based 
 - `routed_trade_inputs`
 - `routed_trade_outputs`
 
+### Common API definitions
+
+More common types can be found [here](./plugins/query/commonApiTypesDefinition.plugin.ts)
+
+```graphql
+enum AggregationTimeRange {
+  _1H_
+  _24H_
+  _1W_
+  _1M_
+  _1Y_
+  _ALL_
+}
+```
+
 ### Custom API Queries
 
 The API provides custom queries for aggregated volume data:
@@ -31,13 +46,28 @@ The API provides custom queries for aggregated volume data:
 
 The API supports the following subscriptions:
 
-- **`xykPoolHistoricalVolume(filter: {poolIds: [String]})`**: Subscribes to events for each new record of `xykPoolHistoricalVolume`.
+- **`xykPoolHistoricalVolume(filter: {poolIds: [String]})`**: _Subscribes to events for each new record of `xykPoolHistoricalVolume`._
 
-- **`omnipoolAssetHistoricalVolume(filter: {omnipoolAssetIds: [String]})`**: Subscribes to events for each new record of `omnipoolAssetHistoricalVolume`.
+- **`xykPoolHistoricalVolumeByPeriod(filter: {poolIds: [String], period: AggregationTimeRange})`**: _Subscribes to events for `batchXykpoolHistVolsList`
+  when a specified pool ID is included in volume aggregation for the latest processed block (or batch of blocks).
+  The event provides total volume data for each matching pool ID within the specified AggregationTimeRange. The aggregation period
+  spans from the start of the given AggregationTimeRange up to the latest processed block in the indexer._
 
-- **`stablepoolHistoricalVolume(filter: {poolIds: [String]})`**: Subscribes to events for each new record of `stablepoolHistoricalVolume`.
+- **`omnipoolAssetHistoricalVolume(filter: {omnipoolAssetIds: [String]})`**: _Subscribes to events for each new record of `omnipoolAssetHistoricalVolume`._
 
-- **`routedTrade(filter: RoutedTradeSubscriptionFilter)`**: Subscribes to events for each new record of `routedTrade`. The `RoutedTradeSubscriptionFilter` includes the following fields:
+- **`omnipoolAssetHistoricalVolumeByPeriod(filter: {assetIds: [String], period: AggregationTimeRange})`**: _Subscribes to events for `batchOmnipoolAssetHistVolsList`
+  when a specified asset ID is included in volume aggregation for the latest processed block (or batch of blocks).
+  The event provides total volume data for each matching asset ID within the specified AggregationTimeRange. The aggregation period
+  spans from the start of the given AggregationTimeRange up to the latest processed block in the indexer._
+
+- **`stablepoolHistoricalVolume(filter: {poolIds: [String]})`**: _Subscribes to events for each new record of `stablepoolHistoricalVolume`._
+
+- **`stablepoolHistoricalVolumeByPeriod(filter: {poolIds: [String], period: AggregationTimeRange})`**: _Subscribes to events for `batchStableswapHistVolsList`
+  when a specified pool ID is included in volume aggregation for the latest processed block (or batch of blocks).
+  The event provides total volume data for each matching pool ID within the specified AggregationTimeRange. The aggregation period
+  spans from the start of the given AggregationTimeRange up to the latest processed block in the indexer._
+
+- **`routedTrade(filter: RoutedTradeSubscriptionFilter)`**: _Subscribes to events for each new record of `routedTrade`. The `RoutedTradeSubscriptionFilter` includes the following fields:_
 
   - `assetIds: [String!]`: List of asset IDs; at least one should be present in `routedTrade.allInvolvedAssetIds`.
 
@@ -55,4 +85,23 @@ The API supports the following subscriptions:
 
 ### Important Notice
 
-The `lbpPoolHistoricalPrice` and `xykPoolHistoricalPrice` are tracked only after the indexer reaches the head of the archive. During the reindexing phase, prices are not processed due to the requirement for extensive storage calls.
+---
+
+The `lbpPoolHistoricalPrice` and `xykPoolHistoricalPrice` are tracked only after the indexer reaches the head of the
+archive. During the reindexing phase, prices are not processed due to the requirement for extensive storage calls.
+
+---
+
+#### Subscription for Pools and Assets volume by period
+
+Following subscriptions are based on appropriate entities:
+
+- `xykPoolHistoricalVolumeByPeriod -> BatchXykpoolHistVolsList`
+- `omnipoolAssetHistoricalVolumeByPeriod -> BatchOmnipoolAssetHistVolsList`
+- `stablepoolHistoricalVolumeByPeriod -> BatchStableswapHistVolsList`
+- These support entities contain all pool or asset IDs involved in volume aggregations within a single indexer blocks batch,
+  which may consist of one or more blocks.
+
+Since the processor saves all processed data from a batch of blocks in a single database transaction, this entity may
+include IDs from multiple blocks. This approach ensures that the subscription event is triggered only after all volume
+entities in the batch are saved, rather than after each individual volume aggregation, optimizing event handling and consistency.
