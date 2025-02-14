@@ -638,6 +638,18 @@ export async function getParsedEventsData(
 
           break;
         }
+        /**
+         * ================= E V M =======================
+         */
+
+        /**
+         * ==== Log ====
+         */
+        case events.evm.log.name: {
+          const preparedData = parserHelper.parseEvmLogData();
+          parsedDataManager.set(EventName.EVM_Log, preparedData);
+          break;
+        }
 
         default:
           totalEventsNumber--;

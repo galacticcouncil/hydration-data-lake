@@ -39,6 +39,8 @@ type Asset @entity {
   xcmRateLimit: BigInt
   isSufficient: Boolean!
   existentialDeposit: BigInt!
+  evmAddress: String
+
   # note: existentialDeposit is probably taken 1:1 from the runtime,
   # real existential deposit will be calculated realtime based on the current price
 }
@@ -319,6 +321,7 @@ type Transfer @entity {
   traceIds: [String!]
 
   asset: Asset!
+  assetType: AssetType!
 
   from: Account!
   to: Account!
@@ -1097,3 +1100,180 @@ type OtcOrderEvent @entity {
   relayBlockHeight: Int!
   event: Event!
 }
+
+# ======================================================================================================================
+# *** Market making ***
+# ======================================================================================================================
+
+type MmSupply @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+
+  asset: Asset!
+  account: Account!
+  accountOnBehalfOf: Account!
+  amount: BigInt
+  referralCode: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmWithdraw @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+
+  asset: Asset!
+  accountFrom: Account!
+  accountTo: Account!
+  amount: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmBorrow @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+
+  asset: Asset!
+  account: Account!
+  accountOnBehalfOf: Account!
+  amount: BigInt
+  interestRateMode: Int
+  borrowRate: BigInt
+  referralCode: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmUserEModeSet @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+
+  account: Account!
+  categoryId: Int
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmRepay @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+
+  account: Account!
+  repayerAccount: Account!
+  amount: BigInt
+  useATokens: Boolean
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmLiquidationCall @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+
+  collateralAsset: Asset!
+  debtAsset: Asset!
+  account: Account!
+  debtToCover: BigInt
+  liquidatedCollateralAmount: BigInt
+  liquidatorAccount: Account!
+  receiveAToken: Boolean!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmReserveUsedAsCollateralEnabledEvent @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+
+  account: Account!
+  asset: Asset!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmReserveUsedAsCollateralDisabledEvent @entity {
+  "<otc_order_id>-<event_id>"
+  id: ID!
+  operationId: String @index
+  traceIds: [String!]
+
+  account: Account!
+  asset: Asset!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+enum MoneyMarketEventName {
+  Transfer
+  Supply
+  Withdraw
+  Borrow
+  Repay
+  UserEModeSet
+  LiquidationCall
+  ReserveUsedAsCollateralEnabled
+  ReserveUsedAsCollateralDisabled
+}
+
+type MoneyMarketEvent @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  eventName: MoneyMarketEventName!
+
+  "<account | accountFrom> from related MoneyMarket event"
+  primaryAccount: Account!
+  "<accountOnBehalfOf | accountTo | repayerAccount | liquidatorAccount> from related MoneyMarket event"
+  secondaryAccount: Account
+  "<asset | collateralAsset> from related MoneyMarket event"
+  primaryAsset: Asset!
+  "<asset | debtAsset> from related MoneyMarket event"
+  secondaryAsset: Asset
+
+  transfer: Transfer
+  supply: MmSupply
+  withdraw: MmWithdraw
+  borrow: MmBorrow
+  repay: MmRepay
+  userEModeSet: MmUserEModeSet
+  liquidationCall: MmLiquidationCall
+  reserveUsedAsCollateralEnabled: MmReserveUsedAsCollateralEnabledEvent
+  reserveUsedAsCollateralDisabled: MmReserveUsedAsCollateralDisabledEvent
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+

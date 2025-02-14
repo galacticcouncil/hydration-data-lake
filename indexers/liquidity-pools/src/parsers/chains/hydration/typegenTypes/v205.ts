@@ -1,5 +1,25 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type H160 = Bytes
+
+export interface CodeMetadata {
+    size: bigint
+    hash: H256
+}
+
+export type H256 = Bytes
+
+export const CodeMetadata: sts.Type<CodeMetadata> = sts.struct(() => {
+    return  {
+        size: sts.bigint(),
+        hash: H256,
+    }
+})
+
+export const H256 = sts.bytes()
+
+export const H160 = sts.bytes()
+
 export type AccountId32 = Bytes
 
 export interface AccountInfo {
@@ -476,16 +496,12 @@ export const Type_407: sts.Type<Type_407> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_407 = Type_407_EthereumTransaction
 
 export interface Type_407_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: H160
 }
-
-export type H160 = Bytes
 
 export const Type_409: sts.Type<Type_409> = sts.closedEnum(() => {
     return  {
@@ -2207,8 +2223,6 @@ export const TipsCall: sts.Type<TipsCall> = sts.closedEnum(() => {
     }
 })
 
-export const H256 = sts.bytes()
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -2265,8 +2279,6 @@ export interface TipsCall_tip_new {
     who: AccountId32
     tipValue: bigint
 }
-
-export type H256 = Bytes
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.

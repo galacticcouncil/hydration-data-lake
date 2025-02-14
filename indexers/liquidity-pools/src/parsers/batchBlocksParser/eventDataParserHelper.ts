@@ -719,4 +719,25 @@ export class EventDataParserHelper {
       },
     };
   }
+
+  /**
+   * ==== EVM Log ====
+   */
+  parseEvmLogData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.evm.parseLogParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
 }

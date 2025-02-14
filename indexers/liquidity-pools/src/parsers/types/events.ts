@@ -6,6 +6,7 @@ import {
   TradeOperationType,
 } from '../../model';
 import { SwappedExecutionTypeKind } from '../../utils/types';
+import { Result } from 'ethers';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -51,6 +52,7 @@ export enum EventName {
 
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
   'Broadcast_Swapped' = 'Broadcast.Swapped',
+  'EVM_Log' = 'EVM.Log',
 }
 
 export type RelayChainInfo = {
@@ -336,4 +338,9 @@ export type BroadcastSwappedEventParams = {
   fees: BroadcastSwappedFee[];
   operation: TradeOperationType;
   operationStack: BroadcastSwappedExecutionType[];
+};
+
+export type EvmLogEventParams = {
+  name: string;
+  args: Result;
 };

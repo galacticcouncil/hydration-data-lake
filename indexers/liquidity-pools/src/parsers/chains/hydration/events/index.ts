@@ -8,6 +8,7 @@ import balances from './balances';
 import tokens from './tokens';
 import assetRegistry from './assetRegistry';
 import broadcast from './broadcast';
+import evm from './evm';
 import { EventParserMethods } from '../../../types/common';
 
 export default {
@@ -21,4 +22,5 @@ export default {
   balances,
   assetRegistry,
   broadcast,
+  evm,
 } as EventParserMethods;

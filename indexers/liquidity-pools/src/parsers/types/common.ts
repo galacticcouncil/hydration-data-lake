@@ -39,6 +39,7 @@ import {
   XykPoolCreatedEventParams,
   XykPoolDestroyedEventParams,
   XykSellExecutedEventParams,
+  EvmLogEventParams,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -65,8 +66,6 @@ import {
   XykGetShareTokenInput,
   XykPoolWithAssets,
 } from './storage';
-import { DcaScheduleOrderType, SwapFillerType } from '../../model';
-import broadcast from '../chains/hydration-paseo-next/events/broadcast';
 
 export interface PoolData {
   owner: string;
@@ -174,6 +173,9 @@ export type EventParserMethods = {
   };
   broadcast: {
     parseSwappedParams: (event: SqdEvent) => BroadcastSwappedEventParams;
+  };
+  evm: {
+    parseLogParams: (event: SqdEvent) => EvmLogEventParams | null;
   };
 };
 export type StorageParserMethods = {

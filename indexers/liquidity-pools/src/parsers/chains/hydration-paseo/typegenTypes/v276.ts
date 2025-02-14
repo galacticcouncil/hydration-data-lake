@@ -57,6 +57,22 @@ export interface PoolType_XYK {
 
 export type Permill = number
 
+export type H256 = Bytes
+
+export interface CodeMetadata {
+    size: bigint
+    hash: H256
+}
+
+export const CodeMetadata: sts.Type<CodeMetadata> = sts.struct(() => {
+    return  {
+        size: sts.bigint(),
+        hash: H256,
+    }
+})
+
+export type H160 = Bytes
+
 export interface Type_673 {
     free: bigint
     reserved: bigint
@@ -302,8 +318,6 @@ export const V7PersistedValidationData: sts.Type<V7PersistedValidationData> = st
     }
 })
 
-export const H256 = sts.bytes()
-
 export const HeadData = sts.bytes()
 
 export interface V7PersistedValidationData {
@@ -312,8 +326,6 @@ export interface V7PersistedValidationData {
     relayParentStorageRoot: H256
     maxPovSize: number
 }
-
-export type H256 = Bytes
 
 export type HeadData = Bytes
 
@@ -337,6 +349,8 @@ export const Schedule: sts.Type<Schedule> = sts.struct(() => {
         order: Order,
     }
 })
+
+export const H256 = sts.bytes()
 
 export const WeightCurveType: sts.Type<WeightCurveType> = sts.closedEnum(() => {
     return  {
@@ -866,16 +880,12 @@ export const Type_97: sts.Type<Type_97> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_97 = Type_97_EthereumTransaction
 
 export interface Type_97_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: H160
 }
-
-export type H160 = Bytes
 
 export const Type_114: sts.Type<Type_114> = sts.closedEnum(() => {
     return  {
@@ -15616,6 +15626,22 @@ export const Order: sts.Type<Order> = sts.closedEnum(() => {
         }),
     }
 })
+
+export const H160 = sts.bytes()
+
+export const Log: sts.Type<Log> = sts.struct(() => {
+    return  {
+        address: H160,
+        topics: sts.array(() => H256),
+        data: sts.bytes(),
+    }
+})
+
+export interface Log {
+    address: H160
+    topics: H256[]
+    data: Bytes
+}
 
 export const Pool: sts.Type<Pool> = sts.struct(() => {
     return  {
