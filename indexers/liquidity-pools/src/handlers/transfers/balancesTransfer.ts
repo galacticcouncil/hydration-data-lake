@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { BalancesTransferData } from '../../parsers/batchBlocksParser/types';
 import { initTransfer } from './utils';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { AssetType } from '../../model';
 
 export async function handleBalancesTransfer(
   ctx: SqdProcessorContext<Store>,

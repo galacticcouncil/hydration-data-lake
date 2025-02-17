@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { TokensTransferData } from '../../parsers/batchBlocksParser/types';
 import { initTransfer } from './utils';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { AssetType } from '../../model';
 
 export async function handleTokensTransfer(
   ctx: SqdProcessorContext<Store>,

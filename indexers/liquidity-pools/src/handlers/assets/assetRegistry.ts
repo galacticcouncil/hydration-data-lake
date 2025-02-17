@@ -47,6 +47,19 @@ export async function getAsset({
 
   if (!storageData) return null;
 
+  const erc20AssetContractDetails =
+    storageData.assetType === AssetType.Erc20
+      ? await parsers.storage.assetRegistry.getErc20AssetContractAddress(
+          +id,
+          blockHeader
+        )
+      : null;
+
+  if (storageData.assetType === AssetType.Erc20) {
+    console.log(`AssetType.Erc20 - ${id}`);
+    console.log(erc20AssetContractDetails);
+  }
+
   const newAsset = new Asset({
     id: `${id}`,
     name: storageData.name,
@@ -56,6 +69,7 @@ export async function getAsset({
     decimals: storageData.decimals ?? null,
     xcmRateLimit: storageData.xcmRateLimit ?? null,
     isSufficient: storageData.isSufficient ?? true,
+    evmAddress: erc20AssetContractDetails?.address ?? null,
   });
 
   await ctx.store.save(newAsset);
@@ -114,9 +128,18 @@ export async function assetRegistered(
     },
   } = eventCallData;
 
+  const erc20AssetContractDetails =
+    assetType === AssetType.Erc20
+      ? await parsers.storage.assetRegistry.getErc20AssetContractAddress(
+          +assetId,
+          eventMetadata.blockHeader
+        )
+      : null;
+
   const newAsset = new Asset({
     id: `${assetId}`,
     name: assetName,
+    evmAddress: erc20AssetContractDetails?.address ?? null,
     assetType,
     existentialDeposit,
     symbol,
@@ -179,7 +202,11 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
     await ProcessorStatusManager.getInstance(ctx).getStatus()
   ).assetsLastUpdatedAtBlock;
 
-  if (ctx.blocks[0].header.height < latestActualisationPoint + 3000) return;
+  if (
+    ctx.blocks[0].header.height <
+    latestActualisationPoint + ctx.appConfig.ASSETS_ACTUALISATION_BLOCKS_PERIOD
+  )
+    return;
 
   const allExistingAssets = new Map(
     (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])

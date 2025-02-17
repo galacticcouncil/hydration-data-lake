@@ -7,7 +7,7 @@
     },
     "AssetRegistry": {
       "events": ["Registered", "Updated"],
-      "storage": ["Assets"]
+      "storage": ["Assets", "AssetLocations"]
     },
     "Balances": {
       "events": ["Transfer"],

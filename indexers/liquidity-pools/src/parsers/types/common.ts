@@ -48,6 +48,7 @@ import {
   AssetDetailsWithId,
   DcaGetScheduleInput,
   DcaScheduleData,
+  Erc20AssetContractDetails,
   GetPoolAssetInfoInput,
   LbpGetAllPoolsDataInput,
   LbpGetPoolDataInput,
@@ -204,6 +205,10 @@ export type StorageParserMethods = {
       assetIds: Array<string | number>,
       block: BlockHeader
     ) => Promise<Array<AssetDetailsWithId>>;
+    getErc20AssetContractAddress: (
+      assetId: string | number,
+      block: BlockHeader
+    ) => Promise<Erc20AssetContractDetails | null>;
   };
   parachainSystem: {
     getLastRelayChainBlockNumber: (

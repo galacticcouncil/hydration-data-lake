@@ -143,6 +143,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly UNIFIED_EVENTS_GENESIS_SPEC_VERSION: number = -1;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ASSETS_ACTUALISATION_BLOCKS_PERIOD: number = 3000;
+
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       AppConfig.instance = new AppConfig();

@@ -60,6 +60,10 @@ export interface AssetDetails {
   xcmRateLimit?: bigint;
 }
 
+export interface Erc20AssetContractDetails {
+  address: string;
+}
+
 export type AssetDetailsWithId = {
   assetId: number;
   data: AssetDetails | null;

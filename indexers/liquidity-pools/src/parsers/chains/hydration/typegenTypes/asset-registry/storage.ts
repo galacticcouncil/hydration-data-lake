@@ -3,6 +3,7 @@ import * as v108 from '../v108'
 import * as v160 from '../v160'
 import * as v176 from '../v176'
 import * as v222 from '../v222'
+import * as v244 from '../v244'
 import * as v264 from '../v264'
 
 export const assets =  {
@@ -111,4 +112,70 @@ export interface AssetsV264  {
     getPairs(block: Block, key: number): Promise<[k: number, v: (v264.AssetDetails | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v264.AssetDetails | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v264.AssetDetails | undefined)][]>
+}
+
+export const assetLocations =  {
+    /**
+     *  Native location of an asset.
+     */
+    v108: new StorageType('AssetRegistry.AssetLocations', 'Optional', [sts.number()], v108.AssetLocation) as AssetLocationsV108,
+    /**
+     *  Native location of an asset.
+     */
+    v160: new StorageType('AssetRegistry.AssetLocations', 'Optional', [sts.number()], v160.AssetLocation) as AssetLocationsV160,
+    /**
+     *  Native location of an asset.
+     */
+    v244: new StorageType('AssetRegistry.AssetLocations', 'Optional', [sts.number()], v244.AssetLocation) as AssetLocationsV244,
+}
+
+/**
+ *  Native location of an asset.
+ */
+export interface AssetLocationsV108  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v108.AssetLocation | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v108.AssetLocation | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v108.AssetLocation | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v108.AssetLocation | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v108.AssetLocation | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v108.AssetLocation | undefined)][]>
+}
+
+/**
+ *  Native location of an asset.
+ */
+export interface AssetLocationsV160  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v160.AssetLocation | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v160.AssetLocation | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v160.AssetLocation | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v160.AssetLocation | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v160.AssetLocation | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v160.AssetLocation | undefined)][]>
+}
+
+/**
+ *  Native location of an asset.
+ */
+export interface AssetLocationsV244  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v244.AssetLocation | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v244.AssetLocation | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v244.AssetLocation | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v244.AssetLocation | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v244.AssetLocation | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v244.AssetLocation | undefined)][]>
 }

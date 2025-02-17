@@ -5,6 +5,11 @@ import {
   DcaScheduleOrderRouteData,
 } from '../../types/calls';
 import { DcaScheduleOrderType, SwapFillerType } from '../../../model';
+// import { AssetLocation } from './typegenTypes/v244';
+import { AssetLocation as AssetLocationV108 } from './typegenTypes/v108';
+import { AssetLocation as AssetLocationV160 } from './typegenTypes/v160';
+import { AssetLocation as AssetLocationV244 } from './typegenTypes/v244';
+import { Erc20AssetContractDetails } from '../../types/storage';
 
 export function decorateDcaSchedule(scheduleRaw: Schedule) {
   const {
@@ -58,4 +63,19 @@ export function decorateDcaSchedule(scheduleRaw: Schedule) {
   };
 
   return scheduleDecoratedData;
+}
+
+export function getErc20AssetContractFromLocation(
+  location?: AssetLocationV108 | AssetLocationV160 | AssetLocationV244
+): Erc20AssetContractDetails | null {
+  if (!location) return null;
+
+  try {
+    return {
+      // @ts-ignore
+      address: location.interior.value.key,
+    };
+  } catch (e) {
+    return null;
+  }
 }

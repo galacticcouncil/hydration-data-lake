@@ -1,9 +1,14 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { storage } from '../typegenTypes/';
-import { AssetDetails, AssetDetailsWithId } from '../../../types/storage';
+import {
+  AssetDetails,
+  AssetDetailsWithId,
+  Erc20AssetContractDetails,
+} from '../../../types/storage';
 import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
 import { AssetType } from '../../../../model';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { getErc20AssetContractFromLocation } from '../utils';
 
 async function getAsset(
   assetId: string | number,
@@ -68,4 +73,22 @@ async function getAssetMany(
   throw new UnknownVersionError('storage.assetRegistry.assets');
 }
 
-export default { getAsset, getAssetMany };
+async function getErc20AssetContractAddress(
+  assetId: string | number,
+  block: BlockHeader
+): Promise<Erc20AssetContractDetails | null> {
+  if (block.specVersion < 276) return null;
+
+  if (storage.assetRegistry.assetLocations.v276.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v276.get(
+      block,
+      +assetId
+    );
+
+    return getErc20AssetContractFromLocation(resp);
+  }
+
+  throw new UnknownVersionError('storage.assetRegistry.assetLocations');
+}
+
+export default { getAsset, getAssetMany, getErc20AssetContractAddress };

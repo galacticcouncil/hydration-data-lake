@@ -40,6 +40,7 @@ export async function initTransfer({
     to: await getAccount({ ctx, id: to }),
     txFee: fee,
     asset: assetEntity,
+    assetType: assetEntity.assetType,
     paraBlockHeight: blockNumber,
     paraTimestamp: timestamp ?? new Date(),
     relayBlockHeight:

@@ -34,4 +34,7 @@ export class Asset {
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   existentialDeposit!: bigint
+
+  @Column_("text", {nullable: true})
+  evmAddress!: string | undefined | null
 }
