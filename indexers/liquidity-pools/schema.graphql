@@ -1253,14 +1253,8 @@ type MoneyMarketEvent @entity {
 
   eventName: MoneyMarketEventName!
 
-  "<account | accountFrom> from related MoneyMarket event"
-  primaryAccount: Account!
-  "<accountOnBehalfOf | accountTo | repayerAccount | liquidatorAccount> from related MoneyMarket event"
-  secondaryAccount: Account
-  "<asset | collateralAsset> from related MoneyMarket event"
-  primaryAsset: Asset!
-  "<asset | debtAsset> from related MoneyMarket event"
-  secondaryAsset: Asset
+  allInvolvedAssetIds: [String!]!
+  allInvolvedParticipants: [String!]!
 
   transfer: Transfer
   supply: MmSupply
@@ -1276,4 +1270,3 @@ type MoneyMarketEvent @entity {
   relayBlockHeight: Int!
   event: Event!
 }
-

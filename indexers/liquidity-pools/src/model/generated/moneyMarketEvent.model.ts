@@ -1,7 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {MoneyMarketEventName} from "./_moneyMarketEventName"
-import {Account} from "./account.model"
-import {Asset} from "./asset.model"
 import {Transfer} from "./transfer.model"
 import {MmSupply} from "./mmSupply.model"
 import {MmWithdraw} from "./mmWithdraw.model"
@@ -31,33 +29,11 @@ export class MoneyMarketEvent {
   @Column_("varchar", {length: 31, nullable: false})
   eventName!: MoneyMarketEventName
 
-  /**
-   * <account | accountFrom> from related MoneyMarket event
-   */
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  primaryAccount!: Account
+  @Column_("text", {array: true, nullable: false})
+  allInvolvedAssetIds!: (string)[]
 
-  /**
-   * <accountOnBehalfOf | accountTo | repayerAccount | liquidatorAccount> from related MoneyMarket event
-   */
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  secondaryAccount!: Account | undefined | null
-
-  /**
-   * <asset | collateralAsset> from related MoneyMarket event
-   */
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  primaryAsset!: Asset
-
-  /**
-   * <asset | debtAsset> from related MoneyMarket event
-   */
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  secondaryAsset!: Asset | undefined | null
+  @Column_("text", {array: true, nullable: false})
+  allInvolvedParticipants!: (string)[]
 
   @Index_()
   @ManyToOne_(() => Transfer, {nullable: true})
