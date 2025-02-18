@@ -740,4 +740,25 @@ export class EventDataParserHelper {
       },
     };
   }
+
+  /**
+   * ==== EVM Accounts Bound ====
+   */
+  parseEvmAccountsBoundData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.evmAccounts.parseBoundParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
 }

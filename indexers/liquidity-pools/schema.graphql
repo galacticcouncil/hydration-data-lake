@@ -109,6 +109,9 @@ type Account @entity {
   id: ID!
   accountType: AccountType!
 
+  boundEvmAddress: String
+  evmAddressBoundEvent: Event
+
   assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
     @derivedFrom(field: "account")
 
@@ -1234,7 +1237,7 @@ type MmReserveUsedAsCollateralDisabledEvent @entity {
   event: Event!
 }
 
-enum MoneyMarketEventName {
+enum EvmEventName {
   Transfer
   Supply
   Withdraw
@@ -1251,7 +1254,7 @@ type MoneyMarketEvent @entity {
   id: ID!
   traceIds: [String!]
 
-  eventName: MoneyMarketEventName!
+  eventName: EvmEventName!
 
   allInvolvedAssetIds: [String!]!
   allInvolvedParticipants: [String!]!

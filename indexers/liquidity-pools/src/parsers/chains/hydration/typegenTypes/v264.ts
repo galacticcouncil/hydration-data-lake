@@ -1,5 +1,9 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type H160 = Bytes
+
+export const H160 = sts.bytes()
+
 export interface AssetDetails {
     name?: (Bytes | undefined)
     assetType: AssetType
@@ -493,16 +497,12 @@ export const Type_474: sts.Type<Type_474> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_474 = Type_474_EthereumTransaction
 
 export interface Type_474_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: H160
 }
-
-export type H160 = Bytes
 
 export const Type_476: sts.Type<Type_476> = sts.closedEnum(() => {
     return  {

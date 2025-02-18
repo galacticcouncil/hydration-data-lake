@@ -190,6 +190,7 @@ export class AppConfig {
       events.assetRegistry.updated.name,
       events.broadcast.swapped.name,
       events.evm.log.name,
+      events.evmAccounts.bound.name,
     ];
 
     // if (this.CHAIN === ChainName.hydration_paseo_next) {

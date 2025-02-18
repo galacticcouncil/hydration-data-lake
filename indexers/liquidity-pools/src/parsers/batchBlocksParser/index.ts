@@ -639,7 +639,7 @@ export async function getParsedEventsData(
           break;
         }
         /**
-         * ================= E V M =======================
+         * ================================= E V M =============================
          */
 
         /**
@@ -648,6 +648,19 @@ export async function getParsedEventsData(
         case events.evm.log.name: {
           const preparedData = parserHelper.parseEvmLogData();
           parsedDataManager.set(EventName.EVM_Log, preparedData);
+          break;
+        }
+
+        /**
+         * ====================== E V M  A C C O U N T S =======================
+         */
+
+        /**
+         * ==== Bound ====
+         */
+        case events.evmAccounts.bound.name: {
+          const preparedData = parserHelper.parseEvmAccountsBoundData();
+          parsedDataManager.set(EventName.EVMAccounts_Bound, preparedData);
           break;
         }
 

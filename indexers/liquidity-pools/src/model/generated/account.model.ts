@@ -1,5 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import {AccountType} from "./_accountType"
+import {Event} from "./event.model"
 import {AccountAssetBalanceHistoricalData} from "./accountAssetBalanceHistoricalData.model"
 import {HistoricalAccountSwapFee} from "./historicalAccountSwapFee.model"
 import {Lbppool} from "./lbppool.model"
@@ -27,6 +28,13 @@ export class Account {
 
   @Column_("varchar", {length: 10, nullable: false})
   accountType!: AccountType
+
+  @Column_("text", {nullable: true})
+  boundEvmAddress!: string | undefined | null
+
+  @Index_()
+  @ManyToOne_(() => Event, {nullable: true})
+  evmAddressBoundEvent!: Event | undefined | null
 
   @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
   assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]

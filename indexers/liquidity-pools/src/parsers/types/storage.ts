@@ -110,6 +110,8 @@ export type OtcOrderData = {
   partiallyFillable: boolean;
 };
 
+export type EvmAccountsAccountExtension = string;
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
@@ -162,5 +164,10 @@ export type DcaGetScheduleInput = {
 };
 export type OtcGetOrderInput = {
   orderId: number;
+  block: BlockHeader;
+};
+
+export type EvmAccountsGetAccountExtensionInput = {
+  evmAddress: string;
   block: BlockHeader;
 };

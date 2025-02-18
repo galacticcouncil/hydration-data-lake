@@ -11,20 +11,38 @@ import { ProcessorStatusManager } from '../../processorStatusManager';
 export async function getAsset({
   ctx,
   id,
+  evmAddress,
   ensure = false,
   blockHeader,
 }: {
   ctx: SqdProcessorContext<Store>;
-  id: string | number;
+  id?: string | number;
+  evmAddress?: string;
   ensure?: boolean;
   blockHeader?: SqdBlock;
 }): Promise<Asset | null> {
+  if (id === undefined && !evmAddress) return null;
+
   const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
 
-  let asset = assetsAllBatch.get(`${id}`);
+  let asset = null;
+
+  if (id !== undefined) {
+    asset = assetsAllBatch.get(`${id}`);
+  } else if (evmAddress) {
+    asset = [...assetsAllBatch.values()].find(
+      (a) => a.evmAddress === evmAddress
+    );
+  }
+
   if (asset) return asset;
 
-  asset = await ctx.store.findOne(Asset, { where: { id: `${id}` } });
+  asset = await ctx.store.findOne(Asset, {
+    where: {
+      ...(id ? { id: `${id}` } : {}),
+      ...(evmAddress ? { evmAddress: evmAddress } : {}),
+    },
+  });
 
   if (asset) {
     assetsAllBatch.set(asset.id, asset);
@@ -40,6 +58,8 @@ export async function getAsset({
    */
 
   if (!blockHeader) return null;
+  if (id === undefined) return null; //TODO fix this
+
   const storageData = await parsers.storage.assetRegistry.getAsset(
     +id,
     blockHeader
@@ -54,11 +74,6 @@ export async function getAsset({
           blockHeader
         )
       : null;
-
-  if (storageData.assetType === AssetType.Erc20) {
-    console.log(`AssetType.Erc20 - ${id}`);
-    console.log(erc20AssetContractDetails);
-  }
 
   const newAsset = new Asset({
     id: `${id}`,

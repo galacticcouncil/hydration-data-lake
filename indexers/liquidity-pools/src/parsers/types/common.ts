@@ -40,6 +40,7 @@ import {
   XykPoolDestroyedEventParams,
   XykSellExecutedEventParams,
   EvmLogEventParams,
+  EvmAccountsBoundEventParams,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -49,6 +50,8 @@ import {
   DcaGetScheduleInput,
   DcaScheduleData,
   Erc20AssetContractDetails,
+  EvmAccountsAccountExtension,
+  EvmAccountsGetAccountExtensionInput,
   GetPoolAssetInfoInput,
   LbpGetAllPoolsDataInput,
   LbpGetPoolDataInput,
@@ -178,6 +181,9 @@ export type EventParserMethods = {
   evm: {
     parseLogParams: (event: SqdEvent) => EvmLogEventParams | null;
   };
+  evmAccounts: {
+    parseBoundParams: (event: SqdEvent) => EvmAccountsBoundEventParams;
+  };
 };
 export type StorageParserMethods = {
   system: {
@@ -254,6 +260,11 @@ export type StorageParserMethods = {
   };
   otc: {
     getOtcOrder: (args: OtcGetOrderInput) => Promise<OtcOrderData | null>;
+  };
+  evmAccounts: {
+    getAccountExtension: (
+      args: EvmAccountsGetAccountExtensionInput
+    ) => Promise<EvmAccountsAccountExtension | null>;
   };
 };
 

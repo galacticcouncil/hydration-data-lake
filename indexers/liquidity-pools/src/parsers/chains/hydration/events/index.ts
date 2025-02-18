@@ -9,6 +9,7 @@ import tokens from './tokens';
 import assetRegistry from './assetRegistry';
 import broadcast from './broadcast';
 import evm from './evm';
+import evmAccounts from './evmAccounts';
 import { EventParserMethods } from '../../../types/common';
 
 export default {
@@ -23,4 +24,5 @@ export default {
   assetRegistry,
   broadcast,
   evm,
+  evmAccounts,
 } as EventParserMethods;

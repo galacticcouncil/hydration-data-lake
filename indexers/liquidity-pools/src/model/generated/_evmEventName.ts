@@ -1,4 +1,4 @@
-export enum MoneyMarketEventName {
+export enum EvmEventName {
   Transfer = "Transfer",
   Supply = "Supply",
   Withdraw = "Withdraw",

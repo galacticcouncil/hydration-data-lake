@@ -48,6 +48,7 @@ import {
 } from './otc';
 import { BroadcastSwappedData } from './broadcast';
 import { EvmLogData } from './evm';
+import { EvmAccountsBoundData } from './evmAccounts';
 
 export * from './assetRegistry';
 export * from './lbp';
@@ -136,7 +137,9 @@ export type EventDataType<T> = T extends EventName.Tokens_Transfer
                                                                   ? BroadcastSwappedData
                                                                   : T extends EventName.EVM_Log
                                                                     ? EvmLogData
-                                                                    : never;
+                                                                    : T extends EventName.EVMAccounts_Bound
+                                                                      ? EvmAccountsBoundData
+                                                                      : never;
 
 export type BatchBlocksParsedDataScope = Map<
   EventName,
@@ -177,7 +180,8 @@ export type ParsedEventsCallsData =
   | OtcOrderFilledData
   | OtcOrderPartiallyFilledData
   | BroadcastSwappedData
-  | EvmLogData;
+  | EvmLogData
+  | EvmAccountsBoundData;
 
 export interface CallMetadata {
   name: string;

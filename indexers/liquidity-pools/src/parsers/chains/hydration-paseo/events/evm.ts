@@ -3,6 +3,7 @@ import { SqdEvent } from '../../../../processor';
 import { EvmLogEventParams } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 import { EvmLogDecoder } from '../../../../utils/evmLogDecoder';
+import { EvmEventName } from '../../../../model';
 
 function parseLogParams(event: SqdEvent): EvmLogEventParams | null {
   if (events.evm.log.v276.is(event)) {
@@ -12,7 +13,12 @@ function parseLogParams(event: SqdEvent): EvmLogEventParams | null {
 
     if (!decodedLog) return null;
 
-    return { name: decodedLog.name, args: decodedLog.args };
+    return {
+      eventName: decodedLog.name as EvmEventName,
+      address: log.address,
+      signature: decodedLog.signature,
+      args: decodedLog.args,
+    };
   }
 
   throw new UnknownVersionError(event.name);

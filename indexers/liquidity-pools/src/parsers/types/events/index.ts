@@ -1,12 +1,14 @@
-import { DispatchError, PoolData } from './common';
+import { DispatchError, PoolData } from '../common';
 import {
   AssetType,
   SwapFeeDestinationType,
   SwapFillerType,
   TradeOperationType,
-} from '../../model';
-import { SwappedExecutionTypeKind } from '../../utils/types';
-import { Result } from 'ethers';
+} from '../../../model';
+import { SwappedExecutionTypeKind } from '../../../utils/types';
+
+export * from './evm';
+export * from './evmAccounts';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -53,6 +55,7 @@ export enum EventName {
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
   'Broadcast_Swapped' = 'Broadcast.Swapped',
   'EVM_Log' = 'EVM.Log',
+  'EVMAccounts_Bound' = 'EVMAccounts.Bound',
 }
 
 export type RelayChainInfo = {
@@ -338,9 +341,4 @@ export type BroadcastSwappedEventParams = {
   fees: BroadcastSwappedFee[];
   operation: TradeOperationType;
   operationStack: BroadcastSwappedExecutionType[];
-};
-
-export type EvmLogEventParams = {
-  name: string;
-  args: Result;
 };

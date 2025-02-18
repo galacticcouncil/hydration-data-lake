@@ -45,6 +45,7 @@ import {
   HistoricalAccountSwapFee,
   HistoricalAccountAssetSwapFee,
   HistoricalAssetSwapFee,
+  MoneyMarketEvent,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -141,6 +142,8 @@ export type BatchStatePayload = {
   historicalAssetSwapFees: Map<string, HistoricalAssetSwapFee>;
   historicalAccountSwapFees: Map<string, HistoricalAccountSwapFee>;
   historicalAccountAssetSwapFees: Map<string, HistoricalAccountAssetSwapFee>;
+
+  moneyMarketEvents: Map<string, MoneyMarketEvent>;
 };
 
 export class BatchState {
@@ -217,6 +220,8 @@ export class BatchState {
     historicalAssetSwapFees: new Map(),
     historicalAccountSwapFees: new Map(),
     historicalAccountAssetSwapFees: new Map(),
+
+    moneyMarketEvents: new Map(),
   };
 
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {

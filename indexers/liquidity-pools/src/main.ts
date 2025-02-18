@@ -33,6 +33,8 @@ import { handleSupportSwappedEvents } from './handlers/swap';
 import { handleStablepoolLiquidityEvents } from './handlers/pools/stableswap/liquidity';
 import { handleRelayChainBlocks } from './handlers/relayChain';
 import { HistoricalDataManager } from './handlers/historicalData';
+import { handleEvm, saveAllMoneyMarketEvents } from './handlers/moneyMarket';
+import { handleEvmAccounts } from './handlers/evmAccounts';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -165,12 +167,20 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   // if (ctx.isHead)
   //   await handlePoolPrices(ctxWithBatchState as SqdProcessorContext<Store>);
 
+  console.time('handleEvm');
+  await handleEvm(ctxWithBatchState as SqdProcessorContext<Store>, parsedData);
+  console.timeEnd('handleEvm');
+
   console.time('handleTransfers');
   await handleTransfers(
     ctxWithBatchState as SqdProcessorContext<Store>,
     parsedData
   );
   console.timeEnd('handleTransfers');
+
+  await saveAllMoneyMarketEvents(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
 
   console.time('handleStableswapHistoricalData');
   await handleStableswapHistoricalData(
@@ -205,6 +215,13 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     ctxWithBatchState as SqdProcessorContext<Store>
   );
   console.timeEnd('ensurePoolsDestroyedStatus');
+
+  console.time('handleEvmAccounts');
+  await handleEvmAccounts(
+    ctxWithBatchState as SqdProcessorContext<Store>,
+    parsedData
+  );
+  console.timeEnd('handleEvmAccounts');
 
   console.time('saveAllBatchAccounts');
   await saveAllBatchAccounts(ctxWithBatchState as SqdProcessorContext<Store>);

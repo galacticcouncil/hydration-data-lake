@@ -1,5 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import {MoneyMarketEventName} from "./_moneyMarketEventName"
+import {EvmEventName} from "./_evmEventName"
 import {Transfer} from "./transfer.model"
 import {MmSupply} from "./mmSupply.model"
 import {MmWithdraw} from "./mmWithdraw.model"
@@ -27,7 +27,7 @@ export class MoneyMarketEvent {
   traceIds!: (string)[] | undefined | null
 
   @Column_("varchar", {length: 31, nullable: false})
-  eventName!: MoneyMarketEventName
+  eventName!: EvmEventName
 
   @Column_("text", {array: true, nullable: false})
   allInvolvedAssetIds!: (string)[]
