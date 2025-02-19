@@ -211,6 +211,7 @@ export type StorageParserMethods = {
       assetIds: Array<string | number>,
       block: BlockHeader
     ) => Promise<Array<AssetDetailsWithId>>;
+    getAssetAll: (block: BlockHeader) => Promise<Array<AssetDetailsWithId>>;
     getErc20AssetContractAddress: (
       assetId: string | number,
       block: BlockHeader

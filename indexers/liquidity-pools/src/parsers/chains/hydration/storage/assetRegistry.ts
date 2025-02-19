@@ -234,6 +234,137 @@ async function getAssetMany(
   throw new UnknownVersionError('storage.assetRegistry.assets');
 }
 
+async function getAssetAll(
+  block: BlockHeader
+): Promise<Array<AssetDetailsWithId>> {
+  if (block.specVersion < 108) return [];
+
+  if (storage.assetRegistry.assets.v108.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.assetRegistry.assets.v108.getPairsPaged(
+      100,
+      block
+    ))
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && !!p[1])
+          .map(([assetId, assetData]) => ({
+            assetId: +assetId,
+            data: {
+              name: hexToStrWithNullCharCheck(assetData!.name),
+              assetType: assetData!.assetType.__kind as AssetType,
+              existentialDeposit: assetData!.existentialDeposit,
+              isSufficient: true,
+            },
+          }))
+      );
+    return pairsPaged;
+  }
+
+  if (storage.assetRegistry.assets.v160.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.assetRegistry.assets.v160.getPairsPaged(
+      100,
+      block
+    ))
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && !!p[1])
+          .map(([assetId, assetData]) => ({
+            assetId: +assetId,
+            data: {
+              name: hexToStrWithNullCharCheck(assetData!.name),
+              assetType: assetData!.assetType.__kind as AssetType,
+              existentialDeposit: assetData!.existentialDeposit,
+              xcmRateLimit: assetData!.xcmRateLimit,
+              isSufficient: true,
+            },
+          }))
+      );
+    return pairsPaged;
+  }
+
+  if (storage.assetRegistry.assets.v176.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.assetRegistry.assets.v176.getPairsPaged(
+      100,
+      block
+    ))
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && !!p[1])
+          .map(([assetId, assetData]) => ({
+            assetId: +assetId,
+            data: {
+              name: hexToStrWithNullCharCheck(assetData!.name),
+              assetType: assetData!.assetType.__kind as AssetType,
+              existentialDeposit: assetData!.existentialDeposit,
+              xcmRateLimit: assetData!.xcmRateLimit,
+              isSufficient: true,
+            },
+          }))
+      );
+    return pairsPaged;
+  }
+
+  if (storage.assetRegistry.assets.v222.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.assetRegistry.assets.v222.getPairsPaged(
+      100,
+      block
+    ))
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && !!p[1])
+          .map(([assetId, assetData]) => ({
+            assetId: +assetId,
+            data: {
+              name: hexToStrWithNullCharCheck(assetData!.name),
+              assetType: assetData!.assetType.__kind as AssetType,
+              existentialDeposit: assetData!.existentialDeposit,
+              xcmRateLimit: assetData!.xcmRateLimit,
+              symbol: hexToStrWithNullCharCheck(assetData!.symbol),
+              decimals: assetData!.decimals,
+              isSufficient: true,
+            },
+          }))
+      );
+    return pairsPaged;
+  }
+
+  if (storage.assetRegistry.assets.v264.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.assetRegistry.assets.v264.getPairsPaged(
+      100,
+      block
+    ))
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && !!p[1])
+          .map(([assetId, assetData]) => ({
+            assetId: +assetId,
+            data: {
+              name: hexToStrWithNullCharCheck(assetData!.name),
+              assetType: assetData!.assetType.__kind as AssetType,
+              existentialDeposit: assetData!.existentialDeposit,
+              xcmRateLimit: assetData!.xcmRateLimit,
+              symbol: hexToStrWithNullCharCheck(assetData!.symbol),
+              decimals: assetData!.decimals,
+              isSufficient: true,
+            },
+          }))
+      );
+    return pairsPaged;
+  }
+
+  throw new UnknownVersionError('storage.assetRegistry.assets [getPairsPaged]');
+}
+
 async function getErc20AssetContractAddress(
   assetId: string | number,
   block: BlockHeader
@@ -270,4 +401,9 @@ async function getErc20AssetContractAddress(
   throw new UnknownVersionError('storage.assetRegistry.assetLocations');
 }
 
-export default { getAsset, getAssetMany, getErc20AssetContractAddress };
+export default {
+  getAsset,
+  getAssetMany,
+  getErc20AssetContractAddress,
+  getAssetAll,
+};

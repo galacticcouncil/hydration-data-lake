@@ -73,6 +73,40 @@ async function getAssetMany(
   throw new UnknownVersionError('storage.assetRegistry.assets');
 }
 
+async function getAssetAll(
+  block: BlockHeader
+): Promise<Array<AssetDetailsWithId>> {
+  if (block.specVersion < 276) return [];
+
+  if (storage.assetRegistry.assets.v276.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.assetRegistry.assets.v276.getPairsPaged(
+      100,
+      block
+    ))
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && !!p[1])
+          .map(([assetId, assetData]) => ({
+            assetId: +assetId,
+            data: {
+              name: hexToStrWithNullCharCheck(assetData!.name),
+              assetType: assetData!.assetType.__kind as AssetType,
+              existentialDeposit: assetData!.existentialDeposit,
+              xcmRateLimit: assetData!.xcmRateLimit,
+              symbol: hexToStrWithNullCharCheck(assetData!.symbol),
+              decimals: assetData!.decimals,
+              isSufficient: true,
+            },
+          }))
+      );
+    return pairsPaged;
+  }
+
+  throw new UnknownVersionError('storage.assetRegistry.assets [getPairsPaged]');
+}
+
 async function getErc20AssetContractAddress(
   assetId: string | number,
   block: BlockHeader
@@ -91,4 +125,9 @@ async function getErc20AssetContractAddress(
   throw new UnknownVersionError('storage.assetRegistry.assetLocations');
 }
 
-export default { getAsset, getAssetMany, getErc20AssetContractAddress };
+export default {
+  getAsset,
+  getAssetMany,
+  getErc20AssetContractAddress,
+  getAssetAll,
+};

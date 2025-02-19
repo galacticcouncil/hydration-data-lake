@@ -7,6 +7,7 @@ import {
 import { Asset, AssetType } from '../../model';
 import parsers from '../../parsers';
 import { ProcessorStatusManager } from '../../processorStatusManager';
+import { AssetDetailsWithId } from '../../parsers/types/storage';
 
 export async function getAsset({
   ctx,
@@ -218,49 +219,96 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   ).assetsLastUpdatedAtBlock;
 
   if (
+    latestActualisationPoint > 0 &&
     ctx.blocks[0].header.height <
-    latestActualisationPoint + ctx.appConfig.ASSETS_ACTUALISATION_BLOCKS_PERIOD
+      latestActualisationPoint +
+        ctx.appConfig.ASSETS_ACTUALISATION_BLOCKS_PERIOD
   )
     return;
+
+  let storageData: AssetDetailsWithId[] = [];
 
   const allExistingAssets = new Map(
     (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
   );
 
-  if (allExistingAssets.size === 0) return;
+  const assetsToSave: Asset[] = [];
 
-  const storageData = await parsers.storage.assetRegistry.getAssetMany(
-    [...allExistingAssets.keys()],
-    ctx.blocks[0].header
-  );
-  const assetsToUpdate: Asset[] = [];
+  if (latestActualisationPoint < 0) {
+    /**
+     * This case can happen only once in indexer life on first run and make sense
+     * if indexing is starting not from genesis block. Main goal - ensure that
+     * on launch time indexer contains all existing assets on start block.
+     */
+    storageData = await parsers.storage.assetRegistry.getAssetAll(
+      ctx.blocks[0].header
+    );
 
-  for (const assetStorageData of storageData) {
-    if (!assetStorageData.data) continue;
-    const assetEntity = allExistingAssets.get(`${assetStorageData.assetId}`);
-    if (!assetEntity) continue;
-    const {
-      name,
-      assetType,
-      existentialDeposit,
-      symbol,
-      decimals,
-      xcmRateLimit,
-      isSufficient,
-    } = assetStorageData.data;
+    for (const { assetId, data } of storageData) {
+      if (!data) continue;
 
-    if (name) assetEntity.name = name;
-    if (assetType) assetEntity.assetType = assetType;
-    if (existentialDeposit) assetEntity.existentialDeposit = existentialDeposit;
-    if (symbol) assetEntity.symbol = symbol;
-    if (decimals) assetEntity.decimals = decimals;
-    if (xcmRateLimit) assetEntity.xcmRateLimit = xcmRateLimit;
-    if (isSufficient) assetEntity.isSufficient = isSufficient;
-    assetsToUpdate.push(assetEntity);
-    allExistingAssets.set(assetEntity.id, assetEntity);
+      const erc20AssetContractDetails =
+        data.assetType === AssetType.Erc20
+          ? await parsers.storage.assetRegistry.getErc20AssetContractAddress(
+              +assetId,
+              ctx.blocks[0].header
+            )
+          : null;
+
+      const newAsset = new Asset({
+        id: `${assetId}`,
+        name: data.name,
+        assetType: data.assetType,
+        existentialDeposit: data.existentialDeposit,
+        symbol: data.symbol ?? null,
+        decimals: data.decimals ?? null,
+        xcmRateLimit: data.xcmRateLimit ?? null,
+        isSufficient: data.isSufficient ?? true,
+        evmAddress: erc20AssetContractDetails?.address ?? null,
+      });
+
+      assetsToSave.push(newAsset);
+    }
+
+    ctx.batchState.state.assetsAllBatch = new Map(
+      assetsToSave.map((asset) => [asset.id, asset])
+    );
+  } else {
+    if (allExistingAssets.size === 0) return;
+    storageData = await parsers.storage.assetRegistry.getAssetMany(
+      [...allExistingAssets.keys()],
+      ctx.blocks[0].header
+    );
+
+    for (const assetStorageData of storageData) {
+      if (!assetStorageData.data) continue;
+      const assetEntity = allExistingAssets.get(`${assetStorageData.assetId}`);
+      if (!assetEntity) continue;
+      const {
+        name,
+        assetType,
+        existentialDeposit,
+        symbol,
+        decimals,
+        xcmRateLimit,
+        isSufficient,
+      } = assetStorageData.data;
+
+      if (name) assetEntity.name = name;
+      if (assetType) assetEntity.assetType = assetType;
+      if (existentialDeposit)
+        assetEntity.existentialDeposit = existentialDeposit;
+      if (symbol) assetEntity.symbol = symbol;
+      if (decimals) assetEntity.decimals = decimals;
+      if (xcmRateLimit) assetEntity.xcmRateLimit = xcmRateLimit;
+      if (isSufficient) assetEntity.isSufficient = isSufficient;
+      assetsToSave.push(assetEntity);
+      allExistingAssets.set(assetEntity.id, assetEntity);
+      ctx.batchState.state.assetsAllBatch.set(assetEntity.id, assetEntity);
+    }
   }
 
-  await ctx.store.upsert(assetsToUpdate);
+  await ctx.store.upsert(assetsToSave);
 
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     assetsLastUpdatedAtBlock: ctx.blocks[0].header.height,
