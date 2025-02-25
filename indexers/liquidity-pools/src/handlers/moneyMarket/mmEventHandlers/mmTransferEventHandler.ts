@@ -5,9 +5,8 @@ import { EvmLogDecoder } from '../../../utils/evmLogDecoder';
 import { initTransfer } from '../../transfers/utils';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { getAsset } from '../../assets/assetRegistry';
-import { getNewMoneyMarketEventEntity } from '../moneyMarketEvent';
+import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 import { EvmEventName } from '../../../model';
-import { convertFromH160 } from '../../../utils/evm';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 
 export async function handleMmTransferEvent(
@@ -24,9 +23,18 @@ export async function handleMmTransferEvent(
   if (!parsedEvmEventData) return;
 
   const {
-    eventData: { params: eventParams, metadata: eventMetadata },
+    eventData: { metadata: eventMetadata },
     callData,
   } = eventCallData;
+
+  const existingTransfer = [...ctx.batchState.state.transfers.values()].find(
+    (transfer) =>
+      transfer.to.id === parsedEvmEventData.toAddress &&
+      transfer.from.id === parsedEvmEventData.fromAddress &&
+      transfer.amount === parsedEvmEventData.amount
+  );
+
+  if (!!existingTransfer) return;
 
   const assetEntity = await getAsset({
     ctx,
@@ -93,18 +101,11 @@ export async function handleMmTransferEvent(
     ctx,
   });
 
-  const newMmEventEntity = getNewMoneyMarketEventEntity({
+  await processNewMoneyMarketEvent({
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
+    transfer: transferEntity,
   });
-
-  if (!newMmEventEntity) return;
-
-  newMmEventEntity.transfer = transferEntity;
-  ctx.batchState.state.moneyMarketEvents.set(
-    newMmEventEntity.id,
-    newMmEventEntity
-  );
 }

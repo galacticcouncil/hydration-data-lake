@@ -20,6 +20,11 @@
       "calls": true,
       "storage": ["Accounts", "TotalIssuance"]
     },
+    "Currencies": {
+      "events": ["Transferred"],
+      "calls": false,
+      "storage": false
+    },
     "Router": {
       "calls": ["sell", "buy"]
     },

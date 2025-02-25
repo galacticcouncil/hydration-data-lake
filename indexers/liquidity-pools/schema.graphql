@@ -1109,9 +1109,8 @@ type OtcOrderEvent @entity {
 # ======================================================================================================================
 
 type MmSupply @entity {
-  "<otc_order_id>-<event_id>"
+  "<event_id>"
   id: ID!
-  operationId: String @index
   traceIds: [String!]
 
   asset: Asset!
@@ -1126,9 +1125,8 @@ type MmSupply @entity {
 }
 
 type MmWithdraw @entity {
-  "<otc_order_id>-<event_id>"
+  "<event_id>"
   id: ID!
-  operationId: String @index
   traceIds: [String!]
 
   asset: Asset!
@@ -1142,9 +1140,8 @@ type MmWithdraw @entity {
 }
 
 type MmBorrow @entity {
-  "<otc_order_id>-<event_id>"
+  "<event_id>"
   id: ID!
-  operationId: String @index
   traceIds: [String!]
 
   asset: Asset!
@@ -1161,9 +1158,8 @@ type MmBorrow @entity {
 }
 
 type MmUserEModeSet @entity {
-  "<otc_order_id>-<event_id>"
+  "<event_id>"
   id: ID!
-  operationId: String @index
   traceIds: [String!]
 
   account: Account!
@@ -1175,11 +1171,11 @@ type MmUserEModeSet @entity {
 }
 
 type MmRepay @entity {
-  "<otc_order_id>-<event_id>"
+  "<event_id>"
   id: ID!
-  operationId: String @index
   traceIds: [String!]
 
+  asset: Asset!
   account: Account!
   repayerAccount: Account!
   amount: BigInt
@@ -1191,15 +1187,14 @@ type MmRepay @entity {
 }
 
 type MmLiquidationCall @entity {
-  "<otc_order_id>-<event_id>"
+  "<event_id>"
   id: ID!
-  operationId: String @index
   traceIds: [String!]
 
   collateralAsset: Asset!
   debtAsset: Asset!
   account: Account!
-  debtToCover: BigInt
+  debtToCoverAmount: BigInt
   liquidatedCollateralAmount: BigInt
   liquidatorAccount: Account!
   receiveAToken: Boolean!
@@ -1210,9 +1205,8 @@ type MmLiquidationCall @entity {
 }
 
 type MmReserveUsedAsCollateralEnabledEvent @entity {
-  "<otc_order_id>-<event_id>"
+  "<event_id>"
   id: ID!
-  operationId: String @index
   traceIds: [String!]
 
   account: Account!
@@ -1224,9 +1218,8 @@ type MmReserveUsedAsCollateralEnabledEvent @entity {
 }
 
 type MmReserveUsedAsCollateralDisabledEvent @entity {
-  "<otc_order_id>-<event_id>"
+  "<event_id>"
   id: ID!
-  operationId: String @index
   traceIds: [String!]
 
   account: Account!

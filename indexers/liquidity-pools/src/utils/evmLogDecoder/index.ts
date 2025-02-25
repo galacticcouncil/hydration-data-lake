@@ -69,6 +69,34 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
         return this.parseSupplyEvent(
           evmLogParams
         ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.Withdraw:
+        return this.parseWithdrawEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.Borrow:
+        return this.parseBorrowEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.Repay:
+        return this.parseRepayEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.UserEModeSet:
+        return this.parseUserEModeSetEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.LiquidationCall:
+        return this.parseLiquidationCallEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.ReserveUsedAsCollateralEnabled:
+        return this.parseReserveUsedAsCollateralEnabledEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.ReserveUsedAsCollateralDisabled:
+        return this.parseReserveUsedAsCollateralDisabledEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
       default:
         return null;
     }

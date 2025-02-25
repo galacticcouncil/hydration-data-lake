@@ -1,25 +1,20 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BalancesTransferData } from '../../../parsers/batchBlocksParser/types';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmLogDecoder';
-import { EvmEventName, MmSupply } from '../../../model';
+import { EvmEventName, MmWithdraw } from '../../../model';
 import { getAsset } from '../../assets/assetRegistry';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import {
-  getNewMoneyMarketEventEntity,
-  processNewMoneyMarketEvent,
-} from '../moneyMarketEvent';
+import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 
-export async function handleMmSupplyEvent(
+export async function handleMmWithdrawEvent(
   ctx: SqdProcessorContext<Store>,
   eventCallData: EvmLogData
 ) {
   if (!eventCallData.eventData.params) return;
-
   const parsedEvmEventData =
-    EvmLogDecoder.getInstance().getEvmEventFromLog<EvmEventName.Supply>(
+    EvmLogDecoder.getInstance().getEvmEventFromLog<EvmEventName.Withdraw>(
       eventCallData.eventData.params
     );
 
@@ -44,41 +39,28 @@ export async function handleMmSupplyEvent(
     return;
   }
 
-  const account = await getOrCreateAccountByBoundEvmAddress({
+  const accountFrom = await getOrCreateAccountByBoundEvmAddress({
     ctx,
     evmAddress: parsedEvmEventData.userAddress,
     blockHeader: eventMetadata.blockHeader,
   });
 
-  const accountOnBehalfOf = await getOrCreateAccountByBoundEvmAddress({
+  const accountTo = await getOrCreateAccountByBoundEvmAddress({
     ctx,
-    evmAddress: parsedEvmEventData.onBehalfOfUserAddress,
+    evmAddress: parsedEvmEventData.toAddress,
     blockHeader: eventMetadata.blockHeader,
   });
 
-  if (!account || !accountOnBehalfOf) {
-    if (!account)
-      console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.userAddress}`
-      );
-    if (!accountOnBehalfOf)
-      console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.onBehalfOfUserAddress}`
-      );
-    return;
-  }
-
-  const mmSupplyEntity = new MmSupply({
+  const mmWithdrawEntity = new MmWithdraw({
     id: eventMetadata.id,
     traceIds: [
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
     ],
     asset: assetEntity,
-    account,
-    accountOnBehalfOf,
+    accountFrom,
+    accountTo,
     amount: parsedEvmEventData.amount,
-    referralCode: parsedEvmEventData.referralCode,
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       eventMetadata.blockHeader.height
     ).height,
@@ -86,11 +68,11 @@ export async function handleMmSupplyEvent(
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });
 
-  ctx.batchState.state.mmSupplies.set(mmSupplyEntity.id, mmSupplyEntity);
+  ctx.batchState.state.mmWithdrawals.set(mmWithdrawEntity.id, mmWithdrawEntity);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [mmSupplyEntity.account, mmSupplyEntity.accountOnBehalfOf],
-    traceIds: mmSupplyEntity.traceIds,
+    participants: [mmWithdrawEntity.accountFrom, mmWithdrawEntity.accountTo],
+    traceIds: mmWithdrawEntity.traceIds,
     ctx,
   });
 
@@ -98,7 +80,7 @@ export async function handleMmSupplyEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
-    allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
-    supply: mmSupplyEntity,
+    allInvolvedParticipants: [accountFrom.id, accountTo.id],
+    withdraw: mmWithdrawEntity,
   });
 }

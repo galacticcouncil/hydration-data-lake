@@ -8,6 +8,7 @@ import { Asset, AssetType } from '../../model';
 import parsers from '../../parsers';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetDetailsWithId } from '../../parsers/types/storage';
+import { EvmUtils } from '../../utils/evm';
 
 export async function getAsset({
   ctx,
@@ -68,13 +69,11 @@ export async function getAsset({
 
   if (!storageData) return null;
 
-  const erc20AssetContractDetails =
-    storageData.assetType === AssetType.Erc20
-      ? await parsers.storage.assetRegistry.getErc20AssetContractAddress(
-          +id,
-          blockHeader
-        )
-      : null;
+  const erc20AssetContractAddress = await getAssetEvmAddressByType({
+    assetId: +id,
+    assetType: storageData.assetType,
+    ctx,
+  });
 
   const newAsset = new Asset({
     id: `${id}`,
@@ -85,7 +84,7 @@ export async function getAsset({
     decimals: storageData.decimals ?? null,
     xcmRateLimit: storageData.xcmRateLimit ?? null,
     isSufficient: storageData.isSufficient ?? true,
-    evmAddress: erc20AssetContractDetails?.address ?? null,
+    evmAddress: erc20AssetContractAddress,
   });
 
   await ctx.store.save(newAsset);
@@ -124,6 +123,32 @@ export async function ensureNativeToken(ctx: SqdProcessorContext<Store>) {
   assetsAllBatch.set(nativeToken.id, nativeToken);
 }
 
+export async function getAssetEvmAddressByType({
+  assetId,
+  assetType,
+  ctx,
+}: {
+  assetId: number;
+  assetType: AssetType;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  if (Number.isNaN(assetId)) return null;
+
+  switch (assetType) {
+    case AssetType.Erc20:
+      return (
+        (
+          await parsers.storage.assetRegistry.getErc20AssetContractAddress(
+            +assetId,
+            ctx.blocks[0].header
+          )
+        )?.address ?? null
+      );
+    default:
+      return EvmUtils.convertAssetIdToNormalizedH160Address(assetId);
+  }
+}
+
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
   eventCallData: AssetRegistryRegisteredData
@@ -144,18 +169,16 @@ export async function assetRegistered(
     },
   } = eventCallData;
 
-  const erc20AssetContractDetails =
-    assetType === AssetType.Erc20
-      ? await parsers.storage.assetRegistry.getErc20AssetContractAddress(
-          +assetId,
-          eventMetadata.blockHeader
-        )
-      : null;
+  const erc20AssetContractAddress = await getAssetEvmAddressByType({
+    assetId,
+    assetType: assetType,
+    ctx,
+  });
 
   const newAsset = new Asset({
     id: `${assetId}`,
     name: assetName,
-    evmAddress: erc20AssetContractDetails?.address ?? null,
+    evmAddress: erc20AssetContractAddress,
     assetType,
     existentialDeposit,
     symbol,
@@ -212,11 +235,11 @@ export async function assetUpdated(
 }
 
 export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
-  if (!ctx.isHead) return;
-
   const latestActualisationPoint = (
     await ProcessorStatusManager.getInstance(ctx).getStatus()
   ).assetsLastUpdatedAtBlock;
+
+  if (latestActualisationPoint > 0 && !ctx.isHead) return;
 
   if (
     latestActualisationPoint > 0 &&
@@ -247,13 +270,11 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
     for (const { assetId, data } of storageData) {
       if (!data) continue;
 
-      const erc20AssetContractDetails =
-        data.assetType === AssetType.Erc20
-          ? await parsers.storage.assetRegistry.getErc20AssetContractAddress(
-              +assetId,
-              ctx.blocks[0].header
-            )
-          : null;
+      const erc20AssetContractAddress = await getAssetEvmAddressByType({
+        assetId,
+        assetType: data.assetType,
+        ctx,
+      });
 
       const newAsset = new Asset({
         id: `${assetId}`,
@@ -264,7 +285,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
         decimals: data.decimals ?? null,
         xcmRateLimit: data.xcmRateLimit ?? null,
         isSufficient: data.isSufficient ?? true,
-        evmAddress: erc20AssetContractDetails?.address ?? null,
+        evmAddress: erc20AssetContractAddress,
       });
 
       assetsToSave.push(newAsset);

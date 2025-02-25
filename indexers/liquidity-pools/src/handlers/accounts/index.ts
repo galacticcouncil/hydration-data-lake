@@ -3,12 +3,7 @@ import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { FindOptionsRelations, Like } from 'typeorm';
 import parsers from '../../parsers';
-import {
-  accountAddressFromEvmAddressAndExtension,
-  addressToHex,
-  convertFromH160,
-} from '../../utils/evm';
-import { Contains } from 'class-validator';
+import { EvmUtils } from '../../utils/evm';
 
 export async function getAccount({
   ctx,
@@ -16,6 +11,7 @@ export async function getAccount({
   accountType = AccountType.User,
   ensureAccountType = false,
   boundEvmAddress,
+  ensureBoundEvmAddress = false,
   relations = {
     dcaSchedules: true,
   },
@@ -25,29 +21,56 @@ export async function getAccount({
   accountType?: AccountType;
   ensureAccountType?: boolean;
   boundEvmAddress?: string;
+  ensureBoundEvmAddress?: boolean;
   relations?: FindOptionsRelations<Account>;
 }): Promise<Account> {
   const batchState = ctx.batchState.state;
 
   let acc = batchState.accounts.get(id);
-  if (acc && ensureAccountType) {
-    acc.accountType = accountType;
+
+  if (
+    acc &&
+    (ensureAccountType || (boundEvmAddress && ensureBoundEvmAddress))
+  ) {
+    if (ensureAccountType) acc.accountType = accountType;
+
+    if (boundEvmAddress && ensureBoundEvmAddress)
+      acc.boundEvmAddress = boundEvmAddress;
+
     ctx.batchState.state.accounts.set(acc.id, acc);
   }
+
   if (acc) return acc;
 
   acc = await ctx.store.findOne(Account, { where: { id }, relations });
 
-  if (acc && ensureAccountType) {
-    acc.accountType = accountType;
+  if (
+    acc &&
+    (ensureAccountType || (boundEvmAddress && ensureBoundEvmAddress))
+  ) {
+    if (ensureAccountType) acc.accountType = accountType;
+
+    if (boundEvmAddress && ensureBoundEvmAddress)
+      acc.boundEvmAddress = boundEvmAddress;
+
     await ctx.store.save(acc);
   }
 
   if (!acc) {
+    let boundEvmAddressToSave = boundEvmAddress ?? null;
+
+    if (!boundEvmAddressToSave) {
+      boundEvmAddressToSave = EvmUtils.isSr25519AddressDerivedFromH160Address(
+        id
+      )
+        ? EvmUtils.getH160FromDerivedSr25519(id)
+        : EvmUtils.getH160FromOriginalSr25519(id);
+    }
+
     acc = new Account();
     acc.id = id;
     acc.accountType = accountType;
-    acc.boundEvmAddress = boundEvmAddress;
+    acc.boundEvmAddress = boundEvmAddressToSave;
     await ctx.store.save(acc);
   }
   ctx.batchState.state.accounts.set(acc.id, acc);
@@ -137,12 +160,17 @@ export async function getOrCreateAccountByBoundEvmAddress({
       block: blockHeader,
     });
 
-  const accountId = accountAddressFromEvmAddressAndExtension(
+  const accountId = EvmUtils.getSr25519FromH160AndExtension(
     evmAddress,
     accountExtension
   );
 
-  return getAccount({ ctx, id: accountId, boundEvmAddress: evmAddress });
+  return getAccount({
+    ctx,
+    id: accountId,
+    boundEvmAddress: evmAddress,
+    ensureBoundEvmAddress: true,
+  });
 
   // if (!accountExtension) {
   //   // const accountId = addressToHex(convertFromH160(evmAddress));

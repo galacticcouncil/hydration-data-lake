@@ -1,6 +1,7 @@
 export * as balances from './balances/events'
 export * as assetRegistry from './asset-registry/events'
 export * as tokens from './tokens/events'
+export * as currencies from './currencies/events'
 export * as omnipool from './omnipool/events'
 export * as otc from './otc/events'
 export * as dca from './dca/events'

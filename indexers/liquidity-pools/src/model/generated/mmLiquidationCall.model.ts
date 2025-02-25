@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {Account} from "./account.model"
@@ -16,10 +16,6 @@ export class MmLiquidationCall {
   @PrimaryColumn_()
   id!: string
 
-  @Index_()
-  @Column_("text", {nullable: true})
-  operationId!: string | undefined | null
-
   @Column_("text", {array: true, nullable: true})
   traceIds!: (string)[] | undefined | null
 
@@ -36,7 +32,7 @@ export class MmLiquidationCall {
   account!: Account
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  debtToCover!: bigint | undefined | null
+  debtToCoverAmount!: bigint | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   liquidatedCollateralAmount!: bigint | undefined | null

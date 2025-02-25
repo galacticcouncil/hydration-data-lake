@@ -6,6 +6,7 @@ import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { handleBalancesTransfer } from './balancesTransfer';
 import { handleTokensTransfer } from './tokensTransfer';
 import { isPoolTransfer } from './utils';
+import { handleCurrenciesTransfer } from './currenciesTransfer';
 
 export async function handleTransfers(
   ctx: SqdProcessorContext<Store>,
@@ -18,14 +19,18 @@ export async function handleTransfers(
 
   const balancesTransferEvents = [
     ...parsedEvents.getSectionByEventName(EventName.Balances_Transfer).values(),
-  ].filter((e) =>
-    isPoolTransfer(allPoolsIds, e.eventData.params.from, e.eventData.params.to)
-  );
+  ];
+  //   .filter((e) =>
+  //   isPoolTransfer(allPoolsIds, e.eventData.params.from, e.eventData.params.to)
+  // );
   const tokensTransferEvents = [
     ...parsedEvents.getSectionByEventName(EventName.Tokens_Transfer).values(),
-  ].filter((e) =>
-    isPoolTransfer(allPoolsIds, e.eventData.params.from, e.eventData.params.to)
-  );
+  ];
+  const currenciesTransferredEvents = [
+    ...parsedEvents
+      .getSectionByEventName(EventName.Currencies_Transferred)
+      .values(),
+  ];
 
   for (const eventData of getOrderedListByBlockNumber(balancesTransferEvents)) {
     await handleBalancesTransfer(ctx, eventData);
@@ -33,6 +38,12 @@ export async function handleTransfers(
 
   for (const eventData of getOrderedListByBlockNumber(tokensTransferEvents)) {
     await handleTokensTransfer(ctx, eventData);
+  }
+
+  for (const eventData of getOrderedListByBlockNumber(
+    currenciesTransferredEvents
+  )) {
+    await handleCurrenciesTransfer(ctx, eventData);
   }
 
   await ctx.store.save([...ctx.batchState.state.transfers.values()]);

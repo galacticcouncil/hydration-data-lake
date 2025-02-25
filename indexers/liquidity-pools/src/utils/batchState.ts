@@ -46,6 +46,14 @@ import {
   HistoricalAccountAssetSwapFee,
   HistoricalAssetSwapFee,
   MoneyMarketEvent,
+  MmSupply,
+  MmWithdraw,
+  MmBorrow,
+  MmUserEModeSet,
+  MmRepay,
+  MmLiquidationCall,
+  MmReserveUsedAsCollateralEnabledEvent,
+  MmReserveUsedAsCollateralDisabledEvent,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -144,6 +152,20 @@ export type BatchStatePayload = {
   historicalAccountAssetSwapFees: Map<string, HistoricalAccountAssetSwapFee>;
 
   moneyMarketEvents: Map<string, MoneyMarketEvent>;
+  mmSupplies: Map<string, MmSupply>;
+  mmWithdrawals: Map<string, MmWithdraw>;
+  mmBorrows: Map<string, MmBorrow>;
+  mmUserEModeSetEvents: Map<string, MmUserEModeSet>;
+  mmRepays: Map<string, MmRepay>;
+  mmLiquidationCalls: Map<string, MmLiquidationCall>;
+  mmReserveUsedAsCollateralEnabledEvents: Map<
+    string,
+    MmReserveUsedAsCollateralEnabledEvent
+  >;
+  mmReserveUsedAsCollateralDisabledEvents: Map<
+    string,
+    MmReserveUsedAsCollateralDisabledEvent
+  >;
 };
 
 export class BatchState {
@@ -222,6 +244,14 @@ export class BatchState {
     historicalAccountAssetSwapFees: new Map(),
 
     moneyMarketEvents: new Map(),
+    mmSupplies: new Map(),
+    mmWithdrawals: new Map(),
+    mmBorrows: new Map(),
+    mmUserEModeSetEvents: new Map(),
+    mmRepays: new Map(),
+    mmLiquidationCalls: new Map(),
+    mmReserveUsedAsCollateralEnabledEvents: new Map(),
+    mmReserveUsedAsCollateralDisabledEvents: new Map(),
   };
 
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {

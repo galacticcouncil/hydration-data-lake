@@ -13,6 +13,7 @@ export * from './evmAccounts';
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
   'Tokens_Transfer' = 'Tokens.Transfer',
+  'Currencies_Transferred' = 'Currencies.Transferred',
 
   'AssetRegistry_Registered' = 'AssetRegistry.Registered',
   'AssetRegistry_Updated' = 'AssetRegistry.Updated',
@@ -74,6 +75,13 @@ export type LbpPoolUpdatedEventParams = {
 };
 
 export type TokensTransferEventParams = {
+  currencyId: number;
+  from: string;
+  to: string;
+  amount: bigint;
+};
+
+export type CurrenciesTransferredEventParams = {
   currencyId: number;
   from: string;
   to: string;

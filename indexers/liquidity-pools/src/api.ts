@@ -88,6 +88,23 @@ const postgraphileInstance = postgraphile(
 
 app.use(postgraphileInstance);
 
+app.get('/proxy/subscan', async (req, res) => {
+  try {
+    // Extract query parameters from FE request
+    const queryParams = req.query;
+
+    res.json({ status: 200 });
+  } catch (error) {
+    // console.error(
+    //   'Error fetching data:',
+    //   error.response?.data || error.message
+    // );
+    // res
+    //   .status(error.response?.status || 500)
+    //   .json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(appConfig.GQL_PORT, () => {
   console.log(`Squid API listening on port ${appConfig.GQL_PORT}`);
 });

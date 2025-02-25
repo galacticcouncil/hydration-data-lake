@@ -1,25 +1,24 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BalancesTransferData } from '../../../parsers/batchBlocksParser/types';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmLogDecoder';
-import { EvmEventName, MmSupply } from '../../../model';
+import {
+  EvmEventName,
+  MmReserveUsedAsCollateralEnabledEvent,
+} from '../../../model';
 import { getAsset } from '../../assets/assetRegistry';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import {
-  getNewMoneyMarketEventEntity,
-  processNewMoneyMarketEvent,
-} from '../moneyMarketEvent';
+import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 
-export async function handleMmSupplyEvent(
+export async function handleMmReserveUsedAsCollateralEnabledEvent(
   ctx: SqdProcessorContext<Store>,
   eventCallData: EvmLogData
 ) {
   if (!eventCallData.eventData.params) return;
 
   const parsedEvmEventData =
-    EvmLogDecoder.getInstance().getEvmEventFromLog<EvmEventName.Supply>(
+    EvmLogDecoder.getInstance().getEvmEventFromLog<EvmEventName.ReserveUsedAsCollateralEnabled>(
       eventCallData.eventData.params
     );
 
@@ -50,25 +49,7 @@ export async function handleMmSupplyEvent(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  const accountOnBehalfOf = await getOrCreateAccountByBoundEvmAddress({
-    ctx,
-    evmAddress: parsedEvmEventData.onBehalfOfUserAddress,
-    blockHeader: eventMetadata.blockHeader,
-  });
-
-  if (!account || !accountOnBehalfOf) {
-    if (!account)
-      console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.userAddress}`
-      );
-    if (!accountOnBehalfOf)
-      console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.onBehalfOfUserAddress}`
-      );
-    return;
-  }
-
-  const mmSupplyEntity = new MmSupply({
+  const mmNewEntity = new MmReserveUsedAsCollateralEnabledEvent({
     id: eventMetadata.id,
     traceIds: [
       ...(callData.traceId ? [callData.traceId] : []),
@@ -76,9 +57,7 @@ export async function handleMmSupplyEvent(
     ],
     asset: assetEntity,
     account,
-    accountOnBehalfOf,
-    amount: parsedEvmEventData.amount,
-    referralCode: parsedEvmEventData.referralCode,
+
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       eventMetadata.blockHeader.height
     ).height,
@@ -86,11 +65,14 @@ export async function handleMmSupplyEvent(
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });
 
-  ctx.batchState.state.mmSupplies.set(mmSupplyEntity.id, mmSupplyEntity);
+  ctx.batchState.state.mmReserveUsedAsCollateralEnabledEvents.set(
+    mmNewEntity.id,
+    mmNewEntity
+  );
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [mmSupplyEntity.account, mmSupplyEntity.accountOnBehalfOf],
-    traceIds: mmSupplyEntity.traceIds,
+    participants: [mmNewEntity.account],
+    traceIds: mmNewEntity.traceIds,
     ctx,
   });
 
@@ -98,7 +80,7 @@ export async function handleMmSupplyEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
-    allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
-    supply: mmSupplyEntity,
+    allInvolvedParticipants: [account.id],
+    reserveUsedAsCollateralEnabled: mmNewEntity,
   });
 }

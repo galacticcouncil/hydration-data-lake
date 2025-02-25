@@ -71,10 +71,40 @@ export function getErc20AssetContractFromLocation(
   if (!location) return null;
 
   try {
-    return {
-      // @ts-ignore
-      address: location.interior.value.key,
-    };
+    switch (location.interior.__kind) {
+      case 'X1':
+        return {
+          // @ts-ignore
+          address: location.interior.value.key,
+        };
+      case 'X2':
+        return {
+          // @ts-ignore
+          address: location.interior.value[1].key,
+        };
+      case 'X3':
+        return {
+          // @ts-ignore
+          address: location.interior.value[2].key,
+        };
+      case 'X4':
+        return {
+          // @ts-ignore
+          address: location.interior.value[3].key,
+        };
+      case 'X5':
+        return {
+          // @ts-ignore
+          address: location.interior.value[4].key,
+        };
+      case 'X6':
+        return {
+          // @ts-ignore
+          address: location.interior.value[5].key,
+        };
+      default:
+        return null;
+    }
   } catch (e) {
     return null;
   }

@@ -35,6 +35,8 @@ import { handleRelayChainBlocks } from './handlers/relayChain';
 import { HistoricalDataManager } from './handlers/historicalData';
 import { handleEvm, saveAllMoneyMarketEvents } from './handlers/moneyMarket';
 import { handleEvmAccounts } from './handlers/evmAccounts';
+import { EvmLogDecoder } from './utils/evmLogDecoder';
+import { EvmUtils } from './utils/evm';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -42,6 +44,17 @@ console.log(
 
 processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   printV8MemoryHeap();
+
+  console.log(
+    EvmUtils.getH160FromDerivedSr25519(
+      '0x4554480029fb08a81867d8f61bce689d2dc366687291e7470000000000000000'
+    )
+  );
+  console.log(
+    EvmUtils.getH160FromOriginalSr25519(
+      '0xf42fc37ca29f3ba9ceb2e0f28ea6b450a2f3cabd436ef2e451618d5c3196252e'
+    )
+  );
 
   const ctxWithBatchState: Omit<
     SqdProcessorContext<Store>,

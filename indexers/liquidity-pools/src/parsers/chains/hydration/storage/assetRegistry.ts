@@ -376,7 +376,6 @@ async function getErc20AssetContractAddress(
       block,
       +assetId
     );
-
     return getErc20AssetContractFromLocation(resp);
   }
 
@@ -385,7 +384,6 @@ async function getErc20AssetContractAddress(
       block,
       +assetId
     );
-
     return getErc20AssetContractFromLocation(resp);
   }
 
@@ -394,7 +392,6 @@ async function getErc20AssetContractAddress(
       block,
       +assetId
     );
-
     return getErc20AssetContractFromLocation(resp);
   }
 

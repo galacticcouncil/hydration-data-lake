@@ -1,0 +1,110 @@
+import { SqdProcessorContext } from '../../../processor';
+import { Store } from '@subsquid/typeorm-store';
+import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import { EvmLogDecoder } from '../../../utils/evmLogDecoder';
+import { EvmEventName, MmBorrow, MmLiquidationCall } from '../../../model';
+import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
+import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
+
+export async function handleMmLiquidationCallEvent(
+  ctx: SqdProcessorContext<Store>,
+  eventCallData: EvmLogData
+) {
+  if (!eventCallData.eventData.params) return;
+
+  const parsedEvmEventData =
+    EvmLogDecoder.getInstance().getEvmEventFromLog<EvmEventName.LiquidationCall>(
+      eventCallData.eventData.params
+    );
+
+  if (!parsedEvmEventData) return;
+
+  const {
+    eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
+  } = eventCallData;
+
+  const collateralAssetEntity = await getAsset({
+    ctx,
+    evmAddress: parsedEvmEventData.collateralAssetAddress,
+    ensure: true,
+    blockHeader: eventMetadata.blockHeader,
+  });
+
+  if (!collateralAssetEntity) {
+    console.log(
+      `Asset with contract address ${parsedEvmEventData.collateralAssetAddress} cannot be found.`
+    );
+    return;
+  }
+
+  const debtAssetEntity = await getAsset({
+    ctx,
+    evmAddress: parsedEvmEventData.debtAssetAddress,
+    ensure: true,
+    blockHeader: eventMetadata.blockHeader,
+  });
+  if (!debtAssetEntity) {
+    console.log(
+      `Asset with contract address ${parsedEvmEventData.debtAssetAddress} cannot be found.`
+    );
+    return;
+  }
+
+  const account = await getOrCreateAccountByBoundEvmAddress({
+    ctx,
+    evmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+  });
+
+  const liquidatorAccount = await getOrCreateAccountByBoundEvmAddress({
+    ctx,
+    evmAddress: parsedEvmEventData.liquidatorAddress,
+    blockHeader: eventMetadata.blockHeader,
+  });
+
+  const mmLiquidationCallEntity = new MmLiquidationCall({
+    id: eventMetadata.id,
+    traceIds: [
+      ...(callData.traceId ? [callData.traceId] : []),
+      eventMetadata.traceId,
+    ],
+    collateralAsset: collateralAssetEntity,
+    debtAsset: debtAssetEntity,
+    account,
+    liquidatorAccount,
+    liquidatedCollateralAmount: parsedEvmEventData.liquidatedCollateralAmount,
+    debtToCoverAmount: parsedEvmEventData.debtToCoverAmount,
+    receiveAToken: parsedEvmEventData.receiveAToken,
+
+    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      eventMetadata.blockHeader.height
+    ).height,
+    paraBlockHeight: eventMetadata.blockHeader.height,
+    event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
+  });
+
+  ctx.batchState.state.mmLiquidationCalls.set(
+    mmLiquidationCallEntity.id,
+    mmLiquidationCallEntity
+  );
+
+  await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
+    participants: [
+      mmLiquidationCallEntity.account,
+      mmLiquidationCallEntity.liquidatorAccount,
+    ],
+    traceIds: mmLiquidationCallEntity.traceIds,
+    ctx,
+  });
+
+  await processNewMoneyMarketEvent({
+    ctx,
+    eventCallData,
+    allInvolvedAssetIds: [collateralAssetEntity.id, debtAssetEntity.id],
+    allInvolvedParticipants: [account.id, liquidatorAccount.id],
+    liquidationCall: mmLiquidationCallEntity,
+  });
+}

@@ -41,6 +41,7 @@ import {
   XykSellExecutedEventParams,
   EvmLogEventParams,
   EvmAccountsBoundEventParams,
+  CurrenciesTransferredEventParams,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -168,6 +169,11 @@ export type EventParserMethods = {
   };
   balances: {
     parseTransferParams: (event: SqdEvent) => BalancesTransferEventParams;
+  };
+  currencies: {
+    parseTransferredParams: (
+      event: SqdEvent
+    ) => CurrenciesTransferredEventParams;
   };
   assetRegistry: {
     parseRegisteredParams: (

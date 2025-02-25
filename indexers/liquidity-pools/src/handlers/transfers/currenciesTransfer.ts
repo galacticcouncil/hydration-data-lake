@@ -1,14 +1,14 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { TokensTransferData } from '../../parsers/batchBlocksParser/types';
 import { initTransfer } from './utils';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { AssetType } from '../../model';
 import { getAsset } from '../assets/assetRegistry';
+import { CurrenciesTransferredData } from '../../parsers/batchBlocksParser/types/currencies';
 
-export async function handleTokensTransfer(
+export async function handleCurrenciesTransfer(
   ctx: SqdProcessorContext<Store>,
-  eventCallData: TokensTransferData
+  eventCallData: CurrenciesTransferredData
 ) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
@@ -22,7 +22,16 @@ export async function handleTokensTransfer(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  if (!assetEntity || assetEntity.assetType === AssetType.Erc20) return;
+  if (!assetEntity || assetEntity.assetType !== AssetType.Erc20) return;
+
+  const existingTransfer = [...ctx.batchState.state.transfers.values()].find(
+    (transfer) =>
+      transfer.to.id === eventParams.to &&
+      transfer.from.id === eventParams.from &&
+      transfer.amount === eventParams.amount
+  );
+
+  if (!!existingTransfer) return;
 
   const transferEntity = await initTransfer({
     ctx,

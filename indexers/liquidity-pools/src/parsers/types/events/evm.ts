@@ -23,7 +23,7 @@ export type MmSupplyEventParams = MmEventParamsWithEventName & {
   reserveAddress: string;
   userAddress: string;
   onBehalfOfUserAddress: string;
-  referralCode: number;
+  referralCode: bigint;
   amount: bigint;
 };
 
@@ -41,7 +41,7 @@ export type MmBorrowEventParams = MmEventParamsWithEventName & {
   amount: bigint;
   interestRateMode: number;
   borrowRate: bigint;
-  referralCode: number;
+  referralCode: bigint;
 };
 
 export type MmRepayEventParams = MmEventParamsWithEventName & {

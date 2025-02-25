@@ -562,6 +562,19 @@ export async function getParsedEventsData(
         }
 
         /**
+         * ====================== C U R R E N C I E S ==========================
+         */
+
+        /**
+         * ==== Currencies Transferred ====
+         */
+        case events.currencies.transferred.name: {
+          const preparedData = parserHelper.parseCurrenciesTransferredData();
+          parsedDataManager.set(EventName.Currencies_Transferred, preparedData);
+          break;
+        }
+
+        /**
          * ================= A S S E T   R E G I S T R Y =======================
          */
 

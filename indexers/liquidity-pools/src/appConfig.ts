@@ -186,6 +186,7 @@ export class AppConfig {
     const eventsToListen = [
       events.balances.transfer.name,
       events.tokens.transfer.name,
+      events.currencies.transferred.name,
       events.assetRegistry.registered.name,
       events.assetRegistry.updated.name,
       events.broadcast.swapped.name,

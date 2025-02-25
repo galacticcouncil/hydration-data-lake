@@ -658,6 +658,27 @@ export class EventDataParserHelper {
     };
   }
   /**
+   * ==== Currencies Transferred ====
+   */
+  parseCurrenciesTransferredData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.currencies.parseTransferredParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+
+  /**
    * ==== AssetRegistry Registered ====
    */
   parseAssetRegistryRegisteredData() {
