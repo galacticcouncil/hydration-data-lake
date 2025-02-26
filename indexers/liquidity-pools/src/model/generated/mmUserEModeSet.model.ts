@@ -9,7 +9,7 @@ export class MmUserEModeSet {
   }
 
   /**
-   * <otc_order_id>-<event_id>
+   * <event_id>
    */
   @PrimaryColumn_()
   id!: string

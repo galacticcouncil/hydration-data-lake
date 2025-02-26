@@ -11,7 +11,7 @@ export class MmWithdraw {
   }
 
   /**
-   * <otc_order_id>-<event_id>
+   * <event_id>
    */
   @PrimaryColumn_()
   id!: string

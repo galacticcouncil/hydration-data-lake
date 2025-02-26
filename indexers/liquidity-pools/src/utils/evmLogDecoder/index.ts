@@ -1,12 +1,9 @@
 import aavePoolImplementation from './abi/aavePoolImplementation.json';
 import aTokenHydration from './abi/aTokenHydration.json';
+import diaOracleV2 from './abi/diaOracleV2.json';
 import { ethers } from 'ethers';
 import { MoneyMarketEventsParser } from './moneyMarketEventsParser';
-import {
-  EvmLogEventParams,
-  MmEventParamsWithEventName,
-  MmTransferEventParams,
-} from '../../parsers/types/events';
+import { EvmLogEventParams } from '../../parsers/types/events';
 import { EvmEventParamsTypeDecorated } from './types';
 import { EvmEventName } from '../../model';
 
@@ -18,6 +15,7 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
       new ethers.Interface(aavePoolImplementation.abi),
     ],
     [aTokenHydration.address, new ethers.Interface(aTokenHydration.abi)],
+    [diaOracleV2.address, new ethers.Interface(diaOracleV2.abi)],
   ]);
 
   constructor() {
