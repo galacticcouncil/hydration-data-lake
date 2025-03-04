@@ -72,6 +72,8 @@ export class AppConfig {
    */
   readonly RPC_URL: string | null = null;
 
+  readonly RPC_URL_HTTPS: string | null = null;
+
   /**
    * Maximum number of ongoing concurrent requests
    */
@@ -139,6 +141,9 @@ export class AppConfig {
 
   @IsString()
   readonly STORAGE_DICTIONARY_STABLEPOOL_URL: string = '';
+
+  @IsString()
+  readonly SUBSCAN_PRO_API_SECRET: string = '';
 
   @Transform(({ value }: { value: string }) => +value)
   readonly UNIFIED_EVENTS_GENESIS_SPEC_VERSION: number = -1;

@@ -20,6 +20,8 @@ import { NodeEnv } from './utils/types';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
 import { RoutedTradesSubscriptionsPlugin } from './apiSupport/plugins/subscription/routedTradesSubscriptions';
 import { CommonApiTypesDefinitionPlugin } from './apiSupport/plugins/query/commonApiTypesDefinition.plugin';
+import { handleProxyReqSubscan } from './apiSupport/proxyApiHandlers';
+import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -87,23 +89,9 @@ const postgraphileInstance = postgraphile(
 );
 
 app.use(postgraphileInstance);
+app.use(express.json());
 
-app.get('/proxy/subscan', async (req, res) => {
-  try {
-    // Extract query parameters from FE request
-    const queryParams = req.query;
-
-    res.json({ status: 200 });
-  } catch (error) {
-    // console.error(
-    //   'Error fetching data:',
-    //   error.response?.data || error.message
-    // );
-    // res
-    //   .status(error.response?.status || 500)
-    //   .json({ error: 'Internal Server Error' });
-  }
-});
+app.post(`${ProxyApiRoute.subscan}/*`, handleProxyReqSubscan);
 
 app.listen(appConfig.GQL_PORT, () => {
   console.log(`Squid API listening on port ${appConfig.GQL_PORT}`);
