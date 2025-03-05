@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { initTransfer } from './utils';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { AssetType } from '../../model';
-import { getAsset } from '../assets/assetRegistry';
+import { getOrCreateAsset } from '../assets/asset';
 import { CurrenciesTransferredData } from '../../parsers/batchBlocksParser/types/currencies';
 
 export async function handleCurrenciesTransfer(
@@ -15,7 +15,7 @@ export async function handleCurrenciesTransfer(
     callData,
   } = eventCallData;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateAsset({
     ctx,
     id: eventParams.currencyId,
     ensure: true,

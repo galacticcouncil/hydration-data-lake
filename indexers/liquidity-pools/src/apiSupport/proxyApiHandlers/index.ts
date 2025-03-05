@@ -1,10 +1,6 @@
 import { Request, Response } from 'express';
 import axios, { AxiosRequestConfig } from 'axios';
-import {
-  allowedQueries,
-  SubscanAllowedSection,
-  SubscanAllowedXcmQuery,
-} from './types';
+import { allowedQueries } from './types';
 import { AppConfig } from '../../appConfig';
 
 const appConfig = AppConfig.getInstance();

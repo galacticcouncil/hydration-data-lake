@@ -4,7 +4,7 @@ import { TokensTransferData } from '../../parsers/batchBlocksParser/types';
 import { initTransfer } from './utils';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { AssetType } from '../../model';
-import { getAsset } from '../assets/assetRegistry';
+import { getOrCreateAsset } from '../assets/asset';
 
 export async function handleTokensTransfer(
   ctx: SqdProcessorContext<Store>,
@@ -15,7 +15,7 @@ export async function handleTokensTransfer(
     callData,
   } = eventCallData;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateAsset({
     ctx,
     id: eventParams.currencyId,
     ensure: true,

@@ -1,8 +1,8 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { getAsset } from '../assets/assetRegistry';
+import { getOrCreateAsset } from '../assets/asset';
 import { OtcOrder, OtcOrderStatus } from '../../model';
-import { getAccount } from '../accounts';
+import { getOrCreateAccount } from '../accounts';
 import { OtcOrderPlacedEventParams } from '../../parsers/types/events';
 import { FindOptionsRelations } from 'typeorm';
 
@@ -25,13 +25,13 @@ export async function createOtcOrder({
     partiallyFillable,
   } = orderDetails;
 
-  const assetIn = await getAsset({
+  const assetIn = await getOrCreateAsset({
     ctx,
     id: assetInId,
     ensure: true,
     blockHeader: blockHeader,
   });
-  const assetOut = await getAsset({
+  const assetOut = await getOrCreateAsset({
     ctx,
     id: assetOutId,
     ensure: true,
@@ -45,7 +45,7 @@ export async function createOtcOrder({
 
   const newOrder = new OtcOrder({
     id: orderId.toString(),
-    owner: await getAccount({ ctx, id: ownerAddress }),
+    owner: await getOrCreateAccount({ ctx, id: ownerAddress }),
     assetIn,
     assetOut,
     amountIn: amountIn,

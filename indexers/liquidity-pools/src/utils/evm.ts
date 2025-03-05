@@ -26,7 +26,7 @@ export class EvmUtils {
   static convertH160ToAssetId(h160Address: string) {
     if (h160Address === undefined || h160Address === null) return null;
     try {
-      const addressNormalized = ethers.getAddress(h160Address);
+      const addressNormalized = ethers.utils.getAddress(h160Address);
 
       const addressBuffer = Buffer.from(
         addressNormalized.replace('0x', ''),
@@ -44,7 +44,7 @@ export class EvmUtils {
       return null;
     }
   }
-  static convertAssetIdToNormalizedH160Address(assetId: number) {
+  static convertAssetIdToH160Address(assetId: number, normalize = false) {
     if (assetId === undefined || assetId === null) return null;
     try {
       if (!Number.isInteger(assetId) || assetId < 0) return null;
@@ -53,7 +53,9 @@ export class EvmUtils {
       evmAddressBuffer[15] = 1;
       evmAddressBuffer.writeUInt32BE(assetId, 16);
 
-      return ethers.getAddress('0x' + evmAddressBuffer.toString('hex'));
+      return normalize
+        ? ethers.utils.getAddress('0x' + evmAddressBuffer.toString('hex'))
+        : `0x${evmAddressBuffer.toString('hex')}`;
     } catch (e) {
       return null;
     }

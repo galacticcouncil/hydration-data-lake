@@ -8,13 +8,13 @@ import {
   StableswapDestroyedData,
   StableswapLifeState,
 } from '../../../model';
-import { getAccount } from '../../accounts';
+import { getOrCreateAccount } from '../../accounts';
 import { StableswapPoolCreatedData } from '../../../parsers/batchBlocksParser/types';
 
 import { StableMath } from '@galacticcouncil/sdk';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import { isNotNullOrUndefined } from '../../../utils/helpers';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 import { getAssetFreeBalance } from '../../assets/balances';
 import parsers from '../../../parsers';
 
@@ -29,7 +29,7 @@ export async function getNewStableswapWithAssets({
   ctx: SqdProcessorContext<Store>;
   blockHeader: SqdBlock;
 }) {
-  const poolShareToken = await getAsset({
+  const poolShareToken = await getOrCreateAsset({
     ctx,
     id: poolId,
     ensure: true,
@@ -41,7 +41,7 @@ export async function getNewStableswapWithAssets({
 
   const newPool = new Stableswap({
     id: `${poolId}`,
-    account: await getAccount({
+    account: await getOrCreateAccount({
       ctx,
       id: blake2AsHex(StableMath.getPoolAddress(+poolId)),
       accountType: AccountType.Stableswap,
@@ -88,7 +88,7 @@ export async function getNewStableswapWithAssets({
           assetId,
           newPool.account.id
         ),
-        asset: (await getAsset({
+        asset: (await getOrCreateAsset({
           ctx,
           id: assetId,
           ensure: true,

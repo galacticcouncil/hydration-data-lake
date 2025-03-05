@@ -17,6 +17,7 @@
     "tests/*"
   ],
   "dependencies": {
+    "@aave/math-utils": "^1.32.1",
     "pg": "^8.13.1"
   },
   "devDependencies": {

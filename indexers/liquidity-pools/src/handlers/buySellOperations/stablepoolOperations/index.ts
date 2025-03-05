@@ -103,8 +103,8 @@ export async function stablepoolBuySellExecuted(
     callData,
   } = eventCallData;
 
-  // let assetInEntity = await getAsset({ ctx, id: eventParams.assetIn });
-  // let assetOutEntity = await getAsset({ ctx, id: eventParams.assetOut });
+  // let assetInEntity = await getOrCreateAsset({ ctx, id: eventParams.assetIn });
+  // let assetOutEntity = await getOrCreateAsset({ ctx, id: eventParams.assetOut });
   const pool = await getOrCreateStableswap({
     ctx,
     poolId: eventParams.poolId,

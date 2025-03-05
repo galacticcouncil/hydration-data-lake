@@ -2,9 +2,9 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BalancesTransferData } from '../../../parsers/batchBlocksParser/types';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import { EvmLogDecoder } from '../../../utils/evmLogDecoder';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { EvmEventName, MmSupply } from '../../../model';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import {
@@ -30,11 +30,10 @@ export async function handleMmSupplyEvent(
     callData,
   } = eventCallData;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateMoneyMarketAsset({
     ctx,
     evmAddress: parsedEvmEventData.reserveAddress,
     ensure: true,
-    blockHeader: eventMetadata.blockHeader,
   });
 
   if (!assetEntity) {

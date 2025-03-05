@@ -188,6 +188,10 @@ export async function getParsedEventsData(
             'lbppoolAssetIdsForStoragePrefetch',
             `${preparedData.eventData.params.data.assets[0]}-${preparedData.eventData.params.data.assets[1]}`
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.data.owner,
+            preparedData.eventData.params.data.feeCollector,
+          ]);
           break;
         }
         /**
@@ -201,6 +205,11 @@ export async function getParsedEventsData(
             'lbppoolAssetIdsForStoragePrefetch',
             `${preparedData.eventData.params.data.assets[0]}-${preparedData.eventData.params.data.assets[1]}`
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.pool,
+            preparedData.eventData.params.data.owner,
+            preparedData.eventData.params.data.feeCollector,
+          ]);
           break;
         }
         /**
@@ -214,6 +223,9 @@ export async function getParsedEventsData(
             'lbppoolAssetIdsForStoragePrefetch',
             `${preparedData.eventData.params.assetIn}-${preparedData.eventData.params.assetOut}`
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -227,6 +239,9 @@ export async function getParsedEventsData(
             'lbppoolAssetIdsForStoragePrefetch',
             `${preparedData.eventData.params.assetIn}-${preparedData.eventData.params.assetOut}`
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
 
@@ -245,6 +260,10 @@ export async function getParsedEventsData(
             'xykPoolIdsForStoragePrefetch',
             preparedData.eventData.params.pool
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+            preparedData.eventData.params.pool,
+          ]);
           break;
         }
         /**
@@ -258,6 +277,10 @@ export async function getParsedEventsData(
             'xykPoolIdsForStoragePrefetch',
             preparedData.eventData.params.pool
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+            preparedData.eventData.params.pool,
+          ]);
           break;
         }
         /**
@@ -271,6 +294,10 @@ export async function getParsedEventsData(
             'xykPoolIdsForStoragePrefetch',
             preparedData.eventData.params.pool
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+            preparedData.eventData.params.pool,
+          ]);
           break;
         }
         /**
@@ -284,6 +311,10 @@ export async function getParsedEventsData(
             'xykPoolIdsForStoragePrefetch',
             preparedData.eventData.params.pool
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+            preparedData.eventData.params.pool,
+          ]);
           break;
         }
 
@@ -332,6 +363,9 @@ export async function getParsedEventsData(
             'omnipoolAssetIdsForStoragePrefetch',
             preparedData.eventData.params.assetOut
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -349,6 +383,9 @@ export async function getParsedEventsData(
             'omnipoolAssetIdsForStoragePrefetch',
             preparedData.eventData.params.assetOut
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
 
@@ -380,6 +417,9 @@ export async function getParsedEventsData(
             'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -396,6 +436,9 @@ export async function getParsedEventsData(
             'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -411,6 +454,9 @@ export async function getParsedEventsData(
             'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -428,6 +474,10 @@ export async function getParsedEventsData(
             'stableswapIdsForStoragePrefetch',
             preparedData.eventData.params.poolId
           );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
 
@@ -441,6 +491,11 @@ export async function getParsedEventsData(
         case events.dca.scheduled.name: {
           const preparedData = parserHelper.parseDcaScheduledData();
           parsedDataManager.set(EventName.DCA_Scheduled, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+
           break;
         }
         /**
@@ -449,6 +504,10 @@ export async function getParsedEventsData(
         case events.dca.completed.name: {
           const preparedData = parserHelper.parseDcaCompletedData();
           parsedDataManager.set(EventName.DCA_Completed, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -457,6 +516,10 @@ export async function getParsedEventsData(
         case events.dca.terminated.name: {
           const preparedData = parserHelper.parseDcaTerminatedData();
           parsedDataManager.set(EventName.DCA_Terminated, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -465,6 +528,10 @@ export async function getParsedEventsData(
         case events.dca.tradeExecuted.name: {
           const preparedData = parserHelper.parseDcaTradeExecutedData();
           parsedDataManager.set(EventName.DCA_TradeExecuted, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -473,6 +540,10 @@ export async function getParsedEventsData(
         case events.dca.tradeFailed.name: {
           const preparedData = parserHelper.parseDcaTradeFailedData();
           parsedDataManager.set(EventName.DCA_TradeFailed, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -481,6 +552,10 @@ export async function getParsedEventsData(
         case events.dca.executionPlanned.name: {
           const preparedData = parserHelper.parseDcaExecutionPlannedData();
           parsedDataManager.set(EventName.DCA_ExecutionPlanned, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
 
@@ -524,6 +599,10 @@ export async function getParsedEventsData(
         case events.otc.filled.name: {
           const preparedData = parserHelper.parseOtcOrderFilledData();
           parsedDataManager.set(EventName.OTC_Filled, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
         /**
@@ -532,6 +611,10 @@ export async function getParsedEventsData(
         case events.otc.partiallyFilled.name: {
           const preparedData = parserHelper.parseOtcOrderPartiallyFilledData();
           parsedDataManager.set(EventName.OTC_PartiallyFilled, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
           break;
         }
 
@@ -558,6 +641,11 @@ export async function getParsedEventsData(
         case events.balances.transfer.name: {
           const preparedData = parserHelper.parseBalancesTransferData();
           parsedDataManager.set(EventName.Balances_Transfer, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.from,
+            preparedData.eventData.params.to,
+          ]);
           break;
         }
 
@@ -571,6 +659,11 @@ export async function getParsedEventsData(
         case events.currencies.transferred.name: {
           const preparedData = parserHelper.parseCurrenciesTransferredData();
           parsedDataManager.set(EventName.Currencies_Transferred, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.from,
+            preparedData.eventData.params.to,
+          ]);
           break;
         }
 
@@ -608,6 +701,14 @@ export async function getParsedEventsData(
         case events.broadcast.swapped.name: {
           const preparedData = parserHelper.parseBroadcastSwappedData();
           parsedDataManager.set(EventName.Broadcast_Swapped, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.filler,
+            preparedData.eventData.params.swapper,
+            ...(preparedData.eventData.params.fees
+              .map((fee) => fee.recipientId)
+              .filter((id) => !!id) as string[]),
+          ]);
 
           switch (preparedData.eventData.params.fillerType.kind) {
             case SwapFillerType.LBP:
@@ -674,6 +775,10 @@ export async function getParsedEventsData(
         case events.evmAccounts.bound.name: {
           const preparedData = parserHelper.parseEvmAccountsBoundData();
           parsedDataManager.set(EventName.EVMAccounts_Bound, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.accountAddress,
+          ]);
           break;
         }
 

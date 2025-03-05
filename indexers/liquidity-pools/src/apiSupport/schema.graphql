@@ -1,2254 +1,3 @@
-"""The root query type which gives access points into the data universe."""
-type Query {
-  """
-  Exposes the root query type nested one level down. This is helpful for Relay 1
-  which can only query top level fields if they are in a particular form.
-  """
-  query: Query!
-
-  """Reads and enables pagination through a set of `Account`."""
-  accounts(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Account`."""
-    orderBy: [AccountsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: AccountCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: AccountFilter
-  ): AccountsConnection
-
-  """
-  Reads and enables pagination through a set of `AccountAssetBalanceHistoricalDatum`.
-  """
-  accountAssetBalanceHistoricalData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `AccountAssetBalanceHistoricalDatum`."""
-    orderBy: [AccountAssetBalanceHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: AccountAssetBalanceHistoricalDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: AccountAssetBalanceHistoricalDatumFilter
-  ): AccountAssetBalanceHistoricalDataConnection
-
-  """
-  Reads and enables pagination through a set of `AccountChainActivityTrace`.
-  """
-  accountChainActivityTraces(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `AccountChainActivityTrace`."""
-    orderBy: [AccountChainActivityTracesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: AccountChainActivityTraceCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: AccountChainActivityTraceFilter
-  ): AccountChainActivityTracesConnection
-
-  """Reads and enables pagination through a set of `Asset`."""
-  assets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Asset`."""
-    orderBy: [AssetsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: AssetCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: AssetFilter
-  ): AssetsConnection
-
-  """
-  Reads and enables pagination through a set of `BatchLbppoolHistoricalVolumesList`.
-  """
-  batchLbppoolHistoricalVolumesLists(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `BatchLbppoolHistoricalVolumesList`."""
-    orderBy: [BatchLbppoolHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BatchLbppoolHistoricalVolumesListCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BatchLbppoolHistoricalVolumesListFilter
-  ): BatchLbppoolHistoricalVolumesListsConnection
-
-  """
-  Reads and enables pagination through a set of `BatchOmnipoolAssetHistoricalVolumesList`.
-  """
-  batchOmnipoolAssetHistoricalVolumesLists(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    The method to use when ordering `BatchOmnipoolAssetHistoricalVolumesList`.
-    """
-    orderBy: [BatchOmnipoolAssetHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BatchOmnipoolAssetHistoricalVolumesListCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BatchOmnipoolAssetHistoricalVolumesListFilter
-  ): BatchOmnipoolAssetHistoricalVolumesListsConnection
-
-  """
-  Reads and enables pagination through a set of `BatchStableswapHistoricalVolumesList`.
-  """
-  batchStableswapHistoricalVolumesLists(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    The method to use when ordering `BatchStableswapHistoricalVolumesList`.
-    """
-    orderBy: [BatchStableswapHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BatchStableswapHistoricalVolumesListCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BatchStableswapHistoricalVolumesListFilter
-  ): BatchStableswapHistoricalVolumesListsConnection
-
-  """
-  Reads and enables pagination through a set of `BatchXykpoolHistoricalVolumesList`.
-  """
-  batchXykpoolHistoricalVolumesLists(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `BatchXykpoolHistoricalVolumesList`."""
-    orderBy: [BatchXykpoolHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BatchXykpoolHistoricalVolumesListCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BatchXykpoolHistoricalVolumesListFilter
-  ): BatchXykpoolHistoricalVolumesListsConnection
-
-  """Reads and enables pagination through a set of `Block`."""
-  blocks(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Block`."""
-    orderBy: [BlocksOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BlockCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: BlockFilter
-  ): BlocksConnection
-
-  """Reads and enables pagination through a set of `Call`."""
-  calls(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Call`."""
-    orderBy: [CallsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: CallCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: CallFilter
-  ): CallsConnection
-
-  """Reads and enables pagination through a set of `ChainActivityTrace`."""
-  chainActivityTraces(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `ChainActivityTrace`."""
-    orderBy: [ChainActivityTracesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ChainActivityTraceCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: ChainActivityTraceFilter
-  ): ChainActivityTracesConnection
-
-  """
-  Reads and enables pagination through a set of `ChainActivityTraceRelation`.
-  """
-  chainActivityTraceRelations(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `ChainActivityTraceRelation`."""
-    orderBy: [ChainActivityTraceRelationsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ChainActivityTraceRelationCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: ChainActivityTraceRelationFilter
-  ): ChainActivityTraceRelationsConnection
-
-  """Reads and enables pagination through a set of `DcaSchedule`."""
-  dcaSchedules(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `DcaSchedule`."""
-    orderBy: [DcaSchedulesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: DcaScheduleCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: DcaScheduleFilter
-  ): DcaSchedulesConnection
-
-  """Reads and enables pagination through a set of `DcaScheduleEvent`."""
-  dcaScheduleEvents(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `DcaScheduleEvent`."""
-    orderBy: [DcaScheduleEventsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: DcaScheduleEventCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: DcaScheduleEventFilter
-  ): DcaScheduleEventsConnection
-
-  """Reads and enables pagination through a set of `DcaScheduleExecution`."""
-  dcaScheduleExecutions(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `DcaScheduleExecution`."""
-    orderBy: [DcaScheduleExecutionsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: DcaScheduleExecutionCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: DcaScheduleExecutionFilter
-  ): DcaScheduleExecutionsConnection
-
-  """
-  Reads and enables pagination through a set of `DcaScheduleExecutionEvent`.
-  """
-  dcaScheduleExecutionEvents(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `DcaScheduleExecutionEvent`."""
-    orderBy: [DcaScheduleExecutionEventsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: DcaScheduleExecutionEventCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: DcaScheduleExecutionEventFilter
-  ): DcaScheduleExecutionEventsConnection
-
-  """
-  Reads and enables pagination through a set of `DcaScheduleOrderRouteHop`.
-  """
-  dcaScheduleOrderRouteHops(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `DcaScheduleOrderRouteHop`."""
-    orderBy: [DcaScheduleOrderRouteHopsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: DcaScheduleOrderRouteHopCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: DcaScheduleOrderRouteHopFilter
-  ): DcaScheduleOrderRouteHopsConnection
-
-  """Reads and enables pagination through a set of `Event`."""
-  events(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Event`."""
-    orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: EventCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: EventFilter
-  ): EventsConnection
-
-  """Reads and enables pagination through a set of `Extrinsic`."""
-  extrinsics(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Extrinsic`."""
-    orderBy: [ExtrinsicsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ExtrinsicCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: ExtrinsicFilter
-  ): ExtrinsicsConnection
-
-  """
-  Reads and enables pagination through a set of `HistoricalAccountAssetSwapFee`.
-  """
-  historicalAccountAssetSwapFees(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `HistoricalAccountAssetSwapFee`."""
-    orderBy: [HistoricalAccountAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: HistoricalAccountAssetSwapFeeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: HistoricalAccountAssetSwapFeeFilter
-  ): HistoricalAccountAssetSwapFeesConnection
-
-  """
-  Reads and enables pagination through a set of `HistoricalAccountSwapFee`.
-  """
-  historicalAccountSwapFees(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `HistoricalAccountSwapFee`."""
-    orderBy: [HistoricalAccountSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: HistoricalAccountSwapFeeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: HistoricalAccountSwapFeeFilter
-  ): HistoricalAccountSwapFeesConnection
-
-  """
-  Reads and enables pagination through a set of `HistoricalAssetSwapFee`.
-  """
-  historicalAssetSwapFees(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `HistoricalAssetSwapFee`."""
-    orderBy: [HistoricalAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: HistoricalAssetSwapFeeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: HistoricalAssetSwapFeeFilter
-  ): HistoricalAssetSwapFeesConnection
-
-  """Reads and enables pagination through a set of `HistoricalAssetVolume`."""
-  historicalAssetVolumes(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `HistoricalAssetVolume`."""
-    orderBy: [HistoricalAssetVolumesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: HistoricalAssetVolumeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: HistoricalAssetVolumeFilter
-  ): HistoricalAssetVolumesConnection
-
-  """Reads and enables pagination through a set of `Lbppool`."""
-  lbppools(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Lbppool`."""
-    orderBy: [LbppoolsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: LbppoolCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: LbppoolFilter
-  ): LbppoolsConnection
-
-  """
-  Reads and enables pagination through a set of `LbppoolHistoricalDatum`.
-  """
-  lbppoolHistoricalData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `LbppoolHistoricalDatum`."""
-    orderBy: [LbppoolHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: LbppoolHistoricalDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: LbppoolHistoricalDatumFilter
-  ): LbppoolHistoricalDataConnection
-
-  """
-  Reads and enables pagination through a set of `LbppoolHistoricalPrice`.
-  """
-  lbppoolHistoricalPrices(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `LbppoolHistoricalPrice`."""
-    orderBy: [LbppoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: LbppoolHistoricalPriceCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: LbppoolHistoricalPriceFilter
-  ): LbppoolHistoricalPricesConnection
-
-  """
-  Reads and enables pagination through a set of `LbppoolHistoricalVolume`.
-  """
-  lbppoolHistoricalVolumes(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `LbppoolHistoricalVolume`."""
-    orderBy: [LbppoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: LbppoolHistoricalVolumeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: LbppoolHistoricalVolumeFilter
-  ): LbppoolHistoricalVolumesConnection
-
-  """Reads and enables pagination through a set of `Migration`."""
-  migrations(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Migration`."""
-    orderBy: [MigrationsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MigrationCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MigrationFilter
-  ): MigrationsConnection
-
-  """Reads and enables pagination through a set of `MmBorrow`."""
-  mmBorrows(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `MmBorrow`."""
-    orderBy: [MmBorrowsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MmBorrowCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MmBorrowFilter
-  ): MmBorrowsConnection
-
-  """Reads and enables pagination through a set of `MmLiquidationCall`."""
-  mmLiquidationCalls(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `MmLiquidationCall`."""
-    orderBy: [MmLiquidationCallsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MmLiquidationCallCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MmLiquidationCallFilter
-  ): MmLiquidationCallsConnection
-
-  """Reads and enables pagination through a set of `MmRepay`."""
-  mmRepays(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `MmRepay`."""
-    orderBy: [MmRepaysOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MmRepayCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MmRepayFilter
-  ): MmRepaysConnection
-
-  """
-  Reads and enables pagination through a set of `MmReserveUsedAsCollateralDisabledEvent`.
-  """
-  mmReserveUsedAsCollateralDisabledEvents(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    The method to use when ordering `MmReserveUsedAsCollateralDisabledEvent`.
-    """
-    orderBy: [MmReserveUsedAsCollateralDisabledEventsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MmReserveUsedAsCollateralDisabledEventCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MmReserveUsedAsCollateralDisabledEventFilter
-  ): MmReserveUsedAsCollateralDisabledEventsConnection
-
-  """
-  Reads and enables pagination through a set of `MmReserveUsedAsCollateralEnabledEvent`.
-  """
-  mmReserveUsedAsCollateralEnabledEvents(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """
-    The method to use when ordering `MmReserveUsedAsCollateralEnabledEvent`.
-    """
-    orderBy: [MmReserveUsedAsCollateralEnabledEventsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MmReserveUsedAsCollateralEnabledEventCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MmReserveUsedAsCollateralEnabledEventFilter
-  ): MmReserveUsedAsCollateralEnabledEventsConnection
-
-  """Reads and enables pagination through a set of `MmSupply`."""
-  mmSupplies(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `MmSupply`."""
-    orderBy: [MmSuppliesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MmSupplyCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MmSupplyFilter
-  ): MmSuppliesConnection
-
-  """Reads and enables pagination through a set of `MmUserEModeSet`."""
-  mmUserEModeSets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `MmUserEModeSet`."""
-    orderBy: [MmUserEModeSetsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MmUserEModeSetCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MmUserEModeSetFilter
-  ): MmUserEModeSetsConnection
-
-  """Reads and enables pagination through a set of `MmWithdraw`."""
-  mmWithdraws(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `MmWithdraw`."""
-    orderBy: [MmWithdrawsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MmWithdrawCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MmWithdrawFilter
-  ): MmWithdrawsConnection
-
-  """Reads and enables pagination through a set of `MoneyMarketEvent`."""
-  moneyMarketEvents(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `MoneyMarketEvent`."""
-    orderBy: [MoneyMarketEventsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MoneyMarketEventCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MoneyMarketEventFilter
-  ): MoneyMarketEventsConnection
-
-  """Reads and enables pagination through a set of `Omnipool`."""
-  omnipools(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Omnipool`."""
-    orderBy: [OmnipoolsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OmnipoolCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OmnipoolFilter
-  ): OmnipoolsConnection
-
-  """Reads and enables pagination through a set of `OmnipoolAsset`."""
-  omnipoolAssets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `OmnipoolAsset`."""
-    orderBy: [OmnipoolAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OmnipoolAssetCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OmnipoolAssetFilter
-  ): OmnipoolAssetsConnection
-
-  """
-  Reads and enables pagination through a set of `OmnipoolAssetHistoricalDatum`.
-  """
-  omnipoolAssetHistoricalData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `OmnipoolAssetHistoricalDatum`."""
-    orderBy: [OmnipoolAssetHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OmnipoolAssetHistoricalDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OmnipoolAssetHistoricalDatumFilter
-  ): OmnipoolAssetHistoricalDataConnection
-
-  """
-  Reads and enables pagination through a set of `OmnipoolAssetHistoricalVolume`.
-  """
-  omnipoolAssetHistoricalVolumes(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `OmnipoolAssetHistoricalVolume`."""
-    orderBy: [OmnipoolAssetHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OmnipoolAssetHistoricalVolumeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OmnipoolAssetHistoricalVolumeFilter
-  ): OmnipoolAssetHistoricalVolumesConnection
-
-  """Reads and enables pagination through a set of `OtcOrder`."""
-  otcOrders(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `OtcOrder`."""
-    orderBy: [OtcOrdersOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OtcOrderCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OtcOrderFilter
-  ): OtcOrdersConnection
-
-  """Reads and enables pagination through a set of `OtcOrderEvent`."""
-  otcOrderEvents(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `OtcOrderEvent`."""
-    orderBy: [OtcOrderEventsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OtcOrderEventCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OtcOrderEventFilter
-  ): OtcOrderEventsConnection
-
-  """Reads and enables pagination through a set of `ProcessorStatus`."""
-  processorStatuses(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `ProcessorStatus`."""
-    orderBy: [ProcessorStatusesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ProcessorStatusCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: ProcessorStatusFilter
-  ): ProcessorStatusesConnection
-
-  """Reads and enables pagination through a set of `RoutedTrade`."""
-  routedTrades(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `RoutedTrade`."""
-    orderBy: [RoutedTradesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: RoutedTradeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: RoutedTradeFilter
-  ): RoutedTradesConnection
-
-  """
-  Reads and enables pagination through a set of `RouteTradeInputOutputAssetBalance`.
-  """
-  routeTradeInputOutputAssetBalances(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `RouteTradeInputOutputAssetBalance`."""
-    orderBy: [RouteTradeInputOutputAssetBalancesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: RouteTradeInputOutputAssetBalanceCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: RouteTradeInputOutputAssetBalanceFilter
-  ): RouteTradeInputOutputAssetBalancesConnection
-
-  """Reads and enables pagination through a set of `Stableswap`."""
-  stableswaps(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Stableswap`."""
-    orderBy: [StableswapsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StableswapCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StableswapFilter
-  ): StableswapsConnection
-
-  """Reads and enables pagination through a set of `StableswapAsset`."""
-  stableswapAssets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `StableswapAsset`."""
-    orderBy: [StableswapAssetsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StableswapAssetCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StableswapAssetFilter
-  ): StableswapAssetsConnection
-
-  """
-  Reads and enables pagination through a set of `StableswapAssetHistoricalDatum`.
-  """
-  stableswapAssetHistoricalData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `StableswapAssetHistoricalDatum`."""
-    orderBy: [StableswapAssetHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StableswapAssetHistoricalDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StableswapAssetHistoricalDatumFilter
-  ): StableswapAssetHistoricalDataConnection
-
-  """
-  Reads and enables pagination through a set of `StableswapAssetHistoricalVolume`.
-  """
-  stableswapAssetHistoricalVolumes(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `StableswapAssetHistoricalVolume`."""
-    orderBy: [StableswapAssetHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StableswapAssetHistoricalVolumeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StableswapAssetHistoricalVolumeFilter
-  ): StableswapAssetHistoricalVolumesConnection
-
-  """
-  Reads and enables pagination through a set of `StableswapAssetLiquidityAmount`.
-  """
-  stableswapAssetLiquidityAmounts(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `StableswapAssetLiquidityAmount`."""
-    orderBy: [StableswapAssetLiquidityAmountsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StableswapAssetLiquidityAmountCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StableswapAssetLiquidityAmountFilter
-  ): StableswapAssetLiquidityAmountsConnection
-
-  """
-  Reads and enables pagination through a set of `StableswapHistoricalDatum`.
-  """
-  stableswapHistoricalData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `StableswapHistoricalDatum`."""
-    orderBy: [StableswapHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StableswapHistoricalDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StableswapHistoricalDatumFilter
-  ): StableswapHistoricalDataConnection
-
-  """
-  Reads and enables pagination through a set of `StableswapHistoricalVolume`.
-  """
-  stableswapHistoricalVolumes(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `StableswapHistoricalVolume`."""
-    orderBy: [StableswapHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StableswapHistoricalVolumeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StableswapHistoricalVolumeFilter
-  ): StableswapHistoricalVolumesConnection
-
-  """
-  Reads and enables pagination through a set of `StableswapLiquidityEvent`.
-  """
-  stableswapLiquidityEvents(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `StableswapLiquidityEvent`."""
-    orderBy: [StableswapLiquidityEventsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StableswapLiquidityEventCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StableswapLiquidityEventFilter
-  ): StableswapLiquidityEventsConnection
-
-  """Reads and enables pagination through a set of `Swap`."""
-  swaps(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Swap`."""
-    orderBy: [SwapsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SwapCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: SwapFilter
-  ): SwapsConnection
-
-  """
-  Reads and enables pagination through a set of `SwapInputOutputAssetBalance`.
-  """
-  swapInputOutputAssetBalances(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `SwapInputOutputAssetBalance`."""
-    orderBy: [SwapInputOutputAssetBalancesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SwapInputOutputAssetBalanceCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: SwapInputOutputAssetBalanceFilter
-  ): SwapInputOutputAssetBalancesConnection
-
-  """Reads and enables pagination through a set of `SwapFee`."""
-  swapFees(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `SwapFee`."""
-    orderBy: [SwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SwapFeeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: SwapFeeFilter
-  ): SwapFeesConnection
-
-  """Reads and enables pagination through a set of `Transfer`."""
-  transfers(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Transfer`."""
-    orderBy: [TransfersOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: TransferCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: TransferFilter
-  ): TransfersConnection
-
-  """Reads and enables pagination through a set of `Xykpool`."""
-  xykpools(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Xykpool`."""
-    orderBy: [XykpoolsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: XykpoolCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: XykpoolFilter
-  ): XykpoolsConnection
-
-  """
-  Reads and enables pagination through a set of `XykpoolHistoricalDatum`.
-  """
-  xykpoolHistoricalData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `XykpoolHistoricalDatum`."""
-    orderBy: [XykpoolHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: XykpoolHistoricalDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: XykpoolHistoricalDatumFilter
-  ): XykpoolHistoricalDataConnection
-
-  """
-  Reads and enables pagination through a set of `XykpoolHistoricalPrice`.
-  """
-  xykpoolHistoricalPrices(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `XykpoolHistoricalPrice`."""
-    orderBy: [XykpoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: XykpoolHistoricalPriceCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: XykpoolHistoricalPriceFilter
-  ): XykpoolHistoricalPricesConnection
-
-  """
-  Reads and enables pagination through a set of `XykpoolHistoricalVolume`.
-  """
-  xykpoolHistoricalVolumes(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `XykpoolHistoricalVolume`."""
-    orderBy: [XykpoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: XykpoolHistoricalVolumeCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: XykpoolHistoricalVolumeFilter
-  ): XykpoolHistoricalVolumesConnection
-  account(id: String!): Account
-  accountAssetBalanceHistoricalDatum(id: String!): AccountAssetBalanceHistoricalDatum
-  accountChainActivityTrace(id: String!): AccountChainActivityTrace
-  asset(id: String!): Asset
-  batchLbppoolHistoricalVolumesList(id: String!): BatchLbppoolHistoricalVolumesList
-  batchOmnipoolAssetHistoricalVolumesList(id: String!): BatchOmnipoolAssetHistoricalVolumesList
-  batchStableswapHistoricalVolumesList(id: String!): BatchStableswapHistoricalVolumesList
-  batchXykpoolHistoricalVolumesList(id: String!): BatchXykpoolHistoricalVolumesList
-  block(id: String!): Block
-  call(id: String!): Call
-  chainActivityTrace(id: String!): ChainActivityTrace
-  chainActivityTraceRelation(id: String!): ChainActivityTraceRelation
-  dcaSchedule(id: String!): DcaSchedule
-  dcaScheduleEvent(id: String!): DcaScheduleEvent
-  dcaScheduleExecution(id: String!): DcaScheduleExecution
-  dcaScheduleExecutionEvent(id: String!): DcaScheduleExecutionEvent
-  dcaScheduleOrderRouteHop(id: String!): DcaScheduleOrderRouteHop
-  event(id: String!): Event
-  extrinsic(id: String!): Extrinsic
-  historicalAccountAssetSwapFee(id: String!): HistoricalAccountAssetSwapFee
-  historicalAccountSwapFee(id: String!): HistoricalAccountSwapFee
-  historicalAssetSwapFee(id: String!): HistoricalAssetSwapFee
-  historicalAssetVolume(id: String!): HistoricalAssetVolume
-  lbppool(id: String!): Lbppool
-  lbppoolHistoricalDatum(id: String!): LbppoolHistoricalDatum
-  lbppoolHistoricalPrice(id: String!): LbppoolHistoricalPrice
-  lbppoolHistoricalVolume(id: String!): LbppoolHistoricalVolume
-  migration(id: Int!): Migration
-  mmBorrow(id: String!): MmBorrow
-  mmLiquidationCall(id: String!): MmLiquidationCall
-  mmRepay(id: String!): MmRepay
-  mmReserveUsedAsCollateralDisabledEvent(id: String!): MmReserveUsedAsCollateralDisabledEvent
-  mmReserveUsedAsCollateralEnabledEvent(id: String!): MmReserveUsedAsCollateralEnabledEvent
-  mmSupply(id: String!): MmSupply
-  mmUserEModeSet(id: String!): MmUserEModeSet
-  mmWithdraw(id: String!): MmWithdraw
-  moneyMarketEvent(id: String!): MoneyMarketEvent
-  omnipool(id: String!): Omnipool
-  omnipoolAsset(id: String!): OmnipoolAsset
-  omnipoolAssetHistoricalDatum(id: String!): OmnipoolAssetHistoricalDatum
-  omnipoolAssetHistoricalVolume(id: String!): OmnipoolAssetHistoricalVolume
-  otcOrder(id: String!): OtcOrder
-  otcOrderEvent(id: String!): OtcOrderEvent
-  processorStatus(id: String!): ProcessorStatus
-  routedTrade(id: String!): RoutedTrade
-  routeTradeInputOutputAssetBalance(id: String!): RouteTradeInputOutputAssetBalance
-  stableswap(id: String!): Stableswap
-  stableswapAsset(id: String!): StableswapAsset
-  stableswapAssetHistoricalDatum(id: String!): StableswapAssetHistoricalDatum
-  stableswapAssetHistoricalVolume(id: String!): StableswapAssetHistoricalVolume
-  stableswapAssetLiquidityAmount(id: String!): StableswapAssetLiquidityAmount
-  stableswapHistoricalDatum(id: String!): StableswapHistoricalDatum
-  stableswapHistoricalVolume(id: String!): StableswapHistoricalVolume
-  stableswapLiquidityEvent(id: String!): StableswapLiquidityEvent
-  swap(id: String!): Swap
-  swapInputOutputAssetBalance(id: String!): SwapInputOutputAssetBalance
-  swapFee(id: String!): SwapFee
-  transfer(id: String!): Transfer
-  xykpool(id: String!): Xykpool
-  xykpoolHistoricalDatum(id: String!): XykpoolHistoricalDatum
-  xykpoolHistoricalPrice(id: String!): XykpoolHistoricalPrice
-  xykpoolHistoricalVolume(id: String!): XykpoolHistoricalVolume
-  _squidStatus: [_ProcessorStatus!]!
-  xykPoolHistoricalVolumesByPeriod(filter: XykPoolVolumesByPeriodFilter!): XykPoolVolumesByPeriodResponse!
-  omnipoolAssetHistoricalVolumesByPeriod(filter: OmnipoolAssetVolumesByPeriodFilter!): OmnipoolAssetVolumesByPeriodResponse!
-  stableswapHistoricalVolumesByPeriod(filter: StableswapVolumesByPeriodFilter!): StableswapVolumesByPeriodResponse!
-}
-
 """A connection to a list of `Account` values."""
 type AccountsConnection {
   """A list of `Account` objects."""
@@ -76514,83 +74263,6 @@ input ProcessorStatusFilter {
   not: ProcessorStatusFilter
 }
 
-type _ProcessorStatus {
-  name: String!
-  height: Int!
-  hash: String!
-}
-
-type XykPoolVolumesByPeriodResponse {
-  nodes: [XykPoolVolumeAggregated]!
-  totalCount: Int!
-}
-
-type XykPoolVolumeAggregated {
-  poolId: String!
-  assetAId: Int!
-  assetBId: Int!
-  assetAVolume: BigFloat!
-  assetBVolume: BigFloat!
-}
-
-input XykPoolVolumesByPeriodFilter {
-  poolIds: [String!]!
-  startBlockNumber: Int!
-  endBlockNumber: Int
-}
-
-type OmnipoolAssetVolumesByPeriodResponse {
-  nodes: [OmnipoolAssetVolumeAggregated]!
-  totalCount: Int!
-}
-
-type OmnipoolAssetVolumeAggregated {
-  omnipoolAssetId: String!
-  assetId: Int!
-  assetVolume: BigFloat!
-  assetFeeVolume: BigFloat!
-}
-
-input OmnipoolAssetVolumesByPeriodFilter {
-  assetIds: [String!]
-  startBlockNumber: Int!
-  endBlockNumber: Int
-}
-
-type StableswapVolumesByPeriodResponse {
-  nodes: [StableswapVolumeAggregated]!
-  totalCount: Int!
-}
-
-type StableswapVolumeAggregated {
-  poolId: String!
-  assetVolumes: [StablepoolAssetVolumeAggregated!]!
-}
-
-type StablepoolAssetVolumeAggregated {
-  assetId: Int!
-  swapFee: BigFloat!
-  swapVolume: BigFloat!
-}
-
-input StableswapVolumesByPeriodFilter {
-  poolIds: [String!]!
-  startBlockNumber: Int!
-  endBlockNumber: Int
-}
-
-"""
-The root mutation type which contains root level fields which mutate data.
-"""
-type Mutation {
-  notify(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: NotifyInput!
-  ): NotifyPayload
-}
-
 """The output of our `notify` mutation."""
 type NotifyPayload {
   """
@@ -76619,18 +74291,45 @@ input NotifyInput {
   extraPayload: JSON
 }
 
-"""
-The root subscription type: contains realtime events you can subscribe to with the `subscription` operation.
-"""
-type Subscription {
-  squidStatus: SquidStatusSubscriptionPayload
-  xykpoolHistoricalVolume(filter: XykpoolHistoricalVolumeSubscriptionFilter): XykpoolHistoricalVolumeSubscriptionPayload
-  xykpoolHistoricalVolumeByPeriod(filter: XykpoolHistoricalVolumeByPeriodSubscriptionFilter): XykpoolHistoricalVolumeByPeriodSubscriptionPayload
-  omnipoolAssetHistoricalVolume(filter: OmnipoolAssetHistoricalVolumeSubscriptionFilter): OmnipoolAssetHistoricalVolumeSubscriptionPayload
-  omnipoolAssetHistoricalVolumeByPeriod(filter: OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter): OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload
-  stableswapHistoricalVolume(filter: StableswapHistoricalVolumeSubscriptionFilter): StableswapHistoricalVolumeSubscriptionPayload
-  stableswapHistoricalVolumeByPeriod(filter: StableswapHistoricalVolumeByPeriodSubscriptionFilter): StableswapHistoricalVolumeByPeriodSubscriptionPayload
-  routedTrade(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
+enum AggregationTimeRange {
+  _1H_
+  _24H_
+  _1W_
+  _1M_
+  _1Y_
+  _ALL_
+}
+
+type XykPoolVolumeAggregated {
+  poolId: String!
+  assetAId: Int!
+  assetBId: Int!
+  assetAVolume: BigFloat!
+  assetBVolume: BigFloat!
+}
+
+type OmnipoolAssetVolumeAggregated {
+  omnipoolAssetId: String!
+  assetId: Int!
+  assetVolume: BigFloat!
+  assetFeeVolume: BigFloat!
+}
+
+type StablepoolAssetVolumeAggregated {
+  assetId: Int!
+  swapFee: BigFloat!
+  swapVolume: BigFloat!
+}
+
+type StableswapVolumeAggregated {
+  poolId: String!
+  assetVolumes: [StablepoolAssetVolumeAggregated!]!
+}
+
+type _ProcessorStatus {
+  name: String!
+  height: Int!
+  hash: String!
 }
 
 type SquidStatusSubscriptionPayload {
@@ -76638,8 +74337,33 @@ type SquidStatusSubscriptionPayload {
   node: _ProcessorStatus!
 }
 
+input XykPoolVolumesByPeriodFilter {
+  poolIds: [String!]!
+  startBlockNumber: Int!
+  endBlockNumber: Int
+}
+
+type XykPoolVolumesByPeriodResponse {
+  nodes: [XykPoolVolumeAggregated]!
+  totalCount: Int!
+}
+
+input XykpoolHistoricalVolumeSubscriptionFilter {
+  poolIds: [String!]
+}
+
+input XykpoolHistoricalVolumeByPeriodSubscriptionFilter {
+  poolIds: [String!]
+  period: AggregationTimeRange
+}
+
 type XykpoolHistoricalVolumeSubscriptionPayload {
   node: XykpoolHistoricalVolumeEntity
+  event: String
+}
+
+type XykpoolHistoricalVolumeByPeriodSubscriptionPayload {
+  nodes: [XykPoolVolumeAggregated!]
   event: String
 }
 
@@ -76665,31 +74389,33 @@ type XykpoolHistoricalVolumeEntity {
   relayBlockHeight: Int!
 }
 
-input XykpoolHistoricalVolumeSubscriptionFilter {
-  poolIds: [String!]
+input OmnipoolAssetVolumesByPeriodFilter {
+  assetIds: [String!]
+  startBlockNumber: Int!
+  endBlockNumber: Int
 }
 
-type XykpoolHistoricalVolumeByPeriodSubscriptionPayload {
-  nodes: [XykPoolVolumeAggregated!]
-  event: String
+type OmnipoolAssetVolumesByPeriodResponse {
+  nodes: [OmnipoolAssetVolumeAggregated]!
+  totalCount: Int!
 }
 
-input XykpoolHistoricalVolumeByPeriodSubscriptionFilter {
-  poolIds: [String!]
+input OmnipoolAssetHistoricalVolumeSubscriptionFilter {
+  assetIds: [String!]
+}
+
+input OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter {
+  assetIds: [String!]
   period: AggregationTimeRange
-}
-
-enum AggregationTimeRange {
-  _1H_
-  _24H_
-  _1W_
-  _1M_
-  _1Y_
-  _ALL_
 }
 
 type OmnipoolAssetHistoricalVolumeSubscriptionPayload {
   node: OmnipoolAssetHistoricalVolumeEntity
+  event: String
+}
+
+type OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload {
+  nodes: [OmnipoolAssetVolumeAggregated!]
   event: String
 }
 
@@ -76706,17 +74432,23 @@ type OmnipoolAssetHistoricalVolumeEntity {
   relayBlockHeight: Int!
 }
 
-input OmnipoolAssetHistoricalVolumeSubscriptionFilter {
-  assetIds: [String!]
+input StableswapVolumesByPeriodFilter {
+  poolIds: [String!]!
+  startBlockNumber: Int!
+  endBlockNumber: Int
 }
 
-type OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload {
-  nodes: [OmnipoolAssetVolumeAggregated!]
-  event: String
+type StableswapVolumesByPeriodResponse {
+  nodes: [StableswapVolumeAggregated]!
+  totalCount: Int!
 }
 
-input OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter {
-  assetIds: [String!]
+input StableswapHistoricalVolumeSubscriptionFilter {
+  poolIds: [String!]
+}
+
+input StableswapHistoricalVolumeByPeriodSubscriptionFilter {
+  poolIds: [String!]
   period: AggregationTimeRange
 }
 
@@ -76725,12 +74457,9 @@ type StableswapHistoricalVolumeSubscriptionPayload {
   event: String
 }
 
-type StableswapHistoricalVolumeEntity {
-  id: String!
-  poolId: String!
-  assetVolumes: [StableswapAssetHistoricalVolumeEntity]!
-  paraBlockHeight: Int!
-  relayBlockHeight: Int!
+type StableswapHistoricalVolumeByPeriodSubscriptionPayload {
+  nodes: [StableswapVolumeAggregated!]
+  event: String
 }
 
 type StableswapAssetHistoricalVolumeEntity {
@@ -76747,23 +74476,2307 @@ type StableswapAssetHistoricalVolumeEntity {
   relayBlockHeight: Int!
 }
 
-input StableswapHistoricalVolumeSubscriptionFilter {
-  poolIds: [String!]
+type StableswapHistoricalVolumeEntity {
+  id: String!
+  poolId: String!
+  assetVolumes: [StableswapAssetHistoricalVolumeEntity]!
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
 }
 
-type StableswapHistoricalVolumeByPeriodSubscriptionPayload {
-  nodes: [StableswapVolumeAggregated!]
-  event: String
+"""The root query type which gives access points into the data universe."""
+type Query {
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+
+  """Reads and enables pagination through a set of `Account`."""
+  accounts(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Account`."""
+    orderBy: [AccountsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountFilter
+  ): AccountsConnection
+
+  """
+  Reads and enables pagination through a set of `AccountAssetBalanceHistoricalDatum`.
+  """
+  accountAssetBalanceHistoricalData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `AccountAssetBalanceHistoricalDatum`."""
+    orderBy: [AccountAssetBalanceHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountAssetBalanceHistoricalDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountAssetBalanceHistoricalDatumFilter
+  ): AccountAssetBalanceHistoricalDataConnection
+
+  """
+  Reads and enables pagination through a set of `AccountChainActivityTrace`.
+  """
+  accountChainActivityTraces(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `AccountChainActivityTrace`."""
+    orderBy: [AccountChainActivityTracesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountChainActivityTraceCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountChainActivityTraceFilter
+  ): AccountChainActivityTracesConnection
+
+  """Reads and enables pagination through a set of `Asset`."""
+  assets(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Asset`."""
+    orderBy: [AssetsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AssetFilter
+  ): AssetsConnection
+
+  """
+  Reads and enables pagination through a set of `BatchLbppoolHistoricalVolumesList`.
+  """
+  batchLbppoolHistoricalVolumesLists(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `BatchLbppoolHistoricalVolumesList`."""
+    orderBy: [BatchLbppoolHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BatchLbppoolHistoricalVolumesListCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: BatchLbppoolHistoricalVolumesListFilter
+  ): BatchLbppoolHistoricalVolumesListsConnection
+
+  """
+  Reads and enables pagination through a set of `BatchOmnipoolAssetHistoricalVolumesList`.
+  """
+  batchOmnipoolAssetHistoricalVolumesLists(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    The method to use when ordering `BatchOmnipoolAssetHistoricalVolumesList`.
+    """
+    orderBy: [BatchOmnipoolAssetHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BatchOmnipoolAssetHistoricalVolumesListCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: BatchOmnipoolAssetHistoricalVolumesListFilter
+  ): BatchOmnipoolAssetHistoricalVolumesListsConnection
+
+  """
+  Reads and enables pagination through a set of `BatchStableswapHistoricalVolumesList`.
+  """
+  batchStableswapHistoricalVolumesLists(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    The method to use when ordering `BatchStableswapHistoricalVolumesList`.
+    """
+    orderBy: [BatchStableswapHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BatchStableswapHistoricalVolumesListCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: BatchStableswapHistoricalVolumesListFilter
+  ): BatchStableswapHistoricalVolumesListsConnection
+
+  """
+  Reads and enables pagination through a set of `BatchXykpoolHistoricalVolumesList`.
+  """
+  batchXykpoolHistoricalVolumesLists(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `BatchXykpoolHistoricalVolumesList`."""
+    orderBy: [BatchXykpoolHistoricalVolumesListsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BatchXykpoolHistoricalVolumesListCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: BatchXykpoolHistoricalVolumesListFilter
+  ): BatchXykpoolHistoricalVolumesListsConnection
+
+  """Reads and enables pagination through a set of `Block`."""
+  blocks(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Block`."""
+    orderBy: [BlocksOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BlockCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: BlockFilter
+  ): BlocksConnection
+
+  """Reads and enables pagination through a set of `Call`."""
+  calls(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Call`."""
+    orderBy: [CallsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CallCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: CallFilter
+  ): CallsConnection
+
+  """Reads and enables pagination through a set of `ChainActivityTrace`."""
+  chainActivityTraces(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ChainActivityTrace`."""
+    orderBy: [ChainActivityTracesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ChainActivityTraceCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ChainActivityTraceFilter
+  ): ChainActivityTracesConnection
+
+  """
+  Reads and enables pagination through a set of `ChainActivityTraceRelation`.
+  """
+  chainActivityTraceRelations(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ChainActivityTraceRelation`."""
+    orderBy: [ChainActivityTraceRelationsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ChainActivityTraceRelationCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ChainActivityTraceRelationFilter
+  ): ChainActivityTraceRelationsConnection
+
+  """Reads and enables pagination through a set of `DcaSchedule`."""
+  dcaSchedules(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `DcaSchedule`."""
+    orderBy: [DcaSchedulesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: DcaScheduleCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: DcaScheduleFilter
+  ): DcaSchedulesConnection
+
+  """Reads and enables pagination through a set of `DcaScheduleEvent`."""
+  dcaScheduleEvents(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `DcaScheduleEvent`."""
+    orderBy: [DcaScheduleEventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: DcaScheduleEventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: DcaScheduleEventFilter
+  ): DcaScheduleEventsConnection
+
+  """Reads and enables pagination through a set of `DcaScheduleExecution`."""
+  dcaScheduleExecutions(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `DcaScheduleExecution`."""
+    orderBy: [DcaScheduleExecutionsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: DcaScheduleExecutionCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: DcaScheduleExecutionFilter
+  ): DcaScheduleExecutionsConnection
+
+  """
+  Reads and enables pagination through a set of `DcaScheduleExecutionEvent`.
+  """
+  dcaScheduleExecutionEvents(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `DcaScheduleExecutionEvent`."""
+    orderBy: [DcaScheduleExecutionEventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: DcaScheduleExecutionEventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: DcaScheduleExecutionEventFilter
+  ): DcaScheduleExecutionEventsConnection
+
+  """
+  Reads and enables pagination through a set of `DcaScheduleOrderRouteHop`.
+  """
+  dcaScheduleOrderRouteHops(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `DcaScheduleOrderRouteHop`."""
+    orderBy: [DcaScheduleOrderRouteHopsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: DcaScheduleOrderRouteHopCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: DcaScheduleOrderRouteHopFilter
+  ): DcaScheduleOrderRouteHopsConnection
+
+  """Reads and enables pagination through a set of `Event`."""
+  events(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Event`."""
+    orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: EventFilter
+  ): EventsConnection
+
+  """Reads and enables pagination through a set of `Extrinsic`."""
+  extrinsics(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Extrinsic`."""
+    orderBy: [ExtrinsicsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ExtrinsicCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ExtrinsicFilter
+  ): ExtrinsicsConnection
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountAssetSwapFee`.
+  """
+  historicalAccountAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountAssetSwapFee`."""
+    orderBy: [HistoricalAccountAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountAssetSwapFeeFilter
+  ): HistoricalAccountAssetSwapFeesConnection
+
+  """
+  Reads and enables pagination through a set of `HistoricalAccountSwapFee`.
+  """
+  historicalAccountSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAccountSwapFee`."""
+    orderBy: [HistoricalAccountSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAccountSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAccountSwapFeeFilter
+  ): HistoricalAccountSwapFeesConnection
+
+  """
+  Reads and enables pagination through a set of `HistoricalAssetSwapFee`.
+  """
+  historicalAssetSwapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAssetSwapFee`."""
+    orderBy: [HistoricalAssetSwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAssetSwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAssetSwapFeeFilter
+  ): HistoricalAssetSwapFeesConnection
+
+  """Reads and enables pagination through a set of `HistoricalAssetVolume`."""
+  historicalAssetVolumes(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAssetVolume`."""
+    orderBy: [HistoricalAssetVolumesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAssetVolumeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAssetVolumeFilter
+  ): HistoricalAssetVolumesConnection
+
+  """Reads and enables pagination through a set of `Lbppool`."""
+  lbppools(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Lbppool`."""
+    orderBy: [LbppoolsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: LbppoolCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: LbppoolFilter
+  ): LbppoolsConnection
+
+  """
+  Reads and enables pagination through a set of `LbppoolHistoricalDatum`.
+  """
+  lbppoolHistoricalData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `LbppoolHistoricalDatum`."""
+    orderBy: [LbppoolHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: LbppoolHistoricalDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: LbppoolHistoricalDatumFilter
+  ): LbppoolHistoricalDataConnection
+
+  """
+  Reads and enables pagination through a set of `LbppoolHistoricalPrice`.
+  """
+  lbppoolHistoricalPrices(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `LbppoolHistoricalPrice`."""
+    orderBy: [LbppoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: LbppoolHistoricalPriceCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: LbppoolHistoricalPriceFilter
+  ): LbppoolHistoricalPricesConnection
+
+  """
+  Reads and enables pagination through a set of `LbppoolHistoricalVolume`.
+  """
+  lbppoolHistoricalVolumes(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `LbppoolHistoricalVolume`."""
+    orderBy: [LbppoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: LbppoolHistoricalVolumeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: LbppoolHistoricalVolumeFilter
+  ): LbppoolHistoricalVolumesConnection
+
+  """Reads and enables pagination through a set of `Migration`."""
+  migrations(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Migration`."""
+    orderBy: [MigrationsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MigrationCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MigrationFilter
+  ): MigrationsConnection
+
+  """Reads and enables pagination through a set of `MmBorrow`."""
+  mmBorrows(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MmBorrow`."""
+    orderBy: [MmBorrowsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmBorrowCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmBorrowFilter
+  ): MmBorrowsConnection
+
+  """Reads and enables pagination through a set of `MmLiquidationCall`."""
+  mmLiquidationCalls(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MmLiquidationCall`."""
+    orderBy: [MmLiquidationCallsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmLiquidationCallCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmLiquidationCallFilter
+  ): MmLiquidationCallsConnection
+
+  """Reads and enables pagination through a set of `MmRepay`."""
+  mmRepays(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MmRepay`."""
+    orderBy: [MmRepaysOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmRepayCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmRepayFilter
+  ): MmRepaysConnection
+
+  """
+  Reads and enables pagination through a set of `MmReserveUsedAsCollateralDisabledEvent`.
+  """
+  mmReserveUsedAsCollateralDisabledEvents(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    The method to use when ordering `MmReserveUsedAsCollateralDisabledEvent`.
+    """
+    orderBy: [MmReserveUsedAsCollateralDisabledEventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmReserveUsedAsCollateralDisabledEventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmReserveUsedAsCollateralDisabledEventFilter
+  ): MmReserveUsedAsCollateralDisabledEventsConnection
+
+  """
+  Reads and enables pagination through a set of `MmReserveUsedAsCollateralEnabledEvent`.
+  """
+  mmReserveUsedAsCollateralEnabledEvents(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    The method to use when ordering `MmReserveUsedAsCollateralEnabledEvent`.
+    """
+    orderBy: [MmReserveUsedAsCollateralEnabledEventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmReserveUsedAsCollateralEnabledEventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmReserveUsedAsCollateralEnabledEventFilter
+  ): MmReserveUsedAsCollateralEnabledEventsConnection
+
+  """Reads and enables pagination through a set of `MmSupply`."""
+  mmSupplies(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MmSupply`."""
+    orderBy: [MmSuppliesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmSupplyCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmSupplyFilter
+  ): MmSuppliesConnection
+
+  """Reads and enables pagination through a set of `MmUserEModeSet`."""
+  mmUserEModeSets(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MmUserEModeSet`."""
+    orderBy: [MmUserEModeSetsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmUserEModeSetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmUserEModeSetFilter
+  ): MmUserEModeSetsConnection
+
+  """Reads and enables pagination through a set of `MmWithdraw`."""
+  mmWithdraws(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MmWithdraw`."""
+    orderBy: [MmWithdrawsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmWithdrawCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmWithdrawFilter
+  ): MmWithdrawsConnection
+
+  """Reads and enables pagination through a set of `MoneyMarketEvent`."""
+  moneyMarketEvents(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MoneyMarketEvent`."""
+    orderBy: [MoneyMarketEventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MoneyMarketEventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MoneyMarketEventFilter
+  ): MoneyMarketEventsConnection
+
+  """Reads and enables pagination through a set of `Omnipool`."""
+  omnipools(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Omnipool`."""
+    orderBy: [OmnipoolsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OmnipoolCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OmnipoolFilter
+  ): OmnipoolsConnection
+
+  """Reads and enables pagination through a set of `OmnipoolAsset`."""
+  omnipoolAssets(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `OmnipoolAsset`."""
+    orderBy: [OmnipoolAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OmnipoolAssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OmnipoolAssetFilter
+  ): OmnipoolAssetsConnection
+
+  """
+  Reads and enables pagination through a set of `OmnipoolAssetHistoricalDatum`.
+  """
+  omnipoolAssetHistoricalData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `OmnipoolAssetHistoricalDatum`."""
+    orderBy: [OmnipoolAssetHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OmnipoolAssetHistoricalDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OmnipoolAssetHistoricalDatumFilter
+  ): OmnipoolAssetHistoricalDataConnection
+
+  """
+  Reads and enables pagination through a set of `OmnipoolAssetHistoricalVolume`.
+  """
+  omnipoolAssetHistoricalVolumes(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `OmnipoolAssetHistoricalVolume`."""
+    orderBy: [OmnipoolAssetHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OmnipoolAssetHistoricalVolumeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OmnipoolAssetHistoricalVolumeFilter
+  ): OmnipoolAssetHistoricalVolumesConnection
+
+  """Reads and enables pagination through a set of `OtcOrder`."""
+  otcOrders(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `OtcOrder`."""
+    orderBy: [OtcOrdersOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OtcOrderCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OtcOrderFilter
+  ): OtcOrdersConnection
+
+  """Reads and enables pagination through a set of `OtcOrderEvent`."""
+  otcOrderEvents(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `OtcOrderEvent`."""
+    orderBy: [OtcOrderEventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OtcOrderEventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OtcOrderEventFilter
+  ): OtcOrderEventsConnection
+
+  """Reads and enables pagination through a set of `ProcessorStatus`."""
+  processorStatuses(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ProcessorStatus`."""
+    orderBy: [ProcessorStatusesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProcessorStatusCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProcessorStatusFilter
+  ): ProcessorStatusesConnection
+
+  """Reads and enables pagination through a set of `RoutedTrade`."""
+  routedTrades(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `RoutedTrade`."""
+    orderBy: [RoutedTradesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: RoutedTradeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: RoutedTradeFilter
+  ): RoutedTradesConnection
+
+  """
+  Reads and enables pagination through a set of `RouteTradeInputOutputAssetBalance`.
+  """
+  routeTradeInputOutputAssetBalances(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `RouteTradeInputOutputAssetBalance`."""
+    orderBy: [RouteTradeInputOutputAssetBalancesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: RouteTradeInputOutputAssetBalanceCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: RouteTradeInputOutputAssetBalanceFilter
+  ): RouteTradeInputOutputAssetBalancesConnection
+
+  """Reads and enables pagination through a set of `Stableswap`."""
+  stableswaps(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Stableswap`."""
+    orderBy: [StableswapsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapFilter
+  ): StableswapsConnection
+
+  """Reads and enables pagination through a set of `StableswapAsset`."""
+  stableswapAssets(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StableswapAsset`."""
+    orderBy: [StableswapAssetsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapAssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapAssetFilter
+  ): StableswapAssetsConnection
+
+  """
+  Reads and enables pagination through a set of `StableswapAssetHistoricalDatum`.
+  """
+  stableswapAssetHistoricalData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StableswapAssetHistoricalDatum`."""
+    orderBy: [StableswapAssetHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapAssetHistoricalDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapAssetHistoricalDatumFilter
+  ): StableswapAssetHistoricalDataConnection
+
+  """
+  Reads and enables pagination through a set of `StableswapAssetHistoricalVolume`.
+  """
+  stableswapAssetHistoricalVolumes(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StableswapAssetHistoricalVolume`."""
+    orderBy: [StableswapAssetHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapAssetHistoricalVolumeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapAssetHistoricalVolumeFilter
+  ): StableswapAssetHistoricalVolumesConnection
+
+  """
+  Reads and enables pagination through a set of `StableswapAssetLiquidityAmount`.
+  """
+  stableswapAssetLiquidityAmounts(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StableswapAssetLiquidityAmount`."""
+    orderBy: [StableswapAssetLiquidityAmountsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapAssetLiquidityAmountCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapAssetLiquidityAmountFilter
+  ): StableswapAssetLiquidityAmountsConnection
+
+  """
+  Reads and enables pagination through a set of `StableswapHistoricalDatum`.
+  """
+  stableswapHistoricalData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StableswapHistoricalDatum`."""
+    orderBy: [StableswapHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapHistoricalDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapHistoricalDatumFilter
+  ): StableswapHistoricalDataConnection
+
+  """
+  Reads and enables pagination through a set of `StableswapHistoricalVolume`.
+  """
+  stableswapHistoricalVolumes(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StableswapHistoricalVolume`."""
+    orderBy: [StableswapHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapHistoricalVolumeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapHistoricalVolumeFilter
+  ): StableswapHistoricalVolumesConnection
+
+  """
+  Reads and enables pagination through a set of `StableswapLiquidityEvent`.
+  """
+  stableswapLiquidityEvents(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StableswapLiquidityEvent`."""
+    orderBy: [StableswapLiquidityEventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapLiquidityEventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapLiquidityEventFilter
+  ): StableswapLiquidityEventsConnection
+
+  """Reads and enables pagination through a set of `Swap`."""
+  swaps(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Swap`."""
+    orderBy: [SwapsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SwapCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SwapFilter
+  ): SwapsConnection
+
+  """
+  Reads and enables pagination through a set of `SwapInputOutputAssetBalance`.
+  """
+  swapInputOutputAssetBalances(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `SwapInputOutputAssetBalance`."""
+    orderBy: [SwapInputOutputAssetBalancesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SwapInputOutputAssetBalanceCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SwapInputOutputAssetBalanceFilter
+  ): SwapInputOutputAssetBalancesConnection
+
+  """Reads and enables pagination through a set of `SwapFee`."""
+  swapFees(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `SwapFee`."""
+    orderBy: [SwapFeesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SwapFeeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SwapFeeFilter
+  ): SwapFeesConnection
+
+  """Reads and enables pagination through a set of `Transfer`."""
+  transfers(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Transfer`."""
+    orderBy: [TransfersOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TransferCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: TransferFilter
+  ): TransfersConnection
+
+  """Reads and enables pagination through a set of `Xykpool`."""
+  xykpools(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Xykpool`."""
+    orderBy: [XykpoolsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: XykpoolCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: XykpoolFilter
+  ): XykpoolsConnection
+
+  """
+  Reads and enables pagination through a set of `XykpoolHistoricalDatum`.
+  """
+  xykpoolHistoricalData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `XykpoolHistoricalDatum`."""
+    orderBy: [XykpoolHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: XykpoolHistoricalDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: XykpoolHistoricalDatumFilter
+  ): XykpoolHistoricalDataConnection
+
+  """
+  Reads and enables pagination through a set of `XykpoolHistoricalPrice`.
+  """
+  xykpoolHistoricalPrices(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `XykpoolHistoricalPrice`."""
+    orderBy: [XykpoolHistoricalPricesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: XykpoolHistoricalPriceCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: XykpoolHistoricalPriceFilter
+  ): XykpoolHistoricalPricesConnection
+
+  """
+  Reads and enables pagination through a set of `XykpoolHistoricalVolume`.
+  """
+  xykpoolHistoricalVolumes(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `XykpoolHistoricalVolume`."""
+    orderBy: [XykpoolHistoricalVolumesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: XykpoolHistoricalVolumeCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: XykpoolHistoricalVolumeFilter
+  ): XykpoolHistoricalVolumesConnection
+  account(id: String!): Account
+  accountAssetBalanceHistoricalDatum(id: String!): AccountAssetBalanceHistoricalDatum
+  accountChainActivityTrace(id: String!): AccountChainActivityTrace
+  asset(id: String!): Asset
+  batchLbppoolHistoricalVolumesList(id: String!): BatchLbppoolHistoricalVolumesList
+  batchOmnipoolAssetHistoricalVolumesList(id: String!): BatchOmnipoolAssetHistoricalVolumesList
+  batchStableswapHistoricalVolumesList(id: String!): BatchStableswapHistoricalVolumesList
+  batchXykpoolHistoricalVolumesList(id: String!): BatchXykpoolHistoricalVolumesList
+  block(id: String!): Block
+  call(id: String!): Call
+  chainActivityTrace(id: String!): ChainActivityTrace
+  chainActivityTraceRelation(id: String!): ChainActivityTraceRelation
+  dcaSchedule(id: String!): DcaSchedule
+  dcaScheduleEvent(id: String!): DcaScheduleEvent
+  dcaScheduleExecution(id: String!): DcaScheduleExecution
+  dcaScheduleExecutionEvent(id: String!): DcaScheduleExecutionEvent
+  dcaScheduleOrderRouteHop(id: String!): DcaScheduleOrderRouteHop
+  event(id: String!): Event
+  extrinsic(id: String!): Extrinsic
+  historicalAccountAssetSwapFee(id: String!): HistoricalAccountAssetSwapFee
+  historicalAccountSwapFee(id: String!): HistoricalAccountSwapFee
+  historicalAssetSwapFee(id: String!): HistoricalAssetSwapFee
+  historicalAssetVolume(id: String!): HistoricalAssetVolume
+  lbppool(id: String!): Lbppool
+  lbppoolHistoricalDatum(id: String!): LbppoolHistoricalDatum
+  lbppoolHistoricalPrice(id: String!): LbppoolHistoricalPrice
+  lbppoolHistoricalVolume(id: String!): LbppoolHistoricalVolume
+  migration(id: Int!): Migration
+  mmBorrow(id: String!): MmBorrow
+  mmLiquidationCall(id: String!): MmLiquidationCall
+  mmRepay(id: String!): MmRepay
+  mmReserveUsedAsCollateralDisabledEvent(id: String!): MmReserveUsedAsCollateralDisabledEvent
+  mmReserveUsedAsCollateralEnabledEvent(id: String!): MmReserveUsedAsCollateralEnabledEvent
+  mmSupply(id: String!): MmSupply
+  mmUserEModeSet(id: String!): MmUserEModeSet
+  mmWithdraw(id: String!): MmWithdraw
+  moneyMarketEvent(id: String!): MoneyMarketEvent
+  omnipool(id: String!): Omnipool
+  omnipoolAsset(id: String!): OmnipoolAsset
+  omnipoolAssetHistoricalDatum(id: String!): OmnipoolAssetHistoricalDatum
+  omnipoolAssetHistoricalVolume(id: String!): OmnipoolAssetHistoricalVolume
+  otcOrder(id: String!): OtcOrder
+  otcOrderEvent(id: String!): OtcOrderEvent
+  processorStatus(id: String!): ProcessorStatus
+  routedTrade(id: String!): RoutedTrade
+  routeTradeInputOutputAssetBalance(id: String!): RouteTradeInputOutputAssetBalance
+  stableswap(id: String!): Stableswap
+  stableswapAsset(id: String!): StableswapAsset
+  stableswapAssetHistoricalDatum(id: String!): StableswapAssetHistoricalDatum
+  stableswapAssetHistoricalVolume(id: String!): StableswapAssetHistoricalVolume
+  stableswapAssetLiquidityAmount(id: String!): StableswapAssetLiquidityAmount
+  stableswapHistoricalDatum(id: String!): StableswapHistoricalDatum
+  stableswapHistoricalVolume(id: String!): StableswapHistoricalVolume
+  stableswapLiquidityEvent(id: String!): StableswapLiquidityEvent
+  swap(id: String!): Swap
+  swapInputOutputAssetBalance(id: String!): SwapInputOutputAssetBalance
+  swapFee(id: String!): SwapFee
+  transfer(id: String!): Transfer
+  xykpool(id: String!): Xykpool
+  xykpoolHistoricalDatum(id: String!): XykpoolHistoricalDatum
+  xykpoolHistoricalPrice(id: String!): XykpoolHistoricalPrice
+  xykpoolHistoricalVolume(id: String!): XykpoolHistoricalVolume
+  _squidStatus: [_ProcessorStatus!]!
+  xykPoolHistoricalVolumesByPeriod(filter: XykPoolVolumesByPeriodFilter!): XykPoolVolumesByPeriodResponse!
+  omnipoolAssetHistoricalVolumesByPeriod(filter: OmnipoolAssetVolumesByPeriodFilter!): OmnipoolAssetVolumesByPeriodResponse!
+  stableswapHistoricalVolumesByPeriod(filter: StableswapVolumesByPeriodFilter!): StableswapVolumesByPeriodResponse!
 }
 
-input StableswapHistoricalVolumeByPeriodSubscriptionFilter {
-  poolIds: [String!]
-  period: AggregationTimeRange
+"""
+The root mutation type which contains root level fields which mutate data.
+"""
+type Mutation {
+  notify(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: NotifyInput!
+  ): NotifyPayload
+}
+
+"""
+The root subscription type: contains realtime events you can subscribe to with the `subscription` operation.
+"""
+type Subscription {
+  squidStatus: SquidStatusSubscriptionPayload
+  xykpoolHistoricalVolume(filter: XykpoolHistoricalVolumeSubscriptionFilter): XykpoolHistoricalVolumeSubscriptionPayload
+  xykpoolHistoricalVolumeByPeriod(filter: XykpoolHistoricalVolumeByPeriodSubscriptionFilter): XykpoolHistoricalVolumeByPeriodSubscriptionPayload
+  omnipoolAssetHistoricalVolume(filter: OmnipoolAssetHistoricalVolumeSubscriptionFilter): OmnipoolAssetHistoricalVolumeSubscriptionPayload
+  omnipoolAssetHistoricalVolumeByPeriod(filter: OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter): OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload
+  stableswapHistoricalVolume(filter: StableswapHistoricalVolumeSubscriptionFilter): StableswapHistoricalVolumeSubscriptionPayload
+  stableswapHistoricalVolumeByPeriod(filter: StableswapHistoricalVolumeByPeriodSubscriptionFilter): StableswapHistoricalVolumeByPeriodSubscriptionPayload
+  routedTrade(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
+}
+
+input RoutedTradeSubscriptionFilter {
+  assetIds: [String!]
+  participantIds: [String!]
+  swapperIds: [String!]
+  fillerIds: [String!]
+  feeRecipientIds: [String!]
 }
 
 type RoutedTradeSubscriptionPayload {
   node: RoutedTradeEntity
   event: String
+}
+
+type RoutedTradeAssetBalanceResponse {
+  assetId: String!
+  amount: BigInt!
 }
 
 type RoutedTradeEntity {
@@ -76779,17 +76792,4 @@ type RoutedTradeEntity {
   paraBlockHeight: Int!
   relayBlockHeight: Int!
   blockId: String!
-}
-
-type RoutedTradeAssetBalanceResponse {
-  assetId: String!
-  amount: BigInt!
-}
-
-input RoutedTradeSubscriptionFilter {
-  assetIds: [String!]
-  participantIds: [String!]
-  swapperIds: [String!]
-  fillerIds: [String!]
-  feeRecipientIds: [String!]
 }

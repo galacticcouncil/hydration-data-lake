@@ -11,8 +11,8 @@ import {
   SwapFeeDestinationType,
   RoutedTrade,
 } from '../../model';
-import { getAccount } from '../accounts';
-import { getAsset } from '../assets/assetRegistry';
+import { getOrCreateAccount } from '../accounts';
+import { getOrCreateAsset } from '../assets/asset';
 import { GetNewSwapResponse } from '../../utils/types';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
@@ -119,8 +119,8 @@ export async function getNewSwap({
     traceIds,
     operationId,
     swapIndex,
-    swapper: await getAccount({ ctx, id: swapperId }),
-    filler: await getAccount({ ctx, id: fillerId }),
+    swapper: await getOrCreateAccount({ ctx, id: swapperId }),
+    filler: await getOrCreateAccount({ ctx, id: fillerId }),
     allInvolvedAssetIds: [
       ...new Set([
         ...inputs.map((input) => input.assetId),
@@ -142,7 +142,7 @@ export async function getNewSwap({
   const outputEntities: SwapAssetBalance[] = [];
 
   for (const fee of fees) {
-    const asset = await getAsset({
+    const asset = await getOrCreateAsset({
       ctx,
       id: fee.assetId,
       ensure: true,
@@ -152,7 +152,7 @@ export async function getNewSwap({
 
     const recipient =
       fee.destinationType === SwapFeeDestinationType.Account
-        ? await getAccount({ ctx, id: fee.recipientId! })
+        ? await getOrCreateAccount({ ctx, id: fee.recipientId! })
         : null;
 
     feeEntities.push(
@@ -167,7 +167,7 @@ export async function getNewSwap({
     );
   }
   for (const input of inputs) {
-    const asset = await getAsset({
+    const asset = await getOrCreateAsset({
       ctx,
       id: input.assetId,
       ensure: true,
@@ -186,7 +186,7 @@ export async function getNewSwap({
     );
   }
   for (const output of outputs) {
-    const asset = await getAsset({
+    const asset = await getOrCreateAsset({
       ctx,
       id: output.assetId,
       ensure: true,

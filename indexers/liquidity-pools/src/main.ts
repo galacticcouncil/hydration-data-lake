@@ -13,18 +13,16 @@ import { handleAssetRegistry } from './handlers/assets';
 import { StorageResolver } from './parsers/storageResolver';
 import { handleStableswapHistoricalData } from './handlers/pools/stableswap/historicalData';
 import { handleOmnipoolAssetHistoricalData } from './handlers/pools/omnipool/historicalData';
-import {
-  actualiseAssets,
-  ensureNativeToken,
-  prefetchAllAssets,
-} from './handlers/assets/assetRegistry';
 import { handleXykPoolHistoricalData } from './handlers/pools/xykPool/xykPoolHistoricalData';
 import { handleLbppoolHistoricalData } from './handlers/pools/lbpPool/lbpPoolHistoricalData';
 import { handleXykPools } from './handlers/pools/xykPool';
 import { handleLbpPools } from './handlers/pools/lbpPool';
 import { ProcessorStatusManager } from './processorStatusManager';
 import { ensurePoolsDestroyedStatus } from './handlers/pools/support';
-import { saveAllBatchAccounts } from './handlers/accounts';
+import {
+  prefetchOrInitAllBatchAccounts,
+  saveAllBatchAccounts,
+} from './handlers/accounts';
 import { ChainActivityTraceManager } from './chainActivityTracingManagers';
 import { handleDcaSchedules, saveDcaEntities } from './handlers/dca';
 import { printV8MemoryHeap } from './utils/helpers';
@@ -35,8 +33,13 @@ import { handleRelayChainBlocks } from './handlers/relayChain';
 import { HistoricalDataManager } from './handlers/historicalData';
 import { handleEvm, saveAllMoneyMarketEvents } from './handlers/moneyMarket';
 import { handleEvmAccounts } from './handlers/evmAccounts';
-import { EvmLogDecoder } from './utils/evmLogDecoder';
-import { EvmUtils } from './utils/evm';
+import { MoneyMarketContractsManager } from './utils/evmTools/moneyMarketContractsManager';
+import {
+  actualiseAssets,
+  ensureNativeToken,
+  prefetchAllAssets,
+} from './handlers/assets/utils';
+import { ethers } from 'ethers';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -45,16 +48,17 @@ console.log(
 processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   printV8MemoryHeap();
 
-  console.log(
-    EvmUtils.getH160FromDerivedSr25519(
-      '0x4554480029fb08a81867d8f61bce689d2dc366687291e7470000000000000000'
-    )
-  );
-  console.log(
-    EvmUtils.getH160FromOriginalSr25519(
-      '0xf42fc37ca29f3ba9ceb2e0f28ea6b450a2f3cabd436ef2e451618d5c3196252e'
-    )
-  );
+  // console.log(
+  //   ethers.utils.getAddress('0xf006621efdc155f5996c3afa23f5a6379c578010')
+  // );
+  // console.log(
+  //   ethers.utils.getAddress('0xf006621eFdc155f5996C3Afa23F5a6379C578010')
+  // );
+  // console.log(
+  //   '0xc64980e4eaf9a1151bd21712b9946b81e41e2b92',
+  //   ethers.utils.getAddress('0xc64980e4eaf9a1151bd21712b9946b81e41e2b92'),
+  //   ethers.utils.getIcapAddress('0xc64980e4eaf9a1151bd21712b9946b81e41e2b92')
+  // );
 
   const ctxWithBatchState: Omit<
     SqdProcessorContext<Store>,
@@ -95,6 +99,19 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     blockNumberFrom: ctx.blocks[0].header.height,
     blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  console.time('prefetchOrInitAllBatchAccounts');
+  await prefetchOrInitAllBatchAccounts(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
+  console.timeEnd('prefetchOrInitAllBatchAccounts');
+
+  console.time('initContractInstances');
+  await MoneyMarketContractsManager.getInstance().initContractInstances({
+    ctx: ctxWithBatchState as SqdProcessorContext<Store>,
+    blockNumber: ctx.blocks[0].header.height,
+  });
+  console.timeEnd('initContractInstances');
 
   console.time('prefetchAllAssets');
   await prefetchAllAssets(ctxWithBatchState as SqdProcessorContext<Store>);

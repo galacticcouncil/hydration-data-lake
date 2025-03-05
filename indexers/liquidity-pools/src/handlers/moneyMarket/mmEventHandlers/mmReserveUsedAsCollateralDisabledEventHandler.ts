@@ -1,13 +1,13 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import { EvmLogDecoder } from '../../../utils/evmLogDecoder';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import {
   EvmEventName,
   MmReserveUsedAsCollateralDisabledEvent,
   MmReserveUsedAsCollateralEnabledEvent,
 } from '../../../model';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
@@ -30,11 +30,10 @@ export async function handleMmReserveUsedAsCollateralDisabledEvent(
     callData,
   } = eventCallData;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateMoneyMarketAsset({
     ctx,
     evmAddress: parsedEvmEventData.reserveAddress,
     ensure: true,
-    blockHeader: eventMetadata.blockHeader,
   });
 
   if (!assetEntity) {

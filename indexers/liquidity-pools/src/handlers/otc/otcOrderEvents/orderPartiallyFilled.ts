@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { OtcOrderPartiallyFilledData } from '../../../parsers/batchBlocksParser/types';
 import { getOtcOrder } from '../orderUtils';
 import { OtcOrderStatus } from '../../../model';
-import { getAccount } from '../../accounts';
+import { getOrCreateAccount } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import {
   getNewOrderEvent,
@@ -42,7 +42,7 @@ export async function handleOtcOrderPartiallyFilled(
     amountIn: eventParams.amountIn,
     amountOut: eventParams.amountOut,
     fee: eventParams.fee,
-    filler: await getAccount({ ctx, id: eventParams.who }),
+    filler: await getOrCreateAccount({ ctx, id: eventParams.who }),
     paraBlockHeight: eventMetadata.blockHeader.height,
     relayBlockHeight:
       ctx.batchState.state.relayChainInfo.get(eventMetadata.blockHeader.height)

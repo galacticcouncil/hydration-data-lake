@@ -8,6 +8,7 @@ import { UnknownVersionError } from '../../../utils/errors';
 import { ScaleCodecManager } from '../scaleCodecManager';
 import { u8aToHex } from '@polkadot/util';
 import { u32 } from 'scale-ts';
+import { BlockHeader } from '@subsquid/substrate-processor';
 
 export async function getAccount({
   block,

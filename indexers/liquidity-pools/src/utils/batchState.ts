@@ -74,6 +74,8 @@ export type BatchStatePayload = {
   // operationStacks: Map<string, OperationStack>;
 
   accounts: Map<string, Account>;
+  accountIdForPrefetch: Set<string>;
+
   transfers: Map<string, Transfer>;
   assetVolumes: Map<string, HistoricalAssetVolume>;
 
@@ -182,6 +184,7 @@ export class BatchState {
     // operationStacks: new Map(),
 
     accounts: new Map(),
+    accountIdForPrefetch: new Set(),
     transfers: new Map(),
     assetVolumes: new Map(),
 

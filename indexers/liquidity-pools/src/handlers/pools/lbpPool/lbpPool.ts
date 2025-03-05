@@ -7,13 +7,13 @@ import {
   LbppoolDestroyedData,
   LbppoolLifeState,
 } from '../../../model';
-import { getAccount } from '../../accounts';
+import { getOrCreateAccount } from '../../accounts';
 import {
   LbpPoolCreatedData,
   LbpPoolUpdatedData,
 } from '../../../parsers/batchBlocksParser/types';
 import { getAssetFreeBalance } from '../../assets/balances';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 import parsers from '../../../parsers';
 
 export async function createLbppool({
@@ -51,13 +51,13 @@ export async function createLbppool({
     finalWeight: number;
   };
 }) {
-  const assetAEntity = await getAsset({
+  const assetAEntity = await getOrCreateAsset({
     ctx,
     id: assetAId,
     ensure: true,
     blockHeader: blockHeader,
   });
-  const assetBEntity = await getAsset({
+  const assetBEntity = await getOrCreateAsset({
     ctx,
     id: assetBId,
     ensure: true,
@@ -91,7 +91,7 @@ export async function createLbppool({
 
   const newPool = new Lbppool({
     id: poolAddress,
-    account: await getAccount({
+    account: await getOrCreateAccount({
       ctx,
       id: poolAddress,
       accountType: AccountType.Lbppool,
@@ -99,12 +99,12 @@ export async function createLbppool({
     }),
     assetA: assetAEntity,
     assetB: assetBEntity,
-    owner: await getAccount({ ctx, id: ownerAddress }),
+    owner: await getOrCreateAccount({ ctx, id: ownerAddress }),
     assetABalance: newPoolsAssetBalances.assetABalance,
     assetBBalance: newPoolsAssetBalances.assetBBalance,
     startBlockNumber: startBlockNumber ?? null,
     endBlockNumber: endBlockNumber ?? null,
-    feeCollector: await getAccount({ ctx, id: feeCollectorAddress }),
+    feeCollector: await getOrCreateAccount({ ctx, id: feeCollectorAddress }),
     fee: fee,
     initialWeight: initialWeight,
     finalWeight: finalWeight,
@@ -283,11 +283,11 @@ export async function lpbpoolUpdated(
 
   if (!existingPoolData) return;
 
-  existingPoolData.owner = await getAccount({
+  existingPoolData.owner = await getOrCreateAccount({
     ctx,
     id: eventParams.data.owner,
   });
-  existingPoolData.feeCollector = await getAccount({
+  existingPoolData.feeCollector = await getOrCreateAccount({
     ctx,
     id: eventParams.data.feeCollector,
   });

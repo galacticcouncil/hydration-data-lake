@@ -1,7 +1,13 @@
 import { transformAndValidateSync } from 'class-transformer-validator';
 import 'reflect-metadata';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidationError } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsArray,
+  IsBoolean,
+  ValidationError,
+} from 'class-validator';
 import dotenv from 'dotenv';
 
 import {
@@ -144,6 +150,14 @@ export class AppConfig {
 
   @IsString()
   readonly SUBSCAN_PRO_API_SECRET: string = '';
+
+  @Transform(({ value }: { value: string }) => value.split('::'))
+  @IsArray()
+  readonly SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: string[] = [];
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: boolean = true;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly UNIFIED_EVENTS_GENESIS_SPEC_VERSION: number = -1;

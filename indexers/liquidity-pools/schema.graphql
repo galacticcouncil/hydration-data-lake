@@ -28,11 +28,20 @@ enum AssetType {
   XYK
   Erc20
 }
+enum ResourceType {
+  Underlying
+  Collateral
+  Debt
+}
 
 type Asset @entity {
   "assetId"
   id: ID!
+  assetRegistryAsset: Asset
+  synthetic: Boolean!
+  active: Boolean!
   assetType: AssetType!
+  resourceType: ResourceType!
   name: String
   symbol: String
   decimals: Int
@@ -40,6 +49,9 @@ type Asset @entity {
   isSufficient: Boolean!
   existentialDeposit: BigInt!
   evmAddress: String
+  underlyingAsset: Asset
+  aToken: Asset
+  variableDebtToken: Asset
 
   # note: existentialDeposit is probably taken 1:1 from the runtime,
   # real existential deposit will be calculated realtime based on the current price

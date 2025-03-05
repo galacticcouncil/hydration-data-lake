@@ -1,9 +1,12 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import { EvmLogDecoder } from '../../../utils/evmLogDecoder';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { EvmEventName, MmBorrow, MmLiquidationCall } from '../../../model';
-import { getAsset } from '../../assets/assetRegistry';
+import {
+  getOrCreateAsset,
+  getOrCreateMoneyMarketAsset,
+} from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
@@ -26,11 +29,10 @@ export async function handleMmLiquidationCallEvent(
     callData,
   } = eventCallData;
 
-  const collateralAssetEntity = await getAsset({
+  const collateralAssetEntity = await getOrCreateMoneyMarketAsset({
     ctx,
     evmAddress: parsedEvmEventData.collateralAssetAddress,
     ensure: true,
-    blockHeader: eventMetadata.blockHeader,
   });
 
   if (!collateralAssetEntity) {
@@ -40,11 +42,10 @@ export async function handleMmLiquidationCallEvent(
     return;
   }
 
-  const debtAssetEntity = await getAsset({
+  const debtAssetEntity = await getOrCreateMoneyMarketAsset({
     ctx,
     evmAddress: parsedEvmEventData.debtAssetAddress,
     ensure: true,
-    blockHeader: eventMetadata.blockHeader,
   });
   if (!debtAssetEntity) {
     console.log(

@@ -1,11 +1,11 @@
-import { Result } from 'ethers';
+import { utils } from 'ethers';
 import { EvmEventName } from '../../../model';
 
 export type EvmLogEventParams = {
   eventName: EvmEventName;
   address: string;
   signature: string;
-  args: Result;
+  args: utils.Result;
 };
 
 export type MmEventParamsWithEventName = {

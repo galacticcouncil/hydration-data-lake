@@ -1,9 +1,13 @@
-module.exports = class Data1739986825210 {
-    name = 'Data1739986825210'
+module.exports = class Data1740854979986 {
+    name = 'Data1740854979986'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE TABLE "asset" ("id" character varying NOT NULL, "asset_type" character varying(10) NOT NULL, "name" text, "symbol" text, "decimals" integer, "xcm_rate_limit" numeric, "is_sufficient" boolean NOT NULL, "existential_deposit" numeric NOT NULL, "evm_address" text, CONSTRAINT "PK_1209d107fe21482beaea51b745e" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "asset" ("id" character varying NOT NULL, "synthetic" boolean NOT NULL, "active" boolean NOT NULL, "asset_type" character varying(10) NOT NULL, "resource_type" character varying(10) NOT NULL, "name" text, "symbol" text, "decimals" integer, "xcm_rate_limit" numeric, "is_sufficient" boolean NOT NULL, "existential_deposit" numeric NOT NULL, "evm_address" text, "asset_registry_asset_id" character varying, "underlying_asset_id" character varying, "a_token_id" character varying, "variable_debt_token_id" character varying, CONSTRAINT "PK_1209d107fe21482beaea51b745e" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_d1e21920952eec51e9626a210a" ON "asset" ("asset_registry_asset_id") `)
+        await db.query(`CREATE INDEX "IDX_3ece542ae21addb0cf35aeada2" ON "asset" ("underlying_asset_id") `)
+        await db.query(`CREATE INDEX "IDX_f311ee39a80698a75e2b0dc731" ON "asset" ("a_token_id") `)
+        await db.query(`CREATE INDEX "IDX_c1ad5b2dd6e571a2f6e2627d27" ON "asset" ("variable_debt_token_id") `)
         await db.query(`CREATE TABLE "event" ("id" character varying NOT NULL, "trace_id" text NOT NULL, "args" text, "index_in_block" integer NOT NULL, "name" text NOT NULL, "group" character varying(14), "phase" text NOT NULL, "entity_types" character varying(25) array, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" character varying, "call_id" character varying, CONSTRAINT "PK_30c2f3bbaf6d34a55f8ae6e4614" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_ba299c8fdec925154085dceff5" ON "event" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_2b0d35d675c4f99751855c4502" ON "event" ("block_id") `)
@@ -302,6 +306,10 @@ module.exports = class Data1739986825210 {
         await db.query(`CREATE INDEX "IDX_d8b5574303d849f0a9e2e709cb" ON "money_market_event" ("reserve_used_as_collateral_disabled_id") `)
         await db.query(`CREATE INDEX "IDX_87aa17150c4012aa53852d48ca" ON "money_market_event" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_5361b99ff601090b2d516aa2d9" ON "money_market_event" ("event_id") `)
+        await db.query(`ALTER TABLE "asset" ADD CONSTRAINT "FK_d1e21920952eec51e9626a210a1" FOREIGN KEY ("asset_registry_asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "asset" ADD CONSTRAINT "FK_3ece542ae21addb0cf35aeada2b" FOREIGN KEY ("underlying_asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "asset" ADD CONSTRAINT "FK_f311ee39a80698a75e2b0dc7318" FOREIGN KEY ("a_token_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "asset" ADD CONSTRAINT "FK_c1ad5b2dd6e571a2f6e2627d277" FOREIGN KEY ("variable_debt_token_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "event" ADD CONSTRAINT "FK_2b0d35d675c4f99751855c45021" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "event" ADD CONSTRAINT "FK_83cf1bd59aa4521ed882fa51452" FOREIGN KEY ("call_id") REFERENCES "call"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "call" ADD CONSTRAINT "FK_bd3f11fd4110d60ac8b96cd62f3" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -481,6 +489,10 @@ module.exports = class Data1739986825210 {
     async down(db) {
         await db.query(`DROP TABLE "processor_status"`)
         await db.query(`DROP TABLE "asset"`)
+        await db.query(`DROP INDEX "public"."IDX_d1e21920952eec51e9626a210a"`)
+        await db.query(`DROP INDEX "public"."IDX_3ece542ae21addb0cf35aeada2"`)
+        await db.query(`DROP INDEX "public"."IDX_f311ee39a80698a75e2b0dc731"`)
+        await db.query(`DROP INDEX "public"."IDX_c1ad5b2dd6e571a2f6e2627d27"`)
         await db.query(`DROP TABLE "event"`)
         await db.query(`DROP INDEX "public"."IDX_ba299c8fdec925154085dceff5"`)
         await db.query(`DROP INDEX "public"."IDX_2b0d35d675c4f99751855c4502"`)
@@ -779,6 +791,10 @@ module.exports = class Data1739986825210 {
         await db.query(`DROP INDEX "public"."IDX_d8b5574303d849f0a9e2e709cb"`)
         await db.query(`DROP INDEX "public"."IDX_87aa17150c4012aa53852d48ca"`)
         await db.query(`DROP INDEX "public"."IDX_5361b99ff601090b2d516aa2d9"`)
+        await db.query(`ALTER TABLE "asset" DROP CONSTRAINT "FK_d1e21920952eec51e9626a210a1"`)
+        await db.query(`ALTER TABLE "asset" DROP CONSTRAINT "FK_3ece542ae21addb0cf35aeada2b"`)
+        await db.query(`ALTER TABLE "asset" DROP CONSTRAINT "FK_f311ee39a80698a75e2b0dc7318"`)
+        await db.query(`ALTER TABLE "asset" DROP CONSTRAINT "FK_c1ad5b2dd6e571a2f6e2627d277"`)
         await db.query(`ALTER TABLE "event" DROP CONSTRAINT "FK_2b0d35d675c4f99751855c45021"`)
         await db.query(`ALTER TABLE "event" DROP CONSTRAINT "FK_83cf1bd59aa4521ed882fa51452"`)
         await db.query(`ALTER TABLE "call" DROP CONSTRAINT "FK_bd3f11fd4110d60ac8b96cd62f3"`)

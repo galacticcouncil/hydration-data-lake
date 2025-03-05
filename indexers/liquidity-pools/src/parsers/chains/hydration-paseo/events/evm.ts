@@ -2,7 +2,7 @@ import { events } from '../typegenTypes';
 import { SqdEvent } from '../../../../processor';
 import { EvmLogEventParams } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { EvmLogDecoder } from '../../../../utils/evmLogDecoder';
+import { EvmLogDecoder } from '../../../../utils/evmTools/evmLogDecoder';
 import { EvmEventName } from '../../../../model';
 
 function parseLogParams(event: SqdEvent): EvmLogEventParams | null {

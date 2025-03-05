@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 509
+slot: 511
 description: Hydration pools indexer
 build:
 deploy:
@@ -23,7 +23,6 @@ deploy:
       NODE_ENV: 'production'
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
       UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-      SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
 
       PROCESS_FROM_BLOCK: 1439857
       PROCESS_TO_BLOCK: -1
@@ -41,6 +40,10 @@ deploy:
       NODE_ENV: 'production'
       CHAIN: 'hydration'
       GQL_PORT: 8080
+      SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
+      SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app'
+      SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
+
     cmd:
       - sqd
       - api:prod

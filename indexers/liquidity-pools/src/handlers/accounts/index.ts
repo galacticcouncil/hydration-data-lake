@@ -1,11 +1,11 @@
 import { Account, AccountType } from '../../model';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { FindOptionsRelations, Like } from 'typeorm';
+import { FindOptionsRelations, In, Like } from 'typeorm';
 import parsers from '../../parsers';
 import { EvmUtils } from '../../utils/evm';
 
-export async function getAccount({
+export async function getOrCreateAccount({
   ctx,
   id,
   accountType = AccountType.User,
@@ -147,34 +147,34 @@ export async function getOrCreateAccountByBoundEvmAddress({
   evmAddress: string;
   blockHeader: SqdBlock;
 }) {
-  let existingAccount = await getAccountByBoundEvmAddress({
+  const existingAccount = await getAccountByBoundEvmAddress({
     ctx,
     evmAddress,
   });
 
   if (existingAccount) return existingAccount;
 
-  const accountExtension =
-    await parsers.storage.evmAccounts.getAccountExtension({
-      evmAddress,
-      block: blockHeader,
-    });
+  // const accountExtension =
+  //   await parsers.storage.evmAccounts.getAccountExtension({
+  //     evmAddress,
+  //     block: blockHeader,
+  //   });
+  //
+  // const accountId = EvmUtils.getSr25519FromH160AndExtension(
+  //   evmAddress,
+  //   accountExtension
+  // );
 
-  const accountId = EvmUtils.getSr25519FromH160AndExtension(
-    evmAddress,
-    accountExtension
-  );
-
-  return getAccount({
+  return getOrCreateAccount({
     ctx,
-    id: accountId,
+    id: EvmUtils.getDerivedSs58FromH160(evmAddress),
     boundEvmAddress: evmAddress,
     ensureBoundEvmAddress: true,
   });
 
   // if (!accountExtension) {
   //   // const accountId = addressToHex(convertFromH160(evmAddress));
-  //   return getAccount({ ctx, id: accountId });
+  //   return getOrCreateAccount({ ctx, id: accountId });
   // }
   //
   // existingAccount = await getAccountByAddressPart({
@@ -183,6 +183,23 @@ export async function getOrCreateAccountByBoundEvmAddress({
   // });
   //
   // return existingAccount;
+}
+
+export async function prefetchOrInitAllBatchAccounts(
+  ctx: SqdProcessorContext<Store>
+) {
+  const existingAccounts = await ctx.store.find(Account, {
+    where: { id: In([...ctx.batchState.state.accountIdForPrefetch.values()]) },
+  });
+
+  for (const existingAccount of existingAccounts)
+    ctx.batchState.state.accounts.set(existingAccount.id, existingAccount);
+
+  for (const existingAccount of existingAccounts)
+    await getOrCreateAccount({
+      ctx,
+      id: existingAccount.id,
+    });
 }
 
 export async function saveAllBatchAccounts(ctx: SqdProcessorContext<Store>) {

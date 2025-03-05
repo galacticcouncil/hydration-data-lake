@@ -1,6 +1,7 @@
 export * from "./processorStatus.model"
 export * from "./asset.model"
 export * from "./_assetType"
+export * from "./_resourceType"
 export * from "./historicalAssetVolume.model"
 export * from "./historicalAssetSwapFee.model"
 export * from "./accountAssetBalanceHistoricalData.model"

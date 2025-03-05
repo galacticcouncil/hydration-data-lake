@@ -1,7 +1,7 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmAccountsBoundData } from '../../parsers/batchBlocksParser/types/evmAccounts';
-import { getAccount } from '../accounts';
+import { getOrCreateAccount } from '../accounts';
 
 export async function handleEvmAccountsBoundEvent(
   ctx: SqdProcessorContext<Store>,
@@ -14,7 +14,7 @@ export async function handleEvmAccountsBoundEvent(
 
   if (!eventParams) return;
 
-  const existingAccountEntity = await getAccount({
+  const existingAccountEntity = await getOrCreateAccount({
     ctx,
     id: eventParams.accountAddress,
   });

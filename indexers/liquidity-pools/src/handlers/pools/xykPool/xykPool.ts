@@ -7,13 +7,13 @@ import {
   XykpoolDestroyedData,
   XykpoolLifeState,
 } from '../../../model';
-import { getAccount } from '../../accounts';
+import { getOrCreateAccount } from '../../accounts';
 import {
   XykPoolCreatedData,
   XykPoolDestroyedData,
 } from '../../../parsers/batchBlocksParser/types';
 import { getAssetFreeBalance } from '../../assets/balances';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 import parsers from '../../../parsers';
 
 export async function createXykPool({
@@ -49,13 +49,13 @@ export async function createXykPool({
     assetBBalance: assetBBalance,
   };
 
-  const assetAEntity = await getAsset({
+  const assetAEntity = await getOrCreateAsset({
     ctx,
     id: assetAId,
     ensure: true,
     blockHeader: blockHeader,
   });
-  const assetBEntity = await getAsset({
+  const assetBEntity = await getOrCreateAsset({
     ctx,
     id: assetBId,
     ensure: true,
@@ -90,7 +90,7 @@ export async function createXykPool({
   }
   if (!shareTokenIdEnsured) return null;
 
-  const sharedTokenEntity = await getAsset({
+  const sharedTokenEntity = await getOrCreateAsset({
     ctx,
     id: shareTokenIdEnsured,
     ensure: true,
@@ -101,7 +101,7 @@ export async function createXykPool({
 
   const newPool = new Xykpool({
     id: poolAddress,
-    account: await getAccount({
+    account: await getOrCreateAccount({
       ctx,
       id: poolAddress,
       accountType: AccountType.Xykpool,

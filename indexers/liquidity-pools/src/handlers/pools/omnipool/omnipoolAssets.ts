@@ -10,7 +10,7 @@ import {
   OmnipoolTokenAddedData,
   OmnipoolTokenRemovedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 
 export async function getOrCreateOmnipoolAsset({
   ctx,
@@ -40,7 +40,7 @@ export async function getOrCreateOmnipoolAsset({
 
   if (!blockHeader) return null;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateAsset({
     ctx,
     id: assetId,
     ensure: true,
@@ -95,7 +95,7 @@ export async function omnipoolTokenAdded(
 
   if (omnipoolAssetEntity) return;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateAsset({
     ctx,
     id: eventParams.assetId,
     ensure: true,

@@ -50,6 +50,10 @@ export class EventDataParserHelper {
     this.batchState[key].get(this.event.block.height)!.ids.add(value as never); // TODO fix type
   }
 
+  addAccountIdsForPrefetch(ids: string[]) {
+    for (const id of ids) this.batchState.accountIdForPrefetch.add(id);
+  }
+
   /**
    * ==== LBP Poll Created ====
    */
