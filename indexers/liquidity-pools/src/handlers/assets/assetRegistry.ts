@@ -1,12 +1,14 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  AssetRegistryLocationSetData,
   AssetRegistryRegisteredData,
   AssetRegistryUpdatedData,
 } from '../../parsers/batchBlocksParser/types';
 import { getAssetEvmAddressByType } from './utils';
-import { Asset, ResourceType } from '../../model';
+import { Asset, AssetType, ResourceType } from '../../model';
 import { getOrCreateAsset } from './asset';
+import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
 
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
@@ -90,6 +92,35 @@ export async function assetUpdated(
   if (decimals) asset.decimals = decimals;
   if (xcmRateLimit) asset.xcmRateLimit = xcmRateLimit;
   if (isSufficient) asset.isSufficient = isSufficient;
+
+  const state = ctx.batchState.state;
+  state.assetsAllBatch.set(asset.id, asset);
+  state.assetIdsToSave.add(asset.id);
+}
+
+export async function assetLocationSet(
+  ctx: SqdProcessorContext<Store>,
+  eventCallData: AssetRegistryLocationSetData
+) {
+  const {
+    eventData: {
+      params: { assetId, location },
+      metadata: eventMetadata,
+    },
+  } = eventCallData;
+
+  const asset = await getOrCreateAsset({
+    ctx,
+    id: assetId,
+    ensure: true,
+    blockHeader: eventMetadata.blockHeader,
+  });
+
+  if (!asset) return;
+
+  if (asset.assetType !== AssetType.Erc20) return;
+
+  asset.evmAddress = getErc20AssetContractFromLocation(location)?.address;
 
   const state = ctx.batchState.state;
   state.assetsAllBatch.set(asset.id, asset);

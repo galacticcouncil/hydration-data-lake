@@ -9,6 +9,7 @@ import { SwappedExecutionTypeKind } from '../../../utils/types';
 
 export * from './evm';
 export * from './evmAccounts';
+export * from './assetRegistry';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -17,6 +18,7 @@ export enum EventName {
 
   'AssetRegistry_Registered' = 'AssetRegistry.Registered',
   'AssetRegistry_Updated' = 'AssetRegistry.Updated',
+  'AssetRegistry_LocationSet' = 'AssetRegistry.LocationSet',
 
   'LBP_PoolCreated' = 'LBP.PoolCreated',
   'LBP_PoolUpdated' = 'LBP.PoolUpdated',
@@ -234,28 +236,6 @@ export type StableswapSellExecutedEventParams = {
   amountIn: bigint;
   amountOut: bigint;
   fee: bigint;
-};
-
-export type AssetRegistryRegisteredEventParams = {
-  assetId: number;
-  assetName?: string;
-  assetType: AssetType;
-  existentialDeposit: bigint;
-  xcmRateLimit?: bigint;
-  symbol?: string;
-  decimals?: number;
-  isSufficient: boolean;
-};
-
-export type AssetRegistryUpdatedEventParams = {
-  assetId: number;
-  assetName?: string;
-  assetType: AssetType;
-  existentialDeposit: bigint;
-  xcmRateLimit?: bigint;
-  symbol?: string;
-  decimals?: number;
-  isSufficient: boolean;
 };
 
 export type DcaScheduledEventParams = {

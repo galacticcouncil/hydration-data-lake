@@ -5,11 +5,8 @@ import {
   DcaScheduleOrderRouteData,
 } from '../../types/calls';
 import { DcaScheduleOrderType, SwapFillerType } from '../../../model';
-// import { AssetLocation } from './typegenTypes/v244';
-import { AssetLocation as AssetLocationV108 } from './typegenTypes/v108';
-import { AssetLocation as AssetLocationV160 } from './typegenTypes/v160';
-import { AssetLocation as AssetLocationV244 } from './typegenTypes/v244';
 import { Erc20AssetContractDetails } from '../../types/storage';
+import { AssetRegistryAssetLocation } from '../../types/events';
 
 export function decorateDcaSchedule(scheduleRaw: Schedule) {
   const {
@@ -66,7 +63,7 @@ export function decorateDcaSchedule(scheduleRaw: Schedule) {
 }
 
 export function getErc20AssetContractFromLocation(
-  location?: AssetLocationV108 | AssetLocationV160 | AssetLocationV244
+  location?: AssetRegistryAssetLocation
 ): Erc20AssetContractDetails | null {
   if (!location) return null;
 
@@ -74,32 +71,26 @@ export function getErc20AssetContractFromLocation(
     switch (location.interior.__kind) {
       case 'X1':
         return {
-          // @ts-ignore
           address: location.interior.value.key,
         };
       case 'X2':
         return {
-          // @ts-ignore
           address: location.interior.value[1].key,
         };
       case 'X3':
         return {
-          // @ts-ignore
           address: location.interior.value[2].key,
         };
       case 'X4':
         return {
-          // @ts-ignore
           address: location.interior.value[3].key,
         };
       case 'X5':
         return {
-          // @ts-ignore
           address: location.interior.value[4].key,
         };
       case 'X6':
         return {
-          // @ts-ignore
           address: location.interior.value[5].key,
         };
       default:

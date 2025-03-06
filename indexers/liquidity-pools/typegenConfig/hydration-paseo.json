@@ -6,7 +6,7 @@
       "calls": ["sudo", "sudo_unchecked_weight", "set_key", "sudo_as"]
     },
     "AssetRegistry": {
-      "events": ["Registered", "Updated"],
+      "events": ["Registered", "Updated", "LocationSet"],
       "storage": ["Assets", "AssetLocations"]
     },
     "Balances": {

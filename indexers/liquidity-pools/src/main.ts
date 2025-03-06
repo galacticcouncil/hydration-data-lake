@@ -27,7 +27,7 @@ import { ChainActivityTraceManager } from './chainActivityTracingManagers';
 import { handleDcaSchedules, saveDcaEntities } from './handlers/dca';
 import { printV8MemoryHeap } from './utils/helpers';
 import { handleOtcOrders } from './handlers/otc';
-import { handleSupportSwappedEvents } from './handlers/swap';
+import { handleBroadcastSwappedEvents } from './handlers/swap';
 import { handleStablepoolLiquidityEvents } from './handlers/pools/stableswap/liquidity';
 import { handleRelayChainBlocks } from './handlers/relayChain';
 import { HistoricalDataManager } from './handlers/historicalData';
@@ -47,18 +47,6 @@ console.log(
 
 processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   printV8MemoryHeap();
-
-  // console.log(
-  //   ethers.utils.getAddress('0xf006621efdc155f5996c3afa23f5a6379c578010')
-  // );
-  // console.log(
-  //   ethers.utils.getAddress('0xf006621eFdc155f5996C3Afa23F5a6379C578010')
-  // );
-  // console.log(
-  //   '0xc64980e4eaf9a1151bd21712b9946b81e41e2b92',
-  //   ethers.utils.getAddress('0xc64980e4eaf9a1151bd21712b9946b81e41e2b92'),
-  //   ethers.utils.getIcapAddress('0xc64980e4eaf9a1151bd21712b9946b81e41e2b92')
-  // );
 
   const ctxWithBatchState: Omit<
     SqdProcessorContext<Store>,
@@ -159,12 +147,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   );
   console.timeEnd('handleStablepools');
 
-  console.time('handleSupportSwappedEvents');
-  await handleSupportSwappedEvents(
+  console.time('handleBroadcastSwappedEvents');
+  await handleBroadcastSwappedEvents(
     ctxWithBatchState as SqdProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleSupportSwappedEvents');
+  console.timeEnd('handleBroadcastSwappedEvents');
 
   console.time('handleBuySellOperations');
   await handleBuySellOperations(

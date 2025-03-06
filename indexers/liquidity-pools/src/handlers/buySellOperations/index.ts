@@ -10,17 +10,25 @@ export async function handleBuySellOperations(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
+  console.time('handleLbpPoolOperations');
   if (ctx.appConfig.PROCESS_LBP_POOLS)
     await handleLbpPoolOperations(ctx, parsedEvents);
+  console.timeEnd('handleLbpPoolOperations');
 
+  console.time('handleXykPoolOperations');
   if (ctx.appConfig.PROCESS_XYK_POOLS)
     await handleXykPoolOperations(ctx, parsedEvents);
+  console.timeEnd('handleXykPoolOperations');
 
+  console.time('handleOmnioolOperations');
   if (ctx.appConfig.PROCESS_OMNIPOOLS)
     await handleOmnioolOperations(ctx, parsedEvents);
+  console.timeEnd('handleOmnioolOperations');
 
+  console.time('handleStablepoolOperations');
   if (ctx.appConfig.PROCESS_STABLEPOOLS)
     await handleStablepoolOperations(ctx, parsedEvents);
+  console.timeEnd('handleStablepoolOperations');
 
   await ctx.store.save([...ctx.batchState.state.routeTrades.values()]);
   await ctx.store.save([

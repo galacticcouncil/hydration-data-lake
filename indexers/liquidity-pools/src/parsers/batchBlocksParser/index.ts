@@ -130,8 +130,6 @@ export async function getParsedEventsData(
   const parsedDataManager = new BatchBlocksParsedDataManager();
   let totalEventsNumber = 0;
 
-  const batchState = ctx.batchState.state;
-
   for (const block of ctx.blocks) {
     const relayChainInfo = ctx.batchState.state.relayChainInfo.get(
       block.header.height
@@ -163,12 +161,12 @@ export async function getParsedEventsData(
       });
 
       const parserHelper = new EventDataParserHelper({
+        batchState: ctx.batchState.state,
         relayChainInfo,
         callMetadata,
         eventMetadata,
         call,
         event,
-        batchState,
       });
 
       totalEventsNumber++;
@@ -690,6 +688,17 @@ export async function getParsedEventsData(
           parsedDataManager.set(EventName.AssetRegistry_Updated, preparedData);
           break;
         }
+        /**
+         * ==== AssetRegistry LocationSet ====
+         */
+        case events.assetRegistry.locationSet.name: {
+          const preparedData = parserHelper.parseAssetRegistryLocationSetData();
+          parsedDataManager.set(
+            EventName.AssetRegistry_LocationSet,
+            preparedData
+          );
+          break;
+        }
 
         /**
          * ======================= B R O A D C A S T ===========================
@@ -785,6 +794,8 @@ export async function getParsedEventsData(
         default:
           totalEventsNumber--;
       }
+
+      parserHelper.migrateLocalState(ctx);
     }
   }
 

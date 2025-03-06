@@ -230,114 +230,6 @@ export interface V3NetworkId_Wococo {
     __kind: 'Wococo'
 }
 
-export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
-    return  {
-        parents: sts.number(),
-        interior: V3Junctions,
-    }
-})
-
-export const V3Junctions: sts.Type<V3Junctions> = sts.closedEnum(() => {
-    return  {
-        Here: sts.unit(),
-        X1: V3Junction,
-        X2: sts.tuple(() => [V3Junction, V3Junction]),
-        X3: sts.tuple(() => [V3Junction, V3Junction, V3Junction]),
-        X4: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction]),
-        X5: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]),
-        X6: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]),
-        X7: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]),
-        X8: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]),
-    }
-})
-
-export const V3Junction: sts.Type<V3Junction> = sts.closedEnum(() => {
-    return  {
-        AccountId32: sts.enumStruct({
-            network: sts.option(() => V3NetworkId),
-            id: sts.bytes(),
-        }),
-        AccountIndex64: sts.enumStruct({
-            network: sts.option(() => V3NetworkId),
-            index: sts.bigint(),
-        }),
-        AccountKey20: sts.enumStruct({
-            network: sts.option(() => V3NetworkId),
-            key: sts.bytes(),
-        }),
-        GeneralIndex: sts.bigint(),
-        GeneralKey: sts.enumStruct({
-            length: sts.number(),
-            data: sts.bytes(),
-        }),
-        GlobalConsensus: V3NetworkId,
-        OnlyChild: sts.unit(),
-        PalletInstance: sts.number(),
-        Parachain: sts.number(),
-        Plurality: sts.enumStruct({
-            id: V3BodyId,
-            part: V3BodyPart,
-        }),
-    }
-})
-
-export const V3BodyPart: sts.Type<V3BodyPart> = sts.closedEnum(() => {
-    return  {
-        AtLeastProportion: sts.enumStruct({
-            nom: sts.number(),
-            denom: sts.number(),
-        }),
-        Fraction: sts.enumStruct({
-            nom: sts.number(),
-            denom: sts.number(),
-        }),
-        Members: sts.enumStruct({
-            count: sts.number(),
-        }),
-        MoreThanProportion: sts.enumStruct({
-            nom: sts.number(),
-            denom: sts.number(),
-        }),
-        Voice: sts.unit(),
-    }
-})
-
-export const V3BodyId: sts.Type<V3BodyId> = sts.closedEnum(() => {
-    return  {
-        Administration: sts.unit(),
-        Defense: sts.unit(),
-        Executive: sts.unit(),
-        Index: sts.number(),
-        Judicial: sts.unit(),
-        Legislative: sts.unit(),
-        Moniker: sts.bytes(),
-        Technical: sts.unit(),
-        Treasury: sts.unit(),
-        Unit: sts.unit(),
-    }
-})
-
-export const V3NetworkId: sts.Type<V3NetworkId> = sts.closedEnum(() => {
-    return  {
-        BitcoinCash: sts.unit(),
-        BitcoinCore: sts.unit(),
-        ByFork: sts.enumStruct({
-            blockNumber: sts.bigint(),
-            blockHash: sts.bytes(),
-        }),
-        ByGenesis: sts.bytes(),
-        Ethereum: sts.enumStruct({
-            chainId: sts.bigint(),
-        }),
-        Kusama: sts.unit(),
-        Polkadot: sts.unit(),
-        PolkadotBulletin: sts.unit(),
-        Rococo: sts.unit(),
-        Westend: sts.unit(),
-        Wococo: sts.unit(),
-    }
-})
-
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -475,6 +367,42 @@ export const V4Junction: sts.Type<V4Junction> = sts.closedEnum(() => {
             id: V3BodyId,
             part: V3BodyPart,
         }),
+    }
+})
+
+export const V3BodyPart: sts.Type<V3BodyPart> = sts.closedEnum(() => {
+    return  {
+        AtLeastProportion: sts.enumStruct({
+            nom: sts.number(),
+            denom: sts.number(),
+        }),
+        Fraction: sts.enumStruct({
+            nom: sts.number(),
+            denom: sts.number(),
+        }),
+        Members: sts.enumStruct({
+            count: sts.number(),
+        }),
+        MoreThanProportion: sts.enumStruct({
+            nom: sts.number(),
+            denom: sts.number(),
+        }),
+        Voice: sts.unit(),
+    }
+})
+
+export const V3BodyId: sts.Type<V3BodyId> = sts.closedEnum(() => {
+    return  {
+        Administration: sts.unit(),
+        Defense: sts.unit(),
+        Executive: sts.unit(),
+        Index: sts.number(),
+        Judicial: sts.unit(),
+        Legislative: sts.unit(),
+        Moniker: sts.bytes(),
+        Technical: sts.unit(),
+        Treasury: sts.unit(),
+        Unit: sts.unit(),
     }
 })
 
@@ -1394,6 +1322,71 @@ export const V3MultiLocation: sts.Type<V3MultiLocation> = sts.struct(() => {
     return  {
         parents: sts.number(),
         interior: V3Junctions,
+    }
+})
+
+export const V3Junctions: sts.Type<V3Junctions> = sts.closedEnum(() => {
+    return  {
+        Here: sts.unit(),
+        X1: V3Junction,
+        X2: sts.tuple(() => [V3Junction, V3Junction]),
+        X3: sts.tuple(() => [V3Junction, V3Junction, V3Junction]),
+        X4: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction]),
+        X5: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]),
+        X6: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]),
+        X7: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]),
+        X8: sts.tuple(() => [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]),
+    }
+})
+
+export const V3Junction: sts.Type<V3Junction> = sts.closedEnum(() => {
+    return  {
+        AccountId32: sts.enumStruct({
+            network: sts.option(() => V3NetworkId),
+            id: sts.bytes(),
+        }),
+        AccountIndex64: sts.enumStruct({
+            network: sts.option(() => V3NetworkId),
+            index: sts.bigint(),
+        }),
+        AccountKey20: sts.enumStruct({
+            network: sts.option(() => V3NetworkId),
+            key: sts.bytes(),
+        }),
+        GeneralIndex: sts.bigint(),
+        GeneralKey: sts.enumStruct({
+            length: sts.number(),
+            data: sts.bytes(),
+        }),
+        GlobalConsensus: V3NetworkId,
+        OnlyChild: sts.unit(),
+        PalletInstance: sts.number(),
+        Parachain: sts.number(),
+        Plurality: sts.enumStruct({
+            id: V3BodyId,
+            part: V3BodyPart,
+        }),
+    }
+})
+
+export const V3NetworkId: sts.Type<V3NetworkId> = sts.closedEnum(() => {
+    return  {
+        BitcoinCash: sts.unit(),
+        BitcoinCore: sts.unit(),
+        ByFork: sts.enumStruct({
+            blockNumber: sts.bigint(),
+            blockHash: sts.bytes(),
+        }),
+        ByGenesis: sts.bytes(),
+        Ethereum: sts.enumStruct({
+            chainId: sts.bigint(),
+        }),
+        Kusama: sts.unit(),
+        Polkadot: sts.unit(),
+        PolkadotBulletin: sts.unit(),
+        Rococo: sts.unit(),
+        Westend: sts.unit(),
+        Wococo: sts.unit(),
     }
 })
 
@@ -11092,5 +11085,12 @@ export const AdjustmentDirection: sts.Type<AdjustmentDirection> = sts.closedEnum
     return  {
         Decrease: sts.unit(),
         Increase: sts.unit(),
+    }
+})
+
+export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
+    return  {
+        parents: sts.number(),
+        interior: V3Junctions,
     }
 })

@@ -18,11 +18,13 @@ export function getNewMoneyMarketEventEntity({
   ctx,
   eventCallData,
   allInvolvedAssetIds,
+  allInvolvedAssetDetails,
   allInvolvedParticipants,
 }: {
   ctx: SqdProcessorContext<Store>;
   eventCallData: EvmLogData;
   allInvolvedAssetIds: string[];
+  allInvolvedAssetDetails: string;
   allInvolvedParticipants: string[];
 }) {
   const {
@@ -40,6 +42,7 @@ export function getNewMoneyMarketEventEntity({
     ],
     eventName: eventParams.eventName,
     allInvolvedAssetIds,
+    allInvolvedAssetDetails,
     allInvolvedParticipants,
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       eventMetadata.blockHeader.height
@@ -53,6 +56,7 @@ export async function processNewMoneyMarketEvent({
   ctx,
   eventCallData,
   allInvolvedAssetIds,
+  allInvolvedAssetDetails,
   allInvolvedParticipants,
   transfer,
   supply,
@@ -67,6 +71,7 @@ export async function processNewMoneyMarketEvent({
   ctx: SqdProcessorContext<Store>;
   eventCallData: EvmLogData;
   allInvolvedAssetIds: string[];
+  allInvolvedAssetDetails: Array<string | number | null | undefined>;
   allInvolvedParticipants: string[];
   transfer?: Transfer;
   supply?: MmSupply;
@@ -82,6 +87,9 @@ export async function processNewMoneyMarketEvent({
     ctx,
     eventCallData,
     allInvolvedAssetIds: [...new Set(allInvolvedAssetIds).values()],
+    allInvolvedAssetDetails: [
+      ...new Set(allInvolvedAssetDetails.filter((i) => !!i)).values(),
+    ].join('_#_'),
     allInvolvedParticipants: [...new Set(allInvolvedParticipants).values()],
   });
 

@@ -33,11 +33,6 @@ export async function handleXykPoolOperations(
         ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
       )
   )) {
-    // console.log(
-    //   'handleXykPoolOperations - ',
-    //   eventData.eventData.metadata.blockHeader.specVersion,
-    //   eventData.eventData.metadata.blockHeader.height
-    // );
     switch (eventData.eventData.name) {
       case EventName.XYK_BuyExecuted:
         await xykBuyExecuted(ctx, eventData as XykBuyExecutedData);

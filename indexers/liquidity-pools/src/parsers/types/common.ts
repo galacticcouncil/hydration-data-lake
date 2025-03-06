@@ -42,6 +42,7 @@ import {
   EvmLogEventParams,
   EvmAccountsBoundEventParams,
   CurrenciesTransferredEventParams,
+  AssetRegistryLocationSetEventParams,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -180,6 +181,9 @@ export type EventParserMethods = {
       event: SqdEvent
     ) => AssetRegistryRegisteredEventParams;
     parseUpdatedParams: (event: SqdEvent) => AssetRegistryUpdatedEventParams;
+    parseLocationSetParams: (
+      event: SqdEvent
+    ) => AssetRegistryLocationSetEventParams;
   };
   broadcast: {
     parseSwappedParams: (event: SqdEvent) => BroadcastSwappedEventParams;

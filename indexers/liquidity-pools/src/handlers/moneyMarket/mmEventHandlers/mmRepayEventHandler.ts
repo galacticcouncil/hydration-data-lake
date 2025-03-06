@@ -3,7 +3,10 @@ import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { EvmEventName, MmBorrow, MmRepay } from '../../../model';
-import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from '../../assets/asset';
+import {
+  getOrCreateAsset,
+  getOrCreateMoneyMarketAsset,
+} from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
@@ -94,6 +97,7 @@ export async function handleMmRepayEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id, repayerAccount.id],
     repay: mmRepayEntity,
   });

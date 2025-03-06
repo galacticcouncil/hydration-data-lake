@@ -1262,6 +1262,7 @@ type MoneyMarketEvent @entity {
   eventName: EvmEventName!
 
   allInvolvedAssetIds: [String!]!
+  allInvolvedAssetDetails: String @index
   allInvolvedParticipants: [String!]!
 
   transfer: Transfer

@@ -208,6 +208,7 @@ export class AppConfig {
       events.currencies.transferred.name,
       events.assetRegistry.registered.name,
       events.assetRegistry.updated.name,
+      events.assetRegistry.locationSet.name,
       events.broadcast.swapped.name,
       events.evm.log.name,
       events.evmAccounts.bound.name,

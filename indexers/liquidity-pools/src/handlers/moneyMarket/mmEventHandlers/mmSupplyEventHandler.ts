@@ -4,7 +4,10 @@ import { BalancesTransferData } from '../../../parsers/batchBlocksParser/types';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { EvmEventName, MmSupply } from '../../../model';
-import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from '../../assets/asset';
+import {
+  getOrCreateAsset,
+  getOrCreateMoneyMarketAsset,
+} from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import {
@@ -97,6 +100,7 @@ export async function handleMmSupplyEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
     supply: mmSupplyEntity,
   });

@@ -197,95 +197,6 @@ export interface V0NetworkId_Polkadot {
     __kind: 'Polkadot'
 }
 
-export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
-    return  {
-        parents: sts.number(),
-        interior: V1Junctions,
-    }
-})
-
-export const V1Junctions: sts.Type<V1Junctions> = sts.closedEnum(() => {
-    return  {
-        Here: sts.unit(),
-        X1: V1Junction,
-        X2: sts.tuple(() => [V1Junction, V1Junction]),
-        X3: sts.tuple(() => [V1Junction, V1Junction, V1Junction]),
-        X4: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction]),
-        X5: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]),
-        X6: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]),
-        X7: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]),
-        X8: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]),
-    }
-})
-
-export const V1Junction: sts.Type<V1Junction> = sts.closedEnum(() => {
-    return  {
-        AccountId32: sts.enumStruct({
-            network: V0NetworkId,
-            id: sts.bytes(),
-        }),
-        AccountIndex64: sts.enumStruct({
-            network: V0NetworkId,
-            index: sts.bigint(),
-        }),
-        AccountKey20: sts.enumStruct({
-            network: V0NetworkId,
-            key: sts.bytes(),
-        }),
-        GeneralIndex: sts.bigint(),
-        GeneralKey: sts.bytes(),
-        OnlyChild: sts.unit(),
-        PalletInstance: sts.number(),
-        Parachain: sts.number(),
-        Plurality: sts.enumStruct({
-            id: V0BodyId,
-            part: V0BodyPart,
-        }),
-    }
-})
-
-export const V0BodyPart: sts.Type<V0BodyPart> = sts.closedEnum(() => {
-    return  {
-        AtLeastProportion: sts.enumStruct({
-            nom: sts.number(),
-            denom: sts.number(),
-        }),
-        Fraction: sts.enumStruct({
-            nom: sts.number(),
-            denom: sts.number(),
-        }),
-        Members: sts.enumStruct({
-            count: sts.number(),
-        }),
-        MoreThanProportion: sts.enumStruct({
-            nom: sts.number(),
-            denom: sts.number(),
-        }),
-        Voice: sts.unit(),
-    }
-})
-
-export const V0BodyId: sts.Type<V0BodyId> = sts.closedEnum(() => {
-    return  {
-        Executive: sts.unit(),
-        Index: sts.number(),
-        Judicial: sts.unit(),
-        Legislative: sts.unit(),
-        Named: sts.bytes(),
-        Technical: sts.unit(),
-        Unit: sts.unit(),
-    }
-})
-
-export const V0NetworkId: sts.Type<V0NetworkId> = sts.closedEnum(() => {
-    return  {
-        Any: sts.unit(),
-        Kusama: sts.unit(),
-        Named: sts.bytes(),
-        Polkadot: sts.unit(),
-    }
-})
-
 export interface AssetDetails {
     name: BoundedVec
     assetType: AssetType
@@ -391,6 +302,88 @@ export const V1MultiLocation: sts.Type<V1MultiLocation> = sts.struct(() => {
     return  {
         parents: sts.number(),
         interior: V1Junctions,
+    }
+})
+
+export const V1Junctions: sts.Type<V1Junctions> = sts.closedEnum(() => {
+    return  {
+        Here: sts.unit(),
+        X1: V1Junction,
+        X2: sts.tuple(() => [V1Junction, V1Junction]),
+        X3: sts.tuple(() => [V1Junction, V1Junction, V1Junction]),
+        X4: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction]),
+        X5: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]),
+        X6: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]),
+        X7: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]),
+        X8: sts.tuple(() => [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]),
+    }
+})
+
+export const V1Junction: sts.Type<V1Junction> = sts.closedEnum(() => {
+    return  {
+        AccountId32: sts.enumStruct({
+            network: V0NetworkId,
+            id: sts.bytes(),
+        }),
+        AccountIndex64: sts.enumStruct({
+            network: V0NetworkId,
+            index: sts.bigint(),
+        }),
+        AccountKey20: sts.enumStruct({
+            network: V0NetworkId,
+            key: sts.bytes(),
+        }),
+        GeneralIndex: sts.bigint(),
+        GeneralKey: sts.bytes(),
+        OnlyChild: sts.unit(),
+        PalletInstance: sts.number(),
+        Parachain: sts.number(),
+        Plurality: sts.enumStruct({
+            id: V0BodyId,
+            part: V0BodyPart,
+        }),
+    }
+})
+
+export const V0BodyPart: sts.Type<V0BodyPart> = sts.closedEnum(() => {
+    return  {
+        AtLeastProportion: sts.enumStruct({
+            nom: sts.number(),
+            denom: sts.number(),
+        }),
+        Fraction: sts.enumStruct({
+            nom: sts.number(),
+            denom: sts.number(),
+        }),
+        Members: sts.enumStruct({
+            count: sts.number(),
+        }),
+        MoreThanProportion: sts.enumStruct({
+            nom: sts.number(),
+            denom: sts.number(),
+        }),
+        Voice: sts.unit(),
+    }
+})
+
+export const V0BodyId: sts.Type<V0BodyId> = sts.closedEnum(() => {
+    return  {
+        Executive: sts.unit(),
+        Index: sts.number(),
+        Judicial: sts.unit(),
+        Legislative: sts.unit(),
+        Named: sts.bytes(),
+        Technical: sts.unit(),
+        Unit: sts.unit(),
+    }
+})
+
+export const V0NetworkId: sts.Type<V0NetworkId> = sts.closedEnum(() => {
+    return  {
+        Any: sts.unit(),
+        Kusama: sts.unit(),
+        Named: sts.bytes(),
+        Polkadot: sts.unit(),
     }
 })
 
@@ -7749,6 +7742,13 @@ export interface Call_XTokens {
 }
 
 export const AccountId32 = sts.bytes()
+
+export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
+    return  {
+        parents: sts.number(),
+        interior: V1Junctions,
+    }
+})
 
 export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
     return  {

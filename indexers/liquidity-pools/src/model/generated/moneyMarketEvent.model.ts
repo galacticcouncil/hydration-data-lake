@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
 import {EvmEventName} from "./_evmEventName"
 import {Transfer} from "./transfer.model"
 import {MmSupply} from "./mmSupply.model"
@@ -31,6 +31,10 @@ export class MoneyMarketEvent {
 
   @Column_("text", {array: true, nullable: false})
   allInvolvedAssetIds!: (string)[]
+
+  @Index_()
+  @Column_("text", {nullable: true})
+  allInvolvedAssetDetails!: string | undefined | null
 
   @Column_("text", {array: true, nullable: false})
   allInvolvedParticipants!: (string)[]

@@ -1,5 +1,5 @@
-module.exports = class Data1740854979986 {
-    name = 'Data1740854979986'
+module.exports = class Data1741196824506 {
+    name = 'Data1741196824506'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -294,7 +294,8 @@ module.exports = class Data1740854979986 {
         await db.query(`CREATE INDEX "IDX_ed4a6f071f3f10f87bdcc579f5" ON "mm_reserve_used_as_collateral_disabled_event" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_a9a47407f06dc1a20152deaa9a" ON "mm_reserve_used_as_collateral_disabled_event" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_c220a3cac1f726994223ca66a7" ON "mm_reserve_used_as_collateral_disabled_event" ("event_id") `)
-        await db.query(`CREATE TABLE "money_market_event" ("id" character varying NOT NULL, "trace_ids" text array, "event_name" character varying(31) NOT NULL, "all_involved_asset_ids" text array NOT NULL, "all_involved_participants" text array NOT NULL, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "transfer_id" character varying, "supply_id" character varying, "withdraw_id" character varying, "borrow_id" character varying, "repay_id" character varying, "user_e_mode_set_id" character varying, "liquidation_call_id" character varying, "reserve_used_as_collateral_enabled_id" character varying, "reserve_used_as_collateral_disabled_id" character varying, "event_id" character varying, CONSTRAINT "PK_3be4b3e3f9cd089066b3d02c254" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "money_market_event" ("id" character varying NOT NULL, "trace_ids" text array, "event_name" character varying(31) NOT NULL, "all_involved_asset_ids" text array NOT NULL, "all_involved_asset_details" text, "all_involved_participants" text array NOT NULL, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "transfer_id" character varying, "supply_id" character varying, "withdraw_id" character varying, "borrow_id" character varying, "repay_id" character varying, "user_e_mode_set_id" character varying, "liquidation_call_id" character varying, "reserve_used_as_collateral_enabled_id" character varying, "reserve_used_as_collateral_disabled_id" character varying, "event_id" character varying, CONSTRAINT "PK_3be4b3e3f9cd089066b3d02c254" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_9d02e623675a59f458d39e88b0" ON "money_market_event" ("all_involved_asset_details") `)
         await db.query(`CREATE INDEX "IDX_062f5754dcbe60f72036dcf728" ON "money_market_event" ("transfer_id") `)
         await db.query(`CREATE INDEX "IDX_f8fa3420b48326ae2b313c1da8" ON "money_market_event" ("supply_id") `)
         await db.query(`CREATE INDEX "IDX_1eec01808ac13a0bc65a0794c7" ON "money_market_event" ("withdraw_id") `)
@@ -780,6 +781,7 @@ module.exports = class Data1740854979986 {
         await db.query(`DROP INDEX "public"."IDX_a9a47407f06dc1a20152deaa9a"`)
         await db.query(`DROP INDEX "public"."IDX_c220a3cac1f726994223ca66a7"`)
         await db.query(`DROP TABLE "money_market_event"`)
+        await db.query(`DROP INDEX "public"."IDX_9d02e623675a59f458d39e88b0"`)
         await db.query(`DROP INDEX "public"."IDX_062f5754dcbe60f72036dcf728"`)
         await db.query(`DROP INDEX "public"."IDX_f8fa3420b48326ae2b313c1da8"`)
         await db.query(`DROP INDEX "public"."IDX_1eec01808ac13a0bc65a0794c7"`)

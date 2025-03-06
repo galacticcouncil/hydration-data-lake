@@ -8,7 +8,7 @@ import {
 } from '../../utils/helpers';
 import { handleSupportSwapperEvent } from './swap';
 
-export async function handleSupportSwappedEvents(
+export async function handleBroadcastSwappedEvents(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {

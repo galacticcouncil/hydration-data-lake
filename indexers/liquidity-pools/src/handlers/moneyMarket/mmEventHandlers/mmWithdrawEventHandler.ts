@@ -82,6 +82,7 @@ export async function handleMmWithdrawEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
     withdraw: mmWithdrawEntity,
   });

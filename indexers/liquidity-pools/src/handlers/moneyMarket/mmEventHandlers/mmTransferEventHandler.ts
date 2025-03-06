@@ -4,7 +4,10 @@ import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { initTransfer } from '../../transfers/utils';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from '../../assets/asset';
+import {
+  getOrCreateAsset,
+  getOrCreateMoneyMarketAsset,
+} from '../../assets/asset';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 import { EvmEventName } from '../../../model';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
@@ -104,6 +107,7 @@ export async function handleMmTransferEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
     transfer: transferEntity,
   });

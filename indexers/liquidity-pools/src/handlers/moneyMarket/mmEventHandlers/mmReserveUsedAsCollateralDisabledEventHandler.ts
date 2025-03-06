@@ -7,7 +7,10 @@ import {
   MmReserveUsedAsCollateralDisabledEvent,
   MmReserveUsedAsCollateralEnabledEvent,
 } from '../../../model';
-import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from '../../assets/asset';
+import {
+  getOrCreateAsset,
+  getOrCreateMoneyMarketAsset,
+} from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
@@ -80,6 +83,7 @@ export async function handleMmReserveUsedAsCollateralDisabledEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id],
     reserveUsedAsCollateralDisabled: mmNewEntity,
   });
