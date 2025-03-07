@@ -125,8 +125,9 @@ export async function createXykPool({
       }),
     }),
     createdAtParaBlockHeight: blockHeader.height,
-    createdAtRelayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
+    createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      blockHeader.height
+    ).height,
     createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
@@ -153,6 +154,11 @@ export async function getOrCreateXykPool({
     where: { id },
     relations: { assetA: true, assetB: true, account: true },
   });
+
+  if (pool) {
+    ctx.batchState.state.xykAllBatchPools.set(pool.id, pool);
+    return pool;
+  }
 
   if (pool || (!pool && !ensure)) return pool ?? null;
 
@@ -273,8 +279,7 @@ export function addXykpoolCreatedLifeState({
   createdState: XykpoolCreatedData;
 }): XykpoolLifeState[] {
   const existingState = existingStates.find(
-    (state) =>
-      state.created.paraBlockHeight === createdState.paraBlockHeight
+    (state) => state.created.paraBlockHeight === createdState.paraBlockHeight
   );
 
   if (existingState) return existingStates;

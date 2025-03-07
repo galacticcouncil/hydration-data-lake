@@ -85,7 +85,7 @@ export async function stablepoolLiquidityAddedRemoved(
 
   if (!pool) return;
 
-  let fee = BigInt(0);
+  const fee = BigInt(0);
   let assetAmounts = [];
 
   const actionType =

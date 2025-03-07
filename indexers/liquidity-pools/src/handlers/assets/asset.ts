@@ -42,7 +42,7 @@ export async function getOrCreateAsset({
   });
 
   if (asset) {
-    assetsAllBatch.set(asset.id, asset);
+    ctx.batchState.state.assetsAllBatch.set(asset.id, asset);
     return asset;
   }
 
@@ -87,7 +87,7 @@ export async function getOrCreateAsset({
 
   await ctx.store.save(newAsset);
 
-  assetsAllBatch.set(newAsset.id, newAsset);
+  ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
 
   return newAsset;
 }
@@ -188,7 +188,7 @@ export async function getOrCreateMoneyMarketAsset({
     await ctx.store.upsert(underlyingAsset);
   }
 
-  assetsAllBatch.set(newAsset.id, newAsset);
+  ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
 
   return newAsset;
 }

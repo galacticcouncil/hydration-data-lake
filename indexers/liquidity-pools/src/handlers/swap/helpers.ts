@@ -184,6 +184,7 @@ export async function supportSwappedEventPostHook({
         swap,
         pool,
       });
+
       break;
     }
   }

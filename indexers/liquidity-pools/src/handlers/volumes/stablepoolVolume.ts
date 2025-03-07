@@ -38,7 +38,10 @@ export async function handleStablepoolVolumeUpdates({
     ? swap.relayBlockHeight
     : liquidityAction!.relayBlockHeight;
 
-  let allAssetsToProcess: Asset[] = await getAssetsByStablepool(ctx, pool.id);
+  // let allAssetsToProcess: Asset[] = await getAssetsByStablepool(ctx, pool.id);
+  const allAssetsToProcess: Asset[] = pool.assets.map(
+    (stableswapAsset) => stableswapAsset.asset
+  );
 
   const stablepoolVolumeCollections =
     ctx.batchState.state.stablepoolVolumeCollections;

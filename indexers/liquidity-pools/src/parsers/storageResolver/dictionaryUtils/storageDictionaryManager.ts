@@ -424,7 +424,6 @@ export class StorageDictionaryManager extends QueriesHelper {
           .size === 0
       )
         return [];
-
       const data: LbpPoolGlq[] = [];
       for await (const page of this.fetchAllPages({
         limit: 1000,
@@ -433,6 +432,7 @@ export class StorageDictionaryManager extends QueriesHelper {
         if (!page) continue;
         data.push(...(page as LbpPoolGlq[]));
       }
+
       return { pallet: ProcessingPallets.LBP, data: data.flat() };
     };
 
@@ -478,7 +478,6 @@ export class StorageDictionaryManager extends QueriesHelper {
           0
       )
         return [];
-
       const data = [];
       for await (const page of this.fetchAllPages({
         limit: 1000,

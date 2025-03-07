@@ -348,26 +348,27 @@ export async function handleSupportSwapperEvent(
     eventParams.operationStack && eventParams.operationStack.length > 0
       ? OperationStackManager.operationStackToString(eventParams.operationStack)
       : undefined;
-
   const chainActivityTraceId = ChainActivityTraceManager.getTraceIdRoot(
     callTraceId ?? eventMetadata.traceId
   );
 
   let chainActivityTrace = null;
 
-  if (chainActivityTraceId)
+  if (chainActivityTraceId) {
     chainActivityTrace = await ChainActivityTraceManager.getChainActivityTrace({
       id: chainActivityTraceId,
       ctx,
       fetchFromDb: true,
     });
+  }
 
-  if (newOperationStackId)
+  if (newOperationStackId) {
     await ChainActivityTraceManager.addOperationIdToActivityTrace({
       traceId: callTraceId ?? eventMetadata.traceId,
       operationId: newOperationStackId,
       ctx,
     });
+  }
 
   const newSwapDetails = await handleSwap({
     ctx,
