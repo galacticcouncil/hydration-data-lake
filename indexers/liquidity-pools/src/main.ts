@@ -40,6 +40,7 @@ import {
   prefetchAllAssets,
 } from './handlers/assets/utils';
 import { ethers } from 'ethers';
+import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -97,7 +98,7 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   console.time('initContractInstances');
   await MoneyMarketContractsManager.getInstance().initContractInstances({
     ctx: ctxWithBatchState as SqdProcessorContext<Store>,
-    blockNumber: ctx.blocks[0].header.height,
+    blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
   console.timeEnd('initContractInstances');
 
@@ -266,6 +267,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     ctxWithBatchState as SqdProcessorContext<Store>
   );
   console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
+
+  // console.time('handleAssetAccountBalancesPerBlock');
+  // await handleAssetAccountBalancesPerBlock(
+  //   ctxWithBatchState as SqdProcessorContext<Store>
+  // );
+  // console.timeEnd('handleAssetAccountBalancesPerBlock');
 
   console.time('updateInitialIndexingFinishedAtTime');
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(

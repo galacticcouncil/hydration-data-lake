@@ -1,14 +1,7 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  AssetRegistryRegisteredData,
-  AssetRegistryUpdatedData,
-} from '../../parsers/batchBlocksParser/types';
 import { Asset, AssetType, ResourceType } from '../../model';
 import parsers from '../../parsers';
-import { ProcessorStatusManager } from '../../processorStatusManager';
-import { AssetDetailsWithId } from '../../parsers/types/storage';
-import { EvmUtils } from '../../utils/evm';
 import { getAssetEvmAddressByType, getAssetIdFromEvmAddress } from './utils';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 
@@ -104,7 +97,7 @@ export async function getOrCreateMoneyMarketAsset({
   id,
   evmAddress,
   ensure = false,
-  resourceType = ResourceType.Underlying,
+  resourceType,
 }: {
   ctx: SqdProcessorContext<Store>;
   id?: string | number;
@@ -159,22 +152,41 @@ export async function getOrCreateMoneyMarketAsset({
 
   const mmAssetSyntheticId = getAssetIdFromEvmAddress(evmAddress);
 
+  const underlyingAsset = contractData.underlyingAssetAddress
+    ? await getOrCreateAsset({
+        ctx,
+        evmAddress: contractData.underlyingAssetAddress.toLowerCase(),
+        ensure: false,
+      })
+    : null;
+
   const newAsset = new Asset({
     id: `${mmAssetSyntheticId}`,
     synthetic: true,
     active: true,
     name: contractData.name,
     assetType: AssetType.Erc20,
-    resourceType,
+    resourceType: resourceType ?? contractData.resourceType,
     existentialDeposit: 0n,
     symbol: contractData.symbol ?? null,
     decimals: contractData.decimals ?? null,
     xcmRateLimit: null,
     isSufficient: true,
     evmAddress: contractData.address,
+    underlyingAsset,
   });
 
   await ctx.store.save(newAsset);
+
+  if (underlyingAsset) {
+    if (contractData.resourceType === ResourceType.Collateral) {
+      underlyingAsset.aToken = newAsset;
+    } else if (contractData.resourceType === ResourceType.Debt) {
+      underlyingAsset.variableDebtToken = newAsset;
+    }
+    assetsAllBatch.set(underlyingAsset.id, underlyingAsset);
+    await ctx.store.upsert(underlyingAsset);
+  }
 
   assetsAllBatch.set(newAsset.id, newAsset);
 

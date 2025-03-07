@@ -54,6 +54,7 @@ import {
   MmLiquidationCall,
   MmReserveUsedAsCollateralEnabledEvent,
   MmReserveUsedAsCollateralDisabledEvent,
+  AccountAssetBalanceHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -81,6 +82,11 @@ export type BatchStatePayload = {
 
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
+
+  accountAssetBalanceHistoricalData: Map<
+    string,
+    AccountAssetBalanceHistoricalData
+  >;
 
   swaps: Map<string, Swap>;
   swapFees: Map<string, SwapFee>;
@@ -190,6 +196,8 @@ export class BatchState {
 
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
+
+    accountAssetBalanceHistoricalData: new Map(),
 
     swaps: new Map(),
     swapFees: new Map(),

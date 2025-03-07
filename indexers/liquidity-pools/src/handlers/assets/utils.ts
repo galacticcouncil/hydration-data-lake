@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { Asset, AssetType, ResourceType } from '../../model';
 import parsers from '../../parsers';
 import { EvmUtils } from '../../utils/evm';
-import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from './asset';
+import { getOrCreateAsset } from './asset';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetDetailsWithId } from '../../parsers/types/storage';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
@@ -113,13 +113,23 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
         ctx,
       });
 
+      let erc20AssetContractDetails = null;
+
+      if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress)
+        erc20AssetContractDetails =
+          await MoneyMarketContractsManager.getInstance().getTokenDetails(
+            erc20AssetContractAddress
+          );
+
       const newAsset = new Asset({
         id: `${assetId}`,
         synthetic: false,
         active: true,
         name: data.name,
         assetType: data.assetType,
-        resourceType: ResourceType.Underlying,
+        resourceType: erc20AssetContractDetails
+          ? erc20AssetContractDetails.resourceType
+          : ResourceType.Underlying,
         existentialDeposit: data.existentialDeposit,
         symbol: data.symbol ?? null,
         decimals: data.decimals ?? null,
@@ -129,6 +139,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
       });
 
       assetsToSave.push(newAsset);
+      ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
     }
 
     // for (const mmResourceDetails of [
@@ -182,9 +193,9 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
     //   }
     // }
 
-    ctx.batchState.state.assetsAllBatch = new Map(
-      assetsToSave.map((asset) => [asset.id, asset])
-    );
+    // ctx.batchState.state.assetsAllBatch = new Map(
+    //   assetsToSave.map((asset) => [asset.id, asset])
+    // );
   } else {
     if (allExistingAssets.size === 0) return;
     storageData = await parsers.storage.assetRegistry.getAssetMany(
@@ -222,6 +233,46 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   }
 
   await ctx.store.upsert(assetsToSave);
+
+  /**
+   * This second step is required to avoid foreign key constraints on DB upsert of Asset
+   */
+  if (latestActualisationPoint < 0) {
+    const erc20AssetToSave: Map<string, Asset> = new Map();
+
+    for (const erc20Asset of [
+      ...ctx.batchState.state.assetsAllBatch.values(),
+    ].filter((a) => a.assetType === AssetType.Erc20 && !!a.evmAddress)) {
+      const erc20AssetContractDetails =
+        await MoneyMarketContractsManager.getInstance().getTokenDetails(
+          erc20Asset.evmAddress!
+        );
+      let underlyingAsset: Asset | null = null;
+
+      if (erc20AssetContractDetails)
+        underlyingAsset = erc20AssetContractDetails.underlyingAssetAddress
+          ? await getOrCreateAsset({
+              ctx,
+              evmAddress:
+                erc20AssetContractDetails.underlyingAssetAddress.toLowerCase(),
+              ensure: false,
+            })
+          : null;
+
+      if (!underlyingAsset) continue;
+
+      erc20Asset.underlyingAsset = underlyingAsset;
+      if (erc20Asset.resourceType === ResourceType.Collateral) {
+        underlyingAsset.aToken = erc20Asset;
+      } else if (erc20Asset.resourceType === ResourceType.Debt) {
+        underlyingAsset.variableDebtToken = erc20Asset;
+      }
+      erc20AssetToSave.set(erc20Asset.id, erc20Asset);
+      erc20AssetToSave.set(underlyingAsset.id, underlyingAsset);
+    }
+
+    await ctx.store.upsert([...erc20AssetToSave.values()]);
+  }
 
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     assetsLastUpdatedAtBlock: ctx.blocks[0].header.height,

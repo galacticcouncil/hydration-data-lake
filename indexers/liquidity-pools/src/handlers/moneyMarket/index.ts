@@ -21,34 +21,6 @@ export async function handleEvm(
 export async function saveAllMoneyMarketEvents(
   ctx: SqdProcessorContext<Store>
 ) {
-  // console.log(
-  //   `ctx.batchState.state.moneyMarketEvents - ${ctx.batchState.state.moneyMarketEvents.size}`
-  // );
-  // console.log(
-  //   `ctx.batchState.state.mmSupplies - ${ctx.batchState.state.mmSupplies.size}`
-  // );
-  // console.log(
-  //   `ctx.batchState.state.mmWithdrawals - ${ctx.batchState.state.mmWithdrawals.size}`
-  // );
-  // console.log(
-  //   `ctx.batchState.state.mmBorrows - ${ctx.batchState.state.mmBorrows.size}`
-  // );
-  // console.log(
-  //   `ctx.batchState.state.mmRepays - ${ctx.batchState.state.mmRepays.size}`
-  // );
-  // console.log(
-  //   `ctx.batchState.state.mmLiquidationCalls - ${ctx.batchState.state.mmLiquidationCalls.size}`
-  // );
-  // console.log(
-  //   `ctx.batchState.state.mmUserEModeSetEvents - ${ctx.batchState.state.mmUserEModeSetEvents.size}`
-  // );
-  // console.log(
-  //   `ctx.batchState.state.mmReserveUsedAsCollateralEnabledEvents - ${ctx.batchState.state.mmReserveUsedAsCollateralEnabledEvents.size}`
-  // );
-  // console.log(
-  //   `ctx.batchState.state.mmReserveUsedAsCollateralDisabledEvents - ${ctx.batchState.state.mmReserveUsedAsCollateralDisabledEvents.size}`
-  // );
-
   await ctx.store.save([...ctx.batchState.state.mmSupplies.values()]);
   await ctx.store.save([...ctx.batchState.state.mmWithdrawals.values()]);
   await ctx.store.save([...ctx.batchState.state.mmBorrows.values()]);
@@ -69,8 +41,6 @@ export async function handleEvmLog(
   eventCallData: EvmLogData
 ) {
   if (!eventCallData.eventData.params) return;
-
-  // console.log('MM event - ', eventCallData.eventData.params.eventName);
 
   switch (eventCallData.eventData.params.eventName) {
     case EvmEventName.Transfer:
