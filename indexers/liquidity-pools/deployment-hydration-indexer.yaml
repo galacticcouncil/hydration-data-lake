@@ -12,7 +12,7 @@ deploy:
   processor:
     env:
       CHAIN: 'hydration'
-      RPC_URL: 'wss://archive.rpc.hydration.cloud'
+      RPC_URL: 'wss://7.rpc.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
       PROCESS_XYK_POOLS: true
@@ -48,10 +48,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
       profile: medium
       storage: 200G
   processor:
-    profile: large
+    profile: medium
+  api:
+    profile: medium
+

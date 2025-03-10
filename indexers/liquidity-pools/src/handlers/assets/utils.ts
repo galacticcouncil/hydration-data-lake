@@ -7,6 +7,7 @@ import { getOrCreateAsset } from './asset';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetDetailsWithId } from '../../parsers/types/storage';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { isU32 } from '../../utils/helpers';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAllBatch = new Map(
@@ -199,7 +200,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   } else {
     if (allExistingAssets.size === 0) return;
     storageData = await parsers.storage.assetRegistry.getAssetMany(
-      [...allExistingAssets.keys()],
+      [...allExistingAssets.keys()].filter((key) => isU32(+key)),
       ctx.blocks[0].header
     );
 
