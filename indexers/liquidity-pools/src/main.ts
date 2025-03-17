@@ -279,4 +279,10 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     ctxWithBatchState as SqdProcessorContext<Store>
   );
   console.timeEnd('updateInitialIndexingFinishedAtTime');
+
+  await ProcessorStatusManager.getInstance(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  ).updateProcessorStatus({
+    latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
 });

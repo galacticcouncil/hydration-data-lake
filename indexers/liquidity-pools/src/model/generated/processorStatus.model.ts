@@ -24,4 +24,7 @@ export class ProcessorStatus {
 
   @Column_("timestamp with time zone", {nullable: true})
   initialIndexingFinishedAt!: Date | undefined | null
+
+  @Column_("int4", {nullable: false})
+  latestProcessedBlock!: number
 }

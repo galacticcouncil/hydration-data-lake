@@ -68,7 +68,7 @@ export async function getAssetEvmAddressByType({
 }
 
 export function getAssetIdFromEvmAddress(address: string) {
-  const partialHash = address.slice(-13);
+  const partialHash = address.slice(-8);
   return parseInt(partialHash, 16);
 }
 
