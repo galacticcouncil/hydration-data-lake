@@ -10,7 +10,7 @@ import {
   OmnipoolTokenAddedData,
   OmnipoolTokenRemovedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 
 export async function getOrCreateOmnipoolAsset({
   ctx,
@@ -35,12 +35,16 @@ export async function getOrCreateOmnipoolAsset({
     relations: { asset: true, pool: true },
   });
 
-  if (omnipoolAsset || (!omnipoolAsset && !ensure))
-    return omnipoolAsset ?? null;
+  if (omnipoolAsset) {
+    batchState.omnipoolAssets.set(omnipoolAsset.id, omnipoolAsset);
+    return omnipoolAsset;
+  }
+
+  if (!omnipoolAsset && !ensure) return omnipoolAsset ?? null;
 
   if (!blockHeader) return null;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateAsset({
     ctx,
     id: assetId,
     ensure: true,
@@ -55,8 +59,9 @@ export async function getOrCreateOmnipoolAsset({
     pool: ctx.batchState.state.omnipoolEntity!,
 
     addedAtParaBlockHeight: blockHeader.height,
-    addedAtRelayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
+    addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      blockHeader.height
+    ).height,
     addedAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
     isRemoved: false,
     lifeStates: addOmnipoolAssetAddedLifeState({
@@ -95,7 +100,7 @@ export async function omnipoolTokenAdded(
 
   if (omnipoolAssetEntity) return;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateAsset({
     ctx,
     id: eventParams.assetId,
     ensure: true,
@@ -110,10 +115,9 @@ export async function omnipoolTokenAdded(
     pool: ctx.batchState.state.omnipoolEntity!,
 
     addedAtParaBlockHeight: eventMetadata.blockHeader.height,
-    addedAtRelayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(
-        eventMetadata.blockHeader.height
-      ).height,
+    addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      eventMetadata.blockHeader.height
+    ).height,
     addedAtBlock: ctx.batchState.state.batchBlocks.get(
       eventMetadata.blockHeader.id
     ),
@@ -181,8 +185,7 @@ export function addOmnipoolAssetAddedLifeState({
   assetAddedState: OmnipoolAssetAddedData;
 }): OmnipoolAssetLifeState[] {
   const existingState = existingStates.find(
-    (state) =>
-      state.added.paraBlockHeight === assetAddedState.paraBlockHeight
+    (state) => state.added.paraBlockHeight === assetAddedState.paraBlockHeight
   );
 
   if (existingState) return existingStates;
@@ -210,8 +213,7 @@ export function addOmnipoolAssetRemovedLifeState({
   return [
     ...existingStates.filter(
       (state) =>
-        state.added.paraBlockHeight !==
-        latestOpenState.added.paraBlockHeight
+        state.added.paraBlockHeight !== latestOpenState.added.paraBlockHeight
     ),
     new OmnipoolAssetLifeState({
       added: latestOpenState.added,

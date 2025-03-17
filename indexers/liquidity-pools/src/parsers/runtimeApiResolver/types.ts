@@ -7,10 +7,17 @@ export enum RuntimeApiVersion {
 export enum RuntimeApiName {
   CurrenciesApi = 'CurrenciesApi',
 }
+export enum RpcCallName {
+  EthCall = 'EthCall',
+}
 
 export enum RuntimeApiMethodName {
   account = 'account',
   accounts = 'accounts',
+}
+
+export enum RpcCallMethodName {
+  balanceOf = 'balanceOf',
 }
 
 export type CurrenciesApiAccountsInput = {

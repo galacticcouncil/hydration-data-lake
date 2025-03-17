@@ -3,6 +3,8 @@ import { Store } from '@subsquid/typeorm-store';
 import { TokensTransferData } from '../../parsers/batchBlocksParser/types';
 import { initTransfer } from './utils';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { AssetType } from '../../model';
+import { getOrCreateAsset } from '../assets/asset';
 
 export async function handleTokensTransfer(
   ctx: SqdProcessorContext<Store>,
@@ -12,6 +14,15 @@ export async function handleTokensTransfer(
     eventData: { params: eventParams, metadata: eventMetadata },
     callData,
   } = eventCallData;
+
+  const assetEntity = await getOrCreateAsset({
+    ctx,
+    id: eventParams.currencyId,
+    ensure: true,
+    blockHeader: eventMetadata.blockHeader,
+  });
+
+  if (!assetEntity || assetEntity.assetType === AssetType.Erc20) return;
 
   const transferEntity = await initTransfer({
     ctx,

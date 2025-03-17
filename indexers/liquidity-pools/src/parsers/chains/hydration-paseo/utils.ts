@@ -5,6 +5,9 @@ import {
   DcaScheduleOrderRouteData,
 } from '../../types/calls';
 import { DcaScheduleOrderType, SwapFillerType } from '../../../model';
+import { AssetLocation as AssetLocationV276 } from './typegenTypes/v276';
+
+import { Erc20AssetContractDetails } from '../../types/storage';
 
 export function decorateDcaSchedule(scheduleRaw: Schedule) {
   const {
@@ -58,4 +61,20 @@ export function decorateDcaSchedule(scheduleRaw: Schedule) {
   };
 
   return scheduleDecoratedData;
+}
+
+// TODO refactor parsing location by proper way
+export function getErc20AssetContractFromLocation(
+  location?: AssetLocationV276
+): Erc20AssetContractDetails | null {
+  if (!location) return null;
+
+  try {
+    return {
+      // @ts-ignore
+      address: location.interior.value.key,
+    };
+  } catch (e) {
+    return null;
+  }
 }

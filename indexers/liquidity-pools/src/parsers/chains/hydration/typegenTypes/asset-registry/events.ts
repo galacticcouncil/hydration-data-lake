@@ -4,6 +4,7 @@ import * as v115 from '../v115'
 import * as v160 from '../v160'
 import * as v176 from '../v176'
 import * as v222 from '../v222'
+import * as v244 from '../v244'
 import * as v264 from '../v264'
 
 export const registered =  {
@@ -147,6 +148,47 @@ export const updated =  {
             symbol: sts.option(() => sts.bytes()),
             decimals: sts.option(() => sts.number()),
             isSufficient: sts.boolean(),
+        })
+    ),
+}
+
+export const locationSet =  {
+    name: 'AssetRegistry.LocationSet',
+    /**
+     * Native location set for an asset. \[asset_id, location\]
+     */
+    v108: new EventType(
+        'AssetRegistry.LocationSet',
+        sts.tuple([sts.number(), v108.AssetLocation])
+    ),
+    /**
+     * Native location set for an asset.
+     */
+    v115: new EventType(
+        'AssetRegistry.LocationSet',
+        sts.struct({
+            assetId: sts.number(),
+            location: v115.AssetLocation,
+        })
+    ),
+    /**
+     * Native location set for an asset.
+     */
+    v160: new EventType(
+        'AssetRegistry.LocationSet',
+        sts.struct({
+            assetId: sts.number(),
+            location: v160.AssetLocation,
+        })
+    ),
+    /**
+     * Native location set for an asset.
+     */
+    v244: new EventType(
+        'AssetRegistry.LocationSet',
+        sts.struct({
+            assetId: sts.number(),
+            location: v244.AssetLocation,
         })
     ),
 }

@@ -40,3 +40,17 @@ export const updated =  {
         })
     ),
 }
+
+export const locationSet =  {
+    name: 'AssetRegistry.LocationSet',
+    /**
+     * Native location set for an asset.
+     */
+    v276: new EventType(
+        'AssetRegistry.LocationSet',
+        sts.struct({
+            assetId: sts.number(),
+            location: v276.AssetLocation,
+        })
+    ),
+}

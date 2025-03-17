@@ -2,8 +2,8 @@ import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { TransferEvent } from '../../utils/types';
 import { Transfer } from '../../model';
-import { getAccount } from '../accounts';
-import { getAsset } from '../assets/assetRegistry';
+import { getOrCreateAccount } from '../accounts';
+import { getOrCreateAsset } from '../assets/asset';
 
 export async function initTransfer({
   ctx,
@@ -26,7 +26,7 @@ export async function initTransfer({
     timestamp,
   } = data;
 
-  const assetEntity = await getAsset({
+  const assetEntity = await getOrCreateAsset({
     ctx,
     id: assetId,
     ensure: true,
@@ -36,10 +36,11 @@ export async function initTransfer({
   if (!assetEntity) throw Error(`Asset ${assetId} cannot be found`);
 
   return new Transfer({
-    from: await getAccount({ ctx, id: from }),
-    to: await getAccount({ ctx, id: to }),
+    from: await getOrCreateAccount({ ctx, id: from }),
+    to: await getOrCreateAccount({ ctx, id: to }),
     txFee: fee,
     asset: assetEntity,
+    assetType: assetEntity.assetType,
     paraBlockHeight: blockNumber,
     paraTimestamp: timestamp ?? new Date(),
     relayBlockHeight:

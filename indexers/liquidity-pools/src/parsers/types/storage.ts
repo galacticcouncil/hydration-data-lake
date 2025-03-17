@@ -60,6 +60,10 @@ export interface AssetDetails {
   xcmRateLimit?: bigint;
 }
 
+export interface Erc20AssetContractDetails {
+  address: string;
+}
+
 export type AssetDetailsWithId = {
   assetId: number;
   data: AssetDetails | null;
@@ -105,6 +109,8 @@ export type OtcOrderData = {
   amountOut: bigint;
   partiallyFillable: boolean;
 };
+
+export type EvmAccountsAccountExtension = string;
 
 /**
  * =============================================================================
@@ -158,5 +164,10 @@ export type DcaGetScheduleInput = {
 };
 export type OtcGetOrderInput = {
   orderId: number;
+  block: BlockHeader;
+};
+
+export type EvmAccountsGetAccountExtensionInput = {
+  evmAddress: string;
   block: BlockHeader;
 };

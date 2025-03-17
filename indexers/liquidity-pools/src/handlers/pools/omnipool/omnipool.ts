@@ -7,8 +7,8 @@ import {
   OmnipoolAssetAddedData,
   OmnipoolAssetLifeState,
 } from '../../../model';
-import { getAccount } from '../../accounts';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAccount } from '../../accounts';
+import { getOrCreateAsset } from '../../assets/asset';
 import { addOmnipoolAssetAddedLifeState } from './omnipoolAssets';
 
 export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
@@ -25,7 +25,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
     return;
   }
 
-  const lrnaAssetEntity = await getAsset({
+  const lrnaAssetEntity = await getOrCreateAsset({
     ctx,
     id: ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
     ensure: true,
@@ -36,7 +36,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
 
   omnipoolEntity = new Omnipool();
   omnipoolEntity.id = ctx.appConfig.OMNIPOOL_ADDRESS;
-  omnipoolEntity.account = await getAccount({
+  omnipoolEntity.account = await getOrCreateAccount({
     ctx,
     id: ctx.appConfig.OMNIPOOL_ADDRESS,
     accountType: AccountType.Omnipool,

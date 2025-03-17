@@ -12,7 +12,7 @@ import {
   EventGroup,
 } from '../model';
 import { getCallOriginParts, jsonToString } from '../utils/helpers';
-import { getAccount } from '../handlers/accounts';
+import { getOrCreateAccount } from '../handlers/accounts';
 import {
   EventPhase,
   TraceIdEventGroup,
@@ -192,7 +192,7 @@ export class ChainActivityTraceManager {
           rootCall.call.originValueKind === 'Signed' &&
           rootCall.call.originValue
         ) {
-          activityTraceEntity.originator = await getAccount({
+          activityTraceEntity.originator = await getOrCreateAccount({
             ctx,
             id: rootCall.call.originValue,
           });

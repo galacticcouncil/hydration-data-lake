@@ -44,11 +44,6 @@ export async function handleOmnioolOperations(
         ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
       )
   )) {
-    // console.log(
-    //   'handleOmnioolOperations - ',
-    //   eventData.eventData.metadata.blockHeader.specVersion,
-    //   eventData.eventData.metadata.blockHeader.height
-    // );
     await omnipoolBuySellExecuted(ctx, eventData);
   }
 }

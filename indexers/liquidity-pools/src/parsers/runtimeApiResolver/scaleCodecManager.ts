@@ -1,4 +1,6 @@
 import {
+  RpcCallMethodName,
+  RpcCallName,
   RuntimeApiMethodName,
   RuntimeApiName,
   RuntimeApiVersion,
@@ -14,6 +16,7 @@ import {
   compact,
   Tuple,
   Codec,
+  u256,
 } from 'scale-ts';
 
 const OrmlAccountDataCodec = Struct({
@@ -32,6 +35,9 @@ export class ScaleCodecManager {
         [RuntimeApiMethodName.accounts]: Vector(
           Tuple(u32, OrmlAccountDataCodec)
         ),
+      },
+      [RpcCallName.EthCall]: {
+        [RpcCallMethodName.balanceOf]: u256,
       },
     },
   };

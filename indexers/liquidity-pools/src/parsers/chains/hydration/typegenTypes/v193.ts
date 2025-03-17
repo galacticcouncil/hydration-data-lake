@@ -1,5 +1,11 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type H256 = Bytes
+
+export type H160 = Bytes
+
+export const H256 = sts.bytes()
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -440,16 +446,12 @@ export const Type_392: sts.Type<Type_392> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_392 = Type_392_EthereumTransaction
 
 export interface Type_392_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: H160
 }
-
-export type H160 = Bytes
 
 export const Type_394: sts.Type<Type_394> = sts.closedEnum(() => {
     return  {
@@ -2761,8 +2763,6 @@ export const TipsCall: sts.Type<TipsCall> = sts.closedEnum(() => {
     }
 })
 
-export const H256 = sts.bytes()
-
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -2925,8 +2925,6 @@ export interface TipsCall_tip_new {
     who: AccountId32
     tipValue: bigint
 }
-
-export type H256 = Bytes
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
@@ -11407,4 +11405,20 @@ export interface Call_XTokens {
 export interface Call_XYK {
     __kind: 'XYK'
     value: XYKCall
+}
+
+export const H160 = sts.bytes()
+
+export const Log: sts.Type<Log> = sts.struct(() => {
+    return  {
+        address: H160,
+        topics: sts.array(() => H256),
+        data: sts.bytes(),
+    }
+})
+
+export interface Log {
+    address: H160
+    topics: H256[]
+    data: Bytes
 }

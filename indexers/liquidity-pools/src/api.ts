@@ -20,6 +20,9 @@ import { NodeEnv } from './utils/types';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
 import { RoutedTradesSubscriptionsPlugin } from './apiSupport/plugins/subscription/routedTradesSubscriptions';
 import { CommonApiTypesDefinitionPlugin } from './apiSupport/plugins/query/commonApiTypesDefinition.plugin';
+import { handleProxyReqSubscan } from './apiSupport/proxyApiHandlers';
+import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
+import cors from 'cors';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -86,7 +89,45 @@ const postgraphileInstance = postgraphile(
   }
 );
 
+const corsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const localhostPattern = /^(?:https?:\/\/)?localhost:\d+$/;
+
+    const isAllowedSuffix =
+      appConfig.SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES.some((suffix) =>
+        origin.endsWith(suffix)
+      );
+
+    if (
+      (appConfig.SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST &&
+        localhostPattern.test(origin)) ||
+      isAllowedSuffix
+    ) {
+      callback(null, true);
+    } else {
+      const err = new Error('Not allowed by CORS');
+      (err as any).statusCode = 403;
+      return callback(err);
+    }
+  },
+  methods: ['GET', 'POST'],
+};
+
 app.use(postgraphileInstance);
+app.use(express.json());
+
+app.post(
+  `${ProxyApiRoute.subscan}/*`,
+  cors(corsOptions),
+  handleProxyReqSubscan
+);
 
 app.listen(appConfig.GQL_PORT, () => {
   console.log(`Squid API listening on port ${appConfig.GQL_PORT}`);

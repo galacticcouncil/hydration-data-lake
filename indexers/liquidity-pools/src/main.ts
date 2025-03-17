@@ -13,26 +13,34 @@ import { handleAssetRegistry } from './handlers/assets';
 import { StorageResolver } from './parsers/storageResolver';
 import { handleStableswapHistoricalData } from './handlers/pools/stableswap/historicalData';
 import { handleOmnipoolAssetHistoricalData } from './handlers/pools/omnipool/historicalData';
-import {
-  actualiseAssets,
-  ensureNativeToken,
-  prefetchAllAssets,
-} from './handlers/assets/assetRegistry';
 import { handleXykPoolHistoricalData } from './handlers/pools/xykPool/xykPoolHistoricalData';
 import { handleLbppoolHistoricalData } from './handlers/pools/lbpPool/lbpPoolHistoricalData';
 import { handleXykPools } from './handlers/pools/xykPool';
 import { handleLbpPools } from './handlers/pools/lbpPool';
 import { ProcessorStatusManager } from './processorStatusManager';
 import { ensurePoolsDestroyedStatus } from './handlers/pools/support';
-import { saveAllBatchAccounts } from './handlers/accounts';
+import {
+  prefetchOrInitAllBatchAccounts,
+  saveAllBatchAccounts,
+} from './handlers/accounts';
 import { ChainActivityTraceManager } from './chainActivityTracingManagers';
 import { handleDcaSchedules, saveDcaEntities } from './handlers/dca';
 import { printV8MemoryHeap } from './utils/helpers';
 import { handleOtcOrders } from './handlers/otc';
-import { handleSupportSwappedEvents } from './handlers/swap';
+import { handleBroadcastSwappedEvents } from './handlers/swap';
 import { handleStablepoolLiquidityEvents } from './handlers/pools/stableswap/liquidity';
 import { handleRelayChainBlocks } from './handlers/relayChain';
 import { HistoricalDataManager } from './handlers/historicalData';
+import { handleEvm, saveAllMoneyMarketEvents } from './handlers/moneyMarket';
+import { handleEvmAccounts } from './handlers/evmAccounts';
+import { MoneyMarketContractsManager } from './utils/evmTools/moneyMarketContractsManager';
+import {
+  actualiseAssets,
+  ensureNativeToken,
+  prefetchAllAssets,
+} from './handlers/assets/utils';
+import { ethers } from 'ethers';
+import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -81,6 +89,19 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
 
+  console.time('prefetchOrInitAllBatchAccounts');
+  await prefetchOrInitAllBatchAccounts(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
+  console.timeEnd('prefetchOrInitAllBatchAccounts');
+
+  console.time('initContractInstances');
+  await MoneyMarketContractsManager.getInstance().initContractInstances({
+    ctx: ctxWithBatchState as SqdProcessorContext<Store>,
+    blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
+  console.timeEnd('initContractInstances');
+
   console.time('prefetchAllAssets');
   await prefetchAllAssets(ctxWithBatchState as SqdProcessorContext<Store>);
   console.timeEnd('prefetchAllAssets');
@@ -127,12 +148,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   );
   console.timeEnd('handleStablepools');
 
-  console.time('handleSupportSwappedEvents');
-  await handleSupportSwappedEvents(
+  console.time('handleBroadcastSwappedEvents');
+  await handleBroadcastSwappedEvents(
     ctxWithBatchState as SqdProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleSupportSwappedEvents');
+  console.timeEnd('handleBroadcastSwappedEvents');
 
   console.time('handleBuySellOperations');
   await handleBuySellOperations(
@@ -165,12 +186,20 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   // if (ctx.isHead)
   //   await handlePoolPrices(ctxWithBatchState as SqdProcessorContext<Store>);
 
+  console.time('handleEvm');
+  await handleEvm(ctxWithBatchState as SqdProcessorContext<Store>, parsedData);
+  console.timeEnd('handleEvm');
+
   console.time('handleTransfers');
   await handleTransfers(
     ctxWithBatchState as SqdProcessorContext<Store>,
     parsedData
   );
   console.timeEnd('handleTransfers');
+
+  await saveAllMoneyMarketEvents(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
 
   console.time('handleStableswapHistoricalData');
   await handleStableswapHistoricalData(
@@ -206,6 +235,13 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   );
   console.timeEnd('ensurePoolsDestroyedStatus');
 
+  console.time('handleEvmAccounts');
+  await handleEvmAccounts(
+    ctxWithBatchState as SqdProcessorContext<Store>,
+    parsedData
+  );
+  console.timeEnd('handleEvmAccounts');
+
   console.time('saveAllBatchAccounts');
   await saveAllBatchAccounts(ctxWithBatchState as SqdProcessorContext<Store>);
   console.timeEnd('saveAllBatchAccounts');
@@ -232,9 +268,21 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   );
   console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
 
+  // console.time('handleAssetAccountBalancesPerBlock');
+  // await handleAssetAccountBalancesPerBlock(
+  //   ctxWithBatchState as SqdProcessorContext<Store>
+  // );
+  // console.timeEnd('handleAssetAccountBalancesPerBlock');
+
   console.time('updateInitialIndexingFinishedAtTime');
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(
     ctxWithBatchState as SqdProcessorContext<Store>
   );
   console.timeEnd('updateInitialIndexingFinishedAtTime');
+
+  await ProcessorStatusManager.getInstance(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  ).updateProcessorStatus({
+    latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
 });

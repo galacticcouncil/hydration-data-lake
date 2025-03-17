@@ -4,8 +4,12 @@ import { Asset, HistoricalAssetVolume } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { getOrderedListByBlockNumber } from '../../utils/helpers';
 import { EventName } from '../../parsers/types/events';
-import { assetRegistered, assetUpdated } from './assetRegistry';
 import { In } from 'typeorm';
+import {
+  assetLocationSet,
+  assetRegistered,
+  assetUpdated,
+} from './assetRegistry';
 
 export async function handleAssetRegistry(
   ctx: SqdProcessorContext<Store>,
@@ -40,6 +44,14 @@ export async function handleAssetRegistry(
 
   for (const eventData of getOrderedListByBlockNumber(updatedAssetsList)) {
     await assetUpdated(ctx, eventData);
+  }
+
+  for (const eventData of getOrderedListByBlockNumber([
+    ...parsedEvents
+      .getSectionByEventName(EventName.AssetRegistry_LocationSet)
+      .values(),
+  ])) {
+    await assetLocationSet(ctx, eventData);
   }
 
   await ctx.store.save(

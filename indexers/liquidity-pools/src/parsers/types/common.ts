@@ -39,6 +39,10 @@ import {
   XykPoolCreatedEventParams,
   XykPoolDestroyedEventParams,
   XykSellExecutedEventParams,
+  EvmLogEventParams,
+  EvmAccountsBoundEventParams,
+  CurrenciesTransferredEventParams,
+  AssetRegistryLocationSetEventParams,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -47,6 +51,9 @@ import {
   AssetDetailsWithId,
   DcaGetScheduleInput,
   DcaScheduleData,
+  Erc20AssetContractDetails,
+  EvmAccountsAccountExtension,
+  EvmAccountsGetAccountExtensionInput,
   GetPoolAssetInfoInput,
   LbpGetAllPoolsDataInput,
   LbpGetPoolDataInput,
@@ -65,8 +72,6 @@ import {
   XykGetShareTokenInput,
   XykPoolWithAssets,
 } from './storage';
-import { DcaScheduleOrderType, SwapFillerType } from '../../model';
-import broadcast from '../chains/hydration-paseo-next/events/broadcast';
 
 export interface PoolData {
   owner: string;
@@ -166,14 +171,28 @@ export type EventParserMethods = {
   balances: {
     parseTransferParams: (event: SqdEvent) => BalancesTransferEventParams;
   };
+  currencies: {
+    parseTransferredParams: (
+      event: SqdEvent
+    ) => CurrenciesTransferredEventParams;
+  };
   assetRegistry: {
     parseRegisteredParams: (
       event: SqdEvent
     ) => AssetRegistryRegisteredEventParams;
     parseUpdatedParams: (event: SqdEvent) => AssetRegistryUpdatedEventParams;
+    parseLocationSetParams: (
+      event: SqdEvent
+    ) => AssetRegistryLocationSetEventParams;
   };
   broadcast: {
     parseSwappedParams: (event: SqdEvent) => BroadcastSwappedEventParams;
+  };
+  evm: {
+    parseLogParams: (event: SqdEvent) => EvmLogEventParams | null;
+  };
+  evmAccounts: {
+    parseBoundParams: (event: SqdEvent) => EvmAccountsBoundEventParams;
   };
 };
 export type StorageParserMethods = {
@@ -202,6 +221,11 @@ export type StorageParserMethods = {
       assetIds: Array<string | number>,
       block: BlockHeader
     ) => Promise<Array<AssetDetailsWithId>>;
+    getAssetAll: (block: BlockHeader) => Promise<Array<AssetDetailsWithId>>;
+    getErc20AssetContractAddress: (
+      assetId: string | number,
+      block: BlockHeader
+    ) => Promise<Erc20AssetContractDetails | null>;
   };
   parachainSystem: {
     getLastRelayChainBlockNumber: (
@@ -247,6 +271,11 @@ export type StorageParserMethods = {
   };
   otc: {
     getOtcOrder: (args: OtcGetOrderInput) => Promise<OtcOrderData | null>;
+  };
+  evmAccounts: {
+    getAccountExtension: (
+      args: EvmAccountsGetAccountExtensionInput
+    ) => Promise<EvmAccountsAccountExtension | null>;
   };
 };
 

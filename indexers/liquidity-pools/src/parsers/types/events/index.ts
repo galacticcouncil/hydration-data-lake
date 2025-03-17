@@ -1,18 +1,24 @@
-import { DispatchError, PoolData } from './common';
+import { DispatchError, PoolData } from '../common';
 import {
   AssetType,
   SwapFeeDestinationType,
   SwapFillerType,
   TradeOperationType,
-} from '../../model';
-import { SwappedExecutionTypeKind } from '../../utils/types';
+} from '../../../model';
+import { SwappedExecutionTypeKind } from '../../../utils/types';
+
+export * from './evm';
+export * from './evmAccounts';
+export * from './assetRegistry';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
   'Tokens_Transfer' = 'Tokens.Transfer',
+  'Currencies_Transferred' = 'Currencies.Transferred',
 
   'AssetRegistry_Registered' = 'AssetRegistry.Registered',
   'AssetRegistry_Updated' = 'AssetRegistry.Updated',
+  'AssetRegistry_LocationSet' = 'AssetRegistry.LocationSet',
 
   'LBP_PoolCreated' = 'LBP.PoolCreated',
   'LBP_PoolUpdated' = 'LBP.PoolUpdated',
@@ -51,6 +57,8 @@ export enum EventName {
 
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
   'Broadcast_Swapped' = 'Broadcast.Swapped',
+  'EVM_Log' = 'EVM.Log',
+  'EVMAccounts_Bound' = 'EVMAccounts.Bound',
 }
 
 export type RelayChainInfo = {
@@ -69,6 +77,13 @@ export type LbpPoolUpdatedEventParams = {
 };
 
 export type TokensTransferEventParams = {
+  currencyId: number;
+  from: string;
+  to: string;
+  amount: bigint;
+};
+
+export type CurrenciesTransferredEventParams = {
   currencyId: number;
   from: string;
   to: string;
@@ -221,28 +236,6 @@ export type StableswapSellExecutedEventParams = {
   amountIn: bigint;
   amountOut: bigint;
   fee: bigint;
-};
-
-export type AssetRegistryRegisteredEventParams = {
-  assetId: number;
-  assetName?: string;
-  assetType: AssetType;
-  existentialDeposit: bigint;
-  xcmRateLimit?: bigint;
-  symbol?: string;
-  decimals?: number;
-  isSufficient: boolean;
-};
-
-export type AssetRegistryUpdatedEventParams = {
-  assetId: number;
-  assetName?: string;
-  assetType: AssetType;
-  existentialDeposit: bigint;
-  xcmRateLimit?: bigint;
-  symbol?: string;
-  decimals?: number;
-  isSufficient: boolean;
 };
 
 export type DcaScheduledEventParams = {

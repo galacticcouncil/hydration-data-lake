@@ -1,4 +1,4 @@
-import { Swap, SwapFee, SwapAssetBalance } from '../model';
+import { Swap, SwapFee, SwapAssetBalance, AssetType } from '../model';
 import type * as base from '@subsquid/substrate-data';
 
 export interface TransferEvent {

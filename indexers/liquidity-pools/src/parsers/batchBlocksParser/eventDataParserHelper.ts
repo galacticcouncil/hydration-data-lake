@@ -1,9 +1,10 @@
 import { RelayChainInfo } from '../types/events';
 import { CallMetadata, EventMetadata, StoragePrefetchIdsGroup } from './types';
-import { SqdCall, SqdEvent } from '../../processor';
+import { SqdCall, SqdEvent, SqdProcessorContext } from '../../processor';
 import parsers from '../index';
 import { BatchStatePayload } from '../../utils/batchState';
-import { calls, events } from '../chains/hydration/typegenTypes'; // TODO fix for different CHAIN env value
+import { calls, events } from '../chains/hydration/typegenTypes';
+import { Store } from '@subsquid/typeorm-store'; // TODO fix for different CHAIN env value
 
 export class EventDataParserHelper {
   private readonly relayChainInfo: RelayChainInfo;
@@ -11,7 +12,7 @@ export class EventDataParserHelper {
   private readonly eventMetadata: EventMetadata;
   private readonly event: SqdEvent;
   private readonly call?: SqdCall | null;
-  private readonly batchState: BatchStatePayload;
+  readonly batchState: BatchStatePayload;
 
   constructor({
     relayChainInfo,
@@ -48,6 +49,23 @@ export class EventDataParserHelper {
       return;
     }
     this.batchState[key].get(this.event.block.height)!.ids.add(value as never); // TODO fix type
+  }
+
+  addAccountIdsForPrefetch(ids: string[]) {
+    for (const id of ids) this.batchState.accountIdForPrefetch.add(id);
+  }
+
+  migrateLocalState(ctx: SqdProcessorContext<Store>) {
+    ctx.batchState.state.lbppoolAssetIdsForStoragePrefetch =
+      this.batchState.lbppoolAssetIdsForStoragePrefetch;
+    ctx.batchState.state.xykPoolIdsForStoragePrefetch =
+      this.batchState.xykPoolIdsForStoragePrefetch;
+    ctx.batchState.state.omnipoolAssetIdsForStoragePrefetch =
+      this.batchState.omnipoolAssetIdsForStoragePrefetch;
+    ctx.batchState.state.stableswapIdsForStoragePrefetch =
+      this.batchState.stableswapIdsForStoragePrefetch;
+    ctx.batchState.state.accountIdForPrefetch =
+      this.batchState.accountIdForPrefetch;
   }
 
   /**
@@ -658,12 +676,54 @@ export class EventDataParserHelper {
     };
   }
   /**
+   * ==== Currencies Transferred ====
+   */
+  parseCurrenciesTransferredData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.currencies.parseTransferredParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+
+  /**
    * ==== AssetRegistry Registered ====
    */
   parseAssetRegistryRegisteredData() {
     const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
     const eventParams =
       parsers.events.assetRegistry.parseRegisteredParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== AssetRegistry LocationSet ====
+   */
+  parseAssetRegistryLocationSetData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams =
+      parsers.events.assetRegistry.parseLocationSetParams(event);
 
     return {
       relayChainInfo,
@@ -705,6 +765,48 @@ export class EventDataParserHelper {
   parseBroadcastSwappedData() {
     const { relayChainInfo, eventMetadata, callMetadata, event } = this;
     const eventParams = parsers.events.broadcast.parseSwappedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+
+  /**
+   * ==== EVM Log ====
+   */
+  parseEvmLogData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.evm.parseLogParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+
+  /**
+   * ==== EVM Accounts Bound ====
+   */
+  parseEvmAccountsBoundData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.evmAccounts.parseBoundParams(event);
 
     return {
       relayChainInfo,

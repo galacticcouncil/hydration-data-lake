@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
+import {AssetType} from "./_assetType"
 import {Account} from "./account.model"
 import {Event} from "./event.model"
 
@@ -22,6 +23,9 @@ export class Transfer {
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
   asset!: Asset
+
+  @Column_("varchar", {length: 10, nullable: false})
+  assetType!: AssetType
 
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})

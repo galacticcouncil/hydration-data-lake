@@ -3,9 +3,9 @@ import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
 import { LbppoolHistoricalData } from '../../../model';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 import { getOrCreateLbppool } from './lbpPool';
-import { getAccount } from '../../accounts';
+import { getOrCreateAccount } from '../../accounts';
 
 export async function handleLbppoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -54,13 +54,13 @@ export async function handleLbppoolHistoricalData(
             .map((assetData) => [assetData.assetId, assetData.data])
         );
 
-        const assetAEntity = await getAsset({
+        const assetAEntity = await getOrCreateAsset({
           ctx,
           id: pool.assetA.id,
           ensure: true,
           blockHeader,
         });
-        const assetBEntity = await getAsset({
+        const assetBEntity = await getOrCreateAsset({
           ctx,
           id: pool.assetB.id,
           ensure: true,
@@ -77,7 +77,7 @@ export async function handleLbppoolHistoricalData(
           assetABalance: assetsData.get(assetAEntity.id)?.free ?? BigInt(0),
           assetBBalance: assetsData.get(assetBEntity.id)?.free ?? BigInt(0),
 
-          owner: await getAccount({ ctx, id: poolStorageData.owner }),
+          owner: await getOrCreateAccount({ ctx, id: poolStorageData.owner }),
           startBlockNumber: poolStorageData.start,
           endBlockNumber: poolStorageData.end,
           initialWeight: poolStorageData.initialWeight,
@@ -85,7 +85,7 @@ export async function handleLbppoolHistoricalData(
           weightCurve: poolStorageData.weightCurve.__kind,
           fee: poolStorageData.fee,
           feeCollector: poolStorageData.feeCollector
-            ? await getAccount({ ctx, id: poolStorageData.feeCollector })
+            ? await getOrCreateAccount({ ctx, id: poolStorageData.feeCollector })
             : null,
           repayTarget: poolStorageData.repayTarget,
 

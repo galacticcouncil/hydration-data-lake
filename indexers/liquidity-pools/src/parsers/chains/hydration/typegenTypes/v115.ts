@@ -8579,18 +8579,6 @@ export const AssetRegistryCall: sts.Type<AssetRegistryCall> = sts.closedEnum(() 
     }
 })
 
-export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
-    return  {
-        parents: sts.number(),
-        interior: V1Junctions,
-    }
-})
-
-export interface AssetLocation {
-    parents: number
-    interior: V1Junctions
-}
-
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -8658,6 +8646,11 @@ export interface AssetRegistryCall_update {
     name: Bytes
     assetType: AssetType
     existentialDeposit?: (bigint | undefined)
+}
+
+export interface AssetLocation {
+    parents: number
+    interior: V1Junctions
 }
 
 export type AssetType = AssetType_PoolShare | AssetType_Token
@@ -8861,6 +8854,13 @@ export interface Call_XTokens {
 export const AccountId32 = sts.bytes()
 
 export const FixedU128 = sts.bigint()
+
+export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
+    return  {
+        parents: sts.number(),
+        interior: V1Junctions,
+    }
+})
 
 export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
     return  {

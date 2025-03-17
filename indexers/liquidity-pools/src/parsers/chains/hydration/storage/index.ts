@@ -8,6 +8,7 @@ import xyk from './xyk';
 import lbp from './lbp';
 import dca from './dca';
 import otc from './otc';
+import evmAccounts from './evmAccounts';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -41,6 +42,7 @@ export default {
   parachainSystem,
   dca,
   otc,
+  evmAccounts,
   stableswap: {
     getPoolData: (
       args: StablepoolGetPoolDataInput

@@ -123,3 +123,9 @@ export function jsonToString(src: any, fallbackResult = null) {
     return fallbackResult;
   }
 }
+
+export function isU32(n: unknown) {
+  return (
+    typeof n === 'number' && Number.isInteger(n) && n >= 0 && n <= 4294967295
+  );
+}

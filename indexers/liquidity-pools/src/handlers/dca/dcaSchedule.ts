@@ -1,13 +1,13 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { getAsset } from '../assets/assetRegistry';
+import { getOrCreateAsset } from '../assets/asset';
 import {
   DcaSchedule,
   DcaScheduleStatus,
   DcaScheduleOrderRouteHop,
   DispatchError,
 } from '../../model';
-import { getAccount } from '../accounts';
+import { getOrCreateAccount } from '../accounts';
 import {
   DcaCompletedData,
   DcaScheduledData,
@@ -42,13 +42,13 @@ export async function createDcaSchedule({
     stabilityThreshold,
     order,
   } = scheduleData;
-  const assetIn = await getAsset({
+  const assetIn = await getOrCreateAsset({
     ctx,
     id: order.assetInId,
     ensure: true,
     blockHeader: blockHeader,
   });
-  const assetOut = await getAsset({
+  const assetOut = await getOrCreateAsset({
     ctx,
     id: order.assetOutId,
     ensure: true,
@@ -63,7 +63,7 @@ export async function createDcaSchedule({
   const newSchedule = new DcaSchedule({
     id: id.toString(),
     startExecutionBlock: startExecutionBlock ?? null,
-    owner: await getAccount({ ctx, id: owner }),
+    owner: await getOrCreateAccount({ ctx, id: owner }),
     period: period ?? null,
     totalAmount: totalAmount ?? null,
     slippage: slippage ?? null,
@@ -88,13 +88,13 @@ export async function createDcaSchedule({
   const orderRouteHops: DcaScheduleOrderRouteHop[] = [];
 
   for (const orderRoute of order.routes) {
-    const routeAssetIn = await getAsset({
+    const routeAssetIn = await getOrCreateAsset({
       ctx,
       id: orderRoute.assetInId,
       ensure: true,
       blockHeader: blockHeader,
     });
-    const routeAssetOut = await getAsset({
+    const routeAssetOut = await getOrCreateAsset({
       ctx,
       id: orderRoute.assetOutId,
       ensure: true,

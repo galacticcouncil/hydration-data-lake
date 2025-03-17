@@ -50,6 +50,7 @@ export class ProcessorStatusManager {
       poolsDestroyedUpdatedAtBlock: -1,
       initialIndexingStartedAt: new Date(),
       initialIndexingFinishedAt: this.ctx.isHead ? new Date() : null,
+      latestProcessedBlock: 0,
     });
 
     if (ensure) await this.ctx.store.save(statusEntity);
@@ -69,6 +70,8 @@ export class ProcessorStatusManager {
     if (payload.poolsDestroyedUpdatedAtBlock)
       status.poolsDestroyedUpdatedAtBlock =
         payload.poolsDestroyedUpdatedAtBlock;
+    if (payload.latestProcessedBlock)
+      status.latestProcessedBlock = payload.latestProcessedBlock;
 
     await this.ctx.store.save(status);
   }

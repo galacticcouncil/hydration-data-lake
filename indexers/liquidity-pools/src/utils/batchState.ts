@@ -45,6 +45,16 @@ import {
   HistoricalAccountSwapFee,
   HistoricalAccountAssetSwapFee,
   HistoricalAssetSwapFee,
+  MoneyMarketEvent,
+  MmSupply,
+  MmWithdraw,
+  MmBorrow,
+  MmUserEModeSet,
+  MmRepay,
+  MmLiquidationCall,
+  MmReserveUsedAsCollateralEnabledEvent,
+  MmReserveUsedAsCollateralDisabledEvent,
+  AccountAssetBalanceHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -65,11 +75,18 @@ export type BatchStatePayload = {
   // operationStacks: Map<string, OperationStack>;
 
   accounts: Map<string, Account>;
+  accountIdForPrefetch: Set<string>;
+
   transfers: Map<string, Transfer>;
   assetVolumes: Map<string, HistoricalAssetVolume>;
 
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
+
+  accountAssetBalanceHistoricalData: Map<
+    string,
+    AccountAssetBalanceHistoricalData
+  >;
 
   swaps: Map<string, Swap>;
   swapFees: Map<string, SwapFee>;
@@ -141,6 +158,22 @@ export type BatchStatePayload = {
   historicalAssetSwapFees: Map<string, HistoricalAssetSwapFee>;
   historicalAccountSwapFees: Map<string, HistoricalAccountSwapFee>;
   historicalAccountAssetSwapFees: Map<string, HistoricalAccountAssetSwapFee>;
+
+  moneyMarketEvents: Map<string, MoneyMarketEvent>;
+  mmSupplies: Map<string, MmSupply>;
+  mmWithdrawals: Map<string, MmWithdraw>;
+  mmBorrows: Map<string, MmBorrow>;
+  mmUserEModeSetEvents: Map<string, MmUserEModeSet>;
+  mmRepays: Map<string, MmRepay>;
+  mmLiquidationCalls: Map<string, MmLiquidationCall>;
+  mmReserveUsedAsCollateralEnabledEvents: Map<
+    string,
+    MmReserveUsedAsCollateralEnabledEvent
+  >;
+  mmReserveUsedAsCollateralDisabledEvents: Map<
+    string,
+    MmReserveUsedAsCollateralDisabledEvent
+  >;
 };
 
 export class BatchState {
@@ -157,11 +190,14 @@ export class BatchState {
     // operationStacks: new Map(),
 
     accounts: new Map(),
+    accountIdForPrefetch: new Set(),
     transfers: new Map(),
     assetVolumes: new Map(),
 
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
+
+    accountAssetBalanceHistoricalData: new Map(),
 
     swaps: new Map(),
     swapFees: new Map(),
@@ -217,6 +253,16 @@ export class BatchState {
     historicalAssetSwapFees: new Map(),
     historicalAccountSwapFees: new Map(),
     historicalAccountAssetSwapFees: new Map(),
+
+    moneyMarketEvents: new Map(),
+    mmSupplies: new Map(),
+    mmWithdrawals: new Map(),
+    mmBorrows: new Map(),
+    mmUserEModeSetEvents: new Map(),
+    mmRepays: new Map(),
+    mmLiquidationCalls: new Map(),
+    mmReserveUsedAsCollateralEnabledEvents: new Map(),
+    mmReserveUsedAsCollateralDisabledEvents: new Map(),
   };
 
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {

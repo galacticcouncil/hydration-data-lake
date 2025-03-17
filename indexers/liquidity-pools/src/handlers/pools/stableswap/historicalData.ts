@@ -9,7 +9,7 @@ import {
   StableswapHistoricalData,
 } from '../../../model';
 import { getOrCreateStableswap } from './stablepool';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
 async function getStableswapDataPromise({
@@ -73,7 +73,7 @@ async function getStableswapDataPromise({
   for (const { assetId, data } of assetsData.filter(
     (data) => !!data && !!data.data
   )) {
-    const asset = await getAsset({
+    const asset = await getOrCreateAsset({
       ctx,
       id: assetId,
       ensure: true,

@@ -1,6 +1,7 @@
 import { events } from '../typegenTypes';
 import { SqdEvent } from '../../../../processor';
 import {
+  AssetRegistryLocationSetEventParams,
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
 } from '../../../types/events';
@@ -191,4 +192,49 @@ function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-export default { parseRegisteredParams, parseUpdatedParams };
+// TODO Type AssetRegistryLocationSetEventParams must be extended with mode real locations
+function parseLocationSetParams(
+  event: SqdEvent
+): AssetRegistryLocationSetEventParams {
+  if (events.assetRegistry.locationSet.v108.is(event)) {
+    const [assetId, location] =
+      events.assetRegistry.locationSet.v108.decode(event);
+    return {
+      assetId,
+      location,
+    };
+  }
+
+  if (events.assetRegistry.locationSet.v115.is(event)) {
+    const { assetId, location } =
+      events.assetRegistry.locationSet.v115.decode(event);
+    return {
+      assetId,
+      location,
+    };
+  }
+  if (events.assetRegistry.locationSet.v160.is(event)) {
+    const { assetId, location } =
+      events.assetRegistry.locationSet.v160.decode(event);
+    return {
+      assetId,
+      location,
+    };
+  }
+  if (events.assetRegistry.locationSet.v244.is(event)) {
+    const { assetId, location } =
+      events.assetRegistry.locationSet.v244.decode(event);
+    return {
+      assetId,
+      location,
+    };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+export default {
+  parseRegisteredParams,
+  parseUpdatedParams,
+  parseLocationSetParams,
+};

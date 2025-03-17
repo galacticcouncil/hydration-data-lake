@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
 import { OmnipoolAssetHistoricalData } from '../../../model';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 import { getOrCreateOmnipoolAsset } from './omnipoolAssets';
 
 export async function handleOmnipoolAssetHistoricalData(
@@ -49,7 +49,7 @@ export async function handleOmnipoolAssetHistoricalData(
 
         if (!omnipoolAsset) return null;
 
-        const asset = await getAsset({
+        const asset = await getOrCreateAsset({
           ctx,
           id: assetId,
           ensure: true,

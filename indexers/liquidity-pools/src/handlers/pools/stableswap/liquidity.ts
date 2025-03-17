@@ -11,7 +11,7 @@ import {
 } from '../../../model';
 import { getOrCreateStableswap } from './stablepool';
 import { EventName } from '../../../parsers/types/events';
-import { getAsset } from '../../assets/assetRegistry';
+import { getOrCreateAsset } from '../../assets/asset';
 import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
 import {
   getOrderedListByBlockNumber,
@@ -85,7 +85,7 @@ export async function stablepoolLiquidityAddedRemoved(
 
   if (!pool) return;
 
-  let fee = BigInt(0);
+  const fee = BigInt(0);
   let assetAmounts = [];
 
   const actionType =
@@ -121,7 +121,7 @@ export async function stablepoolLiquidityAddedRemoved(
 
   for (const assetAmount of assetAmounts) {
     const amountEntityId = `${newAction.id}-${assetAmount.assetId}`;
-    const asset = await getAsset({
+    const asset = await getOrCreateAsset({
       ctx,
       id: assetAmount.assetId,
       blockHeader: eventMetadata.blockHeader,

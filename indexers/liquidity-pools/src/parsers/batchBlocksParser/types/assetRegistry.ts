@@ -1,4 +1,5 @@
 import {
+  AssetRegistryLocationSetEventParams,
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
 } from '../../types/events';
@@ -26,3 +27,15 @@ export type AssetRegistryUpdatedData = ParsedEventCallData<
 
 export type AssetRegistryUpdatedEventParsedData =
   EventParsedData<AssetRegistryUpdatedEventParams>;
+
+/**
+ *  ==== Asset Registry LocationSet ====
+ */
+
+export type AssetRegistryLocationSetData = ParsedEventCallData<
+  AssetRegistryLocationSetEventParsedData,
+  CallParsedData
+>;
+
+export type AssetRegistryLocationSetEventParsedData =
+  EventParsedData<AssetRegistryLocationSetEventParams>;

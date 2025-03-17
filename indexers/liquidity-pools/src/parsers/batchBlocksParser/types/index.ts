@@ -1,6 +1,7 @@
 import { EventName, RelayChainInfo } from '../../types/events';
 import { SqdBlock, SqdExtrinsic } from '../../../processor';
 import {
+  AssetRegistryLocationSetData,
   AssetRegistryRegisteredData,
   AssetRegistryUpdatedData,
 } from './assetRegistry';
@@ -47,6 +48,9 @@ import {
   OtcOrderPlacedData,
 } from './otc';
 import { BroadcastSwappedData } from './broadcast';
+import { EvmLogData } from './evm';
+import { EvmAccountsBoundData } from './evmAccounts';
+import { CurrenciesTransferredData } from './currencies';
 
 export * from './assetRegistry';
 export * from './lbp';
@@ -71,69 +75,77 @@ export type EventDataType<T> = T extends EventName.Tokens_Transfer
   ? TokensTransferData
   : T extends EventName.Balances_Transfer
     ? BalancesTransferData
-    : T extends EventName.AssetRegistry_Registered
-      ? AssetRegistryRegisteredData
-      : T extends EventName.AssetRegistry_Updated
-        ? AssetRegistryUpdatedData
-        : T extends EventName.LBP_PoolCreated
-          ? LbpPoolCreatedData
-          : T extends EventName.LBP_PoolUpdated
-            ? LbpPoolUpdatedData
-            : T extends EventName.LBP_BuyExecuted
-              ? LbpBuyExecutedData
-              : T extends EventName.LBP_SellExecuted
-                ? LbpSellExecutedData
-                : T extends EventName.XYK_PoolCreated
-                  ? XykPoolCreatedData
-                  : T extends EventName.XYK_PoolDestroyed
-                    ? XykPoolDestroyedData
-                    : T extends EventName.XYK_BuyExecuted
-                      ? XykBuyExecutedData
-                      : T extends EventName.XYK_SellExecuted
-                        ? XykSellExecutedData
-                        : T extends EventName.Omnipool_TokenAdded
-                          ? OmnipoolTokenAddedData
-                          : T extends EventName.Omnipool_TokenRemoved
-                            ? OmnipoolTokenRemovedData
-                            : T extends EventName.Omnipool_BuyExecuted
-                              ? OmnipoolBuyExecutedData
-                              : T extends EventName.Omnipool_SellExecuted
-                                ? OmnipoolSellExecutedData
-                                : T extends EventName.Stableswap_PoolCreated
-                                  ? StableswapPoolCreatedData
-                                  : T extends EventName.Stableswap_BuyExecuted
-                                    ? StableswapBuyExecutedData
-                                    : T extends EventName.Stableswap_SellExecuted
-                                      ? StableswapSellExecutedData
-                                      : T extends EventName.Stableswap_LiquidityAdded
-                                        ? StableswapLiquidityAddedData
-                                        : T extends EventName.Stableswap_LiquidityRemoved
-                                          ? StableswapLiquidityRemovedData
-                                          : T extends EventName.DCA_Scheduled
-                                            ? DcaScheduledData
-                                            : T extends EventName.DCA_ExecutionPlanned
-                                              ? DcaExecutionPlannedData
-                                              : T extends EventName.DCA_TradeExecuted
-                                                ? DcaTradeExecutedData
-                                                : T extends EventName.DCA_TradeFailed
-                                                  ? DcaTradeFailedData
-                                                  : T extends EventName.DCA_Terminated
-                                                    ? DcaTerminatedData
-                                                    : T extends EventName.DCA_Completed
-                                                      ? DcaCompletedData
-                                                      : T extends EventName.DCA_RandomnessGenerationFailed
-                                                        ? DcaRandomnessGenerationFailedData
-                                                        : T extends EventName.OTC_Placed
-                                                          ? OtcOrderPlacedData
-                                                          : T extends EventName.OTC_Cancelled
-                                                            ? OtcOrderCancelledData
-                                                            : T extends EventName.OTC_Filled
-                                                              ? OtcOrderFilledData
-                                                              : T extends EventName.OTC_PartiallyFilled
-                                                                ? OtcOrderPartiallyFilledData
-                                                                : T extends EventName.Broadcast_Swapped
-                                                                  ? BroadcastSwappedData
-                                                                  : never;
+    : T extends EventName.Currencies_Transferred
+      ? CurrenciesTransferredData
+      : T extends EventName.AssetRegistry_Registered
+        ? AssetRegistryRegisteredData
+        : T extends EventName.AssetRegistry_Updated
+          ? AssetRegistryUpdatedData
+          : T extends EventName.AssetRegistry_LocationSet
+            ? AssetRegistryLocationSetData
+            : T extends EventName.LBP_PoolCreated
+              ? LbpPoolCreatedData
+              : T extends EventName.LBP_PoolUpdated
+                ? LbpPoolUpdatedData
+                : T extends EventName.LBP_BuyExecuted
+                  ? LbpBuyExecutedData
+                  : T extends EventName.LBP_SellExecuted
+                    ? LbpSellExecutedData
+                    : T extends EventName.XYK_PoolCreated
+                      ? XykPoolCreatedData
+                      : T extends EventName.XYK_PoolDestroyed
+                        ? XykPoolDestroyedData
+                        : T extends EventName.XYK_BuyExecuted
+                          ? XykBuyExecutedData
+                          : T extends EventName.XYK_SellExecuted
+                            ? XykSellExecutedData
+                            : T extends EventName.Omnipool_TokenAdded
+                              ? OmnipoolTokenAddedData
+                              : T extends EventName.Omnipool_TokenRemoved
+                                ? OmnipoolTokenRemovedData
+                                : T extends EventName.Omnipool_BuyExecuted
+                                  ? OmnipoolBuyExecutedData
+                                  : T extends EventName.Omnipool_SellExecuted
+                                    ? OmnipoolSellExecutedData
+                                    : T extends EventName.Stableswap_PoolCreated
+                                      ? StableswapPoolCreatedData
+                                      : T extends EventName.Stableswap_BuyExecuted
+                                        ? StableswapBuyExecutedData
+                                        : T extends EventName.Stableswap_SellExecuted
+                                          ? StableswapSellExecutedData
+                                          : T extends EventName.Stableswap_LiquidityAdded
+                                            ? StableswapLiquidityAddedData
+                                            : T extends EventName.Stableswap_LiquidityRemoved
+                                              ? StableswapLiquidityRemovedData
+                                              : T extends EventName.DCA_Scheduled
+                                                ? DcaScheduledData
+                                                : T extends EventName.DCA_ExecutionPlanned
+                                                  ? DcaExecutionPlannedData
+                                                  : T extends EventName.DCA_TradeExecuted
+                                                    ? DcaTradeExecutedData
+                                                    : T extends EventName.DCA_TradeFailed
+                                                      ? DcaTradeFailedData
+                                                      : T extends EventName.DCA_Terminated
+                                                        ? DcaTerminatedData
+                                                        : T extends EventName.DCA_Completed
+                                                          ? DcaCompletedData
+                                                          : T extends EventName.DCA_RandomnessGenerationFailed
+                                                            ? DcaRandomnessGenerationFailedData
+                                                            : T extends EventName.OTC_Placed
+                                                              ? OtcOrderPlacedData
+                                                              : T extends EventName.OTC_Cancelled
+                                                                ? OtcOrderCancelledData
+                                                                : T extends EventName.OTC_Filled
+                                                                  ? OtcOrderFilledData
+                                                                  : T extends EventName.OTC_PartiallyFilled
+                                                                    ? OtcOrderPartiallyFilledData
+                                                                    : T extends EventName.Broadcast_Swapped
+                                                                      ? BroadcastSwappedData
+                                                                      : T extends EventName.EVM_Log
+                                                                        ? EvmLogData
+                                                                        : T extends EventName.EVMAccounts_Bound
+                                                                          ? EvmAccountsBoundData
+                                                                          : never;
 
 export type BatchBlocksParsedDataScope = Map<
   EventName,
@@ -162,6 +174,7 @@ export type ParsedEventsCallsData =
   | StableswapLiquidityRemovedData
   | AssetRegistryRegisteredData
   | AssetRegistryUpdatedData
+  | AssetRegistryLocationSetData
   | DcaScheduledData
   | DcaExecutionPlannedData
   | DcaTradeExecutedData
@@ -173,7 +186,10 @@ export type ParsedEventsCallsData =
   | OtcOrderCancelledData
   | OtcOrderFilledData
   | OtcOrderPartiallyFilledData
-  | BroadcastSwappedData;
+  | BroadcastSwappedData
+  | EvmLogData
+  | EvmAccountsBoundData
+  | CurrenciesTransferredData;
 
 export interface CallMetadata {
   name: string;

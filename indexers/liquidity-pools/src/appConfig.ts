@@ -1,7 +1,13 @@
 import { transformAndValidateSync } from 'class-transformer-validator';
 import 'reflect-metadata';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidationError } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsArray,
+  IsBoolean,
+  ValidationError,
+} from 'class-validator';
 import dotenv from 'dotenv';
 
 import {
@@ -72,6 +78,8 @@ export class AppConfig {
    */
   readonly RPC_URL: string | null = null;
 
+  readonly RPC_URL_HTTPS: string | null = null;
+
   /**
    * Maximum number of ongoing concurrent requests
    */
@@ -140,8 +148,22 @@ export class AppConfig {
   @IsString()
   readonly STORAGE_DICTIONARY_STABLEPOOL_URL: string = '';
 
+  @IsString()
+  readonly SUBSCAN_PRO_API_SECRET: string = '';
+
+  @Transform(({ value }: { value: string }) => value.split('::'))
+  @IsArray()
+  readonly SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: string[] = [];
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: boolean = true;
+
   @Transform(({ value }: { value: string }) => +value)
   readonly UNIFIED_EVENTS_GENESIS_SPEC_VERSION: number = -1;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ASSETS_ACTUALISATION_BLOCKS_PERIOD: number = 3000;
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
@@ -183,9 +205,13 @@ export class AppConfig {
     const eventsToListen = [
       events.balances.transfer.name,
       events.tokens.transfer.name,
+      events.currencies.transferred.name,
       events.assetRegistry.registered.name,
       events.assetRegistry.updated.name,
+      events.assetRegistry.locationSet.name,
       events.broadcast.swapped.name,
+      events.evm.log.name,
+      events.evmAccounts.bound.name,
     ];
 
     // if (this.CHAIN === ChainName.hydration_paseo_next) {

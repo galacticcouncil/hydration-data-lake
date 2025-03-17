@@ -1,6 +1,7 @@
 import { events } from '../typegenTypes';
 import { SqdEvent } from '../../../../processor';
 import {
+  AssetRegistryLocationSetEventParams,
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
 } from '../../../types/events';
@@ -64,4 +65,23 @@ function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-export default { parseRegisteredParams, parseUpdatedParams };
+function parseLocationSetParams(
+  event: SqdEvent
+): AssetRegistryLocationSetEventParams {
+  if (events.assetRegistry.locationSet.v276.is(event)) {
+    const { assetId, location } =
+      events.assetRegistry.locationSet.v276.decode(event);
+    return {
+      assetId,
+      location,
+    };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+export default {
+  parseRegisteredParams,
+  parseUpdatedParams,
+  parseLocationSetParams,
+};

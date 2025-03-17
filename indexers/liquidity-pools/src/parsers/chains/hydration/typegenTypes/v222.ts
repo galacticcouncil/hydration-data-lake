@@ -1,5 +1,7 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type H160 = Bytes
+
 export interface AssetDetails {
     name?: (Bytes | undefined)
     assetType: AssetType
@@ -75,8 +77,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
         Signed: AccountId32,
     }
 })
-
-export const AccountId32 = sts.bytes()
 
 export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
 
@@ -484,16 +484,12 @@ export const Type_410: sts.Type<Type_410> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_410 = Type_410_EthereumTransaction
 
 export interface Type_410_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: H160
 }
-
-export type H160 = Bytes
 
 export const Type_412: sts.Type<Type_412> = sts.closedEnum(() => {
     return  {
@@ -8980,6 +8976,10 @@ export interface Call_XcmRateLimiter {
     __kind: 'XcmRateLimiter'
     value: XcmRateLimiterCall
 }
+
+export const H160 = sts.bytes()
+
+export const AccountId32 = sts.bytes()
 
 export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
     return  {

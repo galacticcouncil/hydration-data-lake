@@ -1,98 +1,14 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  AssetRegistryLocationSetData,
   AssetRegistryRegisteredData,
   AssetRegistryUpdatedData,
 } from '../../parsers/batchBlocksParser/types';
-import { Asset, AssetType } from '../../model';
-import parsers from '../../parsers';
-import { ProcessorStatusManager } from '../../processorStatusManager';
-
-export async function getAsset({
-  ctx,
-  id,
-  ensure = false,
-  blockHeader,
-}: {
-  ctx: SqdProcessorContext<Store>;
-  id: string | number;
-  ensure?: boolean;
-  blockHeader?: SqdBlock;
-}): Promise<Asset | null> {
-  const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
-
-  let asset = assetsAllBatch.get(`${id}`);
-  if (asset) return asset;
-
-  asset = await ctx.store.findOne(Asset, { where: { id: `${id}` } });
-
-  if (asset) {
-    assetsAllBatch.set(asset.id, asset);
-    return asset;
-  }
-
-  if (!asset && !ensure) return null;
-
-  /**
-   * Following logic below is implemented and will be used only if indexer
-   * has been started not from genesis block and some assets have not been
-   * pre-created before indexing start point.
-   */
-
-  if (!blockHeader) return null;
-  const storageData = await parsers.storage.assetRegistry.getAsset(
-    +id,
-    blockHeader
-  );
-
-  if (!storageData) return null;
-
-  const newAsset = new Asset({
-    id: `${id}`,
-    name: storageData.name,
-    assetType: storageData.assetType,
-    existentialDeposit: storageData.existentialDeposit,
-    symbol: storageData.symbol ?? null,
-    decimals: storageData.decimals ?? null,
-    xcmRateLimit: storageData.xcmRateLimit ?? null,
-    isSufficient: storageData.isSufficient ?? true,
-  });
-
-  await ctx.store.save(newAsset);
-
-  assetsAllBatch.set(newAsset.id, newAsset);
-
-  return newAsset;
-}
-
-export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
-  ctx.batchState.state.assetsAllBatch = new Map(
-    (await ctx.store.find(Asset, { where: {} })).map((asset) => [
-      asset.id,
-      asset,
-    ])
-  );
-}
-
-export async function ensureNativeToken(ctx: SqdProcessorContext<Store>) {
-  let nativeToken = await getAsset({ ctx, id: 0 });
-  if (nativeToken) return;
-
-  nativeToken = new Asset({
-    id: '0',
-    name: 'Hydration',
-    assetType: AssetType.Token,
-    decimals: 12,
-    existentialDeposit: BigInt('1000000000000'),
-    symbol: 'HDX',
-    xcmRateLimit: null,
-    isSufficient: true,
-  });
-
-  await ctx.store.upsert(nativeToken);
-  const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
-  assetsAllBatch.set(nativeToken.id, nativeToken);
-}
+import { getAssetEvmAddressByType } from './utils';
+import { Asset, AssetType, ResourceType } from '../../model';
+import { getOrCreateAsset } from './asset';
+import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
 
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
@@ -114,9 +30,19 @@ export async function assetRegistered(
     },
   } = eventCallData;
 
+  const erc20AssetContractAddress = await getAssetEvmAddressByType({
+    assetId,
+    assetType: assetType,
+    ctx,
+  });
+
   const newAsset = new Asset({
     id: `${assetId}`,
     name: assetName,
+    synthetic: false,
+    active: true,
+    evmAddress: erc20AssetContractAddress,
+    resourceType: ResourceType.Underlying,
     assetType,
     existentialDeposit,
     symbol,
@@ -150,7 +76,7 @@ export async function assetUpdated(
     },
   } = eventCallData;
 
-  const asset = await getAsset({
+  const asset = await getOrCreateAsset({
     ctx,
     id: assetId,
     ensure: true,
@@ -172,55 +98,31 @@ export async function assetUpdated(
   state.assetIdsToSave.add(asset.id);
 }
 
-export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
-  if (!ctx.isHead) return;
+export async function assetLocationSet(
+  ctx: SqdProcessorContext<Store>,
+  eventCallData: AssetRegistryLocationSetData
+) {
+  const {
+    eventData: {
+      params: { assetId, location },
+      metadata: eventMetadata,
+    },
+  } = eventCallData;
 
-  const latestActualisationPoint = (
-    await ProcessorStatusManager.getInstance(ctx).getStatus()
-  ).assetsLastUpdatedAtBlock;
-
-  if (ctx.blocks[0].header.height < latestActualisationPoint + 3000) return;
-
-  const allExistingAssets = new Map(
-    (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
-  );
-
-  if (allExistingAssets.size === 0) return;
-
-  const storageData = await parsers.storage.assetRegistry.getAssetMany(
-    [...allExistingAssets.keys()],
-    ctx.blocks[0].header
-  );
-  const assetsToUpdate: Asset[] = [];
-
-  for (const assetStorageData of storageData) {
-    if (!assetStorageData.data) continue;
-    const assetEntity = allExistingAssets.get(`${assetStorageData.assetId}`);
-    if (!assetEntity) continue;
-    const {
-      name,
-      assetType,
-      existentialDeposit,
-      symbol,
-      decimals,
-      xcmRateLimit,
-      isSufficient,
-    } = assetStorageData.data;
-
-    if (name) assetEntity.name = name;
-    if (assetType) assetEntity.assetType = assetType;
-    if (existentialDeposit) assetEntity.existentialDeposit = existentialDeposit;
-    if (symbol) assetEntity.symbol = symbol;
-    if (decimals) assetEntity.decimals = decimals;
-    if (xcmRateLimit) assetEntity.xcmRateLimit = xcmRateLimit;
-    if (isSufficient) assetEntity.isSufficient = isSufficient;
-    assetsToUpdate.push(assetEntity);
-    allExistingAssets.set(assetEntity.id, assetEntity);
-  }
-
-  await ctx.store.upsert(assetsToUpdate);
-
-  await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
-    assetsLastUpdatedAtBlock: ctx.blocks[0].header.height,
+  const asset = await getOrCreateAsset({
+    ctx,
+    id: assetId,
+    ensure: true,
+    blockHeader: eventMetadata.blockHeader,
   });
+
+  if (!asset) return;
+
+  if (asset.assetType !== AssetType.Erc20) return;
+
+  asset.evmAddress = getErc20AssetContractFromLocation(location)?.address;
+
+  const state = ctx.batchState.state;
+  state.assetsAllBatch.set(asset.id, asset);
+  state.assetIdsToSave.add(asset.id);
 }

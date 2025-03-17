@@ -154,7 +154,6 @@ export async function supportSwappedEventPostHook({
         assetOut: swap.outputs[0].asset,
         assetOutAmount: swap.outputs[0].amount,
       });
-
       break;
     }
     case SwapFillerType.Omnipool:
@@ -185,6 +184,7 @@ export async function supportSwappedEventPostHook({
         swap,
         pool,
       });
+
       break;
     }
   }

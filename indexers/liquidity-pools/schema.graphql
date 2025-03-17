@@ -14,6 +14,7 @@ type ProcessorStatus @entity {
   poolsDestroyedUpdatedAtBlock: Int
   initialIndexingStartedAt: DateTime!
   initialIndexingFinishedAt: DateTime
+  latestProcessedBlock: Int!
 }
 
 # ======================================================================================================================
@@ -28,17 +29,31 @@ enum AssetType {
   XYK
   Erc20
 }
+enum ResourceType {
+  Underlying
+  Collateral
+  Debt
+}
 
 type Asset @entity {
   "assetId"
   id: ID!
+  assetRegistryAsset: Asset
+  synthetic: Boolean!
+  active: Boolean!
   assetType: AssetType!
+  resourceType: ResourceType!
   name: String
   symbol: String
   decimals: Int
   xcmRateLimit: BigInt
   isSufficient: Boolean!
   existentialDeposit: BigInt!
+  evmAddress: String
+  underlyingAsset: Asset
+  aToken: Asset
+  variableDebtToken: Asset
+
   # note: existentialDeposit is probably taken 1:1 from the runtime,
   # real existential deposit will be calculated realtime based on the current price
 }
@@ -106,6 +121,9 @@ type Account @entity {
   "<address>"
   id: ID!
   accountType: AccountType!
+
+  boundEvmAddress: String
+  evmAddressBoundEvent: Event
 
   assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
     @derivedFrom(field: "account")
@@ -319,6 +337,7 @@ type Transfer @entity {
   traceIds: [String!]
 
   asset: Asset!
+  assetType: AssetType!
 
   from: Account!
   to: Account!
@@ -1092,6 +1111,170 @@ type OtcOrderEvent @entity {
 
   filler: Account
   swap: Swap
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+# ======================================================================================================================
+# *** Market making ***
+# ======================================================================================================================
+
+type MmSupply @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  asset: Asset!
+  account: Account!
+  accountOnBehalfOf: Account!
+  amount: BigInt
+  referralCode: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmWithdraw @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  asset: Asset!
+  accountFrom: Account!
+  accountTo: Account!
+  amount: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmBorrow @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  asset: Asset!
+  account: Account!
+  accountOnBehalfOf: Account!
+  amount: BigInt
+  interestRateMode: Int
+  borrowRate: BigInt
+  referralCode: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmUserEModeSet @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  account: Account!
+  categoryId: Int
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmRepay @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  asset: Asset!
+  account: Account!
+  repayerAccount: Account!
+  amount: BigInt
+  useATokens: Boolean
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmLiquidationCall @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  collateralAsset: Asset!
+  debtAsset: Asset!
+  account: Account!
+  debtToCoverAmount: BigInt
+  liquidatedCollateralAmount: BigInt
+  liquidatorAccount: Account!
+  receiveAToken: Boolean!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmReserveUsedAsCollateralEnabledEvent @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  account: Account!
+  asset: Asset!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type MmReserveUsedAsCollateralDisabledEvent @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  account: Account!
+  asset: Asset!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+enum EvmEventName {
+  Transfer
+  Supply
+  Withdraw
+  Borrow
+  Repay
+  UserEModeSet
+  LiquidationCall
+  ReserveUsedAsCollateralEnabled
+  ReserveUsedAsCollateralDisabled
+}
+
+type MoneyMarketEvent @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  eventName: EvmEventName!
+
+  allInvolvedAssetIds: [String!]!
+  allInvolvedAssetDetails: String @index
+  allInvolvedParticipants: [String!]!
+
+  transfer: Transfer
+  supply: MmSupply
+  withdraw: MmWithdraw
+  borrow: MmBorrow
+  repay: MmRepay
+  userEModeSet: MmUserEModeSet
+  liquidationCall: MmLiquidationCall
+  reserveUsedAsCollateralEnabled: MmReserveUsedAsCollateralEnabledEvent
+  reserveUsedAsCollateralDisabled: MmReserveUsedAsCollateralDisabledEvent
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
