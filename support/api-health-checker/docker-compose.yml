@@ -1,0 +1,16 @@
+version: '3'
+
+networks:
+  default:
+    driver: bridge
+
+services:
+  queue_redis:
+    image: redis/redis-stack:latest
+    environment:
+      REDIS_ARGS: '--requirepass password'
+    ports:
+      - '6379:6379'
+    #    command: [ "redis-stack-server", "--requirepass", "password" ]
+    networks:
+      - default

@@ -1,0 +1,5 @@
+export enum GlobalStatusName {
+  MM_EVENTS = 'MM_EVENTS',
+  SWAPS = 'SWAPS',
+  LATEST_PROCESSED_BLOCKS = 'LATEST_PROCESSED_BLOCKS',
+}
