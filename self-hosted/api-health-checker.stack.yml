@@ -44,5 +44,7 @@ services:
       - -c
       - "node dist/src/main.js"
     deploy:
+      labels:
+        swarmpit.service.deployment.autoredeploy: "true"
       restart_policy:
         condition: on-failure
