@@ -93,7 +93,7 @@ services:
         condition: on-failure
 
   storage-dictionary-api:
-    image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
+    image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-add-support-swapped-event
     depends_on:
       - storage-dictionary-processor
     environment:

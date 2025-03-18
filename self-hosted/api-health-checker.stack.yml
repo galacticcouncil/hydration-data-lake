@@ -18,7 +18,7 @@ services:
         condition: on-failure
 
   health-checker-app:
-    image: ghcr.io/mckrava/hydration-indexer-api-health-checker:wip-feat-add-indexer-api-health-checker-app
+    image: ghcr.io/mckrava/hydration-indexer-api-health-checker:wip-feat-add-support-swapped-event
     depends_on:
       - redis
     environment:

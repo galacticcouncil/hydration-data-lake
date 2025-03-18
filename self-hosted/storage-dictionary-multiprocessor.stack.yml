@@ -46,7 +46,7 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
+  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-add-support-swapped-event
   networks:
     - default
   deploy:
@@ -54,7 +54,7 @@ x-common-processor-setup: &common-processor-setup
       condition: on-failure
 
 x-common-api-setup: &common-api-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
+  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-add-support-swapped-event
   networks:
     - default
   command:
