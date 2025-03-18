@@ -1,0 +1,50 @@
+version: "3.9"
+
+networks:
+  default:
+    driver: overlay
+
+services:
+  redis:
+    image: redis/redis-stack:latest
+    environment:
+      REDIS_ARGS: "--requirepass password"
+    logging:
+      driver: json-file
+    networks:
+      - default
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  health-checker-app:
+    image: ghcr.io/mckrava/hydration-indexer-api-health-checker:wip-feat-add-indexer-api-health-checker-app
+    depends_on:
+      - redis
+    environment:
+      NODE_ENV: "production"
+      APP_PORT: 8081
+      REDIS_HOST: "redis"
+      REDIS_PASSWORD: "password"
+      REDIS_PORT: 6379
+      WSS_URL: "wss://hydration-rpc.n.dwellir.com"
+      INDEXER_GRAPHQL_API_URL: "https://galacticcouncil.squids.live/hydration-pools:unified-prod/api/graphql"
+      APP_TERMINATED: "false"
+      DISCORD_ALERTS_BOT_TOKEN: ${DISCORD_ALERTS_BOT_TOKEN}
+      DISCORD_ALERTS_SERVER: ${DISCORD_ALERTS_SERVER}
+      DISCORD_ALERTS_CHANEL: ${DISCORD_ALERTS_CHANEL}
+    ports:
+      - "8081:8081"
+    networks:
+      - default
+    logging:
+      driver: json-file
+    command:
+      - sh
+      - -c
+      - "node dist/src/main.js"
+    deploy:
+      labels:
+        swarmpit.service.deployment.autoredeploy: "true"
+      restart_policy:
+        condition: on-failure

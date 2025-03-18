@@ -4,10 +4,11 @@ A collection of blockchain indexers designed to simplify data access on Hydratio
 [Sqd framework](https://www.sqd.dev/).
 
 ## Project Structure
-| Indexer | Changelog | Description |
-| --- | --- | --- |
-| [liquidity-pools](./indexers/liquidity-pools) | [changelog](./indexers/liquidity-pools/CHANGELOG.md) | An indexer for the Hydration mainnet and Pareo chains, designed to collect and organize data on liquidity pools. |
+| Indexer                                             | Changelog                                               | Description                                                                                                                                                                 |
+|-----------------------------------------------------|---------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [liquidity-pools](./indexers/liquidity-pools)       | [changelog](./indexers/liquidity-pools/CHANGELOG.md)    | An indexer for the Hydration mainnet and Pareo chains, designed to collect and organize data on liquidity pools.                                                            |
 | [storage-dictionary](./indexers/storage-dictionary) | [changelog](./indexers/storage-dictionary/CHANGELOG.md) | An indexer for Hydration mainnet chains, built to collect historical storage data for each block. Optimized for fast, filtered access to storage data with minimal latency. |
+| [api-health-checker](support/api-health-checker)    | [changelog](./support/api-health-checker/CHANGELOG.md)  | An application for continuous testing of Liquidity Pools indexer API.                                                                                                       |
 
 
 ⚙️ [Self-hosted deployment configs](./self-hosted/README.md)
