@@ -18,7 +18,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "indexer-api-codegen": "graphql-codegen --require dotenv/config --config indexer-api-codegen-configs/index.ts",
-    "papi-typegen": "npx papi add -w wss://rpc.hydradx.cloud hydration",
+    "papi-typegen": "npx papi add -w wss://hydration-rpc.n.dwellir.com hydration",
+    "postpapi-typegen": "rm .papi/descriptors/.gitignore",
     "db-up": "docker compose up -d"
   },
   "dependencies": {
