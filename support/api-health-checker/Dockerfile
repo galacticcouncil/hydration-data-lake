@@ -6,7 +6,7 @@ WORKDIR /opt/hdl-health-checker
 
 COPY  . .
 
-RUN yarn install
+RUN yarn install --force
 RUN yarn build
 
 FROM node:20-slim AS runner

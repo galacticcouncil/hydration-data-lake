@@ -1,10 +1,9 @@
 {
   "name": "hydration-data-lake-health-checker",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Application for checking Hydration Indexers API.",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
