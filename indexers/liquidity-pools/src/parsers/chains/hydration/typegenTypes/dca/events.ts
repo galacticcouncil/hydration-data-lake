@@ -2,6 +2,7 @@ import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../suppo
 import * as v160 from '../v160'
 import * as v201 from '../v201'
 import * as v205 from '../v205'
+import * as v295 from '../v295'
 
 export const executionStarted =  {
     name: 'DCA.ExecutionStarted',
@@ -40,6 +41,19 @@ export const scheduled =  {
             period: sts.number(),
             totalAmount: sts.bigint(),
             order: v201.Order,
+        })
+    ),
+    /**
+     * The DCA is scheduled for next execution
+     */
+    v295: new EventType(
+        'DCA.Scheduled',
+        sts.struct({
+            id: sts.number(),
+            who: v295.AccountId32,
+            period: sts.number(),
+            totalAmount: sts.bigint(),
+            order: v295.Order,
         })
     ),
 }

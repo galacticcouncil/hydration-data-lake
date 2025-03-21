@@ -412,6 +412,7 @@ enum SwapFillerType {
   XYK
   LBP
   OTC
+  Aave
 }
 
 enum TradeOperationType {

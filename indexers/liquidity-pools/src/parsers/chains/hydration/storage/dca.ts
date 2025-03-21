@@ -14,6 +14,13 @@ async function getDcaSchedule({
 
     return decorateDcaSchedule(resp);
   }
+  if (storage.dca.schedules.v295.is(block)) {
+    const resp = await storage.dca.schedules.v295.get(block, scheduleId);
+
+    if (!resp) return null;
+
+    return decorateDcaSchedule(resp);
+  }
 
   throw new UnknownVersionError('storage.dca.schedules');
 }
