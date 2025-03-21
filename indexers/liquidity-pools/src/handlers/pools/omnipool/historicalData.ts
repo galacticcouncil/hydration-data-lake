@@ -15,23 +15,23 @@ export async function handleOmnipoolAssetHistoricalData(
   const predefinedEntities = await Promise.all(
     [...ctx.batchState.state.omnipoolAssetIdsForStoragePrefetch.entries()]
       .map(([blockNumber, { blockHeader, ids }]) =>
-        [...ids.values()].map((assetId) => ({
+        [...ids.values()].map((arAssetId) => ({
           blockHeader: blockHeader,
-          assetId,
+          arAssetId,
         }))
       )
       .flat()
-      .map(async ({ assetId, blockHeader }) => {
+      .map(async ({ arAssetId, blockHeader }) => {
         const assetStateStorageData =
           await parsers.storage.omnipool.getOmnipoolAssetData({
-            assetId,
+            assetId: arAssetId,
             block: blockHeader,
           });
 
         if (!assetStateStorageData) return null;
 
         const assetsBalances = await parsers.storage.omnipool.getPoolAssetInfo({
-          assetId,
+          assetId: arAssetId,
           block: blockHeader,
           poolAddress: ctx.appConfig.OMNIPOOL_ADDRESS,
         });
@@ -40,26 +40,26 @@ export async function handleOmnipoolAssetHistoricalData(
 
         if (!ctx.batchState.state.omnipoolEntity) return null;
 
-        const omnipoolAsset = await getOrCreateOmnipoolAsset({
-          ctx,
-          assetId,
-          ensure: true,
-          blockHeader,
-        });
-
-        if (!omnipoolAsset) return null;
-
         const asset = await getOrCreateAsset({
           ctx,
-          id: assetId,
+          assetRegistryId: arAssetId,
           ensure: true,
           blockHeader,
         });
 
         if (!asset) return null;
 
+        const omnipoolAsset = await getOrCreateOmnipoolAsset({
+          ctx,
+          assetId: asset.id,
+          ensure: true,
+          blockHeader,
+        });
+
+        if (!omnipoolAsset) return null;
+
         const newEntity = new OmnipoolAssetHistoricalData({
-          id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${assetId}-${blockHeader.height}`,
+          id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${asset.id}-${blockHeader.height}`,
           asset,
           omnipoolAsset,
 

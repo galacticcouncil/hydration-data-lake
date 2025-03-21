@@ -15,23 +15,37 @@ import { getOrCreateAsset } from '../../assets/asset';
 export async function getOrCreateOmnipoolAsset({
   ctx,
   assetId,
+  assetRegistryAssetId,
   ensure = false,
   blockHeader,
 }: {
   ctx: SqdProcessorContext<Store>;
-  assetId: number | string;
+  assetId?: string;
+  assetRegistryAssetId?: number | string;
   ensure?: boolean;
   blockHeader?: SqdBlock;
 }) {
+  if (!assetId && !assetRegistryAssetId) return null;
+
+  const assetEntity = await getOrCreateAsset({
+    ctx,
+    id: assetId,
+    assetRegistryId: assetRegistryAssetId,
+    ensure: true,
+    blockHeader: blockHeader,
+  });
+
+  if (!assetEntity) throw new Error(`Asset ${assetId} not found`);
+
   const batchState = ctx.batchState.state;
 
   let omnipoolAsset = batchState.omnipoolAssets.get(
-    `${ctx.appConfig.OMNIPOOL_ADDRESS}-${assetId}`
+    `${ctx.appConfig.OMNIPOOL_ADDRESS}-${assetEntity.id}`
   );
   if (omnipoolAsset) return omnipoolAsset;
 
   omnipoolAsset = await ctx.store.findOne(OmnipoolAsset, {
-    where: { asset: { id: `${assetId}` } },
+    where: { asset: { id: `${assetEntity.id}` } },
     relations: { asset: true, pool: true },
   });
 
@@ -44,17 +58,8 @@ export async function getOrCreateOmnipoolAsset({
 
   if (!blockHeader) return null;
 
-  const assetEntity = await getOrCreateAsset({
-    ctx,
-    id: assetId,
-    ensure: true,
-    blockHeader: blockHeader,
-  });
-
-  if (!assetEntity) throw new Error(`Asset ${assetId} not found`);
-
   omnipoolAsset = new OmnipoolAsset({
-    id: `${ctx.batchState.state.omnipoolEntity!.id}-${assetId}`,
+    id: `${ctx.batchState.state.omnipoolEntity!.id}-${assetEntity.id}`,
     asset: assetEntity,
     pool: ctx.batchState.state.omnipoolEntity!,
 
@@ -93,7 +98,7 @@ export async function omnipoolTokenAdded(
 
   let omnipoolAssetEntity = await getOrCreateOmnipoolAsset({
     ctx,
-    assetId: eventParams.assetId,
+    assetRegistryAssetId: eventParams.assetId,
     // ensure: true,
     // blockHeader: eventMetadata.blockHeader,
   });
@@ -102,7 +107,7 @@ export async function omnipoolTokenAdded(
 
   const assetEntity = await getOrCreateAsset({
     ctx,
-    id: eventParams.assetId,
+    assetRegistryId: eventParams.assetId,
     ensure: true,
     blockHeader: eventMetadata.blockHeader,
   });
@@ -110,7 +115,7 @@ export async function omnipoolTokenAdded(
   if (!assetEntity) return;
 
   omnipoolAssetEntity = new OmnipoolAsset({
-    id: `${ctx.batchState.state.omnipoolEntity!.id}-${eventParams.assetId}`,
+    id: `${ctx.batchState.state.omnipoolEntity!.id}-${assetEntity.id}`,
     asset: assetEntity,
     pool: ctx.batchState.state.omnipoolEntity!,
 
@@ -150,7 +155,7 @@ export async function omnipoolTokenRemoved(
 
   const omnipoolAssetEntity = await getOrCreateOmnipoolAsset({
     ctx,
-    assetId: eventParams.assetId,
+    assetRegistryAssetId: eventParams.assetId,
     ensure: true,
     blockHeader: eventMetadata.blockHeader,
   });

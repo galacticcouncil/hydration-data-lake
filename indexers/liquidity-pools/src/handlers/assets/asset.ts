@@ -2,23 +2,30 @@ import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { Asset, AssetType, ResourceType } from '../../model';
 import parsers from '../../parsers';
-import { getAssetEvmAddressByType, getAssetIdFromEvmAddress } from './utils';
+import {
+  getAssetEvmAddressByType,
+  getAssetIdFromMultiLocation,
+  getNewAssetMultiLocation,
+} from './utils';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 
 export async function getOrCreateAsset({
-  ctx,
   id,
+  assetRegistryId,
   evmAddress,
   ensure = false,
   blockHeader,
+  ctx,
 }: {
-  ctx: SqdProcessorContext<Store>;
-  id?: string | number;
+  id?: string;
+  assetRegistryId?: number | string;
   evmAddress?: string;
   ensure?: boolean;
   blockHeader?: SqdBlock;
+  ctx: SqdProcessorContext<Store>;
 }): Promise<Asset | null> {
-  if (id === undefined && !evmAddress) return null;
+  if (id === undefined && !evmAddress && assetRegistryId === undefined)
+    return null;
 
   const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
 
@@ -28,16 +35,22 @@ export async function getOrCreateAsset({
     asset = assetsAllBatch.get(`${id}`);
   } else if (evmAddress) {
     asset = [...assetsAllBatch.values()].find(
-      (a) => a.evmAddress === evmAddress && a.active
+      (a) => a.evmAddress === evmAddress
+    );
+  } else if (assetRegistryId !== undefined) {
+    asset = [...assetsAllBatch.values()].find(
+      (a) => a.assetRegistryId === assetRegistryId
     );
   }
 
   if (asset) return asset;
 
   asset = await ctx.store.findOne(Asset, {
+    // @ts-ignore
     where: {
       ...(id ? { id: `${id}` } : {}),
-      ...(evmAddress ? { evmAddress: evmAddress, active: true } : {}),
+      ...(evmAddress ? { evmAddress } : {}),
+      ...(assetRegistryId ? { assetRegistryId } : {}),
     },
   });
 
@@ -54,26 +67,40 @@ export async function getOrCreateAsset({
    * pre-created before indexing start point.
    */
 
-  if (!blockHeader) return null;
-  if (id === undefined) return null; //TODO fix this
+  if (!blockHeader || assetRegistryId === undefined) return null; //TODO fix this
 
   const storageData = await parsers.storage.assetRegistry.getAsset(
-    +id,
+    +assetRegistryId,
     blockHeader
   );
 
   if (!storageData) return null;
 
   const erc20AssetContractAddress = await getAssetEvmAddressByType({
-    assetId: +id,
+    assetId: +assetRegistryId,
     assetType: storageData.assetType,
     ctx,
   });
 
+  const assetCustomLocation = getNewAssetMultiLocation({
+    assetRegistryId,
+    evmAddress: evmAddress ?? erc20AssetContractAddress,
+    assetType: storageData.assetType,
+  });
+
+  if (!assetCustomLocation) return null;
+
+  const assetEntityId = getAssetIdFromMultiLocation(assetCustomLocation);
+
+  if (!assetEntityId) return null;
+
   const newAsset = new Asset({
-    id: `${id}`,
-    synthetic: false,
-    active: true,
+    id: assetEntityId,
+    evmAddress: erc20AssetContractAddress,
+    assetRegistryId: `${assetRegistryId}`,
+    multiLocationIds: [assetEntityId],
+    multiLocationsMetadata: [assetCustomLocation],
+
     name: storageData.name,
     assetType: storageData.assetType,
     resourceType: ResourceType.Underlying,
@@ -82,7 +109,6 @@ export async function getOrCreateAsset({
     decimals: storageData.decimals ?? null,
     xcmRateLimit: storageData.xcmRateLimit ?? null,
     isSufficient: storageData.isSufficient ?? true,
-    evmAddress: erc20AssetContractAddress,
   });
 
   await ctx.store.save(newAsset);
@@ -93,19 +119,24 @@ export async function getOrCreateAsset({
 }
 
 export async function getOrCreateMoneyMarketAsset({
-  ctx,
   id,
+  assetRegistryId,
   evmAddress,
   ensure = false,
   resourceType,
+  processUnderlyingAsset = true,
+  ctx,
 }: {
-  ctx: SqdProcessorContext<Store>;
-  id?: string | number;
+  id?: string;
+  assetRegistryId?: number | string;
   evmAddress?: string;
   ensure?: boolean;
   resourceType?: ResourceType;
+  processUnderlyingAsset?: boolean;
+  ctx: SqdProcessorContext<Store>;
 }): Promise<Asset | null> {
-  if (id === undefined && !evmAddress) return null;
+  if (id === undefined && assetRegistryId === undefined && !evmAddress)
+    return null;
 
   const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
 
@@ -115,16 +146,22 @@ export async function getOrCreateMoneyMarketAsset({
     asset = assetsAllBatch.get(`${id}`);
   } else if (evmAddress) {
     asset = [...assetsAllBatch.values()].find(
-      (a) => a.evmAddress === evmAddress && a.active
+      (a) => a.evmAddress === evmAddress
+    );
+  } else if (assetRegistryId) {
+    asset = [...assetsAllBatch.values()].find(
+      (a) => a.assetRegistryId === assetRegistryId
     );
   }
 
   if (asset) return asset;
 
   asset = await ctx.store.findOne(Asset, {
+    // @ts-ignore
     where: {
       ...(id ? { id: `${id}` } : {}),
-      ...(evmAddress ? { evmAddress: evmAddress, active: true } : {}),
+      ...(evmAddress ? { evmAddress } : {}),
+      ...(assetRegistryId ? { assetRegistryId } : {}),
     },
   });
 
@@ -146,24 +183,33 @@ export async function getOrCreateMoneyMarketAsset({
   const contractData =
     await MoneyMarketContractsManager.getInstance().getTokenDetails(evmAddress);
 
-  console.log(contractData);
-
   if (!contractData) return null;
 
-  const mmAssetSyntheticId = getAssetIdFromEvmAddress(evmAddress);
+  const assetCustomLocation = getNewAssetMultiLocation({
+    evmAddress,
+    assetType: AssetType.Erc20,
+  });
 
-  const underlyingAsset = contractData.underlyingAssetAddress
-    ? await getOrCreateAsset({
-        ctx,
-        evmAddress: contractData.underlyingAssetAddress.toLowerCase(),
-        ensure: false,
-      })
-    : null;
+  if (!assetCustomLocation) return null;
+
+  const assetEntityId = getAssetIdFromMultiLocation(assetCustomLocation);
+
+  if (!assetEntityId) return null;
+
+  const underlyingAsset =
+    processUnderlyingAsset && contractData.underlyingAssetAddress
+      ? await getOrCreateAsset({
+          ctx,
+          evmAddress: contractData.underlyingAssetAddress.toLowerCase(),
+          ensure: false,
+        })
+      : null;
 
   const newAsset = new Asset({
-    id: `${mmAssetSyntheticId}`,
-    synthetic: true,
-    active: true,
+    id: assetEntityId,
+    evmAddress: contractData.address,
+    multiLocationIds: [assetEntityId],
+    multiLocationsMetadata: [assetCustomLocation],
     name: contractData.name,
     assetType: AssetType.Erc20,
     resourceType: resourceType ?? contractData.resourceType,
@@ -172,7 +218,6 @@ export async function getOrCreateMoneyMarketAsset({
     decimals: contractData.decimals ?? null,
     xcmRateLimit: null,
     isSufficient: true,
-    evmAddress: contractData.address,
     underlyingAsset,
   });
 

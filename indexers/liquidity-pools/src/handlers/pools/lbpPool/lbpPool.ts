@@ -53,13 +53,13 @@ export async function createLbppool({
 }) {
   const assetAEntity = await getOrCreateAsset({
     ctx,
-    id: assetAId,
+    assetRegistryId: assetAId,
     ensure: true,
     blockHeader: blockHeader,
   });
   const assetBEntity = await getOrCreateAsset({
     ctx,
-    id: assetBId,
+    assetRegistryId: assetBId,
     ensure: true,
     blockHeader: blockHeader,
   });

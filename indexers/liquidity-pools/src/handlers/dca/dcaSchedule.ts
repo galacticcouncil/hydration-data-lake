@@ -44,13 +44,13 @@ export async function createDcaSchedule({
   } = scheduleData;
   const assetIn = await getOrCreateAsset({
     ctx,
-    id: order.assetInId,
+    assetRegistryId: order.assetInId,
     ensure: true,
     blockHeader: blockHeader,
   });
   const assetOut = await getOrCreateAsset({
     ctx,
-    id: order.assetOutId,
+    assetRegistryId: order.assetOutId,
     ensure: true,
     blockHeader: blockHeader,
   });
@@ -90,24 +90,24 @@ export async function createDcaSchedule({
   for (const orderRoute of order.routes) {
     const routeAssetIn = await getOrCreateAsset({
       ctx,
-      id: orderRoute.assetInId,
+      assetRegistryId: orderRoute.assetInId,
       ensure: true,
       blockHeader: blockHeader,
     });
     const routeAssetOut = await getOrCreateAsset({
       ctx,
-      id: orderRoute.assetOutId,
+      assetRegistryId: orderRoute.assetOutId,
       ensure: true,
       blockHeader: blockHeader,
     });
-    if (!assetIn || !assetOut)
+    if (!routeAssetIn || !routeAssetOut)
       throw Error(
         `Asset ${!assetIn ? order.assetInId : order.assetOutId} has not been found and created.`
       );
 
     orderRouteHops.push(
       new DcaScheduleOrderRouteHop({
-        id: `${newSchedule.id}-${orderRoute.assetInId}-${orderRoute.assetOutId}`,
+        id: `${newSchedule.id}-${routeAssetIn.id}-${routeAssetOut.id}`,
         schedule: newSchedule,
         poolKind: orderRoute.poolKind,
         assetIn: routeAssetIn,

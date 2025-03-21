@@ -5,7 +5,11 @@ import {
   AssetRegistryRegisteredData,
   AssetRegistryUpdatedData,
 } from '../../parsers/batchBlocksParser/types';
-import { getAssetEvmAddressByType } from './utils';
+import {
+  getAssetEvmAddressByType,
+  getAssetIdFromMultiLocation,
+  getNewAssetMultiLocation,
+} from './utils';
 import { Asset, AssetType, ResourceType } from '../../model';
 import { getOrCreateAsset } from './asset';
 import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
@@ -30,18 +34,50 @@ export async function assetRegistered(
     },
   } = eventCallData;
 
+  // TODO check location in current state for Erc20 assets
   const erc20AssetContractAddress = await getAssetEvmAddressByType({
     assetId,
     assetType: assetType,
     ctx,
   });
 
-  const newAsset = new Asset({
-    id: `${assetId}`,
-    name: assetName,
-    synthetic: false,
-    active: true,
+  // TODO added error handling
+  if (!erc20AssetContractAddress) return;
+
+  const existingAsset = await getOrCreateAsset({
     evmAddress: erc20AssetContractAddress,
+    ensure: false,
+    ctx,
+  });
+
+  const state = ctx.batchState.state;
+
+  if (existingAsset) {
+    existingAsset.assetRegistryId = `${assetId}`;
+    state.assetsAllBatch.set(existingAsset.id, existingAsset);
+    state.assetIdsToSave.add(existingAsset.id);
+    return;
+  }
+
+  const assetCustomLocation = getNewAssetMultiLocation({
+    assetRegistryId: assetId,
+    evmAddress: erc20AssetContractAddress,
+    assetType,
+  });
+
+  if (!assetCustomLocation) return null;
+
+  const assetEntityId = getAssetIdFromMultiLocation(assetCustomLocation);
+
+  if (!assetEntityId) return null;
+
+  const newAsset = new Asset({
+    id: assetEntityId,
+    evmAddress: erc20AssetContractAddress,
+    assetRegistryId: `${assetId}`,
+    multiLocationIds: [assetEntityId],
+    multiLocationsMetadata: [assetCustomLocation],
+    name: assetName,
     resourceType: ResourceType.Underlying,
     assetType,
     existentialDeposit,
@@ -51,7 +87,6 @@ export async function assetRegistered(
     isSufficient,
   });
 
-  const state = ctx.batchState.state;
   state.assetsAllBatch.set(newAsset.id, newAsset);
   state.assetIdsToSave.add(newAsset.id);
 }
@@ -78,7 +113,7 @@ export async function assetUpdated(
 
   const asset = await getOrCreateAsset({
     ctx,
-    id: assetId,
+    assetRegistryId: assetId,
     ensure: true,
     blockHeader: eventMetadata.blockHeader,
   });
@@ -111,7 +146,7 @@ export async function assetLocationSet(
 
   const asset = await getOrCreateAsset({
     ctx,
-    id: assetId,
+    assetRegistryId: assetId,
     ensure: true,
     blockHeader: eventMetadata.blockHeader,
   });
@@ -121,6 +156,13 @@ export async function assetLocationSet(
   if (asset.assetType !== AssetType.Erc20) return;
 
   asset.evmAddress = getErc20AssetContractFromLocation(location)?.address;
+
+  const assetMultiLocation = getNewAssetMultiLocation({
+    evmAddress: asset.evmAddress,
+    assetType: AssetType.Erc20,
+  });
+
+  if (assetMultiLocation) asset.multiLocationsMetadata = [assetMultiLocation];
 
   const state = ctx.batchState.state;
   state.assetsAllBatch.set(asset.id, asset);

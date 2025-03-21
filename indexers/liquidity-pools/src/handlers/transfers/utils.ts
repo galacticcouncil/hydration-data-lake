@@ -17,6 +17,7 @@ export async function initTransfer({
   const {
     id,
     assetId,
+    assetRegistryAssetId,
     amount,
     fee,
     blockNumber,
@@ -28,7 +29,10 @@ export async function initTransfer({
 
   const assetEntity = await getOrCreateAsset({
     ctx,
-    id: assetId,
+    ...(assetId !== undefined ? { id: `${assetId}` } : {}),
+    ...(assetRegistryAssetId !== undefined
+      ? { assetRegistryId: `${assetRegistryAssetId}` }
+      : {}),
     ensure: true,
     blockHeader,
   });

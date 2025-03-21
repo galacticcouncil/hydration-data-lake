@@ -54,6 +54,7 @@ export async function handleLbppoolHistoricalData(
             .map((assetData) => [assetData.assetId, assetData.data])
         );
 
+        // TODO refactor redundant assets re-fetch
         const assetAEntity = await getOrCreateAsset({
           ctx,
           id: pool.assetA.id,
@@ -67,15 +68,23 @@ export async function handleLbppoolHistoricalData(
           blockHeader,
         });
 
-        if (!assetAEntity || !assetBEntity) return null;
+        if (
+          !assetAEntity ||
+          !assetAEntity.assetRegistryId ||
+          !assetBEntity ||
+          !assetBEntity.assetRegistryId
+        )
+          return null;
 
         const poolHistoricalDataEntity = new LbppoolHistoricalData({
           id: `${pool.account.id}-${blockHeader.height}`,
           pool: pool,
           assetA: assetAEntity,
           assetB: assetBEntity,
-          assetABalance: assetsData.get(assetAEntity.id)?.free ?? BigInt(0),
-          assetBBalance: assetsData.get(assetBEntity.id)?.free ?? BigInt(0),
+          assetABalance:
+            assetsData.get(assetAEntity.assetRegistryId)?.free ?? BigInt(0),
+          assetBBalance:
+            assetsData.get(assetBEntity.assetRegistryId)?.free ?? BigInt(0),
 
           owner: await getOrCreateAccount({ ctx, id: poolStorageData.owner }),
           startBlockNumber: poolStorageData.start,
@@ -85,7 +94,10 @@ export async function handleLbppoolHistoricalData(
           weightCurve: poolStorageData.weightCurve.__kind,
           fee: poolStorageData.fee,
           feeCollector: poolStorageData.feeCollector
-            ? await getOrCreateAccount({ ctx, id: poolStorageData.feeCollector })
+            ? await getOrCreateAccount({
+                ctx,
+                id: poolStorageData.feeCollector,
+              })
             : null,
           repayTarget: poolStorageData.repayTarget,
 

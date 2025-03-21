@@ -120,15 +120,16 @@ export async function stablepoolLiquidityAddedRemoved(
   const newAmountsList = [];
 
   for (const assetAmount of assetAmounts) {
-    const amountEntityId = `${newAction.id}-${assetAmount.assetId}`;
     const asset = await getOrCreateAsset({
       ctx,
-      id: assetAmount.assetId,
+      assetRegistryId: assetAmount.assetId,
       blockHeader: eventMetadata.blockHeader,
       ensure: true,
     });
 
     if (!asset) continue; // TODO add error handling
+
+    const amountEntityId = `${newAction.id}-${asset.id}`;
 
     newAmountsList.push(
       new StableswapAssetLiquidityAmount({
