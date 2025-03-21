@@ -133,57 +133,56 @@ export class RedisOmClientProvider implements OnApplicationBootstrap {
       await this.latestProcessedBlocksRepository.fetch(
         RedisOmEntityId.LATEST_PROCESSED_BLOCKS,
       );
-    if (!currentLatestProcessedBlocksStatus.initialized)
-      await this.latestProcessedBlocksRepository.save(
-        RedisOmEntityId.LATEST_PROCESSED_BLOCKS,
-        {
-          initialized: true,
-          latestOnChainBlockHeight: 0,
-          latestIndexerBlockHeight: 0,
-        },
-      );
+    // if (!currentLatestProcessedBlocksStatus.initialized)
+    await this.latestProcessedBlocksRepository.save(
+      RedisOmEntityId.LATEST_PROCESSED_BLOCKS,
+      {
+        initialized: true,
+        latestOnChainBlockHeight: 0,
+        latestIndexerBlockHeight: 0,
+      },
+    );
 
     const currentMmEventsStatus =
       await this.mmEventsTrackingStatusRepository.fetch(
         RedisOmEntityId.MM_EVENTS_STATUS_SCORE,
       );
-    if (!currentMmEventsStatus.initialized)
-      await this.mmEventsTrackingStatusRepository.save(
-        RedisOmEntityId.MM_EVENTS_STATUS_SCORE,
-        {
-          initialized: true,
-          mmEventsTrackingStatusScore: this.appConfig.EVENT_STATUS_MAX_SCORE,
-        },
-      );
+    // if (!currentMmEventsStatus.initialized)
+    await this.mmEventsTrackingStatusRepository.save(
+      RedisOmEntityId.MM_EVENTS_STATUS_SCORE,
+      {
+        initialized: true,
+        mmEventsTrackingStatusScore: this.appConfig.EVENT_STATUS_MAX_SCORE,
+      },
+    );
 
     const currentSwappedEventsStatus =
       await this.swapsTrackingStatusRepository.fetch(
         RedisOmEntityId.SWAPPED_EVENTS_STATUS_SCORE,
       );
-    if (!currentSwappedEventsStatus.initialized)
-      await this.swapsTrackingStatusRepository.save(
-        RedisOmEntityId.SWAPPED_EVENTS_STATUS_SCORE,
-        {
-          initialized: true,
-          swappedEventsTrackingStatusScore:
-            this.appConfig.EVENT_STATUS_MAX_SCORE,
-        },
-      );
+    // if (!currentSwappedEventsStatus.initialized)
+    await this.swapsTrackingStatusRepository.save(
+      RedisOmEntityId.SWAPPED_EVENTS_STATUS_SCORE,
+      {
+        initialized: true,
+        swappedEventsTrackingStatusScore: this.appConfig.EVENT_STATUS_MAX_SCORE,
+      },
+    );
 
     const currentNotificationTriggersState =
       await this.notificationTriggersStateRepository.fetch(
         RedisOmEntityId.NOTIFICATION_TRIGGERS_STATE,
       );
-    if (!currentNotificationTriggersState.initialized)
-      await this.notificationTriggersStateRepository.save(
-        RedisOmEntityId.NOTIFICATION_TRIGGERS_STATE,
-        {
-          initialized: true,
-          processedBlocksDifference: 0,
-          swappedEventsTrackingStatus: 0,
-          mmEventsTrackingStatus: 0,
-        },
-      );
+    // if (!currentNotificationTriggersState.initialized)
+    await this.notificationTriggersStateRepository.save(
+      RedisOmEntityId.NOTIFICATION_TRIGGERS_STATE,
+      {
+        initialized: true,
+        processedBlocksDifference: 0,
+        swappedEventsTrackingStatus: 0,
+        mmEventsTrackingStatus: 0,
+      },
+    );
   }
 
   get latestProcessedBlocksRepository() {
