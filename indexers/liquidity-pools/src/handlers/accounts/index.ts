@@ -167,7 +167,7 @@ export async function getOrCreateAccountByBoundEvmAddress({
 
   return getOrCreateAccount({
     ctx,
-    id: EvmUtils.getDerivedSs58FromH160(evmAddress),
+    id: EvmUtils.addressToHex(EvmUtils.getDerivedSs58FromH160(evmAddress)),
     boundEvmAddress: evmAddress,
     ensureBoundEvmAddress: true,
   });

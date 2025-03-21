@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
 import * as v160 from '../v160'
+import * as v295 from '../v295'
 
 export const schedule =  {
     name: 'DCA.schedule',
@@ -33,6 +34,40 @@ export const schedule =  {
         'DCA.schedule',
         sts.struct({
             schedule: v160.Schedule,
+            startExecutionBlock: sts.option(() => sts.number()),
+        })
+    ),
+    /**
+     * Creates a new DCA (Dollar-Cost Averaging) schedule and plans the next execution
+     * for the specified block.
+     * 
+     * If the block is not specified, the execution is planned for the next block.
+     * If the given block is full, the execution will be planned in the subsequent block.
+     * 
+     * Once the schedule is created, the specified `total_amount` will be reserved for DCA.
+     * The reservation currency will be the `amount_in` currency of the order.
+     * 
+     * Trades are executed as long as there is budget remaining
+     * from the initial `total_amount` allocation, unless `total_amount` is 0, then trades
+     * are executed until schedule is terminated.
+     * 
+     * If a trade fails due to slippage limit or price stability errors, it will be retried.
+     * If the number of retries reaches the maximum allowed,
+     * the schedule will be terminated permanently.
+     * In the case of a successful trade, the retry counter is reset.
+     * 
+     * Parameters:
+     * - `origin`: schedule owner
+     * - `schedule`: schedule details
+     * - `start_execution_block`: first possible execution block for the schedule
+     * 
+     * Emits `Scheduled` and `ExecutionPlanned` event when successful.
+     * 
+     */
+    v295: new CallType(
+        'DCA.schedule',
+        sts.struct({
+            schedule: v295.Schedule,
             startExecutionBlock: sts.option(() => sts.number()),
         })
     ),

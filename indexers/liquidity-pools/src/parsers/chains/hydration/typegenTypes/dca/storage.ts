@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v160 from '../v160'
+import * as v295 from '../v295'
 
 export const scheduleIdSequencer =  {
     /**
@@ -22,6 +23,10 @@ export const schedules =  {
      *  Storing schedule details
      */
     v160: new StorageType('DCA.Schedules', 'Optional', [sts.number()], v160.Schedule) as SchedulesV160,
+    /**
+     *  Storing schedule details
+     */
+    v295: new StorageType('DCA.Schedules', 'Optional', [sts.number()], v295.Schedule) as SchedulesV295,
 }
 
 /**
@@ -39,6 +44,23 @@ export interface SchedulesV160  {
     getPairs(block: Block, key: number): Promise<[k: number, v: (v160.Schedule | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v160.Schedule | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v160.Schedule | undefined)][]>
+}
+
+/**
+ *  Storing schedule details
+ */
+export interface SchedulesV295  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v295.Schedule | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v295.Schedule | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v295.Schedule | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v295.Schedule | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v295.Schedule | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v295.Schedule | undefined)][]>
 }
 
 export const scheduleOwnership =  {
