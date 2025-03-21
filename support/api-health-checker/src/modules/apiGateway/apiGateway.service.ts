@@ -21,6 +21,7 @@ export class ApiGatewayService {
       latestOnChainBlockHeight: 0,
       swappedEventsTrackingStatusScore: this.appConfig.EVENT_STATUS_MAX_SCORE,
       mmEventsTrackingStatusScore: this.appConfig.EVENT_STATUS_MAX_SCORE,
+      version: '1742583860376',
     };
 
     try {
