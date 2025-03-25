@@ -15,6 +15,8 @@ import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetDetailsWithId } from '../../parsers/types/storage';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import { isU32 } from '../../utils/helpers';
+import { AssetRegistryLocationSetData } from '../../parsers/batchBlocksParser/types';
+import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAllBatch = new Map(
@@ -54,27 +56,55 @@ export async function ensureNativeToken(ctx: SqdProcessorContext<Store>) {
   assetsAllBatch.set(nativeToken.id, nativeToken);
 }
 
+/**
+ * "draftMultiLocationsData" argument is useful in case there 2 events in the
+ * same block - AssetRegistry.Registered and AssetRegistry.LocationSet. So this
+ * argument provides still not processed data about location. This trick is
+ * useful for processing Erc20 assets, when AssetRegistry.LocationSet event is
+ * emitter before AssetRegistry.Registered in the same block.
+ * As an improvement, we can read the latest state of storage during processing
+ * past blocks (on indexer reindexing phase), so this will allow as to get asset's
+ * multi-location more certainly.
+ */
 export async function getAssetEvmAddressByType({
   assetId,
   assetType,
+  draftMultiLocationsData,
   ctx,
 }: {
   assetId: number;
   assetType: AssetType;
+  draftMultiLocationsData?: AssetRegistryLocationSetData[];
   ctx: SqdProcessorContext<Store>;
 }) {
   if (Number.isNaN(assetId)) return null;
 
   switch (assetType) {
-    case AssetType.Erc20:
-      return (
-        (
-          await parsers.storage.assetRegistry.getErc20AssetContractAddress(
-            +assetId,
-            ctx.blocks[0].header
-          )
-        )?.address ?? null
-      );
+    case AssetType.Erc20: {
+      const assetLocationSetEvent =
+        draftMultiLocationsData && draftMultiLocationsData.length > 0
+          ? draftMultiLocationsData.find(
+              (event) => event.eventData.params.assetId === assetId
+            )
+          : undefined;
+
+      if (assetLocationSetEvent) {
+        return (
+          getErc20AssetContractFromLocation(
+            assetLocationSetEvent.eventData.params.location
+          )?.address ?? null
+        );
+      } else {
+        return (
+          (
+            await parsers.storage.assetRegistry.getErc20AssetContractAddress(
+              +assetId,
+              ctx.blocks[0].header
+            )
+          )?.address ?? null
+        );
+      }
+    }
     default:
       return EvmUtils.convertAssetIdToH160Address(assetId);
   }
@@ -157,9 +187,8 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
         name: data.name,
         assetType: data.assetType,
-        resourceType: erc20AssetContractDetails
-          ? erc20AssetContractDetails.resourceType
-          : ResourceType.Underlying,
+        resourceType:
+          erc20AssetContractDetails?.resourceType ?? ResourceType.Underlying,
         existentialDeposit: data.existentialDeposit,
         symbol: data.symbol ?? null,
         decimals: data.decimals ?? null,
@@ -340,6 +369,7 @@ export function getNewAssetMultiLocation({
     case AssetType.Token:
     case AssetType.StableSwap:
     case AssetType.XYK:
+    case AssetType.PoolShare:
       if (assetRegistryId === null || assetRegistryId === undefined)
         return null;
       tpl.interior!.push(

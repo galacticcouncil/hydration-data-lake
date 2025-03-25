@@ -14,7 +14,9 @@
     "ingester-codegen:all": ". ./scripts/ingester-codegen.sh",
     "multi-typegen": ". ./scripts/typegen.sh",
     "api-codegen:dictionary-api": "graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts",
-    "explore-metadata": "npx squid-substrate-metadata-explorer --rpc wss://paseo-rpc.play.hydration.cloud --out ./typegenAssets/paseo-metadata.jsonl"
+    "explore-metadata": "npx squid-substrate-metadata-explorer --rpc wss://paseo-rpc.play.hydration.cloud --out ./typegenAssets/paseo-metadata.jsonl",
+    "papi-typegen": "npx papi add -w wss://hydration-rpc.n.dwellir.com hydration",
+    "postpapi-typegen": "rm .papi/descriptors/.gitignore"
   },
   "dependencies": {
     "@aave/contract-helpers": "1.28.0",
@@ -38,20 +40,20 @@
     "class-transformer": "^0.5.1",
     "class-transformer-validator": "^0.9.1",
     "class-validator": "^0.14.1",
+    "cors": "^2.8.5",
     "cpx2": "^8.0.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "ethers": "^5.x",
     "express": "^4.21.1",
-    "graphile-build": "^4.13.0",
     "lodash.camelcase": "^4.3.0",
     "node-pg-migrate": "^7.7.1",
     "pg": "^8.11.5",
+    "polkadot-api": "^1.9.7",
     "postgraphile": "^4.13.0",
     "postgraphile-plugin-connection-filter": "^2.3.0",
     "scale-ts": "^1.6.1",
-    "typeorm": "^0.3.20",
-    "cors": "^2.8.5"
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@polkadot/api": "^14.0.1",
@@ -73,6 +75,7 @@
     "@subsquid/substrate-metadata-explorer": "^3.1.2",
     "@subsquid/substrate-typegen": "^8.1.0",
     "@subsquid/typeorm-codegen": "^2.0.0",
+    "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
     "@types/lodash.camelcase": "^4.3.9",
     "@types/node": "^22.13.9",
@@ -89,7 +92,10 @@
     "typescript": "^5.5.4"
   },
   "resolutions": {
-    "ethers": "^5.x"
+    "ethers": "^5.x",
+    "@polkadot/util": "~13.1.1",
+    "@polkadot/util-crypto": "~13.1.1",
+    "@polkadot/keyring": "~13.1.1"
   },
   "jest": {
     "moduleFileExtensions": [

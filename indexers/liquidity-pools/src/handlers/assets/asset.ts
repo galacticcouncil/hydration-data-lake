@@ -39,7 +39,7 @@ export async function getOrCreateAsset({
     );
   } else if (assetRegistryId !== undefined) {
     asset = [...assetsAllBatch.values()].find(
-      (a) => a.assetRegistryId === assetRegistryId
+      (a) => `${a.assetRegistryId}` === `${assetRegistryId}`
     );
   }
 
@@ -50,7 +50,7 @@ export async function getOrCreateAsset({
     where: {
       ...(id ? { id: `${id}` } : {}),
       ...(evmAddress ? { evmAddress } : {}),
-      ...(assetRegistryId ? { assetRegistryId } : {}),
+      ...(assetRegistryId ? { assetRegistryId: `${assetRegistryId}` } : {}),
     },
   });
 
@@ -94,6 +94,14 @@ export async function getOrCreateAsset({
 
   if (!assetEntityId) return null;
 
+  const evmTokenContractData =
+    storageData.assetType === AssetType.Erc20 &&
+    (evmAddress || erc20AssetContractAddress)
+      ? await MoneyMarketContractsManager.getInstance().getTokenDetails(
+          evmAddress ?? erc20AssetContractAddress ?? ''
+        )
+      : null;
+
   const newAsset = new Asset({
     id: assetEntityId,
     evmAddress: erc20AssetContractAddress,
@@ -103,7 +111,9 @@ export async function getOrCreateAsset({
 
     name: storageData.name,
     assetType: storageData.assetType,
-    resourceType: ResourceType.Underlying,
+    resourceType: evmTokenContractData
+      ? evmTokenContractData.resourceType
+      : ResourceType.Underlying,
     existentialDeposit: storageData.existentialDeposit,
     symbol: storageData.symbol ?? null,
     decimals: storageData.decimals ?? null,
@@ -150,7 +160,7 @@ export async function getOrCreateMoneyMarketAsset({
     );
   } else if (assetRegistryId) {
     asset = [...assetsAllBatch.values()].find(
-      (a) => a.assetRegistryId === assetRegistryId
+      (a) => `${a.assetRegistryId}` === `${assetRegistryId}`
     );
   }
 

@@ -28,6 +28,7 @@ enum AssetType {
   Token
   XYK
   Erc20
+  PoolShare
 }
 enum ResourceType {
   Underlying

@@ -12,15 +12,15 @@
     "test:storage-dict-api": "TARGET=storage_dictionary jest --config jest-api.js --verbose"
   },
   "dependencies": {
-    "@galacticcouncil/sdk": "^4.2.1",
-    "@polkadot/api": "^14.0.1",
+    "@polkadot/api": "^12.4.2",
     "@urql/core": "^5.0.8",
     "@urql/exchange-retry": "^1.3.0",
     "bignumber.js": "^9.1.2",
     "cpx2": "^8.0.0",
     "dotenv": "^16.4.5",
     "pg": "^8.11.5",
-    "scale-ts": "^1.6.1"
+    "scale-ts": "^1.6.1",
+    "@galacticcouncil/sdk": "^4.2.1"
   },
   "devDependencies": {
     "@polkadot/api": "^12.1.1",

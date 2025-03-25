@@ -1,7 +1,6 @@
 import AggregatesPluggin from '@graphile/pg-aggregates';
 import SimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
 import express from 'express';
-import { NodePlugin } from 'graphile-build';
 import { postgraphile, makePluginHook } from 'postgraphile';
 import FilterPlugin from 'postgraphile-plugin-connection-filter';
 import { ProcessorStatusPlugin } from './apiSupport/plugins/query/processorStatus.plugin';
@@ -23,6 +22,7 @@ import { CommonApiTypesDefinitionPlugin } from './apiSupport/plugins/query/commo
 import { handleProxyReqSubscan } from './apiSupport/proxyApiHandlers';
 import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
 import cors from 'cors';
+import { NodePlugin } from 'graphile-build';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -126,6 +126,7 @@ app.use(express.json());
 app.post(
   `${ProxyApiRoute.subscan}/*`,
   cors(corsOptions),
+  // @ts-ignore
   handleProxyReqSubscan
 );
 

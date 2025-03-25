@@ -88,6 +88,7 @@ export async function createXykPool({
       poolAddress,
     });
   }
+
   if (!shareTokenIdEnsured) return null;
 
   const sharedTokenEntity = await getOrCreateAsset({

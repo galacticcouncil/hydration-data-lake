@@ -3,5 +3,5 @@ export type IndexerStatusResponse = {
   latestIndexerBlockHeight: number;
   mmEventsTrackingStatusScore: number;
   swappedEventsTrackingStatusScore: number;
-  version: string;
+  version?: string;
 };

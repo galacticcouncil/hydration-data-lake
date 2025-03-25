@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 513
+slot: 603
 description: Hydration pools indexer
 build:
 deploy:
@@ -12,7 +12,7 @@ deploy:
   processor:
     env:
       CHAIN: 'hydration'
-      RPC_URL: 'wss://7.rpc.hydration.cloud'
+      RPC_URL: 'wss://archive.rpc.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
       PROCESS_XYK_POOLS: true
@@ -48,7 +48,7 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
       profile: medium
@@ -56,5 +56,5 @@ scale:
   processor:
     profile: medium
   api:
-    profile: medium
+    profile: small
 

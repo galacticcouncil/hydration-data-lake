@@ -13,10 +13,14 @@ import {
 import { Asset, AssetType, ResourceType } from '../../model';
 import { getOrCreateAsset } from './asset';
 import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
+import { EventName } from '../../parsers/types/events';
+import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
-  eventCallData: AssetRegistryRegisteredData
+  eventCallData: AssetRegistryRegisteredData,
+  parsedEvents: BatchBlocksParsedDataManager
 ) {
   const {
     eventData: {
@@ -38,6 +42,11 @@ export async function assetRegistered(
   const erc20AssetContractAddress = await getAssetEvmAddressByType({
     assetId,
     assetType: assetType,
+    draftMultiLocationsData: [
+      ...parsedEvents
+        .getSectionByEventName(EventName.AssetRegistry_LocationSet)
+        .values(),
+    ],
     ctx,
   });
 
@@ -71,6 +80,13 @@ export async function assetRegistered(
 
   if (!assetEntityId) return null;
 
+  const evmTokenContractData =
+    assetType === AssetType.Erc20
+      ? await MoneyMarketContractsManager.getInstance().getTokenDetails(
+          erc20AssetContractAddress
+        )
+      : null;
+
   const newAsset = new Asset({
     id: assetEntityId,
     evmAddress: erc20AssetContractAddress,
@@ -78,7 +94,7 @@ export async function assetRegistered(
     multiLocationIds: [assetEntityId],
     multiLocationsMetadata: [assetCustomLocation],
     name: assetName,
-    resourceType: ResourceType.Underlying,
+    resourceType: evmTokenContractData?.resourceType ?? ResourceType.Underlying,
     assetType,
     existentialDeposit,
     symbol,
