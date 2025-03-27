@@ -19,7 +19,7 @@ export async function handleAssetSwapFee({
     `${asset.id}-${block.height}`
   );
 
-  // If not found find last volume in cache
+  // If not found, find last volume in cache
   const lastCachedAssetFeeAmount = getLastAssetSwapFeeAmountFromCache(
     state.historicalAssetSwapFees,
     asset.id
@@ -65,7 +65,7 @@ export function getLastAssetSwapFeeAmountFromCache(
   return fees.get(
     Array.from(fees.keys())
       .filter((k) => {
-        return k.startsWith(`${assetId}`);
+        return k.startsWith(`${assetId}-`);
       })
       .sort((a, b) => {
         return parseInt(b.split('-')[1]) - parseInt(a.split('-')[1]);

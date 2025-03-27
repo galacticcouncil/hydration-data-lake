@@ -48,7 +48,7 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
       profile: medium
@@ -56,5 +56,5 @@ scale:
   processor:
     profile: medium
   api:
-    profile: small
+    profile: medium
 

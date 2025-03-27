@@ -74406,6 +74406,39 @@ type StableswapHistoricalVolumeEntity {
   relayBlockHeight: Int!
 }
 
+input RoutedTradeSubscriptionFilter {
+  assetIds: [String!]
+  participantIds: [String!]
+  swapperIds: [String!]
+  fillerIds: [String!]
+  feeRecipientIds: [String!]
+}
+
+type RoutedTradeSubscriptionPayload {
+  node: RoutedTradeEntity
+  event: String
+}
+
+type RoutedTradeAssetBalanceResponse {
+  assetId: String!
+  amount: BigInt!
+}
+
+type RoutedTradeEntity {
+  id: String!
+  routeId: String
+  allInvolvedAssetIds: [String!]!
+  participantSwappers: [String!]!
+  participantFillers: [String!]!
+  feeRecipients: [String!]!
+  swapIds: [String!]!
+  inputs: [RoutedTradeAssetBalanceResponse!]!
+  outputs: [RoutedTradeAssetBalanceResponse!]!
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+  blockId: String!
+}
+
 """The root query type which gives access points into the data universe."""
 type Query {
   """
@@ -76655,6 +76688,7 @@ type Query {
   xykPoolHistoricalVolumesByPeriod(filter: XykPoolVolumesByPeriodFilter!): XykPoolVolumesByPeriodResponse!
   omnipoolAssetHistoricalVolumesByPeriod(filter: OmnipoolAssetVolumesByPeriodFilter!): OmnipoolAssetVolumesByPeriodResponse!
   stableswapHistoricalVolumesByPeriod(filter: StableswapVolumesByPeriodFilter!): StableswapVolumesByPeriodResponse!
+  swapAssetFeesByPeriod(filter: SwapAssetFeesByPeriodFilter!): SwapAssetFeesByPeriodResponse!
 }
 
 """
@@ -76683,35 +76717,19 @@ type Subscription {
   routedTrade(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
 }
 
-input RoutedTradeSubscriptionFilter {
-  assetIds: [String!]
-  participantIds: [String!]
-  swapperIds: [String!]
-  fillerIds: [String!]
-  feeRecipientIds: [String!]
+input SwapAssetFeesByPeriodFilter {
+  period: AggregationTimeRange
+  startBlockNumber: Int
+  endBlockNumber: Int
 }
 
-type RoutedTradeSubscriptionPayload {
-  node: RoutedTradeEntity
-  event: String
-}
-
-type RoutedTradeAssetBalanceResponse {
+type SwapAssetFeeAggregated {
   assetId: String!
-  amount: BigInt!
+  assetRegistryId: String
+  amount: BigFloat!
 }
 
-type RoutedTradeEntity {
-  id: String!
-  routeId: String
-  allInvolvedAssetIds: [String!]!
-  participantSwappers: [String!]!
-  participantFillers: [String!]!
-  feeRecipients: [String!]!
-  swapIds: [String!]!
-  inputs: [RoutedTradeAssetBalanceResponse!]!
-  outputs: [RoutedTradeAssetBalanceResponse!]!
-  paraBlockHeight: Int!
-  relayBlockHeight: Int!
-  blockId: String!
+type SwapAssetFeesByPeriodResponse {
+  nodes: [SwapAssetFeeAggregated]!
+  totalCount: Int!
 }
