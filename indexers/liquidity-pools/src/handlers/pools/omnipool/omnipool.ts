@@ -27,7 +27,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
 
   const lrnaAssetEntity = await getOrCreateAsset({
     ctx,
-    id: ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
+    assetRegistryId: ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID,
     ensure: true,
     blockHeader: ctx.blocks[0].header,
   });
@@ -49,10 +49,9 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
     asset: lrnaAssetEntity,
     pool: omnipoolEntity,
     addedAtParaBlockHeight: ctx.blocks[0].header.height,
-    addedAtRelayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(
-        ctx.blocks[0].header.height
-      ).height,
+    addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      ctx.blocks[0].header.height
+    ).height,
     addedAtBlock: ctx.batchState.state.batchBlocks.get(ctx.blocks[0].header.id),
     isRemoved: false,
     lifeStates: addOmnipoolAssetAddedLifeState({

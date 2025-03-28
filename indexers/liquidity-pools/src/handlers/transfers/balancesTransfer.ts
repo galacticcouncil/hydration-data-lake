@@ -23,7 +23,7 @@ export async function handleBalancesTransfer(
         ...(callData.traceId ? [callData.traceId] : []),
         eventMetadata.traceId,
       ],
-      assetId: 0,
+      assetRegistryAssetId: 0,
       blockNumber: eventMetadata.blockHeader.height,
       timestamp: new Date(eventMetadata.blockHeader.timestamp || 0),
       from: eventParams.from,

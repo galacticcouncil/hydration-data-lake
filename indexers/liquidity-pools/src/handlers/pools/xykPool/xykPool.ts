@@ -51,13 +51,13 @@ export async function createXykPool({
 
   const assetAEntity = await getOrCreateAsset({
     ctx,
-    id: assetAId,
+    assetRegistryId: assetAId,
     ensure: true,
     blockHeader: blockHeader,
   });
   const assetBEntity = await getOrCreateAsset({
     ctx,
-    id: assetBId,
+    assetRegistryId: assetBId,
     ensure: true,
     blockHeader: blockHeader,
   });
@@ -88,11 +88,12 @@ export async function createXykPool({
       poolAddress,
     });
   }
+
   if (!shareTokenIdEnsured) return null;
 
   const sharedTokenEntity = await getOrCreateAsset({
     ctx,
-    id: shareTokenIdEnsured,
+    assetRegistryId: shareTokenIdEnsured,
     ensure: true,
     blockHeader: blockHeader,
   });

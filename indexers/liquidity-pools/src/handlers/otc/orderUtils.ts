@@ -27,13 +27,13 @@ export async function createOtcOrder({
 
   const assetIn = await getOrCreateAsset({
     ctx,
-    id: assetInId,
+    assetRegistryId: assetInId,
     ensure: true,
     blockHeader: blockHeader,
   });
   const assetOut = await getOrCreateAsset({
     ctx,
-    id: assetOutId,
+    assetRegistryId: assetOutId,
     ensure: true,
     blockHeader: blockHeader,
   });

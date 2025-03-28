@@ -70,12 +70,12 @@ async function getStableswapDataPromise({
 
   const poolAssetHistoricalDataEntities = [];
 
-  for (const { assetId, data } of assetsData.filter(
+  for (const { assetId: arAssetId, data } of assetsData.filter(
     (data) => !!data && !!data.data
   )) {
     const asset = await getOrCreateAsset({
       ctx,
-      id: assetId,
+      assetRegistryId: arAssetId,
       ensure: true,
       blockHeader,
     });
@@ -84,7 +84,7 @@ async function getStableswapDataPromise({
 
     poolAssetHistoricalDataEntities.push(
       new StableswapAssetHistoricalData({
-        id: `${poolId}-${assetId}-${blockHeader.height}`,
+        id: `${poolId}-${asset.id}-${blockHeader.height}`,
         asset,
         poolHistoricalData: poolHistoricalDataEntity,
         freeBalance: data!.free,

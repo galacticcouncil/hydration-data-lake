@@ -91,6 +91,16 @@
       "events": ["Bound"],
       "calls": [],
       "storage": true
+    },
+    "OmnipoolLiquidityMining": {
+      "events": true,
+      "calls": [],
+      "storage": true
+    },
+    "OmnipoolWarehouseLM": {
+      "events": true,
+      "calls": [],
+      "storage": true
     }
   }
 }

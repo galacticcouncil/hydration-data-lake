@@ -144,7 +144,7 @@ export async function getNewSwap({
   for (const fee of fees) {
     const asset = await getOrCreateAsset({
       ctx,
-      id: fee.assetId,
+      assetRegistryId: fee.assetId,
       ensure: true,
       blockHeader,
     });
@@ -169,7 +169,7 @@ export async function getNewSwap({
   for (const input of inputs) {
     const asset = await getOrCreateAsset({
       ctx,
-      id: input.assetId,
+      assetRegistryId: input.assetId,
       ensure: true,
       blockHeader,
     });
@@ -188,7 +188,7 @@ export async function getNewSwap({
   for (const output of outputs) {
     const asset = await getOrCreateAsset({
       ctx,
-      id: output.assetId,
+      assetRegistryId: output.assetId,
       ensure: true,
       blockHeader,
     });

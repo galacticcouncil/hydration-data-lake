@@ -85,7 +85,7 @@ export async function handleMmTransferEvent(
         ...(callData.traceId ? [callData.traceId] : []),
         eventMetadata.traceId,
       ],
-      assetId: +assetEntity.id,
+      assetId: assetEntity.id,
       blockNumber: eventMetadata.blockHeader.height,
       timestamp: new Date(eventMetadata.blockHeader.timestamp || 0),
       from: accountFrom.id,

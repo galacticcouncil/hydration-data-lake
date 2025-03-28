@@ -23,6 +23,7 @@ import { CommonApiTypesDefinitionPlugin } from './apiSupport/plugins/query/commo
 import { handleProxyReqSubscan } from './apiSupport/proxyApiHandlers';
 import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
 import cors from 'cors';
+import { SwapPlugin } from './apiSupport/plugins/query/swap';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -71,6 +72,7 @@ const postgraphileInstance = postgraphile(
       StableswapVolumePlugin,
       StableswapVolumeSubscriptionsPlugin,
       RoutedTradesSubscriptionsPlugin,
+      SwapPlugin,
       makePgSmartTagsFromFilePlugin(
         getEnvPath('apiSupport/postgraphile.tags.json5')
       ),
@@ -126,6 +128,7 @@ app.use(express.json());
 app.post(
   `${ProxyApiRoute.subscan}/*`,
   cors(corsOptions),
+  // @ts-ignore
   handleProxyReqSubscan
 );
 

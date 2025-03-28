@@ -5,4 +5,5 @@ export enum AssetType {
   Token = "Token",
   XYK = "XYK",
   Erc20 = "Erc20",
+  PoolShare = "PoolShare",
 }

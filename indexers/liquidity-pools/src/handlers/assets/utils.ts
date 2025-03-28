@@ -1,13 +1,22 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, AssetType, ResourceType } from '../../model';
+import {
+  Asset,
+  AssetMultiLocation,
+  AssetMultiLocationsInterior,
+  AssetMultiLocationsInteriorKind,
+  AssetType,
+  ResourceType,
+} from '../../model';
 import parsers from '../../parsers';
 import { EvmUtils } from '../../utils/evm';
-import { getOrCreateAsset } from './asset';
+import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from './asset';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetDetailsWithId } from '../../parsers/types/storage';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import { isU32 } from '../../utils/helpers';
+import { AssetRegistryLocationSetData } from '../../parsers/batchBlocksParser/types';
+import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAllBatch = new Map(
@@ -19,13 +28,19 @@ export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
 }
 
 export async function ensureNativeToken(ctx: SqdProcessorContext<Store>) {
-  let nativeToken = await getOrCreateAsset({ ctx, id: 0 });
+  let nativeToken = await getOrCreateAsset({ ctx, assetRegistryId: 0 });
   if (nativeToken) return;
+
+  const multiLocation = getNewAssetMultiLocation({
+    assetRegistryId: 0,
+    assetType: AssetType.Token,
+  });
 
   nativeToken = new Asset({
     id: '0',
-    synthetic: false,
-    active: true,
+    assetRegistryId: '0',
+    multiLocationsMetadata: multiLocation ? [multiLocation] : null,
+    multiLocationIds: ['0'],
     name: 'Hydration',
     assetType: AssetType.Token,
     resourceType: ResourceType.Underlying,
@@ -41,27 +56,55 @@ export async function ensureNativeToken(ctx: SqdProcessorContext<Store>) {
   assetsAllBatch.set(nativeToken.id, nativeToken);
 }
 
+/**
+ * "draftMultiLocationsData" argument is useful in case there 2 events in the
+ * same block - AssetRegistry.Registered and AssetRegistry.LocationSet. So this
+ * argument provides still not processed data about location. This trick is
+ * useful for processing Erc20 assets, when AssetRegistry.LocationSet event is
+ * emitter before AssetRegistry.Registered in the same block.
+ * As an improvement, we can read the latest state of storage during processing
+ * past blocks (on indexer reindexing phase), so this will allow as to get asset's
+ * multi-location more certainly.
+ */
 export async function getAssetEvmAddressByType({
   assetId,
   assetType,
+  draftMultiLocationsData,
   ctx,
 }: {
   assetId: number;
   assetType: AssetType;
+  draftMultiLocationsData?: AssetRegistryLocationSetData[];
   ctx: SqdProcessorContext<Store>;
 }) {
   if (Number.isNaN(assetId)) return null;
 
   switch (assetType) {
-    case AssetType.Erc20:
-      return (
-        (
-          await parsers.storage.assetRegistry.getErc20AssetContractAddress(
-            +assetId,
-            ctx.blocks[0].header
-          )
-        )?.address ?? null
-      );
+    case AssetType.Erc20: {
+      const assetLocationSetEvent =
+        draftMultiLocationsData && draftMultiLocationsData.length > 0
+          ? draftMultiLocationsData.find(
+              (event) => event.eventData.params.assetId === assetId
+            )
+          : undefined;
+
+      if (assetLocationSetEvent) {
+        return (
+          getErc20AssetContractFromLocation(
+            assetLocationSetEvent.eventData.params.location
+          )?.address ?? null
+        );
+      } else {
+        return (
+          (
+            await parsers.storage.assetRegistry.getErc20AssetContractAddress(
+              +assetId,
+              ctx.blocks[0].header
+            )
+          )?.address ?? null
+        );
+      }
+    }
     default:
       return EvmUtils.convertAssetIdToH160Address(assetId);
   }
@@ -94,6 +137,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   );
 
   const assetsToSave: Asset[] = [];
+  const mmAssetsToSave: Asset[] = [];
 
   if (latestActualisationPoint < 0) {
     /**
@@ -122,91 +166,114 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
             erc20AssetContractAddress
           );
 
+      const assetCustomLocation = getNewAssetMultiLocation({
+        assetRegistryId: assetId,
+        evmAddress: erc20AssetContractAddress,
+        assetType: data.assetType,
+      });
+
+      if (!assetCustomLocation) continue;
+
+      const assetEntityId = getAssetIdFromMultiLocation(assetCustomLocation);
+
+      if (!assetEntityId) continue;
+
       const newAsset = new Asset({
-        id: `${assetId}`,
-        synthetic: false,
-        active: true,
+        id: assetEntityId,
+        assetRegistryId: `${assetId}`,
+        evmAddress: erc20AssetContractAddress,
+        multiLocationsMetadata: [assetCustomLocation],
+        multiLocationIds: [assetEntityId],
+
         name: data.name,
         assetType: data.assetType,
-        resourceType: erc20AssetContractDetails
-          ? erc20AssetContractDetails.resourceType
-          : ResourceType.Underlying,
+        resourceType:
+          erc20AssetContractDetails?.resourceType ?? ResourceType.Underlying,
         existentialDeposit: data.existentialDeposit,
         symbol: data.symbol ?? null,
         decimals: data.decimals ?? null,
         xcmRateLimit: data.xcmRateLimit ?? null,
         isSufficient: data.isSufficient ?? true,
-        evmAddress: erc20AssetContractAddress,
       });
 
       assetsToSave.push(newAsset);
       ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
     }
 
-    // for (const mmResourceDetails of [
-    //   ...MoneyMarketContractsManager.getInstance().moneyMarketResourcesDetailsMap.values(),
-    // ]) {
-    //   const mmTokenUnderlyingAsset = assetsToSave.find(
-    //     (assetToSave) =>
-    //       assetToSave.evmAddress ===
-    //       mmResourceDetails.underlyingAssetAddress.toLowerCase()
-    //   );
-    //   if (!mmTokenUnderlyingAsset) continue;
-    //
-    //   if (
-    //     !assetsToSave.find(
-    //       (assetToSave) =>
-    //         assetToSave.evmAddress ===
-    //         mmResourceDetails.aTokenAddress.toLowerCase()
-    //     )
-    //   ) {
-    //     const aTokenEntity = await getOrCreateMoneyMarketAsset({
-    //       ctx,
-    //       evmAddress: mmResourceDetails.aTokenAddress.toLowerCase(),
-    //       ensure: true,
-    //     });
-    //     if (aTokenEntity) {
-    //       aTokenEntity.resourceType = ResourceType.Collateral;
-    //       mmTokenUnderlyingAsset.aToken = aTokenEntity;
-    //       aTokenEntity.underlyingAsset = mmTokenUnderlyingAsset;
-    //       assetsToSave.push(aTokenEntity);
-    //     }
-    //   }
-    //
-    //   if (
-    //     !assetsToSave.find(
-    //       (assetToSave) =>
-    //         assetToSave.evmAddress ===
-    //         mmResourceDetails.variableDebtTokenAddress.toLowerCase()
-    //     )
-    //   ) {
-    //     const variableDebtTokenEntity = await getOrCreateMoneyMarketAsset({
-    //       ctx,
-    //       evmAddress: mmResourceDetails.variableDebtTokenAddress.toLowerCase(),
-    //       ensure: true,
-    //     });
-    //     if (variableDebtTokenEntity) {
-    //       variableDebtTokenEntity.resourceType = ResourceType.Debt;
-    //       mmTokenUnderlyingAsset.variableDebtToken = variableDebtTokenEntity;
-    //       variableDebtTokenEntity.underlyingAsset = mmTokenUnderlyingAsset;
-    //       assetsToSave.push(variableDebtTokenEntity);
-    //     }
-    //   }
-    // }
+    for (const mmResourceDetails of [
+      ...MoneyMarketContractsManager.getInstance().moneyMarketResourcesDetailsMap.values(),
+    ]) {
+      const mmTokenUnderlyingAsset = assetsToSave.find(
+        (assetToSave) =>
+          assetToSave.evmAddress ===
+          mmResourceDetails.underlyingAssetAddress.toLowerCase()
+      );
+      if (!mmTokenUnderlyingAsset) continue;
 
-    // ctx.batchState.state.assetsAllBatch = new Map(
-    //   assetsToSave.map((asset) => [asset.id, asset])
-    // );
+      if (
+        !assetsToSave.find(
+          (assetToSave) =>
+            assetToSave.evmAddress ===
+            mmResourceDetails.aTokenAddress.toLowerCase()
+        )
+      ) {
+        const aTokenEntity = await getOrCreateMoneyMarketAsset({
+          ctx,
+          evmAddress: mmResourceDetails.aTokenAddress.toLowerCase(),
+          ensure: true,
+          processUnderlyingAsset: false,
+        });
+        if (aTokenEntity) {
+          aTokenEntity.resourceType = ResourceType.Collateral;
+          // mmTokenUnderlyingAsset.aToken = aTokenEntity;
+          // aTokenEntity.underlyingAsset = mmTokenUnderlyingAsset;
+          mmAssetsToSave.push(aTokenEntity);
+          ctx.batchState.state.assetsAllBatch.set(
+            aTokenEntity.id,
+            aTokenEntity
+          );
+        }
+      }
+
+      if (
+        !assetsToSave.find(
+          (assetToSave) =>
+            assetToSave.evmAddress ===
+            mmResourceDetails.variableDebtTokenAddress.toLowerCase()
+        )
+      ) {
+        const variableDebtTokenEntity = await getOrCreateMoneyMarketAsset({
+          ctx,
+          evmAddress: mmResourceDetails.variableDebtTokenAddress.toLowerCase(),
+          ensure: true,
+          processUnderlyingAsset: false,
+        });
+        if (variableDebtTokenEntity) {
+          variableDebtTokenEntity.resourceType = ResourceType.Debt;
+          // mmTokenUnderlyingAsset.variableDebtToken = variableDebtTokenEntity;
+          // variableDebtTokenEntity.underlyingAsset = mmTokenUnderlyingAsset;
+          mmAssetsToSave.push(variableDebtTokenEntity);
+          ctx.batchState.state.assetsAllBatch.set(
+            variableDebtTokenEntity.id,
+            variableDebtTokenEntity
+          );
+        }
+      }
+    }
   } else {
     if (allExistingAssets.size === 0) return;
     storageData = await parsers.storage.assetRegistry.getAssetMany(
-      [...allExistingAssets.keys()].filter((key) => isU32(+key)),
+      [...allExistingAssets.values()]
+        .filter((asset) => asset.assetRegistryId)
+        .map((asset) => +asset.assetRegistryId!),
       ctx.blocks[0].header
     );
 
     for (const assetStorageData of storageData) {
       if (!assetStorageData.data) continue;
-      const assetEntity = allExistingAssets.get(`${assetStorageData.assetId}`);
+      const assetEntity = [...allExistingAssets.values()].find(
+        (asset) => asset.assetRegistryId === `${assetStorageData.assetId}`
+      );
       if (!assetEntity) continue;
       const {
         name,
@@ -234,6 +301,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   }
 
   await ctx.store.upsert(assetsToSave);
+  await ctx.store.upsert(mmAssetsToSave);
 
   /**
    * This second step is required to avoid foreign key constraints on DB upsert of Asset
@@ -278,4 +346,69 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     assetsLastUpdatedAtBlock: ctx.blocks[0].header.height,
   });
+}
+
+export function getNewAssetMultiLocation({
+  assetRegistryId,
+  evmAddress,
+  assetType,
+}: {
+  assetRegistryId?: number | string | null;
+  evmAddress?: string | null;
+  assetType: AssetType;
+}): AssetMultiLocation | null {
+  const tpl = new AssetMultiLocation({
+    parents: 0,
+    hierarchyLevel: 'X1',
+    interior: [],
+  });
+
+  switch (assetType) {
+    case AssetType.Bond:
+    case AssetType.External:
+    case AssetType.Token:
+    case AssetType.StableSwap:
+    case AssetType.XYK:
+    case AssetType.PoolShare:
+      if (assetRegistryId === null || assetRegistryId === undefined)
+        return null;
+      tpl.interior!.push(
+        new AssetMultiLocationsInterior({
+          kind: AssetMultiLocationsInteriorKind.GeneralIndex,
+          value: `${assetRegistryId}`,
+        })
+      );
+      break;
+    case AssetType.Erc20:
+      if (!evmAddress) return null;
+      tpl.interior!.push(
+        new AssetMultiLocationsInterior({
+          kind: AssetMultiLocationsInteriorKind.AccountKey20,
+          network: null,
+          key: evmAddress,
+        })
+      );
+      break;
+    default:
+      return null;
+  }
+
+  return tpl;
+}
+
+export function getAssetIdFromMultiLocation(
+  location: AssetMultiLocation
+): string | null {
+  if (location.hierarchyLevel !== 'X1') return null;
+
+  const junction = location.interior[0];
+
+  switch (junction.kind) {
+    case AssetMultiLocationsInteriorKind.GeneralIndex:
+      return junction.value ?? null;
+    case AssetMultiLocationsInteriorKind.AccountKey20:
+      return junction.key ?? null;
+    default:
+      return null;
+  }
 }

@@ -61,7 +61,6 @@
     "cpx2": "^8.0.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "graphile-build": "^4.13.0",
     "lodash.camelcase": "^4.3.0",
     "node-pg-migrate": "^7.7.1",
     "pg": "^8.11.5",

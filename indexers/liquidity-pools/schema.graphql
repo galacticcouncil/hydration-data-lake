@@ -28,6 +28,7 @@ enum AssetType {
   Token
   XYK
   Erc20
+  PoolShare
 }
 enum ResourceType {
   Underlying
@@ -36,11 +37,21 @@ enum ResourceType {
 }
 
 type Asset @entity {
-  "assetId"
+  "assetRegistry ID or actual contract EVM address (e.g. 0xc64980e4eaf9a1151bd21712b9946b81e41e2b92 || 10)"
   id: ID!
-  assetRegistryAsset: Asset
-  synthetic: Boolean!
-  active: Boolean!
+  "Hydration AssetRegistry ID"
+  assetRegistryId: String
+  "real EVM contract address"
+  evmAddress: String
+  "list of all asset ids from current and other chains related with this Asset"
+  multiLocationIds: [String]
+  "list of all asset multi-locations from current and other chains related with this Asset"
+  multiLocationsMetadata: [AssetMultiLocation]
+
+  underlyingAsset: Asset
+  aToken: Asset
+  variableDebtToken: Asset
+
   assetType: AssetType!
   resourceType: ResourceType!
   name: String
@@ -49,13 +60,46 @@ type Asset @entity {
   xcmRateLimit: BigInt
   isSufficient: Boolean!
   existentialDeposit: BigInt!
-  evmAddress: String
-  underlyingAsset: Asset
-  aToken: Asset
-  variableDebtToken: Asset
 
   # note: existentialDeposit is probably taken 1:1 from the runtime,
   # real existential deposit will be calculated realtime based on the current price
+}
+
+enum AssetMultiLocationsInteriorKind {
+  AccountId32
+  AccountIndex64
+  AccountKey20
+  GeneralIndex
+  GeneralKey
+  GlobalConsensus
+  OnlyChild
+  PalletInstance
+  Parachain
+  Plurality
+}
+
+type AssetMultiLocationsInterior {
+  kind: AssetMultiLocationsInteriorKind!
+  network: String
+  id: String
+  index: String
+  key: String
+  value: String
+  data: String
+  part: String
+  nom: String
+  denom: String
+  count: String
+  blockNumber: String
+  blockHash: String
+  chainId: String
+}
+
+type AssetMultiLocation {
+  parents: Int!
+  "Here | X1 | X2 | X3 | X4 | X5 | X6 | X7 | X8"
+  hierarchyLevel: String!
+  interior: [AssetMultiLocationsInterior!]!
 }
 
 type HistoricalAssetVolume @entity {
@@ -102,15 +146,15 @@ type AccountAssetBalanceHistoricalData @entity {
   account: Account!
   asset: Asset!
 
-  decoratedFree: BigInt!
-  decoratedLocked: BigInt!
-  free: BigInt!
-  locked: BigInt!
-  flags: BigInt!
-  frozen: BigInt!
-  reserved: BigInt!
-  feeFrozen: BigInt!
-  miscFrozen: BigInt!
+  transferable: BigInt!
+  totalLocked: BigInt!
+  free: BigInt
+  locked: BigInt
+  flags: BigInt
+  frozen: BigInt
+  reserved: BigInt
+  feeFrozen: BigInt
+  miscFrozen: BigInt
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1276,6 +1320,365 @@ type MoneyMarketEvent @entity {
   liquidationCall: MmLiquidationCall
   reserveUsedAsCollateralEnabled: MmReserveUsedAsCollateralEnabledEvent
   reserveUsedAsCollateralDisabled: MmReserveUsedAsCollateralDisabledEvent
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+# ======================================================================================================================
+# *** NFT ***
+# ======================================================================================================================
+
+type NftCollection @entity {
+  "collection ID "
+  id: ID!
+  collectionType: String! # must be reviewed
+  owner: Account!
+  issuer: Account!
+  admin: Account!
+  freezer: Account!
+  totalDeposit: BigInt!
+  freeHolding: Boolean!
+  isFrozen: Boolean!
+  items: Int!
+  itemMetadatas: Int!
+  attributes: Int!
+  maxSupply: BigInt
+}
+
+type NftAsset @entity {
+  "collection ID "
+  id: ID!
+  owner: Account!
+  deposit: BigInt!
+  isFrozen: Boolean!
+}
+
+# ======================================================================================================================
+# *** Liquidity Mining ***
+# ======================================================================================================================
+
+enum FarmLifeStateEventName {
+  GlobalFarmCreated
+  GlobalFarmUpdated
+  GlobalFarmTerminated
+  YieldFarmCreated
+  YieldFarmUpdated
+  YieldFarmStopped
+  YieldFarmResumed
+  YieldFarmTerminated
+}
+
+type FarmLifeState {
+  eventName: FarmLifeStateEventName!
+  eventId: String
+  paraBlockHeight: Int!
+  relayBlockHeight: Int!
+}
+
+enum YieldFarmDepositStatus {
+  SharesDeposited # probably can be renamed to DepositCreated
+  DepositDestroyed
+  SharesRedeposited
+  SharesWithdrawn
+  RewardClaimed
+}
+
+enum FarmState {
+  Active
+  Stopped
+  Terminated
+}
+
+type YieldFarmLoyaltyCurve {
+  initialRewardPercentage: String!
+  scaleCoef: Int!
+}
+
+#   --------------------------------------------------------------------------------------------------------------------
+#       Omnipool Liquidity Position
+#   --------------------------------------------------------------------------------------------------------------------
+
+enum OmnipoolLiquidityPositionStatus {
+  PositionCreated
+  PositionUpdated
+  PositionDestroyed
+  PositionLiquidityAdded
+  PositionLiquidityRemoved
+}
+
+type OmnipoolLiquidityPositionEvent @entity {
+  "event ID"
+  id: ID!
+  position: OmnipoolLiquidityPosition!
+  eventName: OmnipoolLiquidityPositionStatus!
+
+  account: Account
+  asset: Asset
+  amount: BigInt
+  sharesAmount: BigInt
+  price: BigInt
+  fee: BigIn
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type OmnipoolLiquidityPosition @entity {
+  "position ID"
+  id: ID!
+  account: Account!
+  asset: Asset!
+  omnipoolAsset: OmnipoolAsset!
+  amount: BigInt!
+  sharesAmount: BigInt!
+  positionNft: NftAsset!
+
+  "should be either PositionCreated or PositionDestroyed"
+  status: OmnipoolLiquidityPositionStatus!
+
+  positionEvents: [OmnipoolLiquidityPositionEvent]!
+
+  #  Point of time of position creation for better sorting
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+#   --------------------------------------------------------------------------------------------------------------------
+#       Omnipool Liquidity Farm
+#   --------------------------------------------------------------------------------------------------------------------
+
+type OmnipoolGlobalFarm @entity {
+  "omnipool global farm ID "
+  id: ID!
+  owner: Account!
+
+  updatedAtRelayBlock: Int!
+  totalSharesZ: BigInt!
+  accumulatedRpz: BogInt!
+  rewardAsset: Asset!
+  pendingRewards: BigInt!
+  accumulatedPaidRewards: BigInt!
+  yieldPerPeriod: BigInt!
+  plannedYieldingPeriods: Int!
+  blocksPerPeriod: Int!
+  incentivizedAsset: Asset!
+  maxRewardPerPeriod: Int!
+  minDeposit: BigInt!
+  liveYieldFarmsCount: Int!
+  totalYieldFarmsCount: Int!
+  priceAdjustment: BigInt!
+  state: FarmState!
+  lrnaPriceAdjustment: BigInt!
+  totalRewards: BigInt!
+
+  yieldFarms: [OmnipoolYieldFarm] @derivedFrom(field: "omnipoolGlobalFarm")
+
+  lifeStates: [FarmLifeState!]!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type OmnipoolYieldFarm @entity {
+  "global farm ID"
+  id: ID!
+  globalFarm: OmnipoolGlobalFarm!
+  asset: Asset!
+  updatedAtRelayBlock: Int!
+  totalShares: BigInt!
+  totalValuedShares: BigInt!
+  accumulatedRpvs: BigInt!
+  accumulatedRpz: BigInt!
+  multiplier: BigInt!
+  state: FarmState!
+  entriesCount: Int!
+  leftToDistribute: BigInt!
+  totalStopped: BigInt!
+  loyaltyCurve: YieldFarmLoyaltyCurve
+
+  lifeStates: [FarmLifeState!]!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event
+}
+
+#   --------------------------------------------------------------------------------------------------------------------
+#       Omnipool Liquidity Farm Deposit
+#   --------------------------------------------------------------------------------------------------------------------
+
+type OmnipoolYieldFarmDeposit @entity {
+  "deposit ID"
+  id: ID!
+  depositNft: NftAsset!
+  globalFarm: OmnipoolGlobalFarm!
+  yieldFarm: OmnipoolYieldFarm!
+  position: OmnipoolLiquidityPosition!
+  account: Account!
+  asset: Asset!
+
+  "should be either SharesDeposited or DepositDestroyed"
+  status: YieldFarmDepositStatus!
+  sharesAmount: BigInt!
+  entries: [OmnipoolYieldFarmEntry!]! @derivedFrom(field: "deposit")
+  depositEvents: [OmnipoolYieldFarmDepositEvent]!
+
+  #  Point of time of position creation for better sorting
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type OmnipoolYieldFarmEntry @entity {
+  "<deposit_id>-<omnipool_global_farm_id>-<omnipool_yield_farm_id>"
+  id: ID!
+  deposit: OmnipoolYieldFarmDeposit!
+  valuedShares: BigInt!
+  accumulatedRpvs: BigInt!
+  accumulatedClaimedRewards: BigInt!
+  enteredAtRelayBlock: Int!
+  updatedAtRelayBlock: Int!
+  stoppedAtCreation: Int!
+}
+
+type OmnipoolYieldFarmDepositEvent @entity {
+  "event_id"
+  id: ID!
+  deposit: OmnipoolYieldFarmDeposit!
+  eventName: YieldFarmDepositStatus!
+
+  # required for SharesDeposited, SharesRedeposited, RewardClaimed events
+  globalFarm: OmnipoolGlobalFarm!
+  yieldFarm: OmnipoolYieldFarm!
+
+  asset: Asset
+  account: Account
+  position: OmnipoolLiquidityPosition
+  sharesAmount: Bigint
+  claimedAmount: Bigint
+  rewardAsset: Asset
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+#   --------------------------------------------------------------------------------------------------------------------
+#       XYK Liquidity Farm
+#   --------------------------------------------------------------------------------------------------------------------
+
+type XykGlobalFarm @entity {
+  "XYK global farm ID "
+  id: ID!
+  owner: Account!
+
+  updatedAtRelayBlock: Int
+  totalSharesZ: BigInt
+  totalRewards: BigInt
+  accumulatedRpz: BigInt
+  rewardAsset: Asset
+  pendingRewards: BigInt
+  accumulatedPaidRewards: BigInt
+  yieldPerPeriod: Int
+  plannedYieldingPeriods: Int
+  blocksPerPeriod: Int
+  incentivizedAsset: Asset
+  maxRewardPerPeriod: BigInt
+  minDeposit: BigInt
+  liveYieldFarmsCount: Int
+  totalYieldFarmsCount: Int
+  priceAdjustment: BigInt
+  state: FarmState!
+
+  yieldFarms: [OmnipoolYieldFarm] @derivedFrom(field: "omnipoolGlobalFarm")
+
+  lifeStates: [FarmLifeState!]!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event
+}
+
+type XykYieldFarm @entity {
+  "yield farm ID"
+  id: ID!
+  globalFarm: XykGlobalFarm!
+  allInvolvedAssets: [String!]!
+  pool: Xykpool!
+
+  state: FarmState!
+  updatedAtRelayBlock: Int!
+  totalShares: BigInt!
+  totalValuedShares: BigInt!
+  accumulatedRpvs: BigInt!
+  accumulatedRpz: BigInt!
+  multiplier: BigInt!
+  entriesCount: Int!
+  leftToDistribute: BigInt!
+  totalStopped: BigInt!
+  loyaltyCurve: YieldFarmLoyaltyCurve
+
+  lifeStates: [FarmLifeState!]!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event
+}
+
+#   --------------------------------------------------------------------------------------------------------------------
+#       XYK Liquidity Farm Deposit
+#   --------------------------------------------------------------------------------------------------------------------
+
+type XykYieldFarmDeposit @entity {
+  "deposit ID"
+  id: ID!
+  depositNft: NftAsset!
+  globalFarm: OmnipoolGlobalFarm!
+  yieldFarm: OmnipoolYieldFarm!
+  allInvolvedAssets: [String!]! # assets of used pool
+  account: Account!
+  lpAsset: Asset!
+  sharesAmount: BigInt!
+
+  "should be either SharesDeposited or DepositDestroyed"
+  status: YieldFarmDepositStatus!
+  entries: [XykYieldFarmEntry!]! @derivedFrom(field: "deposit")
+  depositEvents: [OmnipoolYieldFarmDepositEvent]!
+
+  #  Point of time of position creation for better sorting
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
+type XykYieldFarmEntry @entity {
+  "<deposit_id>-<xyk_global_farm_id>-<xyk_yield_farm_id>"
+  id: ID!
+  deposit: OmnipoolYieldFarmDeposit!
+  valuedShares: BigInt!
+  accumulatedRpvs: BigInt!
+  accumulatedClaimedRewards: BigInt!
+  enteredAtRelayBlock: Int!
+  updatedAtRelayBlock: Int!
+  stoppedAtCreation: Int!
+}
+
+type XykYieldFarmDepositEvent @entity {
+  "event_id"
+  id: ID!
+  deposit: XykYieldFarmDeposit!
+  eventName: YieldFarmDepositStatus!
+
+  # required for SharesDeposited, SharesRedeposited, RewardClaimed events
+  globalFarm: OmnipoolGlobalFarm!
+  yieldFarm: OmnipoolYieldFarm!
+
+  lpAsset: Asset
+  account: Account
+  amount: Bigint
+  claimedAmount: Bigint
+  rewardAsset: Asset
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

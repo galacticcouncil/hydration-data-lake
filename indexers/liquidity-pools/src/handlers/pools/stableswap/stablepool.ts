@@ -20,18 +20,19 @@ import parsers from '../../../parsers';
 
 export async function getNewStableswapWithAssets({
   poolId,
-  assetIds,
+  assetRegistryAssetIds,
   ctx,
   blockHeader,
 }: {
   poolId: number | string;
-  assetIds?: number[];
+  // assetIds?: string[];
+  assetRegistryAssetIds?: number[];
   ctx: SqdProcessorContext<Store>;
   blockHeader: SqdBlock;
 }) {
   const poolShareToken = await getOrCreateAsset({
     ctx,
-    id: poolId,
+    assetRegistryId: poolId,
     ensure: true,
     blockHeader,
   });
@@ -64,8 +65,8 @@ export async function getNewStableswapWithAssets({
     }),
   });
 
-  let poolAssetIds = assetIds;
-  if (!poolAssetIds) {
+  let poolArAssetIds = assetRegistryAssetIds;
+  if (!poolArAssetIds) {
     const poolStorageData = await parsers.storage.stableswap.getPoolData({
       poolId: +poolId,
       block: blockHeader,
@@ -75,27 +76,28 @@ export async function getNewStableswapWithAssets({
         `Storage data for Stableswap with poolId ${poolId} can not be fetched.`
       );
 
-    poolAssetIds = poolStorageData?.assets;
+    poolArAssetIds = poolStorageData?.assets;
   }
 
-  const assetsListPromise = poolAssetIds.map(
-    async (assetId) =>
-      new StableswapAsset({
-        id: `${newPool.id}-${assetId}`,
-        pool: newPool,
-        amount: await getAssetFreeBalance(
-          blockHeader,
-          assetId,
-          newPool.account.id
-        ),
-        asset: (await getOrCreateAsset({
-          ctx,
-          id: assetId,
-          ensure: true,
-          blockHeader,
-        }))!, // TODO fix types
-      })
-  );
+  const assetsListPromise = poolArAssetIds.map(async (arAssetId) => {
+    const assetEntity = await getOrCreateAsset({
+      ctx,
+      assetRegistryId: arAssetId,
+      ensure: true,
+      blockHeader,
+    });
+
+    return new StableswapAsset({
+      id: `${newPool.id}-${assetEntity!.id}`,
+      pool: newPool,
+      amount: await getAssetFreeBalance(
+        blockHeader,
+        arAssetId,
+        newPool.account.id
+      ),
+      asset: assetEntity!, // TODO fix types
+    });
+  });
 
   const stablepoolAssets = (await Promise.all(assetsListPromise)).filter(
     isNotNullOrUndefined
@@ -144,9 +146,9 @@ export async function getOrCreateStableswap({
 
   const state = ctx.batchState.state;
 
-  for (const asset of poolAssets) {
-    state.stableswapAssetsAllBatch.set(+asset.asset.id, asset);
-    await ctx.store.upsert(asset);
+  for (const poolAsset of poolAssets) {
+    state.stableswapAssetsAllBatch.set(+poolAsset.id, poolAsset);
+    await ctx.store.upsert(poolAsset);
   }
   await ctx.store.save(newPool.account);
 
@@ -169,7 +171,7 @@ export async function stableswapCreated(
 
   const { pool, poolAssets } = await getNewStableswapWithAssets({
     poolId: eventParams.poolId,
-    assetIds: eventParams.assets,
+    assetRegistryAssetIds: eventParams.assets,
     ctx,
     blockHeader: eventMetadata.blockHeader,
   });
@@ -178,8 +180,8 @@ export async function stableswapCreated(
 
   const state = ctx.batchState.state;
 
-  for (const asset of poolAssets) {
-    state.stableswapAssetsAllBatch.set(+asset.asset.id, asset);
+  for (const poolAsset of poolAssets) {
+    state.stableswapAssetsAllBatch.set(+poolAsset.id, poolAsset);
   }
 
   state.stableswapIdsToSave.add(pool.id);

@@ -1,7 +1,5 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export const Perquintill = sts.bigint()
-
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -11141,3 +11139,5 @@ export interface Call_XYKWarehouseLM {
     __kind: 'XYKWarehouseLM'
     value: XYKWarehouseLMCall
 }
+
+export const Perquintill = sts.bigint()

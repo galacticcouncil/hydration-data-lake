@@ -20,7 +20,7 @@ export async function handleAssetRegistry(
       .getSectionByEventName(EventName.AssetRegistry_Registered)
       .values(),
   ])) {
-    await assetRegistered(ctx, eventData);
+    await assetRegistered(ctx, eventData, parsedEvents);
   }
 
   const updatedAssetsList = [

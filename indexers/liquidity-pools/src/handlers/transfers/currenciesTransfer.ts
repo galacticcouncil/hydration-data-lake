@@ -17,7 +17,7 @@ export async function handleCurrenciesTransfer(
 
   const assetEntity = await getOrCreateAsset({
     ctx,
-    id: eventParams.currencyId,
+    assetRegistryId: eventParams.currencyId,
     ensure: true,
     blockHeader: eventMetadata.blockHeader,
   });
@@ -42,7 +42,7 @@ export async function handleCurrenciesTransfer(
         ...(callData.traceId ? [callData.traceId] : []),
         eventMetadata.traceId,
       ],
-      assetId: eventParams.currencyId,
+      assetId: assetEntity.id,
       blockNumber: eventMetadata.blockHeader.height,
       timestamp: new Date(eventMetadata.blockHeader.timestamp || 0),
       from: eventParams.from,

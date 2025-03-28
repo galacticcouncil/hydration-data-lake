@@ -4,7 +4,8 @@ import type * as base from '@subsquid/substrate-data';
 export interface TransferEvent {
   id: string;
   traceIds: string[];
-  assetId: number;
+  assetId?: number | string;
+  assetRegistryAssetId?: number | string;
   blockNumber: number;
   timestamp: Date;
   from: string;
