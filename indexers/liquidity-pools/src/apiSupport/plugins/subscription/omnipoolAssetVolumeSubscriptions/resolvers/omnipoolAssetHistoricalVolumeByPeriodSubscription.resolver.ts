@@ -24,7 +24,7 @@ export async function omnipoolAssetHistoricalVolumeByPeriodSubscriptionResolver(
   const pgClient: pg.Client = context.pgClient;
 
   const {
-    filter: { omnipoolAssetIds, period },
+    filter: { assetIds, period },
   } = args;
 
   const requestedRange = new AggregationTimeRange(
@@ -63,7 +63,7 @@ export async function omnipoolAssetHistoricalVolumeByPeriodSubscriptionResolver(
   const involvedPoolIdsSet = new Set(
     latestVolumesBatchEntitiesList.rows[0].asset_ids
   );
-  const involvedRequestedAssetIds = omnipoolAssetIds.filter((id: string) =>
+  const involvedRequestedAssetIds = assetIds.filter((id: string) =>
     involvedPoolIdsSet.has(id)
   );
 
