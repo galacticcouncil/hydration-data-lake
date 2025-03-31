@@ -33,13 +33,11 @@ export async function handleSwapAssetFeesByPeriodAggregation({
   stopBlockHeight: number;
   pgClient: pg.Client;
 }): Promise<SwapAssetFeeAggregated[]> {
-  console.time('handleSwapAssetFeesByPeriodAggregation DB query');
   const groupedResult =
     await pgClient.query<AggregateSwapAssetFeesByBlocksRangeSqlResult>(
       aggregateSwapAssetFeesByBlocksRange,
       [startBlockHeight, stopBlockHeight]
     );
-  console.timeEnd('handleSwapAssetFeesByPeriodAggregation DB query');
 
   if (groupedResult?.rows.length === 0) return [];
 
