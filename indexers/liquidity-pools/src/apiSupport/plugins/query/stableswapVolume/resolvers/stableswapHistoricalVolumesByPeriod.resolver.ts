@@ -7,6 +7,7 @@ import {
   StableswapVolumesByPeriodResponse,
 } from './types';
 import { handleStableswapHistoricalVolumesByPeriodAggregation } from '../utils';
+import { getStartStopBlocksFromInput } from '../../../../utils/aggregationUtils';
 
 export async function stableswapHistoricalVolumesByPeriodResolver(
   parentObject: any,
@@ -21,14 +22,23 @@ export async function stableswapHistoricalVolumesByPeriodResolver(
   });
 
   const {
-    filter: { poolIds, startBlockNumber, endBlockNumber },
+    filter: { poolIds, startBlockNumber, endBlockNumber, period },
   } = args;
+
+  const blocksRange = await getStartStopBlocksFromInput({
+    period,
+    pgClient,
+    inputStopBlockNumber: endBlockNumber,
+    inputStartBlockNumber: startBlockNumber,
+  });
+
+  if (!blocksRange) return { nodes: [], totalCount: 0 };
 
   const decoratedNodes =
     await handleStableswapHistoricalVolumesByPeriodAggregation({
       poolIds,
-      startBlockNumber,
-      endBlockNumber,
+      startBlockNumber: blocksRange.startBlockHeight,
+      endBlockNumber: blocksRange.stopBlockHeight,
       pgClient,
     });
 

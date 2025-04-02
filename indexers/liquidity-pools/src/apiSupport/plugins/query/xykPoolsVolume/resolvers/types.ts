@@ -1,10 +1,13 @@
+import { AggregationTimeRangeLabel } from '../../../../types';
+
 export type XykPoolVolumesByPeriodFilter = {
   poolIds: string[];
-  startBlockNumber: number;
+  startBlockNumber?: number;
   endBlockNumber?: number;
+  period?: AggregationTimeRangeLabel;
 };
 
-export type XykPoolVolumeAggregated = {
+export type XykpoolVolumeAggregated = {
   poolId: string;
   assetAId: number;
   assetAVolume: bigint;
@@ -13,6 +16,6 @@ export type XykPoolVolumeAggregated = {
 };
 
 export type XykPoolVolumesByPeriodResponse = {
-  nodes: XykPoolVolumeAggregated[];
+  nodes: XykpoolVolumeAggregated[];
   totalCount: number;
 };

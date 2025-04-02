@@ -50,7 +50,7 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
         }
 
         extend type Subscription {
-          omnipoolAssetHistoricalVolume(
+          omnipoolAssetHistoricalVolumes(
             filter: OmnipoolAssetHistoricalVolumeSubscriptionFilter
           ): OmnipoolAssetHistoricalVolumeSubscriptionPayload
             @pgSubscription(
@@ -58,7 +58,7 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
               filter: ${embed(omnipoolAssetHistoricalVolumeSubscriptionFilter)}
             )
 
-          omnipoolAssetHistoricalVolumeByPeriod(
+          omnipoolAssetHistoricalVolumesByPeriod(
               filter: OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter
           ): OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload
             @pgSubscription(
@@ -69,7 +69,10 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
       `,
       resolvers: {
         Subscription: {
-          omnipoolAssetHistoricalVolume: async (
+          /**
+           * Returns newest item in table omnipool_asset_historical_volume
+           */
+          omnipoolAssetHistoricalVolumes: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,
@@ -82,7 +85,10 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
               resolveInfo,
               sql
             ),
-          omnipoolAssetHistoricalVolumeByPeriod: async (
+          /**
+           * Returns total volume for requested asset by specific period
+           */
+          omnipoolAssetHistoricalVolumesByPeriod: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,

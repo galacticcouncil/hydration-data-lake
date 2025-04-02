@@ -74222,7 +74222,7 @@ enum AggregationTimeRange {
   _ALL_
 }
 
-type XykPoolVolumeAggregated {
+type XykpoolVolumeAggregated {
   poolId: String!
   assetAId: Int!
   assetBId: Int!
@@ -74259,14 +74259,15 @@ type SquidStatusSubscriptionPayload {
   node: _ProcessorStatus!
 }
 
-input XykPoolVolumesByPeriodFilter {
+input XykpoolVolumesByPeriodFilter {
   poolIds: [String!]!
-  startBlockNumber: Int!
+  startBlockNumber: Int
   endBlockNumber: Int
+  period: AggregationTimeRange
 }
 
-type XykPoolVolumesByPeriodResponse {
-  nodes: [XykPoolVolumeAggregated]!
+type XykpoolVolumesByPeriodResponse {
+  nodes: [XykpoolVolumeAggregated]!
   totalCount: Int!
 }
 
@@ -74285,7 +74286,7 @@ type XykpoolHistoricalVolumeSubscriptionPayload {
 }
 
 type XykpoolHistoricalVolumeByPeriodSubscriptionPayload {
-  nodes: [XykPoolVolumeAggregated!]
+  nodes: [XykpoolVolumeAggregated!]
   event: String
 }
 
@@ -74313,8 +74314,9 @@ type XykpoolHistoricalVolumeEntity {
 
 input OmnipoolAssetVolumesByPeriodFilter {
   assetIds: [String!]
-  startBlockNumber: Int!
+  startBlockNumber: Int
   endBlockNumber: Int
+  period: AggregationTimeRange
 }
 
 type OmnipoolAssetVolumesByPeriodResponse {
@@ -74356,8 +74358,9 @@ type OmnipoolAssetHistoricalVolumeEntity {
 
 input StableswapVolumesByPeriodFilter {
   poolIds: [String!]!
-  startBlockNumber: Int!
+  startBlockNumber: Int
   endBlockNumber: Int
+  period: AggregationTimeRange
 }
 
 type StableswapVolumesByPeriodResponse {
@@ -76685,7 +76688,7 @@ type Query {
   xykpoolHistoricalPrice(id: String!): XykpoolHistoricalPrice
   xykpoolHistoricalVolume(id: String!): XykpoolHistoricalVolume
   _squidStatus: [_ProcessorStatus!]!
-  xykPoolHistoricalVolumesByPeriod(filter: XykPoolVolumesByPeriodFilter!): XykPoolVolumesByPeriodResponse!
+  xykpoolHistoricalVolumesByPeriod(filter: XykpoolVolumesByPeriodFilter!): XykpoolVolumesByPeriodResponse!
   omnipoolAssetHistoricalVolumesByPeriod(filter: OmnipoolAssetVolumesByPeriodFilter!): OmnipoolAssetVolumesByPeriodResponse!
   stableswapHistoricalVolumesByPeriod(filter: StableswapVolumesByPeriodFilter!): StableswapVolumesByPeriodResponse!
   swapAssetFeesByPeriod(filter: SwapAssetFeesByPeriodFilter!): SwapAssetFeesByPeriodResponse!
@@ -76708,13 +76711,13 @@ The root subscription type: contains realtime events you can subscribe to with t
 """
 type Subscription {
   squidStatus: SquidStatusSubscriptionPayload
-  xykpoolHistoricalVolume(filter: XykpoolHistoricalVolumeSubscriptionFilter): XykpoolHistoricalVolumeSubscriptionPayload
-  xykpoolHistoricalVolumeByPeriod(filter: XykpoolHistoricalVolumeByPeriodSubscriptionFilter): XykpoolHistoricalVolumeByPeriodSubscriptionPayload
-  omnipoolAssetHistoricalVolume(filter: OmnipoolAssetHistoricalVolumeSubscriptionFilter): OmnipoolAssetHistoricalVolumeSubscriptionPayload
-  omnipoolAssetHistoricalVolumeByPeriod(filter: OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter): OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload
-  stableswapHistoricalVolume(filter: StableswapHistoricalVolumeSubscriptionFilter): StableswapHistoricalVolumeSubscriptionPayload
-  stableswapHistoricalVolumeByPeriod(filter: StableswapHistoricalVolumeByPeriodSubscriptionFilter): StableswapHistoricalVolumeByPeriodSubscriptionPayload
-  routedTrade(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
+  xykpoolHistoricalVolumes(filter: XykpoolHistoricalVolumeSubscriptionFilter): XykpoolHistoricalVolumeSubscriptionPayload
+  xykpoolHistoricalVolumesByPeriod(filter: XykpoolHistoricalVolumeByPeriodSubscriptionFilter): XykpoolHistoricalVolumeByPeriodSubscriptionPayload
+  omnipoolAssetHistoricalVolumes(filter: OmnipoolAssetHistoricalVolumeSubscriptionFilter): OmnipoolAssetHistoricalVolumeSubscriptionPayload
+  omnipoolAssetHistoricalVolumesByPeriod(filter: OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter): OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload
+  stableswapHistoricalVolumes(filter: StableswapHistoricalVolumeSubscriptionFilter): StableswapHistoricalVolumeSubscriptionPayload
+  stableswapHistoricalVolumesByPeriod(filter: StableswapHistoricalVolumeByPeriodSubscriptionFilter): StableswapHistoricalVolumeByPeriodSubscriptionPayload
+  routedTrades(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
 }
 
 input SwapAssetFeesByPeriodFilter {

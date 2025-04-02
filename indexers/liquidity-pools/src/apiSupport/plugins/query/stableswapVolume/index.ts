@@ -7,8 +7,9 @@ export const StableswapVolumePlugin: Plugin = makeExtendSchemaPlugin(
       typeDefs: gql`
         input StableswapVolumesByPeriodFilter {
           poolIds: [String!]!
-          startBlockNumber: Int!
+          startBlockNumber: Int
           endBlockNumber: Int
+          period: AggregationTimeRange
         }
 
         type StableswapVolumesByPeriodResponse {

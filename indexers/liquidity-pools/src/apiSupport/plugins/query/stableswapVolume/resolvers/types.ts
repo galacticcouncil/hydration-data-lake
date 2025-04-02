@@ -1,12 +1,14 @@
 import {
+  AggregationTimeRangeLabel,
   StableswapAssetHistoricalVolumeRaw,
   StableswapHistoricalVolumeRaw,
 } from '../../../../types';
 
 export type StableswapVolumesByPeriodFilter = {
   poolIds: string[];
-  startBlockNumber: number;
+  startBlockNumber?: number;
   endBlockNumber?: number;
+  period?: AggregationTimeRangeLabel;
 };
 
 export type StablepoolAssetVolumeAggregated = {

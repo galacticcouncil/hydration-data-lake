@@ -7,26 +7,27 @@ export const XykpoolsVolumePlugin: Plugin = makeExtendSchemaPlugin(
 
     return {
       typeDefs: gql`
-        input XykPoolVolumesByPeriodFilter {
+        input XykpoolVolumesByPeriodFilter {
           poolIds: [String!]!
-          startBlockNumber: Int!
+          startBlockNumber: Int
           endBlockNumber: Int
+          period: AggregationTimeRange
         }
 
-        type XykPoolVolumesByPeriodResponse {
-          nodes: [XykPoolVolumeAggregated]!
+        type XykpoolVolumesByPeriodResponse {
+          nodes: [XykpoolVolumeAggregated]!
           totalCount: Int!
         }
 
         extend type Query {
-          xykPoolHistoricalVolumesByPeriod(
-            filter: XykPoolVolumesByPeriodFilter!
-          ): XykPoolVolumesByPeriodResponse!
+          xykpoolHistoricalVolumesByPeriod(
+            filter: XykpoolVolumesByPeriodFilter!
+          ): XykpoolVolumesByPeriodResponse!
         }
       `,
       resolvers: {
         Query: {
-          xykPoolHistoricalVolumesByPeriod:
+          xykpoolHistoricalVolumesByPeriod:
             xykPoolHistoricalVolumesByPeriodResolver,
         },
       },

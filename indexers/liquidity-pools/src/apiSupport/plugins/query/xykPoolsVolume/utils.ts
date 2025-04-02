@@ -4,7 +4,7 @@ import {
   getAssetIdsByPoolIds,
 } from '../../sql/xykPoolsVolume.sql';
 import { XykpoolHistoricalVolumeRaw } from '../../../types';
-import { XykPoolVolumeAggregated } from './resolvers';
+import { XykpoolVolumeAggregated } from './resolvers';
 
 export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
   poolIds,
@@ -16,7 +16,7 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
   startBlockNumber: number;
   endBlockNumber?: number;
   pgClient: pg.Client;
-}): Promise<Map<string, XykPoolVolumeAggregated>> {
+}): Promise<Map<string, XykpoolVolumeAggregated>> {
   const squidStatus = (
     await pgClient.query(`SELECT height FROM squid_processor.status`)
   ).rows[0];
@@ -26,11 +26,11 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
     [poolIds, startBlockNumber, endBlockNumber ?? squidStatus.height]
   );
 
-  const decoratedNodes = new Map<string, XykPoolVolumeAggregated>(
+  const decoratedNodes = new Map<string, XykpoolVolumeAggregated>(
     groupedResult.rows
       .map((item) => item.grouped_result.flat())
       .map((group: Array<XykpoolHistoricalVolumeRaw>) => {
-        const resp: XykPoolVolumeAggregated = {
+        const resp: XykpoolVolumeAggregated = {
           poolId: group[0].pool_id,
           assetAId: group[0].asset_a_id,
           assetAVolume: BigInt(0),
@@ -69,7 +69,7 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
           BigInt(group[0].asset_b_volume_out);
         return resp;
       })
-      .map((r: XykPoolVolumeAggregated) => [r.poolId, r])
+      .map((r: XykpoolVolumeAggregated) => [r.poolId, r])
   );
 
   const assetsData = await pgClient.query(getAssetIdsByPoolIds, [

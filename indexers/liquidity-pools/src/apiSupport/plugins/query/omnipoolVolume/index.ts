@@ -15,8 +15,9 @@ export const OmnipoolAssetVolumePlugin: Plugin = makeExtendSchemaPlugin(
       typeDefs: gql`
         input OmnipoolAssetVolumesByPeriodFilter {
           assetIds: [String!]
-          startBlockNumber: Int!
+          startBlockNumber: Int
           endBlockNumber: Int
+          period: AggregationTimeRange
         }
 
         type OmnipoolAssetVolumesByPeriodResponse {
@@ -37,14 +38,15 @@ export const OmnipoolAssetVolumePlugin: Plugin = makeExtendSchemaPlugin(
             args: { filter: OmnipoolAssetVolumesByPeriodFilter },
             context: QueryResolverContext,
             info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
-          ) =>
-            omnipoolAssetHistoricalVolumesByPeriodResolver(
+          ) => {
+            return omnipoolAssetHistoricalVolumesByPeriodResolver(
               parentObject,
               args,
               context,
               info,
               options.omnipoolAddress
-            ),
+            );
+          },
         },
       },
     };

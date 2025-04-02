@@ -47,7 +47,7 @@ export const RoutedTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         extend type Subscription {
-          routedTrade(
+          routedTrades(
             filter: RoutedTradeSubscriptionFilter
           ): RoutedTradeSubscriptionPayload
             @pgSubscription(
@@ -58,7 +58,7 @@ export const RoutedTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
       `,
       resolvers: {
         Subscription: {
-          routedTrade: async (
+          routedTrades: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,

@@ -31,7 +31,7 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
           event: String
         }
         type XykpoolHistoricalVolumeByPeriodSubscriptionPayload {
-          nodes: [XykPoolVolumeAggregated!]
+          nodes: [XykpoolVolumeAggregated!]
           event: String
         }
         type XykpoolHistoricalVolumeEntity {
@@ -57,14 +57,14 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         extend type Subscription {
-          xykpoolHistoricalVolume(
+          xykpoolHistoricalVolumes(
             filter: XykpoolHistoricalVolumeSubscriptionFilter
           ): XykpoolHistoricalVolumeSubscriptionPayload
             @pgSubscription(
               topic: "postgraphile:state_changed:xykpool_historical_volume"
               filter: ${embed(xykpoolHistoricalVolumeSubscriptionFilter)}
             ),
-          xykpoolHistoricalVolumeByPeriod(
+          xykpoolHistoricalVolumesByPeriod(
                 filter: XykpoolHistoricalVolumeByPeriodSubscriptionFilter
             ): XykpoolHistoricalVolumeByPeriodSubscriptionPayload
             @pgSubscription(
@@ -75,7 +75,7 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
       `,
       resolvers: {
         Subscription: {
-          xykpoolHistoricalVolume: async (
+          xykpoolHistoricalVolumes: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,
@@ -88,7 +88,7 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
               resolveInfo,
               sql
             ),
-          xykpoolHistoricalVolumeByPeriod: async (
+          xykpoolHistoricalVolumesByPeriod: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,

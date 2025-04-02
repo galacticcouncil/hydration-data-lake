@@ -58,14 +58,14 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
         }
 
         extend type Subscription {
-          stableswapHistoricalVolume(
+          stableswapHistoricalVolumes(
             filter: StableswapHistoricalVolumeSubscriptionFilter
           ): StableswapHistoricalVolumeSubscriptionPayload
             @pgSubscription(
               topic: "postgraphile:state_changed:stableswap_historical_volume"
               filter: ${embed(stablepoolHistoricalVolumeSubscriptionFilter)}
             )
-          stableswapHistoricalVolumeByPeriod(
+          stableswapHistoricalVolumesByPeriod(
               filter: StableswapHistoricalVolumeByPeriodSubscriptionFilter
           ): StableswapHistoricalVolumeByPeriodSubscriptionPayload
             @pgSubscription(
@@ -76,7 +76,7 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
       `,
       resolvers: {
         Subscription: {
-          stableswapHistoricalVolume: async (
+          stableswapHistoricalVolumes: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,
@@ -90,7 +90,7 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
               sql
             ),
 
-          stableswapHistoricalVolumeByPeriod: async (
+          stableswapHistoricalVolumesByPeriod: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,

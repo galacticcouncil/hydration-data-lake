@@ -1,7 +1,10 @@
+import { AggregationTimeRangeLabel } from '../../../../types';
+
 export type OmnipoolAssetVolumesByPeriodFilter = {
   assetIds?: string[];
-  startBlockNumber: number;
+  startBlockNumber?: number;
   endBlockNumber?: number;
+  period?: AggregationTimeRangeLabel;
 };
 
 export type OmnipoolAssetVolumeAggregated = {

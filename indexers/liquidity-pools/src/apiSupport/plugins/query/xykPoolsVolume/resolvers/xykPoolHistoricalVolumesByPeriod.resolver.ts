@@ -1,4 +1,5 @@
 import {
+  AggregationTimeRangeLabel,
   QueryResolverContext,
   XykpoolHistoricalVolumeRaw,
 } from '../../../../types';
@@ -10,6 +11,12 @@ import {
   XykPoolVolumesByPeriodFilter,
   XykPoolVolumesByPeriodResponse,
 } from './types';
+import { AggregationTimeRange } from '../../../../utils';
+import {
+  getBlockByTimestampGrtOrEq,
+  getBlockByTimestampLtOrEq,
+} from '../../../sql/block.sql';
+import { getStartStopBlocksFromInput } from '../../../../utils/aggregationUtils';
 
 export async function xykPoolHistoricalVolumesByPeriodResolver(
   parentObject: any,
@@ -24,14 +31,23 @@ export async function xykPoolHistoricalVolumesByPeriodResolver(
   });
 
   const {
-    filter: { poolIds, startBlockNumber, endBlockNumber },
+    filter: { poolIds, startBlockNumber, endBlockNumber, period },
   } = args;
+
+  const blocksRange = await getStartStopBlocksFromInput({
+    period,
+    pgClient,
+    inputStopBlockNumber: endBlockNumber,
+    inputStartBlockNumber: startBlockNumber,
+  });
+
+  if (!blocksRange) return { nodes: [], totalCount: 0 };
 
   const decoratedNodes =
     await handleXykPoolHistoricalVolumesByPeriodAggregation({
       poolIds,
-      startBlockNumber,
-      endBlockNumber,
+      startBlockNumber: blocksRange.startBlockHeight,
+      endBlockNumber: blocksRange.stopBlockHeight,
       pgClient,
     });
 

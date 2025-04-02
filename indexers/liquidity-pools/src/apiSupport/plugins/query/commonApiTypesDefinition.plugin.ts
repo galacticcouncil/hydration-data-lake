@@ -14,7 +14,7 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _ALL_
         }
 
-        type XykPoolVolumeAggregated {
+        type XykpoolVolumeAggregated {
           poolId: String!
           assetAId: Int!
           assetBId: Int!

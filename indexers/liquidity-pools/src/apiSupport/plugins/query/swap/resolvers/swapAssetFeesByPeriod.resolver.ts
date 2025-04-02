@@ -15,6 +15,7 @@ import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,
 } from '../../../sql/block.sql';
+import { getStartStopBlocksFromInput } from '../../../../utils/aggregationUtils';
 
 export async function swapAssetFeesByPeriodResolver(
   parentObject: any,
@@ -32,49 +33,18 @@ export async function swapAssetFeesByPeriodResolver(
     filter: { period, startBlockNumber, endBlockNumber },
   } = args;
 
-  const response = {
-    nodes: [],
-    totalCount: 0,
-  };
+  const blocksRange = await getStartStopBlocksFromInput({
+    period,
+    pgClient,
+    inputStopBlockNumber: endBlockNumber,
+    inputStartBlockNumber: startBlockNumber,
+  });
 
-  if (!period && startBlockNumber === undefined) return response;
-
-  const requestedRange = new AggregationTimeRange(
-    period ?? AggregationTimeRangeLabel['24H']
-  );
-
-  let startBlockHeight = 0;
-  let stopBlockHeight = 0;
-
-  if (period) {
-    const startBlock = await pgClient.query(getBlockByTimestampGrtOrEq, [
-      requestedRange.startDate,
-    ]);
-    const stopBlock = await pgClient.query(getBlockByTimestampLtOrEq, [
-      requestedRange.nowDate,
-    ]);
-
-    if (!startBlock?.rows?.length || !stopBlock?.rows?.length) return response;
-
-    startBlockHeight = startBlock.rows[0].height;
-    stopBlockHeight = stopBlock.rows[0].height;
-  } else {
-    startBlockHeight = startBlockNumber ?? 0;
-    if (!endBlockNumber) {
-      const stopBlock = await pgClient.query(getBlockByTimestampLtOrEq, [
-        requestedRange.nowDate,
-      ]);
-
-      if (!stopBlock?.rows?.length) return response;
-      stopBlockHeight = stopBlock.rows[0].height;
-    } else {
-      stopBlockHeight = endBlockNumber;
-    }
-  }
+  if (!blocksRange) return { nodes: [], totalCount: 0 };
 
   const decoratedNodes = await handleSwapAssetFeesByPeriodAggregation({
-    startBlockHeight,
-    stopBlockHeight,
+    startBlockHeight: blocksRange.startBlockHeight,
+    stopBlockHeight: blocksRange.stopBlockHeight,
     pgClient,
   });
 
