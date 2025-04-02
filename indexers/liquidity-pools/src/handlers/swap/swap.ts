@@ -370,6 +370,13 @@ export async function handleSupportSwapperEvent(
     });
   }
 
+  const { inputs: inputsDecorated, outputs: outputsDecorated } =
+    getInputOutputDecorated({
+      inputs: eventParams.inputs,
+      outputs: eventParams.outputs,
+      fillerType: eventParams.fillerType.kind,
+    });
+
   const newSwapDetails = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
@@ -380,8 +387,8 @@ export async function handleSupportSwapperEvent(
       swapperAccountId: eventParams.swapper,
       fillerAccountId: eventParams.filler,
       fillerType: eventParams.fillerType.kind,
-      inputs: eventParams.inputs,
-      outputs: eventParams.outputs,
+      inputs: inputsDecorated,
+      outputs: outputsDecorated,
       fees: eventParams.fees,
       operationType: eventParams.operation,
       paraBlockHeight: eventMetadata.blockHeader.height,
@@ -411,4 +418,40 @@ export async function handleSupportSwapperEvent(
     eventCallData,
     chainActivityTrace,
   });
+}
+
+/**
+ * Decorates swap amounts by switching input and output values for specific pool types
+ * during a transitional period after the Broadcast.Swapped event release.
+ *
+ * @remarks
+ * This decoration handles a temporary issue affecting XYK and LBP pools where
+ * input and output amounts need to be swapped to maintain correct data representation.
+ */
+function getInputOutputDecorated({
+  inputs,
+  outputs,
+  fillerType,
+}: {
+  fillerType: SwapFillerType;
+  inputs: BroadcastSwappedAssetAmount[];
+  outputs: BroadcastSwappedAssetAmount[];
+}) {
+  if (fillerType !== SwapFillerType.XYK && fillerType !== SwapFillerType.LBP)
+    return { inputs, outputs };
+
+  return {
+    inputs: [
+      {
+        assetId: inputs[0].assetId,
+        amount: outputs[0].amount,
+      },
+    ],
+    outputs: [
+      {
+        assetId: outputs[0].assetId,
+        amount: inputs[0].amount,
+      },
+    ],
+  };
 }
