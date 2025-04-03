@@ -128,7 +128,7 @@ export type BatchStatePayload = {
   omnipoolAssetAllHistoricalData: OmnipoolAssetHistoricalData[];
 
   stableswapIdsToSave: Set<string>;
-  stableswapAssetsAllBatch: Map<number, StableswapAsset>;
+  stableswapAssetsAllBatch: Map<string, StableswapAsset>;
   stableswapAllBatchPools: Map<string, Stableswap>;
   stablepoolVolumeCollections: Map<string, StableswapHistoricalVolume>;
   stablepoolAssetVolumes: Map<string, StableswapAssetHistoricalVolume>;
