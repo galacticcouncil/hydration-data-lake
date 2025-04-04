@@ -61,10 +61,3 @@ export const aggregateStablepoolVolumesByBlocksRange = `
     GROUP BY grouped_data.pool_id;
 `;
 
-export const getAssetIdsByStableswapIds = `
-    SELECT pool_id,
-           json_agg(asset_id) AS assets
-    FROM stableswap_asset
-    WHERE pool_id = ANY ($1)
-    GROUP BY pool_id;
-`;

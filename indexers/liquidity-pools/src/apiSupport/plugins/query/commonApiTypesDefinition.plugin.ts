@@ -14,6 +14,13 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _ALL_
         }
 
+        enum YieldMetricsInterval {
+          _1D_
+          _1W_
+          _1MON_
+          _1Y_
+        }
+
         type XykpoolVolumeAggregated {
           poolId: String!
           assetAId: Int!
@@ -48,6 +55,13 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _1M_: '1M',
           _1Y_: '1Y',
           _ALL_: 'ALL',
+        },
+
+        YieldMetricsInterval: {
+          _1D_: '1D',
+          _1W_: '1W',
+          _1MON_: '1MON',
+          _1Y_: '1Y',
         },
       },
     };

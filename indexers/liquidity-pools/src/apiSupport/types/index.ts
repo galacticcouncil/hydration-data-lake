@@ -173,3 +173,10 @@ export enum AggregationTimeRangeLabel {
   '1Y' = '1Y',
   'ALL' = 'ALL',
 }
+
+export enum YieldMetricsInterval {
+  '1D' = '1D',
+  '1W' = '1W',
+  '1MON' = '1MON',
+  '1Y' = '1Y',
+}

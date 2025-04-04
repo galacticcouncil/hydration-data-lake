@@ -5,8 +5,8 @@ import {
 } from './resolvers';
 import {
   aggregateStablepoolVolumesByBlocksRange,
-  getAssetIdsByStableswapIds,
 } from '../../sql/stableswapVolumes.sql';
+import { getAssetIdsByStableswapIds } from '../../sql/stableswap.sql';
 
 export async function handleStableswapHistoricalVolumesByPeriodAggregation({
   poolIds,

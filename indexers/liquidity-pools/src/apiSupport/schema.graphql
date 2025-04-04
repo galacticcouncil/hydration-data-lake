@@ -74222,6 +74222,13 @@ enum AggregationTimeRange {
   _ALL_
 }
 
+enum YieldMetricsInterval {
+  _1D_
+  _1W_
+  _1MON_
+  _1Y_
+}
+
 type XykpoolVolumeAggregated {
   poolId: String!
   assetAId: Int!
@@ -74440,6 +74447,23 @@ type RoutedTradeEntity {
   paraBlockHeight: Int!
   relayBlockHeight: Int!
   blockId: String!
+}
+
+input SwapAssetFeesByPeriodFilter {
+  period: AggregationTimeRange
+  startBlockNumber: Int
+  endBlockNumber: Int
+}
+
+type SwapAssetFeeAggregated {
+  assetId: String!
+  assetRegistryId: String
+  amount: BigFloat!
+}
+
+type SwapAssetFeesByPeriodResponse {
+  nodes: [SwapAssetFeeAggregated]!
+  totalCount: Int!
 }
 
 """The root query type which gives access points into the data universe."""
@@ -76692,6 +76716,7 @@ type Query {
   omnipoolAssetHistoricalVolumesByPeriod(filter: OmnipoolAssetVolumesByPeriodFilter!): OmnipoolAssetVolumesByPeriodResponse!
   stableswapHistoricalVolumesByPeriod(filter: StableswapVolumesByPeriodFilter!): StableswapVolumesByPeriodResponse!
   swapAssetFeesByPeriod(filter: SwapAssetFeesByPeriodFilter!): SwapAssetFeesByPeriodResponse!
+  stableswapYieldMetrics(filter: StableswapYieldMetricsFilter!): StableswapYieldMetricsResponse!
 }
 
 """
@@ -76720,19 +76745,18 @@ type Subscription {
   routedTrades(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
 }
 
-input SwapAssetFeesByPeriodFilter {
-  period: AggregationTimeRange
-  startBlockNumber: Int
-  endBlockNumber: Int
+input StableswapYieldMetricsFilter {
+  interval: YieldMetricsInterval = _1MON_
+  poolIds: [String!]!
 }
 
-type SwapAssetFeeAggregated {
-  assetId: String!
-  assetRegistryId: String
-  amount: BigFloat!
+type StableswapYieldMetricsAggregated {
+  poolId: String!
+  projectedApyPerc: BigFloat!
+  projectedAprPerc: BigFloat!
 }
 
-type SwapAssetFeesByPeriodResponse {
-  nodes: [SwapAssetFeeAggregated]!
+type StableswapYieldMetricsResponse {
+  nodes: [StableswapYieldMetricsAggregated]!
   totalCount: Int!
 }
