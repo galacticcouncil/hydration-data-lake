@@ -13,7 +13,7 @@ import {
   YieldMetricsInterval,
 } from '../../../types';
 import { getStartStopBlocksFromInput } from '../../../utils/aggregationUtils';
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 function getPeriodFromInterval(
   interval: YieldMetricsInterval

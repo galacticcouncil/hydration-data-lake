@@ -5,7 +5,7 @@ import {
   Xykpool,
   XykpoolHistoricalVolume,
 } from '../../model';
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 export function calculateAveragePrice({
   swap,

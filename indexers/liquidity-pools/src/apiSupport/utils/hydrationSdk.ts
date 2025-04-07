@@ -18,6 +18,7 @@ export class HydrationSdkManager {
 
   async init(atBlockHash?: string) {
     if (this.traderRouterClient) return this;
+
     const wsProvider = new WsProvider(appConfig.RPC_URL || '');
     const api = await ApiPromise.create({ provider: wsProvider });
     let apiAt = null;
