@@ -375,6 +375,7 @@ export async function handleSupportSwapperEvent(
       inputs: eventParams.inputs,
       outputs: eventParams.outputs,
       fillerType: eventParams.fillerType.kind,
+      operationType: eventParams.operation,
     });
 
   const newSwapDetails = await handleSwap({
@@ -432,12 +433,18 @@ function getInputOutputDecorated({
   inputs,
   outputs,
   fillerType,
+  operationType,
 }: {
+  operationType: TradeOperationType;
   fillerType: SwapFillerType;
   inputs: BroadcastSwappedAssetAmount[];
   outputs: BroadcastSwappedAssetAmount[];
 }) {
-  if (fillerType !== SwapFillerType.XYK && fillerType !== SwapFillerType.LBP)
+  if (
+    operationType !== TradeOperationType.ExactOut &&
+    fillerType !== SwapFillerType.XYK &&
+    fillerType !== SwapFillerType.LBP
+  )
     return { inputs, outputs };
 
   return {
