@@ -4,8 +4,8 @@ import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 import {LbppoolLifeState} from "./_lbppoolLifeState"
-import {LbppoolHistoricalPrice} from "./lbppoolHistoricalPrice.model"
-import {LbppoolHistoricalVolume} from "./lbppoolHistoricalVolume.model"
+import {LbppoolPriceHistoricalData} from "./lbppoolPriceHistoricalData.model"
+import {LbppoolVolumeHistoricalData} from "./lbppoolVolumeHistoricalData.model"
 import {LbppoolHistoricalData} from "./lbppoolHistoricalData.model"
 
 @Entity_()
@@ -81,11 +81,11 @@ export class Lbppool {
   @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new LbppoolLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
   lifeStates!: (LbppoolLifeState)[]
 
-  @OneToMany_(() => LbppoolHistoricalPrice, e => e.pool)
-  historicalBlockPrices!: LbppoolHistoricalPrice[]
+  @OneToMany_(() => LbppoolPriceHistoricalData, e => e.pool)
+  historicalBlockPrices!: LbppoolPriceHistoricalData[]
 
-  @OneToMany_(() => LbppoolHistoricalVolume, e => e.pool)
-  historicalVolume!: LbppoolHistoricalVolume[]
+  @OneToMany_(() => LbppoolVolumeHistoricalData, e => e.pool)
+  historicalVolume!: LbppoolVolumeHistoricalData[]
 
   @OneToMany_(() => LbppoolHistoricalData, e => e.pool)
   historicalData!: LbppoolHistoricalData[]

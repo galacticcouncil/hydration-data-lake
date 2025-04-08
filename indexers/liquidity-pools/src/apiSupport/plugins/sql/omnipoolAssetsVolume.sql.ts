@@ -13,7 +13,7 @@ export const aggregateOmnipoolAssetsVolumesByBlocksRange = `
             para_block_height,
             ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_block_height ASC) AS rank
         FROM 
-            omnipool_asset_historical_volume
+            omnipool_asset_volume_historical_data
         WHERE 
             omnipool_asset_id = ANY($1)
         AND 
@@ -35,7 +35,7 @@ export const aggregateOmnipoolAssetsVolumesByBlocksRange = `
             para_block_height,
             ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_block_height DESC) AS rank
         FROM 
-            omnipool_asset_historical_volume
+            omnipool_asset_volume_historical_data
         WHERE 
             omnipool_asset_id = ANY($1)
         AND 

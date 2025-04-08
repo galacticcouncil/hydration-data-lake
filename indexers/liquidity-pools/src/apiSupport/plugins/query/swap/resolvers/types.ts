@@ -4,20 +4,20 @@ import {
   StableswapHistoricalVolumeRaw,
 } from '../../../../types';
 
-export type SwapAssetFeesByPeriodFilter = {
+export type AssetSwapFeeHistoricalDataByPeriodFilter = {
   period?: AggregationTimeRangeLabel;
   startBlockNumber?: number;
   endBlockNumber?: number;
 };
 
-export type SwapAssetFeeAggregated = {
+export type AssetSwapFeeAggregated = {
   assetId: string;
   assetRegistryId?: string;
   amount: bigint;
 };
 
-export type SwapAssetFeesByPeriodResponse = {
-  nodes: SwapAssetFeeAggregated[];
+export type AssetSwapFeeHistoricalDataByPeriodResponse = {
+  nodes: AssetSwapFeeAggregated[];
   totalCount: number;
 };
 

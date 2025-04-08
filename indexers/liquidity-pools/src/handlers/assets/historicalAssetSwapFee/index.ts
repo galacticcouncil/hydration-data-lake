@@ -1,6 +1,6 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, Block, HistoricalAssetSwapFee } from '../../../model';
+import { Asset, Block, AssetSwapFeeHistoricalData } from '../../../model';
 
 export async function handleAssetSwapFee({
   block,
@@ -29,7 +29,7 @@ export async function handleAssetSwapFee({
   const persistentAssetFeeAmount =
     currentBlockAssetFeeAmount ||
     lastCachedAssetFeeAmount ||
-    (await ctx.store.findOne(HistoricalAssetSwapFee, {
+    (await ctx.store.findOne(AssetSwapFeeHistoricalData, {
       where: {
         asset: { id: asset.id },
       },
@@ -39,7 +39,7 @@ export async function handleAssetSwapFee({
       },
     }));
 
-  const assetSwapFee = new HistoricalAssetSwapFee({
+  const assetSwapFee = new AssetSwapFeeHistoricalData({
     id: `${asset.id}-${block.height}`,
     asset,
     amount: currentBlockAssetFeeAmount?.amount || BigInt(0),
@@ -59,7 +59,7 @@ export async function handleAssetSwapFee({
 }
 
 export function getLastAssetSwapFeeAmountFromCache(
-  fees: Map<string, HistoricalAssetSwapFee>,
+  fees: Map<string, AssetSwapFeeHistoricalData>,
   assetId: string
 ) {
   return fees.get(

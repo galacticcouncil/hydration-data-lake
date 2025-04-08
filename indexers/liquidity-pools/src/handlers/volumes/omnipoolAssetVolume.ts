@@ -1,6 +1,6 @@
 import {
   OmnipoolAsset,
-  OmnipoolAssetHistoricalVolume,
+  OmnipoolAssetVolumeHistoricalData,
   Swap,
 } from '../../model';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
@@ -19,10 +19,10 @@ export function initOmnipoolAssetVolume({
 }: {
   swap: Swap;
   omnipoolAsset: OmnipoolAsset;
-  currentVolume?: OmnipoolAssetHistoricalVolume | undefined;
-  oldVolume?: OmnipoolAssetHistoricalVolume | undefined;
+  currentVolume?: OmnipoolAssetVolumeHistoricalData | undefined;
+  oldVolume?: OmnipoolAssetVolumeHistoricalData | undefined;
 }) {
-  const newVolume = new OmnipoolAssetHistoricalVolume({
+  const newVolume = new OmnipoolAssetVolumeHistoricalData({
     id: omnipoolAsset.id + '-' + swap.paraBlockHeight,
     omnipoolAsset: omnipoolAsset,
     assetVolumeIn: currentVolume?.assetVolumeIn || BigInt(0),
@@ -113,7 +113,7 @@ export async function handleOmnipoolAssetVolumeUpdates({
       (getPoolAssetLastVolumeFromCache(
         omnipoolAssetVolumes,
         omnipoolAsset.id
-      ) as OmnipoolAssetHistoricalVolume | undefined) ||
+      ) as OmnipoolAssetVolumeHistoricalData | undefined) ||
       (await getOldOmnipoolAssetVolume(ctx, omnipoolAsset.id));
 
     const newVolume = initOmnipoolAssetVolume({

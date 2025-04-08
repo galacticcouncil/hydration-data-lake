@@ -1,44 +1,39 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {HistoricalAccountSwapFee} from "./historicalAccountSwapFee.model"
-import {Account} from "./account.model"
 import {Asset} from "./asset.model"
+import {AssetSpotPriceHistoricalData} from "./_assetSpotPriceHistoricalData"
 import {Block} from "./block.model"
 
 @Entity_()
-export class HistoricalAccountAssetSwapFee {
-  constructor(props?: Partial<HistoricalAccountAssetSwapFee>) {
+export class AssetHistoricalData {
+  constructor(props?: Partial<AssetHistoricalData>) {
     Object.assign(this, props)
   }
 
   /**
-   * <historicalAccountSwapFeeId>-<paraBlockHeight>
+   * <assetId>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
-
-  @Index_()
-  @ManyToOne_(() => HistoricalAccountSwapFee, {nullable: true})
-  collection!: HistoricalAccountSwapFee
-
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  account!: Account
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
   asset!: Asset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  amount!: bigint
+  totalIssuance!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalAmount!: bigint
+  existentialDeposit!: bigint
+
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val == null ? undefined : val.toJSON()), from: obj => marshal.fromList(obj, val => val == null ? undefined : new AssetSpotPriceHistoricalData(undefined, val))}, nullable: false})
+  spotPrices!: (AssetSpotPriceHistoricalData | undefined | null)[]
 
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
 
+  @Index_()
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 

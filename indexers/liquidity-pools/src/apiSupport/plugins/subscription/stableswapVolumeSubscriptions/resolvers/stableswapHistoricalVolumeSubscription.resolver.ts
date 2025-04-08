@@ -22,7 +22,7 @@ export async function stableswapHistoricalVolumeSubscriptionResolver(
 ) {
   const stablepoolHistVolRows =
     await resolveInfo.graphile.selectGraphQLResultFromTable(
-      sql.fragment`public.stableswap_historical_volume`,
+      sql.fragment`public.stableswap_volume_historical_data`,
       (tableAlias: SQL, sqlBuilder: QueryBuilder) => {
         stableswapHistoricalVolumeSelectGraphQLResult({
           sql,

@@ -1,26 +1,26 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
-import {Account} from "./account.model"
-import {HistoricalAccountAssetSwapFee} from "./historicalAccountAssetSwapFee.model"
+import {Stableswap} from "./stableswap.model"
+import {StableswapAssetVolumeHistoricalData} from "./stableswapAssetVolumeHistoricalData.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class HistoricalAccountSwapFee {
-  constructor(props?: Partial<HistoricalAccountSwapFee>) {
+export class StableswapVolumeHistoricalData {
+  constructor(props?: Partial<StableswapVolumeHistoricalData>) {
     Object.assign(this, props)
   }
 
   /**
-   * <address>-<paraBlockHeight>
+   * <stableswapId>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  account!: Account
+  @ManyToOne_(() => Stableswap, {nullable: true})
+  pool!: Stableswap
 
-  @OneToMany_(() => HistoricalAccountAssetSwapFee, e => e.collection)
-  fees!: HistoricalAccountAssetSwapFee[]
+  @OneToMany_(() => StableswapAssetVolumeHistoricalData, e => e.volumesCollection)
+  assetVolumes!: StableswapAssetVolumeHistoricalData[]
 
   @Index_()
   @Column_("int4", {nullable: false})

@@ -1,41 +1,35 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {OmnipoolAsset} from "./omnipoolAsset.model"
+import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class OmnipoolAssetHistoricalVolume {
-  constructor(props?: Partial<OmnipoolAssetHistoricalVolume>) {
+export class AssetVolumeHistoricalData {
+  constructor(props?: Partial<AssetVolumeHistoricalData>) {
     Object.assign(this, props)
   }
 
   /**
-   * <omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)
+   * <assetId>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => OmnipoolAsset, {nullable: true})
-  omnipoolAsset!: OmnipoolAsset
+  @ManyToOne_(() => Asset, {nullable: true})
+  asset!: Asset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetVolumeIn!: bigint
+  volumeIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetVolumeOut!: bigint
+  volumeOut!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetTotalVolumeIn!: bigint
+  totalVolumeIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetTotalVolumeOut!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetFee!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetTotalFees!: bigint
+  totalVolumeOut!: bigint
 
   @Index_()
   @Column_("int4", {nullable: false})

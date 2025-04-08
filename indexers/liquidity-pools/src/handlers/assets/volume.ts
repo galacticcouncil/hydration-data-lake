@@ -1,4 +1,4 @@
-import { Asset, HistoricalAssetVolume } from '../../model';
+import { Asset, AssetVolumeHistoricalData } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { initAssetVolume } from './index';
@@ -38,7 +38,7 @@ export async function handleAssetVolumeUpdates(
   const oldAssetInVolume =
     currentAssetInVolume ||
     cachedVolumeIn ||
-    (await ctx.store.findOne(HistoricalAssetVolume, {
+    (await ctx.store.findOne(AssetVolumeHistoricalData, {
       where: {
         asset: { id: swapDetails.assetIn.id },
       },
@@ -52,7 +52,7 @@ export async function handleAssetVolumeUpdates(
   const oldAssetOutVolume =
     currentAssetOutVolume ||
     cachedVolumeOut ||
-    (await ctx.store.findOne(HistoricalAssetVolume, {
+    (await ctx.store.findOne(AssetVolumeHistoricalData, {
       where: {
         asset: { id: swapDetails.assetOut.id },
       },
@@ -94,7 +94,7 @@ export async function handleAssetVolumeUpdates(
 }
 
 export function getLastAssetVolumeFromCache(
-  volume: Map<string, HistoricalAssetVolume>,
+  volume: Map<string, AssetVolumeHistoricalData>,
   assetId: string
 ) {
   return volume.get(

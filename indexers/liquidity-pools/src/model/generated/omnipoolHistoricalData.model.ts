@@ -1,46 +1,50 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {StableswapHistoricalVolume} from "./stableswapHistoricalVolume.model"
+import {Omnipool} from "./omnipool.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class StableswapAssetHistoricalVolume {
-  constructor(props?: Partial<StableswapAssetHistoricalVolume>) {
+export class OmnipoolHistoricalData {
+  constructor(props?: Partial<OmnipoolHistoricalData>) {
     Object.assign(this, props)
   }
 
   /**
-   * <stableswapId>-<assetId>-<paraBlockHeight> (e.g. 100-10-101332)
+   * <omnipoolId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-101312)
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => StableswapHistoricalVolume, {nullable: true})
-  volumesCollection!: StableswapHistoricalVolume
+  @ManyToOne_(() => Omnipool, {nullable: true})
+  pool!: Omnipool
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  maxInRatio!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  maxOutRatio!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  minTradingLimit!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  minPoolLiquidity!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  minWithdrawalFee!: bigint
+
+  @Column_("int4", {nullable: false})
+  burnProtocolFee!: number
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
-  asset!: Asset
+  hdxAsset!: Asset
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapFee!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapTotalFees!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapVolumeIn!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapVolumeOut!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapTotalVolumeIn!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapTotalVolumeOut!: bigint
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  hubAsset!: Asset
 
   @Index_()
   @Column_("int4", {nullable: false})

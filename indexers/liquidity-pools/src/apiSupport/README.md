@@ -38,7 +38,7 @@ The API provides custom queries for aggregated volume data:
 
 - **`xykPoolHistoricalVolumesByPeriod`**: Retrieves aggregated volumes for specified XYK pools within a given block range.
 
-- **`omnipoolAssetHistoricalVolumesByPeriod`**: Retrieves aggregated volumes for specified Omnipool assets within a given block range.
+- **`omnipoolAssetVolumeHistoricalDataByPeriod`**: Retrieves aggregated volumes for specified Omnipool assets within a given block range.
 
 - **`stablepoolHistoricalVolumesByPeriod`**: Retrieves aggregated volumes for specified Stablepool pools within a given block range.
 

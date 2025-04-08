@@ -16,7 +16,7 @@ export async function omnipoolAssetHistoricalVolumeSubscriptionResolver(
   sql: any
 ) {
   const rows = await resolveInfo.graphile.selectGraphQLResultFromTable(
-    sql.fragment`public.omnipool_asset_historical_volume`,
+    sql.fragment`public.omnipool_asset_volume_historical_data`,
     (tableAlias: SQL, sqlBuilder: QueryBuilder) => {
       omnipoolAssetHistoricalVolumeSelectGraphQLResult({
         sql,

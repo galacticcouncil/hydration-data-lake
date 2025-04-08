@@ -16,7 +16,7 @@ export async function xykpoolHistoricalVolumeSubscriptionResolver(
   sql: any
 ) {
   const rows = await resolveInfo.graphile.selectGraphQLResultFromTable(
-    sql.fragment`public.xykpool_historical_volume`,
+    sql.fragment`public.xykpool_volume_historical_data`,
     (tableAlias: SQL, sqlBuilder: QueryBuilder) => {
       xykpoolHistoricalVolumeSelectGraphQLResult({
         sql,

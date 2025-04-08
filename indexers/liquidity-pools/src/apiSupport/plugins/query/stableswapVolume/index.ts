@@ -5,27 +5,27 @@ export const StableswapVolumePlugin: Plugin = makeExtendSchemaPlugin(
   (build, options) => {
     return {
       typeDefs: gql`
-        input StableswapVolumesByPeriodFilter {
+        input StableswapVolumeHistoricalDataByPeriodFilter {
           poolIds: [String!]!
           startBlockNumber: Int
           endBlockNumber: Int
           period: AggregationTimeRange
         }
 
-        type StableswapVolumesByPeriodResponse {
+        type StableswapVolumeHistoricalDataByPeriodResponse {
           nodes: [StableswapVolumeAggregated]!
           totalCount: Int!
         }
 
         extend type Query {
-          stableswapHistoricalVolumesByPeriod(
-            filter: StableswapVolumesByPeriodFilter!
-          ): StableswapVolumesByPeriodResponse!
+          stableswapVolumeHistoricalDataByPeriod(
+            filter: StableswapVolumeHistoricalDataByPeriodFilter!
+          ): StableswapVolumeHistoricalDataByPeriodResponse!
         }
       `,
       resolvers: {
         Query: {
-          stableswapHistoricalVolumesByPeriod:
+          stableswapVolumeHistoricalDataByPeriod:
             stableswapHistoricalVolumesByPeriodResolver,
         },
       },

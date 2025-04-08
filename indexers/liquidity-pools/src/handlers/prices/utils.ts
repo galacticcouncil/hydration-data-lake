@@ -1,9 +1,9 @@
 import {
   Lbppool,
-  LbppoolHistoricalVolume,
+  LbppoolVolumeHistoricalData,
   Swap,
   Xykpool,
-  XykpoolHistoricalVolume,
+  XykpoolVolumeHistoricalData,
 } from '../../model';
 import BigNumber from 'bignumber.js';
 
@@ -16,9 +16,9 @@ export function calculateAveragePrice({
 }: {
   swap: Swap;
   pool: Xykpool | Lbppool;
-  newVolume: LbppoolHistoricalVolume | XykpoolHistoricalVolume;
-  currentVolume?: LbppoolHistoricalVolume | XykpoolHistoricalVolume;
-  oldVolume?: LbppoolHistoricalVolume | XykpoolHistoricalVolume;
+  newVolume: LbppoolVolumeHistoricalData | XykpoolVolumeHistoricalData;
+  currentVolume?: LbppoolVolumeHistoricalData | XykpoolVolumeHistoricalData;
+  oldVolume?: LbppoolVolumeHistoricalData | XykpoolVolumeHistoricalData;
 }) {
   const totalVolume = oldVolume
     ? oldVolume.assetATotalVolumeIn + oldVolume.assetATotalVolumeOut

@@ -1,6 +1,6 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, HistoricalAssetVolume } from '../../model';
+import { Asset, AssetVolumeHistoricalData } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { getOrderedListByBlockNumber } from '../../utils/helpers';
 import { EventName } from '../../parsers/types/events';
@@ -71,7 +71,7 @@ export function initAssetVolume(
   totalVolumeIn: bigint,
   totalVolumeOut: bigint
 ) {
-  return new HistoricalAssetVolume({
+  return new AssetVolumeHistoricalData({
     id: asset.id + '-' + paraBlockHeight,
     asset,
     volumeIn,

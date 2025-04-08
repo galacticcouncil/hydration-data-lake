@@ -27,6 +27,12 @@ export class StableswapAssetHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   freeBalance!: bigint
 
+  @Column_("int4", {nullable: true})
+  tradeable!: number | undefined | null
+
+  @Column_("text", {array: true, nullable: false})
+  peg!: (string)[]
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

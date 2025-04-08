@@ -4,7 +4,7 @@ import {
   StableswapHistoricalVolumeRaw,
 } from '../../../../types';
 
-export type StableswapVolumesByPeriodFilter = {
+export type StableswapVolumeHistoricalDataByPeriodFilter = {
   poolIds: string[];
   startBlockNumber?: number;
   endBlockNumber?: number;
@@ -22,7 +22,7 @@ export type StableswapVolumeAggregated = {
   assetVolumes: StablepoolAssetVolumeAggregated[];
 };
 
-export type StableswapVolumesByPeriodResponse = {
+export type StableswapVolumeHistoricalDataByPeriodResponse = {
   nodes: StableswapVolumeAggregated[];
   totalCount: number;
 };

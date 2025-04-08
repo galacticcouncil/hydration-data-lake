@@ -7,22 +7,22 @@ import {
   Call as CallEntity,
   ChainActivityTrace,
   Extrinsic as ExtrinsicEntity,
-  HistoricalAssetVolume,
+  AssetVolumeHistoricalData,
   Lbppool,
   LbppoolHistoricalData,
-  LbppoolHistoricalPrice,
-  LbppoolHistoricalVolume,
+  LbppoolPriceHistoricalData,
+  LbppoolVolumeHistoricalData,
   Omnipool,
   OmnipoolAsset,
   OmnipoolAssetHistoricalData,
-  OmnipoolAssetHistoricalVolume,
+  OmnipoolAssetVolumeHistoricalData,
   Stableswap,
   StableswapAsset,
   StableswapAssetHistoricalData,
-  StableswapAssetHistoricalVolume,
+  StableswapAssetVolumeHistoricalData,
   StableswapAssetLiquidityAmount,
   StableswapHistoricalData,
-  StableswapHistoricalVolume,
+  StableswapVolumeHistoricalData,
   StableswapLiquidityEvent,
   Swap,
   SwapFee,
@@ -30,8 +30,8 @@ import {
   Transfer,
   Xykpool,
   XykpoolHistoricalData,
-  XykpoolHistoricalPrice,
-  XykpoolHistoricalVolume,
+  XykpoolPriceHistoricalData,
+  XykpoolVolumeHistoricalData,
   DcaSchedule,
   DcaScheduleOrderRouteHop,
   DcaScheduleExecution,
@@ -42,9 +42,9 @@ import {
   DcaScheduleEvent,
   RoutedTrade,
   RoutedTradeAssetBalance,
-  HistoricalAccountSwapFee,
-  HistoricalAccountAssetSwapFee,
-  HistoricalAssetSwapFee,
+  AccountSwapFeeHistoricalData,
+  AccountAssetSwapFeeHistoricalData,
+  AssetSwapFeeHistoricalData,
   MoneyMarketEvent,
   MmSupply,
   MmWithdraw,
@@ -78,7 +78,7 @@ export type BatchStatePayload = {
   accountIdForPrefetch: Set<string>;
 
   transfers: Map<string, Transfer>;
-  assetVolumes: Map<string, HistoricalAssetVolume>;
+  assetVolumes: Map<string, AssetVolumeHistoricalData>;
 
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
@@ -99,8 +99,8 @@ export type BatchStatePayload = {
 
   lbpPoolIdsToSave: Set<string>;
   lbpAllBatchPools: Map<string, Lbppool>;
-  lbpPoolVolumes: Map<string, LbppoolHistoricalVolume>;
-  lbpPoolHistoricalPrices: Map<string, LbppoolHistoricalPrice>;
+  lbpPoolVolumes: Map<string, LbppoolVolumeHistoricalData>;
+  lbpPoolHistoricalPrices: Map<string, LbppoolPriceHistoricalData>;
   lbppoolAssetIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<string> } // ... ids: Set<"assetAId-assetBId">
@@ -109,8 +109,8 @@ export type BatchStatePayload = {
 
   xykPoolIdsToSave: Set<string>;
   xykAllBatchPools: Map<string, Xykpool>;
-  xykPoolVolumes: Map<string, XykpoolHistoricalVolume>;
-  xykPoolHistoricalPrices: Map<string, XykpoolHistoricalPrice>;
+  xykPoolVolumes: Map<string, XykpoolVolumeHistoricalData>;
+  xykPoolHistoricalPrices: Map<string, XykpoolPriceHistoricalData>;
   xykPoolIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<string> }
@@ -120,7 +120,7 @@ export type BatchStatePayload = {
   omnipoolEntity: Omnipool | null;
   omnipoolAssets: Map<string, OmnipoolAsset>;
   omnipoolAssetIdsToSave: Set<string>;
-  omnipoolAssetVolumes: Map<string, OmnipoolAssetHistoricalVolume>;
+  omnipoolAssetVolumes: Map<string, OmnipoolAssetVolumeHistoricalData>;
   omnipoolAssetIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<number> }
@@ -130,8 +130,8 @@ export type BatchStatePayload = {
   stableswapIdsToSave: Set<string>;
   stableswapAssetsAllBatch: Map<string, StableswapAsset>;
   stableswapAllBatchPools: Map<string, Stableswap>;
-  stablepoolVolumeCollections: Map<string, StableswapHistoricalVolume>;
-  stablepoolAssetVolumes: Map<string, StableswapAssetHistoricalVolume>;
+  stablepoolVolumeCollections: Map<string, StableswapVolumeHistoricalData>;
+  stablepoolAssetVolumes: Map<string, StableswapAssetVolumeHistoricalData>;
   stablepoolAssetVolumeIdsToSave: Set<string>;
   stablepoolAssetBatchLiquidityAmounts: Map<
     string,
@@ -155,9 +155,9 @@ export type BatchStatePayload = {
   otcOrders: Map<string, OtcOrder>;
   otcOrderEvents: Map<string, OtcOrderEvent>;
 
-  historicalAssetSwapFees: Map<string, HistoricalAssetSwapFee>;
-  historicalAccountSwapFees: Map<string, HistoricalAccountSwapFee>;
-  historicalAccountAssetSwapFees: Map<string, HistoricalAccountAssetSwapFee>;
+  historicalAssetSwapFees: Map<string, AssetSwapFeeHistoricalData>;
+  historicalAccountSwapFees: Map<string, AccountSwapFeeHistoricalData>;
+  historicalAccountAssetSwapFees: Map<string, AccountAssetSwapFeeHistoricalData>;
 
   moneyMarketEvents: Map<string, MoneyMarketEvent>;
   mmSupplies: Map<string, MmSupply>;

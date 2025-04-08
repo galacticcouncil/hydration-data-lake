@@ -2,7 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import {AccountType} from "./_accountType"
 import {Event} from "./event.model"
 import {AccountAssetBalanceHistoricalData} from "./accountAssetBalanceHistoricalData.model"
-import {HistoricalAccountSwapFee} from "./historicalAccountSwapFee.model"
+import {AccountSwapFeeHistoricalData} from "./accountSwapFeeHistoricalData.model"
 import {Lbppool} from "./lbppool.model"
 import {Xykpool} from "./xykpool.model"
 import {Omnipool} from "./omnipool.model"
@@ -39,8 +39,8 @@ export class Account {
   @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
   assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]
 
-  @OneToMany_(() => HistoricalAccountSwapFee, e => e.account)
-  historicalAccountSwapFees!: HistoricalAccountSwapFee[]
+  @OneToMany_(() => AccountSwapFeeHistoricalData, e => e.account)
+  historicalAccountSwapFees!: AccountSwapFeeHistoricalData[]
 
   @Index_()
   @ManyToOne_(() => Lbppool, {nullable: true})

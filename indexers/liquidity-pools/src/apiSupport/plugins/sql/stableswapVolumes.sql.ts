@@ -4,7 +4,7 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                                   relay_block_height,
                                                   para_block_height,
                                                   ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY para_block_height ASC) AS rank
-                                           FROM stableswap_historical_volume
+                                           FROM stableswap_volume_historical_data
                                            WHERE pool_id = ANY ($1)
                                              AND para_block_height >= $2
                                              AND para_block_height <= $3),
@@ -13,7 +13,7 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                                 relay_block_height,
                                                 para_block_height,
                                                 ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY para_block_height DESC) AS rank
-                                         FROM stableswap_historical_volume
+                                         FROM stableswap_volume_historical_data
                                          WHERE pool_id = ANY ($1)
                                            AND para_block_height <= $3
                                            AND para_block_height >= $2),
@@ -33,7 +33,7 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                                   'relay_block_height', sahv.relay_block_height
                                           )
                                   ) AS asset_volumes
-                           FROM stableswap_asset_historical_volume sahv
+                           FROM stableswap_asset_volume_historical_data sahv
                            WHERE para_block_height <= $3
                              AND para_block_height >= $2
                            GROUP BY sahv.volumes_collection_id)

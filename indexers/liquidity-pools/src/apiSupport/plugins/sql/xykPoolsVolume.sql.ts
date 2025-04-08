@@ -13,7 +13,7 @@ export const aggregateXykPoolVolumesByBlocksRange = `
                                      asset_b_total_volume_out,
                                      para_block_height,
                                      ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY para_block_height ASC) AS rank
-                              FROM xykpool_historical_volume
+                              FROM xykpool_volume_historical_data
                               WHERE pool_id = ANY ($1)
                                 AND para_block_height >= $2
                                 AND para_block_height <= $3),
@@ -31,7 +31,7 @@ export const aggregateXykPoolVolumesByBlocksRange = `
                                    asset_b_total_volume_out,
                                    para_block_height,
                                    ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY para_block_height DESC) AS rank
-                            FROM xykpool_historical_volume
+                            FROM xykpool_volume_historical_data
                             WHERE pool_id = ANY ($1)
                               AND para_block_height <= $3
                               AND para_block_height >= $2)

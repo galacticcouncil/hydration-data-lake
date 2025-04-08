@@ -1,7 +1,7 @@
 import type * as pg from 'pg';
 import {
   AggregateSwapAssetFeesByBlocksRangeSqlResult,
-  SwapAssetFeeAggregated,
+  AssetSwapFeeAggregated,
 } from './resolvers';
 import { aggregateSwapAssetFeesByBlocksRange } from '../../sql/swap.sql';
 
@@ -32,7 +32,7 @@ export async function handleSwapAssetFeesByPeriodAggregation({
   startBlockHeight: number;
   stopBlockHeight: number;
   pgClient: pg.Client;
-}): Promise<SwapAssetFeeAggregated[]> {
+}): Promise<AssetSwapFeeAggregated[]> {
   const groupedResult =
     await pgClient.query<AggregateSwapAssetFeesByBlocksRangeSqlResult>(
       aggregateSwapAssetFeesByBlocksRange,
@@ -58,7 +58,7 @@ export async function handleSwapAssetFeesByPeriodAggregation({
     groupedResult.rows[0]
   );
 
-  const decoratedNodes: SwapAssetFeeAggregated[] = [];
+  const decoratedNodes: AssetSwapFeeAggregated[] = [];
 
   for (const commonId of commonIds) {
     const startGroupItem = startGroupMap.get(commonId)!;

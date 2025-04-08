@@ -3,18 +3,18 @@ import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
 import {
-  StableswapVolumesByPeriodFilter,
-  StableswapVolumesByPeriodResponse,
+  StableswapVolumeHistoricalDataByPeriodFilter,
+  StableswapVolumeHistoricalDataByPeriodResponse,
 } from './types';
 import { handleStableswapHistoricalVolumesByPeriodAggregation } from '../utils';
 import { getStartStopBlocksFromInput } from '../../../../utils/aggregationUtils';
 
 export async function stableswapHistoricalVolumesByPeriodResolver(
   parentObject: any,
-  args: { filter: StableswapVolumesByPeriodFilter },
+  args: { filter: StableswapVolumeHistoricalDataByPeriodFilter },
   context: QueryResolverContext,
   info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
-): Promise<StableswapVolumesByPeriodResponse> {
+): Promise<StableswapVolumeHistoricalDataByPeriodResponse> {
   const pgClient: pg.Client = context.pgClient;
 
   pgClient.setTypeParser(1700, function (val) {

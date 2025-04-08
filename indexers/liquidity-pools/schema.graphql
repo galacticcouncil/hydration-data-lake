@@ -102,7 +102,7 @@ type AssetMultiLocation {
   interior: [AssetMultiLocationsInterior!]!
 }
 
-type HistoricalAssetVolume @entity {
+type AssetVolumeHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
   id: ID!
   asset: Asset!
@@ -116,7 +116,7 @@ type HistoricalAssetVolume @entity {
   block: Block!
 }
 
-type HistoricalAssetSwapFee @entity {
+type AssetSwapFeeHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
   id: ID!
   asset: Asset!
@@ -125,6 +125,24 @@ type HistoricalAssetSwapFee @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
+  block: Block!
+}
+
+type AssetSpotPriceHistoricalData {
+  quoteAssetId: String!
+  quoteAssetDecimals: Int
+  price: String!
+}
+
+type AssetHistoricalData @entity {
+  "<assetId>-<paraBlockHeight>"
+  id: ID!
+  asset: Asset!
+  totalIssuance: BigInt!
+  existentialDeposit: BigInt!
+  spotPrices: [AssetSpotPriceHistoricalData]!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int! @index
   block: Block!
 }
 
@@ -172,7 +190,7 @@ type Account @entity {
   assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
     @derivedFrom(field: "account")
 
-  historicalAccountSwapFees: [HistoricalAccountSwapFee]
+  historicalAccountSwapFees: [AccountSwapFeeHistoricalData]
     @derivedFrom(field: "account")
 
   lbppool: Lbppool
@@ -196,10 +214,10 @@ type Account @entity {
   # TODO: add proxy and multisig tracking
 }
 
-type HistoricalAccountAssetSwapFee @entity {
+type AccountAssetSwapFeeHistoricalData @entity {
   "<historicalAccountSwapFeeId>-<paraBlockHeight>"
   id: ID!
-  collection: HistoricalAccountSwapFee!
+  collection: AccountSwapFeeHistoricalData!
   account: Account!
   asset: Asset!
 
@@ -211,11 +229,11 @@ type HistoricalAccountAssetSwapFee @entity {
   block: Block!
 }
 
-type HistoricalAccountSwapFee @entity {
+type AccountSwapFeeHistoricalData @entity {
   "<address>-<paraBlockHeight>"
   id: ID!
   account: Account!
-  fees: [HistoricalAccountAssetSwapFee!]! @derivedFrom(field: "collection")
+  fees: [AccountAssetSwapFeeHistoricalData!]! @derivedFrom(field: "collection")
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -527,8 +545,9 @@ type Lbppool @entity {
   isDestroyed: Boolean
   lifeStates: [LbppoolLifeState!]!
 
-  historicalBlockPrices: [LbppoolHistoricalPrice!]! @derivedFrom(field: "pool")
-  historicalVolume: [LbppoolHistoricalVolume!]! @derivedFrom(field: "pool")
+  historicalBlockPrices: [LbppoolPriceHistoricalData!]!
+    @derivedFrom(field: "pool")
+  historicalVolume: [LbppoolVolumeHistoricalData!]! @derivedFrom(field: "pool")
   historicalData: [LbppoolHistoricalData!]! @derivedFrom(field: "pool")
 }
 
@@ -550,7 +569,7 @@ type LbppoolLifeState {
   destroyed: LbppoolDestroyedData
 }
 
-type LbppoolHistoricalPrice @entity {
+type LbppoolPriceHistoricalData @entity {
   "<lbppoolId>-<paraBlockHeight>"
   id: ID!
   pool: Lbppool!
@@ -564,7 +583,7 @@ type LbppoolHistoricalPrice @entity {
   block: Block!
 }
 
-type LbppoolHistoricalVolume @entity {
+type LbppoolVolumeHistoricalData @entity {
   "PoolId-paraBlockHeight"
   id: ID!
   pool: Lbppool!
@@ -591,8 +610,8 @@ type LbppoolHistoricalVolume @entity {
 }
 
 #
-# BatchLbppoolHistVolsList is a support entity for the LbppoolHistoricalVolume API subscription.
-# It contains all LBP pool IDs involved in volume aggregations (LbppoolHistoricalVolume)
+# BatchLbppoolHistVolsList is a support entity for the LbppoolVolumeHistoricalData API subscription.
+# It contains all LBP pool IDs involved in volume aggregations (LbppoolVolumeHistoricalData)
 # within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
 # processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
 # blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
@@ -622,9 +641,14 @@ type LbppoolHistoricalData @entity {
   endBlockNumber: Int
   initialWeight: Int!
   finalWeight: Int!
-  fee: [Int!]!
   repayTarget: BigInt!
   weightCurve: String!
+  fee: [Int!]!
+  repayFee: [Int!]!
+  maxInRatio: BigInt!
+  maxOutRatio: BigInt!
+  minPoolLiquidity: BigInt!
+  minTradingLimit: BigInt!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -652,8 +676,9 @@ type Xykpool @entity {
   isDestroyed: Boolean
   lifeStates: [XykpoolLifeState!]!
 
-  historicalBlockPrices: [XykpoolHistoricalPrice!]! @derivedFrom(field: "pool")
-  historicalVolume: [XykpoolHistoricalVolume!]! @derivedFrom(field: "pool")
+  historicalBlockPrices: [XykpoolPriceHistoricalData!]!
+    @derivedFrom(field: "pool")
+  historicalVolume: [XykpoolVolumeHistoricalData!]! @derivedFrom(field: "pool")
   historicalData: [XykpoolHistoricalData!]! @derivedFrom(field: "pool")
 }
 
@@ -674,7 +699,7 @@ type XykpoolLifeState {
   destroyed: XykpoolDestroyedData
 }
 
-type XykpoolHistoricalPrice @entity {
+type XykpoolPriceHistoricalData @entity {
   "PoolId-paraBlockHeight"
   id: ID!
   pool: Xykpool!
@@ -688,7 +713,7 @@ type XykpoolHistoricalPrice @entity {
   block: Block!
 }
 
-type XykpoolHistoricalVolume @entity {
+type XykpoolVolumeHistoricalData @entity {
   "PoolId-paraBlockHeight"
   id: ID!
   pool: Xykpool!
@@ -715,8 +740,8 @@ type XykpoolHistoricalVolume @entity {
 }
 
 #
-# BatchXykpoolHistVolsList is a support entity for the XykpoolHistoricalVolume API subscription.
-# It contains all XYK pool IDs involved in volume aggregations (XykpoolHistoricalVolume)
+# BatchXykpoolHistVolsList is a support entity for the XykpoolVolumeHistoricalData API subscription.
+# It contains all XYK pool IDs involved in volume aggregations (XykpoolVolumeHistoricalData)
 # within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
 # processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
 # blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
@@ -740,6 +765,14 @@ type XykpoolHistoricalData @entity {
   assetB: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
+
+  exchangeFee: [Int]!
+  maxInRatio: BigInt
+  maxOutRatio: BigInt
+  minPoolLiquidity: BigInt
+  minTradingLimit: BigInt
+  nativeAssetId: Int
+  oracleSource: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -774,7 +807,7 @@ type OmnipoolAsset @entity {
   isRemoved: Boolean
   lifeStates: [OmnipoolAssetLifeState!]!
 
-  historicalVolume: [OmnipoolAssetHistoricalVolume!]!
+  historicalVolume: [OmnipoolAssetVolumeHistoricalData!]!
     @derivedFrom(field: "omnipoolAsset")
   historicalData: [OmnipoolAssetHistoricalData!]!
     @derivedFrom(field: "omnipoolAsset")
@@ -800,7 +833,7 @@ type OmnipoolAssetLifeState {
   removed: OmnipoolAssetRemovedData
 }
 
-type OmnipoolAssetHistoricalVolume @entity {
+type OmnipoolAssetVolumeHistoricalData @entity {
   "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
   omnipoolAsset: OmnipoolAsset!
@@ -818,7 +851,7 @@ type OmnipoolAssetHistoricalVolume @entity {
 
 #
 # BatchOmnipoolAssetHistVolsList is a support entity for the OmnipoolAssetHistoricalVolumeByPeriod API subscription.
-# It contains all OmnipoolAsset IDs and Asset IDs involved in volume aggregations (OmnipoolAssetHistoricalVolume)
+# It contains all OmnipoolAsset IDs and Asset IDs involved in volume aggregations (OmnipoolAssetVolumeHistoricalData)
 # within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
 # processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
 # blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
@@ -834,19 +867,37 @@ type BatchOmnipoolAssetHistVolsList @entity {
   batchEndParaBlockHeight: Int! @index
 }
 
+type OmnipoolHistoricalData @entity {
+  "<omnipoolId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-101312)"
+  id: ID!
+  pool: Omnipool!
+
+  maxInRatio: BigInt!
+  maxOutRatio: BigInt!
+  minTradingLimit: BigInt!
+  minPoolLiquidity: BigInt!
+  minWithdrawalFee: BigInt!
+  burnProtocolFee: Int!
+  hdxAsset: Asset!
+  hubAsset: Asset!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
 type OmnipoolAssetHistoricalData @entity {
   "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
   omnipoolAsset: OmnipoolAsset!
   asset: Asset!
 
-  #>>>check for assetTradability
-
   assetCap: BigInt!
   assetShares: BigInt!
   assetHubReserve: BigInt!
   assetProtocolShares: BigInt!
   freeBalance: BigInt!
+  tradable: Int!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -896,11 +947,11 @@ type StableswapAsset @entity {
   amount: BigInt!
 }
 
-type StableswapHistoricalVolume @entity {
+type StableswapVolumeHistoricalData @entity {
   "<stableswapId>-<paraBlockHeight>"
   id: ID!
   pool: Stableswap!
-  assetVolumes: [StableswapAssetHistoricalVolume!]!
+  assetVolumes: [StableswapAssetVolumeHistoricalData!]!
     @derivedFrom(field: "volumesCollection")
 
   paraBlockHeight: Int! @index
@@ -908,10 +959,10 @@ type StableswapHistoricalVolume @entity {
   block: Block!
 }
 
-type StableswapAssetHistoricalVolume @entity {
+type StableswapAssetVolumeHistoricalData @entity {
   "<stableswapId>-<assetId>-<paraBlockHeight> (e.g. 100-10-101332)"
   id: ID!
-  volumesCollection: StableswapHistoricalVolume!
+  volumesCollection: StableswapVolumeHistoricalData!
   asset: Asset!
 
   swapFee: BigInt!
@@ -927,8 +978,8 @@ type StableswapAssetHistoricalVolume @entity {
 }
 
 #
-# BatchStableswapHistVolsList is a support entity for the StableswapAssetHistoricalVolume API subscription.
-# It contains all Stableswap pool IDs involved in volume aggregations (StableswapAssetHistoricalVolume)
+# BatchStableswapHistVolsList is a support entity for the StableswapAssetVolumeHistoricalData API subscription.
+# It contains all Stableswap pool IDs involved in volume aggregations (StableswapAssetVolumeHistoricalData)
 # within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
 # processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
 # blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
@@ -982,6 +1033,11 @@ type StableswapHistoricalData @entity {
   initialAmplificationChangeAtBlockHeight: Int!
   finalAmplificationChangeAtBlockHeight: Int!
   fee: Int!
+  maxInRatio: BigInt!
+  maxOutRatio: BigInt!
+  minTradingLimit: BigInt!
+  amplificationRange: [Int!]!
+  minPoolLiquidity: BigInt!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -994,6 +1050,8 @@ type StableswapAssetHistoricalData @entity {
   asset: Asset!
   poolHistoricalData: StableswapHistoricalData!
   freeBalance: BigInt!
+  tradeable: Int
+  peg: [String!]!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1419,7 +1477,7 @@ type OmnipoolLiquidityPositionEvent @entity {
   amount: BigInt
   sharesAmount: BigInt
   price: BigInt
-  fee: BigIn
+  fee: BigInt
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1440,6 +1498,7 @@ type OmnipoolLiquidityPosition @entity {
   status: OmnipoolLiquidityPositionStatus!
 
   positionEvents: [OmnipoolLiquidityPositionEvent]!
+    @derivedFrom(field: "position")
 
   #  Point of time of position creation for better sorting
   paraBlockHeight: Int! @index
@@ -1458,7 +1517,7 @@ type OmnipoolGlobalFarm @entity {
 
   updatedAtRelayBlock: Int!
   totalSharesZ: BigInt!
-  accumulatedRpz: BogInt!
+  accumulatedRpz: BigInt!
   rewardAsset: Asset!
   pendingRewards: BigInt!
   accumulatedPaidRewards: BigInt!
@@ -1475,7 +1534,7 @@ type OmnipoolGlobalFarm @entity {
   lrnaPriceAdjustment: BigInt!
   totalRewards: BigInt!
 
-  yieldFarms: [OmnipoolYieldFarm] @derivedFrom(field: "omnipoolGlobalFarm")
+  yieldFarms: [OmnipoolYieldFarm] @derivedFrom(field: "globalFarm")
 
   lifeStates: [FarmLifeState!]!
   paraBlockHeight: Int! @index
@@ -1524,7 +1583,7 @@ type OmnipoolYieldFarmDeposit @entity {
   status: YieldFarmDepositStatus!
   sharesAmount: BigInt!
   entries: [OmnipoolYieldFarmEntry!]! @derivedFrom(field: "deposit")
-  depositEvents: [OmnipoolYieldFarmDepositEvent]!
+  depositEvents: [OmnipoolYieldFarmDepositEvent]! @derivedFrom(field: "deposit")
 
   #  Point of time of position creation for better sorting
   paraBlockHeight: Int! @index
@@ -1557,8 +1616,8 @@ type OmnipoolYieldFarmDepositEvent @entity {
   asset: Asset
   account: Account
   position: OmnipoolLiquidityPosition
-  sharesAmount: Bigint
-  claimedAmount: Bigint
+  sharesAmount: BigInt
+  claimedAmount: BigInt
   rewardAsset: Asset
 
   paraBlockHeight: Int! @index
@@ -1593,7 +1652,7 @@ type XykGlobalFarm @entity {
   priceAdjustment: BigInt
   state: FarmState!
 
-  yieldFarms: [OmnipoolYieldFarm] @derivedFrom(field: "omnipoolGlobalFarm")
+  yieldFarms: [XykYieldFarm] @derivedFrom(field: "globalFarm")
 
   lifeStates: [FarmLifeState!]!
   paraBlockHeight: Int! @index
@@ -1644,7 +1703,7 @@ type XykYieldFarmDeposit @entity {
   "should be either SharesDeposited or DepositDestroyed"
   status: YieldFarmDepositStatus!
   entries: [XykYieldFarmEntry!]! @derivedFrom(field: "deposit")
-  depositEvents: [OmnipoolYieldFarmDepositEvent]!
+  depositEvents: [XykYieldFarmDepositEvent]! @derivedFrom(field: "deposit")
 
   #  Point of time of position creation for better sorting
   paraBlockHeight: Int! @index
@@ -1655,7 +1714,7 @@ type XykYieldFarmDeposit @entity {
 type XykYieldFarmEntry @entity {
   "<deposit_id>-<xyk_global_farm_id>-<xyk_yield_farm_id>"
   id: ID!
-  deposit: OmnipoolYieldFarmDeposit!
+  deposit: XykYieldFarmDeposit!
   valuedShares: BigInt!
   accumulatedRpvs: BigInt!
   accumulatedClaimedRewards: BigInt!
@@ -1671,13 +1730,13 @@ type XykYieldFarmDepositEvent @entity {
   eventName: YieldFarmDepositStatus!
 
   # required for SharesDeposited, SharesRedeposited, RewardClaimed events
-  globalFarm: OmnipoolGlobalFarm!
-  yieldFarm: OmnipoolYieldFarm!
+  globalFarm: XykGlobalFarm!
+  yieldFarm: XykYieldFarm!
 
   lpAsset: Asset
   account: Account
-  amount: Bigint
-  claimedAmount: Bigint
+  amount: BigInt
+  claimedAmount: BigInt
   rewardAsset: Asset
 
   paraBlockHeight: Int! @index

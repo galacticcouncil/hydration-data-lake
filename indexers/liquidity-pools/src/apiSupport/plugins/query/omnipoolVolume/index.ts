@@ -4,7 +4,7 @@ import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import {
   omnipoolAssetHistoricalVolumesByPeriodResolver,
-  OmnipoolAssetVolumesByPeriodFilter,
+  OmnipoolAssetVolumeHistoricalDataByPeriodFilter,
 } from './resolvers';
 
 export const OmnipoolAssetVolumePlugin: Plugin = makeExtendSchemaPlugin(
@@ -13,29 +13,29 @@ export const OmnipoolAssetVolumePlugin: Plugin = makeExtendSchemaPlugin(
 
     return {
       typeDefs: gql`
-        input OmnipoolAssetVolumesByPeriodFilter {
+        input OmnipoolAssetVolumeHistoricalDataByPeriodFilter {
           assetIds: [String!]
           startBlockNumber: Int
           endBlockNumber: Int
           period: AggregationTimeRange
         }
 
-        type OmnipoolAssetVolumesByPeriodResponse {
+        type OmnipoolAssetVolumeHistoricalDataByPeriodResponse {
           nodes: [OmnipoolAssetVolumeAggregated]!
           totalCount: Int!
         }
 
         extend type Query {
-          omnipoolAssetHistoricalVolumesByPeriod(
-            filter: OmnipoolAssetVolumesByPeriodFilter!
-          ): OmnipoolAssetVolumesByPeriodResponse!
+          omnipoolAssetVolumeHistoricalDataByPeriod(
+            filter: OmnipoolAssetVolumeHistoricalDataByPeriodFilter!
+          ): OmnipoolAssetVolumeHistoricalDataByPeriodResponse!
         }
       `,
       resolvers: {
         Query: {
-          omnipoolAssetHistoricalVolumesByPeriod: async (
+          omnipoolAssetVolumeHistoricalDataByPeriod: async (
             parentObject: any,
-            args: { filter: OmnipoolAssetVolumesByPeriodFilter },
+            args: { filter: OmnipoolAssetVolumeHistoricalDataByPeriodFilter },
             context: QueryResolverContext,
             info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
           ) => {

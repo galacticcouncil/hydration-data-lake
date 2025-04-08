@@ -2,7 +2,7 @@
 export const aggregateSwapAssetFeesByBlocksRange = `
     WITH fee_data AS (
         SELECT asset_id, para_block_height, amount, total_amount
-        FROM historical_asset_swap_fee
+        FROM asset_swap_fee_historical_data
         WHERE para_block_height BETWEEN $1 AND $2
     ),
     start_data AS (
@@ -67,7 +67,7 @@ export const aggregateSwapAssetFeesWithAssetRegistryIdByBlocksRange = `
         SELECT
             MIN(para_block_height) AS min_height,
             MAX(para_block_height) AS max_height
-        FROM historical_asset_swap_fee
+        FROM asset_swap_fee_historical_data
         WHERE para_block_height BETWEEN $1 AND $2
     )
     SELECT json_build_object(
@@ -77,7 +77,7 @@ export const aggregateSwapAssetFeesWithAssetRegistryIdByBlocksRange = `
                                       row_to_json(t)::jsonb ||
         jsonb_build_object('asset_registry_id', a.asset_registry_id)
                               )
-                       FROM historical_asset_swap_fee t
+                       FROM asset_swap_fee_historical_data t
                                 JOIN asset a ON t.asset_id = a.id
                                 JOIN heights h ON t.para_block_height = h.min_height
                    ),
@@ -87,7 +87,7 @@ export const aggregateSwapAssetFeesWithAssetRegistryIdByBlocksRange = `
                                       row_to_json(t)::jsonb ||
         jsonb_build_object('asset_registry_id', a.asset_registry_id)
                               )
-                       FROM historical_asset_swap_fee t
+                       FROM asset_swap_fee_historical_data t
                                 JOIN asset a ON t.asset_id = a.id
                                 JOIN heights h ON t.para_block_height = h.max_height
                    )

@@ -1,24 +1,24 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {Xykpool} from "./xykpool.model"
+import {Lbppool} from "./lbppool.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class XykpoolHistoricalPrice {
-  constructor(props?: Partial<XykpoolHistoricalPrice>) {
+export class LbppoolPriceHistoricalData {
+  constructor(props?: Partial<LbppoolPriceHistoricalData>) {
     Object.assign(this, props)
   }
 
   /**
-   * PoolId-paraBlockHeight
+   * <lbppoolId>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => Xykpool, {nullable: true})
-  pool!: Xykpool
+  @ManyToOne_(() => Lbppool, {nullable: true})
+  pool!: Lbppool
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})

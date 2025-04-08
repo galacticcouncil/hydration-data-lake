@@ -18,19 +18,19 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
 
     return {
       typeDefs: gql`
-        input StableswapHistoricalVolumeSubscriptionFilter {
+        input StableswapVolumeHistoricalDataSubscriptionFilter {
           poolIds: [String!]
         }
-        input StableswapHistoricalVolumeByPeriodSubscriptionFilter {
+        input StableswapVolumeHistoricalDataByPeriodSubscriptionFilter {
           poolIds: [String!]
           period: AggregationTimeRange
         }
 
-        type StableswapHistoricalVolumeSubscriptionPayload {
+        type StableswapVolumeHistoricalDataSubscriptionPayload {
           node: StableswapHistoricalVolumeEntity
           event: String
         }
-        type StableswapHistoricalVolumeByPeriodSubscriptionPayload {
+        type StableswapVolumeHistoricalDataByPeriodSubscriptionPayload {
             nodes: [StableswapVolumeAggregated!]
             event: String
         }
@@ -58,16 +58,16 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
         }
 
         extend type Subscription {
-          stableswapHistoricalVolumes(
-            filter: StableswapHistoricalVolumeSubscriptionFilter
-          ): StableswapHistoricalVolumeSubscriptionPayload
+          stableswapVolumeHistoricalData(
+            filter: StableswapVolumeHistoricalDataSubscriptionFilter
+          ): StableswapVolumeHistoricalDataSubscriptionPayload
             @pgSubscription(
-              topic: "postgraphile:state_changed:stableswap_historical_volume"
+              topic: "postgraphile:state_changed:stableswap_volume_historical_data"
               filter: ${embed(stablepoolHistoricalVolumeSubscriptionFilter)}
             )
-          stableswapHistoricalVolumesByPeriod(
-              filter: StableswapHistoricalVolumeByPeriodSubscriptionFilter
-          ): StableswapHistoricalVolumeByPeriodSubscriptionPayload
+          stableswapVolumeHistoricalDataByPeriod(
+              filter: StableswapVolumeHistoricalDataByPeriodSubscriptionFilter
+          ): StableswapVolumeHistoricalDataByPeriodSubscriptionPayload
             @pgSubscription(
                 topic: "postgraphile:state_changed:batch_stableswap_hist_vols_list"
                 filter: ${embed(stableswapHistoricalVolumeByPeriodSubscriptionFilter)}
@@ -76,7 +76,7 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
       `,
       resolvers: {
         Subscription: {
-          stableswapHistoricalVolumes: async (
+          stableswapVolumeHistoricalData: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,
@@ -90,7 +90,7 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
               sql
             ),
 
-          stableswapHistoricalVolumesByPeriod: async (
+          stableswapVolumeHistoricalDataByPeriod: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,

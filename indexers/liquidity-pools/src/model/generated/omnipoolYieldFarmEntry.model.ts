@@ -1,44 +1,38 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {Asset} from "./asset.model"
-import {Block} from "./block.model"
+import {OmnipoolYieldFarmDeposit} from "./omnipoolYieldFarmDeposit.model"
 
 @Entity_()
-export class HistoricalAssetVolume {
-  constructor(props?: Partial<HistoricalAssetVolume>) {
+export class OmnipoolYieldFarmEntry {
+  constructor(props?: Partial<OmnipoolYieldFarmEntry>) {
     Object.assign(this, props)
   }
 
   /**
-   * <assetId>-<paraBlockHeight>
+   * <deposit_id>-<omnipool_global_farm_id>-<omnipool_yield_farm_id>
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  asset!: Asset
+  @ManyToOne_(() => OmnipoolYieldFarmDeposit, {nullable: true})
+  deposit!: OmnipoolYieldFarmDeposit
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  volumeIn!: bigint
+  valuedShares!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  volumeOut!: bigint
+  accumulatedRpvs!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalVolumeIn!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalVolumeOut!: bigint
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+  accumulatedClaimedRewards!: bigint
 
   @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
+  enteredAtRelayBlock!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("int4", {nullable: false})
+  updatedAtRelayBlock!: number
+
+  @Column_("int4", {nullable: false})
+  stoppedAtCreation!: number
 }

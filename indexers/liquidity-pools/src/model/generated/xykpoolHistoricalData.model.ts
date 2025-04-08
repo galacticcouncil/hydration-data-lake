@@ -34,6 +34,27 @@ export class XykpoolHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetBBalance!: bigint
 
+  @Column_("int4", {array: true, nullable: false})
+  exchangeFee!: (number | undefined | null)[]
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  maxInRatio!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  maxOutRatio!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  minPoolLiquidity!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  minTradingLimit!: bigint | undefined | null
+
+  @Column_("int4", {nullable: true})
+  nativeAssetId!: number | undefined | null
+
+  @Column_("text", {nullable: true})
+  oracleSource!: string | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

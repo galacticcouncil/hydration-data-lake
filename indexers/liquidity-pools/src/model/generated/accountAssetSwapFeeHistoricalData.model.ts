@@ -1,38 +1,39 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {Lbppool} from "./lbppool.model"
+import {AccountSwapFeeHistoricalData} from "./accountSwapFeeHistoricalData.model"
+import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class LbppoolHistoricalPrice {
-  constructor(props?: Partial<LbppoolHistoricalPrice>) {
+export class AccountAssetSwapFeeHistoricalData {
+  constructor(props?: Partial<AccountAssetSwapFeeHistoricalData>) {
     Object.assign(this, props)
   }
 
   /**
-   * <lbppoolId>-<paraBlockHeight>
+   * <historicalAccountSwapFeeId>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => Lbppool, {nullable: true})
-  pool!: Lbppool
+  @ManyToOne_(() => AccountSwapFeeHistoricalData, {nullable: true})
+  collection!: AccountSwapFeeHistoricalData
+
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  account!: Account
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
-  assetA!: Asset
-
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  assetB!: Asset
+  asset!: Asset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetABalance!: bigint
+  amount!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetBBalance!: bigint
+  totalAmount!: bigint
 
   @Index_()
   @Column_("int4", {nullable: false})

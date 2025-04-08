@@ -4,8 +4,8 @@ import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class HistoricalAssetSwapFee {
-  constructor(props?: Partial<HistoricalAssetSwapFee>) {
+export class AssetSwapFeeHistoricalData {
+  constructor(props?: Partial<AssetSwapFeeHistoricalData>) {
     Object.assign(this, props)
   }
 

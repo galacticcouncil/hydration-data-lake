@@ -4,32 +4,32 @@ import { swapAssetFeesByPeriodResolver } from './resolvers';
 export const SwapPlugin: Plugin = makeExtendSchemaPlugin((build, options) => {
   return {
     typeDefs: gql`
-      input SwapAssetFeesByPeriodFilter {
+      input AssetSwapFeeHistoricalDataByPeriodFilter {
         period: AggregationTimeRange
         startBlockNumber: Int
         endBlockNumber: Int
       }
 
-      type SwapAssetFeeAggregated {
+      type AssetSwapFeeAggregated {
         assetId: String!
         assetRegistryId: String
         amount: BigFloat!
       }
 
-      type SwapAssetFeesByPeriodResponse {
-        nodes: [SwapAssetFeeAggregated]!
+      type AssetSwapFeeHistoricalDataByPeriodResponse {
+        nodes: [AssetSwapFeeAggregated]!
         totalCount: Int!
       }
 
       extend type Query {
-        swapAssetFeesByPeriod(
-          filter: SwapAssetFeesByPeriodFilter!
-        ): SwapAssetFeesByPeriodResponse!
+        assetSwapFeeHistoricalDataByPeriod(
+          filter: AssetSwapFeeHistoricalDataByPeriodFilter!
+        ): AssetSwapFeeHistoricalDataByPeriodResponse!
       }
     `,
     resolvers: {
       Query: {
-        swapAssetFeesByPeriod: swapAssetFeesByPeriodResolver,
+        assetSwapFeeHistoricalDataByPeriod: swapAssetFeesByPeriodResolver,
       },
     },
   };

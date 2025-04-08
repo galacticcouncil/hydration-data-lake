@@ -18,19 +18,19 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
 
     return {
       typeDefs: gql`
-        input XykpoolHistoricalVolumeSubscriptionFilter {
+        input XykpoolVolumeHistoricalDataSubscriptionFilter {
           poolIds: [String!]
         }          
-        input XykpoolHistoricalVolumeByPeriodSubscriptionFilter {
+        input XykpoolVolumeHistoricalDataByPeriodSubscriptionFilter {
           poolIds: [String!]
           period: AggregationTimeRange
         }
 
-        type XykpoolHistoricalVolumeSubscriptionPayload {
+        type XykpoolVolumeHistoricalDataSubscriptionPayload {
           node: XykpoolHistoricalVolumeEntity
           event: String
         }
-        type XykpoolHistoricalVolumeByPeriodSubscriptionPayload {
+        type XykpoolVolumeHistoricalDataByPeriodSubscriptionPayload {
           nodes: [XykpoolVolumeAggregated!]
           event: String
         }
@@ -57,16 +57,16 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         extend type Subscription {
-          xykpoolHistoricalVolumes(
-            filter: XykpoolHistoricalVolumeSubscriptionFilter
-          ): XykpoolHistoricalVolumeSubscriptionPayload
+          xykpoolVolumeHistoricalData(
+            filter: XykpoolVolumeHistoricalDataSubscriptionFilter
+          ): XykpoolVolumeHistoricalDataSubscriptionPayload
             @pgSubscription(
-              topic: "postgraphile:state_changed:xykpool_historical_volume"
+              topic: "postgraphile:state_changed:xykpool_volume_historical_data"
               filter: ${embed(xykpoolHistoricalVolumeSubscriptionFilter)}
             ),
-          xykpoolHistoricalVolumesByPeriod(
-                filter: XykpoolHistoricalVolumeByPeriodSubscriptionFilter
-            ): XykpoolHistoricalVolumeByPeriodSubscriptionPayload
+          xykpoolVolumeHistoricalDataByPeriod(
+                filter: XykpoolVolumeHistoricalDataByPeriodSubscriptionFilter
+            ): XykpoolVolumeHistoricalDataByPeriodSubscriptionPayload
             @pgSubscription(
                 topic: "postgraphile:state_changed:batch_xykpool_hist_vols_list"
                 filter: ${embed(xykpoolHistoricalVolumeByPeriodSubscriptionFilter)}
@@ -75,7 +75,7 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
       `,
       resolvers: {
         Subscription: {
-          xykpoolHistoricalVolumes: async (
+          xykpoolVolumeHistoricalData: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,
@@ -88,7 +88,7 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
               resolveInfo,
               sql
             ),
-          xykpoolHistoricalVolumesByPeriod: async (
+          xykpoolVolumeHistoricalDataByPeriod: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,

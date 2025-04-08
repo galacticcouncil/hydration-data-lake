@@ -5,8 +5,8 @@ import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class XykpoolHistoricalVolume {
-  constructor(props?: Partial<XykpoolHistoricalVolume>) {
+export class XykpoolVolumeHistoricalData {
+  constructor(props?: Partial<XykpoolVolumeHistoricalData>) {
     Object.assign(this, props)
   }
 

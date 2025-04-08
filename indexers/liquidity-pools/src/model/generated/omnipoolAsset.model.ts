@@ -4,7 +4,7 @@ import {Omnipool} from "./omnipool.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 import {OmnipoolAssetLifeState} from "./_omnipoolAssetLifeState"
-import {OmnipoolAssetHistoricalVolume} from "./omnipoolAssetHistoricalVolume.model"
+import {OmnipoolAssetVolumeHistoricalData} from "./omnipoolAssetVolumeHistoricalData.model"
 import {OmnipoolAssetHistoricalData} from "./omnipoolAssetHistoricalData.model"
 
 @Entity_()
@@ -44,8 +44,8 @@ export class OmnipoolAsset {
   @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new OmnipoolAssetLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
   lifeStates!: (OmnipoolAssetLifeState)[]
 
-  @OneToMany_(() => OmnipoolAssetHistoricalVolume, e => e.omnipoolAsset)
-  historicalVolume!: OmnipoolAssetHistoricalVolume[]
+  @OneToMany_(() => OmnipoolAssetVolumeHistoricalData, e => e.omnipoolAsset)
+  historicalVolume!: OmnipoolAssetVolumeHistoricalData[]
 
   @OneToMany_(() => OmnipoolAssetHistoricalData, e => e.omnipoolAsset)
   historicalData!: OmnipoolAssetHistoricalData[]

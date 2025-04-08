@@ -39,6 +39,9 @@ export class OmnipoolAssetHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   freeBalance!: bigint
 
+  @Column_("int4", {nullable: false})
+  tradable!: number
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

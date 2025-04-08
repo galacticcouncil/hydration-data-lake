@@ -1,6 +1,6 @@
 import { AggregationTimeRangeLabel } from '../../../../types';
 
-export type OmnipoolAssetVolumesByPeriodFilter = {
+export type OmnipoolAssetVolumeHistoricalDataByPeriodFilter = {
   assetIds?: string[];
   startBlockNumber?: number;
   endBlockNumber?: number;

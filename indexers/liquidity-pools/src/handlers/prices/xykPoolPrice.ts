@@ -1,4 +1,4 @@
-import { XykpoolHistoricalPrice } from '../../model';
+import { XykpoolPriceHistoricalData } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { isNotNullOrUndefined } from '../../utils/helpers';
@@ -18,7 +18,7 @@ export async function handleXykPoolPrices(ctx: SqdProcessorContext<Store>) {
     poolPricesRaw.push(
       [...xykAllBatchPools.values()].map(
         async (p) =>
-          new Promise<XykpoolHistoricalPrice | null>((resolve) => {
+          new Promise<XykpoolPriceHistoricalData | null>((resolve) => {
             if (p.createdAtParaBlockHeight > block.header.height) {
               resolve(null);
               return;
@@ -29,7 +29,7 @@ export async function handleXykPoolPrices(ctx: SqdProcessorContext<Store>) {
               getAssetFreeBalance(block.header, +p.assetB.id, p.id), // TODO must be optimized
             ]).then(([assetABalance, assetBBalance]) => {
               resolve(
-                new XykpoolHistoricalPrice({
+                new XykpoolPriceHistoricalData({
                   id: p.id + '-' + block.header.height,
                   assetA: p.assetA,
                   assetB: p.assetB,
@@ -47,7 +47,7 @@ export async function handleXykPoolPrices(ctx: SqdProcessorContext<Store>) {
       )
     );
   }
-  const poolPrices: XykpoolHistoricalPrice[] = (
+  const poolPrices: XykpoolPriceHistoricalData[] = (
     await Promise.all(poolPricesRaw.flat())
   ).filter(isNotNullOrUndefined);
 

@@ -5,8 +5,8 @@ import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class LbppoolHistoricalVolume {
-  constructor(props?: Partial<LbppoolHistoricalVolume>) {
+export class LbppoolVolumeHistoricalData {
+  constructor(props?: Partial<LbppoolVolumeHistoricalData>) {
     Object.assign(this, props)
   }
 

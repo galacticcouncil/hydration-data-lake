@@ -18,20 +18,20 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
 
     return {
       typeDefs: gql`
-        input OmnipoolAssetHistoricalVolumeSubscriptionFilter {
+        input OmnipoolAssetVolumeHistoricalDataSubscriptionFilter {
           assetIds: [String!]
         }
         
-        input OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter {
+        input OmnipoolAssetVolumeHistoricalDataByPeriodSubscriptionFilter {
           assetIds: [String!]
           period: AggregationTimeRange
         }
 
-        type OmnipoolAssetHistoricalVolumeSubscriptionPayload {
+        type OmnipoolAssetVolumeHistoricalDataSubscriptionPayload {
           node: OmnipoolAssetHistoricalVolumeEntity
           event: String
         }
-        type OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload {
+        type OmnipoolAssetVolumeHistoricalDataByPeriodSubscriptionPayload {
           nodes: [OmnipoolAssetVolumeAggregated!]
           event: String
         }
@@ -50,17 +50,17 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
         }
 
         extend type Subscription {
-          omnipoolAssetHistoricalVolumes(
-            filter: OmnipoolAssetHistoricalVolumeSubscriptionFilter
-          ): OmnipoolAssetHistoricalVolumeSubscriptionPayload
+          omnipoolAssetVolumeHistoricalData(
+            filter: OmnipoolAssetVolumeHistoricalDataSubscriptionFilter
+          ): OmnipoolAssetVolumeHistoricalDataSubscriptionPayload
             @pgSubscription(
-              topic: "postgraphile:state_changed:omnipool_asset_historical_volume"
+              topic: "postgraphile:state_changed:omnipool_asset_volume_historical_data"
               filter: ${embed(omnipoolAssetHistoricalVolumeSubscriptionFilter)}
             )
 
-          omnipoolAssetHistoricalVolumesByPeriod(
-              filter: OmnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter
-          ): OmnipoolAssetHistoricalVolumeByPeriodSubscriptionPayload
+          omnipoolAssetVolumeHistoricalDataByPeriod(
+              filter: OmnipoolAssetVolumeHistoricalDataByPeriodSubscriptionFilter
+          ): OmnipoolAssetVolumeHistoricalDataByPeriodSubscriptionPayload
             @pgSubscription(
                 topic: "postgraphile:state_changed:batch_omnipool_asset_hist_vols_list"
                 filter: ${embed(omnipoolAssetHistoricalVolumeByPeriodSubscriptionFilter)}
@@ -70,9 +70,9 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
       resolvers: {
         Subscription: {
           /**
-           * Returns newest item in table omnipool_asset_historical_volume
+           * Returns newest item in table omnipool_asset_volume_historical_data
            */
-          omnipoolAssetHistoricalVolumes: async (
+          omnipoolAssetVolumeHistoricalData: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,
@@ -88,7 +88,7 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
           /**
            * Returns total volume for requested asset by specific period
            */
-          omnipoolAssetHistoricalVolumesByPeriod: async (
+          omnipoolAssetVolumeHistoricalDataByPeriod: async (
             event: any,
             _args: any,
             _context: QueryResolverContext,

@@ -2,9 +2,9 @@ import {
   Asset,
   LiquidityActionEvent,
   Stableswap,
-  StableswapAssetHistoricalVolume,
+  StableswapAssetVolumeHistoricalData,
   StableswapAssetLiquidityAmount,
-  StableswapHistoricalVolume,
+  StableswapVolumeHistoricalData,
   StableswapLiquidityEvent,
   Swap,
 } from '../../model';
@@ -54,7 +54,7 @@ export async function handleStablepoolVolumeUpdates({
   );
 
   if (!volumesCollection) {
-    volumesCollection = new StableswapHistoricalVolume({
+    volumesCollection = new StableswapVolumeHistoricalData({
       id: `${pool.id}-${paraBlockHeight}`,
       pool,
       relayBlockHeight,
@@ -73,7 +73,7 @@ export async function handleStablepoolVolumeUpdates({
       (getPoolAssetLastVolumeFromCache(
         stablepoolAssetVolumes,
         `${pool.id}-${asset.id}`
-      ) as StableswapAssetHistoricalVolume | undefined) ||
+      ) as StableswapAssetVolumeHistoricalData | undefined) ||
       (await getOldStablepoolAssetVolume(ctx, asset.id, pool.id));
 
     const newVolume = initStablepoolAssetVolume({
@@ -121,9 +121,9 @@ export function initStablepoolAssetVolume({
   };
   asset: Asset;
   pool: Stableswap;
-  volumesCollection: StableswapHistoricalVolume;
-  currentVolume?: StableswapAssetHistoricalVolume | undefined;
-  oldVolume?: StableswapAssetHistoricalVolume | undefined;
+  volumesCollection: StableswapVolumeHistoricalData;
+  currentVolume?: StableswapAssetVolumeHistoricalData | undefined;
+  oldVolume?: StableswapAssetVolumeHistoricalData | undefined;
   ctx: SqdProcessorContext<Store>;
 }) {
   if (!swap && !liquidityActionData) return;
@@ -137,7 +137,7 @@ export function initStablepoolAssetVolume({
     ? swap.event.block
     : liquidityActionData?.actionData.event.block;
 
-  const newVolume = new StableswapAssetHistoricalVolume({
+  const newVolume = new StableswapAssetVolumeHistoricalData({
     id: `${poolId}-${asset.id}-${paraBlockHeight}`,
     asset,
     volumesCollection,

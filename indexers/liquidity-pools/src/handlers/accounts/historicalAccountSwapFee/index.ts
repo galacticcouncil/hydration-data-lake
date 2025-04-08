@@ -4,8 +4,8 @@ import {
   Account,
   Asset,
   Block,
-  HistoricalAccountAssetSwapFee,
-  HistoricalAccountSwapFee,
+  AccountAssetSwapFeeHistoricalData,
+  AccountSwapFeeHistoricalData,
 } from '../../../model';
 
 export async function handleAccountAssetSwapFee({
@@ -39,7 +39,7 @@ export async function handleAccountAssetSwapFee({
   const persistentAccAssetFeeAmount =
     currentBlockAccAssetFeeAmount ||
     lastCachedAccAssetFeeAmount ||
-    (await ctx.store.findOne(HistoricalAccountAssetSwapFee, {
+    (await ctx.store.findOne(AccountAssetSwapFeeHistoricalData, {
       where: {
         asset: { id: asset.id },
         account: { id: account.id },
@@ -56,7 +56,7 @@ export async function handleAccountAssetSwapFee({
     ctx,
   });
 
-  const accountAssetSwapFee = new HistoricalAccountAssetSwapFee({
+  const accountAssetSwapFee = new AccountAssetSwapFeeHistoricalData({
     id: `${account.id}-${asset.id}-${block.height}`,
     account,
     asset,
@@ -82,7 +82,7 @@ export async function handleAccountAssetSwapFee({
 }
 
 export function getLastAccAssetSwapFeeAmountFromCache(
-  fees: Map<string, HistoricalAccountAssetSwapFee>,
+  fees: Map<string, AccountAssetSwapFeeHistoricalData>,
   accountId: string,
   assetId: string
 ) {
@@ -112,7 +112,7 @@ export function getAccountSwapFeesCollection({
 
   if (collection) return collection;
 
-  collection = new HistoricalAccountSwapFee({
+  collection = new AccountSwapFeeHistoricalData({
     id: `${account.id}-${block.height}`,
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,

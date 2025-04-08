@@ -4,8 +4,8 @@ import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 import {XykpoolLifeState} from "./_xykpoolLifeState"
-import {XykpoolHistoricalPrice} from "./xykpoolHistoricalPrice.model"
-import {XykpoolHistoricalVolume} from "./xykpoolHistoricalVolume.model"
+import {XykpoolPriceHistoricalData} from "./xykpoolPriceHistoricalData.model"
+import {XykpoolVolumeHistoricalData} from "./xykpoolVolumeHistoricalData.model"
 import {XykpoolHistoricalData} from "./xykpoolHistoricalData.model"
 
 @Entity_()
@@ -59,11 +59,11 @@ export class Xykpool {
   @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new XykpoolLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
   lifeStates!: (XykpoolLifeState)[]
 
-  @OneToMany_(() => XykpoolHistoricalPrice, e => e.pool)
-  historicalBlockPrices!: XykpoolHistoricalPrice[]
+  @OneToMany_(() => XykpoolPriceHistoricalData, e => e.pool)
+  historicalBlockPrices!: XykpoolPriceHistoricalData[]
 
-  @OneToMany_(() => XykpoolHistoricalVolume, e => e.pool)
-  historicalVolume!: XykpoolHistoricalVolume[]
+  @OneToMany_(() => XykpoolVolumeHistoricalData, e => e.pool)
+  historicalVolume!: XykpoolVolumeHistoricalData[]
 
   @OneToMany_(() => XykpoolHistoricalData, e => e.pool)
   historicalData!: XykpoolHistoricalData[]

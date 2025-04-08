@@ -6,7 +6,7 @@ import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
 import {
-  OmnipoolAssetVolumesByPeriodFilter,
+  OmnipoolAssetVolumeHistoricalDataByPeriodFilter,
   XykPoolVolumesByPeriodResponse,
 } from './types';
 import { handleOmnipoolAssetHistoricalVolumesByPeriodAggregation } from '../utils';
@@ -19,7 +19,7 @@ import { getStartStopBlocksFromInput } from '../../../../utils/aggregationUtils'
 
 export async function omnipoolAssetHistoricalVolumesByPeriodResolver(
   parentObject: any,
-  args: { filter: OmnipoolAssetVolumesByPeriodFilter },
+  args: { filter: OmnipoolAssetVolumeHistoricalDataByPeriodFilter },
   context: QueryResolverContext,
   info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> },
   omnipoolAddress: string

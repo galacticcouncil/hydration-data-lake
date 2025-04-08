@@ -1,4 +1,4 @@
-import { LbppoolHistoricalPrice } from '../../model';
+import { LbppoolPriceHistoricalData } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { isNotNullOrUndefined } from '../../utils/helpers';
@@ -18,7 +18,7 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
     poolPricesRaw.push(
       [...lbpAllBatchPools.values()].map(
         async (p) =>
-          new Promise<LbppoolHistoricalPrice | null>((resolve) => {
+          new Promise<LbppoolPriceHistoricalData | null>((resolve) => {
             if (p.createdAtParaBlockHeight > block.header.height) {
               resolve(null);
               return;
@@ -29,7 +29,7 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
               getAssetFreeBalance(block.header, +p.assetB.id, p.id), // TODO must be optimized
             ]).then(([assetABalance, assetBBalance]) => {
               resolve(
-                new LbppoolHistoricalPrice({
+                new LbppoolPriceHistoricalData({
                   id: p.id + '-' + block.header.height,
                   assetA: p.assetA,
                   assetB: p.assetB,
@@ -47,7 +47,7 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
       )
     );
   }
-  const poolPrices: LbppoolHistoricalPrice[] = (
+  const poolPrices: LbppoolPriceHistoricalData[] = (
     await Promise.all(poolPricesRaw.flat())
   ).filter(isNotNullOrUndefined);
 

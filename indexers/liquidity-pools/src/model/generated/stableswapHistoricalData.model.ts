@@ -1,4 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import * as marshal from "./marshal"
 import {Stableswap} from "./stableswap.model"
 import {StableswapAssetHistoricalData} from "./stableswapAssetHistoricalData.model"
 import {Block} from "./block.model"
@@ -36,6 +37,21 @@ export class StableswapHistoricalData {
 
   @Column_("int4", {nullable: false})
   fee!: number
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  maxInRatio!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  maxOutRatio!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  minTradingLimit!: bigint
+
+  @Column_("int4", {array: true, nullable: false})
+  amplificationRange!: (number)[]
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  minPoolLiquidity!: bigint
 
   @Index_()
   @Column_("int4", {nullable: false})
