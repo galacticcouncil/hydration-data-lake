@@ -22,17 +22,25 @@ export class CacheManager {
   }
 
   private initCache() {
+    let keyvClass = null;
+    try {
+      keyvClass = Keyv.default;
+    } catch (error) {
+      keyvClass = Keyv;
+    }
+    if (!keyvClass) throw new Error('Keyv not found');
+
     return createCache({
       ttl: appConfig.API_CACHE_TTL_MS,
       stores: [
-        new Keyv({
+        new Keyv.default({
           store: new CacheableMemory({
             ttl: appConfig.API_CACHE_TTL_MS,
             lruSize: 5000,
           }),
         }),
 
-        new Keyv({
+        new Keyv.default({
           store: new KeyvPostgres({
             uri: `postgresql://${appConfig.DB_USER}:${appConfig.DB_PASS}@${appConfig.DB_HOST}:${appConfig.DB_PORT}/${appConfig.DB_NAME}`,
             schema: 'support',
