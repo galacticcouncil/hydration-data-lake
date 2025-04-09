@@ -441,9 +441,8 @@ function getInputOutputDecorated({
   outputs: BroadcastSwappedAssetAmount[];
 }) {
   if (
-    operationType !== TradeOperationType.ExactOut &&
-    fillerType !== SwapFillerType.XYK &&
-    fillerType !== SwapFillerType.LBP
+    operationType !== TradeOperationType.ExactOut ||
+    (fillerType !== SwapFillerType.XYK && fillerType !== SwapFillerType.LBP)
   )
     return { inputs, outputs };
 
