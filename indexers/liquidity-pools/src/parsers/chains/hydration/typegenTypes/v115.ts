@@ -1,15 +1,23 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const Permill = sts.number()
+
+export interface Tradability {
+    bits: number
+}
+
+export const Tradability: sts.Type<Tradability> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
+
 export interface AssetState {
     hubReserve: bigint
     shares: bigint
     protocolShares: bigint
     cap: bigint
     tradable: Tradability
-}
-
-export interface Tradability {
-    bits: number
 }
 
 export const AssetState: sts.Type<AssetState> = sts.struct(() => {
@@ -19,12 +27,6 @@ export const AssetState: sts.Type<AssetState> = sts.struct(() => {
         protocolShares: sts.bigint(),
         cap: sts.bigint(),
         tradable: Tradability,
-    }
-})
-
-export const Tradability: sts.Type<Tradability> = sts.struct(() => {
-    return  {
-        bits: sts.number(),
     }
 })
 
@@ -5856,8 +5858,6 @@ export const OmnipoolCall: sts.Type<OmnipoolCall> = sts.closedEnum(() => {
         }),
     }
 })
-
-export const Permill = sts.number()
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.

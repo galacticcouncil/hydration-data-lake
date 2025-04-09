@@ -1,7 +1,11 @@
-import { storage } from '../typegenTypes/';
+import { storage, constants } from '../typegenTypes/';
 import {
+  GetPoolAssetInfoInput,
+  OmnipoolAssetTradability,
+  StablepoolAssetState,
   StablepoolGetPoolDataInput,
   StablepoolInfo,
+  StablepoolStorageData,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 
@@ -9,12 +13,74 @@ async function getPoolData({
   poolId,
   block,
 }: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
+  let poolStorageData: StablepoolStorageData | null = null;
+  let minTradingLimit = null;
+  let amplificationRange = null;
+  let minPoolLiquidity = null;
+
   if (storage.stableswap.pools.v276.is(block)) {
     const resp = await storage.stableswap.pools.v276.get(block, poolId);
-    return resp ?? null;
+    if (resp !== undefined) poolStorageData = resp;
   }
+
+  if (constants.stableswap.minTradingLimit.v276.is(block)) {
+    const resp = constants.stableswap.minTradingLimit.v276.get(block);
+    if (resp !== undefined) minTradingLimit = resp;
+  }
+  if (constants.stableswap.minPoolLiquidity.v276.is(block)) {
+    const resp = constants.stableswap.minPoolLiquidity.v276.get(block);
+    if (resp !== undefined) minPoolLiquidity = resp;
+  }
+  if (constants.stableswap.amplificationRange.v276.is(block)) {
+    const resp = constants.stableswap.amplificationRange.v276.get(block);
+    if (resp !== undefined) amplificationRange = [resp.start, resp.end];
+  }
+
+  if (
+    poolStorageData === null ||
+    minTradingLimit === null ||
+    amplificationRange === null ||
+    minPoolLiquidity === null
+  )
+    return null;
+
+  return {
+    ...poolStorageData,
+    minTradingLimit,
+    amplificationRange,
+    minPoolLiquidity,
+    maxInRatio: 0n,
+    maxOutRatio: 0n,
+  };
 
   throw new UnknownVersionError('storage.stableswap.pools');
 }
 
-export default { getPoolData };
+async function getPoolAssetStorageData({
+  poolId,
+  block,
+  assetId,
+}: GetPoolAssetInfoInput): Promise<StablepoolAssetState | null> {
+  let tradable: OmnipoolAssetTradability | null = null;
+  const peg = ['1', '1'];
+
+  if (storage.stableswap.assetTradability.v276.is(block)) {
+    const resp = await storage.stableswap.assetTradability.v276.get(
+      block,
+      poolId!,
+      assetId
+    );
+    if (resp !== undefined) tradable = resp;
+  }
+
+  // TODO add support storage.stableswap.poolPegs query
+
+  if (tradable === null || peg === null) return null;
+
+  return {
+    tradable,
+    peg,
+  };
+}
+
+export default { getPoolData, getPoolAssetStorageData };

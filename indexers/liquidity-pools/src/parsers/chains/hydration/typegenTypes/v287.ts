@@ -1,5 +1,7 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const Permill = sts.number()
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -4793,8 +4795,6 @@ export const Type_240: sts.Type<Type_240> = sts.struct(() => {
 export interface Type_240 {
     bits: number
 }
-
-export const Permill = sts.number()
 
 export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
     return  {

@@ -771,7 +771,7 @@ type XykpoolHistoricalData @entity {
   maxOutRatio: BigInt
   minPoolLiquidity: BigInt
   minTradingLimit: BigInt
-  nativeAssetId: Int
+  nativeAsset: Asset
   oracleSource: String
 
   paraBlockHeight: Int! @index
@@ -889,6 +889,7 @@ type OmnipoolHistoricalData @entity {
 type OmnipoolAssetHistoricalData @entity {
   "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
+  poolHistoricalData: OmnipoolHistoricalData!
   omnipoolAsset: OmnipoolAsset!
   asset: Asset!
 
@@ -1050,7 +1051,7 @@ type StableswapAssetHistoricalData @entity {
   asset: Asset!
   poolHistoricalData: StableswapHistoricalData!
   freeBalance: BigInt!
-  tradeable: Int
+  tradable: Int
   peg: [String!]!
 
   paraBlockHeight: Int! @index

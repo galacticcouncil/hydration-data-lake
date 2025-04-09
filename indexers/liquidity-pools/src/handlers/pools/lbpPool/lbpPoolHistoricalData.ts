@@ -101,6 +101,12 @@ export async function handleLbppoolHistoricalData(
             : null,
           repayTarget: poolStorageData.repayTarget,
 
+          repayFee: poolStorageData.repayFee,
+          maxInRatio: poolStorageData.maxInRatio,
+          maxOutRatio: poolStorageData.maxOutRatio,
+          minPoolLiquidity: poolStorageData.minPoolLiquidity,
+          minTradingLimit: poolStorageData.minTradingLimit,
+
           relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
             blockHeader.height
           ).height,

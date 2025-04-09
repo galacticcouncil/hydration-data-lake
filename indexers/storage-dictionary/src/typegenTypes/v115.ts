@@ -1,5 +1,7 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const Permill = sts.number()
+
 export interface AssetState {
     hubReserve: bigint
     shares: bigint

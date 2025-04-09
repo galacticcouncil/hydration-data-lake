@@ -30,6 +30,11 @@ async function getPoolData({
       fee: resp.fee,
       feeCollector: resp.feeCollector,
       repayTarget: BigInt(resp.repayTarget),
+      repayFee: [0, 0],
+      maxInRatio: 0n,
+      maxOutRatio: 0n,
+      minPoolLiquidity: 0n,
+      minTradingLimit: 0n,
     };
   }
 
@@ -39,12 +44,15 @@ async function getPoolData({
 async function getAllPoolsData({
   block,
 }: LbpGetAllPoolsDataInput): Promise<LbpPoolData[]> {
-  let pairsPaged: LbpPoolData[] = [];
+  const pairsPaged: LbpPoolData[] = [];
 
   if (block.specVersion < 276) return [];
 
   if (storage.lbp.poolData.v276.is(block)) {
-    for await (let page of storage.lbp.poolData.v276.getPairsPaged(100, block))
+    for await (const page of storage.lbp.poolData.v276.getPairsPaged(
+      100,
+      block
+    ))
       pairsPaged.push(
         ...page
           .filter((p) => !!p && !!p[1])
@@ -61,6 +69,11 @@ async function getAllPoolsData({
             fee: poolData!.fee,
             feeCollector: poolData!.feeCollector,
             repayTarget: BigInt(poolData!.repayTarget),
+            repayFee: [0, 0],
+            maxInRatio: 0n,
+            maxOutRatio: 0n,
+            minPoolLiquidity: 0n,
+            minTradingLimit: 0n,
           }))
       );
     return pairsPaged;

@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
 import {
   AccountBalances,
+  Omnipool,
   OmnipoolAssetData,
   OmnipoolAssetState,
   Tradability,
@@ -44,10 +45,28 @@ export async function handleOmnipoolStorage(
     ).map((item) => [item.assetId, item])
   );
 
+  const newOmnipoolEntity = new Omnipool({
+    id: `${appConfig.OMNIPOOL_ADDRESS}-${currentBlockHeader.height}`,
+    poolAddress: appConfig.OMNIPOOL_ADDRESS,
+    maxInRatio: 0n,
+    maxOutRatio: 0n,
+    minTradingLimit: 0n,
+    minPoolLiquidity: 0n,
+    minWithdrawalFee: 0n,
+    burnProtocolFee: 0,
+    hdxAssetId: 0,
+    hubAssetId: 1,
+    paraChainBlockHeight: currentBlockHeader.height,
+    relayChainBlockHeight:
+      relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber || 0,
+  });
+
+  await ctx.store.save(newOmnipoolEntity);
+
   for (const assetState of allAssetStates) {
     const newAssetDataEntity = new OmnipoolAssetData({
       id: `${appConfig.OMNIPOOL_ADDRESS}-${assetState.assetId}-${currentBlockHeader.height}`,
-      poolAddress: appConfig.OMNIPOOL_ADDRESS,
+      pool: newOmnipoolEntity,
       assetId: assetState.assetId,
       assetState: new OmnipoolAssetState({
         ...assetState.assetState,

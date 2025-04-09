@@ -1,5 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
+import {Omnipool} from "./omnipool.model"
 import {AccountBalances} from "./_accountBalances"
 import {OmnipoolAssetState} from "./_omnipoolAssetState"
 
@@ -16,8 +17,8 @@ export class OmnipoolAssetData {
   id!: string
 
   @Index_()
-  @Column_("text", {nullable: false})
-  poolAddress!: string
+  @ManyToOne_(() => Omnipool, {nullable: true})
+  pool!: Omnipool
 
   @Index_()
   @Column_("int4", {nullable: false})

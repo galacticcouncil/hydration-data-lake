@@ -33,6 +33,18 @@ export type OmnipoolAssetTradability = {
   bits: number;
 };
 
+export interface OmnipoolData {
+  burnProtocolFee: number;
+  hdxAssetId: number;
+  hubAssetId: number;
+  maxInRatio: bigint;
+  maxOutRatio: bigint;
+  minPoolLiquidity: bigint;
+  minTradingLimit: bigint;
+  minWithdrawalFee: bigint;
+  poolAddress: string;
+}
+
 export interface OmnipoolAssetData {
   hubReserve: bigint;
   shares: bigint;
@@ -41,13 +53,26 @@ export interface OmnipoolAssetData {
   tradable: OmnipoolAssetTradability;
 }
 
-export interface StablepoolInfo {
+export interface StablepoolStorageData {
   assets: number[];
   initialAmplification: number;
   finalAmplification: number;
   initialBlock: number;
   finalBlock: number;
   fee: number;
+}
+
+export interface StablepoolInfo extends StablepoolStorageData {
+  maxInRatio: bigint;
+  maxOutRatio: bigint;
+  minTradingLimit: bigint;
+  amplificationRange: number[];
+  minPoolLiquidity: bigint;
+}
+
+export interface StablepoolAssetState {
+  tradable: OmnipoolAssetTradability;
+  peg: string[];
 }
 
 export interface AssetDetails {
@@ -69,17 +94,26 @@ export type AssetDetailsWithId = {
   data: AssetDetails | null;
 };
 
-export interface XykPoolWithAssets {
+export interface XykPoolAssetIds {
   poolAddress: string;
   assetAId: number;
   assetBId: number;
+}
+export interface XykPoolData extends XykPoolAssetIds {
+  exchangeFee: number[];
+  maxInRatio: bigint;
+  maxOutRatio: bigint;
+  minPoolLiquidity: bigint;
+  minTradingLimit: bigint;
+  nativeAssetId: number;
+  oracleSource: string;
 }
 
 export type LbpWeightCurveType = {
   __kind: string;
 };
 
-export interface LbpPoolData {
+export interface LbpPoolStorageData {
   poolAddress: string;
   owner: string;
   start?: number;
@@ -93,6 +127,16 @@ export interface LbpPoolData {
   feeCollector: string;
   repayTarget: bigint;
 }
+
+export interface LbpPoolConstants {
+  repayFee: number[];
+  maxInRatio: bigint;
+  maxOutRatio: bigint;
+  minPoolLiquidity: bigint;
+  minTradingLimit: bigint;
+}
+
+export interface LbpPoolData extends LbpPoolStorageData, LbpPoolConstants {}
 
 export type AccountDataMultiple = Array<{
   assetId: number;
@@ -130,8 +174,18 @@ export type GetPoolAssetInfoInput = {
   block: BlockHeader;
 };
 
+export type OmnipoolGetPoolDataInput = {
+  poolAddress: string;
+  block: BlockHeader;
+};
+
 export type OmnipoolGetAssetDataInput = {
   assetId: number;
+  block: BlockHeader;
+};
+
+export type XykGetPoolDataInput = {
+  poolAddress: string;
   block: BlockHeader;
 };
 
@@ -139,6 +193,7 @@ export type XykGetAssetsInput = {
   poolAddress: string;
   block: BlockHeader;
 };
+
 export type XykGetShareTokenInput = {
   poolAddress: string;
   block: BlockHeader;

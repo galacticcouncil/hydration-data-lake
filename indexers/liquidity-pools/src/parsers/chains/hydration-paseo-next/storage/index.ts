@@ -20,7 +20,7 @@ import {
   StablepoolGetPoolDataInput,
   StablepoolInfo,
   XykGetAssetsInput,
-  XykPoolWithAssets,
+  XykPoolAssetIds,
 } from '../../../types/storage';
 import { getAccountBalances } from '../../../../handlers/assets/balances';
 import { StorageParserMethods } from '../../../types/common';
@@ -127,10 +127,10 @@ export default {
     getShareToken: xyk.getShareToken,
     getPoolAssets: (
       args: XykGetAssetsInput
-    ): Promise<XykPoolWithAssets | null> =>
+    ): Promise<XykPoolAssetIds | null> =>
       StorageResolver.getInstance().resolveStorageData<
         XykGetAssetsInput,
-        XykPoolWithAssets | null
+        XykPoolAssetIds | null
       >({
         args,
         pallet: ProcessingPallets.XYK,

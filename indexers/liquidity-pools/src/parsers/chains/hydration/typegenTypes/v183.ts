@@ -1,6 +1,30 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const RangeInclusive: sts.Type<RangeInclusive> = sts.struct(() => {
+    return  {
+        start: NonZeroU16,
+        end: NonZeroU16,
+    }
+})
+
+export interface RangeInclusive {
+    start: NonZeroU16
+    end: NonZeroU16
+}
+
+export type NonZeroU16 = number
+
 export type AccountId32 = Bytes
+
+export interface Type_101 {
+    bits: number
+}
+
+export const Type_101: sts.Type<Type_101> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
 
 export interface PoolInfo {
     assets: number[]
@@ -12,8 +36,6 @@ export interface PoolInfo {
 }
 
 export type Permill = number
-
-export type NonZeroU16 = number
 
 export const PoolInfo: sts.Type<PoolInfo> = sts.struct(() => {
     return  {
@@ -3554,16 +3576,6 @@ export const StableswapCall: sts.Type<StableswapCall> = sts.closedEnum(() => {
         }),
     }
 })
-
-export const Type_101: sts.Type<Type_101> = sts.struct(() => {
-    return  {
-        bits: sts.number(),
-    }
-})
-
-export interface Type_101 {
-    bits: number
-}
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.

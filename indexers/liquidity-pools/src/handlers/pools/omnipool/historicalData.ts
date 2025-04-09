@@ -2,15 +2,21 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
-import { OmnipoolAssetHistoricalData } from '../../../model';
+import {
+  OmnipoolAssetHistoricalData,
+  OmnipoolHistoricalData,
+} from '../../../model';
 import { getOrCreateAsset } from '../../assets/asset';
 import { getOrCreateOmnipoolAsset } from './omnipoolAssets';
 
-export async function handleOmnipoolAssetHistoricalData(
+export async function handleOmnipoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (!ctx.appConfig.PROCESS_OMNIPOOLS) return;
+
+  const predefinedPoolDataPerBlock: Map<number, OmnipoolHistoricalData> =
+    new Map();
 
   const predefinedEntities = await Promise.all(
     [...ctx.batchState.state.omnipoolAssetIdsForStoragePrefetch.entries()]
@@ -22,6 +28,65 @@ export async function handleOmnipoolAssetHistoricalData(
       )
       .flat()
       .map(async ({ arAssetId, blockHeader }) => {
+        if (!predefinedPoolDataPerBlock.has(blockHeader.height)) {
+          const poolStorageData = await parsers.storage.omnipool.getPoolData({
+            block: blockHeader,
+            poolAddress: ctx.appConfig.OMNIPOOL_ADDRESS,
+          });
+
+          if (!poolStorageData) return null;
+
+          const {
+            maxInRatio,
+            maxOutRatio,
+            minTradingLimit,
+            minPoolLiquidity,
+            minWithdrawalFee,
+            burnProtocolFee,
+            hdxAssetId,
+            hubAssetId,
+          } = poolStorageData;
+
+          const hdxAsset = await getOrCreateAsset({
+            id: `${hdxAssetId}`,
+            ensure: true,
+            blockHeader,
+            ctx,
+          });
+          if (!hdxAsset) return null;
+
+          const hubAsset = await getOrCreateAsset({
+            id: `${hubAssetId}`,
+            ensure: true,
+            blockHeader,
+            ctx,
+          });
+          if (!hubAsset) return null;
+
+          predefinedPoolDataPerBlock.set(
+            blockHeader.height,
+            new OmnipoolHistoricalData({
+              id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`,
+              pool: ctx.batchState.state.omnipoolEntity!,
+
+              maxInRatio,
+              maxOutRatio,
+              minTradingLimit,
+              minPoolLiquidity,
+              minWithdrawalFee,
+              burnProtocolFee,
+              hdxAsset,
+              hubAsset,
+
+              relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+                blockHeader.height
+              ).height,
+              paraBlockHeight: blockHeader.height,
+              block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+            })
+          );
+        }
+
         const assetStateStorageData =
           await parsers.storage.omnipool.getOmnipoolAssetData({
             assetId: arAssetId,
@@ -62,20 +127,16 @@ export async function handleOmnipoolAssetHistoricalData(
           id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${asset.id}-${blockHeader.height}`,
           asset,
           omnipoolAsset,
+          poolHistoricalData: predefinedPoolDataPerBlock.get(
+            blockHeader.height
+          )!,
 
           assetCap: assetStateStorageData.cap,
           assetShares: assetStateStorageData.shares,
           assetHubReserve: assetStateStorageData.hubReserve,
           assetProtocolShares: assetStateStorageData.protocolShares,
-
+          tradable: assetStateStorageData.tradable.bits,
           freeBalance: assetsBalances.free,
-
-          // balanceFree: assetsBalances.free,
-          // balanceFlags: assetsBalances.flags,
-          // balanceFrozen: assetsBalances.frozen,
-          // balanceReserved: assetsBalances.reserved,
-          // balanceFeeFrozen: assetsBalances.feeFrozen,
-          // balanceMiscFrozen: assetsBalances.miscFrozen,
 
           relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
             blockHeader.height
@@ -92,5 +153,6 @@ export async function handleOmnipoolAssetHistoricalData(
     predefinedEntities.filter((item) => !!item).map((item) => [item.id, item])
   );
 
+  await ctx.store.save([...predefinedPoolDataPerBlock.values()]);
   await ctx.store.save([...predefinedEntitiesWithoutDuplicates.values()]);
 }

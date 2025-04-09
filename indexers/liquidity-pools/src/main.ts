@@ -12,7 +12,7 @@ import { handleStablepools } from './handlers/pools/stableswap';
 import { handleAssetRegistry } from './handlers/assets';
 import { StorageResolver } from './parsers/storageResolver';
 import { handleStableswapHistoricalData } from './handlers/pools/stableswap/historicalData';
-import { handleOmnipoolAssetHistoricalData } from './handlers/pools/omnipool/historicalData';
+import { handleOmnipoolHistoricalData } from './handlers/pools/omnipool/historicalData';
 import { handleXykPoolHistoricalData } from './handlers/pools/xykPool/xykPoolHistoricalData';
 import { handleLbppoolHistoricalData } from './handlers/pools/lbpPool/lbpPoolHistoricalData';
 import { handleXykPools } from './handlers/pools/xykPool';
@@ -208,12 +208,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   );
   console.timeEnd('handleStableswapHistoricalData');
 
-  console.time('handleOmnipoolAssetHistoricalData');
-  await handleOmnipoolAssetHistoricalData(
+  console.time('handleOmnipoolHistoricalData');
+  await handleOmnipoolHistoricalData(
     ctxWithBatchState as SqdProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleOmnipoolAssetHistoricalData');
+  console.timeEnd('handleOmnipoolHistoricalData');
 
   console.time('handleXykPoolHistoricalData');
   await handleXykPoolHistoricalData(

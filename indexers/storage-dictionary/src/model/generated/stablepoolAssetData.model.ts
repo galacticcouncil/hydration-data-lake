@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Stablepool} from "./stablepool.model"
+import {Tradability} from "./_tradability"
 import {AccountBalances} from "./_accountBalances"
 
 @Entity_()
@@ -21,6 +22,12 @@ export class StablepoolAssetData {
 
   @Column_("int4", {nullable: false})
   assetId!: number
+
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new Tradability(undefined, obj)}, nullable: true})
+  tradable!: Tradability | undefined | null
+
+  @Column_("text", {array: true, nullable: false})
+  peg!: (string)[]
 
   @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new AccountBalances(undefined, marshal.nonNull(obj))}, nullable: false})
   balances!: AccountBalances

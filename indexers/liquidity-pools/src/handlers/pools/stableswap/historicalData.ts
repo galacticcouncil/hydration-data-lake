@@ -41,6 +41,12 @@ async function getStableswapDataPromise({
         block: blockHeader,
         poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
       }),
+      storageData: await parsers.storage.stableswap.getPoolAssetStorageData({
+        poolId,
+        assetId,
+        block: blockHeader,
+        poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
+      }),
     }))
   );
 
@@ -56,11 +62,19 @@ async function getStableswapDataPromise({
   const poolHistoricalDataEntity = new StableswapHistoricalData({
     id: `${poolId}-${blockHeader.height}`,
     pool: poolEntity,
+
     initialAmplification: poolStorageData.initialAmplification,
     finalAmplification: poolStorageData.finalAmplification,
     initialAmplificationChangeAtBlockHeight: poolStorageData.initialBlock,
     finalAmplificationChangeAtBlockHeight: poolStorageData.finalBlock,
     fee: poolStorageData.fee,
+
+    maxInRatio: poolStorageData.maxInRatio,
+    maxOutRatio: poolStorageData.maxOutRatio,
+    minTradingLimit: poolStorageData.minTradingLimit,
+    amplificationRange: poolStorageData.amplificationRange,
+    minPoolLiquidity: poolStorageData.minPoolLiquidity,
+
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
@@ -70,7 +84,7 @@ async function getStableswapDataPromise({
 
   const poolAssetHistoricalDataEntities = [];
 
-  for (const { assetId: arAssetId, data } of assetsData.filter(
+  for (const { assetId: arAssetId, data, storageData } of assetsData.filter(
     (data) => !!data && !!data.data
   )) {
     const asset = await getOrCreateAsset({
@@ -88,11 +102,9 @@ async function getStableswapDataPromise({
         asset,
         poolHistoricalData: poolHistoricalDataEntity,
         freeBalance: data!.free,
-        // reserved: data!.reserved,
-        // miscFrozen: data!.miscFrozen,
-        // feeFrozen: data!.feeFrozen,
-        // frozen: data!.frozen,
-        // flags: data!.flags,
+        tradable: storageData?.tradable.bits ?? 15,
+        peg: storageData?.peg ?? ['1', '1'],
+
         relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           blockHeader.height
         ).height,

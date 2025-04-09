@@ -28,7 +28,7 @@ export class StableswapAssetHistoricalData {
   freeBalance!: bigint
 
   @Column_("int4", {nullable: true})
-  tradeable!: number | undefined | null
+  tradable!: number | undefined | null
 
   @Column_("text", {array: true, nullable: false})
   peg!: (string)[]

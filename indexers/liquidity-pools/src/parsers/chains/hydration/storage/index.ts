@@ -17,11 +17,15 @@ import {
   LbpGetPoolDataInput,
   LbpPoolData,
   OmnipoolAssetData,
+  OmnipoolData,
   OmnipoolGetAssetDataInput,
+  OmnipoolGetPoolDataInput,
+  StablepoolAssetState,
   StablepoolGetPoolDataInput,
   StablepoolInfo,
   XykGetAssetsInput,
-  XykPoolWithAssets,
+  XykPoolAssetIds,
+  XykPoolData,
 } from '../../../types/storage';
 import { getAccountBalances } from '../../../../handlers/assets/balances';
 import { StorageParserMethods } from '../../../types/common';
@@ -55,6 +59,18 @@ export default {
         pallet: ProcessingPallets.STABLESWAP,
         method: 'getPoolData',
         fallbackFns: [stableswap.getPoolData],
+      }),
+    getPoolAssetStorageData: (
+      args: GetPoolAssetInfoInput
+    ): Promise<StablepoolAssetState | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetPoolAssetInfoInput,
+        StablepoolAssetState | null
+      >({
+        args,
+        pallet: ProcessingPallets.STABLESWAP,
+        method: 'getPoolAssetStorageData',
+        fallbackFns: [stableswap.getPoolAssetStorageData],
       }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
@@ -97,6 +113,18 @@ export default {
         method: 'getAssetData',
         fallbackFns: [omnipool.getOmnipoolAssetData],
       }),
+    getPoolData: (
+      args: OmnipoolGetPoolDataInput
+    ): Promise<OmnipoolData | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        OmnipoolGetPoolDataInput,
+        OmnipoolData | null
+      >({
+        args,
+        pallet: ProcessingPallets.OMNIPOOL,
+        method: 'getPoolData',
+        fallbackFns: [omnipool.getPoolData],
+      }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ): Promise<AccountData | null> =>
@@ -127,17 +155,25 @@ export default {
   },
   xyk: {
     getShareToken: xyk.getShareToken,
-    getPoolAssets: (
-      args: XykGetAssetsInput
-    ): Promise<XykPoolWithAssets | null> =>
+    getPoolAssets: (args: XykGetAssetsInput): Promise<XykPoolAssetIds | null> =>
       StorageResolver.getInstance().resolveStorageData<
         XykGetAssetsInput,
-        XykPoolWithAssets | null
+        XykPoolAssetIds | null
       >({
         args,
         pallet: ProcessingPallets.XYK,
         method: 'getPoolAssets',
         fallbackFns: [xyk.getPoolAssets],
+      }),
+    getPoolData: (args: XykGetAssetsInput): Promise<XykPoolData | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        XykGetAssetsInput,
+        XykPoolData | null
+      >({
+        args,
+        pallet: ProcessingPallets.XYK,
+        method: 'getPoolData',
+        fallbackFns: [xyk.getPoolData],
       }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput

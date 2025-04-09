@@ -1,364 +1,3 @@
-"""The root query type which gives access points into the data universe."""
-type Query {
-  """
-  Exposes the root query type nested one level down. This is helpful for Relay 1
-  which can only query top level fields if they are in a particular form.
-  """
-  query: Query!
-
-  """Reads and enables pagination through a set of `Asset`."""
-  assets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Asset`."""
-    orderBy: [AssetsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: AssetCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: AssetFilter
-  ): AssetsConnection
-
-  """Reads and enables pagination through a set of `LbpPool`."""
-  lbpPools(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `LbpPool`."""
-    orderBy: [LbpPoolsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: LbpPoolCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: LbpPoolFilter
-  ): LbpPoolsConnection
-
-  """Reads and enables pagination through a set of `LbpPoolAssetsDatum`."""
-  lbpPoolAssetsData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `LbpPoolAssetsDatum`."""
-    orderBy: [LbpPoolAssetsDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: LbpPoolAssetsDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: LbpPoolAssetsDatumFilter
-  ): LbpPoolAssetsDataConnection
-
-  """Reads and enables pagination through a set of `Migration`."""
-  migrations(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Migration`."""
-    orderBy: [MigrationsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MigrationCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MigrationFilter
-  ): MigrationsConnection
-
-  """Reads and enables pagination through a set of `OmnipoolAssetDatum`."""
-  omnipoolAssetData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `OmnipoolAssetDatum`."""
-    orderBy: [OmnipoolAssetDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OmnipoolAssetDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OmnipoolAssetDatumFilter
-  ): OmnipoolAssetDataConnection
-
-  """Reads and enables pagination through a set of `Stablepool`."""
-  stablepools(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Stablepool`."""
-    orderBy: [StablepoolsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StablepoolCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StablepoolFilter
-  ): StablepoolsConnection
-
-  """Reads and enables pagination through a set of `StablepoolAssetDatum`."""
-  stablepoolAssetData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `StablepoolAssetDatum`."""
-    orderBy: [StablepoolAssetDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: StablepoolAssetDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: StablepoolAssetDatumFilter
-  ): StablepoolAssetDataConnection
-
-  """Reads and enables pagination through a set of `SubProcessorStatus`."""
-  subProcessorStatuses(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `SubProcessorStatus`."""
-    orderBy: [SubProcessorStatusesOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SubProcessorStatusCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: SubProcessorStatusFilter
-  ): SubProcessorStatusesConnection
-
-  """Reads and enables pagination through a set of `XykPool`."""
-  xykPools(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `XykPool`."""
-    orderBy: [XykPoolsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: XykPoolCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: XykPoolFilter
-  ): XykPoolsConnection
-
-  """Reads and enables pagination through a set of `XykPoolAssetsDatum`."""
-  xykPoolAssetsData(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `XykPoolAssetsDatum`."""
-    orderBy: [XykPoolAssetsDataOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: XykPoolAssetsDatumCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: XykPoolAssetsDatumFilter
-  ): XykPoolAssetsDataConnection
-  asset(id: String!): Asset
-  lbpPool(id: String!): LbpPool
-  lbpPoolAssetsDatum(id: String!): LbpPoolAssetsDatum
-  migration(id: Int!): Migration
-  omnipoolAssetDatum(id: String!): OmnipoolAssetDatum
-  stablepool(id: String!): Stablepool
-  stablepoolAssetDatum(id: String!): StablepoolAssetDatum
-  subProcessorStatus(id: String!): SubProcessorStatus
-  xykPool(id: String!): XykPool
-  xykPoolAssetsDatum(id: String!): XykPoolAssetsDatum
-  _squidStatus: [_ProcessorStatus!]!
-  _apiSupport: ApiSupportResponse
-}
-
 """A connection to a list of `Asset` values."""
 type AssetsConnection {
   """A list of `Asset` objects."""
@@ -1063,6 +702,465 @@ input BooleanFilter {
   greaterThanOrEqualTo: Boolean
 }
 
+"""A connection to a list of `HistoricalAssetDatum` values."""
+type HistoricalAssetDataConnection {
+  """A list of `HistoricalAssetDatum` objects."""
+  nodes: [HistoricalAssetDatum]!
+
+  """
+  A list of edges which contains the `HistoricalAssetDatum` and cursor to aid in pagination.
+  """
+  edges: [HistoricalAssetDataEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `HistoricalAssetDatum` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: HistoricalAssetDatumAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `HistoricalAssetDatum` for these aggregates.
+    """
+    groupBy: [HistoricalAssetDataGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: HistoricalAssetDataHavingInput
+  ): [HistoricalAssetDatumAggregates!]
+}
+
+type HistoricalAssetDatum {
+  id: String!
+  assetId: Int!
+  totalIssuance: BigFloat!
+  existentialDeposit: BigFloat!
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+}
+
+"""A `HistoricalAssetDatum` edge in the connection."""
+type HistoricalAssetDataEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `HistoricalAssetDatum` at the end of the edge."""
+  node: HistoricalAssetDatum
+}
+
+type HistoricalAssetDatumAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: HistoricalAssetDatumSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: HistoricalAssetDatumDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: HistoricalAssetDatumMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: HistoricalAssetDatumMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: HistoricalAssetDatumAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: HistoricalAssetDatumStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: HistoricalAssetDatumStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: HistoricalAssetDatumVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: HistoricalAssetDatumVariancePopulationAggregates
+}
+
+type HistoricalAssetDatumSumAggregates {
+  """Sum of assetId across the matching connection"""
+  assetId: BigInt!
+
+  """Sum of totalIssuance across the matching connection"""
+  totalIssuance: BigFloat!
+
+  """Sum of existentialDeposit across the matching connection"""
+  existentialDeposit: BigFloat!
+
+  """Sum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
+}
+
+type HistoricalAssetDatumDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of assetId across the matching connection"""
+  assetId: BigInt
+
+  """Distinct count of totalIssuance across the matching connection"""
+  totalIssuance: BigInt
+
+  """Distinct count of existentialDeposit across the matching connection"""
+  existentialDeposit: BigInt
+
+  """Distinct count of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
+}
+
+type HistoricalAssetDatumMinAggregates {
+  """Minimum of assetId across the matching connection"""
+  assetId: Int
+
+  """Minimum of totalIssuance across the matching connection"""
+  totalIssuance: BigFloat
+
+  """Minimum of existentialDeposit across the matching connection"""
+  existentialDeposit: BigFloat
+
+  """Minimum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
+}
+
+type HistoricalAssetDatumMaxAggregates {
+  """Maximum of assetId across the matching connection"""
+  assetId: Int
+
+  """Maximum of totalIssuance across the matching connection"""
+  totalIssuance: BigFloat
+
+  """Maximum of existentialDeposit across the matching connection"""
+  existentialDeposit: BigFloat
+
+  """Maximum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
+}
+
+type HistoricalAssetDatumAverageAggregates {
+  """Mean average of assetId across the matching connection"""
+  assetId: BigFloat
+
+  """Mean average of totalIssuance across the matching connection"""
+  totalIssuance: BigFloat
+
+  """Mean average of existentialDeposit across the matching connection"""
+  existentialDeposit: BigFloat
+
+  """Mean average of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
+}
+
+type HistoricalAssetDatumStddevSampleAggregates {
+  """Sample standard deviation of assetId across the matching connection"""
+  assetId: BigFloat
+
+  """
+  Sample standard deviation of totalIssuance across the matching connection
+  """
+  totalIssuance: BigFloat
+
+  """
+  Sample standard deviation of existentialDeposit across the matching connection
+  """
+  existentialDeposit: BigFloat
+
+  """
+  Sample standard deviation of paraChainBlockHeight across the matching connection
+  """
+  paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+}
+
+type HistoricalAssetDatumStddevPopulationAggregates {
+  """
+  Population standard deviation of assetId across the matching connection
+  """
+  assetId: BigFloat
+
+  """
+  Population standard deviation of totalIssuance across the matching connection
+  """
+  totalIssuance: BigFloat
+
+  """
+  Population standard deviation of existentialDeposit across the matching connection
+  """
+  existentialDeposit: BigFloat
+
+  """
+  Population standard deviation of paraChainBlockHeight across the matching connection
+  """
+  paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+}
+
+type HistoricalAssetDatumVarianceSampleAggregates {
+  """Sample variance of assetId across the matching connection"""
+  assetId: BigFloat
+
+  """Sample variance of totalIssuance across the matching connection"""
+  totalIssuance: BigFloat
+
+  """Sample variance of existentialDeposit across the matching connection"""
+  existentialDeposit: BigFloat
+
+  """Sample variance of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+}
+
+type HistoricalAssetDatumVariancePopulationAggregates {
+  """Population variance of assetId across the matching connection"""
+  assetId: BigFloat
+
+  """Population variance of totalIssuance across the matching connection"""
+  totalIssuance: BigFloat
+
+  """
+  Population variance of existentialDeposit across the matching connection
+  """
+  existentialDeposit: BigFloat
+
+  """
+  Population variance of paraChainBlockHeight across the matching connection
+  """
+  paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `HistoricalAssetDatum` for usage during aggregation.
+"""
+enum HistoricalAssetDataGroupBy {
+  ASSET_ID
+  TOTAL_ISSUANCE
+  EXISTENTIAL_DEPOSIT
+  PARA_CHAIN_BLOCK_HEIGHT
+  RELAY_CHAIN_BLOCK_HEIGHT
+}
+
+"""Conditions for `HistoricalAssetDatum` aggregates."""
+input HistoricalAssetDataHavingInput {
+  AND: [HistoricalAssetDataHavingInput!]
+  OR: [HistoricalAssetDataHavingInput!]
+  sum: HistoricalAssetDataHavingSumInput
+  distinctCount: HistoricalAssetDataHavingDistinctCountInput
+  min: HistoricalAssetDataHavingMinInput
+  max: HistoricalAssetDataHavingMaxInput
+  average: HistoricalAssetDataHavingAverageInput
+  stddevSample: HistoricalAssetDataHavingStddevSampleInput
+  stddevPopulation: HistoricalAssetDataHavingStddevPopulationInput
+  varianceSample: HistoricalAssetDataHavingVarianceSampleInput
+  variancePopulation: HistoricalAssetDataHavingVariancePopulationInput
+}
+
+input HistoricalAssetDataHavingSumInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetDataHavingDistinctCountInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetDataHavingMinInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetDataHavingMaxInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetDataHavingAverageInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetDataHavingStddevSampleInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetDataHavingStddevPopulationInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetDataHavingVarianceSampleInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input HistoricalAssetDataHavingVariancePopulationInput {
+  assetId: HavingIntFilter
+  totalIssuance: HavingBigfloatFilter
+  existentialDeposit: HavingBigfloatFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `HistoricalAssetDatum`."""
+enum HistoricalAssetDataOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  TOTAL_ISSUANCE_ASC
+  TOTAL_ISSUANCE_DESC
+  EXISTENTIAL_DEPOSIT_ASC
+  EXISTENTIAL_DEPOSIT_DESC
+  PARA_CHAIN_BLOCK_HEIGHT_ASC
+  PARA_CHAIN_BLOCK_HEIGHT_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `HistoricalAssetDatum` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input HistoricalAssetDatumCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `assetId` field."""
+  assetId: Int
+
+  """Checks for equality with the object’s `totalIssuance` field."""
+  totalIssuance: BigFloat
+
+  """Checks for equality with the object’s `existentialDeposit` field."""
+  existentialDeposit: BigFloat
+
+  """Checks for equality with the object’s `paraChainBlockHeight` field."""
+  paraChainBlockHeight: Int
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
+}
+
+"""
+A filter to be used against `HistoricalAssetDatum` object types. All fields are combined with a logical ‘and.’
+"""
+input HistoricalAssetDatumFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: IntFilter
+
+  """Filter by the object’s `totalIssuance` field."""
+  totalIssuance: BigFloatFilter
+
+  """Filter by the object’s `existentialDeposit` field."""
+  existentialDeposit: BigFloatFilter
+
+  """Filter by the object’s `paraChainBlockHeight` field."""
+  paraChainBlockHeight: IntFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [HistoricalAssetDatumFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [HistoricalAssetDatumFilter!]
+
+  """Negates the expression."""
+  not: HistoricalAssetDatumFilter
+}
+
 """A connection to a list of `LbpPool` values."""
 type LbpPoolsConnection {
   """A list of `LbpPool` objects."""
@@ -1112,6 +1210,11 @@ type LbpPool {
   repayTarget: BigFloat!
   paraChainBlockHeight: Int!
   relayChainBlockHeight: Int!
+  repayFee: [Int]!
+  maxInRatio: BigFloat!
+  maxOutRatio: BigFloat!
+  minPoolLiquidity: BigFloat!
+  minTradingLimit: BigFloat!
 
   """Reads and enables pagination through a set of `LbpPoolAssetsDatum`."""
   lbpPoolAssetsDataByPoolId(
@@ -1681,6 +1784,18 @@ type LbpPoolSumAggregates {
 
   """Sum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigInt!
+
+  """Sum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat!
+
+  """Sum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat!
+
+  """Sum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat!
+
+  """Sum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat!
 }
 
 type LbpPoolDistinctCountAggregates {
@@ -1728,6 +1843,21 @@ type LbpPoolDistinctCountAggregates {
 
   """Distinct count of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigInt
+
+  """Distinct count of repayFee across the matching connection"""
+  repayFee: BigInt
+
+  """Distinct count of maxInRatio across the matching connection"""
+  maxInRatio: BigInt
+
+  """Distinct count of maxOutRatio across the matching connection"""
+  maxOutRatio: BigInt
+
+  """Distinct count of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigInt
+
+  """Distinct count of minTradingLimit across the matching connection"""
+  minTradingLimit: BigInt
 }
 
 type LbpPoolMinAggregates {
@@ -1757,6 +1887,18 @@ type LbpPoolMinAggregates {
 
   """Minimum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: Int
+
+  """Minimum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Minimum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Minimum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Minimum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
 }
 
 type LbpPoolMaxAggregates {
@@ -1786,6 +1928,18 @@ type LbpPoolMaxAggregates {
 
   """Maximum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: Int
+
+  """Maximum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Maximum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Maximum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Maximum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
 }
 
 type LbpPoolAverageAggregates {
@@ -1815,6 +1969,18 @@ type LbpPoolAverageAggregates {
 
   """Mean average of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigFloat
+
+  """Mean average of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Mean average of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Mean average of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Mean average of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
 }
 
 type LbpPoolStddevSampleAggregates {
@@ -1854,6 +2020,24 @@ type LbpPoolStddevSampleAggregates {
   Sample standard deviation of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Sample standard deviation of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """
+  Sample standard deviation of maxOutRatio across the matching connection
+  """
+  maxOutRatio: BigFloat
+
+  """
+  Sample standard deviation of minPoolLiquidity across the matching connection
+  """
+  minPoolLiquidity: BigFloat
+
+  """
+  Sample standard deviation of minTradingLimit across the matching connection
+  """
+  minTradingLimit: BigFloat
 }
 
 type LbpPoolStddevPopulationAggregates {
@@ -1897,6 +2081,26 @@ type LbpPoolStddevPopulationAggregates {
   Population standard deviation of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of maxInRatio across the matching connection
+  """
+  maxInRatio: BigFloat
+
+  """
+  Population standard deviation of maxOutRatio across the matching connection
+  """
+  maxOutRatio: BigFloat
+
+  """
+  Population standard deviation of minPoolLiquidity across the matching connection
+  """
+  minPoolLiquidity: BigFloat
+
+  """
+  Population standard deviation of minTradingLimit across the matching connection
+  """
+  minTradingLimit: BigFloat
 }
 
 type LbpPoolVarianceSampleAggregates {
@@ -1928,6 +2132,18 @@ type LbpPoolVarianceSampleAggregates {
   Sample variance of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Sample variance of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Sample variance of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Sample variance of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Sample variance of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
 }
 
 type LbpPoolVariancePopulationAggregates {
@@ -1961,6 +2177,18 @@ type LbpPoolVariancePopulationAggregates {
   Population variance of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Population variance of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Population variance of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Population variance of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Population variance of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
 }
 
 """Grouping methods for `LbpPool` for usage during aggregation."""
@@ -1979,6 +2207,11 @@ enum LbpPoolGroupBy {
   REPAY_TARGET
   PARA_CHAIN_BLOCK_HEIGHT
   RELAY_CHAIN_BLOCK_HEIGHT
+  REPAY_FEE
+  MAX_IN_RATIO
+  MAX_OUT_RATIO
+  MIN_POOL_LIQUIDITY
+  MIN_TRADING_LIMIT
 }
 
 """Conditions for `LbpPool` aggregates."""
@@ -2006,6 +2239,10 @@ input LbpPoolHavingSumInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 input LbpPoolHavingDistinctCountInput {
@@ -2018,6 +2255,10 @@ input LbpPoolHavingDistinctCountInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 input LbpPoolHavingMinInput {
@@ -2030,6 +2271,10 @@ input LbpPoolHavingMinInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 input LbpPoolHavingMaxInput {
@@ -2042,6 +2287,10 @@ input LbpPoolHavingMaxInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 input LbpPoolHavingAverageInput {
@@ -2054,6 +2303,10 @@ input LbpPoolHavingAverageInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 input LbpPoolHavingStddevSampleInput {
@@ -2066,6 +2319,10 @@ input LbpPoolHavingStddevSampleInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 input LbpPoolHavingStddevPopulationInput {
@@ -2078,6 +2335,10 @@ input LbpPoolHavingStddevPopulationInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 input LbpPoolHavingVarianceSampleInput {
@@ -2090,6 +2351,10 @@ input LbpPoolHavingVarianceSampleInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 input LbpPoolHavingVariancePopulationInput {
@@ -2102,6 +2367,10 @@ input LbpPoolHavingVariancePopulationInput {
   repayTarget: HavingBigfloatFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
 }
 
 """Methods to use when ordering `LbpPool`."""
@@ -2137,6 +2406,16 @@ enum LbpPoolsOrderBy {
   PARA_CHAIN_BLOCK_HEIGHT_DESC
   RELAY_CHAIN_BLOCK_HEIGHT_ASC
   RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  REPAY_FEE_ASC
+  REPAY_FEE_DESC
+  MAX_IN_RATIO_ASC
+  MAX_IN_RATIO_DESC
+  MAX_OUT_RATIO_ASC
+  MAX_OUT_RATIO_DESC
+  MIN_POOL_LIQUIDITY_ASC
+  MIN_POOL_LIQUIDITY_DESC
+  MIN_TRADING_LIMIT_ASC
+  MIN_TRADING_LIMIT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
   LBP_POOL_ASSETS_DATA_BY_POOL_ID_COUNT_ASC
@@ -2299,6 +2578,21 @@ input LbpPoolCondition {
 
   """Checks for equality with the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: Int
+
+  """Checks for equality with the object’s `repayFee` field."""
+  repayFee: [Int]
+
+  """Checks for equality with the object’s `maxInRatio` field."""
+  maxInRatio: BigFloat
+
+  """Checks for equality with the object’s `maxOutRatio` field."""
+  maxOutRatio: BigFloat
+
+  """Checks for equality with the object’s `minPoolLiquidity` field."""
+  minPoolLiquidity: BigFloat
+
+  """Checks for equality with the object’s `minTradingLimit` field."""
+  minTradingLimit: BigFloat
 }
 
 """
@@ -2349,6 +2643,21 @@ input LbpPoolFilter {
 
   """Filter by the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: IntFilter
+
+  """Filter by the object’s `repayFee` field."""
+  repayFee: IntListFilter
+
+  """Filter by the object’s `maxInRatio` field."""
+  maxInRatio: BigFloatFilter
+
+  """Filter by the object’s `maxOutRatio` field."""
+  maxOutRatio: BigFloatFilter
+
+  """Filter by the object’s `minPoolLiquidity` field."""
+  minPoolLiquidity: BigFloatFilter
+
+  """Filter by the object’s `minTradingLimit` field."""
+  minTradingLimit: BigFloatFilter
 
   """Checks for all expressions in this list."""
   and: [LbpPoolFilter!]
@@ -2765,6 +3074,88 @@ input BigIntFilter {
   greaterThanOrEqualTo: BigInt
 }
 
+"""A connection to a list of `Omnipool` values."""
+type OmnipoolsConnection {
+  """A list of `Omnipool` objects."""
+  nodes: [Omnipool]!
+
+  """
+  A list of edges which contains the `Omnipool` and cursor to aid in pagination.
+  """
+  edges: [OmnipoolsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Omnipool` you could get from the connection."""
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: OmnipoolAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """The method to use when grouping `Omnipool` for these aggregates."""
+    groupBy: [OmnipoolGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: OmnipoolHavingInput
+  ): [OmnipoolAggregates!]
+}
+
+type Omnipool {
+  id: String!
+  poolAddress: String!
+  maxInRatio: BigFloat!
+  maxOutRatio: BigFloat!
+  minTradingLimit: BigFloat!
+  minPoolLiquidity: BigFloat!
+  minWithdrawalFee: BigFloat!
+  burnProtocolFee: Int!
+  hdxAssetId: Int!
+  hubAssetId: Int!
+  paraChainBlockHeight: Int!
+  relayChainBlockHeight: Int!
+
+  """Reads and enables pagination through a set of `OmnipoolAssetDatum`."""
+  omnipoolAssetDataByPoolId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `OmnipoolAssetDatum`."""
+    orderBy: [OmnipoolAssetDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OmnipoolAssetDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OmnipoolAssetDatumFilter
+  ): OmnipoolAssetDataConnection!
+}
+
 """A connection to a list of `OmnipoolAssetDatum` values."""
 type OmnipoolAssetDataConnection {
   """A list of `OmnipoolAssetDatum` objects."""
@@ -2804,12 +3195,17 @@ type OmnipoolAssetDataConnection {
 
 type OmnipoolAssetDatum {
   id: String!
-  poolAddress: String!
   assetId: Int!
   balances: JSON!
   assetState: JSON!
   paraChainBlockHeight: Int!
   relayChainBlockHeight: Int!
+  poolId: String
+
+  """
+  Reads a single `Omnipool` that is related to this `OmnipoolAssetDatum`.
+  """
+  pool: Omnipool
 }
 
 """A `OmnipoolAssetDatum` edge in the connection."""
@@ -2885,9 +3281,6 @@ type OmnipoolAssetDatumDistinctCountAggregates {
   """Distinct count of id across the matching connection"""
   id: BigInt
 
-  """Distinct count of poolAddress across the matching connection"""
-  poolAddress: BigInt
-
   """Distinct count of assetId across the matching connection"""
   assetId: BigInt
 
@@ -2902,6 +3295,9 @@ type OmnipoolAssetDatumDistinctCountAggregates {
 
   """Distinct count of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigInt
+
+  """Distinct count of poolId across the matching connection"""
+  poolId: BigInt
 }
 
 type OmnipoolAssetDatumMinAggregates {
@@ -3001,12 +3397,12 @@ type OmnipoolAssetDatumVariancePopulationAggregates {
 Grouping methods for `OmnipoolAssetDatum` for usage during aggregation.
 """
 enum OmnipoolAssetDataGroupBy {
-  POOL_ADDRESS
   ASSET_ID
   BALANCES
   ASSET_STATE
   PARA_CHAIN_BLOCK_HEIGHT
   RELAY_CHAIN_BLOCK_HEIGHT
+  POOL_ID
 }
 
 """Conditions for `OmnipoolAssetDatum` aggregates."""
@@ -3083,8 +3479,6 @@ enum OmnipoolAssetDataOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
-  POOL_ADDRESS_ASC
-  POOL_ADDRESS_DESC
   ASSET_ID_ASC
   ASSET_ID_DESC
   BALANCES_ASC
@@ -3095,6 +3489,8 @@ enum OmnipoolAssetDataOrderBy {
   PARA_CHAIN_BLOCK_HEIGHT_DESC
   RELAY_CHAIN_BLOCK_HEIGHT_ASC
   RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  POOL_ID_ASC
+  POOL_ID_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -3106,9 +3502,6 @@ tested for equality and combined with a logical ‘and.’
 input OmnipoolAssetDatumCondition {
   """Checks for equality with the object’s `id` field."""
   id: String
-
-  """Checks for equality with the object’s `poolAddress` field."""
-  poolAddress: String
 
   """Checks for equality with the object’s `assetId` field."""
   assetId: Int
@@ -3124,6 +3517,9 @@ input OmnipoolAssetDatumCondition {
 
   """Checks for equality with the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: Int
+
+  """Checks for equality with the object’s `poolId` field."""
+  poolId: String
 }
 
 """
@@ -3132,9 +3528,6 @@ A filter to be used against `OmnipoolAssetDatum` object types. All fields are co
 input OmnipoolAssetDatumFilter {
   """Filter by the object’s `id` field."""
   id: StringFilter
-
-  """Filter by the object’s `poolAddress` field."""
-  poolAddress: StringFilter
 
   """Filter by the object’s `assetId` field."""
   assetId: IntFilter
@@ -3151,6 +3544,9 @@ input OmnipoolAssetDatumFilter {
   """Filter by the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: IntFilter
 
+  """Filter by the object’s `poolId` field."""
+  poolId: StringFilter
+
   """Checks for all expressions in this list."""
   and: [OmnipoolAssetDatumFilter!]
 
@@ -3159,6 +3555,796 @@ input OmnipoolAssetDatumFilter {
 
   """Negates the expression."""
   not: OmnipoolAssetDatumFilter
+}
+
+"""A `Omnipool` edge in the connection."""
+type OmnipoolsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Omnipool` at the end of the edge."""
+  node: Omnipool
+}
+
+type OmnipoolAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: OmnipoolSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: OmnipoolDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: OmnipoolMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: OmnipoolMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: OmnipoolAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: OmnipoolStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: OmnipoolStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: OmnipoolVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: OmnipoolVariancePopulationAggregates
+}
+
+type OmnipoolSumAggregates {
+  """Sum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat!
+
+  """Sum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat!
+
+  """Sum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat!
+
+  """Sum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat!
+
+  """Sum of minWithdrawalFee across the matching connection"""
+  minWithdrawalFee: BigFloat!
+
+  """Sum of burnProtocolFee across the matching connection"""
+  burnProtocolFee: BigInt!
+
+  """Sum of hdxAssetId across the matching connection"""
+  hdxAssetId: BigInt!
+
+  """Sum of hubAssetId across the matching connection"""
+  hubAssetId: BigInt!
+
+  """Sum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigInt!
+
+  """Sum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt!
+}
+
+type OmnipoolDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of poolAddress across the matching connection"""
+  poolAddress: BigInt
+
+  """Distinct count of maxInRatio across the matching connection"""
+  maxInRatio: BigInt
+
+  """Distinct count of maxOutRatio across the matching connection"""
+  maxOutRatio: BigInt
+
+  """Distinct count of minTradingLimit across the matching connection"""
+  minTradingLimit: BigInt
+
+  """Distinct count of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigInt
+
+  """Distinct count of minWithdrawalFee across the matching connection"""
+  minWithdrawalFee: BigInt
+
+  """Distinct count of burnProtocolFee across the matching connection"""
+  burnProtocolFee: BigInt
+
+  """Distinct count of hdxAssetId across the matching connection"""
+  hdxAssetId: BigInt
+
+  """Distinct count of hubAssetId across the matching connection"""
+  hubAssetId: BigInt
+
+  """Distinct count of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigInt
+
+  """Distinct count of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigInt
+}
+
+type OmnipoolMinAggregates {
+  """Minimum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Minimum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Minimum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Minimum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Minimum of minWithdrawalFee across the matching connection"""
+  minWithdrawalFee: BigFloat
+
+  """Minimum of burnProtocolFee across the matching connection"""
+  burnProtocolFee: Int
+
+  """Minimum of hdxAssetId across the matching connection"""
+  hdxAssetId: Int
+
+  """Minimum of hubAssetId across the matching connection"""
+  hubAssetId: Int
+
+  """Minimum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: Int
+
+  """Minimum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
+}
+
+type OmnipoolMaxAggregates {
+  """Maximum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Maximum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Maximum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Maximum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Maximum of minWithdrawalFee across the matching connection"""
+  minWithdrawalFee: BigFloat
+
+  """Maximum of burnProtocolFee across the matching connection"""
+  burnProtocolFee: Int
+
+  """Maximum of hdxAssetId across the matching connection"""
+  hdxAssetId: Int
+
+  """Maximum of hubAssetId across the matching connection"""
+  hubAssetId: Int
+
+  """Maximum of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: Int
+
+  """Maximum of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: Int
+}
+
+type OmnipoolAverageAggregates {
+  """Mean average of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Mean average of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Mean average of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Mean average of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Mean average of minWithdrawalFee across the matching connection"""
+  minWithdrawalFee: BigFloat
+
+  """Mean average of burnProtocolFee across the matching connection"""
+  burnProtocolFee: BigFloat
+
+  """Mean average of hdxAssetId across the matching connection"""
+  hdxAssetId: BigFloat
+
+  """Mean average of hubAssetId across the matching connection"""
+  hubAssetId: BigFloat
+
+  """Mean average of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigFloat
+
+  """Mean average of relayChainBlockHeight across the matching connection"""
+  relayChainBlockHeight: BigFloat
+}
+
+type OmnipoolStddevSampleAggregates {
+  """Sample standard deviation of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """
+  Sample standard deviation of maxOutRatio across the matching connection
+  """
+  maxOutRatio: BigFloat
+
+  """
+  Sample standard deviation of minTradingLimit across the matching connection
+  """
+  minTradingLimit: BigFloat
+
+  """
+  Sample standard deviation of minPoolLiquidity across the matching connection
+  """
+  minPoolLiquidity: BigFloat
+
+  """
+  Sample standard deviation of minWithdrawalFee across the matching connection
+  """
+  minWithdrawalFee: BigFloat
+
+  """
+  Sample standard deviation of burnProtocolFee across the matching connection
+  """
+  burnProtocolFee: BigFloat
+
+  """Sample standard deviation of hdxAssetId across the matching connection"""
+  hdxAssetId: BigFloat
+
+  """Sample standard deviation of hubAssetId across the matching connection"""
+  hubAssetId: BigFloat
+
+  """
+  Sample standard deviation of paraChainBlockHeight across the matching connection
+  """
+  paraChainBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+}
+
+type OmnipoolStddevPopulationAggregates {
+  """
+  Population standard deviation of maxInRatio across the matching connection
+  """
+  maxInRatio: BigFloat
+
+  """
+  Population standard deviation of maxOutRatio across the matching connection
+  """
+  maxOutRatio: BigFloat
+
+  """
+  Population standard deviation of minTradingLimit across the matching connection
+  """
+  minTradingLimit: BigFloat
+
+  """
+  Population standard deviation of minPoolLiquidity across the matching connection
+  """
+  minPoolLiquidity: BigFloat
+
+  """
+  Population standard deviation of minWithdrawalFee across the matching connection
+  """
+  minWithdrawalFee: BigFloat
+
+  """
+  Population standard deviation of burnProtocolFee across the matching connection
+  """
+  burnProtocolFee: BigFloat
+
+  """
+  Population standard deviation of hdxAssetId across the matching connection
+  """
+  hdxAssetId: BigFloat
+
+  """
+  Population standard deviation of hubAssetId across the matching connection
+  """
+  hubAssetId: BigFloat
+
+  """
+  Population standard deviation of paraChainBlockHeight across the matching connection
+  """
+  paraChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+}
+
+type OmnipoolVarianceSampleAggregates {
+  """Sample variance of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Sample variance of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Sample variance of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Sample variance of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Sample variance of minWithdrawalFee across the matching connection"""
+  minWithdrawalFee: BigFloat
+
+  """Sample variance of burnProtocolFee across the matching connection"""
+  burnProtocolFee: BigFloat
+
+  """Sample variance of hdxAssetId across the matching connection"""
+  hdxAssetId: BigFloat
+
+  """Sample variance of hubAssetId across the matching connection"""
+  hubAssetId: BigFloat
+
+  """Sample variance of paraChainBlockHeight across the matching connection"""
+  paraChainBlockHeight: BigFloat
+
+  """
+  Sample variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+}
+
+type OmnipoolVariancePopulationAggregates {
+  """Population variance of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Population variance of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Population variance of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Population variance of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Population variance of minWithdrawalFee across the matching connection"""
+  minWithdrawalFee: BigFloat
+
+  """Population variance of burnProtocolFee across the matching connection"""
+  burnProtocolFee: BigFloat
+
+  """Population variance of hdxAssetId across the matching connection"""
+  hdxAssetId: BigFloat
+
+  """Population variance of hubAssetId across the matching connection"""
+  hubAssetId: BigFloat
+
+  """
+  Population variance of paraChainBlockHeight across the matching connection
+  """
+  paraChainBlockHeight: BigFloat
+
+  """
+  Population variance of relayChainBlockHeight across the matching connection
+  """
+  relayChainBlockHeight: BigFloat
+}
+
+"""Grouping methods for `Omnipool` for usage during aggregation."""
+enum OmnipoolGroupBy {
+  POOL_ADDRESS
+  MAX_IN_RATIO
+  MAX_OUT_RATIO
+  MIN_TRADING_LIMIT
+  MIN_POOL_LIQUIDITY
+  MIN_WITHDRAWAL_FEE
+  BURN_PROTOCOL_FEE
+  HDX_ASSET_ID
+  HUB_ASSET_ID
+  PARA_CHAIN_BLOCK_HEIGHT
+  RELAY_CHAIN_BLOCK_HEIGHT
+}
+
+"""Conditions for `Omnipool` aggregates."""
+input OmnipoolHavingInput {
+  AND: [OmnipoolHavingInput!]
+  OR: [OmnipoolHavingInput!]
+  sum: OmnipoolHavingSumInput
+  distinctCount: OmnipoolHavingDistinctCountInput
+  min: OmnipoolHavingMinInput
+  max: OmnipoolHavingMaxInput
+  average: OmnipoolHavingAverageInput
+  stddevSample: OmnipoolHavingStddevSampleInput
+  stddevPopulation: OmnipoolHavingStddevPopulationInput
+  varianceSample: OmnipoolHavingVarianceSampleInput
+  variancePopulation: OmnipoolHavingVariancePopulationInput
+}
+
+input OmnipoolHavingSumInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input OmnipoolHavingDistinctCountInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input OmnipoolHavingMinInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input OmnipoolHavingMaxInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input OmnipoolHavingAverageInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input OmnipoolHavingStddevSampleInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input OmnipoolHavingStddevPopulationInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input OmnipoolHavingVarianceSampleInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+input OmnipoolHavingVariancePopulationInput {
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minWithdrawalFee: HavingBigfloatFilter
+  burnProtocolFee: HavingIntFilter
+  hdxAssetId: HavingIntFilter
+  hubAssetId: HavingIntFilter
+  paraChainBlockHeight: HavingIntFilter
+  relayChainBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `Omnipool`."""
+enum OmnipoolsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  POOL_ADDRESS_ASC
+  POOL_ADDRESS_DESC
+  MAX_IN_RATIO_ASC
+  MAX_IN_RATIO_DESC
+  MAX_OUT_RATIO_ASC
+  MAX_OUT_RATIO_DESC
+  MIN_TRADING_LIMIT_ASC
+  MIN_TRADING_LIMIT_DESC
+  MIN_POOL_LIQUIDITY_ASC
+  MIN_POOL_LIQUIDITY_DESC
+  MIN_WITHDRAWAL_FEE_ASC
+  MIN_WITHDRAWAL_FEE_DESC
+  BURN_PROTOCOL_FEE_ASC
+  BURN_PROTOCOL_FEE_DESC
+  HDX_ASSET_ID_ASC
+  HDX_ASSET_ID_DESC
+  HUB_ASSET_ID_ASC
+  HUB_ASSET_ID_DESC
+  PARA_CHAIN_BLOCK_HEIGHT_ASC
+  PARA_CHAIN_BLOCK_HEIGHT_DESC
+  RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_COUNT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_COUNT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_BALANCES_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_BALANCES_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_STATE_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_STATE_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC
+  OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC
+}
+
+"""
+A condition to be used against `Omnipool` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input OmnipoolCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `poolAddress` field."""
+  poolAddress: String
+
+  """Checks for equality with the object’s `maxInRatio` field."""
+  maxInRatio: BigFloat
+
+  """Checks for equality with the object’s `maxOutRatio` field."""
+  maxOutRatio: BigFloat
+
+  """Checks for equality with the object’s `minTradingLimit` field."""
+  minTradingLimit: BigFloat
+
+  """Checks for equality with the object’s `minPoolLiquidity` field."""
+  minPoolLiquidity: BigFloat
+
+  """Checks for equality with the object’s `minWithdrawalFee` field."""
+  minWithdrawalFee: BigFloat
+
+  """Checks for equality with the object’s `burnProtocolFee` field."""
+  burnProtocolFee: Int
+
+  """Checks for equality with the object’s `hdxAssetId` field."""
+  hdxAssetId: Int
+
+  """Checks for equality with the object’s `hubAssetId` field."""
+  hubAssetId: Int
+
+  """Checks for equality with the object’s `paraChainBlockHeight` field."""
+  paraChainBlockHeight: Int
+
+  """Checks for equality with the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: Int
+}
+
+"""
+A filter to be used against `Omnipool` object types. All fields are combined with a logical ‘and.’
+"""
+input OmnipoolFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `poolAddress` field."""
+  poolAddress: StringFilter
+
+  """Filter by the object’s `maxInRatio` field."""
+  maxInRatio: BigFloatFilter
+
+  """Filter by the object’s `maxOutRatio` field."""
+  maxOutRatio: BigFloatFilter
+
+  """Filter by the object’s `minTradingLimit` field."""
+  minTradingLimit: BigFloatFilter
+
+  """Filter by the object’s `minPoolLiquidity` field."""
+  minPoolLiquidity: BigFloatFilter
+
+  """Filter by the object’s `minWithdrawalFee` field."""
+  minWithdrawalFee: BigFloatFilter
+
+  """Filter by the object’s `burnProtocolFee` field."""
+  burnProtocolFee: IntFilter
+
+  """Filter by the object’s `hdxAssetId` field."""
+  hdxAssetId: IntFilter
+
+  """Filter by the object’s `hubAssetId` field."""
+  hubAssetId: IntFilter
+
+  """Filter by the object’s `paraChainBlockHeight` field."""
+  paraChainBlockHeight: IntFilter
+
+  """Filter by the object’s `relayChainBlockHeight` field."""
+  relayChainBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [OmnipoolFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [OmnipoolFilter!]
+
+  """Negates the expression."""
+  not: OmnipoolFilter
 }
 
 """A connection to a list of `Stablepool` values."""
@@ -3205,6 +4391,11 @@ type Stablepool {
   fee: Int!
   paraChainBlockHeight: Int!
   relayChainBlockHeight: Int!
+  maxInRatio: BigFloat!
+  maxOutRatio: BigFloat!
+  minTradingLimit: BigFloat!
+  amplificationRange: [Int]!
+  minPoolLiquidity: BigFloat!
 
   """Reads and enables pagination through a set of `StablepoolAssetDatum`."""
   stablepoolAssetDataByPoolId(
@@ -3285,6 +4476,8 @@ type StablepoolAssetDatum {
   paraChainBlockHeight: Int!
   poolId: String
   relayChainBlockHeight: Int!
+  tradable: JSON
+  peg: [String]!
 
   """
   Reads a single `Stablepool` that is related to this `StablepoolAssetDatum`.
@@ -3379,6 +4572,12 @@ type StablepoolAssetDatumDistinctCountAggregates {
 
   """Distinct count of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigInt
+
+  """Distinct count of tradable across the matching connection"""
+  tradable: BigInt
+
+  """Distinct count of peg across the matching connection"""
+  peg: BigInt
 }
 
 type StablepoolAssetDatumMinAggregates {
@@ -3483,6 +4682,8 @@ enum StablepoolAssetDataGroupBy {
   PARA_CHAIN_BLOCK_HEIGHT
   POOL_ID
   RELAY_CHAIN_BLOCK_HEIGHT
+  TRADABLE
+  PEG
 }
 
 """Conditions for `StablepoolAssetDatum` aggregates."""
@@ -3569,6 +4770,10 @@ enum StablepoolAssetDataOrderBy {
   POOL_ID_DESC
   RELAY_CHAIN_BLOCK_HEIGHT_ASC
   RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  TRADABLE_ASC
+  TRADABLE_DESC
+  PEG_ASC
+  PEG_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -3595,6 +4800,12 @@ input StablepoolAssetDatumCondition {
 
   """Checks for equality with the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: Int
+
+  """Checks for equality with the object’s `tradable` field."""
+  tradable: JSON
+
+  """Checks for equality with the object’s `peg` field."""
+  peg: [String]
 }
 
 """
@@ -3619,6 +4830,12 @@ input StablepoolAssetDatumFilter {
   """Filter by the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: IntFilter
 
+  """Filter by the object’s `tradable` field."""
+  tradable: JSONFilter
+
+  """Filter by the object’s `peg` field."""
+  peg: StringListFilter
+
   """Checks for all expressions in this list."""
   and: [StablepoolAssetDatumFilter!]
 
@@ -3627,6 +4844,69 @@ input StablepoolAssetDatumFilter {
 
   """Negates the expression."""
   not: StablepoolAssetDatumFilter
+}
+
+"""
+A filter to be used against String List fields. All fields are combined with a logical ‘and.’
+"""
+input StringListFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: [String]
+
+  """Not equal to the specified value."""
+  notEqualTo: [String]
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: [String]
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: [String]
+
+  """Less than the specified value."""
+  lessThan: [String]
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: [String]
+
+  """Greater than the specified value."""
+  greaterThan: [String]
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: [String]
+
+  """Contains the specified list of values."""
+  contains: [String]
+
+  """Contained by the specified list of values."""
+  containedBy: [String]
+
+  """Overlaps the specified list of values."""
+  overlaps: [String]
+
+  """Any array item is equal to the specified value."""
+  anyEqualTo: String
+
+  """Any array item is not equal to the specified value."""
+  anyNotEqualTo: String
+
+  """Any array item is less than the specified value."""
+  anyLessThan: String
+
+  """Any array item is less than or equal to the specified value."""
+  anyLessThanOrEqualTo: String
+
+  """Any array item is greater than the specified value."""
+  anyGreaterThan: String
+
+  """Any array item is greater than or equal to the specified value."""
+  anyGreaterThanOrEqualTo: String
 }
 
 """A `Stablepool` edge in the connection."""
@@ -3711,6 +4991,18 @@ type StablepoolSumAggregates {
 
   """Sum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigInt!
+
+  """Sum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat!
+
+  """Sum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat!
+
+  """Sum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat!
+
+  """Sum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat!
 }
 
 type StablepoolDistinctCountAggregates {
@@ -3743,6 +5035,21 @@ type StablepoolDistinctCountAggregates {
 
   """Distinct count of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigInt
+
+  """Distinct count of maxInRatio across the matching connection"""
+  maxInRatio: BigInt
+
+  """Distinct count of maxOutRatio across the matching connection"""
+  maxOutRatio: BigInt
+
+  """Distinct count of minTradingLimit across the matching connection"""
+  minTradingLimit: BigInt
+
+  """Distinct count of amplificationRange across the matching connection"""
+  amplificationRange: BigInt
+
+  """Distinct count of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigInt
 }
 
 type StablepoolMinAggregates {
@@ -3769,6 +5076,18 @@ type StablepoolMinAggregates {
 
   """Minimum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: Int
+
+  """Minimum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Minimum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Minimum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Minimum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
 }
 
 type StablepoolMaxAggregates {
@@ -3795,6 +5114,18 @@ type StablepoolMaxAggregates {
 
   """Maximum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: Int
+
+  """Maximum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Maximum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Maximum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Maximum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
 }
 
 type StablepoolAverageAggregates {
@@ -3821,6 +5152,18 @@ type StablepoolAverageAggregates {
 
   """Mean average of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigFloat
+
+  """Mean average of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Mean average of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Mean average of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Mean average of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
 }
 
 type StablepoolStddevSampleAggregates {
@@ -3857,6 +5200,24 @@ type StablepoolStddevSampleAggregates {
   Sample standard deviation of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Sample standard deviation of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """
+  Sample standard deviation of maxOutRatio across the matching connection
+  """
+  maxOutRatio: BigFloat
+
+  """
+  Sample standard deviation of minTradingLimit across the matching connection
+  """
+  minTradingLimit: BigFloat
+
+  """
+  Sample standard deviation of minPoolLiquidity across the matching connection
+  """
+  minPoolLiquidity: BigFloat
 }
 
 type StablepoolStddevPopulationAggregates {
@@ -3895,6 +5256,26 @@ type StablepoolStddevPopulationAggregates {
   Population standard deviation of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of maxInRatio across the matching connection
+  """
+  maxInRatio: BigFloat
+
+  """
+  Population standard deviation of maxOutRatio across the matching connection
+  """
+  maxOutRatio: BigFloat
+
+  """
+  Population standard deviation of minTradingLimit across the matching connection
+  """
+  minTradingLimit: BigFloat
+
+  """
+  Population standard deviation of minPoolLiquidity across the matching connection
+  """
+  minPoolLiquidity: BigFloat
 }
 
 type StablepoolVarianceSampleAggregates {
@@ -3923,6 +5304,18 @@ type StablepoolVarianceSampleAggregates {
   Sample variance of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Sample variance of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Sample variance of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Sample variance of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Sample variance of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
 }
 
 type StablepoolVariancePopulationAggregates {
@@ -3957,6 +5350,18 @@ type StablepoolVariancePopulationAggregates {
   Population variance of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Population variance of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Population variance of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Population variance of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Population variance of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
 }
 
 """Grouping methods for `Stablepool` for usage during aggregation."""
@@ -3970,6 +5375,11 @@ enum StablepoolGroupBy {
   FEE
   PARA_CHAIN_BLOCK_HEIGHT
   RELAY_CHAIN_BLOCK_HEIGHT
+  MAX_IN_RATIO
+  MAX_OUT_RATIO
+  MIN_TRADING_LIMIT
+  AMPLIFICATION_RANGE
+  MIN_POOL_LIQUIDITY
 }
 
 """Conditions for `Stablepool` aggregates."""
@@ -3996,6 +5406,10 @@ input StablepoolHavingSumInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 input StablepoolHavingDistinctCountInput {
@@ -4007,6 +5421,10 @@ input StablepoolHavingDistinctCountInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 input StablepoolHavingMinInput {
@@ -4018,6 +5436,10 @@ input StablepoolHavingMinInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 input StablepoolHavingMaxInput {
@@ -4029,6 +5451,10 @@ input StablepoolHavingMaxInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 input StablepoolHavingAverageInput {
@@ -4040,6 +5466,10 @@ input StablepoolHavingAverageInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 input StablepoolHavingStddevSampleInput {
@@ -4051,6 +5481,10 @@ input StablepoolHavingStddevSampleInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 input StablepoolHavingStddevPopulationInput {
@@ -4062,6 +5496,10 @@ input StablepoolHavingStddevPopulationInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 input StablepoolHavingVarianceSampleInput {
@@ -4073,6 +5511,10 @@ input StablepoolHavingVarianceSampleInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 input StablepoolHavingVariancePopulationInput {
@@ -4084,6 +5526,10 @@ input StablepoolHavingVariancePopulationInput {
   fee: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
 }
 
 """Methods to use when ordering `Stablepool`."""
@@ -4109,6 +5555,16 @@ enum StablepoolsOrderBy {
   PARA_CHAIN_BLOCK_HEIGHT_DESC
   RELAY_CHAIN_BLOCK_HEIGHT_ASC
   RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  MAX_IN_RATIO_ASC
+  MAX_IN_RATIO_DESC
+  MAX_OUT_RATIO_ASC
+  MAX_OUT_RATIO_DESC
+  MIN_TRADING_LIMIT_ASC
+  MIN_TRADING_LIMIT_DESC
+  AMPLIFICATION_RANGE_ASC
+  AMPLIFICATION_RANGE_DESC
+  MIN_POOL_LIQUIDITY_ASC
+  MIN_POOL_LIQUIDITY_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_COUNT_ASC
@@ -4125,6 +5581,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_SUM_PEG_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_ASC
@@ -4137,6 +5597,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_PEG_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC
@@ -4149,6 +5613,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MIN_PEG_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC
@@ -4161,6 +5629,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_MAX_PEG_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_ASC
@@ -4173,6 +5645,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_PEG_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC
@@ -4185,6 +5661,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_PEG_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC
@@ -4197,6 +5677,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_PEG_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC
@@ -4209,6 +5693,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PEG_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC
@@ -4221,6 +5709,10 @@ enum StablepoolsOrderBy {
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_ASC
   STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_TRADABLE_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_TRADABLE_DESC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_PEG_ASC
+  STABLEPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_PEG_DESC
 }
 
 """
@@ -4257,6 +5749,21 @@ input StablepoolCondition {
 
   """Checks for equality with the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: Int
+
+  """Checks for equality with the object’s `maxInRatio` field."""
+  maxInRatio: BigFloat
+
+  """Checks for equality with the object’s `maxOutRatio` field."""
+  maxOutRatio: BigFloat
+
+  """Checks for equality with the object’s `minTradingLimit` field."""
+  minTradingLimit: BigFloat
+
+  """Checks for equality with the object’s `amplificationRange` field."""
+  amplificationRange: [Int]
+
+  """Checks for equality with the object’s `minPoolLiquidity` field."""
+  minPoolLiquidity: BigFloat
 }
 
 """
@@ -4292,6 +5799,21 @@ input StablepoolFilter {
 
   """Filter by the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: IntFilter
+
+  """Filter by the object’s `maxInRatio` field."""
+  maxInRatio: BigFloatFilter
+
+  """Filter by the object’s `maxOutRatio` field."""
+  maxOutRatio: BigFloatFilter
+
+  """Filter by the object’s `minTradingLimit` field."""
+  minTradingLimit: BigFloatFilter
+
+  """Filter by the object’s `amplificationRange` field."""
+  amplificationRange: IntListFilter
+
+  """Filter by the object’s `minPoolLiquidity` field."""
+  minPoolLiquidity: BigFloatFilter
 
   """Checks for all expressions in this list."""
   and: [StablepoolFilter!]
@@ -4744,6 +6266,13 @@ type XykPool {
   assetBId: Int!
   paraChainBlockHeight: Int!
   relayChainBlockHeight: Int!
+  exchangeFee: [Int]
+  maxInRatio: BigFloat
+  maxOutRatio: BigFloat
+  minPoolLiquidity: BigFloat
+  minTradingLimit: BigFloat
+  nativeAssetId: Int
+  oracleSource: String
 
   """Reads and enables pagination through a set of `XykPoolAssetsDatum`."""
   xykPoolAssetsDataByPoolId(
@@ -5236,6 +6765,21 @@ type XykPoolSumAggregates {
 
   """Sum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigInt!
+
+  """Sum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat!
+
+  """Sum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat!
+
+  """Sum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat!
+
+  """Sum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat!
+
+  """Sum of nativeAssetId across the matching connection"""
+  nativeAssetId: BigInt!
 }
 
 type XykPoolDistinctCountAggregates {
@@ -5256,6 +6800,27 @@ type XykPoolDistinctCountAggregates {
 
   """Distinct count of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigInt
+
+  """Distinct count of exchangeFee across the matching connection"""
+  exchangeFee: BigInt
+
+  """Distinct count of maxInRatio across the matching connection"""
+  maxInRatio: BigInt
+
+  """Distinct count of maxOutRatio across the matching connection"""
+  maxOutRatio: BigInt
+
+  """Distinct count of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigInt
+
+  """Distinct count of minTradingLimit across the matching connection"""
+  minTradingLimit: BigInt
+
+  """Distinct count of nativeAssetId across the matching connection"""
+  nativeAssetId: BigInt
+
+  """Distinct count of oracleSource across the matching connection"""
+  oracleSource: BigInt
 }
 
 type XykPoolMinAggregates {
@@ -5270,6 +6835,21 @@ type XykPoolMinAggregates {
 
   """Minimum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: Int
+
+  """Minimum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Minimum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Minimum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Minimum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Minimum of nativeAssetId across the matching connection"""
+  nativeAssetId: Int
 }
 
 type XykPoolMaxAggregates {
@@ -5284,6 +6864,21 @@ type XykPoolMaxAggregates {
 
   """Maximum of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: Int
+
+  """Maximum of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Maximum of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Maximum of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Maximum of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Maximum of nativeAssetId across the matching connection"""
+  nativeAssetId: Int
 }
 
 type XykPoolAverageAggregates {
@@ -5298,6 +6893,21 @@ type XykPoolAverageAggregates {
 
   """Mean average of relayChainBlockHeight across the matching connection"""
   relayChainBlockHeight: BigFloat
+
+  """Mean average of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Mean average of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Mean average of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Mean average of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Mean average of nativeAssetId across the matching connection"""
+  nativeAssetId: BigFloat
 }
 
 type XykPoolStddevSampleAggregates {
@@ -5316,6 +6926,29 @@ type XykPoolStddevSampleAggregates {
   Sample standard deviation of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Sample standard deviation of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """
+  Sample standard deviation of maxOutRatio across the matching connection
+  """
+  maxOutRatio: BigFloat
+
+  """
+  Sample standard deviation of minPoolLiquidity across the matching connection
+  """
+  minPoolLiquidity: BigFloat
+
+  """
+  Sample standard deviation of minTradingLimit across the matching connection
+  """
+  minTradingLimit: BigFloat
+
+  """
+  Sample standard deviation of nativeAssetId across the matching connection
+  """
+  nativeAssetId: BigFloat
 }
 
 type XykPoolStddevPopulationAggregates {
@@ -5338,6 +6971,31 @@ type XykPoolStddevPopulationAggregates {
   Population standard deviation of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """
+  Population standard deviation of maxInRatio across the matching connection
+  """
+  maxInRatio: BigFloat
+
+  """
+  Population standard deviation of maxOutRatio across the matching connection
+  """
+  maxOutRatio: BigFloat
+
+  """
+  Population standard deviation of minPoolLiquidity across the matching connection
+  """
+  minPoolLiquidity: BigFloat
+
+  """
+  Population standard deviation of minTradingLimit across the matching connection
+  """
+  minTradingLimit: BigFloat
+
+  """
+  Population standard deviation of nativeAssetId across the matching connection
+  """
+  nativeAssetId: BigFloat
 }
 
 type XykPoolVarianceSampleAggregates {
@@ -5354,6 +7012,21 @@ type XykPoolVarianceSampleAggregates {
   Sample variance of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Sample variance of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Sample variance of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Sample variance of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Sample variance of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Sample variance of nativeAssetId across the matching connection"""
+  nativeAssetId: BigFloat
 }
 
 type XykPoolVariancePopulationAggregates {
@@ -5372,6 +7045,21 @@ type XykPoolVariancePopulationAggregates {
   Population variance of relayChainBlockHeight across the matching connection
   """
   relayChainBlockHeight: BigFloat
+
+  """Population variance of maxInRatio across the matching connection"""
+  maxInRatio: BigFloat
+
+  """Population variance of maxOutRatio across the matching connection"""
+  maxOutRatio: BigFloat
+
+  """Population variance of minPoolLiquidity across the matching connection"""
+  minPoolLiquidity: BigFloat
+
+  """Population variance of minTradingLimit across the matching connection"""
+  minTradingLimit: BigFloat
+
+  """Population variance of nativeAssetId across the matching connection"""
+  nativeAssetId: BigFloat
 }
 
 """Grouping methods for `XykPool` for usage during aggregation."""
@@ -5381,6 +7069,13 @@ enum XykPoolGroupBy {
   ASSET_B_ID
   PARA_CHAIN_BLOCK_HEIGHT
   RELAY_CHAIN_BLOCK_HEIGHT
+  EXCHANGE_FEE
+  MAX_IN_RATIO
+  MAX_OUT_RATIO
+  MIN_POOL_LIQUIDITY
+  MIN_TRADING_LIMIT
+  NATIVE_ASSET_ID
+  ORACLE_SOURCE
 }
 
 """Conditions for `XykPool` aggregates."""
@@ -5403,6 +7098,11 @@ input XykPoolHavingSumInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 input XykPoolHavingDistinctCountInput {
@@ -5410,6 +7110,11 @@ input XykPoolHavingDistinctCountInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 input XykPoolHavingMinInput {
@@ -5417,6 +7122,11 @@ input XykPoolHavingMinInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 input XykPoolHavingMaxInput {
@@ -5424,6 +7134,11 @@ input XykPoolHavingMaxInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 input XykPoolHavingAverageInput {
@@ -5431,6 +7146,11 @@ input XykPoolHavingAverageInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 input XykPoolHavingStddevSampleInput {
@@ -5438,6 +7158,11 @@ input XykPoolHavingStddevSampleInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 input XykPoolHavingStddevPopulationInput {
@@ -5445,6 +7170,11 @@ input XykPoolHavingStddevPopulationInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 input XykPoolHavingVarianceSampleInput {
@@ -5452,6 +7182,11 @@ input XykPoolHavingVarianceSampleInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 input XykPoolHavingVariancePopulationInput {
@@ -5459,6 +7194,11 @@ input XykPoolHavingVariancePopulationInput {
   assetBId: HavingIntFilter
   paraChainBlockHeight: HavingIntFilter
   relayChainBlockHeight: HavingIntFilter
+  maxInRatio: HavingBigfloatFilter
+  maxOutRatio: HavingBigfloatFilter
+  minPoolLiquidity: HavingBigfloatFilter
+  minTradingLimit: HavingBigfloatFilter
+  nativeAssetId: HavingIntFilter
 }
 
 """Methods to use when ordering `XykPool`."""
@@ -5476,6 +7216,20 @@ enum XykPoolsOrderBy {
   PARA_CHAIN_BLOCK_HEIGHT_DESC
   RELAY_CHAIN_BLOCK_HEIGHT_ASC
   RELAY_CHAIN_BLOCK_HEIGHT_DESC
+  EXCHANGE_FEE_ASC
+  EXCHANGE_FEE_DESC
+  MAX_IN_RATIO_ASC
+  MAX_IN_RATIO_DESC
+  MAX_OUT_RATIO_ASC
+  MAX_OUT_RATIO_DESC
+  MIN_POOL_LIQUIDITY_ASC
+  MIN_POOL_LIQUIDITY_DESC
+  MIN_TRADING_LIMIT_ASC
+  MIN_TRADING_LIMIT_DESC
+  NATIVE_ASSET_ID_ASC
+  NATIVE_ASSET_ID_DESC
+  ORACLE_SOURCE_ASC
+  ORACLE_SOURCE_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
   XYK_POOL_ASSETS_DATA_BY_POOL_ID_COUNT_ASC
@@ -5611,6 +7365,27 @@ input XykPoolCondition {
 
   """Checks for equality with the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: Int
+
+  """Checks for equality with the object’s `exchangeFee` field."""
+  exchangeFee: [Int]
+
+  """Checks for equality with the object’s `maxInRatio` field."""
+  maxInRatio: BigFloat
+
+  """Checks for equality with the object’s `maxOutRatio` field."""
+  maxOutRatio: BigFloat
+
+  """Checks for equality with the object’s `minPoolLiquidity` field."""
+  minPoolLiquidity: BigFloat
+
+  """Checks for equality with the object’s `minTradingLimit` field."""
+  minTradingLimit: BigFloat
+
+  """Checks for equality with the object’s `nativeAssetId` field."""
+  nativeAssetId: Int
+
+  """Checks for equality with the object’s `oracleSource` field."""
+  oracleSource: String
 }
 
 """
@@ -5635,6 +7410,27 @@ input XykPoolFilter {
   """Filter by the object’s `relayChainBlockHeight` field."""
   relayChainBlockHeight: IntFilter
 
+  """Filter by the object’s `exchangeFee` field."""
+  exchangeFee: IntListFilter
+
+  """Filter by the object’s `maxInRatio` field."""
+  maxInRatio: BigFloatFilter
+
+  """Filter by the object’s `maxOutRatio` field."""
+  maxOutRatio: BigFloatFilter
+
+  """Filter by the object’s `minPoolLiquidity` field."""
+  minPoolLiquidity: BigFloatFilter
+
+  """Filter by the object’s `minTradingLimit` field."""
+  minTradingLimit: BigFloatFilter
+
+  """Filter by the object’s `nativeAssetId` field."""
+  nativeAssetId: IntFilter
+
+  """Filter by the object’s `oracleSource` field."""
+  oracleSource: StringFilter
+
   """Checks for all expressions in this list."""
   and: [XykPoolFilter!]
 
@@ -5653,10 +7449,447 @@ type _ProcessorStatus {
   batchBlockTo: Int!
 }
 
-type ApiSupportResponse {
-  accountBalances: AccountBalances
-  tradability: Tradability
-  omnipoolAssetState: OmnipoolAssetState
+type SquidStatusSubscriptionPayload {
+  event: String!
+  node: _ProcessorStatus!
+}
+
+"""The root query type which gives access points into the data universe."""
+type Query {
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+
+  """Reads and enables pagination through a set of `Asset`."""
+  assets(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Asset`."""
+    orderBy: [AssetsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AssetCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AssetFilter
+  ): AssetsConnection
+
+  """Reads and enables pagination through a set of `HistoricalAssetDatum`."""
+  historicalAssetData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `HistoricalAssetDatum`."""
+    orderBy: [HistoricalAssetDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: HistoricalAssetDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: HistoricalAssetDatumFilter
+  ): HistoricalAssetDataConnection
+
+  """Reads and enables pagination through a set of `LbpPool`."""
+  lbpPools(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `LbpPool`."""
+    orderBy: [LbpPoolsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: LbpPoolCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: LbpPoolFilter
+  ): LbpPoolsConnection
+
+  """Reads and enables pagination through a set of `LbpPoolAssetsDatum`."""
+  lbpPoolAssetsData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `LbpPoolAssetsDatum`."""
+    orderBy: [LbpPoolAssetsDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: LbpPoolAssetsDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: LbpPoolAssetsDatumFilter
+  ): LbpPoolAssetsDataConnection
+
+  """Reads and enables pagination through a set of `Migration`."""
+  migrations(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Migration`."""
+    orderBy: [MigrationsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MigrationCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MigrationFilter
+  ): MigrationsConnection
+
+  """Reads and enables pagination through a set of `Omnipool`."""
+  omnipools(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Omnipool`."""
+    orderBy: [OmnipoolsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OmnipoolCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OmnipoolFilter
+  ): OmnipoolsConnection
+
+  """Reads and enables pagination through a set of `OmnipoolAssetDatum`."""
+  omnipoolAssetData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `OmnipoolAssetDatum`."""
+    orderBy: [OmnipoolAssetDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: OmnipoolAssetDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: OmnipoolAssetDatumFilter
+  ): OmnipoolAssetDataConnection
+
+  """Reads and enables pagination through a set of `Stablepool`."""
+  stablepools(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Stablepool`."""
+    orderBy: [StablepoolsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StablepoolCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StablepoolFilter
+  ): StablepoolsConnection
+
+  """Reads and enables pagination through a set of `StablepoolAssetDatum`."""
+  stablepoolAssetData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StablepoolAssetDatum`."""
+    orderBy: [StablepoolAssetDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StablepoolAssetDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StablepoolAssetDatumFilter
+  ): StablepoolAssetDataConnection
+
+  """Reads and enables pagination through a set of `SubProcessorStatus`."""
+  subProcessorStatuses(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `SubProcessorStatus`."""
+    orderBy: [SubProcessorStatusesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SubProcessorStatusCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: SubProcessorStatusFilter
+  ): SubProcessorStatusesConnection
+
+  """Reads and enables pagination through a set of `XykPool`."""
+  xykPools(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `XykPool`."""
+    orderBy: [XykPoolsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: XykPoolCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: XykPoolFilter
+  ): XykPoolsConnection
+
+  """Reads and enables pagination through a set of `XykPoolAssetsDatum`."""
+  xykPoolAssetsData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `XykPoolAssetsDatum`."""
+    orderBy: [XykPoolAssetsDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: XykPoolAssetsDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: XykPoolAssetsDatumFilter
+  ): XykPoolAssetsDataConnection
+  asset(id: String!): Asset
+  historicalAssetDatum(id: String!): HistoricalAssetDatum
+  lbpPool(id: String!): LbpPool
+  lbpPoolAssetsDatum(id: String!): LbpPoolAssetsDatum
+  migration(id: Int!): Migration
+  omnipool(id: String!): Omnipool
+  omnipoolAssetDatum(id: String!): OmnipoolAssetDatum
+  stablepool(id: String!): Stablepool
+  stablepoolAssetDatum(id: String!): StablepoolAssetDatum
+  subProcessorStatus(id: String!): SubProcessorStatus
+  xykPool(id: String!): XykPool
+  xykPoolAssetsDatum(id: String!): XykPoolAssetsDatum
+  _squidStatus: [_ProcessorStatus!]!
+  _apiSupport: ApiSupportResponse
+}
+
+"""
+The root subscription type: contains realtime events you can subscribe to with the `subscription` operation.
+"""
+type Subscription {
+  squidStatus: SquidStatusSubscriptionPayload
 }
 
 type AccountBalances {
@@ -5680,14 +7913,8 @@ type OmnipoolAssetState {
   tradable: Tradability
 }
 
-"""
-The root subscription type: contains realtime events you can subscribe to with the `subscription` operation.
-"""
-type Subscription {
-  squidStatus: SquidStatusSubscriptionPayload
-}
-
-type SquidStatusSubscriptionPayload {
-  event: String!
-  node: _ProcessorStatus!
+type ApiSupportResponse {
+  accountBalances: AccountBalances
+  tradability: Tradability
+  omnipoolAssetState: OmnipoolAssetState
 }

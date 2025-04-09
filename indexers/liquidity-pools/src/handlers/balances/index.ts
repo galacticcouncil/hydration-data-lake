@@ -190,7 +190,8 @@ export async function handleAssetAccountBalancesPerBlock(
             account: accountAssetsMap.account,
             asset: assetBalance.asset,
 
-            decoratedLocked: 0n,
+            transferable: 0n,
+            totalLocked: 0n,
             free: 0n,
             locked: 0n,
             flags: 0n,
@@ -205,7 +206,7 @@ export async function handleAssetAccountBalancesPerBlock(
           });
         }
 
-        historicalDataEntity.decoratedFree = assetBalance.balance;
+        historicalDataEntity.transferable = assetBalance.balance;
 
         ctx.batchState.state.accountAssetBalanceHistoricalData.set(
           historicalDataEntity.id,

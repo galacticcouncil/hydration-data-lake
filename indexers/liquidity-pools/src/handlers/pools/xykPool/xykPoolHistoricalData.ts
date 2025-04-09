@@ -4,6 +4,7 @@ import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser
 import parsers from '../../../parsers';
 import { XykpoolHistoricalData } from '../../../model';
 import { getOrCreateXykPool } from './xykPool';
+import { getOrCreateAsset } from '../../assets/asset';
 
 export async function handleXykPoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -31,6 +32,13 @@ export async function handleXykPoolHistoricalData(
 
         if (!pool || !pool.assetA || !pool.assetB) return null;
 
+        const poolData = await parsers.storage.xyk.getPoolData({
+          block: blockHeader,
+          poolAddress: poolId,
+        });
+
+        if (!poolData) return null;
+
         const assetsData = new Map(
           (
             await Promise.all(
@@ -55,6 +63,20 @@ export async function handleXykPoolHistoricalData(
           assetB: pool.assetB,
           assetABalance: assetsData.get(pool.assetA.id)?.free ?? BigInt(0),
           assetBBalance: assetsData.get(pool.assetB.id)?.free ?? BigInt(0),
+
+          exchangeFee: poolData?.exchangeFee ?? [0, 0],
+          maxInRatio: poolData?.maxInRatio ?? BigInt(0),
+          maxOutRatio: poolData?.maxOutRatio ?? BigInt(0),
+          minPoolLiquidity: poolData?.minPoolLiquidity ?? BigInt(0),
+          minTradingLimit: poolData?.minTradingLimit ?? BigInt(0),
+          nativeAsset: await getOrCreateAsset({
+            id: `${poolData?.nativeAssetId}`,
+            ensure: true,
+            blockHeader,
+            ctx,
+          }),
+          oracleSource: poolData?.oracleSource ?? null,
+
           relayBlockHeight:
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,

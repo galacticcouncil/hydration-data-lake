@@ -1,5 +1,7 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const Permill = sts.number()
+
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
         Council: Type_328,
@@ -6240,8 +6242,6 @@ export const Tradability: sts.Type<Tradability> = sts.struct(() => {
 export interface Tradability {
     bits: number
 }
-
-export const Permill = sts.number()
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.

@@ -13,7 +13,7 @@
     "deploy": "sqd deploy --org galacticcouncil . -m deployment-hydration-indexer.yaml",
     "ingester-codegen:all": ". ./scripts/ingester-codegen.sh",
     "multi-typegen": ". ./scripts/typegen.sh",
-    "api-codegen:dictionary-api": "graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts",
+    "api-codegen:dictionary-api": "npx graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts",
     "explore-metadata": "npx squid-substrate-metadata-explorer --rpc wss://paseo-rpc.play.hydration.cloud --out ./typegenAssets/paseo-metadata.jsonl",
     "papi-typegen": "npx papi add -w wss://hydration-rpc.n.dwellir.com hydration",
     "postpapi-typegen": "rm .papi/descriptors/.gitignore"
@@ -93,7 +93,9 @@
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.5",
     "turbo": "^2.2.3",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/typescript-document-nodes": "^4.0.11"
   },
   "resolutions": {
     "ethers": "^5.x",

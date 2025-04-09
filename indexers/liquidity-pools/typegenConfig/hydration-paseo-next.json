@@ -35,7 +35,7 @@
     "Omnipool": {
       "events": ["TokenAdded", "TokenRemoved", "SellExecuted", "BuyExecuted"],
       "calls": ["sell", "buy"],
-      "storage": ["Assets"]
+      "storage": ["Assets", "HubAssetTradability"]
     },
     "OmnipoolLiquidityMining": {
       "calls": true
@@ -49,7 +49,7 @@
         "LiquidityRemoved"
       ],
       "calls": ["sell", "buy"],
-      "storage": ["Pools"]
+      "storage": ["Pools", "AssetTradability"]
     },
     "LBP": {
       "events": ["PoolUpdated", "PoolCreated", "SellExecuted", "BuyExecuted"],

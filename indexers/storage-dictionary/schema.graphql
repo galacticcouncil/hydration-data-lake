@@ -20,18 +20,6 @@ type AccountBalances {
   flags: BigInt
 }
 
-type Tradability {
-  bits: Int!
-}
-
-type OmnipoolAssetState {
-  hubReserve: BigInt!
-  shares: BigInt!
-  protocolShares: BigInt!
-  cap: BigInt!
-  tradable: Tradability
-}
-
 enum AssetType {
   Bond
   External
@@ -51,6 +39,16 @@ type Asset @entity {
   xcmRateLimit: BigInt
   isSufficient: Boolean!
   existentialDeposit: BigInt!
+}
+
+type HistoricalAssetData @entity {
+  "<assetId>-<paraChainBlockHeight>"
+  id: ID!
+  assetId: Int! @index
+  totalIssuance: BigInt!
+  existentialDeposit: BigInt!
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -73,6 +71,12 @@ type LbpPool @entity {
   fee: [Int!]!
   feeCollector: String
   repayTarget: BigInt!
+  repayFee: [Int!]!
+  maxInRatio: BigInt!
+  maxOutRatio: BigInt!
+  minPoolLiquidity: BigInt!
+  minTradingLimit: BigInt!
+
   paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int! @index
   assets: [LbpPoolAssetsData!]! @derivedFrom(field: "pool")
@@ -98,9 +102,19 @@ type XykPool @entity {
   poolAddress: String! @index
   assetAId: Int! @index
   assetBId: Int! @index
+
+  exchangeFee: [Int!]
+  maxInRatio: BigInt
+  maxOutRatio: BigInt
+  minPoolLiquidity: BigInt
+  minTradingLimit: BigInt
+  nativeAssetId: Int
+  oracleSource: String
+
+  assets: [XykPoolAssetsData!]! @derivedFrom(field: "pool")
+
   paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int! @index
-  assets: [XykPoolAssetsData!]! @derivedFrom(field: "pool")
 }
 type XykPoolAssetsData @entity {
   "xykPoolAddress-assetId-paraChainBlockHeight"
@@ -116,10 +130,40 @@ type XykPoolAssetsData @entity {
 # *** Omnipool ***
 # ======================================================================================================================
 
+type Tradability {
+  bits: Int!
+}
+
+type OmnipoolAssetState {
+  hubReserve: BigInt!
+  shares: BigInt!
+  protocolShares: BigInt!
+  cap: BigInt!
+  tradable: Tradability
+}
+
+type Omnipool @entity {
+  "omnipoolId-paraChainBlockHeight"
+  id: ID!
+  poolAddress: String! @index
+  maxInRatio: BigInt!
+  maxOutRatio: BigInt!
+  minTradingLimit: BigInt!
+  minPoolLiquidity: BigInt!
+  minWithdrawalFee: BigInt!
+  burnProtocolFee: Int!
+  hdxAssetId: Int!
+  hubAssetId: Int!
+
+  paraChainBlockHeight: Int! @index
+  relayChainBlockHeight: Int! @index
+  assets: [OmnipoolAssetData!]! @derivedFrom(field: "pool")
+}
+
 type OmnipoolAssetData @entity {
   "omnipooAddress-assetId-paraChainBlockHeight"
   id: ID!
-  poolAddress: String! @index
+  pool: Omnipool!
   assetId: Int! @index
   balances: AccountBalances!
   assetState: OmnipoolAssetState!
@@ -136,11 +180,18 @@ type Stablepool @entity {
   id: ID!
   poolId: Int! @index
   poolAddress: String! @index
+
   initialAmplification: Int!
   finalAmplification: Int!
   initialBlock: Int!
   finalBlock: Int!
   fee: Int!
+  maxInRatio: BigInt!
+  maxOutRatio: BigInt!
+  minTradingLimit: BigInt!
+  amplificationRange: [Int!]!
+  minPoolLiquidity: BigInt!
+
   paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int! @index
   assets: [StablepoolAssetData!]! @derivedFrom(field: "pool")
@@ -151,6 +202,8 @@ type StablepoolAssetData @entity {
   id: ID!
   pool: Stablepool!
   assetId: Int!
+  tradable: Tradability
+  peg: [String!]!
   balances: AccountBalances!
   paraChainBlockHeight: Int! @index
   relayChainBlockHeight: Int! @index

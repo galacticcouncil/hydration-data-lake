@@ -5,8 +5,8 @@ dotenv.config();
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: process.env.STORAGE_DICTIONARY_LBPPOOL_URL,
-  // schema: 'http://localhost:8090/graphql',
+  // schema: process.env.STORAGE_DICTIONARY_LBPPOOL_URL,
+  schema: 'http://localhost:8090/graphql',
   documents: 'src/parsers/storageResolver/dictionaryUtils/apiTypes/query.ts',
   generates: {
     'src/parsers/storageResolver/dictionaryUtils/apiTypes/types.ts': {

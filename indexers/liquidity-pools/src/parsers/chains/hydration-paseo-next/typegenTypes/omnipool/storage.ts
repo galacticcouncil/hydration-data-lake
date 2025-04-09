@@ -24,3 +24,19 @@ export interface AssetsV276  {
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v276.AssetState | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v276.AssetState | undefined)][]>
 }
+
+export const hubAssetTradability =  {
+    /**
+     *  Tradable state of hub asset.
+     */
+    v276: new StorageType('Omnipool.HubAssetTradability', 'Default', [], v276.Tradability) as HubAssetTradabilityV276,
+}
+
+/**
+ *  Tradable state of hub asset.
+ */
+export interface HubAssetTradabilityV276  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): v276.Tradability
+    get(block: Block): Promise<(v276.Tradability | undefined)>
+}

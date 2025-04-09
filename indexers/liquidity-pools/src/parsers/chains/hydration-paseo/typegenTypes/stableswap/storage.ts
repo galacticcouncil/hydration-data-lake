@@ -24,3 +24,32 @@ export interface PoolsV276  {
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v276.PoolInfo | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v276.PoolInfo | undefined)][]>
 }
+
+export const assetTradability =  {
+    /**
+     *  Tradability state of pool assets.
+     */
+    v276: new StorageType('Stableswap.AssetTradability', 'Default', [sts.number(), sts.number()], v276.Type_238) as AssetTradabilityV276,
+}
+
+/**
+ *  Tradability state of pool assets.
+ */
+export interface AssetTradabilityV276  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): v276.Type_238
+    get(block: Block, key1: number, key2: number): Promise<(v276.Type_238 | undefined)>
+    getMany(block: Block, keys: [number, number][]): Promise<(v276.Type_238 | undefined)[]>
+    getKeys(block: Block): Promise<[number, number][]>
+    getKeys(block: Block, key1: number): Promise<[number, number][]>
+    getKeys(block: Block, key1: number, key2: number): Promise<[number, number][]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<[number, number][]>
+    getKeysPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[number, number][]>
+    getKeysPaged(pageSize: number, block: Block, key1: number, key2: number): AsyncIterable<[number, number][]>
+    getPairs(block: Block): Promise<[k: [number, number], v: (v276.Type_238 | undefined)][]>
+    getPairs(block: Block, key1: number): Promise<[k: [number, number], v: (v276.Type_238 | undefined)][]>
+    getPairs(block: Block, key1: number, key2: number): Promise<[k: [number, number], v: (v276.Type_238 | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [number, number], v: (v276.Type_238 | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[k: [number, number], v: (v276.Type_238 | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number, key2: number): AsyncIterable<[k: [number, number], v: (v276.Type_238 | undefined)][]>
+}

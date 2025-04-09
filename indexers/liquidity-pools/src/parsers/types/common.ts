@@ -59,18 +59,23 @@ import {
   LbpGetPoolDataInput,
   LbpPoolData,
   OmnipoolAssetData,
+  OmnipoolData,
   OmnipoolGetAssetDataInput,
+  OmnipoolGetPoolDataInput,
   OtcGetOrderInput,
   OtcOrderData,
   ParachainSystemLastRelayChainBlockNumber,
+  StablepoolAssetState,
   StablepoolGetPoolDataInput,
   StablepoolInfo,
   SystemAccountInfo,
   TokensAccountsAssetBalances,
   TokensGetTokenTotalIssuanceInput,
   XykGetAssetsInput,
+  XykGetPoolDataInput,
   XykGetShareTokenInput,
-  XykPoolWithAssets,
+  XykPoolAssetIds,
+  XykPoolData,
 } from './storage';
 
 export interface PoolData {
@@ -239,8 +244,14 @@ export type StorageParserMethods = {
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;
+    getPoolAssetStorageData: (
+      args: GetPoolAssetInfoInput
+    ) => Promise<StablepoolAssetState | null>;
   };
   omnipool: {
+    getPoolData: (
+      args: OmnipoolGetPoolDataInput
+    ) => Promise<OmnipoolData | null>;
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
     ) => Promise<OmnipoolAssetData | null>;
@@ -250,9 +261,8 @@ export type StorageParserMethods = {
   };
   xyk: {
     getShareToken: (args: XykGetShareTokenInput) => Promise<number | null>;
-    getPoolAssets: (
-      args: XykGetAssetsInput
-    ) => Promise<XykPoolWithAssets | null>;
+    getPoolAssets: (args: XykGetAssetsInput) => Promise<XykPoolAssetIds | null>;
+    getPoolData: (args: XykGetPoolDataInput) => Promise<XykPoolData | null>;
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;

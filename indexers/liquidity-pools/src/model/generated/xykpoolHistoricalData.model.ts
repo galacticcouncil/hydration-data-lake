@@ -49,8 +49,9 @@ export class XykpoolHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   minTradingLimit!: bigint | undefined | null
 
-  @Column_("int4", {nullable: true})
-  nativeAssetId!: number | undefined | null
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  nativeAsset!: Asset | undefined | null
 
   @Column_("text", {nullable: true})
   oracleSource!: string | undefined | null

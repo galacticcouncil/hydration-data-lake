@@ -6,25 +6,31 @@
       "events": ["CurrentBlockNumbers"]
     },
     "AssetRegistry": {
-      "storage": ["Assets"]
+      "storage": ["Assets"],
+      "constants": true
     },
     "System": {
       "storage": ["Account"]
     },
     "Tokens": {
-      "storage": ["Accounts"]
+      "storage": ["Accounts"],
+      "constants": true
     },
     "LBP": {
-      "storage": ["PoolData"]
+      "storage": ["PoolData"],
+      "constants": true
     },
     "XYK": {
-      "storage": ["PoolAssets"]
+      "storage": ["PoolAssets"],
+      "constants": true
     },
     "Omnipool": {
-      "storage": ["Assets"]
+      "storage": ["Assets"],
+      "constants": true
     },
     "Stableswap": {
-      "storage": ["Pools"]
+      "storage": true,
+      "constants": true
     }
   }
 }

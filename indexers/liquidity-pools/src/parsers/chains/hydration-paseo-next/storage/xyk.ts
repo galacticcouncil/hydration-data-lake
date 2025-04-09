@@ -2,14 +2,14 @@ import { storage } from '../typegenTypes/';
 import {
   XykGetAssetsInput,
   XykGetShareTokenInput,
-  XykPoolWithAssets,
+  XykPoolAssetIds,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 async function getPoolAssets({
   block,
   poolAddress,
-}: XykGetAssetsInput): Promise<XykPoolWithAssets | null> {
+}: XykGetAssetsInput): Promise<XykPoolAssetIds | null> {
   if (block.specVersion < 276) return null;
 
   if (storage.xyk.poolAssets.v276.is(block)) {

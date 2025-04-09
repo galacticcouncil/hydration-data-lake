@@ -10,26 +10,68 @@ import {
   LbpPoolsOrderBy,
 } from './types';
 
+// export const GET_OMNIPOOL_BLOCKS_STORAGE_STATE = gql`
+//   query GetOmnipoolBlocksStorageState(
+//     $filter: OmnipoolAssetDatumFilter
+//     $first: Int!
+//     $offset: Int!
+//     $orderBy: [OmnipoolAssetDataOrderBy!]
+//   ) {
+//     omnipoolAssetData(
+//       filter: $filter
+//       orderBy: $orderBy
+//       first: $first
+//       offset: $offset
+//     ) {
+//       nodes {
+//         assetId
+//         assetState
+//         balances
+//         id
+//         paraChainBlockHeight
+//         pool {
+//           poolAddress
+//         }
+//       }
+//       totalCount
+//     }
+//   }
+// `;
+
 export const GET_OMNIPOOL_BLOCKS_STORAGE_STATE = gql`
   query GetOmnipoolBlocksStorageState(
-    $filter: OmnipoolAssetDatumFilter
+    $filter: OmnipoolFilter
     $first: Int!
     $offset: Int!
-    $orderBy: [OmnipoolAssetDataOrderBy!]
+    $orderBy: [OmnipoolsOrderBy!]
   ) {
-    omnipoolAssetData(
+    omnipools(
       filter: $filter
       orderBy: $orderBy
       first: $first
       offset: $offset
     ) {
       nodes {
-        assetId
-        assetState
-        balances
         id
+        burnProtocolFee
+        hdxAssetId
+        hubAssetId
+        maxInRatio
+        maxOutRatio
+        minPoolLiquidity
+        minTradingLimit
+        minWithdrawalFee
         paraChainBlockHeight
         poolAddress
+        omnipoolAssetDataByPoolId {
+          nodes {
+            id
+            assetId
+            assetState
+            balances
+            paraChainBlockHeight
+          }
+        }
       }
       totalCount
     }
@@ -50,20 +92,25 @@ export const GET_LBPPOOL_BLOCKS_STORAGE_STATE = gql`
       offset: $offset
     ) {
       nodes {
-        id
-        poolAddress
         assetAId
         assetBId
-        owner
-        repayTarget
-        weightCurve
-        initialWeight
-        finalWeight
-        feeCollector
-        fee
-        start
         end
+        fee
+        feeCollector
+        finalWeight
+        id
+        initialWeight
+        maxInRatio
+        maxOutRatio
+        minPoolLiquidity
+        minTradingLimit
+        owner
+        poolAddress
         paraChainBlockHeight
+        repayFee
+        repayTarget
+        start
+        weightCurve
         lbpPoolAssetsDataByPoolId {
           nodes {
             id
@@ -93,11 +140,18 @@ export const GET_XYKPOOL_BLOCKS_STORAGE_STATE = gql`
       offset: $offset
     ) {
       nodes {
+        id
+        poolAddress
         assetAId
         assetBId
-        id
+        exchangeFee
+        maxInRatio
+        maxOutRatio
+        minPoolLiquidity
+        minTradingLimit
+        nativeAssetId
+        oracleSource
         paraChainBlockHeight
-        poolAddress
         xykPoolAssetsDataByPoolId {
           nodes {
             assetId
@@ -127,22 +181,29 @@ export const GET_STABLEPOOL_BLOCKS_STORAGE_STATE = gql`
       offset: $offset
     ) {
       nodes {
+        id
+        poolId
+        poolAddress
+        amplificationRange
         fee
         finalAmplification
         finalBlock
-        id
         initialAmplification
         initialBlock
+        maxInRatio
+        maxOutRatio
+        minPoolLiquidity
+        minTradingLimit
         paraChainBlockHeight
-        poolAddress
-        poolId
         stablepoolAssetDataByPoolId {
           nodes {
-            assetId
-            balances
             id
-            paraChainBlockHeight
+            assetId
+            peg
+            tradable
+            balances
             poolId
+            paraChainBlockHeight
           }
         }
       }

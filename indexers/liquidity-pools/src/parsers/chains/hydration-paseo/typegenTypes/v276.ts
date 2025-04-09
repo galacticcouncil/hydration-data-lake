@@ -1,5 +1,19 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const RangeInclusive: sts.Type<RangeInclusive> = sts.struct(() => {
+    return  {
+        start: NonZeroU16,
+        end: NonZeroU16,
+    }
+})
+
+export interface RangeInclusive {
+    start: NonZeroU16
+    end: NonZeroU16
+}
+
+export type NonZeroU16 = number
+
 export interface Schedule {
     owner: AccountId32
     period: number
@@ -106,6 +120,16 @@ export interface WeightCurveType_Linear {
     __kind: 'Linear'
 }
 
+export interface Type_238 {
+    bits: number
+}
+
+export const Type_238: sts.Type<Type_238> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
+
 export interface PoolInfo {
     assets: number[]
     initialAmplification: NonZeroU16
@@ -114,8 +138,6 @@ export interface PoolInfo {
     finalBlock: number
     fee: Permill
 }
-
-export type NonZeroU16 = number
 
 export const PoolInfo: sts.Type<PoolInfo> = sts.struct(() => {
     return  {
@@ -148,16 +170,22 @@ export const Type_636: sts.Type<Type_636> = sts.struct(() => {
     }
 })
 
+export interface Tradability {
+    bits: number
+}
+
+export const Tradability: sts.Type<Tradability> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
+
 export interface AssetState {
     hubReserve: bigint
     shares: bigint
     protocolShares: bigint
     cap: bigint
     tradable: Tradability
-}
-
-export interface Tradability {
-    bits: number
 }
 
 export const AssetState: sts.Type<AssetState> = sts.struct(() => {
@@ -167,12 +195,6 @@ export const AssetState: sts.Type<AssetState> = sts.struct(() => {
         protocolShares: sts.bigint(),
         cap: sts.bigint(),
         tradable: Tradability,
-    }
-})
-
-export const Tradability: sts.Type<Tradability> = sts.struct(() => {
-    return  {
-        bits: sts.number(),
     }
 })
 
@@ -5137,16 +5159,6 @@ export const StableswapCall: sts.Type<StableswapCall> = sts.closedEnum(() => {
         }),
     }
 })
-
-export const Type_238: sts.Type<Type_238> = sts.struct(() => {
-    return  {
-        bits: sts.number(),
-    }
-})
-
-export interface Type_238 {
-    bits: number
-}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.

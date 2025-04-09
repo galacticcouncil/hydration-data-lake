@@ -12,9 +12,12 @@ import {
   GetXykPoolBlocksStorageStateQuery,
   GetXykPoolBlocksStorageStateQueryVariables,
   InputMaybe,
-  OmnipoolAssetDataOrderBy,
-  OmnipoolAssetDatum,
-  OmnipoolAssetDatumFilter,
+  // OmnipoolAssetDataOrderBy,
+  // OmnipoolAssetDatum,
+  // OmnipoolAssetDatumFilter,
+  OmnipoolsOrderBy,
+  Omnipool as OmnipoolGql,
+  OmnipoolFilter,
   Stablepool as StablepoolGql,
   StablepoolFilter,
   StablepoolsOrderBy,
@@ -42,17 +45,20 @@ import {
   LbpWeightCurveType,
   OmnipoolAssetData,
   OmnipoolAssetTradability,
+  OmnipoolData,
   OmnipoolGetAssetDataInput,
+  StablepoolAssetState,
   StablepoolGetPoolDataInput,
   StablepoolInfo,
   XykGetAssetsInput,
-  XykPoolWithAssets,
+  XykPoolAssetIds,
+  XykPoolData,
 } from '../../types/storage';
 
 export type BatchStorageStateSectionNode<T> = T extends ProcessingPallets.XYK
   ? XykPoolGlq
   : T extends ProcessingPallets.OMNIPOOL
-    ? OmnipoolAssetDatum
+    ? OmnipoolGql
     : T extends ProcessingPallets.STABLESWAP
       ? StablepoolGql
       : T extends ProcessingPallets.LBP
@@ -64,7 +70,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
   batchStorageState: Map<
     ProcessingPallets,
-    Map<string, LbpPoolGlq | XykPoolGlq | OmnipoolAssetDatum | StablepoolGql>
+    Map<string, LbpPoolGlq | XykPoolGlq | OmnipoolGql | StablepoolGql>
   > = new Map([
     [ProcessingPallets.LBP, new Map()],
     [ProcessingPallets.XYK, new Map()],
@@ -94,6 +100,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
   wipeBatchStorageState() {
     this.batchStorageState = new Map([
+      [ProcessingPallets.LBP, new Map()],
       [ProcessingPallets.XYK, new Map()],
       [ProcessingPallets.OMNIPOOL, new Map()],
       [ProcessingPallets.STABLESWAP, new Map()],
@@ -272,11 +279,11 @@ export class StorageDictionaryManager extends QueriesHelper {
       };
     };
 
-    const fetchAllOmnipoolAssetsPaginated = async ({
+    const fetchAllOmnipoolsPaginated = async ({
       pageSize,
       offset,
     }: PaginationConfig) => {
-      let filter: InputMaybe<OmnipoolAssetDatumFilter> = { or: [] };
+      let filter: InputMaybe<OmnipoolFilter> = { or: [] };
       const omnipoolAssetIdsForStoragePrefetch =
         this.batchCtx.batchState.state.omnipoolAssetIdsForStoragePrefetch;
 
@@ -298,28 +305,44 @@ export class StorageDictionaryManager extends QueriesHelper {
         );
 
         filter = {
-          assetId: {
-            in: filterParams.ids,
-          },
           paraChainBlockHeight: {
             greaterThanOrEqualTo: filterParams.fromBlockNumber,
           },
           and: [
             {
-              assetId: {
-                in: [...new Set(filterParams.ids).values()],
-              },
+              // assetId: {
+              //   in: [...new Set(filterParams.ids).values()],
+              // },
               paraChainBlockHeight: {
                 lessThanOrEqualTo: filterParams.toBlockNumber,
               },
             },
           ],
         };
+
+        // filter = {
+        //   assetId: {
+        //     in: filterParams.ids,
+        //   },
+        //   paraChainBlockHeight: {
+        //     greaterThanOrEqualTo: filterParams.fromBlockNumber,
+        //   },
+        //   and: [
+        //     {
+        //       assetId: {
+        //         in: [...new Set(filterParams.ids).values()],
+        //       },
+        //       paraChainBlockHeight: {
+        //         lessThanOrEqualTo: filterParams.toBlockNumber,
+        //       },
+        //     },
+        //   ],
+        // };
       } else {
         omnipoolAssetIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
           filter!.or!.push({
             paraChainBlockHeight: { equalTo: blockNumber },
-            assetId: { in: [...poolIds.ids.values()] },
+            // assetId: { in: [...poolIds.ids.values()] },
           });
         });
       }
@@ -330,21 +353,16 @@ export class StorageDictionaryManager extends QueriesHelper {
         query: GetOmnipoolBlocksStorageState,
         variables: {
           filter,
-          orderBy: OmnipoolAssetDataOrderBy.ParaChainBlockHeightAsc,
+          orderBy: OmnipoolsOrderBy.ParaChainBlockHeightAsc,
           first: pageSize,
           offset,
         },
         dictName: ProcessingPallets.OMNIPOOL,
       });
       return {
-        data:
-          resp.data && resp.data.omnipoolAssetData
-            ? resp.data.omnipoolAssetData.nodes
-            : [],
+        data: resp.data && resp.data.omnipools ? resp.data.omnipools.nodes : [],
         totalCount:
-          resp.data && resp.data.omnipoolAssetData
-            ? resp.data.omnipoolAssetData.totalCount
-            : 0,
+          resp.data && resp.data.omnipools ? resp.data.omnipools.totalCount : 0,
       };
     };
 
@@ -465,12 +483,13 @@ export class StorageDictionaryManager extends QueriesHelper {
       const data = [];
       for await (const page of this.fetchAllPages({
         limit: 1000,
-        requestPromise: fetchAllOmnipoolAssetsPaginated,
+        requestPromise: fetchAllOmnipoolsPaginated,
       })) {
         data.push(page);
       }
       return { pallet: ProcessingPallets.OMNIPOOL, data: data.flat() };
     };
+
     const allStablepoolStorageFetchPromise = async () => {
       if (
         !this.batchCtx.appConfig.PROCESS_STABLEPOOLS ||
@@ -498,8 +517,9 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     console.timeEnd('Dictionary API call executed in');
 
-    // @ts-ignore
-    this.decorateDictionaryData(fullResponse);
+    this.decorateDictionaryData(
+      fullResponse as Array<PalletDictionaryCollectedData>
+    );
   }
 
   decorateDictionaryData(rawData: Array<PalletDictionaryCollectedData>) {
@@ -525,10 +545,7 @@ export class StorageDictionaryManager extends QueriesHelper {
           this.batchStorageState.set(
             ProcessingPallets.OMNIPOOL,
             new Map(
-              (palletData.data as OmnipoolAssetDatum[]).map((item) => [
-                item.id,
-                item,
-              ])
+              (palletData.data as OmnipoolGql[]).map((item) => [item.id, item])
             )
           );
           break;
@@ -573,6 +590,14 @@ export class StorageDictionaryManager extends QueriesHelper {
       initialBlock: node.initialBlock,
       finalBlock: node.finalBlock,
       fee: node.fee,
+      maxInRatio: node.maxInRatio,
+      maxOutRatio: node.maxOutRatio,
+      minTradingLimit: node.minTradingLimit,
+      amplificationRange: [
+        node.amplificationRange[0]!,
+        node.amplificationRange[1]!,
+      ],
+      minPoolLiquidity: node.minPoolLiquidity,
     };
   }
 
@@ -608,16 +633,84 @@ export class StorageDictionaryManager extends QueriesHelper {
     };
   }
 
+  getStableswapPoolAssetState({
+    poolId,
+    assetId,
+    block,
+  }: GetPoolAssetInfoInput): StablepoolAssetState | null {
+    const node = this.getBatchStorageStatePart(
+      ProcessingPallets.STABLESWAP
+    ).get(`${poolId}-${block.height}`);
+
+    if (!node) return null;
+
+    if (
+      !node.stablepoolAssetDataByPoolId.nodes ||
+      node.stablepoolAssetDataByPoolId.nodes.length === 0
+    )
+      return null;
+
+    const assetState = node.stablepoolAssetDataByPoolId.nodes.find(
+      (asset) => asset?.assetId === assetId
+    );
+    if (!assetState) return null;
+
+    return {
+      tradable: { bits: assetState.tradable.bits ?? 0 },
+      peg: [assetState.peg[0]!, assetState.peg[1]!],
+    };
+  }
+
+  getOmnipoolData({
+    poolAddress,
+    block,
+  }: LbpGetPoolDataInput): OmnipoolData | null {
+    const node = this.getBatchStorageStatePart(ProcessingPallets.OMNIPOOL).get(
+      `${poolAddress}-${block.height}`
+    );
+
+    if (!node) return null;
+
+    const {
+      burnProtocolFee,
+      hdxAssetId,
+      hubAssetId,
+      maxInRatio,
+      maxOutRatio,
+      minPoolLiquidity,
+      minTradingLimit,
+      minWithdrawalFee,
+    } = node;
+
+    return {
+      poolAddress,
+      burnProtocolFee,
+      hdxAssetId,
+      hubAssetId,
+      maxInRatio,
+      maxOutRatio,
+      minPoolLiquidity,
+      minTradingLimit,
+      minWithdrawalFee,
+    };
+  }
+
   getOmnipoolAssetInfo({
+    poolAddress,
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
     const node = this.getBatchStorageStatePart(ProcessingPallets.OMNIPOOL).get(
-      `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${assetId}-${block.height}`
+      `${poolAddress}-${block.height}`
     );
 
     if (!node) return null;
-    const { balances } = node;
+    const asset = node.omnipoolAssetDataByPoolId.nodes.find(
+      (asset) => asset && asset.assetId === assetId
+    );
+    if (!asset) return null;
+
+    const { balances } = asset;
 
     return {
       free: BigInt(balances.free ?? 0),
@@ -638,31 +731,74 @@ export class StorageDictionaryManager extends QueriesHelper {
     );
 
     if (!node) return null;
-    const { assetState } = node;
+    const asset = node.omnipoolAssetDataByPoolId.nodes.find(
+      (asset) => asset && asset.assetId === assetId
+    );
+    if (!asset) return null;
+
+    const { assetState } = asset;
 
     return {
       hubReserve: BigInt(assetState.hubReserve ?? 0),
       shares: BigInt(assetState.shares ?? 0),
       protocolShares: BigInt(assetState.protocolShares ?? 0),
       cap: BigInt(assetState.cap ?? 0),
-      tradable: { bits: assetState.tradable.tradable ?? 0 },
+      tradable: { bits: assetState.tradable.bits ?? 0 },
     };
   }
 
-  getXykPoolAssets({
+  getXykpoolData({
     poolAddress,
     block,
-  }: XykGetAssetsInput): XykPoolWithAssets | null {
+  }: LbpGetPoolDataInput): XykPoolData | null {
     const node = this.getBatchStorageStatePart(ProcessingPallets.XYK).get(
       `${poolAddress}-${block.height}`
     );
 
     if (!node) return null;
 
+    const {
+      assetAId,
+      assetBId,
+      exchangeFee,
+      maxInRatio,
+      maxOutRatio,
+      minPoolLiquidity,
+      minTradingLimit,
+      nativeAssetId,
+      oracleSource,
+    } = node;
+
     return {
-      assetAId: node.assetAId,
-      assetBId: node.assetBId,
       poolAddress,
+      assetAId,
+      assetBId,
+      exchangeFee: [exchangeFee![0] || 0, exchangeFee![1] || 0], // TODO fix types
+      maxInRatio,
+      maxOutRatio,
+      minPoolLiquidity,
+      minTradingLimit,
+      nativeAssetId: nativeAssetId ?? 0,
+      oracleSource: oracleSource || '',
+    };
+  }
+
+  getXykPoolAssets({
+    poolAddress,
+    block,
+  }: XykGetAssetsInput): XykPoolAssetIds | null {
+    const node = this.getBatchStorageStatePart(ProcessingPallets.XYK).get(
+      `${poolAddress}-${block.height}`
+    );
+
+    if (!node) return null;
+
+    const { assetAId, assetBId } = node;
+
+    return {
+      poolAddress,
+      assetAId,
+      assetBId,
     };
   }
   getXykPoolAssetInfo({
@@ -714,6 +850,11 @@ export class StorageDictionaryManager extends QueriesHelper {
       fee,
       feeCollector,
       repayTarget,
+      repayFee,
+      maxInRatio,
+      maxOutRatio,
+      minPoolLiquidity,
+      minTradingLimit,
     } = node;
 
     return {
@@ -729,6 +870,11 @@ export class StorageDictionaryManager extends QueriesHelper {
       fee: [fee[0]!, fee[1]!],
       feeCollector: feeCollector!,
       repayTarget,
+      repayFee: [repayFee[0]!, repayFee[1]!],
+      maxInRatio,
+      maxOutRatio,
+      minPoolLiquidity,
+      minTradingLimit,
     };
   }
 
