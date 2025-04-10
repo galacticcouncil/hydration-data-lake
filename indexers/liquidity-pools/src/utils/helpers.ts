@@ -129,3 +129,19 @@ export function isU32(n: unknown) {
     typeof n === 'number' && Number.isInteger(n) && n >= 0 && n <= 4294967295
   );
 }
+
+export function* splitIntoBatches<T>(
+  list: T[],
+  maxBatchSize: number
+): Generator<T[]> {
+  if (list.length <= maxBatchSize) {
+    yield list;
+  } else {
+    let offset = 0;
+    while (list.length - offset > maxBatchSize) {
+      yield list.slice(offset, offset + maxBatchSize);
+      offset += maxBatchSize;
+    }
+    yield list.slice(offset);
+  }
+}

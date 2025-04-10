@@ -139,13 +139,8 @@ export async function handleStableswapHistoricalData(
       .map((item) => getStableswapDataPromise({ ...item, ctx }))
   );
 
-  const stablepoolAllHistoricalData =
-    ctx.batchState.state.stablepoolAllHistoricalData;
-  const stablepoolAssetsAllHistoricalData =
-    ctx.batchState.state.stablepoolAssetsAllHistoricalData;
-
   for (const entitiesToSave of predefinedEntities.filter((item) => !!item)) {
-    stablepoolAllHistoricalData.set(
+    ctx.batchState.state.stablepoolAllHistoricalData.set(
       entitiesToSave.poolData.id,
       entitiesToSave.poolData
     );
@@ -153,10 +148,17 @@ export async function handleStableswapHistoricalData(
     for (const assetData of entitiesToSave.assetsData.filter(
       (item) => !!item
     )) {
-      stablepoolAssetsAllHistoricalData.set(assetData.id, assetData);
+      ctx.batchState.state.stablepoolAssetsAllHistoricalData.set(
+        assetData.id,
+        assetData
+      );
     }
   }
 
-  await ctx.store.save([...stablepoolAllHistoricalData.values()]);
-  await ctx.store.save([...stablepoolAssetsAllHistoricalData.values()]);
+  await ctx.store.save([
+    ...ctx.batchState.state.stablepoolAllHistoricalData.values(),
+  ]);
+  await ctx.store.save([
+    ...ctx.batchState.state.stablepoolAssetsAllHistoricalData.values(),
+  ]);
 }

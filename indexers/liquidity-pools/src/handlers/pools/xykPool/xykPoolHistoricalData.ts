@@ -88,9 +88,11 @@ export async function handleXykPoolHistoricalData(
       })
   );
 
-  const predefinedEntitiesWithoutDuplicates = new Map(
+  ctx.batchState.state.xykPoolAllHistoricalData = new Map(
     predefinedEntities.filter((item) => !!item).map((item) => [item.id, item])
   );
 
-  await ctx.store.save([...predefinedEntitiesWithoutDuplicates.values()]);
+  await ctx.store.save([
+    ...ctx.batchState.state.xykPoolAllHistoricalData.values(),
+  ]);
 }

@@ -55,6 +55,8 @@ import {
   MmReserveUsedAsCollateralEnabledEvent,
   MmReserveUsedAsCollateralDisabledEvent,
   AccountAssetBalanceHistoricalData,
+  OmnipoolHistoricalData,
+  AssetHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -82,6 +84,7 @@ export type BatchStatePayload = {
 
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
+  assetsHistoricalDataBatch: Map<string, AssetHistoricalData>;
 
   accountAssetBalanceHistoricalData: Map<
     string,
@@ -105,7 +108,7 @@ export type BatchStatePayload = {
     number,
     { blockHeader: BlockHeader; ids: Set<string> } // ... ids: Set<"assetAId-assetBId">
   >;
-  lbpPoolAllHistoricalData: LbppoolHistoricalData[];
+  lbpPoolAllHistoricalData: Map<string, LbppoolHistoricalData>;
 
   xykPoolIdsToSave: Set<string>;
   xykAllBatchPools: Map<string, Xykpool>;
@@ -115,7 +118,7 @@ export type BatchStatePayload = {
     number,
     { blockHeader: BlockHeader; ids: Set<string> }
   >;
-  xykPoolAllHistoricalData: XykpoolHistoricalData[];
+  xykPoolAllHistoricalData: Map<string, XykpoolHistoricalData>;
 
   omnipoolEntity: Omnipool | null;
   omnipoolAssets: Map<string, OmnipoolAsset>;
@@ -125,7 +128,8 @@ export type BatchStatePayload = {
     number,
     { blockHeader: BlockHeader; ids: Set<number> }
   >;
-  omnipoolAssetAllHistoricalData: OmnipoolAssetHistoricalData[];
+  omnipoolAllHistoricalData: Map<string, OmnipoolHistoricalData>;
+  omnipoolAssetAllHistoricalData: Map<string, OmnipoolAssetHistoricalData>;
 
   stableswapIdsToSave: Set<string>;
   stableswapAssetsAllBatch: Map<string, StableswapAsset>;
@@ -157,7 +161,10 @@ export type BatchStatePayload = {
 
   historicalAssetSwapFees: Map<string, AssetSwapFeeHistoricalData>;
   historicalAccountSwapFees: Map<string, AccountSwapFeeHistoricalData>;
-  historicalAccountAssetSwapFees: Map<string, AccountAssetSwapFeeHistoricalData>;
+  historicalAccountAssetSwapFees: Map<
+    string,
+    AccountAssetSwapFeeHistoricalData
+  >;
 
   moneyMarketEvents: Map<string, MoneyMarketEvent>;
   mmSupplies: Map<string, MmSupply>;
@@ -193,6 +200,7 @@ export class BatchState {
     accountIdForPrefetch: new Set(),
     transfers: new Map(),
     assetVolumes: new Map(),
+    assetsHistoricalDataBatch: new Map(),
 
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
@@ -213,21 +221,22 @@ export class BatchState {
     lbpPoolVolumes: new Map(),
     lbpPoolHistoricalPrices: new Map(),
     lbppoolAssetIdsForStoragePrefetch: new Map(),
-    lbpPoolAllHistoricalData: [],
+    lbpPoolAllHistoricalData: new Map(),
 
     xykPoolIdsToSave: new Set(),
     xykAllBatchPools: new Map(),
     xykPoolVolumes: new Map(),
     xykPoolHistoricalPrices: new Map(),
     xykPoolIdsForStoragePrefetch: new Map(),
-    xykPoolAllHistoricalData: [],
+    xykPoolAllHistoricalData: new Map(),
 
     omnipoolEntity: null,
     omnipoolAssets: new Map(),
     omnipoolAssetIdsToSave: new Set(),
     omnipoolAssetVolumes: new Map(),
     omnipoolAssetIdsForStoragePrefetch: new Map(),
-    omnipoolAssetAllHistoricalData: [],
+    omnipoolAllHistoricalData: new Map(),
+    omnipoolAssetAllHistoricalData: new Map(),
 
     stableswapIdsToSave: new Set(),
     stableswapAllBatchPools: new Map(),

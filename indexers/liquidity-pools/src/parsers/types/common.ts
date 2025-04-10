@@ -70,7 +70,9 @@ import {
   StablepoolInfo,
   SystemAccountInfo,
   TokensAccountsAssetBalances,
+  TokensGetTokensTotalIssuanceInput,
   TokensGetTokenTotalIssuanceInput,
+  TokenTotalIssuance,
   XykGetAssetsInput,
   XykGetPoolDataInput,
   XykGetShareTokenInput,
@@ -207,6 +209,9 @@ export type StorageParserMethods = {
       block: BlockHeader
     ) => Promise<SystemAccountInfo | null>;
   };
+  balances: {
+    getTotalIssuance: (block: BlockHeader) => Promise<bigint | null>;
+  };
   tokens: {
     getTokensAccountsAssetBalances: (
       account: string,
@@ -216,6 +221,9 @@ export type StorageParserMethods = {
     getTokenTotalIssuance: (
       args: TokensGetTokenTotalIssuanceInput
     ) => Promise<bigint | null>;
+    getManyTokensTotalIssuance: (
+      args: TokensGetTokensTotalIssuanceInput
+    ) => Promise<TokenTotalIssuance[]>;
   };
   assetRegistry: {
     getAsset: (

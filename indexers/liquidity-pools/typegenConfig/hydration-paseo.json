@@ -12,7 +12,7 @@
     "Balances": {
       "events": ["Transfer"],
       "calls": true,
-      "storage": [],
+      "storage": true,
       "constants": []
     },
     "Tokens": {

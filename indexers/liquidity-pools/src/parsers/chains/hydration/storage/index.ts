@@ -8,6 +8,7 @@ import xyk from './xyk';
 import lbp from './lbp';
 import dca from './dca';
 import otc from './otc';
+import balances from './balances';
 import evmAccounts from './evmAccounts';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
@@ -38,9 +39,13 @@ import {
 
 export default {
   system,
+  balances: {
+    getTotalIssuance: balances.getTotalIssuance,
+  },
   tokens: {
     ...tokens,
     getTokenTotalIssuance: tokens.getTokenTotalIssuance,
+    getManyTokensTotalIssuance: tokens.getManyTokensTotalIssuance,
   },
   assetRegistry,
   parachainSystem,

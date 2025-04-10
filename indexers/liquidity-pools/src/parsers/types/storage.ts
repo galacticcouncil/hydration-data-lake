@@ -29,6 +29,11 @@ export interface TokensAccountsAssetBalances {
   frozen: bigint;
 }
 
+export interface TokenTotalIssuance {
+  tokenId: string;
+  amount: bigint | null;
+}
+
 export type OmnipoolAssetTradability = {
   bits: number;
 };
@@ -210,6 +215,11 @@ export type LbpGetAllPoolsDataInput = {
 
 export type TokensGetTokenTotalIssuanceInput = {
   tokenId: number;
+  block: BlockHeader;
+};
+
+export type TokensGetTokensTotalIssuanceInput = {
+  tokenIds: Array<number | string>;
   block: BlockHeader;
 };
 

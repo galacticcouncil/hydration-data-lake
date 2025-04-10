@@ -20,15 +20,15 @@ export const H256 = sts.bytes()
 
 export const H160 = sts.bytes()
 
-export type AccountId32 = Bytes
-
-export interface AccountInfo {
-    nonce: number
-    consumers: number
-    providers: number
-    sufficients: number
-    data: AccountData
+export interface IdAmount {
+    amount: bigint
 }
+
+export const IdAmount: sts.Type<IdAmount> = sts.struct(() => {
+    return  {
+        amount: sts.bigint(),
+    }
+})
 
 export interface AccountData {
     free: bigint
@@ -38,16 +38,6 @@ export interface AccountData {
 }
 
 export type ExtraFlags = bigint
-
-export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
-    return  {
-        nonce: sts.number(),
-        consumers: sts.number(),
-        providers: sts.number(),
-        sufficients: sts.number(),
-        data: AccountData,
-    }
-})
 
 export const AccountData: sts.Type<AccountData> = sts.struct(() => {
     return  {
@@ -59,6 +49,26 @@ export const AccountData: sts.Type<AccountData> = sts.struct(() => {
 })
 
 export const ExtraFlags = sts.bigint()
+
+export type AccountId32 = Bytes
+
+export interface AccountInfo {
+    nonce: number
+    consumers: number
+    providers: number
+    sufficients: number
+    data: AccountData
+}
+
+export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
+    return  {
+        nonce: sts.number(),
+        consumers: sts.number(),
+        providers: sts.number(),
+        sufficients: sts.number(),
+        data: AccountData,
+    }
+})
 
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {

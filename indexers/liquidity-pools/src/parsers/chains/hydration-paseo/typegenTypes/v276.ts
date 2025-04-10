@@ -476,15 +476,118 @@ export const AssetDetails: sts.Type<AssetDetails> = sts.struct(() => {
     }
 })
 
-export type AccountId32 = Bytes
-
-export interface AccountInfo {
-    nonce: number
-    consumers: number
-    providers: number
-    sufficients: number
-    data: AccountData
+export interface Type_490 {
+    amount: bigint
 }
+
+export const Type_490: sts.Type<Type_490> = sts.struct(() => {
+    return  {
+        amount: sts.bigint(),
+    }
+})
+
+export interface IdAmount {
+    id: RuntimeHoldReason
+    amount: bigint
+}
+
+export type RuntimeHoldReason = RuntimeHoldReason_Preimage | RuntimeHoldReason_StateTrieMigration
+
+export interface RuntimeHoldReason_Preimage {
+    __kind: 'Preimage'
+    value: HoldReason
+}
+
+export interface RuntimeHoldReason_StateTrieMigration {
+    __kind: 'StateTrieMigration'
+    value: Type_487
+}
+
+export type Type_487 = Type_487_SlashForMigrate
+
+export interface Type_487_SlashForMigrate {
+    __kind: 'SlashForMigrate'
+}
+
+export type HoldReason = HoldReason_Preimage
+
+export interface HoldReason_Preimage {
+    __kind: 'Preimage'
+}
+
+export const IdAmount: sts.Type<IdAmount> = sts.struct(() => {
+    return  {
+        id: RuntimeHoldReason,
+        amount: sts.bigint(),
+    }
+})
+
+export const RuntimeHoldReason: sts.Type<RuntimeHoldReason> = sts.closedEnum(() => {
+    return  {
+        Preimage: HoldReason,
+        StateTrieMigration: Type_487,
+    }
+})
+
+export const Type_487: sts.Type<Type_487> = sts.closedEnum(() => {
+    return  {
+        SlashForMigrate: sts.unit(),
+    }
+})
+
+export const HoldReason: sts.Type<HoldReason> = sts.closedEnum(() => {
+    return  {
+        Preimage: sts.unit(),
+    }
+})
+
+export interface ReserveData {
+    id: Bytes
+    amount: bigint
+}
+
+export const ReserveData: sts.Type<ReserveData> = sts.struct(() => {
+    return  {
+        id: sts.bytes(),
+        amount: sts.bigint(),
+    }
+})
+
+export interface BalanceLock {
+    id: Bytes
+    amount: bigint
+    reasons: Reasons
+}
+
+export type Reasons = Reasons_All | Reasons_Fee | Reasons_Misc
+
+export interface Reasons_All {
+    __kind: 'All'
+}
+
+export interface Reasons_Fee {
+    __kind: 'Fee'
+}
+
+export interface Reasons_Misc {
+    __kind: 'Misc'
+}
+
+export const BalanceLock: sts.Type<BalanceLock> = sts.struct(() => {
+    return  {
+        id: sts.bytes(),
+        amount: sts.bigint(),
+        reasons: Reasons,
+    }
+})
+
+export const Reasons: sts.Type<Reasons> = sts.closedEnum(() => {
+    return  {
+        All: sts.unit(),
+        Fee: sts.unit(),
+        Misc: sts.unit(),
+    }
+})
 
 export interface AccountData {
     free: bigint
@@ -494,16 +597,6 @@ export interface AccountData {
 }
 
 export type ExtraFlags = bigint
-
-export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
-    return  {
-        nonce: sts.number(),
-        consumers: sts.number(),
-        providers: sts.number(),
-        sufficients: sts.number(),
-        data: AccountData,
-    }
-})
 
 export const AccountData: sts.Type<AccountData> = sts.struct(() => {
     return  {
@@ -515,6 +608,26 @@ export const AccountData: sts.Type<AccountData> = sts.struct(() => {
 })
 
 export const ExtraFlags = sts.bigint()
+
+export type AccountId32 = Bytes
+
+export interface AccountInfo {
+    nonce: number
+    consumers: number
+    providers: number
+    sufficients: number
+    data: AccountData
+}
+
+export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
+    return  {
+        nonce: sts.number(),
+        consumers: sts.number(),
+        providers: sts.number(),
+        sufficients: sts.number(),
+        data: AccountData,
+    }
+})
 
 export const ParachainInherentData: sts.Type<ParachainInherentData> = sts.struct(() => {
     return  {

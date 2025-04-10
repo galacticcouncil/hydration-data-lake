@@ -18,6 +18,9 @@ export class HistoricalDataManager {
     await ctx.store.save([
       ...ctx.batchState.state.historicalAccountAssetSwapFees.values(),
     ]);
+    await ctx.store.save([
+      ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
+    ]);
   }
 
   static async handleHistoricalVolumesBatchEntriesLists(

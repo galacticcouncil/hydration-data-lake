@@ -1,5 +1,86 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type Releases = Releases_V1_0_0 | Releases_V2_0_0
+
+export interface Releases_V1_0_0 {
+    __kind: 'V1_0_0'
+}
+
+export interface Releases_V2_0_0 {
+    __kind: 'V2_0_0'
+}
+
+export const Releases: sts.Type<Releases> = sts.closedEnum(() => {
+    return  {
+        V1_0_0: sts.unit(),
+        V2_0_0: sts.unit(),
+    }
+})
+
+export interface ReserveData {
+    id: Bytes
+    amount: bigint
+}
+
+export const ReserveData: sts.Type<ReserveData> = sts.struct(() => {
+    return  {
+        id: sts.bytes(),
+        amount: sts.bigint(),
+    }
+})
+
+export interface BalanceLock {
+    id: Bytes
+    amount: bigint
+    reasons: Reasons
+}
+
+export type Reasons = Reasons_All | Reasons_Fee | Reasons_Misc
+
+export interface Reasons_All {
+    __kind: 'All'
+}
+
+export interface Reasons_Fee {
+    __kind: 'Fee'
+}
+
+export interface Reasons_Misc {
+    __kind: 'Misc'
+}
+
+export const BalanceLock: sts.Type<BalanceLock> = sts.struct(() => {
+    return  {
+        id: sts.bytes(),
+        amount: sts.bigint(),
+        reasons: Reasons,
+    }
+})
+
+export const Reasons: sts.Type<Reasons> = sts.closedEnum(() => {
+    return  {
+        All: sts.unit(),
+        Fee: sts.unit(),
+        Misc: sts.unit(),
+    }
+})
+
+export interface AccountData {
+    free: bigint
+    reserved: bigint
+    miscFrozen: bigint
+    feeFrozen: bigint
+}
+
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
+    return  {
+        free: sts.bigint(),
+        reserved: sts.bigint(),
+        miscFrozen: sts.bigint(),
+        feeFrozen: sts.bigint(),
+    }
+})
+
 export type AccountId32 = Bytes
 
 export interface AccountInfo {
@@ -10,13 +91,6 @@ export interface AccountInfo {
     data: AccountData
 }
 
-export interface AccountData {
-    free: bigint
-    reserved: bigint
-    miscFrozen: bigint
-    feeFrozen: bigint
-}
-
 export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
     return  {
         nonce: sts.number(),
@@ -24,15 +98,6 @@ export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
         providers: sts.number(),
         sufficients: sts.number(),
         data: AccountData,
-    }
-})
-
-export const AccountData: sts.Type<AccountData> = sts.struct(() => {
-    return  {
-        free: sts.bigint(),
-        reserved: sts.bigint(),
-        miscFrozen: sts.bigint(),
-        feeFrozen: sts.bigint(),
     }
 })
 

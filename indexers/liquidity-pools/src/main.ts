@@ -41,6 +41,7 @@ import {
 } from './handlers/assets/utils';
 import { ethers } from 'ethers';
 import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
+import { handleAssetHistoricalData } from './handlers/assets/assetHistoricalData';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -245,6 +246,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   console.time('saveAllBatchAccounts');
   await saveAllBatchAccounts(ctxWithBatchState as SqdProcessorContext<Store>);
   console.timeEnd('saveAllBatchAccounts');
+
+  console.time('handleAssetHistoricalData');
+  await handleAssetHistoricalData(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
+  console.timeEnd('handleAssetHistoricalData');
 
   console.time('saveHistoricalDataBulk');
   await HistoricalDataManager.saveHistoricalDataBulk(

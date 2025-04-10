@@ -15,9 +15,6 @@ export async function handleOmnipoolHistoricalData(
 ) {
   if (!ctx.appConfig.PROCESS_OMNIPOOLS) return;
 
-  const predefinedPoolDataPerBlock: Map<number, OmnipoolHistoricalData> =
-    new Map();
-
   const predefinedEntities = await Promise.all(
     [...ctx.batchState.state.omnipoolAssetIdsForStoragePrefetch.entries()]
       .map(([blockNumber, { blockHeader, ids }]) =>
@@ -28,7 +25,11 @@ export async function handleOmnipoolHistoricalData(
       )
       .flat()
       .map(async ({ arAssetId, blockHeader }) => {
-        if (!predefinedPoolDataPerBlock.has(blockHeader.height)) {
+        if (
+          !ctx.batchState.state.omnipoolAllHistoricalData.has(
+            `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`
+          )
+        ) {
           const poolStorageData = await parsers.storage.omnipool.getPoolData({
             block: blockHeader,
             poolAddress: ctx.appConfig.OMNIPOOL_ADDRESS,
@@ -63,8 +64,8 @@ export async function handleOmnipoolHistoricalData(
           });
           if (!hubAsset) return null;
 
-          predefinedPoolDataPerBlock.set(
-            blockHeader.height,
+          ctx.batchState.state.omnipoolAllHistoricalData.set(
+            `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`,
             new OmnipoolHistoricalData({
               id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`,
               pool: ctx.batchState.state.omnipoolEntity!,
@@ -127,9 +128,10 @@ export async function handleOmnipoolHistoricalData(
           id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${asset.id}-${blockHeader.height}`,
           asset,
           omnipoolAsset,
-          poolHistoricalData: predefinedPoolDataPerBlock.get(
-            blockHeader.height
-          )!,
+          poolHistoricalData:
+            ctx.batchState.state.omnipoolAllHistoricalData.get(
+              `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`
+            )!,
 
           assetCap: assetStateStorageData.cap,
           assetShares: assetStateStorageData.shares,
@@ -149,10 +151,14 @@ export async function handleOmnipoolHistoricalData(
       })
   );
 
-  const predefinedEntitiesWithoutDuplicates = new Map(
+  ctx.batchState.state.omnipoolAssetAllHistoricalData = new Map(
     predefinedEntities.filter((item) => !!item).map((item) => [item.id, item])
   );
 
-  await ctx.store.save([...predefinedPoolDataPerBlock.values()]);
-  await ctx.store.save([...predefinedEntitiesWithoutDuplicates.values()]);
+  await ctx.store.save([
+    ...ctx.batchState.state.omnipoolAllHistoricalData.values(),
+  ]);
+  await ctx.store.save([
+    ...ctx.batchState.state.omnipoolAssetAllHistoricalData.values(),
+  ]);
 }

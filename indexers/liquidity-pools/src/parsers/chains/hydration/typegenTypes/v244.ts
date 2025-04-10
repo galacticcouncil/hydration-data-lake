@@ -230,6 +230,65 @@ export interface V3NetworkId_Wococo {
     __kind: 'Wococo'
 }
 
+export type AccountId32 = Bytes
+
+export interface IdAmount {
+    id: RuntimeHoldReason
+    amount: bigint
+}
+
+export type RuntimeHoldReason = RuntimeHoldReason_Preimage | RuntimeHoldReason_StateTrieMigration
+
+export interface RuntimeHoldReason_Preimage {
+    __kind: 'Preimage'
+    value: HoldReason
+}
+
+export interface RuntimeHoldReason_StateTrieMigration {
+    __kind: 'StateTrieMigration'
+    value: Type_265
+}
+
+export type Type_265 = Type_265_SlashForMigrate
+
+export interface Type_265_SlashForMigrate {
+    __kind: 'SlashForMigrate'
+}
+
+export type HoldReason = HoldReason_Preimage
+
+export interface HoldReason_Preimage {
+    __kind: 'Preimage'
+}
+
+export const IdAmount: sts.Type<IdAmount> = sts.struct(() => {
+    return  {
+        id: RuntimeHoldReason,
+        amount: sts.bigint(),
+    }
+})
+
+export const RuntimeHoldReason: sts.Type<RuntimeHoldReason> = sts.closedEnum(() => {
+    return  {
+        Preimage: HoldReason,
+        StateTrieMigration: Type_265,
+    }
+})
+
+export const Type_265: sts.Type<Type_265> = sts.closedEnum(() => {
+    return  {
+        SlashForMigrate: sts.unit(),
+    }
+})
+
+export const HoldReason: sts.Type<HoldReason> = sts.closedEnum(() => {
+    return  {
+        Preimage: sts.unit(),
+    }
+})
+
+export const AccountId32 = sts.bytes()
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -262,8 +321,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
 
 export interface RawOrigin_None {
@@ -278,8 +335,6 @@ export interface RawOrigin_Signed {
     __kind: 'Signed'
     value: AccountId32
 }
-
-export type AccountId32 = Bytes
 
 export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {

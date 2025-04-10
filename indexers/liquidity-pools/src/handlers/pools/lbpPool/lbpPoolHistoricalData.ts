@@ -118,9 +118,11 @@ export async function handleLbppoolHistoricalData(
       })
   );
 
-  const predefinedEntitiesWithoutDuplicates = new Map(
+  ctx.batchState.state.lbpPoolAllHistoricalData = new Map(
     predefinedEntities.filter((item) => !!item).map((item) => [item.id, item])
   );
 
-  await ctx.store.save([...predefinedEntitiesWithoutDuplicates.values()]);
+  await ctx.store.save([
+    ...ctx.batchState.state.lbpPoolAllHistoricalData.values(),
+  ]);
 }
