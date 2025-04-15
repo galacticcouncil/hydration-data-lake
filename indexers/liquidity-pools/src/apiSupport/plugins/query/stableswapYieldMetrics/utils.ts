@@ -184,15 +184,25 @@ export async function handlestableswapYieldMetricsAggregation({
     const poolYieldMetricsByAsset = [];
 
     for (const asset of [...poolData.assets.values()]) {
+      const feeAmount = BigNumber(
+        aggregatedAssetSwapFeesMap.has(poolId) &&
+          aggregatedAssetSwapFeesMap.get(poolId)!.has(asset.asset_id)
+          ? aggregatedAssetSwapFeesMap.get(poolId)!.get(asset.asset_id)!
+              .total_fee_amount
+          : '0'
+      );
+
+      const tvl = BigNumber(
+        latestBalancesMap.has(poolId) &&
+          latestBalancesMap.get(poolId)!.has(asset.asset_id)
+          ? latestBalancesMap.get(poolId)!.get(asset.asset_id)!.free_balance
+          : '0'
+      );
+
       poolYieldMetricsByAsset.push(
         calcYieldMetrics({
-          feeAmount: BigNumber(
-            aggregatedAssetSwapFeesMap.get(poolId)!.get(asset.asset_id)!
-              .total_fee_amount
-          ),
-          tvl: BigNumber(
-            latestBalancesMap.get(poolId)!.get(asset.asset_id)!.free_balance
-          ),
+          feeAmount,
+          tvl,
           interval,
         })
       );
