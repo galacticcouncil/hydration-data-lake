@@ -47,7 +47,7 @@ import {
   OtcOrderPartiallyFilledData,
   OtcOrderPlacedData,
 } from './otc';
-import { BroadcastSwappedData } from './broadcast';
+import { BroadcastSwapped2Data, BroadcastSwappedData } from './broadcast';
 import { EvmLogData } from './evm';
 import { EvmAccountsBoundData } from './evmAccounts';
 import { CurrenciesTransferredData } from './currencies';
@@ -141,11 +141,13 @@ export type EventDataType<T> = T extends EventName.Tokens_Transfer
                                                                     ? OtcOrderPartiallyFilledData
                                                                     : T extends EventName.Broadcast_Swapped
                                                                       ? BroadcastSwappedData
-                                                                      : T extends EventName.EVM_Log
-                                                                        ? EvmLogData
-                                                                        : T extends EventName.EVMAccounts_Bound
-                                                                          ? EvmAccountsBoundData
-                                                                          : never;
+                                                                      : T extends EventName.Broadcast_Swapped2
+                                                                        ? BroadcastSwapped2Data
+                                                                        : T extends EventName.EVM_Log
+                                                                          ? EvmLogData
+                                                                          : T extends EventName.EVMAccounts_Bound
+                                                                            ? EvmAccountsBoundData
+                                                                            : never;
 
 export type BatchBlocksParsedDataScope = Map<
   EventName,
@@ -187,6 +189,7 @@ export type ParsedEventsCallsData =
   | OtcOrderFilledData
   | OtcOrderPartiallyFilledData
   | BroadcastSwappedData
+  | BroadcastSwapped2Data
   | EvmLogData
   | EvmAccountsBoundData
   | CurrenciesTransferredData;

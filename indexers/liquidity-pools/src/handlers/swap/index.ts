@@ -14,6 +14,9 @@ export async function handleBroadcastSwappedEvents(
 ) {
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.Broadcast_Swapped).values(),
+    ...parsedEvents
+      .getSectionByEventName(EventName.Broadcast_Swapped2)
+      .values(),
   ]).filter((event) =>
     isUnifiedEventsSupportSpecVersion(
       event.eventData.metadata.blockHeader.specVersion,

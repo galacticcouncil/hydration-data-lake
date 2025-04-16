@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v282 from '../v282'
+import * as v305 from '../v305'
 
 export const incrementalId =  {
     /**
@@ -51,4 +52,19 @@ export interface OverflowCountV282  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): number
     get(block: Block): Promise<(number | undefined)>
+}
+
+export const swapper =  {
+    /**
+     * If filled, we overwrite the original swapper. Mainly used in router to not to use temporary trade account
+     */
+    v305: new StorageType('Broadcast.Swapper', 'Optional', [], v305.AccountId32) as SwapperV305,
+}
+
+/**
+ * If filled, we overwrite the original swapper. Mainly used in router to not to use temporary trade account
+ */
+export interface SwapperV305  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block): Promise<(v305.AccountId32 | undefined)>
 }

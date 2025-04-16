@@ -21,6 +21,7 @@ import { FindOptionsRelations, In } from 'typeorm';
 import {
   BroadcastSwappedAssetAmount,
   BroadcastSwappedFee,
+  EventName,
 } from '../../parsers/types/events';
 import {
   getFillerContextData,
@@ -30,7 +31,6 @@ import {
 } from './helpers';
 import { processRouteTradeHop } from './routedTrade';
 import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
-import { handleAccountAssetSwapFee } from '../accounts/historicalAccountSwapFee';
 
 export async function getSwap({
   ctx,
@@ -376,6 +376,7 @@ export async function handleSupportSwapperEvent(
       outputs: eventParams.outputs,
       fillerType: eventParams.fillerType.kind,
       operationType: eventParams.operation,
+      eventName: eventMetadata.name,
     });
 
   const newSwapDetails = await handleSwap({
@@ -434,13 +435,17 @@ function getInputOutputDecorated({
   outputs,
   fillerType,
   operationType,
+  eventName,
 }: {
   operationType: TradeOperationType;
   fillerType: SwapFillerType;
   inputs: BroadcastSwappedAssetAmount[];
   outputs: BroadcastSwappedAssetAmount[];
+  eventName: string;
 }) {
   if (
+    eventName === EventName.Broadcast_Swapped2 ||
+    operationType === TradeOperationType.ExactIn ||
     operationType !== TradeOperationType.ExactOut ||
     (fillerType !== SwapFillerType.XYK && fillerType !== SwapFillerType.LBP)
   )
