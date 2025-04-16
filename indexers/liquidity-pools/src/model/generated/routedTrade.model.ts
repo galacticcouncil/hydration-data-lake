@@ -28,6 +28,9 @@ export class RoutedTrade {
   allInvolvedAssetIds!: (string)[]
 
   @Column_("text", {array: true, nullable: false})
+  allInvolvedAssetRegistryIds!: (string)[]
+
+  @Column_("text", {array: true, nullable: false})
   participantSwappers!: (string)[]
 
   @Column_("text", {array: true, nullable: false})

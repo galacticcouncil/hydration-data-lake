@@ -32,6 +32,9 @@ export class MoneyMarketEvent {
   @Column_("text", {array: true, nullable: false})
   allInvolvedAssetIds!: (string)[]
 
+  @Column_("text", {array: true, nullable: false})
+  allInvolvedAssetRegistryIds!: (string)[]
+
   @Index_()
   @Column_("text", {nullable: true})
   allInvolvedAssetDetails!: string | undefined | null

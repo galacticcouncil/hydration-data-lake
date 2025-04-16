@@ -462,6 +462,7 @@ type Swap @entity {
 
   "List of all asset IDs involved in the swap, including those used for fees."
   allInvolvedAssetIds: [String!]!
+  allInvolvedAssetRegistryIds: [String!]!
 
   dcaScheduleExecutionEvent: DcaScheduleExecutionEvent
   otcOrderFulfillment: OtcOrderEvent
@@ -489,6 +490,7 @@ type RoutedTrade @entity {
   inputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
   outputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
   allInvolvedAssetIds: [String!]!
+  allInvolvedAssetRegistryIds: [String!]!
   participantSwappers: [String!]!
   participantFillers: [String!]!
   feeRecipients: [String!]!
@@ -1308,6 +1310,7 @@ type MoneyMarketEvent @entity {
   eventName: EvmEventName!
 
   allInvolvedAssetIds: [String!]!
+  allInvolvedAssetRegistryIds: [String!]!
   allInvolvedAssetDetails: String @index
   allInvolvedParticipants: [String!]!
 
@@ -1605,7 +1608,8 @@ type XykYieldFarm @entity {
   "yield farm ID"
   id: ID!
   globalFarm: XykGlobalFarm!
-  allInvolvedAssets: [String!]!
+  allInvolvedAssetIds: [String!]!
+  allInvolvedAssetRegistryIds: [String!]!
   pool: Xykpool!
 
   state: FarmState!
@@ -1634,9 +1638,10 @@ type XykYieldFarmDeposit @entity {
   "deposit ID"
   id: ID!
   depositNft: NftAsset!
-  globalFarm: OmnipoolGlobalFarm!
-  yieldFarm: OmnipoolYieldFarm!
-  allInvolvedAssets: [String!]! # assets of used pool
+  globalFarm: XykGlobalFarm!
+  yieldFarm: XykYieldFarm!
+  allInvolvedAssetIds: [String!]! # assets of used pool
+  allInvolvedAssetRegistryIds: [String!]! # assets of used pool
   account: Account!
   lpAsset: Asset!
   sharesAmount: BigInt!
