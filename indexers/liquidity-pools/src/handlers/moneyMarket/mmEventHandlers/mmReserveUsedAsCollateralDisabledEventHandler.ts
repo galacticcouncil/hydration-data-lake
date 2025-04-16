@@ -83,6 +83,7 @@ export async function handleMmReserveUsedAsCollateralDisabledEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id],
     reserveUsedAsCollateralDisabled: mmNewEntity,

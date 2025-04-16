@@ -2,6 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {Account} from "./account.model"
+import {RoutedTrade} from "./routedTrade.model"
 import {Event} from "./event.model"
 
 @Entity_()
@@ -33,6 +34,10 @@ export class MmWithdraw {
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   amount!: bigint | undefined | null
+
+  @Index_()
+  @ManyToOne_(() => RoutedTrade, {nullable: true})
+  initiatedByTrade!: RoutedTrade | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})

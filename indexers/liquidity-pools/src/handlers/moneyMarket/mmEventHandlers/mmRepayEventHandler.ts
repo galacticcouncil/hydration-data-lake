@@ -97,6 +97,7 @@ export async function handleMmRepayEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id, repayerAccount.id],
     repay: mmRepayEntity,

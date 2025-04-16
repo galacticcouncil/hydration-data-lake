@@ -12,7 +12,7 @@ import { handleStablepools } from './handlers/pools/stableswap';
 import { handleAssetRegistry } from './handlers/assets';
 import { StorageResolver } from './parsers/storageResolver';
 import { handleStableswapHistoricalData } from './handlers/pools/stableswap/historicalData';
-import { handleOmnipoolAssetHistoricalData } from './handlers/pools/omnipool/historicalData';
+import { handleOmnipoolHistoricalData } from './handlers/pools/omnipool/historicalData';
 import { handleXykPoolHistoricalData } from './handlers/pools/xykPool/xykPoolHistoricalData';
 import { handleLbppoolHistoricalData } from './handlers/pools/lbpPool/lbpPoolHistoricalData';
 import { handleXykPools } from './handlers/pools/xykPool';
@@ -41,6 +41,8 @@ import {
 } from './handlers/assets/utils';
 import { ethers } from 'ethers';
 import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
+import { handleAssetHistoricalData } from './handlers/assets/assetHistoricalData';
+import { createMoneyMarketEventsFromRoutedTrades } from './handlers/moneyMarket/routedTradeToMmEventHandler';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -186,6 +188,17 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   // if (ctx.isHead)
   //   await handlePoolPrices(ctxWithBatchState as SqdProcessorContext<Store>);
 
+  console.time('createMmWithdrawalEventsFromRoutedTrades');
+  await createMoneyMarketEventsFromRoutedTrades(
+    ctxWithBatchState as SqdProcessorContext<Store>,
+    [
+      ...(
+        ctxWithBatchState as SqdProcessorContext<Store>
+      ).batchState.state.routeTrades.values(),
+    ]
+  );
+  console.timeEnd('createMmWithdrawalEventsFromRoutedTrades');
+
   console.time('handleEvm');
   await handleEvm(ctxWithBatchState as SqdProcessorContext<Store>, parsedData);
   console.timeEnd('handleEvm');
@@ -208,12 +221,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   );
   console.timeEnd('handleStableswapHistoricalData');
 
-  console.time('handleOmnipoolAssetHistoricalData');
-  await handleOmnipoolAssetHistoricalData(
+  console.time('handleOmnipoolHistoricalData');
+  await handleOmnipoolHistoricalData(
     ctxWithBatchState as SqdProcessorContext<Store>,
     parsedData
   );
-  console.timeEnd('handleOmnipoolAssetHistoricalData');
+  console.timeEnd('handleOmnipoolHistoricalData');
 
   console.time('handleXykPoolHistoricalData');
   await handleXykPoolHistoricalData(
@@ -245,6 +258,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   console.time('saveAllBatchAccounts');
   await saveAllBatchAccounts(ctxWithBatchState as SqdProcessorContext<Store>);
   console.timeEnd('saveAllBatchAccounts');
+
+  console.time('handleAssetHistoricalData');
+  await handleAssetHistoricalData(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
+  console.timeEnd('handleAssetHistoricalData');
 
   console.time('saveHistoricalDataBulk');
   await HistoricalDataManager.saveHistoricalDataBulk(
