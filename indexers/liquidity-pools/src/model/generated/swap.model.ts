@@ -60,6 +60,9 @@ export class Swap {
   @Column_("text", {array: true, nullable: false})
   allInvolvedAssetIds!: (string)[]
 
+  @Column_("text", {array: true, nullable: false})
+  allInvolvedAssetRegistryIds!: (string)[]
+
   @Index_()
   @ManyToOne_(() => DcaScheduleExecutionEvent, {nullable: true})
   dcaScheduleExecutionEvent!: DcaScheduleExecutionEvent | undefined | null

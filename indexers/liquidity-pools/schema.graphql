@@ -462,6 +462,7 @@ type Swap @entity {
 
   "List of all asset IDs involved in the swap, including those used for fees."
   allInvolvedAssetIds: [String!]!
+  allInvolvedAssetRegistryIds: [String!]!
 
   dcaScheduleExecutionEvent: DcaScheduleExecutionEvent
   otcOrderFulfillment: OtcOrderEvent
@@ -489,6 +490,7 @@ type RoutedTrade @entity {
   inputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
   outputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
   allInvolvedAssetIds: [String!]!
+  allInvolvedAssetRegistryIds: [String!]!
   participantSwappers: [String!]!
   participantFillers: [String!]!
   feeRecipients: [String!]!
@@ -1308,6 +1310,7 @@ type MoneyMarketEvent @entity {
   eventName: EvmEventName!
 
   allInvolvedAssetIds: [String!]!
+  allInvolvedAssetRegistryIds: [String!]!
   allInvolvedAssetDetails: String @index
   allInvolvedParticipants: [String!]!
 
@@ -1419,7 +1422,7 @@ type OmnipoolLiquidityPositionEvent @entity {
   amount: BigInt
   sharesAmount: BigInt
   price: BigInt
-  fee: BigIn
+  fee: BigInt
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1440,6 +1443,7 @@ type OmnipoolLiquidityPosition @entity {
   status: OmnipoolLiquidityPositionStatus!
 
   positionEvents: [OmnipoolLiquidityPositionEvent]!
+    @derivedFrom(field: "position")
 
   #  Point of time of position creation for better sorting
   paraBlockHeight: Int! @index
@@ -1458,7 +1462,7 @@ type OmnipoolGlobalFarm @entity {
 
   updatedAtRelayBlock: Int!
   totalSharesZ: BigInt!
-  accumulatedRpz: BogInt!
+  accumulatedRpz: BigInt!
   rewardAsset: Asset!
   pendingRewards: BigInt!
   accumulatedPaidRewards: BigInt!
@@ -1475,7 +1479,7 @@ type OmnipoolGlobalFarm @entity {
   lrnaPriceAdjustment: BigInt!
   totalRewards: BigInt!
 
-  yieldFarms: [OmnipoolYieldFarm] @derivedFrom(field: "omnipoolGlobalFarm")
+  yieldFarms: [OmnipoolYieldFarm] @derivedFrom(field: "globalFarm")
 
   lifeStates: [FarmLifeState!]!
   paraBlockHeight: Int! @index
@@ -1524,7 +1528,7 @@ type OmnipoolYieldFarmDeposit @entity {
   status: YieldFarmDepositStatus!
   sharesAmount: BigInt!
   entries: [OmnipoolYieldFarmEntry!]! @derivedFrom(field: "deposit")
-  depositEvents: [OmnipoolYieldFarmDepositEvent]!
+  depositEvents: [OmnipoolYieldFarmDepositEvent]! @derivedFrom(field: "deposit")
 
   #  Point of time of position creation for better sorting
   paraBlockHeight: Int! @index
@@ -1557,8 +1561,8 @@ type OmnipoolYieldFarmDepositEvent @entity {
   asset: Asset
   account: Account
   position: OmnipoolLiquidityPosition
-  sharesAmount: Bigint
-  claimedAmount: Bigint
+  sharesAmount: BigInt
+  claimedAmount: BigInt
   rewardAsset: Asset
 
   paraBlockHeight: Int! @index
@@ -1593,7 +1597,7 @@ type XykGlobalFarm @entity {
   priceAdjustment: BigInt
   state: FarmState!
 
-  yieldFarms: [OmnipoolYieldFarm] @derivedFrom(field: "omnipoolGlobalFarm")
+  yieldFarms: [XykYieldFarm] @derivedFrom(field: "globalFarm")
 
   lifeStates: [FarmLifeState!]!
   paraBlockHeight: Int! @index
@@ -1605,7 +1609,8 @@ type XykYieldFarm @entity {
   "yield farm ID"
   id: ID!
   globalFarm: XykGlobalFarm!
-  allInvolvedAssets: [String!]!
+  allInvolvedAssetIds: [String!]!
+  allInvolvedAssetRegistryIds: [String!]!
   pool: Xykpool!
 
   state: FarmState!
@@ -1634,9 +1639,10 @@ type XykYieldFarmDeposit @entity {
   "deposit ID"
   id: ID!
   depositNft: NftAsset!
-  globalFarm: OmnipoolGlobalFarm!
-  yieldFarm: OmnipoolYieldFarm!
-  allInvolvedAssets: [String!]! # assets of used pool
+  globalFarm: XykGlobalFarm!
+  yieldFarm: XykYieldFarm!
+  allInvolvedAssetIds: [String!]! # assets of used pool
+  allInvolvedAssetRegistryIds: [String!]! # assets of used pool
   account: Account!
   lpAsset: Asset!
   sharesAmount: BigInt!
@@ -1644,7 +1650,7 @@ type XykYieldFarmDeposit @entity {
   "should be either SharesDeposited or DepositDestroyed"
   status: YieldFarmDepositStatus!
   entries: [XykYieldFarmEntry!]! @derivedFrom(field: "deposit")
-  depositEvents: [OmnipoolYieldFarmDepositEvent]!
+  depositEvents: [XykYieldFarmDepositEvent]! @derivedFrom(field: "deposit")
 
   #  Point of time of position creation for better sorting
   paraBlockHeight: Int! @index
@@ -1655,7 +1661,7 @@ type XykYieldFarmDeposit @entity {
 type XykYieldFarmEntry @entity {
   "<deposit_id>-<xyk_global_farm_id>-<xyk_yield_farm_id>"
   id: ID!
-  deposit: OmnipoolYieldFarmDeposit!
+  deposit: XykYieldFarmDeposit!
   valuedShares: BigInt!
   accumulatedRpvs: BigInt!
   accumulatedClaimedRewards: BigInt!
@@ -1671,13 +1677,13 @@ type XykYieldFarmDepositEvent @entity {
   eventName: YieldFarmDepositStatus!
 
   # required for SharesDeposited, SharesRedeposited, RewardClaimed events
-  globalFarm: OmnipoolGlobalFarm!
-  yieldFarm: OmnipoolYieldFarm!
+  globalFarm: XykGlobalFarm!
+  yieldFarm: XykYieldFarm!
 
   lpAsset: Asset
   account: Account
-  amount: Bigint
-  claimedAmount: Bigint
+  amount: BigInt
+  claimedAmount: BigInt
   rewardAsset: Asset
 
   paraBlockHeight: Int! @index

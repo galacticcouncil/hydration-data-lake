@@ -25,31 +25,31 @@ export class AccountAssetBalanceHistoricalData {
   asset!: Asset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  decoratedFree!: bigint
+  transferable!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  decoratedLocked!: bigint
+  totalLocked!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  free!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  free!: bigint | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  locked!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  locked!: bigint | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  flags!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  flags!: bigint | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  frozen!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  frozen!: bigint | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  reserved!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  reserved!: bigint | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  feeFrozen!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  feeFrozen!: bigint | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  miscFrozen!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  miscFrozen!: bigint | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})
