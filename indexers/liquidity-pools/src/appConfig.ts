@@ -217,6 +217,10 @@ export class AppConfig {
       events.evmAccounts.bound.name,
     ];
 
+    if (this.CHAIN === ChainName.hydration) {
+      eventsToListen.push(hydrationEvents.broadcast.swapped2.name);
+    }
+
     // if (this.CHAIN === ChainName.hydration_paseo_next) {
     //   eventsToListen.push(hydrationPaseoNextEvents.ammSupport.swapped.name);
     // }
