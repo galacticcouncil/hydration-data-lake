@@ -42,6 +42,7 @@ import {
 import { ethers } from 'ethers';
 import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
 import { handleAssetHistoricalData } from './handlers/assets/assetHistoricalData';
+import { createMoneyMarketEventsFromRoutedTrades } from './handlers/moneyMarket/routedTradeToMmEventHandler';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -186,6 +187,17 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
 
   // if (ctx.isHead)
   //   await handlePoolPrices(ctxWithBatchState as SqdProcessorContext<Store>);
+
+  console.time('createMmWithdrawalEventsFromRoutedTrades');
+  await createMoneyMarketEventsFromRoutedTrades(
+    ctxWithBatchState as SqdProcessorContext<Store>,
+    [
+      ...(
+        ctxWithBatchState as SqdProcessorContext<Store>
+      ).batchState.state.routeTrades.values(),
+    ]
+  );
+  console.timeEnd('createMmWithdrawalEventsFromRoutedTrades');
 
   console.time('handleEvm');
   await handleEvm(ctxWithBatchState as SqdProcessorContext<Store>, parsedData);

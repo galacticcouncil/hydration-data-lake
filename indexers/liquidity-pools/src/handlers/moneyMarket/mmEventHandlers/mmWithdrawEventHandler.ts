@@ -2,7 +2,12 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { EvmEventName, MmWithdraw } from '../../../model';
+import {
+  EvmEventName,
+  MmWithdraw,
+  ResourceType,
+  RoutedTrade,
+} from '../../../model';
 import {
   getOrCreateAsset,
   getOrCreateMoneyMarketAsset,
@@ -82,6 +87,7 @@ export async function handleMmWithdrawEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
     withdraw: mmWithdrawEntity,

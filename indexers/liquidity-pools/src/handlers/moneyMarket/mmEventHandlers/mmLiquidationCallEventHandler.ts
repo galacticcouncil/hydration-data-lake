@@ -105,6 +105,10 @@ export async function handleMmLiquidationCallEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [collateralAssetEntity.id, debtAssetEntity.id],
+    allInvolvedAssetRegistryIds: [
+      collateralAssetEntity.assetRegistryId,
+      debtAssetEntity.assetRegistryId,
+    ],
     allInvolvedAssetDetails: [
       collateralAssetEntity.name,
       collateralAssetEntity.symbol,

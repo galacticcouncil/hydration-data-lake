@@ -1238,6 +1238,8 @@ type MmSupply @entity {
   amount: BigInt
   referralCode: BigInt
 
+  initiatedByTrade: RoutedTrade
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   event: Event!
@@ -1252,6 +1254,8 @@ type MmWithdraw @entity {
   accountFrom: Account!
   accountTo: Account!
   amount: BigInt
+
+  initiatedByTrade: RoutedTrade
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
