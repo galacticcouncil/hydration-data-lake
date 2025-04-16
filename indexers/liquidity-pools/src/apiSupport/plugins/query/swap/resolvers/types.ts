@@ -1,8 +1,4 @@
-import {
-  AggregationTimeRangeLabel,
-  StableswapAssetHistoricalVolumeRaw,
-  StableswapHistoricalVolumeRaw,
-} from '../../../../types';
+import { AggregationTimeRangeLabel } from '../../../../types';
 
 export type SwapAssetFeesByPeriodFilter = {
   period?: AggregationTimeRangeLabel;

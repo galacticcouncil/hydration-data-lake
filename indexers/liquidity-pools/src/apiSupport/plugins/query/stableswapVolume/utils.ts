@@ -3,10 +3,8 @@ import {
   AggregateStablepoolVolumesByBlocksRangeSqlResult,
   StableswapVolumeAggregated,
 } from './resolvers';
-import {
-  aggregateStablepoolVolumesByBlocksRange,
-} from '../../sql/stableswapVolumes.sql';
-import { getAssetIdsByStableswapIds } from '../../sql/stableswap.sql';
+import { aggregateStablepoolVolumesByBlocksRange } from '../../sql/stableswapVolumes.sql';
+import { getAssetsByStableswapIds } from '../../sql/stableswap.sql';
 
 export async function handleStableswapHistoricalVolumesByPeriodAggregation({
   poolIds,
@@ -45,7 +43,8 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
         ) {
           resp.assetVolumes = group.start_entity_asset_volumes.map(
             (assetData) => ({
-              assetId: +assetData.asset_id,
+              assetId: assetData.asset_id,
+              assetRegistryId: assetData.asset_registry_id ?? null,
               swapFee: BigInt(assetData.swap_fee),
               swapVolume:
                 BigInt(assetData.swap_volume_in) +
@@ -64,7 +63,8 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
             startEntityAssetVol.asset_id
           )!;
           resp.assetVolumes.push({
-            assetId: +startEntityAssetVol.asset_id,
+            assetId: startEntityAssetVol.asset_id,
+            assetRegistryId: startEntityAssetVol.asset_registry_id ?? null,
             swapFee:
               BigInt(endEntityAssetVol.swap_total_fees) -
               BigInt(startEntityAssetVol.swap_total_fees) +
@@ -84,18 +84,21 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
       .map((r: StableswapVolumeAggregated) => [r.poolId, r])
   );
 
-  const assetsData = await pgClient.query(getAssetIdsByStableswapIds, [
+  const assetsData = await pgClient.query(getAssetsByStableswapIds, [
     poolIds.filter((id) => !decoratedNodes.has(id)),
   ]);
 
   for (const poolWithNoResult of assetsData.rows) {
     decoratedNodes.set(poolWithNoResult.pool_id, {
       poolId: poolWithNoResult.pool_id,
-      assetVolumes: poolWithNoResult.assets.map((assetId: string) => ({
-        assetId: +assetId,
-        swapFee: BigInt(0),
-        swapVolume: BigInt(0),
-      })),
+      assetVolumes: poolWithNoResult.assets.map(
+        (asset: { asset_id: string; asset_registry_id: string }) => ({
+          assetId: asset.asset_id,
+          assetRegistryId: asset.asset_registry_id,
+          swapFee: BigInt(0),
+          swapVolume: BigInt(0),
+        })
+      ),
     });
   }
 

@@ -9,9 +9,11 @@ export type XykPoolVolumesByPeriodFilter = {
 
 export type XykpoolVolumeAggregated = {
   poolId: string;
-  assetAId: number;
+  assetAId: string;
+  assetAAssetRegistryId?: string;
   assetAVolume: bigint;
-  assetBId: number;
+  assetBId: string;
+  assetBAssetRegistryId?: string;
   assetBVolume: bigint;
 };
 

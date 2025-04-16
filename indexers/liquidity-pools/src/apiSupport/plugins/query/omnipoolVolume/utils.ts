@@ -48,7 +48,7 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
       .map((group: Array<OmnipoolAssetHistoricalVolumeRaw>) => {
         const resp: OmnipoolAssetVolumeAggregated = {
           omnipoolAssetId: group[0].omnipool_asset_id,
-          assetId: +group[0].omnipool_asset_id.split('-')[1],
+          assetId: group[0].omnipool_asset_id.split('-')[1],
           assetVolume: BigInt(0),
           assetFeeVolume: BigInt(0),
         };
@@ -85,7 +85,7 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
   )) {
     decoratedNodes.set(assetIdWithNoResult, {
       omnipoolAssetId: assetIdWithNoResult,
-      assetId: +(assetIdWithNoResult.split('-')[1] || -1),
+      assetId: assetIdWithNoResult.split('-')[1] || '-1',
       assetVolume: BigInt(0),
       assetFeeVolume: BigInt(0),
     });
