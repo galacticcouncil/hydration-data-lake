@@ -38,7 +38,8 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
         type StableswapAssetHistoricalVolumeEntity {
             id: String!
             volumesCollectionId: String!
-            assetId: Int!
+            assetId: String!
+            assetRegistryId: String
             swapFee: BigInt!
             swapTotalFees: BigInt!
             swapVolumeIn: BigInt!

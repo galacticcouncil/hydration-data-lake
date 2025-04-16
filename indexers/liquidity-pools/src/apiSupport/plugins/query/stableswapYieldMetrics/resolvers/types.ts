@@ -1,10 +1,4 @@
-import {
-  AggregationTimeRangeLabel,
-  StableswapAssetHistoricalVolumeRaw,
-  StableswapHistoricalVolumeRaw,
-  YieldMetricsInterval,
-} from '../../../../types';
-import { BigNumber } from 'bignumber.js';
+import { YieldMetricsInterval } from '../../../../types';
 
 export type StableswapYieldMetricsFilter = {
   interval: YieldMetricsInterval;
@@ -26,12 +20,3 @@ export type StableswapYieldMetricsResponse = {
   nodes: StableswapYieldMetricsAggregated[];
   totalCount: number;
 };
-
-// export type AggregateSwapAssetFeesGroupedResult = {
-//   group_start: SwapAssetFeeRaw[];
-//   group_end: SwapAssetFeeRaw[];
-// };
-//
-// export type AggregateSwapAssetFeesByBlocksRangeSqlResult = {
-//   grouped_result: AggregateSwapAssetFeesGroupedResult;
-// };

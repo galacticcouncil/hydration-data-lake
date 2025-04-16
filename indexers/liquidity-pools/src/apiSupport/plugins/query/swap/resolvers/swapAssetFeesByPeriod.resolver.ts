@@ -1,7 +1,4 @@
-import {
-  AggregationTimeRangeLabel,
-  QueryResolverContext,
-} from '../../../../types';
+import { QueryResolverContext } from '../../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
@@ -10,11 +7,6 @@ import {
   AssetSwapFeeHistoricalDataByPeriodResponse,
 } from './types';
 import { handleSwapAssetFeesByPeriodAggregation } from '../utils';
-import { AggregationTimeRange } from '../../../../utils';
-import {
-  getBlockByTimestampGrtOrEq,
-  getBlockByTimestampLtOrEq,
-} from '../../../sql/block.sql';
 import { getStartStopBlocksFromInput } from '../../../../utils/aggregationUtils';
 
 export async function swapAssetFeesByPeriodResolver(

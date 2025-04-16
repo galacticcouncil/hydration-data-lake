@@ -1,26 +1,15 @@
 import {
   AggregationTimeRangeLabel,
   QueryResolverContext,
-  StableswapAssetHistoricalVolumeGqlResponse,
-  StableswapAssetHistoricalVolumeRaw,
-  StableswapHistoricalVolumeGqlResponse,
 } from '../../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
-import type { QueryBuilder, SQL } from 'graphile-build-pg';
-import {
-  stableswapAssetHistoricalVolumeSelectGraphQLResult,
-  stableswapHistoricalVolumeSelectGraphQLResult,
-} from '../utils';
-import { convertObjectPropsSnakeCaseToCamelCase } from '../../../../../utils/helpers';
 import type * as pg from 'pg';
 import { AggregationTimeRange } from '../../../../utils';
 import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,
 } from '../../../sql/block.sql';
-import { getLatestXykpoolHistoricalVolumesBatchEntriesList } from '../../../sql/xykPoolsVolumeByPeriod.sql';
-import { handleXykPoolHistoricalVolumesByPeriodAggregation } from '../../../query/xykPoolsVolume/utils';
 import { getLatestStableswapHistoricalVolumesBatchEntriesList } from '../../../sql/stableswapVolumeByPeriod.sql';
 import { handleStableswapHistoricalVolumesByPeriodAggregation } from '../../../query/stableswapVolume/utils';
 

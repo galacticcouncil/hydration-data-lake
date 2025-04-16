@@ -2,6 +2,7 @@ import { AggregationTimeRangeLabel } from '../../../../types';
 
 export type OmnipoolAssetVolumeHistoricalDataByPeriodFilter = {
   assetIds?: string[];
+  assetRegistryIds?: string[];
   startBlockNumber?: number;
   endBlockNumber?: number;
   period?: AggregationTimeRangeLabel;
@@ -9,7 +10,8 @@ export type OmnipoolAssetVolumeHistoricalDataByPeriodFilter = {
 
 export type OmnipoolAssetVolumeAggregated = {
   omnipoolAssetId: string;
-  assetId: number;
+  assetId: string;
+  assetRegistryId?: string;
   assetVolume: bigint;
   assetFeeVolume: bigint;
 };

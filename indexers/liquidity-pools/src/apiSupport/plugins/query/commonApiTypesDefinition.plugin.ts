@@ -23,21 +23,25 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
 
         type XykpoolVolumeAggregated {
           poolId: String!
-          assetAId: Int!
-          assetBId: Int!
+          assetAId: String!
+          assetBId: String!
+          assetAAssetRegistryId: String
+          assetBAssetRegistryId: String
           assetAVolume: BigFloat!
           assetBVolume: BigFloat!
         }
 
         type OmnipoolAssetVolumeAggregated {
           omnipoolAssetId: String!
-          assetId: Int!
+          assetId: String!
+          assetRegistryId: String
           assetVolume: BigFloat!
           assetFeeVolume: BigFloat!
         }
 
         type StablepoolAssetVolumeAggregated {
-          assetId: Int!
+          assetId: String!
+          assetRegistryId: String
           swapFee: BigFloat!
           swapVolume: BigFloat!
         }

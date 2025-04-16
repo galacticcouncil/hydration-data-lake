@@ -23,6 +23,7 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                                   'id', sahv.id,
                                                   'volumes_collection_id', sahv.volumes_collection_id,
                                                   'asset_id', sahv.asset_id,
+                                                  'asset_registry_id', a.asset_registry_id,
                                                   'swap_fee', sahv.swap_fee,
                                                   'swap_total_fees', sahv.swap_total_fees,
                                                   'swap_volume_in', sahv.swap_volume_in,
@@ -34,6 +35,7 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                           )
                                   ) AS asset_volumes
                            FROM stableswap_asset_volume_historical_data sahv
+                           LEFT JOIN asset a ON sahv.asset_id = a.id
                            WHERE para_block_height <= $3
                              AND para_block_height >= $2
                            GROUP BY sahv.volumes_collection_id)

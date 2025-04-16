@@ -12,7 +12,8 @@ export type StableswapVolumeHistoricalDataByPeriodFilter = {
 };
 
 export type StablepoolAssetVolumeAggregated = {
-  assetId: number;
+  assetId: string;
+  assetRegistryId?: string;
   swapFee: bigint;
   swapVolume: bigint;
 };

@@ -27,6 +27,7 @@ export const RoutedTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
 
         type RoutedTradeAssetBalanceResponse {
             assetId: String!
+            assetRegistryId: String
             amount: BigInt!
         }
         
