@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v183 from '../v183'
+import * as v305 from '../v305'
 
 export const poolCreated =  {
     name: 'Stableswap.PoolCreated',
@@ -13,6 +14,19 @@ export const poolCreated =  {
             assets: sts.array(() => sts.number()),
             amplification: v183.NonZeroU16,
             fee: v183.Permill,
+        })
+    ),
+    /**
+     * A pool was created.
+     */
+    v305: new EventType(
+        'Stableswap.PoolCreated',
+        sts.struct({
+            poolId: sts.number(),
+            assets: sts.array(() => sts.number()),
+            amplification: v305.NonZeroU16,
+            fee: v305.Permill,
+            peg: sts.option(() => v305.PoolPegInfo),
         })
     ),
 }

@@ -779,6 +779,26 @@ export class EventDataParserHelper {
       },
     };
   }
+  /**
+   * ==== Broadcast Swapped2 ====
+   */
+  parseBroadcastSwapped2Data() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams = parsers.events.broadcast.parseSwapped2Params(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
 
   /**
    * ==== EVM Log ====

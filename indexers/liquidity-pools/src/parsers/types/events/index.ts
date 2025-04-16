@@ -57,6 +57,7 @@ export enum EventName {
 
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
   'Broadcast_Swapped' = 'Broadcast.Swapped',
+  'Broadcast_Swapped2' = 'Broadcast.Swapped2',
   'EVM_Log' = 'EVM.Log',
   'EVMAccounts_Bound' = 'EVMAccounts.Bound',
 }
@@ -321,6 +322,17 @@ export type BroadcastSwappedExecutionType = {
 };
 
 export type BroadcastSwappedEventParams = {
+  swapper: string;
+  filler: string;
+  fillerType: BroadcastSwappedFillerType;
+  inputs: BroadcastSwappedAssetAmount[];
+  outputs: BroadcastSwappedAssetAmount[];
+  fees: BroadcastSwappedFee[];
+  operation: TradeOperationType;
+  operationStack: BroadcastSwappedExecutionType[];
+};
+
+export type BroadcastSwapped2EventParams = {
   swapper: string;
   filler: string;
   fillerType: BroadcastSwappedFillerType;
