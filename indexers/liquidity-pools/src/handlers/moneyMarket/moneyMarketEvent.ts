@@ -75,7 +75,7 @@ export async function processNewMoneyMarketEvent({
   ctx: SqdProcessorContext<Store>;
   eventCallData: EvmLogData;
   allInvolvedAssetIds: string[];
-  allInvolvedAssetRegistryIds: string[];
+  allInvolvedAssetRegistryIds: Array<string | undefined | null>;
   allInvolvedAssetDetails: Array<string | number | null | undefined>;
   allInvolvedParticipants: string[];
   transfer?: Transfer;
@@ -93,7 +93,9 @@ export async function processNewMoneyMarketEvent({
     eventCallData,
     allInvolvedAssetIds: [...new Set(allInvolvedAssetIds).values()],
     allInvolvedAssetRegistryIds: [
-      ...new Set(allInvolvedAssetRegistryIds).values(),
+      ...new Set<string>(
+        allInvolvedAssetRegistryIds.filter((id) => !!id) as string[]
+      ).values(),
     ],
     allInvolvedAssetDetails: [
       ...new Set(allInvolvedAssetDetails.filter((i) => !!i)).values(),

@@ -100,6 +100,7 @@ export async function handleMmSupplyEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
     supply: mmSupplyEntity,

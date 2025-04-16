@@ -99,6 +99,7 @@ export async function handleMmBorrowEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
     borrow: mmBorrowEntity,

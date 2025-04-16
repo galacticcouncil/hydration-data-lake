@@ -29,6 +29,7 @@ export async function handleBroadcastSwappedEvents(
   // await OperationStackManager.saveOperationStackEntities(ctx);
 
   await ctx.store.save([...ctx.batchState.state.routeTrades.values()]);
+
   await ctx.store.save([
     ...ctx.batchState.state.routeTradesInputs.values(),
     ...ctx.batchState.state.routeTradesOutputs.values(),

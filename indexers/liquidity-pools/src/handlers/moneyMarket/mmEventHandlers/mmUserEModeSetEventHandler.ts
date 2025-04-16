@@ -62,6 +62,7 @@ export async function handleMmUserEModeSetEvent(
     ctx,
     eventCallData,
     allInvolvedAssetIds: [],
+    allInvolvedAssetRegistryIds: [],
     allInvolvedAssetDetails: [],
     allInvolvedParticipants: [account.id],
     userEModeSet: mmUserEModeSetEventEntity,
