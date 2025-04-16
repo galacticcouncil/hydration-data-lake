@@ -3,8 +3,8 @@ import { Client } from 'pg';
 export type XykpoolHistoricalVolumeRaw = {
   id: string;
   pool_id: string;
-  asset_a_id: number;
-  asset_b_id: number;
+  asset_a_id: string;
+  asset_b_id: string;
   asset_a_volume_in: number;
   asset_a_total_volume_in: number;
   asset_a_volume_out: number;
@@ -24,8 +24,10 @@ export type XykpoolHistoricalVolumeRaw = {
 export type XykpoolHistoricalVolumeGqlResponse = {
   id: string;
   poolId: string;
-  assetAId: number;
-  assetBId: number;
+  assetAId: string;
+  assetBId: string;
+  assetAAssetRegistryId?: string;
+  assetBAssetRegistryId?: string;
   assetAVolumeIn: bigint;
   assetATotalVolumeIn: bigint;
   assetAVolumeOut: bigint;
@@ -86,6 +88,7 @@ export type StableswapAssetHistoricalVolumeRaw = {
   id: string;
   volumes_collection_id: string;
   asset_id: string;
+  asset_registry_id: string;
   swap_fee: number;
   swap_total_fees: number;
   swap_volume_in: number;

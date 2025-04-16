@@ -38,7 +38,9 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
           id: String!
           poolId: String!
           assetAId: String!
-          assetBId: String!
+          assetBId: String!          
+          assetAAssetRegistryId: String
+          assetBAssetRegistryId: String
           assetAVolumeIn: BigInt!
           assetATotalVolumeIn: BigInt!
           assetAVolumeOut: BigInt!

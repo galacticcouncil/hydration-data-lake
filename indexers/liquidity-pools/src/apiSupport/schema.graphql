@@ -74231,21 +74231,25 @@ enum YieldMetricsInterval {
 
 type XykpoolVolumeAggregated {
   poolId: String!
-  assetAId: Int!
-  assetBId: Int!
+  assetAId: String!
+  assetBId: String!
+  assetAAssetRegistryId: String
+  assetBAssetRegistryId: String
   assetAVolume: BigFloat!
   assetBVolume: BigFloat!
 }
 
 type OmnipoolAssetVolumeAggregated {
   omnipoolAssetId: String!
-  assetId: Int!
+  assetId: String!
+  assetRegistryId: String
   assetVolume: BigFloat!
   assetFeeVolume: BigFloat!
 }
 
 type StablepoolAssetVolumeAggregated {
-  assetId: Int!
+  assetId: String!
+  assetRegistryId: String
   swapFee: BigFloat!
   swapVolume: BigFloat!
 }
@@ -74302,6 +74306,8 @@ type XykpoolHistoricalVolumeEntity {
   poolId: String!
   assetAId: String!
   assetBId: String!
+  assetAAssetRegistryId: String
+  assetBAssetRegistryId: String
   assetAVolumeIn: BigInt!
   assetATotalVolumeIn: BigInt!
   assetAVolumeOut: BigInt!
@@ -74397,7 +74403,8 @@ type StableswapHistoricalVolumeByPeriodSubscriptionPayload {
 type StableswapAssetHistoricalVolumeEntity {
   id: String!
   volumesCollectionId: String!
-  assetId: Int!
+  assetId: String!
+  assetRegistryId: String
   swapFee: BigInt!
   swapTotalFees: BigInt!
   swapVolumeIn: BigInt!
@@ -74431,6 +74438,7 @@ type RoutedTradeSubscriptionPayload {
 
 type RoutedTradeAssetBalanceResponse {
   assetId: String!
+  assetRegistryId: String
   amount: BigInt!
 }
 
