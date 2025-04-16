@@ -121,13 +121,15 @@ export async function getNewSwap({
     swapIndex,
     swapper: await getOrCreateAccount({ ctx, id: swapperId }),
     filler: await getOrCreateAccount({ ctx, id: fillerId }),
-    allInvolvedAssetIds: [
-      ...new Set([
-        ...inputs.map((input) => input.assetId),
-        ...outputs.map((output) => output.assetId),
-        ...fees.map((fee) => fee.assetId),
-      ]).values(),
-    ].map((id) => `${id}`),
+    allInvolvedAssetIds: [],
+    allInvolvedAssetRegistryIds: [],
+    // allInvolvedAssetIds: [
+    //   ...new Set([
+    //     ...inputs.map((input) => input.assetId),
+    //     ...outputs.map((output) => output.assetId),
+    //     ...fees.map((fee) => fee.assetId),
+    //   ]).values(),
+    // ].map((id) => `${id}`),
     fillerType,
     operationType,
     paraBlockHeight,
@@ -165,6 +167,9 @@ export async function getNewSwap({
         recipient,
       })
     );
+    swap.allInvolvedAssetIds.push(asset.id);
+    if (asset.assetRegistryId)
+      swap.allInvolvedAssetRegistryIds.push(asset.assetRegistryId);
   }
   for (const input of inputs) {
     const asset = await getOrCreateAsset({
@@ -184,6 +189,9 @@ export async function getNewSwap({
         asset,
       })
     );
+    swap.allInvolvedAssetIds.push(asset.id);
+    if (asset.assetRegistryId)
+      swap.allInvolvedAssetRegistryIds.push(asset.assetRegistryId);
   }
   for (const output of outputs) {
     const asset = await getOrCreateAsset({
@@ -203,11 +211,18 @@ export async function getNewSwap({
         asset,
       })
     );
+    swap.allInvolvedAssetIds.push(asset.id);
+    if (asset.assetRegistryId)
+      swap.allInvolvedAssetRegistryIds.push(asset.assetRegistryId);
   }
 
   swap.fees = feeEntities;
   swap.outputs = outputEntities;
   swap.inputs = inputsEntities;
+  swap.allInvolvedAssetIds = [...new Set(swap.allInvolvedAssetIds)];
+  swap.allInvolvedAssetRegistryIds = [
+    ...new Set(swap.allInvolvedAssetRegistryIds),
+  ];
 
   return {
     swap,

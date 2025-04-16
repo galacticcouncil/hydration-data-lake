@@ -190,7 +190,6 @@ export async function handleAssetAccountBalancesPerBlock(
             account: accountAssetsMap.account,
             asset: assetBalance.asset,
 
-            transferable: 0n,
             totalLocked: 0n,
             free: 0n,
             locked: 0n,

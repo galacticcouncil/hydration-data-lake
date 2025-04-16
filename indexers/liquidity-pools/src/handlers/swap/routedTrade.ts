@@ -83,6 +83,12 @@ export function processRouteTradeHop({
         ...swap.allInvolvedAssetIds,
       ]).values(),
     ];
+    routeTradeEntity.allInvolvedAssetRegistryIds = [
+      ...new Set([
+        ...(routeTradeEntity.allInvolvedAssetRegistryIds || []),
+        ...swap.allInvolvedAssetRegistryIds,
+      ]).values(),
+    ];
     routeTradeEntity.participantFillers = [
       ...new Set([
         ...(routeTradeEntity.participantFillers || []),
@@ -139,6 +145,7 @@ export function processRouteTradeHop({
       .map((swapFee) => swapFee.recipient?.id)
       .filter((recipientId) => !!recipientId) as string[],
     allInvolvedAssetIds: swap.allInvolvedAssetIds,
+    allInvolvedAssetRegistryIds: swap.allInvolvedAssetRegistryIds,
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
     block: swap.event.block,
