@@ -1,6 +1,7 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {Omnipool} from "./omnipool.model"
+import {OmnipoolAssetHistoricalData} from "./omnipoolAssetHistoricalData.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
@@ -19,6 +20,9 @@ export class OmnipoolHistoricalData {
   @Index_()
   @ManyToOne_(() => Omnipool, {nullable: true})
   pool!: Omnipool
+
+  @OneToMany_(() => OmnipoolAssetHistoricalData, e => e.poolHistoricalData)
+  assetsHistoricalData!: OmnipoolAssetHistoricalData[]
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   maxInRatio!: bigint

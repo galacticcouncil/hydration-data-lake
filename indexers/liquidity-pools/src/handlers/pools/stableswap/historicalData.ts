@@ -59,6 +59,10 @@ async function getStableswapDataPromise({
 
   if (!poolEntity) return null;
 
+  const stableswapAssetsMap = new Map(
+    poolEntity.assets.map((sAsset) => [sAsset.asset.id, sAsset])
+  );
+
   const poolHistoricalDataEntity = new StableswapHistoricalData({
     id: `${poolId}-${blockHeader.height}`,
     pool: poolEntity,
@@ -68,6 +72,9 @@ async function getStableswapDataPromise({
     initialAmplificationChangeAtBlockHeight: poolStorageData.initialBlock,
     finalAmplificationChangeAtBlockHeight: poolStorageData.finalBlock,
     fee: poolStorageData.fee,
+    pegs: assetsData.map(
+      (assetData) => assetData.storageData?.peg ?? ['1', '1']
+    ),
 
     maxInRatio: poolStorageData.maxInRatio,
     maxOutRatio: poolStorageData.maxOutRatio,
@@ -100,10 +107,10 @@ async function getStableswapDataPromise({
       new StableswapAssetHistoricalData({
         id: `${poolId}-${asset.id}-${blockHeader.height}`,
         asset,
+        stableswapAsset: stableswapAssetsMap.get(asset.id),
         poolHistoricalData: poolHistoricalDataEntity,
         freeBalance: data!.free,
         tradable: storageData?.tradable.bits ?? 15,
-        peg: storageData?.peg ?? ['1', '1'],
 
         relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           blockHeader.height

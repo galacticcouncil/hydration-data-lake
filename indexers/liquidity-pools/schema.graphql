@@ -873,6 +873,8 @@ type OmnipoolHistoricalData @entity {
   "<omnipoolId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-101312)"
   id: ID!
   pool: Omnipool!
+  assetsHistoricalData: [OmnipoolAssetHistoricalData!]!
+    @derivedFrom(field: "poolHistoricalData")
 
   maxInRatio: BigInt!
   maxOutRatio: BigInt!
@@ -1041,6 +1043,8 @@ type StableswapHistoricalData @entity {
   minTradingLimit: BigInt!
   amplificationRange: [Int!]!
   minPoolLiquidity: BigInt!
+  pegs: [[String!]!]!
+  #  pegsFee: [String!]!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1051,10 +1055,10 @@ type StableswapAssetHistoricalData @entity {
   "<stablepoolId>-<assetId>-<paraBlockHeight>"
   id: ID!
   asset: Asset!
+  stableswapAsset: StableswapAsset!
   poolHistoricalData: StableswapHistoricalData!
   freeBalance: BigInt!
   tradable: Int
-  peg: [String!]!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

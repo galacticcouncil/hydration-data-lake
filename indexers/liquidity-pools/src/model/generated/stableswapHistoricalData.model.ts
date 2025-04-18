@@ -53,6 +53,9 @@ export class StableswapHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   minPoolLiquidity!: bigint
 
+  @Column_("jsonb", {transformer: {to: obj => obj, from: obj => marshal.fromList(obj, val => marshal.fromList(val, val => marshal.string.fromJSON(val)))}, nullable: false})
+  pegs!: ((string)[])[]
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

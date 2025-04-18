@@ -20,7 +20,6 @@ export async function handleXykPoolHistoricalData(
           poolId,
         }))
       )
-
       .flat()
       .map(async ({ poolId, blockHeader }) => {
         const pool = await getOrCreateXykPool({

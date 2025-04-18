@@ -1,18 +1,18 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  AssetHistoricalData,
-} from '../../../model';
+import { AssetHistoricalData } from '../../../model';
 import parsers from '../../../parsers';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { splitIntoBatches } from '../../../utils/helpers';
+import { OfflineTradeRouterManager } from './utils';
+import { getOrCreateAsset } from '../asset';
 
 async function processAssetsHistoricalDataAtBlock({
-  assetIds,
+  assetRegistryIds,
   block,
   ctx,
 }: {
-  assetIds: Array<string>;
+  assetRegistryIds: Array<string>;
   block: BlockHeader;
   ctx: SqdProcessorContext<Store>;
 }) {
@@ -20,7 +20,7 @@ async function processAssetsHistoricalDataAtBlock({
     (
       await parsers.storage.tokens.getManyTokensTotalIssuance({
         block,
-        tokenIds: assetIds,
+        tokenIds: assetRegistryIds,
       })
     )
       .filter((res) => res.amount !== null)
@@ -32,26 +32,43 @@ async function processAssetsHistoricalDataAtBlock({
     await parsers.storage.balances.getTotalIssuance(block)
   );
 
+  /**
+   * We need this fallback because some assets are not present in
+   * tokens.totalIssuance storage.
+   */
+  for (const assetRegistryId of assetRegistryIds) {
+    if (!totalIssuancePerAssetMap.has(assetRegistryId))
+      totalIssuancePerAssetMap.set(`${assetRegistryId}`, 0n);
+  }
+
   const existentialDepositPerAssetMap = new Map(
-    (await parsers.storage.assetRegistry.getAssetMany(assetIds, block))
+    (await parsers.storage.assetRegistry.getAssetMany(assetRegistryIds, block))
       .filter((res) => !!res.data)
       .map((res) => [`${res.assetId}`, res.data])
   );
 
-  for (const assetId of assetIds) {
+  for (const assetRegistryId of assetRegistryIds) {
     if (
-      !totalIssuancePerAssetMap.has(assetId) ||
-      !existentialDepositPerAssetMap.has(assetId)
+      !totalIssuancePerAssetMap.has(assetRegistryId) ||
+      !existentialDepositPerAssetMap.has(assetRegistryId)
     )
       continue;
 
-    const newAssetHistoricalData = new AssetHistoricalData({
-      id: `${assetId}-${block.height}`,
-      asset: ctx.batchState.state.assetsAllBatch.get(assetId),
+    const asset = await getOrCreateAsset({
+      assetRegistryId: assetRegistryId,
+      ensure: false,
+      ctx,
+    });
 
-      totalIssuance: totalIssuancePerAssetMap.get(assetId)!,
+    if (!asset) continue;
+
+    const newAssetHistoricalData = new AssetHistoricalData({
+      id: `${asset.id}-${block.height}`,
+      asset,
+
+      totalIssuance: totalIssuancePerAssetMap.get(assetRegistryId)!,
       existentialDeposit:
-        existentialDepositPerAssetMap.get(assetId)!.existentialDeposit,
+        existentialDepositPerAssetMap.get(assetRegistryId)!.existentialDeposit,
       spotPrices: [],
       paraBlockHeight: block.height,
       relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
@@ -70,7 +87,7 @@ async function processAssetsHistoricalDataAtBlock({
 export async function handleAssetHistoricalData(
   ctx: SqdProcessorContext<Store>
 ) {
-  const assetIds: Array<string> = [
+  const assetRegistryIds: Array<string> = [
     ...ctx.batchState.state.assetsAllBatch.values(),
   ]
     .filter((a) => !!a.assetRegistryId)
@@ -80,11 +97,18 @@ export async function handleAssetHistoricalData(
     await Promise.all(
       blocksSubBatch.map((block) =>
         processAssetsHistoricalDataAtBlock({
-          assetIds,
+          assetRegistryIds,
           block: block.header,
           ctx,
         })
       )
     );
+  }
+
+  for (const blocksSubBatch of splitIntoBatches(ctx.blocks, 100)) {
+    await OfflineTradeRouterManager.getInstance().init({
+      blockNumbers: blocksSubBatch.map((b) => b.header.height),
+      ctx,
+    });
   }
 }

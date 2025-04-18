@@ -24,7 +24,10 @@ export class XykYieldFarm {
   globalFarm!: XykGlobalFarm
 
   @Column_("text", {array: true, nullable: false})
-  allInvolvedAssets!: (string)[]
+  allInvolvedAssetIds!: (string)[]
+
+  @Column_("text", {array: true, nullable: false})
+  allInvolvedAssetRegistryIds!: (string)[]
 
   @Index_()
   @ManyToOne_(() => Xykpool, {nullable: true})

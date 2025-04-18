@@ -1,8 +1,8 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {NftAsset} from "./nftAsset.model"
-import {OmnipoolGlobalFarm} from "./omnipoolGlobalFarm.model"
-import {OmnipoolYieldFarm} from "./omnipoolYieldFarm.model"
+import {XykGlobalFarm} from "./xykGlobalFarm.model"
+import {XykYieldFarm} from "./xykYieldFarm.model"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {YieldFarmDepositStatus} from "./_yieldFarmDepositStatus"
@@ -27,15 +27,18 @@ export class XykYieldFarmDeposit {
   depositNft!: NftAsset
 
   @Index_()
-  @ManyToOne_(() => OmnipoolGlobalFarm, {nullable: true})
-  globalFarm!: OmnipoolGlobalFarm
+  @ManyToOne_(() => XykGlobalFarm, {nullable: true})
+  globalFarm!: XykGlobalFarm
 
   @Index_()
-  @ManyToOne_(() => OmnipoolYieldFarm, {nullable: true})
-  yieldFarm!: OmnipoolYieldFarm
+  @ManyToOne_(() => XykYieldFarm, {nullable: true})
+  yieldFarm!: XykYieldFarm
 
   @Column_("text", {array: true, nullable: false})
-  allInvolvedAssets!: (string)[]
+  allInvolvedAssetIds!: (string)[]
+
+  @Column_("text", {array: true, nullable: false})
+  allInvolvedAssetRegistryIds!: (string)[]
 
   @Index_()
   @ManyToOne_(() => Account, {nullable: true})

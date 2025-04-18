@@ -7,6 +7,8 @@ import {
   TokenTotalIssuance,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
+import { AssetType } from '../../../../model';
 
 async function getTokensAccountsAssetBalances(
   account: string,
@@ -43,25 +45,26 @@ async function getManyTokensTotalIssuance({
 }: TokensGetTokensTotalIssuanceInput): Promise<TokenTotalIssuance[]> {
   if (block.specVersion < 108) return [];
 
-  if (storage.tokens.totalIssuance.v108.is(block)) {
-    const resp = await storage.tokens.totalIssuance.v108.getMany(
-      block,
-      tokenIds.map((id) => +id)
-    );
-    if (!resp) return [];
+  const tokenIdsSet = new Set(tokenIds.map((id) => `${id}`));
 
-    const decoratedResp: TokenTotalIssuance[] = [];
-    tokenIds.forEach((tokenId, index) => {
-      if (!resp[index]) {
-        decoratedResp.push({ tokenId: `${tokenId}`, amount: null });
-      } else {
-        decoratedResp.push({
-          tokenId: `${tokenId}`,
-          amount: resp[index],
-        });
-      }
-    });
-    return decoratedResp;
+  if (storage.tokens.totalIssuance.v108.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.tokens.totalIssuance.v108.getPairsPaged(
+      100,
+      block
+    )) {
+      pairsPaged.push(
+        ...page
+          // .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
+          .map(([assetId, amount]) => ({
+            tokenId: `${assetId}`,
+            amount: amount ?? null,
+          }))
+          .filter((p) => tokenIdsSet.has(p.tokenId))
+      );
+    }
+    return pairsPaged;
   }
 
   throw new UnknownVersionError('storage.tokens.totalIssuance');

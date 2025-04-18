@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
+import {StableswapAsset} from "./stableswapAsset.model"
 import {StableswapHistoricalData} from "./stableswapHistoricalData.model"
 import {Block} from "./block.model"
 
@@ -21,6 +22,10 @@ export class StableswapAssetHistoricalData {
   asset!: Asset
 
   @Index_()
+  @ManyToOne_(() => StableswapAsset, {nullable: true})
+  stableswapAsset!: StableswapAsset
+
+  @Index_()
   @ManyToOne_(() => StableswapHistoricalData, {nullable: true})
   poolHistoricalData!: StableswapHistoricalData
 
@@ -29,9 +34,6 @@ export class StableswapAssetHistoricalData {
 
   @Column_("int4", {nullable: true})
   tradable!: number | undefined | null
-
-  @Column_("text", {array: true, nullable: false})
-  peg!: (string)[]
 
   @Index_()
   @Column_("int4", {nullable: false})
