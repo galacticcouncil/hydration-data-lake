@@ -27,6 +27,7 @@ import { SwapPlugin } from './apiSupport/plugins/query/swap';
 import { StableswapYieldMetricsPlugin } from './apiSupport/plugins/query/stableswapYieldMetrics';
 import { HydrationSdkManager } from './apiSupport/utils/hydrationSdk';
 import { CacheManager } from './apiSupport/utils/cacheManager';
+import { Request, Response, NextFunction } from 'express';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -38,11 +39,7 @@ async function initializeServer() {
   try {
     const app = express();
 
-    runMigrations()
-      .then()
-      .catch((e) => {
-        console.log(e);
-      });
+    await runMigrations();
 
     const postgraphileInstance = postgraphile(
       {
@@ -128,8 +125,26 @@ async function initializeServer() {
       methods: ['GET', 'POST'],
     };
 
-    app.use(postgraphileInstance);
     app.use(express.json());
+
+    // app.use((req: Request, res: Response, next: NextFunction): void => {
+    //   const query: unknown = req.body?.query;
+    //
+    //   if (
+    //     req.method === 'POST' &&
+    //     typeof query === 'string' &&
+    //     query.includes('mutation {')
+    //   ) {
+    //     res
+    //       .status(403)
+    //       .json({ error: 'Mutations are not allowed on this API.' });
+    //     return;
+    //   }
+    //
+    //   next();
+    // });
+
+    app.use(postgraphileInstance);
 
     app.post(
       `${ProxyApiRoute.subscan}/*`,
