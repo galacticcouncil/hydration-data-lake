@@ -127,22 +127,22 @@ async function initializeServer() {
 
     app.use(express.json());
 
-    // app.use((req: Request, res: Response, next: NextFunction): void => {
-    //   const query: unknown = req.body?.query;
-    //
-    //   if (
-    //     req.method === 'POST' &&
-    //     typeof query === 'string' &&
-    //     query.includes('mutation {')
-    //   ) {
-    //     res
-    //       .status(403)
-    //       .json({ error: 'Mutations are not allowed on this API.' });
-    //     return;
-    //   }
-    //
-    //   next();
-    // });
+    app.use((req: Request, res: Response, next: NextFunction): void => {
+      const query: unknown = req.body?.query;
+
+      if (
+        req.method === 'POST' &&
+        typeof query === 'string' &&
+        query.includes('mutation {')
+      ) {
+        res
+          .status(403)
+          .json({ error: 'Mutations are not allowed on this API.' });
+        return;
+      }
+
+      next();
+    });
 
     app.use(postgraphileInstance);
 
