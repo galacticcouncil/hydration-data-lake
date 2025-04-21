@@ -4,12 +4,34 @@ import {
   fetchExchange,
   AnyVariables,
   DocumentInput,
+  Exchange,
 } from '@urql/core';
 import { retryExchange } from '@urql/exchange-retry';
 import { ProcessingPallets } from './types';
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import { pipe, tap } from 'wonka';
+
+const responsePreprocessingExchange: Exchange =
+  ({ forward }) =>
+  (ops$) => {
+    return pipe(
+      forward(ops$),
+      tap((result) => {
+        // if ((result.operation.context.fetchOptions as RequestInit)?.headers?['dictionary-response-compression'] === 'full') {
+        //   // TODO do decompression of response here
+        // }
+
+        if (result.error) {
+          console.error(
+            'Storage dictionary GraphQL Error:',
+            result.error.message
+          );
+        }
+      })
+    );
+  };
 
 export class QueriesHelper {
   private gqlClient: GqlClient | null = null;
@@ -51,7 +73,11 @@ export class QueriesHelper {
 
     const client = new GqlClient({
       url: this.gqlClientUrlsMap.get(clientName)!,
-      exchanges: [fetchExchange, retryExchange(retryOptions)],
+      exchanges: [
+        retryExchange(retryOptions),
+        responsePreprocessingExchange,
+        fetchExchange,
+      ],
     });
 
     this.gqlClients.set(clientName, client);
@@ -70,7 +96,17 @@ export class QueriesHelper {
     variables: Variables;
     dictName: ProcessingPallets;
   }) {
-    return this.getGqlClient(dictName).query(query, variables);
+    return this.getGqlClient(dictName).query(
+      query,
+      variables
+      //   {
+      //   fetchOptions: {
+      //     headers: {
+      //       'dictionary-response-compression': 'full',
+      //     },
+      //   },
+      // }
+    );
   }
 
   async *fetchAllPages<R = []>({
