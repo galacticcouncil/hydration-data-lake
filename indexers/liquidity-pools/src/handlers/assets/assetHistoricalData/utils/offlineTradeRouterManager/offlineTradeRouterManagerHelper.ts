@@ -75,8 +75,8 @@ export class OfflineTradeRouterManagerHelper {
     console.log('stableswapHistData - ', this.stableswapHistData.size);
     console.log('omnipoolHistData - ', this.omnipoolHistData.size);
 
-    console.log('\n\n\n\n\n\n\n');
-    console.dir(this.omnipoolHistData, { depth: null });
+    // console.log('\n\n\n\n\n\n\n');
+    // console.dir(this.omnipoolHistData, { depth: null });
   }
 
   async fetchAssetsHistoricalDataForBlock({

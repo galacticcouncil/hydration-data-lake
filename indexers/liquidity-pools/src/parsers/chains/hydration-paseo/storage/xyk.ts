@@ -1,9 +1,11 @@
 import { storage, constants } from '../typegenTypes/';
 import {
   XykGetAssetsInput,
+  XykGetPoolShareTokenPairsManyInput,
   XykGetShareTokenInput,
   XykPoolAssetIds,
   XykPoolData,
+  XykPoolShareTokenPair,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 
@@ -129,4 +131,38 @@ async function getShareToken({
   throw new UnknownVersionError('storage.xyk.shareToken');
 }
 
-export default { getPoolAssets, getShareToken, getPoolData };
+async function getPoolShareTokenPairsMany({
+  block,
+}: XykGetPoolShareTokenPairsManyInput): Promise<XykPoolShareTokenPair[]> {
+  if (block.specVersion < 276) return [];
+
+  if (storage.xyk.shareToken.v276.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.xyk.shareToken.v276.getPairsPaged(
+      100,
+      block
+    )) {
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && !!p[1])
+          .map(
+            ([poolId, shareTokenId]): XykPoolShareTokenPair => ({
+              poolId,
+              shareTokenId: shareTokenId!,
+            })
+          )
+      );
+    }
+    return pairsPaged;
+  }
+
+  throw new UnknownVersionError('storage.xyk.shareToken');
+}
+
+export default {
+  getPoolAssets,
+  getShareToken,
+  getPoolShareTokenPairsMany,
+  getPoolData,
+};

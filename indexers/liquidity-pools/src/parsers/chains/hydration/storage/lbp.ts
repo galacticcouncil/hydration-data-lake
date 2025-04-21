@@ -1,10 +1,12 @@
 import { constants, storage } from '../typegenTypes/';
 import {
+  LbpGetAllPoolIdsInput,
   LbpGetAllPoolsDataInput,
   LbpGetPoolDataInput,
   LbpPoolConstants,
   LbpPoolData,
   LbpPoolStorageData,
+  StablepoolGetAllPoolIdsInput,
   XykPoolAssetIds,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
@@ -151,4 +153,18 @@ async function getAllPoolsData({
   throw new UnknownVersionError('storage.lbp.poolData');
 }
 
-export default { getPoolData, getAllPoolsData };
+async function getAllPoolIds({
+  block,
+}: LbpGetAllPoolIdsInput): Promise<string[]> {
+  if (block.specVersion < 176) return [];
+
+  if (storage.lbp.poolData.v176.is(block)) {
+    const ids = await storage.lbp.poolData.v176.getKeys(block);
+
+    return ids;
+  }
+
+  throw new UnknownVersionError('storage.lbp.poolData');
+}
+
+export default { getPoolData, getAllPoolsData, getAllPoolIds };

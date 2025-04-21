@@ -15,6 +15,7 @@ import {
 import { getAssetFreeBalance } from '../../assets/balances';
 import { getOrCreateAsset } from '../../assets/asset';
 import parsers from '../../../parsers';
+import { LbpPoolData } from '../../../parsers/types/storage';
 
 export async function createLbppool({
   ctx,
@@ -120,8 +121,9 @@ export async function createLbppool({
       }),
     }),
     createdAtParaBlockHeight: blockHeader.height,
-    createdAtRelayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
+    createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      blockHeader.height
+    ).height,
     createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
@@ -133,11 +135,13 @@ export async function getOrCreateLbppool({
   assetIds,
   ensure = false,
   blockHeader,
+  poolStorageData,
 }: {
   ctx: SqdProcessorContext<Store>;
   assetIds: number[] | string[];
   ensure?: boolean;
   blockHeader?: SqdBlock;
+  poolStorageData?: LbpPoolData;
 }): Promise<Lbppool | null> {
   let pool = [...ctx.batchState.state.lbpAllBatchPools.values()].find(
     (p) =>
@@ -173,16 +177,21 @@ export async function getOrCreateLbppool({
 
   if (!blockHeader) return null;
 
-  const allLbpPoolsStorageData = await parsers.storage.lbp.getAllPoolsData({
-    block: blockHeader,
-  });
+  let newPoolStorageData = poolStorageData;
 
-  const newPoolStorageData = allLbpPoolsStorageData.find(
-    (poolData) =>
-      (poolData.assetAId === +assetIds[0] &&
-        poolData.assetBId === +assetIds[1]) ||
-      (poolData.assetBId === +assetIds[0] && poolData.assetAId === +assetIds[1])
-  );
+  if (!newPoolStorageData) {
+    const allLbpPoolsStorageData = await parsers.storage.lbp.getAllPoolsData({
+      block: blockHeader,
+    });
+
+    newPoolStorageData = allLbpPoolsStorageData.find(
+      (poolData) =>
+        (poolData.assetAId === +assetIds[0] &&
+          poolData.assetBId === +assetIds[1]) ||
+        (poolData.assetBId === +assetIds[0] &&
+          poolData.assetAId === +assetIds[1])
+    );
+  }
 
   if (!newPoolStorageData) return null;
 
@@ -310,8 +319,7 @@ export function addLbppoolCreatedLifeState({
   createdState: LbppoolCreatedData;
 }): LbppoolLifeState[] {
   const existingState = existingStates.find(
-    (state) =>
-      state.created.paraBlockHeight === createdState.paraBlockHeight
+    (state) => state.created.paraBlockHeight === createdState.paraBlockHeight
   );
 
   if (existingState) return existingStates;

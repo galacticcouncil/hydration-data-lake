@@ -11,6 +11,7 @@ import {
 import { getOrCreateStableswap } from './stablepool';
 import { getOrCreateAsset } from '../../assets/asset';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import { splitIntoBatches } from '../../../utils/helpers';
 
 async function getStableswapDataPromise({
   ctx,
@@ -133,20 +134,41 @@ export async function handleStableswapHistoricalData(
 ) {
   if (!ctx.appConfig.PROCESS_STABLEPOOLS) return;
 
-  const predefinedEntities = await Promise.all(
-    [...ctx.batchState.state.stableswapIdsForStoragePrefetch.entries()]
-      .map(([blockNumber, { blockHeader, ids }]) =>
-        [...ids.values()].map((poolId) => ({
-          blockHeader: blockHeader,
-          poolId,
-        }))
+  const predefinedEntities = [];
+
+  for (const blocksSubBatch of splitIntoBatches(ctx.blocks, 100)) {
+    const allPoolsPerBlock: Array<{ blockHeader: BlockHeader; ids: number[] }> =
+      await Promise.all(
+        blocksSubBatch.map(async ({ header: blockHeader }) => {
+          const poolShareTokenPairs =
+            await parsers.storage.stableswap.getAllPoolIds({
+              block: blockHeader,
+            });
+          return {
+            blockHeader,
+            ids: poolShareTokenPairs,
+          };
+        })
+      );
+
+    predefinedEntities.push(
+      await Promise.all(
+        allPoolsPerBlock
+          .map(({ blockHeader, ids }) =>
+            ids.map((poolId) => ({
+              blockHeader: blockHeader,
+              poolId,
+            }))
+          )
+          .flat()
+          .map((item) => getStableswapDataPromise({ ...item, ctx }))
       )
+    );
+  }
 
-      .flat()
-      .map((item) => getStableswapDataPromise({ ...item, ctx }))
-  );
-
-  for (const entitiesToSave of predefinedEntities.filter((item) => !!item)) {
+  for (const entitiesToSave of predefinedEntities
+    .flat()
+    .filter((item) => !!item)) {
     ctx.batchState.state.stablepoolAllHistoricalData.set(
       entitiesToSave.poolData.id,
       entitiesToSave.poolData

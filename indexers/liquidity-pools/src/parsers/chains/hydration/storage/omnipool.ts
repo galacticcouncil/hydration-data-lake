@@ -1,10 +1,14 @@
 import { constants, storage } from '../typegenTypes/';
 import {
   OmnipoolAssetData,
+  OmnipoolAssetTradability,
   OmnipoolData,
+  OmnipoolGetAllAssetIdsInput,
   OmnipoolGetAssetDataInput,
+  OmnipoolGetHubAssetTradabilityInput,
   OmnipoolGetPoolDataInput,
 } from '../../../types/storage';
+import { UnknownVersionError } from '../../../../utils/errors';
 
 async function getOmnipoolAssetData({
   assetId,
@@ -29,6 +33,19 @@ async function getOmnipoolAssetData({
     ...assetData,
     tradable,
   };
+}
+
+async function getOmnipoolAllAssetIds({
+  block,
+}: OmnipoolGetAllAssetIdsInput): Promise<number[]> {
+  if (block.specVersion < 115) return [];
+
+  if (storage.omnipool.assets.v115.is(block)) {
+    const resp = await storage.omnipool.assets.v115.getKeys(block);
+
+    return resp;
+  }
+  throw new UnknownVersionError('storage.omnipool.assets');
 }
 
 async function getPoolData({
@@ -102,4 +119,22 @@ async function getPoolData({
   };
 }
 
-export default { getOmnipoolAssetData, getPoolData };
+async function getOmnipoolHubAssetTradability({
+  block,
+}: OmnipoolGetHubAssetTradabilityInput): Promise<OmnipoolAssetTradability | null> {
+  if (block.specVersion < 115) return null;
+
+  if (storage.omnipool.assets.v115.is(block)) {
+    const resp = await storage.omnipool.hubAssetTradability.v115.get(block);
+
+    return resp ?? null;
+  }
+  throw new UnknownVersionError('storage.omnipool.hubAssetTradability');
+}
+
+export default {
+  getOmnipoolAssetData,
+  getPoolData,
+  getOmnipoolAllAssetIds,
+  getOmnipoolHubAssetTradability,
+};

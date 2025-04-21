@@ -104,6 +104,7 @@ export interface XykPoolAssetIds {
   assetAId: number;
   assetBId: number;
 }
+
 export interface XykPoolData extends XykPoolAssetIds {
   exchangeFee: number[];
   maxInRatio: bigint;
@@ -112,6 +113,11 @@ export interface XykPoolData extends XykPoolAssetIds {
   minTradingLimit: bigint;
   nativeAssetId: number;
   oracleSource: string;
+}
+
+export interface XykPoolShareTokenPair {
+  poolId: string;
+  shareTokenId: number;
 }
 
 export type LbpWeightCurveType = {
@@ -172,6 +178,10 @@ export type StablepoolGetPoolDataInput = {
   block: BlockHeader;
 };
 
+export type StablepoolGetAllPoolIdsInput = {
+  block: BlockHeader;
+};
+
 export type GetPoolAssetInfoInput = {
   poolId?: number;
   poolAddress?: string;
@@ -186,6 +196,12 @@ export type OmnipoolGetPoolDataInput = {
 
 export type OmnipoolGetAssetDataInput = {
   assetId: number;
+  block: BlockHeader;
+};
+export type OmnipoolGetAllAssetIdsInput = {
+  block: BlockHeader;
+};
+export type OmnipoolGetHubAssetTradabilityInput = {
   block: BlockHeader;
 };
 
@@ -204,12 +220,20 @@ export type XykGetShareTokenInput = {
   block: BlockHeader;
 };
 
+export type XykGetPoolShareTokenPairsManyInput = {
+  block: BlockHeader;
+};
+
 export type LbpGetPoolDataInput = {
   poolAddress: string;
   block: BlockHeader;
 };
 
 export type LbpGetAllPoolsDataInput = {
+  block: BlockHeader;
+};
+
+export type LbpGetAllPoolIdsInput = {
   block: BlockHeader;
 };
 

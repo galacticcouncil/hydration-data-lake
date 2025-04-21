@@ -50,6 +50,7 @@ export default {
   otc,
   evmAccounts,
   stableswap: {
+    getAllPoolIds: stableswap.getAllPoolIds,
     getPoolData: (
       args: StablepoolGetPoolDataInput
     ): Promise<StablepoolInfo | null> =>
@@ -91,6 +92,9 @@ export default {
       }),
   },
   omnipool: {
+    getOmnipoolAllAssetIds: omnipool.getOmnipoolAllAssetIds,
+    getOmnipoolHubAssetTradability: omnipool.getOmnipoolHubAssetTradability,
+    getPoolData: omnipool.getPoolData,
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
     ): Promise<OmnipoolAssetData | null> =>
@@ -133,6 +137,7 @@ export default {
   },
   xyk: {
     getShareToken: xyk.getShareToken,
+    getPoolShareTokenPairsMany: xyk.getPoolShareTokenPairsMany,
     getPoolAssets: (args: XykGetAssetsInput): Promise<XykPoolAssetIds | null> =>
       StorageResolver.getInstance().resolveStorageData<
         XykGetAssetsInput,
@@ -193,6 +198,7 @@ export default {
         fallbackFns: [lbp.getPoolData],
       }),
     getAllPoolsData: lbp.getAllPoolsData,
+    getAllPoolIds: lbp.getAllPoolIds,
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ): Promise<AccountData | null> =>

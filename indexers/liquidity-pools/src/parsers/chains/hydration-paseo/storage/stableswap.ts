@@ -3,6 +3,7 @@ import {
   GetPoolAssetInfoInput,
   OmnipoolAssetTradability,
   StablepoolAssetState,
+  StablepoolGetAllPoolIdsInput,
   StablepoolGetPoolDataInput,
   StablepoolInfo,
   StablepoolStorageData,
@@ -83,4 +84,18 @@ async function getPoolAssetStorageData({
   };
 }
 
-export default { getPoolData, getPoolAssetStorageData };
+async function getAllPoolIds({
+  block,
+}: StablepoolGetAllPoolIdsInput): Promise<number[]> {
+  if (block.specVersion < 276) return [];
+
+  if (storage.stableswap.pools.v276.is(block)) {
+    const ids = await storage.stableswap.pools.v276.getKeys(block);
+
+    return ids;
+  }
+
+  throw new UnknownVersionError('storage.stableswap.pools');
+}
+
+export default { getPoolData, getPoolAssetStorageData, getAllPoolIds };
