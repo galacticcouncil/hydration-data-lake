@@ -21,7 +21,7 @@ export class StableswapHistoricalData {
   pool!: Stableswap
 
   @OneToMany_(() => StableswapAssetHistoricalData, e => e.poolHistoricalData)
-  assetsData!: StableswapAssetHistoricalData[]
+  assetsHistoricalData!: StableswapAssetHistoricalData[]
 
   @Column_("int4", {nullable: false})
   initialAmplification!: number

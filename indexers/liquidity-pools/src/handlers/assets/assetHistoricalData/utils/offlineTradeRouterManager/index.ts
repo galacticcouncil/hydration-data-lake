@@ -33,7 +33,7 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
 
     await Promise.all(
       blockNumbers.map(async (blockNumber) => {
-        // await this.initOfflineTradeRouterForBlock(blockNumber, ctx);
+        await this.initOfflineTradeRouterForBlock(blockNumber, ctx);
       })
     );
   }
@@ -43,12 +43,22 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
     ctx: SqdProcessorContext<Store>
   ) {
     const persistentDataSource: IPersistentDataInput = {
-      assets: [],
+      assets: this.getDecoratedAssetsHistDataAsPersistentDataInput({
+        blockNumber,
+      }),
       pools: {
-        lbp: [],
-        xyk: [],
-        stableswap: [],
-        omni: [],
+        lbp: this.getDecoratedLbppoolHistDataAsPersistentDataInput({
+          blockNumber,
+        }),
+        xyk: this.getDecoratedXykpoolHistDataAsPersistentDataInput({
+          blockNumber,
+        }),
+        stableswap: this.getDecoratedStableswapHistDataAsPersistentDataInput({
+          blockNumber,
+        }),
+        omni: this.getDecoratedOmnipoolHistDataAsPersistentDataInput({
+          blockNumber,
+        }),
         aave: [],
       },
     };

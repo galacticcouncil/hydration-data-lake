@@ -25,12 +25,6 @@ export async function fetchStableswapHistoricalData({
     ...ctx.batchState.state.stableswapAssetsAllBatch.values(),
   ].filter((sAsset) => allActiveStableswapsCachedMap.has(sAsset.pool.id));
 
-  console.log(
-    'allActiveStableswapsCachedMap - ',
-    allActiveStableswapsCachedMap.size
-  );
-  console.log('allStableswapAssetsCached - ', allStableswapAssetsCached.length);
-
   const allActiveStableswapsPersisted = await ctx.store.find(Stableswap, {
     where: {
       isDestroyed: false,
@@ -59,8 +53,6 @@ export async function fetchStableswapHistoricalData({
     ),
   ]);
 
-  console.log('allActiveStablewaps - ', allActiveStablewaps.size);
-
   const allStablewapAssets: Map<string, StableswapAsset> = new Map([
     ...allStableswapAssetsPersisted.map((sAsset): [string, StableswapAsset] => [
       sAsset.id,
@@ -79,7 +71,6 @@ export async function fetchStableswapHistoricalData({
       histData.paraBlockHeight === blockNumber &&
       allActiveStablewaps.has(histData.pool.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
-  console.log('cachedStableswapHistData - ', cachedStableswapHistData.length);
 
   const cachedStableswapAssetsHistDataList = [
     ...ctx.batchState.state.stablepoolAssetsAllHistoricalData.values(),
@@ -101,11 +92,6 @@ export async function fetchStableswapHistoricalData({
     cachedStableswapAssetsHistDataByPoolMap.get(poolId)!.push(sAssetHistData);
   }
 
-  console.log(
-    'cachedStableswapAssetsHistDataByPoolMap - ',
-    cachedStableswapAssetsHistDataByPoolMap.size
-  );
-
   const persistedStableswapHistData = await ctx.store.find(
     StableswapHistoricalData,
     {
@@ -120,7 +106,7 @@ export async function fetchStableswapHistoricalData({
       },
       relations: {
         pool: true,
-        assetsData: {
+        assetsHistoricalData: {
           asset: true,
           stableswapAsset: true,
         },
@@ -134,7 +120,7 @@ export async function fetchStableswapHistoricalData({
   >(
     persistedStableswapHistData.map((poolHisData) => [
       poolHisData.pool.id,
-      poolHisData.assetsData,
+      poolHisData.assetsHistoricalData,
     ])
   );
 
@@ -152,7 +138,7 @@ export async function fetchStableswapHistoricalData({
   ]);
 
   allStableswapHistDataMap.forEach((poolData, poolId) => {
-    poolData.assetsData = [
+    poolData.assetsHistoricalData = [
       ...new Map([
         ...(persistedStableswapAssetsHistDataMap.get(poolId) || []).map(
           (sAssetHistData): [string, StableswapAssetHistoricalData] => [

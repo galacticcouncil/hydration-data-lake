@@ -3,8 +3,10 @@ import lodashCamelCase from 'lodash.camelcase';
 import { AppConfig } from '../appConfig';
 import { CallOriginPartsDecorated, CallOriginRaw, NodeEnv } from './types';
 import { join } from 'path';
-import { hexToString } from '@polkadot/util';
+import { hexToString, stringToU8a } from '@polkadot/util';
 import v8 from 'v8';
+import { encodeAddress } from '@polkadot/util-crypto';
+import { HYDRADX_SS58_PREFIX } from '@galacticcouncil/sdk';
 
 const appConfig = AppConfig.getInstance();
 
@@ -144,4 +146,19 @@ export function* splitIntoBatches<T>(
     }
     yield list.slice(offset);
   }
+}
+
+export function bigintToNumberSafe(bigint: bigint | string) {
+  const num = Number(bigint);
+  if (!Number.isSafeInteger(num)) {
+    throw new Error(
+      'BigInt value is outside the safe integer range for Number'
+    );
+  }
+  return num;
+}
+
+export function getAavePoolId(reserve: string, atoken: string): string {
+  const id = reserve + '/' + atoken;
+  return encodeAddress(stringToU8a(id.padEnd(32, '\0')), HYDRADX_SS58_PREFIX);
 }
