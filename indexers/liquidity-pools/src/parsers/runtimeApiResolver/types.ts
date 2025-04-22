@@ -6,6 +6,7 @@ export enum RuntimeApiVersion {
 
 export enum RuntimeApiName {
   CurrenciesApi = 'CurrenciesApi',
+  AaveTradeExecutor = 'AaveTradeExecutor',
 }
 export enum RpcCallName {
   EthCall = 'EthCall',
@@ -14,6 +15,8 @@ export enum RpcCallName {
 export enum RuntimeApiMethodName {
   account = 'account',
   accounts = 'accounts',
+  pool = 'pool',
+  pools = 'pools',
 }
 
 export enum RpcCallMethodName {
@@ -37,7 +40,28 @@ export type CurrenciesApiAccountData = {
   reserved: bigint;
 };
 
-export type CurrenciesApiAccountsData = {
+export type CurrenciesApiAccountsData = Array<{
   assetId: number;
   data: CurrenciesApiAccountData;
-}[];
+}>;
+
+export type AaveTradeExecutorPoolsInput = {
+  block: BlockHeader;
+};
+export type AaveTradeExecutorPoolInput = {
+  block: BlockHeader;
+  reserveId: number;
+  aTokenId: number;
+};
+
+export type AaveTradeExecutorPoolData = {
+  reserve: number;
+  aToken: number;
+  liquidityIn: bigint;
+  liquidityOut: bigint;
+};
+
+export type AaveTradeExecutorPoolDataWithPoolId = {
+  poolId: string;
+  data: AaveTradeExecutorPoolData;
+};

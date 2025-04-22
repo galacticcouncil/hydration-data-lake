@@ -3,9 +3,9 @@ import lodashCamelCase from 'lodash.camelcase';
 import { AppConfig } from '../appConfig';
 import { CallOriginPartsDecorated, CallOriginRaw, NodeEnv } from './types';
 import { join } from 'path';
-import { hexToString, stringToU8a } from '@polkadot/util';
+import { hexToString, stringToU8a, u8aToHex } from '@polkadot/util';
 import v8 from 'v8';
-import { encodeAddress } from '@polkadot/util-crypto';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { HYDRADX_SS58_PREFIX } from '@galacticcouncil/sdk';
 
 const appConfig = AppConfig.getInstance();
@@ -158,7 +158,14 @@ export function bigintToNumberSafe(bigint: bigint | string) {
   return num;
 }
 
-export function getAavePoolId(reserve: string, atoken: string): string {
+export function getAavePoolAddress(
+  reserve: string | number,
+  atoken: string | number,
+  prefix?: number // HYDRADX_SS58_PREFIX
+): string {
   const id = reserve + '/' + atoken;
-  return encodeAddress(stringToU8a(id.padEnd(32, '\0')), HYDRADX_SS58_PREFIX);
+
+  if (prefix) return encodeAddress(stringToU8a(id.padEnd(32, '\0')), prefix);
+
+  return u8aToHex(decodeAddress(stringToU8a(id.padEnd(32, '\0'))));
 }

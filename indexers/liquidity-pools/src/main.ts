@@ -43,6 +43,15 @@ import { ethers } from 'ethers';
 import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
 import { handleAssetHistoricalData } from './handlers/assets/assetHistoricalData';
 import { createMoneyMarketEventsFromRoutedTrades } from './handlers/moneyMarket/routedTradeToMmEventHandler';
+import { RuntimeApiResolver } from './parsers/runtimeApiResolver';
+import {
+  AaveTradeExecutorPoolDataWithPoolId,
+  AaveTradeExecutorPoolsInput,
+  CurrenciesApiAccountInput,
+  RuntimeApiMethodName,
+  RuntimeApiName,
+} from './parsers/runtimeApiResolver/types';
+import { AccountData } from './parsers/types/storage';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -50,6 +59,17 @@ console.log(
 
 processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   printV8MemoryHeap();
+
+  const res = await new RuntimeApiResolver().resolveRuntimeApiCall<
+    AaveTradeExecutorPoolsInput,
+    AaveTradeExecutorPoolDataWithPoolId[] | null
+  >({
+    apiName: RuntimeApiName.AaveTradeExecutor,
+    apiMethod: RuntimeApiMethodName.pools,
+    args: {
+      block: ctx.blocks[0].header,
+    },
+  });
 
   const ctxWithBatchState: Omit<
     SqdProcessorContext<Store>,
