@@ -52,6 +52,7 @@ import {
   RuntimeApiName,
 } from './parsers/runtimeApiResolver/types';
 import { AccountData } from './parsers/types/storage';
+import { handleAavepoolHistoricalData } from './handlers/pools/aavepool/historicalData';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -261,6 +262,13 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     parsedData
   );
   console.timeEnd('handleLbppoolHistoricalData');
+
+  console.time('handleAavepoolHistoricalData');
+  await handleAavepoolHistoricalData(
+    ctxWithBatchState as SqdProcessorContext<Store>,
+    parsedData
+  );
+  console.timeEnd('handleAavepoolHistoricalData');
 
   console.time('ensurePoolsDestroyedStatus');
   await ensurePoolsDestroyedStatus(

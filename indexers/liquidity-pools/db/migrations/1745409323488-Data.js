@@ -1,5 +1,5 @@
-module.exports = class Data1745332635608 {
-    name = 'Data1745332635608'
+module.exports = class Data1745409323488 {
+    name = 'Data1745409323488'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -262,6 +262,13 @@ module.exports = class Data1745332635608 {
         await db.query(`CREATE INDEX "IDX_61f4386afc26c7786e1006b446" ON "stableswap_historical_data" ("pool_id") `)
         await db.query(`CREATE INDEX "IDX_3d8bf94440b9e83a16f4cb68e1" ON "stableswap_historical_data" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_9fb871d6d5a0ccc7889a4ec711" ON "stableswap_historical_data" ("block_id") `)
+        await db.query(`CREATE TABLE "aavepool_historical_data" ("id" character varying NOT NULL, "liquidity_in" numeric NOT NULL, "liquidity_out" numeric NOT NULL, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "pool_id" character varying, "block_id" character varying, CONSTRAINT "PK_5f3ed369ac4ab9081b1bc54bce1" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_093b7c9bca5cbcadf7641a4b58" ON "aavepool_historical_data" ("pool_id") `)
+        await db.query(`CREATE INDEX "IDX_b036adf6e514ff7219dd300a73" ON "aavepool_historical_data" ("para_block_height") `)
+        await db.query(`CREATE INDEX "IDX_5f8d8d09b192511e30ad6de917" ON "aavepool_historical_data" ("block_id") `)
+        await db.query(`CREATE TABLE "aavepool" ("id" character varying NOT NULL, "reserve_asset_id" character varying, "a_token_id" character varying, CONSTRAINT "PK_1626daca149540fd0c3590fa65a" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_2b2797e88d100bd3abf7a01cf8" ON "aavepool" ("reserve_asset_id") `)
+        await db.query(`CREATE INDEX "IDX_8df88fa39af3e8f6947bdd2df3" ON "aavepool" ("a_token_id") `)
         await db.query(`CREATE TABLE "mm_supply" ("id" character varying NOT NULL, "trace_ids" text array, "amount" numeric, "referral_code" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "asset_id" character varying, "account_id" character varying, "account_on_behalf_of_id" character varying, "initiated_by_trade_id" character varying, "event_id" character varying, CONSTRAINT "PK_d56cbc917e757d5e8d34182d706" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_eaa03bf143f075eae431d24682" ON "mm_supply" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_615bdaff81bfdd9a86ecd759f4" ON "mm_supply" ("account_id") `)
@@ -551,6 +558,10 @@ module.exports = class Data1745332635608 {
         await db.query(`ALTER TABLE "stableswap_asset_historical_data" ADD CONSTRAINT "FK_ec2c0f6217b1b5cf88d6d2a3bd2" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "stableswap_historical_data" ADD CONSTRAINT "FK_61f4386afc26c7786e1006b4461" FOREIGN KEY ("pool_id") REFERENCES "stableswap"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "stableswap_historical_data" ADD CONSTRAINT "FK_9fb871d6d5a0ccc7889a4ec7114" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "aavepool_historical_data" ADD CONSTRAINT "FK_093b7c9bca5cbcadf7641a4b581" FOREIGN KEY ("pool_id") REFERENCES "aavepool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "aavepool_historical_data" ADD CONSTRAINT "FK_5f8d8d09b192511e30ad6de9179" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "aavepool" ADD CONSTRAINT "FK_2b2797e88d100bd3abf7a01cf86" FOREIGN KEY ("reserve_asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "aavepool" ADD CONSTRAINT "FK_8df88fa39af3e8f6947bdd2df3a" FOREIGN KEY ("a_token_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "mm_supply" ADD CONSTRAINT "FK_eaa03bf143f075eae431d24682f" FOREIGN KEY ("asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "mm_supply" ADD CONSTRAINT "FK_615bdaff81bfdd9a86ecd759f44" FOREIGN KEY ("account_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "mm_supply" ADD CONSTRAINT "FK_12000fc34581f83bc376c627f25" FOREIGN KEY ("account_on_behalf_of_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -913,6 +924,13 @@ module.exports = class Data1745332635608 {
         await db.query(`DROP INDEX "public"."IDX_61f4386afc26c7786e1006b446"`)
         await db.query(`DROP INDEX "public"."IDX_3d8bf94440b9e83a16f4cb68e1"`)
         await db.query(`DROP INDEX "public"."IDX_9fb871d6d5a0ccc7889a4ec711"`)
+        await db.query(`DROP TABLE "aavepool_historical_data"`)
+        await db.query(`DROP INDEX "public"."IDX_093b7c9bca5cbcadf7641a4b58"`)
+        await db.query(`DROP INDEX "public"."IDX_b036adf6e514ff7219dd300a73"`)
+        await db.query(`DROP INDEX "public"."IDX_5f8d8d09b192511e30ad6de917"`)
+        await db.query(`DROP TABLE "aavepool"`)
+        await db.query(`DROP INDEX "public"."IDX_2b2797e88d100bd3abf7a01cf8"`)
+        await db.query(`DROP INDEX "public"."IDX_8df88fa39af3e8f6947bdd2df3"`)
         await db.query(`DROP TABLE "mm_supply"`)
         await db.query(`DROP INDEX "public"."IDX_eaa03bf143f075eae431d24682"`)
         await db.query(`DROP INDEX "public"."IDX_615bdaff81bfdd9a86ecd759f4"`)
@@ -1202,6 +1220,10 @@ module.exports = class Data1745332635608 {
         await db.query(`ALTER TABLE "stableswap_asset_historical_data" DROP CONSTRAINT "FK_ec2c0f6217b1b5cf88d6d2a3bd2"`)
         await db.query(`ALTER TABLE "stableswap_historical_data" DROP CONSTRAINT "FK_61f4386afc26c7786e1006b4461"`)
         await db.query(`ALTER TABLE "stableswap_historical_data" DROP CONSTRAINT "FK_9fb871d6d5a0ccc7889a4ec7114"`)
+        await db.query(`ALTER TABLE "aavepool_historical_data" DROP CONSTRAINT "FK_093b7c9bca5cbcadf7641a4b581"`)
+        await db.query(`ALTER TABLE "aavepool_historical_data" DROP CONSTRAINT "FK_5f8d8d09b192511e30ad6de9179"`)
+        await db.query(`ALTER TABLE "aavepool" DROP CONSTRAINT "FK_2b2797e88d100bd3abf7a01cf86"`)
+        await db.query(`ALTER TABLE "aavepool" DROP CONSTRAINT "FK_8df88fa39af3e8f6947bdd2df3a"`)
         await db.query(`ALTER TABLE "mm_supply" DROP CONSTRAINT "FK_eaa03bf143f075eae431d24682f"`)
         await db.query(`ALTER TABLE "mm_supply" DROP CONSTRAINT "FK_615bdaff81bfdd9a86ecd759f44"`)
         await db.query(`ALTER TABLE "mm_supply" DROP CONSTRAINT "FK_12000fc34581f83bc376c627f25"`)

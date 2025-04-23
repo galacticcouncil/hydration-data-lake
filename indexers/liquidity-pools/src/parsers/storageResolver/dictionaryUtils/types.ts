@@ -20,4 +20,5 @@ export enum ProcessingPallets {
   XYK = 'XYK',
   STABLESWAP = 'STABLESWAP',
   OMNIPOOL = 'OMNIPOOL',
+  AAVE = 'AAVE',
 }

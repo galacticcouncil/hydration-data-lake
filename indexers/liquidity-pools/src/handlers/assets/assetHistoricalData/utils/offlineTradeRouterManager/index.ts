@@ -63,8 +63,8 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
       },
     };
 
-    const offlinePoolService = new OfflinePoolService(
-      OfflinePoolService.fromPersistentDataToDataSource(persistentDataSource)
-    );
+    // const offlinePoolService = new OfflinePoolService(
+    //   OfflinePoolService.fromPersistentDataToDataSource(persistentDataSource)
+    // );
   }
 }

@@ -65,7 +65,7 @@ export class OfflineTradeRouterManagerHelper {
         return PoolType.Stable;
       case SwapFillerType.Omnipool:
         return PoolType.Omni;
-      case SwapFillerType.Aave:
+      case SwapFillerType.AAVE:
         return PoolType.Aave;
       default:
         throw new Error('Unknown pool type');

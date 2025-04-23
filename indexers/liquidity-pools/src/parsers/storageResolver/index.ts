@@ -81,6 +81,7 @@ export class StorageResolver {
     pallet: ProcessingPallets;
     method:
       | 'getPoolData'
+      | 'getPools'
       | 'getPoolAssetInfo'
       | 'getPoolAssetStorageData'
       | 'getAssetData'
@@ -254,6 +255,19 @@ export class StorageResolver {
             //     args as unknown as GetPoolAssetInfoInput // TODO fix types
             //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
             // );
+          }
+
+          break;
+        }
+        case ProcessingPallets.AAVE: {
+          if (method === 'getPools') {
+            // const resp = this.storageDictionaryManager.getLbpPoolData(
+            //   args as unknown as LbpGetPoolDataInput // TODO fix types
+            // ) as R;
+            //
+            // if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
           }
 
           break;

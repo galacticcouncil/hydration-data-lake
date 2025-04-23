@@ -86,6 +86,10 @@ import {
   XykPoolData,
   XykPoolShareTokenPair,
 } from './storage';
+import {
+  AaveTradeExecutorPoolDataWithPoolId,
+  AaveTradeExecutorPoolsInput,
+} from '../runtimeApiResolver/types';
 
 export interface PoolData {
   owner: string;
@@ -313,6 +317,11 @@ export type StorageParserMethods = {
     getAccountExtension: (
       args: EvmAccountsGetAccountExtensionInput
     ) => Promise<EvmAccountsAccountExtension | null>;
+  };
+  aaveTradeExecutor: {
+    getPools: (
+      args: AaveTradeExecutorPoolsInput
+    ) => Promise<AaveTradeExecutorPoolDataWithPoolId[] | null>;
   };
 };
 

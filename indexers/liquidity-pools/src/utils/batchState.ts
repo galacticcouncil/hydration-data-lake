@@ -57,6 +57,8 @@ import {
   AccountAssetBalanceHistoricalData,
   OmnipoolHistoricalData,
   AssetHistoricalData,
+  Aavepool,
+  AavepoolHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -119,6 +121,9 @@ export type BatchStatePayload = {
     { blockHeader: BlockHeader; ids: Set<string> }
   >;
   xykPoolAllHistoricalData: Map<string, XykpoolHistoricalData>;
+
+  aavePools: Map<string, Aavepool>;
+  aavePoolsHistoricalData: Map<string, AavepoolHistoricalData>;
 
   omnipoolEntity: Omnipool | null;
   omnipoolAssets: Map<string, OmnipoolAsset>;
@@ -229,6 +234,9 @@ export class BatchState {
     xykPoolHistoricalPrices: new Map(),
     xykPoolIdsForStoragePrefetch: new Map(),
     xykPoolAllHistoricalData: new Map(),
+
+    aavePools: new Map(),
+    aavePoolsHistoricalData: new Map(),
 
     omnipoolEntity: null,
     omnipoolAssets: new Map(),

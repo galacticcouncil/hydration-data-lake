@@ -34,6 +34,8 @@ import { getAccountBalances } from '../../../../handlers/assets/balances';
 import { StorageParserMethods } from '../../../types/common';
 import { RuntimeApiResolver } from '../../../runtimeApiResolver';
 import {
+  AaveTradeExecutorPoolDataWithPoolId,
+  AaveTradeExecutorPoolsInput,
   CurrenciesApiAccountInput,
   RuntimeApiMethodName,
   RuntimeApiName,
@@ -252,6 +254,32 @@ export default {
               },
             }),
           getAccountBalances,
+        ],
+      }),
+  },
+  aaveTradeExecutor: {
+    getPools: (
+      args: AaveTradeExecutorPoolsInput
+    ): Promise<AaveTradeExecutorPoolDataWithPoolId[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        AaveTradeExecutorPoolsInput,
+        AaveTradeExecutorPoolDataWithPoolId[] | null
+      >({
+        args,
+        pallet: ProcessingPallets.AAVE,
+        method: 'getPools',
+        fallbackFns: [
+          async (fallbackFnArgs) =>
+            await new RuntimeApiResolver().resolveRuntimeApiCall<
+              AaveTradeExecutorPoolsInput,
+              AaveTradeExecutorPoolDataWithPoolId[] | null
+            >({
+              apiName: RuntimeApiName.AaveTradeExecutor,
+              apiMethod: RuntimeApiMethodName.pools,
+              args: {
+                block: fallbackFnArgs.block,
+              },
+            }),
         ],
       }),
   },

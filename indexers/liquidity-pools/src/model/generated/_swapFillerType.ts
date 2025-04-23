@@ -4,5 +4,5 @@ export enum SwapFillerType {
   XYK = "XYK",
   LBP = "LBP",
   OTC = "OTC",
-  Aave = "Aave",
+  AAVE = "AAVE",
 }

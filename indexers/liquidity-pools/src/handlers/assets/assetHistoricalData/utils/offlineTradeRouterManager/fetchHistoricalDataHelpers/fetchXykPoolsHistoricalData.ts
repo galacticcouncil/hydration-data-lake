@@ -52,7 +52,7 @@ export async function fetchXykPoolsHistoricalData({
         : {}),
     },
     relations: {
-      pool: true,
+      pool: { account: true },
       assetA: true,
       assetB: true,
       nativeAsset: true,
@@ -60,11 +60,11 @@ export async function fetchXykPoolsHistoricalData({
   });
 
   return new Map([
-    ...cachedHistData.map((histData): [string, XykpoolHistoricalData] => [
+    ...persistedHistData.map((histData): [string, XykpoolHistoricalData] => [
       histData.pool.id,
       histData,
     ]),
-    ...persistedHistData.map((histData): [string, XykpoolHistoricalData] => [
+    ...cachedHistData.map((histData): [string, XykpoolHistoricalData] => [
       histData.pool.id,
       histData,
     ]),

@@ -43,12 +43,12 @@ export async function fetchAssetsHistoricalData({
   });
 
   return new Map([
-    ...cachedHistData.map((ahd): [string, AssetHistoricalData] => [
-      ahd.asset.id,
-      ahd,
-    ]),
     ...persistedHistData.map((ahd): [string, AssetHistoricalData] => [
       ahd.id,
+      ahd,
+    ]),
+    ...cachedHistData.map((ahd): [string, AssetHistoricalData] => [
+      ahd.asset.id,
       ahd,
     ]),
   ]);

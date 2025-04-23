@@ -431,7 +431,7 @@ enum SwapFillerType {
   XYK
   LBP
   OTC
-  Aave
+  AAVE
 }
 
 enum TradeOperationType {
@@ -1059,6 +1059,33 @@ type StableswapAssetHistoricalData @entity {
   poolHistoricalData: StableswapHistoricalData!
   freeBalance: BigInt!
   tradable: Int
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** AAVE Pool ***
+# ======================================================================================================================
+
+# Fully synthetic entity to represent assets pair and their balances in AAVE protocol
+type Aavepool @entity {
+  "<address> - address is derived from reserve_asset_id + aToken_id"
+  id: ID!
+
+  reserveAsset: Asset!
+  aToken: Asset!
+  historicalData: [AavepoolHistoricalData!]! @derivedFrom(field: "pool")
+}
+
+type AavepoolHistoricalData @entity {
+  "<aavepoolId>-<paraBlockHeight>"
+  id: ID!
+  pool: Aavepool!
+
+  liquidityIn: BigInt!
+  liquidityOut: BigInt!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

@@ -17,11 +17,6 @@ export async function fetchOmnipoolHistoricalData({
     ...ctx.batchState.state.omnipoolAssets.values(),
   ].filter((oAsset) => !oAsset.isRemoved);
 
-  console.log(
-    'allActiveOmnipoolAssetsCached - ',
-    allActiveOmnipoolAssetsCached.length
-  );
-
   const allActiveOmnipoolAssetsPersisted = await ctx.store.find(OmnipoolAsset, {
     where: {
       isRemoved: false,
@@ -40,8 +35,6 @@ export async function fetchOmnipoolHistoricalData({
       oAsset,
     ]),
   ]);
-
-  console.log('allActiveOmnipoolAssets - ', allActiveOmnipoolAssets.size);
 
   const cachedOmnipoolHistData = [
     ...ctx.batchState.state.omnipoolAllHistoricalData.values(),
@@ -62,7 +55,7 @@ export async function fetchOmnipoolHistoricalData({
         paraBlockHeight: blockNumber,
       },
       relations: {
-        pool: true,
+        pool: { account: true },
         assetsHistoricalData: {
           omnipoolAsset: true,
           asset: true,

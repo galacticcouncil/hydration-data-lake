@@ -54,7 +54,7 @@ export async function fetchLbpPoolsHistoricalData({
         : {}),
     },
     relations: {
-      pool: true,
+      pool: { account: true },
       assetA: true,
       assetB: true,
       owner: true,
@@ -63,11 +63,11 @@ export async function fetchLbpPoolsHistoricalData({
   });
 
   return new Map([
-    ...cachedHistData.map((histData): [string, LbppoolHistoricalData] => [
+    ...persistedHistData.map((histData): [string, LbppoolHistoricalData] => [
       histData.pool.id,
       histData,
     ]),
-    ...persistedHistData.map((histData): [string, LbppoolHistoricalData] => [
+    ...cachedHistData.map((histData): [string, LbppoolHistoricalData] => [
       histData.pool.id,
       histData,
     ]),
