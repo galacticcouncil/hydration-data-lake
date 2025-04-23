@@ -6,6 +6,7 @@ import {
   OfflinePoolService,
   IPersistentDataInput,
 } from '../../../../../../../../../../hydration-sdk/packages/sdk';
+import { PoolType } from '@galacticcouncil/sdk';
 
 export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
   private static instance: OfflineTradeRouterManager;
@@ -59,12 +60,18 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
         omni: this.getDecoratedOmnipoolHistDataAsPersistentDataInput({
           blockNumber,
         }),
-        aave: [],
+        aave: this.getDecoratedAavepoolHistDataAsPersistentDataInput({
+          blockNumber,
+        }),
       },
     };
 
-    // const offlinePoolService = new OfflinePoolService(
-    //   OfflinePoolService.fromPersistentDataToDataSource(persistentDataSource)
-    // );
+    const offlinePoolService = new OfflinePoolService(
+      OfflinePoolService.fromPersistentDataToDataSource(persistentDataSource)
+    );
+    // const omnipools = await offlinePoolService.getPools([PoolType.Omni]);
+    const router = new TradeRouter(offlinePoolService);
+
+    console.dir(await router.getPools(), { depth: null });
   }
 }

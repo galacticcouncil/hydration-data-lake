@@ -1,4 +1,5 @@
 import {
+  AavepoolHistoricalData,
   AssetHistoricalData,
   Lbppool,
   LbppoolHistoricalData,
@@ -33,6 +34,7 @@ import {
   PoolType,
 } from '../../../../../../../../../../hydration-sdk/packages/sdk';
 import { bigintToNumberSafe } from '../../../../../utils/helpers';
+import { fetchAavePoolsHistoricalData } from './fetchHistoricalDataHelpers/fetchAavePoolsHistoricalData';
 
 export class OfflineTradeRouterManagerHelper {
   protected SUPPORTED_ASSET_TYPES_SET = new Set([
@@ -49,6 +51,10 @@ export class OfflineTradeRouterManagerHelper {
     new Map();
   protected xykpoolsHistData: Map<number, Map<string, XykpoolHistoricalData>> =
     new Map();
+  protected aavepoolsHistData: Map<
+    number,
+    Map<string, AavepoolHistoricalData>
+  > = new Map();
   protected stableswapHistData: Map<
     number,
     Map<string, StableswapHistoricalData>
@@ -96,6 +102,7 @@ export class OfflineTradeRouterManagerHelper {
       await this.fetchXykPoolsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchStableswapHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchOmnipoolHistoricalDataForBlock({ ctx, blockNumber });
+      await this.fetchAavePoolsHistoricalDataForBlock({ ctx, blockNumber });
     }
   }
 
@@ -135,6 +142,19 @@ export class OfflineTradeRouterManagerHelper {
     this.xykpoolsHistData.set(
       blockNumber,
       await fetchXykPoolsHistoricalData({ blockNumber, ctx })
+    );
+  }
+
+  async fetchAavePoolsHistoricalDataForBlock({
+    blockNumber,
+    ctx,
+  }: {
+    blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.aavepoolsHistData.set(
+      blockNumber,
+      await fetchAavePoolsHistoricalData({ blockNumber, ctx })
     );
   }
 
@@ -405,6 +425,62 @@ export class OfflineTradeRouterManagerHelper {
     };
 
     return [poolData];
+  }
+
+  getDecoratedAavepoolHistDataAsPersistentDataInput({
+    blockNumber,
+  }: {
+    blockNumber: number;
+  }): IPersistentPoolBase[] {
+    const poolsMap: Map<string, IPersistentPoolBase> = new Map();
+
+    for (const [poolId, poolHistData] of [
+      ...(this.aavepoolsHistData.get(blockNumber) || new Map()).entries(),
+    ] as [string, AavepoolHistoricalData][]) {
+      const reserveAssetHistData = this.assetsHistData
+        .get(blockNumber)
+        ?.get(poolHistData.pool.reserveAsset.id);
+      const aTokenHistData = this.assetsHistData
+        .get(blockNumber)
+        ?.get(poolHistData.pool.aToken.id);
+
+      if (!reserveAssetHistData || !aTokenHistData) {
+        console.error(`>> missing asset data for pool ${poolId}`);
+        continue;
+      }
+
+      poolsMap.set(poolId, {
+        address: poolHistData.pool.id,
+        id: poolHistData.pool.id,
+        type: PoolType.Aave,
+        tokens: [
+          {
+            id: poolHistData.pool.reserveAsset.assetRegistryId,
+            decimals: poolHistData.pool.reserveAsset.decimals,
+            symbol: poolHistData.pool.reserveAsset.symbol,
+            balance: poolHistData.liquidityIn.toString(),
+            existentialDeposit:
+              reserveAssetHistData.existentialDeposit.toString(),
+            isSufficient: true, // TODO fix data
+            type: poolHistData.pool.reserveAsset.assetType,
+          },
+          {
+            id: poolHistData.pool.aToken.assetRegistryId,
+            decimals: poolHistData.pool.aToken.decimals,
+            symbol: poolHistData.pool.aToken.symbol,
+            balance: poolHistData.liquidityOut.toString(),
+            existentialDeposit: aTokenHistData.existentialDeposit.toString(),
+            isSufficient: true, // TODO fix data
+            type: poolHistData.pool.aToken.assetType,
+          },
+        ] as IPersistentPoolToken[],
+        maxInRatio: 0,
+        maxOutRatio: 0,
+        minTradingLimit: 0,
+      } as IPersistentPoolBase);
+    }
+
+    return [...poolsMap.values()];
   }
 
   // private async isRepayFeeApplied(
