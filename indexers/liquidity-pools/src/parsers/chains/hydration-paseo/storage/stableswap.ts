@@ -1,5 +1,6 @@
 import { storage, constants } from '../typegenTypes/';
 import {
+  GetConstantsInput,
   GetPoolAssetInfoInput,
   OmnipoolAssetTradability,
   StablepoolAssetState,
@@ -7,22 +8,14 @@ import {
   StablepoolGetPoolDataInput,
   StablepoolInfo,
   StablepoolStorageData,
+  StableswapConstants,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 
-async function getPoolData({
-  poolId,
-  block,
-}: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
-  let poolStorageData: StablepoolStorageData | null = null;
+function getConstants({ block }: GetConstantsInput): StableswapConstants {
   let minTradingLimit = null;
   let amplificationRange = null;
   let minPoolLiquidity = null;
-
-  if (storage.stableswap.pools.v276.is(block)) {
-    const resp = await storage.stableswap.pools.v276.get(block, poolId);
-    if (resp !== undefined) poolStorageData = resp;
-  }
 
   if (constants.stableswap.minTradingLimit.v276.is(block)) {
     const resp = constants.stableswap.minTradingLimit.v276.get(block);
@@ -37,22 +30,22 @@ async function getPoolData({
     if (resp !== undefined) amplificationRange = [resp.start, resp.end];
   }
 
-  if (
-    poolStorageData === null ||
-    minTradingLimit === null ||
-    amplificationRange === null ||
-    minPoolLiquidity === null
-  )
-    return null;
-
   return {
-    ...poolStorageData,
+    minPoolLiquidity,
     minTradingLimit,
     amplificationRange,
-    minPoolLiquidity,
-    maxInRatio: 0n,
-    maxOutRatio: 0n,
   };
+}
+
+async function getPoolData({
+  poolId,
+  block,
+}: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
+  if (storage.stableswap.pools.v276.is(block)) {
+    const resp = await storage.stableswap.pools.v276.get(block, poolId);
+    if (resp !== undefined) return resp;
+    return null;
+  }
 
   throw new UnknownVersionError('storage.stableswap.pools');
 }
@@ -98,4 +91,9 @@ async function getAllPoolIds({
   throw new UnknownVersionError('storage.stableswap.pools');
 }
 
-export default { getPoolData, getPoolAssetStorageData, getAllPoolIds };
+export default {
+  getPoolData,
+  getPoolAssetStorageData,
+  getAllPoolIds,
+  getConstants,
+};

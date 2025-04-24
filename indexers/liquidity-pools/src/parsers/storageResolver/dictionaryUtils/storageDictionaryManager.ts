@@ -649,14 +649,6 @@ export class StorageDictionaryManager extends QueriesHelper {
       initialBlock: node.initialBlock,
       finalBlock: node.finalBlock,
       fee: node.fee,
-      maxInRatio: node.maxInRatio,
-      maxOutRatio: node.maxOutRatio,
-      minTradingLimit: node.minTradingLimit,
-      amplificationRange: [
-        node.amplificationRange[0]!,
-        node.amplificationRange[1]!,
-      ],
-      minPoolLiquidity: node.minPoolLiquidity,
     };
   }
 
@@ -816,29 +808,12 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     if (!node) return null;
 
-    const {
-      assetAId,
-      assetBId,
-      exchangeFee,
-      maxInRatio,
-      maxOutRatio,
-      minPoolLiquidity,
-      minTradingLimit,
-      nativeAssetId,
-      oracleSource,
-    } = node;
+    const { assetAId, assetBId } = node;
 
     return {
       poolAddress,
       assetAId,
       assetBId,
-      exchangeFee: [exchangeFee![0] || 0, exchangeFee![1] || 0], // TODO fix types
-      maxInRatio,
-      maxOutRatio,
-      minPoolLiquidity,
-      minTradingLimit,
-      nativeAssetId: nativeAssetId ?? 0,
-      oracleSource: oracleSource || '',
     };
   }
 
@@ -909,11 +884,6 @@ export class StorageDictionaryManager extends QueriesHelper {
       fee,
       feeCollector,
       repayTarget,
-      repayFee,
-      maxInRatio,
-      maxOutRatio,
-      minPoolLiquidity,
-      minTradingLimit,
     } = node;
 
     return {
@@ -929,11 +899,6 @@ export class StorageDictionaryManager extends QueriesHelper {
       fee: [fee[0]!, fee[1]!],
       feeCollector: feeCollector!,
       repayTarget,
-      repayFee: [repayFee[0]!, repayFee[1]!],
-      maxInRatio,
-      maxOutRatio,
-      minPoolLiquidity,
-      minTradingLimit,
     };
   }
 

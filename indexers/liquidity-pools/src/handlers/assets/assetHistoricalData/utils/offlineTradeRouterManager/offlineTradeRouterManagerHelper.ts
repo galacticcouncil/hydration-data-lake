@@ -1,6 +1,7 @@
 import {
   AavepoolHistoricalData,
   AssetHistoricalData,
+  ConstantsHistoricalData,
   Lbppool,
   LbppoolHistoricalData,
   OmnipoolAsset,
@@ -21,6 +22,7 @@ import {
   fetchXykPoolsHistoricalData,
   fetchStableswapHistoricalData,
   fetchOmnipoolHistoricalData,
+  fetchConstantsHistoricalData,
 } from './fetchHistoricalDataHelpers';
 
 import {
@@ -45,6 +47,7 @@ export class OfflineTradeRouterManagerHelper {
     'Erc20',
   ]);
 
+  protected constantsHistData: Map<number, ConstantsHistoricalData> = new Map();
   protected assetsHistData: Map<number, Map<string, AssetHistoricalData>> =
     new Map();
   protected lbppoolsHistData: Map<number, Map<string, LbppoolHistoricalData>> =
@@ -97,6 +100,8 @@ export class OfflineTradeRouterManagerHelper {
     this.ensureHistDataStorage(blockNumbers);
 
     for (const blockNumber of blockNumbers) {
+      await this.fetchConstantsHistoricalDataForBlock({ ctx, blockNumber });
+      await this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchLbpPoolsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchXykPoolsHistoricalDataForBlock({ ctx, blockNumber });
@@ -106,6 +111,19 @@ export class OfflineTradeRouterManagerHelper {
     }
   }
 
+  async fetchConstantsHistoricalDataForBlock({
+    blockNumber,
+    ctx,
+  }: {
+    blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    const histData = await fetchConstantsHistoricalData({ ctx, blockNumber });
+
+    if (!histData) throw new Error('Missing constants historical data');
+
+    this.constantsHistData.set(blockNumber, histData);
+  }
   async fetchAssetsHistoricalDataForBlock({
     blockNumber,
     ctx,
@@ -232,6 +250,8 @@ export class OfflineTradeRouterManagerHelper {
         continue;
       }
 
+      const blockConstants = this.constantsHistData.get(blockNumber)!;
+
       poolsMap.set(poolId, {
         address: poolHistData.pool.account.id,
         id: poolHistData.pool.id,
@@ -256,9 +276,9 @@ export class OfflineTradeRouterManagerHelper {
             type: poolHistData.assetB.assetType,
           },
         ] as IPersistentPoolToken[],
-        maxInRatio: bigintToNumberSafe(poolHistData.maxInRatio!), //TODO fix type
-        maxOutRatio: bigintToNumberSafe(poolHistData.maxOutRatio!), //TODO fix type
-        minTradingLimit: bigintToNumberSafe(poolHistData.minTradingLimit!), //TODO fix type
+        maxInRatio: bigintToNumberSafe(blockConstants.xykMaxInRatio!), //TODO fix type
+        maxOutRatio: bigintToNumberSafe(blockConstants.xykMaxOutRatio!), //TODO fix type
+        minTradingLimit: bigintToNumberSafe(blockConstants.xykMinTradingLimit!), //TODO fix type
       } as IPersistentPoolBase);
     }
 
@@ -287,6 +307,8 @@ export class OfflineTradeRouterManagerHelper {
         continue;
       }
 
+      const blockConstants = this.constantsHistData.get(blockNumber)!;
+
       poolsMap.set(poolId, {
         id: poolHistData.pool.id,
         address: poolHistData.pool.account.id,
@@ -311,9 +333,9 @@ export class OfflineTradeRouterManagerHelper {
             type: poolHistData.assetB.assetType,
           },
         ] as IPersistentPoolToken[],
-        maxInRatio: bigintToNumberSafe(poolHistData.maxInRatio!), //TODO fix type
-        maxOutRatio: bigintToNumberSafe(poolHistData.maxOutRatio!), //TODO fix type
-        minTradingLimit: bigintToNumberSafe(poolHistData.minTradingLimit!), //TODO fix type
+        maxInRatio: bigintToNumberSafe(blockConstants.lbpMaxInRatio!), //TODO fix type
+        maxOutRatio: bigintToNumberSafe(blockConstants.lbpMaxOutRatio!), //TODO fix type
+        minTradingLimit: bigintToNumberSafe(blockConstants.lbpMinTradingLimit!), //TODO fix type
         fee: poolHistData.fee,
         repayTarget: poolHistData.repayTarget.toString(),
         feeCollector: poolHistData.feeCollector?.id,
@@ -347,6 +369,8 @@ export class OfflineTradeRouterManagerHelper {
         continue;
       }
 
+      const blockConstants = this.constantsHistData.get(blockNumber)!;
+
       poolsMap.set(poolId, {
         id: poolHistData.pool.id,
         address: poolHistData.pool.account.id,
@@ -367,9 +391,11 @@ export class OfflineTradeRouterManagerHelper {
           type: assetHistData.asset.assetType,
         })) as IPersistentPoolToken[],
 
-        maxInRatio: bigintToNumberSafe(poolHistData.maxInRatio!), //TODO fix type
-        maxOutRatio: bigintToNumberSafe(poolHistData.maxOutRatio!), //TODO fix type
-        minTradingLimit: bigintToNumberSafe(poolHistData.minTradingLimit!), //TODO fix type
+        maxInRatio: 0,
+        maxOutRatio: 0,
+        minTradingLimit: bigintToNumberSafe(
+          blockConstants.stableswapMinTradingLimit!
+        ), //TODO fix type
         fee: poolHistData.fee,
         initialAmplification: poolHistData.initialAmplification,
         finalAmplification: poolHistData.finalAmplification,
@@ -393,6 +419,8 @@ export class OfflineTradeRouterManagerHelper {
   }): IPersistentOmniPoolBase[] {
     const poolHistData = this.omnipoolHistData.get(blockNumber);
     if (!poolHistData) return [];
+
+    const blockConstants = this.constantsHistData.get(blockNumber)!;
 
     const poolData: IPersistentOmniPoolBase = {
       address: poolHistData.pool.account.id,
@@ -418,10 +446,12 @@ export class OfflineTradeRouterManagerHelper {
         protocolShares: assetHistData.assetProtocolShares.toString(),
       })) as IPersistentOmniPoolToken[],
 
-      maxInRatio: bigintToNumberSafe(poolHistData.maxInRatio!), //TODO fix type
-      maxOutRatio: bigintToNumberSafe(poolHistData.maxOutRatio!), //TODO fix type
-      minTradingLimit: bigintToNumberSafe(poolHistData.minTradingLimit!), //TODO fix type
-      hubAssetId: poolHistData.hubAsset.assetRegistryId!,
+      maxInRatio: bigintToNumberSafe(blockConstants.omnipoolMaxInRatio!), //TODO fix type
+      maxOutRatio: bigintToNumberSafe(blockConstants.omnipoolMaxOutRatio!), //TODO fix type
+      minTradingLimit: bigintToNumberSafe(
+        blockConstants.omnipoolMinimumTradingLimit!
+      ), //TODO fix type
+      hubAssetId: `${blockConstants.omnipoolHubAssetId}`,
     };
 
     return [poolData];

@@ -1,5 +1,8 @@
 import { storage, constants } from '../typegenTypes/';
 import {
+  GetConstantsInput,
+  LbpConstants,
+  XykConstants,
   XykGetAssetsInput,
   XykGetPoolShareTokenPairsManyInput,
   XykGetShareTokenInput,
@@ -8,8 +11,55 @@ import {
   XykPoolShareTokenPair,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
-import { AssetType } from '../../../../model';
+
+function getConstants({ block }: GetConstantsInput): XykConstants {
+  let exchangeFee = null;
+  let maxInRatio = null;
+  let maxOutRatio = null;
+  let minPoolLiquidity = null;
+  let minTradingLimit = null;
+  let nativeAssetId = null;
+  let oracleSource = null;
+
+  if (constants.xyk.getExchangeFee.v183.is(block)) {
+    const resp = constants.xyk.getExchangeFee.v183.get(block);
+    if (resp) exchangeFee = resp;
+  }
+  if (constants.xyk.maxInRatio.v183.is(block)) {
+    const resp = constants.xyk.maxInRatio.v183.get(block);
+    if (resp !== undefined) maxInRatio = resp;
+  }
+  if (constants.xyk.maxOutRatio.v183.is(block)) {
+    const resp = constants.xyk.maxOutRatio.v183.get(block);
+    if (resp !== undefined) maxOutRatio = resp;
+  }
+  if (constants.xyk.minPoolLiquidity.v183.is(block)) {
+    const resp = constants.xyk.minPoolLiquidity.v183.get(block);
+    if (resp !== undefined) minPoolLiquidity = resp;
+  }
+  if (constants.xyk.minTradingLimit.v183.is(block)) {
+    const resp = constants.xyk.minTradingLimit.v183.get(block);
+    if (resp !== undefined) minTradingLimit = resp;
+  }
+  if (constants.xyk.nativeAssetId.v183.is(block)) {
+    const resp = constants.xyk.nativeAssetId.v183.get(block);
+    if (resp !== undefined) nativeAssetId = resp;
+  }
+  if (constants.xyk.oracleSource.v193.is(block)) {
+    const resp = constants.xyk.oracleSource.v193.get(block);
+    if (resp !== undefined) oracleSource = resp;
+  }
+
+  return {
+    exchangeFee,
+    maxInRatio,
+    maxOutRatio,
+    minPoolLiquidity,
+    minTradingLimit,
+    nativeAssetId,
+    oracleSource,
+  };
+}
 
 async function getPoolAssets({
   block,
@@ -41,13 +91,6 @@ async function getPoolData({
   if (block.specVersion < 183) return null;
 
   let poolAssetIds: XykPoolAssetIds | null = null;
-  let poolExchangeFee = null;
-  let poolMaxInRatio = null;
-  let poolMaxOutRatio = null;
-  let poolMinPoolLiquidity = null;
-  let poolMinTradingLimit = null;
-  let poolNativeAssetId = null;
-  let poolOracleSource = null;
 
   if (storage.xyk.poolAssets.v183.is(block)) {
     const resp = await storage.xyk.poolAssets.v183.get(block, poolAddress);
@@ -59,59 +102,12 @@ async function getPoolData({
         assetBId,
         poolAddress,
       };
+
+      return poolAssetIds;
     }
-  }
-  if (constants.xyk.getExchangeFee.v183.is(block)) {
-    const resp = constants.xyk.getExchangeFee.v183.get(block);
-    if (resp) poolExchangeFee = resp;
-  }
-  if (constants.xyk.maxInRatio.v183.is(block)) {
-    const resp = constants.xyk.maxInRatio.v183.get(block);
-    if (resp !== undefined) poolMaxInRatio = resp;
-  }
-  if (constants.xyk.maxOutRatio.v183.is(block)) {
-    const resp = constants.xyk.maxOutRatio.v183.get(block);
-    if (resp !== undefined) poolMaxOutRatio = resp;
-  }
-  if (constants.xyk.minPoolLiquidity.v183.is(block)) {
-    const resp = constants.xyk.minPoolLiquidity.v183.get(block);
-    if (resp !== undefined) poolMinPoolLiquidity = resp;
-  }
-  if (constants.xyk.minTradingLimit.v183.is(block)) {
-    const resp = constants.xyk.minTradingLimit.v183.get(block);
-    if (resp !== undefined) poolMinTradingLimit = resp;
-  }
-  if (constants.xyk.nativeAssetId.v183.is(block)) {
-    const resp = constants.xyk.nativeAssetId.v183.get(block);
-    if (resp !== undefined) poolNativeAssetId = resp;
-  }
-  if (constants.xyk.oracleSource.v193.is(block)) {
-    const resp = constants.xyk.oracleSource.v193.get(block);
-    if (resp !== undefined) poolOracleSource = resp;
-  }
-
-  if (
-    poolAssetIds === null ||
-    poolExchangeFee === null ||
-    poolMaxInRatio === null ||
-    poolMaxOutRatio === null ||
-    poolMinPoolLiquidity === null ||
-    poolMinTradingLimit === null ||
-    poolNativeAssetId === null ||
-    poolOracleSource === null
-  )
     return null;
-
-  return {
-    ...poolAssetIds,
-    exchangeFee: poolExchangeFee,
-    maxInRatio: poolMaxInRatio,
-    maxOutRatio: poolMaxOutRatio,
-    minPoolLiquidity: poolMinPoolLiquidity,
-    minTradingLimit: poolMinTradingLimit,
-    nativeAssetId: poolNativeAssetId,
-    oracleSource: poolOracleSource,
-  };
+  }
+  throw new UnknownVersionError('storage.xyk.poolAssets');
 }
 
 async function getShareToken({
@@ -165,4 +161,5 @@ export default {
   getShareToken,
   getPoolShareTokenPairsMany,
   getPoolData,
+  getConstants,
 };

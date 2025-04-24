@@ -1,4 +1,5 @@
 export * as omnipool from './omnipool/constants'
+export * as dynamicFees from './dynamic-fees/constants'
 export * as lbp from './lbp/constants'
 export * as stableswap from './stableswap/constants'
 export * as xyk from './xyk/constants'

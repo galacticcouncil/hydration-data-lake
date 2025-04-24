@@ -38,21 +38,6 @@ export class StableswapHistoricalData {
   @Column_("int4", {nullable: false})
   fee!: number
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  maxInRatio!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  maxOutRatio!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  minTradingLimit!: bigint
-
-  @Column_("int4", {array: true, nullable: false})
-  amplificationRange!: (number)[]
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  minPoolLiquidity!: bigint
-
   @Column_("jsonb", {transformer: {to: obj => obj, from: obj => marshal.fromList(obj, val => marshal.fromList(val, val => marshal.string.fromJSON(val)))}, nullable: false})
   pegs!: ((string)[])[]
 

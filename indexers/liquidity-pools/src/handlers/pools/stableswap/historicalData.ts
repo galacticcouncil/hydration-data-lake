@@ -77,12 +77,6 @@ async function getStableswapDataPromise({
       (assetData) => assetData.storageData?.peg ?? ['1', '1']
     ),
 
-    maxInRatio: poolStorageData.maxInRatio,
-    maxOutRatio: poolStorageData.maxOutRatio,
-    minTradingLimit: poolStorageData.minTradingLimit,
-    amplificationRange: poolStorageData.amplificationRange,
-    minPoolLiquidity: poolStorageData.minPoolLiquidity,
-
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,

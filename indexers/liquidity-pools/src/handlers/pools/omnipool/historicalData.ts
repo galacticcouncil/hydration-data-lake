@@ -57,55 +57,11 @@ export async function handleOmnipoolHistoricalData(
                 `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`
               )
             ) {
-              const poolStorageData =
-                await parsers.storage.omnipool.getPoolData({
-                  block: blockHeader,
-                  poolAddress: ctx.appConfig.OMNIPOOL_ADDRESS,
-                });
-
-              if (!poolStorageData) return null;
-
-              const {
-                maxInRatio,
-                maxOutRatio,
-                minTradingLimit,
-                minPoolLiquidity,
-                minWithdrawalFee,
-                burnProtocolFee,
-                hdxAssetId,
-                hubAssetId,
-              } = poolStorageData;
-
-              const hdxAsset = await getOrCreateAsset({
-                id: `${hdxAssetId}`,
-                ensure: true,
-                blockHeader,
-                ctx,
-              });
-              if (!hdxAsset) return null;
-
-              const hubAsset = await getOrCreateAsset({
-                id: `${hubAssetId}`,
-                ensure: true,
-                blockHeader,
-                ctx,
-              });
-              if (!hubAsset) return null;
-
               ctx.batchState.state.omnipoolAllHistoricalData.set(
                 `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`,
                 new OmnipoolHistoricalData({
                   id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`,
                   pool: ctx.batchState.state.omnipoolEntity!,
-
-                  maxInRatio,
-                  maxOutRatio,
-                  minTradingLimit,
-                  minPoolLiquidity,
-                  minWithdrawalFee,
-                  burnProtocolFee,
-                  hdxAsset,
-                  hubAsset,
 
                   relayBlockHeight:
                     ctx.batchState.getRelayChainBlockDataFromCache(

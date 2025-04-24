@@ -54,10 +54,12 @@ import {
   Erc20AssetContractDetails,
   EvmAccountsAccountExtension,
   EvmAccountsGetAccountExtensionInput,
+  GetConstantsInput,
   GetPoolAssetInfoInput,
   LbpGetAllPoolIdsInput,
   LbpGetAllPoolsDataInput,
   LbpGetPoolDataInput,
+  LbpConstants,
   LbpPoolData,
   OmnipoolAssetData,
   OmnipoolAssetTradability,
@@ -78,6 +80,7 @@ import {
   TokensGetTokensTotalIssuanceInput,
   TokensGetTokenTotalIssuanceInput,
   TokenTotalIssuance,
+  XykConstants,
   XykGetAssetsInput,
   XykGetPoolDataInput,
   XykGetPoolShareTokenPairsManyInput,
@@ -85,6 +88,9 @@ import {
   XykPoolAssetIds,
   XykPoolData,
   XykPoolShareTokenPair,
+  OmnipoolConstants,
+  DynamicFeesConstants,
+  StableswapConstants,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -258,6 +264,7 @@ export type StorageParserMethods = {
     ) => Promise<ParachainSystemLastRelayChainBlockNumber | null>;
   };
   stableswap: {
+    getConstants: (args: GetConstantsInput) => StableswapConstants;
     getAllPoolIds: (args: StablepoolGetAllPoolIdsInput) => Promise<number[]>;
     getPoolData: (
       args: StablepoolGetPoolDataInput
@@ -270,6 +277,7 @@ export type StorageParserMethods = {
     ) => Promise<StablepoolAssetState | null>;
   };
   omnipool: {
+    getConstants: (args: GetConstantsInput) => OmnipoolConstants;
     getOmnipoolHubAssetTradability: (
       args: OmnipoolGetHubAssetTradabilityInput
     ) => Promise<OmnipoolAssetTradability | null>;
@@ -287,6 +295,7 @@ export type StorageParserMethods = {
     ) => Promise<AccountData | null>;
   };
   xyk: {
+    getConstants: (args: GetConstantsInput) => XykConstants;
     getShareToken: (args: XykGetShareTokenInput) => Promise<number | null>;
     getPoolShareTokenPairsMany: (
       args: XykGetPoolShareTokenPairsManyInput
@@ -298,6 +307,7 @@ export type StorageParserMethods = {
     ) => Promise<AccountData | null>;
   };
   lbp: {
+    getConstants: (args: GetConstantsInput) => LbpConstants;
     getPoolData: (args: LbpGetPoolDataInput) => Promise<LbpPoolData | null>;
     getAllPoolIds: (args: LbpGetAllPoolIdsInput) => Promise<string[]>;
     getAllPoolsData: (args: LbpGetAllPoolsDataInput) => Promise<LbpPoolData[]>;
@@ -322,6 +332,9 @@ export type StorageParserMethods = {
     getPools: (
       args: AaveTradeExecutorPoolsInput
     ) => Promise<AaveTradeExecutorPoolDataWithPoolId[] | null>;
+  };
+  dynamicFees: {
+    getConstants: (args: GetConstantsInput) => DynamicFeesConstants;
   };
 };
 

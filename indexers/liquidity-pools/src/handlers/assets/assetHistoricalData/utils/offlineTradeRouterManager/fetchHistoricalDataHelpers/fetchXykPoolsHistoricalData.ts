@@ -55,7 +55,6 @@ export async function fetchXykPoolsHistoricalData({
       pool: { account: true },
       assetA: true,
       assetB: true,
-      nativeAsset: true,
     },
   });
 

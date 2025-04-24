@@ -4,6 +4,11 @@ import { DcaScheduleCallData } from './calls';
 import { OtcOrderPlacedEventParams } from './events';
 import { sts } from '../chains/hydration/typegenTypes/support';
 import { AccountId32 } from '../chains/hydration/typegenTypes/v138';
+import {
+  assetFeeParameters,
+  protocolFeeParameters,
+} from '../chains/hydration/typegenTypes/dynamic-fees/constants';
+import { FixedU128, Permill } from '../chains/hydration/typegenTypes/v170';
 
 export interface AccountData {
   free: bigint;
@@ -38,15 +43,18 @@ export type OmnipoolAssetTradability = {
   bits: number;
 };
 
-export interface OmnipoolData {
-  burnProtocolFee: number;
-  hdxAssetId: number;
-  hubAssetId: number;
-  maxInRatio: bigint;
-  maxOutRatio: bigint;
-  minPoolLiquidity: bigint;
-  minTradingLimit: bigint;
-  minWithdrawalFee: bigint;
+export interface OmnipoolConstants {
+  burnProtocolFee: number | null;
+  hdxAssetId: number | null;
+  hubAssetId: number | null;
+  maxInRatio: bigint | null;
+  maxOutRatio: bigint | null;
+  minPoolLiquidity: bigint | null;
+  minTradingLimit: bigint | null;
+  minWithdrawalFee: number | null;
+}
+
+export interface OmnipoolData extends OmnipoolConstants {
   poolAddress: string;
 }
 
@@ -67,13 +75,13 @@ export interface StablepoolStorageData {
   fee: number;
 }
 
-export interface StablepoolInfo extends StablepoolStorageData {
-  maxInRatio: bigint;
-  maxOutRatio: bigint;
-  minTradingLimit: bigint;
-  amplificationRange: number[];
-  minPoolLiquidity: bigint;
+export interface StableswapConstants {
+  minTradingLimit: bigint | null;
+  amplificationRange: number[] | null;
+  minPoolLiquidity: bigint | null;
 }
+
+export interface StablepoolInfo extends StablepoolStorageData {}
 
 export interface StablepoolAssetState {
   tradable: OmnipoolAssetTradability;
@@ -105,15 +113,17 @@ export interface XykPoolAssetIds {
   assetBId: number;
 }
 
-export interface XykPoolData extends XykPoolAssetIds {
-  exchangeFee: number[];
-  maxInRatio: bigint;
-  maxOutRatio: bigint;
-  minPoolLiquidity: bigint;
-  minTradingLimit: bigint;
-  nativeAssetId: number;
-  oracleSource: string;
+export interface XykConstants {
+  exchangeFee: number[] | null;
+  maxInRatio: bigint | null;
+  maxOutRatio: bigint | null;
+  minPoolLiquidity: bigint | null;
+  minTradingLimit: bigint | null;
+  nativeAssetId: number | null;
+  oracleSource: string | null;
 }
+
+export interface XykPoolData extends XykPoolAssetIds {}
 
 export interface XykPoolShareTokenPair {
   poolId: string;
@@ -139,15 +149,15 @@ export interface LbpPoolStorageData {
   repayTarget: bigint;
 }
 
-export interface LbpPoolConstants {
-  repayFee: number[];
-  maxInRatio: bigint;
-  maxOutRatio: bigint;
-  minPoolLiquidity: bigint;
-  minTradingLimit: bigint;
+export interface LbpConstants {
+  repayFee: number[] | null;
+  maxInRatio: bigint | null;
+  maxOutRatio: bigint | null;
+  minPoolLiquidity: bigint | null;
+  minTradingLimit: bigint | null;
 }
 
-export interface LbpPoolData extends LbpPoolStorageData, LbpPoolConstants {}
+export interface LbpPoolData extends LbpPoolStorageData {}
 
 export type AccountDataMultiple = Array<{
   assetId: number;
@@ -167,11 +177,27 @@ export type OtcOrderData = {
 
 export type EvmAccountsAccountExtension = string;
 
+export type DynamicFeesParams = {
+  minFee: number;
+  maxFee: number;
+  decay: bigint;
+  amplification: bigint;
+};
+
+export interface DynamicFeesConstants {
+  assetFeeParameters: DynamicFeesParams | null;
+  protocolFeeParameters: DynamicFeesParams | null;
+}
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
  * =============================================================================
  */
+
+export type GetConstantsInput = {
+  block: BlockHeader;
+};
 
 export type StablepoolGetPoolDataInput = {
   poolId: number;

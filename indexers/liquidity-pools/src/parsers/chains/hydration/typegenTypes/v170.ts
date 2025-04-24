@@ -1,5 +1,136 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const FeeParams: sts.Type<FeeParams> = sts.struct(() => {
+    return  {
+        minFee: Permill,
+        maxFee: Permill,
+        decay: FixedU128,
+        amplification: FixedU128,
+    }
+})
+
+export const FixedU128 = sts.bigint()
+
+export const Permill = sts.number()
+
+export interface FeeParams {
+    minFee: Permill
+    maxFee: Permill
+    decay: FixedU128
+    amplification: FixedU128
+}
+
+export type FixedU128 = bigint
+
+export type Permill = number
+
+export interface FeeEntry {
+    assetFee: Permill
+    protocolFee: Permill
+    timestamp: number
+}
+
+export const FeeEntry: sts.Type<FeeEntry> = sts.struct(() => {
+    return  {
+        assetFee: Permill,
+        protocolFee: Permill,
+        timestamp: sts.number(),
+    }
+})
+
+export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
+
+export interface OraclePeriod_Day {
+    __kind: 'Day'
+}
+
+export interface OraclePeriod_Hour {
+    __kind: 'Hour'
+}
+
+export interface OraclePeriod_LastBlock {
+    __kind: 'LastBlock'
+}
+
+export interface OraclePeriod_Short {
+    __kind: 'Short'
+}
+
+export interface OraclePeriod_TenMinutes {
+    __kind: 'TenMinutes'
+}
+
+export interface OraclePeriod_Week {
+    __kind: 'Week'
+}
+
+export const OraclePeriod: sts.Type<OraclePeriod> = sts.closedEnum(() => {
+    return  {
+        Day: sts.unit(),
+        Hour: sts.unit(),
+        LastBlock: sts.unit(),
+        Short: sts.unit(),
+        TenMinutes: sts.unit(),
+        Week: sts.unit(),
+    }
+})
+
+export interface OracleEntry {
+    price: Ratio
+    volume: Volume
+    liquidity: Liquidity
+    updatedAt: number
+}
+
+export interface Liquidity {
+    a: bigint
+    b: bigint
+}
+
+export interface Volume {
+    aIn: bigint
+    bOut: bigint
+    aOut: bigint
+    bIn: bigint
+}
+
+export interface Ratio {
+    n: bigint
+    d: bigint
+}
+
+export const OracleEntry: sts.Type<OracleEntry> = sts.struct(() => {
+    return  {
+        price: Ratio,
+        volume: Volume,
+        liquidity: Liquidity,
+        updatedAt: sts.number(),
+    }
+})
+
+export const Liquidity: sts.Type<Liquidity> = sts.struct(() => {
+    return  {
+        a: sts.bigint(),
+        b: sts.bigint(),
+    }
+})
+
+export const Volume: sts.Type<Volume> = sts.struct(() => {
+    return  {
+        aIn: sts.bigint(),
+        bOut: sts.bigint(),
+        aOut: sts.bigint(),
+        bIn: sts.bigint(),
+    }
+})
+
+export const Ratio: sts.Type<Ratio> = sts.struct(() => {
+    return  {
+        n: sts.bigint(),
+        d: sts.bigint(),
+    }
+})
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -6455,10 +6586,6 @@ export interface LoyaltyCurve {
     scaleCoef: number
 }
 
-export type FixedU128 = bigint
-
-export const FixedU128 = sts.bigint()
-
 export const Perquintill = sts.bigint()
 
 /**
@@ -6825,8 +6952,6 @@ export interface Tradability {
     bits: number
 }
 
-export const Permill = sts.number()
-
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -7060,8 +7185,6 @@ export interface OmnipoolCall_set_tvl_cap {
     __kind: 'set_tvl_cap'
     cap: bigint
 }
-
-export type Permill = number
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.

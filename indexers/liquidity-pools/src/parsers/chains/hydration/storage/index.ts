@@ -10,6 +10,7 @@ import dca from './dca';
 import otc from './otc';
 import balances from './balances';
 import evmAccounts from './evmAccounts';
+import dynamicFees from './dynamicFees';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -58,6 +59,7 @@ export default {
   evmAccounts,
   stableswap: {
     getAllPoolIds: stableswap.getAllPoolIds,
+    getConstants: stableswap.getConstants,
     getPoolData: (
       args: StablepoolGetPoolDataInput
     ): Promise<StablepoolInfo | null> =>
@@ -111,6 +113,7 @@ export default {
       }),
   },
   omnipool: {
+    getConstants: omnipool.getConstants,
     getOmnipoolAllAssetIds: omnipool.getOmnipoolAllAssetIds,
     getOmnipoolHubAssetTradability: omnipool.getOmnipoolHubAssetTradability,
     getOmnipoolAssetData: (
@@ -166,6 +169,7 @@ export default {
       }),
   },
   xyk: {
+    getConstants: xyk.getConstants,
     getShareToken: xyk.getShareToken,
     getPoolShareTokenPairsMany: xyk.getPoolShareTokenPairsMany,
     getPoolAssets: (args: XykGetAssetsInput): Promise<XykPoolAssetIds | null> =>
@@ -217,6 +221,7 @@ export default {
       }),
   },
   lbp: {
+    getConstants: lbp.getConstants,
     getPoolData: (args: LbpGetPoolDataInput): Promise<LbpPoolData | null> =>
       StorageResolver.getInstance().resolveStorageData<
         LbpGetPoolDataInput,
@@ -282,5 +287,8 @@ export default {
             }),
         ],
       }),
+  },
+  dynamicFees: {
+    getConstants: dynamicFees.getConstants,
   },
 } as StorageParserMethods;

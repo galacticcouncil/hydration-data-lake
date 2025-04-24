@@ -53,6 +53,7 @@ import {
 } from './parsers/runtimeApiResolver/types';
 import { AccountData } from './parsers/types/storage';
 import { handleAavepoolHistoricalData } from './handlers/pools/aavepool/historicalData';
+import { handleConstantsHistoricalData } from './handlers/constants/constantsHistoricalData';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -234,6 +235,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   await saveAllMoneyMarketEvents(
     ctxWithBatchState as SqdProcessorContext<Store>
   );
+
+  console.time('handleConstantsHistoricalData');
+  await handleConstantsHistoricalData(
+    ctxWithBatchState as SqdProcessorContext<Store>
+  );
+  console.timeEnd('handleConstantsHistoricalData');
 
   console.time('handleStableswapHistoricalData');
   await handleStableswapHistoricalData(

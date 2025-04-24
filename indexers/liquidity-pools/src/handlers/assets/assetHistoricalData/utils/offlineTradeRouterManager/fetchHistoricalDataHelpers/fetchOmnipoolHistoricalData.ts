@@ -60,8 +60,6 @@ export async function fetchOmnipoolHistoricalData({
           omnipoolAsset: true,
           asset: true,
         },
-        hdxAsset: true,
-        hubAsset: true,
       },
     }
   );

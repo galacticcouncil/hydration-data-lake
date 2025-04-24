@@ -64,21 +64,6 @@ export class LbppoolHistoricalData {
   @Column_("int4", {array: true, nullable: false})
   fee!: (number)[]
 
-  @Column_("int4", {array: true, nullable: false})
-  repayFee!: (number)[]
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  maxInRatio!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  maxOutRatio!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  minPoolLiquidity!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  minTradingLimit!: bigint
-
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

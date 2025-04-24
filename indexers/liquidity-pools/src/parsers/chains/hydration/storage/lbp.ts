@@ -1,18 +1,16 @@
 import { constants, storage } from '../typegenTypes/';
 import {
+  GetConstantsInput,
   LbpGetAllPoolIdsInput,
   LbpGetAllPoolsDataInput,
   LbpGetPoolDataInput,
-  LbpPoolConstants,
+  LbpConstants,
   LbpPoolData,
   LbpPoolStorageData,
-  StablepoolGetAllPoolIdsInput,
-  XykPoolAssetIds,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { BlockHeader } from '@subsquid/substrate-processor';
 
-function getPoolConstants(block: BlockHeader): LbpPoolConstants | null {
+function getConstants({ block }: GetConstantsInput): LbpConstants | null {
   if (block.specVersion < 176) return null;
 
   let repayFee = null;
@@ -41,15 +39,6 @@ function getPoolConstants(block: BlockHeader): LbpPoolConstants | null {
     const resp = constants.lbp.minTradingLimit.v176.get(block);
     if (resp !== undefined) minTradingLimit = resp;
   }
-
-  if (
-    repayFee === null ||
-    maxInRatio === null ||
-    maxOutRatio === null ||
-    minPoolLiquidity === null ||
-    minTradingLimit === null
-  )
-    return null;
 
   return {
     repayFee,
@@ -87,31 +76,8 @@ async function getPoolData({
       feeCollector: resp.feeCollector,
       repayTarget: BigInt(resp.repayTarget),
     };
+    return poolStorageData;
   }
-
-  if (!poolStorageData) return null;
-
-  const constants = getPoolConstants(block);
-
-  if (!constants) return null;
-
-  const {
-    repayFee,
-    maxInRatio,
-    maxOutRatio,
-    minPoolLiquidity,
-    minTradingLimit,
-  } = constants;
-
-  return {
-    ...poolStorageData,
-    repayFee,
-    maxInRatio,
-    maxOutRatio,
-    minPoolLiquidity,
-    minTradingLimit,
-  };
-
   throw new UnknownVersionError('storage.lbp.poolData');
 }
 
@@ -122,12 +88,11 @@ async function getAllPoolsData({
 
   if (block.specVersion < 176) return [];
 
-  const constants = getPoolConstants(block);
-
-  if (!constants) return [];
-
   if (storage.lbp.poolData.v176.is(block)) {
-    for await (let page of storage.lbp.poolData.v176.getPairsPaged(100, block))
+    for await (const page of storage.lbp.poolData.v176.getPairsPaged(
+      100,
+      block
+    ))
       pairsPaged.push(
         ...page
           .filter((p) => !!p && !!p[1])
@@ -144,7 +109,6 @@ async function getAllPoolsData({
             fee: poolData!.fee,
             feeCollector: poolData!.feeCollector,
             repayTarget: BigInt(poolData!.repayTarget),
-            ...constants,
           }))
       );
     return pairsPaged;
@@ -167,4 +131,4 @@ async function getAllPoolIds({
   throw new UnknownVersionError('storage.lbp.poolData');
 }
 
-export default { getPoolData, getAllPoolsData, getAllPoolIds };
+export default { getPoolData, getAllPoolsData, getAllPoolIds, getConstants };

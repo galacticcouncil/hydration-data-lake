@@ -15,11 +15,11 @@ async function getPoolData({
 
     return {
       ...resp,
-      maxInRatio: 0n,
-      maxOutRatio: 0n,
-      minTradingLimit: 0n,
-      amplificationRange: [0, 0],
-      minPoolLiquidity: 0n,
+      // maxInRatio: 0n,
+      // maxOutRatio: 0n,
+      // minTradingLimit: 0n,
+      // amplificationRange: [0, 0],
+      // minPoolLiquidity: 0n,
     };
   }
 

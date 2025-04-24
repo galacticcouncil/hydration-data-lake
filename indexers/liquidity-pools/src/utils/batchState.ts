@@ -59,6 +59,7 @@ import {
   AssetHistoricalData,
   Aavepool,
   AavepoolHistoricalData,
+  ConstantsHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -77,6 +78,8 @@ export type BatchStatePayload = {
   chainActivityTraceRelations: Map<string, ChainActivityTraceRelation>;
   accountChainActivityTraces: Map<string, AccountChainActivityTrace>;
   // operationStacks: Map<string, OperationStack>;
+
+  constantsHistoricalData: Map<string, ConstantsHistoricalData>;
 
   accounts: Map<string, Account>;
   accountIdForPrefetch: Set<string>;
@@ -200,6 +203,8 @@ export class BatchState {
     chainActivityTraceRelations: new Map(),
     accountChainActivityTraces: new Map(),
     // operationStacks: new Map(),
+
+    constantsHistoricalData: new Map(),
 
     accounts: new Map(),
     accountIdForPrefetch: new Set(),

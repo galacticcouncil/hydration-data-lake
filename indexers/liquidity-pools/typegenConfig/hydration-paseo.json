@@ -95,6 +95,17 @@
       "events": ["Bound"],
       "calls": [],
       "storage": true
+    },
+    "EmaOracle": {
+      "events": true,
+      "calls": [],
+      "storage": true
+    },
+    "DynamicFees": {
+      "events": [],
+      "calls": [],
+      "storage": true,
+      "constants": true
     }
   }
 }

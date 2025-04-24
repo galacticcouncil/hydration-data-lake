@@ -83,19 +83,6 @@ export async function handleXykPoolHistoricalData(
               assetABalance: assetsData.get(pool.assetA.id)?.free ?? BigInt(0),
               assetBBalance: assetsData.get(pool.assetB.id)?.free ?? BigInt(0),
 
-              exchangeFee: poolData?.exchangeFee ?? [0, 0],
-              maxInRatio: poolData?.maxInRatio ?? BigInt(0),
-              maxOutRatio: poolData?.maxOutRatio ?? BigInt(0),
-              minPoolLiquidity: poolData?.minPoolLiquidity ?? BigInt(0),
-              minTradingLimit: poolData?.minTradingLimit ?? BigInt(0),
-              nativeAsset: await getOrCreateAsset({
-                id: `${poolData?.nativeAssetId}`,
-                ensure: true,
-                blockHeader,
-                ctx,
-              }),
-              oracleSource: poolData?.oracleSource ?? null,
-
               relayBlockHeight:
                 ctx.batchState.state.relayChainInfo.get(blockHeader.height)
                   ?.relaychainBlockNumber ?? 0,

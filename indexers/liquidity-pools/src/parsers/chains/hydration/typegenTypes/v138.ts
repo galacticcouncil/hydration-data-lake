@@ -1,5 +1,98 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
+
+export interface OraclePeriod_Day {
+    __kind: 'Day'
+}
+
+export interface OraclePeriod_Hour {
+    __kind: 'Hour'
+}
+
+export interface OraclePeriod_LastBlock {
+    __kind: 'LastBlock'
+}
+
+export interface OraclePeriod_Short {
+    __kind: 'Short'
+}
+
+export interface OraclePeriod_TenMinutes {
+    __kind: 'TenMinutes'
+}
+
+export interface OraclePeriod_Week {
+    __kind: 'Week'
+}
+
+export const OraclePeriod: sts.Type<OraclePeriod> = sts.closedEnum(() => {
+    return  {
+        Day: sts.unit(),
+        Hour: sts.unit(),
+        LastBlock: sts.unit(),
+        Short: sts.unit(),
+        TenMinutes: sts.unit(),
+        Week: sts.unit(),
+    }
+})
+
+export interface OracleEntry {
+    price: Ratio
+    volume: Volume
+    liquidity: Liquidity
+    timestamp: number
+}
+
+export interface Liquidity {
+    a: bigint
+    b: bigint
+}
+
+export interface Volume {
+    aIn: bigint
+    bOut: bigint
+    aOut: bigint
+    bIn: bigint
+}
+
+export interface Ratio {
+    n: bigint
+    d: bigint
+}
+
+export const OracleEntry: sts.Type<OracleEntry> = sts.struct(() => {
+    return  {
+        price: Ratio,
+        volume: Volume,
+        liquidity: Liquidity,
+        timestamp: sts.number(),
+    }
+})
+
+export const Liquidity: sts.Type<Liquidity> = sts.struct(() => {
+    return  {
+        a: sts.bigint(),
+        b: sts.bigint(),
+    }
+})
+
+export const Volume: sts.Type<Volume> = sts.struct(() => {
+    return  {
+        aIn: sts.bigint(),
+        bOut: sts.bigint(),
+        aOut: sts.bigint(),
+        bIn: sts.bigint(),
+    }
+})
+
+export const Ratio: sts.Type<Ratio> = sts.struct(() => {
+    return  {
+        n: sts.bigint(),
+        d: sts.bigint(),
+    }
+})
+
 export interface Order {
     owner: AccountId32
     assetIn: number

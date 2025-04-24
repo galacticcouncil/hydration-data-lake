@@ -646,11 +646,6 @@ type LbppoolHistoricalData @entity {
   repayTarget: BigInt!
   weightCurve: String!
   fee: [Int!]!
-  repayFee: [Int!]!
-  maxInRatio: BigInt!
-  maxOutRatio: BigInt!
-  minPoolLiquidity: BigInt!
-  minTradingLimit: BigInt!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -768,14 +763,6 @@ type XykpoolHistoricalData @entity {
   assetABalance: BigInt!
   assetBBalance: BigInt!
 
-  exchangeFee: [Int]!
-  maxInRatio: BigInt
-  maxOutRatio: BigInt
-  minPoolLiquidity: BigInt
-  minTradingLimit: BigInt
-  nativeAsset: Asset
-  oracleSource: String
-
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   block: Block!
@@ -875,15 +862,6 @@ type OmnipoolHistoricalData @entity {
   pool: Omnipool!
   assetsHistoricalData: [OmnipoolAssetHistoricalData!]!
     @derivedFrom(field: "poolHistoricalData")
-
-  maxInRatio: BigInt!
-  maxOutRatio: BigInt!
-  minTradingLimit: BigInt!
-  minPoolLiquidity: BigInt!
-  minWithdrawalFee: BigInt!
-  burnProtocolFee: Int!
-  hdxAsset: Asset!
-  hubAsset: Asset!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1038,11 +1016,6 @@ type StableswapHistoricalData @entity {
   initialAmplificationChangeAtBlockHeight: Int!
   finalAmplificationChangeAtBlockHeight: Int!
   fee: Int!
-  maxInRatio: BigInt!
-  maxOutRatio: BigInt!
-  minTradingLimit: BigInt!
-  amplificationRange: [Int!]!
-  minPoolLiquidity: BigInt!
   pegs: [[String!]!]!
   #  pegsFee: [String!]!
 
@@ -1086,6 +1059,56 @@ type AavepoolHistoricalData @entity {
 
   liquidityIn: BigInt!
   liquidityOut: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** Constants ***
+# ======================================================================================================================
+
+type DynamicFeesAssetFeeParameters {
+  minFee: Int!
+  maxFee: Int!
+  decay: String!
+  amplification: String!
+}
+
+type ConstantsHistoricalData @entity {
+  "<paraBlockHeight>"
+  id: ID!
+
+  lbpRepayFee: [Int!]
+  lbpMaxInRatio: BigInt
+  lbpMaxOutRatio: BigInt
+  lbpMinPoolLiquidity: BigInt
+  lbpMinTradingLimit: BigInt
+
+  omnipoolBurnProtocolFee: Int
+  omnipoolHdxAssetId: Int
+  omnipoolHubAssetId: Int
+  omnipoolMaxInRatio: BigInt
+  omnipoolMaxOutRatio: BigInt
+  omnipoolMinimumPoolLiquidity: BigInt
+  omnipoolMinimumTradingLimit: BigInt
+  omnipoolMinWithdrawalFee: Int
+
+  stableswapMinTradingLimit: BigInt
+  stableswapMinPoolLiquidity: BigInt
+  stableswapAmplificationRange: [Int!]
+
+  xykGetExchangeFee: [Int!]
+  xykMaxInRatio: BigInt
+  xykMaxOutRatio: BigInt
+  xykMinPoolLiquidity: BigInt
+  xykMinTradingLimit: BigInt
+  xykNativeAssetId: Int
+  xykOracleSource: String
+
+  dynamicFeesAssetFeeParameters: DynamicFeesAssetFeeParameters
+  dynamicFeesProtocolFeeParameters: DynamicFeesAssetFeeParameters
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

@@ -30,11 +30,11 @@ async function getPoolData({
       fee: resp.fee,
       feeCollector: resp.feeCollector,
       repayTarget: BigInt(resp.repayTarget),
-      repayFee: [0, 0],
-      maxInRatio: 0n,
-      maxOutRatio: 0n,
-      minPoolLiquidity: 0n,
-      minTradingLimit: 0n,
+      // repayFee: [0, 0],
+      // maxInRatio: 0n,
+      // maxOutRatio: 0n,
+      // minPoolLiquidity: 0n,
+      // minTradingLimit: 0n,
     };
   }
 
