@@ -1,5 +1,5 @@
-module.exports = class Data1745513795280 {
-    name = 'Data1745513795280'
+module.exports = class Data1745851501544 {
+    name = 'Data1745851501544'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -269,6 +269,12 @@ module.exports = class Data1745513795280 {
         await db.query(`CREATE TABLE "constants_historical_data" ("id" character varying NOT NULL, "lbp_repay_fee" integer array, "lbp_max_in_ratio" numeric, "lbp_max_out_ratio" numeric, "lbp_min_pool_liquidity" numeric, "lbp_min_trading_limit" numeric, "omnipool_burn_protocol_fee" integer, "omnipool_hdx_asset_id" integer, "omnipool_hub_asset_id" integer, "omnipool_max_in_ratio" numeric, "omnipool_max_out_ratio" numeric, "omnipool_minimum_pool_liquidity" numeric, "omnipool_minimum_trading_limit" numeric, "omnipool_min_withdrawal_fee" integer, "stableswap_min_trading_limit" numeric, "stableswap_min_pool_liquidity" numeric, "stableswap_amplification_range" integer array, "xyk_get_exchange_fee" integer array, "xyk_max_in_ratio" numeric, "xyk_max_out_ratio" numeric, "xyk_min_pool_liquidity" numeric, "xyk_min_trading_limit" numeric, "xyk_native_asset_id" integer, "xyk_oracle_source" text, "dynamic_fees_asset_fee_parameters" jsonb, "dynamic_fees_protocol_fee_parameters" jsonb, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" character varying, CONSTRAINT "PK_7ad872d73a82e93af4717b8b485" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_74eba31c8da74bbbf7cd148409" ON "constants_historical_data" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_de9f533e177766f7c05c779373" ON "constants_historical_data" ("block_id") `)
+        await db.query(`CREATE TABLE "ema_oracle_entry_historical_data" ("id" character varying NOT NULL, "asset_a_asset_registry_id" text NOT NULL, "asset_b_asset_registry_id" text NOT NULL, "source" text NOT NULL, "period" character varying(10) NOT NULL, "numerator_price" numeric NOT NULL, "denominator_price" numeric NOT NULL, "asset_a_in_volume" numeric NOT NULL, "asset_a_out_volume" numeric NOT NULL, "asset_b_in_volume" numeric NOT NULL, "asset_b_out_volume" numeric NOT NULL, "asset_a_liquidity" numeric NOT NULL, "asset_b_liquidity" numeric NOT NULL, "updated_at_para_block_height" integer NOT NULL, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "asset_a_id" character varying, "asset_b_id" character varying, "block_id" character varying, CONSTRAINT "PK_510dcad4579d31b8ab118327716" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_f23489ee005bdd7a700d891007" ON "ema_oracle_entry_historical_data" ("asset_a_id") `)
+        await db.query(`CREATE INDEX "IDX_cd4b9bf83ace9aa6307f621abd" ON "ema_oracle_entry_historical_data" ("asset_b_id") `)
+        await db.query(`CREATE INDEX "IDX_8c39e3994b55a85485de8cbdef" ON "ema_oracle_entry_historical_data" ("source") `)
+        await db.query(`CREATE INDEX "IDX_f9c17d541699c24f0213aed8be" ON "ema_oracle_entry_historical_data" ("para_block_height") `)
+        await db.query(`CREATE INDEX "IDX_69eb79053dfeebef94f290d619" ON "ema_oracle_entry_historical_data" ("block_id") `)
         await db.query(`CREATE TABLE "mm_supply" ("id" character varying NOT NULL, "trace_ids" text array, "amount" numeric, "referral_code" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "asset_id" character varying, "account_id" character varying, "account_on_behalf_of_id" character varying, "initiated_by_trade_id" character varying, "event_id" character varying, CONSTRAINT "PK_d56cbc917e757d5e8d34182d706" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_eaa03bf143f075eae431d24682" ON "mm_supply" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_615bdaff81bfdd9a86ecd759f4" ON "mm_supply" ("account_id") `)
@@ -560,6 +566,9 @@ module.exports = class Data1745513795280 {
         await db.query(`ALTER TABLE "aavepool" ADD CONSTRAINT "FK_2b2797e88d100bd3abf7a01cf86" FOREIGN KEY ("reserve_asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "aavepool" ADD CONSTRAINT "FK_8df88fa39af3e8f6947bdd2df3a" FOREIGN KEY ("a_token_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "constants_historical_data" ADD CONSTRAINT "FK_de9f533e177766f7c05c7793731" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "ema_oracle_entry_historical_data" ADD CONSTRAINT "FK_f23489ee005bdd7a700d8910074" FOREIGN KEY ("asset_a_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "ema_oracle_entry_historical_data" ADD CONSTRAINT "FK_cd4b9bf83ace9aa6307f621abd5" FOREIGN KEY ("asset_b_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "ema_oracle_entry_historical_data" ADD CONSTRAINT "FK_69eb79053dfeebef94f290d6199" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "mm_supply" ADD CONSTRAINT "FK_eaa03bf143f075eae431d24682f" FOREIGN KEY ("asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "mm_supply" ADD CONSTRAINT "FK_615bdaff81bfdd9a86ecd759f44" FOREIGN KEY ("account_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "mm_supply" ADD CONSTRAINT "FK_12000fc34581f83bc376c627f25" FOREIGN KEY ("account_on_behalf_of_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -929,6 +938,12 @@ module.exports = class Data1745513795280 {
         await db.query(`DROP TABLE "constants_historical_data"`)
         await db.query(`DROP INDEX "public"."IDX_74eba31c8da74bbbf7cd148409"`)
         await db.query(`DROP INDEX "public"."IDX_de9f533e177766f7c05c779373"`)
+        await db.query(`DROP TABLE "ema_oracle_entry_historical_data"`)
+        await db.query(`DROP INDEX "public"."IDX_f23489ee005bdd7a700d891007"`)
+        await db.query(`DROP INDEX "public"."IDX_cd4b9bf83ace9aa6307f621abd"`)
+        await db.query(`DROP INDEX "public"."IDX_8c39e3994b55a85485de8cbdef"`)
+        await db.query(`DROP INDEX "public"."IDX_f9c17d541699c24f0213aed8be"`)
+        await db.query(`DROP INDEX "public"."IDX_69eb79053dfeebef94f290d619"`)
         await db.query(`DROP TABLE "mm_supply"`)
         await db.query(`DROP INDEX "public"."IDX_eaa03bf143f075eae431d24682"`)
         await db.query(`DROP INDEX "public"."IDX_615bdaff81bfdd9a86ecd759f4"`)
@@ -1220,6 +1235,9 @@ module.exports = class Data1745513795280 {
         await db.query(`ALTER TABLE "aavepool" DROP CONSTRAINT "FK_2b2797e88d100bd3abf7a01cf86"`)
         await db.query(`ALTER TABLE "aavepool" DROP CONSTRAINT "FK_8df88fa39af3e8f6947bdd2df3a"`)
         await db.query(`ALTER TABLE "constants_historical_data" DROP CONSTRAINT "FK_de9f533e177766f7c05c7793731"`)
+        await db.query(`ALTER TABLE "ema_oracle_entry_historical_data" DROP CONSTRAINT "FK_f23489ee005bdd7a700d8910074"`)
+        await db.query(`ALTER TABLE "ema_oracle_entry_historical_data" DROP CONSTRAINT "FK_cd4b9bf83ace9aa6307f621abd5"`)
+        await db.query(`ALTER TABLE "ema_oracle_entry_historical_data" DROP CONSTRAINT "FK_69eb79053dfeebef94f290d6199"`)
         await db.query(`ALTER TABLE "mm_supply" DROP CONSTRAINT "FK_eaa03bf143f075eae431d24682f"`)
         await db.query(`ALTER TABLE "mm_supply" DROP CONSTRAINT "FK_615bdaff81bfdd9a86ecd759f44"`)
         await db.query(`ALTER TABLE "mm_supply" DROP CONSTRAINT "FK_12000fc34581f83bc376c627f25"`)

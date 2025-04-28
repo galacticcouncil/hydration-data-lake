@@ -11,6 +11,7 @@ import otc from './otc';
 import balances from './balances';
 import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
+import emaOracle from './emaOracle';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -262,5 +263,8 @@ export default {
   },
   dynamicFees: {
     getConstants: dynamicFees.getConstants,
+  },
+  emaOracle: {
+    getOracles: emaOracle.getOracles,
   },
 } as StorageParserMethods;

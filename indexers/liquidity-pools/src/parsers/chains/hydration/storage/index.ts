@@ -8,6 +8,7 @@ import xyk from './xyk';
 import lbp from './lbp';
 import dca from './dca';
 import otc from './otc';
+import emaOracle from './emaOracle';
 import balances from './balances';
 import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
@@ -290,5 +291,8 @@ export default {
   },
   dynamicFees: {
     getConstants: dynamicFees.getConstants,
+  },
+  emaOracle: {
+    getOracles: emaOracle.getOracles,
   },
 } as StorageParserMethods;

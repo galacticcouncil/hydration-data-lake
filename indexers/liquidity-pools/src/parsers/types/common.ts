@@ -91,6 +91,8 @@ import {
   OmnipoolConstants,
   DynamicFeesConstants,
   StableswapConstants,
+  EmaOracleEntryData,
+  GetEmaOraclesInput,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -335,6 +337,9 @@ export type StorageParserMethods = {
   };
   dynamicFees: {
     getConstants: (args: GetConstantsInput) => DynamicFeesConstants;
+  };
+  emaOracle: {
+    getOracles: (args: GetEmaOraclesInput) => Promise<EmaOracleEntryData[]>;
   };
 };
 

@@ -72,6 +72,6 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
     // const omnipools = await offlinePoolService.getPools([PoolType.Omni]);
     const router = new TradeRouter(offlinePoolService);
 
-    console.dir(await router.getPools(), { depth: null });
+    // console.dir(await router.getPools(), { depth: null });
   }
 }

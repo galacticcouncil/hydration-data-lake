@@ -107,7 +107,7 @@
       "storage": true
     },
     "EmaOracle": {
-      "events": true,
+      "events": [],
       "calls": [],
       "storage": true
     },

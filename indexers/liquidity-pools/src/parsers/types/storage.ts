@@ -1,4 +1,4 @@
-import { AssetType } from '../../model';
+import { AssetType, EmaOraclePeriod } from '../../model';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { DcaScheduleCallData } from './calls';
 import { OtcOrderPlacedEventParams } from './events';
@@ -8,7 +8,13 @@ import {
   assetFeeParameters,
   protocolFeeParameters,
 } from '../chains/hydration/typegenTypes/dynamic-fees/constants';
-import { FixedU128, Permill } from '../chains/hydration/typegenTypes/v170';
+import {
+  FixedU128,
+  Liquidity,
+  Permill,
+  Ratio,
+  Volume,
+} from '../chains/hydration/typegenTypes/v170';
 
 export interface AccountData {
   free: bigint;
@@ -189,6 +195,31 @@ export interface DynamicFeesConstants {
   protocolFeeParameters: DynamicFeesParams | null;
 }
 
+export type EmaOracleEntryPriceRatio = {
+  numerator: bigint;
+  denominator: bigint;
+};
+export type EmaOracleEntryVolume = {
+  aIn: bigint;
+  bOut: bigint;
+  aOut: bigint;
+  bIn: bigint;
+};
+export type EmaOracleEntryLiquidity = {
+  a: bigint;
+  b: bigint;
+};
+
+export interface EmaOracleEntryData {
+  source: string;
+  assetIds: number[];
+  period: EmaOraclePeriod;
+  price: EmaOracleEntryPriceRatio;
+  volume: EmaOracleEntryVolume;
+  liquidity: EmaOracleEntryLiquidity;
+  updatedAt: number;
+}
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
@@ -284,5 +315,9 @@ export type OtcGetOrderInput = {
 
 export type EvmAccountsGetAccountExtensionInput = {
   evmAddress: string;
+  block: BlockHeader;
+};
+
+export type GetEmaOraclesInput = {
   block: BlockHeader;
 };

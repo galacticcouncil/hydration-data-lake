@@ -54,6 +54,7 @@ import {
 import { AccountData } from './parsers/types/storage';
 import { handleAavepoolHistoricalData } from './handlers/pools/aavepool/historicalData';
 import { handleConstantsHistoricalData } from './handlers/constants/constantsHistoricalData';
+import { handleOracles } from './handlers/oracles/emaOracle';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -299,6 +300,10 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     ctxWithBatchState as SqdProcessorContext<Store>
   );
   console.timeEnd('handleAssetHistoricalData');
+
+  console.time('handleOracles');
+  await handleOracles(ctxWithBatchState as SqdProcessorContext<Store>);
+  console.timeEnd('handleOracles');
 
   console.time('saveHistoricalDataBulk');
   await HistoricalDataManager.saveHistoricalDataBulk(

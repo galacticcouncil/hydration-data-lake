@@ -60,6 +60,7 @@ import {
   Aavepool,
   AavepoolHistoricalData,
   ConstantsHistoricalData,
+  EmaOracleEntryHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -189,6 +190,8 @@ export type BatchStatePayload = {
     string,
     MmReserveUsedAsCollateralDisabledEvent
   >;
+
+  emaOracleEntriesHistoricalData: Map<string, EmaOracleEntryHistoricalData>;
 };
 
 export class BatchState {
@@ -285,6 +288,8 @@ export class BatchState {
     mmLiquidationCalls: new Map(),
     mmReserveUsedAsCollateralEnabledEvents: new Map(),
     mmReserveUsedAsCollateralDisabledEvents: new Map(),
+
+    emaOracleEntriesHistoricalData: new Map(),
   };
 
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {

@@ -1116,6 +1116,48 @@ type ConstantsHistoricalData @entity {
 }
 
 # ======================================================================================================================
+# *** Ema Oracle ***
+# ======================================================================================================================
+
+enum EmaOraclePeriod {
+  Day
+  Hour
+  LastBlock
+  Short
+  TenMinutes
+  Week
+}
+
+type EmaOracleEntryHistoricalData @entity {
+  "<paraBlockHeight>-<assetAId>-<assetBId>-<source>-<period>"
+  id: ID!
+
+  assetA: Asset!
+  assetB: Asset!
+
+  assetAAssetRegistryId: String!
+  assetBAssetRegistryId: String!
+
+  source: String! @index
+  period: EmaOraclePeriod!
+
+  numeratorPrice: BigInt!
+  denominatorPrice: BigInt!
+  assetAInVolume: BigInt!
+  assetAOutVolume: BigInt!
+  assetBInVolume: BigInt!
+  assetBOutVolume: BigInt!
+  assetALiquidity: BigInt!
+  assetBLiquidity: BigInt!
+
+  updatedAtParaBlockHeight: Int!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
 # *** DCA ***
 # ======================================================================================================================
 
