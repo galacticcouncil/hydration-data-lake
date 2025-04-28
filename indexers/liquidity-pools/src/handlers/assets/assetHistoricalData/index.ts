@@ -1,6 +1,6 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AssetHistoricalData } from '../../../model';
+import { AssetDynamicFee, AssetHistoricalData } from '../../../model';
 import parsers from '../../../parsers';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { splitIntoBatches } from '../../../utils/helpers';
@@ -47,6 +47,12 @@ async function processAssetsHistoricalDataAtBlock({
       .map((res) => [`${res.assetId}`, res.data])
   );
 
+  const dynamicFeePerAssetMap = new Map(
+    (await parsers.storage.dynamicFees.getAssetFeesAll({ block })).map(
+      (res) => [`${res.assetId}`, res]
+    )
+  );
+
   for (const assetRegistryId of assetRegistryIds) {
     if (
       !totalIssuancePerAssetMap.has(assetRegistryId) ||
@@ -69,6 +75,14 @@ async function processAssetsHistoricalDataAtBlock({
       totalIssuance: totalIssuancePerAssetMap.get(assetRegistryId)!,
       existentialDeposit:
         existentialDepositPerAssetMap.get(assetRegistryId)!.existentialDeposit,
+      dynamicFee: dynamicFeePerAssetMap.has(assetRegistryId)
+        ? new AssetDynamicFee({
+            assetFee: dynamicFeePerAssetMap.get(assetRegistryId)!.assetFee,
+            protocolFee:
+              dynamicFeePerAssetMap.get(assetRegistryId)!.protocolFee,
+            timestamp: dynamicFeePerAssetMap.get(assetRegistryId)!.timestamp,
+          })
+        : null,
       spotPrices: [],
       paraBlockHeight: block.height,
       relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(

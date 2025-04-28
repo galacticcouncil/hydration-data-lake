@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
+import {AssetDynamicFee} from "./_assetDynamicFee"
 import {AssetSpotPriceHistoricalData} from "./_assetSpotPriceHistoricalData"
 import {Block} from "./block.model"
 
@@ -25,6 +26,9 @@ export class AssetHistoricalData {
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   existentialDeposit!: bigint
+
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new AssetDynamicFee(undefined, obj)}, nullable: true})
+  dynamicFee!: AssetDynamicFee | undefined | null
 
   @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val == null ? undefined : val.toJSON()), from: obj => marshal.fromList(obj, val => val == null ? undefined : new AssetSpotPriceHistoricalData(undefined, val))}, nullable: false})
   spotPrices!: (AssetSpotPriceHistoricalData | undefined | null)[]

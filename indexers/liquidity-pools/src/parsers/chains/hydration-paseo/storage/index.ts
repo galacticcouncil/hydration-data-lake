@@ -263,6 +263,7 @@ export default {
   },
   dynamicFees: {
     getConstants: dynamicFees.getConstants,
+    getAssetFeesAll: dynamicFees.getAssetFeesAll,
   },
   emaOracle: {
     getOracles: emaOracle.getOracles,

@@ -219,6 +219,12 @@ export interface EmaOracleEntryData {
   liquidity: EmaOracleEntryLiquidity;
   updatedAt: number;
 }
+export interface AssetDynamicFeeData {
+  assetId: number;
+  assetFee: number;
+  protocolFee: number;
+  timestamp: number;
+}
 
 /**
  * =============================================================================
@@ -319,5 +325,9 @@ export type EvmAccountsGetAccountExtensionInput = {
 };
 
 export type GetEmaOraclesInput = {
+  block: BlockHeader;
+};
+
+export type GetAssetsDynamicFeesAllInput = {
   block: BlockHeader;
 };

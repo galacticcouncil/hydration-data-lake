@@ -1,5 +1,5 @@
-module.exports = class Data1745851501544 {
-    name = 'Data1745851501544'
+module.exports = class Data1745857498609 {
+    name = 'Data1745857498609'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -215,7 +215,7 @@ module.exports = class Data1745851501544 {
         await db.query(`CREATE INDEX "IDX_ea6635c9167c3ebc60e8ff5a66" ON "asset_swap_fee_historical_data" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_37f92b940599ef379fa2f69214" ON "asset_swap_fee_historical_data" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_aeda4e63f834e2e91e767fabc7" ON "asset_swap_fee_historical_data" ("block_id") `)
-        await db.query(`CREATE TABLE "asset_historical_data" ("id" character varying NOT NULL, "total_issuance" numeric NOT NULL, "existential_deposit" numeric NOT NULL, "spot_prices" jsonb NOT NULL, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "asset_id" character varying, "block_id" character varying, CONSTRAINT "PK_d2c0807b36c45771c8b9efe6a20" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "asset_historical_data" ("id" character varying NOT NULL, "total_issuance" numeric NOT NULL, "existential_deposit" numeric NOT NULL, "dynamic_fee" jsonb, "spot_prices" jsonb NOT NULL, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "asset_id" character varying, "block_id" character varying, CONSTRAINT "PK_d2c0807b36c45771c8b9efe6a20" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_bbb9a36dd61646de9e108ab7ce" ON "asset_historical_data" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_950584f39612b44c0e3719f19c" ON "asset_historical_data" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_6f49f36e0bf52b7011e3662b23" ON "asset_historical_data" ("relay_block_height") `)

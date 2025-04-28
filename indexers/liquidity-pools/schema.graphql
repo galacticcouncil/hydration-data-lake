@@ -133,6 +133,11 @@ type AssetSpotPriceHistoricalData {
   quoteAssetDecimals: Int
   price: String!
 }
+type AssetDynamicFee {
+  assetFee: Int!
+  protocolFee: Int!
+  timestamp: Int!
+}
 
 type AssetHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
@@ -140,6 +145,7 @@ type AssetHistoricalData @entity {
   asset: Asset!
   totalIssuance: BigInt!
   existentialDeposit: BigInt!
+  dynamicFee: AssetDynamicFee
   spotPrices: [AssetSpotPriceHistoricalData]!
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
