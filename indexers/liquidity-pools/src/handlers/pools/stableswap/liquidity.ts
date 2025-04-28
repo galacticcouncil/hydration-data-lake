@@ -40,26 +40,24 @@ export async function handleStablepoolLiquidityEvents(
       )
     )
   )) {
-    // console.log(
-    //   'handleStablepoolLiquidityEvents - ',
-    //   eventData.eventData.metadata.blockHeader.specVersion,
-    //   eventData.eventData.metadata.blockHeader.height
-    // );
     await stablepoolLiquidityAddedRemoved(
       ctx,
       eventData as StableswapLiquidityAddedData | StableswapLiquidityRemovedData
     );
   }
 
-  await ctx.store.save(
-    [...ctx.batchState.state.stableswapAllBatchPools.values()].filter((pool) =>
-      ctx.batchState.state.stableswapIdsToSave.has(pool.id)
-    )
-  );
-  ctx.batchState.state.stableswapIdsToSave = new Set();
-
+  await ctx.store.save([
+    ...ctx.batchState.state.stableswapAllBatchPools.values(),
+  ]);
   await ctx.store.save([
     ...ctx.batchState.state.stableswapAssetsAllBatch.values(),
+  ]);
+
+  await ctx.store.save([
+    ...ctx.batchState.state.stablepoolBatchLiquidityActions.values(),
+  ]);
+  await ctx.store.save([
+    ...ctx.batchState.state.stablepoolAssetBatchLiquidityAmounts.values(),
   ]);
 }
 
@@ -127,7 +125,10 @@ export async function stablepoolLiquidityAddedRemoved(
       ensure: true,
     });
 
-    if (!asset) continue; // TODO add error handling
+    if (!asset) {
+      console.log(`Asset ${assetAmount.assetId} not found. Skipping.`);
+      continue;
+    } // TODO add error handling
 
     const amountEntityId = `${newAction.id}-${asset.id}`;
 
