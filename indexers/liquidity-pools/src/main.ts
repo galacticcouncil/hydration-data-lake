@@ -295,15 +295,15 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   await saveAllBatchAccounts(ctxWithBatchState as SqdProcessorContext<Store>);
   console.timeEnd('saveAllBatchAccounts');
 
+  console.time('handleOracles');
+  await handleOracles(ctxWithBatchState as SqdProcessorContext<Store>);
+  console.timeEnd('handleOracles');
+
   console.time('handleAssetHistoricalData');
   await handleAssetHistoricalData(
     ctxWithBatchState as SqdProcessorContext<Store>
   );
   console.timeEnd('handleAssetHistoricalData');
-
-  console.time('handleOracles');
-  await handleOracles(ctxWithBatchState as SqdProcessorContext<Store>);
-  console.timeEnd('handleOracles');
 
   console.time('saveHistoricalDataBulk');
   await HistoricalDataManager.saveHistoricalDataBulk(

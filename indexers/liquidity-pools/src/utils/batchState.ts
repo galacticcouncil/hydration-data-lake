@@ -301,4 +301,13 @@ export class BatchState {
       height: blockData?.relaychainBlockNumber ?? 0,
     };
   }
+  getParaBlockFromCacheByHeight(
+    paraBlockHeight: number
+  ): BlockEntity | undefined {
+    const blockData = [...this.state.batchBlocks.values()].find(
+      (b) => b.height === paraBlockHeight
+    );
+
+    return blockData;
+  }
 }

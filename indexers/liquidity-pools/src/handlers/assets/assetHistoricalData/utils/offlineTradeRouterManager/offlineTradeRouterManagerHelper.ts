@@ -2,16 +2,11 @@ import {
   AavepoolHistoricalData,
   AssetHistoricalData,
   ConstantsHistoricalData,
-  Lbppool,
+  EmaOracleEntryHistoricalData,
   LbppoolHistoricalData,
-  OmnipoolAsset,
   OmnipoolHistoricalData,
-  Stableswap,
-  StableswapAsset,
-  StableswapAssetHistoricalData,
   StableswapHistoricalData,
   SwapFillerType,
-  Xykpool,
   XykpoolHistoricalData,
 } from '../../../../../model';
 import { SqdProcessorContext } from '../../../../../processor';
@@ -33,10 +28,13 @@ import {
   IPersistentStableSwapBase,
   IPersistentOmniPoolBase,
   IPersistentOmniPoolToken,
+  IPersistentEmaOracleEntry,
   PoolType,
+  IPersistentConstants,
 } from '../../../../../../../../../../hydration-sdk/packages/sdk';
 import { bigintToNumberSafe } from '../../../../../utils/helpers';
 import { fetchAavePoolsHistoricalData } from './fetchHistoricalDataHelpers/fetchAavePoolsHistoricalData';
+import { fetchEmaOracleEntriesHistoricalData } from './fetchHistoricalDataHelpers/fetchEmaOraclesHistoricalData';
 
 export class OfflineTradeRouterManagerHelper {
   protected SUPPORTED_ASSET_TYPES_SET = new Set([
@@ -48,6 +46,10 @@ export class OfflineTradeRouterManagerHelper {
   ]);
 
   protected constantsHistData: Map<number, ConstantsHistoricalData> = new Map();
+  protected emaOraclesHistData: Map<
+    number,
+    Map<string, EmaOracleEntryHistoricalData>
+  > = new Map();
   protected assetsHistData: Map<number, Map<string, AssetHistoricalData>> =
     new Map();
   protected lbppoolsHistData: Map<number, Map<string, LbppoolHistoricalData>> =
@@ -101,6 +103,7 @@ export class OfflineTradeRouterManagerHelper {
 
     for (const blockNumber of blockNumbers) {
       await this.fetchConstantsHistoricalDataForBlock({ ctx, blockNumber });
+      await this.fetchEmaOraclesHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchLbpPoolsHistoricalDataForBlock({ ctx, blockNumber });
@@ -134,6 +137,19 @@ export class OfflineTradeRouterManagerHelper {
     this.assetsHistData.set(
       blockNumber,
       await fetchAssetsHistoricalData({ ctx, blockNumber })
+    );
+  }
+
+  async fetchEmaOraclesHistoricalDataForBlock({
+    blockNumber,
+    ctx,
+  }: {
+    blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.emaOraclesHistData.set(
+      blockNumber,
+      await fetchEmaOracleEntriesHistoricalData({ ctx, blockNumber })
     );
   }
 
@@ -204,6 +220,61 @@ export class OfflineTradeRouterManagerHelper {
     this.omnipoolHistData.set(blockNumber, historicalData);
   }
 
+  getDecoratedConstantsHistDataAsPersistentDataInput({
+    blockNumber,
+  }: {
+    blockNumber: number;
+  }): IPersistentConstants {
+    const histData = this.constantsHistData.get(blockNumber);
+
+    if (!histData) throw new Error('Missing constants historical data');
+
+    return {
+      lbpRepayFee: histData.lbpRepayFee,
+      lbpMaxInRatio: histData.lbpMaxInRatio?.toString(),
+      lbpMaxOutRatio: histData.lbpMaxOutRatio?.toString(),
+      lbpMinPoolLiquidity: histData.lbpMinPoolLiquidity?.toString(),
+      lbpMinTradingLimit: histData.lbpMinTradingLimit?.toString(),
+
+      omnipoolBurnProtocolFee: histData.omnipoolBurnProtocolFee,
+      omnipoolHdxAssetId: histData.omnipoolHdxAssetId,
+      omnipoolHubAssetId: histData.omnipoolHubAssetId,
+      omnipoolMaxInRatio: histData.omnipoolMaxInRatio?.toString(),
+      omnipoolMaxOutRatio: histData.omnipoolMaxOutRatio?.toString(),
+      omnipoolMinimumPoolLiquidity:
+        histData.omnipoolMinimumPoolLiquidity?.toString(),
+      omnipoolMinimumTradingLimit:
+        histData.omnipoolMinimumTradingLimit?.toString(),
+      omnipoolMinWithdrawalFee: histData.omnipoolMinWithdrawalFee,
+
+      stableswapMinTradingLimit: histData.stableswapMinTradingLimit?.toString(),
+      stableswapMinPoolLiquidity:
+        histData.stableswapMinPoolLiquidity?.toString(),
+      stableswapAmplificationRange: histData.stableswapAmplificationRange,
+
+      xykGetExchangeFee: histData.xykGetExchangeFee,
+      xykMaxInRatio: histData.xykMaxInRatio?.toString(),
+      xykMaxOutRatio: histData.xykMaxOutRatio?.toString(),
+      xykMinPoolLiquidity: histData.xykMinPoolLiquidity?.toString(),
+      xykMinTradingLimit: histData.xykMinTradingLimit?.toString(),
+      xykNativeAssetId: histData.xykNativeAssetId,
+      xykOracleSource: histData.xykOracleSource,
+
+      dynamicFeesAssetFeeParameters: {
+        minFee: histData.dynamicFeesAssetFeeParameters?.minFee,
+        maxFee: histData.dynamicFeesAssetFeeParameters?.maxFee,
+        decay: histData.dynamicFeesAssetFeeParameters?.decay,
+        amplification: histData.dynamicFeesAssetFeeParameters?.amplification,
+      },
+      dynamicFeesProtocolFeeParameters: {
+        minFee: histData.dynamicFeesProtocolFeeParameters?.minFee,
+        maxFee: histData.dynamicFeesProtocolFeeParameters?.maxFee,
+        decay: histData.dynamicFeesProtocolFeeParameters?.decay,
+        amplification: histData.dynamicFeesProtocolFeeParameters?.amplification,
+      },
+    } as IPersistentConstants;
+  }
+
   getDecoratedAssetsHistDataAsPersistentDataInput({
     blockNumber,
   }: {
@@ -222,6 +293,7 @@ export class OfflineTradeRouterManagerHelper {
         existentialDeposit: assetHistData.existentialDeposit.toString(),
         isSufficient: assetHistData.asset.isSufficient,
         type: assetHistData.asset.assetType,
+        dynamicFee: assetHistData.dynamicFee,
       } as PersistentAsset);
     }
 
@@ -371,25 +443,48 @@ export class OfflineTradeRouterManagerHelper {
 
       const blockConstants = this.constantsHistData.get(blockNumber)!;
 
+      const poolShareTokenHistData = this.assetsHistData
+        .get(blockNumber)!
+        .get(poolHistData.pool.shareToken.id);
+
+      if (!poolShareTokenHistData) {
+        console.error(`>> missing share assets data for pool ${poolId}`);
+        continue;
+      }
+
       poolsMap.set(poolId, {
         id: poolHistData.pool.id,
         address: poolHistData.pool.account.id,
         type: PoolType.Stable,
 
-        tokens: poolHistData.assetsHistoricalData.map((assetHistData) => ({
-          id: assetHistData.asset.assetRegistryId,
-          decimals: assetHistData.asset.decimals,
-          symbol: assetHistData.asset.symbol,
-          balance: assetHistData.freeBalance.toString(),
-          existentialDeposit: this.assetsHistData
-            .get(blockNumber)!
-            .get(assetHistData.asset.id)!
-            .existentialDeposit.toString(),
-          isSufficient: this.assetsHistData
-            .get(blockNumber)!
-            .get(assetHistData.asset.id)!.asset.isSufficient, // TODO fix data
-          type: assetHistData.asset.assetType,
-        })) as IPersistentPoolToken[],
+        tokens: [
+          ...(poolHistData.assetsHistoricalData.map((assetHistData) => ({
+            id: assetHistData.asset.assetRegistryId,
+            decimals: assetHistData.asset.decimals,
+            symbol: assetHistData.asset.symbol,
+            balance: assetHistData.freeBalance.toString(),
+            existentialDeposit: this.assetsHistData
+              .get(blockNumber)!
+              .get(assetHistData.asset.id)!
+              .existentialDeposit.toString(),
+            isSufficient: this.assetsHistData
+              .get(blockNumber)!
+              .get(assetHistData.asset.id)!.asset.isSufficient, // TODO fix data
+            type: assetHistData.asset.assetType,
+            tradable: assetHistData.tradable,
+          })) as IPersistentPoolToken[]),
+          {
+            id: poolShareTokenHistData.asset.assetRegistryId,
+            decimals: poolShareTokenHistData.asset.decimals,
+            symbol: poolShareTokenHistData.asset.symbol,
+            balance: poolShareTokenHistData.totalIssuance.toString(),
+            existentialDeposit:
+              poolShareTokenHistData.existentialDeposit.toString(),
+            isSufficient: poolShareTokenHistData.asset.isSufficient,
+            type: poolShareTokenHistData.asset.assetType,
+            tradable: 15, // TODO fix data
+          },
+        ],
 
         maxInRatio: 0,
         maxOutRatio: 0,
@@ -402,10 +497,7 @@ export class OfflineTradeRouterManagerHelper {
         blockNumber: blockNumber,
         initialBlock: poolHistData.initialAmplificationChangeAtBlockHeight,
         finalBlock: poolHistData.finalAmplificationChangeAtBlockHeight,
-        totalIssuance: this.assetsHistData
-          .get(blockNumber)!
-          .get(poolHistData.pool.shareToken.id)!
-          .totalIssuance.toString(),
+        totalIssuance: poolShareTokenHistData.totalIssuance.toString(),
       } as IPersistentStableSwapBase);
     }
 
@@ -511,6 +603,43 @@ export class OfflineTradeRouterManagerHelper {
     }
 
     return [...poolsMap.values()];
+  }
+
+  getDecoratedEmaOraclesHistDataAsPersistentDataInput({
+    blockNumber,
+  }: {
+    blockNumber: number;
+  }): IPersistentEmaOracleEntry[] {
+    const entries: Map<string, IPersistentEmaOracleEntry> = new Map();
+
+    for (const entry of [
+      ...(this.emaOraclesHistData.get(blockNumber) || new Map()).values(),
+    ] as EmaOracleEntryHistoricalData[]) {
+      entries.set(entry.id, {
+        assets: [entry.assetAAssetRegistryId, entry.assetBAssetRegistryId],
+        period: entry.period,
+        source: entry.source,
+        entry: {
+          price: {
+            n: entry.numeratorPrice.toString(),
+            d: entry.denominatorPrice.toString(),
+          },
+          volume: {
+            aIn: entry.assetAInVolume.toString(),
+            aOut: entry.assetAOutVolume.toString(),
+            bIn: entry.assetBInVolume.toString(),
+            bOut: entry.assetBOutVolume.toString(),
+          },
+          liquidity: {
+            a: entry.assetALiquidity.toString(),
+            b: entry.assetBLiquidity.toString(),
+          },
+          updatedAt: entry.updatedAtParaBlockHeight,
+        },
+      } as IPersistentEmaOracleEntry);
+    }
+
+    return [...entries.values()];
   }
 
   // private async isRepayFeeApplied(
