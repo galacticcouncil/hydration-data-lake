@@ -12,7 +12,7 @@ import parsers from '../../parsers';
 import { EvmUtils } from '../../utils/evm';
 import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from './asset';
 import { ProcessorStatusManager } from '../../processorStatusManager';
-import { AssetDetailsWithId } from '../../parsers/types/storage';
+import { AssetDetailsWithId, BondDetails } from '../../parsers/types/storage';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import { isU32 } from '../../utils/helpers';
 import { AssetRegistryLocationSetData } from '../../parsers/batchBlocksParser/types';
@@ -131,6 +131,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
     return;
 
   let storageData: AssetDetailsWithId[] = [];
+  let bondsStorageData: BondDetails[] = [];
 
   const allExistingAssets = new Map(
     (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
@@ -139,15 +140,18 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   const assetsToSave: Asset[] = [];
   const mmAssetsToSave: Asset[] = [];
 
+  const blockHeader = ctx.blocks[ctx.blocks.length - 1].header;
+
   if (latestActualisationPoint < 0) {
     /**
      * This case can happen only once in indexer life on first run and make sense
      * if indexing is starting not from genesis block. Main goal - ensure that
      * on launch time indexer contains all existing assets on start block.
      */
-    storageData = await parsers.storage.assetRegistry.getAssetAll(
-      ctx.blocks[0].header
-    );
+    storageData = await parsers.storage.assetRegistry.getAssetAll(blockHeader);
+    bondsStorageData = await parsers.storage.bonds.getBondsAll({
+      block: blockHeader,
+    });
 
     for (const { assetId, data } of storageData) {
       if (!data) continue;
@@ -178,6 +182,39 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
       if (!assetEntityId) continue;
 
+      let bondUnderlyingAsset = null;
+      let bondMaturity = null;
+
+      if (data.assetType === AssetType.Bond) {
+        const bondDetails = bondsStorageData.find(
+          (bond) => `${bond.bondId}` === `${assetId}`
+        );
+        if (bondDetails) {
+          bondUnderlyingAsset = await getOrCreateAsset({
+            assetRegistryId: bondDetails.underlyingAsset,
+            ctx,
+            ensure: true,
+            blockHeader,
+          });
+          bondMaturity = bondDetails.maturity;
+        }
+      }
+
+      const getDecimals = () => {
+        if (data.assetType !== AssetType.Bond) return data.decimals ?? null;
+        if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
+        return null;
+      };
+
+      const getSymbol = () => {
+        if (data.assetType !== AssetType.Bond) return data.symbol ?? null;
+        if (bondUnderlyingAsset)
+          return bondUnderlyingAsset.symbol
+            ? `${bondUnderlyingAsset.symbol}b`
+            : null;
+        return null;
+      };
+
       const newAsset = new Asset({
         id: assetEntityId,
         assetRegistryId: `${assetId}`,
@@ -190,10 +227,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
         resourceType:
           erc20AssetContractDetails?.resourceType ?? ResourceType.Underlying,
         existentialDeposit: data.existentialDeposit,
-        symbol: data.symbol ?? null,
-        decimals: data.decimals ?? null,
+        symbol: getSymbol(),
+        decimals: getDecimals(),
         xcmRateLimit: data.xcmRateLimit ?? null,
         isSufficient: data.isSufficient ?? true,
+        bondUnderlyingAsset,
+        bondMaturity,
       });
 
       assetsToSave.push(newAsset);

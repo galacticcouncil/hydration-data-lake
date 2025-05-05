@@ -57,8 +57,15 @@ async function processAssetsHistoricalDataAtBlock({
     if (
       !totalIssuancePerAssetMap.has(assetRegistryId) ||
       !existentialDepositPerAssetMap.has(assetRegistryId)
-    )
+    ) {
+      console.log(
+        'processAssetsHistoricalDataAtBlock :: assetRegistryId - ',
+        assetRegistryId,
+        totalIssuancePerAssetMap.has(assetRegistryId),
+        existentialDepositPerAssetMap.has(assetRegistryId)
+      );
       continue;
+    }
 
     const asset = await getOrCreateAsset({
       assetRegistryId: assetRegistryId,
@@ -66,7 +73,13 @@ async function processAssetsHistoricalDataAtBlock({
       ctx,
     });
 
-    if (!asset) continue;
+    if (!asset) {
+      console.log(
+        'processAssetsHistoricalDataAtBlock :: asset not found',
+        assetRegistryId
+      );
+      continue;
+    }
 
     const newAssetHistoricalData = new AssetHistoricalData({
       id: `${asset.id}-${block.height}`,

@@ -37,6 +37,7 @@ import {
   RuntimeApiMethodName,
   RuntimeApiName,
 } from '../../../runtimeApiResolver/types';
+import bonds from '../../hydration/storage/bonds';
 
 export default {
   system,
@@ -48,6 +49,10 @@ export default {
   balances: {
     getTotalIssuance: balances.getTotalIssuance,
   },
+  bonds: {
+    getBond: bonds.getBond,
+    getBondsAll: bonds.getBondsAll,
+  },
   assetRegistry,
   parachainSystem,
   dca,
@@ -55,6 +60,7 @@ export default {
   evmAccounts,
   stableswap: {
     getConstants: stableswap.getConstants,
+    getPoolPegs: stableswap.getPoolPegs,
     getAllPoolIds: stableswap.getAllPoolIds,
     getPoolData: (
       args: StablepoolGetPoolDataInput

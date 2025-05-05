@@ -153,7 +153,7 @@ export async function getOrCreateXykPool({
 
   pool = await ctx.store.findOne(Xykpool, {
     where: { id },
-    relations: { assetA: true, assetB: true, account: true },
+    relations: { assetA: true, assetB: true, account: true, shareToken: true },
   });
 
   if (pool) {

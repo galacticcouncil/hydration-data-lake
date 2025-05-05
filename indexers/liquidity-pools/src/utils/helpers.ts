@@ -3,7 +3,7 @@ import lodashCamelCase from 'lodash.camelcase';
 import { AppConfig } from '../appConfig';
 import { CallOriginPartsDecorated, CallOriginRaw, NodeEnv } from './types';
 import { join } from 'path';
-import { hexToString, stringToU8a, u8aToHex } from '@polkadot/util';
+import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import v8 from 'v8';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { HYDRADX_SS58_PREFIX } from '@galacticcouncil/sdk';
@@ -168,4 +168,11 @@ export function getAavePoolAddress(
   if (prefix) return encodeAddress(stringToU8a(id.padEnd(32, '\0')), prefix);
 
   return u8aToHex(decodeAddress(stringToU8a(id.padEnd(32, '\0'))));
+}
+
+export function publicKeyToSs58(
+  key: string,
+  prefix: number = HYDRADX_SS58_PREFIX
+): string {
+  return encodeAddress(hexToU8a(key), prefix);
 }

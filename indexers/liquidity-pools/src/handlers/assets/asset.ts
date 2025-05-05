@@ -90,6 +90,25 @@ export async function getOrCreateAsset({
 
   if (!assetCustomLocation) return null;
 
+  let bondUnderlyingAsset = null;
+  let bondMaturity = null;
+
+  if (storageData.assetType === AssetType.Bond) {
+    const bondDetails = await parsers.storage.bonds.getBond({
+      bondId: +assetRegistryId,
+      block: blockHeader,
+    });
+    if (bondDetails) {
+      bondUnderlyingAsset = await getOrCreateAsset({
+        assetRegistryId: bondDetails.underlyingAsset,
+        ctx,
+        ensure: true,
+        blockHeader,
+      });
+      bondMaturity = bondDetails.maturity;
+    }
+  }
+
   const assetEntityId = getAssetIdFromMultiLocation(assetCustomLocation);
 
   if (!assetEntityId) return null;
@@ -101,6 +120,23 @@ export async function getOrCreateAsset({
           evmAddress ?? erc20AssetContractAddress ?? ''
         )
       : null;
+
+  const getDecimals = () => {
+    if (storageData.assetType !== AssetType.Bond)
+      return storageData.decimals ?? null;
+    if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
+    return null;
+  };
+
+  const getSymbol = () => {
+    if (storageData.assetType !== AssetType.Bond)
+      return storageData.symbol ?? null;
+    if (bondUnderlyingAsset)
+      return bondUnderlyingAsset.symbol
+        ? `${bondUnderlyingAsset.symbol}b`
+        : null;
+    return null;
+  };
 
   const newAsset = new Asset({
     id: assetEntityId,
@@ -115,10 +151,12 @@ export async function getOrCreateAsset({
       ? evmTokenContractData.resourceType
       : ResourceType.Underlying,
     existentialDeposit: storageData.existentialDeposit,
-    symbol: storageData.symbol ?? null,
-    decimals: storageData.decimals ?? null,
+    symbol: getSymbol(),
+    decimals: getDecimals(),
     xcmRateLimit: storageData.xcmRateLimit ?? null,
     isSufficient: storageData.isSufficient ?? true,
+    bondUnderlyingAsset,
+    bondMaturity,
   });
 
   await ctx.store.save(newAsset);

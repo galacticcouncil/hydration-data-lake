@@ -22,7 +22,7 @@
     "@aave/contract-helpers": "1.28.0",
     "@aave/math-utils": "^1.32.1",
     "@ethersproject/abi": "^5.8.0",
-    "@galacticcouncil/sdk": "^4.2.1",
+    "@galacticcouncil/sdk": "^6.2.0",
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "@graphile/pg-aggregates": "^0.1.1",
     "@graphile/pg-pubsub": "^4.13.0",

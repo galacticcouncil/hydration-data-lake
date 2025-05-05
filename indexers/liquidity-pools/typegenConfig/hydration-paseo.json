@@ -9,6 +9,10 @@
       "events": ["Registered", "Updated", "LocationSet"],
       "storage": ["Assets", "AssetLocations"]
     },
+    "Bonds": {
+      "events": [],
+      "storage": true
+    },
     "Balances": {
       "events": ["Transfer"],
       "calls": true,
@@ -56,7 +60,7 @@
         "LiquidityRemoved"
       ],
       "calls": ["sell", "buy"],
-      "storage": ["Pools", "AssetTradability"],
+      "storage": true,
       "constants": true
     },
     "LBP": {

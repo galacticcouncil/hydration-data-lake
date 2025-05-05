@@ -95,6 +95,11 @@ import {
   GetEmaOraclesInput,
   AssetDynamicFeeData,
   GetAssetsDynamicFeesAllInput,
+  StablepoolGetPoolPegsInput,
+  StablepoolPoolPegsInfo,
+  GetBondByIdInput,
+  BondDetails,
+  GetBondsAllInput,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -234,6 +239,10 @@ export type StorageParserMethods = {
   balances: {
     getTotalIssuance: (block: BlockHeader) => Promise<bigint | null>;
   };
+  bonds: {
+    getBond: (args: GetBondByIdInput) => Promise<BondDetails | null>;
+    getBondsAll: (args: GetBondsAllInput) => Promise<BondDetails[]>;
+  };
   tokens: {
     getTokensAccountsAssetBalances: (
       account: string,
@@ -269,6 +278,9 @@ export type StorageParserMethods = {
   };
   stableswap: {
     getConstants: (args: GetConstantsInput) => StableswapConstants;
+    getPoolPegs: (
+      args: StablepoolGetPoolPegsInput
+    ) => Promise<StablepoolPoolPegsInfo>;
     getAllPoolIds: (args: StablepoolGetAllPoolIdsInput) => Promise<number[]>;
     getPoolData: (
       args: StablepoolGetPoolDataInput

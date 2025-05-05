@@ -51,6 +51,7 @@ type Asset @entity {
   underlyingAsset: Asset
   aToken: Asset
   variableDebtToken: Asset
+  bondUnderlyingAsset: Asset
 
   assetType: AssetType!
   resourceType: ResourceType!
@@ -60,6 +61,7 @@ type Asset @entity {
   xcmRateLimit: BigInt
   isSufficient: Boolean!
   existentialDeposit: BigInt!
+  bondMaturity: BigInt
 
   # note: existentialDeposit is probably taken 1:1 from the runtime,
   # real existential deposit will be calculated realtime based on the current price
@@ -1010,6 +1012,14 @@ type StableswapAssetLiquidityAmount @entity {
   amount: BigInt!
 }
 
+type StableswapPegsSource {
+  sourceKind: String! # Oracle | Value
+  oracleName: String
+  oraclePeriod: EmaOraclePeriod
+  oracleAsset: String
+  valuePoints: [String!]
+}
+
 type StableswapHistoricalData @entity {
   "<stableswapId>-<paraBlockHeight>"
   id: ID!
@@ -1022,8 +1032,9 @@ type StableswapHistoricalData @entity {
   initialAmplificationChangeAtBlockHeight: Int!
   finalAmplificationChangeAtBlockHeight: Int!
   fee: Int!
-  pegs: [[String!]!]!
-  #  pegsFee: [String!]!
+  pegs: [[BigInt!]!]!
+  maxPegUpdate: Int
+  pegSources: [StableswapPegsSource!]
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

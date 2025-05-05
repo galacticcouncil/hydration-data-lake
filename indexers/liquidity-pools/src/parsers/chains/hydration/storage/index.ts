@@ -12,6 +12,7 @@ import emaOracle from './emaOracle';
 import balances from './balances';
 import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
+import bonds from './bonds';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -48,6 +49,10 @@ export default {
   balances: {
     getTotalIssuance: balances.getTotalIssuance,
   },
+  bonds: {
+    getBond: bonds.getBond,
+    getBondsAll: bonds.getBondsAll,
+  },
   tokens: {
     ...tokens,
     getTokenTotalIssuance: tokens.getTokenTotalIssuance,
@@ -61,6 +66,7 @@ export default {
   stableswap: {
     getAllPoolIds: stableswap.getAllPoolIds,
     getConstants: stableswap.getConstants,
+    getPoolPegs: stableswap.getPoolPegs,
     getPoolData: (
       args: StablepoolGetPoolDataInput
     ): Promise<StablepoolInfo | null> =>

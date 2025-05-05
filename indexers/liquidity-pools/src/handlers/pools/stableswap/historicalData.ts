@@ -7,6 +7,7 @@ import { StableMath } from '@galacticcouncil/sdk';
 import {
   StableswapAssetHistoricalData,
   StableswapHistoricalData,
+  StableswapPegsSource,
 } from '../../../model';
 import { getOrCreateStableswap } from './stablepool';
 import { getOrCreateAsset } from '../../assets/asset';
@@ -33,6 +34,11 @@ async function getStableswapDataPromise({
 
   if (!poolStorageData) return null;
 
+  const poolPegsData = await parsers.storage.stableswap.getPoolPegs({
+    poolId,
+    block: blockHeader,
+  });
+
   const assetsData = await Promise.all(
     poolStorageData.assets.map(async (assetId) => ({
       assetId,
@@ -50,6 +56,41 @@ async function getStableswapDataPromise({
       }),
     }))
   );
+
+  const getPoolPegsDetails = (): Pick<
+    StableswapHistoricalData,
+    'pegs' | 'maxPegUpdate' | 'pegSources'
+  > => {
+    if (!poolPegsData)
+      return {
+        pegs: poolStorageData.assets.map((a) => [BigInt(1), BigInt(1)]),
+        maxPegUpdate: null,
+        pegSources: null,
+      };
+
+    return {
+      pegs: poolPegsData.current,
+      maxPegUpdate: poolPegsData.maxPegUpdate,
+      pegSources: poolPegsData.source.map(
+        ({
+          sourceKind,
+          oracleName = null,
+          oraclePeriod = null,
+          oracleAsset = null,
+          valuePoints = null,
+        }) =>
+          new StableswapPegsSource({
+            sourceKind,
+            oracleName,
+            oraclePeriod,
+            oracleAsset: oracleAsset !== null ? oracleAsset.toString() : null,
+            valuePoints: valuePoints
+              ? valuePoints.map((vp) => vp.toString())
+              : null,
+          })
+      ),
+    };
+  };
 
   const poolEntity = await getOrCreateStableswap({
     ctx,
@@ -73,9 +114,7 @@ async function getStableswapDataPromise({
     initialAmplificationChangeAtBlockHeight: poolStorageData.initialBlock,
     finalAmplificationChangeAtBlockHeight: poolStorageData.finalBlock,
     fee: poolStorageData.fee,
-    pegs: assetsData.map(
-      (assetData) => assetData.storageData?.peg ?? ['1', '1']
-    ),
+    ...getPoolPegsDetails(),
 
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height

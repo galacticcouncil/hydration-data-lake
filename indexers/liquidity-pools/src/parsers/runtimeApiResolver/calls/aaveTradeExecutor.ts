@@ -22,6 +22,7 @@ export async function getPools({
         await block._runtime.rpc.call(`state_call`, [
           'AaveTradeExecutor_pools',
           '0x',
+          block.hash,
         ])
       )
       .map(

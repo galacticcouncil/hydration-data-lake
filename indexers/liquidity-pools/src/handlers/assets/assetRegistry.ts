@@ -16,6 +16,7 @@ import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydratio
 import { EventName } from '../../parsers/types/events';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import parsers from '../../parsers';
 
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
@@ -87,6 +88,39 @@ export async function assetRegistered(
         )
       : null;
 
+  let bondUnderlyingAsset = null;
+  let bondMaturity = null;
+
+  if (assetType === AssetType.Bond) {
+    const bondDetails = await parsers.storage.bonds.getBond({
+      bondId: +assetId,
+      block: eventMetadata.blockHeader,
+    });
+    if (bondDetails) {
+      bondUnderlyingAsset = await getOrCreateAsset({
+        assetRegistryId: bondDetails.underlyingAsset,
+        ctx,
+        ensure: true,
+        blockHeader: eventMetadata.blockHeader,
+      });
+      bondMaturity = bondDetails.maturity;
+    }
+  }
+
+  const getDecimals = () => {
+    if (assetType !== AssetType.Bond) return decimals ?? null;
+    if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
+    return null;
+  };
+  const getSymbol = () => {
+    if (assetType !== AssetType.Bond) return symbol ?? null;
+    if (bondUnderlyingAsset)
+      return bondUnderlyingAsset.symbol
+        ? `${bondUnderlyingAsset.symbol}b`
+        : null;
+    return null;
+  };
+
   const newAsset = new Asset({
     id: assetEntityId,
     evmAddress: erc20AssetContractAddress,
@@ -97,10 +131,12 @@ export async function assetRegistered(
     resourceType: evmTokenContractData?.resourceType ?? ResourceType.Underlying,
     assetType,
     existentialDeposit,
-    symbol,
-    decimals,
+    symbol: getSymbol(),
+    decimals: getDecimals(),
     xcmRateLimit,
     isSufficient,
+    bondUnderlyingAsset,
+    bondMaturity,
   });
 
   state.assetsAllBatch.set(newAsset.id, newAsset);

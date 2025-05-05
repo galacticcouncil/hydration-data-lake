@@ -105,7 +105,7 @@ export async function fetchStableswapHistoricalData({
           : {}),
       },
       relations: {
-        pool: { account: true },
+        pool: { account: true, shareToken: true },
         assetsHistoricalData: {
           asset: true,
           stableswapAsset: true,

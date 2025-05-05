@@ -2,6 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Stableswap} from "./stableswap.model"
 import {StableswapAssetHistoricalData} from "./stableswapAssetHistoricalData.model"
+import {StableswapPegsSource} from "./_stableswapPegsSource"
 import {Block} from "./block.model"
 
 @Entity_()
@@ -38,8 +39,14 @@ export class StableswapHistoricalData {
   @Column_("int4", {nullable: false})
   fee!: number
 
-  @Column_("jsonb", {transformer: {to: obj => obj, from: obj => marshal.fromList(obj, val => marshal.fromList(val, val => marshal.string.fromJSON(val)))}, nullable: false})
-  pegs!: ((string)[])[]
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.map((val: any) => marshal.bigint.toJSON(val))), from: obj => marshal.fromList(obj, val => marshal.fromList(val, val => marshal.bigint.fromJSON(val)))}, nullable: false})
+  pegs!: ((bigint)[])[]
+
+  @Column_("int4", {nullable: true})
+  maxPegUpdate!: number | undefined | null
+
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new StableswapPegsSource(undefined, marshal.nonNull(val)))}, nullable: true})
+  pegSources!: (StableswapPegsSource)[] | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})

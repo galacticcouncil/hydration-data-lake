@@ -52,7 +52,7 @@ export async function fetchXykPoolsHistoricalData({
         : {}),
     },
     relations: {
-      pool: { account: true },
+      pool: { account: true, shareToken: true },
       assetA: true,
       assetB: true,
     },

@@ -6,11 +6,15 @@ import {
   StablepoolAssetState,
   StablepoolGetAllPoolIdsInput,
   StablepoolGetPoolDataInput,
+  StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  StablepoolPoolPegsInfo,
   StablepoolStorageData,
   StableswapConstants,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { hexToString } from '@polkadot/util';
+import { EmaOraclePeriod } from '../../../../model';
 
 function getConstants({ block }: GetConstantsInput): StableswapConstants {
   let minTradingLimit = null;
@@ -56,7 +60,6 @@ async function getPoolAssetStorageData({
   assetId,
 }: GetPoolAssetInfoInput): Promise<StablepoolAssetState | null> {
   let tradable: OmnipoolAssetTradability | null = null;
-  const peg = ['1', '1'];
 
   if (storage.stableswap.assetTradability.v276.is(block)) {
     const resp = await storage.stableswap.assetTradability.v276.get(
@@ -67,13 +70,10 @@ async function getPoolAssetStorageData({
     if (resp !== undefined) tradable = resp;
   }
 
-  // TODO add support storage.stableswap.poolPegs query
-
-  if (tradable === null || peg === null) return null;
+  if (tradable === null) return null;
 
   return {
     tradable,
-    peg,
   };
 }
 
@@ -91,9 +91,17 @@ async function getAllPoolIds({
   throw new UnknownVersionError('storage.stableswap.pools');
 }
 
+async function getPoolPegs({
+  poolId,
+  block,
+}: StablepoolGetPoolPegsInput): Promise<StablepoolPoolPegsInfo | null> {
+  return null;
+}
+
 export default {
   getPoolData,
   getPoolAssetStorageData,
   getAllPoolIds,
   getConstants,
+  getPoolPegs,
 };

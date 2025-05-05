@@ -708,7 +708,6 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     return {
       tradable: { bits: assetState.tradable.bits ?? 0 },
-      peg: [assetState.peg[0]!, assetState.peg[1]!],
     };
   }
 

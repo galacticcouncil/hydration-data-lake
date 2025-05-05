@@ -31,8 +31,13 @@ import {
   IPersistentEmaOracleEntry,
   PoolType,
   IPersistentConstants,
+  AMOUNT_MAX,
+  TRADEABLE_DEFAULT,
 } from '../../../../../../../../../../hydration-sdk/packages/sdk';
-import { bigintToNumberSafe } from '../../../../../utils/helpers';
+import {
+  bigintToNumberSafe,
+  publicKeyToSs58,
+} from '../../../../../utils/helpers';
 import { fetchAavePoolsHistoricalData } from './fetchHistoricalDataHelpers/fetchAavePoolsHistoricalData';
 import { fetchEmaOracleEntriesHistoricalData } from './fetchHistoricalDataHelpers/fetchEmaOraclesHistoricalData';
 
@@ -104,7 +109,6 @@ export class OfflineTradeRouterManagerHelper {
     for (const blockNumber of blockNumbers) {
       await this.fetchConstantsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchEmaOraclesHistoricalDataForBlock({ ctx, blockNumber });
-      await this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchLbpPoolsHistoricalDataForBlock({ ctx, blockNumber });
       await this.fetchXykPoolsHistoricalDataForBlock({ ctx, blockNumber });
@@ -325,8 +329,8 @@ export class OfflineTradeRouterManagerHelper {
       const blockConstants = this.constantsHistData.get(blockNumber)!;
 
       poolsMap.set(poolId, {
-        address: poolHistData.pool.account.id,
-        id: poolHistData.pool.id,
+        address: publicKeyToSs58(poolHistData.pool.account.id),
+        id: publicKeyToSs58(poolHistData.pool.id),
         type: PoolType.XYK,
         tokens: [
           {
@@ -382,8 +386,8 @@ export class OfflineTradeRouterManagerHelper {
       const blockConstants = this.constantsHistData.get(blockNumber)!;
 
       poolsMap.set(poolId, {
-        id: poolHistData.pool.id,
-        address: poolHistData.pool.account.id,
+        id: publicKeyToSs58(poolHistData.pool.id),
+        address: publicKeyToSs58(poolHistData.pool.account.id),
         type: PoolType.LBP,
         tokens: [
           {
@@ -454,7 +458,7 @@ export class OfflineTradeRouterManagerHelper {
 
       poolsMap.set(poolId, {
         id: poolHistData.pool.id,
-        address: poolHistData.pool.account.id,
+        address: publicKeyToSs58(poolHistData.pool.account.id),
         type: PoolType.Stable,
 
         tokens: [
@@ -473,17 +477,6 @@ export class OfflineTradeRouterManagerHelper {
             type: assetHistData.asset.assetType,
             tradable: assetHistData.tradable,
           })) as IPersistentPoolToken[]),
-          {
-            id: poolShareTokenHistData.asset.assetRegistryId,
-            decimals: poolShareTokenHistData.asset.decimals,
-            symbol: poolShareTokenHistData.asset.symbol,
-            balance: poolShareTokenHistData.totalIssuance.toString(),
-            existentialDeposit:
-              poolShareTokenHistData.existentialDeposit.toString(),
-            isSufficient: poolShareTokenHistData.asset.isSufficient,
-            type: poolShareTokenHistData.asset.assetType,
-            tradable: 15, // TODO fix data
-          },
         ],
 
         maxInRatio: 0,
@@ -498,6 +491,9 @@ export class OfflineTradeRouterManagerHelper {
         initialBlock: poolHistData.initialAmplificationChangeAtBlockHeight,
         finalBlock: poolHistData.finalAmplificationChangeAtBlockHeight,
         totalIssuance: poolShareTokenHistData.totalIssuance.toString(),
+        pegs: poolHistData.pegs.map((p) => p.map((i) => i.toString())),
+        maxPegUpdate: poolHistData.maxPegUpdate?.toString(),
+        pegSources: poolHistData.pegSources,
       } as IPersistentStableSwapBase);
     }
 
@@ -515,7 +511,7 @@ export class OfflineTradeRouterManagerHelper {
     const blockConstants = this.constantsHistData.get(blockNumber)!;
 
     const poolData: IPersistentOmniPoolBase = {
-      address: poolHistData.pool.account.id,
+      address: publicKeyToSs58(poolHistData.pool.account.id),
       type: PoolType.Omni,
 
       tokens: poolHistData.assetsHistoricalData.map((assetHistData) => ({
@@ -572,8 +568,8 @@ export class OfflineTradeRouterManagerHelper {
       }
 
       poolsMap.set(poolId, {
-        address: poolHistData.pool.id,
-        id: poolHistData.pool.id,
+        address: publicKeyToSs58(poolHistData.pool.id),
+        id: publicKeyToSs58(poolHistData.pool.id),
         type: PoolType.Aave,
         tokens: [
           {

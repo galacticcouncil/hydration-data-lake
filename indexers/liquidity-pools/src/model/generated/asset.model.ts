@@ -52,6 +52,10 @@ export class Asset {
   @ManyToOne_(() => Asset, {nullable: true})
   variableDebtToken!: Asset | undefined | null
 
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  bondUnderlyingAsset!: Asset | undefined | null
+
   @Column_("varchar", {length: 10, nullable: false})
   assetType!: AssetType
 
@@ -75,4 +79,7 @@ export class Asset {
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   existentialDeposit!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  bondMaturity!: bigint | undefined | null
 }

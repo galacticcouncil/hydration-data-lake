@@ -6,11 +6,15 @@ import {
   StablepoolAssetState,
   StablepoolGetAllPoolIdsInput,
   StablepoolGetPoolDataInput,
+  StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  StablepoolPoolPegsInfo,
   StablepoolStorageData,
   StableswapConstants,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { hexToString, stringToHex } from '@polkadot/util';
+import { EmaOraclePeriod } from '../../../../model';
 
 function getConstants({ block }: GetConstantsInput): StableswapConstants {
   let minTradingLimit = null;
@@ -56,7 +60,6 @@ async function getPoolAssetStorageData({
   assetId,
 }: GetPoolAssetInfoInput): Promise<StablepoolAssetState | null> {
   let tradable: OmnipoolAssetTradability | null = null;
-  const peg = ['1', '1'];
 
   if (storage.stableswap.assetTradability.v183.is(block)) {
     // TODO fix call - returns undefined in any case
@@ -68,13 +71,10 @@ async function getPoolAssetStorageData({
     if (resp !== undefined) tradable = resp;
   }
 
-  // TODO add support storage.stableswap.poolPegs query
-
-  if (tradable === null || peg === null) return null;
+  if (tradable === null) return null;
 
   return {
     tradable,
-    peg,
   };
 }
 
@@ -92,9 +92,40 @@ async function getAllPoolIds({
   throw new UnknownVersionError('storage.stableswap.pools');
 }
 
+async function getPoolPegs({
+  poolId,
+  block,
+}: StablepoolGetPoolPegsInput): Promise<StablepoolPoolPegsInfo | null> {
+  if (block.specVersion < 305) return null;
+
+  if (storage.stableswap.poolPegs.v305.is(block)) {
+    const pegsInfo = await storage.stableswap.poolPegs.v305.get(block, poolId);
+
+    if (!pegsInfo) return null;
+
+    return {
+      maxPegUpdate: pegsInfo.maxPegUpdate,
+      current: pegsInfo.current,
+      source: pegsInfo.source.map((s) => ({
+        sourceKind: s.__kind,
+        oracleName: s.__kind === 'Oracle' ? hexToString(s.value[0]) : undefined,
+        oraclePeriod:
+          s.__kind === 'Oracle'
+            ? (s.value[1].__kind as EmaOraclePeriod)
+            : undefined,
+        oracleAsset: s.__kind === 'Oracle' ? s.value[2] : undefined,
+        valuePoints: s.__kind === 'Value' ? s.value : undefined,
+      })),
+    };
+  }
+
+  throw new UnknownVersionError('storage.stableswap.poolPegs');
+}
+
 export default {
   getPoolData,
   getPoolAssetStorageData,
   getAllPoolIds,
   getConstants,
+  getPoolPegs,
 };

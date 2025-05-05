@@ -2,7 +2,7 @@ import { AssetType, EmaOraclePeriod } from '../../model';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { DcaScheduleCallData } from './calls';
 import { OtcOrderPlacedEventParams } from './events';
-import { sts } from '../chains/hydration/typegenTypes/support';
+import { Bytes, sts } from '../chains/hydration/typegenTypes/support';
 import { AccountId32 } from '../chains/hydration/typegenTypes/v138';
 import {
   assetFeeParameters,
@@ -15,6 +15,7 @@ import {
   Ratio,
   Volume,
 } from '../chains/hydration/typegenTypes/v170';
+import { OraclePeriod, PegSource } from '../chains/hydration/typegenTypes/v305';
 
 export interface AccountData {
   free: bigint;
@@ -91,7 +92,20 @@ export interface StablepoolInfo extends StablepoolStorageData {}
 
 export interface StablepoolAssetState {
   tradable: OmnipoolAssetTradability;
-  peg: string[];
+}
+
+export type StableswapPegSource = {
+  sourceKind: 'Oracle' | 'Value';
+  oracleName?: string;
+  oraclePeriod?: EmaOraclePeriod;
+  oracleAsset?: number;
+  valuePoints?: [bigint, bigint];
+};
+
+export interface StablepoolPoolPegsInfo {
+  source: StableswapPegSource[];
+  maxPegUpdate: number;
+  current: [bigint, bigint][];
 }
 
 export interface AssetDetails {
@@ -219,11 +233,18 @@ export interface EmaOracleEntryData {
   liquidity: EmaOracleEntryLiquidity;
   updatedAt: number;
 }
+
 export interface AssetDynamicFeeData {
   assetId: number;
   assetFee: number;
   protocolFee: number;
   timestamp: number;
+}
+
+export interface BondDetails {
+  bondId: number;
+  underlyingAsset: number;
+  maturity: bigint;
 }
 
 /**
@@ -242,6 +263,11 @@ export type StablepoolGetPoolDataInput = {
 };
 
 export type StablepoolGetAllPoolIdsInput = {
+  block: BlockHeader;
+};
+
+export type StablepoolGetPoolPegsInput = {
+  poolId: number;
   block: BlockHeader;
 };
 
@@ -329,5 +355,14 @@ export type GetEmaOraclesInput = {
 };
 
 export type GetAssetsDynamicFeesAllInput = {
+  block: BlockHeader;
+};
+
+export type GetBondByIdInput = {
+  bondId: number;
+  block: BlockHeader;
+};
+
+export type GetBondsAllInput = {
   block: BlockHeader;
 };

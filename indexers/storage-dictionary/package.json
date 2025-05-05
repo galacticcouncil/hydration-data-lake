@@ -12,7 +12,7 @@
     "deploy-main": "sqd deploy --org galacticcouncil . -m deployment-xyk-pool.yaml"
   },
   "dependencies": {
-    "@galacticcouncil/sdk": "^4.2.1",
+    "@galacticcouncil/sdk": "^6.2.0",
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "@graphile/pg-aggregates": "^0.1.1",
     "@graphile/pg-pubsub": "^4.13.0",

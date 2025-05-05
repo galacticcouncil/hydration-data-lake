@@ -71,25 +71,11 @@ async function getOmnipoolAssetData({
   assetId,
   block,
 }: OmnipoolGetAssetDataInput): Promise<OmnipoolAssetData | null> {
-  let assetData = null;
-  let tradable = null;
-
   if (storage.omnipool.assets.v115.is(block)) {
     const resp = await storage.omnipool.assets.v115.get(block, assetId);
-    if (!resp) return null;
-    assetData = resp;
+    return resp ?? null;
   }
-  if (storage.omnipool.hubAssetTradability.v115.is(block)) {
-    const resp = await storage.omnipool.hubAssetTradability.v115.get(block);
-    if (resp) tradable = resp;
-  }
-
-  if (assetData === null || tradable === null) return null;
-
-  return {
-    ...assetData,
-    tradable,
-  };
+  throw new UnknownVersionError('storage.omnipool.assets');
 }
 
 async function getOmnipoolAllAssetIds({

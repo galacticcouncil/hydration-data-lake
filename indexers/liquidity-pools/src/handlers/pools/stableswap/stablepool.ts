@@ -127,7 +127,7 @@ export async function getOrCreateStableswap({
 
   pool = await ctx.store.findOne(Stableswap, {
     where: { id: `${poolId}` },
-    relations: { assets: { asset: true }, account: true },
+    relations: { assets: { asset: true }, account: true, shareToken: true },
   });
 
   if (pool || (!pool && !ensure)) return pool ?? null;

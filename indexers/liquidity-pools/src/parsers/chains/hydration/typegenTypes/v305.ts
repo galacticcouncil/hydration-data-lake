@@ -2,6 +2,52 @@ import {sts, Result, Option, Bytes, BitSequence} from './support'
 
 export type AccountId32 = Bytes
 
+export interface PoolPegInfo {
+    source: PegSource[]
+    maxPegUpdate: Permill
+    current: [bigint, bigint][]
+}
+
+export type Permill = number
+
+export type PegSource = PegSource_Oracle | PegSource_Value
+
+export interface PegSource_Oracle {
+    __kind: 'Oracle'
+    value: [Bytes, OraclePeriod, number]
+}
+
+export interface PegSource_Value {
+    __kind: 'Value'
+    value: [bigint, bigint]
+}
+
+export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
+
+export interface OraclePeriod_Day {
+    __kind: 'Day'
+}
+
+export interface OraclePeriod_Hour {
+    __kind: 'Hour'
+}
+
+export interface OraclePeriod_LastBlock {
+    __kind: 'LastBlock'
+}
+
+export interface OraclePeriod_Short {
+    __kind: 'Short'
+}
+
+export interface OraclePeriod_TenMinutes {
+    __kind: 'TenMinutes'
+}
+
+export interface OraclePeriod_Week {
+    __kind: 'Week'
+}
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -4743,44 +4789,6 @@ export const OraclePeriod: sts.Type<OraclePeriod> = sts.closedEnum(() => {
     }
 })
 
-export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
-
-export interface OraclePeriod_Day {
-    __kind: 'Day'
-}
-
-export interface OraclePeriod_Hour {
-    __kind: 'Hour'
-}
-
-export interface OraclePeriod_LastBlock {
-    __kind: 'LastBlock'
-}
-
-export interface OraclePeriod_Short {
-    __kind: 'Short'
-}
-
-export interface OraclePeriod_TenMinutes {
-    __kind: 'TenMinutes'
-}
-
-export interface OraclePeriod_Week {
-    __kind: 'Week'
-}
-
-export type PegSource = PegSource_Oracle | PegSource_Value
-
-export interface PegSource_Oracle {
-    __kind: 'Oracle'
-    value: [Bytes, OraclePeriod, number]
-}
-
-export interface PegSource_Value {
-    __kind: 'Value'
-    value: [bigint, bigint]
-}
-
 export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
     return  {
         assetId: sts.number(),
@@ -5139,8 +5147,6 @@ export interface StableswapCall_withdraw_asset_amount {
     amount: bigint
     maxShareAmount: bigint
 }
-
-export type Permill = number
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -15751,12 +15757,6 @@ export const PoolPegInfo: sts.Type<PoolPegInfo> = sts.struct(() => {
         current: sts.array(() => sts.tuple(() => [sts.bigint(), sts.bigint()])),
     }
 })
-
-export interface PoolPegInfo {
-    source: PegSource[]
-    maxPegUpdate: Permill
-    current: [bigint, bigint][]
-}
 
 export const Permill = sts.number()
 
