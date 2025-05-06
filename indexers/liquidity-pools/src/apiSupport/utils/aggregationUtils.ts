@@ -1,5 +1,5 @@
 import { AggregationTimeRange } from './index';
-import { AggregationTimeRangeLabel } from '../types';
+import { AggregationTimeRangeLabel, YieldMetricsInterval } from '../types';
 import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,
@@ -56,4 +56,36 @@ export async function getStartStopBlocksFromInput({
     startBlockHeight,
     stopBlockHeight,
   };
+}
+
+export function getPeriodFromInterval(
+  interval: YieldMetricsInterval
+): AggregationTimeRangeLabel {
+  switch (interval) {
+    case YieldMetricsInterval['1D']:
+      return AggregationTimeRangeLabel['24H'];
+    case YieldMetricsInterval['1W']:
+      return AggregationTimeRangeLabel['1W'];
+    case YieldMetricsInterval['1MON']:
+      return AggregationTimeRangeLabel['1M'];
+    case YieldMetricsInterval['1Y']:
+      return AggregationTimeRangeLabel['1Y'];
+    default:
+      return AggregationTimeRangeLabel['1M'];
+  }
+}
+
+export function getPeriodsNumberFromInterval(interval: YieldMetricsInterval) {
+  switch (interval) {
+    case YieldMetricsInterval['1D']:
+      return 365;
+    case YieldMetricsInterval['1W']:
+      return 52;
+    case YieldMetricsInterval['1MON']:
+      return 12;
+    case YieldMetricsInterval['1Y']:
+      return 1;
+    default:
+      return 12;
+  }
 }

@@ -22,6 +22,7 @@ export async function getAccount({
       await block._runtime.rpc.call(`state_call`, [
         'CurrenciesApi_account',
         u8aToHex(u32.enc(assetId)) + address.substring(2),
+        block.hash,
       ])
     );
   }
@@ -41,6 +42,7 @@ export async function getAccounts({
         await block._runtime.rpc.call(`state_call`, [
           'CurrenciesApi_accounts',
           address,
+          block.hash,
         ])
       )
       .map(([assetId, data]) => ({

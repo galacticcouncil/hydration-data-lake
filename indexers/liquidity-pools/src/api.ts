@@ -28,6 +28,7 @@ import { StableswapYieldMetricsPlugin } from './apiSupport/plugins/query/stables
 import { HydrationSdkManager } from './apiSupport/utils/hydrationSdk';
 import { CacheManager } from './apiSupport/utils/cacheManager';
 import { Request, Response, NextFunction } from 'express';
+import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolYieldMetrics';
 
 const pgTypes = new TypeOverrides();
 pgTypes.setTypeParser(1700, function (val) {
@@ -76,6 +77,7 @@ async function initializeServer() {
           RoutedTradesSubscriptionsPlugin,
           SwapPlugin,
           StableswapYieldMetricsPlugin,
+          OmnipoolYieldMetricsPlugin,
           makePgSmartTagsFromFilePlugin(
             getEnvPath('apiSupport/postgraphile.tags.json5')
           ),
