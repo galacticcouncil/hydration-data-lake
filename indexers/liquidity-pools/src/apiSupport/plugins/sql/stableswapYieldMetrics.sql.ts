@@ -1,4 +1,4 @@
-export const getAssetSwapFeesByPeriod = `
+export const getStableswapAssetSwapFeesByPeriod = `
     WITH pool_data AS (
         SELECT pd."pool_id", pd."asset_ids"
         FROM jsonb_to_recordset($1::jsonb) AS pd("pool_id" text, "asset_ids" text[])

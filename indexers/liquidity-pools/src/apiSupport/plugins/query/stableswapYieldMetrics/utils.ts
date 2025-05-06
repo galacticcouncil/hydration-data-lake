@@ -4,7 +4,7 @@ import {
   StableswapYieldMetricsRaw,
 } from './resolvers';
 import {
-  getAssetSwapFeesByPeriod,
+  getStableswapAssetSwapFeesByPeriod,
   getLatestStableswapAssetBalance,
 } from '../../sql/stableswapYieldMetrics.sql';
 import { getAssetsByStableswapIds } from '../../sql/stableswap.sql';
@@ -12,97 +12,15 @@ import {
   AggregationTimeRangeLabel,
   YieldMetricsInterval,
 } from '../../../types';
-import { getStartStopBlocksFromInput } from '../../../utils/aggregationUtils';
+import {
+  getPeriodFromInterval,
+  getStartStopBlocksFromInput,
+} from '../../../utils/aggregationUtils';
 import BigNumber from 'bignumber.js';
-
-function getPeriodFromInterval(
-  interval: YieldMetricsInterval
-): AggregationTimeRangeLabel {
-  switch (interval) {
-    case YieldMetricsInterval['1D']:
-      return AggregationTimeRangeLabel['24H'];
-    case YieldMetricsInterval['1W']:
-      return AggregationTimeRangeLabel['1W'];
-    case YieldMetricsInterval['1MON']:
-      return AggregationTimeRangeLabel['1M'];
-    case YieldMetricsInterval['1Y']:
-      return AggregationTimeRangeLabel['1Y'];
-    default:
-      return AggregationTimeRangeLabel['1M'];
-  }
-}
-
-function getPeriodsNumberFromInterval(interval: YieldMetricsInterval) {
-  switch (interval) {
-    case YieldMetricsInterval['1D']:
-      return 365;
-    case YieldMetricsInterval['1W']:
-      return 52;
-    case YieldMetricsInterval['1MON']:
-      return 12;
-    case YieldMetricsInterval['1Y']:
-      return 1;
-    default:
-      return 12;
-  }
-}
-
-/**
- * Calculates yield metrics for a stableswap pair based on the provided fee amount, total value locked (TVL),
- * and interval for yield calculation.
- *
- * Notice: returns metrics as represents but not in decimal form.
- *
- */
-function calcYieldMetrics({
-  feeAmount,
-  tvl,
-  interval,
-}: {
-  feeAmount: BigNumber;
-  tvl: BigNumber;
-  interval: YieldMetricsInterval;
-}): StableswapYieldMetricsRaw {
-  if (tvl.isZero()) {
-    throw new Error('TVL cannot be zero.');
-  }
-
-  const feeYieldPerPeriod = feeAmount.div(tvl);
-
-  return {
-    projectedAprPerc: feeYieldPerPeriod
-      .multipliedBy(getPeriodsNumberFromInterval(interval))
-      .multipliedBy(100),
-    projectedApyPerc: new BigNumber(1)
-      .plus(feeYieldPerPeriod)
-      .pow(getPeriodsNumberFromInterval(interval))
-      .minus(1)
-      .multipliedBy(100),
-  };
-}
-
-function getAverageYieldMetrics(
-  data: StableswapYieldMetricsRaw[]
-): StableswapYieldMetricsRaw {
-  const avrMetrics = {
-    projectedAprPerc: new BigNumber(0),
-    projectedApyPerc: new BigNumber(0),
-  };
-
-  data.forEach((assetData) => {
-    avrMetrics.projectedAprPerc = avrMetrics.projectedAprPerc.plus(
-      assetData.projectedAprPerc
-    );
-    avrMetrics.projectedApyPerc = avrMetrics.projectedApyPerc.plus(
-      assetData.projectedApyPerc
-    );
-  });
-
-  return {
-    projectedAprPerc: avrMetrics.projectedAprPerc.div(data.length),
-    projectedApyPerc: avrMetrics.projectedApyPerc.div(data.length),
-  };
-}
+import {
+  calculateAssetYieldMetrics,
+  calculateAverageYieldMetrics,
+} from '../../../utils/math';
 
 export async function handlestableswapYieldMetricsAggregation({
   poolIds,
@@ -117,6 +35,8 @@ export async function handlestableswapYieldMetricsAggregation({
     pool_id: string;
     assets: { asset_id: string; decimals: number }[];
   }>(getAssetsByStableswapIds, [poolIds]);
+
+  if (!assetsDataByPool.rows || assetsDataByPool.rows.length === 0) return [];
 
   const assetsDataByPoolMap = new Map(
     assetsDataByPool.rows.map((poolData) => [
@@ -145,7 +65,7 @@ export async function handlestableswapYieldMetricsAggregation({
   const aggregatedAssetSwapFees = await pgClient.query<{
     pool_id: string;
     asset_amounts: { asset_id: string; total_fee_amount: string }[];
-  }>(getAssetSwapFeesByPeriod, [
+  }>(getStableswapAssetSwapFeesByPeriod, [
     JSON.stringify(
       assetsDataByPool.rows.map(({ pool_id, assets }) => ({
         pool_id,
@@ -154,6 +74,12 @@ export async function handlestableswapYieldMetricsAggregation({
     ),
     blocksRange.startBlockHeight,
   ]);
+
+  if (
+    !aggregatedAssetSwapFees.rows ||
+    aggregatedAssetSwapFees.rows.length === 0
+  )
+    return [];
 
   const aggregatedAssetSwapFeesMap = new Map(
     aggregatedAssetSwapFees.rows.map((r) => [
@@ -170,6 +96,8 @@ export async function handlestableswapYieldMetricsAggregation({
       para_block_height: number;
     }[];
   }>(getLatestStableswapAssetBalance, [poolIds]);
+
+  if (!latestBalances.rows || latestBalances.rows.length === 0) return [];
 
   const latestBalancesMap = new Map(
     latestBalances.rows.map((r) => [
@@ -200,7 +128,7 @@ export async function handlestableswapYieldMetricsAggregation({
       );
 
       poolYieldMetricsByAsset.push(
-        calcYieldMetrics({
+        calculateAssetYieldMetrics({
           feeAmount,
           tvl,
           interval,
@@ -208,7 +136,7 @@ export async function handlestableswapYieldMetricsAggregation({
       );
     }
 
-    const avrMetrics = getAverageYieldMetrics(poolYieldMetricsByAsset);
+    const avrMetrics = calculateAverageYieldMetrics(poolYieldMetricsByAsset);
 
     resultMap.set(poolId, {
       poolId,

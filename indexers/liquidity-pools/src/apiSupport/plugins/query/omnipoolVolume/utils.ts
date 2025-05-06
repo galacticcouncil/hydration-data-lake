@@ -1,6 +1,6 @@
 import type * as pg from 'pg';
 import { OmnipoolAssetVolumeAggregated } from './resolvers';
-import { getAllOmnipoolAssets } from '../../sql/omnipoolAssetsAll.sql';
+import { getAllOmnipoolAssets } from '../../sql/omnipoolAssets.sql';
 import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../../sql/omnipoolAssetsVolume.sql';
 import { OmnipoolAssetHistoricalVolumeRaw } from '../../../types';
 
