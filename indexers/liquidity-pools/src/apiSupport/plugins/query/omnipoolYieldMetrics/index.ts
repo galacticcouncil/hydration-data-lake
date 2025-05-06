@@ -1,14 +1,23 @@
 import { gql, makeExtendSchemaPlugin, Plugin } from 'postgraphile';
-import { stableswapYieldMetricsResolver } from './resolvers';
+import {
+  omnipoolAssetsYieldMetricsResolver,
+  OmnipoolAssetYieldMetricsFilter,
+} from './resolvers';
+import {
+  omnipoolAssetHistoricalVolumesByPeriodResolver,
+  OmnipoolAssetVolumesByPeriodFilter,
+} from '../omnipoolVolume/resolvers';
+import { QueryResolverContext } from '../../../types';
+import { GraphQLResolveInfo } from 'graphql/type/definition';
+import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 
 export const OmnipoolYieldMetricsPlugin: Plugin = makeExtendSchemaPlugin(
   (build, options) => {
     return {
       typeDefs: gql`
-        input OmnipoolAssetYieldMetricsFilter {
+        input OmnipoolAssetsYieldMetricsFilter {
           interval: YieldMetricsInterval = _1MON_
-          assetIds: [String!]!
-          assetRegistryIds: [String!]!
+          assetIds: [String!]
         }
 
         type OmnipoolAssetYieldMetricsAggregated {
@@ -25,13 +34,26 @@ export const OmnipoolYieldMetricsPlugin: Plugin = makeExtendSchemaPlugin(
 
         extend type Query {
           omnipoolAssetsYieldMetrics(
-            filter: OmnipoolAssetsYieldMetricsFilter!
+            filter: OmnipoolAssetsYieldMetricsFilter
           ): OmnipoolAssetsYieldMetricsResponse!
         }
       `,
       resolvers: {
         Query: {
-          omnipoolAssetsYieldMetrics: stableswapYieldMetricsResolver,
+          omnipoolAssetsYieldMetrics: async (
+            parentObject: any,
+            args: { filter: OmnipoolAssetYieldMetricsFilter },
+            context: QueryResolverContext,
+            info: GraphQLResolveInfo & { graphile: GraphileHelpers<any> }
+          ) => {
+            return omnipoolAssetsYieldMetricsResolver(
+              parentObject,
+              args,
+              context,
+              info,
+              options.omnipoolAddress
+            );
+          },
         },
       },
     };

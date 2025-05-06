@@ -74474,6 +74474,22 @@ type AssetSwapFeeHistoricalDataByPeriodResponse {
   totalCount: Int!
 }
 
+input StableswapYieldMetricsFilter {
+  interval: YieldMetricsInterval = _1MON_
+  poolIds: [String!]!
+}
+
+type StableswapYieldMetricsAggregated {
+  poolId: String!
+  projectedApyPerc: BigFloat!
+  projectedAprPerc: BigFloat!
+}
+
+type StableswapYieldMetricsResponse {
+  nodes: [StableswapYieldMetricsAggregated]!
+  totalCount: Int!
+}
+
 """The root query type which gives access points into the data universe."""
 type Query {
   """
@@ -76725,6 +76741,7 @@ type Query {
   stableswapVolumeHistoricalDataByPeriod(filter: StableswapVolumeHistoricalDataByPeriodFilter!): StableswapVolumeHistoricalDataByPeriodResponse!
   assetSwapFeeHistoricalDataByPeriod(filter: AssetSwapFeeHistoricalDataByPeriodFilter!): AssetSwapFeeHistoricalDataByPeriodResponse!
   stableswapYieldMetrics(filter: StableswapYieldMetricsFilter!): StableswapYieldMetricsResponse!
+  omnipoolAssetsYieldMetrics(filter: OmnipoolAssetsYieldMetricsFilter): OmnipoolAssetsYieldMetricsResponse!
 }
 
 """
@@ -76753,18 +76770,19 @@ type Subscription {
   routedTrades(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
 }
 
-input StableswapYieldMetricsFilter {
+input OmnipoolAssetsYieldMetricsFilter {
   interval: YieldMetricsInterval = _1MON_
-  poolIds: [String!]!
+  assetIds: [String!]
 }
 
-type StableswapYieldMetricsAggregated {
-  poolId: String!
+type OmnipoolAssetYieldMetricsAggregated {
+  assetId: String!
+  assetRegistryId: String!
   projectedApyPerc: BigFloat!
   projectedAprPerc: BigFloat!
 }
 
-type StableswapYieldMetricsResponse {
-  nodes: [StableswapYieldMetricsAggregated]!
+type OmnipoolAssetsYieldMetricsResponse {
+  nodes: [OmnipoolAssetYieldMetricsAggregated]!
   totalCount: Int!
 }

@@ -1,22 +1,23 @@
 import { YieldMetricsInterval } from '../../../../types';
 
-export type StableswapYieldMetricsFilter = {
+export type OmnipoolAssetYieldMetricsFilter = {
   interval: YieldMetricsInterval;
-  poolIds: string[];
+  assetIds?: string[];
 };
 
-export type StableswapYieldMetricsRaw = {
+export type OmnipoolAssetYieldMetricsRaw = {
   projectedApyPerc: BigNumber;
   projectedAprPerc: BigNumber;
 };
 
-export type StableswapYieldMetricsAggregated = {
-  poolId: string;
+export type OmnipoolAssetYieldMetricsAggregated = {
+  assetId: string;
+  assetRegistryId: string;
   projectedApyPerc: string;
   projectedAprPerc: string;
 };
 
-export type StableswapYieldMetricsResponse = {
-  nodes: StableswapYieldMetricsAggregated[];
+export type OmnipoolAssetsYieldMetricsResponse = {
+  nodes: OmnipoolAssetYieldMetricsAggregated[];
   totalCount: number;
 };

@@ -1,2 +1,2 @@
-export { stableswapYieldMetricsResolver } from './stableswapYieldMetrics.resolver';
+export { omnipoolAssetsYieldMetricsResolver } from './omnipoolAssetsYieldMetrics.resolver';
 export * from './types';
