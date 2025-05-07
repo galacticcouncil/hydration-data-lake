@@ -6,6 +6,7 @@ import { BlockHeader } from '@subsquid/substrate-processor';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { OfflineTradeRouterManager } from './utils';
 import { getOrCreateAsset } from '../asset';
+import { handleSpotPricesIntoAssetsHistoricalData } from './spotPrice';
 
 async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -96,7 +97,7 @@ async function processAssetsHistoricalDataAtBlock({
             timestamp: dynamicFeePerAssetMap.get(assetRegistryId)!.timestamp,
           })
         : null,
-      spotPrices: [],
+      spotPrices: [], // Spot prices will be calculated and injected in further processing steps.
       paraBlockHeight: block.height,
       relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
         block.height
@@ -120,6 +121,13 @@ export async function handleAssetHistoricalData(
     .filter((a) => !!a.assetRegistryId)
     .map((a) => `${a.assetRegistryId}`);
 
+  /**
+   * @description Processes data in a specific sequence to ensure data dependencies are met
+   *
+   * @important Generic asset historical data must be processed before asset historical spot prices.
+   * This ordering is critical because the generic asset historical data serves as a required
+   * data source for the OfflinePoolService.
+   */
   for (const blocksSubBatch of splitIntoBatches(ctx.blocks, 15)) {
     await Promise.all(
       blocksSubBatch.map((block) =>
@@ -133,9 +141,15 @@ export async function handleAssetHistoricalData(
   }
 
   for (const blocksSubBatch of splitIntoBatches(ctx.blocks, 100)) {
-    await OfflineTradeRouterManager.getInstance().init({
+    await OfflineTradeRouterManager.getInstance().initForBlocksBatch({
       blockNumbers: blocksSubBatch.map((b) => b.header.height),
       ctx,
     });
+    for (const block of blocksSubBatch) {
+      await handleSpotPricesIntoAssetsHistoricalData({
+        blockHeader: block.header,
+        ctx,
+      });
+    }
   }
 }

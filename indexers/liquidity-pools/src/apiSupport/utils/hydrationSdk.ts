@@ -25,7 +25,7 @@ export class HydrationSdkManager {
     if (atBlockHash !== undefined) apiAt = await api.at(atBlockHash);
 
     const poolService = new PoolService((apiAt as ApiPromise) ?? api);
-    await poolService.syncRegistry(); // Wait until pools initialized (optional), fallback to lazy init
+    await poolService.syncRegistry(); // Wait until pools initialized (optional), fallback to lazy initForBlocksBatch
     this.traderRouterClient = new TradeRouter(poolService);
     return this;
   }

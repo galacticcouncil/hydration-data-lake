@@ -63,7 +63,7 @@ export class SubProcessorStatusManager {
   }
 
   async calcSubBatchConfig() {
-    await this.getStatus({ ensure: true }); // Just to init status entity for current sub-processor
+    await this.getStatus({ ensure: true }); // Just to initForBlocksBatch status entity for current sub-processor
 
     const allSubProcessorsStats = await this.ctx.store.find(SubProcessorStatus);
 

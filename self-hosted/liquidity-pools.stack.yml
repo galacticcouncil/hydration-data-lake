@@ -37,7 +37,7 @@ services:
         condition: on-failure
 
   liquidity-pools-processor:
-    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
+    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-initForBlocksBatch-monorepo
     depends_on:
       - liquidity-pools-db
     environment:
@@ -85,7 +85,7 @@ services:
         condition: on-failure
 
   liquidity-pools-api:
-    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
+    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-initForBlocksBatch-monorepo
     depends_on:
       - liquidity-pools-processor
     environment:

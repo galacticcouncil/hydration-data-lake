@@ -1,23 +1,11 @@
 import type * as pg from 'pg';
-import {
-  OmnipoolAssetYieldMetricsAggregated,
-  OmnipoolAssetYieldMetricsRaw,
-} from './resolvers';
-import {
-  getStableswapAssetSwapFeesByPeriod,
-  getLatestStableswapAssetBalance,
-} from '../../sql/stableswapYieldMetrics.sql';
-import { getAssetsByStableswapIds } from '../../sql/stableswap.sql';
-import {
-  AggregationTimeRangeLabel,
-  YieldMetricsInterval,
-} from '../../../types';
+import { OmnipoolAssetYieldMetricsAggregated } from './resolvers';
+import { YieldMetricsInterval } from '../../../types';
 import {
   getPeriodFromInterval,
   getStartStopBlocksFromInput,
 } from '../../../utils/aggregationUtils';
 import BigNumber from 'bignumber.js';
-import { getAssetsByIds } from '../../sql/asset.sql';
 import {
   getOmnipoolAssetsAll,
   getOmnipoolAssetsByAssetIds,

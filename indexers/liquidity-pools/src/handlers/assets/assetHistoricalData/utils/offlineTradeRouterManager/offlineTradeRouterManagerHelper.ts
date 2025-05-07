@@ -97,7 +97,7 @@ export class OfflineTradeRouterManagerHelper {
     }
   }
 
-  async prefetchAllHistoricalData({
+  protected async prefetchAllHistoricalData({
     blockNumbers,
     ctx,
   }: {
@@ -118,7 +118,7 @@ export class OfflineTradeRouterManagerHelper {
     }
   }
 
-  async fetchConstantsHistoricalDataForBlock({
+  protected async fetchConstantsHistoricalDataForBlock({
     blockNumber,
     ctx,
   }: {
@@ -131,7 +131,7 @@ export class OfflineTradeRouterManagerHelper {
 
     this.constantsHistData.set(blockNumber, histData);
   }
-  async fetchAssetsHistoricalDataForBlock({
+  protected async fetchAssetsHistoricalDataForBlock({
     blockNumber,
     ctx,
   }: {
@@ -144,7 +144,7 @@ export class OfflineTradeRouterManagerHelper {
     );
   }
 
-  async fetchEmaOraclesHistoricalDataForBlock({
+  protected async fetchEmaOraclesHistoricalDataForBlock({
     blockNumber,
     ctx,
   }: {
@@ -157,7 +157,7 @@ export class OfflineTradeRouterManagerHelper {
     );
   }
 
-  async fetchLbpPoolsHistoricalDataForBlock({
+  protected async fetchLbpPoolsHistoricalDataForBlock({
     blockNumber,
     ctx,
   }: {
@@ -170,7 +170,7 @@ export class OfflineTradeRouterManagerHelper {
     );
   }
 
-  async fetchXykPoolsHistoricalDataForBlock({
+  protected async fetchXykPoolsHistoricalDataForBlock({
     blockNumber,
     ctx,
   }: {
@@ -183,7 +183,7 @@ export class OfflineTradeRouterManagerHelper {
     );
   }
 
-  async fetchAavePoolsHistoricalDataForBlock({
+  protected async fetchAavePoolsHistoricalDataForBlock({
     blockNumber,
     ctx,
   }: {
@@ -196,7 +196,7 @@ export class OfflineTradeRouterManagerHelper {
     );
   }
 
-  async fetchStableswapHistoricalDataForBlock({
+  protected async fetchStableswapHistoricalDataForBlock({
     blockNumber,
     ctx,
   }: {
@@ -209,7 +209,7 @@ export class OfflineTradeRouterManagerHelper {
     );
   }
 
-  async fetchOmnipoolHistoricalDataForBlock({
+  protected async fetchOmnipoolHistoricalDataForBlock({
     blockNumber,
     ctx,
   }: {

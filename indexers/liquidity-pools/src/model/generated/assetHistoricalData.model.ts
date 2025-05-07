@@ -1,8 +1,8 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {AssetDynamicFee} from "./_assetDynamicFee"
-import {AssetSpotPriceHistoricalData} from "./_assetSpotPriceHistoricalData"
+import {AssetSpotPriceHistoricalData} from "./assetSpotPriceHistoricalData.model"
 import {Block} from "./block.model"
 
 @Entity_()
@@ -30,8 +30,8 @@ export class AssetHistoricalData {
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new AssetDynamicFee(undefined, obj)}, nullable: true})
   dynamicFee!: AssetDynamicFee | undefined | null
 
-  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val == null ? undefined : val.toJSON()), from: obj => marshal.fromList(obj, val => val == null ? undefined : new AssetSpotPriceHistoricalData(undefined, val))}, nullable: false})
-  spotPrices!: (AssetSpotPriceHistoricalData | undefined | null)[]
+  @OneToMany_(() => AssetSpotPriceHistoricalData, e => e.assetInHistData)
+  spotPrices!: AssetSpotPriceHistoricalData[]
 
   @Index_()
   @Column_("int4", {nullable: false})

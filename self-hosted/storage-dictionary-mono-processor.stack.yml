@@ -35,7 +35,7 @@ services:
         condition: on-failure
 
   storage-dictionary-processor:
-    image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-init-monorepo
+    image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-initForBlocksBatch-monorepo
     depends_on:
       - storage-dictionary-db
     environment:

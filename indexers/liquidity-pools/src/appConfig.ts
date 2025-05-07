@@ -19,6 +19,7 @@ import {
   events as hydrationPaseoEvents,
 } from './parsers/chains/hydration-paseo/typegenTypes';
 import { ChainName, NodeEnv } from './utils/types';
+import { isHex } from '@polkadot/util';
 
 dotenv.config({
   path: (() => {
@@ -167,6 +168,11 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly API_CACHE_TTL_MS: number = 600000;
+
+  @Transform(({ value }: { value: string }) =>
+    value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id))
+  )
+  readonly ASSET_SPOT_PRICE_ASSET_OUT_IDS: string[] = ['10', '0'];
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {

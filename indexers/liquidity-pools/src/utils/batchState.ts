@@ -61,6 +61,7 @@ import {
   AavepoolHistoricalData,
   ConstantsHistoricalData,
   EmaOracleEntryHistoricalData,
+  AssetSpotPriceHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -91,6 +92,7 @@ export type BatchStatePayload = {
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
   assetsHistoricalDataBatch: Map<string, AssetHistoricalData>;
+  assetsSpotPriceHistoricalDataBatch: Map<string, AssetSpotPriceHistoricalData>;
 
   accountAssetBalanceHistoricalData: Map<
     string,
@@ -214,6 +216,7 @@ export class BatchState {
     transfers: new Map(),
     assetVolumes: new Map(),
     assetsHistoricalDataBatch: new Map(),
+    assetsSpotPriceHistoricalDataBatch: new Map(),
 
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),

@@ -130,11 +130,22 @@ type AssetSwapFeeHistoricalData @entity {
   block: Block!
 }
 
-type AssetSpotPriceHistoricalData {
-  quoteAssetId: String!
-  quoteAssetDecimals: Int
+type AssetSpotPriceHistoricalData @entity {
+  "<assetInId>-<assetOutId>-<paraBlockHeight>"
+  id: ID!
+  assetInHistData: AssetHistoricalData!
+  assetIn: Asset!
+  assetOut: Asset!
+  assetInAssetRegistryId: String
+  assetOutAssetRegistryId: String
+
+  assetOutDecimals: Int
   price: String!
+  routerLog: String!
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int! @index
 }
+
 type AssetDynamicFee {
   assetFee: Int!
   protocolFee: Int!
@@ -149,6 +160,7 @@ type AssetHistoricalData @entity {
   existentialDeposit: BigInt!
   dynamicFee: AssetDynamicFee
   spotPrices: [AssetSpotPriceHistoricalData]!
+    @derivedFrom(field: "assetInHistData")
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
   block: Block!
@@ -346,7 +358,7 @@ type Event @entity {
 type ChainActivityTrace @entity {
   # "<extrinsicId> where particular ChainActivityTrace has bee initialised"
   # or
-  # <blockHeight>-<TraceIdEventGroup> where eventGroup can be <ext | init | fin>
+  # <blockHeight>-<TraceIdEventGroup> where eventGroup can be <ext | initForBlocksBatch | fin>
   id: ID!
 
   #  Batch:1419/Router:1420/Omnipool:1421
