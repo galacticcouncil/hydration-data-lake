@@ -110,17 +110,6 @@ async function processAssetSpotPrices({
         ]);
       };
 
-      console.log(
-        'ffff - ',
-        price.amount.toFixed(),
-        price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
-        price.decimals,
-        fromExponentialToDecimalNotation(
-          price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
-          price.decimals
-        ).toFixed()
-      );
-
       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
         histDataItemId,
         new AssetSpotPriceHistoricalData({
