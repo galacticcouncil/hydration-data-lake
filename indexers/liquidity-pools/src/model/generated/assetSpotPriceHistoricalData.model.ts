@@ -1,6 +1,8 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 import {AssetHistoricalData} from "./assetHistoricalData.model"
 import {Asset} from "./asset.model"
+import {Block} from "./block.model"
 
 @Entity_()
 export class AssetSpotPriceHistoricalData {
@@ -35,11 +37,14 @@ export class AssetSpotPriceHistoricalData {
   @Column_("int4", {nullable: true})
   assetOutDecimals!: number | undefined | null
 
-  @Column_("text", {nullable: false})
-  price!: string
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  price!: bigint
 
   @Column_("text", {nullable: false})
-  routerLog!: string
+  priceNormalised!: string
+
+  @Column_("jsonb", {transformer: {to: obj => obj, from: obj => marshal.fromList(obj, val => marshal.fromList(val, val => marshal.string.fromJSON(val)))}, nullable: false})
+  priceRoute!: ((string)[])[]
 
   @Index_()
   @Column_("int4", {nullable: false})
@@ -48,4 +53,8 @@ export class AssetSpotPriceHistoricalData {
   @Index_()
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
 }

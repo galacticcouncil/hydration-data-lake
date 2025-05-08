@@ -140,10 +140,11 @@ type AssetSpotPriceHistoricalData @entity {
   assetOutAssetRegistryId: String
 
   assetOutDecimals: Int
-  price: String!
+  price: BigInt!
   priceNormalised: String!
-  "priceRoute is a hashmap where key is pool address van value is list of swapped assets in appropriate order of swap"
-  priceRoute: String!
+  #  priceRoute is a list of tupes with following values: pool address, pool type, assetIn, assetOut in appropriate order of swap
+  #  [ [<pool_address>, <pool_type>, <asset_in_id>, <asset_out_id>] ]
+  priceRoute: [[String!]!]!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
@@ -163,14 +164,40 @@ type AssetHistoricalData @entity {
   totalIssuance: BigInt!
   existentialDeposit: BigInt!
   dynamicFee: AssetDynamicFee
+
+  usdPriceNormalised: String!
+
   spotPrices: [AssetSpotPriceHistoricalData]!
     @derivedFrom(field: "assetInHistData")
-
-  usdPriceNormalised: BigInt!
+  assetPairVolumes: [AssetAssetsPairVolumeHistoricalData]!
+    @derivedFrom(field: "assetHistoricalData")
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
   block: Block!
+}
+
+type AssetsPairVolumeHistoricalData @entity {
+  "<assetAId>-<assetBId>-<paraBlockHeight>"
+  id: ID!
+
+  assetA: Asset!
+  assetB: Asset!
+
+  assetAVolume: BigInt!
+  assetBVolume: BigInt!
+  totalVolume: BigInt!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int! @index
+  block: Block!
+}
+
+type AssetAssetsPairVolumeHistoricalData @entity {
+  "<assetId>-<paraBlockHeight>"
+  id: ID!
+  assetHistoricalData: AssetHistoricalData!
+  assetsPairVolumeHistoricalData: AssetsPairVolumeHistoricalData!
 }
 
 # ======================================================================================================================

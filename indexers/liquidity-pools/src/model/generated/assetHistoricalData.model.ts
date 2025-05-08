@@ -3,6 +3,7 @@ import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {AssetDynamicFee} from "./_assetDynamicFee"
 import {AssetSpotPriceHistoricalData} from "./assetSpotPriceHistoricalData.model"
+import {AssetAssetsPairVolumeHistoricalData} from "./assetAssetsPairVolumeHistoricalData.model"
 import {Block} from "./block.model"
 
 @Entity_()
@@ -30,8 +31,14 @@ export class AssetHistoricalData {
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new AssetDynamicFee(undefined, obj)}, nullable: true})
   dynamicFee!: AssetDynamicFee | undefined | null
 
+  @Column_("text", {nullable: false})
+  usdPriceNormalised!: string
+
   @OneToMany_(() => AssetSpotPriceHistoricalData, e => e.assetInHistData)
   spotPrices!: AssetSpotPriceHistoricalData[]
+
+  @OneToMany_(() => AssetAssetsPairVolumeHistoricalData, e => e.assetHistoricalData)
+  assetPairVolumes!: AssetAssetsPairVolumeHistoricalData[]
 
   @Index_()
   @Column_("int4", {nullable: false})

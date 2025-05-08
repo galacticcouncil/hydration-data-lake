@@ -97,6 +97,8 @@ async function processAssetsHistoricalDataAtBlock({
             timestamp: dynamicFeePerAssetMap.get(assetRegistryId)!.timestamp,
           })
         : null,
+      usdPriceNormalised: '0',
+      assetPairVolumes: [],
       spotPrices: [], // Spot prices will be calculated and injected in further processing steps.
       paraBlockHeight: block.height,
       relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(

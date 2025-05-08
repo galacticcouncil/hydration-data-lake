@@ -8,6 +8,8 @@ import {
 } from '../../../model';
 import { OfflineTradeRouterManager } from './utils';
 import { getOrCreateAsset } from '../asset';
+import { Hop, BigNumber } from '@galacticcouncil/sdk';
+import { fromExponentialToDecimalNotation } from '../../../utils/helpers';
 
 export async function handleSpotPricesIntoAssetsHistoricalData({
   blockHeader,
@@ -47,6 +49,25 @@ async function processAssetSpotPrices({
 
   if (!router) return;
 
+  if (asset.assetRegistryId !== undefined && asset.assetRegistryId !== null) {
+    try {
+      /**
+       * USD price must be calculation based on DIA Oracle data
+       */
+      const usdPriceDetails = await router.getBestSpotPrice(
+        asset.assetRegistryId,
+        ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+      );
+
+      if (usdPriceDetails) {
+        assetHistData.usdPriceNormalised = fromExponentialToDecimalNotation(
+          usdPriceDetails.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
+          usdPriceDetails.decimals
+        ).toFixed();
+      }
+    } catch (e) {}
+  }
+
   for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
     /**
      * Skips price calculation when source and target assets are identical.
@@ -80,6 +101,26 @@ async function processAssetSpotPrices({
 
       const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
+      const getPriceRouteDecorated = (route: Hop[]): string[][] => {
+        return route.map((hop) => [
+          hop.poolAddress,
+          hop.pool,
+          hop.assetIn,
+          hop.assetOut,
+        ]);
+      };
+
+      console.log(
+        'ffff - ',
+        price.amount.toFixed(),
+        price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
+        price.decimals,
+        fromExponentialToDecimalNotation(
+          price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
+          price.decimals
+        ).toFixed()
+      );
+
       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
         histDataItemId,
         new AssetSpotPriceHistoricalData({
@@ -89,11 +130,19 @@ async function processAssetSpotPrices({
           assetInAssetRegistryId: asset.assetRegistryId,
           assetOutAssetRegistryId: assetOut.assetRegistryId,
           assetInHistData: assetHistData,
+
           assetOutDecimals: price.decimals,
-          price: price.amount.toFixed(),
-          routerLog: JSON.stringify(route),
+          price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
+
+          priceNormalised: fromExponentialToDecimalNotation(
+            price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
+            price.decimals
+          ).toFixed(),
+          priceRoute: getPriceRouteDecorated(route),
+
           paraBlockHeight: blockHeader.height,
           relayBlockHeight: assetHistData.relayBlockHeight,
+          block: assetHistData.block,
         })
       );
     } catch (e) {}

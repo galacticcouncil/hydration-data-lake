@@ -166,7 +166,7 @@ export class OfflineTradeRouterManagerHelper {
     blockNumber,
     ctx,
   }: {
-    blockNumbers: number;
+    blockNumber: number;
     ctx: SqdProcessorContext<Store>;
   }) {
     this.ensureHistDataStorage([blockNumber]);

@@ -6,7 +6,7 @@ import { join } from 'path';
 import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import v8 from 'v8';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { HYDRADX_SS58_PREFIX } from '@galacticcouncil/sdk';
+import { HYDRADX_SS58_PREFIX, BigNumber } from '@galacticcouncil/sdk';
 
 const appConfig = AppConfig.getInstance();
 
@@ -175,4 +175,17 @@ export function publicKeyToSs58(
   prefix: number = HYDRADX_SS58_PREFIX
 ): string {
   return encodeAddress(hexToU8a(key), prefix);
+}
+
+export function fromExponentialToDecimalNotation(
+  input: BigNumber | string,
+  decimals: number
+): BigNumber {
+  return BigNumber(input).dividedBy(BigNumber(10).pow(decimals));
+}
+export function fromDecimalToExponentialNotation(
+  input: BigNumber | string,
+  decimals: number
+): BigNumber {
+  return BigNumber(input).multipliedBy(BigNumber(10).pow(decimals));
 }

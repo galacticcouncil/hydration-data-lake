@@ -25,6 +25,18 @@ export class RoutedTrade {
   outputs!: RoutedTradeAssetBalance[]
 
   @Column_("text", {array: true, nullable: false})
+  inputAssetIds!: (string)[]
+
+  @Column_("text", {array: true, nullable: false})
+  inputAssetRegistryIds!: (string)[]
+
+  @Column_("text", {array: true, nullable: false})
+  outputAssetIds!: (string)[]
+
+  @Column_("text", {array: true, nullable: false})
+  outputAssetRegistryIds!: (string)[]
+
+  @Column_("text", {array: true, nullable: false})
   allInvolvedAssetIds!: (string)[]
 
   @Column_("text", {array: true, nullable: false})

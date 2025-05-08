@@ -172,7 +172,10 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) =>
     value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id))
   )
-  readonly ASSET_SPOT_PRICE_ASSET_OUT_IDS: string[] = ['10', '0'];
+  readonly ASSET_SPOT_PRICE_ASSET_OUT_IDS: string[] = ['10'];
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ASSET_PRICE_BASE_ASSET_ID: string = '10';
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {

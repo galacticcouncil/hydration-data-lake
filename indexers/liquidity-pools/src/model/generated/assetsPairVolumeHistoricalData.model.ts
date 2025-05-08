@@ -1,0 +1,46 @@
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
+import {Asset} from "./asset.model"
+import {Block} from "./block.model"
+
+@Entity_()
+export class AssetsPairVolumeHistoricalData {
+  constructor(props?: Partial<AssetsPairVolumeHistoricalData>) {
+    Object.assign(this, props)
+  }
+
+  /**
+   * <assetAId>-<assetBId>-<paraBlockHeight>
+   */
+  @PrimaryColumn_()
+  id!: string
+
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  assetA!: Asset
+
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  assetB!: Asset
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetAVolume!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBVolume!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  totalVolume!: bigint
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  relayBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => Block, {nullable: true})
+  block!: Block
+}
