@@ -18,6 +18,12 @@ import {
   fetchStableswapHistoricalData,
   fetchOmnipoolHistoricalData,
   fetchConstantsHistoricalData,
+  fetchConstantsHistoricalDataForBlocksRange,
+  fetchAssetsHistoricalDataForBlocksRange,
+  fetchLbpPoolsHistoricalDataForBlocksRange,
+  fetchXykPoolsHistoricalDataForBlocksRange,
+  fetchStableswapHistoricalDataForBlocksRange,
+  fetchOmnipoolHistoricalDataForBlocksRange,
 } from './fetchHistoricalDataHelpers';
 
 import {
@@ -38,8 +44,14 @@ import {
   bigintToNumberSafe,
   publicKeyToSs58,
 } from '../../../../../utils/helpers';
-import { fetchAavePoolsHistoricalData } from './fetchHistoricalDataHelpers/fetchAavePoolsHistoricalData';
-import { fetchEmaOracleEntriesHistoricalData } from './fetchHistoricalDataHelpers/fetchEmaOraclesHistoricalData';
+import {
+  fetchAavePoolsHistoricalData,
+  fetchAavePoolsHistoricalDataForBlocksRange,
+} from './fetchHistoricalDataHelpers/fetchAavePoolsHistoricalData';
+import {
+  fetchEmaOracleEntriesHistoricalData,
+  fetchEmaOracleEntriesHistoricalDataForBlocksRange,
+} from './fetchHistoricalDataHelpers/fetchEmaOraclesHistoricalData';
 
 export class OfflineTradeRouterManagerHelper {
   protected SUPPORTED_ASSET_TYPES_SET = new Set([
@@ -104,18 +116,71 @@ export class OfflineTradeRouterManagerHelper {
     blockNumbers: number[];
     ctx: SqdProcessorContext<Store>;
   }) {
-    this.ensureHistDataStorage(blockNumbers);
+    const blockNumbersSorted = blockNumbers.sort((a, b) => a - b);
 
-    for (const blockNumber of blockNumbers) {
-      await this.fetchConstantsHistoricalDataForBlock({ ctx, blockNumber });
-      await this.fetchEmaOraclesHistoricalDataForBlock({ ctx, blockNumber });
-      await this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber });
-      await this.fetchLbpPoolsHistoricalDataForBlock({ ctx, blockNumber });
-      await this.fetchXykPoolsHistoricalDataForBlock({ ctx, blockNumber });
-      await this.fetchStableswapHistoricalDataForBlock({ ctx, blockNumber });
-      await this.fetchOmnipoolHistoricalDataForBlock({ ctx, blockNumber });
-      await this.fetchAavePoolsHistoricalDataForBlock({ ctx, blockNumber });
-    }
+    await Promise.all([
+      this.fetchConstantsHistoricalDataForBlocksRange({
+        ctx,
+        blockFromNumber: blockNumbersSorted[0],
+        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      }),
+      this.fetchEmaOraclesHistoricalDataForBlocksRange({
+        ctx,
+        blockFromNumber: blockNumbersSorted[0],
+        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      }),
+      this.fetchAssetsHistoricalDataForBlocksRange({
+        ctx,
+        blockFromNumber: blockNumbersSorted[0],
+        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      }),
+      this.fetchLbpPoolsHistoricalDataForBlocksRange({
+        ctx,
+        blockFromNumber: blockNumbersSorted[0],
+        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      }),
+      this.fetchXykPoolsHistoricalDataForBlocksRange({
+        ctx,
+        blockFromNumber: blockNumbersSorted[0],
+        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      }),
+      this.fetchStableswapHistoricalDataForBlocksRange({
+        ctx,
+        blockFromNumber: blockNumbersSorted[0],
+        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      }),
+      this.fetchOmnipoolHistoricalDataForBlocksRange({
+        ctx,
+        blockFromNumber: blockNumbersSorted[0],
+        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      }),
+      this.fetchAavePoolsHistoricalDataForBlocksRange({
+        ctx,
+        blockFromNumber: blockNumbersSorted[0],
+        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      }),
+    ]);
+  }
+
+  protected async prefetchAllHistoricalDataForBlock({
+    blockNumber,
+    ctx,
+  }: {
+    blockNumbers: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.ensureHistDataStorage([blockNumber]);
+
+    await Promise.all([
+      this.fetchConstantsHistoricalDataForBlock({ ctx, blockNumber }),
+      this.fetchEmaOraclesHistoricalDataForBlock({ ctx, blockNumber }),
+      this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber }),
+      this.fetchLbpPoolsHistoricalDataForBlock({ ctx, blockNumber }),
+      this.fetchXykPoolsHistoricalDataForBlock({ ctx, blockNumber }),
+      this.fetchStableswapHistoricalDataForBlock({ ctx, blockNumber }),
+      this.fetchOmnipoolHistoricalDataForBlock({ ctx, blockNumber }),
+      this.fetchAavePoolsHistoricalDataForBlock({ ctx, blockNumber }),
+    ]);
   }
 
   protected async fetchConstantsHistoricalDataForBlock({
@@ -222,6 +287,142 @@ export class OfflineTradeRouterManagerHelper {
     });
     if (!historicalData) return;
     this.omnipoolHistData.set(blockNumber, historicalData);
+  }
+
+  protected async fetchConstantsHistoricalDataForBlocksRange({
+    blockFromNumber,
+    blockToNumber,
+    ctx,
+  }: {
+    blockFromNumber: number;
+    blockToNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    const histData = await fetchConstantsHistoricalDataForBlocksRange({
+      blockFromNumber,
+      blockToNumber,
+      ctx,
+    });
+
+    if (!histData) throw new Error('Missing constants historical data');
+
+    this.constantsHistData = histData;
+  }
+  protected async fetchAssetsHistoricalDataForBlocksRange({
+    blockFromNumber,
+    blockToNumber,
+    ctx,
+  }: {
+    blockFromNumber: number;
+    blockToNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.assetsHistData = await fetchAssetsHistoricalDataForBlocksRange({
+      blockFromNumber,
+      blockToNumber,
+      ctx,
+    });
+  }
+
+  protected async fetchEmaOraclesHistoricalDataForBlocksRange({
+    blockFromNumber,
+    blockToNumber,
+    ctx,
+  }: {
+    blockFromNumber: number;
+    blockToNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.emaOraclesHistData =
+      await fetchEmaOracleEntriesHistoricalDataForBlocksRange({
+        blockFromNumber,
+        blockToNumber,
+        ctx,
+      });
+  }
+
+  protected async fetchLbpPoolsHistoricalDataForBlocksRange({
+    blockFromNumber,
+    blockToNumber,
+    ctx,
+  }: {
+    blockFromNumber: number;
+    blockToNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.lbppoolsHistData = await fetchLbpPoolsHistoricalDataForBlocksRange({
+      blockFromNumber,
+      blockToNumber,
+      ctx,
+    });
+  }
+
+  protected async fetchXykPoolsHistoricalDataForBlocksRange({
+    blockFromNumber,
+    blockToNumber,
+    ctx,
+  }: {
+    blockFromNumber: number;
+    blockToNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.xykpoolsHistData = await fetchXykPoolsHistoricalDataForBlocksRange({
+      blockFromNumber,
+      blockToNumber,
+      ctx,
+    });
+  }
+
+  protected async fetchAavePoolsHistoricalDataForBlocksRange({
+    blockFromNumber,
+    blockToNumber,
+    ctx,
+  }: {
+    blockFromNumber: number;
+    blockToNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.aavepoolsHistData = await fetchAavePoolsHistoricalDataForBlocksRange({
+      blockFromNumber,
+      blockToNumber,
+      ctx,
+    });
+  }
+
+  protected async fetchStableswapHistoricalDataForBlocksRange({
+    blockFromNumber,
+    blockToNumber,
+    ctx,
+  }: {
+    blockFromNumber: number;
+    blockToNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    this.stableswapHistData = await fetchStableswapHistoricalDataForBlocksRange(
+      {
+        blockFromNumber,
+        blockToNumber,
+        ctx,
+      }
+    );
+  }
+
+  protected async fetchOmnipoolHistoricalDataForBlocksRange({
+    blockFromNumber,
+    blockToNumber,
+    ctx,
+  }: {
+    blockFromNumber: number;
+    blockToNumber: number;
+    ctx: SqdProcessorContext<Store>;
+  }) {
+    const historicalData = await fetchOmnipoolHistoricalDataForBlocksRange({
+      blockFromNumber,
+      blockToNumber,
+      ctx,
+    });
+    if (!historicalData) return;
+    this.omnipoolHistData = historicalData;
   }
 
   getDecoratedConstantsHistDataAsPersistentDataInput({
@@ -433,7 +634,6 @@ export class OfflineTradeRouterManagerHelper {
     blockNumber: number;
   }): IPersistentStableSwapBase[] {
     const poolsMap: Map<string, IPersistentStableSwapBase> = new Map();
-
     for (const [poolId, poolHistData] of [
       ...(this.stableswapHistData.get(blockNumber) || new Map()).entries(),
     ] as [string, StableswapHistoricalData][]) {

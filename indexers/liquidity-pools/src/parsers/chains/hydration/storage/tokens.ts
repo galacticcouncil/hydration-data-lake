@@ -51,7 +51,7 @@ async function getManyTokensTotalIssuance({
     const pairsPaged = [];
 
     for await (const page of storage.tokens.totalIssuance.v108.getPairsPaged(
-      100,
+      500,
       block
     )) {
       pairsPaged.push(

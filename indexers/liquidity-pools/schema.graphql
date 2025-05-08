@@ -141,9 +141,13 @@ type AssetSpotPriceHistoricalData @entity {
 
   assetOutDecimals: Int
   price: String!
-  routerLog: String!
+  priceNormalised: String!
+  "priceRoute is a hashmap where key is pool address van value is list of swapped assets in appropriate order of swap"
+  priceRoute: String!
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
+  block: Block!
 }
 
 type AssetDynamicFee {
@@ -161,6 +165,9 @@ type AssetHistoricalData @entity {
   dynamicFee: AssetDynamicFee
   spotPrices: [AssetSpotPriceHistoricalData]!
     @derivedFrom(field: "assetInHistData")
+
+  usdPriceNormalised: BigInt!
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
   block: Block!
@@ -527,6 +534,12 @@ type RoutedTrade @entity {
   routeId: String
   inputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
   outputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
+
+  inputAssetIds: [String!]!
+  inputAssetRegistryIds: [String!]!
+  outputAssetIds: [String!]!
+  outputAssetRegistryIds: [String!]!
+
   allInvolvedAssetIds: [String!]!
   allInvolvedAssetRegistryIds: [String!]!
   participantSwappers: [String!]!

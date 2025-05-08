@@ -136,7 +136,7 @@ async function getPoolShareTokenPairsMany({
     const pairsPaged = [];
 
     for await (const page of storage.xyk.shareToken.v183.getPairsPaged(
-      100,
+      500,
       block
     )) {
       pairsPaged.push(

@@ -37,7 +37,7 @@ async function getAssetFeesAll({
     const pairsPaged = [];
 
     for await (const page of storage.dynamicFees.assetFee.v170.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(

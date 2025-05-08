@@ -243,7 +243,7 @@ async function getAssetAll(
     const pairsPaged = [];
 
     for await (const page of storage.assetRegistry.assets.v108.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(
@@ -266,7 +266,7 @@ async function getAssetAll(
     const pairsPaged = [];
 
     for await (const page of storage.assetRegistry.assets.v160.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(
@@ -290,7 +290,7 @@ async function getAssetAll(
     const pairsPaged = [];
 
     for await (const page of storage.assetRegistry.assets.v176.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(
@@ -314,7 +314,7 @@ async function getAssetAll(
     const pairsPaged = [];
 
     for await (const page of storage.assetRegistry.assets.v222.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(
@@ -340,7 +340,7 @@ async function getAssetAll(
     const pairsPaged = [];
 
     for await (const page of storage.assetRegistry.assets.v264.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(

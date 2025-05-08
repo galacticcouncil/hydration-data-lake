@@ -11,7 +11,7 @@ async function getOracles({
     const pairsPaged = [];
 
     for await (const page of storage.emaOracle.oracles.v138.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(
@@ -55,7 +55,7 @@ async function getOracles({
     const pairsPaged = [];
 
     for await (const page of storage.emaOracle.oracles.v170.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(

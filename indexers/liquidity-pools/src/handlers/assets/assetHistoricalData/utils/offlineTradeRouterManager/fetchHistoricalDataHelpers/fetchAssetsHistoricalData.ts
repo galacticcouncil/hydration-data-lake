@@ -1,7 +1,12 @@
 import { SqdProcessorContext } from '../../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AssetHistoricalData } from '../../../../../../model';
+import {
+  AavepoolHistoricalData,
+  AssetHistoricalData,
+} from '../../../../../../model';
 import { In } from 'typeorm';
+import { fetchAavePoolsHistoricalDataForBlocksRange } from './fetchAavePoolsHistoricalData';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function fetchAssetsHistoricalData({
   blockNumber,
@@ -10,8 +15,6 @@ export async function fetchAssetsHistoricalData({
   blockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  // const allAssetsCachedMap = ctx.batchState.state.assetsAllBatch;
-
   /**
    * Assets are pre-loaded in cache during initial batch processing.
    * Direct database queries are skipped as cache contains complete asset data.
@@ -19,23 +22,11 @@ export async function fetchAssetsHistoricalData({
 
   const cachedHistData = [
     ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
-  ].filter(
-    (item) => item.paraBlockHeight === blockNumber
-    // &&
-    // allAssetsCachedMap.has(item.asset.id) // TODO check this condition item.paraBlockHeight === blockNumber
-  );
-
-  // const cachedHistDataIdsSet = new Set(cachedHistData.map((i) => i.asset.id));
+  ].filter((item) => item.paraBlockHeight === blockNumber);
 
   const persistedHistData = await ctx.store.find(AssetHistoricalData, {
     where: {
       paraBlockHeight: blockNumber,
-      // paraBlockHeight: LessThanOrEqual(blockNumber),
-      // id: In(
-      //   [...allAssetsCachedMap.values()]
-      //     .filter((a) => !cachedHistDataIdsSet.has(a.id))
-      //     .map((a) => `${a.id}-${blockNumber}`)
-      // ),
     },
     relations: {
       asset: true,
@@ -52,4 +43,60 @@ export async function fetchAssetsHistoricalData({
       ahd,
     ]),
   ]);
+}
+
+export async function fetchAssetsHistoricalDataForBlocksRange({
+  blockFromNumber,
+  blockToNumber,
+  ctx,
+}: {
+  blockFromNumber: number;
+  blockToNumber: number;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  /**
+   * Assets are pre-loaded in cache during initial batch processing.
+   * Direct database queries are skipped as cache contains complete asset data.
+   */
+
+  const cachedHistData = [
+    ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
+  ].filter(
+    (item) =>
+      item.paraBlockHeight > blockFromNumber - 1 &&
+      item.paraBlockHeight < blockToNumber + 1
+  );
+
+  const persistedHistData = await ctx.store.find(AssetHistoricalData, {
+    where: {
+      paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+    },
+    relations: {
+      asset: true,
+    },
+  });
+
+  const mergedDataMap = new Map([
+    ...persistedHistData.map((ahd): [string, AssetHistoricalData] => [
+      ahd.id,
+      ahd,
+    ]),
+    ...cachedHistData.map((ahd): [string, AssetHistoricalData] => [
+      ahd.id,
+      ahd,
+    ]),
+  ]);
+
+  const histDataPerBlock = new Map<number, Map<string, AssetHistoricalData>>();
+
+  for (const histDataItem of [...mergedDataMap.values()]) {
+    if (!histDataPerBlock.has(histDataItem.paraBlockHeight))
+      histDataPerBlock.set(histDataItem.paraBlockHeight, new Map());
+
+    histDataPerBlock
+      .get(histDataItem.paraBlockHeight)!
+      .set(histDataItem.asset.id, histDataItem);
+  }
+
+  return histDataPerBlock;
 }

@@ -1,7 +1,13 @@
 import { SqdProcessorContext } from '../../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Xykpool, XykpoolHistoricalData } from '../../../../../../model';
+import {
+  LbppoolHistoricalData,
+  Xykpool,
+  XykpoolHistoricalData,
+} from '../../../../../../model';
 import { In, Not } from 'typeorm';
+import { fetchLbpPoolsHistoricalDataForBlocksRange } from './fetchLbpPoolsHistoricalData';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function fetchXykPoolsHistoricalData({
   blockNumber,
@@ -68,4 +74,91 @@ export async function fetchXykPoolsHistoricalData({
       histData,
     ]),
   ]);
+}
+
+export async function fetchXykPoolsHistoricalDataForBlocksRange({
+  blockFromNumber,
+  blockToNumber,
+  ctx,
+}: {
+  blockFromNumber: number;
+  blockToNumber: number;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const allActivePoolsCached = [
+    ...ctx.batchState.state.xykAllBatchPools.values(),
+  ].filter((item) => !item.isDestroyed);
+
+  const allActivePoolsPersisted = await ctx.store.find(Xykpool, {
+    where: {
+      isDestroyed: false,
+    },
+    relations: {
+      account: true,
+      assetA: true,
+      assetB: true,
+      shareToken: true,
+    },
+  });
+
+  const allActivePools: Map<string, Xykpool> = new Map([
+    ...allActivePoolsCached.map((pool): [string, Xykpool] => [pool.id, pool]),
+    ...allActivePoolsPersisted.map((pool): [string, Xykpool] => [
+      pool.id,
+      pool,
+    ]),
+  ]);
+
+  const cachedHistData = [
+    ...ctx.batchState.state.xykPoolAllHistoricalData.values(),
+  ].filter(
+    (item) =>
+      item.paraBlockHeight > blockFromNumber - 1 &&
+      item.paraBlockHeight < blockToNumber + 1 &&
+      allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
+  );
+  const persistedHistData = await ctx.store.find(XykpoolHistoricalData, {
+    where: {
+      // paraBlockHeight: LessThanOrEqual(blockNumber),
+      paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+      pool: {
+        id: In([...allActivePools.keys()]),
+      },
+      ...(cachedHistData.length > 0
+        ? { id: Not(In(cachedHistData.map((i) => i.id))) }
+        : {}),
+    },
+    relations: {
+      pool: { account: true, shareToken: true },
+      assetA: true,
+      assetB: true,
+    },
+  });
+
+  const mergedDataMap = new Map([
+    ...persistedHistData.map((histData): [string, XykpoolHistoricalData] => [
+      histData.id,
+      histData,
+    ]),
+    ...cachedHistData.map((histData): [string, XykpoolHistoricalData] => [
+      histData.id,
+      histData,
+    ]),
+  ]);
+
+  const histDataPerBlock = new Map<
+    number,
+    Map<string, XykpoolHistoricalData>
+  >();
+
+  for (const histDataItem of [...mergedDataMap.values()]) {
+    if (!histDataPerBlock.has(histDataItem.paraBlockHeight))
+      histDataPerBlock.set(histDataItem.paraBlockHeight, new Map());
+
+    histDataPerBlock
+      .get(histDataItem.paraBlockHeight)!
+      .set(histDataItem.pool.id, histDataItem);
+  }
+
+  return histDataPerBlock;
 }

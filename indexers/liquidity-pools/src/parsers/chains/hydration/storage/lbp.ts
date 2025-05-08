@@ -90,7 +90,7 @@ async function getAllPoolsData({
 
   if (storage.lbp.poolData.v176.is(block)) {
     for await (const page of storage.lbp.poolData.v176.getPairsPaged(
-      100,
+      500,
       block
     ))
       pairsPaged.push(

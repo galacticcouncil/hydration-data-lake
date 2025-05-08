@@ -1,12 +1,15 @@
 import { SqdProcessorContext } from '../../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  AssetHistoricalData,
   Stableswap,
   StableswapAsset,
   StableswapAssetHistoricalData,
   StableswapHistoricalData,
 } from '../../../../../../model';
 import { In, Not } from 'typeorm';
+import { fetchAssetsHistoricalDataForBlocksRange } from './fetchAssetsHistoricalData';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function fetchStableswapHistoricalData({
   blockNumber,
@@ -157,4 +160,213 @@ export async function fetchStableswapHistoricalData({
   });
 
   return allStableswapHistDataMap;
+}
+
+export async function fetchStableswapHistoricalDataForBlocksRange({
+  blockFromNumber,
+  blockToNumber,
+  ctx,
+}: {
+  blockFromNumber: number;
+  blockToNumber: number;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const allActiveStableswapsCachedMap = new Map(
+    [...ctx.batchState.state.stableswapAllBatchPools.values()]
+      .filter((item) => !item.isDestroyed)
+      .map((item) => [item.id, item])
+  );
+
+  const allStableswapAssetsCached = [
+    ...ctx.batchState.state.stableswapAssetsAllBatch.values(),
+  ].filter((sAsset) => allActiveStableswapsCachedMap.has(sAsset.pool.id));
+
+  const allActiveStableswapsPersisted = await ctx.store.find(Stableswap, {
+    where: {
+      isDestroyed: false,
+    },
+    relations: {
+      account: true,
+      shareToken: true,
+      assets: {
+        asset: true,
+        pool: true,
+      },
+    },
+  });
+
+  const allStableswapAssetsPersisted = allActiveStableswapsPersisted
+    .map((pool) => pool.assets)
+    .flat();
+
+  const allActiveStablewaps: Map<string, Stableswap> = new Map([
+    ...allActiveStableswapsPersisted.map((pool): [string, Stableswap] => [
+      pool.id,
+      pool,
+    ]),
+    ...[...allActiveStableswapsCachedMap.values()].map(
+      (pool): [string, Stableswap] => [pool.id, pool]
+    ),
+  ]);
+
+  const allStablewapAssets: Map<string, StableswapAsset> = new Map([
+    ...allStableswapAssetsPersisted.map((sAsset): [string, StableswapAsset] => [
+      sAsset.id,
+      sAsset,
+    ]),
+    ...allStableswapAssetsCached.map((sAsset): [string, StableswapAsset] => [
+      sAsset.id,
+      sAsset,
+    ]),
+  ]);
+
+  const cachedStableswapHistData = [
+    ...ctx.batchState.state.stablepoolAllHistoricalData.values(),
+  ].filter(
+    (histData) =>
+      histData.paraBlockHeight > blockFromNumber - 1 &&
+      histData.paraBlockHeight < blockToNumber + 1 &&
+      allActiveStablewaps.has(histData.pool.id) // TODO check this condition item.paraBlockHeight === blockNumber
+  );
+
+  const cachedStableswapAssetsHistDataList = [
+    ...ctx.batchState.state.stablepoolAssetsAllHistoricalData.values(),
+  ].filter(
+    (histData) =>
+      histData.paraBlockHeight > blockFromNumber - 1 &&
+      histData.paraBlockHeight < blockToNumber + 1 &&
+      allStablewapAssets.has(histData.stableswapAsset.id) // TODO check this condition item.paraBlockHeight === blockNumber
+  );
+
+  const cachedStableswapAssetsHistDataByPoolMap = new Map<
+    number,
+    Map<string, StableswapAssetHistoricalData[]>
+  >();
+
+  for (const sAssetHistData of cachedStableswapAssetsHistDataList) {
+    const poolId = sAssetHistData.id.split('-')[0];
+    if (
+      !cachedStableswapAssetsHistDataByPoolMap.has(
+        sAssetHistData.paraBlockHeight
+      )
+    )
+      cachedStableswapAssetsHistDataByPoolMap.set(
+        sAssetHistData.paraBlockHeight,
+        new Map()
+      );
+
+    if (
+      !cachedStableswapAssetsHistDataByPoolMap
+        .get(sAssetHistData.paraBlockHeight)!
+        .has(poolId)
+    )
+      cachedStableswapAssetsHistDataByPoolMap
+        .get(sAssetHistData.paraBlockHeight)!
+        .set(poolId, []);
+
+    cachedStableswapAssetsHistDataByPoolMap
+      .get(sAssetHistData.paraBlockHeight)!
+      .get(poolId)!
+      .push(sAssetHistData);
+  }
+
+  const persistedStableswapHistData = await ctx.store.find(
+    StableswapHistoricalData,
+    {
+      where: {
+        paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+        pool: {
+          id: In([...allActiveStablewaps.keys()]),
+        },
+        ...(cachedStableswapHistData.length > 0
+          ? { id: Not(In(cachedStableswapHistData.map((i) => i.id))) }
+          : {}),
+      },
+      relations: {
+        pool: { account: true, shareToken: true },
+        assetsHistoricalData: {
+          asset: true,
+          stableswapAsset: true,
+        },
+      },
+    }
+  );
+
+  const persistedStableswapAssetsHistDataMap = new Map<
+    number,
+    Map<string, StableswapAssetHistoricalData[]>
+  >();
+
+  for (const stableswapHistData of persistedStableswapHistData) {
+    if (
+      !persistedStableswapAssetsHistDataMap.has(
+        stableswapHistData.paraBlockHeight
+      )
+    ) {
+      persistedStableswapAssetsHistDataMap.set(
+        stableswapHistData.paraBlockHeight,
+        new Map()
+      );
+    }
+
+    persistedStableswapAssetsHistDataMap
+      .get(stableswapHistData.paraBlockHeight)!
+      .set(stableswapHistData.pool.id, stableswapHistData.assetsHistoricalData);
+  }
+
+  const allStableswapHistDataMap = new Map<string, StableswapHistoricalData>([
+    ...persistedStableswapHistData.map(
+      (
+        poolData: StableswapHistoricalData
+      ): [string, StableswapHistoricalData] => [poolData.id, poolData]
+    ),
+    ...cachedStableswapHistData.map(
+      (
+        poolData: StableswapHistoricalData
+      ): [string, StableswapHistoricalData] => [poolData.id, poolData]
+    ),
+  ]);
+
+  allStableswapHistDataMap.forEach((poolData, poolId) => {
+
+    poolData.assetsHistoricalData = [
+      ...new Map([
+        ...(
+          ((persistedStableswapAssetsHistDataMap.get(
+            poolData.paraBlockHeight
+          ) || new Map<string, StableswapHistoricalData>())!.get(
+            poolData.pool.id
+          ) || []) as StableswapAssetHistoricalData[]
+        ).map((sAssetHistData): [string, StableswapAssetHistoricalData] => [
+          sAssetHistData.id,
+          sAssetHistData,
+        ]),
+        ...(
+          ((cachedStableswapAssetsHistDataByPoolMap.get(
+            poolData.paraBlockHeight
+          ) || new Map())!.get(poolData.pool.id) ||
+            []) as StableswapAssetHistoricalData[]
+        ).map((sAssetHistData): [string, StableswapAssetHistoricalData] => [
+          sAssetHistData.id,
+          sAssetHistData,
+        ]),
+      ]).values(),
+    ];
+  });
+
+  const histDataPerBlock = new Map<
+    number,
+    Map<string, StableswapHistoricalData>
+  >();
+
+  for (const histDataItem of [...allStableswapHistDataMap.values()]) {
+    if (!histDataPerBlock.has(histDataItem.paraBlockHeight))
+      histDataPerBlock.set(histDataItem.paraBlockHeight, new Map());
+
+    histDataPerBlock
+      .get(histDataItem.paraBlockHeight)!
+      .set(histDataItem.pool.id, histDataItem);
+  }
+
+  return histDataPerBlock;
 }
