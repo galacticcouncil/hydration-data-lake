@@ -7,6 +7,8 @@ import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import v8 from 'v8';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { HYDRADX_SS58_PREFIX, BigNumber } from '@galacticcouncil/sdk';
+import crypto from 'node:crypto';
+import { YieldMetricsInterval } from '../apiSupport/types';
 
 const appConfig = AppConfig.getInstance();
 
@@ -188,4 +190,9 @@ export function fromDecimalToExponentialNotation(
   decimals: number
 ): BigNumber {
   return BigNumber(input).multipliedBy(BigNumber(10).pow(decimals));
+}
+
+export function stringToMd5Hash(str: string) {
+  if (!str) throw new Error('String is empty');
+  return crypto.createHash('md5').update(str).digest('hex');
 }

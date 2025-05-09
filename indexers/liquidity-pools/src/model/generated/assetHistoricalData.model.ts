@@ -3,7 +3,7 @@ import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {AssetDynamicFee} from "./_assetDynamicFee"
 import {AssetSpotPriceHistoricalData} from "./assetSpotPriceHistoricalData.model"
-import {AssetAssetsPairVolumeHistoricalData} from "./assetAssetsPairVolumeHistoricalData.model"
+import {AssetAssetsPairVolume} from "./assetAssetsPairVolume.model"
 import {Block} from "./block.model"
 
 @Entity_()
@@ -37,8 +37,8 @@ export class AssetHistoricalData {
   @OneToMany_(() => AssetSpotPriceHistoricalData, e => e.assetInHistData)
   spotPrices!: AssetSpotPriceHistoricalData[]
 
-  @OneToMany_(() => AssetAssetsPairVolumeHistoricalData, e => e.assetHistoricalData)
-  assetPairVolumes!: AssetAssetsPairVolumeHistoricalData[]
+  @OneToMany_(() => AssetAssetsPairVolume, e => e.assetHistoricalData)
+  assetPairVolumes!: AssetAssetsPairVolume[]
 
   @Index_()
   @Column_("int4", {nullable: false})

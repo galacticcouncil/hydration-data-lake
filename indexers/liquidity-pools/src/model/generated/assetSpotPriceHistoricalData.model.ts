@@ -34,8 +34,8 @@ export class AssetSpotPriceHistoricalData {
   @Column_("text", {nullable: true})
   assetOutAssetRegistryId!: string | undefined | null
 
-  @Column_("int4", {nullable: true})
-  assetOutDecimals!: number | undefined | null
+  @Column_("int4", {nullable: false})
+  assetOutDecimals!: number
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   price!: bigint

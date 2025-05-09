@@ -29,8 +29,11 @@ export class AssetsPairVolumeHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetBVolume!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalVolume!: bigint
+  /**
+   * totalVolumeNormalised is calculated in base asset (10:USDT) and normalised to decimal format
+   */
+  @Column_("text", {nullable: false})
+  totalVolumeNormalised!: string
 
   @Index_()
   @Column_("int4", {nullable: false})

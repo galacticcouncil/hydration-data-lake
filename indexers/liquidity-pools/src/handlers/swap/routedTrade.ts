@@ -1,6 +1,7 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  ResourceType,
   RoutedTrade,
   RoutedTradeAssetBalance,
   Swap,
@@ -128,6 +129,18 @@ export function processRouteTradeHop({
       routeTradeEntity.outputs.push(tradeOutput);
     }
 
+    const {
+      inputAssetIds,
+      inputAssetRegistryIds,
+      outputAssetIds,
+      outputAssetRegistryIds,
+    } = getRouterTradeInputOutputPoints(routeTradeEntity);
+
+    routeTradeEntity.inputAssetIds = inputAssetIds;
+    routeTradeEntity.inputAssetRegistryIds = inputAssetRegistryIds;
+    routeTradeEntity.outputAssetIds = outputAssetIds;
+    routeTradeEntity.outputAssetRegistryIds = outputAssetRegistryIds;
+
     ctx.batchState.state.routeTrades.set(routeTradeEntity.id, routeTradeEntity);
 
     return routeTradeEntity;
@@ -175,7 +188,58 @@ export function processRouteTradeHop({
     return tradeOutput;
   });
 
+  const {
+    inputAssetIds,
+    inputAssetRegistryIds,
+    outputAssetIds,
+    outputAssetRegistryIds,
+  } = getRouterTradeInputOutputPoints(routeTradeEntity);
+
+  routeTradeEntity.inputAssetIds = inputAssetIds;
+  routeTradeEntity.inputAssetRegistryIds = inputAssetRegistryIds;
+  routeTradeEntity.outputAssetIds = outputAssetIds;
+  routeTradeEntity.outputAssetRegistryIds = outputAssetRegistryIds;
+
   ctx.batchState.state.routeTrades.set(routeTradeEntity.id, routeTradeEntity);
 
   return routeTradeEntity;
+}
+
+export function getRouterTradeInputOutputPoints(
+  routedTrade: RoutedTrade
+): Pick<
+  RoutedTrade,
+  | 'inputAssetIds'
+  | 'inputAssetRegistryIds'
+  | 'outputAssetIds'
+  | 'outputAssetRegistryIds'
+> {
+  const res: Pick<
+    RoutedTrade,
+    | 'inputAssetIds'
+    | 'inputAssetRegistryIds'
+    | 'outputAssetIds'
+    | 'outputAssetRegistryIds'
+  > = {
+    inputAssetIds: [],
+    inputAssetRegistryIds: [],
+    outputAssetIds: [],
+    outputAssetRegistryIds: [],
+  };
+
+  const orderedSwaps = routedTrade.swaps.sort(
+    (a, b) => a.event.indexInBlock - b.event.indexInBlock
+  );
+  for (const inputAsset of orderedSwaps[0].inputs) {
+    res.inputAssetIds.push(inputAsset.asset.id);
+    if (inputAsset.asset.assetRegistryId)
+      res.inputAssetRegistryIds.push(inputAsset.asset.assetRegistryId);
+  }
+  for (const outputAsset of orderedSwaps[orderedSwaps.length - 1].outputs) {
+    res.outputAssetIds.push(outputAsset.asset.id);
+    if (outputAsset.asset.assetRegistryId)
+      res.outputAssetRegistryIds.push(outputAsset.asset.assetRegistryId);
+  }
+
+  return res;
 }

@@ -3,13 +3,13 @@ import {AssetHistoricalData} from "./assetHistoricalData.model"
 import {AssetsPairVolumeHistoricalData} from "./assetsPairVolumeHistoricalData.model"
 
 @Entity_()
-export class AssetAssetsPairVolumeHistoricalData {
-  constructor(props?: Partial<AssetAssetsPairVolumeHistoricalData>) {
+export class AssetAssetsPairVolume {
+  constructor(props?: Partial<AssetAssetsPairVolume>) {
     Object.assign(this, props)
   }
 
   /**
-   * <assetId>-<paraBlockHeight>
+   * <assetHistoricalDataId>-<assetsPairVolumeHistoricalData>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
@@ -21,4 +21,8 @@ export class AssetAssetsPairVolumeHistoricalData {
   @Index_()
   @ManyToOne_(() => AssetsPairVolumeHistoricalData, {nullable: true})
   assetsPairVolumeHistoricalData!: AssetsPairVolumeHistoricalData
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
 }

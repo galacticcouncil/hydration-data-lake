@@ -6,7 +6,8 @@ import { BlockHeader } from '@subsquid/substrate-processor';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { OfflineTradeRouterManager } from './utils';
 import { getOrCreateAsset } from '../asset';
-import { handleSpotPricesIntoAssetsHistoricalData } from './spotPrice';
+import { handleAssetSpotPricesHistoricalData } from './spotPrice';
+import { handleAssetPairVolumesHistoricalData } from './assePairVolumes';
 
 async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -148,7 +149,11 @@ export async function handleAssetHistoricalData(
       ctx,
     });
     for (const block of blocksSubBatch) {
-      await handleSpotPricesIntoAssetsHistoricalData({
+      await handleAssetSpotPricesHistoricalData({
+        blockHeader: block.header,
+        ctx,
+      });
+      await handleAssetPairVolumesHistoricalData({
         blockHeader: block.header,
         ctx,
       });

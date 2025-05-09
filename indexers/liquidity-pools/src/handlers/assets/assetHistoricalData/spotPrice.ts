@@ -11,7 +11,7 @@ import { getOrCreateAsset } from '../asset';
 import { Hop, BigNumber } from '@galacticcouncil/sdk';
 import { fromExponentialToDecimalNotation } from '../../../utils/helpers';
 
-export async function handleSpotPricesIntoAssetsHistoricalData({
+export async function handleAssetSpotPricesHistoricalData({
   blockHeader,
   ctx,
 }: {

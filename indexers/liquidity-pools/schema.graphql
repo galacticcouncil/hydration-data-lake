@@ -139,7 +139,7 @@ type AssetSpotPriceHistoricalData @entity {
   assetInAssetRegistryId: String
   assetOutAssetRegistryId: String
 
-  assetOutDecimals: Int
+  assetOutDecimals: Int!
   price: BigInt!
   priceNormalised: String!
   #  priceRoute is a list of tupes with following values: pool address, pool type, assetIn, assetOut in appropriate order of swap
@@ -169,7 +169,7 @@ type AssetHistoricalData @entity {
 
   spotPrices: [AssetSpotPriceHistoricalData]!
     @derivedFrom(field: "assetInHistData")
-  assetPairVolumes: [AssetAssetsPairVolumeHistoricalData]!
+  assetPairVolumes: [AssetAssetsPairVolume]!
     @derivedFrom(field: "assetHistoricalData")
 
   paraBlockHeight: Int! @index
@@ -186,18 +186,20 @@ type AssetsPairVolumeHistoricalData @entity {
 
   assetAVolume: BigInt!
   assetBVolume: BigInt!
-  totalVolume: BigInt!
+  "totalVolumeNormalised is calculated in base asset (10:USDT) and normalised to decimal format"
+  totalVolumeNormalised: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
   block: Block!
 }
 
-type AssetAssetsPairVolumeHistoricalData @entity {
-  "<assetId>-<paraBlockHeight>"
+type AssetAssetsPairVolume @entity {
+  "<assetHistoricalDataId>-<assetsPairVolumeHistoricalData>-<paraBlockHeight>"
   id: ID!
   assetHistoricalData: AssetHistoricalData!
   assetsPairVolumeHistoricalData: AssetsPairVolumeHistoricalData!
+  paraBlockHeight: Int! @index
 }
 
 # ======================================================================================================================

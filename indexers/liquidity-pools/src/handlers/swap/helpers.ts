@@ -162,6 +162,14 @@ export async function supportSwappedEventPostHook({
         swap,
         blockHeader: eventMetadata.blockHeader,
       });
+      await handleAssetVolumeUpdates(ctx, {
+        paraBlockHeight: swap.paraBlockHeight,
+        relayBlockHeight: swap.relayBlockHeight,
+        assetIn: swap.inputs[0].asset,
+        assetInAmount: swap.inputs[0].amount,
+        assetOut: swap.outputs[0].asset,
+        assetOutAmount: swap.outputs[0].amount,
+      });
       break;
     case SwapFillerType.Stableswap: {
       const pool = await getOrCreateStableswap({
@@ -183,6 +191,15 @@ export async function supportSwappedEventPostHook({
         ctx,
         swap,
         pool,
+      });
+
+      await handleAssetVolumeUpdates(ctx, {
+        paraBlockHeight: swap.paraBlockHeight,
+        relayBlockHeight: swap.relayBlockHeight,
+        assetIn: swap.inputs[0].asset,
+        assetInAmount: swap.inputs[0].amount,
+        assetOut: swap.outputs[0].asset,
+        assetOutAmount: swap.outputs[0].amount,
       });
 
       break;
