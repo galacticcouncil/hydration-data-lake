@@ -120,8 +120,9 @@ export async function createLbppool({
       }),
     }),
     createdAtParaBlockHeight: blockHeader.height,
-    createdAtRelayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(blockHeader.height).height,
+    createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+      blockHeader.height
+    ).height,
     createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
@@ -239,6 +240,50 @@ export async function lpbpoolCreated(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
+  const existingPool = await getOrCreateLbppool({
+    assetIds: eventParams.data.assets,
+    ctx,
+    ensure: false,
+  });
+
+  if (existingPool && !existingPool.isDestroyed) return existingPool;
+
+  if (existingPool && existingPool.isDestroyed) {
+    const assetABalance = await getAssetFreeBalance(
+      eventMetadata.blockHeader,
+      +eventParams.data.assets[0],
+      eventParams.pool
+    );
+    const assetBBalance = await getAssetFreeBalance(
+      eventMetadata.blockHeader,
+      +eventParams.data.assets[1],
+      eventParams.pool
+    );
+
+    existingPool.lifeStates = addLbppoolCreatedLifeState({
+      createdState: new LbppoolCreatedData({
+        assetABalance: assetABalance?.toString() ?? '0',
+        assetBBalance: assetBBalance?.toString() ?? '0',
+        paraBlockHeight: eventMetadata.blockHeader.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          eventMetadata.blockHeader.height
+        ).height,
+      }),
+    });
+    existingPool.createdAtParaBlockHeight = eventMetadata.blockHeader.height;
+    existingPool.createdAtRelayBlockHeight =
+      ctx.batchState.getRelayChainBlockDataFromCache(
+        eventMetadata.blockHeader.height
+      ).height;
+    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
+      eventMetadata.blockHeader.id
+    )!;
+
+    ctx.batchState.state.lbpAllBatchPools.set(eventParams.pool, existingPool);
+    ctx.batchState.state.lbpPoolIdsToSave.add(eventParams.pool);
+    return existingPool;
+  }
+
   const newPool = await createLbppool({
     ctx,
     blockHeader: eventMetadata.blockHeader,
@@ -310,8 +355,7 @@ export function addLbppoolCreatedLifeState({
   createdState: LbppoolCreatedData;
 }): LbppoolLifeState[] {
   const existingState = existingStates.find(
-    (state) =>
-      state.created.paraBlockHeight === createdState.paraBlockHeight
+    (state) => state.created.paraBlockHeight === createdState.paraBlockHeight
   );
 
   if (existingState) return existingStates;

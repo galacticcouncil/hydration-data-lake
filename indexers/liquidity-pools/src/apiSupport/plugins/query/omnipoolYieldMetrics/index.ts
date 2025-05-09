@@ -3,10 +3,6 @@ import {
   omnipoolAssetsYieldMetricsResolver,
   OmnipoolAssetYieldMetricsFilter,
 } from './resolvers';
-import {
-  omnipoolAssetHistoricalVolumesByPeriodResolver,
-  OmnipoolAssetVolumesByPeriodFilter,
-} from '../omnipoolVolume/resolvers';
 import { QueryResolverContext } from '../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';

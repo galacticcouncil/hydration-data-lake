@@ -103,6 +103,36 @@ export async function omnipoolTokenAdded(
     // blockHeader: eventMetadata.blockHeader,
   });
 
+  if (omnipoolAssetEntity && omnipoolAssetEntity.isRemoved) {
+    omnipoolAssetEntity.isRemoved = false;
+    omnipoolAssetEntity.lifeStates = addOmnipoolAssetAddedLifeState({
+      existingStates: omnipoolAssetEntity.lifeStates,
+      assetAddedState: new OmnipoolAssetAddedData({
+        initialAmount: '0', // TODO fix values
+        initialPrice: '0',
+        paraBlockHeight: eventMetadata.blockHeader.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          eventMetadata.blockHeader.height
+        ).height,
+      }),
+    });
+    omnipoolAssetEntity.addedAtParaBlockHeight =
+      eventMetadata.blockHeader.height;
+    omnipoolAssetEntity.addedAtRelayBlockHeight =
+      ctx.batchState.getRelayChainBlockDataFromCache(
+        eventMetadata.blockHeader.height
+      ).height;
+    omnipoolAssetEntity.addedAtBlock = ctx.batchState.state.batchBlocks.get(
+      eventMetadata.blockHeader.id
+    )!;
+
+    ctx.batchState.state.omnipoolAssets.set(
+      omnipoolAssetEntity.id,
+      omnipoolAssetEntity
+    );
+    ctx.batchState.state.omnipoolAssetIdsToSave.add(omnipoolAssetEntity.id);
+  }
+
   if (omnipoolAssetEntity) return;
 
   const assetEntity = await getOrCreateAsset({
