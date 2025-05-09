@@ -211,6 +211,43 @@ export async function xykPoolCreated(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
+  const existingPool = await getOrCreateXykPool({
+    id: eventParams.pool,
+    ctx,
+    ensure: false,
+  });
+
+  if (existingPool && !existingPool.isDestroyed) return;
+
+  if (existingPool && existingPool.isDestroyed) {
+    existingPool.isDestroyed = false;
+
+    existingPool.lifeStates = addXykpoolCreatedLifeState({
+      createdState: new XykpoolCreatedData({
+        initialSharesAmount: eventParams.initialSharesAmount
+          ? eventParams.initialSharesAmount.toString()
+          : '0',
+        paraBlockHeight: eventMetadata.blockHeader.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          eventMetadata.blockHeader.height
+        ).height,
+      }),
+    });
+    existingPool.createdAtParaBlockHeight = eventMetadata.blockHeader.height;
+    existingPool.createdAtRelayBlockHeight =
+      ctx.batchState.getRelayChainBlockDataFromCache(
+        eventMetadata.blockHeader.height
+      ).height;
+    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
+      eventMetadata.blockHeader.id
+    )!;
+
+    ctx.batchState.state.xykAllBatchPools.set(existingPool.id, existingPool);
+    ctx.batchState.state.xykPoolIdsToSave.add(existingPool.id);
+
+    return existingPool;
+  }
+
   const newPool = await createXykPool({
     ctx,
     blockHeader: eventMetadata.blockHeader,

@@ -169,6 +169,42 @@ export async function stableswapCreated(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
+  const existingPool = await getOrCreateStableswap({
+    poolId: eventParams.poolId,
+    ctx,
+    ensure: false,
+  });
+
+  if (existingPool && !existingPool.isDestroyed) return;
+
+  if (existingPool && existingPool.isDestroyed) {
+    existingPool.isDestroyed = false;
+
+    existingPool.createdAtParaBlockHeight = eventMetadata.blockHeader.height;
+    existingPool.createdAtRelayBlockHeight =
+      ctx.batchState.getRelayChainBlockDataFromCache(
+        eventMetadata.blockHeader.height
+      ).height;
+    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
+      eventMetadata.blockHeader.id
+    )!;
+    existingPool.lifeStates = addStableswapCreatedLifeState({
+      createdState: new StableswapCreatedData({
+        paraBlockHeight: eventMetadata.blockHeader.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          eventMetadata.blockHeader.height
+        ).height,
+      }),
+    });
+
+    ctx.batchState.state.stableswapAllBatchPools.set(
+      existingPool.id,
+      existingPool
+    );
+    ctx.batchState.state.stableswapIdsToSave.add(existingPool.id);
+    return existingPool;
+  }
+
   const { pool, poolAssets } = await getNewStableswapWithAssets({
     poolId: eventParams.poolId,
     assetRegistryAssetIds: eventParams.assets,
