@@ -30,6 +30,19 @@ export class HistoricalDataManager {
     await ctx.store.save([
       ...ctx.batchState.state.assetAssetsPairVolumesBatch.values(),
     ]);
+
+    await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);
+    await ctx.store.save([...ctx.batchState.state.xykPoolVolumes.values()]);
+    await ctx.store.save([
+      ...ctx.batchState.state.omnipoolAssetVolumes.values(),
+    ]);
+
+    await ctx.store.save([
+      ...ctx.batchState.state.stablepoolVolumeCollections.values(),
+    ]);
+    await ctx.store.save([
+      ...ctx.batchState.state.stablepoolAssetVolumes.values(),
+    ]);
   }
 
   static async handleHistoricalVolumesBatchEntriesLists(

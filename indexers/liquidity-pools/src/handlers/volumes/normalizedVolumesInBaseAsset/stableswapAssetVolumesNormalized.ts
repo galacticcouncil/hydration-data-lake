@@ -1,6 +1,7 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { calcVolumeNormalized } from './index';
+import { BigNumber } from '@galacticcouncil/sdk';
 
 export function processStableswapAssetNormalizedVolumes(
   ctx: SqdProcessorContext<Store>
@@ -54,6 +55,57 @@ export function processStableswapAssetNormalizedVolumes(
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
+
+    const poolVolsHistData =
+      ctx.batchState.state.stablepoolVolumeCollections.get(
+        assetVolsHistData.volumesCollection.id
+      );
+
+    console.log('poolVolsHistData');
+    console.dir(poolVolsHistData, { depth: null });
+
+    if (poolVolsHistData) {
+      poolVolsHistData.poolVolInNorm = BigNumber(
+        poolVolsHistData.poolVolInNorm || '0'
+      )
+        .plus(assetVolsHistData.assetVolInNorm)
+        .toFixed();
+
+      poolVolsHistData.poolVolOutNorm = BigNumber(
+        poolVolsHistData.poolVolOutNorm || '0'
+      )
+        .plus(assetVolsHistData.assetVolOutNorm)
+        .toFixed();
+
+      poolVolsHistData.poolFeesVolNorm = BigNumber(
+        poolVolsHistData.poolFeesVolNorm || '0'
+      )
+        .plus(assetVolsHistData.assetFeeVolNorm)
+        .toFixed();
+
+      poolVolsHistData.poolTotalVolInNorm = BigNumber(
+        poolVolsHistData.poolTotalVolInNorm || '0'
+      )
+        .plus(assetVolsHistData.assetTotalFeesVolNorm)
+        .toFixed();
+
+      poolVolsHistData.poolTotalVolOutNorm = BigNumber(
+        poolVolsHistData.poolTotalVolOutNorm || '0'
+      )
+        .plus(assetVolsHistData.assetTotalVolOutNorm)
+        .toFixed();
+
+      poolVolsHistData.poolTotalFeesVolNorm = BigNumber(
+        poolVolsHistData.poolTotalFeesVolNorm || '0'
+      )
+        .plus(assetVolsHistData.assetTotalFeesVolNorm)
+        .toFixed();
+
+      ctx.batchState.state.stablepoolVolumeCollections.set(
+        poolVolsHistData.id,
+        poolVolsHistData
+      );
+    }
 
     ctx.batchState.state.stablepoolAssetVolumes.set(
       assetVolsHistData.id,

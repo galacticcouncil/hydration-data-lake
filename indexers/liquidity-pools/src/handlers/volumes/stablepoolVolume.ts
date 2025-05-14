@@ -57,6 +57,14 @@ export async function handleStablepoolVolumeUpdates({
     volumesCollection = new StableswapVolumeHistoricalData({
       id: `${pool.id}-${paraBlockHeight}`,
       pool,
+
+      poolVolInNorm: '0',
+      poolVolOutNorm: '0',
+      poolFeesVolNorm: '0',
+      poolTotalVolInNorm: '0',
+      poolTotalVolOutNorm: '0',
+      poolTotalFeesVolNorm: '0',
+
       relayBlockHeight,
       paraBlockHeight,
     });
@@ -169,38 +177,52 @@ export function initStablepoolAssetVolume({
     block,
   });
 
-  let assetVolIn = BigInt(0);
-  let assetVolOut = BigInt(0);
+  // let assetVolIn = BigInt(0);
+  // let assetVolOut = BigInt(0);
   let routedLiqAddedAmount = BigInt(0);
   let routedLiqRemovedAmount = BigInt(0);
-  let assetFeeVol = BigInt(0);
+  // let assetFeeVol = BigInt(0);
   let routedLiqFee = BigInt(0);
 
   if (swap) {
-    const inputsMap = new Map(
-      swap.inputs.map((inputAssetData) => [
-        inputAssetData.asset.id,
-        inputAssetData,
-      ])
-    );
-    const outputsMap = new Map(
-      swap.outputs.map((outputAssetData) => [
-        outputAssetData.asset.id,
-        outputAssetData,
-      ])
-    );
-    const feesMap = new Map(
-      swap.fees.map((feeAssetData) => [feeAssetData.asset.id, feeAssetData])
-    );
-    assetVolIn = inputsMap.has(newVolume.asset.id)
-      ? inputsMap.get(newVolume.asset.id)!.amount
-      : BigInt(0);
-    assetVolOut = outputsMap.has(newVolume.asset.id)
-      ? outputsMap.get(newVolume.asset.id)!.amount
-      : BigInt(0);
-    assetFeeVol = feesMap.has(newVolume.asset.id)
-      ? feesMap.get(newVolume.asset.id)!.amount
-      : BigInt(0);
+    // const inputsMap = new Map(
+    //   swap.inputs.map((inputAssetData) => [
+    //     inputAssetData.asset.id,
+    //     inputAssetData,
+    //   ])
+    // );
+    // const outputsMap = new Map(
+    //   swap.outputs.map((outputAssetData) => [
+    //     outputAssetData.asset.id,
+    //     outputAssetData,
+    //   ])
+    // );
+    // const feesMap = new Map(
+    //   swap.fees.map((feeAssetData) => [feeAssetData.asset.id, feeAssetData])
+    // );
+    // assetVolIn = inputsMap.has(newVolume.asset.id)
+    //   ? inputsMap.get(newVolume.asset.id)!.amount
+    //   : BigInt(0);
+    // assetVolOut = outputsMap.has(newVolume.asset.id)
+    //   ? outputsMap.get(newVolume.asset.id)!.amount
+    //   : BigInt(0);
+    // assetFeeVol = feesMap.has(newVolume.asset.id)
+    //   ? feesMap.get(newVolume.asset.id)!.amount
+    //   : BigInt(0);
+
+    const assetVolIn =
+      swap.inputs.find((input) => input.asset.id === newVolume.asset.id)
+        ?.amount || BigInt(0);
+
+    const assetVolOut =
+      swap.outputs.find((output) => output.asset.id === newVolume.asset.id)
+        ?.amount || BigInt(0);
+
+    const assetFeeVol = swap.fees.reduce((acc, feeData) => {
+      if (feeData.asset.id !== newVolume.asset.id || !feeData.recipient)
+        return acc;
+      return acc + feeData.amount;
+    }, 0n);
 
     // Block volumes
     newVolume.assetVolIn += assetVolIn;

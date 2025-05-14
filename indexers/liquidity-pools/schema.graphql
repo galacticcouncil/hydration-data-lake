@@ -1041,6 +1041,9 @@ type StableswapVolumeHistoricalData @entity {
   assetVolumes: [StableswapAssetVolumeHistoricalData!]!
     @derivedFrom(field: "volumesCollection")
 
+  poolVolInNorm: String!
+  poolVolOutNorm: String!
+  poolFeesVolNorm: String!
   poolTotalVolInNorm: String!
   poolTotalVolOutNorm: String!
   poolTotalFeesVolNorm: String!

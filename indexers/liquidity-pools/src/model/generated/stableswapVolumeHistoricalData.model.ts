@@ -23,6 +23,15 @@ export class StableswapVolumeHistoricalData {
   assetVolumes!: StableswapAssetVolumeHistoricalData[]
 
   @Column_("text", {nullable: false})
+  poolVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  poolVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  poolFeesVolNorm!: string
+
+  @Column_("text", {nullable: false})
   poolTotalVolInNorm!: string
 
   @Column_("text", {nullable: false})

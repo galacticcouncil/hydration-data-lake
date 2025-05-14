@@ -52,20 +52,38 @@ export function initOmnipoolAssetVolume({
     block: swap.event.block,
   });
 
+  // const assetVolIn =
+  //   swap.inputs[0].asset.id === newVolume.omnipoolAsset.asset.id
+  //     ? swap.inputs[0].amount
+  //     : BigInt(0);
+  //
+  // const assetVolOut =
+  //   swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
+  //     ? swap.outputs[0].amount
+  //     : BigInt(0);
+  // const assetFeeVol =
+  //   swap.fees[0].asset.id === newVolume.omnipoolAsset.asset.id
+  //     ? swap.fees[0].amount
+  //     : BigInt(0);
+
   const assetVolIn =
-    swap.inputs[0].asset.id === newVolume.omnipoolAsset.asset.id
-      ? swap.inputs[0].amount
-      : BigInt(0);
+    swap.inputs.find(
+      (input) => input.asset.id === newVolume.omnipoolAsset.asset.id
+    )?.amount || BigInt(0);
 
   const assetVolOut =
-    swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
-      ? swap.outputs[0].amount
-      : BigInt(0);
+    swap.outputs.find(
+      (output) => output.asset.id === newVolume.omnipoolAsset.asset.id
+    )?.amount || BigInt(0);
 
-  const assetFeeVol =
-    swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
-      ? swap.outputs[0].amount
-      : BigInt(0);
+  const assetFeeVol = swap.fees.reduce((acc, feeData) => {
+    if (
+      feeData.asset.id !== newVolume.omnipoolAsset.asset.id ||
+      !feeData.recipient
+    )
+      return acc;
+    return acc + feeData.amount;
+  }, 0n);
 
   // SqdBlock volumes
   newVolume.assetVolIn += assetVolIn;
