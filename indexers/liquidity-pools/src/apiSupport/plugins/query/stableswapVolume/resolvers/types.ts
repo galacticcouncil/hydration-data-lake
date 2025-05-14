@@ -16,10 +16,14 @@ export type StablepoolAssetVolumeAggregated = {
   assetRegistryId?: string;
   assetFeeVol: bigint;
   assetVol: bigint;
+  assetFeeVolNorm: string;
+  assetVolNorm: string;
 };
 
 export type StableswapVolumeAggregated = {
   poolId: string;
+  poolVolNorm: string;
+  poolFeeVolNorm: string;
   assetVolumes: StablepoolAssetVolumeAggregated[];
 };
 

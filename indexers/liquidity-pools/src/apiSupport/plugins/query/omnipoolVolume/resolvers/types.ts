@@ -12,8 +12,10 @@ export type OmnipoolAssetVolumeAggregated = {
   omnipoolAssetId: string;
   assetId: string;
   assetRegistryId?: string;
-  assetVolume: bigint;
-  assetFeeVolume: bigint;
+  assetVol: bigint;
+  assetFeeVol: bigint;
+  assetVolNormalized: string;
+  assetFeeVolNormalized: string;
 };
 
 export type XykPoolVolumesByPeriodResponse = {

@@ -68,6 +68,24 @@ export class XykpoolVolumeHistoricalData {
   assetBTotalVolOut!: bigint
 
   @Column_("text", {nullable: false})
+  assetAVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetAVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetBVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetBVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetAFeeVolNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetBFeeVolNorm!: string
+
+  @Column_("text", {nullable: false})
   assetATotalVolInNorm!: string
 
   @Column_("text", {nullable: false})

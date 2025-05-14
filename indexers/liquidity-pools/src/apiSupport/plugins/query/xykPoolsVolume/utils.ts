@@ -33,26 +33,44 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
         const resp: XykpoolVolumeAggregated = {
           poolId: group[0].pool_id,
           assetAId: group[0].asset_a_id,
-          assetAVolume: BigInt(0),
+          assetAAssetRegistryId: group[0].asset_a_registry_id,
           assetBId: group[0].asset_b_id,
-          assetBVolume: BigInt(0),
+          assetBAssetRegistryId: group[0].asset_b_registry_id,
+          assetAVol: BigInt(0),
+          assetBVol: BigInt(0),
+          assetAFeeVol: BigInt(0),
+          assetBFeeVol: BigInt(0),
+          assetAVolNorm: '0',
+          assetBVolNorm: '0',
+          assetAFeeVolNorm: '0',
+          assetBFeeVolNorm: '0',
         };
         // Should not occur in normal conditions because SQL query will return
         // either 2 elements in the group or nothing.
         if (group.length === 1) return resp;
 
         if (group[0].para_block_height === group[1].para_block_height) {
-          resp.assetAVolume =
-            BigInt(group[0].asset_a_vol_in) +
-            BigInt(group[0].asset_a_vol_out);
-          resp.assetBVolume =
-            BigInt(group[0].asset_b_vol_in) +
-            BigInt(group[0].asset_b_vol_out);
+          resp.assetAVol =
+            BigInt(group[0].asset_a_vol_in) + BigInt(group[0].asset_a_vol_out);
+          resp.assetBVol =
+            BigInt(group[0].asset_b_vol_in) + BigInt(group[0].asset_b_vol_out);
+          resp.assetAFeeVol = BigInt(group[0].asset_a_fee_vol);
+          resp.assetBFeeVol = BigInt(group[0].asset_b_fee_vol);
+          resp.assetAVolNorm = (
+            BigInt(group[0].asset_a_vol_in_norm) +
+            BigInt(group[0].asset_a_vol_out_norm)
+          ).toString();
+          resp.assetBVolNorm = (
+            BigInt(group[0].asset_b_vol_in_norm) +
+            BigInt(group[0].asset_b_vol_out_norm)
+          ).toString();
+          resp.assetAFeeVolNorm = group[0].asset_a_fee_vol_norm;
+          resp.assetBFeeVolNorm = group[0].asset_b_fee_vol_norm;
 
           return resp;
         }
 
-        resp.assetAVolume =
+        resp.assetAVol =
           BigInt(group[1].asset_a_total_vol_in) +
           BigInt(group[1].asset_a_total_vol_out) -
           BigInt(group[0].asset_a_total_vol_in) -
@@ -60,13 +78,54 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
           BigInt(group[0].asset_a_vol_in) +
           BigInt(group[0].asset_a_vol_out);
 
-        resp.assetBVolume =
+        resp.assetBVol =
           BigInt(group[1].asset_b_total_vol_in) +
           BigInt(group[1].asset_b_total_vol_out) -
           BigInt(group[0].asset_b_total_vol_in) -
           BigInt(group[0].asset_b_total_vol_out) +
           BigInt(group[0].asset_b_vol_in) +
           BigInt(group[0].asset_b_vol_out);
+
+        resp.assetAFeeVol =
+          BigInt(group[1].asset_a_fees_total_vol) -
+          BigInt(group[0].asset_a_fees_total_vol) +
+          BigInt(group[0].asset_a_fee_vol);
+
+        resp.assetAFeeVol =
+          BigInt(group[1].asset_b_fees_total_vol) -
+          BigInt(group[0].asset_b_fees_total_vol) +
+          BigInt(group[0].asset_b_fee_vol);
+
+        resp.assetAVolNorm = (
+          BigInt(group[1].asset_a_total_vol_in_norm) +
+          BigInt(group[1].asset_a_total_vol_out_norm) -
+          BigInt(group[0].asset_a_total_vol_in_norm) -
+          BigInt(group[0].asset_a_total_vol_out_norm) +
+          BigInt(group[0].asset_a_vol_in_norm) +
+          BigInt(group[0].asset_a_vol_out_norm)
+        ).toString();
+
+        resp.assetBVolNorm = (
+          BigInt(group[1].asset_b_total_vol_in_norm) +
+          BigInt(group[1].asset_b_total_vol_out_norm) -
+          BigInt(group[0].asset_b_total_vol_in_norm) -
+          BigInt(group[0].asset_b_total_vol_out_norm) +
+          BigInt(group[0].asset_b_vol_in_norm) +
+          BigInt(group[0].asset_b_vol_out_norm)
+        ).toString();
+
+        resp.assetAFeeVolNorm = (
+          BigInt(group[1].asset_a_fees_total_vol_norm) -
+          BigInt(group[0].asset_a_fees_total_vol_norm) +
+          BigInt(group[0].asset_a_fee_vol_norm)
+        ).toString();
+
+        resp.assetAFeeVolNorm = (
+          BigInt(group[1].asset_b_fees_total_vol_norm) -
+          BigInt(group[0].asset_b_fees_total_vol_norm) +
+          BigInt(group[0].asset_b_fee_vol_norm)
+        ).toString();
+
         return resp;
       })
       .map((r: XykpoolVolumeAggregated) => [r.poolId, r])
@@ -81,8 +140,14 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
       poolId: poolWithAssetsData.id,
       assetAId: poolWithAssetsData.asset_a_id,
       assetBId: poolWithAssetsData.asset_b_id,
-      assetAVolume: BigInt(0),
-      assetBVolume: BigInt(0),
+      assetAVol: BigInt(0),
+      assetBVol: BigInt(0),
+      assetAFeeVol: BigInt(0),
+      assetBFeeVol: BigInt(0),
+      assetAVolNorm: '0',
+      assetBVolNorm: '0',
+      assetAFeeVolNorm: '0',
+      assetBFeeVolNorm: '0',
     });
   }
 

@@ -49,8 +49,10 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
         const resp: OmnipoolAssetVolumeAggregated = {
           omnipoolAssetId: group[0].omnipool_asset_id,
           assetId: group[0].omnipool_asset_id.split('-')[1],
-          assetVolume: BigInt(0),
-          assetFeeVolume: BigInt(0),
+          assetVol: BigInt(0),
+          assetFeeVol: BigInt(0),
+          assetVolNormalized: '0',
+          assetFeeVolNormalized: '0',
         };
 
         // Should not occur in normal conditions because SQL query will return
@@ -58,14 +60,20 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
         if (group.length === 1) return resp;
 
         if (group[0].para_block_height === group[1].para_block_height) {
-          resp.assetVolume =
-            BigInt(group[0].asset_vol_in) +
-            BigInt(group[0].asset_vol_out);
-          resp.assetFeeVolume = BigInt(group[0].asset_fee_vol);
+          resp.assetVol =
+            BigInt(group[0].asset_vol_in) + BigInt(group[0].asset_vol_out);
+          resp.assetFeeVol = BigInt(group[0].asset_fee_vol);
+
+          resp.assetVolNormalized = (
+            BigInt(group[0].asset_vol_in_norm) +
+            BigInt(group[0].asset_vol_out_norm)
+          ).toString();
+          resp.assetFeeVolNormalized = group[0].asset_fee_vol_norm;
+
           return resp;
         }
 
-        resp.assetVolume =
+        resp.assetVol =
           BigInt(group[1].asset_total_vol_in) +
           BigInt(group[1].asset_total_vol_out) -
           BigInt(group[0].asset_total_vol_in) -
@@ -73,8 +81,24 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
           BigInt(group[0].asset_vol_in) +
           BigInt(group[0].asset_vol_out);
 
-        resp.assetFeeVolume =
-          BigInt(group[1].asset_total_fees_vol) - BigInt(group[0].asset_total_fees_vol);
+        resp.assetFeeVol =
+          BigInt(group[1].asset_total_fees_vol) -
+          BigInt(group[0].asset_total_fees_vol);
+
+        resp.assetVolNormalized = (
+          BigInt(group[1].asset_total_vol_in_norm) +
+          BigInt(group[1].asset_total_vol_out_norm) -
+          BigInt(group[0].asset_total_vol_in_norm) -
+          BigInt(group[0].asset_total_vol_out_norm) +
+          BigInt(group[0].asset_vol_in_norm) +
+          BigInt(group[0].asset_vol_out_norm)
+        ).toString();
+
+        resp.assetFeeVolNormalized = (
+          BigInt(group[1].asset_total_fees_vol_norm) -
+          BigInt(group[0].asset_total_fees_vol_norm)
+        ).toString();
+
         return resp;
       })
       .map((r: OmnipoolAssetVolumeAggregated) => [r.omnipoolAssetId, r])
@@ -86,8 +110,10 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
     decoratedNodes.set(assetIdWithNoResult, {
       omnipoolAssetId: assetIdWithNoResult,
       assetId: assetIdWithNoResult.split('-')[1] || '-1',
-      assetVolume: BigInt(0),
-      assetFeeVolume: BigInt(0),
+      assetVol: BigInt(0),
+      assetFeeVol: BigInt(0),
+      assetVolNormalized: '0',
+      assetFeeVolNormalized: '0',
     });
   }
 

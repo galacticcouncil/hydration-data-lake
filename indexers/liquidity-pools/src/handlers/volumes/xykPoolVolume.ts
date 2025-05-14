@@ -47,6 +47,13 @@ export function initXykPoolVolume(
       oldVolume?.assetBTotalVolOut ||
       BigInt(0),
 
+    assetAVolInNorm: currentVolume?.assetAVolInNorm || '0',
+    assetAVolOutNorm: currentVolume?.assetAVolOutNorm || '0',
+    assetBVolInNorm: currentVolume?.assetBVolInNorm || '0',
+    assetBVolOutNorm: currentVolume?.assetBVolOutNorm || '0',
+    assetAFeeVolNorm: currentVolume?.assetAFeeVolNorm || '0',
+    assetBFeeVolNorm: currentVolume?.assetBFeeVolNorm || '0',
+
     assetATotalVolInNorm: currentVolume?.assetATotalVolInNorm || '0',
     assetATotalVolOutNorm: currentVolume?.assetATotalVolOutNorm || '0',
     assetBTotalVolInNorm: currentVolume?.assetBTotalVolInNorm || '0',

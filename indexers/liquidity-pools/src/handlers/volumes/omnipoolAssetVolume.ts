@@ -39,6 +39,10 @@ export function initOmnipoolAssetVolume({
       oldVolume?.assetTotalVolOut ||
       BigInt(0),
 
+    assetVolInNorm: currentVolume?.assetVolInNorm || '0',
+    assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
+    assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
+
     assetTotalVolInNorm: currentVolume?.assetTotalVolInNorm || '0',
     assetTotalVolOutNorm: currentVolume?.assetTotalVolOutNorm || '0',
     assetTotalFeesVolNorm: currentVolume?.assetTotalFeesVolNorm || '0',

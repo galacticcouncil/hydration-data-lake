@@ -30,6 +30,14 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                                   'asset_vol_out', sahv.asset_vol_out,
                                                   'asset_total_vol_in', sahv.asset_total_vol_in,
                                                   'asset_total_vol_out', sahv.asset_total_vol_out,
+
+                                                  'asset_fee_vol_norm', sahv.asset_fee_vol_norm,
+                                                  'asset_fees_total_vol_norm', sahv.asset_fees_total_vol_norm,
+                                                  'asset_vol_in_norm', sahv.asset_vol_in_norm,
+                                                  'asset_vol_out_norm', sahv.asset_vol_out_norm,
+                                                  'asset_total_vol_in_norm', sahv.asset_total_vol_in_norm,
+                                                  'asset_total_vol_out_norm', sahv.asset_total_vol_out_norm,
+                                            
                                                   'para_block_height', sahv.para_block_height,
                                                   'relay_block_height', sahv.relay_block_height
                                           )
@@ -62,4 +70,3 @@ export const aggregateStablepoolVolumesByBlocksRange = `
              LEFT JOIN asset_volumes av_end_entity ON grouped_data.end_entity_id = av_end_entity.volumes_collection_id
     GROUP BY grouped_data.pool_id;
 `;
-

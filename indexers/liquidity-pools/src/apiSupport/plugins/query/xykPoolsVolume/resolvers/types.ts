@@ -11,10 +11,18 @@ export type XykpoolVolumeAggregated = {
   poolId: string;
   assetAId: string;
   assetAAssetRegistryId?: string;
-  assetAVolume: bigint;
   assetBId: string;
   assetBAssetRegistryId?: string;
-  assetBVolume: bigint;
+
+  assetAVol: bigint;
+  assetBVol: bigint;
+  assetAFeeVol: bigint;
+  assetBFeeVol: bigint;
+
+  assetAVolNorm: string;
+  assetBVolNorm: string;
+  assetAFeeVolNorm: string;
+  assetBFeeVolNorm: string;
 };
 
 export type XykPoolVolumesByPeriodResponse = {

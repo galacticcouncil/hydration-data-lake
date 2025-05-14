@@ -4,7 +4,9 @@ export type XykpoolHistoricalVolumeRaw = {
   id: string;
   pool_id: string;
   asset_a_id: string;
+  asset_a_registry_id?: string;
   asset_b_id: string;
+  asset_b_registry_id?: string;
   asset_a_vol_in: number;
   asset_a_total_vol_in: number;
   asset_a_vol_out: number;
@@ -13,10 +15,26 @@ export type XykpoolHistoricalVolumeRaw = {
   asset_b_total_vol_in: number;
   asset_b_vol_out: number;
   asset_b_total_vol_out: number;
-  asset_a_fee: number;
-  asset_b_fee: number;
-  asset_a_total_fees: number;
-  asset_b_total_fees: number;
+
+  asset_a_fee_vol: number;
+  asset_a_fees_total_vol: number;
+  asset_b_fee_vol: number;
+  asset_b_fees_total_vol: number;
+
+  asset_a_vol_in_norm: string;
+  asset_a_vol_out_norm: string;
+  asset_b_vol_in_norm: string;
+  asset_b_vol_out_norm: string;
+  asset_a_fee_vol_norm: string;
+  asset_b_fee_vol_norm: string;
+
+  asset_a_total_vol_in_norm: string;
+  asset_a_total_vol_out_norm: string;
+  asset_b_total_vol_in_norm: string;
+  asset_b_total_vol_out_norm: string;
+  asset_a_fees_total_vol_norm: string;
+  asset_b_fees_total_vol_norm: string;
+
   average_price: number;
   relay_block_height: number;
   para_block_height: number;
@@ -54,6 +72,12 @@ export type OmnipoolAssetHistoricalVolumeRaw = {
   asset_total_vol_out: number;
   asset_fee_vol: number;
   asset_total_fees_vol: number;
+  asset_vol_in_norm: string;
+  asset_vol_out_norm: string;
+  asset_fee_vol_norm: string;
+  asset_total_vol_in_norm: string;
+  asset_total_vol_out_norm: string;
+  asset_total_fees_vol_norm: string;
   relay_block_height: number;
   para_block_height: number;
 };
@@ -89,12 +113,21 @@ export type StableswapAssetHistoricalVolumeRaw = {
   volumes_collection_id: string;
   asset_id: string;
   asset_registry_id: string;
+
   asset_fee_vol: number;
   asset_fees_total_vol: number;
   asset_vol_in: number;
   asset_vol_out: number;
   asset_total_vol_in: number;
   asset_total_vol_out: number;
+
+  asset_fee_vol_norm: string;
+  asset_fees_total_vol_norm: string;
+  asset_vol_in_norm: string;
+  asset_vol_out_norm: string;
+  asset_total_vol_in_norm: string;
+  asset_total_vol_out_norm: string;
+
   para_block_height: number;
   relay_block_height: number;
 };

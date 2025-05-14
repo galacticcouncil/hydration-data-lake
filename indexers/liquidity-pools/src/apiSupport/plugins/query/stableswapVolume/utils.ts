@@ -1,6 +1,7 @@
 import type * as pg from 'pg';
 import {
   AggregateStablepoolVolumesByBlocksRangeSqlResult,
+  StablepoolAssetVolumeAggregated,
   StableswapVolumeAggregated,
 } from './resolvers';
 import { aggregateStablepoolVolumesByBlocksRange } from '../../sql/stableswapVolumes.sql';
@@ -34,6 +35,8 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
       .map((group) => {
         const resp: StableswapVolumeAggregated = {
           poolId: group.pool_id,
+          poolVolNorm: '0',
+          poolFeeVolNorm: '0',
           assetVolumes: [],
         };
 
@@ -49,8 +52,20 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
               assetVol:
                 BigInt(assetData.asset_vol_in) +
                 BigInt(assetData.asset_vol_out),
+              assetVolNorm: (
+                BigInt(assetData.asset_vol_in_norm) +
+                BigInt(assetData.asset_vol_out_norm)
+              ).toString(),
+              assetFeeVolNorm: assetData.asset_fee_vol_norm,
             })
           );
+          const { poolVolNorm, poolFeeVolNorm } = getPoolNormalizedVolumes(
+            resp.assetVolumes
+          );
+
+          resp.poolVolNorm = poolVolNorm;
+          resp.poolFeeVolNorm = poolFeeVolNorm;
+
           return resp;
         }
 
@@ -76,8 +91,28 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
               BigInt(startEntityAssetVol.asset_total_vol_out) +
               BigInt(startEntityAssetVol.asset_vol_in) +
               BigInt(startEntityAssetVol.asset_vol_out),
+            assetFeeVolNorm: (
+              BigInt(endEntityAssetVol.asset_fees_total_vol_norm) -
+              BigInt(startEntityAssetVol.asset_fees_total_vol_norm) +
+              BigInt(startEntityAssetVol.asset_fee_vol_norm)
+            ).toString(),
+            assetVolNorm: (
+              BigInt(endEntityAssetVol.asset_total_vol_in_norm) +
+              BigInt(endEntityAssetVol.asset_total_vol_out_norm) -
+              BigInt(startEntityAssetVol.asset_total_vol_in_norm) -
+              BigInt(startEntityAssetVol.asset_total_vol_out_norm) +
+              BigInt(startEntityAssetVol.asset_vol_in_norm) +
+              BigInt(startEntityAssetVol.asset_vol_out_norm)
+            ).toString(),
           });
         }
+
+        const { poolVolNorm, poolFeeVolNorm } = getPoolNormalizedVolumes(
+          resp.assetVolumes
+        );
+
+        resp.poolVolNorm = poolVolNorm;
+        resp.poolFeeVolNorm = poolFeeVolNorm;
 
         return resp;
       })
@@ -91,16 +126,33 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
   for (const poolWithNoResult of assetsData.rows) {
     decoratedNodes.set(poolWithNoResult.pool_id, {
       poolId: poolWithNoResult.pool_id,
+      poolVolNorm: '0',
+      poolFeeVolNorm: '0',
       assetVolumes: poolWithNoResult.assets.map(
         (asset: { asset_id: string; asset_registry_id: string }) => ({
           assetId: asset.asset_id,
           assetRegistryId: asset.asset_registry_id,
           assetFeeVol: BigInt(0),
           assetVol: BigInt(0),
+          assetFeeVolNorm: '0',
+          assetVolNorm: '0',
         })
       ),
     });
   }
 
   return decoratedNodes;
+}
+
+function getPoolNormalizedVolumes(
+  assetsData: StablepoolAssetVolumeAggregated[]
+): Pick<StableswapVolumeAggregated, 'poolVolNorm' | 'poolFeeVolNorm'> {
+  return {
+    poolVolNorm: assetsData
+      .reduce((acc, assetData) => acc + BigInt(assetData.assetVolNorm), 0n)
+      .toString(),
+    poolFeeVolNorm: assetsData
+      .reduce((acc, assetData) => acc + BigInt(assetData.assetFeeVolNorm), 0n)
+      .toString(),
+  };
 }

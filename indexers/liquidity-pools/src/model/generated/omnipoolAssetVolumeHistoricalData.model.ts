@@ -38,6 +38,15 @@ export class OmnipoolAssetVolumeHistoricalData {
   assetTotalFeesVol!: bigint
 
   @Column_("text", {nullable: false})
+  assetVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetFeeVolNorm!: string
+
+  @Column_("text", {nullable: false})
   assetTotalVolInNorm!: string
 
   @Column_("text", {nullable: false})

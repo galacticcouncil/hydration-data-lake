@@ -27,16 +27,24 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           assetBId: String!
           assetAAssetRegistryId: String
           assetBAssetRegistryId: String
-          assetAVolume: BigFloat!
-          assetBVolume: BigFloat!
+          assetAVol: BigFloat!
+          assetBVol: BigFloat!
+          assetAVolNorm: String!
+          assetBVolNorm: String!
+          assetAFeeVol: BigFloat!
+          assetBFeeVol: BigFloat!
+          assetAFeeVolNorm: String!
+          assetBFeeVolNorm: String!
         }
 
         type OmnipoolAssetVolumeAggregated {
           omnipoolAssetId: String!
           assetId: String!
           assetRegistryId: String
-          assetVolume: BigFloat!
-          assetFeeVolume: BigFloat!
+          assetVol: BigFloat!
+          assetFeeVol: BigFloat!
+          assetVolNormalized: String!
+          assetFeeVolNormalized: String!
         }
 
         type StablepoolAssetVolumeAggregated {
@@ -44,10 +52,14 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           assetRegistryId: String
           assetFeeVol: BigFloat!
           assetVol: BigFloat!
+          assetFeeVolNorm: String!
+          assetVolNorm: String!
         }
 
         type StableswapVolumeAggregated {
           poolId: String!
+          poolVolNorm: String!
+          poolFeeVolNorm: String!
           assetVolumes: [StablepoolAssetVolumeAggregated!]!
         }
       `,
