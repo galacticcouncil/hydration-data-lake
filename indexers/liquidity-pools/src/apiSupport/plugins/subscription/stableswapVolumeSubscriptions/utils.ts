@@ -46,26 +46,26 @@ export function stableswapAssetHistoricalVolumeSelectGraphQLResult({
     'volumes_collection_id'
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.asset_id`, 'asset_id');
-  sqlBuilder.select(sql.fragment`${tableAlias}.swap_fee`, 'swap_fee');
+  sqlBuilder.select(sql.fragment`${tableAlias}.asset_fee_vol`, 'asset_fee_vol');
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.swap_total_fees`,
-    'swap_total_fees'
+    sql.fragment`${tableAlias}.asset_fees_total_vol`,
+    'asset_fees_total_vol'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.swap_volume_in`,
-    'swap_volume_in'
+    sql.fragment`${tableAlias}.asset_vol_in`,
+    'asset_vol_in'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.swap_volume_out`,
-    'swap_volume_out'
+    sql.fragment`${tableAlias}.asset_vol_out`,
+    'asset_vol_out'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.swap_total_volume_in`,
-    'swap_total_volume_in'
+    sql.fragment`${tableAlias}.asset_total_vol_in`,
+    'asset_total_vol_in'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.swap_total_volume_out`,
-    'swap_total_volume_out'
+    sql.fragment`${tableAlias}.asset_total_vol_out`,
+    'asset_total_vol_out'
   );
   sqlBuilder.select(
     sql.fragment`${tableAlias}.para_block_height`,

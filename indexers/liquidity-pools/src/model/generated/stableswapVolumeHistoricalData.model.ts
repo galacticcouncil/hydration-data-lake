@@ -22,6 +22,15 @@ export class StableswapVolumeHistoricalData {
   @OneToMany_(() => StableswapAssetVolumeHistoricalData, e => e.volumesCollection)
   assetVolumes!: StableswapAssetVolumeHistoricalData[]
 
+  @Column_("text", {nullable: false})
+  poolTotalVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  poolTotalVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  poolTotalFeesVolNorm!: string
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

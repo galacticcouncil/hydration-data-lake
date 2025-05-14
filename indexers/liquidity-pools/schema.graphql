@@ -655,18 +655,28 @@ type LbppoolVolumeHistoricalData @entity {
   assetA: Asset!
   assetB: Asset!
   averagePrice: Float!
-  assetAVolumeIn: BigInt!
-  assetAVolumeOut: BigInt!
-  assetATotalVolumeIn: BigInt!
-  assetATotalVolumeOut: BigInt!
-  assetAFee: BigInt!
-  assetBFee: BigInt!
-  assetATotalFees: BigInt!
-  assetBTotalFees: BigInt!
-  assetBVolumeIn: BigInt!
-  assetBVolumeOut: BigInt!
-  assetBTotalVolumeIn: BigInt!
-  assetBTotalVolumeOut: BigInt!
+
+  assetAVolIn: BigInt!
+  assetAVolOut: BigInt!
+  assetATotalVolIn: BigInt!
+  assetATotalVolOut: BigInt!
+
+  assetAFeeVol: BigInt!
+  assetBFeeVol: BigInt!
+  assetAFeesTotalVol: BigInt!
+  assetBFeesTotalVol: BigInt!
+
+  assetBVolIn: BigInt!
+  assetBVolOut: BigInt!
+  assetBTotalVolIn: BigInt!
+  assetBTotalVolOut: BigInt!
+
+  assetATotalVolInNorm: String!
+  assetATotalVolOutNorm: String!
+  assetBTotalVolInNorm: String!
+  assetBTotalVolOutNorm: String!
+  assetAFeesTotalVolNorm: String!
+  assetBFeesTotalVolNorm: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -780,18 +790,28 @@ type XykpoolVolumeHistoricalData @entity {
   assetA: Asset!
   assetB: Asset!
   averagePrice: Float!
-  assetAVolumeIn: BigInt!
-  assetAVolumeOut: BigInt!
-  assetATotalVolumeIn: BigInt!
-  assetATotalVolumeOut: BigInt!
-  assetAFee: BigInt!
-  assetBFee: BigInt!
-  assetATotalFees: BigInt!
-  assetBTotalFees: BigInt!
-  assetBVolumeIn: BigInt!
-  assetBVolumeOut: BigInt!
-  assetBTotalVolumeIn: BigInt!
-  assetBTotalVolumeOut: BigInt!
+
+  assetAVolIn: BigInt!
+  assetAVolOut: BigInt!
+  assetATotalVolIn: BigInt!
+  assetATotalVolOut: BigInt!
+  assetAFeeVol: BigInt!
+  assetBFeeVol: BigInt!
+
+  assetAFeesTotalVol: BigInt!
+  assetBFeesTotalVol: BigInt!
+
+  assetBVolIn: BigInt!
+  assetBVolOut: BigInt!
+  assetBTotalVolIn: BigInt!
+  assetBTotalVolOut: BigInt!
+
+  assetATotalVolInNorm: String!
+  assetATotalVolOutNorm: String!
+  assetBTotalVolInNorm: String!
+  assetBTotalVolOutNorm: String!
+  assetAFeesTotalVolNorm: String!
+  assetBFeesTotalVolNorm: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -888,12 +908,16 @@ type OmnipoolAssetVolumeHistoricalData @entity {
   "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
   omnipoolAsset: OmnipoolAsset!
-  assetVolumeIn: BigInt!
-  assetVolumeOut: BigInt!
-  assetTotalVolumeIn: BigInt!
-  assetTotalVolumeOut: BigInt!
-  assetFee: BigInt!
-  assetTotalFees: BigInt!
+  assetVolIn: BigInt!
+  assetVolOut: BigInt!
+  assetTotalVolIn: BigInt!
+  assetTotalVolOut: BigInt!
+  assetFeeVol: BigInt!
+  assetTotalFeesVol: BigInt!
+
+  assetTotalVolInNorm: String!
+  assetTotalVolOutNorm: String!
+  assetTotalFeesVolNorm: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -999,6 +1023,10 @@ type StableswapVolumeHistoricalData @entity {
   assetVolumes: [StableswapAssetVolumeHistoricalData!]!
     @derivedFrom(field: "volumesCollection")
 
+  poolTotalVolInNorm: String!
+  poolTotalVolOutNorm: String!
+  poolTotalFeesVolNorm: String!
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   block: Block!
@@ -1010,12 +1038,16 @@ type StableswapAssetVolumeHistoricalData @entity {
   volumesCollection: StableswapVolumeHistoricalData!
   asset: Asset!
 
-  swapFee: BigInt!
-  swapTotalFees: BigInt!
-  swapVolumeIn: BigInt!
-  swapVolumeOut: BigInt!
-  swapTotalVolumeIn: BigInt!
-  swapTotalVolumeOut: BigInt!
+  assetFeeVol: BigInt!
+  assetFeesTotalVol: BigInt!
+  assetVolIn: BigInt!
+  assetVolOut: BigInt!
+  assetTotalVolIn: BigInt!
+  assetTotalVolOut: BigInt!
+
+  assetTotalVolInNorm: String!
+  assetTotalVolOutNorm: String!
+  assetTotalFeesVolNorm: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

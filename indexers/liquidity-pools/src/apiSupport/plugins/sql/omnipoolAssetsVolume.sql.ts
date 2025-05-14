@@ -3,13 +3,13 @@ export const aggregateOmnipoolAssetsVolumesByBlocksRange = `
         SELECT 
             id,
             omnipool_asset_id,
-            asset_volume_in,
-            asset_total_volume_in,
-            asset_volume_out,
-            asset_total_volume_out,
-            asset_fee,
-            asset_total_fees,
-            asset_total_volume_out,
+            asset_vol_in,
+            asset_total_vol_in,
+            asset_vol_out,
+            asset_total_vol_out,
+            asset_fee_vol,
+            asset_total_fees_vol,
+            asset_total_vol_out,
             para_block_height,
             ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_block_height ASC) AS rank
         FROM 
@@ -25,13 +25,13 @@ export const aggregateOmnipoolAssetsVolumesByBlocksRange = `
         SELECT 
             id,
             omnipool_asset_id,
-            asset_volume_in,
-            asset_total_volume_in,
-            asset_volume_out,
-            asset_total_volume_out,
-            asset_fee,
-            asset_total_fees,
-            asset_total_volume_out,
+            asset_vol_in,
+            asset_total_vol_in,
+            asset_vol_out,
+            asset_total_vol_out,
+            asset_fee_vol,
+            asset_total_fees_vol,
+            asset_total_vol_out,
             para_block_height,
             ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_block_height DESC) AS rank
         FROM 

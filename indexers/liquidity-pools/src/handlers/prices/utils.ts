@@ -21,12 +21,12 @@ export function calculateAveragePrice({
   oldVolume?: LbppoolVolumeHistoricalData | XykpoolVolumeHistoricalData;
 }) {
   const totalVolume = oldVolume
-    ? oldVolume.assetATotalVolumeIn + oldVolume.assetATotalVolumeOut
+    ? oldVolume.assetATotalVolIn + oldVolume.assetATotalVolOut
     : currentVolume
-      ? currentVolume.assetATotalVolumeIn + currentVolume.assetATotalVolumeOut
+      ? currentVolume.assetATotalVolIn + currentVolume.assetATotalVolOut
       : BigInt(0);
 
-  const volume = newVolume.assetAVolumeIn + newVolume.assetAVolumeOut;
+  const volume = newVolume.assetAVolIn + newVolume.assetAVolOut;
 
   const swapPrice = new BigNumber(swap.inputs[0].amount.toString())
     .div(swap.outputs[0].amount.toString())

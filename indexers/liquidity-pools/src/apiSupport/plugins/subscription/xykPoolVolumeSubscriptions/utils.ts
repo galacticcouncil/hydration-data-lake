@@ -19,36 +19,36 @@ export function xykpoolHistoricalVolumeSelectGraphQLResult({
   sqlBuilder.select(sql.fragment`${tableAlias}.asset_a_id`, 'asset_a_id');
   sqlBuilder.select(sql.fragment`${tableAlias}.asset_b_id`, 'asset_b_id');
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_a_volume_in`,
-    'asset_a_volume_in'
+    sql.fragment`${tableAlias}.asset_a_vol_in`,
+    'asset_a_vol_in'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_a_total_volume_in`,
-    'asset_a_total_volume_in'
+    sql.fragment`${tableAlias}.asset_a_total_vol_in`,
+    'asset_a_total_vol_in'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_a_volume_out`,
-    'asset_a_volume_out'
+    sql.fragment`${tableAlias}.asset_a_vol_out`,
+    'asset_a_vol_out'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_a_total_volume_out`,
-    'asset_a_total_volume_out'
+    sql.fragment`${tableAlias}.asset_a_total_vol_out`,
+    'asset_a_total_vol_out'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_b_volume_in`,
-    'asset_b_volume_in'
+    sql.fragment`${tableAlias}.asset_b_vol_in`,
+    'asset_b_vol_in'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_b_total_volume_in`,
-    'asset_b_total_volume_in'
+    sql.fragment`${tableAlias}.asset_b_total_vol_in`,
+    'asset_b_total_vol_in'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_b_volume_out`,
-    'asset_b_volume_out'
+    sql.fragment`${tableAlias}.asset_b_vol_out`,
+    'asset_b_vol_out'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_b_total_volume_out`,
-    'asset_b_total_volume_out'
+    sql.fragment`${tableAlias}.asset_b_total_vol_out`,
+    'asset_b_total_vol_out'
   );
   sqlBuilder.select(sql.fragment`${tableAlias}.asset_a_fee`, 'asset_a_fee');
   sqlBuilder.select(sql.fragment`${tableAlias}.asset_b_fee`, 'asset_b_fee');

@@ -43,30 +43,30 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
 
         if (group[0].para_block_height === group[1].para_block_height) {
           resp.assetAVolume =
-            BigInt(group[0].asset_a_volume_in) +
-            BigInt(group[0].asset_a_volume_out);
+            BigInt(group[0].asset_a_vol_in) +
+            BigInt(group[0].asset_a_vol_out);
           resp.assetBVolume =
-            BigInt(group[0].asset_b_volume_in) +
-            BigInt(group[0].asset_b_volume_out);
+            BigInt(group[0].asset_b_vol_in) +
+            BigInt(group[0].asset_b_vol_out);
 
           return resp;
         }
 
         resp.assetAVolume =
-          BigInt(group[1].asset_a_total_volume_in) +
-          BigInt(group[1].asset_a_total_volume_out) -
-          BigInt(group[0].asset_a_total_volume_in) -
-          BigInt(group[0].asset_a_total_volume_out) +
-          BigInt(group[0].asset_a_volume_in) +
-          BigInt(group[0].asset_a_volume_out);
+          BigInt(group[1].asset_a_total_vol_in) +
+          BigInt(group[1].asset_a_total_vol_out) -
+          BigInt(group[0].asset_a_total_vol_in) -
+          BigInt(group[0].asset_a_total_vol_out) +
+          BigInt(group[0].asset_a_vol_in) +
+          BigInt(group[0].asset_a_vol_out);
 
         resp.assetBVolume =
-          BigInt(group[1].asset_b_total_volume_in) +
-          BigInt(group[1].asset_b_total_volume_out) -
-          BigInt(group[0].asset_b_total_volume_in) -
-          BigInt(group[0].asset_b_total_volume_out) +
-          BigInt(group[0].asset_b_volume_in) +
-          BigInt(group[0].asset_b_volume_out);
+          BigInt(group[1].asset_b_total_vol_in) +
+          BigInt(group[1].asset_b_total_vol_out) -
+          BigInt(group[0].asset_b_total_vol_in) -
+          BigInt(group[0].asset_b_total_vol_out) +
+          BigInt(group[0].asset_b_vol_in) +
+          BigInt(group[0].asset_b_vol_out);
         return resp;
       })
       .map((r: XykpoolVolumeAggregated) => [r.poolId, r])

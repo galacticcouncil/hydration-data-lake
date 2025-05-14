@@ -42,8 +42,8 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
         type StablepoolAssetVolumeAggregated {
           assetId: String!
           assetRegistryId: String
-          swapFee: BigFloat!
-          swapVolume: BigFloat!
+          assetFeeVol: BigFloat!
+          assetVol: BigFloat!
         }
 
         type StableswapVolumeAggregated {

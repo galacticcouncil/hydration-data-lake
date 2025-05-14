@@ -1,4 +1,3 @@
-
 export const aggregateSwapAssetFeesByBlocksRange = `
     WITH fee_data AS (
         SELECT asset_id, para_block_height, amount, total_amount
@@ -38,29 +37,6 @@ export const aggregateSwapAssetFeesByBlocksRange = `
        )
     ) AS grouped_result;
 `;
-// export const aggregateSwapAssetFeesByBlocksRange = `
-//     WITH heights AS (
-//         SELECT
-//             MIN(para_block_height) AS min_height,
-//             MAX(para_block_height) AS max_height
-//         FROM historical_asset_swap_fee
-//         WHERE para_block_height BETWEEN $1 AND $2
-//     )
-//     SELECT json_build_object(
-//              'group_start',
-//              (
-//                  SELECT json_agg(row_to_json(t))
-//                  FROM historical_asset_swap_fee t
-//                           JOIN heights h ON t.para_block_height = h.min_height
-//              ),
-//              'group_end',
-//              (
-//                  SELECT json_agg(row_to_json(t))
-//                  FROM historical_asset_swap_fee t
-//                           JOIN heights h ON t.para_block_height = h.max_height
-//              )
-//      ) AS grouped_result;
-// `;
 
 export const aggregateSwapAssetFeesWithAssetRegistryIdByBlocksRange = `
     WITH heights AS (

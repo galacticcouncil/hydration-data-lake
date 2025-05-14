@@ -141,19 +141,23 @@ export function initStablepoolAssetVolume({
     id: `${poolId}-${asset.id}-${paraBlockHeight}`,
     asset,
     volumesCollection,
-    swapFee: currentVolume?.swapFee || BigInt(0),
-    swapTotalFees:
-      currentVolume?.swapTotalFees || oldVolume?.swapTotalFees || BigInt(0),
-    swapVolumeIn: currentVolume?.swapVolumeIn || BigInt(0),
-    swapVolumeOut: currentVolume?.swapVolumeOut || BigInt(0),
-    swapTotalVolumeIn:
-      currentVolume?.swapTotalVolumeIn ||
-      oldVolume?.swapTotalVolumeIn ||
+    assetFeeVol: currentVolume?.assetFeeVol || BigInt(0),
+    assetFeesTotalVol:
+      currentVolume?.assetFeesTotalVol ||
+      oldVolume?.assetFeesTotalVol ||
       BigInt(0),
-    swapTotalVolumeOut:
-      currentVolume?.swapTotalVolumeOut ||
-      oldVolume?.swapTotalVolumeOut ||
+    assetVolIn: currentVolume?.assetVolIn || BigInt(0),
+    assetVolOut: currentVolume?.assetVolOut || BigInt(0),
+    assetTotalVolIn:
+      currentVolume?.assetTotalVolIn || oldVolume?.assetTotalVolIn || BigInt(0),
+    assetTotalVolOut:
+      currentVolume?.assetTotalVolOut ||
+      oldVolume?.assetTotalVolOut ||
       BigInt(0),
+
+    assetTotalVolInNorm: currentVolume?.assetTotalVolInNorm || '0',
+    assetTotalVolOutNorm: currentVolume?.assetTotalVolOutNorm || '0',
+    assetTotalFeesVolNorm: currentVolume?.assetTotalFeesVolNorm || '0',
 
     relayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
@@ -161,11 +165,11 @@ export function initStablepoolAssetVolume({
     block,
   });
 
-  let swapVolumeIn = BigInt(0);
-  let swapVolumeOut = BigInt(0);
+  let assetVolIn = BigInt(0);
+  let assetVolOut = BigInt(0);
   let routedLiqAddedAmount = BigInt(0);
   let routedLiqRemovedAmount = BigInt(0);
-  let swapFee = BigInt(0);
+  let assetFeeVol = BigInt(0);
   let routedLiqFee = BigInt(0);
 
   if (swap) {
@@ -184,25 +188,25 @@ export function initStablepoolAssetVolume({
     const feesMap = new Map(
       swap.fees.map((feeAssetData) => [feeAssetData.asset.id, feeAssetData])
     );
-    swapVolumeIn = inputsMap.has(newVolume.asset.id)
+    assetVolIn = inputsMap.has(newVolume.asset.id)
       ? inputsMap.get(newVolume.asset.id)!.amount
       : BigInt(0);
-    swapVolumeOut = outputsMap.has(newVolume.asset.id)
+    assetVolOut = outputsMap.has(newVolume.asset.id)
       ? outputsMap.get(newVolume.asset.id)!.amount
       : BigInt(0);
-    swapFee = feesMap.has(newVolume.asset.id)
+    assetFeeVol = feesMap.has(newVolume.asset.id)
       ? feesMap.get(newVolume.asset.id)!.amount
       : BigInt(0);
 
     // Block volumes
-    newVolume.swapVolumeIn += swapVolumeIn;
-    newVolume.swapVolumeOut += swapVolumeOut;
-    newVolume.swapFee += swapFee;
+    newVolume.assetVolIn += assetVolIn;
+    newVolume.assetVolOut += assetVolOut;
+    newVolume.assetFeeVol += assetFeeVol;
 
     // Total/accumulated volumes
-    newVolume.swapTotalVolumeIn += swapVolumeIn;
-    newVolume.swapTotalVolumeOut += swapVolumeOut;
-    newVolume.swapTotalFees += swapFee;
+    newVolume.assetTotalVolIn += assetVolIn;
+    newVolume.assetTotalVolOut += assetVolOut;
+    newVolume.assetFeesTotalVol += assetFeeVol;
   }
 
   if (liquidityActionData) {
@@ -232,14 +236,14 @@ export function initStablepoolAssetVolume({
         : BigInt(0);
 
     // Block volumes
-    newVolume.swapVolumeIn += routedLiqAddedAmount;
-    newVolume.swapVolumeOut += routedLiqRemovedAmount;
-    newVolume.swapFee += routedLiqFee;
+    newVolume.assetVolIn += routedLiqAddedAmount;
+    newVolume.assetVolOut += routedLiqRemovedAmount;
+    newVolume.assetFeeVol += routedLiqFee;
 
     // Total/accumulated volumes
-    newVolume.swapTotalVolumeIn += routedLiqAddedAmount;
-    newVolume.swapTotalVolumeOut += routedLiqRemovedAmount;
-    newVolume.swapTotalFees += routedLiqFee;
+    newVolume.assetTotalVolIn += routedLiqAddedAmount;
+    newVolume.assetTotalVolOut += routedLiqRemovedAmount;
+    newVolume.assetFeesTotalVol += routedLiqFee;
   }
 
   return newVolume;

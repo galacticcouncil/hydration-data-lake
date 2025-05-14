@@ -16,32 +16,44 @@ export function initLbppoolVolume(
     assetA: pool.assetA,
     assetB: pool.assetB,
     averagePrice: 0,
-    assetAVolumeIn: currentVolume?.assetAVolumeIn || BigInt(0),
-    assetAVolumeOut: currentVolume?.assetAVolumeOut || BigInt(0),
-    assetAFee: currentVolume?.assetAFee || BigInt(0),
-    assetATotalFees:
-      currentVolume?.assetATotalFees || oldVolume?.assetATotalFees || BigInt(0),
-    assetATotalVolumeIn:
-      currentVolume?.assetATotalVolumeIn ||
-      oldVolume?.assetATotalVolumeIn ||
+    assetAVolIn: currentVolume?.assetAVolIn || BigInt(0),
+    assetAVolOut: currentVolume?.assetAVolOut || BigInt(0),
+    assetAFeeVol: currentVolume?.assetAFeeVol || BigInt(0),
+    assetAFeesTotalVol:
+      currentVolume?.assetAFeesTotalVol ||
+      oldVolume?.assetAFeesTotalVol ||
       BigInt(0),
-    assetATotalVolumeOut:
-      currentVolume?.assetATotalVolumeOut ||
-      oldVolume?.assetATotalVolumeOut ||
+    assetATotalVolIn:
+      currentVolume?.assetATotalVolIn ||
+      oldVolume?.assetATotalVolIn ||
       BigInt(0),
-    assetBVolumeIn: currentVolume?.assetBVolumeIn || BigInt(0),
-    assetBVolumeOut: currentVolume?.assetBVolumeOut || BigInt(0),
-    assetBFee: currentVolume?.assetBFee || BigInt(0),
-    assetBTotalFees:
-      currentVolume?.assetBTotalFees || oldVolume?.assetBTotalFees || BigInt(0),
-    assetBTotalVolumeIn:
-      currentVolume?.assetBTotalVolumeIn ||
-      oldVolume?.assetBTotalVolumeIn ||
+    assetATotalVolOut:
+      currentVolume?.assetATotalVolOut ||
+      oldVolume?.assetATotalVolOut ||
       BigInt(0),
-    assetBTotalVolumeOut:
-      currentVolume?.assetBTotalVolumeOut ||
-      oldVolume?.assetBTotalVolumeOut ||
+    assetBVolIn: currentVolume?.assetBVolIn || BigInt(0),
+    assetBVolOut: currentVolume?.assetBVolOut || BigInt(0),
+    assetBFeeVol: currentVolume?.assetBFeeVol || BigInt(0),
+    assetBFeesTotalVol:
+      currentVolume?.assetBFeesTotalVol ||
+      oldVolume?.assetBFeesTotalVol ||
       BigInt(0),
+    assetBTotalVolIn:
+      currentVolume?.assetBTotalVolIn ||
+      oldVolume?.assetBTotalVolIn ||
+      BigInt(0),
+    assetBTotalVolOut:
+      currentVolume?.assetBTotalVolOut ||
+      oldVolume?.assetBTotalVolOut ||
+      BigInt(0),
+
+    assetATotalVolInNorm: currentVolume?.assetATotalVolInNorm || '0',
+    assetATotalVolOutNorm: currentVolume?.assetATotalVolOutNorm || '0',
+    assetBTotalVolInNorm: currentVolume?.assetBTotalVolInNorm || '0',
+    assetBTotalVolOutNorm: currentVolume?.assetBTotalVolOutNorm || '0',
+    assetAFeesTotalVolNorm: currentVolume?.assetAFeesTotalVolNorm || '0',
+    assetBFeesTotalVolNorm: currentVolume?.assetBFeesTotalVolNorm || '0',
+
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
     block: swap.event.block,
@@ -51,48 +63,48 @@ export function initLbppoolVolume(
   const swapAssetOutData = swap.outputs[0];
   const swapAssetFeeData = swap.fees[0];
 
-  const assetAVolumeIn =
+  const assetAVolIn =
     swapAssetInData.asset.id === newVolume.assetA.id
       ? swapAssetInData.amount
       : BigInt(0);
-  const assetBVolumeIn =
+  const assetBVolIn =
     swapAssetInData.asset.id === newVolume.assetB.id
       ? swapAssetInData.amount
       : BigInt(0);
 
-  const assetAVolumeOut =
+  const assetAVolOut =
     swapAssetOutData.asset.id === newVolume.assetA.id
       ? swapAssetOutData.amount
       : BigInt(0);
-  const assetBVolumeOut =
+  const assetBVolOut =
     swapAssetOutData.asset.id === newVolume.assetB.id
       ? swapAssetOutData.amount
       : BigInt(0);
 
-  const assetAFee =
+  const assetAFeeVol =
     swapAssetFeeData.asset.id === newVolume.assetA.id
       ? swapAssetFeeData.amount
       : BigInt(0);
-  const assetBFee =
+  const assetBFeeVol =
     swapAssetFeeData.asset.id === newVolume.assetB.id
       ? swapAssetFeeData.amount
       : BigInt(0);
 
-  newVolume.assetAVolumeIn += assetAVolumeIn;
-  newVolume.assetAVolumeOut += assetAVolumeOut;
-  newVolume.assetAFee += assetAFee;
+  newVolume.assetAVolIn += assetAVolIn;
+  newVolume.assetAVolOut += assetAVolOut;
+  newVolume.assetAFeeVol += assetAFeeVol;
 
-  newVolume.assetATotalVolumeIn += assetAVolumeIn;
-  newVolume.assetATotalVolumeOut += assetAVolumeOut;
-  newVolume.assetATotalFees += assetAFee;
+  newVolume.assetATotalVolIn += assetAVolIn;
+  newVolume.assetATotalVolOut += assetAVolOut;
+  newVolume.assetAFeesTotalVol += assetAFeeVol;
 
-  newVolume.assetBVolumeIn += assetBVolumeIn;
-  newVolume.assetBVolumeOut += assetBVolumeOut;
-  newVolume.assetBFee += assetBFee;
+  newVolume.assetBVolIn += assetBVolIn;
+  newVolume.assetBVolOut += assetBVolOut;
+  newVolume.assetBFeeVol += assetBFeeVol;
 
-  newVolume.assetBTotalVolumeIn += assetBVolumeIn;
-  newVolume.assetBTotalVolumeOut += assetBVolumeOut;
-  newVolume.assetBTotalFees += assetBFee;
+  newVolume.assetBTotalVolIn += assetBVolIn;
+  newVolume.assetBTotalVolOut += assetBVolOut;
+  newVolume.assetBFeesTotalVol += assetBFeeVol;
 
   newVolume.averagePrice = calculateAveragePrice({
     swap,

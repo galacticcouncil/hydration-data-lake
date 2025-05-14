@@ -20,22 +20,31 @@ export class OmnipoolAssetVolumeHistoricalData {
   omnipoolAsset!: OmnipoolAsset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetVolumeIn!: bigint
+  assetVolIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetVolumeOut!: bigint
+  assetVolOut!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetTotalVolumeIn!: bigint
+  assetTotalVolIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetTotalVolumeOut!: bigint
+  assetTotalVolOut!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetFee!: bigint
+  assetFeeVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetTotalFees!: bigint
+  assetTotalFeesVol!: bigint
+
+  @Column_("text", {nullable: false})
+  assetTotalVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetTotalVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetTotalFeesVolNorm!: string
 
   @Index_()
   @Column_("int4", {nullable: false})

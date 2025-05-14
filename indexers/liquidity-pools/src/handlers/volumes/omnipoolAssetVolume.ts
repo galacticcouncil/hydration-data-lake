@@ -25,48 +25,53 @@ export function initOmnipoolAssetVolume({
   const newVolume = new OmnipoolAssetVolumeHistoricalData({
     id: omnipoolAsset.id + '-' + swap.paraBlockHeight,
     omnipoolAsset: omnipoolAsset,
-    assetVolumeIn: currentVolume?.assetVolumeIn || BigInt(0),
-    assetVolumeOut: currentVolume?.assetVolumeOut || BigInt(0),
-    assetFee: currentVolume?.assetFee || BigInt(0),
-    assetTotalFees:
-      currentVolume?.assetTotalFees || oldVolume?.assetTotalFees || BigInt(0),
-    assetTotalVolumeIn:
-      currentVolume?.assetTotalVolumeIn ||
-      oldVolume?.assetTotalVolumeIn ||
+    assetVolIn: currentVolume?.assetVolIn || BigInt(0),
+    assetVolOut: currentVolume?.assetVolOut || BigInt(0),
+    assetFeeVol: currentVolume?.assetFeeVol || BigInt(0),
+    assetTotalFeesVol:
+      currentVolume?.assetTotalFeesVol ||
+      oldVolume?.assetTotalFeesVol ||
       BigInt(0),
-    assetTotalVolumeOut:
-      currentVolume?.assetTotalVolumeOut ||
-      oldVolume?.assetTotalVolumeOut ||
+    assetTotalVolIn:
+      currentVolume?.assetTotalVolIn || oldVolume?.assetTotalVolIn || BigInt(0),
+    assetTotalVolOut:
+      currentVolume?.assetTotalVolOut ||
+      oldVolume?.assetTotalVolOut ||
       BigInt(0),
+
+    assetTotalVolInNorm: currentVolume?.assetTotalVolInNorm || '0',
+    assetTotalVolOutNorm: currentVolume?.assetTotalVolOutNorm || '0',
+    assetTotalFeesVolNorm: currentVolume?.assetTotalFeesVolNorm || '0',
+
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
     block: swap.event.block,
   });
 
-  const assetVolumeIn =
+  const assetVolIn =
     swap.inputs[0].asset.id === newVolume.omnipoolAsset.asset.id
       ? swap.inputs[0].amount
       : BigInt(0);
 
-  const assetVolumeOut =
+  const assetVolOut =
     swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
       ? swap.outputs[0].amount
       : BigInt(0);
 
-  const assetFee =
+  const assetFeeVol =
     swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
       ? swap.outputs[0].amount
       : BigInt(0);
 
   // SqdBlock volumes
-  newVolume.assetVolumeIn += assetVolumeIn;
-  newVolume.assetVolumeOut += assetVolumeOut;
-  newVolume.assetFee += assetFee;
+  newVolume.assetVolIn += assetVolIn;
+  newVolume.assetVolOut += assetVolOut;
+  newVolume.assetFeeVol += assetFeeVol;
 
   // Total volumes
-  newVolume.assetTotalVolumeIn += assetVolumeIn;
-  newVolume.assetTotalVolumeOut += assetVolumeOut;
-  newVolume.assetTotalFees += assetFee;
+  newVolume.assetTotalVolIn += assetVolIn;
+  newVolume.assetTotalVolOut += assetVolOut;
+  newVolume.assetTotalFeesVol += assetFeeVol;
 
   return newVolume;
 }

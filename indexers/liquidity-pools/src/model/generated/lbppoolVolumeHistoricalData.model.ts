@@ -32,40 +32,58 @@ export class LbppoolVolumeHistoricalData {
   averagePrice!: number
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetAVolumeIn!: bigint
+  assetAVolIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetAVolumeOut!: bigint
+  assetAVolOut!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetATotalVolumeIn!: bigint
+  assetATotalVolIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetATotalVolumeOut!: bigint
+  assetATotalVolOut!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetAFee!: bigint
+  assetAFeeVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetBFee!: bigint
+  assetBFeeVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetATotalFees!: bigint
+  assetAFeesTotalVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetBTotalFees!: bigint
+  assetBFeesTotalVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetBVolumeIn!: bigint
+  assetBVolIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetBVolumeOut!: bigint
+  assetBVolOut!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetBTotalVolumeIn!: bigint
+  assetBTotalVolIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetBTotalVolumeOut!: bigint
+  assetBTotalVolOut!: bigint
+
+  @Column_("text", {nullable: false})
+  assetATotalVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetATotalVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetBTotalVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetBTotalVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetAFeesTotalVolNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetBFeesTotalVolNorm!: string
 
   @Index_()
   @Column_("int4", {nullable: false})

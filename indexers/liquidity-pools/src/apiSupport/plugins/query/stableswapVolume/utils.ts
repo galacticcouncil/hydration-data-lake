@@ -45,10 +45,10 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
             (assetData) => ({
               assetId: assetData.asset_id,
               assetRegistryId: assetData.asset_registry_id ?? null,
-              swapFee: BigInt(assetData.swap_fee),
-              swapVolume:
-                BigInt(assetData.swap_volume_in) +
-                BigInt(assetData.swap_volume_out),
+              assetFeeVol: BigInt(assetData.asset_fee_vol),
+              assetVol:
+                BigInt(assetData.asset_vol_in) +
+                BigInt(assetData.asset_vol_out),
             })
           );
           return resp;
@@ -65,17 +65,17 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
           resp.assetVolumes.push({
             assetId: startEntityAssetVol.asset_id,
             assetRegistryId: startEntityAssetVol.asset_registry_id ?? null,
-            swapFee:
-              BigInt(endEntityAssetVol.swap_total_fees) -
-              BigInt(startEntityAssetVol.swap_total_fees) +
-              BigInt(startEntityAssetVol.swap_fee),
-            swapVolume:
-              BigInt(endEntityAssetVol.swap_total_volume_in) +
-              BigInt(endEntityAssetVol.swap_total_volume_out) -
-              BigInt(startEntityAssetVol.swap_total_volume_in) -
-              BigInt(startEntityAssetVol.swap_total_volume_out) +
-              BigInt(startEntityAssetVol.swap_volume_in) +
-              BigInt(startEntityAssetVol.swap_volume_out),
+            assetFeeVol:
+              BigInt(endEntityAssetVol.asset_fees_total_vol) -
+              BigInt(startEntityAssetVol.asset_fees_total_vol) +
+              BigInt(startEntityAssetVol.asset_fee_vol),
+            assetVol:
+              BigInt(endEntityAssetVol.asset_total_vol_in) +
+              BigInt(endEntityAssetVol.asset_total_vol_out) -
+              BigInt(startEntityAssetVol.asset_total_vol_in) -
+              BigInt(startEntityAssetVol.asset_total_vol_out) +
+              BigInt(startEntityAssetVol.asset_vol_in) +
+              BigInt(startEntityAssetVol.asset_vol_out),
           });
         }
 
@@ -95,8 +95,8 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
         (asset: { asset_id: string; asset_registry_id: string }) => ({
           assetId: asset.asset_id,
           assetRegistryId: asset.asset_registry_id,
-          swapFee: BigInt(0),
-          swapVolume: BigInt(0),
+          assetFeeVol: BigInt(0),
+          assetVol: BigInt(0),
         })
       ),
     });

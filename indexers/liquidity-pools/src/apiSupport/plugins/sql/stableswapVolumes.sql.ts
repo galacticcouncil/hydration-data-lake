@@ -24,12 +24,12 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                                   'volumes_collection_id', sahv.volumes_collection_id,
                                                   'asset_id', sahv.asset_id,
                                                   'asset_registry_id', a.asset_registry_id,
-                                                  'swap_fee', sahv.swap_fee,
-                                                  'swap_total_fees', sahv.swap_total_fees,
-                                                  'swap_volume_in', sahv.swap_volume_in,
-                                                  'swap_volume_out', sahv.swap_volume_out,
-                                                  'swap_total_volume_in', sahv.swap_total_volume_in,
-                                                  'swap_total_volume_out', sahv.swap_total_volume_out,
+                                                  'asset_fee_vol', sahv.asset_fee_vol,
+                                                  'asset_fees_total_vol', sahv.asset_fees_total_vol,
+                                                  'asset_vol_in', sahv.asset_vol_in,
+                                                  'asset_vol_out', sahv.asset_vol_out,
+                                                  'asset_total_vol_in', sahv.asset_total_vol_in,
+                                                  'asset_total_vol_out', sahv.asset_total_vol_out,
                                                   'para_block_height', sahv.para_block_height,
                                                   'relay_block_height', sahv.relay_block_height
                                           )

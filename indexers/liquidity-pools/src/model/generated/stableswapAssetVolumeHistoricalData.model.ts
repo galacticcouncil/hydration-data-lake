@@ -25,22 +25,31 @@ export class StableswapAssetVolumeHistoricalData {
   asset!: Asset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapFee!: bigint
+  assetFeeVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapTotalFees!: bigint
+  assetFeesTotalVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapVolumeIn!: bigint
+  assetVolIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapVolumeOut!: bigint
+  assetVolOut!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapTotalVolumeIn!: bigint
+  assetTotalVolIn!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  swapTotalVolumeOut!: bigint
+  assetTotalVolOut!: bigint
+
+  @Column_("text", {nullable: false})
+  assetTotalVolInNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetTotalVolOutNorm!: string
+
+  @Column_("text", {nullable: false})
+  assetTotalFeesVolNorm!: string
 
   @Index_()
   @Column_("int4", {nullable: false})

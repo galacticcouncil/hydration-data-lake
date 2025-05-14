@@ -20,25 +20,25 @@ export function omnipoolAssetHistoricalVolumeSelectGraphQLResult({
     'omnipool_asset_id'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_volume_in`,
-    'asset_volume_in'
+    sql.fragment`${tableAlias}.asset_vol_in`,
+    'asset_vol_in'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_total_volume_in`,
-    'asset_total_volume_in'
+    sql.fragment`${tableAlias}.asset_total_vol_in`,
+    'asset_total_vol_in'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_volume_out`,
-    'asset_volume_out'
+    sql.fragment`${tableAlias}.asset_vol_out`,
+    'asset_vol_out'
   );
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_total_volume_out`,
-    'asset_total_volume_out'
+    sql.fragment`${tableAlias}.asset_total_vol_out`,
+    'asset_total_vol_out'
   );
-  sqlBuilder.select(sql.fragment`${tableAlias}.asset_fee`, 'asset_fee');
+  sqlBuilder.select(sql.fragment`${tableAlias}.asset_fee_vol`, 'asset_fee_vol');
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_total_fees`,
-    'asset_total_fees'
+    sql.fragment`${tableAlias}.asset_total_fees_vol`,
+    'asset_total_fees_vol'
   );
   sqlBuilder.select(
     sql.fragment`${tableAlias}.relay_block_height`,

@@ -7,7 +7,7 @@ export const getStableswapAssetSwapFeesByPeriod = `
              SELECT pd."pool_id", asset_id
              FROM pool_data pd, unnest(pd."asset_ids") AS asset_id
          ),
-         asset_fee AS (
+         asset_fee_vol AS (
              SELECT
                  pa."pool_id",
                  pa.asset_id,
@@ -26,7 +26,7 @@ export const getStableswapAssetSwapFeesByPeriod = `
                         'total_fee_amount', af."total_fee_amount"
                 )
         ) AS "asset_amounts"
-    FROM asset_fee af
+    FROM asset_fee_vol af
     GROUP BY af."pool_id";
 `;
 

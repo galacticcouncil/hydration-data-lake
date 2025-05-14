@@ -59,22 +59,22 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
 
         if (group[0].para_block_height === group[1].para_block_height) {
           resp.assetVolume =
-            BigInt(group[0].asset_volume_in) +
-            BigInt(group[0].asset_volume_out);
-          resp.assetFeeVolume = BigInt(group[0].asset_fee);
+            BigInt(group[0].asset_vol_in) +
+            BigInt(group[0].asset_vol_out);
+          resp.assetFeeVolume = BigInt(group[0].asset_fee_vol);
           return resp;
         }
 
         resp.assetVolume =
-          BigInt(group[1].asset_total_volume_in) +
-          BigInt(group[1].asset_total_volume_out) -
-          BigInt(group[0].asset_total_volume_in) -
-          BigInt(group[0].asset_total_volume_out) +
-          BigInt(group[0].asset_volume_in) +
-          BigInt(group[0].asset_volume_out);
+          BigInt(group[1].asset_total_vol_in) +
+          BigInt(group[1].asset_total_vol_out) -
+          BigInt(group[0].asset_total_vol_in) -
+          BigInt(group[0].asset_total_vol_out) +
+          BigInt(group[0].asset_vol_in) +
+          BigInt(group[0].asset_vol_out);
 
         resp.assetFeeVolume =
-          BigInt(group[1].asset_total_fees) - BigInt(group[0].asset_total_fees);
+          BigInt(group[1].asset_total_fees_vol) - BigInt(group[0].asset_total_fees_vol);
         return resp;
       })
       .map((r: OmnipoolAssetVolumeAggregated) => [r.omnipoolAssetId, r])
