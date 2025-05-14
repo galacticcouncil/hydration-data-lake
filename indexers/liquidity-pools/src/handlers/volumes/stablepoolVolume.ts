@@ -142,9 +142,9 @@ export function initStablepoolAssetVolume({
     asset,
     volumesCollection,
     assetFeeVol: currentVolume?.assetFeeVol || BigInt(0),
-    assetFeesTotalVol:
-      currentVolume?.assetFeesTotalVol ||
-      oldVolume?.assetFeesTotalVol ||
+    assetTotalFeesVol:
+      currentVolume?.assetTotalFeesVol ||
+      oldVolume?.assetTotalFeesVol ||
       BigInt(0),
     assetVolIn: currentVolume?.assetVolIn || BigInt(0),
     assetVolOut: currentVolume?.assetVolOut || BigInt(0),
@@ -210,7 +210,7 @@ export function initStablepoolAssetVolume({
     // Total/accumulated volumes
     newVolume.assetTotalVolIn += assetVolIn;
     newVolume.assetTotalVolOut += assetVolOut;
-    newVolume.assetFeesTotalVol += assetFeeVol;
+    newVolume.assetTotalFeesVol += assetFeeVol;
   }
 
   if (liquidityActionData) {
@@ -247,7 +247,7 @@ export function initStablepoolAssetVolume({
     // Total/accumulated volumes
     newVolume.assetTotalVolIn += routedLiqAddedAmount;
     newVolume.assetTotalVolOut += routedLiqRemovedAmount;
-    newVolume.assetFeesTotalVol += routedLiqFee;
+    newVolume.assetTotalFeesVol += routedLiqFee;
   }
 
   return newVolume;

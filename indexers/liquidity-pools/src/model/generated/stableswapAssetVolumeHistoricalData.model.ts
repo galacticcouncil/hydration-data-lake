@@ -28,7 +28,7 @@ export class StableswapAssetVolumeHistoricalData {
   assetFeeVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetFeesTotalVol!: bigint
+  assetTotalFeesVol!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetVolIn!: bigint

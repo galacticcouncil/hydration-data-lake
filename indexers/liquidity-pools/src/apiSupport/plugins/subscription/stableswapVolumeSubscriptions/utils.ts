@@ -48,8 +48,8 @@ export function stableswapAssetHistoricalVolumeSelectGraphQLResult({
   sqlBuilder.select(sql.fragment`${tableAlias}.asset_id`, 'asset_id');
   sqlBuilder.select(sql.fragment`${tableAlias}.asset_fee_vol`, 'asset_fee_vol');
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.asset_fees_total_vol`,
-    'asset_fees_total_vol'
+    sql.fragment`${tableAlias}.asset_total_fees_vol`,
+    'asset_total_fees_vol'
   );
   sqlBuilder.select(
     sql.fragment`${tableAlias}.asset_vol_in`,

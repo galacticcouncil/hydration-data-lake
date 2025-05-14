@@ -81,8 +81,8 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
             assetId: startEntityAssetVol.asset_id,
             assetRegistryId: startEntityAssetVol.asset_registry_id ?? null,
             assetFeeVol:
-              BigInt(endEntityAssetVol.asset_fees_total_vol) -
-              BigInt(startEntityAssetVol.asset_fees_total_vol) +
+              BigInt(endEntityAssetVol.asset_total_fees_vol) -
+              BigInt(startEntityAssetVol.asset_total_fees_vol) +
               BigInt(startEntityAssetVol.asset_fee_vol),
             assetVol:
               BigInt(endEntityAssetVol.asset_total_vol_in) +

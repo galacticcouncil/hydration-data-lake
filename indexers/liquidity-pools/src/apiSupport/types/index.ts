@@ -115,7 +115,7 @@ export type StableswapAssetHistoricalVolumeRaw = {
   asset_registry_id: string;
 
   asset_fee_vol: number;
-  asset_fees_total_vol: number;
+  asset_total_fees_vol: number;
   asset_vol_in: number;
   asset_vol_out: number;
   asset_total_vol_in: number;

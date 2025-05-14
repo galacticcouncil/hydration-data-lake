@@ -30,7 +30,7 @@ export function processStableswapAssetNormalizedVolumes(
     });
 
     assetVolsHistData.assetTotalFeesVolNorm = calcVolumeNormalized({
-      volume: assetVolsHistData.assetFeesTotalVol,
+      volume: assetVolsHistData.assetTotalFeesVol,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });

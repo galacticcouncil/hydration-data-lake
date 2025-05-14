@@ -25,7 +25,7 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                                   'asset_id', sahv.asset_id,
                                                   'asset_registry_id', a.asset_registry_id,
                                                   'asset_fee_vol', sahv.asset_fee_vol,
-                                                  'asset_fees_total_vol', sahv.asset_fees_total_vol,
+                                                  'asset_total_fees_vol', sahv.asset_total_fees_vol,
                                                   'asset_vol_in', sahv.asset_vol_in,
                                                   'asset_vol_out', sahv.asset_vol_out,
                                                   'asset_total_vol_in', sahv.asset_total_vol_in,
