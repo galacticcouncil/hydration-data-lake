@@ -110,7 +110,11 @@ export class StorageResolver {
                 args as unknown as GetPoolAssetInfoInput // TOD fix types
               ) as R;
 
-            if (resp) return resp;
+            if (
+              resp &&
+              this.isFreeBalanceExisting(resp as unknown as AccountData) // TODO fix type casting
+            )
+              return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
@@ -142,7 +146,11 @@ export class StorageResolver {
               args as unknown as GetPoolAssetInfoInput // TOD fix types
             ) as R;
 
-            if (resp) return resp;
+            if (
+              resp &&
+              this.isFreeBalanceExisting(resp as unknown as AccountData) // TODO fix type casting
+            )
+              return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
@@ -175,7 +183,11 @@ export class StorageResolver {
               args as unknown as GetPoolAssetInfoInput // TOD fix types
             ) as R;
 
-            if (resp) return resp;
+            if (
+              resp &&
+              this.isFreeBalanceExisting(resp as unknown as AccountData) // TODO fix type casting
+            )
+              return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
@@ -208,7 +220,11 @@ export class StorageResolver {
               args as unknown as GetPoolAssetInfoInput // TOD fix types
             ) as R;
 
-            if (resp) return resp;
+            if (
+              resp &&
+              this.isFreeBalanceExisting(resp as unknown as AccountData) // TODO fix type casting
+            )
+              return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
             // return (
@@ -227,5 +243,11 @@ export class StorageResolver {
       console.log(e);
     }
     return null;
+  }
+
+  private isFreeBalanceExisting(accountData: AccountData) {
+    if (!accountData || !accountData.free || accountData.free === 0n)
+      return false;
+    return true;
   }
 }
