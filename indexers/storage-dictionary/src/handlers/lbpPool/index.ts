@@ -1,15 +1,15 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
-import { AccountBalances, LbpPool, LbpPoolAssetsData } from '../../model';
+import { AccountBalances, Lbppool, LbppoolAssetsData } from '../../model';
 import { getAssetBalancesMany } from '../balances';
 
 export async function handleLbpPoolsStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
-  const lbpPools: Map<string, LbpPool> = new Map();
-  const lbpPoolAssetsData: Map<string, LbpPoolAssetsData> = new Map();
+  const lbpPools: Map<string, Lbppool> = new Map();
+  const lbpPoolAssetsData: Map<string, LbppoolAssetsData> = new Map();
   const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allPools = await parsers.storage.lbp.getAllPoolData(currentBlockHeader);
@@ -44,11 +44,11 @@ export async function handleLbpPoolsStorage(
   );
 
   for (const poolData of allPools) {
-    const newPoolEntity = new LbpPool({
+    const newPoolEntity = new Lbppool({
       id: `${poolData.poolAddress}-${currentBlockHeader.height}`,
       poolAddress: poolData.poolAddress,
-      paraChainBlockHeight: currentBlockHeader.height,
-      relayChainBlockHeight:
+      paraBlockHeight: currentBlockHeader.height,
+      relayBlockHeight:
         relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
         0,
       assetAId: poolData.assetAId,
@@ -64,10 +64,10 @@ export async function handleLbpPoolsStorage(
       repayTarget: poolData.repayTarget,
     });
 
-    const assetAData = new LbpPoolAssetsData({
+    const assetAData = new LbppoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetAId}-${currentBlockHeader.height}`,
-      paraChainBlockHeight: currentBlockHeader.height,
-      relayChainBlockHeight:
+      paraBlockHeight: currentBlockHeader.height,
+      relayBlockHeight:
         relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
         0,
       assetId: poolData.assetAId,
@@ -77,10 +77,10 @@ export async function handleLbpPoolsStorage(
           `${poolData.poolAddress}-${poolData.assetAId}`
         )?.balances ?? fallbackAccountBalances,
     });
-    const assetBData = new LbpPoolAssetsData({
+    const assetBData = new LbppoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetBId}-${currentBlockHeader.height}`,
-      paraChainBlockHeight: currentBlockHeader.height,
-      relayChainBlockHeight:
+      paraBlockHeight: currentBlockHeader.height,
+      relayBlockHeight:
         relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
         0,
       assetId: poolData.assetBId,

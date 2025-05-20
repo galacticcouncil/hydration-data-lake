@@ -2,41 +2,13 @@ import gql from 'graphql-tag';
 import {
   OmnipoolAssetDataOrderBy,
   OmnipoolAssetDatumFilter,
-  StablepoolFilter,
-  StablepoolsOrderBy,
-  XykPoolFilter,
-  XykPoolsOrderBy,
-  LbpPoolFilter,
-  LbpPoolsOrderBy,
+  StableswapFilter,
+  StableswapsOrderBy,
+  XykpoolFilter,
+  XykpoolsOrderBy,
+  LbppoolFilter,
+  LbppoolsOrderBy,
 } from './types';
-
-// export const GET_OMNIPOOL_BLOCKS_STORAGE_STATE = gql`
-//   query GetOmnipoolBlocksStorageState(
-//     $filter: OmnipoolAssetDatumFilter
-//     $first: Int!
-//     $offset: Int!
-//     $orderBy: [OmnipoolAssetDataOrderBy!]
-//   ) {
-//     omnipoolAssetData(
-//       filter: $filter
-//       orderBy: $orderBy
-//       first: $first
-//       offset: $offset
-//     ) {
-//       nodes {
-//         assetId
-//         assetState
-//         balances
-//         id
-//         paraChainBlockHeight
-//         pool {
-//           poolAddress
-//         }
-//       }
-//       totalCount
-//     }
-//   }
-// `;
 
 export const GET_OMNIPOOL_BLOCKS_STORAGE_STATE = gql`
   query GetOmnipoolBlocksStorageState(
@@ -53,23 +25,16 @@ export const GET_OMNIPOOL_BLOCKS_STORAGE_STATE = gql`
     ) {
       nodes {
         id
-        burnProtocolFee
-        hdxAssetId
-        hubAssetId
-        maxInRatio
-        maxOutRatio
-        minPoolLiquidity
-        minTradingLimit
-        minWithdrawalFee
-        paraChainBlockHeight
         poolAddress
+        hubAssetTradability
+        paraBlockHeight
         omnipoolAssetDataByPoolId {
           nodes {
-            id
             assetId
             assetState
             balances
-            paraChainBlockHeight
+            paraBlockHeight
+            id
           }
         }
       }
@@ -79,45 +44,40 @@ export const GET_OMNIPOOL_BLOCKS_STORAGE_STATE = gql`
 `;
 
 export const GET_LBPPOOL_BLOCKS_STORAGE_STATE = gql`
-  query GetLbpPoolBlocksStorageState(
-    $filter: LbpPoolFilter
+  query GetLbppoolBlocksStorageState(
+    $filter: LbppoolFilter
     $first: Int!
     $offset: Int!
-    $orderBy: [LbpPoolsOrderBy!]
+    $orderBy: [LbppoolsOrderBy!]
   ) {
-    lbpPools(
+    lbppools(
       filter: $filter
       orderBy: $orderBy
       first: $first
       offset: $offset
     ) {
       nodes {
+        id
         assetAId
         assetBId
-        end
         fee
-        feeCollector
-        finalWeight
-        id
-        initialWeight
-        maxInRatio
-        maxOutRatio
-        minPoolLiquidity
-        minTradingLimit
-        owner
-        poolAddress
-        paraChainBlockHeight
-        repayFee
-        repayTarget
         start
+        end
         weightCurve
-        lbpPoolAssetsDataByPoolId {
+        initialWeight
+        finalWeight
+        feeCollector
+        repayTarget
+        repayFee
+        poolAddress
+        owner
+        lbppoolAssetsDataByPoolId {
           nodes {
             id
             assetId
             poolId
             balances
-            paraChainBlockHeight
+            paraBlockHeight
           }
         }
       }
@@ -127,37 +87,31 @@ export const GET_LBPPOOL_BLOCKS_STORAGE_STATE = gql`
 `;
 
 export const GET_XYKPOOL_BLOCKS_STORAGE_STATE = gql`
-  query GetXykPoolBlocksStorageState(
-    $filter: XykPoolFilter
+  query GetXykpoolBlocksStorageState(
+    $filter: XykpoolFilter
     $first: Int!
     $offset: Int!
-    $orderBy: [XykPoolsOrderBy!]
+    $orderBy: [XykpoolsOrderBy!]
   ) {
-    xykPools(
+    xykpools(
       filter: $filter
       orderBy: $orderBy
       first: $first
       offset: $offset
     ) {
       nodes {
-        id
-        poolAddress
         assetAId
         assetBId
-        exchangeFee
-        maxInRatio
-        maxOutRatio
-        minPoolLiquidity
-        minTradingLimit
-        nativeAssetId
-        oracleSource
-        paraChainBlockHeight
-        xykPoolAssetsDataByPoolId {
+        id
+        paraBlockHeight
+        poolAddress
+        shareTokenId
+        xykpoolAssetsDataByPoolId {
           nodes {
             assetId
             balances
             id
-            paraChainBlockHeight
+            paraBlockHeight
             poolId
           }
         }
@@ -168,42 +122,39 @@ export const GET_XYKPOOL_BLOCKS_STORAGE_STATE = gql`
 `;
 
 export const GET_STABLEPOOL_BLOCKS_STORAGE_STATE = gql`
-  query GetStablepoolBlocksStorageState(
-    $filter: StablepoolFilter
+  query GetStableswapBlocksStorageState(
+    $filter: StableswapFilter
     $first: Int!
     $offset: Int!
-    $orderBy: [StablepoolsOrderBy!]
+    $orderBy: [StableswapsOrderBy!]
   ) {
-    stablepools(
+    stableswaps(
       filter: $filter
       orderBy: $orderBy
       first: $first
       offset: $offset
     ) {
       nodes {
-        id
-        poolId
-        poolAddress
-        amplificationRange
         fee
         finalAmplification
         finalBlock
+        id
         initialAmplification
         initialBlock
-        maxInRatio
-        maxOutRatio
-        minPoolLiquidity
-        minTradingLimit
-        paraChainBlockHeight
-        stablepoolAssetDataByPoolId {
+        paraBlockHeight
+        poolAddress
+        poolId
+        pegs
+        pegSources
+        maxPegUpdate
+        stableswapAssetDataByPoolId {
           nodes {
             id
             assetId
-            peg
-            tradable
             balances
             poolId
-            paraChainBlockHeight
+            tradable
+            paraBlockHeight
           }
         }
       }

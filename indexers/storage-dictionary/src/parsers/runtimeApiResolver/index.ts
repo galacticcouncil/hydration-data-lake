@@ -1,5 +1,7 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
+  AaveTradeExecutorPoolDataWithPoolId,
+  AaveTradeExecutorPoolsInput,
   CurrenciesApiAccountInput,
   CurrenciesApiAccountsInput,
   RuntimeApiMethodName,
@@ -35,6 +37,13 @@ export class RuntimeApiResolver {
           }
 
           break;
+        case RuntimeApiName.AaveTradeExecutor:
+          if (apiMethod === RuntimeApiMethodName.pools) {
+            return (await this.handleAaveTradeExecutorPoolsCall(
+              args as AaveTradeExecutorPoolsInput
+            )) as R;
+          }
+          break;
 
         default:
           return null;
@@ -42,6 +51,7 @@ export class RuntimeApiResolver {
     } catch (e) {
       // @ts-ignore
       if (e.message) console.log(e.message);
+      // console.log(e);
       return null;
     }
 
@@ -85,5 +95,15 @@ export class RuntimeApiResolver {
       feeFrozen: BigInt(0),
       flags: BigInt(0),
     };
+  }
+
+  async handleAaveTradeExecutorPoolsCall(
+    args: AaveTradeExecutorPoolsInput
+  ): Promise<AaveTradeExecutorPoolDataWithPoolId[] | null> {
+    const runtimeApiResp =
+      await runtimeApiCalls.aaveTradeExecutor.getPools(args);
+    if (!runtimeApiResp) return null;
+
+    return runtimeApiResp;
   }
 }

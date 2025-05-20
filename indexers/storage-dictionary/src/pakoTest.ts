@@ -44,10 +44,10 @@ const payload = [
     id: '0x00d7288f8cf3952a5233c6078acb85b4091e55f034e0ca2398d0ae0d0c480a51-6389493',
     assetBId: 1000091,
     assetAId: 1000524,
-    paraChainBlockHeight: 6389493,
+    paraBlockHeight: 6389493,
     poolAddress:
       '0x00d7288f8cf3952a5233c6078acb85b4091e55f034e0ca2398d0ae0d0c480a51',
-    relayChainBlockHeight: 23395539,
+    relayBlockHeight: 23395539,
     xykPoolAssetsDataByPoolId: {
       nodes: [
         {
@@ -61,10 +61,10 @@ const payload = [
             miscFrozen: '0',
           },
           id: '0x00d7288f8cf3952a5233c6078acb85b4091e55f034e0ca2398d0ae0d0c480a51-1000091-6389493',
-          paraChainBlockHeight: 6389493,
+          paraBlockHeight: 6389493,
           poolId:
             '0x00d7288f8cf3952a5233c6078acb85b4091e55f034e0ca2398d0ae0d0c480a51-6389493',
-          relayChainBlockHeight: 23395539,
+          relayBlockHeight: 23395539,
         },
         {
           assetId: 1000524,
@@ -77,10 +77,10 @@ const payload = [
             miscFrozen: '0',
           },
           id: '0x00d7288f8cf3952a5233c6078acb85b4091e55f034e0ca2398d0ae0d0c480a51-1000524-6389493',
-          paraChainBlockHeight: 6389493,
+          paraBlockHeight: 6389493,
           poolId:
             '0x00d7288f8cf3952a5233c6078acb85b4091e55f034e0ca2398d0ae0d0c480a51-6389493',
-          relayChainBlockHeight: 23395539,
+          relayBlockHeight: 23395539,
         },
       ],
     },

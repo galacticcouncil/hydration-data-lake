@@ -1,4 +1,4 @@
-import { AccountBalances, AssetType } from '../../model';
+import { AccountBalances, AssetType, EmaOraclePeriod } from '../../model';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
 export interface AccountData {
@@ -104,6 +104,84 @@ export type AccountDataMultiple = Array<{
   data: AccountData;
 }>;
 
+export interface TokenTotalIssuance {
+  tokenId: string;
+  amount: bigint | null;
+}
+
+export interface BondDetails {
+  bondId: number;
+  underlyingAsset: number;
+  maturity: bigint;
+}
+
+export type DynamicFeesParams = {
+  minFee: number;
+  maxFee: number;
+  decay: bigint;
+  amplification: bigint;
+};
+
+export interface DynamicFeesConstants {
+  assetFeeParameters: DynamicFeesParams | null;
+  protocolFeeParameters: DynamicFeesParams | null;
+}
+
+export type EmaOracleEntryPriceRatio = {
+  n: bigint;
+  d: bigint;
+};
+export type EmaOracleEntryVolume = {
+  aIn: bigint;
+  bOut: bigint;
+  aOut: bigint;
+  bIn: bigint;
+};
+export type EmaOracleEntryLiquidity = {
+  a: bigint;
+  b: bigint;
+};
+
+export interface EmaOracleEntryData {
+  source: string;
+  assetIds: number[];
+  period: EmaOraclePeriod;
+  price: EmaOracleEntryPriceRatio;
+  volume: EmaOracleEntryVolume;
+  liquidity: EmaOracleEntryLiquidity;
+  updatedAt: number;
+}
+
+export interface AssetDynamicFeeData {
+  assetId: number;
+  assetFee: number;
+  protocolFee: number;
+  timestamp: number;
+}
+
+export interface StablepoolAssetState {
+  tradable: OmnipoolAssetTradability;
+}
+
+export type StableswapPegSource = {
+  sourceKind: 'Oracle' | 'Value';
+  oracleName?: string;
+  oraclePeriod?: EmaOraclePeriod;
+  oracleAsset?: number;
+  valuePoints?: [bigint, bigint];
+};
+
+export interface StablepoolPoolPegsInfo {
+  source: StableswapPegSource[];
+  maxPegUpdate: number;
+  current: [bigint, bigint][];
+}
+
+export interface StablepoolPoolPegsInfoWithPoolId
+  extends StablepoolPoolPegsInfo {
+  poolId: number;
+}
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
@@ -113,5 +191,64 @@ export type AccountDataMultiple = Array<{
 export type GetAssetBalancesInput = {
   address: string;
   assetId: number;
+  block: BlockHeader;
+};
+
+export type TokensGetTokenTotalIssuanceInput = {
+  tokenId: number;
+  block: BlockHeader;
+};
+
+export type TokensGetTokensTotalIssuanceInput = {
+  tokenIds: Array<number | string>;
+  block: BlockHeader;
+};
+
+export type GetEmaOraclesInput = {
+  block: BlockHeader;
+};
+
+export type GetAssetsDynamicFeesAllInput = {
+  block: BlockHeader;
+};
+
+export type GetBondByIdInput = {
+  bondId: number;
+  block: BlockHeader;
+};
+
+export type GetBondsAllInput = {
+  block: BlockHeader;
+};
+
+export type OmnipoolGetPoolDataInput = {
+  poolAddress: string;
+  block: BlockHeader;
+};
+
+export type OmnipoolGetAssetDataInput = {
+  assetId: number;
+  block: BlockHeader;
+};
+export type OmnipoolGetAllAssetIdsInput = {
+  block: BlockHeader;
+};
+export type OmnipoolGetHubAssetTradabilityInput = {
+  block: BlockHeader;
+};
+
+export type GetPoolAssetInfoInput = {
+  poolId?: number;
+  poolAddress?: string;
+  assetId: number;
+  block: BlockHeader;
+};
+
+export type StablepoolGetAllPoolIdsInput = {
+  block: BlockHeader;
+};
+
+export type StablepoolGetPoolPegsInput = {
+  poolId: number;
   block: BlockHeader;
 };

@@ -4,7 +4,7 @@ import { processor, ProcessorContext } from './processor';
 import { BatchState } from './utils/batchState';
 import { AppConfig } from './appConfig';
 import { handleXykPoolsStorage } from './handlers/xykPool';
-import { handleOmnipoolStorage } from './handlers/omnipoolPool';
+import { handleOmnipoolStorage } from './handlers/omnipool';
 import { handleStablepoolStorage } from './handlers/stablepool';
 import * as crypto from 'node:crypto';
 import { SubProcessorStatusManager } from './utils/subProcessorStatusManager';
@@ -17,6 +17,9 @@ import {
   waitForAssetsActualisation,
 } from './handlers/asset/assetRegistry';
 import { handleRelayChainInfo } from './handlers/relayChainInfo';
+import { handleAssetsStorage } from './handlers/asset/historicalData';
+import { handleOracles } from './handlers/oracles/emaOracle';
+import { handleAavePoolsStorage } from './handlers/aavePool/historicalData';
 
 const appConfig = AppConfig.getInstance();
 
@@ -97,6 +100,20 @@ processor.run(
               ctxWithBatchState as ProcessorContext<Store>,
               block.header
             );
+          if (appConfig.PROCESS_GENERIC_HIST_DATA) {
+            await handleAssetsStorage(
+              ctxWithBatchState as ProcessorContext<Store>,
+              block.header
+            );
+            await handleOracles(
+              ctxWithBatchState as ProcessorContext<Store>,
+              block.header
+            );
+            await handleAavePoolsStorage(
+              ctxWithBatchState as ProcessorContext<Store>,
+              block.header
+            );
+          }
         })
       );
       console.timeEnd(

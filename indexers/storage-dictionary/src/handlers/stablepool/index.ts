@@ -3,10 +3,10 @@ import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
 import {
   AccountBalances,
-  Stablepool,
-  StablepoolAssetData,
-  XykPool,
-  XykPoolAssetsData,
+  Stableswap,
+  StableswapAssetData,
+  StableswapPegsSource,
+  Tradability,
 } from '../../model';
 import { getAssetBalancesMany } from '../balances';
 import { StableMath } from '@galacticcouncil/sdk';
@@ -16,8 +16,8 @@ export async function handleStablepoolStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
-  const stablepools: Map<string, Stablepool> = new Map();
-  const stablepoolAssetsData: Map<string, StablepoolAssetData> = new Map();
+  const stablepools: Map<string, Stableswap> = new Map();
+  const stablepoolAssetsData: Map<string, StableswapAssetData> = new Map();
   const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allPools = (
@@ -26,6 +26,39 @@ export async function handleStablepoolStorage(
     ...poolData,
     poolAddress: blake2AsHex(StableMath.getPoolAddress(poolData.poolId)),
   }));
+
+  const allPoolsPegsDataMap = new Map(
+    (
+      await parsers.storage.stableswap.getAllPoolsPegs({
+        block: currentBlockHeader,
+      })
+    ).map((pegData) => [pegData.poolId, pegData])
+  );
+
+  const assetsStorageDataByPoolMap = new Map(
+    (
+      await Promise.all(
+        [...allPools.values()]
+          .map((pool) =>
+            pool.assetIds.map(async (assetId) => ({
+              poolId: pool.poolId,
+              poolAddress: blake2AsHex(StableMath.getPoolAddress(pool.poolId)),
+              assetId,
+              storageData:
+                await parsers.storage.stableswap.getPoolAssetStorageData({
+                  poolId: pool.poolId,
+                  assetId,
+                  block: currentBlockHeader,
+                  poolAddress: blake2AsHex(
+                    StableMath.getPoolAddress(pool.poolId)
+                  ),
+                }),
+            }))
+          )
+          .flat()
+      )
+    ).map((res) => [`${res.poolAddress}-${res.assetId}`, res])
+  );
 
   const fallbackAccountBalances = new AccountBalances({
     free: BigInt(0),
@@ -63,9 +96,49 @@ export async function handleStablepoolStorage(
     fee,
     assetIds,
   } of allPools) {
-    const newPoolEntity = new Stablepool({
+    const getPoolPegsDetails = (): Pick<
+      Stableswap,
+      'pegs' | 'maxPegUpdate' | 'pegSources'
+    > => {
+      if (!allPoolsPegsDataMap.has(poolId))
+        return {
+          pegs: assetIds.map((a) => [BigInt(1), BigInt(1)]),
+          maxPegUpdate: null,
+          pegSources: null,
+        };
+
+      const poolPegsData = allPoolsPegsDataMap.get(poolId)!;
+      return {
+        pegs: poolPegsData.current,
+        maxPegUpdate: poolPegsData.maxPegUpdate,
+        pegSources: poolPegsData.source.map(
+          ({
+            sourceKind,
+            oracleName = null,
+            oraclePeriod = null,
+            oracleAsset = null,
+            valuePoints = null,
+          }) =>
+            new StableswapPegsSource({
+              sourceKind,
+              oracleName,
+              oraclePeriod,
+              oracleAsset: oracleAsset !== null ? oracleAsset.toString() : null,
+              valuePoints: valuePoints
+                ? valuePoints.map((vp) => vp.toString())
+                : null,
+            })
+        ),
+      };
+    };
+
+    const newPoolEntity = new Stableswap({
       id: `${poolId}-${currentBlockHeader.height}`,
-      paraChainBlockHeight: currentBlockHeader.height,
+      paraBlockHeight: currentBlockHeader.height,
+      relayBlockHeight:
+        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
+        0,
+      ...getPoolPegsDetails(),
       poolAddress,
       poolId,
       initialAmplification,
@@ -78,13 +151,17 @@ export async function handleStablepoolStorage(
     for (const assetId of assetIds) {
       stablepoolAssetsData.set(
         `${poolId}-${assetId}-${currentBlockHeader.height}`,
-        new StablepoolAssetData({
+        new StableswapAssetData({
           id: `${poolId}-${assetId}-${currentBlockHeader.height}`,
-          paraChainBlockHeight: currentBlockHeader.height,
-          relayChainBlockHeight:
+          paraBlockHeight: currentBlockHeader.height,
+          relayBlockHeight:
             relayChainInfo.get(currentBlockHeader.height)
               ?.relaychainBlockNumber || 0,
           assetId: assetId,
+          tradable: new Tradability(
+            assetsStorageDataByPoolMap.get(`${poolAddress}-${assetId}`)
+              ?.storageData?.tradable ?? { bits: 15 }
+          ),
           pool: newPoolEntity,
           balances:
             allPoolAssetBalancesMap.get(`${poolAddress}-${assetId}`)

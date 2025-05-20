@@ -1,15 +1,15 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
-import { AccountBalances, XykPool, XykPoolAssetsData } from '../../model';
+import { AccountBalances, Xykpool, XykpoolAssetsData } from '../../model';
 import { getAssetBalancesMany } from '../balances';
 
 export async function handleXykPoolsStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
-  const xykPools: Map<string, XykPool> = new Map();
-  const xykPoolAssetsData: Map<string, XykPoolAssetsData> = new Map();
+  const xykPools: Map<string, Xykpool> = new Map();
+  const xykPoolAssetsData: Map<string, XykpoolAssetsData> = new Map();
   const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allPoolsWithAssets =
@@ -46,21 +46,21 @@ export async function handleXykPoolsStorage(
   );
 
   for (const poolData of allPoolsWithAssets) {
-    const newPoolEntity = new XykPool({
+    const newPoolEntity = new Xykpool({
       id: `${poolData.poolAddress}-${currentBlockHeader.height}`,
       poolAddress: poolData.poolAddress,
-      paraChainBlockHeight: currentBlockHeader.height,
-      relayChainBlockHeight:
+      paraBlockHeight: currentBlockHeader.height,
+      relayBlockHeight:
         relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
         0,
       assetAId: poolData.assetAId,
       assetBId: poolData.assetBId,
     });
 
-    const assetAData = new XykPoolAssetsData({
+    const assetAData = new XykpoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetAId}-${currentBlockHeader.height}`,
-      paraChainBlockHeight: currentBlockHeader.height,
-      relayChainBlockHeight:
+      paraBlockHeight: currentBlockHeader.height,
+      relayBlockHeight:
         relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
         0,
       assetId: poolData.assetAId,
@@ -70,10 +70,10 @@ export async function handleXykPoolsStorage(
           `${poolData.poolAddress}-${poolData.assetAId}`
         )?.balances ?? fallbackAccountBalances,
     });
-    const assetBData = new XykPoolAssetsData({
+    const assetBData = new XykpoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetBId}-${currentBlockHeader.height}`,
-      paraChainBlockHeight: currentBlockHeader.height,
-      relayChainBlockHeight:
+      paraBlockHeight: currentBlockHeader.height,
+      relayBlockHeight:
         relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
         0,
       assetId: poolData.assetBId,

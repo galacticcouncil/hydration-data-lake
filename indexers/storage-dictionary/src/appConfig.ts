@@ -61,7 +61,7 @@ export class AppConfig {
   /**
    * Maximum number of ongoing concurrent requests
    */
-  readonly RPC_CAPACITY: number = 1_000;
+  readonly RPC_CAPACITY: number = 400;
   /**
    * Maximum number of requests per second
    */
@@ -91,6 +91,9 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_STABLEPOOLS: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly PROCESS_GENERIC_HIST_DATA: boolean = true;
 
   @IsString()
   readonly OMNIPOOL_ADDRESS: string =

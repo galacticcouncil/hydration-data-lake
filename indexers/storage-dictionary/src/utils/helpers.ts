@@ -2,7 +2,9 @@ import lodashCamelCase from 'lodash.camelcase';
 import { AppConfig } from '../appConfig';
 import { NodeEnv } from './types';
 import { join } from 'path';
-import { hexToString } from '@polkadot/util';
+import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { HYDRADX_SS58_PREFIX } from '@galacticcouncil/sdk';
 
 const appConfig = AppConfig.getInstance();
 
@@ -38,4 +40,23 @@ export function* splitIntoBatches<T>(
     }
     yield list.slice(offset);
   }
+}
+
+export function getAavePoolAddress(
+  reserve: string | number,
+  atoken: string | number,
+  prefix?: number // HYDRADX_SS58_PREFIX
+): string {
+  const id = reserve + '/' + atoken;
+
+  if (prefix) return encodeAddress(stringToU8a(id.padEnd(32, '\0')), prefix);
+
+  return u8aToHex(decodeAddress(stringToU8a(id.padEnd(32, '\0'))));
+}
+
+export function publicKeyToSs58(
+  key: string,
+  prefix: number = HYDRADX_SS58_PREFIX
+): string {
+  return encodeAddress(hexToU8a(key), prefix);
 }

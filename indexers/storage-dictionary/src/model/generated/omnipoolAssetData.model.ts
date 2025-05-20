@@ -11,7 +11,7 @@ export class OmnipoolAssetData {
   }
 
   /**
-   * omnipooAddress-assetId-paraChainBlockHeight
+   * omnipooAddress-assetId-paraBlockHeight
    */
   @PrimaryColumn_()
   id!: string
@@ -32,9 +32,9 @@ export class OmnipoolAssetData {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Index_()
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 }

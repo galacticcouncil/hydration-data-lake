@@ -16,11 +16,12 @@ export async function getAccount({
 }: CurrenciesApiAccountInput): Promise<CurrenciesApiAccountData> {
   const decoders = ScaleCodecManager.getInstance().decoders;
 
-  if (block.specVersion === 264) {
+  if (block.specVersion >= 264) {
     return decoders.v264.CurrenciesApi.account.dec(
       await block._runtime.rpc.call(`state_call`, [
         'CurrenciesApi_account',
         u8aToHex(u32.enc(assetId)) + address.substring(2),
+        block.hash,
       ])
     );
   }
@@ -34,12 +35,13 @@ export async function getAccounts({
 }: CurrenciesApiAccountsInput): Promise<CurrenciesApiAccountsData> {
   const decoders = ScaleCodecManager.getInstance().decoders;
 
-  if (block.specVersion === 264) {
+  if (block.specVersion >= 264) {
     return decoders.v264.CurrenciesApi.accounts
       .dec(
         await block._runtime.rpc.call(`state_call`, [
           'CurrenciesApi_accounts',
           address,
+          block.hash,
         ])
       )
       .map(([assetId, data]) => ({

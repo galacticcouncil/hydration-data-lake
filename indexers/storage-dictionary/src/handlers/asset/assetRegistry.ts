@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { Asset, AssetType, SubProcessorStatus } from '../../model';
 import parsers from '../../parsers';
 import { SubProcessorStatusManager } from '../../utils/subProcessorStatusManager';
+import { AssetDetails } from '../../parsers/types/storage';
 
 export async function getAsset({
   ctx,
@@ -44,7 +45,6 @@ export async function getAsset({
     id: `${id}`,
     name: storageData.name,
     assetType: storageData.assetType,
-    existentialDeposit: storageData.existentialDeposit,
     symbol: storageData.symbol ?? null,
     decimals: storageData.decimals ?? null,
     xcmRateLimit: storageData.xcmRateLimit ?? null,
@@ -61,28 +61,143 @@ export async function getAsset({
   return newAsset;
 }
 
+export async function createAsset({
+  id,
+  blockHeader,
+  ctx,
+  assetStorageData,
+}: {
+  id: string | number;
+  blockHeader: Block;
+  ctx: ProcessorContext<Store>;
+  assetStorageData?: AssetDetails;
+}) {
+  const storageData =
+    assetStorageData ||
+    (await parsers.storage.assetRegistry.getAsset(+id, blockHeader));
+
+  if (!storageData) return null;
+
+  let bondUnderlyingAsset = null;
+  let bondMaturity = null;
+
+  if (storageData.assetType === AssetType.Bond) {
+    const bondDetails = await parsers.storage.bonds.getBond({
+      bondId: +id,
+      block: blockHeader,
+    });
+    if (bondDetails) {
+      bondUnderlyingAsset = await getOrCreateAsset({
+        id: bondDetails.underlyingAsset,
+        ctx,
+        ensure: true,
+        blockHeader,
+      });
+      bondMaturity = bondDetails.maturity;
+    }
+  }
+
+  const getDecimals = () => {
+    if (storageData.assetType !== AssetType.Bond)
+      return storageData.decimals ?? null;
+    if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
+    return null;
+  };
+
+  const getSymbol = () => {
+    if (storageData.assetType !== AssetType.Bond)
+      return storageData.symbol ?? null;
+    if (bondUnderlyingAsset)
+      return bondUnderlyingAsset.symbol
+        ? `${bondUnderlyingAsset.symbol}b`
+        : null;
+    return null;
+  };
+
+  const newAsset = new Asset({
+    id: `${id}`,
+    name: storageData.name,
+    assetType: storageData.assetType,
+    symbol: getSymbol(),
+    decimals: getDecimals(),
+    xcmRateLimit: storageData.xcmRateLimit ?? null,
+    isSufficient: storageData.isSufficient ?? true,
+    bondUnderlyingAsset,
+    bondMaturity,
+  });
+
+  await ctx.store.save(newAsset);
+
+  ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
+
+  return newAsset;
+}
+
+export async function getOrCreateAsset({
+  id,
+  ensure = false,
+  blockHeader,
+  ctx,
+}: {
+  id: string | number;
+  ensure?: boolean;
+  blockHeader?: Block;
+  ctx: ProcessorContext<Store>;
+}): Promise<Asset | null> {
+  const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
+
+  let asset = assetsAllBatch.get(`${id}`);
+
+  if (asset) return asset;
+
+  asset = await ctx.store.findOne(Asset, {
+    where: {
+      id: `${id}`,
+    },
+  });
+
+  if (asset) {
+    ctx.batchState.state.assetsAllBatch.set(asset.id, asset);
+    return asset;
+  }
+
+  if (!asset && !ensure) return null;
+
+  /**
+   * Following logic below is implemented and will be used only if indexer
+   * has been started not from genesis block and some assets have not been
+   * pre-created before indexing start point.
+   */
+
+  if (!blockHeader) return null;
+
+  const newAsset = await createAsset({
+    id,
+    ctx,
+    blockHeader,
+  });
+
+  return newAsset;
+}
+
 export async function prefetchAllAssets(ctx: ProcessorContext<Store>) {
   ctx.batchState.state = {
     assetsAllBatch: new Map(
-      (await ctx.store.find(Asset, { where: {} })).map((asset) => [
-        asset.id,
-        asset,
-      ])
+      (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
     ),
   };
 }
 
 export async function ensureNativeToken(ctx: ProcessorContext<Store>) {
-  let nativeToken = await getAsset({ ctx, id: 0 });
+  let nativeToken = await getOrCreateAsset({ ctx, id: 0 });
   if (nativeToken) return;
 
   nativeToken = new Asset({
-    id: '0',
+    id: `0`,
     name: 'Hydration',
     assetType: AssetType.Token,
-    decimals: 12,
-    existentialDeposit: BigInt('1000000000000'),
     symbol: 'HDX',
+    decimals: 12,
     xcmRateLimit: null,
     isSufficient: true,
   });
@@ -90,9 +205,6 @@ export async function ensureNativeToken(ctx: ProcessorContext<Store>) {
   await ctx.store.upsert(nativeToken);
   const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
   assetsAllBatch.set(nativeToken.id, nativeToken);
-  ctx.batchState.state = {
-    assetsAllBatch,
-  };
 }
 
 /**
@@ -110,6 +222,14 @@ export async function waitForAssetsActualisation(
 
   const procStatus = await statusManager.getStatus();
 
+  /**
+   * Waiting will stop after first processed and saved blocks batch by assets
+   * tracker processor. This should be enough to have in DB all necessary assets
+   * for all sub-processors, including that one, which is processing last chunk of
+   * blocks (from <last_chunk_start_block> to -1). It means that assets
+   * tracker processor must start at <last_chunk_start_block> as well to cover
+   * this processor data requirements.
+   */
   if (
     !!procStatus.assetsActualisedAtBlock &&
     procStatus.assetsActualisedAtBlock > 0
@@ -158,48 +278,47 @@ export async function actualiseAssets(
 
   // if (ctx.blocks[0].header.height < latestActualisationPoint + 100) return;
 
-  const allExistingAssets = new Map(
-    (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
-  );
+  // const allExistingAssets = new Map(
+  //   (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
+  // );
 
   const storageData = await parsers.storage.assetRegistry.getAssetsAll(
-    ctx.blocks[0].header
+    ctx.blocks[ctx.blocks.length - 1].header
   );
-  const assetsToUpdate: Asset[] = [];
+  // const assetsToUpdate: Asset[] = [];
 
   for (const assetStorageData of storageData) {
     if (!assetStorageData.data) continue;
 
-    const {
-      name,
-      assetType,
-      existentialDeposit,
-      symbol,
-      decimals,
-      xcmRateLimit,
-      isSufficient,
-    } = assetStorageData.data;
-
-    const assetEntity = new Asset({
-      id: `${assetStorageData.assetId}`,
-      name: name,
-      assetType: assetType,
-      existentialDeposit: existentialDeposit,
-      symbol: symbol ?? null,
-      decimals: decimals ?? null,
-      xcmRateLimit: xcmRateLimit ?? null,
-      isSufficient: isSufficient ?? true,
+    await createAsset({
+      id: assetStorageData.assetId,
+      ctx,
+      blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+      assetStorageData: assetStorageData.data,
     });
 
-    assetsToUpdate.push(assetEntity);
-    allExistingAssets.set(assetEntity.id, assetEntity);
+    // const { name, assetType, symbol, decimals, xcmRateLimit, isSufficient } =
+    //   assetStorageData.data;
+    //
+    // const assetEntity = new Asset({
+    //   id: `${assetStorageData.assetId}`,
+    //   name: name,
+    //   assetType: assetType,
+    //   symbol: symbol ?? null,
+    //   decimals: decimals ?? null,
+    //   xcmRateLimit: xcmRateLimit ?? null,
+    //   isSufficient: isSufficient ?? true,
+    // });
+    //
+    // assetsToUpdate.push(assetEntity);
+    // allExistingAssets.set(assetEntity.id, assetEntity);
   }
 
-  await ctx.store.upsert(assetsToUpdate);
+  // await ctx.store.upsert(assetsToUpdate);
 
-  ctx.batchState.state = {
-    assetsAllBatch: allExistingAssets,
-  };
+  // ctx.batchState.state = {
+  //   assetsAllBatch: allExistingAssets,
+  // };
 
   await statusManager.setSubProcessorStatus({
     assetsActualisedAtBlock: ctx.blocks[0].header.height,

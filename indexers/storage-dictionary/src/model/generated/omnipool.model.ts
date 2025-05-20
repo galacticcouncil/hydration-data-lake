@@ -1,5 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
+import {Tradability} from "./_tradability"
 import {OmnipoolAssetData} from "./omnipoolAssetData.model"
 
 @Entity_()
@@ -9,7 +10,7 @@ export class Omnipool {
   }
 
   /**
-   * omnipoolId-paraChainBlockHeight
+   * omnipoolId-paraBlockHeight
    */
   @PrimaryColumn_()
   id!: string
@@ -18,37 +19,16 @@ export class Omnipool {
   @Column_("text", {nullable: false})
   poolAddress!: string
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  maxInRatio!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  maxOutRatio!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  minTradingLimit!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  minPoolLiquidity!: bigint
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  minWithdrawalFee!: bigint
-
-  @Column_("int4", {nullable: false})
-  burnProtocolFee!: number
-
-  @Column_("int4", {nullable: false})
-  hdxAssetId!: number
-
-  @Column_("int4", {nullable: false})
-  hubAssetId!: number
+  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new Tradability(undefined, marshal.nonNull(obj))}, nullable: false})
+  hubAssetTradability!: Tradability
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Index_()
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 
   @OneToMany_(() => OmnipoolAssetData, e => e.pool)
   assets!: OmnipoolAssetData[]

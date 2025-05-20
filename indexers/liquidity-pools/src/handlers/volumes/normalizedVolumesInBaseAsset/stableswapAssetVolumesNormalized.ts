@@ -61,9 +61,6 @@ export function processStableswapAssetNormalizedVolumes(
         assetVolsHistData.volumesCollection.id
       );
 
-    console.log('poolVolsHistData');
-    console.dir(poolVolsHistData, { depth: null });
-
     if (poolVolsHistData) {
       poolVolsHistData.poolVolInNorm = BigNumber(
         poolVolsHistData.poolVolInNorm || '0'

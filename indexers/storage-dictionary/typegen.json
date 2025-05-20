@@ -6,29 +6,90 @@
       "events": ["CurrentBlockNumbers"]
     },
     "AssetRegistry": {
-      "storage": ["Assets"],
+      "storage": true,
       "constants": true
     },
-    "System": {
-      "storage": ["Account"]
+    "Bonds": {
+      "storage": true,
+      "constants": true
+    },
+    "Balances": {
+      "storage": true,
+      "constants": true
     },
     "Tokens": {
-      "storage": ["Accounts"],
+      "storage": true,
       "constants": true
     },
-    "LBP": {
-      "storage": ["PoolData"],
+    "Currencies": {
+      "storage": true,
+      "constants": true
+    },
+    "Router": {
+      "storage": true,
+      "constants": true
+    },
+    "ParachainSystem": {
+      "storage": true,
       "constants": true
     },
     "XYK": {
-      "storage": ["PoolAssets"],
+      "storage": true,
       "constants": true
     },
     "Omnipool": {
-      "storage": ["Assets"],
+      "storage": true,
+      "constants": true
+    },
+    "OmnipoolLiquidityMining": {
+      "storage": true,
       "constants": true
     },
     "Stableswap": {
+      "storage": true,
+      "constants": true
+    },
+    "LBP": {
+      "storage": true,
+      "constants": true
+    },
+    "System": {
+      "storage": true,
+      "constants": true
+    },
+    "DCA": {
+      "storage": true,
+      "constants": true
+    },
+    "OTC": {
+      "storage": true,
+      "constants": true
+    },
+    "Utility": {
+      "storage": true,
+      "constants": true
+    },
+    "Broadcast": {
+      "storage": true,
+      "constants": true
+    },
+    "EVM": {
+      "storage": true,
+      "constants": true
+    },
+    "EVMAccounts": {
+      "storage": true,
+      "constants": true
+    },
+    "OmnipoolWarehouseLM": {
+      "storage": true,
+      "constants": true
+    },
+    "EmaOracle": {
+      "storage": true,
+      "constants": true
+    },
+    "DynamicFees": {
       "storage": true,
       "constants": true
     }

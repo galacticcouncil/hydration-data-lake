@@ -7,7 +7,7 @@ import {
 } from '../../parsers/types/storage';
 import { AccountBalances, AssetType } from '../../model';
 import { Store } from '@subsquid/typeorm-store';
-import { getAsset } from '../asset/assetRegistry';
+import { getOrCreateAsset } from '../asset/assetRegistry';
 import {
   CurrenciesApiAccountInput,
   RuntimeApiMethodName,
@@ -67,12 +67,21 @@ export async function getAssetBalancesMany({
   const assetsKeyPairs: { address: string; assetId: number }[] = [];
   const ercTokens: { address: string; assetId: number }[] = [];
 
+  const defaultBalances = new AccountBalances({
+    free: BigInt(0),
+    reserved: BigInt(0),
+    miscFrozen: BigInt(0),
+    feeFrozen: BigInt(0),
+    frozen: BigInt(0),
+    flags: BigInt(0),
+  });
+
   for (const kp of keyPairs) {
     if (kp.assetId === 0) {
       nativeTokenKeyPairs.push(kp);
       continue;
     }
-    const assetData = await getAsset({ ctx, id: kp.assetId });
+    const assetData = await getOrCreateAsset({ ctx, id: kp.assetId });
 
     if (assetData && assetData.assetType === AssetType.Erc20) {
       ercTokens.push(kp);
@@ -91,14 +100,7 @@ export async function getAssetBalancesMany({
         response.push({
           poolAddress: kPair.address,
           assetId: kPair.assetId,
-          balances: new AccountBalances({
-            free: BigInt(0),
-            reserved: BigInt(0),
-            miscFrozen: BigInt(0),
-            feeFrozen: BigInt(0),
-            frozen: BigInt(0),
-            flags: BigInt(0),
-          }),
+          balances: defaultBalances,
         });
       } else {
         response.push({
@@ -129,14 +131,7 @@ export async function getAssetBalancesMany({
         response.push({
           poolAddress: kPair.address,
           assetId: kPair.assetId,
-          balances: new AccountBalances({
-            free: BigInt(0),
-            reserved: BigInt(0),
-            frozen: BigInt(0),
-            miscFrozen: BigInt(0),
-            feeFrozen: BigInt(0),
-            flags: BigInt(0),
-          }),
+          balances: defaultBalances,
         });
       } else {
         response.push({
@@ -180,14 +175,7 @@ export async function getAssetBalancesMany({
         response.push({
           poolAddress: kPair.address,
           assetId: kPair.assetId,
-          balances: new AccountBalances({
-            free: BigInt(0),
-            reserved: BigInt(0),
-            frozen: BigInt(0),
-            miscFrozen: BigInt(0),
-            feeFrozen: BigInt(0),
-            flags: BigInt(0),
-          }),
+          balances: defaultBalances,
         });
       } else {
         response.push({

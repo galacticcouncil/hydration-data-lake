@@ -48,9 +48,6 @@
       "storage": ["Assets", "HubAssetTradability"],
       "constants": true
     },
-    "OmnipoolLiquidityMining": {
-      "calls": true
-    },
     "Stableswap": {
       "events": [
         "PoolCreated",
@@ -102,7 +99,7 @@
     },
     "OmnipoolLiquidityMining": {
       "events": true,
-      "calls": [],
+      "calls": true,
       "storage": true
     },
     "OmnipoolWarehouseLM": {

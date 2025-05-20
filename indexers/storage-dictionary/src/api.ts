@@ -7,14 +7,14 @@ import FilterPlugin from 'postgraphile-plugin-connection-filter';
 import { ProcessorStatusPlugin } from './apiSupport/plugins/query/processorStatus.plugin';
 import { AppConfig } from './appConfig';
 import PgPubsub from '@graphile/pg-pubsub';
-import TypeOverrides from 'pg/lib/type-overrides';
+// import TypeOverrides from 'pg/lib/type-overrides';
 import { getEnvPath } from './utils/helpers';
 import { ApiTypesAugmentPlugin } from './apiSupport/plugins/query/apiTypesAugment.plugin';
 
-const pgTypes = new TypeOverrides();
-pgTypes.setTypeParser(1700, function (val) {
-  return val;
-});
+// const pgTypes = new TypeOverrides();
+// pgTypes.setTypeParser(1700, function (val) {
+//   return val;
+// });
 
 const app = express();
 const appConfig = AppConfig.getInstance();
@@ -26,7 +26,7 @@ const postgraphileInstance = postgraphile(
     database: appConfig.DB_NAME,
     user: appConfig.DB_USER,
     password: appConfig.DB_PASS,
-    types: pgTypes,
+    // types: pgTypes,
   },
   'public',
   {

@@ -1,12 +1,12 @@
 import {
   Asset,
-  LbpPool,
-  LbpPoolAssetsData,
+  Lbppool,
+  LbppoolAssetsData,
   OmnipoolAssetData,
-  Stablepool,
-  StablepoolAssetData,
-  XykPool,
-  XykPoolAssetsData,
+  Stableswap,
+  StableswapAssetData,
+  Xykpool,
+  XykpoolAssetsData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/common';
 
@@ -18,16 +18,16 @@ export type BatchStatePayload = {
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
 
-  xykPools: Map<string, XykPool>;
-  xykPoolAssetsData: Map<string, XykPoolAssetsData>;
+  xykPools: Map<string, Xykpool>;
+  xykPoolAssetsData: Map<string, XykpoolAssetsData>;
 
-  lbpPools: Map<string, LbpPool>;
-  lbpPoolAssetsData: Map<string, LbpPoolAssetsData>;
+  lbpPools: Map<string, Lbppool>;
+  lbpPoolAssetsData: Map<string, LbppoolAssetsData>;
 
   omnipoolAssetsData: Map<string, OmnipoolAssetData>;
 
-  stablepools: Map<string, Stablepool>;
-  stablepoolAssetsData: Map<string, StablepoolAssetData>;
+  stablepools: Map<string, Stableswap>;
+  stablepoolAssetsData: Map<string, StableswapAssetData>;
 };
 
 export class BatchState {
@@ -50,5 +50,15 @@ export class BatchState {
 
   set state(partialState: Partial<BatchStatePayload>) {
     this.statePayload = { ...this.statePayload, ...partialState };
+  }
+
+  getRelayChainBlockDataFromCache(paraBlockHeight: number): {
+    height: number;
+  } {
+    const blockData = this.state.relayChainInfo.get(paraBlockHeight);
+
+    return {
+      height: blockData?.relaychainBlockNumber ?? 0,
+    };
   }
 }

@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {AssetType} from "./_assetType"
 
@@ -32,6 +32,10 @@ export class Asset {
   @Column_("bool", {nullable: false})
   isSufficient!: boolean
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  existentialDeposit!: bigint
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  bondUnderlyingAsset!: Asset | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  bondMaturity!: bigint | undefined | null
 }

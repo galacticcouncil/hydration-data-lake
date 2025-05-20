@@ -1,15 +1,15 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
-import {LbpPoolAssetsData} from "./lbpPoolAssetsData.model"
+import {LbppoolAssetsData} from "./lbppoolAssetsData.model"
 
 @Entity_()
-export class LbpPool {
-  constructor(props?: Partial<LbpPool>) {
+export class Lbppool {
+  constructor(props?: Partial<Lbppool>) {
     Object.assign(this, props)
   }
 
   /**
-   * xykPoolAddress-paraChainBlockHeight
+   * xykPoolAddress-paraBlockHeight
    */
   @PrimaryColumn_()
   id!: string
@@ -73,12 +73,12 @@ export class LbpPool {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Index_()
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 
-  @OneToMany_(() => LbpPoolAssetsData, e => e.pool)
-  assets!: LbpPoolAssetsData[]
+  @OneToMany_(() => LbppoolAssetsData, e => e.pool)
+  assets!: LbppoolAssetsData[]
 }

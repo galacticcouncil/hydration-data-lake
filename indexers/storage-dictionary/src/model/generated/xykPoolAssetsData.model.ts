@@ -1,23 +1,23 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {XykPool} from "./xykPool.model"
+import {Xykpool} from "./xykpool.model"
 import {AccountBalances} from "./_accountBalances"
 
 @Entity_()
-export class XykPoolAssetsData {
-  constructor(props?: Partial<XykPoolAssetsData>) {
+export class XykpoolAssetsData {
+  constructor(props?: Partial<XykpoolAssetsData>) {
     Object.assign(this, props)
   }
 
   /**
-   * xykPoolAddress-assetId-paraChainBlockHeight
+   * xykPoolAddress-assetId-paraBlockHeight
    */
   @PrimaryColumn_()
   id!: string
 
   @Index_()
-  @ManyToOne_(() => XykPool, {nullable: true})
-  pool!: XykPool
+  @ManyToOne_(() => Xykpool, {nullable: true})
+  pool!: Xykpool
 
   @Index_()
   @Column_("int4", {nullable: false})
@@ -28,9 +28,9 @@ export class XykPoolAssetsData {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraChainBlockHeight!: number
+  paraBlockHeight!: number
 
   @Index_()
   @Column_("int4", {nullable: false})
-  relayChainBlockHeight!: number
+  relayBlockHeight!: number
 }

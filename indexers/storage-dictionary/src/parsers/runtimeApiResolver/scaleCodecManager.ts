@@ -1,4 +1,6 @@
 import {
+  RpcCallMethodName,
+  RpcCallName,
   RuntimeApiMethodName,
   RuntimeApiName,
   RuntimeApiVersion,
@@ -14,12 +16,19 @@ import {
   compact,
   Tuple,
   Codec,
+  u256,
 } from 'scale-ts';
 
 const OrmlAccountDataCodec = Struct({
   free: u128,
   reserved: u128,
   frozen: u128,
+});
+const AavePoolDataCodec = Struct({
+  reserve: u32,
+  aToken: u32,
+  liquidityIn: u128,
+  liquidityOut: u128,
 });
 
 export class ScaleCodecManager {
@@ -32,6 +41,12 @@ export class ScaleCodecManager {
         [RuntimeApiMethodName.accounts]: Vector(
           Tuple(u32, OrmlAccountDataCodec)
         ),
+      },
+      [RpcCallName.EthCall]: {
+        [RpcCallMethodName.balanceOf]: u256,
+      },
+      [RuntimeApiName.AaveTradeExecutor]: {
+        [RuntimeApiMethodName.pools]: Vector(AavePoolDataCodec),
       },
     },
   };
