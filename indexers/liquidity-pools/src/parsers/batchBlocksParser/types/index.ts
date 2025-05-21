@@ -47,7 +47,11 @@ import {
   OtcOrderPartiallyFilledData,
   OtcOrderPlacedData,
 } from './otc';
-import { BroadcastSwapped2Data, BroadcastSwappedData } from './broadcast';
+import {
+  BroadcastSwapped2Data,
+  BroadcastSwapped3Data,
+  BroadcastSwappedData,
+} from './broadcast';
 import { EvmLogData } from './evm';
 import { EvmAccountsBoundData } from './evmAccounts';
 import { CurrenciesTransferredData } from './currencies';
@@ -143,11 +147,13 @@ export type EventDataType<T> = T extends EventName.Tokens_Transfer
                                                                       ? BroadcastSwappedData
                                                                       : T extends EventName.Broadcast_Swapped2
                                                                         ? BroadcastSwapped2Data
-                                                                        : T extends EventName.EVM_Log
-                                                                          ? EvmLogData
-                                                                          : T extends EventName.EVMAccounts_Bound
-                                                                            ? EvmAccountsBoundData
-                                                                            : never;
+                                                                        : T extends EventName.Broadcast_Swapped3
+                                                                          ? BroadcastSwapped3Data
+                                                                          : T extends EventName.EVM_Log
+                                                                            ? EvmLogData
+                                                                            : T extends EventName.EVMAccounts_Bound
+                                                                              ? EvmAccountsBoundData
+                                                                              : never;
 
 export type BatchBlocksParsedDataScope = Map<
   EventName,
