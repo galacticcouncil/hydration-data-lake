@@ -819,6 +819,63 @@ export async function getParsedEventsData(
           break;
         }
         /**
+         * ==== Swapped3 ====
+         */
+        case (events as typeof hydrationEvents).broadcast.swapped3?.name: {
+          const preparedData = parserHelper.parseBroadcastSwapped3Data();
+          parsedDataManager.set(EventName.Broadcast_Swapped3, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.filler,
+            preparedData.eventData.params.swapper,
+            ...(preparedData.eventData.params.fees
+              .map((fee) => fee.recipientId)
+              .filter((id) => !!id) as string[]),
+          ]);
+
+          switch (preparedData.eventData.params.fillerType.kind) {
+            case SwapFillerType.LBP:
+              parserHelper.addIdsForStoragePrefetch(
+                'lbppoolAssetIdsForStoragePrefetch',
+                preparedData.eventData.params.filler
+              );
+              break;
+            case SwapFillerType.XYK:
+              parserHelper.addIdsForStoragePrefetch(
+                'xykPoolIdsForStoragePrefetch',
+                preparedData.eventData.params.filler
+              );
+              break;
+            case SwapFillerType.Omnipool:
+              for (const assetId of [
+                ...preparedData.eventData.params.inputs.map(
+                  (inputData) => inputData.assetId
+                ),
+                ...preparedData.eventData.params.outputs.map(
+                  (outputData) => outputData.assetId
+                ),
+                ...preparedData.eventData.params.fees.map(
+                  (feeData) => feeData.assetId
+                ),
+                1,
+              ]) {
+                parserHelper.addIdsForStoragePrefetch(
+                  'omnipoolAssetIdsForStoragePrefetch',
+                  assetId
+                );
+              }
+              break;
+            case SwapFillerType.Stableswap:
+              parserHelper.addIdsForStoragePrefetch(
+                'stableswapIdsForStoragePrefetch',
+                preparedData.eventData.params.fillerType.value
+              );
+              break;
+          }
+
+          break;
+        }
+        /**
          * ================================= E V M =============================
          */
 

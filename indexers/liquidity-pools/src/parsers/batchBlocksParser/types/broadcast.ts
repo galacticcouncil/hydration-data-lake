@@ -1,4 +1,8 @@
-import { BroadcastSwapped2EventParams, BroadcastSwappedEventParams } from '../../types/events';
+import {
+  BroadcastSwapped2EventParams,
+  BroadcastSwapped3EventParams,
+  BroadcastSwappedEventParams,
+} from '../../types/events';
 import { CallParsedData, EventParsedData, ParsedEventCallData } from './index';
 
 /**
@@ -24,3 +28,15 @@ export type BroadcastSwapped2Data = ParsedEventCallData<
 
 export type BroadcastSwapped2EventParsedData =
   EventParsedData<BroadcastSwapped2EventParams>;
+
+/**
+ *  ==== Broadcast Swapped3 ====
+ */
+
+export type BroadcastSwapped3Data = ParsedEventCallData<
+  BroadcastSwapped3EventParsedData,
+  CallParsedData
+>;
+
+export type BroadcastSwapped3EventParsedData =
+  EventParsedData<BroadcastSwapped3EventParams>;

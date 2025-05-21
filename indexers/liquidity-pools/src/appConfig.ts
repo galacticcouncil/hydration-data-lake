@@ -219,6 +219,7 @@ export class AppConfig {
 
     if (this.CHAIN === ChainName.hydration) {
       eventsToListen.push(hydrationEvents.broadcast.swapped2.name);
+      eventsToListen.push(hydrationEvents.broadcast.swapped3.name);
     }
 
     // if (this.CHAIN === ChainName.hydration_paseo_next) {

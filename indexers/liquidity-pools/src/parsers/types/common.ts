@@ -188,6 +188,7 @@ export type EventParserMethods = {
   broadcast: {
     parseSwappedParams: (event: SqdEvent) => BroadcastSwappedEventParams;
     parseSwapped2Params: (event: SqdEvent) => BroadcastSwappedEventParams;
+    parseSwapped3Params: (event: SqdEvent) => BroadcastSwappedEventParams;
   };
   evm: {
     parseLogParams: (event: SqdEvent) => EvmLogEventParams | null;
