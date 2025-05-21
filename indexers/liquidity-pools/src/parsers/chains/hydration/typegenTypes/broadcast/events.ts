@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v282 from '../v282'
 import * as v305 from '../v305'
+import * as v313 from '../v313'
 
 export const swapped =  {
     name: 'Broadcast.Swapped',
@@ -41,6 +42,33 @@ export const swapped2 =  {
             outputs: sts.array(() => v305.Asset),
             fees: sts.array(() => v305.Fee),
             operationStack: sts.array(() => v305.ExecutionType),
+        })
+    ),
+}
+
+export const swapped3 =  {
+    name: 'Broadcast.Swapped3',
+    /**
+     * Trade executed.
+     * 
+     * Swapped3 is a fixed and renamed version of original Swapped,
+     * as Swapped contained wrong input/output amounts for XYK buy trade
+     * 
+     * Swapped3 is a fixed and renamed version of original Swapped3,
+     * as Swapped contained wrong filler account on AAVE trades
+     * 
+     */
+    v313: new EventType(
+        'Broadcast.Swapped3',
+        sts.struct({
+            swapper: v313.AccountId32,
+            filler: v313.AccountId32,
+            fillerType: v313.Filler,
+            operation: v313.TradeOperation,
+            inputs: sts.array(() => v313.Asset),
+            outputs: sts.array(() => v313.Asset),
+            fees: sts.array(() => v313.Fee),
+            operationStack: sts.array(() => v313.ExecutionType),
         })
     ),
 }

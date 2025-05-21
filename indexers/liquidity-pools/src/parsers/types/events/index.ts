@@ -58,6 +58,7 @@ export enum EventName {
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
   'Broadcast_Swapped' = 'Broadcast.Swapped',
   'Broadcast_Swapped2' = 'Broadcast.Swapped2',
+  'Broadcast_Swapped3' = 'Broadcast.Swapped3',
   'EVM_Log' = 'EVM.Log',
   'EVMAccounts_Bound' = 'EVMAccounts.Bound',
 }
@@ -342,3 +343,5 @@ export type BroadcastSwapped2EventParams = {
   operation: TradeOperationType;
   operationStack: BroadcastSwappedExecutionType[];
 };
+
+export type BroadcastSwapped3EventParams = BroadcastSwapped2EventParams;

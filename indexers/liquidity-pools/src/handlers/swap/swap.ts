@@ -438,6 +438,10 @@ export async function handleSupportSwapperEvent(
 }
 
 /**
+ *
+ * IMPORTANT!!!
+ * Actual ONLY for Broadcast.Swapped event
+ *
  * Decorates swap amounts by switching input and output values for specific pool types
  * during a transitional period after the Broadcast.Swapped event release.
  *

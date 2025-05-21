@@ -17,6 +17,9 @@ export async function handleBroadcastSwappedEvents(
     ...parsedEvents
       .getSectionByEventName(EventName.Broadcast_Swapped2)
       .values(),
+    ...parsedEvents
+      .getSectionByEventName(EventName.Broadcast_Swapped3)
+      .values(),
   ]).filter((event) =>
     isUnifiedEventsSupportSpecVersion(
       event.eventData.metadata.blockHeader.specVersion,
