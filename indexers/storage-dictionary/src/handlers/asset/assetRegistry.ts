@@ -259,6 +259,7 @@ export async function waitForAssetsActualisation(
             assetsActualisationProcStatus.assetsActualisedAtBlock,
         });
         res();
+        return;
       }
       console.log(
         `Processor ${ctx.appConfig.STATE_SCHEMA_NAME} is waiting for assets actualisation.`

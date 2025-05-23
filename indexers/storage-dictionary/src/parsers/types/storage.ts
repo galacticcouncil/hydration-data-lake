@@ -182,6 +182,11 @@ export interface StablepoolPoolPegsInfoWithPoolId
   poolId: number;
 }
 
+export interface XykPoolShareTokenPair {
+  poolId: string;
+  shareTokenId: number;
+}
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
@@ -250,5 +255,9 @@ export type StablepoolGetAllPoolIdsInput = {
 
 export type StablepoolGetPoolPegsInput = {
   poolId: number;
+  block: BlockHeader;
+};
+
+export type XykGetPoolShareTokenPairsManyInput = {
   block: BlockHeader;
 };

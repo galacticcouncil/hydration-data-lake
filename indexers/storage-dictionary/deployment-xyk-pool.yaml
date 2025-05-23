@@ -4,7 +4,7 @@
 
 manifestVersion: subsquid.io/v0.1
 name: hydration-storage-dictionary
-slot: 208
+slot: 209
 description: Hydration storage dictionary for XYK pool storage
 build:
 deploy:
@@ -30,8 +30,7 @@ deploy:
         PROCESS_FROM_BLOCK: 3934550
         PROCESS_TO_BLOCK: 4748000
         STATE_SCHEMA_NAME: xyk_pool__batch_proc_1
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 200
+        INDEXER_MAX_SUB_BATCH_SIZE: 10
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
     - name: xyk-pool-batch-proc-2
@@ -50,8 +49,7 @@ deploy:
         PROCESS_FROM_BLOCK: 4748001
         PROCESS_TO_BLOCK: 5561000
         STATE_SCHEMA_NAME: xyk_pool__batch_proc_2
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 200
+        INDEXER_MAX_SUB_BATCH_SIZE: 10
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
     - name: xyk-pool-batch-proc-3
@@ -70,8 +68,7 @@ deploy:
         PROCESS_FROM_BLOCK: 5561001
         PROCESS_TO_BLOCK: 6374000
         STATE_SCHEMA_NAME: xyk_pool__batch_proc_3
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 200
+        INDEXER_MAX_SUB_BATCH_SIZE: 10
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
     - name: xyk-pool-batch-proc-4
@@ -90,8 +87,7 @@ deploy:
         PROCESS_FROM_BLOCK: 6374001
         PROCESS_TO_BLOCK: 7187000
         STATE_SCHEMA_NAME: xyk_pool__batch_proc_4
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 200
+        INDEXER_MAX_SUB_BATCH_SIZE: 10
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
     - name: xyk-pool-batch-proc-5
@@ -110,8 +106,7 @@ deploy:
         PROCESS_FROM_BLOCK: 7187001
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: xyk_pool__batch_proc_5
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 200
+        INDEXER_MAX_SUB_BATCH_SIZE: 10
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
     - name: xyk-pool-assets-tracker-proc
@@ -130,8 +125,7 @@ deploy:
         PROCESS_FROM_BLOCK: 7187001
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 200
+        INDEXER_MAX_SUB_BATCH_SIZE: 10
         ASSETS_TRACKER_PROCESSOR: true
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
   api:

@@ -7,7 +7,7 @@ import {
   Exchange,
 } from '@urql/core';
 import { retryExchange } from '@urql/exchange-retry';
-import { ProcessingPallets } from './types';
+import { ProcessingTopic } from './types';
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -35,31 +35,37 @@ const responsePreprocessingExchange: Exchange =
 
 export class QueriesHelper {
   private gqlClient: GqlClient | null = null;
-  private gqlClientUrlsMap: Map<ProcessingPallets, string>;
-  private gqlClients: Map<ProcessingPallets, GqlClient> = new Map();
+  private gqlClientUrlsMap: Map<ProcessingTopic, string>;
+  private gqlClients: Map<ProcessingTopic, GqlClient> = new Map();
 
   constructor({ batchCtx }: { batchCtx: SqdProcessorContext<Store> }) {
     this.gqlClientUrlsMap = new Map([
+      [ProcessingTopic.XYK, batchCtx.appConfig.STORAGE_DICTIONARY_XYKPOOL_URL],
+      [ProcessingTopic.LBP, batchCtx.appConfig.STORAGE_DICTIONARY_LBPPOOL_URL],
       [
-        ProcessingPallets.XYK,
-        batchCtx.appConfig.STORAGE_DICTIONARY_XYKPOOL_URL,
-      ],
-      [
-        ProcessingPallets.LBP,
-        batchCtx.appConfig.STORAGE_DICTIONARY_LBPPOOL_URL,
-      ],
-      [
-        ProcessingPallets.OMNIPOOL,
+        ProcessingTopic.OMNIPOOL,
         batchCtx.appConfig.STORAGE_DICTIONARY_OMNIPOOL_URL,
       ],
       [
-        ProcessingPallets.STABLESWAP,
+        ProcessingTopic.STABLESWAP,
         batchCtx.appConfig.STORAGE_DICTIONARY_STABLEPOOL_URL,
+      ],
+      [
+        ProcessingTopic.AAVE,
+        batchCtx.appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
+      ],
+      [
+        ProcessingTopic.ASSET_HIST_DATA,
+        batchCtx.appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
+      ],
+      [
+        ProcessingTopic.EMA_ORACLE,
+        batchCtx.appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
       ],
     ]);
   }
 
-  getGqlClient(clientName: ProcessingPallets): GqlClient {
+  getGqlClient(clientName: ProcessingTopic): GqlClient {
     if (this.gqlClients.has(clientName) && !!this.gqlClients.get(clientName))
       return this.gqlClients.get(clientName)!;
 
@@ -94,7 +100,7 @@ export class QueriesHelper {
   }: {
     query: DocumentInput<Data, Variables>;
     variables: Variables;
-    dictName: ProcessingPallets;
+    dictName: ProcessingTopic;
   }) {
     return this.getGqlClient(dictName).query(
       query,

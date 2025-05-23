@@ -693,7 +693,15 @@ export class OfflineTradeRouterManagerHelper {
         totalIssuance: poolShareTokenHistData.totalIssuance.toString(),
         pegs: poolHistData.pegs.map((p) => p.map((i) => i.toString())),
         maxPegUpdate: poolHistData.maxPegUpdate?.toString(),
-        pegSources: poolHistData.pegSources,
+        pegSources: poolHistData.pegSources
+          ? poolHistData.pegSources.map((pSrc) => ({
+              sourceKind: pSrc.sourceKind,
+              oracleName: pSrc.oracleName,
+              oraclePeriod: pSrc.oraclePeriod,
+              oracleAsset: pSrc.oracleAsset,
+              valuePoints: pSrc.valuePoints,
+            }))
+          : undefined,
       } as IPersistentStableSwapBase);
     }
 

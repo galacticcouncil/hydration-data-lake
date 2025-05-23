@@ -1,5 +1,9 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
-import { XykPoolWithAssets } from '../types/storage';
+import {
+  XykGetPoolShareTokenPairsManyInput,
+  XykPoolShareTokenPair,
+  XykPoolWithAssets,
+} from '../types/storage';
 import { storage } from '../../typegenTypes/';
 import { UnknownVersionError } from '../../utils/errors';
 
@@ -30,4 +34,33 @@ async function getAllPoolsWithAssets(
   throw new UnknownVersionError('storage.omnipool.assets');
 }
 
-export default { getAllPoolsWithAssets };
+async function getPoolShareTokenAll({
+  block,
+}: XykGetPoolShareTokenPairsManyInput): Promise<XykPoolShareTokenPair[]> {
+  if (block.specVersion < 183) return [];
+
+  if (storage.xyk.shareToken.v183.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.xyk.shareToken.v183.getPairsPaged(
+      500,
+      block
+    )) {
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && !!p[1])
+          .map(
+            ([poolId, shareTokenId]): XykPoolShareTokenPair => ({
+              poolId,
+              shareTokenId: shareTokenId!,
+            })
+          )
+      );
+    }
+    return pairsPaged;
+  }
+
+  throw new UnknownVersionError('storage.xyk.shareToken');
+}
+
+export default { getAllPoolsWithAssets, getPoolShareTokenAll };

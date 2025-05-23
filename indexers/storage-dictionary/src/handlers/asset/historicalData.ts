@@ -1,10 +1,6 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  Asset,
-  AssetDynamicFee,
-  AssetHistoricalData,
-} from '../../model';
+import { Asset, AssetDynamicFee, AssetHistoricalData } from '../../model';
 import parsers from '../../parsers';
 import { AssetDetails, AssetDetailsWithId } from '../../parsers/types/storage';
 import { getOrCreateAsset } from './assetRegistry';
@@ -14,11 +10,7 @@ export async function handleAssetsStorage(
   currentBlockHeader: Block
 ): Promise<void> {
   const storageDataAllAssetsMap = new Map(
-    (
-      await parsers.storage.assetRegistry.getAssetsAll(
-        ctx.blocks[ctx.blocks.length - 1].header
-      )
-    )
+    (await parsers.storage.assetRegistry.getAssetsAll(currentBlockHeader))
       .filter((res) => !!res.data)
       .map((res): [string, AssetDetailsWithId] => [`${res.assetId}`, res])
   );

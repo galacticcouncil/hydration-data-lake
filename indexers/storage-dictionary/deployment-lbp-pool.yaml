@@ -17,7 +17,7 @@ deploy:
     - name: lbp-pool-batch-proc-1
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://4.rpc.hydration.cloud
+        RPC_URL: wss://archive.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: true
         PROCESS_XYK_POOLS: false
@@ -30,14 +30,13 @@ deploy:
         PROCESS_FROM_BLOCK: 3681428
         PROCESS_TO_BLOCK: 4512000
         STATE_SCHEMA_NAME: lbp_pool__batch_proc_1
-        SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 200
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: lbp_pool__assets_tracker_proc
     - name: lbp-pool-batch-proc-2
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://4.rpc.hydration.cloud
+        RPC_URL: wss://archive.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: true
         PROCESS_XYK_POOLS: false
@@ -50,14 +49,13 @@ deploy:
         PROCESS_FROM_BLOCK: 4512001
         PROCESS_TO_BLOCK: 5384000
         STATE_SCHEMA_NAME: lbp_pool__batch_proc_2
-        SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 200
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: lbp_pool__assets_tracker_proc
     - name: lbp-pool-batch-proc-3
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://4.rpc.hydration.cloud
+        RPC_URL: wss://archive.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: true
         PROCESS_XYK_POOLS: false
@@ -70,14 +68,13 @@ deploy:
         PROCESS_FROM_BLOCK: 5384001
         PROCESS_TO_BLOCK: 6256000
         STATE_SCHEMA_NAME: lbp_pool__batch_proc_3
-        SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 200
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: lbp_pool__assets_tracker_proc
     - name: lbp-pool-batch-proc-4
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://4.rpc.hydration.cloud
+        RPC_URL: wss://archive.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: true
         PROCESS_XYK_POOLS: false
@@ -90,14 +87,13 @@ deploy:
         PROCESS_FROM_BLOCK: 6256001
         PROCESS_TO_BLOCK: 7128000
         STATE_SCHEMA_NAME: lbp_pool__batch_proc_4
-        SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 200
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: lbp_pool__assets_tracker_proc
     - name: lbp-pool-batch-proc-5
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://4.rpc.hydration.cloud
+        RPC_URL: wss://archive.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: true
         PROCESS_XYK_POOLS: false
@@ -110,14 +106,13 @@ deploy:
         PROCESS_FROM_BLOCK: 7128001
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: lbp_pool__batch_proc_5
-        SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 200
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: lbp_pool__assets_tracker_proc
     - name: lbp-pool-assets-tracker-proc
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://4.rpc.hydration.cloud
+        RPC_URL: wss://archive.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -130,7 +125,6 @@ deploy:
         PROCESS_FROM_BLOCK: 7128001
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: lbp_pool__assets_tracker_proc
-        SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 200
         ASSETS_TRACKER_PROCESSOR: true
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: lbp_pool__assets_tracker_proc

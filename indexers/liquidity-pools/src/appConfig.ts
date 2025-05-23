@@ -150,6 +150,9 @@ export class AppConfig {
   readonly STORAGE_DICTIONARY_STABLEPOOL_URL: string = '';
 
   @IsString()
+  readonly STORAGE_DICTIONARY_GEN_HIST_DATA_URL: string = '';
+
+  @IsString()
   readonly SUBSCAN_PRO_API_SECRET: string = '';
 
   @Transform(({ value }: { value: string }) => value.split('::'))

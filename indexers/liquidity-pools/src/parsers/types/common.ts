@@ -100,6 +100,8 @@ import {
   GetBondByIdInput,
   BondDetails,
   GetBondsAllInput,
+  GetDataAtBlockInput,
+  AssetExistentialDeposit,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -238,7 +240,7 @@ export type StorageParserMethods = {
     ) => Promise<SystemAccountInfo | null>;
   };
   balances: {
-    getTotalIssuance: (block: BlockHeader) => Promise<bigint | null>;
+    getTotalIssuance: (args: GetConstantsInput) => Promise<bigint | null>;
   };
   bonds: {
     getBond: (args: GetBondByIdInput) => Promise<BondDetails | null>;
@@ -271,6 +273,9 @@ export type StorageParserMethods = {
       assetId: string | number,
       block: BlockHeader
     ) => Promise<Erc20AssetContractDetails | null>;
+    getAssetsExistentialDepositAll: (
+      args: GetDataAtBlockInput
+    ) => Promise<AssetExistentialDeposit[] | null>;
   };
   parachainSystem: {
     getLastRelayChainBlockNumber: (

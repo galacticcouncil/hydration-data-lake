@@ -85,11 +85,6 @@ type Lbppool @entity {
   fee: [Int!]!
   feeCollector: String
   repayTarget: BigInt!
-  repayFee: [Int!]!
-  maxInRatio: BigInt!
-  maxOutRatio: BigInt!
-  minPoolLiquidity: BigInt!
-  minTradingLimit: BigInt!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index

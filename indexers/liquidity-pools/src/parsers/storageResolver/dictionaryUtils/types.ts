@@ -1,8 +1,11 @@
 import {
-  LbpPool as LbpPoolGlq,
+  Lbppool as LbppoolGlq,
   Omnipool as OmnipoolGql,
-  Stablepool as StablepoolGql,
-  XykPool as XykPoolGlq,
+  Stableswap as StableswapGql,
+  Xykpool as XykpoolGlq,
+  Aavepool as AavepoolGlq,
+  EmaOracle as EmaOracleGlq,
+  AssetHistoricalDatum as AssetHistoricalDatumGql,
 } from './apiTypes/types';
 
 export type PaginationConfig = {
@@ -11,14 +14,24 @@ export type PaginationConfig = {
 };
 
 export type PalletDictionaryCollectedData = {
-  pallet: ProcessingPallets;
-  data: LbpPoolGlq[] | StablepoolGql[] | XykPoolGlq[] | OmnipoolGql[];
+  pallet: ProcessingTopic;
+  data:
+    | LbppoolGlq[]
+    | StableswapGql[]
+    | XykpoolGlq[]
+    | OmnipoolGql[]
+    | AavepoolGlq[]
+    | EmaOracleGlq[]
+    | AssetHistoricalDatumGql[];
 };
 
-export enum ProcessingPallets {
+// TODO  create fetching of each entity separately, update fetching function -> use the same dict URL for all generic entities
+export enum ProcessingTopic {
   LBP = 'LBP',
   XYK = 'XYK',
   STABLESWAP = 'STABLESWAP',
   OMNIPOOL = 'OMNIPOOL',
   AAVE = 'AAVE',
+  EMA_ORACLE = 'EMA_ORACLE',
+  ASSET_HIST_DATA = 'ASSET_HIST_DATA',
 }

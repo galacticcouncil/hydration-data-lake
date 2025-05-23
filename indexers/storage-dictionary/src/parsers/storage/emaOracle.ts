@@ -7,6 +7,8 @@ import { UnknownVersionError } from '../../utils/errors';
 async function getOracles({
   block,
 }: GetEmaOraclesInput): Promise<EmaOracleEntryData[]> {
+  if (block.specVersion < 138) return [];
+
   if (storage.emaOracle.oracles.v138.is(block)) {
     const pairsPaged = [];
 
@@ -26,7 +28,7 @@ async function getOracles({
               const entry = entryData[0];
               return {
                 source: hexToString(source),
-                assetIds: assetIds,
+                assetIds,
                 period: period.__kind as EmaOraclePeriod,
                 price: {
                   n: entry.price.n,

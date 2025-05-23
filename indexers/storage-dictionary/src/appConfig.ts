@@ -59,13 +59,13 @@ export class AppConfig {
   readonly RPC_URL: string | null = null;
 
   /**
-   * Maximum number of ongoing concurrent requests
+   * Maximum number of ongoing concurrent requests (default 10)
    */
-  readonly RPC_CAPACITY: number = 400;
+  readonly RPC_CAPACITY: number = 6;
   /**
    * Maximum number of requests per second
    */
-  readonly RPC_RATE_LIMIT: number = 1_000;
+  readonly RPC_RATE_LIMIT: number = 500;
   /**
    * Maximum number of requests in a single batch call
    */
@@ -73,7 +73,7 @@ export class AppConfig {
   /**
    * Request timeout in ms
    */
-  readonly RPC_REQUEST_TIMEOUT: number = 3_000;
+  readonly RPC_REQUEST_TIMEOUT: number = 20_000;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly IGNORE_ARCHIVE_DATA_SOURCE: boolean = false;
@@ -118,7 +118,7 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   @IsNotEmpty()
-  readonly SUB_BATCH_MAX_TIMEOUT_MS: number = 500;
+  readonly SUB_BATCH_MAX_TIMEOUT_MS: number = 1000;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly INDEXER_SUB_PROCESSORS_NUMBER: number = 1;

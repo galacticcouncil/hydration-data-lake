@@ -68,7 +68,6 @@ export const GET_LBPPOOL_BLOCKS_STORAGE_STATE = gql`
         finalWeight
         feeCollector
         repayTarget
-        repayFee
         poolAddress
         owner
         lbppoolAssetsDataByPoolId {
@@ -157,6 +156,82 @@ export const GET_STABLEPOOL_BLOCKS_STORAGE_STATE = gql`
             paraBlockHeight
           }
         }
+      }
+      totalCount
+    }
+  }
+`;
+
+export const GET_AAVE_POOL_BLOCKS_STORAGE_STATE = gql`
+  query GetAavePoolBlocksStorageState(
+    $filter: AavepoolFilter
+    $first: Int!
+    $offset: Int!
+    $orderBy: [AavepoolsOrderBy!]
+  ) {
+    aavepools(
+      filter: $filter
+      orderBy: $orderBy
+      first: $first
+      offset: $offset
+    ) {
+      nodes {
+        id
+        aTokenId
+        reserveAssetId
+        liquidityIn
+        liquidityOut
+        paraBlockHeight
+        poolId
+      }
+      totalCount
+    }
+  }
+`;
+
+export const GET_EMA_ORACLE_BLOCKS_STORAGE_STATE = gql`
+  query GetEmaOracleBlocksStorageState(
+    $filter: EmaOracleFilter
+    $first: Int!
+    $offset: Int!
+    $orderBy: [EmaOraclesOrderBy!]
+  ) {
+    emaOracles(
+      filter: $filter
+      orderBy: $orderBy
+      first: $first
+      offset: $offset
+    ) {
+      nodes {
+        id
+        paraBlockHeight
+        entries
+      }
+      totalCount
+    }
+  }
+`;
+
+export const GET_ASSET_HIST_DATA_BLOCKS_STORAGE_STATE = gql`
+  query GetAssetHistDataBlocksStorageState(
+    $filter: AssetHistoricalDatumFilter
+    $first: Int!
+    $offset: Int!
+    $orderBy: [AssetHistoricalDataOrderBy!]
+  ) {
+    assetHistoricalData(
+      filter: $filter
+      orderBy: $orderBy
+      first: $first
+      offset: $offset
+    ) {
+      nodes {
+        id
+        assetId
+        dynamicFee
+        existentialDeposit
+        totalIssuance
+        paraBlockHeight
       }
       totalCount
     }

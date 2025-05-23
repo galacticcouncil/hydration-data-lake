@@ -101,18 +101,20 @@ processor.run(
               block.header
             );
           if (appConfig.PROCESS_GENERIC_HIST_DATA) {
-            await handleAssetsStorage(
-              ctxWithBatchState as ProcessorContext<Store>,
-              block.header
-            );
-            await handleOracles(
-              ctxWithBatchState as ProcessorContext<Store>,
-              block.header
-            );
-            await handleAavePoolsStorage(
-              ctxWithBatchState as ProcessorContext<Store>,
-              block.header
-            );
+            await Promise.all([
+              handleAssetsStorage(
+                ctxWithBatchState as ProcessorContext<Store>,
+                block.header
+              ),
+              handleOracles(
+                ctxWithBatchState as ProcessorContext<Store>,
+                block.header
+              ),
+              handleAavePoolsStorage(
+                ctxWithBatchState as ProcessorContext<Store>,
+                block.header
+              ),
+            ]);
           }
         })
       );

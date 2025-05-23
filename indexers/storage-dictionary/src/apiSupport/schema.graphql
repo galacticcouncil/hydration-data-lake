@@ -2731,11 +2731,6 @@ type Lbppool {
   fee: [Int]!
   feeCollector: String
   repayTarget: BigFloat!
-  repayFee: [Int]!
-  maxInRatio: BigFloat!
-  maxOutRatio: BigFloat!
-  minPoolLiquidity: BigFloat!
-  minTradingLimit: BigFloat!
   paraBlockHeight: Int!
   relayBlockHeight: Int!
 
@@ -3234,18 +3229,6 @@ type LbppoolSumAggregates {
   """Sum of repayTarget across the matching connection"""
   repayTarget: BigFloat!
 
-  """Sum of maxInRatio across the matching connection"""
-  maxInRatio: BigFloat!
-
-  """Sum of maxOutRatio across the matching connection"""
-  maxOutRatio: BigFloat!
-
-  """Sum of minPoolLiquidity across the matching connection"""
-  minPoolLiquidity: BigFloat!
-
-  """Sum of minTradingLimit across the matching connection"""
-  minTradingLimit: BigFloat!
-
   """Sum of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigInt!
 
@@ -3293,21 +3276,6 @@ type LbppoolDistinctCountAggregates {
   """Distinct count of repayTarget across the matching connection"""
   repayTarget: BigInt
 
-  """Distinct count of repayFee across the matching connection"""
-  repayFee: BigInt
-
-  """Distinct count of maxInRatio across the matching connection"""
-  maxInRatio: BigInt
-
-  """Distinct count of maxOutRatio across the matching connection"""
-  maxOutRatio: BigInt
-
-  """Distinct count of minPoolLiquidity across the matching connection"""
-  minPoolLiquidity: BigInt
-
-  """Distinct count of minTradingLimit across the matching connection"""
-  minTradingLimit: BigInt
-
   """Distinct count of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigInt
 
@@ -3336,18 +3304,6 @@ type LbppoolMinAggregates {
 
   """Minimum of repayTarget across the matching connection"""
   repayTarget: BigFloat
-
-  """Minimum of maxInRatio across the matching connection"""
-  maxInRatio: BigFloat
-
-  """Minimum of maxOutRatio across the matching connection"""
-  maxOutRatio: BigFloat
-
-  """Minimum of minPoolLiquidity across the matching connection"""
-  minPoolLiquidity: BigFloat
-
-  """Minimum of minTradingLimit across the matching connection"""
-  minTradingLimit: BigFloat
 
   """Minimum of paraBlockHeight across the matching connection"""
   paraBlockHeight: Int
@@ -3378,18 +3334,6 @@ type LbppoolMaxAggregates {
   """Maximum of repayTarget across the matching connection"""
   repayTarget: BigFloat
 
-  """Maximum of maxInRatio across the matching connection"""
-  maxInRatio: BigFloat
-
-  """Maximum of maxOutRatio across the matching connection"""
-  maxOutRatio: BigFloat
-
-  """Maximum of minPoolLiquidity across the matching connection"""
-  minPoolLiquidity: BigFloat
-
-  """Maximum of minTradingLimit across the matching connection"""
-  minTradingLimit: BigFloat
-
   """Maximum of paraBlockHeight across the matching connection"""
   paraBlockHeight: Int
 
@@ -3418,18 +3362,6 @@ type LbppoolAverageAggregates {
 
   """Mean average of repayTarget across the matching connection"""
   repayTarget: BigFloat
-
-  """Mean average of maxInRatio across the matching connection"""
-  maxInRatio: BigFloat
-
-  """Mean average of maxOutRatio across the matching connection"""
-  maxOutRatio: BigFloat
-
-  """Mean average of minPoolLiquidity across the matching connection"""
-  minPoolLiquidity: BigFloat
-
-  """Mean average of minTradingLimit across the matching connection"""
-  minTradingLimit: BigFloat
 
   """Mean average of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
@@ -3465,24 +3397,6 @@ type LbppoolStddevSampleAggregates {
   Sample standard deviation of repayTarget across the matching connection
   """
   repayTarget: BigFloat
-
-  """Sample standard deviation of maxInRatio across the matching connection"""
-  maxInRatio: BigFloat
-
-  """
-  Sample standard deviation of maxOutRatio across the matching connection
-  """
-  maxOutRatio: BigFloat
-
-  """
-  Sample standard deviation of minPoolLiquidity across the matching connection
-  """
-  minPoolLiquidity: BigFloat
-
-  """
-  Sample standard deviation of minTradingLimit across the matching connection
-  """
-  minTradingLimit: BigFloat
 
   """
   Sample standard deviation of paraBlockHeight across the matching connection
@@ -3528,26 +3442,6 @@ type LbppoolStddevPopulationAggregates {
   repayTarget: BigFloat
 
   """
-  Population standard deviation of maxInRatio across the matching connection
-  """
-  maxInRatio: BigFloat
-
-  """
-  Population standard deviation of maxOutRatio across the matching connection
-  """
-  maxOutRatio: BigFloat
-
-  """
-  Population standard deviation of minPoolLiquidity across the matching connection
-  """
-  minPoolLiquidity: BigFloat
-
-  """
-  Population standard deviation of minTradingLimit across the matching connection
-  """
-  minTradingLimit: BigFloat
-
-  """
   Population standard deviation of paraBlockHeight across the matching connection
   """
   paraBlockHeight: BigFloat
@@ -3580,18 +3474,6 @@ type LbppoolVarianceSampleAggregates {
   """Sample variance of repayTarget across the matching connection"""
   repayTarget: BigFloat
 
-  """Sample variance of maxInRatio across the matching connection"""
-  maxInRatio: BigFloat
-
-  """Sample variance of maxOutRatio across the matching connection"""
-  maxOutRatio: BigFloat
-
-  """Sample variance of minPoolLiquidity across the matching connection"""
-  minPoolLiquidity: BigFloat
-
-  """Sample variance of minTradingLimit across the matching connection"""
-  minTradingLimit: BigFloat
-
   """Sample variance of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
 
@@ -3621,18 +3503,6 @@ type LbppoolVariancePopulationAggregates {
   """Population variance of repayTarget across the matching connection"""
   repayTarget: BigFloat
 
-  """Population variance of maxInRatio across the matching connection"""
-  maxInRatio: BigFloat
-
-  """Population variance of maxOutRatio across the matching connection"""
-  maxOutRatio: BigFloat
-
-  """Population variance of minPoolLiquidity across the matching connection"""
-  minPoolLiquidity: BigFloat
-
-  """Population variance of minTradingLimit across the matching connection"""
-  minTradingLimit: BigFloat
-
   """Population variance of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
 
@@ -3654,11 +3524,6 @@ enum LbppoolGroupBy {
   FEE
   FEE_COLLECTOR
   REPAY_TARGET
-  REPAY_FEE
-  MAX_IN_RATIO
-  MAX_OUT_RATIO
-  MIN_POOL_LIQUIDITY
-  MIN_TRADING_LIMIT
   PARA_BLOCK_HEIGHT
   RELAY_BLOCK_HEIGHT
 }
@@ -3686,10 +3551,6 @@ input LbppoolHavingSumInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3702,10 +3563,6 @@ input LbppoolHavingDistinctCountInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3718,10 +3575,6 @@ input LbppoolHavingMinInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3734,10 +3587,6 @@ input LbppoolHavingMaxInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3750,10 +3599,6 @@ input LbppoolHavingAverageInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3766,10 +3611,6 @@ input LbppoolHavingStddevSampleInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3782,10 +3623,6 @@ input LbppoolHavingStddevPopulationInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3798,10 +3635,6 @@ input LbppoolHavingVarianceSampleInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3814,10 +3647,6 @@ input LbppoolHavingVariancePopulationInput {
   initialWeight: HavingIntFilter
   finalWeight: HavingIntFilter
   repayTarget: HavingBigfloatFilter
-  maxInRatio: HavingBigfloatFilter
-  maxOutRatio: HavingBigfloatFilter
-  minPoolLiquidity: HavingBigfloatFilter
-  minTradingLimit: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
   relayBlockHeight: HavingIntFilter
 }
@@ -3851,16 +3680,6 @@ enum LbppoolsOrderBy {
   FEE_COLLECTOR_DESC
   REPAY_TARGET_ASC
   REPAY_TARGET_DESC
-  REPAY_FEE_ASC
-  REPAY_FEE_DESC
-  MAX_IN_RATIO_ASC
-  MAX_IN_RATIO_DESC
-  MAX_OUT_RATIO_ASC
-  MAX_OUT_RATIO_DESC
-  MIN_POOL_LIQUIDITY_ASC
-  MIN_POOL_LIQUIDITY_DESC
-  MIN_TRADING_LIMIT_ASC
-  MIN_TRADING_LIMIT_DESC
   PARA_BLOCK_HEIGHT_ASC
   PARA_BLOCK_HEIGHT_DESC
   RELAY_BLOCK_HEIGHT_ASC
@@ -4022,21 +3841,6 @@ input LbppoolCondition {
   """Checks for equality with the object’s `repayTarget` field."""
   repayTarget: BigFloat
 
-  """Checks for equality with the object’s `repayFee` field."""
-  repayFee: [Int]
-
-  """Checks for equality with the object’s `maxInRatio` field."""
-  maxInRatio: BigFloat
-
-  """Checks for equality with the object’s `maxOutRatio` field."""
-  maxOutRatio: BigFloat
-
-  """Checks for equality with the object’s `minPoolLiquidity` field."""
-  minPoolLiquidity: BigFloat
-
-  """Checks for equality with the object’s `minTradingLimit` field."""
-  minTradingLimit: BigFloat
-
   """Checks for equality with the object’s `paraBlockHeight` field."""
   paraBlockHeight: Int
 
@@ -4086,21 +3890,6 @@ input LbppoolFilter {
 
   """Filter by the object’s `repayTarget` field."""
   repayTarget: BigFloatFilter
-
-  """Filter by the object’s `repayFee` field."""
-  repayFee: IntListFilter
-
-  """Filter by the object’s `maxInRatio` field."""
-  maxInRatio: BigFloatFilter
-
-  """Filter by the object’s `maxOutRatio` field."""
-  maxOutRatio: BigFloatFilter
-
-  """Filter by the object’s `minPoolLiquidity` field."""
-  minPoolLiquidity: BigFloatFilter
-
-  """Filter by the object’s `minTradingLimit` field."""
-  minTradingLimit: BigFloatFilter
 
   """Filter by the object’s `paraBlockHeight` field."""
   paraBlockHeight: IntFilter

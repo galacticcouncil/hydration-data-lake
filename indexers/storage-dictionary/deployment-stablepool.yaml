@@ -30,8 +30,7 @@ deploy:
         PROCESS_FROM_BLOCK: 3640100
         PROCESS_TO_BLOCK: 4512000
         STATE_SCHEMA_NAME: stablepool__batch_proc_1
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 250
+        INDEXER_MAX_SUB_BATCH_SIZE: 50
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
     - name: stablepool-batch-proc-2
@@ -50,8 +49,7 @@ deploy:
         PROCESS_FROM_BLOCK: 4512001
         PROCESS_TO_BLOCK: 5384000
         STATE_SCHEMA_NAME: stablepool__batch_proc_2
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 250
+        INDEXER_MAX_SUB_BATCH_SIZE: 50
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
     - name: stablepool-batch-proc-3
@@ -70,8 +68,7 @@ deploy:
         PROCESS_FROM_BLOCK: 5384001
         PROCESS_TO_BLOCK: 6256000
         STATE_SCHEMA_NAME: stablepool__batch_proc_3
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 250
+        INDEXER_MAX_SUB_BATCH_SIZE: 50
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
     - name: stablepool-batch-proc-4
@@ -90,8 +87,7 @@ deploy:
         PROCESS_FROM_BLOCK: 6256001
         PROCESS_TO_BLOCK: 7128000
         STATE_SCHEMA_NAME: stablepool__batch_proc_4
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 250
+        INDEXER_MAX_SUB_BATCH_SIZE: 50
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
     - name: stablepool-batch-proc-5
@@ -110,8 +106,7 @@ deploy:
         PROCESS_FROM_BLOCK: 7128001
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: stablepool__batch_proc_5
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 250
+        INDEXER_MAX_SUB_BATCH_SIZE: 50
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
     - name: stablepool-assets-tracker-proc
@@ -130,8 +125,7 @@ deploy:
         PROCESS_FROM_BLOCK: 7128001
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 250
+        INDEXER_MAX_SUB_BATCH_SIZE: 50
         ASSETS_TRACKER_PROCESSOR: true
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
   api:

@@ -104,7 +104,7 @@ export type StableswapPegSource = {
 
 export interface StablepoolPoolPegsInfo {
   source: StableswapPegSource[];
-  maxPegUpdate: number;
+  maxPegUpdate?: number;
   current: [bigint, bigint][];
 }
 
@@ -125,6 +125,11 @@ export interface Erc20AssetContractDetails {
 export type AssetDetailsWithId = {
   assetId: number;
   data: AssetDetails | null;
+};
+
+export type AssetExistentialDeposit = {
+  assetId: string;
+  existentialDeposit: bigint;
 };
 
 export interface XykPoolAssetIds {
@@ -252,6 +257,11 @@ export interface BondDetails {
  * =========================== I N P U T    T Y P E S===========================
  * =============================================================================
  */
+
+
+export type GetDataAtBlockInput = {
+  block: BlockHeader;
+};
 
 export type GetConstantsInput = {
   block: BlockHeader;

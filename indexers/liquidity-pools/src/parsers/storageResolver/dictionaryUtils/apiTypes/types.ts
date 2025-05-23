@@ -2165,15 +2165,10 @@ export type Lbppool = {
   initialWeight: Scalars['Int']['output'];
   /** Reads and enables pagination through a set of `LbppoolAssetsDatum`. */
   lbppoolAssetsDataByPoolId: LbppoolAssetsDataConnection;
-  maxInRatio: Scalars['BigFloat']['output'];
-  maxOutRatio: Scalars['BigFloat']['output'];
-  minPoolLiquidity: Scalars['BigFloat']['output'];
-  minTradingLimit: Scalars['BigFloat']['output'];
   owner: Scalars['String']['output'];
   paraBlockHeight: Scalars['Int']['output'];
   poolAddress: Scalars['String']['output'];
   relayBlockHeight: Scalars['Int']['output'];
-  repayFee: Array<Maybe<Scalars['Int']['output']>>;
   repayTarget: Scalars['BigFloat']['output'];
   start?: Maybe<Scalars['Int']['output']>;
   weightCurve: Scalars['String']['output'];
@@ -2528,14 +2523,6 @@ export type LbppoolAverageAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of maxInRatio across the matching connection */
-  maxInRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of maxOutRatio across the matching connection */
-  maxOutRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of minPoolLiquidity across the matching connection */
-  minPoolLiquidity?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of minTradingLimit across the matching connection */
-  minTradingLimit?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of relayBlockHeight across the matching connection */
@@ -2564,14 +2551,6 @@ export type LbppoolCondition = {
   id?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `initialWeight` field. */
   initialWeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `maxInRatio` field. */
-  maxInRatio?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `maxOutRatio` field. */
-  maxOutRatio?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `minPoolLiquidity` field. */
-  minPoolLiquidity?: InputMaybe<Scalars['BigFloat']['input']>;
-  /** Checks for equality with the object’s `minTradingLimit` field. */
-  minTradingLimit?: InputMaybe<Scalars['BigFloat']['input']>;
   /** Checks for equality with the object’s `owner` field. */
   owner?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `paraBlockHeight` field. */
@@ -2580,8 +2559,6 @@ export type LbppoolCondition = {
   poolAddress?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `relayBlockHeight` field. */
   relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `repayFee` field. */
-  repayFee?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
   /** Checks for equality with the object’s `repayTarget` field. */
   repayTarget?: InputMaybe<Scalars['BigFloat']['input']>;
   /** Checks for equality with the object’s `start` field. */
@@ -2608,14 +2585,6 @@ export type LbppoolDistinctCountAggregates = {
   id?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of maxInRatio across the matching connection */
-  maxInRatio?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of maxOutRatio across the matching connection */
-  maxOutRatio?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of minPoolLiquidity across the matching connection */
-  minPoolLiquidity?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of minTradingLimit across the matching connection */
-  minTradingLimit?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of owner across the matching connection */
   owner?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of paraBlockHeight across the matching connection */
@@ -2624,8 +2593,6 @@ export type LbppoolDistinctCountAggregates = {
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of relayBlockHeight across the matching connection */
   relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of repayFee across the matching connection */
-  repayFee?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of start across the matching connection */
@@ -2654,14 +2621,6 @@ export type LbppoolFilter = {
   id?: InputMaybe<StringFilter>;
   /** Filter by the object’s `initialWeight` field. */
   initialWeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `maxInRatio` field. */
-  maxInRatio?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `maxOutRatio` field. */
-  maxOutRatio?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `minPoolLiquidity` field. */
-  minPoolLiquidity?: InputMaybe<BigFloatFilter>;
-  /** Filter by the object’s `minTradingLimit` field. */
-  minTradingLimit?: InputMaybe<BigFloatFilter>;
   /** Negates the expression. */
   not?: InputMaybe<LbppoolFilter>;
   /** Checks for any expressions in this list. */
@@ -2674,8 +2633,6 @@ export type LbppoolFilter = {
   poolAddress?: InputMaybe<StringFilter>;
   /** Filter by the object’s `relayBlockHeight` field. */
   relayBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `repayFee` field. */
-  repayFee?: InputMaybe<IntListFilter>;
   /** Filter by the object’s `repayTarget` field. */
   repayTarget?: InputMaybe<BigFloatFilter>;
   /** Filter by the object’s `start` field. */
@@ -2693,15 +2650,10 @@ export enum LbppoolGroupBy {
   FeeCollector = 'FEE_COLLECTOR',
   FinalWeight = 'FINAL_WEIGHT',
   InitialWeight = 'INITIAL_WEIGHT',
-  MaxInRatio = 'MAX_IN_RATIO',
-  MaxOutRatio = 'MAX_OUT_RATIO',
-  MinPoolLiquidity = 'MIN_POOL_LIQUIDITY',
-  MinTradingLimit = 'MIN_TRADING_LIMIT',
   Owner = 'OWNER',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
   PoolAddress = 'POOL_ADDRESS',
   RelayBlockHeight = 'RELAY_BLOCK_HEIGHT',
-  RepayFee = 'REPAY_FEE',
   RepayTarget = 'REPAY_TARGET',
   Start = 'START',
   WeightCurve = 'WEIGHT_CURVE'
@@ -2713,10 +2665,6 @@ export type LbppoolHavingAverageInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2729,10 +2677,6 @@ export type LbppoolHavingDistinctCountInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2760,10 +2704,6 @@ export type LbppoolHavingMaxInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2776,10 +2716,6 @@ export type LbppoolHavingMinInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2792,10 +2728,6 @@ export type LbppoolHavingStddevPopulationInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2808,10 +2740,6 @@ export type LbppoolHavingStddevSampleInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2824,10 +2752,6 @@ export type LbppoolHavingSumInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2840,10 +2764,6 @@ export type LbppoolHavingVariancePopulationInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2856,10 +2776,6 @@ export type LbppoolHavingVarianceSampleInput = {
   end?: InputMaybe<HavingIntFilter>;
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
-  maxInRatio?: InputMaybe<HavingBigfloatFilter>;
-  maxOutRatio?: InputMaybe<HavingBigfloatFilter>;
-  minPoolLiquidity?: InputMaybe<HavingBigfloatFilter>;
-  minTradingLimit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   relayBlockHeight?: InputMaybe<HavingIntFilter>;
   repayTarget?: InputMaybe<HavingBigfloatFilter>;
@@ -2878,14 +2794,6 @@ export type LbppoolMaxAggregates = {
   finalWeight?: Maybe<Scalars['Int']['output']>;
   /** Maximum of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of maxInRatio across the matching connection */
-  maxInRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of maxOutRatio across the matching connection */
-  maxOutRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of minPoolLiquidity across the matching connection */
-  minPoolLiquidity?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of minTradingLimit across the matching connection */
-  minTradingLimit?: Maybe<Scalars['BigFloat']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
   /** Maximum of relayBlockHeight across the matching connection */
@@ -2908,14 +2816,6 @@ export type LbppoolMinAggregates = {
   finalWeight?: Maybe<Scalars['Int']['output']>;
   /** Minimum of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of maxInRatio across the matching connection */
-  maxInRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of maxOutRatio across the matching connection */
-  maxOutRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of minPoolLiquidity across the matching connection */
-  minPoolLiquidity?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of minTradingLimit across the matching connection */
-  minTradingLimit?: Maybe<Scalars['BigFloat']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
   /** Minimum of relayBlockHeight across the matching connection */
@@ -2938,14 +2838,6 @@ export type LbppoolStddevPopulationAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of maxInRatio across the matching connection */
-  maxInRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of maxOutRatio across the matching connection */
-  maxOutRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of minPoolLiquidity across the matching connection */
-  minPoolLiquidity?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of minTradingLimit across the matching connection */
-  minTradingLimit?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of relayBlockHeight across the matching connection */
@@ -2968,14 +2860,6 @@ export type LbppoolStddevSampleAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of maxInRatio across the matching connection */
-  maxInRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of maxOutRatio across the matching connection */
-  maxOutRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of minPoolLiquidity across the matching connection */
-  minPoolLiquidity?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of minTradingLimit across the matching connection */
-  minTradingLimit?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of relayBlockHeight across the matching connection */
@@ -2998,14 +2882,6 @@ export type LbppoolSumAggregates = {
   finalWeight: Scalars['BigInt']['output'];
   /** Sum of initialWeight across the matching connection */
   initialWeight: Scalars['BigInt']['output'];
-  /** Sum of maxInRatio across the matching connection */
-  maxInRatio: Scalars['BigFloat']['output'];
-  /** Sum of maxOutRatio across the matching connection */
-  maxOutRatio: Scalars['BigFloat']['output'];
-  /** Sum of minPoolLiquidity across the matching connection */
-  minPoolLiquidity: Scalars['BigFloat']['output'];
-  /** Sum of minTradingLimit across the matching connection */
-  minTradingLimit: Scalars['BigFloat']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
   /** Sum of relayBlockHeight across the matching connection */
@@ -3028,14 +2904,6 @@ export type LbppoolVariancePopulationAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of maxInRatio across the matching connection */
-  maxInRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of maxOutRatio across the matching connection */
-  maxOutRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of minPoolLiquidity across the matching connection */
-  minPoolLiquidity?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of minTradingLimit across the matching connection */
-  minTradingLimit?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of relayBlockHeight across the matching connection */
@@ -3058,14 +2926,6 @@ export type LbppoolVarianceSampleAggregates = {
   finalWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of initialWeight across the matching connection */
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of maxInRatio across the matching connection */
-  maxInRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of maxOutRatio across the matching connection */
-  maxOutRatio?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of minPoolLiquidity across the matching connection */
-  minPoolLiquidity?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of minTradingLimit across the matching connection */
-  minTradingLimit?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of relayBlockHeight across the matching connection */
@@ -3237,14 +3097,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdVarianceSamplePoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
   LbppoolAssetsDataByPoolIdVarianceSampleRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
   LbppoolAssetsDataByPoolIdVarianceSampleRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
-  MaxInRatioAsc = 'MAX_IN_RATIO_ASC',
-  MaxInRatioDesc = 'MAX_IN_RATIO_DESC',
-  MaxOutRatioAsc = 'MAX_OUT_RATIO_ASC',
-  MaxOutRatioDesc = 'MAX_OUT_RATIO_DESC',
-  MinPoolLiquidityAsc = 'MIN_POOL_LIQUIDITY_ASC',
-  MinPoolLiquidityDesc = 'MIN_POOL_LIQUIDITY_DESC',
-  MinTradingLimitAsc = 'MIN_TRADING_LIMIT_ASC',
-  MinTradingLimitDesc = 'MIN_TRADING_LIMIT_DESC',
   Natural = 'NATURAL',
   OwnerAsc = 'OWNER_ASC',
   OwnerDesc = 'OWNER_DESC',
@@ -3256,8 +3108,6 @@ export enum LbppoolsOrderBy {
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
   RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC',
-  RepayFeeAsc = 'REPAY_FEE_ASC',
-  RepayFeeDesc = 'REPAY_FEE_DESC',
   RepayTargetAsc = 'REPAY_TARGET_ASC',
   RepayTargetDesc = 'REPAY_TARGET_DESC',
   StartAsc = 'START_ASC',
@@ -6733,7 +6583,7 @@ export type GetOmnipoolBlocksStorageStateQueryVariables = Exact<{
 
 export type GetOmnipoolBlocksStorageStateQuery = { __typename?: 'Query', omnipools?: { __typename?: 'OmnipoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Omnipool', id: string, poolAddress: string, hubAssetTradability: any, paraBlockHeight: number, omnipoolAssetDataByPoolId: { __typename?: 'OmnipoolAssetDataConnection', nodes: Array<{ __typename?: 'OmnipoolAssetDatum', assetId: number, assetState: any, balances: any, paraBlockHeight: number, id: string } | null> } } | null> } | null };
 
-export type GetLbpPoolBlocksStorageStateQueryVariables = Exact<{
+export type GetLbppoolBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<LbppoolFilter>;
   first: Scalars['Int']['input'];
   offset: Scalars['Int']['input'];
@@ -6741,9 +6591,9 @@ export type GetLbpPoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetLbpPoolBlocksStorageStateQuery = { __typename?: 'Query', lbppools?: { __typename?: 'LbppoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Lbppool', id: string, assetAId: number, assetBId: number, fee: Array<number | null>, start?: number | null, end?: number | null, weightCurve: string, initialWeight: number, finalWeight: number, feeCollector?: string | null, repayTarget: any, repayFee: Array<number | null>, poolAddress: string, owner: string, lbppoolAssetsDataByPoolId: { __typename?: 'LbppoolAssetsDataConnection', nodes: Array<{ __typename?: 'LbppoolAssetsDatum', id: string, assetId: number, poolId?: string | null, balances: any, paraBlockHeight: number } | null> } } | null> } | null };
+export type GetLbppoolBlocksStorageStateQuery = { __typename?: 'Query', lbppools?: { __typename?: 'LbppoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Lbppool', id: string, assetAId: number, assetBId: number, fee: Array<number | null>, start?: number | null, end?: number | null, weightCurve: string, initialWeight: number, finalWeight: number, feeCollector?: string | null, repayTarget: any, poolAddress: string, owner: string, lbppoolAssetsDataByPoolId: { __typename?: 'LbppoolAssetsDataConnection', nodes: Array<{ __typename?: 'LbppoolAssetsDatum', id: string, assetId: number, poolId?: string | null, balances: any, paraBlockHeight: number } | null> } } | null> } | null };
 
-export type GetXykPoolBlocksStorageStateQueryVariables = Exact<{
+export type GetXykpoolBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<XykpoolFilter>;
   first: Scalars['Int']['input'];
   offset: Scalars['Int']['input'];
@@ -6751,9 +6601,9 @@ export type GetXykPoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetXykPoolBlocksStorageStateQuery = { __typename?: 'Query', xykpools?: { __typename?: 'XykpoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Xykpool', assetAId: number, assetBId: number, id: string, paraBlockHeight: number, poolAddress: string, shareTokenId?: string | null, xykpoolAssetsDataByPoolId: { __typename?: 'XykpoolAssetsDataConnection', nodes: Array<{ __typename?: 'XykpoolAssetsDatum', assetId: number, balances: any, id: string, paraBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
+export type GetXykpoolBlocksStorageStateQuery = { __typename?: 'Query', xykpools?: { __typename?: 'XykpoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Xykpool', assetAId: number, assetBId: number, id: string, paraBlockHeight: number, poolAddress: string, shareTokenId?: string | null, xykpoolAssetsDataByPoolId: { __typename?: 'XykpoolAssetsDataConnection', nodes: Array<{ __typename?: 'XykpoolAssetsDatum', assetId: number, balances: any, id: string, paraBlockHeight: number, poolId?: string | null } | null> } } | null> } | null };
 
-export type GetStablepoolBlocksStorageStateQueryVariables = Exact<{
+export type GetStableswapBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<StableswapFilter>;
   first: Scalars['Int']['input'];
   offset: Scalars['Int']['input'];
@@ -6761,7 +6611,37 @@ export type GetStablepoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetStablepoolBlocksStorageStateQuery = { __typename?: 'Query', stableswaps?: { __typename?: 'StableswapsConnection', totalCount: number, nodes: Array<{ __typename?: 'Stableswap', fee: number, finalAmplification: number, finalBlock: number, id: string, initialAmplification: number, initialBlock: number, paraBlockHeight: number, poolAddress: string, poolId: number, pegs: any, pegSources?: any | null, maxPegUpdate?: number | null, stableswapAssetDataByPoolId: { __typename?: 'StableswapAssetDataConnection', nodes: Array<{ __typename?: 'StableswapAssetDatum', id: string, assetId: number, balances: any, poolId?: string | null, tradable?: any | null, paraBlockHeight: number } | null> } } | null> } | null };
+export type GetStableswapBlocksStorageStateQuery = { __typename?: 'Query', stableswaps?: { __typename?: 'StableswapsConnection', totalCount: number, nodes: Array<{ __typename?: 'Stableswap', fee: number, finalAmplification: number, finalBlock: number, id: string, initialAmplification: number, initialBlock: number, paraBlockHeight: number, poolAddress: string, poolId: number, pegs: any, pegSources?: any | null, maxPegUpdate?: number | null, stableswapAssetDataByPoolId: { __typename?: 'StableswapAssetDataConnection', nodes: Array<{ __typename?: 'StableswapAssetDatum', id: string, assetId: number, balances: any, poolId?: string | null, tradable?: any | null, paraBlockHeight: number } | null> } } | null> } | null };
+
+export type GetAavePoolBlocksStorageStateQueryVariables = Exact<{
+  filter?: InputMaybe<AavepoolFilter>;
+  first: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
+  orderBy?: InputMaybe<Array<AavepoolsOrderBy> | AavepoolsOrderBy>;
+}>;
+
+
+export type GetAavePoolBlocksStorageStateQuery = { __typename?: 'Query', aavepools?: { __typename?: 'AavepoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Aavepool', id: string, aTokenId?: string | null, reserveAssetId?: string | null, liquidityIn: any, liquidityOut: any, paraBlockHeight: number, poolId: string } | null> } | null };
+
+export type GetEmaOracleBlocksStorageStateQueryVariables = Exact<{
+  filter?: InputMaybe<EmaOracleFilter>;
+  first: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
+  orderBy?: InputMaybe<Array<EmaOraclesOrderBy> | EmaOraclesOrderBy>;
+}>;
+
+
+export type GetEmaOracleBlocksStorageStateQuery = { __typename?: 'Query', emaOracles?: { __typename?: 'EmaOraclesConnection', totalCount: number, nodes: Array<{ __typename?: 'EmaOracle', id: string, paraBlockHeight: number, entries: any } | null> } | null };
+
+export type GetAssetHistDataBlocksStorageStateQueryVariables = Exact<{
+  filter?: InputMaybe<AssetHistoricalDatumFilter>;
+  first: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
+  orderBy?: InputMaybe<Array<AssetHistoricalDataOrderBy> | AssetHistoricalDataOrderBy>;
+}>;
+
+
+export type GetAssetHistDataBlocksStorageStateQuery = { __typename?: 'Query', assetHistoricalData?: { __typename?: 'AssetHistoricalDataConnection', totalCount: number, nodes: Array<{ __typename?: 'AssetHistoricalDatum', id: string, assetId?: string | null, dynamicFee?: any | null, existentialDeposit: any, totalIssuance: any, paraBlockHeight: number } | null> } | null };
 
 
 export const GetOmnipoolBlocksStorageState = gql`
@@ -6801,7 +6681,6 @@ export const GetLbppoolBlocksStorageState = gql`
       finalWeight
       feeCollector
       repayTarget
-      repayFee
       poolAddress
       owner
       lbppoolAssetsDataByPoolId {
@@ -6868,6 +6747,54 @@ export const GetStableswapBlocksStorageState = gql`
           paraBlockHeight
         }
       }
+    }
+    totalCount
+  }
+}
+    `;
+export const GetAavePoolBlocksStorageState = gql`
+    query GetAavePoolBlocksStorageState($filter: AavepoolFilter, $first: Int!, $offset: Int!, $orderBy: [AavepoolsOrderBy!]) {
+  aavepools(filter: $filter, orderBy: $orderBy, first: $first, offset: $offset) {
+    nodes {
+      id
+      aTokenId
+      reserveAssetId
+      liquidityIn
+      liquidityOut
+      paraBlockHeight
+      poolId
+    }
+    totalCount
+  }
+}
+    `;
+export const GetEmaOracleBlocksStorageState = gql`
+    query GetEmaOracleBlocksStorageState($filter: EmaOracleFilter, $first: Int!, $offset: Int!, $orderBy: [EmaOraclesOrderBy!]) {
+  emaOracles(filter: $filter, orderBy: $orderBy, first: $first, offset: $offset) {
+    nodes {
+      id
+      paraBlockHeight
+      entries
+    }
+    totalCount
+  }
+}
+    `;
+export const GetAssetHistDataBlocksStorageState = gql`
+    query GetAssetHistDataBlocksStorageState($filter: AssetHistoricalDatumFilter, $first: Int!, $offset: Int!, $orderBy: [AssetHistoricalDataOrderBy!]) {
+  assetHistoricalData(
+    filter: $filter
+    orderBy: $orderBy
+    first: $first
+    offset: $offset
+  ) {
+    nodes {
+      id
+      assetId
+      dynamicFee
+      existentialDeposit
+      totalIssuance
+      paraBlockHeight
     }
     totalCount
   }

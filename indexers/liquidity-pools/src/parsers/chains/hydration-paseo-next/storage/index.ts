@@ -9,7 +9,7 @@ import lbp from './lbp';
 import dca from './dca';
 import otc from './otc';
 import { StorageResolver } from '../../../storageResolver';
-import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
+import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
 import {
   AccountData,
   GetPoolAssetInfoInput,
@@ -50,7 +50,7 @@ export default {
         StablepoolInfo | null
       >({
         args,
-        pallet: ProcessingPallets.STABLESWAP,
+        pallet: ProcessingTopic.STABLESWAP,
         method: 'getPoolData',
         fallbackFns: [stableswap.getPoolData],
       }),
@@ -62,7 +62,7 @@ export default {
         AccountData | null
       >({
         args,
-        pallet: ProcessingPallets.STABLESWAP,
+        pallet: ProcessingTopic.STABLESWAP,
         method: 'getPoolAssetInfo',
         fallbackFns: [
           async (fallbackFnArgs) =>
@@ -91,7 +91,7 @@ export default {
         OmnipoolAssetData | null
       >({
         args,
-        pallet: ProcessingPallets.OMNIPOOL,
+        pallet: ProcessingTopic.OMNIPOOL,
         method: 'getAssetData',
         fallbackFns: [omnipool.getOmnipoolAssetData],
       }),
@@ -103,7 +103,7 @@ export default {
         AccountData | null
       >({
         args,
-        pallet: ProcessingPallets.OMNIPOOL,
+        pallet: ProcessingTopic.OMNIPOOL,
         method: 'getPoolAssetInfo',
         fallbackFns: [
           async (fallbackFnArgs) =>
@@ -133,7 +133,7 @@ export default {
         XykPoolAssetIds | null
       >({
         args,
-        pallet: ProcessingPallets.XYK,
+        pallet: ProcessingTopic.XYK,
         method: 'getPoolAssets',
         fallbackFns: [xyk.getPoolAssets],
       }),
@@ -145,7 +145,7 @@ export default {
         AccountData | null
       >({
         args,
-        pallet: ProcessingPallets.XYK,
+        pallet: ProcessingTopic.XYK,
         method: 'getPoolAssetInfo',
         fallbackFns: [
           async (fallbackFnArgs) =>
@@ -172,7 +172,7 @@ export default {
         LbpPoolData | null
       >({
         args,
-        pallet: ProcessingPallets.LBP,
+        pallet: ProcessingTopic.LBP,
         method: 'getPoolData',
         fallbackFns: [lbp.getPoolData],
       }),
@@ -185,7 +185,7 @@ export default {
         AccountData | null
       >({
         args,
-        pallet: ProcessingPallets.LBP,
+        pallet: ProcessingTopic.LBP,
         method: 'getPoolAssetInfo',
         fallbackFns: [
           async (fallbackFnArgs) =>

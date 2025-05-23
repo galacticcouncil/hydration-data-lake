@@ -4,7 +4,6 @@ import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser
 import parsers from '../../../parsers';
 import { XykpoolHistoricalData } from '../../../model';
 import { getOrCreateXykPool } from './xykPool';
-import { getOrCreateAsset } from '../../assets/asset';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { BlockHeader } from '@subsquid/substrate-processor';
 

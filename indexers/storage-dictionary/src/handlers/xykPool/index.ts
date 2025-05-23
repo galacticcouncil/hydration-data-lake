@@ -15,6 +15,14 @@ export async function handleXykPoolsStorage(
   const allPoolsWithAssets =
     await parsers.storage.xyk.getAllPoolsWithAssets(currentBlockHeader);
 
+  const allPoolShareAssets = new Map(
+    (
+      (await parsers.storage.xyk.getPoolShareTokenAll({
+        block: currentBlockHeader,
+      })) || []
+    ).map((item) => [item.poolId, item])
+  );
+
   const fallbackAccountBalances = new AccountBalances({
     free: BigInt(0),
     reserved: BigInt(0),
@@ -55,6 +63,9 @@ export async function handleXykPoolsStorage(
         0,
       assetAId: poolData.assetAId,
       assetBId: poolData.assetBId,
+      shareTokenId:
+        allPoolShareAssets.get(poolData.poolAddress)?.shareTokenId.toString() ??
+        null,
     });
 
     const assetAData = new XykpoolAssetsData({

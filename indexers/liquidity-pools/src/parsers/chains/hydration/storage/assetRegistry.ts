@@ -3,7 +3,9 @@ import { storage } from '../typegenTypes/';
 import {
   AssetDetails,
   AssetDetailsWithId,
+  AssetExistentialDeposit,
   Erc20AssetContractDetails,
+  GetDataAtBlockInput,
 } from '../../../types/storage';
 import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
 import { AssetType } from '../../../../model';
@@ -234,6 +236,19 @@ async function getAssetMany(
   throw new UnknownVersionError('storage.assetRegistry.assets');
 }
 
+async function getAssetsExistentialDepositAll({
+  block,
+}: GetDataAtBlockInput): Promise<Array<AssetExistentialDeposit>> {
+  const allAssetsData = await getAssetAll(block);
+
+  return allAssetsData
+    .filter((a) => !!a.data)
+    .map((asset) => ({
+      assetId: `${asset.assetId}`,
+      existentialDeposit: asset.data!.existentialDeposit,
+    }));
+}
+
 async function getAssetAll(
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
@@ -403,4 +418,5 @@ export default {
   getAssetMany,
   getErc20AssetContractAddress,
   getAssetAll,
+  getAssetsExistentialDepositAll,
 };

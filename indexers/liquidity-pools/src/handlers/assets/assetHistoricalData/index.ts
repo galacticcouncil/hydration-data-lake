@@ -31,7 +31,7 @@ async function processAssetsHistoricalDataAtBlock({
 
   totalIssuancePerAssetMap.set(
     '0',
-    await parsers.storage.balances.getTotalIssuance(block)
+    await parsers.storage.balances.getTotalIssuance({ block })
   );
 
   /**
@@ -44,9 +44,11 @@ async function processAssetsHistoricalDataAtBlock({
   }
 
   const existentialDepositPerAssetMap = new Map(
-    (await parsers.storage.assetRegistry.getAssetMany(assetRegistryIds, block))
-      .filter((res) => !!res.data)
-      .map((res) => [`${res.assetId}`, res.data])
+    (
+      (await parsers.storage.assetRegistry.getAssetsExistentialDepositAll({
+        block,
+      })) || []
+    ).map((res) => [`${res.assetId}`, res])
   );
 
   const dynamicFeePerAssetMap = new Map(

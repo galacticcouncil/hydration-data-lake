@@ -68,6 +68,15 @@ async function getStableswapDataPromise({
         pegSources: null,
       };
 
+    if (poolPegsData && !poolPegsData.source && !poolPegsData.maxPegUpdate)
+      return {
+        pegs:
+          poolPegsData.current ??
+          poolStorageData.assets.map((a) => [BigInt(1), BigInt(1)]),
+        maxPegUpdate: null,
+        pegSources: null,
+      };
+
     return {
       pegs: poolPegsData.current,
       maxPegUpdate: poolPegsData.maxPegUpdate,

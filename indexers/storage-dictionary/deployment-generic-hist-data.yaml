@@ -17,7 +17,7 @@ deploy:
     - name: batch-proc-1
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://archive.rpc.hydration.cloud
+        RPC_URL: wss://4.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -31,13 +31,13 @@ deploy:
         PROCESS_TO_BLOCK: 2752000
         STATE_SCHEMA_NAME: gen_hist_data__batch_proc_1
         SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 150
+        INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
     - name: batch-proc-2
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://archive.rpc.hydration.cloud
+        RPC_URL: wss://4.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -51,13 +51,13 @@ deploy:
         PROCESS_TO_BLOCK: 4064000
         STATE_SCHEMA_NAME: gen_hist_data__batch_proc_2
         SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 150
+        INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
     - name: batch-proc-3
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://archive.rpc.hydration.cloud
+        RPC_URL: wss://4.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -71,13 +71,13 @@ deploy:
         PROCESS_TO_BLOCK: 5376000
         STATE_SCHEMA_NAME: gen_hist_data__batch_proc_3
         SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 150
+        INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
     - name: batch-proc-4
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://archive.rpc.hydration.cloud
+        RPC_URL: wss://4.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -91,13 +91,13 @@ deploy:
         PROCESS_TO_BLOCK: 6688000
         STATE_SCHEMA_NAME: gen_hist_data__batch_proc_4
         SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 150
+        INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
     - name: batch-proc-5
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://archive.rpc.hydration.cloud
+        RPC_URL: wss://4.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -111,13 +111,13 @@ deploy:
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
         SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 150
+        INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
     - name: assets-tracker-proc
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://archive.rpc.hydration.cloud
+        RPC_URL: wss://4.rpc.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -131,7 +131,7 @@ deploy:
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
         SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 150
+        INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: true
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
   api:

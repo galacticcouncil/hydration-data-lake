@@ -14,21 +14,36 @@ import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
 import bonds from './bonds';
 import { StorageResolver } from '../../../storageResolver';
-import { ProcessingPallets } from '../../../storageResolver/dictionaryUtils/types';
+import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
 import {
   AccountData,
+  AssetDynamicFeeData,
+  AssetExistentialDeposit,
+  EmaOracleEntryData,
+  GetAssetsDynamicFeesAllInput,
+  GetConstantsInput,
+  GetDataAtBlockInput,
+  GetEmaOraclesInput,
   GetPoolAssetInfoInput,
   LbpGetPoolDataInput,
   LbpPoolData,
   OmnipoolAssetData,
+  OmnipoolAssetTradability,
   OmnipoolData,
   OmnipoolGetAssetDataInput,
+  OmnipoolGetHubAssetTradabilityInput,
   OmnipoolGetPoolDataInput,
   StablepoolAssetState,
   StablepoolGetPoolDataInput,
+  StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  StablepoolPoolPegsInfo,
+  TokensGetTokensTotalIssuanceInput,
+  TokensGetTokenTotalIssuanceInput,
+  TokenTotalIssuance,
   XykGetAssetsInput,
   XykGetPoolShareTokenPairsManyInput,
+  XykGetShareTokenInput,
   XykPoolAssetIds,
   XykPoolData,
   XykPoolShareTokenPair,
@@ -43,11 +58,21 @@ import {
   RuntimeApiMethodName,
   RuntimeApiName,
 } from '../../../runtimeApiResolver/types';
+import { BlockHeader } from '@subsquid/substrate-processor';
 
 export default {
   system,
   balances: {
-    getTotalIssuance: balances.getTotalIssuance,
+    getTotalIssuance: (args: GetConstantsInput): Promise<bigint | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetConstantsInput,
+        bigint | null
+      >({
+        args,
+        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        method: 'getNativeTokenTotalIssuance',
+        fallbackFns: [balances.getTotalIssuance],
+      }),
   },
   bonds: {
     getBond: bonds.getBond,
@@ -55,10 +80,46 @@ export default {
   },
   tokens: {
     ...tokens,
-    getTokenTotalIssuance: tokens.getTokenTotalIssuance,
-    getManyTokensTotalIssuance: tokens.getManyTokensTotalIssuance,
+    getTokenTotalIssuance: (
+      args: TokensGetTokenTotalIssuanceInput
+    ): Promise<bigint | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        TokensGetTokenTotalIssuanceInput,
+        bigint | null
+      >({
+        args,
+        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        method: 'getTokenTotalIssuance',
+        fallbackFns: [tokens.getTokenTotalIssuance],
+      }),
+    getManyTokensTotalIssuance: (
+      args: TokensGetTokensTotalIssuanceInput
+    ): Promise<TokenTotalIssuance[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        TokensGetTokensTotalIssuanceInput,
+        TokenTotalIssuance[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        method: 'getManyTokensTotalIssuance',
+        fallbackFns: [tokens.getManyTokensTotalIssuance],
+      }),
   },
-  assetRegistry,
+  assetRegistry: {
+    ...assetRegistry,
+    getAssetsExistentialDepositAll: (
+      args: GetDataAtBlockInput
+    ): Promise<AssetExistentialDeposit[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetDataAtBlockInput,
+        AssetExistentialDeposit[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        method: 'getAssetsExistentialDepositAll',
+        fallbackFns: [assetRegistry.getAssetsExistentialDepositAll],
+      }),
+  },
   parachainSystem,
   dca,
   otc,
@@ -66,7 +127,18 @@ export default {
   stableswap: {
     getAllPoolIds: stableswap.getAllPoolIds,
     getConstants: stableswap.getConstants,
-    getPoolPegs: stableswap.getPoolPegs,
+    getPoolPegs: (
+      args: StablepoolGetPoolPegsInput
+    ): Promise<StablepoolPoolPegsInfo | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        StablepoolGetPoolPegsInput,
+        StablepoolPoolPegsInfo | null
+      >({
+        args,
+        pallet: ProcessingTopic.STABLESWAP,
+        method: 'getPoolPegs',
+        fallbackFns: [stableswap.getPoolPegs],
+      }),
     getPoolData: (
       args: StablepoolGetPoolDataInput
     ): Promise<StablepoolInfo | null> =>
@@ -75,7 +147,7 @@ export default {
         StablepoolInfo | null
       >({
         args,
-        pallet: ProcessingPallets.STABLESWAP,
+        pallet: ProcessingTopic.STABLESWAP,
         method: 'getPoolData',
         fallbackFns: [stableswap.getPoolData],
       }),
@@ -87,7 +159,7 @@ export default {
         StablepoolAssetState | null
       >({
         args,
-        pallet: ProcessingPallets.STABLESWAP,
+        pallet: ProcessingTopic.STABLESWAP,
         method: 'getPoolAssetStorageData',
         fallbackFns: [stableswap.getPoolAssetStorageData],
       }),
@@ -99,7 +171,7 @@ export default {
         AccountData | null
       >({
         args,
-        pallet: ProcessingPallets.STABLESWAP,
+        pallet: ProcessingTopic.STABLESWAP,
         method: 'getPoolAssetInfo',
         fallbackFns: [
           async (fallbackFnArgs) =>
@@ -122,7 +194,19 @@ export default {
   omnipool: {
     getConstants: omnipool.getConstants,
     getOmnipoolAllAssetIds: omnipool.getOmnipoolAllAssetIds,
-    getOmnipoolHubAssetTradability: omnipool.getOmnipoolHubAssetTradability,
+    getPoolData: omnipool.getPoolData,
+    getOmnipoolHubAssetTradability: (
+      args: OmnipoolGetHubAssetTradabilityInput
+    ): Promise<OmnipoolAssetTradability | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        OmnipoolGetHubAssetTradabilityInput,
+        OmnipoolAssetTradability | null
+      >({
+        args,
+        pallet: ProcessingTopic.OMNIPOOL,
+        method: 'getOmnipoolHubAssetTradability',
+        fallbackFns: [omnipool.getOmnipoolHubAssetTradability],
+      }),
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
     ): Promise<OmnipoolAssetData | null> =>
@@ -131,21 +215,9 @@ export default {
         OmnipoolAssetData | null
       >({
         args,
-        pallet: ProcessingPallets.OMNIPOOL,
+        pallet: ProcessingTopic.OMNIPOOL,
         method: 'getAssetData',
         fallbackFns: [omnipool.getOmnipoolAssetData],
-      }),
-    getPoolData: (
-      args: OmnipoolGetPoolDataInput
-    ): Promise<OmnipoolData | null> =>
-      StorageResolver.getInstance().resolveStorageData<
-        OmnipoolGetPoolDataInput,
-        OmnipoolData | null
-      >({
-        args,
-        pallet: ProcessingPallets.OMNIPOOL,
-        method: 'getPoolData',
-        fallbackFns: [omnipool.getPoolData],
       }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
@@ -155,7 +227,7 @@ export default {
         AccountData | null
       >({
         args,
-        pallet: ProcessingPallets.OMNIPOOL,
+        pallet: ProcessingTopic.OMNIPOOL,
         method: 'getPoolAssetInfo',
         fallbackFns: [
           async (fallbackFnArgs) =>
@@ -177,15 +249,35 @@ export default {
   },
   xyk: {
     getConstants: xyk.getConstants,
-    getShareToken: xyk.getShareToken,
-    getPoolShareTokenPairsMany: xyk.getPoolShareTokenPairsMany,
+    getPoolShareTokenPairsMany: (
+      args: XykGetPoolShareTokenPairsManyInput
+    ): Promise<XykPoolShareTokenPair[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        XykGetPoolShareTokenPairsManyInput,
+        XykPoolShareTokenPair[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.XYK,
+        method: 'getPoolShareTokenPairsMany',
+        fallbackFns: [xyk.getPoolShareTokenPairsMany],
+      }),
+    getShareToken: (args: XykGetShareTokenInput): Promise<number | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        XykGetShareTokenInput,
+        number | null
+      >({
+        args,
+        pallet: ProcessingTopic.XYK,
+        method: 'getPoolShareToken',
+        fallbackFns: [xyk.getShareToken],
+      }),
     getPoolAssets: (args: XykGetAssetsInput): Promise<XykPoolAssetIds | null> =>
       StorageResolver.getInstance().resolveStorageData<
         XykGetAssetsInput,
         XykPoolAssetIds | null
       >({
         args,
-        pallet: ProcessingPallets.XYK,
+        pallet: ProcessingTopic.XYK,
         method: 'getPoolAssets',
         fallbackFns: [xyk.getPoolAssets],
       }),
@@ -195,7 +287,7 @@ export default {
         XykPoolData | null
       >({
         args,
-        pallet: ProcessingPallets.XYK,
+        pallet: ProcessingTopic.XYK,
         method: 'getPoolData',
         fallbackFns: [xyk.getPoolData],
       }),
@@ -207,7 +299,7 @@ export default {
         AccountData | null
       >({
         args,
-        pallet: ProcessingPallets.XYK,
+        pallet: ProcessingTopic.XYK,
         method: 'getPoolAssetInfo',
         fallbackFns: [
           async (fallbackFnArgs) =>
@@ -235,7 +327,7 @@ export default {
         LbpPoolData | null
       >({
         args,
-        pallet: ProcessingPallets.LBP,
+        pallet: ProcessingTopic.LBP,
         method: 'getPoolData',
         fallbackFns: [lbp.getPoolData],
       }),
@@ -249,7 +341,7 @@ export default {
         AccountData | null
       >({
         args,
-        pallet: ProcessingPallets.LBP,
+        pallet: ProcessingTopic.LBP,
         method: 'getPoolAssetInfo',
         fallbackFns: [
           async (fallbackFnArgs) =>
@@ -278,7 +370,7 @@ export default {
         AaveTradeExecutorPoolDataWithPoolId[] | null
       >({
         args,
-        pallet: ProcessingPallets.AAVE,
+        pallet: ProcessingTopic.AAVE,
         method: 'getPools',
         fallbackFns: [
           async (fallbackFnArgs) =>
@@ -297,9 +389,31 @@ export default {
   },
   dynamicFees: {
     getConstants: dynamicFees.getConstants,
-    getAssetFeesAll: dynamicFees.getAssetFeesAll,
+    getAssetFeesAll: (
+      args: GetAssetsDynamicFeesAllInput
+    ): Promise<AssetDynamicFeeData[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetAssetsDynamicFeesAllInput,
+        AssetDynamicFeeData[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        method: 'getAssetDynamicFeesAll',
+        fallbackFns: [dynamicFees.getAssetFeesAll],
+      }),
   },
   emaOracle: {
-    getOracles: emaOracle.getOracles,
+    getOracles: (
+      args: GetEmaOraclesInput
+    ): Promise<EmaOracleEntryData[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetEmaOraclesInput,
+        EmaOracleEntryData[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.EMA_ORACLE,
+        method: 'getOracleEntries',
+        fallbackFns: [emaOracle.getOracles],
+      }),
   },
 } as StorageParserMethods;

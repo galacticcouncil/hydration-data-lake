@@ -5,40 +5,62 @@ import {
   GetOmnipoolBlocksStorageState,
   GetOmnipoolBlocksStorageStateQuery,
   GetOmnipoolBlocksStorageStateQueryVariables,
-  GetStablepoolBlocksStorageState,
-  GetStablepoolBlocksStorageStateQuery,
-  GetStablepoolBlocksStorageStateQueryVariables,
-  GetXykPoolBlocksStorageState,
-  GetXykPoolBlocksStorageStateQuery,
-  GetXykPoolBlocksStorageStateQueryVariables,
+  GetStableswapBlocksStorageState,
+  GetStableswapBlocksStorageStateQuery,
+  GetStableswapBlocksStorageStateQueryVariables,
+  GetXykpoolBlocksStorageState,
+  GetXykpoolBlocksStorageStateQuery,
+  GetXykpoolBlocksStorageStateQueryVariables,
   InputMaybe,
-  // OmnipoolAssetDataOrderBy,
-  // OmnipoolAssetDatum,
-  // OmnipoolAssetDatumFilter,
   OmnipoolsOrderBy,
   Omnipool as OmnipoolGql,
   OmnipoolFilter,
-  Stablepool as StablepoolGql,
-  StablepoolFilter,
-  StablepoolsOrderBy,
-  XykPool as XykPoolGlq,
-  XykPoolFilter,
-  XykPoolsOrderBy,
-  LbpPool as LbpPoolGlq,
-  LbpPoolFilter,
-  LbpPoolsOrderBy,
-  GetLbpPoolBlocksStorageStateQuery,
-  GetLbpPoolBlocksStorageStateQueryVariables,
-  GetLbpPoolBlocksStorageState,
+  Stableswap as StableswapGql,
+  StableswapFilter,
+  StableswapsOrderBy,
+  Xykpool as XykpoolGlq,
+  XykpoolFilter,
+  XykpoolsOrderBy,
+  Lbppool as LbpPoolGlq,
+  LbppoolFilter,
+  LbppoolsOrderBy,
+  Aavepool as AavepoolGlq,
+  AavepoolFilter,
+  AavepoolsOrderBy,
+  GetLbppoolBlocksStorageStateQuery,
+  GetLbppoolBlocksStorageStateQueryVariables,
+  GetLbppoolBlocksStorageState,
+  GetAavePoolBlocksStorageStateQuery,
+  GetAavePoolBlocksStorageStateQueryVariables,
+  GetAavePoolBlocksStorageState,
+  EmaOracleFilter,
+  GetEmaOracleBlocksStorageStateQuery,
+  GetEmaOracleBlocksStorageStateQueryVariables,
+  GetEmaOracleBlocksStorageState,
+  EmaOraclesOrderBy,
+  AssetHistoricalDatumFilter,
+  GetAssetHistDataBlocksStorageStateQuery,
+  GetAssetHistDataBlocksStorageStateQueryVariables,
+  GetAssetHistDataBlocksStorageState,
+  AssetHistoricalDataOrderBy,
+  EmaOracle as EmaOracleGql,
+  AssetHistoricalDatum as AssetHistoricalDatumGql,
 } from './apiTypes/types';
 import { QueriesHelper } from './queriesHelper';
 import {
   PaginationConfig,
   PalletDictionaryCollectedData,
-  ProcessingPallets,
+  ProcessingTopic,
 } from './types';
 import {
   AccountData,
+  AssetDynamicFeeData,
+  AssetExistentialDeposit,
+  EmaOracleEntryData,
+  GetAssetsDynamicFeesAllInput,
+  GetConstantsInput,
+  GetDataAtBlockInput,
+  GetEmaOraclesInput,
   GetPoolAssetInfoInput,
   LbpGetPoolDataInput,
   LbpPoolData,
@@ -47,35 +69,69 @@ import {
   OmnipoolAssetTradability,
   OmnipoolData,
   OmnipoolGetAssetDataInput,
+  OmnipoolGetHubAssetTradabilityInput,
   StablepoolAssetState,
   StablepoolGetPoolDataInput,
+  StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  StablepoolPoolPegsInfo,
+  StableswapPegSource,
+  TokensGetTokensTotalIssuanceInput,
+  TokensGetTokenTotalIssuanceInput,
+  TokenTotalIssuance,
   XykGetAssetsInput,
+  XykGetPoolShareTokenPairsManyInput,
+  XykGetShareTokenInput,
   XykPoolAssetIds,
   XykPoolData,
+  XykPoolShareTokenPair,
 } from '../../types/storage';
+import { EmaOraclePeriod } from '../../../model';
+import {
+  AaveTradeExecutorPoolDataWithPoolId,
+  AaveTradeExecutorPoolsInput,
+} from '../../runtimeApiResolver/types';
+import { hexToString } from '@polkadot/util';
 
-export type BatchStorageStateSectionNode<T> = T extends ProcessingPallets.XYK
-  ? XykPoolGlq
-  : T extends ProcessingPallets.OMNIPOOL
+export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
+  ? XykpoolGlq
+  : T extends ProcessingTopic.OMNIPOOL
     ? OmnipoolGql
-    : T extends ProcessingPallets.STABLESWAP
-      ? StablepoolGql
-      : T extends ProcessingPallets.LBP
+    : T extends ProcessingTopic.STABLESWAP
+      ? StableswapGql
+      : T extends ProcessingTopic.LBP
         ? LbpPoolGlq
-        : never;
+        : T extends ProcessingTopic.AAVE
+          ? AavepoolGlq
+          : T extends ProcessingTopic.EMA_ORACLE
+            ? EmaOracleGql
+            : T extends ProcessingTopic.ASSET_HIST_DATA
+              ? AssetHistoricalDatumGql
+              : never;
 
 export class StorageDictionaryManager extends QueriesHelper {
   protected batchCtx: SqdProcessorContext<Store>;
 
   batchStorageState: Map<
-    ProcessingPallets,
-    Map<string, LbpPoolGlq | XykPoolGlq | OmnipoolGql | StablepoolGql>
+    ProcessingTopic,
+    Map<
+      string,
+      | LbpPoolGlq
+      | XykpoolGlq
+      | OmnipoolGql
+      | StableswapGql
+      | AavepoolGlq
+      | EmaOracleGql
+      | AssetHistoricalDatumGql
+    >
   > = new Map([
-    [ProcessingPallets.LBP, new Map()],
-    [ProcessingPallets.XYK, new Map()],
-    [ProcessingPallets.OMNIPOOL, new Map()],
-    [ProcessingPallets.STABLESWAP, new Map()],
+    [ProcessingTopic.LBP, new Map()],
+    [ProcessingTopic.XYK, new Map()],
+    [ProcessingTopic.OMNIPOOL, new Map()],
+    [ProcessingTopic.STABLESWAP, new Map()],
+    [ProcessingTopic.AAVE, new Map()],
+    [ProcessingTopic.EMA_ORACLE, new Map()],
+    [ProcessingTopic.ASSET_HIST_DATA, new Map()],
   ]);
 
   constructor({ batchCtx }: { batchCtx: SqdProcessorContext<Store> }) {
@@ -87,7 +143,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     this.batchCtx = batchCtx;
   }
 
-  getBatchStorageStatePart<T extends ProcessingPallets>(
+  getBatchStorageStatePart<T extends ProcessingTopic>(
     section: T
   ): Map<string, BatchStorageStateSectionNode<T>> {
     return (
@@ -100,10 +156,13 @@ export class StorageDictionaryManager extends QueriesHelper {
 
   wipeBatchStorageState() {
     this.batchStorageState = new Map([
-      [ProcessingPallets.LBP, new Map()],
-      [ProcessingPallets.XYK, new Map()],
-      [ProcessingPallets.OMNIPOOL, new Map()],
-      [ProcessingPallets.STABLESWAP, new Map()],
+      [ProcessingTopic.LBP, new Map()],
+      [ProcessingTopic.XYK, new Map()],
+      [ProcessingTopic.OMNIPOOL, new Map()],
+      [ProcessingTopic.STABLESWAP, new Map()],
+      [ProcessingTopic.AAVE, new Map()],
+      [ProcessingTopic.EMA_ORACLE, new Map()],
+      [ProcessingTopic.ASSET_HIST_DATA, new Map()],
     ]);
   }
 
@@ -111,119 +170,171 @@ export class StorageDictionaryManager extends QueriesHelper {
     blockNumberFrom: number;
     blockNumberTo: number;
   }) {
-    const fetchAllLbpPoolsPaginated = async ({
+    const fetchAllAssetHistDataPaginated = async ({
       pageSize,
       offset,
     }: PaginationConfig) => {
-      const filter: InputMaybe<LbpPoolFilter> = {
-        paraChainBlockHeight: {
+      const filter: InputMaybe<AssetHistoricalDatumFilter> = {
+        paraBlockHeight: {
           greaterThanOrEqualTo: args.blockNumberFrom,
         },
         and: [
           {
-            paraChainBlockHeight: {
+            paraBlockHeight: {
               lessThanOrEqualTo: args.blockNumberTo,
             },
           },
         ],
       };
-      // let filter: InputMaybe<LbpPoolFilter> = { or: [] };
-      // const lbppoolAssetIdsForStoragePrefetch =
-      //   this.batchCtx.batchState.state.lbppoolAssetIdsForStoragePrefetch;
-      //
-      // if (lbppoolAssetIdsForStoragePrefetch.size === 0)
-      //   return {
-      //     data: [],
-      //     totalCount: 0,
-      //   };
-
-      // if (lbppoolAssetIdsForStoragePrefetch.size > 2) {
-      //   const filterParams = this.getGenericFilterParams<string>(
-      //     lbppoolAssetIdsForStoragePrefetch
-      //   );
-      //   filter = {
-      //     or: [...filterParams.ids.values()]
-      //       .map((idsPair) => {
-      //         const [assetA, assetB] = idsPair.split('-');
-      //         return [
-      //           {
-      //             assetAId: { equalTo: +assetA },
-      //             assetBId: { equalTo: +assetB },
-      //             paraChainBlockHeight: {
-      //               greaterThanOrEqualTo: filterParams.fromBlockNumber,
-      //             },
-      //             and: [
-      //               {
-      //                 assetAId: { equalTo: +assetA },
-      //                 assetBId: { equalTo: +assetB },
-      //                 paraBlockHeight: {
-      //                   lessThanOrEqualTo: filterParams.toBlockNumber,
-      //                 },
-      //               },
-      //             ],
-      //           },
-      //           {
-      //             assetAId: { equalTo: +assetB },
-      //             assetBId: { equalTo: +assetA },
-      //             paraChainBlockHeight: {
-      //               greaterThanOrEqualTo: filterParams.fromBlockNumber,
-      //             },
-      //             and: [
-      //               {
-      //                 assetAId: { equalTo: +assetA },
-      //                 assetBId: { equalTo: +assetB },
-      //                 paraChainBlockHeight: {
-      //                   lessThanOrEqualTo: filterParams.toBlockNumber,
-      //                 },
-      //               },
-      //             ],
-      //           },
-      //         ] as LbpPoolFilter[];
-      //       })
-      //       .flat(),
-      //   };
-      // } else {
-      //   lbppoolAssetIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
-      //     poolIds.ids.forEach((idsPair) => {
-      //       const [assetA, assetB] = idsPair.split('-');
-      //       filter!.or!.push(
-      //         ...[
-      //           {
-      //             paraChainBlockHeight: { equalTo: blockNumber },
-      //             assetAId: { equalTo: +assetA },
-      //             assetBId: { equalTo: +assetB },
-      //           },
-      //           {
-      //             paraChainBlockHeight: { equalTo: blockNumber },
-      //             assetAId: { equalTo: +assetB },
-      //             assetBId: { equalTo: +assetA },
-      //           },
-      //         ]
-      //       );
-      //     });
-      //   });
-      // }
 
       const resp = await this.dictionaryGqlRequest<
-        GetLbpPoolBlocksStorageStateQuery,
-        GetLbpPoolBlocksStorageStateQueryVariables
+        GetAssetHistDataBlocksStorageStateQuery,
+        GetAssetHistDataBlocksStorageStateQueryVariables
       >({
-        query: GetLbpPoolBlocksStorageState,
+        query: GetAssetHistDataBlocksStorageState,
         variables: {
           filter,
-          orderBy: LbpPoolsOrderBy.ParaChainBlockHeightAsc,
+          orderBy: AssetHistoricalDataOrderBy.ParaBlockHeightAsc,
           first: pageSize,
           offset,
         },
-        dictName: ProcessingPallets.LBP,
+        dictName: ProcessingTopic.ASSET_HIST_DATA,
       });
 
       // if (resp.error) console.log(resp.error); //TODO make this log configurable
 
       return {
-        data: resp.data && resp.data.lbpPools ? resp.data.lbpPools.nodes : [],
+        data:
+          resp.data && resp.data.assetHistoricalData
+            ? resp.data.assetHistoricalData.nodes
+            : [],
         totalCount:
-          resp.data && resp.data.lbpPools ? resp.data.lbpPools.totalCount : 0,
+          resp.data && resp.data.assetHistoricalData
+            ? resp.data.assetHistoricalData.totalCount
+            : 0,
+      };
+    };
+
+    const fetchAllEmaOraclesPaginated = async ({
+      pageSize,
+      offset,
+    }: PaginationConfig) => {
+      const filter: InputMaybe<EmaOracleFilter> = {
+        paraBlockHeight: {
+          greaterThanOrEqualTo: args.blockNumberFrom,
+        },
+        and: [
+          {
+            paraBlockHeight: {
+              lessThanOrEqualTo: args.blockNumberTo,
+            },
+          },
+        ],
+      };
+
+      const resp = await this.dictionaryGqlRequest<
+        GetEmaOracleBlocksStorageStateQuery,
+        GetEmaOracleBlocksStorageStateQueryVariables
+      >({
+        query: GetEmaOracleBlocksStorageState,
+        variables: {
+          filter,
+          orderBy: EmaOraclesOrderBy.ParaBlockHeightAsc,
+          first: pageSize,
+          offset,
+        },
+        dictName: ProcessingTopic.EMA_ORACLE,
+      });
+
+      // if (resp.error) console.log(resp.error); //TODO make this log configurable
+
+      return {
+        data:
+          resp.data && resp.data.emaOracles ? resp.data.emaOracles.nodes : [],
+        totalCount:
+          resp.data && resp.data.emaOracles
+            ? resp.data.emaOracles.totalCount
+            : 0,
+      };
+    };
+
+    const fetchAllAavepoolsPaginated = async ({
+      pageSize,
+      offset,
+    }: PaginationConfig) => {
+      const filter: InputMaybe<AavepoolFilter> = {
+        paraBlockHeight: {
+          greaterThanOrEqualTo: args.blockNumberFrom,
+        },
+        and: [
+          {
+            paraBlockHeight: {
+              lessThanOrEqualTo: args.blockNumberTo,
+            },
+          },
+        ],
+      };
+
+      const resp = await this.dictionaryGqlRequest<
+        GetAavePoolBlocksStorageStateQuery,
+        GetAavePoolBlocksStorageStateQueryVariables
+      >({
+        query: GetAavePoolBlocksStorageState,
+        variables: {
+          filter,
+          orderBy: AavepoolsOrderBy.ParaBlockHeightAsc,
+          first: pageSize,
+          offset,
+        },
+        dictName: ProcessingTopic.AAVE,
+      });
+
+      // if (resp.error) console.log(resp.error); //TODO make this log configurable
+
+      return {
+        data: resp.data && resp.data.aavepools ? resp.data.aavepools.nodes : [],
+        totalCount:
+          resp.data && resp.data.aavepools ? resp.data.aavepools.totalCount : 0,
+      };
+    };
+
+    const fetchAllLbpPoolsPaginated = async ({
+      pageSize,
+      offset,
+    }: PaginationConfig) => {
+      const filter: InputMaybe<LbppoolFilter> = {
+        paraBlockHeight: {
+          greaterThanOrEqualTo: args.blockNumberFrom,
+        },
+        and: [
+          {
+            paraBlockHeight: {
+              lessThanOrEqualTo: args.blockNumberTo,
+            },
+          },
+        ],
+      };
+
+      const resp = await this.dictionaryGqlRequest<
+        GetLbppoolBlocksStorageStateQuery,
+        GetLbppoolBlocksStorageStateQueryVariables
+      >({
+        query: GetLbppoolBlocksStorageState,
+        variables: {
+          filter,
+          orderBy: LbppoolsOrderBy.ParaBlockHeightAsc,
+          first: pageSize,
+          offset,
+        },
+        dictName: ProcessingTopic.LBP,
+      });
+
+      // if (resp.error) console.log(resp.error); //TODO make this log configurable
+
+      return {
+        data: resp.data && resp.data.lbppools ? resp.data.lbppools.nodes : [],
+        totalCount:
+          resp.data && resp.data.lbppools ? resp.data.lbppools.totalCount : 0,
       };
     };
 
@@ -231,79 +342,39 @@ export class StorageDictionaryManager extends QueriesHelper {
       pageSize,
       offset,
     }: PaginationConfig) => {
-      const filter: InputMaybe<XykPoolFilter> = {
-        paraChainBlockHeight: {
+      const filter: InputMaybe<XykpoolFilter> = {
+        paraBlockHeight: {
           greaterThanOrEqualTo: args.blockNumberFrom,
         },
         and: [
           {
-            paraChainBlockHeight: {
+            paraBlockHeight: {
               lessThanOrEqualTo: args.blockNumberTo,
             },
           },
         ],
       };
-      // let filter: InputMaybe<XykPoolFilter> = { or: [] };
-      // const xykPoolIdsForStoragePrefetch =
-      //   this.batchCtx.batchState.state.xykPoolIdsForStoragePrefetch;
-      //
-      // if (xykPoolIdsForStoragePrefetch.size === 0)
-      //   return {
-      //     data: [],
-      //     totalCount: 0,
-      //   };
-      //
-      // if (xykPoolIdsForStoragePrefetch.size > 30) {
-      //   const filterParams = this.getGenericFilterParams<string>(
-      //     xykPoolIdsForStoragePrefetch
-      //   );
-      //   filter = {
-      //     poolAddress: {
-      //       in: filterParams.ids,
-      //     },
-      //     paraChainBlockHeight: {
-      //       greaterThanOrEqualTo: filterParams.fromBlockNumber,
-      //     },
-      //     and: [
-      //       {
-      //         poolAddress: {
-      //           in: [...new Set(filterParams.ids).values()],
-      //         },
-      //         paraChainBlockHeight: {
-      //           lessThanOrEqualTo: filterParams.toBlockNumber,
-      //         },
-      //       },
-      //     ],
-      //   };
-      // } else {
-      //   xykPoolIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
-      //     filter!.or!.push({
-      //       paraChainBlockHeight: { equalTo: blockNumber },
-      //       poolAddress: { in: [...poolIds.ids.values()] },
-      //     });
-      //   });
-      // }
 
       const resp = await this.dictionaryGqlRequest<
-        GetXykPoolBlocksStorageStateQuery,
-        GetXykPoolBlocksStorageStateQueryVariables
+        GetXykpoolBlocksStorageStateQuery,
+        GetXykpoolBlocksStorageStateQueryVariables
       >({
-        query: GetXykPoolBlocksStorageState,
+        query: GetXykpoolBlocksStorageState,
         variables: {
           filter,
-          orderBy: XykPoolsOrderBy.ParaChainBlockHeightAsc,
+          orderBy: XykpoolsOrderBy.ParaBlockHeightAsc,
           first: pageSize,
           offset,
         },
-        dictName: ProcessingPallets.XYK,
+        dictName: ProcessingTopic.XYK,
       });
 
       // if (resp.error) console.log(resp.error); //TODO make this log configurable
 
       return {
-        data: resp.data && resp.data.xykPools ? resp.data.xykPools.nodes : [],
+        data: resp.data && resp.data.xykpools ? resp.data.xykpools.nodes : [],
         totalCount:
-          resp.data && resp.data.xykPools ? resp.data.xykPools.totalCount : 0,
+          resp.data && resp.data.xykpools ? resp.data.xykpools.totalCount : 0,
       };
     };
 
@@ -312,80 +383,17 @@ export class StorageDictionaryManager extends QueriesHelper {
       offset,
     }: PaginationConfig) => {
       const filter: InputMaybe<OmnipoolFilter> = {
-        paraChainBlockHeight: {
+        paraBlockHeight: {
           greaterThanOrEqualTo: args.blockNumberFrom,
         },
         and: [
           {
-            paraChainBlockHeight: {
+            paraBlockHeight: {
               lessThanOrEqualTo: args.blockNumberTo,
             },
           },
         ],
       };
-      // let filter: InputMaybe<OmnipoolFilter> = { or: [] };
-      // const omnipoolAssetIdsForStoragePrefetch =
-      //   this.batchCtx.batchState.state.omnipoolAssetIdsForStoragePrefetch;
-      //
-      // if (omnipoolAssetIdsForStoragePrefetch.size === 0)
-      //   return {
-      //     data: [],
-      //     totalCount: 0,
-      //   };
-      //
-      // /**
-      //  * We need adjust filter based on number of blocks which must be filtered.
-      //  * Dictionary API will go through Time out error with big amount of
-      //  * filtering conditions. So we must fetch redundant data with more generic
-      //  * filter.
-      //  */
-      // if (omnipoolAssetIdsForStoragePrefetch.size > 30) {
-      //   const filterParams = this.getGenericFilterParams<number>(
-      //     omnipoolAssetIdsForStoragePrefetch
-      //   );
-      //
-      //   filter = {
-      //     paraChainBlockHeight: {
-      //       greaterThanOrEqualTo: filterParams.fromBlockNumber,
-      //     },
-      //     and: [
-      //       {
-      //         // assetId: {
-      //         //   in: [...new Set(filterParams.ids).values()],
-      //         // },
-      //         paraChainBlockHeight: {
-      //           lessThanOrEqualTo: filterParams.toBlockNumber,
-      //         },
-      //       },
-      //     ],
-      //   };
-      //
-      //   // filter = {
-      //   //   assetId: {
-      //   //     in: filterParams.ids,
-      //   //   },
-      //   //   paraChainBlockHeight: {
-      //   //     greaterThanOrEqualTo: filterParams.fromBlockNumber,
-      //   //   },
-      //   //   and: [
-      //   //     {
-      //   //       assetId: {
-      //   //         in: [...new Set(filterParams.ids).values()],
-      //   //       },
-      //   //       paraChainBlockHeight: {
-      //   //         lessThanOrEqualTo: filterParams.toBlockNumber,
-      //   //       },
-      //   //     },
-      //   //   ],
-      //   // };
-      // } else {
-      //   omnipoolAssetIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
-      //     filter!.or!.push({
-      //       paraChainBlockHeight: { equalTo: blockNumber },
-      //       // assetId: { in: [...poolIds.ids.values()] },
-      //     });
-      //   });
-      // }
       const resp = await this.dictionaryGqlRequest<
         GetOmnipoolBlocksStorageStateQuery,
         GetOmnipoolBlocksStorageStateQueryVariables
@@ -393,11 +401,11 @@ export class StorageDictionaryManager extends QueriesHelper {
         query: GetOmnipoolBlocksStorageState,
         variables: {
           filter,
-          orderBy: OmnipoolsOrderBy.ParaChainBlockHeightAsc,
+          orderBy: OmnipoolsOrderBy.ParaBlockHeightAsc,
           first: pageSize,
           offset,
         },
-        dictName: ProcessingPallets.OMNIPOOL,
+        dictName: ProcessingTopic.OMNIPOOL,
       });
 
       // if (resp.error) console.log(resp.error); //TODO make this log configurable
@@ -413,91 +421,88 @@ export class StorageDictionaryManager extends QueriesHelper {
       pageSize,
       offset,
     }: PaginationConfig) => {
-      const filter: InputMaybe<StablepoolFilter> = {
-        paraChainBlockHeight: {
+      const filter: InputMaybe<StableswapFilter> = {
+        paraBlockHeight: {
           greaterThanOrEqualTo: args.blockNumberFrom,
         },
         and: [
           {
-            paraChainBlockHeight: {
+            paraBlockHeight: {
               lessThanOrEqualTo: args.blockNumberTo,
             },
           },
         ],
       };
-      // let filter: InputMaybe<StablepoolFilter> = { or: [] };
-      // const stableswapIdsForStoragePrefetch =
-      //   this.batchCtx.batchState.state.stableswapIdsForStoragePrefetch;
-      //
-      // if (stableswapIdsForStoragePrefetch.size === 0)
-      //   return {
-      //     data: [],
-      //     totalCount: 0,
-      //   };
-      //
-      // if (stableswapIdsForStoragePrefetch.size > 30) {
-      //   const filterParams = this.getGenericFilterParams<number>(
-      //     stableswapIdsForStoragePrefetch
-      //   );
-      //   filter = {
-      //     poolId: {
-      //       in: [...new Set(filterParams.ids).values()],
-      //     },
-      //     paraChainBlockHeight: {
-      //       greaterThanOrEqualTo: filterParams.fromBlockNumber,
-      //     },
-      //     and: [
-      //       {
-      //         poolId: {
-      //           in: [...new Set(filterParams.ids).values()],
-      //         },
-      //         paraChainBlockHeight: {
-      //           lessThanOrEqualTo: filterParams.toBlockNumber,
-      //         },
-      //       },
-      //     ],
-      //   };
-      // } else {
-      //   stableswapIdsForStoragePrefetch.forEach((poolIds, blockNumber) => {
-      //     filter!.or!.push({
-      //       paraChainBlockHeight: { equalTo: blockNumber },
-      //       poolId: { in: [...poolIds.ids.values()] },
-      //     });
-      //   });
-      // }
 
       const resp = await this.dictionaryGqlRequest<
-        GetStablepoolBlocksStorageStateQuery,
-        GetStablepoolBlocksStorageStateQueryVariables
+        GetStableswapBlocksStorageStateQuery,
+        GetStableswapBlocksStorageStateQueryVariables
       >({
-        query: GetStablepoolBlocksStorageState,
+        query: GetStableswapBlocksStorageState,
         variables: {
           filter,
-          orderBy: StablepoolsOrderBy.ParaChainBlockHeightAsc,
+          orderBy: StableswapsOrderBy.ParaBlockHeightAsc,
           first: pageSize,
           offset,
         },
-        dictName: ProcessingPallets.STABLESWAP,
+        dictName: ProcessingTopic.STABLESWAP,
       });
 
       // if (resp.error) console.log(resp.error); //TODO make this log configurable
 
       return {
         data:
-          resp.data && resp.data.stablepools ? resp.data.stablepools.nodes : [],
+          resp.data && resp.data.stableswaps ? resp.data.stableswaps.nodes : [],
         totalCount:
-          resp.data && resp.data.stablepools
-            ? resp.data.stablepools.totalCount
+          resp.data && resp.data.stableswaps
+            ? resp.data.stableswaps.totalCount
             : 0,
       };
     };
 
+    const allEmaOraclesStorageFetchPromise = async () => {
+      // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
+      const data: EmaOracleGql[] = [];
+      for await (const page of this.fetchAllPages({
+        limit: 1000,
+        requestPromise: fetchAllEmaOraclesPaginated,
+      })) {
+        if (!page) continue;
+        data.push(...(page as EmaOracleGql[]));
+      }
+
+      return { pallet: ProcessingTopic.EMA_ORACLE, data: data.flat() };
+    };
+
+    const allAssetHistDataStorageFetchPromise = async () => {
+      // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
+      const data: AssetHistoricalDatumGql[] = [];
+      for await (const page of this.fetchAllPages({
+        limit: 1000,
+        requestPromise: fetchAllAssetHistDataPaginated,
+      })) {
+        if (!page) continue;
+        data.push(...(page as AssetHistoricalDatumGql[]));
+      }
+
+      return { pallet: ProcessingTopic.ASSET_HIST_DATA, data: data.flat() };
+    };
+
+    const allAavepoolsStorageFetchPromise = async () => {
+      // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
+      const data: AavepoolGlq[] = [];
+      for await (const page of this.fetchAllPages({
+        limit: 1000,
+        requestPromise: fetchAllAavepoolsPaginated,
+      })) {
+        if (!page) continue;
+        data.push(...(page as AavepoolGlq[]));
+      }
+
+      return { pallet: ProcessingTopic.AAVE, data: data.flat() };
+    };
+
     const allLbpPoolStorageFetchPromise = async () => {
-      // if (
-      //   !this.batchCtx.appConfig.PROCESS_LBP_POOLS ||
-      //   this.batchCtx.batchState.state.lbppoolAssetIdsForStoragePrefetch
-      //     .size === 0
-      // )
       if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: LbpPoolGlq[] = [];
       for await (const page of this.fetchAllPages({
@@ -508,7 +513,7 @@ export class StorageDictionaryManager extends QueriesHelper {
         data.push(...(page as LbpPoolGlq[]));
       }
 
-      return { pallet: ProcessingPallets.LBP, data: data.flat() };
+      return { pallet: ProcessingTopic.LBP, data: data.flat() };
     };
 
     const allXykPoolStorageFetchPromise = async () => {
@@ -518,15 +523,15 @@ export class StorageDictionaryManager extends QueriesHelper {
       )
         return [];
 
-      const data: XykPoolGlq[] = [];
+      const data: XykpoolGlq[] = [];
       for await (const page of this.fetchAllPages({
         limit: 1000,
         requestPromise: fetchAllXykPoolsPaginated,
       })) {
         if (!page) continue;
-        data.push(...(page as XykPoolGlq[]));
+        data.push(...(page as XykpoolGlq[]));
       }
-      return { pallet: ProcessingPallets.XYK, data: data.flat() };
+      return { pallet: ProcessingTopic.XYK, data: data.flat() };
     };
 
     const allOmnipoolStorageFetchPromise = async () => {
@@ -544,7 +549,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       })) {
         data.push(page);
       }
-      return { pallet: ProcessingPallets.OMNIPOOL, data: data.flat() };
+      return { pallet: ProcessingTopic.OMNIPOOL, data: data.flat() };
     };
 
     const allStablepoolStorageFetchPromise = async () => {
@@ -561,7 +566,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       })) {
         data.push(page);
       }
-      return { pallet: ProcessingPallets.STABLESWAP, data: data.flat() };
+      return { pallet: ProcessingTopic.STABLESWAP, data: data.flat() };
     };
 
     console.time('Dictionary API call executed in');
@@ -570,9 +575,10 @@ export class StorageDictionaryManager extends QueriesHelper {
       allXykPoolStorageFetchPromise(),
       allOmnipoolStorageFetchPromise(),
       allStablepoolStorageFetchPromise(),
+      allAavepoolsStorageFetchPromise(),
+      allEmaOraclesStorageFetchPromise(),
+      allAssetHistDataStorageFetchPromise(),
     ]);
-
-    console.dir(fullResponse, { depth: null });
 
     console.timeEnd('Dictionary API call executed in');
 
@@ -584,35 +590,62 @@ export class StorageDictionaryManager extends QueriesHelper {
   decorateDictionaryData(rawData: Array<PalletDictionaryCollectedData>) {
     for (const palletData of rawData) {
       switch (palletData.pallet) {
-        case ProcessingPallets.LBP:
+        case ProcessingTopic.ASSET_HIST_DATA:
           this.batchStorageState.set(
-            ProcessingPallets.LBP,
+            ProcessingTopic.ASSET_HIST_DATA,
+            new Map(
+              (palletData.data as AssetHistoricalDatumGql[]).map((item) => [
+                item.id,
+                item,
+              ])
+            )
+          );
+          break;
+        case ProcessingTopic.EMA_ORACLE:
+          this.batchStorageState.set(
+            ProcessingTopic.EMA_ORACLE,
+            new Map(
+              (palletData.data as EmaOracleGql[]).map((item) => [item.id, item])
+            )
+          );
+          break;
+        case ProcessingTopic.AAVE:
+          this.batchStorageState.set(
+            ProcessingTopic.AAVE,
+            new Map(
+              (palletData.data as AavepoolGlq[]).map((item) => [item.id, item])
+            )
+          );
+          break;
+        case ProcessingTopic.LBP:
+          this.batchStorageState.set(
+            ProcessingTopic.LBP,
             new Map(
               (palletData.data as LbpPoolGlq[]).map((item) => [item.id, item])
             )
           );
           break;
-        case ProcessingPallets.XYK:
+        case ProcessingTopic.XYK:
           this.batchStorageState.set(
-            ProcessingPallets.XYK,
+            ProcessingTopic.XYK,
             new Map(
-              (palletData.data as XykPoolGlq[]).map((item) => [item.id, item])
+              (palletData.data as XykpoolGlq[]).map((item) => [item.id, item])
             )
           );
           break;
-        case ProcessingPallets.OMNIPOOL:
+        case ProcessingTopic.OMNIPOOL:
           this.batchStorageState.set(
-            ProcessingPallets.OMNIPOOL,
+            ProcessingTopic.OMNIPOOL,
             new Map(
               (palletData.data as OmnipoolGql[]).map((item) => [item.id, item])
             )
           );
           break;
-        case ProcessingPallets.STABLESWAP:
+        case ProcessingTopic.STABLESWAP:
           this.batchStorageState.set(
-            ProcessingPallets.STABLESWAP,
+            ProcessingTopic.STABLESWAP,
             new Map(
-              (palletData.data as StablepoolGql[]).map((item) => [
+              (palletData.data as StableswapGql[]).map((item) => [
                 item.id,
                 item,
               ])
@@ -628,20 +661,20 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolId,
     block,
   }: StablepoolGetPoolDataInput): StablepoolInfo | null {
-    const node = this.getBatchStorageStatePart(
-      ProcessingPallets.STABLESWAP
-    ).get(`${poolId}-${block.height}`);
+    const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
+      `${poolId}-${block.height}`
+    );
 
     if (!node) return null;
 
     if (
-      !node.stablepoolAssetDataByPoolId.nodes ||
-      node.stablepoolAssetDataByPoolId.nodes.length === 0
+      !node.stableswapAssetDataByPoolId.nodes ||
+      node.stableswapAssetDataByPoolId.nodes.length === 0
     )
       return null;
 
     return {
-      assets: node.stablepoolAssetDataByPoolId.nodes.map(
+      assets: node.stableswapAssetDataByPoolId.nodes.map(
         (asset) => asset!.assetId
       ),
       initialAmplification: node.initialAmplification,
@@ -651,25 +684,56 @@ export class StorageDictionaryManager extends QueriesHelper {
       fee: node.fee,
     };
   }
+  getStableswapPegsData({
+    poolId,
+    block,
+  }: StablepoolGetPoolPegsInput): StablepoolPoolPegsInfo | null {
+    const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
+      `${poolId}-${block.height}`
+    );
+
+    if (!node || node.maxPegUpdate === undefined) return null;
+
+    return {
+      source: node.pegSources
+        ? node.pegSources.map(
+            (src: any): StableswapPegSource => ({
+              sourceKind: src.sourceKind,
+              oracleName: src.oracleName,
+              oraclePeriod: src.oraclePeriod,
+              oracleAsset: src.oracleAsset,
+              valuePoints: src.valuePoints
+                ? src.valuePoints.map((p: any) => BigInt(p))
+                : undefined,
+            })
+          )
+        : undefined,
+      maxPegUpdate: node.maxPegUpdate ?? undefined,
+      current: node.pegs.map(([pegA, pegB]: string[]) => [
+        BigInt(pegA),
+        BigInt(pegB),
+      ]),
+    };
+  }
 
   getStableswapPoolAssetInfo({
     poolId,
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    const node = this.getBatchStorageStatePart(
-      ProcessingPallets.STABLESWAP
-    ).get(`${poolId}-${block.height}`);
+    const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
+      `${poolId}-${block.height}`
+    );
 
     if (!node) return null;
 
     if (
-      !node.stablepoolAssetDataByPoolId.nodes ||
-      node.stablepoolAssetDataByPoolId.nodes.length === 0
+      !node.stableswapAssetDataByPoolId.nodes ||
+      node.stableswapAssetDataByPoolId.nodes.length === 0
     )
       return null;
 
-    const assetInfo = node.stablepoolAssetDataByPoolId.nodes.find(
+    const assetInfo = node.stableswapAssetDataByPoolId.nodes.find(
       (asset) => asset?.assetId === assetId
     );
     if (!assetInfo || !assetInfo.balances) return null;
@@ -689,19 +753,19 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): StablepoolAssetState | null {
-    const node = this.getBatchStorageStatePart(
-      ProcessingPallets.STABLESWAP
-    ).get(`${poolId}-${block.height}`);
+    const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
+      `${poolId}-${block.height}`
+    );
 
     if (!node) return null;
 
     if (
-      !node.stablepoolAssetDataByPoolId.nodes ||
-      node.stablepoolAssetDataByPoolId.nodes.length === 0
+      !node.stableswapAssetDataByPoolId.nodes ||
+      node.stableswapAssetDataByPoolId.nodes.length === 0
     )
       return null;
 
-    const assetState = node.stablepoolAssetDataByPoolId.nodes.find(
+    const assetState = node.stableswapAssetDataByPoolId.nodes.find(
       (asset) => asset?.assetId === assetId
     );
     if (!assetState) return null;
@@ -711,37 +775,38 @@ export class StorageDictionaryManager extends QueriesHelper {
     };
   }
 
+  // TODO remove as redundant
   getOmnipoolData({
     poolAddress,
     block,
   }: LbpGetPoolDataInput): OmnipoolData | null {
-    const node = this.getBatchStorageStatePart(ProcessingPallets.OMNIPOOL).get(
+    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
       `${poolAddress}-${block.height}`
     );
 
     if (!node) return null;
 
-    const {
-      burnProtocolFee,
-      hdxAssetId,
-      hubAssetId,
-      maxInRatio,
-      maxOutRatio,
-      minPoolLiquidity,
-      minTradingLimit,
-      minWithdrawalFee,
-    } = node;
+    const { hubAssetTradability } = node;
 
+    // @ts-ignore
     return {
       poolAddress,
-      burnProtocolFee,
-      hdxAssetId,
-      hubAssetId,
-      maxInRatio,
-      maxOutRatio,
-      minPoolLiquidity,
-      minTradingLimit,
-      minWithdrawalFee,
+    };
+  }
+
+  getOmnipoolHubAssetTradability({
+    block,
+  }: OmnipoolGetHubAssetTradabilityInput): OmnipoolAssetTradability | null {
+    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
+      `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
+    );
+
+    if (!node) return null;
+
+    const { hubAssetTradability } = node;
+
+    return {
+      bits: hubAssetTradability.bits,
     };
   }
 
@@ -750,7 +815,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    const node = this.getBatchStorageStatePart(ProcessingPallets.OMNIPOOL).get(
+    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
       `${poolAddress}-${block.height}`
     );
 
@@ -776,7 +841,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: OmnipoolGetAssetDataInput): OmnipoolAssetData | null {
-    const node = this.getBatchStorageStatePart(ProcessingPallets.OMNIPOOL).get(
+    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
       `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${assetId}-${block.height}`
     );
 
@@ -801,7 +866,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolAddress,
     block,
   }: LbpGetPoolDataInput): XykPoolData | null {
-    const node = this.getBatchStorageStatePart(ProcessingPallets.XYK).get(
+    const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
       `${poolAddress}-${block.height}`
     );
 
@@ -816,11 +881,43 @@ export class StorageDictionaryManager extends QueriesHelper {
     };
   }
 
+  getXykpoolShareTokenId({
+    poolAddress,
+    block,
+  }: XykGetShareTokenInput): number | null {
+    const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
+      `${poolAddress}-${block.height}`
+    );
+
+    if (!node) return null;
+
+    const { shareTokenId } = node;
+
+    if (shareTokenId === undefined || shareTokenId === null) return null;
+
+    return +shareTokenId;
+  }
+
+  getXykpoolShareTokenPairsAll({
+    block,
+  }: XykGetPoolShareTokenPairsManyInput): XykPoolShareTokenPair[] | null {
+    const nodes = [
+      ...this.getBatchStorageStatePart(ProcessingTopic.XYK).entries(),
+    ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+
+    if (nodes.length === 0) return null;
+
+    return nodes.map(([key, data]) => ({
+      poolId: data.poolAddress,
+      shareTokenId: +data.shareTokenId!, //TODO fix type casting
+    }));
+  }
+
   getXykPoolAssets({
     poolAddress,
     block,
   }: XykGetAssetsInput): XykPoolAssetIds | null {
-    const node = this.getBatchStorageStatePart(ProcessingPallets.XYK).get(
+    const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
       `${poolAddress}-${block.height}`
     );
 
@@ -839,12 +936,12 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    const node = this.getBatchStorageStatePart(ProcessingPallets.XYK).get(
+    const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
       `${poolAddress}-${block.height}`
     );
 
     if (!node) return null;
-    const asset = node.xykPoolAssetsDataByPoolId.nodes.find(
+    const asset = node.xykpoolAssetsDataByPoolId.nodes.find(
       (asset) => asset && asset.assetId === assetId
     );
     if (!asset) return null;
@@ -865,7 +962,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolAddress,
     block,
   }: LbpGetPoolDataInput): LbpPoolData | null {
-    const node = this.getBatchStorageStatePart(ProcessingPallets.LBP).get(
+    const node = this.getBatchStorageStatePart(ProcessingTopic.LBP).get(
       `${poolAddress}-${block.height}`
     );
 
@@ -906,12 +1003,12 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    const node = this.getBatchStorageStatePart(ProcessingPallets.LBP).get(
+    const node = this.getBatchStorageStatePart(ProcessingTopic.LBP).get(
       `${poolAddress}-${block.height}`
     );
 
     if (!node) return null;
-    const asset = node.lbpPoolAssetsDataByPoolId.nodes.find(
+    const asset = node.lbppoolAssetsDataByPoolId.nodes.find(
       (asset) => asset && asset.assetId === assetId
     );
     if (!asset) return null;
@@ -926,5 +1023,167 @@ export class StorageDictionaryManager extends QueriesHelper {
       feeFrozen: BigInt(balances.feeFrozen ?? 0),
       flags: BigInt(balances.flags ?? 0),
     };
+  }
+
+  getAavepoolsAll({
+    block,
+  }: AaveTradeExecutorPoolsInput):
+    | AaveTradeExecutorPoolDataWithPoolId[]
+    | null {
+    const nodes = [
+      ...this.getBatchStorageStatePart(ProcessingTopic.AAVE).entries(),
+    ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+
+    if (nodes.length === 0) return null;
+
+    return nodes
+      .filter(([key, data]) => !!data.reserveAssetId && !!data.aTokenId)
+      .map(([key, data]) => ({
+        poolId: key,
+        data: {
+          reserve: +data.reserveAssetId!,
+          aToken: +data.aTokenId!,
+          liquidityIn: BigInt(data.liquidityIn),
+          liquidityOut: BigInt(data.liquidityOut),
+        },
+      }));
+  }
+
+  getAssetDynamicFeesAll({
+    block,
+  }: GetAssetsDynamicFeesAllInput): AssetDynamicFeeData[] | null {
+    const nodes = [
+      ...this.getBatchStorageStatePart(
+        ProcessingTopic.ASSET_HIST_DATA
+      ).entries(),
+    ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+
+    if (nodes.length === 0) return null;
+
+    return nodes
+      .filter(([key, data]) => data.assetId !== undefined)
+      .map(([key, data]) => {
+        if (!data.dynamicFee) return null;
+
+        return {
+          assetId: +data.assetId!,
+          assetFee: +data.dynamicFee.assetFee,
+          protocolFee: +data.dynamicFee.protocolFee,
+          timestamp: +data.dynamicFee.timestamp,
+        };
+      })
+      .filter((item) => item !== null) as AssetDynamicFeeData[];
+  }
+
+  getTokenTotalIssuance({
+    tokenId,
+    block,
+  }: TokensGetTokenTotalIssuanceInput): bigint | null {
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.ASSET_HIST_DATA
+    ).get(`${tokenId}-${block.height}`);
+
+    if (
+      !node ||
+      node.totalIssuance === undefined ||
+      node.totalIssuance === null
+    )
+      return null;
+
+    return BigInt(node.totalIssuance);
+  }
+  getNativeTokenTotalIssuance({ block }: GetConstantsInput): bigint | null {
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.ASSET_HIST_DATA
+    ).get(`0-${block.height}`);
+
+    if (
+      !node ||
+      node.totalIssuance === undefined ||
+      node.totalIssuance === null
+    )
+      return null;
+
+    return BigInt(node.totalIssuance);
+  }
+
+  getManyTokensTotalIssuance({
+    tokenIds,
+    block,
+  }: TokensGetTokensTotalIssuanceInput): TokenTotalIssuance[] | null {
+    const idsSet = new Set(tokenIds);
+
+    const nodes = [
+      ...this.getBatchStorageStatePart(
+        ProcessingTopic.ASSET_HIST_DATA
+      ).entries(),
+    ].filter(
+      ([key, data]) =>
+        key.split('-')[1] === block.height.toString() &&
+        idsSet.has(+key.split('-')[0])
+    );
+
+    if (nodes.length === 0) return null;
+
+    return nodes.map(([key, data]) => ({
+      tokenId: `${data.assetId}`,
+      amount: BigInt(data.totalIssuance),
+    }));
+  }
+
+  getAssetsExistentialDepositAll({
+    block,
+  }: GetDataAtBlockInput): AssetExistentialDeposit[] | null {
+    const nodes = [
+      ...this.getBatchStorageStatePart(
+        ProcessingTopic.ASSET_HIST_DATA
+      ).entries(),
+    ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+
+    if (nodes.length === 0) return null;
+
+    return nodes.map(([key, data]) => ({
+      assetId: `${data.assetId!}`,
+      existentialDeposit: BigInt(data.existentialDeposit),
+    }));
+  }
+
+  getEmaOracleEntriesAll({
+    block,
+  }: GetEmaOraclesInput): EmaOracleEntryData[] | null {
+    const nodes = [
+      ...this.getBatchStorageStatePart(ProcessingTopic.EMA_ORACLE).entries(),
+    ].filter(([key, data]) => key === block.height.toString());
+
+    if (nodes.length === 0) return null;
+
+    const entries: EmaOracleEntryData[] = [];
+
+    for (const [key, oracleData] of nodes) {
+      for (const entry of oracleData.entries) {
+        entries.push({
+          source: entry.source,
+          assetIds: entry.assetIds.map((id: any) => +id),
+          period: entry.period as EmaOraclePeriod,
+          price: {
+            numerator: BigInt(entry.price.n),
+            denominator: BigInt(entry.price.d),
+          },
+          volume: {
+            aIn: BigInt(entry.volume.aIn),
+            aOut: BigInt(entry.volume.aOut),
+            bIn: BigInt(entry.volume.bIn),
+            bOut: BigInt(entry.volume.bOut),
+          },
+          liquidity: {
+            a: BigInt(entry.liquidity.a),
+            b: BigInt(entry.liquidity.b),
+          },
+          updatedAt: +entry.updatedAt,
+        } as EmaOracleEntryData);
+      }
+    }
+
+    return entries;
   }
 }

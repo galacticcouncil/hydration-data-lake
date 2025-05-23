@@ -1,20 +1,31 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { StorageDictionaryManager } from './dictionaryUtils/storageDictionaryManager';
-import { ProcessingPallets } from './dictionaryUtils/types';
+import { ProcessingTopic } from './dictionaryUtils/types';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
   AccountData,
+  GetAssetsDynamicFeesAllInput,
+  GetConstantsInput,
+  GetDataAtBlockInput,
+  GetEmaOraclesInput,
   GetPoolAssetInfoInput,
   LbpGetPoolDataInput,
   OmnipoolGetAssetDataInput,
+  OmnipoolGetHubAssetTradabilityInput,
   OmnipoolGetPoolDataInput,
   StablepoolGetPoolDataInput,
+  StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  TokensGetTokensTotalIssuanceInput,
+  TokensGetTokenTotalIssuanceInput,
   XykGetAssetsInput,
   XykGetPoolDataInput,
+  XykGetPoolShareTokenPairsManyInput,
+  XykGetShareTokenInput,
   XykPoolData,
 } from '../types/storage';
+import { AaveTradeExecutorPoolsInput } from '../runtimeApiResolver/types';
 
 export class StorageResolver {
   private static instance: StorageResolver;
@@ -78,14 +89,24 @@ export class StorageResolver {
     args,
     fallbackFns = [],
   }: {
-    pallet: ProcessingPallets;
+    pallet: ProcessingTopic;
     method:
       | 'getPoolData'
       | 'getPools'
       | 'getPoolAssetInfo'
       | 'getPoolAssetStorageData'
       | 'getAssetData'
-      | 'getPoolAssets';
+      | 'getPoolAssets'
+      | 'getPoolPegs'
+      | 'getOmnipoolHubAssetTradability'
+      | 'getPoolShareTokenPairsMany'
+      | 'getPoolShareToken'
+      | 'getAssetDynamicFeesAll'
+      | 'getOracleEntries'
+      | 'getTokenTotalIssuance'
+      | 'getManyTokensTotalIssuance'
+      | 'getNativeTokenTotalIssuance'
+      | 'getAssetsExistentialDepositAll';
     args: Args;
     fallbackFns: Array<(args: Args) => Promise<R>>;
   }): Promise<R | null> {
@@ -94,7 +115,7 @@ export class StorageResolver {
 
     try {
       switch (pallet) {
-        case ProcessingPallets.STABLESWAP: {
+        case ProcessingTopic.STABLESWAP: {
           if (method === 'getPoolData') {
             const resp = this.storageDictionaryManager.getStableswapPoolData(
               args as unknown as StablepoolGetPoolDataInput // TODO fix types
@@ -138,9 +159,18 @@ export class StorageResolver {
 
             return this.resolveFallbackFunctions(args, fallbackFns);
           }
+          if (method === 'getPoolPegs') {
+            const resp = this.storageDictionaryManager.getStableswapPegsData(
+              args as unknown as StablepoolGetPoolPegsInput // TODO fix types
+            ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
           break;
         }
-        case ProcessingPallets.OMNIPOOL: {
+        case ProcessingTopic.OMNIPOOL: {
           if (method === 'getAssetData') {
             const resp = this.storageDictionaryManager.getOmnipoolAssetState(
               args as unknown as OmnipoolGetAssetDataInput // TODO fix types
@@ -175,10 +205,11 @@ export class StorageResolver {
             // );
           }
 
-          if (method === 'getPoolData') {
-            const resp = this.storageDictionaryManager.getOmnipoolData(
-              args as unknown as OmnipoolGetPoolDataInput // TODO fix types
-            ) as R;
+          if (method === 'getOmnipoolHubAssetTradability') {
+            const resp =
+              this.storageDictionaryManager.getOmnipoolHubAssetTradability(
+                args as unknown as OmnipoolGetHubAssetTradabilityInput // TODO fix types
+              ) as R;
 
             if (resp) return resp;
 
@@ -187,7 +218,7 @@ export class StorageResolver {
 
           break;
         }
-        case ProcessingPallets.XYK: {
+        case ProcessingTopic.XYK: {
           if (method === 'getPoolAssets') {
             const resp = this.storageDictionaryManager.getXykPoolAssets(
               args as unknown as XykGetAssetsInput // TODO fix types
@@ -236,9 +267,30 @@ export class StorageResolver {
             // );
           }
 
+          if (method === 'getPoolShareToken') {
+            const resp = this.storageDictionaryManager.getXykpoolShareTokenId(
+              args as unknown as XykGetShareTokenInput // TODO fix types
+            ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+
+          if (method === 'getPoolShareTokenPairsMany') {
+            const resp =
+              this.storageDictionaryManager.getXykpoolShareTokenPairsAll(
+                args as unknown as XykGetPoolShareTokenPairsManyInput // TODO fix types
+              ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+
           break;
         }
-        case ProcessingPallets.LBP: {
+        case ProcessingTopic.LBP: {
           if (method === 'getPoolData') {
             const resp = this.storageDictionaryManager.getLbpPoolData(
               args as unknown as LbpGetPoolDataInput // TODO fix types
@@ -275,13 +327,78 @@ export class StorageResolver {
 
           break;
         }
-        case ProcessingPallets.AAVE: {
+        case ProcessingTopic.AAVE: {
           if (method === 'getPools') {
-            // const resp = this.storageDictionaryManager.getLbpPoolData(
-            //   args as unknown as LbpGetPoolDataInput // TODO fix types
-            // ) as R;
-            //
-            // if (resp) return resp;
+            const resp = this.storageDictionaryManager.getAavepoolsAll(
+              args as unknown as AaveTradeExecutorPoolsInput // TODO fix types
+            ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+
+          break;
+        }
+        case ProcessingTopic.ASSET_HIST_DATA: {
+          if (method === 'getAssetDynamicFeesAll') {
+            const resp = this.storageDictionaryManager.getAssetDynamicFeesAll(
+              args as unknown as GetAssetsDynamicFeesAllInput // TODO fix types
+            ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+          if (method === 'getTokenTotalIssuance') {
+            const resp = this.storageDictionaryManager.getTokenTotalIssuance(
+              args as unknown as TokensGetTokenTotalIssuanceInput // TODO fix types
+            ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+          if (method === 'getNativeTokenTotalIssuance') {
+            const resp =
+              this.storageDictionaryManager.getNativeTokenTotalIssuance(
+                args as unknown as GetConstantsInput // TODO fix types
+              ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+          if (method === 'getManyTokensTotalIssuance') {
+            const resp =
+              this.storageDictionaryManager.getManyTokensTotalIssuance(
+                args as unknown as TokensGetTokensTotalIssuanceInput // TODO fix types
+              ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+          if (method === 'getAssetsExistentialDepositAll') {
+            const resp =
+              this.storageDictionaryManager.getAssetsExistentialDepositAll(
+                args as unknown as GetDataAtBlockInput // TODO fix types
+              ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+
+          break;
+        }
+        case ProcessingTopic.EMA_ORACLE: {
+          if (method === 'getOracleEntries') {
+            const resp = this.storageDictionaryManager.getEmaOracleEntriesAll(
+              args as unknown as GetEmaOraclesInput // TODO fix types
+            ) as R;
+
+            if (resp) return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
           }
