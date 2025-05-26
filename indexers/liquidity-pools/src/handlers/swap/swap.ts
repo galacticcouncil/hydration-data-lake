@@ -463,7 +463,7 @@ function getInputOutputDecorated({
   eventName: string;
 }) {
   if (
-    eventName === EventName.Broadcast_Swapped2 ||
+    eventName !== EventName.Broadcast_Swapped ||
     operationType === TradeOperationType.ExactIn ||
     operationType !== TradeOperationType.ExactOut ||
     (fillerType !== SwapFillerType.XYK && fillerType !== SwapFillerType.LBP)
