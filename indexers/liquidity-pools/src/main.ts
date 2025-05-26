@@ -229,46 +229,57 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     ctxWithBatchState as SqdProcessorContext<Store>
   );
 
-  console.time('handleConstantsHistoricalData');
-  await handleConstantsHistoricalData(
-    ctxWithBatchState as SqdProcessorContext<Store>
-  );
-  console.timeEnd('handleConstantsHistoricalData');
-
-  console.time('handleStableswapHistoricalData');
-  await handleStableswapHistoricalData(
-    ctxWithBatchState as SqdProcessorContext<Store>,
-    parsedData
-  );
-  console.timeEnd('handleStableswapHistoricalData');
-
-  console.time('handleOmnipoolHistoricalData');
-  await handleOmnipoolHistoricalData(
-    ctxWithBatchState as SqdProcessorContext<Store>,
-    parsedData
-  );
-  console.timeEnd('handleOmnipoolHistoricalData');
-
-  console.time('handleXykPoolHistoricalData');
-  await handleXykPoolHistoricalData(
-    ctxWithBatchState as SqdProcessorContext<Store>,
-    parsedData
-  );
-  console.timeEnd('handleXykPoolHistoricalData');
-
-  console.time('handleLbppoolHistoricalData');
-  await handleLbppoolHistoricalData(
-    ctxWithBatchState as SqdProcessorContext<Store>,
-    parsedData
-  );
-  console.timeEnd('handleLbppoolHistoricalData');
-
-  console.time('handleAavepoolHistoricalData');
-  await handleAavepoolHistoricalData(
-    ctxWithBatchState as SqdProcessorContext<Store>,
-    parsedData
-  );
-  console.timeEnd('handleAavepoolHistoricalData');
+  console.time('pools hist data Promise.all');
+  await Promise.all([
+    (async () => {
+      console.time('handleConstantsHistoricalData');
+      await handleConstantsHistoricalData(
+        ctxWithBatchState as SqdProcessorContext<Store>
+      );
+      console.timeEnd('handleConstantsHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleStableswapHistoricalData');
+      await handleStableswapHistoricalData(
+        ctxWithBatchState as SqdProcessorContext<Store>,
+        parsedData
+      );
+      console.timeEnd('handleStableswapHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleOmnipoolHistoricalData');
+      await handleOmnipoolHistoricalData(
+        ctxWithBatchState as SqdProcessorContext<Store>,
+        parsedData
+      );
+      console.timeEnd('handleOmnipoolHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleXykPoolHistoricalData');
+      await handleXykPoolHistoricalData(
+        ctxWithBatchState as SqdProcessorContext<Store>,
+        parsedData
+      );
+      console.timeEnd('handleXykPoolHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleLbppoolHistoricalData');
+      await handleLbppoolHistoricalData(
+        ctxWithBatchState as SqdProcessorContext<Store>,
+        parsedData
+      );
+      console.timeEnd('handleLbppoolHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleAavepoolHistoricalData');
+      await handleAavepoolHistoricalData(
+        ctxWithBatchState as SqdProcessorContext<Store>,
+        parsedData
+      );
+      console.timeEnd('handleAavepoolHistoricalData');
+    })(),
+  ]);
+  console.timeEnd('pools hist data Promise.all');
 
   console.time('ensurePoolsDestroyedStatus');
   await ensurePoolsDestroyedStatus(

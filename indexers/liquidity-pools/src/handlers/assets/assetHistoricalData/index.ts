@@ -168,7 +168,6 @@ export async function handleAssetHistoricalData(
       blockNumbers: blocksSubBatch.map((b) => b.header.height),
       ctx,
     });
-    console.time(`--- handleAssetSpotPricesHistoricalData`);
     await Promise.all(
       blocksSubBatch.map((block) =>
         handleAssetSpotPricesHistoricalData({
@@ -177,9 +176,7 @@ export async function handleAssetHistoricalData(
         })
       )
     );
-    console.timeEnd(`--- handleAssetSpotPricesHistoricalData`);
 
-    console.time(`--- handleAssetPairVolumesHistoricalData`);
     await Promise.all(
       blocksSubBatch.map((block) =>
         handleAssetPairVolumesHistoricalData({
@@ -188,7 +185,6 @@ export async function handleAssetHistoricalData(
         })
       )
     );
-    console.timeEnd(`--- handleAssetPairVolumesHistoricalData`);
   }
   console.timeEnd(
     `handleAssetHistoricalData :: ${ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE} ::  handleAssetSpotPricesHistoricalData`

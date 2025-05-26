@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 704
+slot: 705
 description: Hydration pools indexer
 build:
 deploy:
@@ -24,7 +24,7 @@ deploy:
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
       UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
 
-      PROCESS_FROM_BLOCK: 7653200
+      PROCESS_FROM_BLOCK: 7653990
       PROCESS_TO_BLOCK: -1
 
       USE_STORAGE_DICTIONARY: false
@@ -48,13 +48,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
       profile: medium
       storage: 200G
   processor:
-    profile: medium
+    profile: large
   api:
-    profile: medium
+    profile: small
 
