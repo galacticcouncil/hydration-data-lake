@@ -6,6 +6,7 @@ import {
 } from './resolvers';
 import { aggregateStablepoolVolumesByBlocksRange } from '../../sql/stableswapVolumes.sql';
 import { getAssetsByStableswapIds } from '../../sql/stableswap.sql';
+import { BigNumber } from '@galacticcouncil/sdk';
 
 export async function handleStableswapHistoricalVolumesByPeriodAggregation({
   poolIds,
@@ -52,10 +53,9 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
               assetVol:
                 BigInt(assetData.asset_vol_in) +
                 BigInt(assetData.asset_vol_out),
-              assetVolNorm: (
-                BigInt(assetData.asset_vol_in_norm) +
-                BigInt(assetData.asset_vol_out_norm)
-              ).toString(),
+              assetVolNorm: BigNumber(assetData.asset_vol_in_norm)
+                .plus(assetData.asset_vol_out_norm)
+                .toFixed(),
               assetFeeVolNorm: assetData.asset_fee_vol_norm,
             })
           );
@@ -91,19 +91,19 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
               BigInt(startEntityAssetVol.asset_total_vol_out) +
               BigInt(startEntityAssetVol.asset_vol_in) +
               BigInt(startEntityAssetVol.asset_vol_out),
-            assetFeeVolNorm: (
-              BigInt(endEntityAssetVol.asset_fees_total_vol_norm) -
-              BigInt(startEntityAssetVol.asset_fees_total_vol_norm) +
-              BigInt(startEntityAssetVol.asset_fee_vol_norm)
-            ).toString(),
-            assetVolNorm: (
-              BigInt(endEntityAssetVol.asset_total_vol_in_norm) +
-              BigInt(endEntityAssetVol.asset_total_vol_out_norm) -
-              BigInt(startEntityAssetVol.asset_total_vol_in_norm) -
-              BigInt(startEntityAssetVol.asset_total_vol_out_norm) +
-              BigInt(startEntityAssetVol.asset_vol_in_norm) +
-              BigInt(startEntityAssetVol.asset_vol_out_norm)
-            ).toString(),
+            assetFeeVolNorm: BigNumber(
+              endEntityAssetVol.asset_total_fees_vol_norm
+            )
+              .minus(startEntityAssetVol.asset_total_fees_vol_norm)
+              .plus(startEntityAssetVol.asset_fee_vol_norm)
+              .toFixed(),
+            assetVolNorm: BigNumber(endEntityAssetVol.asset_total_vol_in_norm)
+              .plus(endEntityAssetVol.asset_total_vol_out_norm)
+              .minus(startEntityAssetVol.asset_total_vol_in_norm)
+              .minus(startEntityAssetVol.asset_total_vol_out_norm)
+              .plus(startEntityAssetVol.asset_vol_in_norm)
+              .plus(startEntityAssetVol.asset_vol_out_norm)
+              .toFixed(),
           });
         }
 
@@ -149,10 +149,16 @@ function getPoolNormalizedVolumes(
 ): Pick<StableswapVolumeAggregated, 'poolVolNorm' | 'poolFeeVolNorm'> {
   return {
     poolVolNorm: assetsData
-      .reduce((acc, assetData) => acc + BigInt(assetData.assetVolNorm), 0n)
-      .toString(),
+      .reduce(
+        (acc, assetData) => acc.plus(assetData.assetVolNorm),
+        BigNumber(0)
+      )
+      .toFixed(),
     poolFeeVolNorm: assetsData
-      .reduce((acc, assetData) => acc + BigInt(assetData.assetFeeVolNorm), 0n)
-      .toString(),
+      .reduce(
+        (acc, assetData) => acc.plus(assetData.assetFeeVolNorm),
+        BigNumber(0)
+      )
+      .toFixed(),
   };
 }

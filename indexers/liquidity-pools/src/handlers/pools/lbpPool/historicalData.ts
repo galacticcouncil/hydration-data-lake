@@ -17,7 +17,10 @@ export async function handleLbppoolHistoricalData(
 
   const predefinedEntities = [];
 
-  for (const blocksSubBatch of splitIntoBatches(ctx.blocks, 100)) {
+  for (const blocksSubBatch of splitIntoBatches(
+    ctx.blocks,
+    ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
+  )) {
     const allPoolsPerBlock: Array<{
       blockHeader: BlockHeader;
       pools: Lbppool[];

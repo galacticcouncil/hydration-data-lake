@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 603
+slot: 704
 description: Hydration pools indexer
 build:
 deploy:
@@ -12,7 +12,7 @@ deploy:
   processor:
     env:
       CHAIN: 'hydration'
-      RPC_URL: 'wss://archive.rpc.hydration.cloud'
+      RPC_URL: 'wss://4.rpc.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
       PROCESS_XYK_POOLS: true
@@ -24,10 +24,10 @@ deploy:
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
       UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
 
-      PROCESS_FROM_BLOCK: 1439857
+      PROCESS_FROM_BLOCK: 7653200
       PROCESS_TO_BLOCK: -1
 
-      USE_STORAGE_DICTIONARY: true
+      USE_STORAGE_DICTIONARY: false
       STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql'
       STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql'
       STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql'
@@ -48,7 +48,7 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
       profile: medium

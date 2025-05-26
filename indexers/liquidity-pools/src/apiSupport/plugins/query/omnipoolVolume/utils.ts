@@ -3,6 +3,7 @@ import { OmnipoolAssetVolumeAggregated } from './resolvers';
 import { getAllOmnipoolAssets } from '../../sql/omnipoolAssets.sql';
 import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../../sql/omnipoolAssetsVolume.sql';
 import { OmnipoolAssetHistoricalVolumeRaw } from '../../../types';
+import { BigNumber } from '@galacticcouncil/sdk';
 
 export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
   omnipoolAddress,
@@ -64,10 +65,9 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
             BigInt(group[0].asset_vol_in) + BigInt(group[0].asset_vol_out);
           resp.assetFeeVol = BigInt(group[0].asset_fee_vol);
 
-          resp.assetVolNormalized = (
-            BigInt(group[0].asset_vol_in_norm) +
-            BigInt(group[0].asset_vol_out_norm)
-          ).toString();
+          resp.assetVolNormalized = BigNumber(group[0].asset_vol_in_norm)
+            .plus(group[0].asset_vol_out_norm)
+            .toFixed();
           resp.assetFeeVolNormalized = group[0].asset_fee_vol_norm;
 
           return resp;
@@ -85,19 +85,19 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
           BigInt(group[1].asset_total_fees_vol) -
           BigInt(group[0].asset_total_fees_vol);
 
-        resp.assetVolNormalized = (
-          BigInt(group[1].asset_total_vol_in_norm) +
-          BigInt(group[1].asset_total_vol_out_norm) -
-          BigInt(group[0].asset_total_vol_in_norm) -
-          BigInt(group[0].asset_total_vol_out_norm) +
-          BigInt(group[0].asset_vol_in_norm) +
-          BigInt(group[0].asset_vol_out_norm)
-        ).toString();
+        resp.assetVolNormalized = BigNumber(group[1].asset_total_vol_in_norm)
+          .plus(group[1].asset_total_vol_out_norm)
+          .minus(group[0].asset_total_vol_in_norm)
+          .minus(group[0].asset_total_vol_out_norm)
+          .plus(group[0].asset_vol_in_norm)
+          .plus(group[0].asset_vol_out_norm)
+          .toFixed();
 
-        resp.assetFeeVolNormalized = (
-          BigInt(group[1].asset_total_fees_vol_norm) -
-          BigInt(group[0].asset_total_fees_vol_norm)
-        ).toString();
+        resp.assetFeeVolNormalized = BigNumber(
+          group[1].asset_total_fees_vol_norm
+        )
+          .minus(group[0].asset_total_fees_vol_norm)
+          .toFixed();
 
         return resp;
       })

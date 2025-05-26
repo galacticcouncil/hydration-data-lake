@@ -122,7 +122,7 @@ export type StableswapAssetHistoricalVolumeRaw = {
   asset_total_vol_out: number;
 
   asset_fee_vol_norm: string;
-  asset_fees_total_vol_norm: string;
+  asset_total_fees_vol_norm: string;
   asset_vol_in_norm: string;
   asset_vol_out_norm: string;
   asset_total_vol_in_norm: string;

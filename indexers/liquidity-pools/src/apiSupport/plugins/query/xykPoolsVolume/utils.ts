@@ -5,6 +5,7 @@ import {
 } from '../../sql/xykPoolsVolume.sql';
 import { XykpoolHistoricalVolumeRaw } from '../../../types';
 import { XykpoolVolumeAggregated } from './resolvers';
+import { BigNumber } from '@galacticcouncil/sdk';
 
 export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
   poolIds,
@@ -56,14 +57,13 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
             BigInt(group[0].asset_b_vol_in) + BigInt(group[0].asset_b_vol_out);
           resp.assetAFeeVol = BigInt(group[0].asset_a_fee_vol);
           resp.assetBFeeVol = BigInt(group[0].asset_b_fee_vol);
-          resp.assetAVolNorm = (
-            BigInt(group[0].asset_a_vol_in_norm) +
-            BigInt(group[0].asset_a_vol_out_norm)
-          ).toString();
-          resp.assetBVolNorm = (
-            BigInt(group[0].asset_b_vol_in_norm) +
-            BigInt(group[0].asset_b_vol_out_norm)
-          ).toString();
+
+          resp.assetAVolNorm = BigNumber(group[0].asset_a_vol_in_norm)
+            .plus(group[0].asset_a_vol_out_norm)
+            .toFixed();
+          resp.assetBVolNorm = BigNumber(group[0].asset_b_vol_in_norm)
+            .plus(group[0].asset_b_vol_out_norm)
+            .toFixed();
           resp.assetAFeeVolNorm = group[0].asset_a_fee_vol_norm;
           resp.assetBFeeVolNorm = group[0].asset_b_fee_vol_norm;
 
@@ -96,35 +96,31 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
           BigInt(group[0].asset_b_fees_total_vol) +
           BigInt(group[0].asset_b_fee_vol);
 
-        resp.assetAVolNorm = (
-          BigInt(group[1].asset_a_total_vol_in_norm) +
-          BigInt(group[1].asset_a_total_vol_out_norm) -
-          BigInt(group[0].asset_a_total_vol_in_norm) -
-          BigInt(group[0].asset_a_total_vol_out_norm) +
-          BigInt(group[0].asset_a_vol_in_norm) +
-          BigInt(group[0].asset_a_vol_out_norm)
-        ).toString();
+        resp.assetAVolNorm = BigNumber(group[1].asset_a_total_vol_in_norm)
+          .plus(group[1].asset_a_total_vol_out_norm)
+          .minus(group[0].asset_a_total_vol_in_norm)
+          .minus(group[0].asset_a_total_vol_out_norm)
+          .plus(group[0].asset_a_vol_in_norm)
+          .plus(group[0].asset_a_vol_out_norm)
+          .toFixed();
 
-        resp.assetBVolNorm = (
-          BigInt(group[1].asset_b_total_vol_in_norm) +
-          BigInt(group[1].asset_b_total_vol_out_norm) -
-          BigInt(group[0].asset_b_total_vol_in_norm) -
-          BigInt(group[0].asset_b_total_vol_out_norm) +
-          BigInt(group[0].asset_b_vol_in_norm) +
-          BigInt(group[0].asset_b_vol_out_norm)
-        ).toString();
+        resp.assetBVolNorm = BigNumber(group[1].asset_b_total_vol_in_norm)
+          .plus(group[1].asset_b_total_vol_out_norm)
+          .minus(group[0].asset_b_total_vol_in_norm)
+          .minus(group[0].asset_b_total_vol_out_norm)
+          .plus(group[0].asset_b_vol_in_norm)
+          .plus(group[0].asset_b_vol_out_norm)
+          .toFixed();
 
-        resp.assetAFeeVolNorm = (
-          BigInt(group[1].asset_a_fees_total_vol_norm) -
-          BigInt(group[0].asset_a_fees_total_vol_norm) +
-          BigInt(group[0].asset_a_fee_vol_norm)
-        ).toString();
+        resp.assetAFeeVolNorm = BigNumber(group[1].asset_a_fees_total_vol_norm)
+          .minus(group[0].asset_a_fees_total_vol_norm)
+          .plus(group[0].asset_a_fee_vol_norm)
+          .toFixed();
 
-        resp.assetAFeeVolNorm = (
-          BigInt(group[1].asset_b_fees_total_vol_norm) -
-          BigInt(group[0].asset_b_fees_total_vol_norm) +
-          BigInt(group[0].asset_b_fee_vol_norm)
-        ).toString();
+        resp.assetAFeeVolNorm = BigNumber(group[1].asset_b_fees_total_vol_norm)
+          .minus(group[0].asset_b_fees_total_vol_norm)
+          .plus(group[0].asset_b_fee_vol_norm)
+          .toFixed();
 
         return resp;
       })

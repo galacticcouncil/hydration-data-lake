@@ -96,7 +96,7 @@ export class AppConfig {
   /**
    * Request timeout in ms
    */
-  readonly RPC_REQUEST_TIMEOUT: number = 3_000;
+  readonly RPC_REQUEST_TIMEOUT: number = 30_000;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly IGNORE_ARCHIVE_DATA_SOURCE: boolean = false;
@@ -171,6 +171,9 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly API_CACHE_TTL_MS: number = 600000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: number = 10;
 
   @Transform(({ value }: { value: string }) =>
     value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id))

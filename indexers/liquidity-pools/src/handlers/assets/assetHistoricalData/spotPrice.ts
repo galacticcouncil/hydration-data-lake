@@ -49,91 +49,93 @@ async function processAssetSpotPrices({
 
   if (!router) return;
 
-  if (asset.assetRegistryId !== undefined && asset.assetRegistryId !== null) {
-    try {
+  const calcAssetUsdPriceNormalised = async () => {
+    if (asset.assetRegistryId !== undefined && asset.assetRegistryId !== null) {
+      try {
+        /**
+         * USD price must be calculation based on DIA Oracle data
+         */
+        const usdPriceDetails = await router.getBestSpotPrice(
+          asset.assetRegistryId,
+          ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+        );
+
+        if (usdPriceDetails) {
+          assetHistData.usdPriceNormalised = fromExponentialToDecimalNotation(
+            usdPriceDetails.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
+            usdPriceDetails.decimals
+          ).toFixed();
+        }
+      } catch (e) {}
+    }
+  };
+
+  const calcAssetSpotPrices = async () => {
+    for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
       /**
-       * USD price must be calculation based on DIA Oracle data
+       * Skips price calculation when source and target assets are identical.
        */
-      const usdPriceDetails = await router.getBestSpotPrice(
-        asset.assetRegistryId,
-        ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
-      );
+      if (assetOutId === asset.assetRegistryId) continue;
 
-      if (usdPriceDetails) {
-        assetHistData.usdPriceNormalised = fromExponentialToDecimalNotation(
-          usdPriceDetails.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
-          usdPriceDetails.decimals
-        ).toFixed();
-      }
-    } catch (e) {}
-  }
+      const assetOut = await getOrCreateAsset({
+        assetRegistryId: assetOutId,
+        ctx,
+        blockHeader,
+        ensure: true,
+      });
+      if (
+        !assetOut ||
+        asset.assetRegistryId === undefined ||
+        asset.assetRegistryId === null
+      )
+        continue;
 
-  for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
-    /**
-     * Skips price calculation when source and target assets are identical.
-     */
-    if (assetOutId === asset.assetRegistryId) continue;
-
-    const assetOut = await getOrCreateAsset({
-      assetRegistryId: assetOutId,
-      ctx,
-      blockHeader,
-      ensure: true,
-    });
-    if (
-      !assetOut ||
-      asset.assetRegistryId === undefined ||
-      asset.assetRegistryId === null
-    )
-      continue;
-
-    try {
-      const price = await router.getBestSpotPrice(
-        asset.assetRegistryId,
-        assetOutId
-      );
-      const route = await router.getMostLiquidRoute(
-        asset.assetRegistryId,
-        assetOutId
-      );
-
-      if (!price) continue;
-
-      const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
-
-      const getPriceRouteDecorated = (route: Hop[]): string[][] => {
-        return route.map((hop) => [
-          hop.poolAddress,
-          hop.pool,
-          hop.assetIn,
-          hop.assetOut,
+      try {
+        const [price, route] = await Promise.all([
+          router.getBestSpotPrice(asset.assetRegistryId, assetOutId),
+          router.getMostLiquidRoute(asset.assetRegistryId, assetOutId),
         ]);
-      };
 
-      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
-        histDataItemId,
-        new AssetSpotPriceHistoricalData({
-          id: histDataItemId,
-          assetIn: asset,
-          assetOut,
-          assetInAssetRegistryId: asset.assetRegistryId,
-          assetOutAssetRegistryId: assetOut.assetRegistryId,
-          assetInHistData: assetHistData,
+        if (!price) continue;
 
-          assetOutDecimals: price.decimals,
-          price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
+        const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
-          priceNormalised: fromExponentialToDecimalNotation(
-            price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
-            price.decimals
-          ).toFixed(),
-          priceRoute: getPriceRouteDecorated(route),
+        const getPriceRouteDecorated = (route: Hop[]): string[][] => {
+          return route.map((hop) => [
+            hop.poolAddress,
+            hop.pool,
+            hop.assetIn,
+            hop.assetOut,
+          ]);
+        };
 
-          paraBlockHeight: blockHeader.height,
-          relayBlockHeight: assetHistData.relayBlockHeight,
-          block: assetHistData.block,
-        })
-      );
-    } catch (e) {}
-  }
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
+          histDataItemId,
+          new AssetSpotPriceHistoricalData({
+            id: histDataItemId,
+            assetIn: asset,
+            assetOut,
+            assetInAssetRegistryId: asset.assetRegistryId,
+            assetOutAssetRegistryId: assetOut.assetRegistryId,
+            assetInHistData: assetHistData,
+
+            assetOutDecimals: price.decimals,
+            price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
+
+            priceNormalised: fromExponentialToDecimalNotation(
+              price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
+              price.decimals
+            ).toFixed(),
+            priceRoute: getPriceRouteDecorated(route),
+
+            paraBlockHeight: blockHeader.height,
+            relayBlockHeight: assetHistData.relayBlockHeight,
+            block: assetHistData.block,
+          })
+        );
+      } catch (e) {}
+    }
+  };
+
+  await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
 }

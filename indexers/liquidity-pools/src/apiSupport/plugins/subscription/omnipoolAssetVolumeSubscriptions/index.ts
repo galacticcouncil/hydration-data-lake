@@ -54,7 +54,7 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
             filter: OmnipoolAssetVolumeHistoricalDataSubscriptionFilter
           ): OmnipoolAssetVolumeHistoricalDataSubscriptionPayload
             @pgSubscription(
-              topic: "postgraphile:state_changed:omnipool_asset_volume_historical_data"
+              topic: "postgraphile:state_changed:omnipool_asset_vol_hist_data"
               filter: ${embed(omnipoolAssetHistoricalVolumeSubscriptionFilter)}
             )
 

@@ -6,7 +6,8 @@ import {
   OfflinePoolService,
   IPersistentDataInput,
   OfflinePoolUtils,
-} from '../../../../../../../../../../hydration-sdk/packages/sdk';
+} from '../offlineSdk/sdk/src';
+// } from '@galacticcouncil/sdk';
 
 export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
   private static instance: OfflineTradeRouterManager;

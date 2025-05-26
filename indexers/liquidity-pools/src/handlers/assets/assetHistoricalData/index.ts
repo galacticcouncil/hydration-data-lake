@@ -126,6 +126,10 @@ export async function handleAssetHistoricalData(
     .filter((a) => !!a.assetRegistryId)
     .map((a) => `${a.assetRegistryId}`);
 
+  console.time(
+    `handleAssetHistoricalData :: ${ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE} ::  processAssetsHistoricalDataAtBlock`
+  );
+
   /**
    * @description Processes data in a specific sequence to ensure data dependencies are met
    *
@@ -133,7 +137,10 @@ export async function handleAssetHistoricalData(
    * This ordering is critical because the generic asset historical data serves as a required
    * data source for the OfflinePoolService.
    */
-  for (const blocksSubBatch of splitIntoBatches(ctx.blocks, 15)) {
+  for (const blocksSubBatch of splitIntoBatches(
+    ctx.blocks,
+    ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
+  )) {
     await Promise.all(
       blocksSubBatch.map((block) =>
         processAssetsHistoricalDataAtBlock({
@@ -145,20 +152,45 @@ export async function handleAssetHistoricalData(
     );
   }
 
-  for (const blocksSubBatch of splitIntoBatches(ctx.blocks, 100)) {
+  console.timeEnd(
+    `handleAssetHistoricalData :: ${ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE} ::  processAssetsHistoricalDataAtBlock`
+  );
+
+  console.time(
+    `handleAssetHistoricalData :: ${ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE} ::  handleAssetSpotPricesHistoricalData`
+  );
+
+  for (const blocksSubBatch of splitIntoBatches(
+    ctx.blocks,
+    ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
+  )) {
     await OfflineTradeRouterManager.getInstance().initForBlocksBatch({
       blockNumbers: blocksSubBatch.map((b) => b.header.height),
       ctx,
     });
-    for (const block of blocksSubBatch) {
-      await handleAssetSpotPricesHistoricalData({
-        blockHeader: block.header,
-        ctx,
-      });
-      await handleAssetPairVolumesHistoricalData({
-        blockHeader: block.header,
-        ctx,
-      });
-    }
+    console.time(`--- handleAssetSpotPricesHistoricalData`);
+    await Promise.all(
+      blocksSubBatch.map((block) =>
+        handleAssetSpotPricesHistoricalData({
+          blockHeader: block.header,
+          ctx,
+        })
+      )
+    );
+    console.timeEnd(`--- handleAssetSpotPricesHistoricalData`);
+
+    console.time(`--- handleAssetPairVolumesHistoricalData`);
+    await Promise.all(
+      blocksSubBatch.map((block) =>
+        handleAssetPairVolumesHistoricalData({
+          blockHeader: block.header,
+          ctx,
+        })
+      )
+    );
+    console.timeEnd(`--- handleAssetPairVolumesHistoricalData`);
   }
+  console.timeEnd(
+    `handleAssetHistoricalData :: ${ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE} ::  handleAssetSpotPricesHistoricalData`
+  );
 }

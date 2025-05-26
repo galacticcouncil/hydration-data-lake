@@ -39,7 +39,8 @@ import {
   IPersistentConstants,
   AMOUNT_MAX,
   TRADEABLE_DEFAULT,
-} from '../../../../../../../../../../hydration-sdk/packages/sdk';
+} from '../offlineSdk/sdk/src';
+// } from '@galacticcouncil/sdk';
 import {
   bigintToNumberSafe,
   publicKeyToSs58,

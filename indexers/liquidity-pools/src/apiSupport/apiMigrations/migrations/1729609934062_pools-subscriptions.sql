@@ -76,13 +76,13 @@ BEGIN
   CASE TG_OP
       WHEN 'INSERT' THEN
         PERFORM
-          public.notify ('state_changed', 'created', 'omnipool_asset_volume_historical_data', NEW.id); RETURN NEW;
+          public.notify ('state_changed', 'created', 'omnipool_asset_vol_hist_data', NEW.id); RETURN NEW;
       WHEN 'UPDATE' THEN
         PERFORM
-          public.notify ('state_changed', 'updated', 'omnipool_asset_volume_historical_data', NEW.id); RETURN NEW;
+          public.notify ('state_changed', 'updated', 'omnipool_asset_vol_hist_data', NEW.id); RETURN NEW;
       WHEN 'DELETE' THEN
         PERFORM
-          public.notify ('state_changed', 'deleted', 'omnipool_asset_volume_historical_data', OLD.id); RETURN OLD;
+          public.notify ('state_changed', 'deleted', 'omnipool_asset_vol_hist_data', OLD.id); RETURN OLD;
   END CASE;
 END
 $$ VOLATILE
