@@ -13,31 +13,45 @@ import { getOrCreateStableswap } from './stablepool';
 import { getOrCreateAsset } from '../../assets/asset';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { splitIntoBatches } from '../../../utils/helpers';
+import {
+  StablepoolAllPoolsInfoWithPoolId,
+  StablepoolInfo,
+  StablepoolManyPoolsPegsInfoWithPoolId,
+  StablepoolPoolPegsInfo,
+} from '../../../parsers/types/storage';
 
 async function getStableswapDataPromise({
   ctx,
   poolId,
+  poolData,
+  poolPegs,
   blockHeader,
 }: {
   ctx: SqdProcessorContext<Store>;
   poolId: number;
+  poolData: StablepoolInfo;
+  poolPegs?: StablepoolPoolPegsInfo;
   blockHeader: BlockHeader;
 }): Promise<{
   poolData: StableswapHistoricalData;
   assetsData: StableswapAssetHistoricalData[];
 } | null> {
   //TODO add using pool data from current batch cache
-  const poolStorageData = await parsers.storage.stableswap.getPoolData({
-    poolId,
-    block: blockHeader,
-  });
+  const poolStorageData =
+    poolData ??
+    (await parsers.storage.stableswap.getPoolData({
+      poolId,
+      block: blockHeader,
+    }));
 
   if (!poolStorageData) return null;
 
-  const poolPegsData = await parsers.storage.stableswap.getPoolPegs({
-    poolId,
-    block: blockHeader,
-  });
+  const poolPegsData =
+    poolPegs ??
+    (await parsers.storage.stableswap.getPoolPegs({
+      poolId,
+      block: blockHeader,
+    }));
 
   const assetsData = await Promise.all(
     poolStorageData.assets.map(async (assetId) => ({
@@ -182,27 +196,42 @@ export async function handleStableswapHistoricalData(
     ctx.blocks,
     ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
   )) {
-    const allPoolsPerBlock: Array<{ blockHeader: BlockHeader; ids: number[] }> =
-      await Promise.all(
-        blocksSubBatch.map(async ({ header: blockHeader }) => {
-          const poolShareTokenPairs =
-            await parsers.storage.stableswap.getAllPoolIds({
-              block: blockHeader,
-            });
-          return {
-            blockHeader,
-            ids: poolShareTokenPairs,
-          };
-        })
-      );
+    const allPoolsPerBlock: Array<{
+      blockHeader: BlockHeader;
+      poolsDataMap: Map<number, StablepoolAllPoolsInfoWithPoolId>;
+      poolsPegsMap: Map<number, StablepoolManyPoolsPegsInfoWithPoolId>;
+    }> = await Promise.all(
+      blocksSubBatch.map(async ({ header: blockHeader }) => {
+        const [blockAllPoolsData, blockAllPoolsPegs] = await Promise.all([
+          parsers.storage.stableswap.getAllPoolsData({
+            block: blockHeader,
+          }),
+          parsers.storage.stableswap.getAllPoolsPegs({
+            block: blockHeader,
+          }),
+        ]);
+
+        return {
+          blockHeader,
+          poolsDataMap: new Map(
+            (blockAllPoolsData || []).map((data) => [data.poolId, data])
+          ),
+          poolsPegsMap: new Map(
+            (blockAllPoolsPegs || []).map((data) => [data.poolId, data])
+          ),
+        };
+      })
+    );
 
     predefinedEntities.push(
       await Promise.all(
         allPoolsPerBlock
-          .map(({ blockHeader, ids }) =>
-            ids.map((poolId) => ({
+          .map(({ blockHeader, poolsDataMap, poolsPegsMap }) =>
+            [...poolsDataMap.values()].map((poolDataWithId) => ({
               blockHeader: blockHeader,
-              poolId,
+              poolId: poolDataWithId.poolId,
+              poolData: poolDataWithId.data,
+              poolPegs: poolsPegsMap.get(poolDataWithId.poolId)?.data,
             }))
           )
           .flat()

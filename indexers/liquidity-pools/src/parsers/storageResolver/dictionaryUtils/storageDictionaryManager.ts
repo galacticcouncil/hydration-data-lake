@@ -70,10 +70,12 @@ import {
   OmnipoolData,
   OmnipoolGetAssetDataInput,
   OmnipoolGetHubAssetTradabilityInput,
+  StablepoolAllPoolsInfoWithPoolId,
   StablepoolAssetState,
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolPoolPegsInfo,
   StableswapPegSource,
   TokensGetTokensTotalIssuanceInput,
@@ -684,6 +686,35 @@ export class StorageDictionaryManager extends QueriesHelper {
       fee: node.fee,
     };
   }
+  getStableswapAllPoolsData({
+    block,
+  }: GetDataAtBlockInput): StablepoolAllPoolsInfoWithPoolId[] | null {
+    const nodes = [
+      ...this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).entries(),
+    ].filter(
+      ([key, data]) =>
+        key.split('-')[1] === block.height.toString() &&
+        data.stableswapAssetDataByPoolId.nodes &&
+        data.stableswapAssetDataByPoolId.nodes.length > 0
+    );
+
+    if (nodes.length === 0) return null;
+
+    return nodes.map(([id, node]) => ({
+      poolId: node.poolId,
+      data: {
+        assets: node.stableswapAssetDataByPoolId.nodes.map(
+          (asset) => asset!.assetId
+        ),
+        initialAmplification: node.initialAmplification,
+        finalAmplification: node.finalAmplification,
+        initialBlock: node.initialBlock,
+        finalBlock: node.finalBlock,
+        fee: node.fee,
+      },
+    }));
+  }
+
   getStableswapPegsData({
     poolId,
     block,
@@ -714,6 +745,44 @@ export class StorageDictionaryManager extends QueriesHelper {
         BigInt(pegB),
       ]),
     };
+  }
+
+  getStableswapAllPoolsPegsData({
+    block,
+  }: GetDataAtBlockInput): StablepoolManyPoolsPegsInfoWithPoolId[] | null {
+    const nodes = [
+      ...this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).entries(),
+    ].filter(
+      ([key, data]) =>
+        key.split('-')[1] === block.height.toString() &&
+        data.maxPegUpdate !== undefined
+    );
+
+    if (nodes.length === 0) return null;
+
+    return nodes.map(([key, data]) => ({
+      poolId: data.poolId,
+      data: {
+        source: data.pegSources
+          ? data.pegSources.map(
+              (src: any): StableswapPegSource => ({
+                sourceKind: src.sourceKind,
+                oracleName: src.oracleName,
+                oraclePeriod: src.oraclePeriod,
+                oracleAsset: src.oracleAsset,
+                valuePoints: src.valuePoints
+                  ? src.valuePoints.map((p: any) => BigInt(p))
+                  : undefined,
+              })
+            )
+          : undefined,
+        maxPegUpdate: data.maxPegUpdate ?? undefined,
+        current: data.pegs.map(([pegA, pegB]: string[]) => [
+          BigInt(pegA),
+          BigInt(pegB),
+        ]),
+      },
+    }));
   }
 
   getStableswapPoolAssetInfo({

@@ -92,12 +92,14 @@ export class StorageResolver {
     pallet: ProcessingTopic;
     method:
       | 'getPoolData'
+      | 'getAllPoolsData'
       | 'getPools'
       | 'getPoolAssetInfo'
       | 'getPoolAssetStorageData'
       | 'getAssetData'
       | 'getPoolAssets'
       | 'getPoolPegs'
+      | 'getAllPoolsPegs'
       | 'getOmnipoolHubAssetTradability'
       | 'getPoolShareTokenPairsMany'
       | 'getPoolShareToken'
@@ -129,6 +131,16 @@ export class StorageResolver {
             //     args as unknown as StablepoolGetPoolDataInput // TODO fix types
             //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
             // );
+          }
+          if (method === 'getAllPoolsData') {
+            const resp =
+              this.storageDictionaryManager.getStableswapAllPoolsData(
+                args as unknown as GetDataAtBlockInput // TODO fix types
+              ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
           }
           if (method === 'getPoolAssetInfo') {
             const resp =
@@ -163,6 +175,16 @@ export class StorageResolver {
             const resp = this.storageDictionaryManager.getStableswapPegsData(
               args as unknown as StablepoolGetPoolPegsInput // TODO fix types
             ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+          if (method === 'getAllPoolsPegs') {
+            const resp =
+              this.storageDictionaryManager.getStableswapAllPoolsPegsData(
+                args as unknown as GetDataAtBlockInput // TODO fix types
+              ) as R;
 
             if (resp) return resp;
 

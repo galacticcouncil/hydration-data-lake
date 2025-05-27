@@ -53,13 +53,6 @@ export async function handleXykPoolHistoricalData(
 
             if (!pool || !pool.assetA || !pool.assetB) return null;
 
-            const poolData = await parsers.storage.xyk.getPoolData({
-              block: blockHeader,
-              poolAddress: poolId,
-            });
-
-            if (!poolData) return null;
-
             const assetsData = new Map(
               (
                 await Promise.all(

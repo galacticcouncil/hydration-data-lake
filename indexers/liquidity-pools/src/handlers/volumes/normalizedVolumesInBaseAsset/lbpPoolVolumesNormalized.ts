@@ -52,13 +52,13 @@ export function processLbpPoolsNormalizedVolumes(
       poolVolsHistData.assetBVolIn.toString(),
       assetB.decimals
     )
-      .multipliedBy(assetASpotPriceNorm)
+      .multipliedBy(assetBSpotPriceNorm)
       .toFixed();
     poolVolsHistData.assetBVolOutNorm = fromExponentialToDecimalNotation(
       poolVolsHistData.assetBVolOut.toString(),
       assetB.decimals
     )
-      .multipliedBy(assetASpotPriceNorm)
+      .multipliedBy(assetBSpotPriceNorm)
       .toFixed();
     poolVolsHistData.assetAFeeVolNorm = fromExponentialToDecimalNotation(
       poolVolsHistData.assetAFeeVol.toString(),
@@ -70,7 +70,7 @@ export function processLbpPoolsNormalizedVolumes(
       poolVolsHistData.assetBFeeVol.toString(),
       assetB.decimals
     )
-      .multipliedBy(assetASpotPriceNorm)
+      .multipliedBy(assetBSpotPriceNorm)
       .toFixed();
 
     poolVolsHistData.assetATotalVolInNorm = fromExponentialToDecimalNotation(
@@ -87,15 +87,15 @@ export function processLbpPoolsNormalizedVolumes(
       .toFixed();
     poolVolsHistData.assetBTotalVolInNorm = fromExponentialToDecimalNotation(
       poolVolsHistData.assetBTotalVolIn.toString(),
-      assetA.decimals
+      assetB.decimals
     )
-      .multipliedBy(assetASpotPriceNorm)
+      .multipliedBy(assetBSpotPriceNorm)
       .toFixed();
     poolVolsHistData.assetBTotalVolOutNorm = fromExponentialToDecimalNotation(
       poolVolsHistData.assetBTotalVolOut.toString(),
-      assetA.decimals
+      assetB.decimals
     )
-      .multipliedBy(assetASpotPriceNorm)
+      .multipliedBy(assetBSpotPriceNorm)
       .toFixed();
     poolVolsHistData.assetAFeesTotalVolNorm = fromExponentialToDecimalNotation(
       poolVolsHistData.assetAFeesTotalVol.toString(),
@@ -105,9 +105,9 @@ export function processLbpPoolsNormalizedVolumes(
       .toFixed();
     poolVolsHistData.assetBFeesTotalVolNorm = fromExponentialToDecimalNotation(
       poolVolsHistData.assetBFeesTotalVol.toString(),
-      assetA.decimals
+      assetB.decimals
     )
-      .multipliedBy(assetASpotPriceNorm)
+      .multipliedBy(assetBSpotPriceNorm)
       .toFixed();
 
     ctx.batchState.state.lbpPoolVolumes.set(

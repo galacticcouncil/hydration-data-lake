@@ -102,6 +102,8 @@ import {
   GetBondsAllInput,
   GetDataAtBlockInput,
   AssetExistentialDeposit,
+  StablepoolManyPoolsPegsInfoWithPoolId,
+  StablepoolAllPoolsInfoWithPoolId,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -287,10 +289,16 @@ export type StorageParserMethods = {
     getPoolPegs: (
       args: StablepoolGetPoolPegsInput
     ) => Promise<StablepoolPoolPegsInfo>;
+    getAllPoolsPegs: (
+      args: GetDataAtBlockInput
+    ) => Promise<StablepoolManyPoolsPegsInfoWithPoolId[] | null>;
     getAllPoolIds: (args: StablepoolGetAllPoolIdsInput) => Promise<number[]>;
     getPoolData: (
       args: StablepoolGetPoolDataInput
     ) => Promise<StablepoolInfo | null>;
+    getAllPoolsData: (
+      args: GetDataAtBlockInput
+    ) => Promise<StablepoolAllPoolsInfoWithPoolId[] | null>;
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;

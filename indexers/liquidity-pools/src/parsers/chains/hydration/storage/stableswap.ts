@@ -1,13 +1,16 @@
 import { constants, storage } from '../typegenTypes/';
 import {
   GetConstantsInput,
+  GetDataAtBlockInput,
   GetPoolAssetInfoInput,
   OmnipoolAssetTradability,
+  StablepoolAllPoolsInfoWithPoolId,
   StablepoolAssetState,
   StablepoolGetAllPoolIdsInput,
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolPoolPegsInfo,
   StablepoolStorageData,
   StableswapConstants,
@@ -49,6 +52,33 @@ async function getPoolData({
     const resp = await storage.stableswap.pools.v183.get(block, poolId);
     if (resp !== undefined) return resp;
     return null;
+  }
+
+  throw new UnknownVersionError('storage.stableswap.pools');
+}
+
+async function getAllPoolsData({
+  block,
+}: GetDataAtBlockInput): Promise<StablepoolAllPoolsInfoWithPoolId[] | null> {
+  if (block.specVersion < 183) return [];
+
+  if (storage.stableswap.pools.v183.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.stableswap.pools.v183.getPairsPaged(
+      500,
+      block
+    )) {
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
+          .map(([poolId, poolInfo]) => ({
+            poolId,
+            data: poolInfo!,
+          }))
+      );
+    }
+    return pairsPaged;
   }
 
   throw new UnknownVersionError('storage.stableswap.pools');
@@ -122,10 +152,55 @@ async function getPoolPegs({
   throw new UnknownVersionError('storage.stableswap.poolPegs');
 }
 
+async function getAllPoolsPegs({
+  block,
+}: GetDataAtBlockInput): Promise<
+  StablepoolManyPoolsPegsInfoWithPoolId[] | null
+> {
+  if (block.specVersion < 305) return null;
+
+  if (storage.stableswap.poolPegs.v305.is(block)) {
+    const pairsPaged = [];
+
+    for await (const page of storage.stableswap.poolPegs.v305.getPairsPaged(
+      500,
+      block
+    )) {
+      pairsPaged.push(
+        ...page
+          .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
+          .map(([poolId, pegsInfo]) => ({
+            poolId,
+            data: {
+              maxPegUpdate: pegsInfo!.maxPegUpdate,
+              current: pegsInfo!.current,
+              source: pegsInfo!.source.map((s) => ({
+                sourceKind: s.__kind,
+                oracleName:
+                  s.__kind === 'Oracle' ? hexToString(s.value[0]) : undefined,
+                oraclePeriod:
+                  s.__kind === 'Oracle'
+                    ? (s.value[1].__kind as EmaOraclePeriod)
+                    : undefined,
+                oracleAsset: s.__kind === 'Oracle' ? s.value[2] : undefined,
+                valuePoints: s.__kind === 'Value' ? s.value : undefined,
+              })),
+            },
+          }))
+      );
+    }
+    return pairsPaged;
+  }
+
+  throw new UnknownVersionError('storage.stableswap.poolPegs');
+}
+
 export default {
   getPoolData,
   getPoolAssetStorageData,
   getAllPoolIds,
   getConstants,
   getPoolPegs,
+  getAllPoolsPegs,
+  getAllPoolsData,
 };

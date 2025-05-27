@@ -32,11 +32,12 @@ import {
   OmnipoolData,
   OmnipoolGetAssetDataInput,
   OmnipoolGetHubAssetTradabilityInput,
-  OmnipoolGetPoolDataInput,
+  OmnipoolGetPoolDataInput, StablepoolAllPoolsInfoWithPoolId,
   StablepoolAssetState,
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolPoolPegsInfo,
   TokensGetTokensTotalIssuanceInput,
   TokensGetTokenTotalIssuanceInput,
@@ -139,6 +140,18 @@ export default {
         method: 'getPoolPegs',
         fallbackFns: [stableswap.getPoolPegs],
       }),
+    getAllPoolsPegs: (
+      args: GetDataAtBlockInput
+    ): Promise<StablepoolManyPoolsPegsInfoWithPoolId[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetDataAtBlockInput,
+        StablepoolManyPoolsPegsInfoWithPoolId[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.STABLESWAP,
+        method: 'getAllPoolsPegs',
+        fallbackFns: [stableswap.getAllPoolsPegs],
+      }),
     getPoolData: (
       args: StablepoolGetPoolDataInput
     ): Promise<StablepoolInfo | null> =>
@@ -150,6 +163,18 @@ export default {
         pallet: ProcessingTopic.STABLESWAP,
         method: 'getPoolData',
         fallbackFns: [stableswap.getPoolData],
+      }),
+    getAllPoolsData: (
+      args: GetDataAtBlockInput
+    ): Promise<StablepoolAllPoolsInfoWithPoolId[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetDataAtBlockInput,
+        StablepoolAllPoolsInfoWithPoolId[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.STABLESWAP,
+        method: 'getAllPoolsData',
+        fallbackFns: [stableswap.getAllPoolsData],
       }),
     getPoolAssetStorageData: (
       args: GetPoolAssetInfoInput

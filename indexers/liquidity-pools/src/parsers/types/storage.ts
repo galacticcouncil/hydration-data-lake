@@ -90,6 +90,11 @@ export interface StableswapConstants {
 
 export interface StablepoolInfo extends StablepoolStorageData {}
 
+export interface StablepoolAllPoolsInfoWithPoolId {
+  poolId: number;
+  data: StablepoolInfo;
+}
+
 export interface StablepoolAssetState {
   tradable: OmnipoolAssetTradability;
 }
@@ -106,6 +111,11 @@ export interface StablepoolPoolPegsInfo {
   source: StableswapPegSource[];
   maxPegUpdate?: number;
   current: [bigint, bigint][];
+}
+
+export interface StablepoolManyPoolsPegsInfoWithPoolId {
+  poolId: number;
+  data: StablepoolPoolPegsInfo;
 }
 
 export interface AssetDetails {
@@ -257,7 +267,6 @@ export interface BondDetails {
  * =========================== I N P U T    T Y P E S===========================
  * =============================================================================
  */
-
 
 export type GetDataAtBlockInput = {
   block: BlockHeader;

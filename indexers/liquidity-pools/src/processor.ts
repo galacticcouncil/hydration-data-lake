@@ -67,6 +67,7 @@ let processor = new SubstrateBatchProcessor()
     },
   })
   .includeAllBlocks()
+  .setFinalityConfirmation(200)
   .setBlockRange({
     from: appConfig.PROCESS_FROM_BLOCK,
     to: appConfig.PROCESS_TO_BLOCK > 0 ? appConfig.PROCESS_TO_BLOCK : undefined,
