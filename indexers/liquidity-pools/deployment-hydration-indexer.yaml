@@ -12,7 +12,7 @@ deploy:
   processor:
     env:
       CHAIN: 'hydration'
-      RPC_URL: 'wss://archive.rpc.hydration.cloud'
+      RPC_URL: 'wss://node.kril.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
       PROCESS_XYK_POOLS: true
