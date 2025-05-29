@@ -76,6 +76,9 @@ export class AppConfig {
   readonly RPC_REQUEST_TIMEOUT: number = 20_000;
 
   @Transform(({ value }: { value: string }) => value === 'true')
+  readonly INDEXING_IS_PAUSED: boolean = false;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
   readonly IGNORE_ARCHIVE_DATA_SOURCE: boolean = false;
 
   readonly GATEWAY_HYDRATION_HTTPS: string | null = null;

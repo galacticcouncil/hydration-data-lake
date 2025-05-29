@@ -25,6 +25,11 @@ const appConfig = AppConfig.getInstance();
 
 console.log(`Indexer is staring in ${process.env.NODE_ENV} environment`);
 
+if (process.env.INDEXING_IS_PAUSED === 'true') {
+  console.log('Indexing is paused. Waiting...');
+  while (true) {}
+}
+
 processor.run(
   new TypeormDatabase({
     supportHotBlocks: true,
@@ -40,6 +45,13 @@ processor.run(
     (ctxWithBatchState as ProcessorContext<Store>).batchState = batchState;
     (ctxWithBatchState as ProcessorContext<Store>).appConfig =
       AppConfig.getInstance();
+
+    // if (
+    //   (ctxWithBatchState as ProcessorContext<Store>).appConfig
+    //     .INDEXING_IS_PAUSED
+    // ) {
+    //   await new Promise((res) => console.log('Indexing is paused. Waiting...'));
+    // }
 
     const subProcessorStatusManager = new SubProcessorStatusManager(
       ctxWithBatchState as ProcessorContext<Store>
