@@ -17,7 +17,7 @@ async function getAssetFeesAll({
     for await (const page of storage.dynamicFees.assetFee.v170.getPairsPaged(
       500,
       block
-    ))
+    )) {
       pairsPaged.push(
         ...page
           .filter((p) => !!p && !!p[1])
@@ -33,6 +33,7 @@ async function getAssetFeesAll({
           })
           .filter((resp) => !!resp)
       );
+    }
     return pairsPaged;
   }
 

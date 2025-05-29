@@ -15,7 +15,7 @@ async function getOracles({
     for await (const page of storage.emaOracle.oracles.v138.getPairsPaged(
       500,
       block
-    ))
+    )) {
       pairsPaged.push(
         ...page
           .filter((p) => !!p && !!p[1])
@@ -50,6 +50,7 @@ async function getOracles({
           )
           .filter((resp) => !!resp)
       );
+    }
     return pairsPaged;
   }
 
@@ -59,7 +60,7 @@ async function getOracles({
     for await (const page of storage.emaOracle.oracles.v170.getPairsPaged(
       500,
       block
-    ))
+    )) {
       pairsPaged.push(
         ...page
           .filter((p) => !!p && !!p[1])
@@ -94,10 +95,13 @@ async function getOracles({
           )
           .filter((resp) => !!resp)
       );
+    }
     return pairsPaged;
   }
 
-  throw new UnknownVersionError('storage.emaOracle.oracles');
+  throw new UnknownVersionError(
+    `storage.emaOracle.oracles :: block.specVersion: ${block.specVersion}`
+  );
 }
 
 export default {

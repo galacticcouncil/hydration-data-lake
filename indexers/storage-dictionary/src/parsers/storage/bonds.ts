@@ -31,7 +31,7 @@ async function getBondsAll({
   if (storage.bonds.bonds.v176.is(block)) {
     const pairsPaged = [];
 
-    for await (const page of storage.bonds.bonds.v176.getPairsPaged(500, block))
+    for await (const page of storage.bonds.bonds.v176.getPairsPaged(500, block)) {
       pairsPaged.push(
         ...page
           .filter((p) => !!p && !!p[1])
@@ -41,6 +41,7 @@ async function getBondsAll({
             maturity: bondDetails![1],
           }))
       );
+    }
     return pairsPaged;
   }
 
