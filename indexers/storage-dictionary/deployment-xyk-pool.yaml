@@ -14,118 +14,124 @@ deploy:
         statement_timeout: 1080000
         log_min_duration_statement: 60000
   processor:
-    - name: xyk-pool-batch-proc-1
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_URL: wss://4.rpc.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: true
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        PROCESS_GENERIC_HIST_DATA: false
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 3934550
-        PROCESS_TO_BLOCK: 4748000
-        STATE_SCHEMA_NAME: xyk_pool__batch_proc_1
-        INDEXER_MAX_SUB_BATCH_SIZE: 10
-        ASSETS_TRACKER_PROCESSOR: false
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
-    - name: xyk-pool-batch-proc-2
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_URL: wss://4.rpc.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: true
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        PROCESS_GENERIC_HIST_DATA: false
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 4748001
-        PROCESS_TO_BLOCK: 5561000
-        STATE_SCHEMA_NAME: xyk_pool__batch_proc_2
-        INDEXER_MAX_SUB_BATCH_SIZE: 10
-        ASSETS_TRACKER_PROCESSOR: false
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
-    - name: xyk-pool-batch-proc-3
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_URL: wss://4.rpc.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: true
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        PROCESS_GENERIC_HIST_DATA: false
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 5561001
-        PROCESS_TO_BLOCK: 6374000
-        STATE_SCHEMA_NAME: xyk_pool__batch_proc_3
-        INDEXER_MAX_SUB_BATCH_SIZE: 10
-        ASSETS_TRACKER_PROCESSOR: false
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
-    - name: xyk-pool-batch-proc-4
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_URL: wss://4.rpc.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: true
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        PROCESS_GENERIC_HIST_DATA: false
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 6374001
-        PROCESS_TO_BLOCK: 7187000
-        STATE_SCHEMA_NAME: xyk_pool__batch_proc_4
-        INDEXER_MAX_SUB_BATCH_SIZE: 10
-        ASSETS_TRACKER_PROCESSOR: false
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+#    - name: xyk-pool-batch-proc-1
+#      cmd: ['sqd', 'process:prod']
+#      env:
+#        RPC_URL: wss://node.kril.hydration.cloud
+#        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+#        PROCESS_LBP_POOLS: false
+#        PROCESS_XYK_POOLS: true
+#        PROCESS_OMNIPOOLS: false
+#        PROCESS_STABLEPOOLS: false
+#        PROCESS_GENERIC_HIST_DATA: false
+#        INDEXING_IS_PAUSED: false
+#        GQL_PORT: 8080
+#        NODE_ENV: production
+#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#        PROCESS_FROM_BLOCK: 3934550
+#        PROCESS_TO_BLOCK: 4748000
+#        STATE_SCHEMA_NAME: xyk_pool__batch_proc_1
+#        INDEXER_MAX_SUB_BATCH_SIZE: 500
+#        ASSETS_TRACKER_PROCESSOR: false
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+#    - name: xyk-pool-batch-proc-2
+#      cmd: ['sqd', 'process:prod']
+#      env:
+#        RPC_URL: wss://node.kril.hydration.cloud
+#        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+#        PROCESS_LBP_POOLS: false
+#        PROCESS_XYK_POOLS: true
+#        PROCESS_OMNIPOOLS: false
+#        PROCESS_STABLEPOOLS: false
+#        PROCESS_GENERIC_HIST_DATA: false
+#        INDEXING_IS_PAUSED: false
+#        GQL_PORT: 8080
+#        NODE_ENV: production
+#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#        PROCESS_FROM_BLOCK: 4748001
+#        PROCESS_TO_BLOCK: 5561000
+#        STATE_SCHEMA_NAME: xyk_pool__batch_proc_2
+#        INDEXER_MAX_SUB_BATCH_SIZE: 500
+#        ASSETS_TRACKER_PROCESSOR: false
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+#    - name: xyk-pool-batch-proc-3
+#      cmd: ['sqd', 'process:prod']
+#      env:
+#        RPC_URL: wss://node.kril.hydration.cloud
+#        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+#        PROCESS_LBP_POOLS: false
+#        PROCESS_XYK_POOLS: true
+#        PROCESS_OMNIPOOLS: false
+#        PROCESS_STABLEPOOLS: false
+#        PROCESS_GENERIC_HIST_DATA: false
+#        INDEXING_IS_PAUSED: false
+#        GQL_PORT: 8080
+#        NODE_ENV: production
+#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#        PROCESS_FROM_BLOCK: 5561001
+#        PROCESS_TO_BLOCK: 6374000
+#        STATE_SCHEMA_NAME: xyk_pool__batch_proc_3
+#        INDEXER_MAX_SUB_BATCH_SIZE: 500
+#        ASSETS_TRACKER_PROCESSOR: false
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
+#    - name: xyk-pool-batch-proc-4
+#      cmd: ['sqd', 'process:prod']
+#      env:
+#        RPC_URL: wss://node.kril.hydration.cloud
+#        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+#        PROCESS_LBP_POOLS: false
+#        PROCESS_XYK_POOLS: true
+#        PROCESS_OMNIPOOLS: false
+#        PROCESS_STABLEPOOLS: false
+#        PROCESS_GENERIC_HIST_DATA: false
+#        INDEXING_IS_PAUSED: false
+#        GQL_PORT: 8080
+#        NODE_ENV: production
+#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#        PROCESS_FROM_BLOCK: 6374001
+#        PROCESS_TO_BLOCK: 7187000
+#        STATE_SCHEMA_NAME: xyk_pool__batch_proc_4
+#        INDEXER_MAX_SUB_BATCH_SIZE: 500
+#        ASSETS_TRACKER_PROCESSOR: false
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
     - name: xyk-pool-batch-proc-5
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://4.rpc.hydration.cloud
+        RPC_URL: wss://node.kril.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: true
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: false
+        INDEXING_IS_PAUSED: false
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
         PROCESS_FROM_BLOCK: 7187001
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: xyk_pool__batch_proc_5
-        INDEXER_MAX_SUB_BATCH_SIZE: 10
+        INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
     - name: xyk-pool-assets-tracker-proc
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://4.rpc.hydration.cloud
+        RPC_URL: wss://node.kril.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: false
+        INDEXING_IS_PAUSED: false
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
         PROCESS_FROM_BLOCK: 7187001
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
-        INDEXER_MAX_SUB_BATCH_SIZE: 10
+        INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: true
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__assets_tracker_proc
   api:

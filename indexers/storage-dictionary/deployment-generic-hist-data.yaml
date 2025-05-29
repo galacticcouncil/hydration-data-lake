@@ -24,6 +24,7 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: true
+        INDEXING_IS_PAUSED: true
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
@@ -44,6 +45,7 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: true
+        INDEXING_IS_PAUSED: true
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
@@ -64,6 +66,7 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: true
+        INDEXING_IS_PAUSED: true
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
@@ -84,6 +87,7 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: true
+        INDEXING_IS_PAUSED: true
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
@@ -104,6 +108,7 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: true
+        INDEXING_IS_PAUSED: true
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
@@ -124,6 +129,7 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: false
+        INDEXING_IS_PAUSED: true
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
@@ -147,7 +153,7 @@ scale:
   addons:
     postgres:
       profile: medium
-      storage: 300G
+      storage: 700G
   processor:
     profile: medium
   api:

@@ -28,6 +28,10 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
     return this.routerInstancesMap.get(blockNumber) ?? null;
   }
 
+  wipeCache() {
+    this.routerInstancesMap = new Map();
+  }
+
   async initForBlocksBatch({
     blockNumbers,
     ctx,

@@ -160,6 +160,8 @@ export async function handleAssetHistoricalData(
     `handleAssetHistoricalData :: ${ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE} ::  handleAssetSpotPricesHistoricalData`
   );
 
+  OfflineTradeRouterManager.getInstance().wipeCache();
+
   for (const blocksSubBatch of splitIntoBatches(
     ctx.blocks,
     ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE

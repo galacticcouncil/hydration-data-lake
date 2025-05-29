@@ -1,0 +1,146 @@
+version: "3.7"
+
+x-chain-name: &chain-name "hydration"
+
+x-storage-dictionary-stableswap-db-creds:
+  &storage-dictionary-stableswap-db-creds
+  DB_PORT: 5432
+  DB_NAME: ""
+  DB_USER: ""
+  DB_PASS: ""
+  DB_HOST: ""
+
+x-processor-unit-envs: &processor-unit-envs
+  NODE_ENV: "self-hosted"
+  CHAIN: *chain-name
+  RPC_URL: "wss://node.kril.hydration.cloud"
+  IGNORE_ARCHIVE_DATA_SOURCE: "false"
+  GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
+  OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+  PROCESS_LBP_POOLS: "false"
+  PROCESS_XYK_POOLS: "false"
+  PROCESS_OMNIPOOLS: "false"
+  PROCESS_STABLEPOOLS: "false"
+  PROCESS_GENERIC_HIST_DATA: "false"
+  INDEXER_MAX_SUB_BATCH_SIZE: 200
+  SUB_BATCH_MAX_TIMEOUT_MS: 500
+  INDEXER_SUB_PROCESSORS_NUMBER: 5
+  ASSETS_TRACKER_PROCESSOR: "false"
+
+x-common-db-setup: &common-db-setup
+  image: postgres:15
+  networks:
+    - default
+  deploy:
+    restart_policy:
+      condition: on-failure
+
+x-common-processor-setup: &common-processor-setup
+  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-improve-pools-historical-data-aggregation
+  networks:
+    - default
+  deploy:
+    restart_policy:
+      condition: on-failure
+
+# =================================================================================
+# ========================== STABLEPOOLS SERVICES SETUP ===========================
+# =================================================================================
+x-stablepools-services-setup: &stablepools-services-setup
+  stableswap-stor-dict-proc-1:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 3640100 # First event related with Omnipool has been occurred
+      PROCESS_TO_BLOCK: 4512000
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_1"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__assets_tracker_proc"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  stableswap-stor-dict-proc-2:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 4512001
+      PROCESS_TO_BLOCK: 5384000
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_2"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__assets_tracker_proc"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  stableswap-stor-dict-proc-3:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 5384001
+      PROCESS_TO_BLOCK: 6256000
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_3"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__assets_tracker_proc"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  stableswap-stor-dict-proc-4:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 6256001
+      PROCESS_TO_BLOCK: 7128000
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_4"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__assets_tracker_proc"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  stableswap-stor-dict-proc-5:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 7128001
+      PROCESS_TO_BLOCK: -1
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__assets_tracker_proc"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+  stableswap-stor-dict-proc-assets-tracker:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 7128001
+      PROCESS_TO_BLOCK: -1
+      STATE_SCHEMA_NAME: "stablepool__assets_tracker_proc"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__assets_tracker_proc"
+    command:
+      - sh
+      - -c
+      - "sleep 10 && node lib/main.js"
+
+# =================================================================================
+# ============================ M A I N   S E T U P ================================
+# =================================================================================
+networks:
+  default:
+    driver: overlay
+
+volumes:
+  stablepools-storage-dict-db:
+    driver: local
+
+services:
+  <<: *stablepools-services-setup
