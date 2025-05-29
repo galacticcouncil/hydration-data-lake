@@ -1,6 +1,9 @@
 import type * as pg from 'pg';
 import { OmnipoolAssetVolumeAggregated } from './resolvers';
-import { getAllOmnipoolAssets } from '../../sql/omnipoolAssets.sql';
+import {
+  getAllOmnipoolAssets,
+  getOmnipoolAssetsByAssetIds,
+} from '../../sql/omnipoolAssets.sql';
 import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../../sql/omnipoolAssetsVolume.sql';
 import { OmnipoolAssetHistoricalVolumeRaw } from '../../../types';
 import { getAssetsByIds } from '../../sql/asset.sql';
@@ -82,26 +85,31 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
       .map((r: OmnipoolAssetVolumeAggregated) => [r.omnipoolAssetId, r])
   );
 
-  const assetIdsWithoutResultsList = omnipoolAssetIds.filter(
+  const omnipoolAssetIdsWithoutResultsList = omnipoolAssetIds.filter(
     (id) => !decoratedNodes.has(id)
   );
 
   const assetWithoutResultsDetails = new Map(
     (
       await pgClient.query<{
+        omnipool_asset_id: string;
         asset_id: string;
         asset_registry_id?: string;
         decimals?: number;
-      }>(getAssetsByIds, [assetIdsWithoutResultsList])
-    ).rows.map((a) => [a.asset_id, a])
+      }>(getOmnipoolAssetsByAssetIds, [
+        omnipoolAssetIdsWithoutResultsList.map((omAs) => omAs.split('-')[1]),
+      ])
+    ).rows.map((a) => [a.omnipool_asset_id, a])
   );
 
-  for (const assetIdWithNoResult of assetIdsWithoutResultsList) {
-    decoratedNodes.set(assetIdWithNoResult, {
-      omnipoolAssetId: assetIdWithNoResult,
-      assetId: assetIdWithNoResult.split('-')[1] || '-1',
+  for (const omnipoolAssetIdWithNoResult of omnipoolAssetIdsWithoutResultsList.filter(
+    (a) => assetWithoutResultsDetails.has(a)
+  )) {
+    decoratedNodes.set(omnipoolAssetIdWithNoResult, {
+      omnipoolAssetId: omnipoolAssetIdWithNoResult,
+      assetId: omnipoolAssetIdWithNoResult.split('-')[1] || '-1',
       assetRegistryId: assetWithoutResultsDetails.get(
-        assetIdWithNoResult.split('-')[1] || '-1'
+        omnipoolAssetIdWithNoResult
       )?.asset_registry_id,
       assetVolume: BigInt(0),
       assetFeeVolume: BigInt(0),

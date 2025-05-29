@@ -54,8 +54,8 @@ export function initOmnipoolAssetVolume({
       : BigInt(0);
 
   const assetFee =
-    swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
-      ? swap.outputs[0].amount
+    swap.fees[0].asset.id === newVolume.omnipoolAsset.asset.id
+      ? swap.fees[0].amount
       : BigInt(0);
 
   // SqdBlock volumes
