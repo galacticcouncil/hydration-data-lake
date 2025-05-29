@@ -7,15 +7,24 @@ import {
   StableswapAssetData,
   StableswapPegsSource,
   Tradability,
+  Xykpool,
 } from '../../model';
 import { getAssetBalancesMany } from '../balances';
 import { StableMath } from '@galacticcouncil/sdk';
 import { blake2AsHex } from '@polkadot/util-crypto';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function handleStablepoolStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
+  if (
+    ctx.batchState.state.stablepoolsProcessedBlocks.has(
+      currentBlockHeader.height
+    )
+  )
+    return;
+
   const stablepools: Map<string, Stableswap> = new Map();
   const stablepoolAssetsData: Map<string, StableswapAssetData> = new Map();
   const relayChainInfo = ctx.batchState.state.relayChainInfo;
@@ -175,4 +184,36 @@ export async function handleStablepoolStorage(
 
   await ctx.store.save([...stablepools.values()]);
   await ctx.store.save([...stablepoolAssetsData.values()]);
+}
+
+export async function prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBlocks(
+  ctx: ProcessorContext<Store>
+) {
+  if (
+    !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
+    !ctx.appConfig.PROCESS_STABLEPOOLS
+  )
+    return;
+
+  const orderedNumbers = ctx.blocks
+    .map((b) => b.header.height)
+    .sort((a, b) => a - b);
+
+  const records = await ctx.store.find(Stableswap, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+  });
+
+  ctx.batchState.state.stablepools = new Map(records.map((r) => [r.id, r]));
+  ctx.batchState.state.stablepoolsProcessedBlocks = new Set(
+    records.map((r) => r.paraBlockHeight)
+  );
+  console.log(
+    `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.stablepoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+  );
 }

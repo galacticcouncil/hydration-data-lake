@@ -16,9 +16,7 @@ export async function getAsset({
   ensure?: boolean;
   blockHeader?: Block;
 }): Promise<Asset | null> {
-  const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
-
-  let asset = assetsAllBatch.get(`${id}`);
+  let asset = ctx.batchState.state.assetsAllBatch.get(`${id}`);
   if (asset) return asset;
 
   asset = await ctx.store.findOne(Asset, { where: { id: `${id}` } });
@@ -53,10 +51,7 @@ export async function getAsset({
 
   await ctx.store.save(newAsset);
 
-  assetsAllBatch.set(newAsset.id, newAsset);
-  ctx.batchState.state = {
-    assetsAllBatch,
-  };
+  ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
 
   return newAsset;
 }
@@ -181,11 +176,9 @@ export async function getOrCreateAsset({
 }
 
 export async function prefetchAllAssets(ctx: ProcessorContext<Store>) {
-  ctx.batchState.state = {
-    assetsAllBatch: new Map(
-      (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
-    ),
-  };
+  ctx.batchState.state.assetsAllBatch = new Map(
+    (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
+  );
 }
 
 export async function ensureNativeToken(ctx: ProcessorContext<Store>) {

@@ -2,6 +2,7 @@ import { Block, ProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../../parsers';
 import {
+  AssetHistoricalData,
   EmaOracle,
   EmaOracleEntry,
   EmaOracleEntryLiquidity,
@@ -9,11 +10,15 @@ import {
   EmaOracleEntryVolume,
 } from '../../../model';
 import { getOrCreateAsset } from '../../asset/assetRegistry';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function handleEmaOracleHistoricalData(
   ctx: ProcessorContext<Store>,
   blockHeader: Block
 ) {
+  if (ctx.batchState.state.emaOraclesProcessedBlocks.has(blockHeader.height))
+    return;
+
   const entriesStorageData = await parsers.storage.emaOracle.getOracles({
     block: blockHeader,
   });
@@ -87,4 +92,36 @@ export async function handleEmaOracleHistoricalData(
   }
 
   await ctx.store.upsert(oracleHistDataEntity);
+}
+
+export async function prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks(
+  ctx: ProcessorContext<Store>
+) {
+  if (
+    !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
+    !ctx.appConfig.PROCESS_GENERIC_HIST_DATA
+  )
+    return;
+
+  const orderedNumbers = ctx.blocks
+    .map((b) => b.header.height)
+    .sort((a, b) => a - b);
+
+  const records = await ctx.store.find(EmaOracle, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+  });
+
+  ctx.batchState.state.emaOracles = new Map(records.map((r) => [r.id, r]));
+  ctx.batchState.state.emaOraclesProcessedBlocks = new Set(
+    records.map((r) => r.paraBlockHeight)
+  );
+  console.log(
+    `EmaOracle :: Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.emaOraclesProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+  );
 }

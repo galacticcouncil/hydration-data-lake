@@ -1,13 +1,24 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
-import { AccountBalances, Lbppool, LbppoolAssetsData } from '../../model';
+import {
+  AccountBalances,
+  Lbppool,
+  LbppoolAssetsData,
+  Omnipool,
+} from '../../model';
 import { getAssetBalancesMany } from '../balances';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function handleLbpPoolsStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
+  if (
+    ctx.batchState.state.lbpPoolsProcessedBlocks.has(currentBlockHeader.height)
+  )
+    return;
+
   const lbpPools: Map<string, Lbppool> = new Map();
   const lbpPoolAssetsData: Map<string, LbppoolAssetsData> = new Map();
   const relayChainInfo = ctx.batchState.state.relayChainInfo;
@@ -96,4 +107,36 @@ export async function handleLbpPoolsStorage(
   }
   await ctx.store.save([...lbpPools.values()]);
   await ctx.store.save([...lbpPoolAssetsData.values()]);
+}
+
+export async function prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlocks(
+  ctx: ProcessorContext<Store>
+) {
+  if (
+    !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
+    !ctx.appConfig.PROCESS_LBP_POOLS
+  )
+    return;
+
+  const orderedNumbers = ctx.blocks
+    .map((b) => b.header.height)
+    .sort((a, b) => a - b);
+
+  const records = await ctx.store.find(Lbppool, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+  });
+
+  ctx.batchState.state.lbpPools = new Map(records.map((r) => [r.id, r]));
+  ctx.batchState.state.lbpPoolsProcessedBlocks = new Set(
+    records.map((r) => r.paraBlockHeight)
+  );
+  console.log(
+    `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.lbpPoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+  );
 }

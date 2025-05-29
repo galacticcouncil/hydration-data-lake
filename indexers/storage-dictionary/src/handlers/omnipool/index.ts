@@ -6,11 +6,13 @@ import {
   Omnipool,
   OmnipoolAssetData,
   OmnipoolAssetState,
+  Stableswap,
   Tradability,
 } from '../../model';
 import { getAssetBalancesMany } from '../balances';
 import { AppConfig } from '../../appConfig';
-import { OmnipoolAssetTradability } from '../../parsers/types/storage';
+import { Between } from 'typeorm/find-options/operator/Between';
+import { In } from 'typeorm/find-options/operator/In';
 
 const appConfig = AppConfig.getInstance();
 
@@ -18,6 +20,12 @@ export async function handleOmnipoolStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
+  if (
+    ctx.batchState.state.omnipoolsProcessedBlocks.has(currentBlockHeader.height)
+  ) {
+    return;
+  }
+
   const omnipoolAssetsData: Map<string, OmnipoolAssetData> = new Map();
   const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
@@ -102,4 +110,37 @@ export async function handleOmnipoolStorage(
   }
 
   await ctx.store.save([...omnipoolAssetsData.values()]);
+}
+
+export async function prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBlocks(
+  ctx: ProcessorContext<Store>
+) {
+  if (
+    !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
+    !ctx.appConfig.PROCESS_OMNIPOOLS
+  )
+    return;
+
+  const orderedNumbers = ctx.blocks
+    .map((b) => b.header.height)
+    .sort((a, b) => a - b);
+
+  const records = await ctx.store.find(Omnipool, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+  });
+
+  ctx.batchState.state.omnipools = new Map(records.map((r) => [r.id, r]));
+  ctx.batchState.state.omnipoolsProcessedBlocks = new Set(
+    records.map((r) => r.paraBlockHeight)
+  );
+
+  console.log(
+    `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.omnipoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+  );
 }

@@ -129,6 +129,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ASSETS_TRACKER_PROCESSOR: boolean = true;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly PROCESS_ONLY_MISSED_BLOCKS: boolean = false;
+
   @Transform(
     ({ value }: { value: string }) =>
       new Map(

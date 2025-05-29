@@ -3,11 +3,17 @@ import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
 import { AccountBalances, Xykpool, XykpoolAssetsData } from '../../model';
 import { getAssetBalancesMany } from '../balances';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function handleXykPoolsStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
+  if (
+    ctx.batchState.state.xykPoolsProcessedBlocks.has(currentBlockHeader.height)
+  )
+    return;
+
   const xykPools: Map<string, Xykpool> = new Map();
   const xykPoolAssetsData: Map<string, XykpoolAssetsData> = new Map();
   const relayChainInfo = ctx.batchState.state.relayChainInfo;
@@ -101,4 +107,36 @@ export async function handleXykPoolsStorage(
 
   await ctx.store.save([...xykPools.values()]);
   await ctx.store.save([...xykPoolAssetsData.values()]);
+}
+
+export async function prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks(
+  ctx: ProcessorContext<Store>
+) {
+  if (
+    !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
+    !ctx.appConfig.PROCESS_XYK_POOLS
+  )
+    return;
+
+  const orderedNumbers = ctx.blocks
+    .map((b) => b.header.height)
+    .sort((a, b) => a - b);
+
+  const records = await ctx.store.find(Xykpool, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+  });
+
+  ctx.batchState.state.xykPools = new Map(records.map((r) => [r.id, r]));
+  ctx.batchState.state.xykPoolsProcessedBlocks = new Set(
+    records.map((r) => r.paraBlockHeight)
+  );
+  console.log(
+    `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.xykPoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+  );
 }

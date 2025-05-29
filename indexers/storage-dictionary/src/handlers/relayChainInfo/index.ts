@@ -38,7 +38,5 @@ export function handleRelayChainInfo(
     }
   }
 
-  ctx.batchState.state = {
-    relayChainInfo,
-  };
+  ctx.batchState.state.relayChainInfo = relayChainInfo;
 }

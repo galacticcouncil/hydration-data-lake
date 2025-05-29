@@ -1,14 +1,27 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, AssetDynamicFee, AssetHistoricalData } from '../../model';
+import {
+  Aavepool,
+  Asset,
+  AssetDynamicFee,
+  AssetHistoricalData,
+} from '../../model';
 import parsers from '../../parsers';
 import { AssetDetails, AssetDetailsWithId } from '../../parsers/types/storage';
 import { getOrCreateAsset } from './assetRegistry';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function handleAssetsStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
+  if (
+    ctx.batchState.state.assetHistoricalDataProcessedBlocks.has(
+      currentBlockHeader.height
+    )
+  )
+    return;
+
   const storageDataAllAssetsMap = new Map(
     (await parsers.storage.assetRegistry.getAssetsAll(currentBlockHeader))
       .filter((res) => !!res.data)
@@ -103,4 +116,38 @@ export async function handleAssetsStorage(
   }
 
   await ctx.store.upsert(allAssetHistoricalData);
+}
+
+export async function prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
+  ctx: ProcessorContext<Store>
+) {
+  if (
+    !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
+    !ctx.appConfig.PROCESS_GENERIC_HIST_DATA
+  )
+    return;
+
+  const orderedNumbers = ctx.blocks
+    .map((b) => b.header.height)
+    .sort((a, b) => a - b);
+
+  const records = await ctx.store.find(AssetHistoricalData, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+  });
+
+  ctx.batchState.state.assetHistoricalDataItems = new Map(
+    records.map((r) => [r.id, r])
+  );
+  ctx.batchState.state.assetHistoricalDataProcessedBlocks = new Set(
+    records.map((r) => r.paraBlockHeight)
+  );
+  console.log(
+    `AssetHistoricalData :: Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.assetHistoricalDataProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+  );
 }

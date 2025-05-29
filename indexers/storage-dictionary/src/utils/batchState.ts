@@ -1,7 +1,11 @@
 import {
+  Aavepool,
   Asset,
+  AssetHistoricalData,
+  EmaOracle,
   Lbppool,
   LbppoolAssetsData,
+  Omnipool,
   OmnipoolAssetData,
   Stableswap,
   StableswapAssetData,
@@ -20,37 +24,69 @@ export type BatchStatePayload = {
 
   xykPools: Map<string, Xykpool>;
   xykPoolAssetsData: Map<string, XykpoolAssetsData>;
+  xykPoolsProcessedBlocks: Set<number>;
 
   lbpPools: Map<string, Lbppool>;
   lbpPoolAssetsData: Map<string, LbppoolAssetsData>;
+  lbpPoolsProcessedBlocks: Set<number>;
 
+  omnipools: Map<string, Omnipool>;
   omnipoolAssetsData: Map<string, OmnipoolAssetData>;
+  omnipoolsProcessedBlocks: Set<number>;
 
   stablepools: Map<string, Stableswap>;
   stablepoolAssetsData: Map<string, StableswapAssetData>;
+  stablepoolsProcessedBlocks: Set<number>;
+
+  emaOracles: Map<string, EmaOracle>;
+  emaOraclesProcessedBlocks: Set<number>;
+
+  assetHistoricalDataItems: Map<string, AssetHistoricalData>;
+  assetHistoricalDataProcessedBlocks: Set<number>;
+
+  aavepools: Map<string, Aavepool>;
+  aavepoolsProcessedBlocks: Set<number>;
 };
 
 export class BatchState {
-  private statePayload: BatchStatePayload = {
+  public state: BatchStatePayload = {
     relayChainInfo: new Map(),
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
+
     xykPools: new Map(),
     xykPoolAssetsData: new Map(),
+    xykPoolsProcessedBlocks: new Set(),
+
     lbpPools: new Map(),
     lbpPoolAssetsData: new Map(),
+    lbpPoolsProcessedBlocks: new Set(),
+
+    omnipools: new Map(),
     omnipoolAssetsData: new Map(),
+    omnipoolsProcessedBlocks: new Set(),
+
     stablepools: new Map(),
     stablepoolAssetsData: new Map(),
+    stablepoolsProcessedBlocks: new Set(),
+
+    emaOracles: new Map(),
+    emaOraclesProcessedBlocks: new Set(),
+
+    assetHistoricalDataItems: new Map(),
+    assetHistoricalDataProcessedBlocks: new Set(),
+
+    aavepools: new Map(),
+    aavepoolsProcessedBlocks: new Set(),
   };
 
-  get state(): BatchStatePayload {
-    return { ...this.statePayload };
-  }
-
-  set state(partialState: Partial<BatchStatePayload>) {
-    this.statePayload = { ...this.statePayload, ...partialState };
-  }
+  // get state(): BatchStatePayload {
+  //   return { ...this.statePayload };
+  // }
+  //
+  // set state(partialState: Partial<BatchStatePayload>) {
+  //   this.statePayload = { ...this.statePayload, ...partialState };
+  // }
 
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {
     height: number;

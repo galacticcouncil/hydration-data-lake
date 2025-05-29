@@ -1,13 +1,17 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Aavepool } from '../../model';
+import { Aavepool, Lbppool } from '../../model';
 import { getAllAavePools } from './index';
 import { getOrCreateAsset } from '../asset/assetRegistry';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function handleAavePoolsStorage(
   ctx: ProcessorContext<Store>,
   blockHeader: Block
 ): Promise<void> {
+  if (ctx.batchState.state.aavepoolsProcessedBlocks.has(blockHeader.height))
+    return;
+
   const relayChainInfo = ctx.batchState.state.relayChainInfo;
   const poolsToSave: Aavepool[] = [];
 
@@ -49,4 +53,36 @@ export async function handleAavePoolsStorage(
   }
 
   await ctx.store.upsert(poolsToSave);
+}
+
+export async function prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks(
+  ctx: ProcessorContext<Store>
+) {
+  if (
+    !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
+    !ctx.appConfig.PROCESS_GENERIC_HIST_DATA
+  )
+    return;
+
+  const orderedNumbers = ctx.blocks
+    .map((b) => b.header.height)
+    .sort((a, b) => a - b);
+
+  const records = await ctx.store.find(Aavepool, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+  });
+
+  ctx.batchState.state.aavepools = new Map(records.map((r) => [r.id, r]));
+  ctx.batchState.state.aavepoolsProcessedBlocks = new Set(
+    records.map((r) => r.paraBlockHeight)
+  );
+  console.log(
+    `Aavepool :: Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.aavepoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+  );
 }

@@ -1,14 +1,26 @@
 import { TypeormDatabase, Store } from '@subsquid/typeorm-store';
 
-import { processor, ProcessorContext } from './processor';
+import { Block, processor, ProcessorContext } from './processor';
 import { BatchState } from './utils/batchState';
 import { AppConfig } from './appConfig';
-import { handleXykPoolsStorage } from './handlers/xykPool';
-import { handleOmnipoolStorage } from './handlers/omnipool';
-import { handleStablepoolStorage } from './handlers/stablepool';
+import {
+  handleXykPoolsStorage,
+  prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks,
+} from './handlers/xykPool';
+import {
+  handleOmnipoolStorage,
+  prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBlocks,
+} from './handlers/omnipool';
+import {
+  handleStablepoolStorage,
+  prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBlocks,
+} from './handlers/stablepool';
 import * as crypto from 'node:crypto';
 import { SubProcessorStatusManager } from './utils/subProcessorStatusManager';
-import { handleLbpPoolsStorage } from './handlers/lbpPool';
+import {
+  handleLbpPoolsStorage,
+  prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlocks,
+} from './handlers/lbpPool';
 import { splitIntoBatches } from './utils/helpers';
 import {
   actualiseAssets,
@@ -17,9 +29,16 @@ import {
   waitForAssetsActualisation,
 } from './handlers/asset/assetRegistry';
 import { handleRelayChainInfo } from './handlers/relayChainInfo';
-import { handleAssetsStorage } from './handlers/asset/historicalData';
+import {
+  handleAssetsStorage,
+  prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks,
+} from './handlers/asset/historicalData';
 import { handleOracles } from './handlers/oracles/emaOracle';
-import { handleAavePoolsStorage } from './handlers/aavePool/historicalData';
+import {
+  handleAavePoolsStorage,
+  prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks,
+} from './handlers/aavePool/historicalData';
+import { prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/oracles/emaOracle/historicalData';
 
 const appConfig = AppConfig.getInstance();
 
@@ -72,10 +91,33 @@ processor.run(
       subProcessorStatusManager
     );
 
+    await prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>
+    );
+    await prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>
+    );
+    await prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>
+    );
+    await prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>
+    );
+    await prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>
+    );
+    await prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>
+    );
+    await prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>
+    );
+
     console.log(`Batch size - ${ctx.blocks.length} blocks.`);
 
     console.time(`Blocks batch has been processed in`);
     let blocksSubBatchIndex = 1;
+
     for (const blocksSubBatch of splitIntoBatches(
       ctx.blocks,
       subProcessorStatusManager.subBatchConfig.subBatchSize
