@@ -102,5 +102,5 @@ export async function handleAssetsStorage(
     allAssetHistoricalData.push(newAssetHistoricalData);
   }
 
-  ctx.store.upsert(allAssetHistoricalData);
+  await ctx.store.upsert(allAssetHistoricalData);
 }
