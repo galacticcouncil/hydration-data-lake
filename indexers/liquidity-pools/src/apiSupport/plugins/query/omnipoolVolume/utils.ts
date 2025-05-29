@@ -3,6 +3,7 @@ import { OmnipoolAssetVolumeAggregated } from './resolvers';
 import { getAllOmnipoolAssets } from '../../sql/omnipoolAssets.sql';
 import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../../sql/omnipoolAssetsVolume.sql';
 import { OmnipoolAssetHistoricalVolumeRaw } from '../../../types';
+import { getAssetsByIds } from '../../sql/asset.sql';
 
 export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
   omnipoolAddress,
@@ -49,6 +50,7 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
         const resp: OmnipoolAssetVolumeAggregated = {
           omnipoolAssetId: group[0].omnipool_asset_id,
           assetId: group[0].omnipool_asset_id.split('-')[1],
+          assetRegistryId: group[0].asset_registry_id,
           assetVolume: BigInt(0),
           assetFeeVolume: BigInt(0),
         };
@@ -80,12 +82,27 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
       .map((r: OmnipoolAssetVolumeAggregated) => [r.omnipoolAssetId, r])
   );
 
-  for (const assetIdWithNoResult of omnipoolAssetIds.filter(
+  const assetIdsWithoutResultsList = omnipoolAssetIds.filter(
     (id) => !decoratedNodes.has(id)
-  )) {
+  );
+
+  const assetWithoutResultsDetails = new Map(
+    (
+      await pgClient.query<{
+        asset_id: string;
+        asset_registry_id?: string;
+        decimals?: number;
+      }>(getAssetsByIds, [assetIdsWithoutResultsList])
+    ).rows.map((a) => [a.asset_id, a])
+  );
+
+  for (const assetIdWithNoResult of assetIdsWithoutResultsList) {
     decoratedNodes.set(assetIdWithNoResult, {
       omnipoolAssetId: assetIdWithNoResult,
       assetId: assetIdWithNoResult.split('-')[1] || '-1',
+      assetRegistryId: assetWithoutResultsDetails.get(
+        assetIdWithNoResult.split('-')[1] || '-1'
+      )?.asset_registry_id,
       assetVolume: BigInt(0),
       assetFeeVolume: BigInt(0),
     });

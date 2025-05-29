@@ -5,10 +5,7 @@ export const getAllOmnipoolAssets = `
         omnipool_asset
     WHERE 
         pool_id = $1
-        AND (
-            NOT is_removed 
-            OR (is_removed AND removed_at_para_block > $2)
-        );
+        AND NOT is_removed ;
 `;
 
 export const getOmnipoolAssetsByAssetIds = `

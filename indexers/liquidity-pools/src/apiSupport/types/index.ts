@@ -5,6 +5,8 @@ export type XykpoolHistoricalVolumeRaw = {
   pool_id: string;
   asset_a_id: string;
   asset_b_id: string;
+  asset_a_registry_id: string;
+  asset_b_registry_id: string;
   asset_a_volume_in: number;
   asset_a_total_volume_in: number;
   asset_a_volume_out: number;
@@ -48,6 +50,7 @@ export type XykpoolHistoricalVolumeGqlResponse = {
 export type OmnipoolAssetHistoricalVolumeRaw = {
   id: string;
   omnipool_asset_id: string;
+  asset_registry_id: string;
   asset_volume_in: number;
   asset_total_volume_in: number;
   asset_volume_out: number;

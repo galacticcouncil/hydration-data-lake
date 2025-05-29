@@ -33,8 +33,10 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
         const resp: XykpoolVolumeAggregated = {
           poolId: group[0].pool_id,
           assetAId: group[0].asset_a_id,
+          assetAAssetRegistryId: group[0].asset_a_registry_id,
           assetAVolume: BigInt(0),
           assetBId: group[0].asset_b_id,
+          assetBAssetRegistryId: group[0].asset_b_registry_id,
           assetBVolume: BigInt(0),
         };
         // Should not occur in normal conditions because SQL query will return
@@ -81,6 +83,8 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
       poolId: poolWithAssetsData.id,
       assetAId: poolWithAssetsData.asset_a_id,
       assetBId: poolWithAssetsData.asset_b_id,
+      assetAAssetRegistryId: poolWithAssetsData.asset_a_registry_id,
+      assetBAssetRegistryId: poolWithAssetsData.asset_b_registry_id,
       assetAVolume: BigInt(0),
       assetBVolume: BigInt(0),
     });

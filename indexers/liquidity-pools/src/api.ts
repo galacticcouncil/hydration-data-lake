@@ -8,7 +8,7 @@ import { ProcessorStatusPlugin } from './apiSupport/plugins/query/processorStatu
 import { AppConfig } from './appConfig';
 import { XykpoolsVolumePlugin } from './apiSupport/plugins/query/xykPoolsVolume';
 import PgPubsub from '@graphile/pg-pubsub';
-import TypeOverrides from 'pg/lib/type-overrides';
+// import TypeOverrides from 'pg/lib/type-overrides';
 import { runMigrations } from './apiSupport/apiMigrations/runMigrations';
 import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/xykPoolVolumeSubscriptions';
 import { getEnvPath } from './utils/helpers';
@@ -30,10 +30,10 @@ import { CacheManager } from './apiSupport/utils/cacheManager';
 import { Request, Response, NextFunction } from 'express';
 import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolYieldMetrics';
 
-const pgTypes = new TypeOverrides();
-pgTypes.setTypeParser(1700, function (val) {
-  return val;
-});
+// const pgTypes = new TypeOverrides();
+// pgTypes.setTypeParser(1700, function (val) {
+//   return val;
+// });
 const appConfig = AppConfig.getInstance();
 
 async function initializeServer() {
@@ -49,7 +49,7 @@ async function initializeServer() {
         database: appConfig.DB_NAME,
         user: appConfig.DB_USER,
         password: appConfig.DB_PASS,
-        types: pgTypes,
+        // types: pgTypes,
       },
       'public',
       {

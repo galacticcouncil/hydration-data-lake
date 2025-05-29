@@ -17,7 +17,6 @@ import {
   getStartStopBlocksFromInput,
 } from '../../../utils/aggregationUtils';
 import BigNumber from 'bignumber.js';
-import { getAssetsByIds } from '../../sql/asset.sql';
 import {
   getOmnipoolAssetsAll,
   getOmnipoolAssetsByAssetIds,
