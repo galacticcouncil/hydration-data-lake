@@ -911,7 +911,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     block,
   }: OmnipoolGetAssetDataInput): OmnipoolAssetData | null {
     const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
-      `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${assetId}-${block.height}`
+      `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
     );
 
     if (!node) return null;
