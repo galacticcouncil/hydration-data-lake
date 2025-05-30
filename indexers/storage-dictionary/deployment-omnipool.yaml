@@ -121,7 +121,7 @@ deploy:
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: omnipool__assets_tracker_proc
 
-    - name: omnipool-batch-proc-ensure
+    - name: omnipool-batch-proc-ensure-2
       cmd: ['sqd', 'process:prod']
       env:
         RPC_URL: wss://node.kril.hydration.cloud
@@ -136,9 +136,9 @@ deploy:
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 1708100
-        PROCESS_TO_BLOCK: -1
-        STATE_SCHEMA_NAME: omnipool__batch_proc_ensure
+        PROCESS_FROM_BLOCK: 1475996
+        PROCESS_TO_BLOCK: 1708100
+        STATE_SCHEMA_NAME: omnipool__batch_proc_ensure_2
         SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: false
@@ -170,7 +170,7 @@ deploy:
     env:
       GQL_PORT: 8080
       NODE_ENV: production
-      SUB_PROCESSORS_RANGES: 'omnipool__batch_proc_1:1708100:2966000;omnipool__batch_proc_2:2966001:4224000;omnipool__batch_proc_3:4224001:5482000;omnipool__batch_proc_4:5482001:6740000;omnipool__batch_proc_5:6740001:-1;omnipool__batch_proc_ensure:1708100:-1;omnipool__assets_tracker_proc:6740001:-1'
+      SUB_PROCESSORS_RANGES: 'omnipool__batch_proc_1:1708100:2966000;omnipool__batch_proc_2:2966001:4224000;omnipool__batch_proc_3:4224001:5482000;omnipool__batch_proc_4:5482001:6740000;omnipool__batch_proc_5:6740001:-1;omnipool__batch_proc_ensure:1708100:-1;omnipool__batch_proc_ensure_2:1475996:1708100;omnipool__assets_tracker_proc:6740001:-1'
 
     cmd:
       - sqd

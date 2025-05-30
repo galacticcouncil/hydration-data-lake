@@ -6,6 +6,7 @@ import { GetConstantsInput } from '../../../types/storage';
 async function getTotalIssuance({
   block,
 }: GetConstantsInput): Promise<bigint | null> {
+  if (block.specVersion < 100) return null;
   if (storage.balances.totalIssuance.v100.is(block)) {
     const resp = await storage.balances.totalIssuance.v100.get(block);
     return resp ?? null;

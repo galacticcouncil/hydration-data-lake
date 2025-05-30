@@ -48,6 +48,7 @@ async function getPoolData({
   poolId,
   block,
 }: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
+  if (block.specVersion < 183) return null;
   if (storage.stableswap.pools.v183.is(block)) {
     const resp = await storage.stableswap.pools.v183.get(block, poolId);
     if (resp !== undefined) return resp;
@@ -89,6 +90,7 @@ async function getPoolAssetStorageData({
   block,
   assetId,
 }: GetPoolAssetInfoInput): Promise<StablepoolAssetState | null> {
+  if (block.specVersion < 183) return null;
   let tradable: OmnipoolAssetTradability | null = null;
 
   if (storage.stableswap.assetTradability.v183.is(block)) {

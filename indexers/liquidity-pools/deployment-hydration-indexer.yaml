@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 709
+slot: 711
 description: Hydration pools indexer
 build:
 deploy:
@@ -24,14 +24,15 @@ deploy:
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
       UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
 
-      PROCESS_FROM_BLOCK: 7656570
+      PROCESS_FROM_BLOCK: 1439857
       PROCESS_TO_BLOCK: -1
 
-      USE_STORAGE_DICTIONARY: false
-      STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql'
-      STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql'
-      STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql'
-      STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool/api/graphql'
+      USE_STORAGE_DICTIONARY: true
+      STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
+      STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
+      STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
+      STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
+      STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
     cmd:
       - sqd
       - process:prod
@@ -52,7 +53,7 @@ scale:
   addons:
     postgres:
       profile: medium
-      storage: 200G
+      storage: 400G
   processor:
     profile: large
   api:

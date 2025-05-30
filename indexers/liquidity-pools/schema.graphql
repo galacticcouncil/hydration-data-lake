@@ -891,7 +891,7 @@ type OmnipoolAsset @entity {
   addedAtRelayBlockHeight: Int!
   addedAtBlock: Block!
   isRemoved: Boolean
-  lifeStates: [OmnipoolAssetLifeState!]!
+  lifeStates: [OmnipoolAssetLifeState!]
 
   historicalVolume: [OmnipoolAssetVolumeHistoricalData!]!
     @derivedFrom(field: "omnipoolAsset")

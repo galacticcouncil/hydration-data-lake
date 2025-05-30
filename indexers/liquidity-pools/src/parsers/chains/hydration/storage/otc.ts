@@ -6,6 +6,7 @@ async function getOtcOrder({
   orderId,
   block,
 }: OtcGetOrderInput): Promise<OtcOrderData | null> {
+  if (block.specVersion < 138) return null;
   if (storage.otc.orders.v138.is(block)) {
     const resp = await storage.otc.orders.v138.get(block, orderId);
 

@@ -12,6 +12,7 @@ async function getBond({
   bondId,
   block,
 }: GetBondByIdInput): Promise<BondDetails | null> {
+  if (block.specVersion < 176) return null;
   if (storage.bonds.bonds.v176.is(block)) {
     const resp = await storage.bonds.bonds.v176.get(block, bondId);
     if (!resp) return null;

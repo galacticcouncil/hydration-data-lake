@@ -62,12 +62,6 @@ async function processAssetsHistoricalDataAtBlock({
       !totalIssuancePerAssetMap.has(assetRegistryId) ||
       !existentialDepositPerAssetMap.has(assetRegistryId)
     ) {
-      console.log(
-        'processAssetsHistoricalDataAtBlock :: assetRegistryId - ',
-        assetRegistryId,
-        totalIssuancePerAssetMap.has(assetRegistryId),
-        existentialDepositPerAssetMap.has(assetRegistryId)
-      );
       continue;
     }
 
@@ -89,9 +83,10 @@ async function processAssetsHistoricalDataAtBlock({
       id: `${asset.id}-${block.height}`,
       asset,
 
-      totalIssuance: totalIssuancePerAssetMap.get(assetRegistryId)!,
+      totalIssuance: totalIssuancePerAssetMap.get(assetRegistryId) ?? 0n,
       existentialDeposit:
-        existentialDepositPerAssetMap.get(assetRegistryId)!.existentialDeposit,
+        existentialDepositPerAssetMap.get(assetRegistryId)
+          ?.existentialDeposit ?? 0n,
       dynamicFee: dynamicFeePerAssetMap.has(assetRegistryId)
         ? new AssetDynamicFee({
             assetFee: dynamicFeePerAssetMap.get(assetRegistryId)!.assetFee,

@@ -337,7 +337,7 @@ export type StorageParserMethods = {
     ) => Promise<AccountData | null>;
   };
   lbp: {
-    getConstants: (args: GetConstantsInput) => LbpConstants;
+    getConstants: (args: GetConstantsInput) => LbpConstants | null;
     getPoolData: (args: LbpGetPoolDataInput) => Promise<LbpPoolData | null>;
     getAllPoolIds: (args: LbpGetAllPoolIdsInput) => Promise<string[]>;
     getAllPoolsData: (args: LbpGetAllPoolsDataInput) => Promise<LbpPoolData[]>;

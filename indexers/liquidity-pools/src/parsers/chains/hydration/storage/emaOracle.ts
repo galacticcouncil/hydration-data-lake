@@ -7,6 +7,8 @@ import { EmaOraclePeriod } from '../../../../model';
 async function getOracles({
   block,
 }: GetEmaOraclesInput): Promise<EmaOracleEntryData[]> {
+  if (block.specVersion < 138) return [];
+
   if (storage.emaOracle.oracles.v138.is(block)) {
     const pairsPaged = [];
 

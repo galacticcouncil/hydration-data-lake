@@ -41,8 +41,8 @@ export class OmnipoolAsset {
   @Column_("bool", {nullable: true})
   isRemoved!: boolean | undefined | null
 
-  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new OmnipoolAssetLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
-  lifeStates!: (OmnipoolAssetLifeState)[]
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new OmnipoolAssetLifeState(undefined, marshal.nonNull(val)))}, nullable: true})
+  lifeStates!: (OmnipoolAssetLifeState)[] | undefined | null
 
   @OneToMany_(() => OmnipoolAssetVolumeHistoricalData, e => e.omnipoolAsset)
   historicalVolume!: OmnipoolAssetVolumeHistoricalData[]

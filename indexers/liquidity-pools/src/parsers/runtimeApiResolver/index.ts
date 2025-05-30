@@ -51,7 +51,7 @@ export class RuntimeApiResolver {
     } catch (e) {
       // @ts-ignore
       // if (e.message) console.log(e.message);
-      console.log(e);
+      // console.log(e);
       return null;
     }
 

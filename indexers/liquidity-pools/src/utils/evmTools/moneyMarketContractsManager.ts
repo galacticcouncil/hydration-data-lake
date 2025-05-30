@@ -36,7 +36,7 @@ export class MoneyMarketContractsManager {
 
   private constructor() {
     this.provider = new ethers.providers.JsonRpcProvider(
-      'https://archive.rpc.hydration.cloud'
+      process.env.RPC_URL_HTTPS
     );
 
     this.erc20TokenContractInstance = new Contract(

@@ -7,6 +7,7 @@ async function getDcaSchedule({
   scheduleId,
   block,
 }: DcaGetScheduleInput): Promise<DcaScheduleData | null> {
+  if (block.specVersion < 160) return null;
   if (storage.dca.schedules.v160.is(block)) {
     const resp = await storage.dca.schedules.v160.get(block, scheduleId);
 

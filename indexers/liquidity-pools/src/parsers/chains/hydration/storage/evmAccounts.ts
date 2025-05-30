@@ -9,6 +9,7 @@ async function getAccountExtension({
   evmAddress,
   block,
 }: EvmAccountsGetAccountExtensionInput): Promise<EvmAccountsAccountExtension | null> {
+  if (block.specVersion < 222) return null;
   if (storage.evmAccounts.accountExtension.v222.is(block)) {
     const resp = await storage.evmAccounts.accountExtension.v222.get(
       block,

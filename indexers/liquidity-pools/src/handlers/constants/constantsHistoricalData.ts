@@ -37,11 +37,11 @@ export async function handleConstantsHistoricalData(
           const poolHistoricalDataEntity = new ConstantsHistoricalData({
             id: `${blockHeader.height}`,
 
-            lbpRepayFee: lbpConstants.repayFee,
-            lbpMaxInRatio: lbpConstants.maxInRatio,
-            lbpMaxOutRatio: lbpConstants.maxOutRatio,
-            lbpMinPoolLiquidity: lbpConstants.minPoolLiquidity,
-            lbpMinTradingLimit: lbpConstants.minTradingLimit,
+            lbpRepayFee: lbpConstants?.repayFee,
+            lbpMaxInRatio: lbpConstants?.maxInRatio,
+            lbpMaxOutRatio: lbpConstants?.maxOutRatio,
+            lbpMinPoolLiquidity: lbpConstants?.minPoolLiquidity,
+            lbpMinTradingLimit: lbpConstants?.minTradingLimit,
 
             omnipoolBurnProtocolFee: omnipoolConstants.burnProtocolFee,
             omnipoolHdxAssetId: omnipoolConstants.hdxAssetId,
@@ -66,7 +66,7 @@ export async function handleConstantsHistoricalData(
             xykOracleSource: xykConstants.oracleSource,
 
             dynamicFeesAssetFeeParameters:
-              dynamicFeesConstants.assetFeeParameters
+              dynamicFeesConstants?.assetFeeParameters
                 ? new DynamicFeesAssetFeeParameters({
                     minFee: dynamicFeesConstants.assetFeeParameters.minFee,
                     maxFee: dynamicFeesConstants.assetFeeParameters.maxFee,
@@ -77,7 +77,7 @@ export async function handleConstantsHistoricalData(
                   })
                 : null,
             dynamicFeesProtocolFeeParameters:
-              dynamicFeesConstants.protocolFeeParameters
+              dynamicFeesConstants?.protocolFeeParameters
                 ? new DynamicFeesAssetFeeParameters({
                     minFee: dynamicFeesConstants.protocolFeeParameters.minFee,
                     maxFee: dynamicFeesConstants.protocolFeeParameters.maxFee,

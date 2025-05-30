@@ -106,7 +106,7 @@ export async function omnipoolTokenAdded(
   if (omnipoolAssetEntity && omnipoolAssetEntity.isRemoved) {
     omnipoolAssetEntity.isRemoved = false;
     omnipoolAssetEntity.lifeStates = addOmnipoolAssetAddedLifeState({
-      existingStates: omnipoolAssetEntity.lifeStates,
+      existingStates: omnipoolAssetEntity.lifeStates || [],
       assetAddedState: new OmnipoolAssetAddedData({
         initialAmount: '0', // TODO fix values
         initialPrice: '0',
@@ -194,7 +194,7 @@ export async function omnipoolTokenRemoved(
 
   omnipoolAssetEntity.isRemoved = true;
   omnipoolAssetEntity.lifeStates = addOmnipoolAssetRemovedLifeState({
-    existingStates: omnipoolAssetEntity.lifeStates,
+    existingStates: omnipoolAssetEntity.lifeStates || [],
     assetRemovedState: new OmnipoolAssetRemovedData({
       removedAmount: eventParams.amount.toString(),
       hubWithdrawn: eventParams.hubWithdrawn.toString(),

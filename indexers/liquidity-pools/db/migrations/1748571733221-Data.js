@@ -1,5 +1,5 @@
-module.exports = class Data1747240667727 {
-    name = 'Data1747240667727'
+module.exports = class Data1748571733221 {
+    name = 'Data1748571733221'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -102,7 +102,7 @@ module.exports = class Data1747240667727 {
         await db.query(`CREATE INDEX "IDX_f8c9eddb6bfddb6f94cc0b1636" ON "omnipool_asset_historical_data" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_757ac8e86648b630d25f55e801" ON "omnipool_asset_historical_data" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_2dd1572de3b31974213e8c504a" ON "omnipool_asset_historical_data" ("block_id") `)
-        await db.query(`CREATE TABLE "omnipool_asset" ("id" character varying NOT NULL, "added_at_para_block_height" integer NOT NULL, "added_at_relay_block_height" integer NOT NULL, "is_removed" boolean, "life_states" jsonb NOT NULL, "pool_id" character varying, "asset_id" character varying, "added_at_block_id" character varying, CONSTRAINT "PK_6e3b9f3836fa6616f083b5ea75b" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "omnipool_asset" ("id" character varying NOT NULL, "added_at_para_block_height" integer NOT NULL, "added_at_relay_block_height" integer NOT NULL, "is_removed" boolean, "life_states" jsonb, "pool_id" character varying, "asset_id" character varying, "added_at_block_id" character varying, CONSTRAINT "PK_6e3b9f3836fa6616f083b5ea75b" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_530f27607e7d82575c5c337d65" ON "omnipool_asset" ("pool_id") `)
         await db.query(`CREATE INDEX "IDX_eee49a5571d9d7e3fbe7757f13" ON "omnipool_asset" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_b6d480d6e9678a34b122cf3f5d" ON "omnipool_asset" ("added_at_para_block_height") `)
