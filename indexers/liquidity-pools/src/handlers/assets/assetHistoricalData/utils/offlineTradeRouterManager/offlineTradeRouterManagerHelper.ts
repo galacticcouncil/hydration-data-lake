@@ -723,25 +723,31 @@ export class OfflineTradeRouterManagerHelper {
       address: publicKeyToSs58(poolHistData.pool.account.id),
       type: PoolType.Omni,
 
-      tokens: poolHistData.assetsHistoricalData.map((assetHistData) => ({
-        id: assetHistData.asset.assetRegistryId,
-        decimals: assetHistData.asset.decimals,
-        symbol: assetHistData.asset.symbol,
-        type: assetHistData.asset.assetType,
-        existentialDeposit: this.assetsHistData
-          .get(blockNumber)!
-          .get(assetHistData.asset.id)!
-          .existentialDeposit.toString(),
-        isSufficient: this.assetsHistData
-          .get(blockNumber)!
-          .get(assetHistData.asset.id)!.asset.isSufficient, // TODO fix data
-        balance: assetHistData.freeBalance.toString(),
-        tradable: assetHistData.tradable,
-        hubReserves: assetHistData.assetHubReserve.toString(),
-        shares: assetHistData.assetShares.toString(),
-        cap: assetHistData.assetCap.toString(),
-        protocolShares: assetHistData.assetProtocolShares.toString(),
-      })) as IPersistentOmniPoolToken[],
+      tokens: poolHistData.assetsHistoricalData
+        .map((assetHistData) => {
+          const assetHistoricalData = this.assetsHistData
+            .get(blockNumber)!
+            .get(assetHistData.asset.id);
+
+          if (!assetHistoricalData) return null;
+
+          return {
+            id: assetHistData.asset.assetRegistryId,
+            decimals: assetHistData.asset.decimals,
+            symbol: assetHistData.asset.symbol,
+            type: assetHistData.asset.assetType,
+            existentialDeposit:
+              assetHistoricalData.existentialDeposit.toString(),
+            isSufficient: assetHistoricalData.asset.isSufficient, // TODO fix data
+            balance: assetHistData.freeBalance.toString(),
+            tradable: assetHistData.tradable,
+            hubReserves: assetHistData.assetHubReserve.toString(),
+            shares: assetHistData.assetShares.toString(),
+            cap: assetHistData.assetCap.toString(),
+            protocolShares: assetHistData.assetProtocolShares.toString(),
+          };
+        })
+        .filter((token) => !!token) as IPersistentOmniPoolToken[],
 
       maxInRatio: bigintToNumberSafe(blockConstants.omnipoolMaxInRatio!), //TODO fix type
       maxOutRatio: bigintToNumberSafe(blockConstants.omnipoolMaxOutRatio!), //TODO fix type
