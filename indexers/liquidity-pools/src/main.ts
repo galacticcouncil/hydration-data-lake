@@ -39,19 +39,8 @@ import {
   ensureNativeToken,
   prefetchAllAssets,
 } from './handlers/assets/utils';
-import { ethers } from 'ethers';
-import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
 import { handleAssetHistoricalData } from './handlers/assets/assetHistoricalData';
 import { createMoneyMarketEventsFromRoutedTrades } from './handlers/moneyMarket/routedTradeToMmEventHandler';
-import { RuntimeApiResolver } from './parsers/runtimeApiResolver';
-import {
-  AaveTradeExecutorPoolDataWithPoolId,
-  AaveTradeExecutorPoolsInput,
-  CurrenciesApiAccountInput,
-  RuntimeApiMethodName,
-  RuntimeApiName,
-} from './parsers/runtimeApiResolver/types';
-import { AccountData } from './parsers/types/storage';
 import { handleAavepoolHistoricalData } from './handlers/pools/aavepool/historicalData';
 import { handleConstantsHistoricalData } from './handlers/constants/constantsHistoricalData';
 import { handleOracles } from './handlers/oracles/emaOracle';
@@ -60,6 +49,11 @@ import { processPoolsNormalizedVolumes } from './handlers/volumes/normalizedVolu
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
 );
+
+if (process.env.INDEXING_IS_PAUSED === 'true') {
+  console.log('Indexing is paused. Waiting...');
+  while (true) {}
+}
 
 processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   printV8MemoryHeap();
@@ -74,6 +68,12 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
     new BatchState();
   (ctxWithBatchState as SqdProcessorContext<Store>).appConfig =
     AppConfig.getInstance();
+
+  // if (
+  //   (ctxWithBatchState as SqdProcessorContext<Store>).appConfig.INDEXING_IS_PAUSED
+  // ) {
+  //   await new Promise((res) => console.log('Indexing is paused. Waiting...'));
+  // }
 
   await handleRelayChainBlocks(ctxWithBatchState as SqdProcessorContext<Store>);
 

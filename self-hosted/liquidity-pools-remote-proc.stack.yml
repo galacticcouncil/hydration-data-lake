@@ -1,0 +1,72 @@
+version: "3.7"
+
+x-chain-name: &chain-name "hydration"
+x-postgres-db: &postgres-db ""
+x-postgres-user: &postgres-user ""
+x-postgres-password: &postgres-password ""
+x-postgres-host: &postgres-host "pg.squid.subsquid.io"
+
+x-liquidity-pools-db-creds: &liquidity-pools-db-creds
+  DB_PORT: 5432
+  DB_NAME: *postgres-db
+  DB_USER: *postgres-user
+  DB_PASS: *postgres-password
+  DB_HOST: *postgres-host
+
+networks:
+  default:
+    driver: overlay
+
+#volumes:
+#  liquidity-pools-db:
+#    driver: local
+
+services:
+  liquidity-pools-processor:
+    image: ghcr.io/mckrava/liquidity-pools-indexer:3b5cee4dd1198711c19748fba4fa6182571efcd6
+    environment:
+      #
+      # REQUIRED PARAMETERS
+      #
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      <<: *liquidity-pools-db-creds
+      RPC_URL: "wss://node.kril.hydration.cloud"
+      # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
+      IGNORE_ARCHIVE_DATA_SOURCE: "false"
+      GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
+      OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+      #
+      # OPTIONAL PARAMETERS
+      #
+      PROCESS_FROM_BLOCK: 7300000
+      PROCESS_TO_BLOCK: -1
+      PROCESS_LBP_POOLS: "true"
+      PROCESS_XYK_POOLS: "true"
+      PROCESS_OMNIPOOLS: "true"
+      PROCESS_STABLEPOOLS: "true"
+      PROCESS_DCA: "true"
+      PROCESS_OTC: "true"
+      UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
+      # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
+      USE_STORAGE_DICTIONARY: "true"
+      # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
+      # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
+      # For example, if the Storage Dictionary is running as a single processor indexer
+      # within the same Swarm stack as the Liquidity Pools indexer,
+      # the URL for all pools should be set uniformly, such as:
+      #   http://storage-dictionary-api:8090/graphql
+      STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
+      STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
+      STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
+      STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
+      STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
+    networks:
+      - default
+    command:
+      - sh
+      - -c
+      - "sqd process:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure

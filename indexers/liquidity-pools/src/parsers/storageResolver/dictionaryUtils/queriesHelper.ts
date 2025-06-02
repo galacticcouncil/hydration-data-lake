@@ -11,16 +11,39 @@ import { ProcessingTopic } from './types';
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
-import { pipe, tap } from 'wonka';
+import { pipe, tap, map } from 'wonka';
+// import pako from 'pako';
+// import { PakoManager } from '../../../utils/pakoManager';
+
+// function base64ToUint8Array(base64: string) {
+//   return Uint8Array.from(Buffer.from(base64, 'base64'));
+// }
+
+// function decompressStorageDictionaryResponse(data: any): Record<any, any> {
+//   const decomprResult = pako.inflate(base64ToUint8Array(data), {
+//     to: 'string',
+//   });
+//
+//   return JSON.parse(decomprResult);
+// }
 
 const responsePreprocessingExchange: Exchange =
   ({ forward }) =>
   (ops$) => {
     return pipe(
       forward(ops$),
-      tap((result) => {
-        // if ((result.operation.context.fetchOptions as RequestInit)?.headers?['dictionary-response-compression'] === 'full') {
-        //   // TODO do decompression of response here
+      map((result) => {
+        const headers = (result.operation.context.fetchOptions as RequestInit)
+          ?.headers as Record<string, string> | undefined;
+
+        // console.dir(result.data, { depth: null });
+
+        // if (headers?.['Content-Encoding'] === 'deflate') {
+        //   const decompressed = PakoManager.decompress(result.data, false);
+        //   return {
+        //     ...result,
+        //     data: decompressed,
+        //   };
         // }
 
         if (result.error) {
@@ -29,7 +52,22 @@ const responsePreprocessingExchange: Exchange =
             result.error.message
           );
         }
+
+        return result;
       })
+
+      // tap((result) => {
+      //   if ((result.operation.context.fetchOptions as RequestInit)?.headers?['dictionary-response-compression'] === 'full') {
+      //     // TODO do decompression of response here
+      //   }
+      //
+      //   if (result.error) {
+      //     console.error(
+      //       'Storage dictionary GraphQL Error:',
+      //       result.error.message
+      //     );
+      //   }
+      // })
     );
   };
 
@@ -79,6 +117,11 @@ export class QueriesHelper {
 
     const client = new GqlClient({
       url: this.gqlClientUrlsMap.get(clientName)!,
+      fetchOptions: {
+        headers: {
+          'dictionary-response-compression': 'full',
+        },
+      },
       exchanges: [
         retryExchange(retryOptions),
         responsePreprocessingExchange,

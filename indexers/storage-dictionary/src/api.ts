@@ -1,6 +1,6 @@
 import AggregatesPluggin from '@graphile/pg-aggregates';
 import SimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { NodePlugin } from 'graphile-build';
 import { postgraphile, makePluginHook } from 'postgraphile';
 import FilterPlugin from 'postgraphile-plugin-connection-filter';
@@ -10,6 +10,7 @@ import PgPubsub from '@graphile/pg-pubsub';
 // import TypeOverrides from 'pg/lib/type-overrides';
 import { getEnvPath } from './utils/helpers';
 import { ApiTypesAugmentPlugin } from './apiSupport/plugins/query/apiTypesAugment.plugin';
+import { PakoManager } from './utils/pakoManager';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -57,6 +58,33 @@ const postgraphileInstance = postgraphile(
     exportGqlSchemaPath: getEnvPath('apiSupport/schema.graphql'),
   }
 );
+
+// app.use((req: Request, res: Response, next: NextFunction): void => {
+//   console.log('compression middleware');
+//   console.dir(req.headers, { depth: null });
+//   console.log(req.headers['dictionary-response-compression'] !== 'full')
+//
+//   if (req.headers['dictionary-response-compression'] !== 'full') {
+//     return next();
+//   }
+//
+//   const _send = res.send.bind(res);
+//   res.send = (body) => {
+//     try {
+//       const compressed = PakoManager.compress(body);
+//       res.setHeader('Content-Encoding', 'deflate');
+//       res.setHeader('Content-Length', compressed.byteLength);
+//
+//       console.log('compressed')
+//       console.dir(compressed, {depth: null})
+//       return _send(Buffer.from(compressed));
+//     } catch (err) {
+//       console.error('Pako compression failed:', err);
+//       return _send(body);
+//     }
+//   };
+//   next();
+// });
 
 app.use(postgraphileInstance);
 

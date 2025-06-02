@@ -15,9 +15,13 @@ async function getOmnipoolAssetData(
 ): Promise<OmnipoolAssetState | null> {
   if (block.specVersion < 115) return null;
 
-  if (storage.omnipool.assets.v115.is(block)) {
-    const resp = await storage.omnipool.assets.v115.get(block, assetId);
-    return resp ?? null;
+  if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
+    try {
+      const resp = await storage.omnipool.assets.v115.get(block, assetId);
+      return resp ?? null;
+    } catch (e) {
+      return null;
+    }
   }
 
   throw new UnknownVersionError('storage.omnipool.assets');
@@ -38,19 +42,21 @@ async function getOmnipoolAssetsAll(
 
   if (block.specVersion < 115) return [];
 
-  if (storage.omnipool.assets.v115.is(block)) {
-    for await (let page of storage.omnipool.assets.v115.getPairsPaged(
-      500,
-      block
-    ))
-      pairsPaged.push(
-        ...page
-          .filter((p) => !!p)
-          .map((pair) => ({
-            assetId: pair[0],
-            assetState: pair[1] ?? assetStateFallback,
-          }))
-      );
+  if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
+    try {
+      for await (let page of storage.omnipool.assets.v115.getPairsPaged(
+        500,
+        block
+      ))
+        pairsPaged.push(
+          ...page
+            .filter((p) => !!p)
+            .map((pair) => ({
+              assetId: pair[0],
+              assetState: pair[1] ?? assetStateFallback,
+            }))
+        );
+    } catch (e) {}
     return pairsPaged;
   }
   throw new UnknownVersionError('storage.omnipool.assets');
@@ -61,10 +67,13 @@ async function getOmnipoolAllAssetIds({
 }: OmnipoolGetAllAssetIdsInput): Promise<number[]> {
   if (block.specVersion < 115) return [];
 
-  if (storage.omnipool.assets.v115.is(block)) {
-    const resp = await storage.omnipool.assets.v115.getKeys(block);
-
-    return resp;
+  if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
+    try {
+      const resp = await storage.omnipool.assets.v115.getKeys(block);
+      return resp;
+    } catch (e) {
+      return [];
+    }
   }
   throw new UnknownVersionError('storage.omnipool.assets');
 }
@@ -74,10 +83,13 @@ async function getOmnipoolHubAssetTradability({
 }: OmnipoolGetHubAssetTradabilityInput): Promise<OmnipoolAssetTradability | null> {
   if (block.specVersion < 115) return null;
 
-  if (storage.omnipool.assets.v115.is(block)) {
-    const resp = await storage.omnipool.hubAssetTradability.v115.get(block);
-
-    return resp ?? null;
+  if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
+    try {
+      const resp = await storage.omnipool.hubAssetTradability.v115.get(block);
+      return resp ?? null;
+    } catch (e) {
+      return null;
+    }
   }
   throw new UnknownVersionError('storage.omnipool.hubAssetTradability');
 }
