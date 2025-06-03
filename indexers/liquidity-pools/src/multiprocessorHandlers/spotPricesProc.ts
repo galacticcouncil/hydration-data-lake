@@ -261,12 +261,6 @@ async function prefetchAllAvailableRoutedTradesForBlocksRange({
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
     relations: {
-      inputs: {
-        asset: true,
-      },
-      outputs: {
-        asset: true,
-      },
       swaps: {
         swapper: true,
         filler: true,
@@ -287,13 +281,6 @@ async function prefetchAllAvailableRoutedTradesForBlocksRange({
   });
 
   for (const route of routes) {
-    route.inputs = route.inputs.filter(
-      (i) => i.assetBalanceType === SwapAssetBalanceType.Input
-    );
-    route.outputs = route.outputs.filter(
-      (i) => i.assetBalanceType === SwapAssetBalanceType.Output
-    );
-
     for (const swap of route.swaps) {
       swap.inputs = swap.inputs.filter(
         (i) => i.assetBalanceType === SwapAssetBalanceType.Input
