@@ -12,20 +12,6 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { pipe, tap, map } from 'wonka';
-// import pako from 'pako';
-// import { PakoManager } from '../../../utils/pakoManager';
-
-// function base64ToUint8Array(base64: string) {
-//   return Uint8Array.from(Buffer.from(base64, 'base64'));
-// }
-
-// function decompressStorageDictionaryResponse(data: any): Record<any, any> {
-//   const decomprResult = pako.inflate(base64ToUint8Array(data), {
-//     to: 'string',
-//   });
-//
-//   return JSON.parse(decomprResult);
-// }
 
 const responsePreprocessingExchange: Exchange =
   ({ forward }) =>
@@ -33,19 +19,6 @@ const responsePreprocessingExchange: Exchange =
     return pipe(
       forward(ops$),
       map((result) => {
-        const headers = (result.operation.context.fetchOptions as RequestInit)
-          ?.headers as Record<string, string> | undefined;
-
-        // console.dir(result.data, { depth: null });
-
-        // if (headers?.['Content-Encoding'] === 'deflate') {
-        //   const decompressed = PakoManager.decompress(result.data, false);
-        //   return {
-        //     ...result,
-        //     data: decompressed,
-        //   };
-        // }
-
         if (result.error) {
           console.error(
             'Storage dictionary GraphQL Error:',
@@ -117,11 +90,6 @@ export class QueriesHelper {
 
     const client = new GqlClient({
       url: this.gqlClientUrlsMap.get(clientName)!,
-      fetchOptions: {
-        headers: {
-          'dictionary-response-compression': 'full',
-        },
-      },
       exchanges: [
         retryExchange(retryOptions),
         responsePreprocessingExchange,
@@ -145,17 +113,7 @@ export class QueriesHelper {
     variables: Variables;
     dictName: ProcessingTopic;
   }) {
-    return this.getGqlClient(dictName).query(
-      query,
-      variables
-      //   {
-      //   fetchOptions: {
-      //     headers: {
-      //       'dictionary-response-compression': 'full',
-      //     },
-      //   },
-      // }
-    );
+    return this.getGqlClient(dictName).query(query, variables);
   }
 
   async *fetchAllPages<R = []>({

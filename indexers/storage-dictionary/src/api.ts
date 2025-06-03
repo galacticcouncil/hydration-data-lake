@@ -10,7 +10,9 @@ import PgPubsub from '@graphile/pg-pubsub';
 // import TypeOverrides from 'pg/lib/type-overrides';
 import { getEnvPath } from './utils/helpers';
 import { ApiTypesAugmentPlugin } from './apiSupport/plugins/query/apiTypesAugment.plugin';
-import { PakoManager } from './utils/pakoManager';
+import compression from 'compression';
+import zlib from 'zlib';
+// import { PakoManager } from './utils/pakoManager';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -59,32 +61,20 @@ const postgraphileInstance = postgraphile(
   }
 );
 
-// app.use((req: Request, res: Response, next: NextFunction): void => {
-//   console.log('compression middleware');
-//   console.dir(req.headers, { depth: null });
-//   console.log(req.headers['dictionary-response-compression'] !== 'full')
-//
-//   if (req.headers['dictionary-response-compression'] !== 'full') {
-//     return next();
-//   }
-//
-//   const _send = res.send.bind(res);
-//   res.send = (body) => {
-//     try {
-//       const compressed = PakoManager.compress(body);
-//       res.setHeader('Content-Encoding', 'deflate');
-//       res.setHeader('Content-Length', compressed.byteLength);
-//
-//       console.log('compressed')
-//       console.dir(compressed, {depth: null})
-//       return _send(Buffer.from(compressed));
-//     } catch (err) {
-//       console.error('Pako compression failed:', err);
-//       return _send(body);
-//     }
-//   };
-//   next();
-// });
+function shouldCompress(req: express.Request, res: express.Response) {
+  return compression.filter(req, res);
+}
+
+app.use(
+  compression({
+    filter: shouldCompress,
+    threshold: 1,
+    level: zlib.constants.Z_BEST_COMPRESSION,
+    zlib: {
+      level: zlib.constants.Z_BEST_COMPRESSION,
+    },
+  })
+);
 
 app.use(postgraphileInstance);
 

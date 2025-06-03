@@ -19,7 +19,7 @@ import {
   TraceIdContext,
   ChainName,
 } from '../utils/types';
-import { FindOptionsRelations } from 'typeorm';
+import { FindOptionsRelations, In } from 'typeorm';
 import { EventName, RelayChainInfo } from '../parsers/types/events';
 
 export class ChainActivityTraceManager {
@@ -133,8 +133,7 @@ export class ChainActivityTraceManager {
                 originValue: callEntityOriginData.value,
                 extrinsic: extrinsicEntity,
                 paraBlockHeight: subcall.block.height,
-                relayBlockHeight:
-                  relayChainInfo?.relaychainBlockNumber ?? 0,
+                relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
                 block: blockEntity,
               });
 
@@ -693,5 +692,26 @@ export class ChainActivityTraceManager {
     ];
 
     return entity;
+  }
+
+  static async prefetchBlockToCache({
+    blockHeights,
+    ctx,
+    relations,
+  }: {
+    blockHeights: number[];
+    ctx: SqdProcessorContext<Store>;
+    relations?: FindOptionsRelations<Block>;
+  }) {
+    const persistentBlocks = await ctx.store.find(Block, {
+      where: {
+        height: In(blockHeights),
+      },
+      ...(relations ? { relations } : {}),
+    });
+
+    ctx.batchState.state.batchBlocks = new Map(
+      persistentBlocks.map((b) => [b.id, b])
+    );
   }
 }

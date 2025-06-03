@@ -87,7 +87,8 @@ async function initializeServer() {
           ? process.env.BASE_PATH + '/api'
           : undefined,
         graphileBuildOptions: {
-          stateSchemas: ['squid_processor'],
+          // stateSchemas: ['squid_processor'],
+          stateSchemas: appConfig.SUB_PROCESSOR_SCHEMAS,
           omnipoolAddress: appConfig.OMNIPOOL_ADDRESS,
           enableSmartTags: true,
         },

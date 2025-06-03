@@ -193,7 +193,10 @@ export class OfflineTradeRouterManagerHelper {
   }) {
     const histData = await fetchConstantsHistoricalData({ ctx, blockNumber });
 
-    if (!histData) throw new Error('Missing constants historical data');
+    if (!histData)
+      throw new Error(
+        `Missing constants historical data at block ${blockNumber}`
+      );
 
     this.constantsHistData.set(blockNumber, histData);
   }
@@ -305,7 +308,10 @@ export class OfflineTradeRouterManagerHelper {
       ctx,
     });
 
-    if (!histData) throw new Error('Missing constants historical data');
+    if (!histData)
+      throw new Error(
+        `Missing constants historical data at blocks range ${blockFromNumber}/${blockToNumber}`
+      );
 
     this.constantsHistData = histData;
   }
@@ -433,7 +439,10 @@ export class OfflineTradeRouterManagerHelper {
   }): IPersistentConstants {
     const histData = this.constantsHistData.get(blockNumber);
 
-    if (!histData) throw new Error('Missing constants historical data');
+    if (!histData)
+      throw new Error(
+        `Missing constants historical data at block ${blockNumber}`
+      );
 
     return {
       lbpRepayFee: histData.lbpRepayFee,

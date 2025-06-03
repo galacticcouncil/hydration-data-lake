@@ -16,9 +16,10 @@ import {
   stringToMd5Hash,
 } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import fs from 'fs';
 
 class RouterAssetPairs {
-  private pairsSet: Set<string> = new Set();
+  public pairsSet: Set<string> = new Set();
 
   get pairsListEmpty() {
     return this.pairsSet.size === 0;
@@ -75,7 +76,10 @@ export async function handleAssetPairVolumesHistoricalData({
 
   const routerAssetPairs = await new RouterAssetPairs().init(blockHeader);
 
-  if (routerAssetPairs.pairsListEmpty) return;
+  if (routerAssetPairs.pairsListEmpty) {
+    console.log(`routerAssetPairs is empty on block ${blockHeader.height}`);
+    return;
+  }
 
   for (const trade of blockContextRoutedTrades) {
     const assetBalancePairs = getRelatedAssetPairsFromSwapsChain(trade.swaps);
@@ -99,8 +103,9 @@ export async function handleAssetPairVolumesHistoricalData({
           assetInData.asset.assetRegistryId,
           assetOutData.asset.assetRegistryId
         )
-      )
+      ) {
         continue assetsPairLoop;
+      }
 
       const assetInSpotPrice = getAssetSpotPriceFromHistoricalData({
         assetId: assetInData.asset.id,

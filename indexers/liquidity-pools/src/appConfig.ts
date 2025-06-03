@@ -99,6 +99,24 @@ export class AppConfig {
   readonly RPC_REQUEST_TIMEOUT: number = 30_000;
 
   @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ALL_IN_ONE_PROCESSOR_MODE: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly IS_CORE_PROCESSOR: boolean = false;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly IS_SPOT_PRICES_PROCESSOR: boolean = false;
+
+  @IsString()
+  readonly STATE_SCHEMA_NAME: string = 'squid_processor';
+
+  @Transform(({ value }: { value: string }) => {
+    if (value.length === 0) return ['squid_processor'];
+    return value.split(';');
+  })
+  SUB_PROCESSOR_SCHEMAS: string[] = ['squid_processor'];
+
+  @Transform(({ value }: { value: string }) => value === 'true')
   readonly INDEXING_IS_PAUSED: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')
@@ -154,6 +172,9 @@ export class AppConfig {
 
   @IsString()
   readonly STORAGE_DICTIONARY_GEN_HIST_DATA_URL: string = '';
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE: number = 300;
 
   @IsString()
   readonly SUBSCAN_PRO_API_SECRET: string = '';

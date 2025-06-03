@@ -466,7 +466,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: EmaOracleGql[] = [];
       for await (const page of this.fetchAllPages({
-        limit: 1000,
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchAllEmaOraclesPaginated,
       })) {
         if (!page) continue;
@@ -480,7 +480,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: AssetHistoricalDatumGql[] = [];
       for await (const page of this.fetchAllPages({
-        limit: 1000,
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchAllAssetHistDataPaginated,
       })) {
         if (!page) continue;
@@ -494,7 +494,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: AavepoolGlq[] = [];
       for await (const page of this.fetchAllPages({
-        limit: 1000,
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchAllAavepoolsPaginated,
       })) {
         if (!page) continue;
@@ -508,7 +508,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: LbpPoolGlq[] = [];
       for await (const page of this.fetchAllPages({
-        limit: 1000,
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchAllLbpPoolsPaginated,
       })) {
         if (!page) continue;
@@ -527,7 +527,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
       const data: XykpoolGlq[] = [];
       for await (const page of this.fetchAllPages({
-        limit: 1000,
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchAllXykPoolsPaginated,
       })) {
         if (!page) continue;
@@ -546,7 +546,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
       const data = [];
       for await (const page of this.fetchAllPages({
-        limit: 1000,
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchAllOmnipoolsPaginated,
       })) {
         data.push(page);
@@ -563,7 +563,7 @@ export class StorageDictionaryManager extends QueriesHelper {
         return [];
       const data = [];
       for await (const page of this.fetchAllPages({
-        limit: 1000,
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchAllStablepoolAssetsPaginated,
       })) {
         data.push(page);

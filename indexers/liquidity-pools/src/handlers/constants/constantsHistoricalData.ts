@@ -108,7 +108,7 @@ export async function handleConstantsHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save([
+  await ctx.store.upsert([
     ...ctx.batchState.state.constantsHistoricalData.values(),
   ]);
 }

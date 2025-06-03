@@ -8,12 +8,13 @@ enum LiquidityActionEvent {
 }
 
 type ProcessorStatus @entity {
-  "static value - 1"
+  "processor state schema name"
   id: ID!
   assetsLastUpdatedAtBlock: Int!
   poolsDestroyedUpdatedAtBlock: Int
   initialIndexingStartedAt: DateTime!
   initialIndexingFinishedAt: DateTime
+  latestProcessedBlock: Int!
   latestProcessedBlock: Int!
 }
 

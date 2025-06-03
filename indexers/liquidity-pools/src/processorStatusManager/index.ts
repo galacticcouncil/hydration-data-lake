@@ -36,7 +36,7 @@ export class ProcessorStatusManager {
     if (this.currentStatusEntity) return this.currentStatusEntity;
 
     let statusEntity = await this.ctx.store.findOne(ProcessorStatus, {
-      where: { id: '1' },
+      where: { id: this.ctx.appConfig.STATE_SCHEMA_NAME },
     });
 
     if (statusEntity) {
@@ -45,7 +45,7 @@ export class ProcessorStatusManager {
     }
 
     statusEntity = new ProcessorStatus({
-      id: '1',
+      id: this.ctx.appConfig.STATE_SCHEMA_NAME,
       assetsLastUpdatedAtBlock: -1,
       poolsDestroyedUpdatedAtBlock: -1,
       initialIndexingStartedAt: new Date(),
