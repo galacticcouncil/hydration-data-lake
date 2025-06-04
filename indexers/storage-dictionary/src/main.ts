@@ -78,6 +78,10 @@ processor.run(
     );
     await subProcessorStatusManager.calcSubBatchConfig();
 
+    console.log(`Batch size - ${ctx.blocks.length} blocks.`);
+
+    console.time(`Blocks batch has been processed in`);
+
     await waitForAssetsActualisation(
       subProcessorStatusManager,
       ctxWithBatchState as ProcessorContext<Store>
@@ -114,9 +118,6 @@ processor.run(
       ctxWithBatchState as ProcessorContext<Store>
     );
 
-    console.log(`Batch size - ${ctx.blocks.length} blocks.`);
-
-    console.time(`Blocks batch has been processed in`);
     let blocksSubBatchIndex = 1;
 
     for (const blocksSubBatch of splitIntoBatches(

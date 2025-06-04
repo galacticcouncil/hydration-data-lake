@@ -110,7 +110,7 @@ export class StorageDictionaryManager extends QueriesHelper {
   ]);
 
   constructor({ batchCtx }: { batchCtx: SqdProcessorContext<Store> }) {
-    super({ batchCtx });
+    super({ appConfig: batchCtx.appConfig });
     this.batchCtx = batchCtx;
   }
 

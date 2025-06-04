@@ -157,25 +157,30 @@ export async function handleStablepoolStorage(
       fee,
     });
 
+    ctx.batchState.state.stablepools.set(newPoolEntity.id, newPoolEntity);
+
     for (const assetId of assetIds) {
-      stablepoolAssetsData.set(
-        `${poolId}-${assetId}-${currentBlockHeader.height}`,
-        new StableswapAssetData({
-          id: `${poolId}-${assetId}-${currentBlockHeader.height}`,
-          paraBlockHeight: currentBlockHeader.height,
-          relayBlockHeight:
-            relayChainInfo.get(currentBlockHeader.height)
-              ?.relaychainBlockNumber || 0,
-          assetId: assetId,
-          tradable: new Tradability(
-            assetsStorageDataByPoolMap.get(`${poolAddress}-${assetId}`)
-              ?.storageData?.tradable ?? { bits: 15 }
-          ),
-          pool: newPoolEntity,
-          balances:
-            allPoolAssetBalancesMap.get(`${poolAddress}-${assetId}`)
-              ?.balances ?? fallbackAccountBalances,
-        })
+      const newAssetEntity = new StableswapAssetData({
+        id: `${poolId}-${assetId}-${currentBlockHeader.height}`,
+        paraBlockHeight: currentBlockHeader.height,
+        relayBlockHeight:
+          relayChainInfo.get(currentBlockHeader.height)
+            ?.relaychainBlockNumber || 0,
+        assetId: assetId,
+        tradable: new Tradability(
+          assetsStorageDataByPoolMap.get(`${poolAddress}-${assetId}`)
+            ?.storageData?.tradable ?? { bits: 15 }
+        ),
+        pool: newPoolEntity,
+        balances:
+          allPoolAssetBalancesMap.get(`${poolAddress}-${assetId}`)?.balances ??
+          fallbackAccountBalances,
+      });
+      stablepoolAssetsData.set(newAssetEntity.id, newAssetEntity);
+
+      ctx.batchState.state.stablepoolAssetsData.set(
+        newAssetEntity.id,
+        newAssetEntity
       );
     }
 
@@ -199,7 +204,7 @@ export async function prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBl
     .map((b) => b.header.height)
     .sort((a, b) => a - b);
 
-  const records = await ctx.store.find(Stableswap, {
+  const pools = await ctx.store.find(Stableswap, {
     where: {
       paraBlockHeight: Between(
         orderedNumbers[0],
@@ -208,9 +213,22 @@ export async function prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBl
     },
   });
 
-  ctx.batchState.state.stablepools = new Map(records.map((r) => [r.id, r]));
+  const assets = await ctx.store.find(StableswapAssetData, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+    relations: { pool: true },
+  });
+
+  ctx.batchState.state.stablepools = new Map(pools.map((r) => [r.id, r]));
+  ctx.batchState.state.stablepoolAssetsData = new Map(
+    assets.map((r) => [r.id, r])
+  );
   ctx.batchState.state.stablepoolsProcessedBlocks = new Set(
-    records.map((r) => r.paraBlockHeight)
+    pools.map((r) => r.paraBlockHeight)
   );
   console.log(
     `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 

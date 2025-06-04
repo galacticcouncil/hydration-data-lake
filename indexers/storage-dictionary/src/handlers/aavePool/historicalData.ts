@@ -35,21 +35,23 @@ export async function handleAavePoolsStorage(
     });
     if (!reserveAsset) continue;
 
-    poolsToSave.push(
-      new Aavepool({
-        id: `${poolId}-${blockHeader.height}`,
-        poolId,
-        reserveAsset,
-        aToken,
-        liquidityIn: data.liquidityIn,
-        liquidityOut: data.liquidityOut,
+    const newPoolEntity = new Aavepool({
+      id: `${poolId}-${blockHeader.height}`,
+      poolId,
+      reserveAsset,
+      aToken,
+      liquidityIn: data.liquidityIn,
+      liquidityOut: data.liquidityOut,
 
-        paraBlockHeight: blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          blockHeader.height
-        ).height,
-      })
-    );
+      paraBlockHeight: blockHeader.height,
+      relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+        blockHeader.height
+      ).height,
+    });
+
+    poolsToSave.push(newPoolEntity);
+
+    ctx.batchState.state.aavepools.set(newPoolEntity.id, newPoolEntity);
   }
 
   await ctx.store.upsert(poolsToSave);
@@ -74,6 +76,10 @@ export async function prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBloc
         orderedNumbers[0],
         orderedNumbers[orderedNumbers.length - 1]
       ),
+    },
+    relations: {
+      reserveAsset: true,
+      aToken: true,
     },
   });
 

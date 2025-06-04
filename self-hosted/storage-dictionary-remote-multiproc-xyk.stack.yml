@@ -36,7 +36,7 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-improve-pools-historical-data-aggregation
+  image: ghcr.io/mckrava/storage-dictionary-indexer:df2f2c0fcc69c7c265299efb176e37fe9c84c642
   networks:
     - default
   deploy:
@@ -47,61 +47,61 @@ x-common-processor-setup: &common-processor-setup
 # ========================== XYK SERVICES SETUP ===========================
 # =================================================================================
 x-xyk-services-setup: &xyk-services-setup
-  xyk-stor-dict-proc-1:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 3934550
-      PROCESS_TO_BLOCK: 4748000
-      PROCESS_STABLEPOOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_1"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
-
-  xyk-stor-dict-proc-2:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 4748001
-      PROCESS_TO_BLOCK: 5561000
-      PROCESS_STABLEPOOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_2"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
-
-  xyk-stor-dict-proc-3:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 5561001
-      PROCESS_TO_BLOCK: 6374000
-      PROCESS_STABLEPOOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_3"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
-
-  xyk-stor-dict-proc-4:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 6374001
-      PROCESS_TO_BLOCK: 7187000
-      PROCESS_STABLEPOOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_4"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
+#  xyk-stor-dict-proc-1:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
+#      PROCESS_FROM_BLOCK: 3934550
+#      PROCESS_TO_BLOCK: 4748000
+#      PROCESS_STABLEPOOLS: "true"
+#      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_1"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+#    command:
+#      - sh
+#      - -c
+#      - "sleep 10 && node lib/main.js"
+#
+#  xyk-stor-dict-proc-2:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
+#      PROCESS_FROM_BLOCK: 4748001
+#      PROCESS_TO_BLOCK: 5561000
+#      PROCESS_STABLEPOOLS: "true"
+#      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_2"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+#    command:
+#      - sh
+#      - -c
+#      - "sleep 10 && node lib/main.js"
+#
+#  xyk-stor-dict-proc-3:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
+#      PROCESS_FROM_BLOCK: 5561001
+#      PROCESS_TO_BLOCK: 6374000
+#      PROCESS_STABLEPOOLS: "true"
+#      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_3"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+#    command:
+#      - sh
+#      - -c
+#      - "sleep 10 && node lib/main.js"
+#
+#  xyk-stor-dict-proc-4:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
+#      PROCESS_FROM_BLOCK: 6374001
+#      PROCESS_TO_BLOCK: 7187000
+#      PROCESS_STABLEPOOLS: "true"
+#      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_4"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+#    command:
+#      - sh
+#      - -c
+#      - "sleep 10 && node lib/main.js"
 
   xyk-stor-dict-proc-5:
     <<: *common-processor-setup
@@ -109,27 +109,45 @@ x-xyk-services-setup: &xyk-services-setup
       <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
       PROCESS_FROM_BLOCK: 7187001
       PROCESS_TO_BLOCK: -1
-      PROCESS_STABLEPOOLS: "true"
+      PROCESS_XYK_POOLS: "true"
       STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      PROCESS_ONLY_MISSED_BLOCKS: "false"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
     command:
       - sh
       - -c
       - "sleep 10 && node lib/main.js"
 
-  xyk-stor-dict-proc-assets-tracker:
+  xyk-stor-dict-proc-ensure-2:
     <<: *common-processor-setup
     environment:
-      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 7187001
+      <<: [ *processor-unit-envs, *storage-dictionary-xyk-db-creds ]
+      PROCESS_FROM_BLOCK: 3934550
       PROCESS_TO_BLOCK: -1
-      STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
-      ASSETS_TRACKER_PROCESSOR: "true"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+      PROCESS_XYK_POOLS: "true"
+      PROCESS_ONLY_MISSED_BLOCKS: "true"
+      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_ensure_2"
+      INDEXER_MAX_SUB_BATCH_SIZE: 3000
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
     command:
       - sh
       - -c
       - "sleep 10 && node lib/main.js"
+
+#  xyk-stor-dict-proc-assets-tracker:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
+#      PROCESS_FROM_BLOCK: 7187001
+#      PROCESS_TO_BLOCK: -1
+#      STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+#      ASSETS_TRACKER_PROCESSOR: "true"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+#    command:
+#      - sh
+#      - -c
+#      - "sleep 10 && node lib/main.js"
 
 # =================================================================================
 # ============================ M A I N   S E T U P ================================

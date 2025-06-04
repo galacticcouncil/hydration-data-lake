@@ -85,6 +85,7 @@ export async function handleOmnipoolStorage(
     relayBlockHeight:
       relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber || 0,
   });
+  ctx.batchState.state.omnipools.set(newOmnipoolEntity.id, newOmnipoolEntity);
 
   await ctx.store.save(newOmnipoolEntity);
 
@@ -105,6 +106,10 @@ export async function handleOmnipoolStorage(
         relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
         0,
     });
+    ctx.batchState.state.omnipoolAssetsData.set(
+      newAssetDataEntity.id,
+      newAssetDataEntity
+    );
 
     omnipoolAssetsData.set(newAssetDataEntity.id, newAssetDataEntity);
   }
@@ -125,7 +130,7 @@ export async function prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBloc
     .map((b) => b.header.height)
     .sort((a, b) => a - b);
 
-  const records = await ctx.store.find(Omnipool, {
+  const pools = await ctx.store.find(Omnipool, {
     where: {
       paraBlockHeight: Between(
         orderedNumbers[0],
@@ -134,9 +139,22 @@ export async function prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBloc
     },
   });
 
-  ctx.batchState.state.omnipools = new Map(records.map((r) => [r.id, r]));
+  const assets = await ctx.store.find(OmnipoolAssetData, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+    relations: { pool: true },
+  });
+
+  ctx.batchState.state.omnipools = new Map(pools.map((r) => [r.id, r]));
+  ctx.batchState.state.omnipoolAssetsData = new Map(
+    assets.map((r) => [r.id, r])
+  );
   ctx.batchState.state.omnipoolsProcessedBlocks = new Set(
-    records.map((r) => r.paraBlockHeight)
+    pools.map((r) => r.paraBlockHeight)
   );
 
   console.log(

@@ -90,7 +90,10 @@ export async function handleEmaOracleHistoricalData(
       })
     );
   }
-
+  ctx.batchState.state.emaOracles.set(
+    oracleHistDataEntity.id,
+    oracleHistDataEntity
+  );
   await ctx.store.upsert(oracleHistDataEntity);
 }
 

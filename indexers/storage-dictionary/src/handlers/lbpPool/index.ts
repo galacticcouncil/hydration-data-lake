@@ -75,6 +75,8 @@ export async function handleLbpPoolsStorage(
       repayTarget: poolData.repayTarget,
     });
 
+    ctx.batchState.state.lbpPools.set(newPoolEntity.id, newPoolEntity);
+
     const assetAData = new LbppoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetAId}-${currentBlockHeader.height}`,
       paraBlockHeight: currentBlockHeader.height,
@@ -101,6 +103,10 @@ export async function handleLbpPoolsStorage(
           `${poolData.poolAddress}-${poolData.assetBId}`
         )?.balances ?? fallbackAccountBalances,
     });
+
+    ctx.batchState.state.lbpPoolAssetsData.set(assetAData.id, assetAData);
+    ctx.batchState.state.lbpPoolAssetsData.set(assetBData.id, assetBData);
+
     lbpPools.set(newPoolEntity.id, newPoolEntity);
     lbpPoolAssetsData.set(assetAData.id, assetAData);
     lbpPoolAssetsData.set(assetBData.id, assetBData);
@@ -122,7 +128,7 @@ export async function prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlock
     .map((b) => b.header.height)
     .sort((a, b) => a - b);
 
-  const records = await ctx.store.find(Lbppool, {
+  const pools = await ctx.store.find(Lbppool, {
     where: {
       paraBlockHeight: Between(
         orderedNumbers[0],
@@ -130,10 +136,22 @@ export async function prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlock
       ),
     },
   });
+  const assets = await ctx.store.find(LbppoolAssetsData, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+    relations: { pool: true },
+  });
 
-  ctx.batchState.state.lbpPools = new Map(records.map((r) => [r.id, r]));
+  ctx.batchState.state.lbpPools = new Map(pools.map((r) => [r.id, r]));
+  ctx.batchState.state.lbpPoolAssetsData = new Map(
+    assets.map((r) => [r.id, r])
+  );
   ctx.batchState.state.lbpPoolsProcessedBlocks = new Set(
-    records.map((r) => r.paraBlockHeight)
+    pools.map((r) => r.paraBlockHeight)
   );
   console.log(
     `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 

@@ -133,7 +133,7 @@ deploy:
         PROCESS_FROM_BLOCK: 3934550
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: xyk_pool__batch_proc_ensure_2
-        INDEXER_MAX_SUB_BATCH_SIZE: 3000
+        INDEXER_MAX_SUB_BATCH_SIZE: 6000
         ASSETS_TRACKER_PROCESSOR: false
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_pool__batch_proc_5
 #    - name: xyk-pool-assets-tracker-proc
@@ -172,7 +172,7 @@ scale:
       profile: medium
       storage: 1200G
   processor:
-    profile: medium
-  api:
     profile: large
+  api:
+    profile: small
     replicas: 2

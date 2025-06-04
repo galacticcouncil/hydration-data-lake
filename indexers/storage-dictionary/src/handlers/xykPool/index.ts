@@ -74,6 +74,8 @@ export async function handleXykPoolsStorage(
         null,
     });
 
+    ctx.batchState.state.xykPools.set(newPoolEntity.id, newPoolEntity);
+
     const assetAData = new XykpoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetAId}-${currentBlockHeader.height}`,
       paraBlockHeight: currentBlockHeader.height,
@@ -100,6 +102,10 @@ export async function handleXykPoolsStorage(
           `${poolData.poolAddress}-${poolData.assetBId}`
         )?.balances ?? fallbackAccountBalances,
     });
+
+    ctx.batchState.state.xykPoolAssetsData.set(assetAData.id, assetAData);
+    ctx.batchState.state.xykPoolAssetsData.set(assetBData.id, assetBData);
+
     xykPools.set(newPoolEntity.id, newPoolEntity);
     xykPoolAssetsData.set(assetAData.id, assetAData);
     xykPoolAssetsData.set(assetBData.id, assetBData);
@@ -122,7 +128,7 @@ export async function prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlock
     .map((b) => b.header.height)
     .sort((a, b) => a - b);
 
-  const records = await ctx.store.find(Xykpool, {
+  const pools = await ctx.store.find(Xykpool, {
     where: {
       paraBlockHeight: Between(
         orderedNumbers[0],
@@ -131,9 +137,22 @@ export async function prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlock
     },
   });
 
-  ctx.batchState.state.xykPools = new Map(records.map((r) => [r.id, r]));
+  const assets = await ctx.store.find(XykpoolAssetsData, {
+    where: {
+      paraBlockHeight: Between(
+        orderedNumbers[0],
+        orderedNumbers[orderedNumbers.length - 1]
+      ),
+    },
+    relations: { pool: true },
+  });
+
+  ctx.batchState.state.xykPools = new Map(pools.map((r) => [r.id, r]));
+  ctx.batchState.state.xykPoolAssetsData = new Map(
+    assets.map((r) => [r.id, r])
+  );
   ctx.batchState.state.xykPoolsProcessedBlocks = new Set(
-    records.map((r) => r.paraBlockHeight)
+    pools.map((r) => r.paraBlockHeight)
   );
   console.log(
     `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 

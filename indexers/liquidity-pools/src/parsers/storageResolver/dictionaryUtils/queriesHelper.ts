@@ -12,6 +12,7 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { pipe, tap, map } from 'wonka';
+import { AppConfig } from '../../../appConfig';
 
 const responsePreprocessingExchange: Exchange =
   ({ forward }) =>
@@ -49,29 +50,20 @@ export class QueriesHelper {
   private gqlClientUrlsMap: Map<ProcessingTopic, string>;
   private gqlClients: Map<ProcessingTopic, GqlClient> = new Map();
 
-  constructor({ batchCtx }: { batchCtx: SqdProcessorContext<Store> }) {
+  constructor({ appConfig }: { appConfig: AppConfig }) {
     this.gqlClientUrlsMap = new Map([
-      [ProcessingTopic.XYK, batchCtx.appConfig.STORAGE_DICTIONARY_XYKPOOL_URL],
-      [ProcessingTopic.LBP, batchCtx.appConfig.STORAGE_DICTIONARY_LBPPOOL_URL],
-      [
-        ProcessingTopic.OMNIPOOL,
-        batchCtx.appConfig.STORAGE_DICTIONARY_OMNIPOOL_URL,
-      ],
-      [
-        ProcessingTopic.STABLESWAP,
-        batchCtx.appConfig.STORAGE_DICTIONARY_STABLEPOOL_URL,
-      ],
-      [
-        ProcessingTopic.AAVE,
-        batchCtx.appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
-      ],
+      [ProcessingTopic.XYK, appConfig.STORAGE_DICTIONARY_XYKPOOL_URL],
+      [ProcessingTopic.LBP, appConfig.STORAGE_DICTIONARY_LBPPOOL_URL],
+      [ProcessingTopic.OMNIPOOL, appConfig.STORAGE_DICTIONARY_OMNIPOOL_URL],
+      [ProcessingTopic.STABLESWAP, appConfig.STORAGE_DICTIONARY_STABLEPOOL_URL],
+      [ProcessingTopic.AAVE, appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL],
       [
         ProcessingTopic.ASSET_HIST_DATA,
-        batchCtx.appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
+        appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
       ],
       [
         ProcessingTopic.EMA_ORACLE,
-        batchCtx.appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
+        appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
       ],
     ]);
   }
@@ -101,7 +93,7 @@ export class QueriesHelper {
     return client;
   }
 
-  protected dictionaryGqlRequest<
+  dictionaryGqlRequest<
     Data = any,
     Variables extends AnyVariables = AnyVariables,
   >({
@@ -147,7 +139,7 @@ export class QueriesHelper {
     }
   }
 
-  protected getGenericFilterParams<T>(
+  getGenericFilterParams<T>(
     filtersSrc: Map<number, { blockHeader: BlockHeader; ids: Set<T> }>
   ) {
     const resp: { ids: T[]; fromBlockNumber: number; toBlockNumber: number } = {

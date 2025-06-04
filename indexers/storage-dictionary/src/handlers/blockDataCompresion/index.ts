@@ -22,76 +22,120 @@ export async function compressBlockStorage(
 ): Promise<void> {
   if (!ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS) return;
 
-  let lbppools = await ctx.store.find(Lbppool, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-  });
-  let lbppoolAssets = await ctx.store.find(LbppoolAssetsData, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-    relations: { pool: true },
-  });
+  // let lbppools = await ctx.store.find(Lbppool, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  // });
+  // let lbppoolAssets = await ctx.store.find(LbppoolAssetsData, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  //   relations: { pool: true },
+  // });
+  //
+  // let xykPools = await ctx.store.find(Xykpool, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  // });
+  // let xykAssets = await ctx.store.find(XykpoolAssetsData, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  //   relations: { pool: true },
+  // });
+  //
+  // let stableswaps = await ctx.store.find(Stableswap, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  // });
+  // let stableswapAssets = await ctx.store.find(StableswapAssetData, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  //   relations: { pool: true },
+  // });
+  //
+  // let omnipools = await ctx.store.find(Omnipool, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  // });
+  // let omnipoolAssets = await ctx.store.find(OmnipoolAssetData, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  //   relations: { pool: true },
+  // });
+  //
+  // let aavepools = await ctx.store.find(Aavepool, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  //   relations: {
+  //     reserveAsset: true,
+  //     aToken: true,
+  //   },
+  // });
+  //
+  // let emaOraces = await ctx.store.find(EmaOracle, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  // });
+  //
+  // let assetHistoricalData = await ctx.store.find(AssetHistoricalData, {
+  //   where: {
+  //     paraBlockHeight: currentBlockHeader.height,
+  //   },
+  //   relations: { asset: true },
+  // });
 
-  let xykPools = await ctx.store.find(Xykpool, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-  });
-  let xykAssets = await ctx.store.find(XykpoolAssetsData, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-    relations: { pool: true },
-  });
+  let lbppools = [...ctx.batchState.state.lbpPools.values()].filter(
+    (e) => e.paraBlockHeight === currentBlockHeader.height
+  );
 
-  let stableswaps = await ctx.store.find(Stableswap, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-  });
-  let stableswapAssets = await ctx.store.find(StableswapAssetData, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-    relations: { pool: true },
-  });
+  let lbppoolAssets = [
+    ...ctx.batchState.state.lbpPoolAssetsData.values(),
+  ].filter((e) => e.paraBlockHeight === currentBlockHeader.height);
 
-  let omnipools = await ctx.store.find(Omnipool, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-  });
-  let omnipoolAssets = await ctx.store.find(OmnipoolAssetData, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-    relations: { pool: true },
-  });
+  let xykPools = [...ctx.batchState.state.xykPools.values()].filter(
+    (e) => e.paraBlockHeight === currentBlockHeader.height
+  );
 
-  let aavepools = await ctx.store.find(Aavepool, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-    relations: {
-      reserveAsset: true,
-      aToken: true,
-    },
-  });
+  let xykAssets = [...ctx.batchState.state.xykPoolAssetsData.values()].filter(
+    (e) => e.paraBlockHeight === currentBlockHeader.height
+  );
 
-  let emaOraces = await ctx.store.find(EmaOracle, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-  });
+  let stableswaps = [...ctx.batchState.state.stablepools.values()].filter(
+    (e) => e.paraBlockHeight === currentBlockHeader.height
+  );
 
-  let assetHistoricalData = await ctx.store.find(AssetHistoricalData, {
-    where: {
-      paraBlockHeight: currentBlockHeader.height,
-    },
-    relations: { asset: true },
-  });
+  let stableswapAssets = [
+    ...ctx.batchState.state.stablepoolAssetsData.values(),
+  ].filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
+  let omnipools = [...ctx.batchState.state.omnipools.values()].filter(
+    (e) => e.paraBlockHeight === currentBlockHeader.height
+  );
+
+  let omnipoolAssets = [
+    ...ctx.batchState.state.omnipoolAssetsData.values(),
+  ].filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
+  let aavepools = [...ctx.batchState.state.aavepools.values()].filter(
+    (e) => e.paraBlockHeight === currentBlockHeader.height
+  );
+
+  let emaOraces = [...ctx.batchState.state.emaOracles.values()].filter(
+    (e) => e.paraBlockHeight === currentBlockHeader.height
+  );
+
+  let assetHistoricalData = [
+    ...ctx.batchState.state.assetHistoricalDataItems.values(),
+  ].filter((e) => e.paraBlockHeight === currentBlockHeader.height);
 
   for (const asset of xykAssets) {
     // @ts-ignore

@@ -111,7 +111,10 @@ export async function handleAssetsStorage(
         currentBlockHeader.height
       ).height,
     });
-
+    ctx.batchState.state.assetHistoricalDataItems.set(
+      newAssetHistoricalData.id,
+      newAssetHistoricalData
+    );
     allAssetHistoricalData.push(newAssetHistoricalData);
   }
 
@@ -138,6 +141,7 @@ export async function prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMisse
         orderedNumbers[orderedNumbers.length - 1]
       ),
     },
+    relations: { asset: true },
   });
 
   ctx.batchState.state.assetHistoricalDataItems = new Map(
