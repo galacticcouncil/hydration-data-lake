@@ -24,7 +24,7 @@ deploy:
         NODE_ENV: 'production'
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
         UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-        INDEXING_IS_PAUSED: false
+        INDEXING_IS_PAUSED: true
         ALL_IN_ONE_PROCESSOR_MODE: false
         IS_CORE_PROCESSOR: true
         IS_SPOT_PRICES_PROCESSOR: false
@@ -57,7 +57,7 @@ deploy:
         NODE_ENV: 'production'
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
         UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-        INDEXING_IS_PAUSED: false
+        INDEXING_IS_PAUSED: true
         ALL_IN_ONE_PROCESSOR_MODE: false
         IS_CORE_PROCESSOR: false
         IS_SPOT_PRICES_PROCESSOR: true
@@ -91,7 +91,7 @@ scale:
   dedicated: false
   addons:
     postgres:
-      profile: medium
+      profile: large
       storage: 400G
   processor:
     profile: large

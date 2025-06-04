@@ -119,19 +119,26 @@ export class QueriesHelper {
   async *fetchAllPages<R = []>({
     requestPromise,
     limit,
+    topic,
   }: {
     requestPromise: (args: {
       pageSize: number;
       offset: number;
+      topic: ProcessingTopic;
     }) => Promise<{ totalCount: number; data: R }>;
     limit: number;
+    topic: ProcessingTopic;
   }) {
     const pageSize = limit;
     let offset = 0;
     let totalCount = Infinity; // Set to a high number initially to enter the loop
 
     while (offset < totalCount) {
-      const responseWithTotal = await requestPromise({ pageSize, offset });
+      const responseWithTotal = await requestPromise({
+        pageSize,
+        offset,
+        topic,
+      });
 
       yield responseWithTotal.data;
 

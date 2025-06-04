@@ -2374,6 +2374,298 @@ input AavepoolHavingVariancePopulationInput {
   relayBlockHeight: HavingIntFilter
 }
 
+"""A connection to a list of `BlockCompressedDatum` values."""
+type BlockCompressedDataConnection {
+  """A list of `BlockCompressedDatum` objects."""
+  nodes: [BlockCompressedDatum]!
+
+  """
+  A list of edges which contains the `BlockCompressedDatum` and cursor to aid in pagination.
+  """
+  edges: [BlockCompressedDataEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `BlockCompressedDatum` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: BlockCompressedDatumAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `BlockCompressedDatum` for these aggregates.
+    """
+    groupBy: [BlockCompressedDataGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: BlockCompressedDataHavingInput
+  ): [BlockCompressedDatumAggregates!]
+}
+
+type BlockCompressedDatum {
+  id: String!
+  algo: String!
+  compStrFormat: String!
+  data: String!
+  paraBlockHeight: Int!
+}
+
+"""A `BlockCompressedDatum` edge in the connection."""
+type BlockCompressedDataEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `BlockCompressedDatum` at the end of the edge."""
+  node: BlockCompressedDatum
+}
+
+type BlockCompressedDatumAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: BlockCompressedDatumSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: BlockCompressedDatumDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: BlockCompressedDatumMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: BlockCompressedDatumMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: BlockCompressedDatumAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: BlockCompressedDatumStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: BlockCompressedDatumStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: BlockCompressedDatumVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: BlockCompressedDatumVariancePopulationAggregates
+}
+
+type BlockCompressedDatumSumAggregates {
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type BlockCompressedDatumDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of algo across the matching connection"""
+  algo: BigInt
+
+  """Distinct count of compStrFormat across the matching connection"""
+  compStrFormat: BigInt
+
+  """Distinct count of data across the matching connection"""
+  data: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+}
+
+type BlockCompressedDatumMinAggregates {
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type BlockCompressedDatumMaxAggregates {
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type BlockCompressedDatumAverageAggregates {
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type BlockCompressedDatumStddevSampleAggregates {
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type BlockCompressedDatumStddevPopulationAggregates {
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type BlockCompressedDatumVarianceSampleAggregates {
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type BlockCompressedDatumVariancePopulationAggregates {
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `BlockCompressedDatum` for usage during aggregation.
+"""
+enum BlockCompressedDataGroupBy {
+  ALGO
+  COMP_STR_FORMAT
+  DATA
+  PARA_BLOCK_HEIGHT
+}
+
+"""Conditions for `BlockCompressedDatum` aggregates."""
+input BlockCompressedDataHavingInput {
+  AND: [BlockCompressedDataHavingInput!]
+  OR: [BlockCompressedDataHavingInput!]
+  sum: BlockCompressedDataHavingSumInput
+  distinctCount: BlockCompressedDataHavingDistinctCountInput
+  min: BlockCompressedDataHavingMinInput
+  max: BlockCompressedDataHavingMaxInput
+  average: BlockCompressedDataHavingAverageInput
+  stddevSample: BlockCompressedDataHavingStddevSampleInput
+  stddevPopulation: BlockCompressedDataHavingStddevPopulationInput
+  varianceSample: BlockCompressedDataHavingVarianceSampleInput
+  variancePopulation: BlockCompressedDataHavingVariancePopulationInput
+}
+
+input BlockCompressedDataHavingSumInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input BlockCompressedDataHavingDistinctCountInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input BlockCompressedDataHavingMinInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input BlockCompressedDataHavingMaxInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input BlockCompressedDataHavingAverageInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input BlockCompressedDataHavingStddevSampleInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input BlockCompressedDataHavingStddevPopulationInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input BlockCompressedDataHavingVarianceSampleInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input BlockCompressedDataHavingVariancePopulationInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `BlockCompressedDatum`."""
+enum BlockCompressedDataOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ALGO_ASC
+  ALGO_DESC
+  COMP_STR_FORMAT_ASC
+  COMP_STR_FORMAT_DESC
+  DATA_ASC
+  DATA_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `BlockCompressedDatum` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input BlockCompressedDatumCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `algo` field."""
+  algo: String
+
+  """Checks for equality with the object’s `compStrFormat` field."""
+  compStrFormat: String
+
+  """Checks for equality with the object’s `data` field."""
+  data: String
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+}
+
+"""
+A filter to be used against `BlockCompressedDatum` object types. All fields are combined with a logical ‘and.’
+"""
+input BlockCompressedDatumFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `algo` field."""
+  algo: StringFilter
+
+  """Filter by the object’s `compStrFormat` field."""
+  compStrFormat: StringFilter
+
+  """Filter by the object’s `data` field."""
+  data: StringFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [BlockCompressedDatumFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [BlockCompressedDatumFilter!]
+
+  """Negates the expression."""
+  not: BlockCompressedDatumFilter
+}
+
 """A connection to a list of `EmaOracle` values."""
 type EmaOraclesConnection {
   """A list of `EmaOracle` objects."""
@@ -7895,6 +8187,40 @@ type Query {
     filter: AssetHistoricalDatumFilter
   ): AssetHistoricalDataConnection
 
+  """Reads and enables pagination through a set of `BlockCompressedDatum`."""
+  blockCompressedData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `BlockCompressedDatum`."""
+    orderBy: [BlockCompressedDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BlockCompressedDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: BlockCompressedDatumFilter
+  ): BlockCompressedDataConnection
+
   """Reads and enables pagination through a set of `EmaOracle`."""
   emaOracles(
     """Only read the first `n` values of the set."""
@@ -8271,6 +8597,7 @@ type Query {
   aavepool(id: String!): Aavepool
   asset(id: String!): Asset
   assetHistoricalDatum(id: String!): AssetHistoricalDatum
+  blockCompressedDatum(id: String!): BlockCompressedDatum
   emaOracle(id: String!): EmaOracle
   lbppool(id: String!): Lbppool
   lbppoolAssetsDatum(id: String!): LbppoolAssetsDatum

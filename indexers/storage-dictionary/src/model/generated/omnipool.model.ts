@@ -22,6 +22,9 @@ export class Omnipool {
   @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new Tradability(undefined, marshal.nonNull(obj))}, nullable: false})
   hubAssetTradability!: Tradability
 
+  @OneToMany_(() => OmnipoolAssetData, e => e.pool)
+  assets!: OmnipoolAssetData[]
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
@@ -29,7 +32,4 @@ export class Omnipool {
   @Index_()
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
-
-  @OneToMany_(() => OmnipoolAssetData, e => e.pool)
-  assets!: OmnipoolAssetData[]
 }

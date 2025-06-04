@@ -1,50 +1,20 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
-  AccountBalances as AccountBalancesGql,
-  GetOmnipoolBlocksStorageState,
-  GetOmnipoolBlocksStorageStateQuery,
-  GetOmnipoolBlocksStorageStateQueryVariables,
-  GetStableswapBlocksStorageState,
-  GetStableswapBlocksStorageStateQuery,
-  GetStableswapBlocksStorageStateQueryVariables,
-  GetXykpoolBlocksStorageState,
-  GetXykpoolBlocksStorageStateQuery,
-  GetXykpoolBlocksStorageStateQueryVariables,
-  InputMaybe,
-  OmnipoolsOrderBy,
-  Omnipool as OmnipoolGql,
-  OmnipoolFilter,
-  Stableswap as StableswapGql,
-  StableswapFilter,
-  StableswapsOrderBy,
-  Xykpool as XykpoolGlq,
-  XykpoolFilter,
-  XykpoolsOrderBy,
-  Lbppool as LbpPoolGlq,
-  LbppoolFilter,
-  LbppoolsOrderBy,
   Aavepool as AavepoolGlq,
-  AavepoolFilter,
-  AavepoolsOrderBy,
-  GetLbppoolBlocksStorageStateQuery,
-  GetLbppoolBlocksStorageStateQueryVariables,
-  GetLbppoolBlocksStorageState,
-  GetAavePoolBlocksStorageStateQuery,
-  GetAavePoolBlocksStorageStateQueryVariables,
-  GetAavePoolBlocksStorageState,
-  EmaOracleFilter,
-  GetEmaOracleBlocksStorageStateQuery,
-  GetEmaOracleBlocksStorageStateQueryVariables,
-  GetEmaOracleBlocksStorageState,
-  EmaOraclesOrderBy,
-  AssetHistoricalDatumFilter,
-  GetAssetHistDataBlocksStorageStateQuery,
-  GetAssetHistDataBlocksStorageStateQueryVariables,
-  GetAssetHistDataBlocksStorageState,
-  AssetHistoricalDataOrderBy,
-  EmaOracle as EmaOracleGql,
+  AccountBalances as AccountBalancesGql,
   AssetHistoricalDatum as AssetHistoricalDatumGql,
+  BlockCompressedDataOrderBy,
+  BlockCompressedDatumFilter,
+  EmaOracle as EmaOracleGql,
+  GetBlockCompressedData,
+  GetBlockCompressedDataQuery,
+  GetBlockCompressedDataQueryVariables,
+  InputMaybe,
+  Lbppool as LbpPoolGlq,
+  Omnipool as OmnipoolGql,
+  Stableswap as StableswapGql,
+  Xykpool as XykpoolGlq,
 } from './apiTypes/types';
 import { QueriesHelper } from './queriesHelper';
 import {
@@ -64,7 +34,6 @@ import {
   GetPoolAssetInfoInput,
   LbpGetPoolDataInput,
   LbpPoolData,
-  LbpWeightCurveType,
   OmnipoolAssetData,
   OmnipoolAssetTradability,
   OmnipoolData,
@@ -93,7 +62,11 @@ import {
   AaveTradeExecutorPoolDataWithPoolId,
   AaveTradeExecutorPoolsInput,
 } from '../../runtimeApiResolver/types';
-import { hexToString } from '@polkadot/util';
+import sizeof from 'object-sizeof';
+import {
+  BlockCompressedDataKey,
+  encodeBlockCompressedData,
+} from './helpers/blockCompressedDataHandler';
 
 export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
   ? XykpoolGlq
@@ -172,11 +145,302 @@ export class StorageDictionaryManager extends QueriesHelper {
     blockNumberFrom: number;
     blockNumberTo: number;
   }) {
-    const fetchAllAssetHistDataPaginated = async ({
+    // const fetchAllAssetHistDataPaginated = async ({
+    //   pageSize,
+    //   offset,
+    // }: PaginationConfig) => {
+    //   const filter: InputMaybe<AssetHistoricalDatumFilter> = {
+    //     paraBlockHeight: {
+    //       greaterThanOrEqualTo: args.blockNumberFrom,
+    //     },
+    //     and: [
+    //       {
+    //         paraBlockHeight: {
+    //           lessThanOrEqualTo: args.blockNumberTo,
+    //         },
+    //       },
+    //     ],
+    //   };
+    //
+    //   const resp = await this.dictionaryGqlRequest<
+    //     GetAssetHistDataBlocksStorageStateQuery,
+    //     GetAssetHistDataBlocksStorageStateQueryVariables
+    //   >({
+    //     query: GetAssetHistDataBlocksStorageState,
+    //     variables: {
+    //       filter,
+    //       orderBy: AssetHistoricalDataOrderBy.ParaBlockHeightAsc,
+    //       first: pageSize,
+    //       offset,
+    //     },
+    //     dictName: ProcessingTopic.ASSET_HIST_DATA,
+    //   });
+    //
+    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
+    //
+    //   return {
+    //     data:
+    //       resp.data && resp.data.assetHistoricalData
+    //         ? resp.data.assetHistoricalData.nodes
+    //         : [],
+    //     totalCount:
+    //       resp.data && resp.data.assetHistoricalData
+    //         ? resp.data.assetHistoricalData.totalCount
+    //         : 0,
+    //   };
+    // };
+    //
+    // const fetchAllEmaOraclesPaginated = async ({
+    //   pageSize,
+    //   offset,
+    // }: PaginationConfig) => {
+    //   const filter: InputMaybe<EmaOracleFilter> = {
+    //     paraBlockHeight: {
+    //       greaterThanOrEqualTo: args.blockNumberFrom,
+    //     },
+    //     and: [
+    //       {
+    //         paraBlockHeight: {
+    //           lessThanOrEqualTo: args.blockNumberTo,
+    //         },
+    //       },
+    //     ],
+    //   };
+    //
+    //   const resp = await this.dictionaryGqlRequest<
+    //     GetEmaOracleBlocksStorageStateQuery,
+    //     GetEmaOracleBlocksStorageStateQueryVariables
+    //   >({
+    //     query: GetEmaOracleBlocksStorageState,
+    //     variables: {
+    //       filter,
+    //       orderBy: EmaOraclesOrderBy.ParaBlockHeightAsc,
+    //       first: pageSize,
+    //       offset,
+    //     },
+    //     dictName: ProcessingTopic.EMA_ORACLE,
+    //   });
+    //
+    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
+    //
+    //   return {
+    //     data:
+    //       resp.data && resp.data.emaOracles ? resp.data.emaOracles.nodes : [],
+    //     totalCount:
+    //       resp.data && resp.data.emaOracles
+    //         ? resp.data.emaOracles.totalCount
+    //         : 0,
+    //   };
+    // };
+    //
+    // const fetchAllAavepoolsPaginated = async ({
+    //   pageSize,
+    //   offset,
+    // }: PaginationConfig) => {
+    //   const filter: InputMaybe<AavepoolFilter> = {
+    //     paraBlockHeight: {
+    //       greaterThanOrEqualTo: args.blockNumberFrom,
+    //     },
+    //     and: [
+    //       {
+    //         paraBlockHeight: {
+    //           lessThanOrEqualTo: args.blockNumberTo,
+    //         },
+    //       },
+    //     ],
+    //   };
+    //
+    //   const resp = await this.dictionaryGqlRequest<
+    //     GetAavePoolBlocksStorageStateQuery,
+    //     GetAavePoolBlocksStorageStateQueryVariables
+    //   >({
+    //     query: GetAavePoolBlocksStorageState,
+    //     variables: {
+    //       filter,
+    //       orderBy: AavepoolsOrderBy.ParaBlockHeightAsc,
+    //       first: pageSize,
+    //       offset,
+    //     },
+    //     dictName: ProcessingTopic.AAVE,
+    //   });
+    //
+    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
+    //
+    //   return {
+    //     data: resp.data && resp.data.aavepools ? resp.data.aavepools.nodes : [],
+    //     totalCount:
+    //       resp.data && resp.data.aavepools ? resp.data.aavepools.totalCount : 0,
+    //   };
+    // };
+    //
+    // const fetchAllLbpPoolsPaginated = async ({
+    //   pageSize,
+    //   offset,
+    // }: PaginationConfig) => {
+    //   const filter: InputMaybe<LbppoolFilter> = {
+    //     paraBlockHeight: {
+    //       greaterThanOrEqualTo: args.blockNumberFrom,
+    //     },
+    //     and: [
+    //       {
+    //         paraBlockHeight: {
+    //           lessThanOrEqualTo: args.blockNumberTo,
+    //         },
+    //       },
+    //     ],
+    //   };
+    //
+    //   const resp = await this.dictionaryGqlRequest<
+    //     GetLbppoolBlocksStorageStateQuery,
+    //     GetLbppoolBlocksStorageStateQueryVariables
+    //   >({
+    //     query: GetLbppoolBlocksStorageState,
+    //     variables: {
+    //       filter,
+    //       orderBy: LbppoolsOrderBy.ParaBlockHeightAsc,
+    //       first: pageSize,
+    //       offset,
+    //     },
+    //     dictName: ProcessingTopic.LBP,
+    //   });
+    //
+    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
+    //
+    //   return {
+    //     data: resp.data && resp.data.lbppools ? resp.data.lbppools.nodes : [],
+    //     totalCount:
+    //       resp.data && resp.data.lbppools ? resp.data.lbppools.totalCount : 0,
+    //   };
+    // };
+    //
+    // const fetchAllXykPoolsPaginated = async ({
+    //   pageSize,
+    //   offset,
+    // }: PaginationConfig) => {
+    //   const filter: InputMaybe<XykpoolFilter> = {
+    //     paraBlockHeight: {
+    //       greaterThanOrEqualTo: args.blockNumberFrom,
+    //     },
+    //     and: [
+    //       {
+    //         paraBlockHeight: {
+    //           lessThanOrEqualTo: args.blockNumberTo,
+    //         },
+    //       },
+    //     ],
+    //   };
+    //
+    //   const resp = await this.dictionaryGqlRequest<
+    //     GetXykpoolBlocksStorageStateQuery,
+    //     GetXykpoolBlocksStorageStateQueryVariables
+    //   >({
+    //     query: GetXykpoolBlocksStorageState,
+    //     variables: {
+    //       filter,
+    //       orderBy: XykpoolsOrderBy.ParaBlockHeightAsc,
+    //       first: pageSize,
+    //       offset,
+    //     },
+    //     dictName: ProcessingTopic.XYK,
+    //   });
+    //
+    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
+    //
+    //   return {
+    //     data: resp.data && resp.data.xykpools ? resp.data.xykpools.nodes : [],
+    //     totalCount:
+    //       resp.data && resp.data.xykpools ? resp.data.xykpools.totalCount : 0,
+    //   };
+    // };
+    //
+    // const fetchAllOmnipoolsPaginated = async ({
+    //   pageSize,
+    //   offset,
+    // }: PaginationConfig) => {
+    //   const filter: InputMaybe<OmnipoolFilter> = {
+    //     paraBlockHeight: {
+    //       greaterThanOrEqualTo: args.blockNumberFrom,
+    //     },
+    //     and: [
+    //       {
+    //         paraBlockHeight: {
+    //           lessThanOrEqualTo: args.blockNumberTo,
+    //         },
+    //       },
+    //     ],
+    //   };
+    //   const resp = await this.dictionaryGqlRequest<
+    //     GetOmnipoolBlocksStorageStateQuery,
+    //     GetOmnipoolBlocksStorageStateQueryVariables
+    //   >({
+    //     query: GetOmnipoolBlocksStorageState,
+    //     variables: {
+    //       filter,
+    //       orderBy: OmnipoolsOrderBy.ParaBlockHeightAsc,
+    //       first: pageSize,
+    //       offset,
+    //     },
+    //     dictName: ProcessingTopic.OMNIPOOL,
+    //   });
+    //
+    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
+    //
+    //   return {
+    //     data: resp.data && resp.data.omnipools ? resp.data.omnipools.nodes : [],
+    //     totalCount:
+    //       resp.data && resp.data.omnipools ? resp.data.omnipools.totalCount : 0,
+    //   };
+    // };
+    //
+    // const fetchAllStablepoolAssetsPaginated = async ({
+    //   pageSize,
+    //   offset,
+    // }: PaginationConfig) => {
+    //   const filter: InputMaybe<StableswapFilter> = {
+    //     paraBlockHeight: {
+    //       greaterThanOrEqualTo: args.blockNumberFrom,
+    //     },
+    //     and: [
+    //       {
+    //         paraBlockHeight: {
+    //           lessThanOrEqualTo: args.blockNumberTo,
+    //         },
+    //       },
+    //     ],
+    //   };
+    //
+    //   const resp = await this.dictionaryGqlRequest<
+    //     GetStableswapBlocksStorageStateQuery,
+    //     GetStableswapBlocksStorageStateQueryVariables
+    //   >({
+    //     query: GetStableswapBlocksStorageState,
+    //     variables: {
+    //       filter,
+    //       orderBy: StableswapsOrderBy.ParaBlockHeightAsc,
+    //       first: pageSize,
+    //       offset,
+    //     },
+    //     dictName: ProcessingTopic.STABLESWAP,
+    //   });
+    //
+    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
+    //
+    //   return {
+    //     data:
+    //       resp.data && resp.data.stableswaps ? resp.data.stableswaps.nodes : [],
+    //     totalCount:
+    //       resp.data && resp.data.stableswaps
+    //         ? resp.data.stableswaps.totalCount
+    //         : 0,
+    //   };
+    // };
+
+    const fetchBlockCompressedDataPaginated = async ({
       pageSize,
       offset,
+      topic,
     }: PaginationConfig) => {
-      const filter: InputMaybe<AssetHistoricalDatumFilter> = {
+      const filter: InputMaybe<BlockCompressedDatumFilter> = {
         paraBlockHeight: {
           greaterThanOrEqualTo: args.blockNumberFrom,
         },
@@ -190,274 +454,27 @@ export class StorageDictionaryManager extends QueriesHelper {
       };
 
       const resp = await this.dictionaryGqlRequest<
-        GetAssetHistDataBlocksStorageStateQuery,
-        GetAssetHistDataBlocksStorageStateQueryVariables
+        GetBlockCompressedDataQuery,
+        GetBlockCompressedDataQueryVariables
       >({
-        query: GetAssetHistDataBlocksStorageState,
+        query: GetBlockCompressedData,
         variables: {
           filter,
-          orderBy: AssetHistoricalDataOrderBy.ParaBlockHeightAsc,
+          orderBy: BlockCompressedDataOrderBy.ParaBlockHeightAsc,
           first: pageSize,
           offset,
         },
-        dictName: ProcessingTopic.ASSET_HIST_DATA,
+        dictName: topic,
       });
-
-      // if (resp.error) console.log(resp.error); //TODO make this log configurable
 
       return {
         data:
-          resp.data && resp.data.assetHistoricalData
-            ? resp.data.assetHistoricalData.nodes
+          resp.data && resp.data.blockCompressedData
+            ? resp.data.blockCompressedData.nodes
             : [],
         totalCount:
-          resp.data && resp.data.assetHistoricalData
-            ? resp.data.assetHistoricalData.totalCount
-            : 0,
-      };
-    };
-
-    const fetchAllEmaOraclesPaginated = async ({
-      pageSize,
-      offset,
-    }: PaginationConfig) => {
-      const filter: InputMaybe<EmaOracleFilter> = {
-        paraBlockHeight: {
-          greaterThanOrEqualTo: args.blockNumberFrom,
-        },
-        and: [
-          {
-            paraBlockHeight: {
-              lessThanOrEqualTo: args.blockNumberTo,
-            },
-          },
-        ],
-      };
-
-      const resp = await this.dictionaryGqlRequest<
-        GetEmaOracleBlocksStorageStateQuery,
-        GetEmaOracleBlocksStorageStateQueryVariables
-      >({
-        query: GetEmaOracleBlocksStorageState,
-        variables: {
-          filter,
-          orderBy: EmaOraclesOrderBy.ParaBlockHeightAsc,
-          first: pageSize,
-          offset,
-        },
-        dictName: ProcessingTopic.EMA_ORACLE,
-      });
-
-      // if (resp.error) console.log(resp.error); //TODO make this log configurable
-
-      return {
-        data:
-          resp.data && resp.data.emaOracles ? resp.data.emaOracles.nodes : [],
-        totalCount:
-          resp.data && resp.data.emaOracles
-            ? resp.data.emaOracles.totalCount
-            : 0,
-      };
-    };
-
-    const fetchAllAavepoolsPaginated = async ({
-      pageSize,
-      offset,
-    }: PaginationConfig) => {
-      const filter: InputMaybe<AavepoolFilter> = {
-        paraBlockHeight: {
-          greaterThanOrEqualTo: args.blockNumberFrom,
-        },
-        and: [
-          {
-            paraBlockHeight: {
-              lessThanOrEqualTo: args.blockNumberTo,
-            },
-          },
-        ],
-      };
-
-      const resp = await this.dictionaryGqlRequest<
-        GetAavePoolBlocksStorageStateQuery,
-        GetAavePoolBlocksStorageStateQueryVariables
-      >({
-        query: GetAavePoolBlocksStorageState,
-        variables: {
-          filter,
-          orderBy: AavepoolsOrderBy.ParaBlockHeightAsc,
-          first: pageSize,
-          offset,
-        },
-        dictName: ProcessingTopic.AAVE,
-      });
-
-      // if (resp.error) console.log(resp.error); //TODO make this log configurable
-
-      return {
-        data: resp.data && resp.data.aavepools ? resp.data.aavepools.nodes : [],
-        totalCount:
-          resp.data && resp.data.aavepools ? resp.data.aavepools.totalCount : 0,
-      };
-    };
-
-    const fetchAllLbpPoolsPaginated = async ({
-      pageSize,
-      offset,
-    }: PaginationConfig) => {
-      const filter: InputMaybe<LbppoolFilter> = {
-        paraBlockHeight: {
-          greaterThanOrEqualTo: args.blockNumberFrom,
-        },
-        and: [
-          {
-            paraBlockHeight: {
-              lessThanOrEqualTo: args.blockNumberTo,
-            },
-          },
-        ],
-      };
-
-      const resp = await this.dictionaryGqlRequest<
-        GetLbppoolBlocksStorageStateQuery,
-        GetLbppoolBlocksStorageStateQueryVariables
-      >({
-        query: GetLbppoolBlocksStorageState,
-        variables: {
-          filter,
-          orderBy: LbppoolsOrderBy.ParaBlockHeightAsc,
-          first: pageSize,
-          offset,
-        },
-        dictName: ProcessingTopic.LBP,
-      });
-
-      // if (resp.error) console.log(resp.error); //TODO make this log configurable
-
-      return {
-        data: resp.data && resp.data.lbppools ? resp.data.lbppools.nodes : [],
-        totalCount:
-          resp.data && resp.data.lbppools ? resp.data.lbppools.totalCount : 0,
-      };
-    };
-
-    const fetchAllXykPoolsPaginated = async ({
-      pageSize,
-      offset,
-    }: PaginationConfig) => {
-      const filter: InputMaybe<XykpoolFilter> = {
-        paraBlockHeight: {
-          greaterThanOrEqualTo: args.blockNumberFrom,
-        },
-        and: [
-          {
-            paraBlockHeight: {
-              lessThanOrEqualTo: args.blockNumberTo,
-            },
-          },
-        ],
-      };
-
-      const resp = await this.dictionaryGqlRequest<
-        GetXykpoolBlocksStorageStateQuery,
-        GetXykpoolBlocksStorageStateQueryVariables
-      >({
-        query: GetXykpoolBlocksStorageState,
-        variables: {
-          filter,
-          orderBy: XykpoolsOrderBy.ParaBlockHeightAsc,
-          first: pageSize,
-          offset,
-        },
-        dictName: ProcessingTopic.XYK,
-      });
-
-      // if (resp.error) console.log(resp.error); //TODO make this log configurable
-
-      return {
-        data: resp.data && resp.data.xykpools ? resp.data.xykpools.nodes : [],
-        totalCount:
-          resp.data && resp.data.xykpools ? resp.data.xykpools.totalCount : 0,
-      };
-    };
-
-    const fetchAllOmnipoolsPaginated = async ({
-      pageSize,
-      offset,
-    }: PaginationConfig) => {
-      const filter: InputMaybe<OmnipoolFilter> = {
-        paraBlockHeight: {
-          greaterThanOrEqualTo: args.blockNumberFrom,
-        },
-        and: [
-          {
-            paraBlockHeight: {
-              lessThanOrEqualTo: args.blockNumberTo,
-            },
-          },
-        ],
-      };
-      const resp = await this.dictionaryGqlRequest<
-        GetOmnipoolBlocksStorageStateQuery,
-        GetOmnipoolBlocksStorageStateQueryVariables
-      >({
-        query: GetOmnipoolBlocksStorageState,
-        variables: {
-          filter,
-          orderBy: OmnipoolsOrderBy.ParaBlockHeightAsc,
-          first: pageSize,
-          offset,
-        },
-        dictName: ProcessingTopic.OMNIPOOL,
-      });
-
-      // if (resp.error) console.log(resp.error); //TODO make this log configurable
-
-      return {
-        data: resp.data && resp.data.omnipools ? resp.data.omnipools.nodes : [],
-        totalCount:
-          resp.data && resp.data.omnipools ? resp.data.omnipools.totalCount : 0,
-      };
-    };
-
-    const fetchAllStablepoolAssetsPaginated = async ({
-      pageSize,
-      offset,
-    }: PaginationConfig) => {
-      const filter: InputMaybe<StableswapFilter> = {
-        paraBlockHeight: {
-          greaterThanOrEqualTo: args.blockNumberFrom,
-        },
-        and: [
-          {
-            paraBlockHeight: {
-              lessThanOrEqualTo: args.blockNumberTo,
-            },
-          },
-        ],
-      };
-
-      const resp = await this.dictionaryGqlRequest<
-        GetStableswapBlocksStorageStateQuery,
-        GetStableswapBlocksStorageStateQueryVariables
-      >({
-        query: GetStableswapBlocksStorageState,
-        variables: {
-          filter,
-          orderBy: StableswapsOrderBy.ParaBlockHeightAsc,
-          first: pageSize,
-          offset,
-        },
-        dictName: ProcessingTopic.STABLESWAP,
-      });
-
-      // if (resp.error) console.log(resp.error); //TODO make this log configurable
-
-      return {
-        data:
-          resp.data && resp.data.stableswaps ? resp.data.stableswaps.nodes : [],
-        totalCount:
-          resp.data && resp.data.stableswaps
-            ? resp.data.stableswaps.totalCount
+          resp.data && resp.data.blockCompressedData
+            ? resp.data.blockCompressedData.totalCount
             : 0,
       };
     };
@@ -467,10 +484,17 @@ export class StorageDictionaryManager extends QueriesHelper {
       const data: EmaOracleGql[] = [];
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchAllEmaOraclesPaginated,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.EMA_ORACLE,
       })) {
         if (!page) continue;
-        data.push(...(page as EmaOracleGql[]));
+        const encodedPageData: EmaOracleGql[] =
+          encodeBlockCompressedData<EmaOracleGql>({
+            data: page,
+            dataKey: BlockCompressedDataKey.emaOracle,
+          });
+
+        data.push(...(encodedPageData as EmaOracleGql[]));
       }
 
       return { pallet: ProcessingTopic.EMA_ORACLE, data: data.flat() };
@@ -479,12 +503,20 @@ export class StorageDictionaryManager extends QueriesHelper {
     const allAssetHistDataStorageFetchPromise = async () => {
       // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: AssetHistoricalDatumGql[] = [];
+
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchAllAssetHistDataPaginated,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.ASSET_HIST_DATA,
       })) {
         if (!page) continue;
-        data.push(...(page as AssetHistoricalDatumGql[]));
+        const encodedPageData: AssetHistoricalDatumGql[] =
+          encodeBlockCompressedData<AssetHistoricalDatumGql>({
+            data: page,
+            dataKey: BlockCompressedDataKey.assetHistoricalData,
+          });
+
+        data.push(...(encodedPageData as AssetHistoricalDatumGql[]));
       }
 
       return { pallet: ProcessingTopic.ASSET_HIST_DATA, data: data.flat() };
@@ -493,12 +525,20 @@ export class StorageDictionaryManager extends QueriesHelper {
     const allAavepoolsStorageFetchPromise = async () => {
       // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: AavepoolGlq[] = [];
+
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchAllAavepoolsPaginated,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.AAVE,
       })) {
         if (!page) continue;
-        data.push(...(page as AavepoolGlq[]));
+        const encodedPageData: AavepoolGlq[] =
+          encodeBlockCompressedData<AavepoolGlq>({
+            data: page,
+            dataKey: BlockCompressedDataKey.aavepool,
+          });
+
+        data.push(...(encodedPageData as AavepoolGlq[]));
       }
 
       return { pallet: ProcessingTopic.AAVE, data: data.flat() };
@@ -507,12 +547,20 @@ export class StorageDictionaryManager extends QueriesHelper {
     const allLbpPoolStorageFetchPromise = async () => {
       if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: LbpPoolGlq[] = [];
+
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchAllLbpPoolsPaginated,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.LBP,
       })) {
         if (!page) continue;
-        data.push(...(page as LbpPoolGlq[]));
+        const encodedPageData: LbpPoolGlq[] =
+          encodeBlockCompressedData<LbpPoolGlq>({
+            data: page,
+            dataKey: BlockCompressedDataKey.lbppool,
+          });
+
+        data.push(...(encodedPageData as LbpPoolGlq[]));
       }
 
       return { pallet: ProcessingTopic.LBP, data: data.flat() };
@@ -526,13 +574,22 @@ export class StorageDictionaryManager extends QueriesHelper {
         return [];
 
       const data: XykpoolGlq[] = [];
+
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchAllXykPoolsPaginated,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.XYK,
       })) {
         if (!page) continue;
-        data.push(...(page as XykpoolGlq[]));
+        const encodedPageData: XykpoolGlq[] =
+          encodeBlockCompressedData<XykpoolGlq>({
+            data: page,
+            dataKey: BlockCompressedDataKey.xykpool,
+          });
+
+        data.push(...(encodedPageData as XykpoolGlq[]));
       }
+
       return { pallet: ProcessingTopic.XYK, data: data.flat() };
     };
 
@@ -545,12 +602,22 @@ export class StorageDictionaryManager extends QueriesHelper {
         return [];
 
       const data = [];
+
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchAllOmnipoolsPaginated,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.OMNIPOOL,
       })) {
-        data.push(page);
+        if (!page) continue;
+        const encodedPageData: OmnipoolGql[] =
+          encodeBlockCompressedData<OmnipoolGql>({
+            data: page,
+            dataKey: BlockCompressedDataKey.omnipool,
+          });
+
+        data.push(...(encodedPageData as OmnipoolGql[]));
       }
+
       return { pallet: ProcessingTopic.OMNIPOOL, data: data.flat() };
     };
 
@@ -562,12 +629,22 @@ export class StorageDictionaryManager extends QueriesHelper {
       )
         return [];
       const data = [];
+
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchAllStablepoolAssetsPaginated,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.STABLESWAP,
       })) {
-        data.push(page);
+        if (!page) continue;
+        const encodedPageData: StableswapGql[] =
+          encodeBlockCompressedData<StableswapGql>({
+            data: page,
+            dataKey: BlockCompressedDataKey.stableswap,
+          });
+
+        data.push(...(encodedPageData as StableswapGql[]));
       }
+
       return { pallet: ProcessingTopic.STABLESWAP, data: data.flat() };
     };
 
@@ -581,6 +658,10 @@ export class StorageDictionaryManager extends QueriesHelper {
       allEmaOraclesStorageFetchPromise(),
       allAssetHistDataStorageFetchPromise(),
     ]);
+
+    console.log(
+      `Size of the batchStorageState object: ${sizeof(fullResponse)} bytes`
+    );
 
     console.timeEnd('Dictionary API call executed in');
 

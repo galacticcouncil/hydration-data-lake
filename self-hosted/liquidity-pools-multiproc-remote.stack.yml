@@ -49,7 +49,7 @@ x-proc-default-envs: &proc-default-envs
   STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql"
 
 x-proc-default-config: &proc-default-config
-  image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-initForBlocksBatch-monorepo
+  image: ghcr.io/mckrava/liquidity-pools-indexer:e1f0b6f70f8795380264625b2d243179986ccbc5
   networks:
     - default
   command:

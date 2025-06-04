@@ -1743,6 +1743,246 @@ export type BigIntFilter = {
   notIn?: InputMaybe<Array<Scalars['BigInt']['input']>>;
 };
 
+/** A connection to a list of `BlockCompressedDatum` values. */
+export type BlockCompressedDataConnection = {
+  __typename?: 'BlockCompressedDataConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<BlockCompressedDatumAggregates>;
+  /** A list of edges which contains the `BlockCompressedDatum` and cursor to aid in pagination. */
+  edges: Array<BlockCompressedDataEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<BlockCompressedDatumAggregates>>;
+  /** A list of `BlockCompressedDatum` objects. */
+  nodes: Array<Maybe<BlockCompressedDatum>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `BlockCompressedDatum` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `BlockCompressedDatum` values. */
+export type BlockCompressedDataConnectionGroupedAggregatesArgs = {
+  groupBy: Array<BlockCompressedDataGroupBy>;
+  having?: InputMaybe<BlockCompressedDataHavingInput>;
+};
+
+/** A `BlockCompressedDatum` edge in the connection. */
+export type BlockCompressedDataEdge = {
+  __typename?: 'BlockCompressedDataEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `BlockCompressedDatum` at the end of the edge. */
+  node?: Maybe<BlockCompressedDatum>;
+};
+
+/** Grouping methods for `BlockCompressedDatum` for usage during aggregation. */
+export enum BlockCompressedDataGroupBy {
+  Algo = 'ALGO',
+  CompStrFormat = 'COMP_STR_FORMAT',
+  Data = 'DATA',
+  ParaBlockHeight = 'PARA_BLOCK_HEIGHT'
+}
+
+export type BlockCompressedDataHavingAverageInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockCompressedDataHavingDistinctCountInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `BlockCompressedDatum` aggregates. */
+export type BlockCompressedDataHavingInput = {
+  AND?: InputMaybe<Array<BlockCompressedDataHavingInput>>;
+  OR?: InputMaybe<Array<BlockCompressedDataHavingInput>>;
+  average?: InputMaybe<BlockCompressedDataHavingAverageInput>;
+  distinctCount?: InputMaybe<BlockCompressedDataHavingDistinctCountInput>;
+  max?: InputMaybe<BlockCompressedDataHavingMaxInput>;
+  min?: InputMaybe<BlockCompressedDataHavingMinInput>;
+  stddevPopulation?: InputMaybe<BlockCompressedDataHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<BlockCompressedDataHavingStddevSampleInput>;
+  sum?: InputMaybe<BlockCompressedDataHavingSumInput>;
+  variancePopulation?: InputMaybe<BlockCompressedDataHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<BlockCompressedDataHavingVarianceSampleInput>;
+};
+
+export type BlockCompressedDataHavingMaxInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockCompressedDataHavingMinInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockCompressedDataHavingStddevPopulationInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockCompressedDataHavingStddevSampleInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockCompressedDataHavingSumInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockCompressedDataHavingVariancePopulationInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockCompressedDataHavingVarianceSampleInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `BlockCompressedDatum`. */
+export enum BlockCompressedDataOrderBy {
+  AlgoAsc = 'ALGO_ASC',
+  AlgoDesc = 'ALGO_DESC',
+  CompStrFormatAsc = 'COMP_STR_FORMAT_ASC',
+  CompStrFormatDesc = 'COMP_STR_FORMAT_DESC',
+  DataAsc = 'DATA_ASC',
+  DataDesc = 'DATA_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  ParaBlockHeightAsc = 'PARA_BLOCK_HEIGHT_ASC',
+  ParaBlockHeightDesc = 'PARA_BLOCK_HEIGHT_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+}
+
+export type BlockCompressedDatum = {
+  __typename?: 'BlockCompressedDatum';
+  algo: Scalars['String']['output'];
+  compStrFormat: Scalars['String']['output'];
+  data: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
+};
+
+export type BlockCompressedDatumAggregates = {
+  __typename?: 'BlockCompressedDatumAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<BlockCompressedDatumAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<BlockCompressedDatumDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<BlockCompressedDatumMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<BlockCompressedDatumMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<BlockCompressedDatumStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<BlockCompressedDatumStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<BlockCompressedDatumSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<BlockCompressedDatumVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<BlockCompressedDatumVarianceSampleAggregates>;
+};
+
+export type BlockCompressedDatumAverageAggregates = {
+  __typename?: 'BlockCompressedDatumAverageAggregates';
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/**
+ * A condition to be used against `BlockCompressedDatum` object types. All fields
+ * are tested for equality and combined with a logical ‘and.’
+ */
+export type BlockCompressedDatumCondition = {
+  /** Checks for equality with the object’s `algo` field. */
+  algo?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `compStrFormat` field. */
+  compStrFormat?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `data` field. */
+  data?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type BlockCompressedDatumDistinctCountAggregates = {
+  __typename?: 'BlockCompressedDatumDistinctCountAggregates';
+  /** Distinct count of algo across the matching connection */
+  algo?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of compStrFormat across the matching connection */
+  compStrFormat?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of data across the matching connection */
+  data?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `BlockCompressedDatum` object types. All fields are combined with a logical ‘and.’ */
+export type BlockCompressedDatumFilter = {
+  /** Filter by the object’s `algo` field. */
+  algo?: InputMaybe<StringFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<BlockCompressedDatumFilter>>;
+  /** Filter by the object’s `compStrFormat` field. */
+  compStrFormat?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `data` field. */
+  data?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<BlockCompressedDatumFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<BlockCompressedDatumFilter>>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
+};
+
+export type BlockCompressedDatumMaxAggregates = {
+  __typename?: 'BlockCompressedDatumMaxAggregates';
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type BlockCompressedDatumMinAggregates = {
+  __typename?: 'BlockCompressedDatumMinAggregates';
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type BlockCompressedDatumStddevPopulationAggregates = {
+  __typename?: 'BlockCompressedDatumStddevPopulationAggregates';
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type BlockCompressedDatumStddevSampleAggregates = {
+  __typename?: 'BlockCompressedDatumStddevSampleAggregates';
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type BlockCompressedDatumSumAggregates = {
+  __typename?: 'BlockCompressedDatumSumAggregates';
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
+};
+
+export type BlockCompressedDatumVariancePopulationAggregates = {
+  __typename?: 'BlockCompressedDatumVariancePopulationAggregates';
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type BlockCompressedDatumVarianceSampleAggregates = {
+  __typename?: 'BlockCompressedDatumVarianceSampleAggregates';
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
 /** A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’ */
 export type BooleanFilter = {
   /** Not equal to the specified value, treating null like an ordinary value. */
@@ -4116,6 +4356,9 @@ export type Query = {
   assetHistoricalDatum?: Maybe<AssetHistoricalDatum>;
   /** Reads and enables pagination through a set of `Asset`. */
   assets?: Maybe<AssetsConnection>;
+  /** Reads and enables pagination through a set of `BlockCompressedDatum`. */
+  blockCompressedData?: Maybe<BlockCompressedDataConnection>;
+  blockCompressedDatum?: Maybe<BlockCompressedDatum>;
   emaOracle?: Maybe<EmaOracle>;
   /** Reads and enables pagination through a set of `EmaOracle`. */
   emaOracles?: Maybe<EmaOraclesConnection>;
@@ -4211,6 +4454,25 @@ export type QueryAssetsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<AssetsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryBlockCompressedDataArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<BlockCompressedDatumCondition>;
+  filter?: InputMaybe<BlockCompressedDatumFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<BlockCompressedDataOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryBlockCompressedDatumArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -6643,6 +6905,16 @@ export type GetAssetHistDataBlocksStorageStateQueryVariables = Exact<{
 
 export type GetAssetHistDataBlocksStorageStateQuery = { __typename?: 'Query', assetHistoricalData?: { __typename?: 'AssetHistoricalDataConnection', totalCount: number, nodes: Array<{ __typename?: 'AssetHistoricalDatum', id: string, assetId?: string | null, dynamicFee?: any | null, existentialDeposit: any, totalIssuance: any, paraBlockHeight: number } | null> } | null };
 
+export type GetBlockCompressedDataQueryVariables = Exact<{
+  filter?: InputMaybe<BlockCompressedDatumFilter>;
+  first: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
+  orderBy?: InputMaybe<Array<BlockCompressedDataOrderBy> | BlockCompressedDataOrderBy>;
+}>;
+
+
+export type GetBlockCompressedDataQuery = { __typename?: 'Query', blockCompressedData?: { __typename?: 'BlockCompressedDataConnection', totalCount: number, nodes: Array<{ __typename?: 'BlockCompressedDatum', id: string, algo: string, compStrFormat: string, data: string, paraBlockHeight: number } | null> } | null };
+
 
 export const GetOmnipoolBlocksStorageState = gql`
     query GetOmnipoolBlocksStorageState($filter: OmnipoolFilter, $first: Int!, $offset: Int!, $orderBy: [OmnipoolsOrderBy!]) {
@@ -6794,6 +7066,25 @@ export const GetAssetHistDataBlocksStorageState = gql`
       dynamicFee
       existentialDeposit
       totalIssuance
+      paraBlockHeight
+    }
+    totalCount
+  }
+}
+    `;
+export const GetBlockCompressedData = gql`
+    query GetBlockCompressedData($filter: BlockCompressedDatumFilter, $first: Int!, $offset: Int!, $orderBy: [BlockCompressedDataOrderBy!]) {
+  blockCompressedData(
+    filter: $filter
+    orderBy: $orderBy
+    first: $first
+    offset: $offset
+  ) {
+    nodes {
+      id
+      algo
+      compStrFormat
+      data
       paraBlockHeight
     }
     totalCount

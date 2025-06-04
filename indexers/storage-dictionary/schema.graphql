@@ -60,7 +60,6 @@ type AssetHistoricalData @entity {
   totalIssuance: BigInt!
   dynamicFee: AssetDynamicFee
   existentialDeposit: BigInt!
-
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
 }
@@ -96,6 +95,7 @@ type LbppoolAssetsData @entity {
   pool: Lbppool!
   assetId: Int! @index
   balances: AccountBalances!
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
 }
@@ -124,6 +124,7 @@ type XykpoolAssetsData @entity {
   pool: Xykpool!
   assetId: Int! @index
   balances: AccountBalances!
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
 }
@@ -150,9 +151,9 @@ type Omnipool @entity {
   poolAddress: String! @index
   hubAssetTradability: Tradability!
 
+  assets: [OmnipoolAssetData!]! @derivedFrom(field: "pool")
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
-  assets: [OmnipoolAssetData!]! @derivedFrom(field: "pool")
 }
 
 type OmnipoolAssetData @entity {
@@ -162,6 +163,7 @@ type OmnipoolAssetData @entity {
   assetId: Int! @index
   balances: AccountBalances!
   assetState: OmnipoolAssetState!
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
 }
@@ -193,9 +195,10 @@ type Stableswap @entity {
   maxPegUpdate: Int
   pegSources: [StableswapPegsSource!]
 
+  assets: [StableswapAssetData!]! @derivedFrom(field: "pool")
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
-  assets: [StableswapAssetData!]! @derivedFrom(field: "pool")
 }
 
 type StableswapAssetData @entity {
@@ -205,6 +208,7 @@ type StableswapAssetData @entity {
   assetId: Int!
   tradable: Tradability
   balances: AccountBalances!
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
 }
@@ -272,4 +276,13 @@ type EmaOracle @entity {
   entries: [EmaOracleEntry!]!
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
+}
+
+type BlockCompressedData @entity {
+  "block_number"
+  id: ID!
+  algo: String!
+  compStrFormat: String!
+  data: String!
+  paraBlockHeight: Int! @index
 }

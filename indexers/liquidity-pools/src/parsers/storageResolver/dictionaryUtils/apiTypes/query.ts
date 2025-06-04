@@ -237,3 +237,28 @@ export const GET_ASSET_HIST_DATA_BLOCKS_STORAGE_STATE = gql`
     }
   }
 `;
+
+export const GET_BLOCK_COMPRESSED_DATA = gql`
+  query GetBlockCompressedData(
+    $filter: BlockCompressedDatumFilter
+    $first: Int!
+    $offset: Int!
+    $orderBy: [BlockCompressedDataOrderBy!]
+  ) {
+    blockCompressedData(
+      filter: $filter
+      orderBy: $orderBy
+      first: $first
+      offset: $offset
+    ) {
+      nodes {
+        id
+        algo
+        compStrFormat
+        data
+        paraBlockHeight
+      }
+      totalCount
+    }
+  }
+`;

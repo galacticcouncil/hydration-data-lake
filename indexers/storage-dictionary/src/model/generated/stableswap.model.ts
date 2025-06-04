@@ -47,6 +47,9 @@ export class Stableswap {
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new StableswapPegsSource(undefined, marshal.nonNull(val)))}, nullable: true})
   pegSources!: (StableswapPegsSource)[] | undefined | null
 
+  @OneToMany_(() => StableswapAssetData, e => e.pool)
+  assets!: StableswapAssetData[]
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
@@ -54,7 +57,4 @@ export class Stableswap {
   @Index_()
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
-
-  @OneToMany_(() => StableswapAssetData, e => e.pool)
-  assets!: StableswapAssetData[]
 }

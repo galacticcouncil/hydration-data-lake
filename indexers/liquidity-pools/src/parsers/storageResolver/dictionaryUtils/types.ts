@@ -11,6 +11,7 @@ import {
 export type PaginationConfig = {
   pageSize: number;
   offset: number;
+  topic: ProcessingTopic;
 };
 
 export type PalletDictionaryCollectedData = {

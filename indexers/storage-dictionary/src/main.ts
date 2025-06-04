@@ -39,6 +39,7 @@ import {
   prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks,
 } from './handlers/aavePool/historicalData';
 import { prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/oracles/emaOracle/historicalData';
+import { compressBlockStorage } from './handlers/blockDataCompresion';
 
 const appConfig = AppConfig.getInstance();
 
@@ -170,8 +171,13 @@ processor.run(
               ),
             ]);
           }
+          await compressBlockStorage(
+            ctxWithBatchState as ProcessorContext<Store>,
+            block.header
+          );
         })
       );
+
       console.timeEnd(
         `Blocks sub-batch #${blocksSubBatchIndex} with size ${subProcessorStatusManager.subBatchConfig.subBatchSize} blocks has been processed in`
       );
