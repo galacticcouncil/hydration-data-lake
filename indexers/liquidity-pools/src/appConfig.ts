@@ -197,7 +197,7 @@ export class AppConfig {
   readonly API_CACHE_TTL_MS: number = 600000;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: number = 10;
+  readonly HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: number = 300;
 
   @Transform(({ value }: { value: string }) =>
     value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id))

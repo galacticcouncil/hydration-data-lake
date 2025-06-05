@@ -43,7 +43,9 @@ export async function getOrCreateAsset({
     );
   }
 
-  if (asset) return asset;
+  if (asset) {
+    return asset;
+  }
 
   asset = await ctx.store.findOne(Asset, {
     // @ts-ignore

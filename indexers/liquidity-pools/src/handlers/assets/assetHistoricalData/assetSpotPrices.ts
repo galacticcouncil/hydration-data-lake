@@ -22,14 +22,25 @@ export async function handleAssetSpotPricesHistoricalData({
     ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
   ].filter((histData) => histData.paraBlockHeight === blockHeader.height);
 
-  for (const histDataItem of blockContextAssetsHistoricalData) {
-    await processAssetSpotPrices({
-      asset: histDataItem.asset,
-      assetHistData: histDataItem,
-      blockHeader,
-      ctx,
-    });
-  }
+  await Promise.all(
+    blockContextAssetsHistoricalData.map((histDataItem) =>
+      processAssetSpotPrices({
+        asset: histDataItem.asset,
+        assetHistData: histDataItem,
+        blockHeader,
+        ctx,
+      })
+    )
+  );
+
+  // for (const histDataItem of blockContextAssetsHistoricalData) {
+  //   await processAssetSpotPrices({
+  //     asset: histDataItem.asset,
+  //     assetHistData: histDataItem,
+  //     blockHeader,
+  //     ctx,
+  //   });
+  // }
 }
 
 async function processAssetSpotPrices({

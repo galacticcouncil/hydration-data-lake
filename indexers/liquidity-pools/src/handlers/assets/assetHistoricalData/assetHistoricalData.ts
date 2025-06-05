@@ -53,57 +53,58 @@ export async function processAssetsHistoricalDataAtBlock({
     )
   );
 
-  for (const assetRegistryId of assetRegistryIds) {
-    if (
-      !totalIssuancePerAssetMap.has(assetRegistryId) ||
-      !existentialDepositPerAssetMap.has(assetRegistryId)
-    ) {
-      continue;
-    }
+  await Promise.all(
+    assetRegistryIds.map(async (assetRegistryId) => {
+      if (
+        !totalIssuancePerAssetMap.has(assetRegistryId) ||
+        !existentialDepositPerAssetMap.has(assetRegistryId)
+      ) {
+        return;
+      }
+      const asset = await getOrCreateAsset({
+        assetRegistryId: assetRegistryId,
+        ensure: false,
+        ctx,
+      });
 
-    const asset = await getOrCreateAsset({
-      assetRegistryId: assetRegistryId,
-      ensure: false,
-      ctx,
-    });
+      if (!asset) {
+        console.log(
+          'processAssetsHistoricalDataAtBlock :: asset not found',
+          assetRegistryId
+        );
+        return;
+      }
 
-    if (!asset) {
-      console.log(
-        'processAssetsHistoricalDataAtBlock :: asset not found',
-        assetRegistryId
+      const newAssetHistoricalData = new AssetHistoricalData({
+        id: `${asset.id}-${block.height}`,
+        asset,
+
+        totalIssuance: totalIssuancePerAssetMap.get(assetRegistryId) ?? 0n,
+        existentialDeposit:
+          existentialDepositPerAssetMap.get(assetRegistryId)
+            ?.existentialDeposit ?? 0n,
+        dynamicFee: dynamicFeePerAssetMap.has(assetRegistryId)
+          ? new AssetDynamicFee({
+              assetFee: dynamicFeePerAssetMap.get(assetRegistryId)!.assetFee,
+              protocolFee:
+                dynamicFeePerAssetMap.get(assetRegistryId)!.protocolFee,
+              timestamp: dynamicFeePerAssetMap.get(assetRegistryId)!.timestamp,
+            })
+          : null,
+        usdPriceNormalised: '0',
+        assetPairVolumes: [],
+        spotPrices: [], // Spot prices will be calculated and injected in further processing steps.
+        paraBlockHeight: block.height,
+        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
+          block.height
+        ).height,
+        block: ctx.batchState.state.batchBlocks.get(block.id),
+      });
+
+      ctx.batchState.state.assetsHistoricalDataBatch.set(
+        newAssetHistoricalData.id,
+        newAssetHistoricalData
       );
-      continue;
-    }
-
-    const newAssetHistoricalData = new AssetHistoricalData({
-      id: `${asset.id}-${block.height}`,
-      asset,
-
-      totalIssuance: totalIssuancePerAssetMap.get(assetRegistryId) ?? 0n,
-      existentialDeposit:
-        existentialDepositPerAssetMap.get(assetRegistryId)
-          ?.existentialDeposit ?? 0n,
-      dynamicFee: dynamicFeePerAssetMap.has(assetRegistryId)
-        ? new AssetDynamicFee({
-            assetFee: dynamicFeePerAssetMap.get(assetRegistryId)!.assetFee,
-            protocolFee:
-              dynamicFeePerAssetMap.get(assetRegistryId)!.protocolFee,
-            timestamp: dynamicFeePerAssetMap.get(assetRegistryId)!.timestamp,
-          })
-        : null,
-      usdPriceNormalised: '0',
-      assetPairVolumes: [],
-      spotPrices: [], // Spot prices will be calculated and injected in further processing steps.
-      paraBlockHeight: block.height,
-      relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-        block.height
-      ).height,
-      block: ctx.batchState.state.batchBlocks.get(block.id),
-    });
-
-    ctx.batchState.state.assetsHistoricalDataBatch.set(
-      newAssetHistoricalData.id,
-      newAssetHistoricalData
-    );
-  }
+    })
+  );
 }

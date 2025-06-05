@@ -51,6 +51,7 @@ export async function handleAssetSpotPriceRelatedHistoricalData(
       blockNumbers: blocksSubBatch.map((b) => b.header.height),
       ctx,
     });
+
     await Promise.all(
       blocksSubBatch.map((block) =>
         handleAssetSpotPricesHistoricalData({
