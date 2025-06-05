@@ -1,5 +1,9 @@
 import { CacheStorageHelper } from './cacheStorageHelper';
-import { PaginationConfig, ProcessingTopic } from '../types';
+import {
+  PaginationConfig,
+  PalletDictionaryCollectedData,
+  ProcessingTopic,
+} from '../types';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { QueriesHelper } from '../queriesHelper';
 import { AppConfig } from '../../../../appConfig';
@@ -23,6 +27,7 @@ import {
   BlockCompressedDataKey,
   encodeBlockCompressedData,
 } from '../helpers/blockCompressedDataHandler';
+import { BlockCompressedData } from './cacheStorageEntities/blockCompressedData';
 
 const appConfig = AppConfig.getInstance();
 
@@ -216,5 +221,79 @@ export class StorageDictionaryCacheManager extends CacheStorageHelper {
       allStablepoolStorageFetchPromise(),
       allGenericHistStorageFetchPromise(),
     ]);
+
+    // this.persistResponseDataToCacheStorage(fullResponse);
   }
+
+  // persistResponseDataToCacheStorage(
+  //   rawData: Array<{ pallet: ProcessingTopic; data: BlockCompressedDatum[] }>
+  // ) {
+  //   const recordsToCache: BlockCompressedData[][] = [];
+  //
+  //   for (const palletData of rawData) {
+  //     switch (palletData.pallet) {
+  //       case ProcessingTopic.AAVE:
+  //       case ProcessingTopic.EMA_ORACLE:
+  //       case ProcessingTopic.ASSET_HIST_DATA:
+  //         recordsToCache.push(
+  //           palletData.data.map(
+  //             (r) =>
+  //               new BlockCompressedData({
+  //                 id: `${r.paraBlockHeight}-${ProcessingTopic.GENERIC_HIST_DATA}`,
+  //                 dictionaryTopic: ProcessingTopic.GENERIC_HIST_DATA,
+  //                 data: r.data,
+  //                 paraBlockNumber: r.paraBlockHeight,
+  //               })
+  //           )
+  //         );
+  //         break;
+  //       case ProcessingTopic.LBP:
+  //         recordsToCache.push(
+  //           palletData.data.map(
+  //             (r) =>
+  //               new BlockCompressedData({
+  //                 id: `${r.paraBlockHeight}-${ProcessingTopic.LBP}`,
+  //                 dictionaryTopic: ProcessingTopic.LBP,
+  //                 data: r.data,
+  //                 paraBlockNumber: r.paraBlockHeight,
+  //               })
+  //           )
+  //         );
+  //         break;
+  //       case ProcessingTopic.XYK:
+  //         recordsToCache.push(
+  //           palletData.data.map(
+  //             (r) =>
+  //               new BlockCompressedData({
+  //                 id: `${r.paraBlockHeight}-${ProcessingTopic.LBP}`,
+  //                 dictionaryTopic: ProcessingTopic.LBP,
+  //                 data: r.data,
+  //                 paraBlockNumber: r.paraBlockHeight,
+  //               })
+  //           )
+  //         );
+  //         break;
+  //       case ProcessingTopic.OMNIPOOL:
+  //         this.batchStorageState.set(
+  //           ProcessingTopic.OMNIPOOL,
+  //           new Map(
+  //             (palletData.data as OmnipoolGql[]).map((item) => [item.id, item])
+  //           )
+  //         );
+  //         break;
+  //       case ProcessingTopic.STABLESWAP:
+  //         this.batchStorageState.set(
+  //           ProcessingTopic.STABLESWAP,
+  //           new Map(
+  //             (palletData.data as StableswapGql[]).map((item) => [
+  //               item.id,
+  //               item,
+  //             ])
+  //           )
+  //         );
+  //         break;
+  //       default:
+  //     }
+  //   }
+  // }
 }

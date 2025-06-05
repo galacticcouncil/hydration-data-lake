@@ -213,7 +213,7 @@ export function encodeBlockCompressedData<R>({
                 relayBlockHeight: pool.relayBlockHeight,
                 omnipoolAssetDataByPoolId: {
                   nodes: decompressedData[
-                    BlockCompressedDataKey.stableswapAssetData
+                    BlockCompressedDataKey.omnipoolAssetData
                   ]
                     .filter((a) => a.pool.id === pool.id)
                     .map(

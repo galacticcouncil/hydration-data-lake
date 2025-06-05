@@ -68,6 +68,10 @@ export class QueriesHelper {
         ProcessingTopic.EMA_ORACLE,
         appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
       ],
+      [
+        ProcessingTopic.GENERIC_HIST_DATA,
+        appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
+      ],
     ]);
   }
 

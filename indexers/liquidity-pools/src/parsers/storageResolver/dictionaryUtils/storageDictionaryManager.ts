@@ -890,7 +890,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       return null;
 
     const assetInfo = node.stableswapAssetDataByPoolId.nodes.find(
-      (asset) => asset?.assetId === assetId
+      (asset) => asset?.assetId.toString() === assetId.toString()
     );
     if (!assetInfo || !assetInfo.balances) return null;
     const balances = assetInfo.balances as AccountBalancesGql;
@@ -966,6 +966,28 @@ export class StorageDictionaryManager extends QueriesHelper {
     };
   }
 
+  getOmnipoolAllAssetIds({
+    block,
+  }: OmnipoolGetHubAssetTradabilityInput): number[] | null {
+    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
+      `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
+    );
+
+    if (!node) return null;
+
+    const assetIds = node.omnipoolAssetDataByPoolId.nodes
+      .map((omnipoolAsset) =>
+        omnipoolAsset?.assetId !== undefined && omnipoolAsset?.assetId !== null
+          ? +omnipoolAsset.assetId
+          : null
+      )
+      .filter((id) => id !== undefined && id !== null);
+
+    if (!assetIds || assetIds.length === 0) return null;
+
+    return assetIds;
+  }
+
   getOmnipoolAssetInfo({
     poolAddress,
     assetId,
@@ -977,7 +999,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     if (!node) return null;
     const asset = node.omnipoolAssetDataByPoolId.nodes.find(
-      (asset) => asset && asset.assetId === assetId
+      (asset) => asset && asset.assetId.toString() === assetId.toString()
     );
     if (!asset) return null;
 
@@ -1003,7 +1025,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     if (!node) return null;
     const asset = node.omnipoolAssetDataByPoolId.nodes.find(
-      (asset) => asset && asset.assetId === assetId
+      (asset) => asset && asset.assetId.toString() === assetId.toString()
     );
     if (!asset) return null;
 
@@ -1098,7 +1120,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     if (!node) return null;
     const asset = node.xykpoolAssetsDataByPoolId.nodes.find(
-      (asset) => asset && asset.assetId === assetId
+      (asset) => asset && asset.assetId.toString() === assetId.toString()
     );
     if (!asset) return null;
 
@@ -1165,7 +1187,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     if (!node) return null;
     const asset = node.lbppoolAssetsDataByPoolId.nodes.find(
-      (asset) => asset && asset.assetId === assetId
+      (asset) => asset && asset.assetId.toString() === assetId.toString()
     );
     if (!asset) return null;
 
@@ -1193,7 +1215,13 @@ export class StorageDictionaryManager extends QueriesHelper {
     if (nodes.length === 0) return null;
 
     return nodes
-      .filter(([key, data]) => !!data.reserveAssetId && !!data.aTokenId)
+      .filter(
+        ([key, data]) =>
+          data.reserveAssetId !== undefined &&
+          data.reserveAssetId !== null &&
+          data.aTokenId !== undefined &&
+          data.aTokenId !== null
+      )
       .map(([key, data]) => ({
         poolId: key,
         data: {
@@ -1217,7 +1245,9 @@ export class StorageDictionaryManager extends QueriesHelper {
     if (nodes.length === 0) return null;
 
     return nodes
-      .filter(([key, data]) => data.assetId !== undefined)
+      .filter(
+        ([key, data]) => data.assetId !== undefined && data.assetId !== null
+      )
       .map(([key, data]) => {
         if (!data.dynamicFee) return null;
 
@@ -1267,7 +1297,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     tokenIds,
     block,
   }: TokensGetTokensTotalIssuanceInput): TokenTotalIssuance[] | null {
-    const idsSet = new Set(tokenIds);
+    const idsSet = new Set(tokenIds.map((id) => `${id}`));
 
     const nodes = [
       ...this.getBatchStorageStatePart(
@@ -1276,7 +1306,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     ].filter(
       ([key, data]) =>
         key.split('-')[1] === block.height.toString() &&
-        idsSet.has(+key.split('-')[0])
+        idsSet.has(key.split('-')[0])
     );
 
     if (nodes.length === 0) return null;

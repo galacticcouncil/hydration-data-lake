@@ -24,15 +24,24 @@ export class BlockCompressedData {
   @Column({ nullable: false })
   dictionaryTopic!: string;
 
+  // @Column({
+  //   nullable: false,
+  //   type: 'jsonb',
+  // })
+  // data!: BlockCompressedDataPayload;
+
   @Column({
     nullable: false,
-    type: 'jsonb',
   })
-  data!: BlockCompressedDataPayload;
+  data!: string;
 
   @Column({
     nullable: false,
     name: 'para_block_number',
   })
   paraBlockNumber!: number;
+
+  constructor(props?: Partial<BlockCompressedData>) {
+    Object.assign(this, props);
+  }
 }

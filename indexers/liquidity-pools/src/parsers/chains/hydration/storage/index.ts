@@ -29,7 +29,7 @@ import {
   LbpPoolData,
   OmnipoolAssetData,
   OmnipoolAssetTradability,
-  OmnipoolData,
+  OmnipoolData, OmnipoolGetAllAssetIdsInput,
   OmnipoolGetAssetDataInput,
   OmnipoolGetHubAssetTradabilityInput,
   OmnipoolGetPoolDataInput, StablepoolAllPoolsInfoWithPoolId,
@@ -218,7 +218,18 @@ export default {
   },
   omnipool: {
     getConstants: omnipool.getConstants,
-    getOmnipoolAllAssetIds: omnipool.getOmnipoolAllAssetIds,
+    getOmnipoolAllAssetIds: (
+      args: OmnipoolGetAllAssetIdsInput
+    ): Promise<number[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        OmnipoolGetAllAssetIdsInput,
+        number[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.OMNIPOOL,
+        method: 'getOmnipoolAllAssetIds',
+        fallbackFns: [omnipool.getOmnipoolAllAssetIds],
+      }),
     getPoolData: omnipool.getPoolData,
     getOmnipoolHubAssetTradability: (
       args: OmnipoolGetHubAssetTradabilityInput

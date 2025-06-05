@@ -10,7 +10,7 @@ import {
   GetDataAtBlockInput,
   GetEmaOraclesInput,
   GetPoolAssetInfoInput,
-  LbpGetPoolDataInput,
+  LbpGetPoolDataInput, OmnipoolGetAllAssetIdsInput,
   OmnipoolGetAssetDataInput,
   OmnipoolGetHubAssetTradabilityInput,
   OmnipoolGetPoolDataInput,
@@ -101,6 +101,7 @@ export class StorageResolver {
       | 'getPoolPegs'
       | 'getAllPoolsPegs'
       | 'getOmnipoolHubAssetTradability'
+      | 'getOmnipoolAllAssetIds'
       | 'getPoolShareTokenPairsMany'
       | 'getPoolShareToken'
       | 'getAssetDynamicFeesAll'
@@ -231,6 +232,17 @@ export class StorageResolver {
             const resp =
               this.storageDictionaryManager.getOmnipoolHubAssetTradability(
                 args as unknown as OmnipoolGetHubAssetTradabilityInput // TODO fix types
+              ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+
+          if (method === 'getOmnipoolAllAssetIds') {
+            const resp =
+              this.storageDictionaryManager.getOmnipoolAllAssetIds(
+                args as unknown as OmnipoolGetAllAssetIdsInput // TODO fix types
               ) as R;
 
             if (resp) return resp;

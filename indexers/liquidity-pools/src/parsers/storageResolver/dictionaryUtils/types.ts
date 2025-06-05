@@ -35,4 +35,5 @@ export enum ProcessingTopic {
   AAVE = 'AAVE',
   EMA_ORACLE = 'EMA_ORACLE',
   ASSET_HIST_DATA = 'ASSET_HIST_DATA',
+  GENERIC_HIST_DATA = 'GENERIC_HIST_DATA',
 }
