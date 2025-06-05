@@ -13,6 +13,7 @@ import {
 import { OfflineTradeRouterManager } from './utils';
 import {
   fromExponentialToDecimalNotation,
+  isUnifiedEventsSupportSpecVersion,
   stringToMd5Hash,
 } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
@@ -70,10 +71,6 @@ export async function handleAssetPairVolumesHistoricalData({
   blockHeader: BlockHeader;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const blockContextRoutedTrades = [
-    ...ctx.batchState.state.routeTrades.values(),
-  ].filter((trade) => trade.paraBlockHeight === blockHeader.height);
-
   const routerAssetPairs = await new RouterAssetPairs().init(blockHeader);
 
   if (routerAssetPairs.pairsListEmpty) {
@@ -81,142 +78,175 @@ export async function handleAssetPairVolumesHistoricalData({
     return;
   }
 
-  for (const trade of blockContextRoutedTrades) {
-    const assetBalancePairs = getRelatedAssetPairsFromSwapsChain(trade.swaps);
+  const currentBlockEntity = ctx.batchState.getParaBlockFromCacheByHeight(
+    blockHeader.height
+  );
 
-    assetsPairLoop: for (const {
-      in: assetInData,
-      out: assetOutData,
-    } of assetBalancePairs) {
-      if (
-        assetInData.asset.assetRegistryId === undefined ||
-        assetInData.asset.assetRegistryId === null ||
-        !assetInData.asset.decimals ||
-        assetOutData.asset.assetRegistryId === undefined ||
-        assetOutData.asset.assetRegistryId === null ||
-        !assetOutData.asset.decimals
+  const assetBalancePairs = [];
+  const swapGroupsToProcess: Swap[][] = [];
+
+  /**
+   * In case blocks before OperationId has been released and indexer got an
+   * opportunity to aggregate RoutedTrades based on it, we need to collect asset
+   * pairs volumes from single swaps.
+   */
+  if (
+    isUnifiedEventsSupportSpecVersion(
+      blockHeader.specVersion,
+      ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+    )
+  ) {
+    const blockContextRoutedTrades = [
+      ...ctx.batchState.state.routeTrades.values(),
+    ].filter((trade) => trade.paraBlockHeight === blockHeader.height);
+
+    for (const trade of blockContextRoutedTrades) {
+      swapGroupsToProcess.push(trade.swaps);
+    }
+  } else {
+    const blockContextSwaps = [...ctx.batchState.state.swaps.values()].filter(
+      (trade) => trade.paraBlockHeight === blockHeader.height
+    );
+    for (const swap of blockContextSwaps) {
+      swapGroupsToProcess.push([swap]);
+    }
+  }
+  for (const swapsGroup of swapGroupsToProcess) {
+    assetBalancePairs.push(getRelatedAssetPairsFromSwapsChain(swapsGroup));
+  }
+
+  assetsPairLoop: for (const {
+    in: assetInData,
+    out: assetOutData,
+  } of assetBalancePairs.flat()) {
+    if (
+      assetInData.asset.assetRegistryId === undefined ||
+      assetInData.asset.assetRegistryId === null ||
+      !assetInData.asset.decimals ||
+      assetOutData.asset.assetRegistryId === undefined ||
+      assetOutData.asset.assetRegistryId === null ||
+      !assetOutData.asset.decimals
+    )
+      continue assetsPairLoop;
+
+    if (
+      !routerAssetPairs.isPairTradable(
+        assetInData.asset.assetRegistryId,
+        assetOutData.asset.assetRegistryId
       )
-        continue assetsPairLoop;
+    ) {
+      continue assetsPairLoop;
+    }
 
-      if (
-        !routerAssetPairs.isPairTradable(
-          assetInData.asset.assetRegistryId,
-          assetOutData.asset.assetRegistryId
-        )
-      ) {
-        continue assetsPairLoop;
-      }
+    const assetInSpotPrice = getAssetSpotPriceFromHistoricalData({
+      assetId: assetInData.asset.id,
+      blockHeader,
+      ctx,
+    });
 
-      const assetInSpotPrice = getAssetSpotPriceFromHistoricalData({
-        assetId: assetInData.asset.id,
-        blockHeader,
-        ctx,
-      });
+    const assetOutSpotPrice = getAssetSpotPriceFromHistoricalData({
+      assetId: assetOutData.asset.id,
+      blockHeader,
+      ctx,
+    });
 
-      const assetOutSpotPrice = getAssetSpotPriceFromHistoricalData({
-        assetId: assetOutData.asset.id,
-        blockHeader,
-        ctx,
-      });
+    if (!assetInSpotPrice || !assetOutSpotPrice) continue assetsPairLoop;
 
-      if (!assetInSpotPrice || !assetOutSpotPrice) continue assetsPairLoop;
+    const existingPairVolEntity = [
+      ...ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values(),
+    ].find(
+      (item) =>
+        item.id ===
+          `${assetInData.asset.id}-${assetOutData.asset.id}-${blockHeader.height}` ||
+        item.id ===
+          `${assetOutData.asset.id}-${assetInData.asset.id}-${blockHeader.height}`
+    );
 
-      const existingPairVolEntity = [
-        ...ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values(),
-      ].find(
-        (item) =>
-          item.id ===
-            `${assetInData.asset.id}-${assetOutData.asset.id}-${blockHeader.height}` ||
-          item.id ===
-            `${assetOutData.asset.id}-${assetInData.asset.id}-${blockHeader.height}`
+    const assetsPairVolumeEntityId =
+      existingPairVolEntity?.id ??
+      `${assetInData.asset.id}-${assetOutData.asset.id}-${blockHeader.height}`;
+
+    const currentTotalVolumeNormalised = fromExponentialToDecimalNotation(
+      assetInData.amount.toString(),
+      assetInData.asset.decimals
+    )
+      .multipliedBy(assetInSpotPrice)
+      .plus(
+        fromExponentialToDecimalNotation(
+          assetOutData.amount.toString(),
+          assetOutData.asset.decimals
+        ).multipliedBy(assetOutSpotPrice)
       );
 
-      const assetsPairVolumeEntityId =
-        existingPairVolEntity?.id ??
-        `${assetInData.asset.id}-${assetOutData.asset.id}-${blockHeader.height}`;
+    let assetA = assetInData.asset;
+    let assetB = assetOutData.asset;
+    let assetAVolume = assetInData.amount;
+    let assetBVolume = assetOutData.amount;
 
-      const currentTotalVolumeNormalised = fromExponentialToDecimalNotation(
-        assetInData.amount.toString(),
-        assetInData.asset.decimals
-      )
-        .multipliedBy(assetInSpotPrice)
-        .plus(
-          fromExponentialToDecimalNotation(
-            assetOutData.amount.toString(),
-            assetOutData.asset.decimals
-          ).multipliedBy(assetOutSpotPrice)
-        );
+    if (existingPairVolEntity) {
+      assetA =
+        existingPairVolEntity.assetA.id === assetInData.asset.id
+          ? assetInData.asset
+          : assetOutData.asset;
+      assetB =
+        existingPairVolEntity.assetB.id === assetOutData.asset.id
+          ? assetOutData.asset
+          : assetInData.asset;
+      assetAVolume =
+        (existingPairVolEntity.assetA.id === assetInData.asset.id
+          ? assetInData.amount
+          : assetOutData.amount) + existingPairVolEntity.assetAVolume;
+      assetBVolume =
+        (existingPairVolEntity.assetB.id === assetOutData.asset.id
+          ? assetOutData.amount
+          : assetInData.amount) + existingPairVolEntity.assetBVolume;
+    }
 
-      let assetA = assetInData.asset;
-      let assetB = assetOutData.asset;
-      let assetAVolume = assetInData.amount;
-      let assetBVolume = assetOutData.amount;
+    const assetsPairVolumeEntity = new AssetsPairVolumeHistoricalData({
+      id: assetsPairVolumeEntityId,
 
-      if (existingPairVolEntity) {
-        assetA =
-          existingPairVolEntity.assetA.id === assetInData.asset.id
-            ? assetInData.asset
-            : assetOutData.asset;
-        assetB =
-          existingPairVolEntity.assetB.id === assetOutData.asset.id
-            ? assetOutData.asset
-            : assetInData.asset;
-        assetAVolume =
-          (existingPairVolEntity.assetA.id === assetInData.asset.id
-            ? assetInData.amount
-            : assetOutData.amount) + existingPairVolEntity.assetAVolume;
-        assetBVolume =
-          (existingPairVolEntity.assetB.id === assetOutData.asset.id
-            ? assetOutData.amount
-            : assetInData.amount) + existingPairVolEntity.assetBVolume;
-      }
+      assetA,
+      assetB,
 
-      const assetsPairVolumeEntity = new AssetsPairVolumeHistoricalData({
-        id: assetsPairVolumeEntityId,
+      assetAVolume,
+      assetBVolume,
+      totalVolumeNormalised: currentTotalVolumeNormalised
+        .plus(existingPairVolEntity?.totalVolumeNormalised ?? '0')
+        .toFixed(),
 
-        assetA,
-        assetB,
+      paraBlockHeight: blockHeader.height,
+      relayBlockHeight: currentBlockEntity?.relayBlockHeight,
+      block: currentBlockEntity,
+    });
 
-        assetAVolume,
-        assetBVolume,
-        totalVolumeNormalised: currentTotalVolumeNormalised
-          .plus(existingPairVolEntity?.totalVolumeNormalised ?? '0')
-          .toFixed(),
+    ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.set(
+      assetsPairVolumeEntity.id,
+      assetsPairVolumeEntity
+    );
 
+    const assetsHistoricalDataEntities = [
+      ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
+    ].filter(
+      (item) =>
+        item.paraBlockHeight === blockHeader.height &&
+        (item.asset.assetRegistryId === assetInData.asset.assetRegistryId ||
+          item.asset.assetRegistryId === assetOutData.asset.assetRegistryId)
+    );
+
+    for (const assetHisData of assetsHistoricalDataEntities) {
+      const assetAssetsPairVolumeJunction = new AssetAssetsPairVolume({
+        id: stringToMd5Hash(
+          `${assetHisData.id}-${assetsPairVolumeEntity.id}-${blockHeader.height}`
+        ),
+        assetHistoricalData: assetHisData,
+        assetsPairVolumeHistoricalData: assetsPairVolumeEntity,
         paraBlockHeight: blockHeader.height,
-        relayBlockHeight: trade.relayBlockHeight,
-        block: trade.block,
       });
 
-      ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.set(
-        assetsPairVolumeEntity.id,
-        assetsPairVolumeEntity
+      ctx.batchState.state.assetAssetsPairVolumesBatch.set(
+        assetAssetsPairVolumeJunction.id,
+        assetAssetsPairVolumeJunction
       );
-
-      const assetsHistoricalDataEntities = [
-        ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
-      ].filter(
-        (item) =>
-          item.paraBlockHeight === blockHeader.height &&
-          (item.asset.assetRegistryId === assetInData.asset.assetRegistryId ||
-            item.asset.assetRegistryId === assetOutData.asset.assetRegistryId)
-      );
-
-      for (const assetHisData of assetsHistoricalDataEntities) {
-        const assetAssetsPairVolumeJunction = new AssetAssetsPairVolume({
-          id: stringToMd5Hash(
-            `${assetHisData.id}-${assetsPairVolumeEntity.id}-${blockHeader.height}`
-          ),
-          assetHistoricalData: assetHisData,
-          assetsPairVolumeHistoricalData: assetsPairVolumeEntity,
-          paraBlockHeight: blockHeader.height,
-        });
-
-        ctx.batchState.state.assetAssetsPairVolumesBatch.set(
-          assetAssetsPairVolumeJunction.id,
-          assetAssetsPairVolumeJunction
-        );
-      }
     }
   }
 }

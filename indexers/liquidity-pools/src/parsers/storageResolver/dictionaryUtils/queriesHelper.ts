@@ -21,8 +21,11 @@ const responsePreprocessingExchange: Exchange =
       forward(ops$),
       map((result) => {
         if (result.error) {
+          console.log(
+            (result.operation.context.fetchOptions as RequestInit)?.headers
+          );
           console.error(
-            'Storage dictionary GraphQL Error:',
+            `Storage dictionary [] GraphQL Error:`,
             result.error.message
           );
         }
@@ -82,6 +85,11 @@ export class QueriesHelper {
 
     const client = new GqlClient({
       url: this.gqlClientUrlsMap.get(clientName)!,
+      // fetchOptions: {
+      //   headers: {
+      //     ProcessingTopic: clientName,
+      //   },
+      // },
       exchanges: [
         retryExchange(retryOptions),
         responsePreprocessingExchange,

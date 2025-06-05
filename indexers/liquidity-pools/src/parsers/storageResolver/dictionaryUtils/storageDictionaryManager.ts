@@ -481,7 +481,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     const allEmaOraclesStorageFetchPromise = async () => {
       // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-      const data: EmaOracleGql[] = [];
+      const data: EmaOracleGql[][] = [];
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchBlockCompressedDataPaginated,
@@ -494,7 +494,8 @@ export class StorageDictionaryManager extends QueriesHelper {
             dataKey: BlockCompressedDataKey.emaOracle,
           });
 
-        data.push(...(encodedPageData as EmaOracleGql[]));
+        // data.push(...(encodedPageData as EmaOracleGql[]));
+        data.push(encodedPageData);
       }
 
       return { pallet: ProcessingTopic.EMA_ORACLE, data: data.flat() };
@@ -502,7 +503,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     const allAssetHistDataStorageFetchPromise = async () => {
       // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-      const data: AssetHistoricalDatumGql[] = [];
+      const data: AssetHistoricalDatumGql[][] = [];
 
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
@@ -516,7 +517,8 @@ export class StorageDictionaryManager extends QueriesHelper {
             dataKey: BlockCompressedDataKey.assetHistoricalData,
           });
 
-        data.push(...(encodedPageData as AssetHistoricalDatumGql[]));
+        // data.push(...(encodedPageData as AssetHistoricalDatumGql[]));
+        data.push(encodedPageData as AssetHistoricalDatumGql[]);
       }
 
       return { pallet: ProcessingTopic.ASSET_HIST_DATA, data: data.flat() };
@@ -524,7 +526,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     const allAavepoolsStorageFetchPromise = async () => {
       // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-      const data: AavepoolGlq[] = [];
+      const data: AavepoolGlq[][] = [];
 
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
@@ -538,7 +540,8 @@ export class StorageDictionaryManager extends QueriesHelper {
             dataKey: BlockCompressedDataKey.aavepool,
           });
 
-        data.push(...(encodedPageData as AavepoolGlq[]));
+        data.push(encodedPageData);
+        // data.push(...(encodedPageData as AavepoolGlq[]));
       }
 
       return { pallet: ProcessingTopic.AAVE, data: data.flat() };
@@ -546,7 +549,7 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     const allLbpPoolStorageFetchPromise = async () => {
       if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-      const data: LbpPoolGlq[] = [];
+      const data: LbpPoolGlq[][] = [];
 
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
@@ -560,20 +563,21 @@ export class StorageDictionaryManager extends QueriesHelper {
             dataKey: BlockCompressedDataKey.lbppool,
           });
 
-        data.push(...(encodedPageData as LbpPoolGlq[]));
+        data.push(encodedPageData);
+        // data.push(...(encodedPageData as LbpPoolGlq[]));
       }
 
       return { pallet: ProcessingTopic.LBP, data: data.flat() };
     };
 
     const allXykPoolStorageFetchPromise = async () => {
-      if (
-        !this.batchCtx.appConfig.PROCESS_XYK_POOLS
-        // this.batchCtx.batchState.state.xykPoolIdsForStoragePrefetch.size === 0
-      )
-        return [];
+      // if (
+      //   !this.batchCtx.appConfig.PROCESS_XYK_POOLS
+      //   // this.batchCtx.batchState.state.xykPoolIdsForStoragePrefetch.size === 0
+      // )
+      //   return [];
 
-      const data: XykpoolGlq[] = [];
+      const data: XykpoolGlq[][] = [];
 
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
@@ -587,19 +591,20 @@ export class StorageDictionaryManager extends QueriesHelper {
             dataKey: BlockCompressedDataKey.xykpool,
           });
 
-        data.push(...(encodedPageData as XykpoolGlq[]));
+        data.push(encodedPageData);
+        // data.push(...(encodedPageData as XykpoolGlq[]));
       }
 
       return { pallet: ProcessingTopic.XYK, data: data.flat() };
     };
 
     const allOmnipoolStorageFetchPromise = async () => {
-      if (
-        !this.batchCtx.appConfig.PROCESS_OMNIPOOLS
-        // this.batchCtx.batchState.state.omnipoolAssetIdsForStoragePrefetch
-        //   .size === 0
-      )
-        return [];
+      // if (
+      //   !this.batchCtx.appConfig.PROCESS_OMNIPOOLS
+      //   // this.batchCtx.batchState.state.omnipoolAssetIdsForStoragePrefetch
+      //   //   .size === 0
+      // )
+      //   return [];
 
       const data = [];
 
@@ -615,19 +620,19 @@ export class StorageDictionaryManager extends QueriesHelper {
             dataKey: BlockCompressedDataKey.omnipool,
           });
 
-        data.push(...(encodedPageData as OmnipoolGql[]));
+        data.push(encodedPageData);
       }
 
       return { pallet: ProcessingTopic.OMNIPOOL, data: data.flat() };
     };
 
     const allStablepoolStorageFetchPromise = async () => {
-      if (
-        !this.batchCtx.appConfig.PROCESS_STABLEPOOLS
-        // this.batchCtx.batchState.state.stableswapIdsForStoragePrefetch.size ===
-        //   0
-      )
-        return [];
+      // if (
+      //   !this.batchCtx.appConfig.PROCESS_STABLEPOOLS
+      //   // this.batchCtx.batchState.state.stableswapIdsForStoragePrefetch.size ===
+      //   //   0
+      // )
+      //   return [];
       const data = [];
 
       for await (const page of this.fetchAllPages({
@@ -642,7 +647,8 @@ export class StorageDictionaryManager extends QueriesHelper {
             dataKey: BlockCompressedDataKey.stableswap,
           });
 
-        data.push(...(encodedPageData as StableswapGql[]));
+        data.push(encodedPageData);
+        // data.push(...(encodedPageData as StableswapGql[]));
       }
 
       return { pallet: ProcessingTopic.STABLESWAP, data: data.flat() };
