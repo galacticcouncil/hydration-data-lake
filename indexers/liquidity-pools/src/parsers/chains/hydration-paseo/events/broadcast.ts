@@ -13,7 +13,7 @@ import {
 import { SwappedExecutionTypeKind } from '../../../../utils/types';
 
 function parseSwappedParams(event: SqdEvent): BroadcastSwappedEventParams {
-  if (events.broadcast.swapped.v282.is(event)) {
+  if (events.broadcast.swapped.v287.is(event)) {
     const {
       swapper,
       filler,
@@ -23,7 +23,7 @@ function parseSwappedParams(event: SqdEvent): BroadcastSwappedEventParams {
       fees,
       operation,
       operationStack: operationStackRaw,
-    } = events.broadcast.swapped.v282.decode(event);
+    } = events.broadcast.swapped.v287.decode(event);
 
     const fillerType = {
       kind: fillerTypeRaw.__kind as SwapFillerType,
@@ -57,4 +57,94 @@ function parseSwappedParams(event: SqdEvent): BroadcastSwappedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-export default { parseSwappedParams };
+function parseSwapped2Params(event: SqdEvent): BroadcastSwappedEventParams {
+  if (events.broadcast.swapped2.v308.is(event)) {
+    const {
+      swapper,
+      filler,
+      fillerType: fillerTypeRaw,
+      inputs,
+      outputs,
+      fees,
+      operation,
+      operationStack: operationStackRaw,
+    } = events.broadcast.swapped2.v308.decode(event);
+
+    const fillerType = {
+      kind: fillerTypeRaw.__kind as SwapFillerType,
+      // @ts-ignore
+      value: fillerTypeRaw.value,
+    };
+    const operationStack: BroadcastSwappedExecutionType[] =
+      operationStackRaw.map((stackItem) => ({
+        kind: stackItem.__kind as SwappedExecutionTypeKind,
+        value: stackItem.value,
+      }));
+
+    return {
+      swapper,
+      filler,
+      fillerType,
+      inputs: inputs.map((e) => ({ amount: e.amount, assetId: e.asset })),
+      outputs: outputs.map((e) => ({ amount: e.amount, assetId: e.asset })),
+      fees: fees.map((e) => ({
+        amount: e.amount,
+        assetId: e.asset,
+        destinationType: e.destination.__kind as SwapFeeDestinationType,
+        // @ts-ignore
+        recipientId: e.destination.value,
+      })),
+      operationStack,
+      operation: operation.__kind as TradeOperationType,
+    };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+function parseSwapped3Params(event: SqdEvent): BroadcastSwappedEventParams {
+  if (events.broadcast.swapped3.v312.is(event)) {
+    const {
+      swapper,
+      filler,
+      fillerType: fillerTypeRaw,
+      inputs,
+      outputs,
+      fees,
+      operation,
+      operationStack: operationStackRaw,
+    } = events.broadcast.swapped3.v312.decode(event);
+
+    const fillerType = {
+      kind: fillerTypeRaw.__kind as SwapFillerType,
+      // @ts-ignore
+      value: fillerTypeRaw.value,
+    };
+    const operationStack: BroadcastSwappedExecutionType[] =
+      operationStackRaw.map((stackItem) => ({
+        kind: stackItem.__kind as SwappedExecutionTypeKind,
+        value: stackItem.value,
+      }));
+
+    return {
+      swapper,
+      filler,
+      fillerType,
+      inputs: inputs.map((e) => ({ amount: e.amount, assetId: e.asset })),
+      outputs: outputs.map((e) => ({ amount: e.amount, assetId: e.asset })),
+      fees: fees.map((e) => ({
+        amount: e.amount,
+        assetId: e.asset,
+        destinationType: e.destination.__kind as SwapFeeDestinationType,
+        // @ts-ignore
+        recipientId: e.destination.value,
+      })),
+      operationStack,
+      operation: operation.__kind as TradeOperationType,
+    };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+export default { parseSwappedParams, parseSwapped2Params, parseSwapped3Params };

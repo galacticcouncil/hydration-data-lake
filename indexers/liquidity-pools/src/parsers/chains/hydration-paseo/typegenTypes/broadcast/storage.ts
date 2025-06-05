@@ -1,17 +1,18 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v282 from '../v282'
+import * as v287 from '../v287'
+import * as v308 from '../v308'
 
 export const incrementalId =  {
     /**
      *  Next available incremental ID
      */
-    v282: new StorageType('Broadcast.IncrementalId', 'Default', [], sts.number()) as IncrementalIdV282,
+    v287: new StorageType('Broadcast.IncrementalId', 'Default', [], sts.number()) as IncrementalIdV287,
 }
 
 /**
  *  Next available incremental ID
  */
-export interface IncrementalIdV282  {
+export interface IncrementalIdV287  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): number
     get(block: Block): Promise<(number | undefined)>
@@ -21,34 +22,29 @@ export const executionContext =  {
     /**
      *  Execution context to figure out where the trade is originated from
      */
-    v282: new StorageType('Broadcast.ExecutionContext', 'Default', [], sts.array(() => v282.ExecutionType)) as ExecutionContextV282,
+    v287: new StorageType('Broadcast.ExecutionContext', 'Default', [], sts.array(() => v287.ExecutionType)) as ExecutionContextV287,
 }
 
 /**
  *  Execution context to figure out where the trade is originated from
  */
-export interface ExecutionContextV282  {
+export interface ExecutionContextV287  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v282.ExecutionType[]
-    get(block: Block): Promise<(v282.ExecutionType[] | undefined)>
+    getDefault(block: Block): v287.ExecutionType[]
+    get(block: Block): Promise<(v287.ExecutionType[] | undefined)>
 }
 
-export const overflowCount =  {
+export const swapper =  {
     /**
-     *  To handle the overflow of increasing the execution context.
-     *  After the stack is full, we start to increase the overflow count,
-     *  so we how many times we can ignore the removal from the context.
+     * If filled, we overwrite the original swapper. Mainly used in router to not to use temporary trade account
      */
-    v282: new StorageType('Broadcast.OverflowCount', 'Default', [], sts.number()) as OverflowCountV282,
+    v308: new StorageType('Broadcast.Swapper', 'Optional', [], v308.AccountId32) as SwapperV308,
 }
 
 /**
- *  To handle the overflow of increasing the execution context.
- *  After the stack is full, we start to increase the overflow count,
- *  so we how many times we can ignore the removal from the context.
+ * If filled, we overwrite the original swapper. Mainly used in router to not to use temporary trade account
  */
-export interface OverflowCountV282  {
+export interface SwapperV308  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): number
-    get(block: Block): Promise<(number | undefined)>
+    get(block: Block): Promise<(v308.AccountId32 | undefined)>
 }

@@ -9,8 +9,8 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseOrderPlacedParams(event: SqdEvent): OtcOrderPlacedEventParams {
-  if (events.otc.placed.v276.is(event)) {
-    return events.otc.placed.v276.decode(event);
+  if (events.otc.placed.v287.is(event)) {
+    return events.otc.placed.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -19,17 +19,17 @@ function parseOrderPlacedParams(event: SqdEvent): OtcOrderPlacedEventParams {
 function parseOrderCancelledParams(
   event: SqdEvent
 ): OtcOrderCancelledEventParams {
-  if (events.otc.cancelled.v276.is(event)) {
-    return events.otc.cancelled.v276.decode(event);
+  if (events.otc.cancelled.v287.is(event)) {
+    return events.otc.cancelled.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseOrderFilledParams(event: SqdEvent): OtcOrderFilledEventParams {
-  if (events.otc.filled.v276.is(event)) {
+  if (events.otc.filled.v287.is(event)) {
     const { orderId, amountIn, amountOut, who, fee } =
-      events.otc.filled.v276.decode(event);
+      events.otc.filled.v287.decode(event);
 
     return {
       orderId,
@@ -46,9 +46,9 @@ function parseOrderFilledParams(event: SqdEvent): OtcOrderFilledEventParams {
 function parseOrderPartiallyFilledParams(
   event: SqdEvent
 ): OtcOrderPartiallyFilledEventParams {
-  if (events.otc.filled.v276.is(event)) {
+  if (events.otc.filled.v287.is(event)) {
     const { orderId, amountIn, amountOut, who, fee } =
-      events.otc.filled.v276.decode(event);
+      events.otc.filled.v287.decode(event);
 
     return {
       orderId,

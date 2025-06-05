@@ -1,15 +1,19 @@
-import { Schedule } from './typegenTypes/v278';
+import { Schedule as Schedule_v287 } from './typegenTypes/v287';
+import { Schedule as Schedule_v295 } from './typegenTypes/v295';
 import {
   DcaScheduleCallData,
   DcaScheduleOrderData,
   DcaScheduleOrderRouteData,
 } from '../../types/calls';
 import { DcaScheduleOrderType, SwapFillerType } from '../../../model';
-import { AssetLocation as AssetLocationV276 } from './typegenTypes/v276';
+import { AssetLocation as AssetLocationV276 } from './typegenTypes/v287';
 
 import { Erc20AssetContractDetails } from '../../types/storage';
+import { AssetRegistryAssetLocation } from '../../types/events';
 
-export function decorateDcaSchedule(scheduleRaw: Schedule) {
+export function decorateDcaSchedule(
+  scheduleRaw: Schedule_v287 | Schedule_v295
+) {
   const {
     owner,
     period,
@@ -63,17 +67,40 @@ export function decorateDcaSchedule(scheduleRaw: Schedule) {
   return scheduleDecoratedData;
 }
 
-// TODO refactor parsing location by proper way
 export function getErc20AssetContractFromLocation(
-  location?: AssetLocationV276
+  location?: AssetRegistryAssetLocation
 ): Erc20AssetContractDetails | null {
   if (!location) return null;
 
   try {
-    return {
-      // @ts-ignore
-      address: location.interior.value.key,
-    };
+    switch (location.interior.__kind) {
+      case 'X1':
+        return {
+          address: location.interior.value.key,
+        };
+      case 'X2':
+        return {
+          address: location.interior.value[1].key,
+        };
+      case 'X3':
+        return {
+          address: location.interior.value[2].key,
+        };
+      case 'X4':
+        return {
+          address: location.interior.value[3].key,
+        };
+      case 'X5':
+        return {
+          address: location.interior.value[4].key,
+        };
+      case 'X6':
+        return {
+          address: location.interior.value[5].key,
+        };
+      default:
+        return null;
+    }
   } catch (e) {
     return null;
   }

@@ -12,8 +12,16 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseScheduledParams(event: SqdEvent): DcaScheduledEventParams {
-  if (events.dca.scheduled.v276.is(event)) {
-    const { id, who } = events.dca.scheduled.v276.decode(event);
+  if (events.dca.scheduled.v287.is(event)) {
+    const { id, who } = events.dca.scheduled.v287.decode(event);
+    return {
+      id,
+      who,
+    };
+  }
+
+  if (events.dca.scheduled.v295.is(event)) {
+    const { id, who } = events.dca.scheduled.v295.decode(event);
     return {
       id,
       who,
@@ -26,12 +34,12 @@ function parseScheduledParams(event: SqdEvent): DcaScheduledEventParams {
 function parseExecutionPlannedParams(
   event: SqdEvent
 ): DcaExecutionPlannedEventParams {
-  if (events.dca.executionPlanned.v276.is(event)) {
+  if (events.dca.executionPlanned.v287.is(event)) {
     const {
       id,
       who,
       block: blockNumber,
-    } = events.dca.executionPlanned.v276.decode(event);
+    } = events.dca.executionPlanned.v287.decode(event);
     return {
       id,
       who,
@@ -45,9 +53,9 @@ function parseExecutionPlannedParams(
 function parseTradeExecutedParams(
   event: SqdEvent
 ): DcaTradeExecutedEventParams {
-  if (events.dca.tradeExecuted.v276.is(event)) {
+  if (events.dca.tradeExecuted.v287.is(event)) {
     const { id, who, amountIn, amountOut } =
-      events.dca.tradeExecuted.v276.decode(event);
+      events.dca.tradeExecuted.v287.decode(event);
     return {
       id,
       who,
@@ -60,8 +68,8 @@ function parseTradeExecutedParams(
 }
 
 function parseTradeFailedParams(event: SqdEvent): DcaTradeFailedEventParams {
-  if (events.dca.tradeFailed.v276.is(event)) {
-    const { id, who, error } = events.dca.tradeFailed.v276.decode(event);
+  if (events.dca.tradeFailed.v287.is(event)) {
+    const { id, who, error } = events.dca.tradeFailed.v287.decode(event);
     return {
       id,
       who,
@@ -74,8 +82,8 @@ function parseTradeFailedParams(event: SqdEvent): DcaTradeFailedEventParams {
 }
 
 function parseTerminatedParams(event: SqdEvent): DcaTerminatedEventParams {
-  if (events.dca.terminated.v276.is(event)) {
-    const { id, who, error } = events.dca.terminated.v276.decode(event);
+  if (events.dca.terminated.v287.is(event)) {
+    const { id, who, error } = events.dca.terminated.v287.decode(event);
     return {
       id,
       who,
@@ -88,8 +96,8 @@ function parseTerminatedParams(event: SqdEvent): DcaTerminatedEventParams {
 }
 
 function parseCompletedParams(event: SqdEvent): DcaCompletedEventParams {
-  if (events.dca.completed.v276.is(event)) {
-    const { id, who } = events.dca.completed.v276.decode(event);
+  if (events.dca.completed.v287.is(event)) {
+    const { id, who } = events.dca.completed.v287.decode(event);
     return {
       id,
       who,
@@ -102,9 +110,9 @@ function parseCompletedParams(event: SqdEvent): DcaCompletedEventParams {
 function parseRandomnessGenerationFailedParams(
   event: SqdEvent
 ): DcaRandomnessGenerationFailedEventParams {
-  if (events.dca.randomnessGenerationFailed.v276.is(event)) {
+  if (events.dca.randomnessGenerationFailed.v287.is(event)) {
     const { block, error } =
-      events.dca.randomnessGenerationFailed.v276.decode(event);
+      events.dca.randomnessGenerationFailed.v287.decode(event);
     return {
       block,
       // @ts-ignore

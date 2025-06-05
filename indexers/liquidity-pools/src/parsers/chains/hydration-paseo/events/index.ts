@@ -1,5 +1,6 @@
 import lbp from './lbp';
 import dca from './dca';
+import otc from './otc';
 import xyk from './xyk';
 import omnipool from './omnipool';
 import stableswap from './stableswap';
@@ -15,6 +16,7 @@ import { EventParserMethods } from '../../../types/common';
 export default {
   lbp,
   xyk,
+  otc,
   omnipool,
   stableswap,
   tokens,

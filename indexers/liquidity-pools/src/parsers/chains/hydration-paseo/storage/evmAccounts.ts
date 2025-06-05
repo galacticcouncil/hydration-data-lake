@@ -9,8 +9,8 @@ async function getAccountExtension({
   evmAddress,
   block,
 }: EvmAccountsGetAccountExtensionInput): Promise<EvmAccountsAccountExtension | null> {
-  if (storage.evmAccounts.accountExtension.v276.is(block)) {
-    const resp = await storage.evmAccounts.accountExtension.v276.get(
+  if (storage.evmAccounts.accountExtension.v287.is(block)) {
+    const resp = await storage.evmAccounts.accountExtension.v287.get(
       block,
       evmAddress
     );

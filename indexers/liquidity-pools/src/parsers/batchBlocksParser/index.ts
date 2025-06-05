@@ -764,7 +764,7 @@ export async function getParsedEventsData(
         /**
          * ==== Swapped2 ====
          */
-        case (events as typeof hydrationEvents).broadcast.swapped2?.name: {
+        case events.broadcast.swapped2.name: {
           const preparedData = parserHelper.parseBroadcastSwapped2Data();
           parsedDataManager.set(EventName.Broadcast_Swapped2, preparedData);
 
@@ -821,7 +821,7 @@ export async function getParsedEventsData(
         /**
          * ==== Swapped3 ====
          */
-        case (events as typeof hydrationEvents).broadcast.swapped3?.name: {
+        case events.broadcast.swapped3.name: {
           const preparedData = parserHelper.parseBroadcastSwapped3Data();
           parsedDataManager.set(EventName.Broadcast_Swapped3, preparedData);
 

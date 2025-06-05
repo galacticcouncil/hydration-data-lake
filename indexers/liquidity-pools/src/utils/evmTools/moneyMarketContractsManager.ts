@@ -35,8 +35,12 @@ export class MoneyMarketContractsManager {
   > = new Map();
 
   private constructor() {
+    console.log(
+      'MoneyMarketContractsManager : RPC_URL_HTTPS - ',
+      process.env.RPC_URL_HTTPS
+    );
     this.provider = new ethers.providers.JsonRpcProvider(
-      'https://archive.rpc.hydration.cloud'
+      process.env.RPC_URL_HTTPS || 'https://archive.rpc.hydration.cloud'
     );
 
     this.erc20TokenContractInstance = new Contract(

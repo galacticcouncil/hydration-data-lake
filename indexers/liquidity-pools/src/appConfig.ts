@@ -215,12 +215,14 @@ export class AppConfig {
       events.broadcast.swapped.name,
       events.evm.log.name,
       events.evmAccounts.bound.name,
+      events.broadcast.swapped2.name,
+      events.broadcast.swapped3.name,
     ];
 
-    if (this.CHAIN === ChainName.hydration) {
-      eventsToListen.push(hydrationEvents.broadcast.swapped2.name);
-      eventsToListen.push(hydrationEvents.broadcast.swapped3.name);
-    }
+    // if (this.CHAIN === ChainName.hydration) {
+    //   eventsToListen.push(hydrationEvents.broadcast.swapped2.name);
+    //   eventsToListen.push(hydrationEvents.broadcast.swapped3.name);
+    // }
 
     // if (this.CHAIN === ChainName.hydration_paseo_next) {
     //   eventsToListen.push(hydrationPaseoNextEvents.ammSupport.swapped.name);

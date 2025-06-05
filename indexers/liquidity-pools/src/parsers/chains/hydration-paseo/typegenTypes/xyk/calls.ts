@@ -13,7 +13,7 @@ export const createPool =  {
      * 
      * Emits `PoolCreated` event when successful.
      */
-    v276: new CallType(
+    v287: new CallType(
         'XYK.create_pool',
         sts.struct({
             assetA: sts.number(),
@@ -33,9 +33,10 @@ export const sell =  {
      * 
      * `max_limit` - minimum amount of `asset_out` / amount of asset_out to be obtained from the pool in exchange for `asset_in`.
      * 
-     * Emits `SellExecuted` when successful.
+     * Emits `SellExecuted` when successful. Deprecated.
+     * Emits `pallet_broadcast::Swapped` when successful.
      */
-    v276: new CallType(
+    v287: new CallType(
         'XYK.sell',
         sts.struct({
             assetIn: sts.number(),
@@ -55,10 +56,10 @@ export const buy =  {
      * Executes a swap of `asset_in` for `asset_out`. Price is determined by the liquidity pool.
      * 
      * `max_limit` - maximum amount of `asset_in` to be sold in exchange for `asset_out`.
-     * 
-     * Emits `BuyExecuted` when successful.
+     * Emits `BuyExecuted` when successful. Deprecated.
+     * Emits `pallet_broadcast::Swapped` when successful.
      */
-    v276: new CallType(
+    v287: new CallType(
         'XYK.buy',
         sts.struct({
             assetOut: sts.number(),

@@ -1,15 +1,15 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
+import * as v287 from '../v287'
 
 export const log =  {
     name: 'EVM.Log',
     /**
      * Ethereum events from contracts.
      */
-    v276: new EventType(
+    v287: new EventType(
         'EVM.Log',
         sts.struct({
-            log: v276.Log,
+            log: v287.Log,
         })
     ),
 }
@@ -19,10 +19,10 @@ export const created =  {
     /**
      * A contract has been created at given address.
      */
-    v276: new EventType(
+    v287: new EventType(
         'EVM.Created',
         sts.struct({
-            address: v276.H160,
+            address: v287.H160,
         })
     ),
 }
@@ -32,10 +32,10 @@ export const createdFailed =  {
     /**
      * A contract was attempted to be created, but the execution failed.
      */
-    v276: new EventType(
+    v287: new EventType(
         'EVM.CreatedFailed',
         sts.struct({
-            address: v276.H160,
+            address: v287.H160,
         })
     ),
 }
@@ -45,10 +45,10 @@ export const executed =  {
     /**
      * A contract has been executed successfully with states applied.
      */
-    v276: new EventType(
+    v287: new EventType(
         'EVM.Executed',
         sts.struct({
-            address: v276.H160,
+            address: v287.H160,
         })
     ),
 }
@@ -58,10 +58,10 @@ export const executedFailed =  {
     /**
      * A contract has been executed with errors. States are reverted with only gas fees applied.
      */
-    v276: new EventType(
+    v287: new EventType(
         'EVM.ExecutedFailed',
         sts.struct({
-            address: v276.H160,
+            address: v287.H160,
         })
     ),
 }
