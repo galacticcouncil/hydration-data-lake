@@ -50,6 +50,7 @@ import {
   execCoreProcessorHandlers,
 } from './multiprocessorHandlers';
 import { execSpotPricesProcessorHandlers } from './multiprocessorHandlers/spotPricesProc';
+import { ProcessingPoolManager } from './utils/processingPoolManager';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`

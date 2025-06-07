@@ -2,12 +2,24 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { calcVolumeNormalized } from './index';
 
-export function processOmnipoolAssetNormalizedVolumes(
-  ctx: SqdProcessorContext<Store>
-) {
-  const omnipoolAssetHistVolsByBatchList = [
+export function processOmnipoolAssetNormalizedVolumes({
+  blockNumbersToProcess,
+  ctx,
+}: {
+  blockNumbersToProcess?: number[];
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let omnipoolAssetHistVolsByBatchList = [
     ...ctx.batchState.state.omnipoolAssetVolumes.values(),
   ];
+
+  if (blockNumbersToProcess) {
+    const blockNumbersToProcessSet = new Set(blockNumbersToProcess);
+    omnipoolAssetHistVolsByBatchList = omnipoolAssetHistVolsByBatchList.filter(
+      (i) => blockNumbersToProcessSet.has(i.paraBlockHeight)
+    );
+  }
+
   const historicalSpotPricesMap =
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 

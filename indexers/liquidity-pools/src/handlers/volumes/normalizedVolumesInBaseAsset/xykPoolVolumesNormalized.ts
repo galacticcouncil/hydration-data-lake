@@ -2,12 +2,24 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { fromExponentialToDecimalNotation } from '../../../utils/helpers';
 
-export function processXykPoolsNormalizedVolumes(
-  ctx: SqdProcessorContext<Store>
-) {
-  const xykPoolHistVolsByBatchList = [
+export function processXykPoolsNormalizedVolumes({
+  blockNumbersToProcess,
+  ctx,
+}: {
+  blockNumbersToProcess?: number[];
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let xykPoolHistVolsByBatchList = [
     ...ctx.batchState.state.xykPoolVolumes.values(),
   ];
+
+  if (blockNumbersToProcess) {
+    const blockNumbersToProcessSet = new Set(blockNumbersToProcess);
+    xykPoolHistVolsByBatchList = xykPoolHistVolsByBatchList.filter((i) =>
+      blockNumbersToProcessSet.has(i.paraBlockHeight)
+    );
+  }
+
   const historicalSpotPricesMap =
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 

@@ -98,6 +98,22 @@ export class AppConfig {
    */
   readonly RPC_REQUEST_TIMEOUT: number = 30_000;
 
+  @IsNotEmpty()
+  readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
+
+  @IsNotEmpty()
+  readonly ORCHESTRATOR_QUEUE_REDIS_PASS: string = 'orchestra';
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ORCHESTRATOR_QUEUE_REDIS_PORT: number = 6379;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly MAX_JOB_BATCH_SIZE: number = 10;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly INDEXER_ID!: string;
+
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ALL_IN_ONE_PROCESSOR_MODE: boolean = true;
 

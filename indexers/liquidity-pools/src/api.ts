@@ -29,6 +29,7 @@ import { HydrationSdkManager } from './apiSupport/utils/hydrationSdk';
 import { CacheManager } from './apiSupport/utils/cacheManager';
 import { Request, Response, NextFunction } from 'express';
 import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolYieldMetrics';
+import { getBullBoardExpressAdapter } from './utils/processingPoolManager/bullBoard';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -146,6 +147,8 @@ async function initializeServer() {
 
       next();
     });
+
+    app.use('/admin/queues', getBullBoardExpressAdapter().getRouter());
 
     app.use(postgraphileInstance);
 

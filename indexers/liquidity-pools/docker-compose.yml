@@ -13,3 +13,11 @@ services:
 #    volumes:
 #      - ./data/db:/var/lib/postgresql/data
 
+  redis:
+    image: redis:6.2-alpine
+    environment:
+      - ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - "6379:6379"
+#    networks:
+#      - epic_data_hub_dev

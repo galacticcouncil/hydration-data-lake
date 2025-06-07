@@ -41,6 +41,7 @@ import { handleAssetHistoricalData } from '../handlers/assets/assetHistoricalDat
 import { processPoolsNormalizedVolumes } from '../handlers/volumes/normalizedVolumesInBaseAsset';
 import { HistoricalDataManager } from '../handlers/historicalData';
 import { ProcessorStatusManager } from '../processorStatusManager';
+import { ProcessingPoolManager } from '../utils/processingPoolManager';
 
 export async function execCoreProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -52,6 +53,10 @@ export async function execCoreProcessorHandlers(
     return;
 
   console.log('execCoreProcessorHandlers');
+
+  await ProcessingPoolManager.getInstance().commitBlocksForProcessing(
+    ctx.blocks.map((b) => b.header.height)
+  );
 
   await handleRelayChainBlocks(ctx);
 
@@ -210,9 +215,9 @@ export async function execCoreProcessorHandlers(
   await handleOracles(ctx);
   console.timeEnd('handleOracles');
 
-  console.time('handleAssetHistoricalData');
-  await handleAssetHistoricalData(ctx);
-  console.timeEnd('handleAssetHistoricalData');
+  // console.time('handleAssetHistoricalData');
+  // await handleAssetHistoricalData(ctx);
+  // console.timeEnd('handleAssetHistoricalData');
 
   // console.time('processPoolsNormalizedVolumes');
   // processPoolsNormalizedVolumes(ctx);

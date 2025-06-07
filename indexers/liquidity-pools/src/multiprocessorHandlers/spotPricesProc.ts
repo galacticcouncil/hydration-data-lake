@@ -6,7 +6,10 @@ import {
   ensureNativeToken,
   prefetchAllAssets,
 } from '../handlers/assets/utils';
-import { handleAssetSpotPriceRelatedHistoricalData } from '../handlers/assets/assetHistoricalData';
+import {
+  handleAssetHistoricalData,
+  handleAssetSpotPriceRelatedHistoricalData,
+} from '../handlers/assets/assetHistoricalData';
 import { processPoolsNormalizedVolumes } from '../handlers/volumes/normalizedVolumesInBaseAsset';
 import { HistoricalDataManager } from '../handlers/historicalData';
 import { Between } from 'typeorm/find-options/operator/Between';
@@ -18,6 +21,7 @@ import {
   LbppoolHistoricalData,
   LbppoolVolumeHistoricalData,
   OmnipoolAssetVolumeHistoricalData,
+  ProcessorStatus,
   RoutedTrade,
   StableswapAssetVolumeHistoricalData,
   StableswapVolumeHistoricalData,
@@ -27,6 +31,8 @@ import {
 } from '../model';
 import { ProcessorStatusManager } from '../processorStatusManager';
 import { ChainActivityTraceManager } from '../chainActivityTracingManagers';
+import { ProcessingPoolManager } from '../utils/processingPoolManager';
+import { StorageResolver } from '../parsers/storageResolver';
 
 export async function execSpotPricesProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -39,13 +45,58 @@ export async function execSpotPricesProcessorHandlers(
 
   console.log('execSpotPricesProcessorHandlers');
 
+  console.time('prefetchAllAssets');
+  await prefetchAllAssets(ctx);
+  console.timeEnd('prefetchAllAssets');
+
+  await checkAndWaitForCoreProcStatus(ctx);
+
+  await ProcessingPoolManager.getInstance().releaseCompletedJobs();
+
+  const batchBlockNumbers = ctx.blocks.map((b) => b.header.height);
+
+  while (true) {
+    const blockNumbersToProcess =
+      await ProcessingPoolManager.getInstance().takeJobsToProcessing(
+        batchBlockNumbers
+      );
+
+    console.log('blockNumbersToProcess - ', blockNumbersToProcess);
+    if (blockNumbersToProcess.length === 0) break;
+
+    await processLockedBlocksBatch(blockNumbersToProcess, ctx);
+
+    ProcessingPoolManager.getInstance().completeProcessedJobs(
+      batchBlockNumbers
+    );
+  }
+
+  console.time('updateInitialIndexingFinishedAtTime');
+  await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);
+  console.timeEnd('updateInitialIndexingFinishedAtTime');
+
+  await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
+    latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
+}
+
+async function processLockedBlocksBatch(
+  blockNumbersToProcess: number[],
+  ctx: SqdProcessorContext<Store>
+) {
+  await StorageResolver.getInstance().init({
+    ctx: ctx,
+    blockNumberFrom: blockNumbersToProcess[0],
+    blockNumberTo: blockNumbersToProcess[blockNumbersToProcess.length - 1],
+  });
+
   console.time('waitForSpotPricesRelatedHistoricalData');
-  await waitForSpotPricesRelatedHistoricalData(ctx);
+  await waitForSpotPricesRelatedHistoricalData(blockNumbersToProcess, ctx);
   console.timeEnd('waitForSpotPricesRelatedHistoricalData');
 
   await ChainActivityTraceManager.prefetchBlockToCache({
     ctx,
-    blockHeights: ctx.blocks.map((b) => b.header.height),
+    blockHeights: blockNumbersToProcess,
   });
 
   await handleRelayChainBlocks(ctx);
@@ -60,33 +111,36 @@ export async function execSpotPricesProcessorHandlers(
   // await actualiseAssets(ctx);
   // console.timeEnd('actualiseAssets');
 
+  console.time('handleAssetHistoricalData');
+  await handleAssetHistoricalData({
+    ctx,
+    blockNumbersToProcess,
+  });
+  console.timeEnd('handleAssetHistoricalData');
+
   console.time('handleAssetSpotPricesHistoricalData');
-  await handleAssetSpotPriceRelatedHistoricalData(ctx);
+  await handleAssetSpotPriceRelatedHistoricalData({
+    ctx,
+    blockNumbersToProcess,
+  });
   console.timeEnd('handleAssetSpotPricesHistoricalData');
 
   console.time('processPoolsNormalizedVolumes');
-  processPoolsNormalizedVolumes(ctx);
+  processPoolsNormalizedVolumes({ ctx });
   console.timeEnd('processPoolsNormalizedVolumes');
 
   console.time('saveHistoricalDataBulk');
   await HistoricalDataManager.saveHistoricalDataBulk(ctx);
   console.timeEnd('saveHistoricalDataBulk');
-
-  console.time('updateInitialIndexingFinishedAtTime');
-  await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);
-  console.timeEnd('updateInitialIndexingFinishedAtTime');
-
-  await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
-    latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
-  });
 }
 
 async function waitForSpotPricesRelatedHistoricalData(
+  blocksToProcess: number[],
   ctx: SqdProcessorContext<Store>
 ) {
-  const orderedBlockNumbers = ctx.blocks
-    .map((b) => b.header.height)
-    .sort((a, b) => a - b);
+  // const orderedBlockNumbers = ctx.blocks
+  //   .map((b) => b.header.height)
+  //   .sort((a, b) => a - b);
 
   const prefetchConstantsHistoricalData = async (
     fromBlockNumber: number,
@@ -193,11 +247,11 @@ async function waitForSpotPricesRelatedHistoricalData(
     ) => Promise<Set<number>>
   ) => {
     const processedBlockNumbers = await fetchFn(
-      orderedBlockNumbers[0],
-      orderedBlockNumbers[orderedBlockNumbers.length - 1]
+      blocksToProcess[0],
+      blocksToProcess[blocksToProcess.length - 1]
     );
 
-    const missingBlockNumbers = orderedBlockNumbers.filter(
+    const missingBlockNumbers = blocksToProcess.filter(
       (bn) => !processedBlockNumbers.has(bn)
     );
     if (missingBlockNumbers.length > 0) {
@@ -210,7 +264,7 @@ async function waitForSpotPricesRelatedHistoricalData(
   };
 
   await Promise.all([
-    checkAndWaitForData(prefetchAssetHistoricalData),
+    // checkAndWaitForData(prefetchAssetHistoricalData),
     checkAndWaitForData(prefetchConstantsHistoricalData),
     checkAndWaitForData(prefetchEmaOracleHistoricalData),
     checkAndWaitForData(prefetchXykpoolsHistoricalData),
@@ -218,28 +272,28 @@ async function waitForSpotPricesRelatedHistoricalData(
 
   await Promise.all([
     prefetchAllAvailableRoutedTradesForBlocksRange({
-      fromBlockNumber: orderedBlockNumbers[0],
-      toBlockNumber: orderedBlockNumbers[orderedBlockNumbers.length - 1],
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
       ctx,
     }),
     prefetchAllAvailableXykpoolVolumesForBlocksRange({
-      fromBlockNumber: orderedBlockNumbers[0],
-      toBlockNumber: orderedBlockNumbers[orderedBlockNumbers.length - 1],
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
       ctx,
     }),
     prefetchAllAvailableStableswapVolumesForBlocksRange({
-      fromBlockNumber: orderedBlockNumbers[0],
-      toBlockNumber: orderedBlockNumbers[orderedBlockNumbers.length - 1],
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
       ctx,
     }),
     prefetchAllAvailableOmnipoolAssetVolumesForBlocksRange({
-      fromBlockNumber: orderedBlockNumbers[0],
-      toBlockNumber: orderedBlockNumbers[orderedBlockNumbers.length - 1],
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
       ctx,
     }),
     prefetchAllAvailableLbppoolVolumesForBlocksRange({
-      fromBlockNumber: orderedBlockNumbers[0],
-      toBlockNumber: orderedBlockNumbers[orderedBlockNumbers.length - 1],
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
       ctx,
     }),
   ]);
@@ -405,3 +459,25 @@ async function prefetchAllAvailableStableswapVolumesForBlocksRange({
     records.map((r) => [r.id, r])
   );
 }
+
+const checkAndWaitForCoreProcStatus = async (
+  ctx: SqdProcessorContext<Store>
+) => {
+  const coreProcStatus = await ctx.store.findOne(ProcessorStatus, {
+    where: {
+      id: 'squid_processor',
+    },
+  });
+
+  const coreProcLatestProcessedBlock = coreProcStatus?.latestProcessedBlock;
+
+  if (
+    !coreProcLatestProcessedBlock ||
+    coreProcLatestProcessedBlock <
+      ctx.blocks[ctx.blocks.length - 1].header.height
+  ) {
+    console.log(`Waiting for core processor state`);
+    await new Promise((resolve) => setTimeout(resolve, 4_000));
+    await checkAndWaitForCoreProcStatus(ctx);
+  }
+};

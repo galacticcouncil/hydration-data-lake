@@ -6,14 +6,23 @@ import { handleAssetSpotPricesHistoricalData } from './assetSpotPrices';
 import { handleAssetPairVolumesHistoricalData } from './assePairVolumes';
 import { processAssetsHistoricalDataAtBlock } from './assetHistoricalData';
 
-export async function handleAssetHistoricalData(
-  ctx: SqdProcessorContext<Store>
-) {
+export async function handleAssetHistoricalData({
+  blockNumbersToProcess,
+  ctx,
+}: {
+  blockNumbersToProcess?: number[];
+  ctx: SqdProcessorContext<Store>;
+}) {
   const assetRegistryIds: Array<string> = [
     ...ctx.batchState.state.assetsAllBatch.values(),
   ]
     .filter((a) => !!a.assetRegistryId)
     .map((a) => `${a.assetRegistryId}`);
+
+  const blocksNumbersToProcessSet = new Set(blockNumbersToProcess || []);
+  const blocksToProcess = blockNumbersToProcess
+    ? ctx.blocks.filter((b) => blocksNumbersToProcessSet.has(b.header.height))
+    : ctx.blocks;
 
   /**
    * @description Processes data in a specific sequence to ensure data dependencies are met
@@ -23,7 +32,7 @@ export async function handleAssetHistoricalData(
    * data source for the OfflinePoolService.
    */
   for (const blocksSubBatch of splitIntoBatches(
-    ctx.blocks,
+    blocksToProcess,
     ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
   )) {
     await Promise.all(
@@ -38,13 +47,22 @@ export async function handleAssetHistoricalData(
   }
 }
 
-export async function handleAssetSpotPriceRelatedHistoricalData(
-  ctx: SqdProcessorContext<Store>
-) {
+export async function handleAssetSpotPriceRelatedHistoricalData({
+  blockNumbersToProcess,
+  ctx,
+}: {
+  blockNumbersToProcess?: number[];
+  ctx: SqdProcessorContext<Store>;
+}) {
   OfflineTradeRouterManager.getInstance().wipeCache();
 
+  const blocksNumbersToProcessSet = new Set(blockNumbersToProcess || []);
+  const blocksToProcess = blockNumbersToProcess
+    ? ctx.blocks.filter((b) => blocksNumbersToProcessSet.has(b.header.height))
+    : ctx.blocks;
+
   for (const blocksSubBatch of splitIntoBatches(
-    ctx.blocks,
+    blocksToProcess,
     ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
   )) {
     await OfflineTradeRouterManager.getInstance().initForBlocksBatch({

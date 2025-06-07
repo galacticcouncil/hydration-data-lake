@@ -6,11 +6,17 @@ import { fromExponentialToDecimalNotation } from '../../../utils/helpers';
 import { processStableswapAssetNormalizedVolumes } from './stableswapAssetVolumesNormalized';
 import { processOmnipoolAssetNormalizedVolumes } from './omnipoolAssetVolumesNormalized';
 
-export function processPoolsNormalizedVolumes(ctx: SqdProcessorContext<Store>) {
-  processXykPoolsNormalizedVolumes(ctx);
-  processLbpPoolsNormalizedVolumes(ctx);
-  processStableswapAssetNormalizedVolumes(ctx);
-  processOmnipoolAssetNormalizedVolumes(ctx);
+export function processPoolsNormalizedVolumes({
+  blockNumbersToProcess,
+  ctx,
+}: {
+  blockNumbersToProcess?: number[];
+  ctx: SqdProcessorContext<Store>;
+}) {
+  processXykPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
+  processLbpPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
+  processStableswapAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
+  processOmnipoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
 }
 
 export function calcVolumeNormalized({

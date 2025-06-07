@@ -3,12 +3,25 @@ import { Store } from '@subsquid/typeorm-store';
 import { calcVolumeNormalized } from './index';
 import { BigNumber } from '@galacticcouncil/sdk';
 
-export function processStableswapAssetNormalizedVolumes(
-  ctx: SqdProcessorContext<Store>
-) {
-  const stableswapAssetHistVolsByBatchList = [
+export function processStableswapAssetNormalizedVolumes({
+  blockNumbersToProcess,
+  ctx,
+}: {
+  blockNumbersToProcess?: number[];
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let stableswapAssetHistVolsByBatchList = [
     ...ctx.batchState.state.stablepoolAssetVolumes.values(),
   ];
+
+  if (blockNumbersToProcess) {
+    const blockNumbersToProcessSet = new Set(blockNumbersToProcess);
+    stableswapAssetHistVolsByBatchList =
+      stableswapAssetHistVolsByBatchList.filter((i) =>
+        blockNumbersToProcessSet.has(i.paraBlockHeight)
+      );
+  }
+
   const historicalSpotPricesMap =
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 

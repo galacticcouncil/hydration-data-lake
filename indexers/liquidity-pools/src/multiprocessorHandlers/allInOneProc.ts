@@ -210,15 +210,15 @@ export async function execAllInOneProcessorHandlers(
   console.timeEnd('handleOracles');
 
   console.time('handleAssetHistoricalData');
-  await handleAssetHistoricalData(ctx);
+  await handleAssetHistoricalData({ ctx });
   console.timeEnd('handleAssetHistoricalData');
 
   console.time('handleAssetSpotPriceRelatedHistoricalData');
-  await handleAssetSpotPriceRelatedHistoricalData(ctx);
+  await handleAssetSpotPriceRelatedHistoricalData({ ctx });
   console.timeEnd('handleAssetSpotPriceRelatedHistoricalData');
 
   console.time('processPoolsNormalizedVolumes');
-  processPoolsNormalizedVolumes(ctx);
+  processPoolsNormalizedVolumes({ ctx });
   console.timeEnd('processPoolsNormalizedVolumes');
 
   console.time('saveHistoricalDataBulk');
