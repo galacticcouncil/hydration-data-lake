@@ -4,9 +4,14 @@ import { AppConfig } from '../../appConfig';
 export enum JobProcessingStatus {
   READY_TO_PICK_UP = 'READY_TO_PICK_UP',
   PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
 }
 
-export type JobPayload = { blockNumber: number; status: JobProcessingStatus };
+export type JobPayload = {
+  blockNumber: number;
+  status: JobProcessingStatus;
+  consumed?: string;
+};
 
 const appConfig = AppConfig.getInstance();
 
@@ -43,11 +48,26 @@ export class ProcessingPoolManager {
         const existingJob = await this.processingPoolQueue.getJob(blockNumber);
         if (!existingJob) return;
         await existingJob.update({
-          blockNumber,
+          ...existingJob.data,
           status: JobProcessingStatus.READY_TO_PICK_UP,
         });
       })
     );
+
+    const jobs = await this.processingPoolQueue.getWaiting();
+    const lostJobsToUpdate = jobs.filter(
+      (job) =>
+        job.data.blockNumber < blockNumbers[0] &&
+        job.data.status === JobProcessingStatus.PENDING
+    );
+
+    for (const lostJob of lostJobsToUpdate) {
+      await lostJob.update({
+        ...lostJob.data,
+        status: JobProcessingStatus.READY_TO_PICK_UP,
+      });
+    }
+
     this.pendingBlocks = blockNumbers;
 
     await this.processingPoolQueue.addBulk(
@@ -83,6 +103,10 @@ export class ProcessingPoolManager {
   async releaseCompletedJobs() {
     await Promise.all(
       [...this.completedJobs.values()].map(async (job) => {
+        await job.update({
+          ...job.data,
+          status: JobProcessingStatus.COMPLETED,
+        });
         await job.releaseLock();
         await job.remove();
         // await job.moveToCompleted(`{ done: true }`, true, true);
@@ -103,15 +127,23 @@ export class ProcessingPoolManager {
 
     for (const job of allActiveJobs) {
       if (
-        job.progress() !== 1 &&
-        allowedIdsSet.has(job.data.blockNumber) &&
-        job.data.status === JobProcessingStatus.READY_TO_PICK_UP &&
-        !this.processingJobs.has(`${job.data.blockNumber}`) &&
-        !this.completedJobs.has(`${job.data.blockNumber}`)
+        (job.progress() !== 1 &&
+          job.data.status !== JobProcessingStatus.COMPLETED &&
+          allowedIdsSet.has(job.data.blockNumber) &&
+          job.data.status === JobProcessingStatus.READY_TO_PICK_UP &&
+          !this.processingJobs.has(`${job.data.blockNumber}`) &&
+          !this.completedJobs.has(`${job.data.blockNumber}`)) ||
+        (job.progress() === 1 &&
+          job.data.status !== JobProcessingStatus.COMPLETED &&
+          job.data.consumed === appConfig.STATE_SCHEMA_NAME &&
+          allowedIdsSet.has(job.data.blockNumber) &&
+          !this.processingJobs.has(`${job.data.blockNumber}`) &&
+          !this.completedJobs.has(`${job.data.blockNumber}`))
       ) {
         allowedJobs.push(job);
       } else if (
         job.progress() !== 1 &&
+        job.data.status !== JobProcessingStatus.COMPLETED &&
         allowedIdsSet.has(job.data.blockNumber) &&
         job.data.status === JobProcessingStatus.PENDING &&
         !this.processingJobs.has(`${job.data.blockNumber}`) &&
@@ -143,6 +175,7 @@ export class ProcessingPoolManager {
       if (!lockKey) continue;
 
       await job.progress(1);
+      await job.update({ ...job.data, consumed: appConfig.STATE_SCHEMA_NAME });
       tookJobsCounterIndex++;
       this.processingJobs.set(`${job.id}`, job);
       lockedJobs.push(job);
