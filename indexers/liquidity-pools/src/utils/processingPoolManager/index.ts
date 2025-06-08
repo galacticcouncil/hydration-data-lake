@@ -43,16 +43,14 @@ export class ProcessingPoolManager {
   }
 
   async commitBlocksForProcessing(blockNumbers: number[]) {
-    await Promise.all(
-      this.pendingBlocks.map(async (blockNumber) => {
-        const existingJob = await this.processingPoolQueue.getJob(blockNumber);
-        if (!existingJob) return;
-        await existingJob.update({
-          ...existingJob.data,
-          status: JobProcessingStatus.READY_TO_PICK_UP,
-        });
-      })
-    );
+    for (const blockNumber of this.pendingBlocks) {
+      const existingJob = await this.processingPoolQueue.getJob(blockNumber);
+      if (!existingJob) return;
+      await existingJob.update({
+        ...existingJob.data,
+        status: JobProcessingStatus.READY_TO_PICK_UP,
+      });
+    }
 
     const jobs = await this.processingPoolQueue.getWaiting();
     const lostJobsToUpdate = jobs.filter(
