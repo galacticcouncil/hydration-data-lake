@@ -76,11 +76,6 @@ export class ProcessingPoolManager {
         opts: { jobId: blockNumber },
       }))
     );
-
-    console.log(
-      'TOTAL JOBS COUNT ',
-      (await this.processingPoolQueue.getWaiting()).length
-    );
   }
 
   async addProcessingJob(job: Queue.Job) {
