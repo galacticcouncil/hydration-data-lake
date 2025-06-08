@@ -76,6 +76,11 @@ export class ProcessingPoolManager {
         opts: { jobId: blockNumber },
       }))
     );
+
+    console.log(
+      'TOTAL JOBS COUNT ',
+      (await this.processingPoolQueue.getWaiting()).length
+    );
   }
 
   async addProcessingJob(job: Queue.Job) {
@@ -124,6 +129,8 @@ export class ProcessingPoolManager {
     const allActiveJobs = await this.processingPoolQueue.getWaiting();
     const allowedButPendingJobs = [];
     const allowedJobs = [];
+
+    console.log('TOTAL JOBS COUNT ', allActiveJobs.length);
 
     for (const job of allActiveJobs) {
       if (
