@@ -101,6 +101,8 @@ processor.run(
       ctxWithBatchState as SqdProcessorContext<Store>
     );
 
+    (ctxWithBatchState as SqdProcessorContext<Store>).batchState.wipeState();
+
     console.timeEnd('TOTAL BATCH EXECUTION TIME');
   }
 );

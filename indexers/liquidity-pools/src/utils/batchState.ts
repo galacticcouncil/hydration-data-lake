@@ -304,6 +304,116 @@ export class BatchState {
     emaOracleEntriesHistoricalData: new Map(),
   };
 
+  constructor() {
+    this.initState();
+  }
+
+  initState() {
+    this.state = {
+      relayChainInfo: new Map(),
+
+      batchBlocks: new Map(),
+      batchExtrinsics: new Map(),
+      batchCalls: new Map(),
+      batchEvents: new Map(),
+      chainActivityTraces: new Map(),
+      chainActivityTraceRelations: new Map(),
+      accountChainActivityTraces: new Map(),
+      // operationStacks: new Map(),
+
+      constantsHistoricalData: new Map(),
+
+      accounts: new Map(),
+      accountIdForPrefetch: new Set(),
+      transfers: new Map(),
+      assetVolumes: new Map(),
+      assetsHistoricalDataBatch: new Map(),
+      assetsSpotPriceHistoricalDataBatch: new Map(),
+      assetsPairVolumeHistoricalDataBatch: new Map(),
+      assetAssetsPairVolumesBatch: new Map(),
+
+      assetIdsToSave: new Set(),
+      assetsAllBatch: new Map(),
+
+      accountAssetBalanceHistoricalData: new Map(),
+
+      swaps: new Map(),
+      swapFees: new Map(),
+      swapInputs: new Map(),
+      swapOutputs: new Map(),
+      swapFillerContexts: new Map(),
+      routeTrades: new Map(),
+      routeTradesInputs: new Map(),
+      routeTradesOutputs: new Map(),
+
+      lbpPoolIdsToSave: new Set(),
+      lbpAllBatchPools: new Map(),
+      lbpPoolVolumes: new Map(),
+      lbpPoolHistoricalPrices: new Map(),
+      lbppoolAssetIdsForStoragePrefetch: new Map(),
+      lbpPoolAllHistoricalData: new Map(),
+
+      xykPoolIdsToSave: new Set(),
+      xykAllBatchPools: new Map(),
+      xykPoolVolumes: new Map(),
+      xykPoolHistoricalPrices: new Map(),
+      xykPoolIdsForStoragePrefetch: new Map(),
+      xykPoolAllHistoricalData: new Map(),
+
+      aavePools: new Map(),
+      aavePoolsHistoricalData: new Map(),
+
+      omnipoolEntity: null,
+      omnipoolAssets: new Map(),
+      omnipoolAssetIdsToSave: new Set(),
+      omnipoolAssetVolumes: new Map(),
+      omnipoolAssetIdsForStoragePrefetch: new Map(),
+      omnipoolAllHistoricalData: new Map(),
+      omnipoolAssetAllHistoricalData: new Map(),
+
+      stableswapIdsToSave: new Set(),
+      stableswapAllBatchPools: new Map(),
+      stableswapAssetsAllBatch: new Map(),
+      stablepoolAssetVolumes: new Map(),
+      stablepoolAssetVolumeIdsToSave: new Set(),
+      stablepoolVolumeCollections: new Map(),
+      stablepoolAssetBatchLiquidityAmounts: new Map(),
+      stablepoolBatchLiquidityActions: new Map(),
+      stablepoolAllHistoricalData: new Map(),
+      stablepoolAssetsAllHistoricalData: new Map(),
+      stableswapIdsForStoragePrefetch: new Map(),
+
+      dcaSchedules: new Map(),
+      dcaScheduleEvents: new Map(),
+      dcaScheduleOrderRoutes: new Map(),
+      dcaScheduleExecutions: new Map(),
+      dcaScheduleExecutionEvents: new Map(),
+
+      otcOrders: new Map(),
+      otcOrderEvents: new Map(),
+
+      historicalAssetSwapFees: new Map(),
+      historicalAccountSwapFees: new Map(),
+      historicalAccountAssetSwapFees: new Map(),
+
+      moneyMarketEvents: new Map(),
+      mmSupplies: new Map(),
+      mmWithdrawals: new Map(),
+      mmBorrows: new Map(),
+      mmUserEModeSetEvents: new Map(),
+      mmRepays: new Map(),
+      mmLiquidationCalls: new Map(),
+      mmReserveUsedAsCollateralEnabledEvents: new Map(),
+      mmReserveUsedAsCollateralDisabledEvents: new Map(),
+
+      emaOracleEntriesHistoricalData: new Map(),
+    };
+  }
+
+  wipeState() {
+    this.initState();
+  }
+
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {
     height: number;
   } {
