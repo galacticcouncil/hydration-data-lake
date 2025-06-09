@@ -46,10 +46,14 @@ export class ProcessingPoolManager {
     for (const blockNumber of this.pendingBlocks) {
       const existingJob = await this.processingPoolQueue.getJob(blockNumber);
       if (!existingJob) return;
-      await existingJob.update({
-        ...existingJob.data,
-        status: JobProcessingStatus.READY_TO_PICK_UP,
-      });
+      try {
+        await existingJob.update({
+          ...existingJob.data,
+          status: JobProcessingStatus.READY_TO_PICK_UP,
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     const jobs = await this.processingPoolQueue.getWaiting();
@@ -60,20 +64,28 @@ export class ProcessingPoolManager {
     );
 
     for (const lostJob of lostJobsToUpdate) {
-      await lostJob.update({
-        ...lostJob.data,
-        status: JobProcessingStatus.READY_TO_PICK_UP,
-      });
+      try {
+        await lostJob.update({
+          ...lostJob.data,
+          status: JobProcessingStatus.READY_TO_PICK_UP,
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     this.pendingBlocks = blockNumbers;
 
-    await this.processingPoolQueue.addBulk(
-      this.pendingBlocks.map((blockNumber) => ({
-        data: { blockNumber, status: JobProcessingStatus.PENDING },
-        opts: { jobId: blockNumber },
-      }))
-    );
+    try {
+      await this.processingPoolQueue.addBulk(
+        this.pendingBlocks.map((blockNumber) => ({
+          data: { blockNumber, status: JobProcessingStatus.PENDING },
+          opts: { jobId: blockNumber },
+        }))
+      );
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async addProcessingJob(job: Queue.Job) {
@@ -101,13 +113,16 @@ export class ProcessingPoolManager {
   async releaseCompletedJobs() {
     await Promise.all(
       [...this.completedJobs.values()].map(async (job) => {
-        await job.update({
-          ...job.data,
-          status: JobProcessingStatus.COMPLETED,
-        });
-        await job.releaseLock();
-        await job.remove();
-        // await job.moveToCompleted(`{ done: true }`, true, true);
+        try {
+          await job.update({
+            ...job.data,
+            status: JobProcessingStatus.COMPLETED,
+          });
+          await job.releaseLock();
+          await job.remove();
+        } catch (e) {
+          console.log(e);
+        }
       })
     );
 
@@ -171,14 +186,21 @@ export class ProcessingPoolManager {
     for (const job of allowedJobs) {
       if (tookJobsCounterIndex > this.maxJobsBatchNumber) continue;
 
-      const lockKey = await job.takeLock();
-      if (!lockKey) continue;
+      try {
+        const lockKey = await job.takeLock();
+        if (!lockKey) continue;
 
-      await job.progress(1);
-      await job.update({ ...job.data, consumed: appConfig.STATE_SCHEMA_NAME });
-      tookJobsCounterIndex++;
-      this.processingJobs.set(`${job.id}`, job);
-      lockedJobs.push(job);
+        await job.progress(1);
+        await job.update({
+          ...job.data,
+          consumed: appConfig.STATE_SCHEMA_NAME,
+        });
+        tookJobsCounterIndex++;
+        this.processingJobs.set(`${job.id}`, job);
+        lockedJobs.push(job);
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     if (lockedJobs.length > 0)
