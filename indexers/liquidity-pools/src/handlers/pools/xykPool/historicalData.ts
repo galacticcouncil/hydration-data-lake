@@ -44,11 +44,13 @@ export async function handleXykPoolHistoricalData(
           )
           .flat()
           .map(async ({ poolId, blockHeader }) => {
+
             const pool = await getOrCreateXykPool({
               ctx,
               id: poolId,
               ensure: true,
               blockHeader,
+              parent: 'handleXykPoolHistoricalData',
             });
 
             if (!pool || !pool.assetA || !pool.assetB) return null;

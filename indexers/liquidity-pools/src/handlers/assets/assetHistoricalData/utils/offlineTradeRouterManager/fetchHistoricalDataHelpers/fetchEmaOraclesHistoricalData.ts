@@ -72,27 +72,35 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRange({
     },
   });
 
-  const mergedDataMap = new Map([
-    ...persistedHistData.map(
-      (histData): [string, EmaOracleEntryHistoricalData] => [
-        histData.id,
-        histData,
-      ]
-    ),
-    ...cachedHistData.map(
-      (histData): [string, EmaOracleEntryHistoricalData] => [
-        histData.id,
-        histData,
-      ]
-    ),
-  ]);
+  // const mergedDataMap = new Map([
+  //   ...persistedHistData.map(
+  //     (histData): [string, EmaOracleEntryHistoricalData] => [
+  //       histData.id,
+  //       histData,
+  //     ]
+  //   ),
+  //   ...cachedHistData.map(
+  //     (histData): [string, EmaOracleEntryHistoricalData] => [
+  //       histData.id,
+  //       histData,
+  //     ]
+  //   ),
+  // ]);
+
+  const mergedDataMap = new Map<string, EmaOracleEntryHistoricalData>();
+  for (const histData of persistedHistData) {
+    mergedDataMap.set(histData.id, histData);
+  }
+  for (const histData of cachedHistData) {
+    mergedDataMap.set(histData.id, histData);
+  }
 
   const histDataPerBlock = new Map<
     number,
     Map<string, EmaOracleEntryHistoricalData>
   >();
 
-  for (const histDataItem of [...mergedDataMap.values()]) {
+  for (const histDataItem of mergedDataMap.values()) {
     if (!histDataPerBlock.has(histDataItem.paraBlockHeight))
       histDataPerBlock.set(histDataItem.paraBlockHeight, new Map());
 

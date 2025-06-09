@@ -67,6 +67,7 @@ import {
   BlockCompressedDataKey,
   encodeBlockCompressedData,
 } from './helpers/blockCompressedDataHandler';
+import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
 
 export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
   ? XykpoolGlq
@@ -776,14 +777,23 @@ export class StorageDictionaryManager extends QueriesHelper {
   getStableswapAllPoolsData({
     block,
   }: GetDataAtBlockInput): StablepoolAllPoolsInfoWithPoolId[] | null {
-    const nodes = [
-      ...this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).entries(),
-    ].filter(
-      ([key, data]) =>
-        key.split('-')[1] === block.height.toString() &&
-        data.stableswapAssetDataByPoolId.nodes &&
-        data.stableswapAssetDataByPoolId.nodes.length > 0
-    );
+    // const nodes = [
+    //   ...this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).entries(),
+    // ].filter(
+    //   ([key, data]) =>
+    //     key.split('-')[1] === block.height.toString() &&
+    //     data.stableswapAssetDataByPoolId.nodes &&
+    //     data.stableswapAssetDataByPoolId.nodes.length > 0
+    // );
+
+    const nodes =
+      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.STABLESWAP>({
+        blockNumber: block.height,
+        fullData: this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP),
+        additionalFilter: ([key, data]) =>
+          !!data.stableswapAssetDataByPoolId.nodes &&
+          data.stableswapAssetDataByPoolId.nodes.length > 0,
+      });
 
     if (nodes.length === 0) return null;
 
@@ -837,13 +847,20 @@ export class StorageDictionaryManager extends QueriesHelper {
   getStableswapAllPoolsPegsData({
     block,
   }: GetDataAtBlockInput): StablepoolManyPoolsPegsInfoWithPoolId[] | null {
-    const nodes = [
-      ...this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).entries(),
-    ].filter(
-      ([key, data]) =>
-        key.split('-')[1] === block.height.toString() &&
-        data.maxPegUpdate !== undefined
-    );
+    // const nodes = [
+    //   ...this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).entries(),
+    // ].filter(
+    //   ([key, data]) =>
+    //     key.split('-')[1] === block.height.toString() &&
+    //     data.maxPegUpdate !== undefined
+    // );
+
+    const nodes =
+      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.STABLESWAP>({
+        blockNumber: block.height,
+        fullData: this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP),
+        additionalFilter: ([key, data]) => data.maxPegUpdate !== undefined,
+      });
 
     if (nodes.length === 0) return null;
 
@@ -1079,9 +1096,15 @@ export class StorageDictionaryManager extends QueriesHelper {
   getXykpoolShareTokenPairsAll({
     block,
   }: XykGetPoolShareTokenPairsManyInput): XykPoolShareTokenPair[] | null {
-    const nodes = [
-      ...this.getBatchStorageStatePart(ProcessingTopic.XYK).entries(),
-    ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+    // const nodes = [
+    //   ...this.getBatchStorageStatePart(ProcessingTopic.XYK).entries(),
+    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+
+    const nodes =
+      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.XYK>({
+        blockNumber: block.height,
+        fullData: this.getBatchStorageStatePart(ProcessingTopic.XYK),
+      });
 
     if (nodes.length === 0) return null;
 
@@ -1208,9 +1231,15 @@ export class StorageDictionaryManager extends QueriesHelper {
   }: AaveTradeExecutorPoolsInput):
     | AaveTradeExecutorPoolDataWithPoolId[]
     | null {
-    const nodes = [
-      ...this.getBatchStorageStatePart(ProcessingTopic.AAVE).entries(),
-    ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+    // const nodes = [
+    //   ...this.getBatchStorageStatePart(ProcessingTopic.AAVE).entries(),
+    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+
+    const nodes =
+      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.AAVE>({
+        blockNumber: block.height,
+        fullData: this.getBatchStorageStatePart(ProcessingTopic.AAVE),
+      });
 
     if (nodes.length === 0) return null;
 
@@ -1236,29 +1265,43 @@ export class StorageDictionaryManager extends QueriesHelper {
   getAssetDynamicFeesAll({
     block,
   }: GetAssetsDynamicFeesAllInput): AssetDynamicFeeData[] | null {
-    const nodes = [
-      ...this.getBatchStorageStatePart(
-        ProcessingTopic.ASSET_HIST_DATA
-      ).entries(),
-    ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+    // const nodes = [
+    //   ...this.getBatchStorageStatePart(
+    //     ProcessingTopic.ASSET_HIST_DATA
+    //   ).entries(),
+    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+
+    const nodes =
+      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
+        {
+          blockNumber: block.height,
+          fullData: this.getBatchStorageStatePart(
+            ProcessingTopic.ASSET_HIST_DATA
+          ),
+          additionalFilter: ([key, data]) =>
+            data.assetId !== undefined && data.assetId !== null,
+        }
+      );
 
     if (nodes.length === 0) return null;
 
-    return nodes
-      .filter(
-        ([key, data]) => data.assetId !== undefined && data.assetId !== null
-      )
-      .map(([key, data]) => {
-        if (!data.dynamicFee) return null;
+    return (
+      nodes
+        // .filter(
+        //   ([key, data]) => data.assetId !== undefined && data.assetId !== null
+        // )
+        .map(([key, data]) => {
+          if (!data.dynamicFee) return null;
 
-        return {
-          assetId: +data.assetId!,
-          assetFee: +data.dynamicFee.assetFee,
-          protocolFee: +data.dynamicFee.protocolFee,
-          timestamp: +data.dynamicFee.timestamp,
-        };
-      })
-      .filter((item) => item !== null) as AssetDynamicFeeData[];
+          return {
+            assetId: +data.assetId!,
+            assetFee: +data.dynamicFee.assetFee,
+            protocolFee: +data.dynamicFee.protocolFee,
+            timestamp: +data.dynamicFee.timestamp,
+          };
+        })
+        .filter((item) => item !== null) as AssetDynamicFeeData[]
+    );
   }
 
   getTokenTotalIssuance({
@@ -1299,15 +1342,26 @@ export class StorageDictionaryManager extends QueriesHelper {
   }: TokensGetTokensTotalIssuanceInput): TokenTotalIssuance[] | null {
     const idsSet = new Set(tokenIds.map((id) => `${id}`));
 
-    const nodes = [
-      ...this.getBatchStorageStatePart(
-        ProcessingTopic.ASSET_HIST_DATA
-      ).entries(),
-    ].filter(
-      ([key, data]) =>
-        key.split('-')[1] === block.height.toString() &&
-        idsSet.has(key.split('-')[0])
-    );
+    // const nodes = [
+    //   ...this.getBatchStorageStatePart(
+    //     ProcessingTopic.ASSET_HIST_DATA
+    //   ).entries(),
+    // ].filter(
+    //   ([key, data]) =>
+    //     key.split('-')[1] === block.height.toString() &&
+    //     idsSet.has(key.split('-')[0])
+    // );
+
+    const nodes =
+      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
+        {
+          blockNumber: block.height,
+          fullData: this.getBatchStorageStatePart(
+            ProcessingTopic.ASSET_HIST_DATA
+          ),
+          additionalFilter: ([key, data]) => idsSet.has(key.split('-')[0]),
+        }
+      );
 
     if (nodes.length === 0) return null;
 
@@ -1320,11 +1374,21 @@ export class StorageDictionaryManager extends QueriesHelper {
   getAssetsExistentialDepositAll({
     block,
   }: GetDataAtBlockInput): AssetExistentialDeposit[] | null {
-    const nodes = [
-      ...this.getBatchStorageStatePart(
-        ProcessingTopic.ASSET_HIST_DATA
-      ).entries(),
-    ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+    // const nodes = [
+    //   ...this.getBatchStorageStatePart(
+    //     ProcessingTopic.ASSET_HIST_DATA
+    //   ).entries(),
+    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+
+    const nodes =
+      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
+        {
+          blockNumber: block.height,
+          fullData: this.getBatchStorageStatePart(
+            ProcessingTopic.ASSET_HIST_DATA
+          ),
+        }
+      );
 
     if (nodes.length === 0) return null;
 

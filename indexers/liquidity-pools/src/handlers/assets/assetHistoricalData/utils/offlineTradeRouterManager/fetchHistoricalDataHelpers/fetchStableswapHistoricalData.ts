@@ -199,26 +199,42 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
     .map((pool) => pool.assets)
     .flat();
 
-  const allActiveStablewaps: Map<string, Stableswap> = new Map([
-    ...allActiveStableswapsPersisted.map((pool): [string, Stableswap] => [
-      pool.id,
-      pool,
-    ]),
-    ...[...allActiveStableswapsCachedMap.values()].map(
-      (pool): [string, Stableswap] => [pool.id, pool]
-    ),
-  ]);
+  // const allActiveStablewaps: Map<string, Stableswap> = new Map([
+  //   ...allActiveStableswapsPersisted.map((pool): [string, Stableswap] => [
+  //     pool.id,
+  //     pool,
+  //   ]),
+  //   ...[...allActiveStableswapsCachedMap.values()].map(
+  //     (pool): [string, Stableswap] => [pool.id, pool]
+  //   ),
+  // ]);
 
-  const allStablewapAssets: Map<string, StableswapAsset> = new Map([
-    ...allStableswapAssetsPersisted.map((sAsset): [string, StableswapAsset] => [
-      sAsset.id,
-      sAsset,
-    ]),
-    ...allStableswapAssetsCached.map((sAsset): [string, StableswapAsset] => [
-      sAsset.id,
-      sAsset,
-    ]),
-  ]);
+  const allActiveStablewaps = new Map<string, Stableswap>();
+  for (const histData of allActiveStableswapsPersisted) {
+    allActiveStablewaps.set(histData.id, histData);
+  }
+  for (const histData of allActiveStableswapsCachedMap.values()) {
+    allActiveStablewaps.set(histData.id, histData);
+  }
+
+  // const allStablewapAssets: Map<string, StableswapAsset> = new Map([
+  //   ...allStableswapAssetsPersisted.map((sAsset): [string, StableswapAsset] => [
+  //     sAsset.id,
+  //     sAsset,
+  //   ]),
+  //   ...allStableswapAssetsCached.map((sAsset): [string, StableswapAsset] => [
+  //     sAsset.id,
+  //     sAsset,
+  //   ]),
+  // ]);
+
+  const allStablewapAssets = new Map<string, StableswapAsset>();
+  for (const histData of allStableswapAssetsPersisted) {
+    allStablewapAssets.set(histData.id, histData);
+  }
+  for (const histData of allStableswapAssetsCached) {
+    allStablewapAssets.set(histData.id, histData);
+  }
 
   const cachedStableswapHistData = [
     ...ctx.batchState.state.stablepoolAllHistoricalData.values(),
@@ -314,21 +330,28 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
       .set(stableswapHistData.pool.id, stableswapHistData.assetsHistoricalData);
   }
 
-  const allStableswapHistDataMap = new Map<string, StableswapHistoricalData>([
-    ...persistedStableswapHistData.map(
-      (
-        poolData: StableswapHistoricalData
-      ): [string, StableswapHistoricalData] => [poolData.id, poolData]
-    ),
-    ...cachedStableswapHistData.map(
-      (
-        poolData: StableswapHistoricalData
-      ): [string, StableswapHistoricalData] => [poolData.id, poolData]
-    ),
-  ]);
+  // const allStableswapHistDataMap = new Map<string, StableswapHistoricalData>([
+  //   ...persistedStableswapHistData.map(
+  //     (
+  //       poolData: StableswapHistoricalData
+  //     ): [string, StableswapHistoricalData] => [poolData.id, poolData]
+  //   ),
+  //   ...cachedStableswapHistData.map(
+  //     (
+  //       poolData: StableswapHistoricalData
+  //     ): [string, StableswapHistoricalData] => [poolData.id, poolData]
+  //   ),
+  // ]);
+
+  const allStableswapHistDataMap = new Map<string, StableswapHistoricalData>();
+  for (const histData of persistedStableswapHistData) {
+    allStableswapHistDataMap.set(histData.id, histData);
+  }
+  for (const histData of cachedStableswapHistData) {
+    allStableswapHistDataMap.set(histData.id, histData);
+  }
 
   allStableswapHistDataMap.forEach((poolData, poolId) => {
-
     poolData.assetsHistoricalData = [
       ...new Map([
         ...(

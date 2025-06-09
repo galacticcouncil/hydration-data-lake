@@ -117,15 +117,23 @@ export async function fetchOmnipoolHistoricalDataForBlocksRange({
     },
   });
 
-  const allActiveOmnipoolAssets: Map<string, OmnipoolAsset> = new Map([
-    ...allActiveOmnipoolAssetsPersisted.map(
-      (oAsset): [string, OmnipoolAsset] => [oAsset.asset.id, oAsset]
-    ),
-    ...allActiveOmnipoolAssetsCached.map((oAsset): [string, OmnipoolAsset] => [
-      oAsset.asset.id,
-      oAsset,
-    ]),
-  ]);
+  // const allActiveOmnipoolAssets: Map<string, OmnipoolAsset> = new Map([
+  //   ...allActiveOmnipoolAssetsPersisted.map(
+  //     (oAsset): [string, OmnipoolAsset] => [oAsset.asset.id, oAsset]
+  //   ),
+  //   ...allActiveOmnipoolAssetsCached.map((oAsset): [string, OmnipoolAsset] => [
+  //     oAsset.asset.id,
+  //     oAsset,
+  //   ]),
+  // ]);
+
+  const allActiveOmnipoolAssets = new Map<string, OmnipoolAsset>();
+  for (const histData of allActiveOmnipoolAssetsPersisted) {
+    allActiveOmnipoolAssets.set(histData.asset.id, histData);
+  }
+  for (const histData of allActiveOmnipoolAssetsCached) {
+    allActiveOmnipoolAssets.set(histData.asset.id, histData);
+  }
 
   const cachedOmnipoolHistData = [
     ...ctx.batchState.state.omnipoolAllHistoricalData.values(),
@@ -160,33 +168,52 @@ export async function fetchOmnipoolHistoricalDataForBlocksRange({
     }
   );
 
-  const mergedOmnipoolHistDataMap = new Map([
-    ...persistedOmnipoolHistData.map(
-      (histData): [string, OmnipoolHistoricalData] => [histData.id, histData]
-    ),
-    ...cachedOmnipoolHistData.map(
-      (histData): [string, OmnipoolHistoricalData] => [histData.id, histData]
-    ),
-  ]);
+  // const mergedOmnipoolHistDataMap = new Map([
+  //   ...persistedOmnipoolHistData.map(
+  //     (histData): [string, OmnipoolHistoricalData] => [histData.id, histData]
+  //   ),
+  //   ...cachedOmnipoolHistData.map(
+  //     (histData): [string, OmnipoolHistoricalData] => [histData.id, histData]
+  //   ),
+  // ]);
+
+  const mergedOmnipoolHistDataMap = new Map<string, OmnipoolHistoricalData>();
+  for (const histData of persistedOmnipoolHistData) {
+    mergedOmnipoolHistDataMap.set(histData.id, histData);
+  }
+  for (const histData of cachedOmnipoolHistData) {
+    mergedOmnipoolHistDataMap.set(histData.id, histData);
+  }
 
   const persistedOmnipoolAssetsHistData = persistedOmnipoolHistData
     .map((poolHisData) => poolHisData.assetsHistoricalData)
     .flat();
 
-  const mergedOmnipoolAssetHistDataMap = new Map([
-    ...persistedOmnipoolAssetsHistData.map(
-      (histData): [string, OmnipoolAssetHistoricalData] => [
-        histData.id,
-        histData,
-      ]
-    ),
-    ...cachedOmnipoolAssetsHistData.map(
-      (histData): [string, OmnipoolAssetHistoricalData] => [
-        histData.id,
-        histData,
-      ]
-    ),
-  ]);
+  // const mergedOmnipoolAssetHistDataMap = new Map([
+  //   ...persistedOmnipoolAssetsHistData.map(
+  //     (histData): [string, OmnipoolAssetHistoricalData] => [
+  //       histData.id,
+  //       histData,
+  //     ]
+  //   ),
+  //   ...cachedOmnipoolAssetsHistData.map(
+  //     (histData): [string, OmnipoolAssetHistoricalData] => [
+  //       histData.id,
+  //       histData,
+  //     ]
+  //   ),
+  // ]);
+
+  const mergedOmnipoolAssetHistDataMap = new Map<
+    string,
+    OmnipoolAssetHistoricalData
+  >();
+  for (const histData of persistedOmnipoolAssetsHistData) {
+    mergedOmnipoolAssetHistDataMap.set(histData.id, histData);
+  }
+  for (const histData of cachedOmnipoolAssetsHistData) {
+    mergedOmnipoolAssetHistDataMap.set(histData.id, histData);
+  }
 
   const histDataPerBlock = new Map<number, OmnipoolHistoricalData>();
 

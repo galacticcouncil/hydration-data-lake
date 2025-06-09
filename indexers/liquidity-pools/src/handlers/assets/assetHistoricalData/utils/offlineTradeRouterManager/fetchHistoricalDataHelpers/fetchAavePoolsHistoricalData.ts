@@ -78,10 +78,18 @@ export async function fetchAavePoolsHistoricalDataForBlocksRange({
     },
   });
 
-  const allPools: Map<string, Aavepool> = new Map([
-    ...allPoolsCached.map((pool): [string, Aavepool] => [pool.id, pool]),
-    ...allPoolsPersisted.map((pool): [string, Aavepool] => [pool.id, pool]),
-  ]);
+  // const allPools: Map<string, Aavepool> = new Map([
+  //   ...allPoolsCached.map((pool): [string, Aavepool] => [pool.id, pool]),
+  //   ...allPoolsPersisted.map((pool): [string, Aavepool] => [pool.id, pool]),
+  // ]);
+
+  const allPools = new Map<string, Aavepool>();
+  for (const histData of allPoolsPersisted) {
+    allPools.set(histData.id, histData);
+  }
+  for (const histData of allPoolsCached) {
+    allPools.set(histData.id, histData);
+  }
 
   const cachedHistData = [
     ...ctx.batchState.state.aavePoolsHistoricalData.values(),
@@ -106,16 +114,24 @@ export async function fetchAavePoolsHistoricalDataForBlocksRange({
     },
   });
 
-  const mergedDataMap = new Map([
-    ...persistedHistData.map((histData): [string, AavepoolHistoricalData] => [
-      histData.id,
-      histData,
-    ]),
-    ...cachedHistData.map((histData): [string, AavepoolHistoricalData] => [
-      histData.id,
-      histData,
-    ]),
-  ]);
+  // const mergedDataMap = new Map([
+  //   ...persistedHistData.map((histData): [string, AavepoolHistoricalData] => [
+  //     histData.id,
+  //     histData,
+  //   ]),
+  //   ...cachedHistData.map((histData): [string, AavepoolHistoricalData] => [
+  //     histData.id,
+  //     histData,
+  //   ]),
+  // ]);
+
+  const mergedDataMap = new Map<string, AavepoolHistoricalData>();
+  for (const histData of persistedHistData) {
+    mergedDataMap.set(histData.id, histData);
+  }
+  for (const histData of cachedHistData) {
+    mergedDataMap.set(histData.id, histData);
+  }
 
   const histDataPerBlock = new Map<
     number,

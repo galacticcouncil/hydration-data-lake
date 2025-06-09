@@ -106,13 +106,21 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
     },
   });
 
-  const allActivePools: Map<string, Lbppool> = new Map([
-    ...allActivePoolsCached.map((pool): [string, Lbppool] => [pool.id, pool]),
-    ...allActivePoolsPersisted.map((pool): [string, Lbppool] => [
-      pool.id,
-      pool,
-    ]),
-  ]);
+  // const allActivePools: Map<string, Lbppool> = new Map([
+  //   ...allActivePoolsCached.map((pool): [string, Lbppool] => [pool.id, pool]),
+  //   ...allActivePoolsPersisted.map((pool): [string, Lbppool] => [
+  //     pool.id,
+  //     pool,
+  //   ]),
+  // ]);
+
+  const allActivePools = new Map<string, Lbppool>();
+  for (const histData of allActivePoolsPersisted) {
+    allActivePools.set(histData.id, histData);
+  }
+  for (const histData of allActivePoolsCached) {
+    allActivePools.set(histData.id, histData);
+  }
 
   const cachedHistData = [
     ...ctx.batchState.state.lbpPoolAllHistoricalData.values(),
@@ -142,23 +150,31 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
     },
   });
 
-  const mergedDataMap = new Map([
-    ...persistedHistData.map((histData): [string, LbppoolHistoricalData] => [
-      histData.id,
-      histData,
-    ]),
-    ...cachedHistData.map((histData): [string, LbppoolHistoricalData] => [
-      histData.id,
-      histData,
-    ]),
-  ]);
+  // const mergedDataMap = new Map([
+  //   ...persistedHistData.map((histData): [string, LbppoolHistoricalData] => [
+  //     histData.id,
+  //     histData,
+  //   ]),
+  //   ...cachedHistData.map((histData): [string, LbppoolHistoricalData] => [
+  //     histData.id,
+  //     histData,
+  //   ]),
+  // ]);
+
+  const mergedDataMap = new Map<string, LbppoolHistoricalData>();
+  for (const histData of persistedHistData) {
+    mergedDataMap.set(histData.id, histData);
+  }
+  for (const histData of cachedHistData) {
+    mergedDataMap.set(histData.id, histData);
+  }
 
   const histDataPerBlock = new Map<
     number,
     Map<string, LbppoolHistoricalData>
   >();
 
-  for (const histDataItem of [...mergedDataMap.values()]) {
+  for (const histDataItem of mergedDataMap.values()) {
     if (!histDataPerBlock.has(histDataItem.paraBlockHeight))
       histDataPerBlock.set(histDataItem.paraBlockHeight, new Map());
 

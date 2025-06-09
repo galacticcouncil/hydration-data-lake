@@ -50,7 +50,7 @@ export async function fetchConstantsHistoricalDataForBlocksRange({
 
   let persistedHistData: ConstantsHistoricalData[] = [];
 
-  if (!cachedHistData)
+  if (!cachedHistData || cachedHistData.length === 0)
     persistedHistData = await ctx.store.find(ConstantsHistoricalData, {
       where: {
         paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),

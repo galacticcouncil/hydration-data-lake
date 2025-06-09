@@ -16,9 +16,15 @@ export async function fetchXykPoolsHistoricalData({
   blockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const allActivePoolsCached = [
-    ...ctx.batchState.state.xykAllBatchPools.values(),
-  ].filter((item) => !item.isDestroyed);
+  // const allActivePoolsCached = [
+  //   ...ctx.batchState.state.xykAllBatchPools.values(),
+  // ].filter((item) => !item.isDestroyed);
+
+  const allActivePoolsCached: Xykpool[] = [];
+  for (const item of ctx.batchState.state.xykAllBatchPools.values()) {
+    if (item.isDestroyed) continue;
+    allActivePoolsCached.push(item);
+  }
 
   const allActivePoolsPersisted = await ctx.store.find(Xykpool, {
     where: {
@@ -40,12 +46,19 @@ export async function fetchXykPoolsHistoricalData({
     ]),
   ]);
 
-  const cachedHistData = [
-    ...ctx.batchState.state.xykPoolAllHistoricalData.values(),
-  ].filter(
-    (item) =>
-      item.paraBlockHeight === blockNumber && allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
-  );
+  // const cachedHistData = [
+  //   ...ctx.batchState.state.xykPoolAllHistoricalData.values(),
+  // ].filter(
+  //   (item) =>
+  //     item.paraBlockHeight === blockNumber && allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
+  // );
+  const cachedHistData: XykpoolHistoricalData[] = [];
+  for (const item of ctx.batchState.state.xykPoolAllHistoricalData.values()) {
+    if (item.paraBlockHeight !== blockNumber) continue;
+    if (!allActivePools.has(item.id)) continue;
+    cachedHistData.push(item);
+  }
+
   const persistedHistData = await ctx.store.find(XykpoolHistoricalData, {
     where: {
       // paraBlockHeight: LessThanOrEqual(blockNumber),
@@ -101,13 +114,21 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
     },
   });
 
-  const allActivePools: Map<string, Xykpool> = new Map([
-    ...allActivePoolsCached.map((pool): [string, Xykpool] => [pool.id, pool]),
-    ...allActivePoolsPersisted.map((pool): [string, Xykpool] => [
-      pool.id,
-      pool,
-    ]),
-  ]);
+  // const allActivePools: Map<string, Xykpool> = new Map([
+  //   ...allActivePoolsCached.map((pool): [string, Xykpool] => [pool.id, pool]),
+  //   ...allActivePoolsPersisted.map((pool): [string, Xykpool] => [
+  //     pool.id,
+  //     pool,
+  //   ]),
+  // ]);
+
+  const allActivePools = new Map<string, Xykpool>();
+  for (const histData of allActivePoolsCached) {
+    allActivePools.set(histData.id, histData);
+  }
+  for (const histData of allActivePoolsPersisted) {
+    allActivePools.set(histData.id, histData);
+  }
 
   const cachedHistData = [
     ...ctx.batchState.state.xykPoolAllHistoricalData.values(),
@@ -135,16 +156,24 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
     },
   });
 
-  const mergedDataMap = new Map([
-    ...persistedHistData.map((histData): [string, XykpoolHistoricalData] => [
-      histData.id,
-      histData,
-    ]),
-    ...cachedHistData.map((histData): [string, XykpoolHistoricalData] => [
-      histData.id,
-      histData,
-    ]),
-  ]);
+  // const mergedDataMap = new Map([
+  //   ...persistedHistData.map((histData): [string, XykpoolHistoricalData] => [
+  //     histData.id,
+  //     histData,
+  //   ]),
+  //   ...cachedHistData.map((histData): [string, XykpoolHistoricalData] => [
+  //     histData.id,
+  //     histData,
+  //   ]),
+  // ]);
+
+  const mergedDataMap = new Map<string, XykpoolHistoricalData>();
+  for (const histData of persistedHistData) {
+    mergedDataMap.set(histData.id, histData);
+  }
+  for (const histData of cachedHistData) {
+    mergedDataMap.set(histData.id, histData);
+  }
 
   const histDataPerBlock = new Map<
     number,

@@ -9,6 +9,9 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { HYDRADX_SS58_PREFIX, BigNumber } from '@galacticcouncil/sdk';
 import crypto from 'node:crypto';
 import { YieldMetricsInterval } from '../apiSupport/types';
+import { performance, monitorEventLoopDelay } from 'perf_hooks';
+const hdl = monitorEventLoopDelay();
+hdl.enable();
 
 const appConfig = AppConfig.getInstance();
 
@@ -101,6 +104,7 @@ export function getTotalAvailableHeapSizeMb() {
 export function printV8MemoryHeap() {
   const heapStatistics = v8.getHeapStatistics();
 
+  console.log('EventLoop delay (ms):', Number(hdl.mean) / 1e6);
   console.log(
     `Total available heap size: ${
       heapStatistics.total_available_size / 1024 / 1024

@@ -497,9 +497,12 @@ export class OfflineTradeRouterManagerHelper {
   }): PersistentAsset[] {
     const assetsMap: Map<string, PersistentAsset> = new Map();
 
-    for (const [assetRegistryId, assetHistData] of [
-      ...(this.assetsHistData.get(blockNumber) || new Map()).entries(),
-    ] as [string, AssetHistoricalData][]) {
+    // for (const [assetRegistryId, assetHistData] of [
+    //   ...(this.assetsHistData.get(blockNumber) || new Map()).entries(),
+    // ] as [string, AssetHistoricalData][]) {
+    for (const [assetRegistryId, assetHistData] of (this.assetsHistData.get(
+      blockNumber
+    ) || new Map()) as Map<string, AssetHistoricalData>) {
       assetsMap.set(assetRegistryId, {
         id: assetHistData.asset.assetRegistryId,
         decimals: assetHistData.asset.decimals,
@@ -522,9 +525,13 @@ export class OfflineTradeRouterManagerHelper {
   }): IPersistentPoolBase[] {
     const poolsMap: Map<string, IPersistentPoolBase> = new Map();
 
-    for (const [poolId, poolHistData] of [
-      ...(this.xykpoolsHistData.get(blockNumber) || new Map()).entries(),
-    ] as [string, XykpoolHistoricalData][]) {
+    // for (const [poolId, poolHistData] of [
+    //   ...(this.xykpoolsHistData.get(blockNumber) || new Map()).entries(),
+    // ] as [string, XykpoolHistoricalData][]) {
+
+    for (const [poolId, poolHistData] of (this.xykpoolsHistData.get(
+      blockNumber
+    ) || new Map()) as Map<string, XykpoolHistoricalData>) {
       const assetAHistData = this.assetsHistData
         .get(blockNumber)
         ?.get(poolHistData.assetA.id);
@@ -579,9 +586,12 @@ export class OfflineTradeRouterManagerHelper {
   }): IPersistentLbpPoolBase[] {
     const poolsMap: Map<string, IPersistentLbpPoolBase> = new Map();
 
-    for (const [poolId, poolHistData] of [
-      ...(this.lbppoolsHistData.get(blockNumber) || new Map()).entries(),
-    ] as [string, LbppoolHistoricalData][]) {
+    // for (const [poolId, poolHistData] of [
+    //   ...(this.lbppoolsHistData.get(blockNumber) || new Map()).entries(),
+    // ] as [string, LbppoolHistoricalData][]) {
+    for (const [poolId, poolHistData] of (this.lbppoolsHistData.get(
+      blockNumber
+    ) || new Map()) as Map<string, LbppoolHistoricalData>) {
       const assetAHistData = this.assetsHistData
         .get(blockNumber)
         ?.get(poolHistData.assetA.id);
@@ -644,9 +654,12 @@ export class OfflineTradeRouterManagerHelper {
     blockNumber: number;
   }): IPersistentStableSwapBase[] {
     const poolsMap: Map<string, IPersistentStableSwapBase> = new Map();
-    for (const [poolId, poolHistData] of [
-      ...(this.stableswapHistData.get(blockNumber) || new Map()).entries(),
-    ] as [string, StableswapHistoricalData][]) {
+    // for (const [poolId, poolHistData] of [
+    //   ...(this.stableswapHistData.get(blockNumber) || new Map()).entries(),
+    // ] as [string, StableswapHistoricalData][]) {
+    for (const [poolId, poolHistData] of (this.stableswapHistData.get(
+      blockNumber
+    ) || new Map()) as Map<string, StableswapHistoricalData>) {
       if (
         !poolHistData.assetsHistoricalData ||
         poolHistData.assetsHistoricalData.length === 0
@@ -776,9 +789,12 @@ export class OfflineTradeRouterManagerHelper {
   }): IPersistentPoolBase[] {
     const poolsMap: Map<string, IPersistentPoolBase> = new Map();
 
-    for (const [poolId, poolHistData] of [
-      ...(this.aavepoolsHistData.get(blockNumber) || new Map()).entries(),
-    ] as [string, AavepoolHistoricalData][]) {
+    // for (const [poolId, poolHistData] of [
+    //   ...(this.aavepoolsHistData.get(blockNumber) || new Map()).entries(),
+    // ] as [string, AavepoolHistoricalData][]) {
+    for (const [poolId, poolHistData] of (this.aavepoolsHistData.get(
+      blockNumber
+    ) || new Map()) as Map<string, AavepoolHistoricalData>) {
       const reserveAssetHistData = this.assetsHistData
         .get(blockNumber)
         ?.get(poolHistData.pool.reserveAsset.id);
@@ -832,9 +848,11 @@ export class OfflineTradeRouterManagerHelper {
   }): IPersistentEmaOracleEntry[] {
     const entries: Map<string, IPersistentEmaOracleEntry> = new Map();
 
-    for (const entry of [
-      ...(this.emaOraclesHistData.get(blockNumber) || new Map()).values(),
-    ] as EmaOracleEntryHistoricalData[]) {
+    // for (const entry of [
+    //   ...(this.emaOraclesHistData.get(blockNumber) || new Map()).values(),
+    // ] as EmaOracleEntryHistoricalData[]) {
+    for (const [key, entry] of (this.emaOraclesHistData.get(blockNumber) ||
+      new Map()) as Map<string, EmaOracleEntryHistoricalData>) {
       entries.set(entry.id, {
         assets: [entry.assetAAssetRegistryId, entry.assetBAssetRegistryId],
         period: entry.period,
