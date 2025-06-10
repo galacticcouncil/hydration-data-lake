@@ -1,7 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Lbppool} from "./lbppool.model"
-import {AccountBalances} from "./_accountBalances"
+import {MinifiedDataStructure} from "./_minifiedDataStructure"
 
 @Entity_()
 export class LbppoolAssetsData {
@@ -19,18 +19,16 @@ export class LbppoolAssetsData {
   @ManyToOne_(() => Lbppool, {nullable: true})
   pool!: Lbppool
 
-  @Index_()
   @Column_("int4", {nullable: false})
   assetId!: number
 
-  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new AccountBalances(undefined, marshal.nonNull(obj))}, nullable: false})
-  balances!: AccountBalances
+  /**
+   * AccountBalances
+   */
+  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new MinifiedDataStructure(undefined, marshal.nonNull(obj))}, nullable: false})
+  balances!: MinifiedDataStructure
 
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
 }

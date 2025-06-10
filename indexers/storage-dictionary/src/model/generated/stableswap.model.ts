@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {StableswapPegsSource} from "./_stableswapPegsSource"
 import {StableswapAssetData} from "./stableswapAssetData.model"
@@ -15,11 +15,9 @@ export class Stableswap {
   @PrimaryColumn_()
   id!: string
 
-  @Index_()
   @Column_("int4", {nullable: false})
   poolId!: number
 
-  @Index_()
   @Column_("text", {nullable: false})
   poolAddress!: string
 
@@ -38,8 +36,8 @@ export class Stableswap {
   @Column_("int4", {nullable: false})
   fee!: number
 
-  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.map((val: any) => marshal.bigint.toJSON(val))), from: obj => marshal.fromList(obj, val => marshal.fromList(val, val => marshal.bigint.fromJSON(val)))}, nullable: false})
-  pegs!: ((bigint)[])[]
+  @Column_("jsonb", {transformer: {to: obj => obj, from: obj => marshal.fromList(obj, val => marshal.fromList(val, val => marshal.string.fromJSON(val)))}, nullable: false})
+  pegs!: ((string)[])[]
 
   @Column_("int4", {nullable: true})
   maxPegUpdate!: number | undefined | null
@@ -53,8 +51,4 @@ export class Stableswap {
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
 }

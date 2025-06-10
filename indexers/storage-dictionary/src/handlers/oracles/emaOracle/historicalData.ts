@@ -26,9 +26,6 @@ export async function handleEmaOracleHistoricalData(
   const oracleHistDataEntity = new EmaOracle({
     id: `${blockHeader.height}`,
     entries: [],
-    relayBlockHeight:
-      ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-        ?.relaychainBlockNumber ?? 0,
     paraBlockHeight: blockHeader.height,
   });
 

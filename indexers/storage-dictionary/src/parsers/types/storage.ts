@@ -1,4 +1,4 @@
-import { AccountBalances, AssetType, EmaOraclePeriod } from '../../model';
+import { AssetType, EmaOraclePeriod } from '../../model';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
 export interface AccountData {
@@ -65,7 +65,7 @@ export interface LbpPoolData {
 export interface PoolAssetBalances {
   poolAddress: string;
   assetId: number;
-  balances: AccountBalances;
+  balances: AccountData;
 }
 
 export interface OmnipoolAssetWithDetails {

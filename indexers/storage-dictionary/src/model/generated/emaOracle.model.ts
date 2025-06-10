@@ -20,8 +20,4 @@ export class EmaOracle {
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
 }

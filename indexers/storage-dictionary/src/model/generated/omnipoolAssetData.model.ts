@@ -1,8 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Omnipool} from "./omnipool.model"
-import {AccountBalances} from "./_accountBalances"
-import {OmnipoolAssetState} from "./_omnipoolAssetState"
+import {MinifiedDataStructure} from "./_minifiedDataStructure"
 
 @Entity_()
 export class OmnipoolAssetData {
@@ -20,21 +19,22 @@ export class OmnipoolAssetData {
   @ManyToOne_(() => Omnipool, {nullable: true})
   pool!: Omnipool
 
-  @Index_()
   @Column_("int4", {nullable: false})
   assetId!: number
 
-  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new AccountBalances(undefined, marshal.nonNull(obj))}, nullable: false})
-  balances!: AccountBalances
+  /**
+   * AccountBalances
+   */
+  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new MinifiedDataStructure(undefined, marshal.nonNull(obj))}, nullable: false})
+  balances!: MinifiedDataStructure
 
-  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new OmnipoolAssetState(undefined, marshal.nonNull(obj))}, nullable: false})
-  assetState!: OmnipoolAssetState
+  /**
+   * OmnipoolAssetState
+   */
+  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new MinifiedDataStructure(undefined, marshal.nonNull(obj))}, nullable: false})
+  assetState!: MinifiedDataStructure
 
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
 }

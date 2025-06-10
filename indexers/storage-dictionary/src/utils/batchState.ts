@@ -11,6 +11,7 @@ import {
   StableswapAssetData,
   Xykpool,
   XykpoolAssetsData,
+  Block,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/common';
 
@@ -18,6 +19,8 @@ type ParachainBlockNumber = number;
 
 export type BatchStatePayload = {
   relayChainInfo: Map<ParachainBlockNumber, RelayChainInfo>;
+
+  blocks: Map<number, Block>;
 
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
@@ -51,6 +54,7 @@ export type BatchStatePayload = {
 export class BatchState {
   public state: BatchStatePayload = {
     relayChainInfo: new Map(),
+    blocks: new Map(),
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
 
@@ -91,10 +95,10 @@ export class BatchState {
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {
     height: number;
   } {
-    const blockData = this.state.relayChainInfo.get(paraBlockHeight);
+    const blockData = this.state.blocks.get(paraBlockHeight);
 
     return {
-      height: blockData?.relaychainBlockNumber ?? 0,
+      height: blockData?.relayBlockHeight ?? 0,
     };
   }
 }

@@ -5,7 +5,7 @@ import {
   GetAssetBalancesInput,
   PoolAssetBalances,
 } from '../../parsers/types/storage';
-import { AccountBalances, AssetType } from '../../model';
+import { AssetType } from '../../model';
 import { Store } from '@subsquid/typeorm-store';
 import { getOrCreateAsset } from '../asset/assetRegistry';
 import {
@@ -67,14 +67,14 @@ export async function getAssetBalancesMany({
   const assetsKeyPairs: { address: string; assetId: number }[] = [];
   const ercTokens: { address: string; assetId: number }[] = [];
 
-  const defaultBalances = new AccountBalances({
+  const defaultBalances: AccountData = {
     free: BigInt(0),
     reserved: BigInt(0),
     miscFrozen: BigInt(0),
     feeFrozen: BigInt(0),
     frozen: BigInt(0),
     flags: BigInt(0),
-  });
+  };
 
   for (const kp of keyPairs) {
     if (kp.assetId === 0) {
@@ -106,14 +106,14 @@ export async function getAssetBalancesMany({
         response.push({
           poolAddress: kPair.address,
           assetId: kPair.assetId,
-          balances: new AccountBalances({
+          balances: {
             free: BigInt(unmarkedData[index].data.free),
             reserved: BigInt(unmarkedData[index].data.reserved),
             miscFrozen: BigInt(unmarkedData[index].data.miscFrozen),
             feeFrozen: BigInt(unmarkedData[index].data.feeFrozen),
             frozen: BigInt(unmarkedData[index].data.frozen),
             flags: BigInt(unmarkedData[index].data.flags),
-          }),
+          },
         });
       }
     });
@@ -137,14 +137,14 @@ export async function getAssetBalancesMany({
         response.push({
           poolAddress: kPair.address,
           assetId: kPair.assetId,
-          balances: new AccountBalances({
+          balances: {
             free: BigInt(unmarkedData[index].free),
             reserved: BigInt(unmarkedData[index].reserved),
             frozen: BigInt(unmarkedData[index].frozen),
             miscFrozen: BigInt(0),
             feeFrozen: BigInt(0),
             flags: BigInt(0),
-          }),
+          },
         });
       }
     });
@@ -181,14 +181,14 @@ export async function getAssetBalancesMany({
         response.push({
           poolAddress: kPair.address,
           assetId: kPair.assetId,
-          balances: new AccountBalances({
+          balances: {
             free: BigInt(unmarkedData[index].free),
             reserved: BigInt(unmarkedData[index].reserved),
             frozen: BigInt(unmarkedData[index].frozen),
             miscFrozen: BigInt(0),
             feeFrozen: BigInt(0),
             flags: BigInt(0),
-          }),
+          },
         });
       }
     });

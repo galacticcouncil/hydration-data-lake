@@ -12,7 +12,6 @@ export async function handleAavePoolsStorage(
   if (ctx.batchState.state.aavepoolsProcessedBlocks.has(blockHeader.height))
     return;
 
-  const relayChainInfo = ctx.batchState.state.relayChainInfo;
   const poolsToSave: Aavepool[] = [];
 
   const allAavePools = await getAllAavePools({ block: blockHeader });
@@ -40,13 +39,10 @@ export async function handleAavePoolsStorage(
       poolId,
       reserveAsset,
       aToken,
-      liquidityIn: data.liquidityIn,
-      liquidityOut: data.liquidityOut,
+      liquidityIn: data.liquidityIn.toString(),
+      liquidityOut: data.liquidityOut.toString(),
 
       paraBlockHeight: blockHeader.height,
-      relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-        blockHeader.height
-      ).height,
     });
 
     poolsToSave.push(newPoolEntity);

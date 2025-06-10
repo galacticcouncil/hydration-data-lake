@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Tradability} from "./_tradability"
 import {OmnipoolAssetData} from "./omnipoolAssetData.model"
@@ -15,7 +15,6 @@ export class Omnipool {
   @PrimaryColumn_()
   id!: string
 
-  @Index_()
   @Column_("text", {nullable: false})
   poolAddress!: string
 
@@ -28,8 +27,4 @@ export class Omnipool {
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
 }

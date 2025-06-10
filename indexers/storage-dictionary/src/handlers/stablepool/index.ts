@@ -2,7 +2,7 @@ import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
 import {
-  AccountBalances,
+  DataStructureTypeName,
   Stableswap,
   StableswapAssetData,
   StableswapPegsSource,
@@ -13,6 +13,8 @@ import { getAssetBalancesMany } from '../balances';
 import { StableMath } from '@galacticcouncil/sdk';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import { Between } from 'typeorm/find-options/operator/Between';
+import { AccountData } from '../../parsers/types/storage';
+import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
 
 export async function handleStablepoolStorage(
   ctx: ProcessorContext<Store>,
@@ -27,7 +29,6 @@ export async function handleStablepoolStorage(
 
   const stablepools: Map<string, Stableswap> = new Map();
   const stablepoolAssetsData: Map<string, StableswapAssetData> = new Map();
-  const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allPools = (
     await parsers.storage.stableswap.getPoolsAll(currentBlockHeader)
@@ -69,14 +70,14 @@ export async function handleStablepoolStorage(
     ).map((res) => [`${res.poolAddress}-${res.assetId}`, res])
   );
 
-  const fallbackAccountBalances = new AccountBalances({
+  const fallbackAccountBalances: AccountData = {
     free: BigInt(0),
     reserved: BigInt(0),
     miscFrozen: BigInt(0),
     feeFrozen: BigInt(0),
     frozen: BigInt(0),
     flags: BigInt(0),
-  });
+  };
 
   const allPoolAssetBalancesMap = new Map(
     (
@@ -111,14 +112,17 @@ export async function handleStablepoolStorage(
     > => {
       if (!allPoolsPegsDataMap.has(poolId))
         return {
-          pegs: assetIds.map((a) => [BigInt(1), BigInt(1)]),
+          pegs: assetIds.map((a) => ['1', '1']),
           maxPegUpdate: null,
           pegSources: null,
         };
 
       const poolPegsData = allPoolsPegsDataMap.get(poolId)!;
       return {
-        pegs: poolPegsData.current,
+        pegs: poolPegsData.current.map(([a, b]) => [
+          a.toString(),
+          b.toString(),
+        ]),
         maxPegUpdate: poolPegsData.maxPegUpdate,
         pegSources: poolPegsData.source.map(
           ({
@@ -144,9 +148,6 @@ export async function handleStablepoolStorage(
     const newPoolEntity = new Stableswap({
       id: `${poolId}-${currentBlockHeader.height}`,
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight:
-        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
-        0,
       ...getPoolPegsDetails(),
       poolAddress,
       poolId,
@@ -163,18 +164,18 @@ export async function handleStablepoolStorage(
       const newAssetEntity = new StableswapAssetData({
         id: `${poolId}-${assetId}-${currentBlockHeader.height}`,
         paraBlockHeight: currentBlockHeader.height,
-        relayBlockHeight:
-          relayChainInfo.get(currentBlockHeader.height)
-            ?.relaychainBlockNumber || 0,
         assetId: assetId,
         tradable: new Tradability(
           assetsStorageDataByPoolMap.get(`${poolAddress}-${assetId}`)
             ?.storageData?.tradable ?? { bits: 15 }
         ),
         pool: newPoolEntity,
-        balances:
-          allPoolAssetBalancesMap.get(`${poolAddress}-${assetId}`)?.balances ??
-          fallbackAccountBalances,
+
+        balances: MinifiedDataStructuresManager.getMinifiedDataStructure(
+          (allPoolAssetBalancesMap.get(`${poolAddress}-${assetId}`)
+            ?.balances as AccountData) ?? fallbackAccountBalances,
+          DataStructureTypeName.AccountBalances
+        ),
       });
       stablepoolAssetsData.set(newAssetEntity.id, newAssetEntity);
 

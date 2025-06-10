@@ -1,9 +1,11 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
-import { AccountBalances, Xykpool, XykpoolAssetsData } from '../../model';
+import { DataStructureTypeName, Xykpool, XykpoolAssetsData } from '../../model';
 import { getAssetBalancesMany } from '../balances';
 import { Between } from 'typeorm/find-options/operator/Between';
+import { AccountData } from '../../parsers/types/storage';
+import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
 
 export async function handleXykPoolsStorage(
   ctx: ProcessorContext<Store>,
@@ -16,7 +18,6 @@ export async function handleXykPoolsStorage(
 
   const xykPools: Map<string, Xykpool> = new Map();
   const xykPoolAssetsData: Map<string, XykpoolAssetsData> = new Map();
-  const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allPoolsWithAssets =
     await parsers.storage.xyk.getAllPoolsWithAssets(currentBlockHeader);
@@ -29,14 +30,14 @@ export async function handleXykPoolsStorage(
     ).map((item) => [item.poolId, item])
   );
 
-  const fallbackAccountBalances = new AccountBalances({
+  const fallbackAccountBalances: AccountData = {
     free: BigInt(0),
     reserved: BigInt(0),
     miscFrozen: BigInt(0),
     feeFrozen: BigInt(0),
     frozen: BigInt(0),
     flags: BigInt(0),
-  });
+  };
 
   const allPoolAssetBalancesMap = new Map(
     (
@@ -64,9 +65,6 @@ export async function handleXykPoolsStorage(
       id: `${poolData.poolAddress}-${currentBlockHeader.height}`,
       poolAddress: poolData.poolAddress,
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight:
-        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
-        0,
       assetAId: poolData.assetAId,
       assetBId: poolData.assetBId,
       shareTokenId:
@@ -79,28 +77,26 @@ export async function handleXykPoolsStorage(
     const assetAData = new XykpoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetAId}-${currentBlockHeader.height}`,
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight:
-        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
-        0,
       assetId: poolData.assetAId,
       pool: newPoolEntity,
-      balances:
-        allPoolAssetBalancesMap.get(
+      balances: MinifiedDataStructuresManager.getMinifiedDataStructure(
+        (allPoolAssetBalancesMap.get(
           `${poolData.poolAddress}-${poolData.assetAId}`
-        )?.balances ?? fallbackAccountBalances,
+        )?.balances as AccountData) ?? fallbackAccountBalances,
+        DataStructureTypeName.AccountBalances
+      ),
     });
     const assetBData = new XykpoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetBId}-${currentBlockHeader.height}`,
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight:
-        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
-        0,
       assetId: poolData.assetBId,
       pool: newPoolEntity,
-      balances:
-        allPoolAssetBalancesMap.get(
+      balances: MinifiedDataStructuresManager.getMinifiedDataStructure(
+        (allPoolAssetBalancesMap.get(
           `${poolData.poolAddress}-${poolData.assetBId}`
-        )?.balances ?? fallbackAccountBalances,
+        )?.balances as AccountData) ?? fallbackAccountBalances,
+        DataStructureTypeName.AccountBalances
+      ),
     });
 
     ctx.batchState.state.xykPoolAssetsData.set(assetAData.id, assetAData);

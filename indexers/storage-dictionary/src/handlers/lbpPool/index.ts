@@ -1,14 +1,11 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
-import {
-  AccountBalances,
-  Lbppool,
-  LbppoolAssetsData,
-  Omnipool,
-} from '../../model';
+import { DataStructureTypeName, Lbppool, LbppoolAssetsData } from '../../model';
 import { getAssetBalancesMany } from '../balances';
 import { Between } from 'typeorm/find-options/operator/Between';
+import { AccountData } from '../../parsers/types/storage';
+import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
 
 export async function handleLbpPoolsStorage(
   ctx: ProcessorContext<Store>,
@@ -21,17 +18,16 @@ export async function handleLbpPoolsStorage(
 
   const lbpPools: Map<string, Lbppool> = new Map();
   const lbpPoolAssetsData: Map<string, LbppoolAssetsData> = new Map();
-  const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allPools = await parsers.storage.lbp.getAllPoolData(currentBlockHeader);
-  const fallbackAccountBalances = new AccountBalances({
+  const fallbackAccountBalances: AccountData = {
     free: BigInt(0),
     reserved: BigInt(0),
     miscFrozen: BigInt(0),
     feeFrozen: BigInt(0),
     frozen: BigInt(0),
     flags: BigInt(0),
-  });
+  };
 
   const allPoolAssetBalancesMap = new Map(
     (
@@ -59,9 +55,6 @@ export async function handleLbpPoolsStorage(
       id: `${poolData.poolAddress}-${currentBlockHeader.height}`,
       poolAddress: poolData.poolAddress,
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight:
-        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
-        0,
       assetAId: poolData.assetAId,
       assetBId: poolData.assetBId,
       owner: poolData.owner,
@@ -72,7 +65,7 @@ export async function handleLbpPoolsStorage(
       weightCurve: poolData.weightCurve.__kind,
       fee: poolData.fee,
       feeCollector: poolData.feeCollector,
-      repayTarget: poolData.repayTarget,
+      repayTarget: poolData.repayTarget.toString(),
     });
 
     ctx.batchState.state.lbpPools.set(newPoolEntity.id, newPoolEntity);
@@ -80,28 +73,26 @@ export async function handleLbpPoolsStorage(
     const assetAData = new LbppoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetAId}-${currentBlockHeader.height}`,
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight:
-        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
-        0,
       assetId: poolData.assetAId,
       pool: newPoolEntity,
-      balances:
-        allPoolAssetBalancesMap.get(
+      balances: MinifiedDataStructuresManager.getMinifiedDataStructure(
+        (allPoolAssetBalancesMap.get(
           `${poolData.poolAddress}-${poolData.assetAId}`
-        )?.balances ?? fallbackAccountBalances,
+        )?.balances as AccountData) ?? fallbackAccountBalances,
+        DataStructureTypeName.AccountBalances
+      ),
     });
     const assetBData = new LbppoolAssetsData({
       id: `${poolData.poolAddress}-${poolData.assetBId}-${currentBlockHeader.height}`,
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight:
-        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
-        0,
       assetId: poolData.assetBId,
       pool: newPoolEntity,
-      balances:
-        allPoolAssetBalancesMap.get(
+      balances: MinifiedDataStructuresManager.getMinifiedDataStructure(
+        (allPoolAssetBalancesMap.get(
           `${poolData.poolAddress}-${poolData.assetBId}`
-        )?.balances ?? fallbackAccountBalances,
+        )?.balances as AccountData) ?? fallbackAccountBalances,
+        DataStructureTypeName.AccountBalances
+      ),
     });
 
     ctx.batchState.state.lbpPoolAssetsData.set(assetAData.id, assetAData);

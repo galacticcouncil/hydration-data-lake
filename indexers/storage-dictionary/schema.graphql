@@ -11,6 +11,15 @@ type SubProcessorStatus @entity {
   assetsActualisedAtBlock: Int
 }
 
+type Block @entity {
+  "block_id"
+  id: ID!
+  height: Int!
+  hash: String!
+  timestamp: String!
+  relayBlockHeight: Int!
+}
+
 type AccountBalances {
   free: BigInt!
   reserved: BigInt!
@@ -18,6 +27,24 @@ type AccountBalances {
   feeFrozen: BigInt
   frozen: BigInt
   flags: BigInt
+}
+
+enum DataStructureTypeName {
+  AccountBalances
+  AssetDynamicFee
+  OmnipoolAssetState
+}
+
+type DataStructureType @entity {
+  "type_name"
+  id: ID!
+  name: DataStructureTypeName!
+  definition: String!
+}
+
+type MinifiedDataStructure {
+  t: DataStructureTypeName!
+  d: [String!]!
 }
 
 # ======================================================================================================================
@@ -47,21 +74,21 @@ type Asset @entity {
   bondMaturity: BigInt
 }
 
-type AssetDynamicFee {
-  assetFee: Int!
-  protocolFee: Int!
-  timestamp: Int!
-}
+#type AssetDynamicFee {
+#  assetFee: Int!
+#  protocolFee: Int!
+#  timestamp: Int!
+#}
 
 type AssetHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
   id: ID!
   asset: Asset!
-  totalIssuance: BigInt!
-  dynamicFee: AssetDynamicFee
-  existentialDeposit: BigInt!
+  totalIssuance: String!
+  "AssetDynamicFee"
+  dynamicFee: MinifiedDataStructure
+  existentialDeposit: String!
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -72,9 +99,9 @@ type Lbppool @entity {
   "xykPoolAddress-paraBlockHeight"
   id: ID!
   "XYK pool address"
-  poolAddress: String! @index
-  assetAId: Int! @index
-  assetBId: Int! @index
+  poolAddress: String!
+  assetAId: Int!
+  assetBId: Int!
   owner: String!
   start: Int
   end: Int
@@ -83,21 +110,20 @@ type Lbppool @entity {
   weightCurve: String!
   fee: [Int!]!
   feeCollector: String
-  repayTarget: BigInt!
+  repayTarget: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
   assets: [LbppoolAssetsData!]! @derivedFrom(field: "pool")
 }
 type LbppoolAssetsData @entity {
   "xykPoolAddress-assetId-paraBlockHeight"
   id: ID!
   pool: Lbppool!
-  assetId: Int! @index
-  balances: AccountBalances!
+  assetId: Int!
+  "AccountBalances"
+  balances: MinifiedDataStructure!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -108,25 +134,24 @@ type Xykpool @entity {
   "xykPoolAddress-paraBlockHeight"
   id: ID!
   "XYK pool address"
-  poolAddress: String! @index
-  assetAId: Int! @index
-  assetBId: Int! @index
+  poolAddress: String!
+  assetAId: Int!
+  assetBId: Int!
   shareTokenId: String
-
   assets: [XykpoolAssetsData!]! @derivedFrom(field: "pool")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
+
 type XykpoolAssetsData @entity {
   "xykPoolAddress-assetId-paraBlockHeight"
   id: ID!
   pool: Xykpool!
-  assetId: Int! @index
-  balances: AccountBalances!
+  assetId: Int!
+  "AccountBalances"
+  balances: MinifiedDataStructure!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -138,34 +163,34 @@ type Tradability {
 }
 
 type OmnipoolAssetState {
-  hubReserve: BigInt!
-  shares: BigInt!
-  protocolShares: BigInt!
-  cap: BigInt!
+  hubReserve: String!
+  shares: String!
+  protocolShares: String!
+  cap: String!
   tradable: Tradability
 }
 
 type Omnipool @entity {
   "omnipoolId-paraBlockHeight"
   id: ID!
-  poolAddress: String! @index
+  poolAddress: String!
   hubAssetTradability: Tradability!
 
   assets: [OmnipoolAssetData!]! @derivedFrom(field: "pool")
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 type OmnipoolAssetData @entity {
   "omnipooAddress-assetId-paraBlockHeight"
   id: ID!
   pool: Omnipool!
-  assetId: Int! @index
-  balances: AccountBalances!
-  assetState: OmnipoolAssetState!
+  assetId: Int!
+  "AccountBalances"
+  balances: MinifiedDataStructure!
+  "OmnipoolAssetState"
+  assetState: MinifiedDataStructure!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -183,22 +208,21 @@ type StableswapPegsSource {
 type Stableswap @entity {
   "stablepoolId-paraBlockHeight"
   id: ID!
-  poolId: Int! @index
-  poolAddress: String! @index
+  poolId: Int!
+  poolAddress: String!
 
   initialAmplification: Int!
   finalAmplification: Int!
   initialBlock: Int!
   finalBlock: Int!
   fee: Int!
-  pegs: [[BigInt!]!]!
+  pegs: [[String!]!]!
   maxPegUpdate: Int
   pegSources: [StableswapPegsSource!]
 
   assets: [StableswapAssetData!]! @derivedFrom(field: "pool")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 type StableswapAssetData @entity {
@@ -207,10 +231,10 @@ type StableswapAssetData @entity {
   pool: Stableswap!
   assetId: Int!
   tradable: Tradability
-  balances: AccountBalances!
+  "AccountBalances"
+  balances: MinifiedDataStructure!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -223,11 +247,10 @@ type Aavepool @entity {
   poolId: String!
   reserveAsset: Asset!
   aToken: Asset!
-  liquidityIn: BigInt!
-  liquidityOut: BigInt!
+  liquidityIn: String!
+  liquidityOut: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 # ======================================================================================================================
@@ -275,7 +298,6 @@ type EmaOracle @entity {
   id: ID!
   entries: [EmaOracleEntry!]!
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int! @index
 }
 
 type BlockCompressedData @entity {

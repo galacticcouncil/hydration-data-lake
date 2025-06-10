@@ -3,13 +3,14 @@ import { Store } from '@subsquid/typeorm-store';
 import {
   Aavepool,
   Asset,
-  AssetDynamicFee,
   AssetHistoricalData,
+  DataStructureTypeName,
 } from '../../model';
 import parsers from '../../parsers';
 import { AssetDetails, AssetDetailsWithId } from '../../parsers/types/storage';
 import { getOrCreateAsset } from './assetRegistry';
 import { Between } from 'typeorm/find-options/operator/Between';
+import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
 
 export async function handleAssetsStorage(
   ctx: ProcessorContext<Store>,
@@ -96,20 +97,17 @@ export async function handleAssetsStorage(
       id: `${asset.id}-${currentBlockHeader.height}`,
       asset,
 
-      totalIssuance: totalIssuancePerAssetMap.get(asset.id)!,
-      existentialDeposit: storageDataAllAssetsMap.get(asset.id)!.data!
-        .existentialDeposit,
+      totalIssuance: totalIssuancePerAssetMap.get(asset.id)?.toString(),
+      existentialDeposit: storageDataAllAssetsMap
+        .get(asset.id)!
+        .data!.existentialDeposit.toString(),
       dynamicFee: assetDynamicFee
-        ? new AssetDynamicFee({
-            assetFee: assetDynamicFee.assetFee,
-            protocolFee: assetDynamicFee.protocolFee,
-            timestamp: assetDynamicFee.timestamp,
-          })
+        ? MinifiedDataStructuresManager.getMinifiedDataStructure(
+            assetDynamicFee,
+            DataStructureTypeName.AssetDynamicFee
+          )
         : null,
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-        currentBlockHeader.height
-      ).height,
     });
     ctx.batchState.state.assetHistoricalDataItems.set(
       newAssetHistoricalData.id,

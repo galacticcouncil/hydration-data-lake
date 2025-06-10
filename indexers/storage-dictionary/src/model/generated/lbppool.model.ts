@@ -1,5 +1,4 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
-import * as marshal from "./marshal"
 import {LbppoolAssetsData} from "./lbppoolAssetsData.model"
 
 @Entity_()
@@ -17,15 +16,12 @@ export class Lbppool {
   /**
    * XYK pool address
    */
-  @Index_()
   @Column_("text", {nullable: false})
   poolAddress!: string
 
-  @Index_()
   @Column_("int4", {nullable: false})
   assetAId!: number
 
-  @Index_()
   @Column_("int4", {nullable: false})
   assetBId!: number
 
@@ -53,16 +49,12 @@ export class Lbppool {
   @Column_("text", {nullable: true})
   feeCollector!: string | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  repayTarget!: bigint
+  @Column_("text", {nullable: false})
+  repayTarget!: string
 
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
 
   @OneToMany_(() => LbppoolAssetsData, e => e.pool)
   assets!: LbppoolAssetsData[]

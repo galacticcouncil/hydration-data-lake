@@ -2,17 +2,17 @@ import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
 import {
-  AccountBalances,
+  DataStructureTypeName,
   Omnipool,
   OmnipoolAssetData,
-  OmnipoolAssetState,
   Stableswap,
   Tradability,
 } from '../../model';
 import { getAssetBalancesMany } from '../balances';
 import { AppConfig } from '../../appConfig';
 import { Between } from 'typeorm/find-options/operator/Between';
-import { In } from 'typeorm/find-options/operator/In';
+import { AccountData } from '../../parsers/types/storage';
+import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
 
 const appConfig = AppConfig.getInstance();
 
@@ -27,7 +27,6 @@ export async function handleOmnipoolStorage(
   }
 
   const omnipoolAssetsData: Map<string, OmnipoolAssetData> = new Map();
-  const relayChainInfo = ctx.batchState.state.relayChainInfo;
 
   const allAssetStates =
     await parsers.storage.omnipool.getOmnipoolAssetsAll(currentBlockHeader);
@@ -48,14 +47,14 @@ export async function handleOmnipoolStorage(
     },
   });
 
-  const fallbackAccountBalances = new AccountBalances({
+  const fallbackAccountBalances: AccountData = {
     free: BigInt(0),
     reserved: BigInt(0),
     miscFrozen: BigInt(0),
     feeFrozen: BigInt(0),
     frozen: BigInt(0),
     flags: BigInt(0),
-  });
+  };
 
   const allAssetBalancesMap = new Map(
     (
@@ -82,8 +81,6 @@ export async function handleOmnipoolStorage(
       bits: hubAssetTradeability?.bits ?? 1,
     }),
     paraBlockHeight: currentBlockHeader.height,
-    relayBlockHeight:
-      relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber || 0,
   });
   ctx.batchState.state.omnipools.set(newOmnipoolEntity.id, newOmnipoolEntity);
 
@@ -94,17 +91,16 @@ export async function handleOmnipoolStorage(
       id: `${appConfig.OMNIPOOL_ADDRESS}-${assetState.assetId}-${currentBlockHeader.height}`,
       pool: newOmnipoolEntity,
       assetId: assetState.assetId,
-      assetState: new OmnipoolAssetState({
-        ...assetState.assetState,
-        tradable: new Tradability(assetState.assetState.tradable),
-      }),
-      balances:
-        allAssetBalancesMap.get(assetState.assetId)?.balances ??
-        fallbackAccountBalances,
+      assetState: MinifiedDataStructuresManager.getMinifiedDataStructure(
+        assetState.assetState,
+        DataStructureTypeName.OmnipoolAssetState
+      ),
+      balances: MinifiedDataStructuresManager.getMinifiedDataStructure(
+        (allAssetBalancesMap.get(assetState.assetId)
+          ?.balances as AccountData) ?? fallbackAccountBalances,
+        DataStructureTypeName.AccountBalances
+      ),
       paraBlockHeight: currentBlockHeader.height,
-      relayBlockHeight:
-        relayChainInfo.get(currentBlockHeader.height)?.relaychainBlockNumber ||
-        0,
     });
     ctx.batchState.state.omnipoolAssetsData.set(
       newAssetDataEntity.id,

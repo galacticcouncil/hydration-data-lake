@@ -2,7 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Stableswap} from "./stableswap.model"
 import {Tradability} from "./_tradability"
-import {AccountBalances} from "./_accountBalances"
+import {MinifiedDataStructure} from "./_minifiedDataStructure"
 
 @Entity_()
 export class StableswapAssetData {
@@ -26,14 +26,13 @@ export class StableswapAssetData {
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new Tradability(undefined, obj)}, nullable: true})
   tradable!: Tradability | undefined | null
 
-  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new AccountBalances(undefined, marshal.nonNull(obj))}, nullable: false})
-  balances!: AccountBalances
+  /**
+   * AccountBalances
+   */
+  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => new MinifiedDataStructure(undefined, marshal.nonNull(obj))}, nullable: false})
+  balances!: MinifiedDataStructure
 
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
 }

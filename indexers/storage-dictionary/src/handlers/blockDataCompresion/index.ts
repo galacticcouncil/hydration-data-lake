@@ -20,7 +20,7 @@ export async function compressBlockStorage(
   ctx: ProcessorContext<Store>,
   currentBlockHeader: Block
 ): Promise<void> {
-  if (!ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS) return;
+  // if (!ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS) return;
 
   // let lbppools = await ctx.store.find(Lbppool, {
   //   where: {

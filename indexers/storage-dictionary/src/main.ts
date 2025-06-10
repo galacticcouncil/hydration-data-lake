@@ -28,7 +28,7 @@ import {
   prefetchAllAssets,
   waitForAssetsActualisation,
 } from './handlers/asset/assetRegistry';
-import { handleRelayChainInfo } from './handlers/relayChainInfo';
+import { handleBlockEntities } from './handlers/blocks';
 import {
   handleAssetsStorage,
   prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks,
@@ -129,7 +129,7 @@ processor.run(
         `Blocks sub-batch #${blocksSubBatchIndex} with size ${subProcessorStatusManager.subBatchConfig.subBatchSize} blocks has been processed in`
       );
 
-      handleRelayChainInfo(
+      await handleBlockEntities(
         blocksSubBatch,
         ctxWithBatchState as ProcessorContext<Store>
       );

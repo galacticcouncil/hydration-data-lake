@@ -138,9 +138,6 @@ async function waitForSpotPricesRelatedHistoricalData(
   blocksToProcess: number[],
   ctx: SqdProcessorContext<Store>
 ) {
-  // const orderedBlockNumbers = ctx.blocks
-  //   .map((b) => b.header.height)
-  //   .sort((a, b) => a - b);
 
   const prefetchConstantsHistoricalData = async (
     fromBlockNumber: number,

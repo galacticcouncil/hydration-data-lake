@@ -70,6 +70,7 @@ processor.run(
     isolationLevel: 'READ COMMITTED',
   }),
   async (ctx) => {
+
     printV8MemoryHeap();
 
     console.time('TOTAL BATCH EXECUTION TIME');
@@ -82,12 +83,6 @@ processor.run(
       new BatchState();
     (ctxWithBatchState as SqdProcessorContext<Store>).appConfig =
       AppConfig.getInstance();
-
-    // if (
-    //   (ctxWithBatchState as SqdProcessorContext<Store>).appConfig.INDEXING_IS_PAUSED
-    // ) {
-    //   await new Promise((res) => console.log('Indexing is paused. Waiting...'));
-    // }
 
     await execAllInOneProcessorHandlers(
       ctxWithBatchState as SqdProcessorContext<Store>

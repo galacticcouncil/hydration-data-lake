@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, Index as Index_} from "typeorm"
 import {XykpoolAssetsData} from "./xykpoolAssetsData.model"
 
 @Entity_()
@@ -16,15 +16,12 @@ export class Xykpool {
   /**
    * XYK pool address
    */
-  @Index_()
   @Column_("text", {nullable: false})
   poolAddress!: string
 
-  @Index_()
   @Column_("int4", {nullable: false})
   assetAId!: number
 
-  @Index_()
   @Column_("int4", {nullable: false})
   assetBId!: number
 
@@ -37,8 +34,4 @@ export class Xykpool {
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
 }
