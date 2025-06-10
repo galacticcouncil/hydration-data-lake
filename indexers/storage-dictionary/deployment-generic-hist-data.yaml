@@ -185,7 +185,7 @@ scale:
       profile: medium
       storage: 700G
   processor:
-    profile: medium
+    profile: large
   api:
     profile: large
     replicas: 2

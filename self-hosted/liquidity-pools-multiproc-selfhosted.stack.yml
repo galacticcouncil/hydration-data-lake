@@ -1,10 +1,20 @@
 version: "3.7"
 
 x-chain-name: &chain-name "hydration"
-x-postgres-db: &postgres-db ""
-x-postgres-user: &postgres-user ""
-x-postgres-password: &postgres-password ""
-x-postgres-host: &postgres-host "pg.squid.subsquid.io"
+x-postgres-db: &postgres-db "liquidity_pools_db_multyproc"
+x-postgres-user: &postgres-user "postgres"
+x-postgres-password: &postgres-password "postgres"
+x-postgres-host: &postgres-host "liquidity-pools-db"
+
+x-indexer-id: &indexer-id "swarm_3"
+
+x-image: &image "ghcr.io/mckrava/liquidity-pools-indexer:a5afc4d1edf8eac25d28fa63c649dd80d074761e"
+
+x-traefic-labels: &traefic-labels
+  labels:
+    traefik.http.routers.node.rule: Host(`whale-recent-sh.kril.hydration.cloud`)
+    traefik.http.routers.node.tls: "true"
+    traefik.http.routers.node.tls.certresolver: myresolver
 
 x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_PORT: 5432
@@ -14,8 +24,8 @@ x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_HOST: *postgres-host
 
 x-proc-default-envs: &proc-default-envs
-  INDEXER_ID: "721"
-  NODE_OPTIONS: "--max-old-space-size=6072"
+  INDEXER_ID: *indexer-id
+  NODE_OPTIONS: "--max-old-space-size=8048"
   NODE_ENV: "self-hosted"
   CHAIN: *chain-name
   RPC_URL: "wss://node.kril.hydration.cloud"
@@ -25,12 +35,14 @@ x-proc-default-envs: &proc-default-envs
   GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
   OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
 
-  ORCHESTRATOR_QUEUE_REDIS_HOST: "138.199.136.142"
+  ORCHESTRATOR_QUEUE_REDIS_HOST: "orchestration-redis"
   ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
   ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
   MAX_JOB_BATCH_SIZE: 20
 
-  PROCESS_FROM_BLOCK: 7700000
+  HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
+
+  PROCESS_FROM_BLOCK: 7840000
   PROCESS_TO_BLOCK: -1
 
   PROCESS_LBP_POOLS: "true"
@@ -56,13 +68,14 @@ x-proc-default-envs: &proc-default-envs
   STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql"
 
 x-proc-default-config: &proc-default-config
-  image: ghcr.io/mckrava/liquidity-pools-indexer:16ef72a2055a327a69a4493ac7287c89d9a43416
+  image: *image
   networks:
     - default
   command:
     - sh
     - -c
     - "sqd migration:apply && node lib/main.js"
+#    - "sqd migration:apply && node -expose-gc --max-old-space-size=8192 --optimize-for-size --gc-interval=10000 --incremental-marking --max-semi-space-size=128 lib/main.js"
   deploy:
     restart_policy:
       condition: on-failure
@@ -71,9 +84,45 @@ networks:
   default:
     driver: overlay
 
+volumes:
+  liquidity-pools-db:
+    driver: local
+  orchestration-redis:
+    driver: local
+
 services:
+  orchestration-redis:
+    image: redis:6.2-alpine
+    environment:
+      - ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - "6395:6379"
+    volumes:
+      - "orchestration-redis:/var/lib/redis/data"
+
+  liquidity-pools-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: *postgres-db
+      POSTGRES_USER: *postgres-user
+      POSTGRES_PASSWORD: *postgres-password
+    volumes:
+      - "liquidity-pools-db:/var/lib/postgresql/data"
+    ports:
+      - "5495:5432"
+    logging:
+      driver: json-file
+    networks:
+      - default
+    deploy:
+      restart_policy:
+        condition: on-failure
+
   core-processor:
     <<: *proc-default-config
+    depends_on:
+      - liquidity-pools-db
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
       STATE_SCHEMA_NAME: "squid_processor"
@@ -81,11 +130,18 @@ services:
       ALL_IN_ONE_PROCESSOR_MODE: "false"
       IS_CORE_PROCESSOR: "true"
       IS_SPOT_PRICES_PROCESSOR: "false"
+    #    volumes:
+    #      - "core-processor:/var/lib/core-proc"
+  #    command:
+  #      - sh
+  #      - -c
+  #      - "sqd migration:apply && node lib/main.js"
 
-  spot-prices-proc-1:
+  spot-prices-processor-1:
     <<: *proc-default-config
     depends_on:
-      - core-processor
+      - liquidity-pools-db
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
       STATE_SCHEMA_NAME: "spot_price_processor_1"
@@ -93,11 +149,16 @@ services:
       ALL_IN_ONE_PROCESSOR_MODE: "false"
       IS_CORE_PROCESSOR: "false"
       IS_SPOT_PRICES_PROCESSOR: "true"
+  #    command:
+  #      - sh
+  #      - -c
+  #      - "sqd migration:apply && node lib/main.js"
 
-  spot-prices-proc-2:
+  spot-prices-processor-2:
     <<: *proc-default-config
     depends_on:
-      - core-processor
+      - liquidity-pools-db
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
       STATE_SCHEMA_NAME: "spot_price_processor_2"
@@ -105,11 +166,16 @@ services:
       ALL_IN_ONE_PROCESSOR_MODE: "false"
       IS_CORE_PROCESSOR: "false"
       IS_SPOT_PRICES_PROCESSOR: "true"
+  #    command:
+  #      - sh
+  #      - -c
+  #      - "sqd migration:apply && node lib/main.js"
 
-  spot-prices-proc-3:
+  spot-prices-processor-3:
     <<: *proc-default-config
     depends_on:
-      - core-processor
+      - liquidity-pools-db
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
       STATE_SCHEMA_NAME: "spot_price_processor_3"
@@ -117,11 +183,16 @@ services:
       ALL_IN_ONE_PROCESSOR_MODE: "false"
       IS_CORE_PROCESSOR: "false"
       IS_SPOT_PRICES_PROCESSOR: "true"
+  #    command:
+  #      - sh
+  #      - -c
+  #      - "sqd migration:apply && node lib/main.js"
 
-  spot-prices-proc-4:
+  spot-prices-processor-4:
     <<: *proc-default-config
     depends_on:
-      - core-processor
+      - liquidity-pools-db
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
       STATE_SCHEMA_NAME: "spot_price_processor_4"
@@ -129,11 +200,16 @@ services:
       ALL_IN_ONE_PROCESSOR_MODE: "false"
       IS_CORE_PROCESSOR: "false"
       IS_SPOT_PRICES_PROCESSOR: "true"
+  #    command:
+  #      - sh
+  #      - -c
+  #      - "sqd migration:apply && node lib/main.js"
 
-  spot-prices-proc-5:
+  spot-prices-processor-5:
     <<: *proc-default-config
     depends_on:
-      - core-processor
+      - liquidity-pools-db
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
       STATE_SCHEMA_NAME: "spot_price_processor_5"
@@ -141,3 +217,37 @@ services:
       ALL_IN_ONE_PROCESSOR_MODE: "false"
       IS_CORE_PROCESSOR: "false"
       IS_SPOT_PRICES_PROCESSOR: "true"
+  #    command:
+  #      - sh
+  #      - -c
+  #      - "sqd migration:apply && node lib/main.js"
+
+  liquidity-pools-api:
+    image: *image
+    depends_on:
+      - liquidity-pools-db
+      - orchestration-redis
+    environment:
+      INDEXER_ID: *indexer-id
+      ORCHESTRATOR_QUEUE_REDIS_HOST: "orchestration-redis"
+      ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
+      ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      GQL_PORT: 8080
+      <<: *liquidity-pools-db-creds
+      SUB_PROCESSOR_SCHEMAS: "squid_processor;spot_price_processor"
+    ports:
+      - "8095:8080"
+    networks:
+      - default
+    logging:
+      driver: json-file
+    command:
+      - sh
+      - -c
+      - "sqd api:prod"
+    deploy:
+      <<: *traefic-labels
+      restart_policy:
+        condition: on-failure

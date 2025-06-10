@@ -1,10 +1,268 @@
-version: '3.7'
+#version: '3.7'
+#
+#x-chain-name: &chain-name 'hydration'
+#x-postgres-db: &postgres-db 'liquidity_pools_db_multyproc'
+#x-postgres-user: &postgres-user 'postgres'
+#x-postgres-password: &postgres-password 'postgres'
+#x-postgres-host: &postgres-host 'liquidity-pools-db'
+#
+#x-liquidity-pools-db-creds: &liquidity-pools-db-creds
+#  DB_PORT: 5432
+#  DB_NAME: *postgres-db
+#  DB_USER: *postgres-user
+#  DB_PASS: *postgres-password
+#  DB_HOST: *postgres-host
+#
+#x-proc-default-envs: &proc-default-envs
+#  INDEXER_ID: 'swarm_1'
+#  NODE_OPTIONS: '--max-old-space-size=4048'
+#  NODE_ENV: 'self-hosted'
+#  CHAIN: *chain-name
+#  RPC_URL: 'wss://node.kril.hydration.cloud'
+#  RPC_URL_HTTPS: 'https://archive.rpc.hydration.cloud'
+#  # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
+#  IGNORE_ARCHIVE_DATA_SOURCE: 'false'
+#  GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
+#  OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+#
+#  ORCHESTRATOR_QUEUE_REDIS_HOST: 'redis'
+#  ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
+#  ORCHESTRATOR_QUEUE_REDIS_PASS: 'orchestra'
+#  MAX_JOB_BATCH_SIZE: 20
+#
+#  HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
+#
+#  PROCESS_FROM_BLOCK: 7300000
+#  PROCESS_TO_BLOCK: 7310000
+#
+#  PROCESS_LBP_POOLS: 'true'
+#  PROCESS_XYK_POOLS: 'true'
+#  PROCESS_OMNIPOOLS: 'true'
+#  PROCESS_STABLEPOOLS: 'true'
+#  PROCESS_DCA: 'true'
+#  PROCESS_OTC: 'true'
+#  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
+#  INDEXING_IS_PAUSED: 'false'
+#  # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
+#  USE_STORAGE_DICTIONARY: 'true'
+#  # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
+#  # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
+#  # For example, if the Storage Dictionary is running as a single processor indexer
+#  # within the same Swarm stack as the Liquidity Pools indexer,
+#  # the URL for all pools should be set uniformly, such as:
+#  #   http://storage-dictionary-api:8090/graphql
+#  STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
+#  STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
+#  STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
+#  STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
+#  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
+#
+#x-proc-default-config: &proc-default-config
+#  #  image: node:20 # Use a base Node.js image (choose appropriate version)
+#  #  volumes:
+#  #    - ../indexers/liquidity-pools:/app # Mount your code directory into /app
+#  #  working_dir: /app
+#  image: indexer
+#  networks:
+#    - default
+#  command:
+#    - sh
+#    - -c
+#    - 'node lib/main.js'
+#  deploy:
+#    restart_policy:
+#      condition: on-failure
+#
+#networks:
+#  default:
+#    driver: overlay
+#
+##volumes:
+##  liquidity-pools-db:
+##    driver: local
+##  core-processor:
+##    driver: local
+##  spot-prices-processor:
+##    driver: local
+##  liquidity-pools-api:
+##    driver: local
+#
+#services:
+#  redis:
+#    image: redis:6.2-alpine
+#    environment:
+#      - ALLOW_EMPTY_PASSWORD=true
+#    ports:
+#      - '6379:6379'
+#
+#  liquidity-pools-db:
+#    image: postgres:15
+#    environment:
+#      POSTGRES_DB: *postgres-db
+#      POSTGRES_USER: *postgres-user
+#      POSTGRES_PASSWORD: *postgres-password
+#    #    volumes:
+#    #      - liquidity-pools-db:/var/lib/postgresql/data
+#    ports:
+#      - '5488:5432'
+#    logging:
+#      driver: json-file
+#    networks:
+#      - default
+#    deploy:
+#      restart_policy:
+#        condition: on-failure
+#
+#  core-processor:
+#    <<: *proc-default-config
+#    depends_on:
+#      - liquidity-pools-db
+#      - redis
+#    environment:
+#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
+#      STATE_SCHEMA_NAME: 'squid_processor'
+#
+#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
+#      IS_CORE_PROCESSOR: 'true'
+#      IS_SPOT_PRICES_PROCESSOR: 'false'
+#    command:
+#      - sh
+#      - -c
+#      - 'sqd migration:apply && node lib/main.js'
+#
+#  spot-prices-processor-1:
+#    <<: *proc-default-config
+#    depends_on:
+#      - liquidity-pools-db
+#      - redis
+#    environment:
+#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
+#      STATE_SCHEMA_NAME: 'spot_price_processor_1'
+#
+#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
+#      IS_CORE_PROCESSOR: 'false'
+#      IS_SPOT_PRICES_PROCESSOR: 'true'
+#    command:
+#      - sh
+#      - -c
+#      - 'sqd migration:apply && node lib/main.js'
+#
+#  spot-prices-processor-2:
+#    <<: *proc-default-config
+#    depends_on:
+#      - liquidity-pools-db
+#      - redis
+#    environment:
+#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
+#      STATE_SCHEMA_NAME: 'spot_price_processor_2'
+#
+#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
+#      IS_CORE_PROCESSOR: 'false'
+#      IS_SPOT_PRICES_PROCESSOR: 'true'
+#    command:
+#      - sh
+#      - -c
+#      - 'sqd migration:apply && node lib/main.js'
+#
+#  spot-prices-processor-3:
+#    <<: *proc-default-config
+#    depends_on:
+#      - liquidity-pools-db
+#      - redis
+#    environment:
+#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
+#      STATE_SCHEMA_NAME: 'spot_price_processor_3'
+#
+#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
+#      IS_CORE_PROCESSOR: 'false'
+#      IS_SPOT_PRICES_PROCESSOR: 'true'
+#    command:
+#      - sh
+#      - -c
+#      - 'sqd migration:apply && node lib/main.js'
+#
+#  spot-prices-processor-4:
+#    <<: *proc-default-config
+#    depends_on:
+#      - liquidity-pools-db
+#      - redis
+#    environment:
+#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
+#      STATE_SCHEMA_NAME: 'spot_price_processor_4'
+#
+#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
+#      IS_CORE_PROCESSOR: 'false'
+#      IS_SPOT_PRICES_PROCESSOR: 'true'
+#    command:
+#      - sh
+#      - -c
+#      - 'sqd migration:apply && node lib/main.js'
+#
+#  spot-prices-processor-5:
+#    <<: *proc-default-config
+#    depends_on:
+#      - liquidity-pools-db
+#      - redis
+#    environment:
+#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
+#      STATE_SCHEMA_NAME: 'spot_price_processor_5'
+#
+#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
+#      IS_CORE_PROCESSOR: 'false'
+#      IS_SPOT_PRICES_PROCESSOR: 'true'
+#    command:
+#      - sh
+#      - -c
+#      - 'sqd migration:apply && node lib/main.js'
+#
+#  liquidity-pools-api:
+#    image: indexer
+#    depends_on:
+#      - liquidity-pools-db
+#      - redis
+#    environment:
+#      INDEXER_ID: 'swarm_1'
+#      ORCHESTRATOR_QUEUE_REDIS_HOST: 'redis'
+#      ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
+#      ORCHESTRATOR_QUEUE_REDIS_PASS: 'orchestra'
+#      NODE_ENV: 'self-hosted'
+#      CHAIN: *chain-name
+#      GQL_PORT: 8080
+#      <<: *liquidity-pools-db-creds
+#      SUB_PROCESSOR_SCHEMAS: 'squid_processor;spot_price_processor'
+#    ports:
+#      - '8088:8080'
+#    networks:
+#      - default
+#    logging:
+#      driver: json-file
+#    command:
+#      - sh
+#      - -c
+#      - 'sqd api:prod'
+#    deploy:
+#      restart_policy:
+#        condition: on-failure
 
-x-chain-name: &chain-name 'hydration'
-x-postgres-db: &postgres-db 'liquidity_pools_db_multyproc'
-x-postgres-user: &postgres-user 'postgres'
-x-postgres-password: &postgres-password 'postgres'
-x-postgres-host: &postgres-host 'liquidity-pools-db'
+
+version: "3.7"
+
+x-chain-name: &chain-name "hydration"
+x-postgres-db: &postgres-db "liquidity_pools_db_multyproc"
+x-postgres-user: &postgres-user "postgres"
+x-postgres-password: &postgres-password "postgres"
+x-postgres-host: &postgres-host "liquidity-pools-db"
+
+x-indexer-id: &indexer-id "swarm_3"
+
+#x-image: &image "ghcr.io/mckrava/liquidity-pools-indexer:9dd3c506535ed50c59e61caa0f42ef696e49c8b2"
+x-image: &image "indexer"
+
+x-traefic-labels: &traefic-labels
+  labels:
+    traefik.http.routers.node.rule: Host(`whale-recent-sh.kril.hydration.cloud`)
+    traefik.http.routers.node.tls: "true"
+    traefik.http.routers.node.tls.certresolver: myresolver
 
 x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_PORT: 5432
@@ -14,61 +272,57 @@ x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_HOST: *postgres-host
 
 x-proc-default-envs: &proc-default-envs
-  INDEXER_ID: 'swarm_1'
-  NODE_OPTIONS: '--max-old-space-size=4048'
-  NODE_ENV: 'self-hosted'
+  INDEXER_ID: *indexer-id
+  NODE_OPTIONS: "--max-old-space-size=8048"
+  NODE_ENV: "self-hosted"
   CHAIN: *chain-name
-  RPC_URL: 'wss://node.kril.hydration.cloud'
-  RPC_URL_HTTPS: 'https://archive.rpc.hydration.cloud'
+  RPC_URL: "wss://node.kril.hydration.cloud"
+  RPC_URL_HTTPS: "https://archive.rpc.hydration.cloud"
   # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
-  IGNORE_ARCHIVE_DATA_SOURCE: 'false'
-  GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
-  OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+  IGNORE_ARCHIVE_DATA_SOURCE: "false"
+  GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
+  OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
 
-  ORCHESTRATOR_QUEUE_REDIS_HOST: 'redis'
+  ORCHESTRATOR_QUEUE_REDIS_HOST: "orchestration-redis"
   ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-  ORCHESTRATOR_QUEUE_REDIS_PASS: 'orchestra'
+  ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
   MAX_JOB_BATCH_SIZE: 20
 
   HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
 
-  PROCESS_FROM_BLOCK: 7300000
-  PROCESS_TO_BLOCK: 7310000
+  PROCESS_FROM_BLOCK: 7800000
+  PROCESS_TO_BLOCK: -1
 
-  PROCESS_LBP_POOLS: 'true'
-  PROCESS_XYK_POOLS: 'true'
-  PROCESS_OMNIPOOLS: 'true'
-  PROCESS_STABLEPOOLS: 'true'
-  PROCESS_DCA: 'true'
-  PROCESS_OTC: 'true'
+  PROCESS_LBP_POOLS: "true"
+  PROCESS_XYK_POOLS: "true"
+  PROCESS_OMNIPOOLS: "true"
+  PROCESS_STABLEPOOLS: "true"
+  PROCESS_DCA: "true"
+  PROCESS_OTC: "true"
   UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-  INDEXING_IS_PAUSED: 'false'
+  INDEXING_IS_PAUSED: "false"
   # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
-  USE_STORAGE_DICTIONARY: 'true'
+  USE_STORAGE_DICTIONARY: "true"
   # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
   # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
   # For example, if the Storage Dictionary is running as a single processor indexer
   # within the same Swarm stack as the Liquidity Pools indexer,
   # the URL for all pools should be set uniformly, such as:
   #   http://storage-dictionary-api:8090/graphql
-  STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
-  STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
-  STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
-  STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
-  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
+  STORAGE_DICTIONARY_LBPPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql"
+  STORAGE_DICTIONARY_XYKPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql"
+  STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql"
+  STORAGE_DICTIONARY_STABLEPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql"
+  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql"
 
 x-proc-default-config: &proc-default-config
-  #  image: node:20 # Use a base Node.js image (choose appropriate version)
-  #  volumes:
-  #    - ../indexers/liquidity-pools:/app # Mount your code directory into /app
-  #  working_dir: /app
-  image: indexer
+  image: *image
   networks:
     - default
   command:
     - sh
     - -c
-    - 'node lib/main.js'
+    - "node lib/main.js"
   deploy:
     restart_policy:
       condition: on-failure
@@ -77,23 +331,23 @@ networks:
   default:
     driver: overlay
 
-#volumes:
-#  liquidity-pools-db:
-#    driver: local
+volumes:
+  liquidity-pools-db:
+    driver: local
+  orchestration-redis:
+    driver: local
 #  core-processor:
-#    driver: local
-#  spot-prices-processor:
-#    driver: local
-#  liquidity-pools-api:
 #    driver: local
 
 services:
-  redis:
+  orchestration-redis:
     image: redis:6.2-alpine
     environment:
       - ALLOW_EMPTY_PASSWORD=true
     ports:
-      - '6379:6379'
+      - "6394:6379"
+    volumes:
+      - "orchestration-redis:/data"
 
   liquidity-pools-db:
     image: postgres:15
@@ -101,10 +355,10 @@ services:
       POSTGRES_DB: *postgres-db
       POSTGRES_USER: *postgres-user
       POSTGRES_PASSWORD: *postgres-password
-    #    volumes:
-    #      - liquidity-pools-db:/var/lib/postgresql/data
+    volumes:
+      - "liquidity-pools-db:/var/lib/postgresql/data"
     ports:
-      - '5488:5432'
+      - "5494:5432"
     logging:
       driver: json-file
     networks:
@@ -117,121 +371,123 @@ services:
     <<: *proc-default-config
     depends_on:
       - liquidity-pools-db
-      - redis
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: 'squid_processor'
+      STATE_SCHEMA_NAME: "squid_processor"
 
-      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-      IS_CORE_PROCESSOR: 'true'
-      IS_SPOT_PRICES_PROCESSOR: 'false'
+      ALL_IN_ONE_PROCESSOR_MODE: "false"
+      IS_CORE_PROCESSOR: "true"
+      IS_SPOT_PRICES_PROCESSOR: "false"
+#    volumes:
+#      - "core-processor:/squid"
     command:
       - sh
       - -c
-      - 'sqd migration:apply && node lib/main.js'
+      - "sqd migration:apply && node lib/main.js"
 
   spot-prices-processor-1:
     <<: *proc-default-config
     depends_on:
       - liquidity-pools-db
-      - redis
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: 'spot_price_processor_1'
+      STATE_SCHEMA_NAME: "spot_price_processor_1"
 
-      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-      IS_CORE_PROCESSOR: 'false'
-      IS_SPOT_PRICES_PROCESSOR: 'true'
+      ALL_IN_ONE_PROCESSOR_MODE: "false"
+      IS_CORE_PROCESSOR: "false"
+      IS_SPOT_PRICES_PROCESSOR: "true"
     command:
       - sh
       - -c
-      - 'sqd migration:apply && node lib/main.js'
+      - "sqd migration:apply && node lib/main.js"
 
   spot-prices-processor-2:
     <<: *proc-default-config
     depends_on:
       - liquidity-pools-db
-      - redis
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: 'spot_price_processor_2'
+      STATE_SCHEMA_NAME: "spot_price_processor_2"
 
-      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-      IS_CORE_PROCESSOR: 'false'
-      IS_SPOT_PRICES_PROCESSOR: 'true'
+      ALL_IN_ONE_PROCESSOR_MODE: "false"
+      IS_CORE_PROCESSOR: "false"
+      IS_SPOT_PRICES_PROCESSOR: "true"
     command:
       - sh
       - -c
-      - 'sqd migration:apply && node lib/main.js'
+      - "sqd migration:apply && node lib/main.js"
 
   spot-prices-processor-3:
     <<: *proc-default-config
     depends_on:
       - liquidity-pools-db
-      - redis
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: 'spot_price_processor_3'
+      STATE_SCHEMA_NAME: "spot_price_processor_3"
 
-      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-      IS_CORE_PROCESSOR: 'false'
-      IS_SPOT_PRICES_PROCESSOR: 'true'
+      ALL_IN_ONE_PROCESSOR_MODE: "false"
+      IS_CORE_PROCESSOR: "false"
+      IS_SPOT_PRICES_PROCESSOR: "true"
     command:
       - sh
       - -c
-      - 'sqd migration:apply && node lib/main.js'
+      - "sqd migration:apply && node lib/main.js"
 
   spot-prices-processor-4:
     <<: *proc-default-config
     depends_on:
       - liquidity-pools-db
-      - redis
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: 'spot_price_processor_4'
+      STATE_SCHEMA_NAME: "spot_price_processor_4"
 
-      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-      IS_CORE_PROCESSOR: 'false'
-      IS_SPOT_PRICES_PROCESSOR: 'true'
+      ALL_IN_ONE_PROCESSOR_MODE: "false"
+      IS_CORE_PROCESSOR: "false"
+      IS_SPOT_PRICES_PROCESSOR: "true"
     command:
       - sh
       - -c
-      - 'sqd migration:apply && node lib/main.js'
+      - "sqd migration:apply && node lib/main.js"
 
   spot-prices-processor-5:
     <<: *proc-default-config
     depends_on:
       - liquidity-pools-db
-      - redis
+      - orchestration-redis
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: 'spot_price_processor_5'
+      STATE_SCHEMA_NAME: "spot_price_processor_5"
 
-      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-      IS_CORE_PROCESSOR: 'false'
-      IS_SPOT_PRICES_PROCESSOR: 'true'
+      ALL_IN_ONE_PROCESSOR_MODE: "false"
+      IS_CORE_PROCESSOR: "false"
+      IS_SPOT_PRICES_PROCESSOR: "true"
     command:
       - sh
       - -c
-      - 'sqd migration:apply && node lib/main.js'
+      - "sqd migration:apply && node lib/main.js"
 
   liquidity-pools-api:
-    image: indexer
+    image: *image
     depends_on:
       - liquidity-pools-db
-      - redis
+      - orchestration-redis
     environment:
-      INDEXER_ID: 'swarm_1'
-      ORCHESTRATOR_QUEUE_REDIS_HOST: 'redis'
+      INDEXER_ID: *indexer-id
+      ORCHESTRATOR_QUEUE_REDIS_HOST: "orchestration-redis"
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-      ORCHESTRATOR_QUEUE_REDIS_PASS: 'orchestra'
-      NODE_ENV: 'self-hosted'
+      ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
+      NODE_ENV: "self-hosted"
       CHAIN: *chain-name
       GQL_PORT: 8080
       <<: *liquidity-pools-db-creds
-      SUB_PROCESSOR_SCHEMAS: 'squid_processor;spot_price_processor'
+      SUB_PROCESSOR_SCHEMAS: "squid_processor;spot_price_processor"
     ports:
-      - '8088:8080'
+      - "8094:8080"
     networks:
       - default
     logging:
@@ -239,7 +495,8 @@ services:
     command:
       - sh
       - -c
-      - 'sqd api:prod'
+      - "sqd api:prod"
     deploy:
+#      <<: *traefic-labels
       restart_policy:
         condition: on-failure

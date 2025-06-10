@@ -4,7 +4,7 @@ x-chain-name: &chain-name "hydration"
 x-postgres-db: &postgres-db ""
 x-postgres-user: &postgres-user ""
 x-postgres-password: &postgres-password ""
-x-postgres-host: &postgres-host "pg.squid.subsquid.io"
+x-postgres-host: &postgres-host ""
 
 x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_PORT: 5432
@@ -23,7 +23,7 @@ networks:
 
 services:
   liquidity-pools-processor:
-    image: ghcr.io/mckrava/liquidity-pools-indexer:3b5cee4dd1198711c19748fba4fa6182571efcd6
+    image: ghcr.io/mckrava/liquidity-pools-indexer:42fcd9c1f1ea52e478a75d007e310f9493216367
     environment:
       #
       # REQUIRED PARAMETERS
@@ -36,10 +36,14 @@ services:
       IGNORE_ARCHIVE_DATA_SOURCE: "false"
       GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
       OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+      INDEXING_IS_PAUSED: "false"
+      ALL_IN_ONE_PROCESSOR_MODE: "true"
+      IS_SPOT_PRICES_PROCESSOR: "false"
+      IS_CORE_PROCESSOR: "false"
       #
       # OPTIONAL PARAMETERS
       #
-      PROCESS_FROM_BLOCK: 7300000
+      PROCESS_FROM_BLOCK: 6500000
       PROCESS_TO_BLOCK: -1
       PROCESS_LBP_POOLS: "true"
       PROCESS_XYK_POOLS: "true"
