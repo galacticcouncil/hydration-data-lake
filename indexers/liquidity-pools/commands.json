@@ -64,6 +64,10 @@
       "deps": ["build", "migration:apply"],
       "cmd": ["node", "--require=dotenv/config", "lib/main.js"]
     },
+    "process:fast": {
+      "description": "Load .env and start the squid processor",
+      "cmd": ["node", "--require=dotenv/config", "lib/main.js"]
+    },
     "process:prod": {
       "description": "Start the squid processor",
       "deps": ["migration:apply"],
@@ -73,6 +77,10 @@
     "api": {
       "description": "Start the PostGraphile GraphQL server",
       "deps": ["build"],
+      "cmd": ["node", "--require=dotenv/config", "lib/api.js"]
+    },
+    "api:fast": {
+      "description": "Start the PostGraphile GraphQL server",
       "cmd": ["node", "--require=dotenv/config", "lib/api.js"]
     },
     "api:prod": {

@@ -8,7 +8,7 @@ export class ProcessorStatus {
   }
 
   /**
-   * static value - 1
+   * processor state schema name
    */
   @PrimaryColumn_()
   id!: string

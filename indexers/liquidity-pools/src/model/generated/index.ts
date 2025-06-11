@@ -1,4 +1,5 @@
 export * from "./processorStatus.model"
+export * from "./preprocessedDataBucket.model"
 export * from "./asset.model"
 export * from "./_assetMultiLocation"
 export * from "./_assetMultiLocationsInterior"

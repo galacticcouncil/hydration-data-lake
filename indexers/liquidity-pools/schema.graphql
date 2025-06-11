@@ -15,7 +15,19 @@ type ProcessorStatus @entity {
   initialIndexingStartedAt: DateTime!
   initialIndexingFinishedAt: DateTime
   latestProcessedBlock: Int!
-  latestProcessedBlock: Int!
+}
+
+# ======================================================================================================================
+# *** Preprocessed Data Heap ***
+# ======================================================================================================================
+
+type PreprocessedDataBucket @entity {
+  "<uuid>"
+  id: ID!
+  processorId: String!
+  paraBlockHeight: Int!
+  entityName: String!
+  data: JSON!
 }
 
 # ======================================================================================================================

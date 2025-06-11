@@ -2,11 +2,8 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
-  Asset,
   AssetAssetsPairVolume,
-  AssetHistoricalData,
   AssetsPairVolumeHistoricalData,
-  AssetSpotPriceHistoricalData,
   Swap,
   SwapAssetBalance,
 } from '../../../model';
@@ -16,8 +13,6 @@ import {
   isUnifiedEventsSupportSpecVersion,
   stringToMd5Hash,
 } from '../../../utils/helpers';
-import { BigNumber } from '@galacticcouncil/sdk';
-import fs from 'fs';
 
 class RouterAssetPairs {
   public pairsSet: Set<string> = new Set();

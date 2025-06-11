@@ -67,6 +67,7 @@ export async function handleStablepoolVolumeUpdates({
 
       relayBlockHeight,
       paraBlockHeight,
+      block: ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight),
     });
     stablepoolVolumeCollections.set(volumesCollection.id, volumesCollection);
   }

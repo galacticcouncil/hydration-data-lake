@@ -42,6 +42,7 @@ import { processPoolsNormalizedVolumes } from '../handlers/volumes/normalizedVol
 import { HistoricalDataManager } from '../handlers/historicalData';
 import { ProcessorStatusManager } from '../processorStatusManager';
 import { ProcessingPoolManager } from '../utils/processingPoolManager';
+import { processPreprocessedDataBuckets } from '../handlers/preprocessedDataBucket';
 
 export async function execCoreProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -53,6 +54,10 @@ export async function execCoreProcessorHandlers(
     return;
 
   console.log('execCoreProcessorHandlers');
+
+  console.time('processPreprocessedDataBuckets');
+  await processPreprocessedDataBuckets(ctx);
+  console.timeEnd('processPreprocessedDataBuckets');
 
   await ProcessingPoolManager.getInstance().commitBlocksForProcessing(
     ctx.blocks.map((b) => b.header.height)

@@ -115531,6 +115531,298 @@ input BigIntFilter {
   greaterThanOrEqualTo: BigInt
 }
 
+"""A connection to a list of `PreprocessedDataBucket` values."""
+type PreprocessedDataBucketsConnection {
+  """A list of `PreprocessedDataBucket` objects."""
+  nodes: [PreprocessedDataBucket]!
+
+  """
+  A list of edges which contains the `PreprocessedDataBucket` and cursor to aid in pagination.
+  """
+  edges: [PreprocessedDataBucketsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `PreprocessedDataBucket` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: PreprocessedDataBucketAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `PreprocessedDataBucket` for these aggregates.
+    """
+    groupBy: [PreprocessedDataBucketGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: PreprocessedDataBucketHavingInput
+  ): [PreprocessedDataBucketAggregates!]
+}
+
+type PreprocessedDataBucket {
+  id: String!
+  processorId: String!
+  paraBlockHeight: Int!
+  entityName: String!
+  data: JSON!
+}
+
+"""A `PreprocessedDataBucket` edge in the connection."""
+type PreprocessedDataBucketsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `PreprocessedDataBucket` at the end of the edge."""
+  node: PreprocessedDataBucket
+}
+
+type PreprocessedDataBucketAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: PreprocessedDataBucketSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: PreprocessedDataBucketDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: PreprocessedDataBucketMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: PreprocessedDataBucketMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: PreprocessedDataBucketAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: PreprocessedDataBucketStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: PreprocessedDataBucketStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: PreprocessedDataBucketVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: PreprocessedDataBucketVariancePopulationAggregates
+}
+
+type PreprocessedDataBucketSumAggregates {
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type PreprocessedDataBucketDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of processorId across the matching connection"""
+  processorId: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+
+  """Distinct count of entityName across the matching connection"""
+  entityName: BigInt
+
+  """Distinct count of data across the matching connection"""
+  data: BigInt
+}
+
+type PreprocessedDataBucketMinAggregates {
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type PreprocessedDataBucketMaxAggregates {
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type PreprocessedDataBucketAverageAggregates {
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type PreprocessedDataBucketStddevSampleAggregates {
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type PreprocessedDataBucketStddevPopulationAggregates {
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type PreprocessedDataBucketVarianceSampleAggregates {
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type PreprocessedDataBucketVariancePopulationAggregates {
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `PreprocessedDataBucket` for usage during aggregation.
+"""
+enum PreprocessedDataBucketGroupBy {
+  PROCESSOR_ID
+  PARA_BLOCK_HEIGHT
+  ENTITY_NAME
+  DATA
+}
+
+"""Conditions for `PreprocessedDataBucket` aggregates."""
+input PreprocessedDataBucketHavingInput {
+  AND: [PreprocessedDataBucketHavingInput!]
+  OR: [PreprocessedDataBucketHavingInput!]
+  sum: PreprocessedDataBucketHavingSumInput
+  distinctCount: PreprocessedDataBucketHavingDistinctCountInput
+  min: PreprocessedDataBucketHavingMinInput
+  max: PreprocessedDataBucketHavingMaxInput
+  average: PreprocessedDataBucketHavingAverageInput
+  stddevSample: PreprocessedDataBucketHavingStddevSampleInput
+  stddevPopulation: PreprocessedDataBucketHavingStddevPopulationInput
+  varianceSample: PreprocessedDataBucketHavingVarianceSampleInput
+  variancePopulation: PreprocessedDataBucketHavingVariancePopulationInput
+}
+
+input PreprocessedDataBucketHavingSumInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input PreprocessedDataBucketHavingDistinctCountInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input PreprocessedDataBucketHavingMinInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input PreprocessedDataBucketHavingMaxInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input PreprocessedDataBucketHavingAverageInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input PreprocessedDataBucketHavingStddevSampleInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input PreprocessedDataBucketHavingStddevPopulationInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input PreprocessedDataBucketHavingVarianceSampleInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input PreprocessedDataBucketHavingVariancePopulationInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `PreprocessedDataBucket`."""
+enum PreprocessedDataBucketsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  PROCESSOR_ID_ASC
+  PROCESSOR_ID_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  ENTITY_NAME_ASC
+  ENTITY_NAME_DESC
+  DATA_ASC
+  DATA_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `PreprocessedDataBucket` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input PreprocessedDataBucketCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `processorId` field."""
+  processorId: String
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+
+  """Checks for equality with the object’s `entityName` field."""
+  entityName: String
+
+  """Checks for equality with the object’s `data` field."""
+  data: JSON
+}
+
+"""
+A filter to be used against `PreprocessedDataBucket` object types. All fields are combined with a logical ‘and.’
+"""
+input PreprocessedDataBucketFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `processorId` field."""
+  processorId: StringFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Filter by the object’s `entityName` field."""
+  entityName: StringFilter
+
+  """Filter by the object’s `data` field."""
+  data: JSONFilter
+
+  """Checks for all expressions in this list."""
+  and: [PreprocessedDataBucketFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [PreprocessedDataBucketFilter!]
+
+  """Negates the expression."""
+  not: PreprocessedDataBucketFilter
+}
+
 """A connection to a list of `ProcessorStatus` values."""
 type ProcessorStatusesConnection {
   """A list of `ProcessorStatus` objects."""
@@ -118429,6 +118721,42 @@ type Query {
     filter: OtcOrderEventFilter
   ): OtcOrderEventsConnection
 
+  """
+  Reads and enables pagination through a set of `PreprocessedDataBucket`.
+  """
+  preprocessedDataBuckets(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `PreprocessedDataBucket`."""
+    orderBy: [PreprocessedDataBucketsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PreprocessedDataBucketCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: PreprocessedDataBucketFilter
+  ): PreprocessedDataBucketsConnection
+
   """Reads and enables pagination through a set of `ProcessorStatus`."""
   processorStatuses(
     """Only read the first `n` values of the set."""
@@ -119331,6 +119659,7 @@ type Query {
   omnipoolYieldFarmEntry(id: String!): OmnipoolYieldFarmEntry
   otcOrder(id: String!): OtcOrder
   otcOrderEvent(id: String!): OtcOrderEvent
+  preprocessedDataBucket(id: String!): PreprocessedDataBucket
   processorStatus(id: String!): ProcessorStatus
   routedTrade(id: String!): RoutedTrade
   routeTradeInputOutputAssetBalance(id: String!): RouteTradeInputOutputAssetBalance

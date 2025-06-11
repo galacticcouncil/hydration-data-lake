@@ -1,8 +1,9 @@
-module.exports = class Data1748571733221 {
-    name = 'Data1748571733221'
+module.exports = class Data1749645291094 {
+    name = 'Data1749645291094'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "preprocessed_data_bucket" ("id" character varying NOT NULL, "processor_id" text NOT NULL, "para_block_height" integer NOT NULL, "entity_name" text NOT NULL, "data" jsonb NOT NULL, CONSTRAINT "PK_23ab11d38f2d5670ad938075527" PRIMARY KEY ("id"))`)
         await db.query(`CREATE TABLE "asset" ("id" character varying NOT NULL, "asset_registry_id" text, "evm_address" text, "multi_location_ids" text array, "multi_locations_metadata" jsonb, "asset_type" character varying(10) NOT NULL, "resource_type" character varying(10) NOT NULL, "name" text, "symbol" text, "decimals" integer, "xcm_rate_limit" numeric, "is_sufficient" boolean NOT NULL, "existential_deposit" numeric NOT NULL, "bond_maturity" numeric, "underlying_asset_id" character varying, "a_token_id" character varying, "variable_debt_token_id" character varying, "bond_underlying_asset_id" character varying, CONSTRAINT "PK_1209d107fe21482beaea51b745e" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_3ece542ae21addb0cf35aeada2" ON "asset" ("underlying_asset_id") `)
         await db.query(`CREATE INDEX "IDX_f311ee39a80698a75e2b0dc731" ON "asset" ("a_token_id") `)
@@ -700,6 +701,7 @@ module.exports = class Data1748571733221 {
 
     async down(db) {
         await db.query(`DROP TABLE "processor_status"`)
+        await db.query(`DROP TABLE "preprocessed_data_bucket"`)
         await db.query(`DROP TABLE "asset"`)
         await db.query(`DROP INDEX "public"."IDX_3ece542ae21addb0cf35aeada2"`)
         await db.query(`DROP INDEX "public"."IDX_f311ee39a80698a75e2b0dc731"`)
