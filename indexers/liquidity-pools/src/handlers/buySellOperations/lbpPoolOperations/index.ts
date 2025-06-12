@@ -1,0 +1,43 @@
+import { SqdProcessorContext } from '../../../processor';
+import { Store } from '@subsquid/typeorm-store';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
+import { EventName } from '../../../parsers/types/events';
+import {
+  getOrderedListByBlockNumber,
+  isUnifiedEventsSupportSpecVersion,
+} from '../../../utils/helpers';
+import { lpbBuyExecuted, lpbSellExecuted } from './lbppoolOperation';
+import {
+  LbpBuyExecutedData,
+  LbpSellExecutedData,
+} from '../../../parsers/batchBlocksParser/types';
+
+export async function handleLbpPoolOperations(
+  ctx: SqdProcessorContext<Store>,
+  parsedEvents: BatchBlocksParsedDataManager
+) {
+  /**
+   * BuyExecuted as SellExecuted events must be processed sequentially in the same
+   * flow to avoid wrong calculations of accumulated volumes.
+   */
+  for (const eventData of getOrderedListByBlockNumber([
+    ...parsedEvents.getSectionByEventName(EventName.LBP_BuyExecuted).values(),
+    ...parsedEvents.getSectionByEventName(EventName.LBP_SellExecuted).values(),
+  ]).filter(
+    (event) =>
+      !isUnifiedEventsSupportSpecVersion(
+        event.eventData.metadata.blockHeader.specVersion,
+        ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
+      )
+  )) {
+    switch (eventData.eventData.name) {
+      case EventName.LBP_BuyExecuted:
+        await lpbBuyExecuted(ctx, eventData as LbpBuyExecutedData);
+        break;
+      case EventName.LBP_SellExecuted:
+        await lpbSellExecuted(ctx, eventData as LbpSellExecutedData);
+        break;
+      default:
+    }
+  }
+}

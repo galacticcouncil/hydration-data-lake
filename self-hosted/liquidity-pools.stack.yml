@@ -1,0 +1,109 @@
+version: "3.7"
+
+x-chain-name: &chain-name "hydration"
+x-postgres-db: &postgres-db "liquidity_pools_db"
+x-postgres-user: &postgres-user "postgres"
+x-postgres-password: &postgres-password "postgres"
+
+x-liquidity-pools-db-creds: &liquidity-pools-db-creds
+  DB_PORT: 5432
+  DB_NAME: *postgres-db
+  DB_USER: *postgres-user
+  DB_PASS: *postgres-password
+
+networks:
+  default:
+    driver: overlay
+
+volumes:
+  liquidity-pools-db:
+    driver: local
+
+services:
+  liquidity-pools-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: *postgres-db
+      POSTGRES_USER: *postgres-user
+      POSTGRES_PASSWORD: *postgres-password
+    volumes:
+      - liquidity-pools-db:/var/lib/postgresql/data
+    logging:
+      driver: json-file
+    networks:
+      - default
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  liquidity-pools-processor:
+    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
+    depends_on:
+      - liquidity-pools-db
+    environment:
+      #
+      # REQUIRED PARAMETERS
+      #
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      <<: *liquidity-pools-db-creds
+      DB_HOST: "liquidity-pools-db"
+      RPC_URL: "wss://archive.rpc.hydration.cloud"
+      # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
+      IGNORE_ARCHIVE_DATA_SOURCE: "false"
+      GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
+      OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+      #
+      # OPTIONAL PARAMETERS
+      #
+      PROCESS_FROM_BLOCK: 1708000
+      PROCESS_TO_BLOCK: -1
+      PROCESS_LBP_POOLS: "true"
+      PROCESS_XYK_POOLS: "true"
+      PROCESS_OMNIPOOLS: "true"
+      PROCESS_STABLEPOOLS: "true"
+      # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
+      USE_STORAGE_DICTIONARY: "true"
+      # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
+      # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
+      # For example, if the Storage Dictionary is running as a single processor indexer
+      # within the same Swarm stack as the Liquidity Pools indexer,
+      # the URL for all pools should be set uniformly, such as:
+      #   http://storage-dictionary-api:8090/graphql
+      STORAGE_DICTIONARY_LBPPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql"
+      STORAGE_DICTIONARY_XYKPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql"
+      STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql"
+      STORAGE_DICTIONARY_STABLEPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool/api/graphql"
+    networks:
+      - default
+    command:
+      - sh
+      - -c
+      - "sqd process:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  liquidity-pools-api:
+    image: ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-init-monorepo
+    depends_on:
+      - liquidity-pools-processor
+    environment:
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      GQL_PORT: 8080
+      <<: *liquidity-pools-db-creds
+      DB_HOST: "liquidity-pools-db"
+    ports:
+      - "8080:8080"
+    networks:
+      - default
+    logging:
+      driver: json-file
+    command:
+      - sh
+      - -c
+      - "sqd api:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure
