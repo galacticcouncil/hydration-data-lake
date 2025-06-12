@@ -4,7 +4,7 @@
 
 manifestVersion: subsquid.io/v0.1
 name: hydration-storage-dictionary
-slot: 601
+slot: 602
 description: Hydration storage dictionary for generic data (AssetData, Oracles, AavePools)
 build:
 deploy:
@@ -102,7 +102,30 @@ deploy:
     #        INDEXER_MAX_SUB_BATCH_SIZE: 500
     #        ASSETS_TRACKER_PROCESSOR: false
     #        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
-#    - name: batch-proc-5
+    - name: batch-proc-5
+      cmd: ['sqd', 'process:prod']
+      env:
+        RPC_URL: wss://node.kril.hydration.cloud
+        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+        PROCESS_LBP_POOLS: false
+        PROCESS_XYK_POOLS: false
+        PROCESS_OMNIPOOLS: false
+        PROCESS_STABLEPOOLS: false
+        PROCESS_GENERIC_HIST_DATA: true
+        INDEXING_IS_PAUSED: true
+        PROCESS_ONLY_MISSED_BLOCKS: false
+        GQL_PORT: 8080
+        NODE_ENV: production
+        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+        PROCESS_FROM_BLOCK: 6688001
+        PROCESS_TO_BLOCK: -1
+        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
+        SUB_BATCH_SIZE: 300
+        INDEXER_MAX_SUB_BATCH_SIZE: 4000
+        ASSETS_TRACKER_PROCESSOR: true
+        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
+
+#    - name: batch-proc-ensure-2
 #      cmd: ['sqd', 'process:prod']
 #      env:
 #        RPC_URL: wss://node.kril.hydration.cloud
@@ -113,40 +136,17 @@ deploy:
 #        PROCESS_STABLEPOOLS: false
 #        PROCESS_GENERIC_HIST_DATA: true
 #        INDEXING_IS_PAUSED: false
-#        PROCESS_ONLY_MISSED_BLOCKS: false
+#        PROCESS_ONLY_MISSED_BLOCKS: true
 #        GQL_PORT: 8080
 #        NODE_ENV: production
 #        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-#        PROCESS_FROM_BLOCK: 6688001
+#        PROCESS_FROM_BLOCK: 1439857
 #        PROCESS_TO_BLOCK: -1
-#        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
+#        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_ensure_2
 #        SUB_BATCH_SIZE: 300
-#        INDEXER_MAX_SUB_BATCH_SIZE: 4000
+#        INDEXER_MAX_SUB_BATCH_SIZE: 3000
 #        ASSETS_TRACKER_PROCESSOR: true
-#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
-
-    - name: batch-proc-ensure-2
-      cmd: ['sqd', 'process:prod']
-      env:
-        RPC_URL: wss://node.kril.hydration.cloud
-        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-        PROCESS_LBP_POOLS: false
-        PROCESS_XYK_POOLS: false
-        PROCESS_OMNIPOOLS: false
-        PROCESS_STABLEPOOLS: false
-        PROCESS_GENERIC_HIST_DATA: true
-        INDEXING_IS_PAUSED: false
-        PROCESS_ONLY_MISSED_BLOCKS: true
-        GQL_PORT: 8080
-        NODE_ENV: production
-        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 1439857
-        PROCESS_TO_BLOCK: -1
-        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_ensure_2
-        SUB_BATCH_SIZE: 300
-        INDEXER_MAX_SUB_BATCH_SIZE: 3000
-        ASSETS_TRACKER_PROCESSOR: true
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_ensure_2
+#        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_ensure_2
 
 #    - name: assets-tracker-proc
 #      cmd: ['sqd', 'process:prod']
@@ -179,13 +179,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
       profile: medium
-      storage: 700G
+      storage: 450G
   processor:
-    profile: large
+    profile: small
   api:
-    profile: large
-    replicas: 2
+    profile: small
+#    replicas: 2
