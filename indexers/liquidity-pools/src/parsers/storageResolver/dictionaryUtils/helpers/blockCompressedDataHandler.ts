@@ -25,6 +25,8 @@ import {
   Lbppool,
   XykpoolAssetsDataConnection,
   StableswapAssetDataConnection,
+  LbppoolAssetsDataConnection,
+  OmnipoolAssetDataConnection,
 } from '../apiTypes/types';
 
 export enum BlockCompressedDataKey {
@@ -113,7 +115,7 @@ export function encodeBlockCompressedData<R>({
                           paraBlockHeight: asset.paraBlockHeight,
                         }) as LbppoolAssetsDatumGlq
                     ),
-                },
+                } as LbppoolAssetsDataConnection,
                 owner: lbppool.owner,
                 poolAddress: lbppool.poolAddress,
                 repayTarget: lbppool.repayTarget,
@@ -154,7 +156,7 @@ export function encodeBlockCompressedData<R>({
                           paraBlockHeight: asset.paraBlockHeight,
                         }) as XykpoolAssetsDatumGlq
                     ),
-                },
+                } as XykpoolAssetsDataConnection,
               }) as XykpoolGlq as R
           )
         );
@@ -195,7 +197,7 @@ export function encodeBlockCompressedData<R>({
                           paraBlockHeight: asset.paraBlockHeight,
                         }) as StableswapAssetDatumGql
                     ),
-                },
+                } as StableswapAssetDataConnection,
               }) as StableswapGql as R
           )
         );
@@ -228,7 +230,7 @@ export function encodeBlockCompressedData<R>({
                           paraBlockHeight: asset.paraBlockHeight,
                         }) as OmnipoolAssetDatumGql
                     ),
-                },
+                } as OmnipoolAssetDataConnection,
               }) as OmnipoolGql as R
           )
         );

@@ -74,11 +74,11 @@ type Asset @entity {
   bondMaturity: BigInt
 }
 
-#type AssetDynamicFee {
-#  assetFee: Int!
-#  protocolFee: Int!
-#  timestamp: Int!
-#}
+type AssetDynamicFee {
+  assetFee: Int!
+  protocolFee: Int!
+  timestamp: Int!
+}
 
 type AssetHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"

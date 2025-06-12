@@ -25,11 +25,10 @@ export type Aavepool = {
   aToken?: Maybe<Asset>;
   aTokenId?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  liquidityIn: Scalars['BigFloat']['output'];
-  liquidityOut: Scalars['BigFloat']['output'];
+  liquidityIn: Scalars['String']['output'];
+  liquidityOut: Scalars['String']['output'];
   paraBlockHeight: Scalars['Int']['output'];
   poolId: Scalars['String']['output'];
-  relayBlockHeight: Scalars['Int']['output'];
   /** Reads a single `Asset` that is related to this `Aavepool`. */
   reserveAsset?: Maybe<Asset>;
   reserveAssetId?: Maybe<Scalars['String']['output']>;
@@ -60,14 +59,8 @@ export type AavepoolAggregates = {
 
 export type AavepoolAverageAggregates = {
   __typename?: 'AavepoolAverageAggregates';
-  /** Mean average of liquidityIn across the matching connection */
-  liquidityIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of liquidityOut across the matching connection */
-  liquidityOut?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -80,15 +73,13 @@ export type AavepoolCondition = {
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `liquidityIn` field. */
-  liquidityIn?: InputMaybe<Scalars['BigFloat']['input']>;
+  liquidityIn?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `liquidityOut` field. */
-  liquidityOut?: InputMaybe<Scalars['BigFloat']['input']>;
+  liquidityOut?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `paraBlockHeight` field. */
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `reserveAssetId` field. */
   reserveAssetId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -107,8 +98,6 @@ export type AavepoolDistinctCountAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of reserveAssetId across the matching connection */
   reserveAssetId?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -122,9 +111,9 @@ export type AavepoolFilter = {
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
   /** Filter by the object’s `liquidityIn` field. */
-  liquidityIn?: InputMaybe<BigFloatFilter>;
+  liquidityIn?: InputMaybe<StringFilter>;
   /** Filter by the object’s `liquidityOut` field. */
-  liquidityOut?: InputMaybe<BigFloatFilter>;
+  liquidityOut?: InputMaybe<StringFilter>;
   /** Negates the expression. */
   not?: InputMaybe<AavepoolFilter>;
   /** Checks for any expressions in this list. */
@@ -133,8 +122,6 @@ export type AavepoolFilter = {
   paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `reserveAssetId` field. */
   reserveAssetId?: InputMaybe<StringFilter>;
 };
@@ -146,22 +133,15 @@ export enum AavepoolGroupBy {
   LiquidityOut = 'LIQUIDITY_OUT',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
   PoolId = 'POOL_ID',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT',
   ReserveAssetId = 'RESERVE_ASSET_ID'
 }
 
 export type AavepoolHavingAverageInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type AavepoolHavingDistinctCountInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `Aavepool` aggregates. */
@@ -180,136 +160,73 @@ export type AavepoolHavingInput = {
 };
 
 export type AavepoolHavingMaxInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type AavepoolHavingMinInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type AavepoolHavingStddevPopulationInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type AavepoolHavingStddevSampleInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type AavepoolHavingSumInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type AavepoolHavingVariancePopulationInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type AavepoolHavingVarianceSampleInput = {
-  liquidityIn?: InputMaybe<HavingBigfloatFilter>;
-  liquidityOut?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type AavepoolMaxAggregates = {
   __typename?: 'AavepoolMaxAggregates';
-  /** Maximum of liquidityIn across the matching connection */
-  liquidityIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Maximum of liquidityOut across the matching connection */
-  liquidityOut?: Maybe<Scalars['BigFloat']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type AavepoolMinAggregates = {
   __typename?: 'AavepoolMinAggregates';
-  /** Minimum of liquidityIn across the matching connection */
-  liquidityIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Minimum of liquidityOut across the matching connection */
-  liquidityOut?: Maybe<Scalars['BigFloat']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type AavepoolStddevPopulationAggregates = {
   __typename?: 'AavepoolStddevPopulationAggregates';
-  /** Population standard deviation of liquidityIn across the matching connection */
-  liquidityIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of liquidityOut across the matching connection */
-  liquidityOut?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AavepoolStddevSampleAggregates = {
   __typename?: 'AavepoolStddevSampleAggregates';
-  /** Sample standard deviation of liquidityIn across the matching connection */
-  liquidityIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of liquidityOut across the matching connection */
-  liquidityOut?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AavepoolSumAggregates = {
   __typename?: 'AavepoolSumAggregates';
-  /** Sum of liquidityIn across the matching connection */
-  liquidityIn: Scalars['BigFloat']['output'];
-  /** Sum of liquidityOut across the matching connection */
-  liquidityOut: Scalars['BigFloat']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type AavepoolVariancePopulationAggregates = {
   __typename?: 'AavepoolVariancePopulationAggregates';
-  /** Population variance of liquidityIn across the matching connection */
-  liquidityIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of liquidityOut across the matching connection */
-  liquidityOut?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AavepoolVarianceSampleAggregates = {
   __typename?: 'AavepoolVarianceSampleAggregates';
-  /** Sample variance of liquidityIn across the matching connection */
-  liquidityIn?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of liquidityOut across the matching connection */
-  liquidityOut?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A connection to a list of `Aavepool` values. */
@@ -362,25 +279,26 @@ export enum AavepoolsOrderBy {
   PoolIdDesc = 'POOL_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC',
   ReserveAssetIdAsc = 'RESERVE_ASSET_ID_ASC',
   ReserveAssetIdDesc = 'RESERVE_ASSET_ID_DESC'
 }
 
 export type AccountBalances = {
   __typename?: 'AccountBalances';
-  feeFrozen?: Maybe<Scalars['BigInt']['output']>;
-  flags?: Maybe<Scalars['BigInt']['output']>;
-  free: Scalars['BigInt']['output'];
-  frozen?: Maybe<Scalars['BigInt']['output']>;
-  miscFrozen?: Maybe<Scalars['BigInt']['output']>;
-  reserved: Scalars['BigInt']['output'];
+  feeFrozen?: Maybe<Scalars['String']['output']>;
+  flags?: Maybe<Scalars['String']['output']>;
+  free: Scalars['String']['output'];
+  frozen?: Maybe<Scalars['String']['output']>;
+  miscFrozen?: Maybe<Scalars['String']['output']>;
+  reserved: Scalars['String']['output'];
 };
 
 export type ApiSupportResponse = {
   __typename?: 'ApiSupportResponse';
   accountBalances?: Maybe<AccountBalances>;
+  assetDynamicFee?: Maybe<AssetDynamicFee>;
+  minifiedDataStructure?: Maybe<MinifiedDataStructure>;
+  minifiedDataStructureTypeName?: Maybe<MinifiedDataStructureTypeName>;
   omnipoolAssetState?: Maybe<OmnipoolAssetState>;
   tradability?: Maybe<Tradability>;
 };
@@ -533,6 +451,13 @@ export type AssetDistinctCountAggregates = {
   xcmRateLimit?: Maybe<Scalars['BigInt']['output']>;
 };
 
+export type AssetDynamicFee = {
+  __typename?: 'AssetDynamicFee';
+  assetFee: Scalars['Int']['output'];
+  protocolFee: Scalars['Int']['output'];
+  timestamp: Scalars['Int']['output'];
+};
+
 /** A filter to be used against `Asset` object types. All fields are combined with a logical ‘and.’ */
 export type AssetFilter = {
   /** Checks for all expressions in this list. */
@@ -681,22 +606,15 @@ export enum AssetHistoricalDataGroupBy {
   DynamicFee = 'DYNAMIC_FEE',
   ExistentialDeposit = 'EXISTENTIAL_DEPOSIT',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT',
   TotalIssuance = 'TOTAL_ISSUANCE'
 }
 
 export type AssetHistoricalDataHavingAverageInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 export type AssetHistoricalDataHavingDistinctCountInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 /** Conditions for `AssetHistoricalDatum` aggregates. */
@@ -715,52 +633,31 @@ export type AssetHistoricalDataHavingInput = {
 };
 
 export type AssetHistoricalDataHavingMaxInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 export type AssetHistoricalDataHavingMinInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 export type AssetHistoricalDataHavingStddevPopulationInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 export type AssetHistoricalDataHavingStddevSampleInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 export type AssetHistoricalDataHavingSumInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 export type AssetHistoricalDataHavingVariancePopulationInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 export type AssetHistoricalDataHavingVarianceSampleInput = {
-  existentialDeposit?: InputMaybe<HavingBigfloatFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  totalIssuance?: InputMaybe<HavingBigfloatFilter>;
 };
 
 /** Methods to use when ordering `AssetHistoricalDatum`. */
@@ -778,8 +675,6 @@ export enum AssetHistoricalDataOrderBy {
   ParaBlockHeightDesc = 'PARA_BLOCK_HEIGHT_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC',
   TotalIssuanceAsc = 'TOTAL_ISSUANCE_ASC',
   TotalIssuanceDesc = 'TOTAL_ISSUANCE_DESC'
 }
@@ -790,11 +685,10 @@ export type AssetHistoricalDatum = {
   asset?: Maybe<Asset>;
   assetId?: Maybe<Scalars['String']['output']>;
   dynamicFee?: Maybe<Scalars['JSON']['output']>;
-  existentialDeposit: Scalars['BigFloat']['output'];
+  existentialDeposit: Scalars['String']['output'];
   id: Scalars['String']['output'];
   paraBlockHeight: Scalars['Int']['output'];
-  relayBlockHeight: Scalars['Int']['output'];
-  totalIssuance: Scalars['BigFloat']['output'];
+  totalIssuance: Scalars['String']['output'];
 };
 
 export type AssetHistoricalDatumAggregates = {
@@ -822,14 +716,8 @@ export type AssetHistoricalDatumAggregates = {
 
 export type AssetHistoricalDatumAverageAggregates = {
   __typename?: 'AssetHistoricalDatumAverageAggregates';
-  /** Mean average of existentialDeposit across the matching connection */
-  existentialDeposit?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of totalIssuance across the matching connection */
-  totalIssuance?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -842,15 +730,13 @@ export type AssetHistoricalDatumCondition = {
   /** Checks for equality with the object’s `dynamicFee` field. */
   dynamicFee?: InputMaybe<Scalars['JSON']['input']>;
   /** Checks for equality with the object’s `existentialDeposit` field. */
-  existentialDeposit?: InputMaybe<Scalars['BigFloat']['input']>;
+  existentialDeposit?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `paraBlockHeight` field. */
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `totalIssuance` field. */
-  totalIssuance?: InputMaybe<Scalars['BigFloat']['input']>;
+  totalIssuance?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AssetHistoricalDatumDistinctCountAggregates = {
@@ -865,8 +751,6 @@ export type AssetHistoricalDatumDistinctCountAggregates = {
   id?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of totalIssuance across the matching connection */
   totalIssuance?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -880,7 +764,7 @@ export type AssetHistoricalDatumFilter = {
   /** Filter by the object’s `dynamicFee` field. */
   dynamicFee?: InputMaybe<JsonFilter>;
   /** Filter by the object’s `existentialDeposit` field. */
-  existentialDeposit?: InputMaybe<BigFloatFilter>;
+  existentialDeposit?: InputMaybe<StringFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
   /** Negates the expression. */
@@ -889,94 +773,50 @@ export type AssetHistoricalDatumFilter = {
   or?: InputMaybe<Array<AssetHistoricalDatumFilter>>;
   /** Filter by the object’s `paraBlockHeight` field. */
   paraBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `totalIssuance` field. */
-  totalIssuance?: InputMaybe<BigFloatFilter>;
+  totalIssuance?: InputMaybe<StringFilter>;
 };
 
 export type AssetHistoricalDatumMaxAggregates = {
   __typename?: 'AssetHistoricalDatumMaxAggregates';
-  /** Maximum of existentialDeposit across the matching connection */
-  existentialDeposit?: Maybe<Scalars['BigFloat']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of totalIssuance across the matching connection */
-  totalIssuance?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AssetHistoricalDatumMinAggregates = {
   __typename?: 'AssetHistoricalDatumMinAggregates';
-  /** Minimum of existentialDeposit across the matching connection */
-  existentialDeposit?: Maybe<Scalars['BigFloat']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of totalIssuance across the matching connection */
-  totalIssuance?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AssetHistoricalDatumStddevPopulationAggregates = {
   __typename?: 'AssetHistoricalDatumStddevPopulationAggregates';
-  /** Population standard deviation of existentialDeposit across the matching connection */
-  existentialDeposit?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of totalIssuance across the matching connection */
-  totalIssuance?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AssetHistoricalDatumStddevSampleAggregates = {
   __typename?: 'AssetHistoricalDatumStddevSampleAggregates';
-  /** Sample standard deviation of existentialDeposit across the matching connection */
-  existentialDeposit?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of totalIssuance across the matching connection */
-  totalIssuance?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AssetHistoricalDatumSumAggregates = {
   __typename?: 'AssetHistoricalDatumSumAggregates';
-  /** Sum of existentialDeposit across the matching connection */
-  existentialDeposit: Scalars['BigFloat']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of totalIssuance across the matching connection */
-  totalIssuance: Scalars['BigFloat']['output'];
 };
 
 export type AssetHistoricalDatumVariancePopulationAggregates = {
   __typename?: 'AssetHistoricalDatumVariancePopulationAggregates';
-  /** Population variance of existentialDeposit across the matching connection */
-  existentialDeposit?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of totalIssuance across the matching connection */
-  totalIssuance?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AssetHistoricalDatumVarianceSampleAggregates = {
   __typename?: 'AssetHistoricalDatumVarianceSampleAggregates';
-  /** Sample variance of existentialDeposit across the matching connection */
-  existentialDeposit?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of totalIssuance across the matching connection */
-  totalIssuance?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type AssetMaxAggregates = {
@@ -1096,8 +936,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdAverageParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdAveragePoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_AVERAGE_POOL_ID_ASC',
   AavepoolsByAtokenIdAveragePoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_AVERAGE_POOL_ID_DESC',
-  AavepoolsByAtokenIdAverageRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdAverageRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_AVERAGE_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdAverageReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_AVERAGE_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdAverageReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_AVERAGE_RESERVE_ASSET_ID_DESC',
   AavepoolsByAtokenIdCountAsc = 'AAVEPOOLS_BY_ATOKEN_ID_COUNT_ASC',
@@ -1114,8 +952,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdDistinctCountParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdDistinctCountPoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_DISTINCT_COUNT_POOL_ID_ASC',
   AavepoolsByAtokenIdDistinctCountPoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  AavepoolsByAtokenIdDistinctCountRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdDistinctCountRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdDistinctCountReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_DISTINCT_COUNT_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdDistinctCountReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_DISTINCT_COUNT_RESERVE_ASSET_ID_DESC',
   AavepoolsByAtokenIdMaxATokenIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_MAX_A_TOKEN_ID_ASC',
@@ -1130,8 +966,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdMaxParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_MAX_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdMaxPoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_MAX_POOL_ID_ASC',
   AavepoolsByAtokenIdMaxPoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_MAX_POOL_ID_DESC',
-  AavepoolsByAtokenIdMaxRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_MAX_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdMaxRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_MAX_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdMaxReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_MAX_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdMaxReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_MAX_RESERVE_ASSET_ID_DESC',
   AavepoolsByAtokenIdMinATokenIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_MIN_A_TOKEN_ID_ASC',
@@ -1146,8 +980,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdMinParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_MIN_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdMinPoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_MIN_POOL_ID_ASC',
   AavepoolsByAtokenIdMinPoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_MIN_POOL_ID_DESC',
-  AavepoolsByAtokenIdMinRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_MIN_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdMinRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_MIN_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdMinReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_MIN_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdMinReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_MIN_RESERVE_ASSET_ID_DESC',
   AavepoolsByAtokenIdStddevPopulationATokenIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_POPULATION_A_TOKEN_ID_ASC',
@@ -1162,8 +994,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdStddevPopulationParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdStddevPopulationPoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_POPULATION_POOL_ID_ASC',
   AavepoolsByAtokenIdStddevPopulationPoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  AavepoolsByAtokenIdStddevPopulationRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdStddevPopulationRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdStddevPopulationReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_POPULATION_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdStddevPopulationReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_POPULATION_RESERVE_ASSET_ID_DESC',
   AavepoolsByAtokenIdStddevSampleATokenIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_SAMPLE_A_TOKEN_ID_ASC',
@@ -1178,8 +1008,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdStddevSampleParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdStddevSamplePoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_SAMPLE_POOL_ID_ASC',
   AavepoolsByAtokenIdStddevSamplePoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  AavepoolsByAtokenIdStddevSampleRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdStddevSampleRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdStddevSampleReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_SAMPLE_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdStddevSampleReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_STDDEV_SAMPLE_RESERVE_ASSET_ID_DESC',
   AavepoolsByAtokenIdSumATokenIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_SUM_A_TOKEN_ID_ASC',
@@ -1194,8 +1022,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdSumParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_SUM_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdSumPoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_SUM_POOL_ID_ASC',
   AavepoolsByAtokenIdSumPoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_SUM_POOL_ID_DESC',
-  AavepoolsByAtokenIdSumRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_SUM_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdSumRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_SUM_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdSumReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_SUM_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdSumReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_SUM_RESERVE_ASSET_ID_DESC',
   AavepoolsByAtokenIdVariancePopulationATokenIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_POPULATION_A_TOKEN_ID_ASC',
@@ -1210,8 +1036,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdVariancePopulationParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdVariancePopulationPoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_POPULATION_POOL_ID_ASC',
   AavepoolsByAtokenIdVariancePopulationPoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  AavepoolsByAtokenIdVariancePopulationRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdVariancePopulationRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdVariancePopulationReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_POPULATION_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdVariancePopulationReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_POPULATION_RESERVE_ASSET_ID_DESC',
   AavepoolsByAtokenIdVarianceSampleATokenIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_SAMPLE_A_TOKEN_ID_ASC',
@@ -1226,8 +1050,6 @@ export enum AssetsOrderBy {
   AavepoolsByAtokenIdVarianceSampleParaBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdVarianceSamplePoolIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
   AavepoolsByAtokenIdVarianceSamplePoolIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  AavepoolsByAtokenIdVarianceSampleRelayBlockHeightAsc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByAtokenIdVarianceSampleRelayBlockHeightDesc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByAtokenIdVarianceSampleReserveAssetIdAsc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_SAMPLE_RESERVE_ASSET_ID_ASC',
   AavepoolsByAtokenIdVarianceSampleReserveAssetIdDesc = 'AAVEPOOLS_BY_ATOKEN_ID_VARIANCE_SAMPLE_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdAverageATokenIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_AVERAGE_A_TOKEN_ID_ASC',
@@ -1242,8 +1064,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdAverageParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdAveragePoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_AVERAGE_POOL_ID_ASC',
   AavepoolsByReserveAssetIdAveragePoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_AVERAGE_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdAverageRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdAverageRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_AVERAGE_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdAverageReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_AVERAGE_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdAverageReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_AVERAGE_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdCountAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_COUNT_ASC',
@@ -1260,8 +1080,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdDistinctCountParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdDistinctCountPoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_DISTINCT_COUNT_POOL_ID_ASC',
   AavepoolsByReserveAssetIdDistinctCountPoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdDistinctCountRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdDistinctCountRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdDistinctCountReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_DISTINCT_COUNT_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdDistinctCountReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_DISTINCT_COUNT_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdMaxATokenIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MAX_A_TOKEN_ID_ASC',
@@ -1276,8 +1094,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdMaxParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MAX_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdMaxPoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MAX_POOL_ID_ASC',
   AavepoolsByReserveAssetIdMaxPoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MAX_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdMaxRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MAX_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdMaxRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MAX_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdMaxReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MAX_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdMaxReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MAX_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdMinATokenIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MIN_A_TOKEN_ID_ASC',
@@ -1292,8 +1108,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdMinParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MIN_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdMinPoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MIN_POOL_ID_ASC',
   AavepoolsByReserveAssetIdMinPoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MIN_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdMinRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MIN_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdMinRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MIN_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdMinReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MIN_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdMinReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_MIN_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdStddevPopulationATokenIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_POPULATION_A_TOKEN_ID_ASC',
@@ -1308,8 +1122,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdStddevPopulationParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdStddevPopulationPoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_POPULATION_POOL_ID_ASC',
   AavepoolsByReserveAssetIdStddevPopulationPoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdStddevPopulationRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdStddevPopulationRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdStddevPopulationReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_POPULATION_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdStddevPopulationReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_POPULATION_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdStddevSampleATokenIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_SAMPLE_A_TOKEN_ID_ASC',
@@ -1324,8 +1136,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdStddevSampleParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdStddevSamplePoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_SAMPLE_POOL_ID_ASC',
   AavepoolsByReserveAssetIdStddevSamplePoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdStddevSampleRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdStddevSampleRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdStddevSampleReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_SAMPLE_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdStddevSampleReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_STDDEV_SAMPLE_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdSumATokenIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_SUM_A_TOKEN_ID_ASC',
@@ -1340,8 +1150,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdSumParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_SUM_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdSumPoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_SUM_POOL_ID_ASC',
   AavepoolsByReserveAssetIdSumPoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_SUM_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdSumRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_SUM_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdSumRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_SUM_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdSumReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_SUM_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdSumReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_SUM_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdVariancePopulationATokenIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_POPULATION_A_TOKEN_ID_ASC',
@@ -1356,8 +1164,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdVariancePopulationParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdVariancePopulationPoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_POPULATION_POOL_ID_ASC',
   AavepoolsByReserveAssetIdVariancePopulationPoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdVariancePopulationRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdVariancePopulationRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdVariancePopulationReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_POPULATION_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdVariancePopulationReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_POPULATION_RESERVE_ASSET_ID_DESC',
   AavepoolsByReserveAssetIdVarianceSampleATokenIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_A_TOKEN_ID_ASC',
@@ -1372,8 +1178,6 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdVarianceSampleParaBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdVarianceSamplePoolIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
   AavepoolsByReserveAssetIdVarianceSamplePoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  AavepoolsByReserveAssetIdVarianceSampleRelayBlockHeightAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  AavepoolsByReserveAssetIdVarianceSampleRelayBlockHeightDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   AavepoolsByReserveAssetIdVarianceSampleReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdVarianceSampleReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_RESERVE_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdAverageAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_ASSET_TYPE_ASC',
@@ -1550,8 +1354,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataAverageIdDesc = 'ASSET_HISTORICAL_DATA_AVERAGE_ID_DESC',
   AssetHistoricalDataAverageParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_AVERAGE_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataAverageParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_AVERAGE_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataAverageRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_AVERAGE_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataAverageRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_AVERAGE_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataAverageTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_AVERAGE_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataAverageTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_AVERAGE_TOTAL_ISSUANCE_DESC',
   AssetHistoricalDataCountAsc = 'ASSET_HISTORICAL_DATA_COUNT_ASC',
@@ -1566,8 +1368,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataDistinctCountIdDesc = 'ASSET_HISTORICAL_DATA_DISTINCT_COUNT_ID_DESC',
   AssetHistoricalDataDistinctCountParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataDistinctCountParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataDistinctCountRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataDistinctCountRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataDistinctCountTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataDistinctCountTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_ISSUANCE_DESC',
   AssetHistoricalDataMaxAssetIdAsc = 'ASSET_HISTORICAL_DATA_MAX_ASSET_ID_ASC',
@@ -1580,8 +1380,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataMaxIdDesc = 'ASSET_HISTORICAL_DATA_MAX_ID_DESC',
   AssetHistoricalDataMaxParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_MAX_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataMaxParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_MAX_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataMaxRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_MAX_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataMaxRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_MAX_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataMaxTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_MAX_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataMaxTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_MAX_TOTAL_ISSUANCE_DESC',
   AssetHistoricalDataMinAssetIdAsc = 'ASSET_HISTORICAL_DATA_MIN_ASSET_ID_ASC',
@@ -1594,8 +1392,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataMinIdDesc = 'ASSET_HISTORICAL_DATA_MIN_ID_DESC',
   AssetHistoricalDataMinParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_MIN_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataMinParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_MIN_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataMinRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_MIN_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataMinRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_MIN_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataMinTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_MIN_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataMinTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_MIN_TOTAL_ISSUANCE_DESC',
   AssetHistoricalDataStddevPopulationAssetIdAsc = 'ASSET_HISTORICAL_DATA_STDDEV_POPULATION_ASSET_ID_ASC',
@@ -1608,8 +1404,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataStddevPopulationIdDesc = 'ASSET_HISTORICAL_DATA_STDDEV_POPULATION_ID_DESC',
   AssetHistoricalDataStddevPopulationParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataStddevPopulationParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataStddevPopulationRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataStddevPopulationRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataStddevPopulationTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataStddevPopulationTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_ISSUANCE_DESC',
   AssetHistoricalDataStddevSampleAssetIdAsc = 'ASSET_HISTORICAL_DATA_STDDEV_SAMPLE_ASSET_ID_ASC',
@@ -1622,8 +1416,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataStddevSampleIdDesc = 'ASSET_HISTORICAL_DATA_STDDEV_SAMPLE_ID_DESC',
   AssetHistoricalDataStddevSampleParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataStddevSampleParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataStddevSampleRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataStddevSampleRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataStddevSampleTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataStddevSampleTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_ISSUANCE_DESC',
   AssetHistoricalDataSumAssetIdAsc = 'ASSET_HISTORICAL_DATA_SUM_ASSET_ID_ASC',
@@ -1636,8 +1428,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataSumIdDesc = 'ASSET_HISTORICAL_DATA_SUM_ID_DESC',
   AssetHistoricalDataSumParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_SUM_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataSumParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_SUM_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataSumRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_SUM_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataSumRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_SUM_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataSumTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_SUM_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataSumTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_SUM_TOTAL_ISSUANCE_DESC',
   AssetHistoricalDataVariancePopulationAssetIdAsc = 'ASSET_HISTORICAL_DATA_VARIANCE_POPULATION_ASSET_ID_ASC',
@@ -1650,8 +1440,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataVariancePopulationIdDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_POPULATION_ID_DESC',
   AssetHistoricalDataVariancePopulationParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataVariancePopulationParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataVariancePopulationRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataVariancePopulationRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataVariancePopulationTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataVariancePopulationTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_ISSUANCE_DESC',
   AssetHistoricalDataVarianceSampleAssetIdAsc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_ASSET_ID_ASC',
@@ -1664,8 +1452,6 @@ export enum AssetsOrderBy {
   AssetHistoricalDataVarianceSampleIdDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_ID_DESC',
   AssetHistoricalDataVarianceSampleParaBlockHeightAsc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC',
   AssetHistoricalDataVarianceSampleParaBlockHeightDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
-  AssetHistoricalDataVarianceSampleRelayBlockHeightAsc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  AssetHistoricalDataVarianceSampleRelayBlockHeightDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   AssetHistoricalDataVarianceSampleTotalIssuanceAsc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_ISSUANCE_ASC',
   AssetHistoricalDataVarianceSampleTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_ISSUANCE_DESC',
   AssetTypeAsc = 'ASSET_TYPE_ASC',
@@ -1741,6 +1527,46 @@ export type BigIntFilter = {
   notEqualTo?: InputMaybe<Scalars['BigInt']['input']>;
   /** Not included in the specified list. */
   notIn?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+};
+
+export type Block = {
+  __typename?: 'Block';
+  hash: Scalars['String']['output'];
+  height: Scalars['Int']['output'];
+  id: Scalars['String']['output'];
+  relayBlockHeight: Scalars['Int']['output'];
+  timestamp: Scalars['String']['output'];
+};
+
+export type BlockAggregates = {
+  __typename?: 'BlockAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<BlockAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<BlockDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<BlockMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<BlockMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<BlockStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<BlockStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<BlockSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<BlockVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<BlockVarianceSampleAggregates>;
+};
+
+export type BlockAverageAggregates = {
+  __typename?: 'BlockAverageAggregates';
+  /** Mean average of height across the matching connection */
+  height?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of relayBlockHeight across the matching connection */
+  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A connection to a list of `BlockCompressedDatum` values. */
@@ -1983,6 +1809,228 @@ export type BlockCompressedDatumVarianceSampleAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
+/** A condition to be used against `Block` object types. All fields are tested for equality and combined with a logical ‘and.’ */
+export type BlockCondition = {
+  /** Checks for equality with the object’s `hash` field. */
+  hash?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `height` field. */
+  height?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `relayBlockHeight` field. */
+  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `timestamp` field. */
+  timestamp?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type BlockDistinctCountAggregates = {
+  __typename?: 'BlockDistinctCountAggregates';
+  /** Distinct count of hash across the matching connection */
+  hash?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of height across the matching connection */
+  height?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of relayBlockHeight across the matching connection */
+  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of timestamp across the matching connection */
+  timestamp?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `Block` object types. All fields are combined with a logical ‘and.’ */
+export type BlockFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<BlockFilter>>;
+  /** Filter by the object’s `hash` field. */
+  hash?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `height` field. */
+  height?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<BlockFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<BlockFilter>>;
+  /** Filter by the object’s `relayBlockHeight` field. */
+  relayBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `timestamp` field. */
+  timestamp?: InputMaybe<StringFilter>;
+};
+
+/** Grouping methods for `Block` for usage during aggregation. */
+export enum BlockGroupBy {
+  Hash = 'HASH',
+  Height = 'HEIGHT',
+  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT',
+  Timestamp = 'TIMESTAMP'
+}
+
+export type BlockHavingAverageInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockHavingDistinctCountInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `Block` aggregates. */
+export type BlockHavingInput = {
+  AND?: InputMaybe<Array<BlockHavingInput>>;
+  OR?: InputMaybe<Array<BlockHavingInput>>;
+  average?: InputMaybe<BlockHavingAverageInput>;
+  distinctCount?: InputMaybe<BlockHavingDistinctCountInput>;
+  max?: InputMaybe<BlockHavingMaxInput>;
+  min?: InputMaybe<BlockHavingMinInput>;
+  stddevPopulation?: InputMaybe<BlockHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<BlockHavingStddevSampleInput>;
+  sum?: InputMaybe<BlockHavingSumInput>;
+  variancePopulation?: InputMaybe<BlockHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<BlockHavingVarianceSampleInput>;
+};
+
+export type BlockHavingMaxInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockHavingMinInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockHavingStddevPopulationInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockHavingStddevSampleInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockHavingSumInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockHavingVariancePopulationInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockHavingVarianceSampleInput = {
+  height?: InputMaybe<HavingIntFilter>;
+  relayBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type BlockMaxAggregates = {
+  __typename?: 'BlockMaxAggregates';
+  /** Maximum of height across the matching connection */
+  height?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of relayBlockHeight across the matching connection */
+  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type BlockMinAggregates = {
+  __typename?: 'BlockMinAggregates';
+  /** Minimum of height across the matching connection */
+  height?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of relayBlockHeight across the matching connection */
+  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type BlockStddevPopulationAggregates = {
+  __typename?: 'BlockStddevPopulationAggregates';
+  /** Population standard deviation of height across the matching connection */
+  height?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of relayBlockHeight across the matching connection */
+  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type BlockStddevSampleAggregates = {
+  __typename?: 'BlockStddevSampleAggregates';
+  /** Sample standard deviation of height across the matching connection */
+  height?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of relayBlockHeight across the matching connection */
+  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type BlockSumAggregates = {
+  __typename?: 'BlockSumAggregates';
+  /** Sum of height across the matching connection */
+  height: Scalars['BigInt']['output'];
+  /** Sum of relayBlockHeight across the matching connection */
+  relayBlockHeight: Scalars['BigInt']['output'];
+};
+
+export type BlockVariancePopulationAggregates = {
+  __typename?: 'BlockVariancePopulationAggregates';
+  /** Population variance of height across the matching connection */
+  height?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of relayBlockHeight across the matching connection */
+  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type BlockVarianceSampleAggregates = {
+  __typename?: 'BlockVarianceSampleAggregates';
+  /** Sample variance of height across the matching connection */
+  height?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of relayBlockHeight across the matching connection */
+  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A connection to a list of `Block` values. */
+export type BlocksConnection = {
+  __typename?: 'BlocksConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<BlockAggregates>;
+  /** A list of edges which contains the `Block` and cursor to aid in pagination. */
+  edges: Array<BlocksEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<BlockAggregates>>;
+  /** A list of `Block` objects. */
+  nodes: Array<Maybe<Block>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Block` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `Block` values. */
+export type BlocksConnectionGroupedAggregatesArgs = {
+  groupBy: Array<BlockGroupBy>;
+  having?: InputMaybe<BlockHavingInput>;
+};
+
+/** A `Block` edge in the connection. */
+export type BlocksEdge = {
+  __typename?: 'BlocksEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `Block` at the end of the edge. */
+  node?: Maybe<Block>;
+};
+
+/** Methods to use when ordering `Block`. */
+export enum BlocksOrderBy {
+  HashAsc = 'HASH_ASC',
+  HashDesc = 'HASH_DESC',
+  HeightAsc = 'HEIGHT_ASC',
+  HeightDesc = 'HEIGHT_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
+  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC',
+  TimestampAsc = 'TIMESTAMP_ASC',
+  TimestampDesc = 'TIMESTAMP_DESC'
+}
+
 /** A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’ */
 export type BooleanFilter = {
   /** Not equal to the specified value, treating null like an ordinary value. */
@@ -2009,12 +2057,122 @@ export type BooleanFilter = {
   notIn?: InputMaybe<Array<Scalars['Boolean']['input']>>;
 };
 
+export type DataStructureType = {
+  __typename?: 'DataStructureType';
+  definition: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type DataStructureTypeAggregates = {
+  __typename?: 'DataStructureTypeAggregates';
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<DataStructureTypeDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+/**
+ * A condition to be used against `DataStructureType` object types. All fields are
+ * tested for equality and combined with a logical ‘and.’
+ */
+export type DataStructureTypeCondition = {
+  /** Checks for equality with the object’s `definition` field. */
+  definition?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `name` field. */
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type DataStructureTypeDistinctCountAggregates = {
+  __typename?: 'DataStructureTypeDistinctCountAggregates';
+  /** Distinct count of definition across the matching connection */
+  definition?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of name across the matching connection */
+  name?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `DataStructureType` object types. All fields are combined with a logical ‘and.’ */
+export type DataStructureTypeFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<DataStructureTypeFilter>>;
+  /** Filter by the object’s `definition` field. */
+  definition?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `name` field. */
+  name?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<DataStructureTypeFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<DataStructureTypeFilter>>;
+};
+
+/** Grouping methods for `DataStructureType` for usage during aggregation. */
+export enum DataStructureTypeGroupBy {
+  Definition = 'DEFINITION',
+  Name = 'NAME'
+}
+
+/** Conditions for `DataStructureType` aggregates. */
+export type DataStructureTypeHavingInput = {
+  AND?: InputMaybe<Array<DataStructureTypeHavingInput>>;
+  OR?: InputMaybe<Array<DataStructureTypeHavingInput>>;
+};
+
+/** A connection to a list of `DataStructureType` values. */
+export type DataStructureTypesConnection = {
+  __typename?: 'DataStructureTypesConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<DataStructureTypeAggregates>;
+  /** A list of edges which contains the `DataStructureType` and cursor to aid in pagination. */
+  edges: Array<DataStructureTypesEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<DataStructureTypeAggregates>>;
+  /** A list of `DataStructureType` objects. */
+  nodes: Array<Maybe<DataStructureType>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `DataStructureType` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `DataStructureType` values. */
+export type DataStructureTypesConnectionGroupedAggregatesArgs = {
+  groupBy: Array<DataStructureTypeGroupBy>;
+  having?: InputMaybe<DataStructureTypeHavingInput>;
+};
+
+/** A `DataStructureType` edge in the connection. */
+export type DataStructureTypesEdge = {
+  __typename?: 'DataStructureTypesEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `DataStructureType` at the end of the edge. */
+  node?: Maybe<DataStructureType>;
+};
+
+/** Methods to use when ordering `DataStructureType`. */
+export enum DataStructureTypesOrderBy {
+  DefinitionAsc = 'DEFINITION_ASC',
+  DefinitionDesc = 'DEFINITION_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  NameAsc = 'NAME_ASC',
+  NameDesc = 'NAME_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+}
+
 export type EmaOracle = {
   __typename?: 'EmaOracle';
   entries: Scalars['JSON']['output'];
   id: Scalars['String']['output'];
   paraBlockHeight: Scalars['Int']['output'];
-  relayBlockHeight: Scalars['Int']['output'];
 };
 
 export type EmaOracleAggregates = {
@@ -2044,8 +2202,6 @@ export type EmaOracleAverageAggregates = {
   __typename?: 'EmaOracleAverageAggregates';
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -2059,8 +2215,6 @@ export type EmaOracleCondition = {
   id?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `paraBlockHeight` field. */
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type EmaOracleDistinctCountAggregates = {
@@ -2071,8 +2225,6 @@ export type EmaOracleDistinctCountAggregates = {
   id?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
 };
 
 /** A filter to be used against `EmaOracle` object types. All fields are combined with a logical ‘and.’ */
@@ -2089,25 +2241,20 @@ export type EmaOracleFilter = {
   or?: InputMaybe<Array<EmaOracleFilter>>;
   /** Filter by the object’s `paraBlockHeight` field. */
   paraBlockHeight?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
 };
 
 /** Grouping methods for `EmaOracle` for usage during aggregation. */
 export enum EmaOracleGroupBy {
   Entries = 'ENTRIES',
-  ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT'
+  ParaBlockHeight = 'PARA_BLOCK_HEIGHT'
 }
 
 export type EmaOracleHavingAverageInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type EmaOracleHavingDistinctCountInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `EmaOracle` aggregates. */
@@ -2127,93 +2274,72 @@ export type EmaOracleHavingInput = {
 
 export type EmaOracleHavingMaxInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type EmaOracleHavingMinInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type EmaOracleHavingStddevPopulationInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type EmaOracleHavingStddevSampleInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type EmaOracleHavingSumInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type EmaOracleHavingVariancePopulationInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type EmaOracleHavingVarianceSampleInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type EmaOracleMaxAggregates = {
   __typename?: 'EmaOracleMaxAggregates';
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type EmaOracleMinAggregates = {
   __typename?: 'EmaOracleMinAggregates';
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type EmaOracleStddevPopulationAggregates = {
   __typename?: 'EmaOracleStddevPopulationAggregates';
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type EmaOracleStddevSampleAggregates = {
   __typename?: 'EmaOracleStddevSampleAggregates';
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type EmaOracleSumAggregates = {
   __typename?: 'EmaOracleSumAggregates';
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type EmaOracleVariancePopulationAggregates = {
   __typename?: 'EmaOracleVariancePopulationAggregates';
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type EmaOracleVarianceSampleAggregates = {
   __typename?: 'EmaOracleVarianceSampleAggregates';
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A connection to a list of `EmaOracle` values. */
@@ -2259,9 +2385,7 @@ export enum EmaOraclesOrderBy {
   ParaBlockHeightAsc = 'PARA_BLOCK_HEIGHT_ASC',
   ParaBlockHeightDesc = 'PARA_BLOCK_HEIGHT_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 export type HavingBigfloatFilter = {
@@ -2408,8 +2532,7 @@ export type Lbppool = {
   owner: Scalars['String']['output'];
   paraBlockHeight: Scalars['Int']['output'];
   poolAddress: Scalars['String']['output'];
-  relayBlockHeight: Scalars['Int']['output'];
-  repayTarget: Scalars['BigFloat']['output'];
+  repayTarget: Scalars['String']['output'];
   start?: Maybe<Scalars['Int']['output']>;
   weightCurve: Scalars['String']['output'];
 };
@@ -2487,20 +2610,17 @@ export enum LbppoolAssetsDataGroupBy {
   AssetId = 'ASSET_ID',
   Balances = 'BALANCES',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
-  PoolId = 'POOL_ID',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT'
+  PoolId = 'POOL_ID'
 }
 
 export type LbppoolAssetsDataHavingAverageInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbppoolAssetsDataHavingDistinctCountInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `LbppoolAssetsDatum` aggregates. */
@@ -2521,43 +2641,36 @@ export type LbppoolAssetsDataHavingInput = {
 export type LbppoolAssetsDataHavingMaxInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbppoolAssetsDataHavingMinInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbppoolAssetsDataHavingStddevPopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbppoolAssetsDataHavingStddevSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbppoolAssetsDataHavingSumInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbppoolAssetsDataHavingVariancePopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type LbppoolAssetsDataHavingVarianceSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `LbppoolAssetsDatum`. */
@@ -2574,9 +2687,7 @@ export enum LbppoolAssetsDataOrderBy {
   PoolIdAsc = 'POOL_ID_ASC',
   PoolIdDesc = 'POOL_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 export type LbppoolAssetsDatum = {
@@ -2588,7 +2699,6 @@ export type LbppoolAssetsDatum = {
   /** Reads a single `Lbppool` that is related to this `LbppoolAssetsDatum`. */
   pool?: Maybe<Lbppool>;
   poolId?: Maybe<Scalars['String']['output']>;
-  relayBlockHeight: Scalars['Int']['output'];
 };
 
 export type LbppoolAssetsDatumAggregates = {
@@ -2620,8 +2730,6 @@ export type LbppoolAssetsDatumAverageAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -2639,8 +2747,6 @@ export type LbppoolAssetsDatumCondition = {
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type LbppoolAssetsDatumDistinctCountAggregates = {
@@ -2655,8 +2761,6 @@ export type LbppoolAssetsDatumDistinctCountAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
 };
 
 /** A filter to be used against `LbppoolAssetsDatum` object types. All fields are combined with a logical ‘and.’ */
@@ -2677,8 +2781,6 @@ export type LbppoolAssetsDatumFilter = {
   paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
 };
 
 export type LbppoolAssetsDatumMaxAggregates = {
@@ -2687,8 +2789,6 @@ export type LbppoolAssetsDatumMaxAggregates = {
   assetId?: Maybe<Scalars['Int']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type LbppoolAssetsDatumMinAggregates = {
@@ -2697,8 +2797,6 @@ export type LbppoolAssetsDatumMinAggregates = {
   assetId?: Maybe<Scalars['Int']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type LbppoolAssetsDatumStddevPopulationAggregates = {
@@ -2707,8 +2805,6 @@ export type LbppoolAssetsDatumStddevPopulationAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type LbppoolAssetsDatumStddevSampleAggregates = {
@@ -2717,8 +2813,6 @@ export type LbppoolAssetsDatumStddevSampleAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type LbppoolAssetsDatumSumAggregates = {
@@ -2727,8 +2821,6 @@ export type LbppoolAssetsDatumSumAggregates = {
   assetId: Scalars['BigInt']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type LbppoolAssetsDatumVariancePopulationAggregates = {
@@ -2737,8 +2829,6 @@ export type LbppoolAssetsDatumVariancePopulationAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type LbppoolAssetsDatumVarianceSampleAggregates = {
@@ -2747,8 +2837,6 @@ export type LbppoolAssetsDatumVarianceSampleAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type LbppoolAverageAggregates = {
@@ -2765,10 +2853,6 @@ export type LbppoolAverageAggregates = {
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of repayTarget across the matching connection */
-  repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of start across the matching connection */
   start?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -2797,10 +2881,8 @@ export type LbppoolCondition = {
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `repayTarget` field. */
-  repayTarget?: InputMaybe<Scalars['BigFloat']['input']>;
+  repayTarget?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `start` field. */
   start?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `weightCurve` field. */
@@ -2831,8 +2913,6 @@ export type LbppoolDistinctCountAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolAddress across the matching connection */
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of repayTarget across the matching connection */
   repayTarget?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of start across the matching connection */
@@ -2871,10 +2951,8 @@ export type LbppoolFilter = {
   paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `repayTarget` field. */
-  repayTarget?: InputMaybe<BigFloatFilter>;
+  repayTarget?: InputMaybe<StringFilter>;
   /** Filter by the object’s `start` field. */
   start?: InputMaybe<IntFilter>;
   /** Filter by the object’s `weightCurve` field. */
@@ -2893,7 +2971,6 @@ export enum LbppoolGroupBy {
   Owner = 'OWNER',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
   PoolAddress = 'POOL_ADDRESS',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT',
   RepayTarget = 'REPAY_TARGET',
   Start = 'START',
   WeightCurve = 'WEIGHT_CURVE'
@@ -2906,8 +2983,6 @@ export type LbppoolHavingAverageInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2918,8 +2993,6 @@ export type LbppoolHavingDistinctCountInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2945,8 +3018,6 @@ export type LbppoolHavingMaxInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2957,8 +3028,6 @@ export type LbppoolHavingMinInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2969,8 +3038,6 @@ export type LbppoolHavingStddevPopulationInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2981,8 +3048,6 @@ export type LbppoolHavingStddevSampleInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -2993,8 +3058,6 @@ export type LbppoolHavingSumInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -3005,8 +3068,6 @@ export type LbppoolHavingVariancePopulationInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -3017,8 +3078,6 @@ export type LbppoolHavingVarianceSampleInput = {
   finalWeight?: InputMaybe<HavingIntFilter>;
   initialWeight?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
-  repayTarget?: InputMaybe<HavingBigfloatFilter>;
   start?: InputMaybe<HavingIntFilter>;
 };
 
@@ -3036,10 +3095,6 @@ export type LbppoolMaxAggregates = {
   initialWeight?: Maybe<Scalars['Int']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of repayTarget across the matching connection */
-  repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Maximum of start across the matching connection */
   start?: Maybe<Scalars['Int']['output']>;
 };
@@ -3058,10 +3113,6 @@ export type LbppoolMinAggregates = {
   initialWeight?: Maybe<Scalars['Int']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of repayTarget across the matching connection */
-  repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Minimum of start across the matching connection */
   start?: Maybe<Scalars['Int']['output']>;
 };
@@ -3080,10 +3131,6 @@ export type LbppoolStddevPopulationAggregates = {
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of repayTarget across the matching connection */
-  repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of start across the matching connection */
   start?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -3102,10 +3149,6 @@ export type LbppoolStddevSampleAggregates = {
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of repayTarget across the matching connection */
-  repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of start across the matching connection */
   start?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -3124,10 +3167,6 @@ export type LbppoolSumAggregates = {
   initialWeight: Scalars['BigInt']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of repayTarget across the matching connection */
-  repayTarget: Scalars['BigFloat']['output'];
   /** Sum of start across the matching connection */
   start: Scalars['BigInt']['output'];
 };
@@ -3146,10 +3185,6 @@ export type LbppoolVariancePopulationAggregates = {
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of repayTarget across the matching connection */
-  repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of start across the matching connection */
   start?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -3168,10 +3203,6 @@ export type LbppoolVarianceSampleAggregates = {
   initialWeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of repayTarget across the matching connection */
-  repayTarget?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of start across the matching connection */
   start?: Maybe<Scalars['BigFloat']['output']>;
 };
@@ -3237,8 +3268,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdAverageParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdAveragePoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdAveragePoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdAverageRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdAverageRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_RELAY_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdCountAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_COUNT_ASC',
   LbppoolAssetsDataByPoolIdCountDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_COUNT_DESC',
   LbppoolAssetsDataByPoolIdDistinctCountAssetIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_ASC',
@@ -3251,8 +3280,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdDistinctCountParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdDistinctCountPoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdDistinctCountPoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdDistinctCountRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdDistinctCountRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdMaxAssetIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC',
   LbppoolAssetsDataByPoolIdMaxAssetIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MAX_ASSET_ID_DESC',
   LbppoolAssetsDataByPoolIdMaxBalancesAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MAX_BALANCES_ASC',
@@ -3263,8 +3290,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdMaxParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MAX_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdMaxPoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MAX_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdMaxPoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MAX_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdMaxRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MAX_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdMaxRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MAX_RELAY_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdMinAssetIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC',
   LbppoolAssetsDataByPoolIdMinAssetIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MIN_ASSET_ID_DESC',
   LbppoolAssetsDataByPoolIdMinBalancesAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MIN_BALANCES_ASC',
@@ -3275,8 +3300,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdMinParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MIN_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdMinPoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MIN_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdMinPoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MIN_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdMinRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MIN_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdMinRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_MIN_RELAY_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdStddevPopulationAssetIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC',
   LbppoolAssetsDataByPoolIdStddevPopulationAssetIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_DESC',
   LbppoolAssetsDataByPoolIdStddevPopulationBalancesAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_BALANCES_ASC',
@@ -3287,8 +3310,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdStddevPopulationParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdStddevPopulationPoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdStddevPopulationPoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdStddevPopulationRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdStddevPopulationRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdStddevSampleAssetIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC',
   LbppoolAssetsDataByPoolIdStddevSampleAssetIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_DESC',
   LbppoolAssetsDataByPoolIdStddevSampleBalancesAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_BALANCES_ASC',
@@ -3299,8 +3320,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdStddevSampleParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdStddevSamplePoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdStddevSamplePoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdStddevSampleRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdStddevSampleRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdSumAssetIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_SUM_ASSET_ID_ASC',
   LbppoolAssetsDataByPoolIdSumAssetIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_SUM_ASSET_ID_DESC',
   LbppoolAssetsDataByPoolIdSumBalancesAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_SUM_BALANCES_ASC',
@@ -3311,8 +3330,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdSumParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_SUM_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdSumPoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_SUM_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdSumPoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_SUM_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdSumRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_SUM_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdSumRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_SUM_RELAY_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdVariancePopulationAssetIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC',
   LbppoolAssetsDataByPoolIdVariancePopulationAssetIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_DESC',
   LbppoolAssetsDataByPoolIdVariancePopulationBalancesAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_BALANCES_ASC',
@@ -3323,8 +3340,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdVariancePopulationParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdVariancePopulationPoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdVariancePopulationPoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdVariancePopulationRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdVariancePopulationRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdVarianceSampleAssetIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC',
   LbppoolAssetsDataByPoolIdVarianceSampleAssetIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_DESC',
   LbppoolAssetsDataByPoolIdVarianceSampleBalancesAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_BALANCES_ASC',
@@ -3335,8 +3350,6 @@ export enum LbppoolsOrderBy {
   LbppoolAssetsDataByPoolIdVarianceSampleParaBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   LbppoolAssetsDataByPoolIdVarianceSamplePoolIdAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
   LbppoolAssetsDataByPoolIdVarianceSamplePoolIdDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  LbppoolAssetsDataByPoolIdVarianceSampleRelayBlockHeightAsc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  LbppoolAssetsDataByPoolIdVarianceSampleRelayBlockHeightDesc = 'LBPPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   Natural = 'NATURAL',
   OwnerAsc = 'OWNER_ASC',
   OwnerDesc = 'OWNER_DESC',
@@ -3346,8 +3359,6 @@ export enum LbppoolsOrderBy {
   PoolAddressDesc = 'POOL_ADDRESS_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC',
   RepayTargetAsc = 'REPAY_TARGET_ASC',
   RepayTargetDesc = 'REPAY_TARGET_DESC',
   StartAsc = 'START_ASC',
@@ -3601,6 +3612,18 @@ export enum MigrationsOrderBy {
   TimestampDesc = 'TIMESTAMP_DESC'
 }
 
+export type MinifiedDataStructure = {
+  __typename?: 'MinifiedDataStructure';
+  d: Array<Scalars['String']['output']>;
+  t: MinifiedDataStructureTypeName;
+};
+
+export enum MinifiedDataStructureTypeName {
+  AccountBalances = 'AccountBalances',
+  AssetDynamicFee = 'AssetDynamicFee',
+  OmnipoolAssetState = 'OmnipoolAssetState'
+}
+
 export type Omnipool = {
   __typename?: 'Omnipool';
   hubAssetTradability: Scalars['JSON']['output'];
@@ -3609,7 +3632,6 @@ export type Omnipool = {
   omnipoolAssetDataByPoolId: OmnipoolAssetDataConnection;
   paraBlockHeight: Scalars['Int']['output'];
   poolAddress: Scalars['String']['output'];
-  relayBlockHeight: Scalars['Int']['output'];
 };
 
 
@@ -3686,20 +3708,17 @@ export enum OmnipoolAssetDataGroupBy {
   AssetState = 'ASSET_STATE',
   Balances = 'BALANCES',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
-  PoolId = 'POOL_ID',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT'
+  PoolId = 'POOL_ID'
 }
 
 export type OmnipoolAssetDataHavingAverageInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingDistinctCountInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `OmnipoolAssetDatum` aggregates. */
@@ -3720,43 +3739,36 @@ export type OmnipoolAssetDataHavingInput = {
 export type OmnipoolAssetDataHavingMaxInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingMinInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingStddevPopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingStddevSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingSumInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingVariancePopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolAssetDataHavingVarianceSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `OmnipoolAssetDatum`. */
@@ -3775,9 +3787,7 @@ export enum OmnipoolAssetDataOrderBy {
   PoolIdAsc = 'POOL_ID_ASC',
   PoolIdDesc = 'POOL_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 export type OmnipoolAssetDatum = {
@@ -3790,7 +3800,6 @@ export type OmnipoolAssetDatum = {
   /** Reads a single `Omnipool` that is related to this `OmnipoolAssetDatum`. */
   pool?: Maybe<Omnipool>;
   poolId?: Maybe<Scalars['String']['output']>;
-  relayBlockHeight: Scalars['Int']['output'];
 };
 
 export type OmnipoolAssetDatumAggregates = {
@@ -3822,8 +3831,6 @@ export type OmnipoolAssetDatumAverageAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -3843,8 +3850,6 @@ export type OmnipoolAssetDatumCondition = {
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type OmnipoolAssetDatumDistinctCountAggregates = {
@@ -3861,8 +3866,6 @@ export type OmnipoolAssetDatumDistinctCountAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
 };
 
 /** A filter to be used against `OmnipoolAssetDatum` object types. All fields are combined with a logical ‘and.’ */
@@ -3885,8 +3888,6 @@ export type OmnipoolAssetDatumFilter = {
   paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
 };
 
 export type OmnipoolAssetDatumMaxAggregates = {
@@ -3895,8 +3896,6 @@ export type OmnipoolAssetDatumMaxAggregates = {
   assetId?: Maybe<Scalars['Int']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type OmnipoolAssetDatumMinAggregates = {
@@ -3905,8 +3904,6 @@ export type OmnipoolAssetDatumMinAggregates = {
   assetId?: Maybe<Scalars['Int']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type OmnipoolAssetDatumStddevPopulationAggregates = {
@@ -3915,8 +3912,6 @@ export type OmnipoolAssetDatumStddevPopulationAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolAssetDatumStddevSampleAggregates = {
@@ -3925,8 +3920,6 @@ export type OmnipoolAssetDatumStddevSampleAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolAssetDatumSumAggregates = {
@@ -3935,8 +3928,6 @@ export type OmnipoolAssetDatumSumAggregates = {
   assetId: Scalars['BigInt']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type OmnipoolAssetDatumVariancePopulationAggregates = {
@@ -3945,8 +3936,6 @@ export type OmnipoolAssetDatumVariancePopulationAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolAssetDatumVarianceSampleAggregates = {
@@ -3955,16 +3944,14 @@ export type OmnipoolAssetDatumVarianceSampleAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolAssetState = {
   __typename?: 'OmnipoolAssetState';
-  cap: Scalars['BigInt']['output'];
-  hubReserve: Scalars['BigInt']['output'];
-  protocolShares: Scalars['BigInt']['output'];
-  shares: Scalars['BigInt']['output'];
+  cap: Scalars['String']['output'];
+  hubReserve: Scalars['String']['output'];
+  protocolShares: Scalars['String']['output'];
+  shares: Scalars['String']['output'];
   tradable?: Maybe<Tradability>;
 };
 
@@ -3972,8 +3959,6 @@ export type OmnipoolAverageAggregates = {
   __typename?: 'OmnipoolAverageAggregates';
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -3989,8 +3974,6 @@ export type OmnipoolCondition = {
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type OmnipoolDistinctCountAggregates = {
@@ -4003,8 +3986,6 @@ export type OmnipoolDistinctCountAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolAddress across the matching connection */
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
 };
 
 /** A filter to be used against `Omnipool` object types. All fields are combined with a logical ‘and.’ */
@@ -4023,26 +4004,21 @@ export type OmnipoolFilter = {
   paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
 };
 
 /** Grouping methods for `Omnipool` for usage during aggregation. */
 export enum OmnipoolGroupBy {
   HubAssetTradability = 'HUB_ASSET_TRADABILITY',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
-  PoolAddress = 'POOL_ADDRESS',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT'
+  PoolAddress = 'POOL_ADDRESS'
 }
 
 export type OmnipoolHavingAverageInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolHavingDistinctCountInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `Omnipool` aggregates. */
@@ -4062,93 +4038,72 @@ export type OmnipoolHavingInput = {
 
 export type OmnipoolHavingMaxInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolHavingMinInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolHavingStddevPopulationInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolHavingStddevSampleInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolHavingSumInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolHavingVariancePopulationInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolHavingVarianceSampleInput = {
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type OmnipoolMaxAggregates = {
   __typename?: 'OmnipoolMaxAggregates';
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type OmnipoolMinAggregates = {
   __typename?: 'OmnipoolMinAggregates';
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type OmnipoolStddevPopulationAggregates = {
   __typename?: 'OmnipoolStddevPopulationAggregates';
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolStddevSampleAggregates = {
   __typename?: 'OmnipoolStddevSampleAggregates';
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolSumAggregates = {
   __typename?: 'OmnipoolSumAggregates';
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type OmnipoolVariancePopulationAggregates = {
   __typename?: 'OmnipoolVariancePopulationAggregates';
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type OmnipoolVarianceSampleAggregates = {
   __typename?: 'OmnipoolVarianceSampleAggregates';
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A connection to a list of `Omnipool` values. */
@@ -4203,8 +4158,6 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdAverageParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdAveragePoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdAveragePoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdAverageRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdAverageRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdCountAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_COUNT_ASC',
   OmnipoolAssetDataByPoolIdCountDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_COUNT_DESC',
   OmnipoolAssetDataByPoolIdDistinctCountAssetIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_ASC',
@@ -4219,8 +4172,6 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdDistinctCountParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdDistinctCountPoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdDistinctCountPoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdDistinctCountRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdDistinctCountRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdMaxAssetIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC',
   OmnipoolAssetDataByPoolIdMaxAssetIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_ID_DESC',
   OmnipoolAssetDataByPoolIdMaxAssetStateAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_ASSET_STATE_ASC',
@@ -4233,8 +4184,6 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdMaxParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdMaxPoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdMaxPoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdMaxRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdMaxRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MAX_RELAY_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdMinAssetIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC',
   OmnipoolAssetDataByPoolIdMinAssetIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_ID_DESC',
   OmnipoolAssetDataByPoolIdMinAssetStateAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_ASSET_STATE_ASC',
@@ -4247,8 +4196,6 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdMinParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdMinPoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdMinPoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdMinRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdMinRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_MIN_RELAY_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdStddevPopulationAssetIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC',
   OmnipoolAssetDataByPoolIdStddevPopulationAssetIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_DESC',
   OmnipoolAssetDataByPoolIdStddevPopulationAssetStateAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_STATE_ASC',
@@ -4261,8 +4208,6 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdStddevPopulationParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdStddevPopulationPoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdStddevPopulationPoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdStddevPopulationRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdStddevPopulationRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdStddevSampleAssetIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC',
   OmnipoolAssetDataByPoolIdStddevSampleAssetIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_DESC',
   OmnipoolAssetDataByPoolIdStddevSampleAssetStateAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_STATE_ASC',
@@ -4275,8 +4220,6 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdStddevSampleParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdStddevSamplePoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdStddevSamplePoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdStddevSampleRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdStddevSampleRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdSumAssetIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ASSET_ID_ASC',
   OmnipoolAssetDataByPoolIdSumAssetIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ASSET_ID_DESC',
   OmnipoolAssetDataByPoolIdSumAssetStateAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_ASSET_STATE_ASC',
@@ -4289,8 +4232,6 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdSumParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdSumPoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdSumPoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdSumRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdSumRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_SUM_RELAY_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdVariancePopulationAssetIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC',
   OmnipoolAssetDataByPoolIdVariancePopulationAssetIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_DESC',
   OmnipoolAssetDataByPoolIdVariancePopulationAssetStateAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_STATE_ASC',
@@ -4303,8 +4244,6 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdVariancePopulationParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdVariancePopulationPoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdVariancePopulationPoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdVariancePopulationRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdVariancePopulationRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdVarianceSampleAssetIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC',
   OmnipoolAssetDataByPoolIdVarianceSampleAssetIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_DESC',
   OmnipoolAssetDataByPoolIdVarianceSampleAssetStateAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_STATE_ASC',
@@ -4317,16 +4256,12 @@ export enum OmnipoolsOrderBy {
   OmnipoolAssetDataByPoolIdVarianceSampleParaBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   OmnipoolAssetDataByPoolIdVarianceSamplePoolIdAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
   OmnipoolAssetDataByPoolIdVarianceSamplePoolIdDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  OmnipoolAssetDataByPoolIdVarianceSampleRelayBlockHeightAsc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  OmnipoolAssetDataByPoolIdVarianceSampleRelayBlockHeightDesc = 'OMNIPOOL_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   ParaBlockHeightAsc = 'PARA_BLOCK_HEIGHT_ASC',
   ParaBlockHeightDesc = 'PARA_BLOCK_HEIGHT_DESC',
   PoolAddressAsc = 'POOL_ADDRESS_ASC',
   PoolAddressDesc = 'POOL_ADDRESS_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 /** Information about pagination in a connection. */
@@ -4356,9 +4291,15 @@ export type Query = {
   assetHistoricalDatum?: Maybe<AssetHistoricalDatum>;
   /** Reads and enables pagination through a set of `Asset`. */
   assets?: Maybe<AssetsConnection>;
+  block?: Maybe<Block>;
   /** Reads and enables pagination through a set of `BlockCompressedDatum`. */
   blockCompressedData?: Maybe<BlockCompressedDataConnection>;
   blockCompressedDatum?: Maybe<BlockCompressedDatum>;
+  /** Reads and enables pagination through a set of `Block`. */
+  blocks?: Maybe<BlocksConnection>;
+  dataStructureType?: Maybe<DataStructureType>;
+  /** Reads and enables pagination through a set of `DataStructureType`. */
+  dataStructureTypes?: Maybe<DataStructureTypesConnection>;
   emaOracle?: Maybe<EmaOracle>;
   /** Reads and enables pagination through a set of `EmaOracle`. */
   emaOracles?: Maybe<EmaOraclesConnection>;
@@ -4458,6 +4399,12 @@ export type QueryAssetsArgs = {
 
 
 /** The root query type which gives access points into the data universe. */
+export type QueryBlockArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
 export type QueryBlockCompressedDataArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -4473,6 +4420,38 @@ export type QueryBlockCompressedDataArgs = {
 /** The root query type which gives access points into the data universe. */
 export type QueryBlockCompressedDatumArgs = {
   id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryBlocksArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<BlockCondition>;
+  filter?: InputMaybe<BlockFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<BlocksOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryDataStructureTypeArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryDataStructureTypesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<DataStructureTypeCondition>;
+  filter?: InputMaybe<DataStructureTypeFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<DataStructureTypesOrderBy>>;
 };
 
 
@@ -4704,7 +4683,6 @@ export type Stableswap = {
   pegs: Scalars['JSON']['output'];
   poolAddress: Scalars['String']['output'];
   poolId: Scalars['Int']['output'];
-  relayBlockHeight: Scalars['Int']['output'];
   /** Reads and enables pagination through a set of `StableswapAssetDatum`. */
   stableswapAssetDataByPoolId: StableswapAssetDataConnection;
 };
@@ -4783,20 +4761,17 @@ export enum StableswapAssetDataGroupBy {
   Balances = 'BALANCES',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
   PoolId = 'POOL_ID',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT',
   Tradable = 'TRADABLE'
 }
 
 export type StableswapAssetDataHavingAverageInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapAssetDataHavingDistinctCountInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `StableswapAssetDatum` aggregates. */
@@ -4817,43 +4792,36 @@ export type StableswapAssetDataHavingInput = {
 export type StableswapAssetDataHavingMaxInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapAssetDataHavingMinInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapAssetDataHavingStddevPopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapAssetDataHavingStddevSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapAssetDataHavingSumInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapAssetDataHavingVariancePopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapAssetDataHavingVarianceSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `StableswapAssetDatum`. */
@@ -4871,8 +4839,6 @@ export enum StableswapAssetDataOrderBy {
   PoolIdDesc = 'POOL_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC',
   TradableAsc = 'TRADABLE_ASC',
   TradableDesc = 'TRADABLE_DESC'
 }
@@ -4886,7 +4852,6 @@ export type StableswapAssetDatum = {
   /** Reads a single `Stableswap` that is related to this `StableswapAssetDatum`. */
   pool?: Maybe<Stableswap>;
   poolId?: Maybe<Scalars['String']['output']>;
-  relayBlockHeight: Scalars['Int']['output'];
   tradable?: Maybe<Scalars['JSON']['output']>;
 };
 
@@ -4919,8 +4884,6 @@ export type StableswapAssetDatumAverageAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -4938,8 +4901,6 @@ export type StableswapAssetDatumCondition = {
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `tradable` field. */
   tradable?: InputMaybe<Scalars['JSON']['input']>;
 };
@@ -4956,8 +4917,6 @@ export type StableswapAssetDatumDistinctCountAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of tradable across the matching connection */
   tradable?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -4980,8 +4939,6 @@ export type StableswapAssetDatumFilter = {
   paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `tradable` field. */
   tradable?: InputMaybe<JsonFilter>;
 };
@@ -4992,8 +4949,6 @@ export type StableswapAssetDatumMaxAggregates = {
   assetId?: Maybe<Scalars['Int']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type StableswapAssetDatumMinAggregates = {
@@ -5002,8 +4957,6 @@ export type StableswapAssetDatumMinAggregates = {
   assetId?: Maybe<Scalars['Int']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type StableswapAssetDatumStddevPopulationAggregates = {
@@ -5012,8 +4965,6 @@ export type StableswapAssetDatumStddevPopulationAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StableswapAssetDatumStddevSampleAggregates = {
@@ -5022,8 +4973,6 @@ export type StableswapAssetDatumStddevSampleAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StableswapAssetDatumSumAggregates = {
@@ -5032,8 +4981,6 @@ export type StableswapAssetDatumSumAggregates = {
   assetId: Scalars['BigInt']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type StableswapAssetDatumVariancePopulationAggregates = {
@@ -5042,8 +4989,6 @@ export type StableswapAssetDatumVariancePopulationAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StableswapAssetDatumVarianceSampleAggregates = {
@@ -5052,8 +4997,6 @@ export type StableswapAssetDatumVarianceSampleAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StableswapAverageAggregates = {
@@ -5074,8 +5017,6 @@ export type StableswapAverageAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -5107,8 +5048,6 @@ export type StableswapCondition = {
   poolAddress?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['Int']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type StableswapDistinctCountAggregates = {
@@ -5137,8 +5076,6 @@ export type StableswapDistinctCountAggregates = {
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
 };
 
 /** A filter to be used against `Stableswap` object types. All fields are combined with a logical ‘and.’ */
@@ -5173,8 +5110,6 @@ export type StableswapFilter = {
   poolAddress?: InputMaybe<StringFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<IntFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
 };
 
 /** Grouping methods for `Stableswap` for usage during aggregation. */
@@ -5189,8 +5124,7 @@ export enum StableswapGroupBy {
   Pegs = 'PEGS',
   PegSources = 'PEG_SOURCES',
   PoolAddress = 'POOL_ADDRESS',
-  PoolId = 'POOL_ID',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT'
+  PoolId = 'POOL_ID'
 }
 
 export type StableswapHavingAverageInput = {
@@ -5202,7 +5136,6 @@ export type StableswapHavingAverageInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapHavingDistinctCountInput = {
@@ -5214,7 +5147,6 @@ export type StableswapHavingDistinctCountInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `Stableswap` aggregates. */
@@ -5241,7 +5173,6 @@ export type StableswapHavingMaxInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapHavingMinInput = {
@@ -5253,7 +5184,6 @@ export type StableswapHavingMinInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapHavingStddevPopulationInput = {
@@ -5265,7 +5195,6 @@ export type StableswapHavingStddevPopulationInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapHavingStddevSampleInput = {
@@ -5277,7 +5206,6 @@ export type StableswapHavingStddevSampleInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapHavingSumInput = {
@@ -5289,7 +5217,6 @@ export type StableswapHavingSumInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapHavingVariancePopulationInput = {
@@ -5301,7 +5228,6 @@ export type StableswapHavingVariancePopulationInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapHavingVarianceSampleInput = {
@@ -5313,7 +5239,6 @@ export type StableswapHavingVarianceSampleInput = {
   maxPegUpdate?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
   poolId?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type StableswapMaxAggregates = {
@@ -5334,8 +5259,6 @@ export type StableswapMaxAggregates = {
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
   /** Maximum of poolId across the matching connection */
   poolId?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type StableswapMinAggregates = {
@@ -5356,8 +5279,6 @@ export type StableswapMinAggregates = {
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
   /** Minimum of poolId across the matching connection */
   poolId?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type StableswapStddevPopulationAggregates = {
@@ -5378,8 +5299,6 @@ export type StableswapStddevPopulationAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StableswapStddevSampleAggregates = {
@@ -5400,8 +5319,6 @@ export type StableswapStddevSampleAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StableswapSumAggregates = {
@@ -5422,8 +5339,6 @@ export type StableswapSumAggregates = {
   paraBlockHeight: Scalars['BigInt']['output'];
   /** Sum of poolId across the matching connection */
   poolId: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type StableswapVariancePopulationAggregates = {
@@ -5444,8 +5359,6 @@ export type StableswapVariancePopulationAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type StableswapVarianceSampleAggregates = {
@@ -5466,8 +5379,6 @@ export type StableswapVarianceSampleAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A connection to a list of `Stableswap` values. */
@@ -5532,8 +5443,6 @@ export enum StableswapsOrderBy {
   PoolIdDesc = 'POOL_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdAverageAssetIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_ASC',
   StableswapAssetDataByPoolIdAverageAssetIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_DESC',
   StableswapAssetDataByPoolIdAverageBalancesAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_BALANCES_ASC',
@@ -5544,8 +5453,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdAverageParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdAveragePoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_ASC',
   StableswapAssetDataByPoolIdAveragePoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdAverageRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdAverageRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdAverageTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_TRADABLE_ASC',
   StableswapAssetDataByPoolIdAverageTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_AVERAGE_TRADABLE_DESC',
   StableswapAssetDataByPoolIdCountAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_COUNT_ASC',
@@ -5560,8 +5467,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdDistinctCountParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdDistinctCountPoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC',
   StableswapAssetDataByPoolIdDistinctCountPoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdDistinctCountRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdDistinctCountRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdDistinctCountTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_TRADABLE_ASC',
   StableswapAssetDataByPoolIdDistinctCountTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_DISTINCT_COUNT_TRADABLE_DESC',
   StableswapAssetDataByPoolIdMaxAssetIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC',
@@ -5574,8 +5479,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdMaxParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MAX_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdMaxPoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_ASC',
   StableswapAssetDataByPoolIdMaxPoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MAX_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdMaxRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MAX_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdMaxRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MAX_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdMaxTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MAX_TRADABLE_ASC',
   StableswapAssetDataByPoolIdMaxTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MAX_TRADABLE_DESC',
   StableswapAssetDataByPoolIdMinAssetIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC',
@@ -5588,8 +5491,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdMinParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MIN_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdMinPoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_ASC',
   StableswapAssetDataByPoolIdMinPoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MIN_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdMinRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MIN_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdMinRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MIN_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdMinTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MIN_TRADABLE_ASC',
   StableswapAssetDataByPoolIdMinTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_MIN_TRADABLE_DESC',
   StableswapAssetDataByPoolIdStddevPopulationAssetIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC',
@@ -5602,8 +5503,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdStddevPopulationParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdStddevPopulationPoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC',
   StableswapAssetDataByPoolIdStddevPopulationPoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdStddevPopulationRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdStddevPopulationRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdStddevPopulationTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_TRADABLE_ASC',
   StableswapAssetDataByPoolIdStddevPopulationTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_POPULATION_TRADABLE_DESC',
   StableswapAssetDataByPoolIdStddevSampleAssetIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC',
@@ -5616,8 +5515,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdStddevSampleParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdStddevSamplePoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC',
   StableswapAssetDataByPoolIdStddevSamplePoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdStddevSampleRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdStddevSampleRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdStddevSampleTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_TRADABLE_ASC',
   StableswapAssetDataByPoolIdStddevSampleTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_STDDEV_SAMPLE_TRADABLE_DESC',
   StableswapAssetDataByPoolIdSumAssetIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_SUM_ASSET_ID_ASC',
@@ -5630,8 +5527,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdSumParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_SUM_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdSumPoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_ASC',
   StableswapAssetDataByPoolIdSumPoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_SUM_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdSumRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_SUM_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdSumRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_SUM_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdSumTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_SUM_TRADABLE_ASC',
   StableswapAssetDataByPoolIdSumTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_SUM_TRADABLE_DESC',
   StableswapAssetDataByPoolIdVariancePopulationAssetIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC',
@@ -5644,8 +5539,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdVariancePopulationParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdVariancePopulationPoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC',
   StableswapAssetDataByPoolIdVariancePopulationPoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdVariancePopulationRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdVariancePopulationRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdVariancePopulationTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_TRADABLE_ASC',
   StableswapAssetDataByPoolIdVariancePopulationTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_POPULATION_TRADABLE_DESC',
   StableswapAssetDataByPoolIdVarianceSampleAssetIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC',
@@ -5658,8 +5551,6 @@ export enum StableswapsOrderBy {
   StableswapAssetDataByPoolIdVarianceSampleParaBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdVarianceSamplePoolIdAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
   StableswapAssetDataByPoolIdVarianceSamplePoolIdDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  StableswapAssetDataByPoolIdVarianceSampleRelayBlockHeightAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  StableswapAssetDataByPoolIdVarianceSampleRelayBlockHeightDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   StableswapAssetDataByPoolIdVarianceSampleTradableAsc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_TRADABLE_ASC',
   StableswapAssetDataByPoolIdVarianceSampleTradableDesc = 'STABLESWAP_ASSET_DATA_BY_POOL_ID_VARIANCE_SAMPLE_TRADABLE_DESC'
 }
@@ -6075,7 +5966,6 @@ export type Xykpool = {
   id: Scalars['String']['output'];
   paraBlockHeight: Scalars['Int']['output'];
   poolAddress: Scalars['String']['output'];
-  relayBlockHeight: Scalars['Int']['output'];
   shareTokenId?: Maybe<Scalars['String']['output']>;
   /** Reads and enables pagination through a set of `XykpoolAssetsDatum`. */
   xykpoolAssetsDataByPoolId: XykpoolAssetsDataConnection;
@@ -6154,20 +6044,17 @@ export enum XykpoolAssetsDataGroupBy {
   AssetId = 'ASSET_ID',
   Balances = 'BALANCES',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
-  PoolId = 'POOL_ID',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT'
+  PoolId = 'POOL_ID'
 }
 
 export type XykpoolAssetsDataHavingAverageInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolAssetsDataHavingDistinctCountInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `XykpoolAssetsDatum` aggregates. */
@@ -6188,43 +6075,36 @@ export type XykpoolAssetsDataHavingInput = {
 export type XykpoolAssetsDataHavingMaxInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolAssetsDataHavingMinInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolAssetsDataHavingStddevPopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolAssetsDataHavingStddevSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolAssetsDataHavingSumInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolAssetsDataHavingVariancePopulationInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolAssetsDataHavingVarianceSampleInput = {
   assetId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `XykpoolAssetsDatum`. */
@@ -6241,9 +6121,7 @@ export enum XykpoolAssetsDataOrderBy {
   PoolIdAsc = 'POOL_ID_ASC',
   PoolIdDesc = 'POOL_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
 export type XykpoolAssetsDatum = {
@@ -6255,7 +6133,6 @@ export type XykpoolAssetsDatum = {
   /** Reads a single `Xykpool` that is related to this `XykpoolAssetsDatum`. */
   pool?: Maybe<Xykpool>;
   poolId?: Maybe<Scalars['String']['output']>;
-  relayBlockHeight: Scalars['Int']['output'];
 };
 
 export type XykpoolAssetsDatumAggregates = {
@@ -6287,8 +6164,6 @@ export type XykpoolAssetsDatumAverageAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /**
@@ -6306,8 +6181,6 @@ export type XykpoolAssetsDatumCondition = {
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolId` field. */
   poolId?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type XykpoolAssetsDatumDistinctCountAggregates = {
@@ -6322,8 +6195,6 @@ export type XykpoolAssetsDatumDistinctCountAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolId across the matching connection */
   poolId?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
 };
 
 /** A filter to be used against `XykpoolAssetsDatum` object types. All fields are combined with a logical ‘and.’ */
@@ -6344,8 +6215,6 @@ export type XykpoolAssetsDatumFilter = {
   paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolId` field. */
   poolId?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
 };
 
 export type XykpoolAssetsDatumMaxAggregates = {
@@ -6354,8 +6223,6 @@ export type XykpoolAssetsDatumMaxAggregates = {
   assetId?: Maybe<Scalars['Int']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type XykpoolAssetsDatumMinAggregates = {
@@ -6364,8 +6231,6 @@ export type XykpoolAssetsDatumMinAggregates = {
   assetId?: Maybe<Scalars['Int']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type XykpoolAssetsDatumStddevPopulationAggregates = {
@@ -6374,8 +6239,6 @@ export type XykpoolAssetsDatumStddevPopulationAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykpoolAssetsDatumStddevSampleAggregates = {
@@ -6384,8 +6247,6 @@ export type XykpoolAssetsDatumStddevSampleAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykpoolAssetsDatumSumAggregates = {
@@ -6394,8 +6255,6 @@ export type XykpoolAssetsDatumSumAggregates = {
   assetId: Scalars['BigInt']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type XykpoolAssetsDatumVariancePopulationAggregates = {
@@ -6404,8 +6263,6 @@ export type XykpoolAssetsDatumVariancePopulationAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykpoolAssetsDatumVarianceSampleAggregates = {
@@ -6414,8 +6271,6 @@ export type XykpoolAssetsDatumVarianceSampleAggregates = {
   assetId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykpoolAverageAggregates = {
@@ -6426,8 +6281,6 @@ export type XykpoolAverageAggregates = {
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
   /** Mean average of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Mean average of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A condition to be used against `Xykpool` object types. All fields are tested for equality and combined with a logical ‘and.’ */
@@ -6442,8 +6295,6 @@ export type XykpoolCondition = {
   paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<Scalars['Int']['input']>;
   /** Checks for equality with the object’s `shareTokenId` field. */
   shareTokenId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -6460,8 +6311,6 @@ export type XykpoolDistinctCountAggregates = {
   paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of poolAddress across the matching connection */
   poolAddress?: Maybe<Scalars['BigInt']['output']>;
-  /** Distinct count of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of shareTokenId across the matching connection */
   shareTokenId?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -6484,8 +6333,6 @@ export type XykpoolFilter = {
   paraBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `poolAddress` field. */
   poolAddress?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `relayBlockHeight` field. */
-  relayBlockHeight?: InputMaybe<IntFilter>;
   /** Filter by the object’s `shareTokenId` field. */
   shareTokenId?: InputMaybe<StringFilter>;
 };
@@ -6496,7 +6343,6 @@ export enum XykpoolGroupBy {
   AssetBId = 'ASSET_B_ID',
   ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
   PoolAddress = 'POOL_ADDRESS',
-  RelayBlockHeight = 'RELAY_BLOCK_HEIGHT',
   ShareTokenId = 'SHARE_TOKEN_ID'
 }
 
@@ -6504,14 +6350,12 @@ export type XykpoolHavingAverageInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolHavingDistinctCountInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `Xykpool` aggregates. */
@@ -6533,49 +6377,42 @@ export type XykpoolHavingMaxInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolHavingMinInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolHavingStddevPopulationInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolHavingStddevSampleInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolHavingSumInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolHavingVariancePopulationInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolHavingVarianceSampleInput = {
   assetAId?: InputMaybe<HavingIntFilter>;
   assetBId?: InputMaybe<HavingIntFilter>;
   paraBlockHeight?: InputMaybe<HavingIntFilter>;
-  relayBlockHeight?: InputMaybe<HavingIntFilter>;
 };
 
 export type XykpoolMaxAggregates = {
@@ -6586,8 +6423,6 @@ export type XykpoolMaxAggregates = {
   assetBId?: Maybe<Scalars['Int']['output']>;
   /** Maximum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Maximum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type XykpoolMinAggregates = {
@@ -6598,8 +6433,6 @@ export type XykpoolMinAggregates = {
   assetBId?: Maybe<Scalars['Int']['output']>;
   /** Minimum of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['Int']['output']>;
-  /** Minimum of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['Int']['output']>;
 };
 
 export type XykpoolStddevPopulationAggregates = {
@@ -6610,8 +6443,6 @@ export type XykpoolStddevPopulationAggregates = {
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykpoolStddevSampleAggregates = {
@@ -6622,8 +6453,6 @@ export type XykpoolStddevSampleAggregates = {
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample standard deviation of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample standard deviation of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykpoolSumAggregates = {
@@ -6634,8 +6463,6 @@ export type XykpoolSumAggregates = {
   assetBId: Scalars['BigInt']['output'];
   /** Sum of paraBlockHeight across the matching connection */
   paraBlockHeight: Scalars['BigInt']['output'];
-  /** Sum of relayBlockHeight across the matching connection */
-  relayBlockHeight: Scalars['BigInt']['output'];
 };
 
 export type XykpoolVariancePopulationAggregates = {
@@ -6646,8 +6473,6 @@ export type XykpoolVariancePopulationAggregates = {
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
   /** Population variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Population variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 export type XykpoolVarianceSampleAggregates = {
@@ -6658,8 +6483,6 @@ export type XykpoolVarianceSampleAggregates = {
   assetBId?: Maybe<Scalars['BigFloat']['output']>;
   /** Sample variance of paraBlockHeight across the matching connection */
   paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
-  /** Sample variance of relayBlockHeight across the matching connection */
-  relayBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
 };
 
 /** A connection to a list of `Xykpool` values. */
@@ -6710,8 +6533,6 @@ export enum XykpoolsOrderBy {
   PoolAddressDesc = 'POOL_ADDRESS_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RelayBlockHeightAsc = 'RELAY_BLOCK_HEIGHT_ASC',
-  RelayBlockHeightDesc = 'RELAY_BLOCK_HEIGHT_DESC',
   ShareTokenIdAsc = 'SHARE_TOKEN_ID_ASC',
   ShareTokenIdDesc = 'SHARE_TOKEN_ID_DESC',
   XykpoolAssetsDataByPoolIdAverageAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_ASSET_ID_ASC',
@@ -6724,8 +6545,6 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdAverageParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdAveragePoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_POOL_ID_ASC',
   XykpoolAssetsDataByPoolIdAveragePoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdAverageRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdAverageRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_AVERAGE_RELAY_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdCountAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_COUNT_ASC',
   XykpoolAssetsDataByPoolIdCountDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_COUNT_DESC',
   XykpoolAssetsDataByPoolIdDistinctCountAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_ASSET_ID_ASC',
@@ -6738,8 +6557,6 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdDistinctCountParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdDistinctCountPoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_ASC',
   XykpoolAssetsDataByPoolIdDistinctCountPoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdDistinctCountRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdDistinctCountRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_DISTINCT_COUNT_RELAY_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdMaxAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MAX_ASSET_ID_ASC',
   XykpoolAssetsDataByPoolIdMaxAssetIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MAX_ASSET_ID_DESC',
   XykpoolAssetsDataByPoolIdMaxBalancesAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MAX_BALANCES_ASC',
@@ -6750,8 +6567,6 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdMaxParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MAX_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdMaxPoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MAX_POOL_ID_ASC',
   XykpoolAssetsDataByPoolIdMaxPoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MAX_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdMaxRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MAX_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdMaxRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MAX_RELAY_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdMinAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MIN_ASSET_ID_ASC',
   XykpoolAssetsDataByPoolIdMinAssetIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MIN_ASSET_ID_DESC',
   XykpoolAssetsDataByPoolIdMinBalancesAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MIN_BALANCES_ASC',
@@ -6762,8 +6577,6 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdMinParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MIN_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdMinPoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MIN_POOL_ID_ASC',
   XykpoolAssetsDataByPoolIdMinPoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MIN_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdMinRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MIN_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdMinRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_MIN_RELAY_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdStddevPopulationAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_ASC',
   XykpoolAssetsDataByPoolIdStddevPopulationAssetIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_ASSET_ID_DESC',
   XykpoolAssetsDataByPoolIdStddevPopulationBalancesAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_BALANCES_ASC',
@@ -6774,8 +6587,6 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdStddevPopulationParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdStddevPopulationPoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_ASC',
   XykpoolAssetsDataByPoolIdStddevPopulationPoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdStddevPopulationRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdStddevPopulationRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdStddevSampleAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_ASC',
   XykpoolAssetsDataByPoolIdStddevSampleAssetIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_ASSET_ID_DESC',
   XykpoolAssetsDataByPoolIdStddevSampleBalancesAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_BALANCES_ASC',
@@ -6786,8 +6597,6 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdStddevSampleParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdStddevSamplePoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_ASC',
   XykpoolAssetsDataByPoolIdStddevSamplePoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdStddevSampleRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdStddevSampleRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_STDDEV_SAMPLE_RELAY_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdSumAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_SUM_ASSET_ID_ASC',
   XykpoolAssetsDataByPoolIdSumAssetIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_SUM_ASSET_ID_DESC',
   XykpoolAssetsDataByPoolIdSumBalancesAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_SUM_BALANCES_ASC',
@@ -6798,8 +6607,6 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdSumParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_SUM_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdSumPoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_SUM_POOL_ID_ASC',
   XykpoolAssetsDataByPoolIdSumPoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_SUM_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdSumRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_SUM_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdSumRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_SUM_RELAY_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdVariancePopulationAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_ASC',
   XykpoolAssetsDataByPoolIdVariancePopulationAssetIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_ASSET_ID_DESC',
   XykpoolAssetsDataByPoolIdVariancePopulationBalancesAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_BALANCES_ASC',
@@ -6810,8 +6617,6 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdVariancePopulationParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdVariancePopulationPoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_ASC',
   XykpoolAssetsDataByPoolIdVariancePopulationPoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdVariancePopulationRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdVariancePopulationRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_POPULATION_RELAY_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdVarianceSampleAssetIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_ASC',
   XykpoolAssetsDataByPoolIdVarianceSampleAssetIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_ASSET_ID_DESC',
   XykpoolAssetsDataByPoolIdVarianceSampleBalancesAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_BALANCES_ASC',
@@ -6821,9 +6626,7 @@ export enum XykpoolsOrderBy {
   XykpoolAssetsDataByPoolIdVarianceSampleParaBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_ASC',
   XykpoolAssetsDataByPoolIdVarianceSampleParaBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_PARA_BLOCK_HEIGHT_DESC',
   XykpoolAssetsDataByPoolIdVarianceSamplePoolIdAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_ASC',
-  XykpoolAssetsDataByPoolIdVarianceSamplePoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
-  XykpoolAssetsDataByPoolIdVarianceSampleRelayBlockHeightAsc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_ASC',
-  XykpoolAssetsDataByPoolIdVarianceSampleRelayBlockHeightDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_RELAY_BLOCK_HEIGHT_DESC'
+  XykpoolAssetsDataByPoolIdVarianceSamplePoolIdDesc = 'XYKPOOL_ASSETS_DATA_BY_POOL_ID_VARIANCE_SAMPLE_POOL_ID_DESC'
 }
 
 export type _ProcessorStatus = {
@@ -6853,7 +6656,7 @@ export type GetLbppoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetLbppoolBlocksStorageStateQuery = { __typename?: 'Query', lbppools?: { __typename?: 'LbppoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Lbppool', id: string, assetAId: number, assetBId: number, fee: Array<number | null>, start?: number | null, end?: number | null, weightCurve: string, initialWeight: number, finalWeight: number, feeCollector?: string | null, repayTarget: any, poolAddress: string, owner: string, lbppoolAssetsDataByPoolId: { __typename?: 'LbppoolAssetsDataConnection', nodes: Array<{ __typename?: 'LbppoolAssetsDatum', id: string, assetId: number, poolId?: string | null, balances: any, paraBlockHeight: number } | null> } } | null> } | null };
+export type GetLbppoolBlocksStorageStateQuery = { __typename?: 'Query', lbppools?: { __typename?: 'LbppoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Lbppool', id: string, assetAId: number, assetBId: number, fee: Array<number | null>, start?: number | null, end?: number | null, weightCurve: string, initialWeight: number, finalWeight: number, feeCollector?: string | null, repayTarget: string, poolAddress: string, owner: string, lbppoolAssetsDataByPoolId: { __typename?: 'LbppoolAssetsDataConnection', nodes: Array<{ __typename?: 'LbppoolAssetsDatum', id: string, assetId: number, poolId?: string | null, balances: any, paraBlockHeight: number } | null> } } | null> } | null };
 
 export type GetXykpoolBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<XykpoolFilter>;
@@ -6883,7 +6686,7 @@ export type GetAavePoolBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetAavePoolBlocksStorageStateQuery = { __typename?: 'Query', aavepools?: { __typename?: 'AavepoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Aavepool', id: string, aTokenId?: string | null, reserveAssetId?: string | null, liquidityIn: any, liquidityOut: any, paraBlockHeight: number, poolId: string } | null> } | null };
+export type GetAavePoolBlocksStorageStateQuery = { __typename?: 'Query', aavepools?: { __typename?: 'AavepoolsConnection', totalCount: number, nodes: Array<{ __typename?: 'Aavepool', id: string, aTokenId?: string | null, reserveAssetId?: string | null, liquidityIn: string, liquidityOut: string, paraBlockHeight: number, poolId: string } | null> } | null };
 
 export type GetEmaOracleBlocksStorageStateQueryVariables = Exact<{
   filter?: InputMaybe<EmaOracleFilter>;
@@ -6903,7 +6706,7 @@ export type GetAssetHistDataBlocksStorageStateQueryVariables = Exact<{
 }>;
 
 
-export type GetAssetHistDataBlocksStorageStateQuery = { __typename?: 'Query', assetHistoricalData?: { __typename?: 'AssetHistoricalDataConnection', totalCount: number, nodes: Array<{ __typename?: 'AssetHistoricalDatum', id: string, assetId?: string | null, dynamicFee?: any | null, existentialDeposit: any, totalIssuance: any, paraBlockHeight: number } | null> } | null };
+export type GetAssetHistDataBlocksStorageStateQuery = { __typename?: 'Query', assetHistoricalData?: { __typename?: 'AssetHistoricalDataConnection', totalCount: number, nodes: Array<{ __typename?: 'AssetHistoricalDatum', id: string, assetId?: string | null, dynamicFee?: any | null, existentialDeposit: string, totalIssuance: string, paraBlockHeight: number } | null> } | null };
 
 export type GetBlockCompressedDataQueryVariables = Exact<{
   filter?: InputMaybe<BlockCompressedDatumFilter>;

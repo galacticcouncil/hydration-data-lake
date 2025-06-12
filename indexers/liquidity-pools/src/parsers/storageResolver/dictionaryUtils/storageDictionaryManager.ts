@@ -12,6 +12,7 @@ import {
   GetBlockCompressedDataQueryVariables,
   InputMaybe,
   Lbppool as LbpPoolGlq,
+  MinifiedDataStructureTypeName,
   Omnipool as OmnipoolGql,
   Stableswap as StableswapGql,
   Xykpool as XykpoolGlq,
@@ -68,6 +69,7 @@ import {
   encodeBlockCompressedData,
 } from './helpers/blockCompressedDataHandler';
 import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
+import { MinifiedDataStructureManager } from './helpers/minifiedDataStructureManager';
 
 export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
   ? XykpoolGlq
@@ -910,7 +912,11 @@ export class StorageDictionaryManager extends QueriesHelper {
       (asset) => asset?.assetId.toString() === assetId.toString()
     );
     if (!assetInfo || !assetInfo.balances) return null;
-    const balances = assetInfo.balances as AccountBalancesGql;
+    // const balances = assetInfo.balances as AccountBalancesGql;
+    const balances =
+      MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.AccountBalances>(
+        assetInfo.balances
+      );
     return {
       free: BigInt(balances.free ?? 0),
       reserved: BigInt(balances.reserved ?? 0),
@@ -961,10 +967,9 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     const { hubAssetTradability } = node;
 
-    // @ts-ignore
     return {
       poolAddress,
-    };
+    } as OmnipoolData;
   }
 
   getOmnipoolHubAssetTradability({
@@ -1020,7 +1025,11 @@ export class StorageDictionaryManager extends QueriesHelper {
     );
     if (!asset) return null;
 
-    const { balances } = asset;
+    // const { balances } = asset;
+    const balances =
+      MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.AccountBalances>(
+        asset.balances
+      );
 
     return {
       free: BigInt(balances.free ?? 0),
@@ -1046,14 +1055,18 @@ export class StorageDictionaryManager extends QueriesHelper {
     );
     if (!asset) return null;
 
-    const { assetState } = asset;
+    // const { assetState } = asset;
+    const assetState =
+      MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.OmnipoolAssetState>(
+        asset.assetState
+      );
 
     return {
       hubReserve: BigInt(assetState.hubReserve ?? 0),
       shares: BigInt(assetState.shares ?? 0),
       protocolShares: BigInt(assetState.protocolShares ?? 0),
       cap: BigInt(assetState.cap ?? 0),
-      tradable: { bits: assetState.tradable.bits ?? 0 },
+      tradable: { bits: assetState.tradable?.bits ?? 0 },
     };
   }
 
@@ -1147,7 +1160,12 @@ export class StorageDictionaryManager extends QueriesHelper {
     );
     if (!asset) return null;
 
-    const { balances } = asset;
+    // const { balances } = asset;
+
+    const balances =
+      MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.AccountBalances>(
+        asset.balances
+      );
 
     return {
       free: BigInt(balances.free ?? 0),
@@ -1195,7 +1213,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       weightCurve: { __kind: weightCurve },
       fee: [fee[0]!, fee[1]!],
       feeCollector: feeCollector!,
-      repayTarget,
+      repayTarget: BigInt(repayTarget ?? 0),
     };
   }
 
@@ -1214,7 +1232,11 @@ export class StorageDictionaryManager extends QueriesHelper {
     );
     if (!asset) return null;
 
-    const { balances } = asset;
+    // const { balances } = asset;
+    const balances =
+      MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.AccountBalances>(
+        asset.balances
+      );
 
     return {
       free: BigInt(balances.free ?? 0),
@@ -1293,11 +1315,16 @@ export class StorageDictionaryManager extends QueriesHelper {
         .map(([key, data]) => {
           if (!data.dynamicFee) return null;
 
+          const dynamicFeeEncoded =
+            MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.AssetDynamicFee>(
+              data.dynamicFee
+            );
+
           return {
             assetId: +data.assetId!,
-            assetFee: +data.dynamicFee.assetFee,
-            protocolFee: +data.dynamicFee.protocolFee,
-            timestamp: +data.dynamicFee.timestamp,
+            assetFee: dynamicFeeEncoded.assetFee,
+            protocolFee: dynamicFeeEncoded.protocolFee,
+            timestamp: dynamicFeeEncoded.timestamp,
           };
         })
         .filter((item) => item !== null) as AssetDynamicFeeData[]
