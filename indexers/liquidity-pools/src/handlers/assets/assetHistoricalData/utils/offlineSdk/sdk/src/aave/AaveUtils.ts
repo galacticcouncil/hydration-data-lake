@@ -1,30 +1,34 @@
 import { AaveClient } from './AaveClient';
-import { AaveCtx, AaveReserveCtx } from './types';
+import { AaveSummary, AaveReserveData } from './types';
 
 import { H160 } from '../utils/h160';
 import { ERC20 } from '../utils/erc20';
-
 import { bnum, BigNumber, ZERO, scale } from '../utils/bignumber';
+
+import { EvmClient } from '../evm';
 import { Amount } from '../types';
 
 const RAY = bnum('1e27');
 const TARGET_WITHDRAW_HF = bnum('1.01');
+const SECONDS_PER_YEAR = bnum('31536000');
 
 export class AaveUtils {
-  private client: AaveClient;
+  readonly client: AaveClient;
 
-  constructor() {
-    this.client = new AaveClient();
+  constructor(evm: EvmClient) {
+    this.client = new AaveClient(evm);
   }
 
-  async loadAaveCtx(user: string): Promise<AaveCtx> {
+  async getSummary(user: string): Promise<AaveSummary> {
     const to = H160.fromAny(user);
 
-    const [poolReserves, userReserves, userData] = await Promise.all([
-      this.client.getReservesData(),
-      this.client.getUserReservesData(to),
-      this.client.getUserAccountData(to),
-    ]);
+    const [poolReserves, userReserves, userData, blockTimestamp] =
+      await Promise.all([
+        this.client.getReservesData(),
+        this.client.getUserReservesData(to),
+        this.client.getUserAccountData(to),
+        this.client.getBlockTimestamp(),
+      ]);
 
     const [pReserves] = poolReserves;
     const [uReserves, userEmodeCategoryId] = userReserves;
@@ -44,7 +48,7 @@ export class AaveUtils {
     const totalCollateral = bnum(totalCollateralBase);
     const totalDebt = bnum(totalDebtBase);
 
-    const reserves: AaveReserveCtx[] = [];
+    const reserves: AaveReserveData[] = [];
 
     for (const uReserve of uReserves) {
       const reserveAsset = uReserve.underlyingAsset.toLowerCase();
@@ -58,10 +62,23 @@ export class AaveUtils {
 
       const scaledABalance = bnum(uReserve.scaledATokenBalance);
       const liquidityIndex = bnum(pReserve.liquidityIndex);
+      const liquidityRate = bnum(pReserve.liquidityRate);
       const priceInRef = bnum(pReserve.priceInMarketReferenceCurrency);
 
+      const nextBlockTimestamp = blockTimestamp + 6; // adding 6 sec (blocktime)
+      const linearInterest = this.calculateLinearInterest(
+        liquidityRate,
+        pReserve.lastUpdateTimestamp,
+        nextBlockTimestamp
+      );
+
+      const currLiquidityIndex = liquidityIndex
+        .multipliedBy(linearInterest)
+        .dividedBy(RAY)
+        .decimalPlaces(0, BigNumber.ROUND_DOWN);
+
       const aTokenBalance = scaledABalance
-        .multipliedBy(liquidityIndex)
+        .multipliedBy(currLiquidityIndex)
         .dividedBy(RAY)
         .decimalPlaces(0, BigNumber.ROUND_DOWN);
 
@@ -95,6 +112,20 @@ export class AaveUtils {
       totalDebt: totalDebt,
       reserves: reserves,
     };
+  }
+
+  /**
+   * Check if user has active borrow positions
+   *
+   * @param user - user address
+   * @returns true if user has debt, otherwise false
+   */
+  async hasBorrowPositions(user: string): Promise<boolean> {
+    const to = H160.fromAny(user);
+    const userData = await this.client.getUserAccountData(to);
+    const [_totalCollateralBase, totalDebtBase] = userData;
+    // @ts-ignore
+    return totalDebtBase > 0n;
   }
 
   /**
@@ -136,7 +167,7 @@ export class AaveUtils {
     withdrawAmount: string
   ): Promise<number> {
     const { totalCollateral, totalDebt, reserves } =
-      await this.loadAaveCtx(user);
+      await this.getSummary(user);
 
     const reserveAsset = ERC20.fromAssetId(reserve);
     const reserveCtx = reserves.find((r) => r.reserveAsset === reserveAsset);
@@ -187,7 +218,7 @@ export class AaveUtils {
     supplyAmount: string
   ): Promise<number> {
     const { totalCollateral, totalDebt, reserves } =
-      await this.loadAaveCtx(user);
+      await this.getSummary(user);
 
     const reserveAsset = ERC20.fromAssetId(reserve);
     const reserveCtx = reserves.find((r) => r.reserveAsset === reserveAsset);
@@ -230,7 +261,7 @@ export class AaveUtils {
    */
   async getMaxWithdraw(user: string, reserve: string): Promise<Amount> {
     const { totalCollateral, totalDebt, reserves } =
-      await this.loadAaveCtx(user);
+      await this.getSummary(user);
 
     const reserveAsset = ERC20.fromAssetId(reserve);
     const reserveCtx = reserves.find((r) => r.reserveAsset === reserveAsset);
@@ -248,7 +279,7 @@ export class AaveUtils {
    */
   async getMaxWithdrawAll(user: string): Promise<Record<number, Amount>> {
     const { totalCollateral, totalDebt, reserves } =
-      await this.loadAaveCtx(user);
+      await this.getSummary(user);
 
     const result: Record<number, Amount> = {};
 
@@ -267,7 +298,7 @@ export class AaveUtils {
   }
 
   private calculateWithdrawMax(
-    reserve: AaveReserveCtx,
+    reserve: AaveReserveData,
     totalCollateral: BigNumber,
     totalDebt: BigNumber
   ) {
@@ -303,5 +334,22 @@ export class AaveUtils {
       amount: maxWithdrawable,
       decimals,
     } as Amount;
+  }
+
+  private calculateLinearInterest(
+    liquidityRate: BigNumber,
+    lastUpdateTimestamp: number,
+    currentTimestamp: number
+  ): BigNumber {
+    const delta = currentTimestamp - lastUpdateTimestamp;
+    if (delta <= 0) return RAY;
+
+    const linearAccumulation = liquidityRate
+      .multipliedBy(delta)
+      .dividedBy(SECONDS_PER_YEAR)
+      .plus(RAY)
+      .decimalPlaces(0, BigNumber.ROUND_DOWN);
+
+    return linearAccumulation;
   }
 }

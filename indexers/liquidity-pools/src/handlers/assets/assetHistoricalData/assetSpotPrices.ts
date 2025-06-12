@@ -102,12 +102,20 @@ async function processAssetSpotPrices({
         continue;
 
       try {
-        const [price, route] = await Promise.all([
-          router.getBestSpotPrice(asset.assetRegistryId, assetOutId),
-          router.getMostLiquidRoute(asset.assetRegistryId, assetOutId),
-        ]);
+        // const [price, route] = await Promise.all([
+        //   router.getBestSpotPrice(asset.assetRegistryId, assetOutId),
+        //   router.getMostLiquidRoute(asset.assetRegistryId, assetOutId),
+        // ]);
 
-        if (!price) continue;
+        const priceWithRoute = await router.getBestSpotPriceWitRoute(
+          asset.assetRegistryId,
+          assetOutId
+        );
+
+        // if (!price) continue;
+        if (!priceWithRoute) continue;
+
+        const { price, route } = priceWithRoute;
 
         const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 

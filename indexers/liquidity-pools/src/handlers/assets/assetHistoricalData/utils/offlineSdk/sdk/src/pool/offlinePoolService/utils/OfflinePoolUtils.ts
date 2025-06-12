@@ -17,10 +17,10 @@ import {
 } from '../types';
 import { PoolBase, PoolFee, PoolToken, PoolType } from '../../types';
 import { StableMath, StableSwapBase } from '../../stable';
-import { toPoolFee } from '../../../utils/mapper';
 import { OmniPoolBase, OmniPoolToken } from '../../omni';
 import { LbpPoolBase, WeightedPoolToken, LbpMath } from '../../lbp';
 import { StableSwapOfflineUtils } from './StableSwapOfflineUtils';
+import { FeeUtils } from '../../../utils/fee';
 
 export class OfflinePoolUtils {
   private static readonly MAX_FINAL_WEIGHT = scale(bnum(100), 6);
@@ -369,7 +369,7 @@ export class OfflinePoolUtils {
       id,
       address,
       type,
-      fee: toPoolFee(fee),
+      fee: FeeUtils.fromPermill(fee),
       maxInRatio,
       maxOutRatio,
       minTradingLimit,

@@ -36,9 +36,9 @@ export class AssetOfflineClient {
   }
 
   getOnChainAssets(includeInvalid?: boolean): PersistentAsset[] {
-    const supportedAssets = this.getSupportedAssets([
-      ...this.persistentAssets.values(),
-    ]);
+    const supportedAssets = this.getSupportedAssets(
+      Array.from(this.persistentAssets.values())
+    );
 
     return includeInvalid
       ? supportedAssets

@@ -1,3 +1,4 @@
+import { memoize1 } from '@thi.ng/memoize';
 import { PoolNotFound } from '../../errors';
 
 import { IOfflinePoolServiceDataSource, PersistentAsset } from './types';

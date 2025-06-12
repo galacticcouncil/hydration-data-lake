@@ -6,12 +6,12 @@ import {
   PersistentAsset,
 } from '../types';
 import { AMOUNT_MAX, StableMath, StableSwapBase } from '../../stable';
-import { toPoolFee } from '../../../utils/mapper';
 import { Asset } from '../../../types';
 import { OfflinePoolUtils } from './OfflinePoolUtils';
 import { BigNumber } from '../../../utils/bignumber';
 import { TRADEABLE_DEFAULT } from '../../../consts';
 import { PoolFee, PoolToken } from '../../types';
+import { FeeUtils } from '../../../utils/fee';
 
 export class StableSwapOfflineUtils {
   static getStableswapPegsFromPersistentData({
@@ -53,7 +53,7 @@ export class StableSwapOfflineUtils {
 
     const updatedFeePermill = Number(updatedFee) * 10000;
     return {
-      pegsFee: toPoolFee(updatedFeePermill),
+      pegsFee: FeeUtils.fromPermill(updatedFeePermill),
       pegs: updatedPegs,
     };
   }
@@ -68,7 +68,7 @@ export class StableSwapOfflineUtils {
     const defaultFee = poolFee;
     const defaultPegs = StableMath.defaultPegs(assets.length);
     return {
-      pegsFee: toPoolFee(defaultFee),
+      pegsFee: FeeUtils.fromPermill(defaultFee),
       pegs: defaultPegs,
     };
   }

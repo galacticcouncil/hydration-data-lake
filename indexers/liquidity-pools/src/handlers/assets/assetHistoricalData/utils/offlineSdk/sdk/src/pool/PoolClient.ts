@@ -5,12 +5,17 @@ import { UnsubscribePromise } from '@polkadot/api-base/types';
 // import { TLRUCache } from '@thi.ng/cache';
 
 import { BalanceClient } from '../client';
+import { EvmClient } from '../evm';
+import { MmOracleClient } from '../mm';
 import { Asset } from '../types';
 import { BigNumber } from '../utils/bignumber';
 
 import { PoolBase, PoolFees, PoolPair, PoolType } from './types';
 
 export abstract class PoolClient extends BalanceClient {
+  protected evm: EvmClient;
+  protected mmOracle: MmOracleClient;
+
   protected pools: PoolBase[] = [];
   protected subs: UnsubscribePromise[] = [];
 
@@ -20,7 +25,7 @@ export abstract class PoolClient extends BalanceClient {
   // @ts-ignore
   private memPoolsCache = new TLRUCache<number, Promise<PoolBase[]>>(null, {
     maxlen: 1,
-    ttl: 60 * 60 * 1000,
+    ttl: 1 * 60 * 60 * 1000,
     // @ts-ignore
     release: (mem) => {
       if (this.mem > mem) {
@@ -35,8 +40,10 @@ export abstract class PoolClient extends BalanceClient {
     return this.getPools();
   }, this.memPoolsCache);
 
-  constructor(api: ApiPromise) {
+  constructor(api: ApiPromise, evm: EvmClient) {
     super(api);
+    this.evm = evm;
+    this.mmOracle = new MmOracleClient(evm);
   }
 
   abstract isSupported(): boolean;
@@ -145,16 +152,16 @@ export abstract class PoolClient extends BalanceClient {
     const isNotStableswap = (p: PoolBase, t: string) => p.id !== t;
     return this.subscribeTokenBalance(
       pool.address,
-      pool.tokens,
       this.updateBalancesCallback(pool, isNotStableswap)
     );
   }
 
   private subscribeErc20PoolBalance(pool: PoolBase): UnsubscribePromise {
+    const ids = pool.tokens.filter((t) => t.type === 'Erc20').map((t) => t.id);
     return this.subscribeErc20Balance(
       pool.address,
-      pool.tokens,
-      this.updateBalancesCallback(pool, () => true)
+      this.updateBalancesCallback(pool, () => true),
+      ids
     );
   }
 

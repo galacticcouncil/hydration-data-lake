@@ -8,8 +8,8 @@ import {
 } from '../types';
 import { PoolFees, PoolPair, PoolType } from '../../types';
 import { HUB_ASSET_ID, SYSTEM_ASSET_ID } from '../../../consts';
-import { toPct, toPoolFee } from '../../../utils/mapper';
 import { OmniPoolFees, OmniMath } from '../../omni';
+import { FeeUtils } from '../../../utils/fee';
 
 type OmniPoolFeeRange = [number, number, number];
 
@@ -82,10 +82,10 @@ export class OmniPoolOfflineClient extends OfflinePoolClient {
     const max = assetFeeMax + protocolFeeMax;
 
     return {
-      assetFee: toPoolFee(assetFee),
-      protocolFee: toPoolFee(protocolFee),
-      min: toPoolFee(min),
-      max: toPoolFee(max),
+      assetFee: FeeUtils.fromPermill(assetFee),
+      protocolFee: FeeUtils.fromPermill(protocolFee),
+      min: FeeUtils.fromPermill(min),
+      max: FeeUtils.fromPermill(max),
     } as OmniPoolFees;
   }
 
@@ -124,8 +124,8 @@ export class OmniPoolOfflineClient extends OfflinePoolClient {
     const { minFee, maxFee, decay, amplification } =
       this.constants.dynamicFeesAssetFeeParameters;
 
-    const feeMin = toPoolFee(minFee);
-    const feeMax = toPoolFee(maxFee);
+    const feeMin = FeeUtils.fromPermill(minFee);
+    const feeMax = FeeUtils.fromPermill(maxFee);
 
     if (!dynamicFee || !oracleEntry) {
       return [minFee, minFee, maxFee];
@@ -145,17 +145,17 @@ export class OmniPoolOfflineClient extends OfflinePoolClient {
       oracleLiquidity = oracleEntry.liquidity.a;
     }
 
-    const feePrev = toPoolFee(assetFee);
+    const feePrev = FeeUtils.fromPermill(assetFee);
     const fee = OmniMath.recalculateAssetFee(
       oracleAmountIn,
       oracleAmountOut,
       oracleLiquidity,
       '9',
       balanceOut.toString(),
-      toPct(feePrev).toString(),
+      FeeUtils.toPct(feePrev).toString(),
       blockDifference.toString(),
-      toPct(feeMin).toString(),
-      toPct(feeMax).toString(),
+      FeeUtils.toPct(feeMin).toString(),
+      FeeUtils.toPct(feeMax).toString(),
       decay.toString(),
       amplification.toString()
     );
@@ -173,8 +173,8 @@ export class OmniPoolOfflineClient extends OfflinePoolClient {
     const { minFee, maxFee, decay, amplification } =
       this.constants.dynamicFeesProtocolFeeParameters;
 
-    const feeMin = toPoolFee(minFee);
-    const feeMax = toPoolFee(maxFee);
+    const feeMin = FeeUtils.fromPermill(minFee);
+    const feeMax = FeeUtils.fromPermill(maxFee);
 
     if (!dynamicFee || !oracleEntry) {
       return [minFee, minFee, maxFee];
@@ -194,17 +194,17 @@ export class OmniPoolOfflineClient extends OfflinePoolClient {
       oracleLiquidity = oracleEntry.liquidity.a.toString();
     }
 
-    const feePrev = toPoolFee(protocolFee);
+    const feePrev = FeeUtils.fromPermill(protocolFee);
     const fee = OmniMath.recalculateProtocolFee(
       oracleAmountIn,
       oracleAmountOut,
       oracleLiquidity,
       '9',
       balanceIn.toString(),
-      toPct(feePrev).toString(),
+      FeeUtils.toPct(feePrev).toString(),
       blockDifference.toString(),
-      toPct(feeMin).toString(),
-      toPct(feeMax).toString(),
+      FeeUtils.toPct(feeMin).toString(),
+      FeeUtils.toPct(feeMax).toString(),
       decay.toString(),
       amplification.toString()
     );
