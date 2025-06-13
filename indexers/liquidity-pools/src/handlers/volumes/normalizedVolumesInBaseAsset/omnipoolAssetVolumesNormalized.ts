@@ -9,9 +9,9 @@ export function processOmnipoolAssetNormalizedVolumes({
   blockNumbersToProcess?: number[];
   ctx: SqdProcessorContext<Store>;
 }) {
-  let omnipoolAssetHistVolsByBatchList = [
-    ...ctx.batchState.state.omnipoolAssetVolumes.values(),
-  ];
+  let omnipoolAssetHistVolsByBatchList = Array.from(
+    ctx.batchState.state.omnipoolAssetVolumes.values()
+  );
 
   if (blockNumbersToProcess) {
     const blockNumbersToProcessSet = new Set(blockNumbersToProcess);

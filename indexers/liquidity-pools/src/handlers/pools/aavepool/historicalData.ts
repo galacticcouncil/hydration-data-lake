@@ -82,7 +82,7 @@ export async function handleAavepoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save([
-    ...ctx.batchState.state.aavePoolsHistoricalData.values(),
-  ]);
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.aavePoolsHistoricalData.values())
+  );
 }

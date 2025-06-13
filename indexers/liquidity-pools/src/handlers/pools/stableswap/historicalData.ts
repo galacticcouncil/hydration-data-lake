@@ -258,10 +258,10 @@ export async function handleStableswapHistoricalData(
     }
   }
 
-  await ctx.store.save([
-    ...ctx.batchState.state.stablepoolAllHistoricalData.values(),
-  ]);
-  await ctx.store.save([
-    ...ctx.batchState.state.stablepoolAssetsAllHistoricalData.values(),
-  ]);
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
+  );
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values())
+  );
 }

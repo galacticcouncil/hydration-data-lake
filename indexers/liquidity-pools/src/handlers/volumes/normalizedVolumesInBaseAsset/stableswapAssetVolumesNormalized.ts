@@ -10,9 +10,9 @@ export function processStableswapAssetNormalizedVolumes({
   blockNumbersToProcess?: number[];
   ctx: SqdProcessorContext<Store>;
 }) {
-  let stableswapAssetHistVolsByBatchList = [
-    ...ctx.batchState.state.stablepoolAssetVolumes.values(),
-  ];
+  let stableswapAssetHistVolsByBatchList = Array.from(
+    ctx.batchState.state.stablepoolAssetVolumes.values()
+  );
 
   if (blockNumbersToProcess) {
     const blockNumbersToProcessSet = new Set(blockNumbersToProcess);

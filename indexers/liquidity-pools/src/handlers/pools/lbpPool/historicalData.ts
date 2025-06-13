@@ -154,7 +154,7 @@ export async function handleLbppoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save([
-    ...ctx.batchState.state.lbpPoolAllHistoricalData.values(),
-  ]);
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values())
+  );
 }

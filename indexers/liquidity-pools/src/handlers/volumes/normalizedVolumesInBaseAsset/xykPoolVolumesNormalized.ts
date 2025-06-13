@@ -9,9 +9,9 @@ export function processXykPoolsNormalizedVolumes({
   blockNumbersToProcess?: number[];
   ctx: SqdProcessorContext<Store>;
 }) {
-  let xykPoolHistVolsByBatchList = [
-    ...ctx.batchState.state.xykPoolVolumes.values(),
-  ];
+  let xykPoolHistVolsByBatchList = Array.from(
+    ctx.batchState.state.xykPoolVolumes.values()
+  );
 
   if (blockNumbersToProcess) {
     const blockNumbersToProcessSet = new Set(blockNumbersToProcess);

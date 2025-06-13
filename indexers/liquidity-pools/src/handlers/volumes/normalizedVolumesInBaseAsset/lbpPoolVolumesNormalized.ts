@@ -9,9 +9,9 @@ export function processLbpPoolsNormalizedVolumes({
   blockNumbersToProcess?: number[];
   ctx: SqdProcessorContext<Store>;
 }) {
-  let lbpPoolHistVolsByBatchList = [
-    ...ctx.batchState.state.lbpPoolVolumes.values(),
-  ];
+  let lbpPoolHistVolsByBatchList = Array.from(
+    ctx.batchState.state.lbpPoolVolumes.values()
+  );
 
   if (blockNumbersToProcess) {
     const blockNumbersToProcessSet = new Set(blockNumbersToProcess);

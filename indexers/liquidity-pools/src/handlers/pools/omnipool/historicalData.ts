@@ -165,10 +165,10 @@ export async function handleOmnipoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save([
-    ...ctx.batchState.state.omnipoolAllHistoricalData.values(),
-  ]);
-  await ctx.store.save([
-    ...ctx.batchState.state.omnipoolAssetAllHistoricalData.values(),
-  ]);
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
+  );
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values())
+  );
 }

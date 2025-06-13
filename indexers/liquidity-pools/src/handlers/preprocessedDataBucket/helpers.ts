@@ -30,12 +30,12 @@ export type ResultCache = {
   assetHistoricalData: Map<string, AssetHistoricalData>;
   assetSpotPriceHistoricalData: Map<string, AssetSpotPriceHistoricalData>;
   assetsPairVolumeHistoricalData: Map<string, AssetsPairVolumeHistoricalData>;
-  assetAssetsPairVolume: AssetAssetsPairVolume[];
-  xykPoolVolumes: XykpoolVolumeHistoricalData[];
-  lbppoolVolumes: LbppoolVolumeHistoricalData[];
-  omnipoolAssetVolumes: OmnipoolAssetVolumeHistoricalData[];
-  stableswapVolumes: StableswapVolumeHistoricalData[];
-  stableswapAssetVolumes: StableswapAssetVolumeHistoricalData[];
+  assetAssetsPairVolume: Map<string, AssetAssetsPairVolume>;
+  xykPoolVolumes: Map<string, XykpoolVolumeHistoricalData>;
+  lbppoolVolumes: Map<string, LbppoolVolumeHistoricalData>;
+  omnipoolAssetVolumes: Map<string, OmnipoolAssetVolumeHistoricalData>;
+  stableswapVolumes: Map<string, StableswapVolumeHistoricalData>;
+  stableswapAssetVolumes: Map<string, StableswapAssetVolumeHistoricalData>;
 };
 
 export type IdsToPrefetchScope = {
@@ -234,7 +234,7 @@ export async function handlePreprocDataBuckets({
           assetsPairVolumeHistoricalData,
           paraBlockHeight: preprocData.paraBlockHeight,
         });
-        resultCache.assetAssetsPairVolume.push(newEntity);
+        resultCache.assetAssetsPairVolume.set(newEntity.id, newEntity);
         break;
       }
       case 'XykpoolVolumeHistoricalData': {
@@ -264,7 +264,7 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.assetBFeesTotalVolNorm =
           preprocData.assetBFeesTotalVolNorm;
 
-        resultCache.xykPoolVolumes.push(existingVolEntity);
+        resultCache.xykPoolVolumes.set(existingVolEntity.id, existingVolEntity);
         break;
       }
       case 'LbppoolVolumeHistoricalData': {
@@ -294,7 +294,7 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.assetBFeesTotalVolNorm =
           preprocData.assetBFeesTotalVolNorm;
 
-        resultCache.lbppoolVolumes.push(existingVolEntity);
+        resultCache.lbppoolVolumes.set(existingVolEntity.id, existingVolEntity);
 
         break;
       }
@@ -315,7 +315,10 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.assetTotalVolOutNorm =
           preprocData.assetTotalVolOutNorm;
 
-        resultCache.omnipoolAssetVolumes.push(existingVolEntity);
+        resultCache.omnipoolAssetVolumes.set(
+          existingVolEntity.id,
+          existingVolEntity
+        );
 
         break;
       }
@@ -336,7 +339,10 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.assetTotalVolOutNorm =
           preprocData.assetTotalVolOutNorm;
 
-        resultCache.stableswapAssetVolumes.push(existingVolEntity);
+        resultCache.stableswapAssetVolumes.set(
+          existingVolEntity.id,
+          existingVolEntity
+        );
         break;
       }
       case 'StableswapVolumeHistoricalData': {
@@ -355,7 +361,10 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.poolTotalFeesVolNorm =
           preprocData.poolTotalFeesVolNorm;
 
-        resultCache.stableswapVolumes.push(existingVolEntity);
+        resultCache.stableswapVolumes.set(
+          existingVolEntity.id,
+          existingVolEntity
+        );
 
         break;
       }
@@ -423,34 +432,6 @@ export async function getPrefetchedCache({
   stableswapAssetVolIdsToPrefetch: string[];
   ctx: SqdProcessorContext<Store>;
 }): Promise<PrefetchedCache> {
-  // const blocksList = await ctx.store.find(BlockEntity, {
-  //   where: { id: In(bockIdsToPrefetch) },
-  // });
-  // const xykPoolVolumesList = await ctx.store.find(XykpoolVolumeHistoricalData, {
-  //   where: { id: In(xykpoolVolIdsToPrefetch) },
-  // });
-  // const lbppoolVolumesList = await ctx.store.find(LbppoolVolumeHistoricalData, {
-  //   where: { id: In(lbppoolVolIdsToPrefetch) },
-  // });
-  // const omnipoolAssetVolumesList = await ctx.store.find(
-  //   OmnipoolAssetVolumeHistoricalData,
-  //   {
-  //     where: { id: In(omnipoolAssetVolIdsToPrefetch) },
-  //   }
-  // );
-  // const stableswapVolumesList = await ctx.store.find(
-  //   StableswapVolumeHistoricalData,
-  //   {
-  //     where: { id: In(stableswapVolIdsToPrefetch) },
-  //   }
-  // );
-  // const stableswapAssetVolumesList = await ctx.store.find(
-  //   StableswapAssetVolumeHistoricalData,
-  //   {
-  //     where: { id: In(stableswapAssetVolIdsToPrefetch) },
-  //   }
-  // );
-
   const [
     blocksList,
     xykPoolVolumesList,

@@ -42,12 +42,12 @@ export async function processPreprocessedDataBuckets(
       assetHistoricalData: new Map(),
       assetSpotPriceHistoricalData: new Map(),
       assetsPairVolumeHistoricalData: new Map(),
-      assetAssetsPairVolume: [],
-      xykPoolVolumes: [],
-      lbppoolVolumes: [],
-      omnipoolAssetVolumes: [],
-      stableswapVolumes: [],
-      stableswapAssetVolumes: [],
+      assetAssetsPairVolume: new Map(),
+      xykPoolVolumes: new Map(),
+      lbppoolVolumes: new Map(),
+      omnipoolAssetVolumes: new Map(),
+      stableswapVolumes: new Map(),
+      stableswapAssetVolumes: new Map(),
     };
 
     await handlePreprocDataBuckets({
@@ -60,19 +60,40 @@ export async function processPreprocessedDataBuckets(
     /**
      * Order of saving following entities must be observed.
      */
-    await ctx.store.upsert([...resultCache.assetHistoricalData.values()]);
-    await ctx.store.upsert([
-      ...resultCache.assetSpotPriceHistoricalData.values(),
-    ]);
-    await ctx.store.upsert([
-      ...resultCache.assetsPairVolumeHistoricalData.values(),
-    ]);
-    await ctx.store.upsert(resultCache.assetAssetsPairVolume);
-    await ctx.store.upsert(resultCache.lbppoolVolumes);
-    await ctx.store.upsert(resultCache.xykPoolVolumes);
-    await ctx.store.upsert(resultCache.omnipoolAssetVolumes);
-    await ctx.store.upsert(resultCache.stableswapVolumes);
-    await ctx.store.upsert(resultCache.stableswapAssetVolumes);
+    // await ctx.store.upsert([...resultCache.assetHistoricalData.values()]);
+    // await ctx.store.upsert([
+    //   ...resultCache.assetSpotPriceHistoricalData.values(),
+    // ]);
+    // await ctx.store.upsert([
+    //   ...resultCache.assetsPairVolumeHistoricalData.values(),
+    // ]);
+    // await ctx.store.upsert(resultCache.assetAssetsPairVolume);
+    // await ctx.store.upsert(resultCache.lbppoolVolumes);
+    // await ctx.store.upsert(resultCache.xykPoolVolumes);
+    // await ctx.store.upsert(resultCache.omnipoolAssetVolumes);
+    // await ctx.store.upsert(resultCache.stableswapVolumes);
+    // await ctx.store.upsert(resultCache.stableswapAssetVolumes);
+
+    ctx.batchState.state.assetsHistoricalDataBatch =
+      resultCache.assetHistoricalData;
+
+    ctx.batchState.state.assetsSpotPriceHistoricalDataBatch =
+      resultCache.assetSpotPriceHistoricalData;
+
+    ctx.batchState.state.assetsPairVolumeHistoricalDataBatch =
+      resultCache.assetsPairVolumeHistoricalData;
+
+    ctx.batchState.state.assetAssetsPairVolumesBatch =
+      resultCache.assetAssetsPairVolume;
+
+    ctx.batchState.state.lbpPoolVolumes = resultCache.lbppoolVolumes;
+    ctx.batchState.state.xykPoolVolumes = resultCache.xykPoolVolumes;
+    ctx.batchState.state.omnipoolAssetVolumes =
+      resultCache.omnipoolAssetVolumes;
+    ctx.batchState.state.stablepoolVolumeCollections =
+      resultCache.stableswapVolumes;
+    ctx.batchState.state.stablepoolAssetVolumes =
+      resultCache.stableswapAssetVolumes;
 
     await ctx.store.remove(bucketsForBlock);
   }

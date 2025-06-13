@@ -44,7 +44,6 @@ export async function handleXykPoolHistoricalData(
           )
           .flat()
           .map(async ({ poolId, blockHeader }) => {
-
             const pool = await getOrCreateXykPool({
               ctx,
               id: poolId,
@@ -100,7 +99,7 @@ export async function handleXykPoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save([
-    ...ctx.batchState.state.xykPoolAllHistoricalData.values(),
-  ]);
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
+  );
 }
