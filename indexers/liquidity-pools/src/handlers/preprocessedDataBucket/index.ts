@@ -12,6 +12,10 @@ export async function processPreprocessedDataBuckets(
   ctx: SqdProcessorContext<Store>
 ) {
   let isBlockNumberToProcess = true;
+  console.time('totalBucketsCount fetch - ');
+  const totalBucketsCount = await ctx.store.count(PreprocessedDataBucket);
+  console.log(`Total buckets count: ${totalBucketsCount}`);
+  console.timeEnd('totalBucketsCount fetch - ');
 
   while (isBlockNumberToProcess) {
     const anyBucket = await ctx.store.findOne(PreprocessedDataBucket, {
@@ -27,12 +31,6 @@ export async function processPreprocessedDataBuckets(
       where: { paraBlockHeight: anyBucket.paraBlockHeight },
     });
 
-    console.log(
-      ' --- bucketsForBlock - ',
-      anyBucket.paraBlockHeight,
-      bucketsForBlock.length
-    );
-
     const prefetchedCache = await getPrefetchedCache({
       ...getIdsToPrefetch(bucketsForBlock),
       ctx,
@@ -42,12 +40,12 @@ export async function processPreprocessedDataBuckets(
       assetHistoricalData: new Map(),
       assetSpotPriceHistoricalData: new Map(),
       assetsPairVolumeHistoricalData: new Map(),
-      assetAssetsPairVolume: new Map(),
-      xykPoolVolumes: new Map(),
-      lbppoolVolumes: new Map(),
-      omnipoolAssetVolumes: new Map(),
-      stableswapVolumes: new Map(),
-      stableswapAssetVolumes: new Map(),
+      assetAssetsPairVolume: [],
+      xykPoolVolumes: [],
+      lbppoolVolumes: [],
+      omnipoolAssetVolumes: [],
+      stableswapVolumes: [],
+      stableswapAssetVolumes: [],
     };
 
     await handlePreprocDataBuckets({
@@ -68,32 +66,39 @@ export async function processPreprocessedDataBuckets(
     //   ...resultCache.assetsPairVolumeHistoricalData.values(),
     // ]);
     // await ctx.store.upsert(resultCache.assetAssetsPairVolume);
-    // await ctx.store.upsert(resultCache.lbppoolVolumes);
-    // await ctx.store.upsert(resultCache.xykPoolVolumes);
-    // await ctx.store.upsert(resultCache.omnipoolAssetVolumes);
-    // await ctx.store.upsert(resultCache.stableswapVolumes);
-    // await ctx.store.upsert(resultCache.stableswapAssetVolumes);
+    await ctx.store.upsert(resultCache.lbppoolVolumes);
+    await ctx.store.upsert(resultCache.xykPoolVolumes);
+    await ctx.store.upsert(resultCache.omnipoolAssetVolumes);
+    await ctx.store.upsert(resultCache.stableswapVolumes);
+    await ctx.store.upsert(resultCache.stableswapAssetVolumes);
 
-    ctx.batchState.state.assetsHistoricalDataBatch =
-      resultCache.assetHistoricalData;
-
-    ctx.batchState.state.assetsSpotPriceHistoricalDataBatch =
-      resultCache.assetSpotPriceHistoricalData;
-
-    ctx.batchState.state.assetsPairVolumeHistoricalDataBatch =
-      resultCache.assetsPairVolumeHistoricalData;
-
-    ctx.batchState.state.assetAssetsPairVolumesBatch =
-      resultCache.assetAssetsPairVolume;
-
-    ctx.batchState.state.lbpPoolVolumes = resultCache.lbppoolVolumes;
-    ctx.batchState.state.xykPoolVolumes = resultCache.xykPoolVolumes;
-    ctx.batchState.state.omnipoolAssetVolumes =
-      resultCache.omnipoolAssetVolumes;
-    ctx.batchState.state.stablepoolVolumeCollections =
-      resultCache.stableswapVolumes;
-    ctx.batchState.state.stablepoolAssetVolumes =
-      resultCache.stableswapAssetVolumes;
+    for (const i of resultCache.assetHistoricalData.values()) {
+      ctx.batchState.state.assetsHistoricalDataBatch.set(i.id, i);
+    }
+    for (const i of resultCache.assetSpotPriceHistoricalData.values()) {
+      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(i.id, i);
+    }
+    for (const i of resultCache.assetsPairVolumeHistoricalData.values()) {
+      ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.set(i.id, i);
+    }
+    for (const i of resultCache.assetAssetsPairVolume) {
+      ctx.batchState.state.assetAssetsPairVolumesBatch.set(i.id, i);
+    }
+    // for (const i of resultCache.lbppoolVolumes) {
+    //   ctx.batchState.state.lbpPoolVolumes.set(i.id, i);
+    // }
+    // for (const i of resultCache.xykPoolVolumes) {
+    //   ctx.batchState.state.xykPoolVolumes.set(i.id, i);
+    // }
+    // for (const i of resultCache.omnipoolAssetVolumes) {
+    //   ctx.batchState.state.omnipoolAssetVolumes.set(i.id, i);
+    // }
+    // for (const i of resultCache.stableswapVolumes) {
+    //   ctx.batchState.state.stablepoolVolumeCollections.set(i.id, i);
+    // }
+    // for (const i of resultCache.stableswapAssetVolumes) {
+    //   ctx.batchState.state.stablepoolAssetVolumes.set(i.id, i);
+    // }
 
     await ctx.store.remove(bucketsForBlock);
   }

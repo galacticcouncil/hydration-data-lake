@@ -118,13 +118,31 @@ export async function getAssetHistDataWithUniqueData(
   const result: Map<string, AssetHistoricalData> = new Map();
   const concurrencyLimit = 1000;
 
+  const assetHistoryIndex = new Map<string, AssetHistoricalData[]>();
+
+  for (const i of (
+    src || ctx.batchState.state.assetsHistoricalDataBatch
+  ).values()) {
+    if (!assetHistoryIndex.has(i.asset.id)) {
+      assetHistoryIndex.set(i.asset.id, []);
+    }
+    assetHistoryIndex.get(i.asset.id)!.push(i);
+  }
+
+  for (const [assetId, list] of assetHistoryIndex.entries()) {
+    assetHistoryIndex.set(
+      assetId,
+      list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    );
+  }
+
   await pMap(
     Array.from(src.values()),
     async (item) => {
       if (
         await isAssetHistoricalDataUniqueRegardingPreviousRecord({
           currentRecord: item,
-          cachedRecords: src,
+          cachedIndexedRecords: assetHistoryIndex,
           ctx,
         })
       ) {
@@ -150,22 +168,16 @@ export async function getAssetHistDataWithUniqueData(
 
 export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
   currentRecord,
-  cachedRecords,
+  cachedIndexedRecords,
   ctx,
 }: {
   currentRecord: AssetHistoricalData;
-  cachedRecords?: Map<string, AssetHistoricalData>;
+  cachedIndexedRecords: Map<string, AssetHistoricalData[]>;
   ctx: SqdProcessorContext<Store>;
 }) {
-  let previousItem = Array.from(
-    (cachedRecords || ctx.batchState.state.assetsHistoricalDataBatch).values()
-  )
-    .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
-    .find(
-      (i) =>
-        i.paraBlockHeight < currentRecord.paraBlockHeight &&
-        i.asset.id === currentRecord.asset.id
-    );
+  let previousItem = (cachedIndexedRecords.get(currentRecord.asset.id) || [])
+    // .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    .find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
     previousItem = await ctx.store.findOne(AssetHistoricalData, {

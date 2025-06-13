@@ -30,12 +30,12 @@ export type ResultCache = {
   assetHistoricalData: Map<string, AssetHistoricalData>;
   assetSpotPriceHistoricalData: Map<string, AssetSpotPriceHistoricalData>;
   assetsPairVolumeHistoricalData: Map<string, AssetsPairVolumeHistoricalData>;
-  assetAssetsPairVolume: Map<string, AssetAssetsPairVolume>;
-  xykPoolVolumes: Map<string, XykpoolVolumeHistoricalData>;
-  lbppoolVolumes: Map<string, LbppoolVolumeHistoricalData>;
-  omnipoolAssetVolumes: Map<string, OmnipoolAssetVolumeHistoricalData>;
-  stableswapVolumes: Map<string, StableswapVolumeHistoricalData>;
-  stableswapAssetVolumes: Map<string, StableswapAssetVolumeHistoricalData>;
+  assetAssetsPairVolume: Array<AssetAssetsPairVolume>;
+  xykPoolVolumes: Array<XykpoolVolumeHistoricalData>;
+  lbppoolVolumes: Array<LbppoolVolumeHistoricalData>;
+  omnipoolAssetVolumes: Array<OmnipoolAssetVolumeHistoricalData>;
+  stableswapVolumes: Array<StableswapVolumeHistoricalData>;
+  stableswapAssetVolumes: Array<StableswapAssetVolumeHistoricalData>;
 };
 
 export type IdsToPrefetchScope = {
@@ -234,7 +234,7 @@ export async function handlePreprocDataBuckets({
           assetsPairVolumeHistoricalData,
           paraBlockHeight: preprocData.paraBlockHeight,
         });
-        resultCache.assetAssetsPairVolume.set(newEntity.id, newEntity);
+        resultCache.assetAssetsPairVolume.push(newEntity);
         break;
       }
       case 'XykpoolVolumeHistoricalData': {
@@ -264,7 +264,7 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.assetBFeesTotalVolNorm =
           preprocData.assetBFeesTotalVolNorm;
 
-        resultCache.xykPoolVolumes.set(existingVolEntity.id, existingVolEntity);
+        resultCache.xykPoolVolumes.push(existingVolEntity);
         break;
       }
       case 'LbppoolVolumeHistoricalData': {
@@ -294,7 +294,7 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.assetBFeesTotalVolNorm =
           preprocData.assetBFeesTotalVolNorm;
 
-        resultCache.lbppoolVolumes.set(existingVolEntity.id, existingVolEntity);
+        resultCache.lbppoolVolumes.push(existingVolEntity);
 
         break;
       }
@@ -315,10 +315,7 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.assetTotalVolOutNorm =
           preprocData.assetTotalVolOutNorm;
 
-        resultCache.omnipoolAssetVolumes.set(
-          existingVolEntity.id,
-          existingVolEntity
-        );
+        resultCache.omnipoolAssetVolumes.push(existingVolEntity);
 
         break;
       }
@@ -339,10 +336,7 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.assetTotalVolOutNorm =
           preprocData.assetTotalVolOutNorm;
 
-        resultCache.stableswapAssetVolumes.set(
-          existingVolEntity.id,
-          existingVolEntity
-        );
+        resultCache.stableswapAssetVolumes.push(existingVolEntity);
         break;
       }
       case 'StableswapVolumeHistoricalData': {
@@ -361,10 +355,7 @@ export async function handlePreprocDataBuckets({
         existingVolEntity.poolTotalFeesVolNorm =
           preprocData.poolTotalFeesVolNorm;
 
-        resultCache.stableswapVolumes.set(
-          existingVolEntity.id,
-          existingVolEntity
-        );
+        resultCache.stableswapVolumes.push(existingVolEntity);
 
         break;
       }

@@ -217,13 +217,13 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
       cachedRecords || ctx.batchState.state.assetsSpotPriceHistoricalDataBatch
     ).values()
   )
-    .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
-    .find(
+    .filter(
       (i) =>
-        i.paraBlockHeight < currentRecord.paraBlockHeight &&
         i.assetIn.id === currentRecord.assetIn.id &&
         i.assetOut.id === currentRecord.assetOut.id
-    );
+    )
+    .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    .find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
     previousItem = await ctx.store.findOne(AssetSpotPriceHistoricalData, {
