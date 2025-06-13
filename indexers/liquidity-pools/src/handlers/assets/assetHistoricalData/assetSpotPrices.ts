@@ -9,7 +9,14 @@ import {
 import { OfflineTradeRouterManager } from './utils';
 import { getOrCreateAsset } from '../asset';
 import { Hop, BigNumber } from '@galacticcouncil/sdk';
-import { fromExponentialToDecimalNotation } from '../../../utils/helpers';
+import {
+  fromExponentialToDecimalNotation,
+  isDeepEqual,
+} from '../../../utils/helpers';
+import { LessThan } from 'typeorm';
+import blockHash from 'object-hash';
+import pMap from 'p-map';
+import { isAssetHistoricalDataUniqueRegardingPreviousRecord } from './assetHistoricalData';
 
 export async function handleAssetSpotPricesHistoricalData({
   blockHeader,
@@ -157,4 +164,114 @@ async function processAssetSpotPrices({
   };
 
   await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
+}
+
+export async function getAssetSpotPriceHistDataWithUniqueData(
+  src: Map<string, AssetSpotPriceHistoricalData>,
+  ctx: SqdProcessorContext<Store>
+) {
+  const result: AssetSpotPriceHistoricalData[] = [];
+  const concurrencyLimit = 1000;
+
+  await pMap(
+    Array.from(src.values()),
+    async (item) => {
+      if (
+        await isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecord({
+          currentRecord: item,
+          cachedRecords: src,
+          ctx,
+        })
+      ) {
+        result.push(item);
+      }
+    },
+    { concurrency: concurrencyLimit }
+  );
+
+  // for (const item of src.values()) {
+  //   if (
+  //     await isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecord({
+  //       currentRecord: item,
+  //       cachedRecords: src,
+  //       ctx,
+  //     })
+  //   )
+  //     result.push(item);
+  // }
+
+  return result;
+}
+
+export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecord({
+  currentRecord,
+  cachedRecords,
+  ctx,
+}: {
+  currentRecord: AssetSpotPriceHistoricalData;
+  cachedRecords?: Map<string, AssetSpotPriceHistoricalData>;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let previousItem = Array.from(
+    (
+      cachedRecords || ctx.batchState.state.assetsSpotPriceHistoricalDataBatch
+    ).values()
+  )
+    .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    .find(
+      (i) =>
+        i.paraBlockHeight < currentRecord.paraBlockHeight &&
+        i.assetIn.id === currentRecord.assetIn.id &&
+        i.assetOut.id === currentRecord.assetOut.id
+    );
+
+  if (!previousItem) {
+    previousItem = await ctx.store.findOne(AssetSpotPriceHistoricalData, {
+      where: {
+        assetIn: {
+          id: currentRecord.assetIn.id,
+        },
+        assetOut: {
+          id: currentRecord.assetOut.id,
+        },
+        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
+    });
+  }
+
+  if (!previousItem) {
+    return true;
+  }
+
+  // const overwriteProps = {
+  //   paraBlockHeight: null,
+  //   relayBlockHeight: null,
+  //   assetInHistData: null,
+  //   assetIn: null,
+  //   assetOut: null,
+  //   id: null,
+  //   block: null,
+  // };
+  //
+  // const prevItemDecorated = {
+  //   ...previousItem,
+  //   ...overwriteProps,
+  // };
+  //
+  // const currentItemDecorated = {
+  //   ...currentRecord,
+  //   ...overwriteProps,
+  // };
+  //
+  // return !isDeepEqual(prevItemDecorated, currentItemDecorated);
+
+  let isEqual = true;
+
+  if (previousItem.price !== currentRecord.price) {
+    isEqual = false;
+  }
+  return !isEqual;
 }

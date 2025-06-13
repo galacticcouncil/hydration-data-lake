@@ -4,7 +4,10 @@ import { splitIntoBatches } from '../../../utils/helpers';
 import { OfflineTradeRouterManager } from './utils';
 import { handleAssetSpotPricesHistoricalData } from './assetSpotPrices';
 import { handleAssetPairVolumesHistoricalData } from './assePairVolumes';
-import { processAssetsHistoricalDataAtBlock } from './assetHistoricalData';
+import {
+  isAssetHistoricalDataUniqueRegardingPreviousRecord,
+  processAssetsHistoricalDataAtBlock,
+} from './assetHistoricalData';
 
 export async function handleAssetHistoricalData({
   blockNumbersToProcess,
@@ -45,6 +48,20 @@ export async function handleAssetHistoricalData({
       )
     );
   }
+
+  // for (const entity of [
+  //   ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
+  // ].filter((e) => e !== null)) {
+  //   if (
+  //     ctx.appConfig.SAVE_ASSET_HISTORICAL_DATA_ON_CHANGE &&
+  //     !(await isAssetHistoricalDataUniqueRegardingPreviousRecord({
+  //       currentRecord: entity,
+  //       ctx,
+  //     }))
+  //   ) {
+  //     ctx.batchState.state.assetsHistoricalDataBatch.delete(entity.id);
+  //   }
+  // }
 }
 
 export async function handleAssetSpotPriceRelatedHistoricalData({
@@ -88,4 +105,5 @@ export async function handleAssetSpotPriceRelatedHistoricalData({
       )
     );
   }
+
 }

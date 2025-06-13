@@ -10,6 +10,8 @@ import { HYDRADX_SS58_PREFIX, BigNumber } from '@galacticcouncil/sdk';
 import crypto from 'node:crypto';
 import { YieldMetricsInterval } from '../apiSupport/types';
 import { performance, monitorEventLoopDelay } from 'perf_hooks';
+import { deepEqual } from 'fast-equals';
+import blockHash from 'object-hash';
 const hdl = monitorEventLoopDelay();
 hdl.enable();
 
@@ -200,3 +202,9 @@ export function stringToMd5Hash(str: string) {
   if (!str) throw new Error('String is empty');
   return crypto.createHash('md5').update(str).digest('hex');
 }
+
+export function isDeepEqual(a: any, b: any) {
+  // return blockHash(a) === blockHash(b);
+  return deepEqual(a, b);
+}
+

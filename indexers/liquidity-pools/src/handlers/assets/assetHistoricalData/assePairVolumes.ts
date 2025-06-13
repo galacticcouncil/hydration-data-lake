@@ -257,11 +257,24 @@ function getAssetSpotPriceFromHistoricalData({
 }) {
   if (assetId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) return '1';
 
+  // if (!ctx.appConfig.SAVE_ASSET_HISTORICAL_DATA_ON_CHANGE)
   return (
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
       `${assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
     )?.priceNormalised ?? null
   );
+
+  // const assetPriceHisData =
+  //   [...ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()]
+  //     .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+  //     .find(
+  //       (item) =>
+  //         item.paraBlockHeight <= blockHeader.height &&
+  //         item.assetIn.id === assetId &&
+  //         item.assetOut.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+  //     )?.priceNormalised ?? null;
+
+  // return assetPriceHisData;
 }
 
 function getRelatedAssetPairsFromSwapsChain(swaps: Swap[]) {

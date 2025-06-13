@@ -110,6 +110,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly MAX_JOB_BATCH_SIZE: number = 10;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly SAVE_ASSET_RELATED_HISTORICAL_DATA_ON_CHANGE: boolean = false;
+
   @IsNotEmpty()
   @IsString()
   readonly INDEXER_ID!: string;

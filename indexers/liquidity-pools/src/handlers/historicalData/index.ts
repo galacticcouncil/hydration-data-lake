@@ -6,6 +6,8 @@ import {
   BatchStableswapHistVolsList,
   BatchXykpoolHistVolsList,
 } from '../../model';
+import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/assetHistoricalData';
+import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -18,18 +20,8 @@ export class HistoricalDataManager {
     await ctx.store.save([
       ...ctx.batchState.state.historicalAccountAssetSwapFees.values(),
     ]);
-    await ctx.store.save([
-      ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
-    ]);
-    await ctx.store.save([
-      ...ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values(),
-    ]);
-    await ctx.store.save([
-      ...ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values(),
-    ]);
-    await ctx.store.save([
-      ...ctx.batchState.state.assetAssetsPairVolumesBatch.values(),
-    ]);
+
+    await this.saveAssetRelatedDataBulk(ctx);
 
     await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);
     await ctx.store.save([...ctx.batchState.state.xykPoolVolumes.values()]);
@@ -43,6 +35,75 @@ export class HistoricalDataManager {
     await ctx.store.save([
       ...ctx.batchState.state.stablepoolAssetVolumes.values(),
     ]);
+  }
+
+  static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
+    if (!ctx.appConfig.SAVE_ASSET_RELATED_HISTORICAL_DATA_ON_CHANGE) {
+      await ctx.store.save(
+        Array.from(ctx.batchState.state.assetsHistoricalDataBatch.values())
+      );
+      await ctx.store.save(
+        Array.from(
+          ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+        )
+      );
+      await ctx.store.save(
+        Array.from(
+          ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
+        )
+      );
+      await ctx.store.save(
+        Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
+      );
+      return;
+    }
+
+    const assetHistDataToSaveMap = await getAssetHistDataWithUniqueData(
+      ctx.batchState.state.assetsHistoricalDataBatch,
+      ctx
+    );
+
+    const assetSpotPriceHistDataToSaveList =
+      await getAssetSpotPriceHistDataWithUniqueData(
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch,
+        ctx
+      );
+
+    // const [assetHistDataToSaveMap, assetSpotPriceHistDataToSaveList] =
+    //   await Promise.all([
+    //     getAssetHistDataWithUniqueData(
+    //       ctx.batchState.state.assetsHistoricalDataBatch,
+    //       ctx
+    //     ),
+    //     getAssetSpotPriceHistDataWithUniqueData(
+    //       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch,
+    //       ctx
+    //     ),
+    //   ]);
+
+    for (const priceHistData of assetSpotPriceHistDataToSaveList) {
+      assetHistDataToSaveMap.set(
+        priceHistData.assetInHistData.id,
+        priceHistData.assetInHistData
+      );
+    }
+    for (const junctionRecord of ctx.batchState.state.assetAssetsPairVolumesBatch.values()) {
+      assetHistDataToSaveMap.set(
+        junctionRecord.assetHistoricalData.id,
+        junctionRecord.assetHistoricalData
+      );
+    }
+
+    await ctx.store.save(Array.from(assetHistDataToSaveMap.values()));
+    await ctx.store.save(assetSpotPriceHistDataToSaveList);
+    await ctx.store.save(
+      Array.from(
+        ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
+      )
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
+    );
   }
 
   static async handleHistoricalVolumesBatchEntriesLists(

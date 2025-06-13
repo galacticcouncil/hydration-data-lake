@@ -4,6 +4,8 @@ import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../../parsers';
 import { getOrCreateAsset } from '../asset';
 import { AssetDynamicFee, AssetHistoricalData } from '../../../model';
+import { LessThan } from 'typeorm';
+import pMap from 'p-map';
 
 export async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -59,7 +61,7 @@ export async function processAssetsHistoricalDataAtBlock({
         !totalIssuancePerAssetMap.has(assetRegistryId) ||
         !existentialDepositPerAssetMap.has(assetRegistryId)
       ) {
-        return;
+        return null;
       }
       const asset = await getOrCreateAsset({
         assetRegistryId: assetRegistryId,
@@ -72,7 +74,7 @@ export async function processAssetsHistoricalDataAtBlock({
           'processAssetsHistoricalDataAtBlock :: asset not found',
           assetRegistryId
         );
-        return;
+        return null;
       }
 
       const newAssetHistoricalData = new AssetHistoricalData({
@@ -107,4 +109,119 @@ export async function processAssetsHistoricalDataAtBlock({
       );
     })
   );
+}
+
+export async function getAssetHistDataWithUniqueData(
+  src: Map<string, AssetHistoricalData>,
+  ctx: SqdProcessorContext<Store>
+) {
+  const result: Map<string, AssetHistoricalData> = new Map();
+  const concurrencyLimit = 1000;
+
+  await pMap(
+    Array.from(src.values()),
+    async (item) => {
+      if (
+        await isAssetHistoricalDataUniqueRegardingPreviousRecord({
+          currentRecord: item,
+          cachedRecords: src,
+          ctx,
+        })
+      ) {
+        result.set(item.id, item);
+      }
+    },
+    { concurrency: concurrencyLimit }
+  );
+
+  // for (const item of src.values()) {
+  //   if (
+  //     await isAssetHistoricalDataUniqueRegardingPreviousRecord({
+  //       currentRecord: item,
+  //       cachedRecords: src,
+  //       ctx,
+  //     })
+  //   )
+  //     result.set(item.id, item);
+  // }
+
+  return result;
+}
+
+export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
+  currentRecord,
+  cachedRecords,
+  ctx,
+}: {
+  currentRecord: AssetHistoricalData;
+  cachedRecords?: Map<string, AssetHistoricalData>;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let previousItem = Array.from(
+    (cachedRecords || ctx.batchState.state.assetsHistoricalDataBatch).values()
+  )
+    .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    .find(
+      (i) =>
+        i.paraBlockHeight < currentRecord.paraBlockHeight &&
+        i.asset.id === currentRecord.asset.id
+    );
+
+  if (!previousItem) {
+    previousItem = await ctx.store.findOne(AssetHistoricalData, {
+      where: {
+        asset: {
+          id: currentRecord.asset.id,
+        },
+        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
+    });
+  }
+
+  if (!previousItem) {
+    return true;
+  }
+
+  // const overwriteProps = {
+  //   paraBlockHeight: null,
+  //   relayBlockHeight: null,
+  //   spotPrices: null,
+  //   assetPairVolumes: null,
+  //   asset: null,
+  //   id: null,
+  //   block: null,
+  // };
+  //
+  // const prevItemDecorated = {
+  //   ...previousItem,
+  //   ...overwriteProps,
+  // };
+  //
+  // const currentItemDecorated = {
+  //   ...currentRecord,
+  //   ...overwriteProps,
+  // };
+
+  // return blockHash(prevItemDecorated) !== blockHash(currentItemDecorated);
+  // return !isDeepEqual(prevItemDecorated, currentItemDecorated);
+
+  let isEqual = true;
+
+  if (
+    previousItem.totalIssuance !== currentRecord.totalIssuance ||
+    previousItem.existentialDeposit !== currentRecord.existentialDeposit ||
+    previousItem.usdPriceNormalised !== currentRecord.usdPriceNormalised ||
+    (!!previousItem.dynamicFee &&
+      !!currentRecord.dynamicFee &&
+      (previousItem.dynamicFee.assetFee !== currentRecord.dynamicFee.assetFee ||
+        previousItem.dynamicFee.protocolFee !==
+          currentRecord.dynamicFee.protocolFee))
+  ) {
+    isEqual = false;
+  }
+
+  return !isEqual;
 }
