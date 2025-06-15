@@ -141,12 +141,15 @@ export async function waitForSpotPricesRelatedHistoricalData(
     }
   };
 
-  await Promise.all([
-    // checkAndWaitForData(prefetchAssetHistoricalData),
-    checkAndWaitForData(prefetchConstantsHistoricalData),
-    checkAndWaitForData(prefetchEmaOracleHistoricalData),
-    checkAndWaitForData(prefetchXykpoolsHistoricalData),
-  ]);
+  // await Promise.all([
+  //   checkAndWaitForData(prefetchConstantsHistoricalData),
+  //   checkAndWaitForData(prefetchEmaOracleHistoricalData),
+  //   checkAndWaitForData(prefetchXykpoolsHistoricalData),
+  // ]);
+
+  await checkAndWaitForData(prefetchConstantsHistoricalData);
+  await checkAndWaitForData(prefetchEmaOracleHistoricalData);
+  await checkAndWaitForData(prefetchXykpoolsHistoricalData);
 
   await Promise.all([
     prefetchAllAvailableRoutedTradesForBlocksRange({
