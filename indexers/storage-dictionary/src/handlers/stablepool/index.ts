@@ -15,6 +15,8 @@ import { blake2AsHex } from '@polkadot/util-crypto';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { AccountData } from '../../parsers/types/storage';
 import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
+import { getXykpoolHistDataWithUniqueData } from '../xykPool/utils';
+import { getStableswapHistDataWithUniqueData } from './utils';
 
 export async function handleStablepoolStorage(
   ctx: ProcessorContext<Store>,
@@ -188,8 +190,10 @@ export async function handleStablepoolStorage(
     stablepools.set(newPoolEntity.id, newPoolEntity);
   }
 
-  await ctx.store.save([...stablepools.values()]);
-  await ctx.store.save([...stablepoolAssetsData.values()]);
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+    await ctx.store.save([...stablepools.values()]);
+    await ctx.store.save([...stablepoolAssetsData.values()]);
+  }
 }
 
 export async function prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBlocks(

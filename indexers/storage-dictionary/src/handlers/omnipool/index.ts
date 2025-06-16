@@ -84,8 +84,6 @@ export async function handleOmnipoolStorage(
   });
   ctx.batchState.state.omnipools.set(newOmnipoolEntity.id, newOmnipoolEntity);
 
-  await ctx.store.save(newOmnipoolEntity);
-
   for (const assetState of allAssetStates) {
     const newAssetDataEntity = new OmnipoolAssetData({
       id: `${appConfig.OMNIPOOL_ADDRESS}-${assetState.assetId}-${currentBlockHeader.height}`,
@@ -110,7 +108,10 @@ export async function handleOmnipoolStorage(
     omnipoolAssetsData.set(newAssetDataEntity.id, newAssetDataEntity);
   }
 
-  await ctx.store.save([...omnipoolAssetsData.values()]);
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+    await ctx.store.save(newOmnipoolEntity);
+    await ctx.store.save([...omnipoolAssetsData.values()]);
+  }
 }
 
 export async function prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBlocks(

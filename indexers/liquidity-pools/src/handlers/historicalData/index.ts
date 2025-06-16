@@ -38,7 +38,7 @@ export class HistoricalDataManager {
   }
 
   static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
-    if (!ctx.appConfig.SAVE_ASSET_RELATED_HISTORICAL_DATA_ON_CHANGE) {
+    if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
       await ctx.store.save(
         Array.from(ctx.batchState.state.assetsHistoricalDataBatch.values())
       );

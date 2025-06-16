@@ -6,6 +6,8 @@ import { XykpoolHistoricalData } from '../../../model';
 import { getOrCreateXykPool } from './xykPool';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import pMap from 'p-map';
+import { LessThan } from 'typeorm';
 
 export async function handleXykPoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -99,7 +101,101 @@ export async function handleXykPoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
+    );
+    return;
+  }
+
+  const entitiesToSave = await getXykpoolHistDataWithUniqueData(
+    ctx.batchState.state.xykPoolAllHistoricalData,
+    ctx
   );
+  await ctx.store.save(Array.from(entitiesToSave.values()));
+}
+
+export async function getXykpoolHistDataWithUniqueData(
+  poolsData: Map<string, XykpoolHistoricalData>,
+  ctx: SqdProcessorContext<Store>
+) {
+  const poolsResult: Map<string, XykpoolHistoricalData> = new Map();
+  const concurrencyLimit = 1000;
+
+  const poolsHistoryIndex = new Map<string, XykpoolHistoricalData[]>();
+
+  for (const i of (
+    poolsData || ctx.batchState.state.xykPoolAllHistoricalData
+  ).values()) {
+    if (!poolsHistoryIndex.has(i.pool.id)) {
+      poolsHistoryIndex.set(i.pool.id, []);
+    }
+    poolsHistoryIndex.get(i.pool.id)!.push(i);
+  }
+
+  for (const [poolId, list] of poolsHistoryIndex.entries()) {
+    poolsHistoryIndex.set(
+      poolId,
+      list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    );
+  }
+
+  await pMap(
+    Array.from(poolsData.values()),
+    async (item) => {
+      if (
+        await isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
+          currentRecord: item,
+          cachedIndexedRecords: poolsHistoryIndex,
+          ctx,
+        })
+      ) {
+        poolsResult.set(item.id, item);
+      }
+    },
+    { concurrency: concurrencyLimit }
+  );
+
+  return poolsResult;
+}
+
+export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
+  currentRecord,
+  cachedIndexedRecords,
+  ctx,
+}: {
+  currentRecord: XykpoolHistoricalData;
+  cachedIndexedRecords: Map<string, XykpoolHistoricalData[]>;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let previousItem = (
+    cachedIndexedRecords.get(currentRecord.pool.id) || []
+  ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
+
+  if (!previousItem) {
+    previousItem = await ctx.store.findOne(XykpoolHistoricalData, {
+      where: {
+        pool: { id: currentRecord.pool.id },
+        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
+    });
+  }
+
+  if (!previousItem) {
+    return true;
+  }
+
+  let isEqual = true;
+
+  if (
+    !!previousItem.assetABalance !== !!currentRecord.assetABalance ||
+    !!previousItem.assetBBalance !== !!currentRecord.assetBBalance
+  ) {
+    isEqual = false;
+  }
+
+  return !isEqual;
 }

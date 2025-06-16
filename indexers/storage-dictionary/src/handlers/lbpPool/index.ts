@@ -102,8 +102,10 @@ export async function handleLbpPoolsStorage(
     lbpPoolAssetsData.set(assetAData.id, assetAData);
     lbpPoolAssetsData.set(assetBData.id, assetBData);
   }
-  await ctx.store.save([...lbpPools.values()]);
-  await ctx.store.save([...lbpPoolAssetsData.values()]);
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+    await ctx.store.save([...lbpPools.values()]);
+    await ctx.store.save([...lbpPoolAssetsData.values()]);
+  }
 }
 
 export async function prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlocks(

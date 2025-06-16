@@ -116,7 +116,8 @@ export async function handleAssetsStorage(
     allAssetHistoricalData.push(newAssetHistoricalData);
   }
 
-  await ctx.store.upsert(allAssetHistoricalData);
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE)
+    await ctx.store.upsert(allAssetHistoricalData);
 }
 
 export async function prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks(

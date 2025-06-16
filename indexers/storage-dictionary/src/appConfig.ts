@@ -146,6 +146,9 @@ export class AppConfig {
   )
   SUB_PROCESSORS_RANGES: Map<string, { from: number; to: number }> = new Map();
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly PERSIST_HIST_DATA_ONLY_ON_CHANGE: boolean = false;
+
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       AppConfig.instance = new AppConfig();

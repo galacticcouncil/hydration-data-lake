@@ -226,6 +226,7 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
     previousItem.totalIssuance !== currentRecord.totalIssuance ||
     previousItem.existentialDeposit !== currentRecord.existentialDeposit ||
     previousItem.usdPriceNormalised !== currentRecord.usdPriceNormalised ||
+    !!previousItem.dynamicFee !== !!currentRecord.dynamicFee ||
     (!!previousItem.dynamicFee &&
       !!currentRecord.dynamicFee &&
       (previousItem.dynamicFee.assetFee !== currentRecord.dynamicFee.assetFee ||

@@ -107,8 +107,10 @@ export async function handleXykPoolsStorage(
     xykPoolAssetsData.set(assetBData.id, assetBData);
   }
 
-  await ctx.store.save([...xykPools.values()]);
-  await ctx.store.save([...xykPoolAssetsData.values()]);
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+    await ctx.store.save(Array.from(xykPools.values()));
+    await ctx.store.save(Array.from(xykPoolAssetsData.values()));
+  }
 }
 
 export async function prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks(

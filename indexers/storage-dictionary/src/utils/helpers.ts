@@ -5,6 +5,7 @@ import { join } from 'path';
 import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { HYDRADX_SS58_PREFIX } from '@galacticcouncil/sdk';
+import { deepEqual } from 'fast-equals';
 
 const appConfig = AppConfig.getInstance();
 
@@ -59,4 +60,8 @@ export function publicKeyToSs58(
   prefix: number = HYDRADX_SS58_PREFIX
 ): string {
   return encodeAddress(hexToU8a(key), prefix);
+}
+
+export function isDeepEqual(a: any, b: any) {
+  return deepEqual(a, b);
 }

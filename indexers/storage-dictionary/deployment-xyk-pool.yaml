@@ -11,7 +11,7 @@ deploy:
   addons:
     postgres:
       config:
-        statement_timeout: 1080000
+        statement_timeout: 2080000
         log_min_duration_statement: 60000
   processor:
 #    - name: xyk-pool-batch-proc-1
@@ -166,11 +166,11 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
-      profile: large
-      storage: 680G
+      profile: small
+      storage: 1050G
   processor:
     profile: small
   api:

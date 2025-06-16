@@ -112,7 +112,7 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: true
-        INDEXING_IS_PAUSED: true
+        INDEXING_IS_PAUSED: false
         PROCESS_ONLY_MISSED_BLOCKS: false
         GQL_PORT: 8080
         NODE_ENV: production
@@ -179,13 +179,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
-      profile: medium
-      storage: 450G
+      profile: large
+      storage: 550G
   processor:
-    profile: small
+    profile: large
   api:
-    profile: small
+    profile: large
 #    replicas: 2

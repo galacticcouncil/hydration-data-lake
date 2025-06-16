@@ -93,49 +93,48 @@ export async function compressBlockStorage(
   //   relations: { asset: true },
   // });
 
-  let lbppools = [...ctx.batchState.state.lbpPools.values()].filter(
+  let lbppools = Array.from(ctx.batchState.state.lbpPools.values()).filter(
     (e) => e.paraBlockHeight === currentBlockHeader.height
   );
 
-  let lbppoolAssets = [
-    ...ctx.batchState.state.lbpPoolAssetsData.values(),
-  ].filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+  let lbppoolAssets = Array.from(
+    ctx.batchState.state.lbpPoolAssetsData.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
 
-  let xykPools = [...ctx.batchState.state.xykPools.values()].filter(
+  let xykPools = Array.from(ctx.batchState.state.xykPools.values()).filter(
     (e) => e.paraBlockHeight === currentBlockHeader.height
   );
 
-  let xykAssets = [...ctx.batchState.state.xykPoolAssetsData.values()].filter(
+  let xykAssets = Array.from(
+    ctx.batchState.state.xykPoolAssetsData.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
+  let stableswaps = Array.from(
+    ctx.batchState.state.stablepools.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
+  let stableswapAssets = Array.from(
+    ctx.batchState.state.stablepoolAssetsData.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
+  let omnipools = Array.from(ctx.batchState.state.omnipools.values()).filter(
+    (e) => e.paraBlockHeight === currentBlockHeader.height
+  );
+  let omnipoolAssets = Array.from(
+    ctx.batchState.state.omnipoolAssetsData.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
+  let aavepools = Array.from(ctx.batchState.state.aavepools.values()).filter(
     (e) => e.paraBlockHeight === currentBlockHeader.height
   );
 
-  let stableswaps = [...ctx.batchState.state.stablepools.values()].filter(
+  let emaOraces = Array.from(ctx.batchState.state.emaOracles.values()).filter(
     (e) => e.paraBlockHeight === currentBlockHeader.height
   );
 
-  let stableswapAssets = [
-    ...ctx.batchState.state.stablepoolAssetsData.values(),
-  ].filter((e) => e.paraBlockHeight === currentBlockHeader.height);
-
-  let omnipools = [...ctx.batchState.state.omnipools.values()].filter(
-    (e) => e.paraBlockHeight === currentBlockHeader.height
-  );
-
-  let omnipoolAssets = [
-    ...ctx.batchState.state.omnipoolAssetsData.values(),
-  ].filter((e) => e.paraBlockHeight === currentBlockHeader.height);
-
-  let aavepools = [...ctx.batchState.state.aavepools.values()].filter(
-    (e) => e.paraBlockHeight === currentBlockHeader.height
-  );
-
-  let emaOraces = [...ctx.batchState.state.emaOracles.values()].filter(
-    (e) => e.paraBlockHeight === currentBlockHeader.height
-  );
-
-  let assetHistoricalData = [
-    ...ctx.batchState.state.assetHistoricalDataItems.values(),
-  ].filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+  let assetHistoricalData = Array.from(
+    ctx.batchState.state.assetHistoricalDataItems.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
 
   for (const asset of xykAssets) {
     // @ts-ignore

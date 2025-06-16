@@ -40,6 +40,13 @@ import {
 } from './handlers/aavePool/historicalData';
 import { prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/oracles/emaOracle/historicalData';
 import { compressBlockStorage } from './handlers/blockDataCompresion';
+import { getXykpoolHistDataWithUniqueData } from './handlers/xykPool/utils';
+import { getStableswapHistDataWithUniqueData } from './handlers/stablepool/utils';
+import { getOmnipoolHistDataWithUniqueData } from './handlers/omnipool/utils';
+import { getAavepoolHistDataWithUniqueData } from './handlers/aavePool/utils';
+import { getAssetHistDataWithUniqueData } from './handlers/asset/utils';
+import { getEmaOracleHistDataWithUniqueData } from './handlers/oracles/emaOracle/utils';
+import { getLbppoolHistDataWithUniqueData } from './handlers/lbpPool/utils';
 
 const appConfig = AppConfig.getInstance();
 
@@ -120,10 +127,11 @@ processor.run(
 
     let blocksSubBatchIndex = 1;
 
+    console.log('START processing blocks');
+
     for (const blocksSubBatch of splitIntoBatches(
       ctx.blocks,
       subProcessorStatusManager.subBatchConfig.subBatchSize
-      // 334
     )) {
       console.time(
         `Blocks sub-batch #${blocksSubBatchIndex} with size ${subProcessorStatusManager.subBatchConfig.subBatchSize} blocks has been processed in`
@@ -172,10 +180,16 @@ processor.run(
               ),
             ]);
           }
-          await compressBlockStorage(
-            ctxWithBatchState as ProcessorContext<Store>,
-            block.header
-          );
+
+          /**
+           * Should avoid compressing in case PERSIST_HIST_DATA_ONLY_ON_CHANGE === true
+           * because compressBlockStorage mutates cached entities.
+           */
+          if (!appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE)
+            await compressBlockStorage(
+              ctxWithBatchState as ProcessorContext<Store>,
+              block.header
+            );
         })
       );
 
@@ -192,9 +206,86 @@ processor.run(
     }
     console.timeEnd(`Blocks batch has been processed in`);
 
+    console.time(`Unique entities have been saved in`);
+    await persistUniqueEntities(ctxWithBatchState as ProcessorContext<Store>);
+    console.timeEnd(`Unique entities have been saved in`);
+
     await subProcessorStatusManager.setSubProcessorStatus({
       height: ctx.blocks[ctx.blocks.length - 1].header.height,
     });
     console.log('Batch complete');
   }
 );
+
+async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) return;
+
+  if (appConfig.PROCESS_LBP_POOLS) {
+    const { pools: lbppools, poolAssets: lbppoolAssets } =
+      await getLbppoolHistDataWithUniqueData({
+        ctx,
+        poolsData: ctx.batchState.state.lbpPools,
+        poolAssetsData: ctx.batchState.state.lbpPoolAssetsData,
+      });
+
+    await ctx.store.save(Array.from(lbppools.values()));
+    await ctx.store.save(Array.from(lbppoolAssets.values()));
+  }
+
+  if (appConfig.PROCESS_XYK_POOLS) {
+    const { pools: xykpools, poolAssets: xykpoolAssets } =
+      await getXykpoolHistDataWithUniqueData(
+        ctx.batchState.state.xykPoolAssetsData,
+        ctx
+      );
+
+    await ctx.store.save(Array.from(xykpools.values()));
+    await ctx.store.save(Array.from(xykpoolAssets.values()));
+  }
+
+  if (appConfig.PROCESS_OMNIPOOLS) {
+    const { pools: omnipools, poolAssets: omnipoolAssets } =
+      await getOmnipoolHistDataWithUniqueData({
+        ctx,
+        poolsData: ctx.batchState.state.omnipools,
+        poolAssetsData: ctx.batchState.state.omnipoolAssetsData,
+      });
+
+    await ctx.store.save(Array.from(omnipools.values()));
+    await ctx.store.save(Array.from(omnipoolAssets.values()));
+  }
+
+  if (appConfig.PROCESS_STABLEPOOLS) {
+    const { pools: stableswaps, poolAssets: stableswapAssets } =
+      await getStableswapHistDataWithUniqueData({
+        ctx,
+        poolsData: ctx.batchState.state.stablepools,
+        poolAssetsData: ctx.batchState.state.stablepoolAssetsData,
+      });
+
+    await ctx.store.save(Array.from(stableswaps.values()));
+    await ctx.store.save(Array.from(stableswapAssets.values()));
+  }
+
+  if (appConfig.PROCESS_GENERIC_HIST_DATA) {
+    const aavepoolsToSave = await getAavepoolHistDataWithUniqueData(
+      ctx.batchState.state.aavepools,
+      ctx
+    );
+    const eassetHistDataToSave = await getAssetHistDataWithUniqueData(
+      ctx.batchState.state.assetHistoricalDataItems,
+      ctx
+    );
+    const emaOracleDataToSave = await getEmaOracleHistDataWithUniqueData(
+      ctx.batchState.state.emaOracles,
+      ctx
+    );
+    await ctx.store.save(Array.from(aavepoolsToSave.values()));
+    await ctx.store.save(Array.from(eassetHistDataToSave.values()));
+    await ctx.store.save(Array.from(emaOracleDataToSave.values()));
+  }
+
+  for (const block of ctx.blocks) {
+    await compressBlockStorage(ctx, block.header);
+  }
+}

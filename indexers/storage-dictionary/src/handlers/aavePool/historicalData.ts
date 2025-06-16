@@ -50,7 +50,8 @@ export async function handleAavePoolsStorage(
     ctx.batchState.state.aavepools.set(newPoolEntity.id, newPoolEntity);
   }
 
-  await ctx.store.upsert(poolsToSave);
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE)
+    await ctx.store.upsert(poolsToSave);
 }
 
 export async function prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks(

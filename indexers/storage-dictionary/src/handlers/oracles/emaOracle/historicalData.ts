@@ -91,7 +91,9 @@ export async function handleEmaOracleHistoricalData(
     oracleHistDataEntity.id,
     oracleHistDataEntity
   );
-  await ctx.store.upsert(oracleHistDataEntity);
+
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE)
+    await ctx.store.upsert(oracleHistDataEntity);
 }
 
 export async function prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks(

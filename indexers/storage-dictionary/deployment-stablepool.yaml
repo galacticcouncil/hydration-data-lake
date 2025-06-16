@@ -104,7 +104,7 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: true
         PROCESS_GENERIC_HIST_DATA: false
-        INDEXING_IS_PAUSED: true
+        INDEXING_IS_PAUSED: false
         PROCESS_ONLY_MISSED_BLOCKS: false
         GQL_PORT: 8080
         NODE_ENV: production
@@ -113,8 +113,8 @@ deploy:
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: stablepool__batch_proc_5
         INDEXER_MAX_SUB_BATCH_SIZE: 500
-        ASSETS_TRACKER_PROCESSOR: false
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
+        ASSETS_TRACKER_PROCESSOR: true
+        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__batch_proc_5
 
 #    - name: stablepool-batch-proc-ensure-2
 #      cmd: ['sqd', 'process:prod']
@@ -167,13 +167,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
       profile: medium
-      storage: 30G
+      storage: 50G
   processor:
     profile: small
   api:
-    profile: small
+    profile: large
 #    replicas: 5
