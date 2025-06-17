@@ -133,11 +133,13 @@ export async function getOrCreateAsset({
   ensure = false,
   blockHeader,
   ctx,
+  assetStorageData,
 }: {
   id: string | number;
   ensure?: boolean;
   blockHeader?: Block;
   ctx: ProcessorContext<Store>;
+  assetStorageData?: AssetDetails;
 }): Promise<Asset | null> {
   const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
 
@@ -170,6 +172,7 @@ export async function getOrCreateAsset({
     id,
     ctx,
     blockHeader,
+    assetStorageData,
   });
 
   return newAsset;
@@ -284,12 +287,49 @@ export async function actualiseAssets(
   for (const assetStorageData of storageData) {
     if (!assetStorageData.data) continue;
 
-    await createAsset({
-      id: assetStorageData.assetId,
-      ctx,
-      blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
-      assetStorageData: assetStorageData.data,
-    });
+    if (
+      !ctx.batchState.state.assetsAllBatch.has(`${assetStorageData.assetId}`)
+    ) {
+      await getOrCreateAsset({
+        id: assetStorageData.assetId,
+        ctx,
+        ensure: true,
+        blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+        assetStorageData: assetStorageData.data,
+      });
+      continue;
+    }
+    const asset = ctx.batchState.state.assetsAllBatch.get(
+      `${assetStorageData.assetId}`
+    );
+
+    if (
+      !asset ||
+      (asset.name === assetStorageData.data.name &&
+        asset.assetType === assetStorageData.data.assetType &&
+        asset.symbol === assetStorageData.data.symbol &&
+        asset.decimals === assetStorageData.data.decimals)
+    )
+      continue;
+
+    if (!!assetStorageData.data.name) asset.name = assetStorageData.data.name;
+
+    if (!!assetStorageData.data.assetType) {
+      asset.assetType = assetStorageData.data.assetType;
+    }
+    if (!!assetStorageData.data.symbol)
+      asset.symbol = assetStorageData.data.symbol;
+
+    if (!!assetStorageData.data.decimals)
+      asset.decimals = assetStorageData.data.decimals;
+
+    if (!!assetStorageData.data.xcmRateLimit)
+      asset.xcmRateLimit = assetStorageData.data.xcmRateLimit;
+
+    if (!!assetStorageData.data.isSufficient)
+      asset.isSufficient = assetStorageData.data.isSufficient;
+
+    await ctx.store.save(asset);
 
     // const { name, assetType, symbol, decimals, xcmRateLimit, isSufficient } =
     //   assetStorageData.data;
