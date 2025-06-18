@@ -4,7 +4,7 @@
 
 manifestVersion: subsquid.io/v0.1
 name: hydration-storage-dictionary
-slot: 511
+slot: 512
 description: Hydration storage dictionary for LBP pool storage
 build:
 deploy:
@@ -110,6 +110,7 @@ deploy:
         STATE_SCHEMA_NAME: lbp_pool__batch_proc_5
         INDEXER_MAX_SUB_BATCH_SIZE: 200
         ASSETS_TRACKER_PROCESSOR: true
+        PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: lbp_pool__batch_proc_5
 
 #    - name: lbp-pool-batch-proc-ensure-2
@@ -157,7 +158,7 @@ deploy:
     env:
       GQL_PORT: 8080
       NODE_ENV: production
-      SUB_PROCESSORS_RANGES: 'lbp_pool__batch_proc_1:3681428:4512000;lbp_pool__batch_proc_2:4512001:5384000;lbp_pool__batch_proc_3:5384001:6256000;lbp_pool__batch_proc_4:6256001:7128000;lbp_pool__batch_proc_5:7128001:-1;lbp_pool__assets_tracker_proc:7128001:-1'
+      SUB_PROCESSORS_RANGES: 'lbp_pool__batch_proc_1:3681428:4512000;lbp_pool__batch_proc_2:4512001:5384000;lbp_pool__batch_proc_3:5384001:6256000;lbp_pool__batch_proc_4:6256001:7128000;lbp_pool__batch_proc_5:7128001:-1'
     cmd:
       - sqd
       - api:prod

@@ -51,7 +51,6 @@ export async function handleXykPoolHistoricalData(
               id: poolId,
               ensure: true,
               blockHeader,
-              parent: 'handleXykPoolHistoricalData',
             });
 
             if (!pool || !pool.assetA || !pool.assetB) return null;
@@ -101,18 +100,22 @@ export async function handleXykPoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
-    await ctx.store.save(
-      Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
-    );
-    return;
-  }
-
-  const entitiesToSave = await getXykpoolHistDataWithUniqueData(
-    ctx.batchState.state.xykPoolAllHistoricalData,
-    ctx
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
   );
-  await ctx.store.save(Array.from(entitiesToSave.values()));
+
+  // if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+  //   await ctx.store.save(
+  //     Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
+  //   );
+  //   return;
+  // }
+  //
+  // const entitiesToSave = await getXykpoolHistDataWithUniqueData(
+  //   ctx.batchState.state.xykPoolAllHistoricalData,
+  //   ctx
+  // );
+  // await ctx.store.save(Array.from(entitiesToSave.values()));
 }
 
 export async function getXykpoolHistDataWithUniqueData(
@@ -191,8 +194,8 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
   let isEqual = true;
 
   if (
-    !!previousItem.assetABalance !== !!currentRecord.assetABalance ||
-    !!previousItem.assetBBalance !== !!currentRecord.assetBBalance
+    previousItem.assetABalance !== currentRecord.assetABalance ||
+    previousItem.assetBBalance !== currentRecord.assetBBalance
   ) {
     isEqual = false;
   }

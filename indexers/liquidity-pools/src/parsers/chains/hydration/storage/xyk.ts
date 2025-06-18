@@ -13,8 +13,6 @@ import {
   XykPoolShareTokenPair,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { hexToString } from '@polkadot/util';
-import { EmaOraclePeriod } from '../../../../model';
 
 function getConstants({ block }: GetConstantsInput): XykConstants {
   let exchangeFee = null;

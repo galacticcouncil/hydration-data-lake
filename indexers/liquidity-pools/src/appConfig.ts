@@ -223,8 +223,14 @@ export class AppConfig {
   )
   readonly ASSET_SPOT_PRICE_ASSET_OUT_IDS: string[] = ['10'];
 
-  @Transform(({ value }: { value: string }) => +value)
+  @Transform(({ value }: { value: string }) => value)
   readonly ASSET_PRICE_BASE_ASSET_ID: string = '10';
+
+  @Transform(({ value }: { value: string }) => value)
+  readonly XYKPOOL_ASSET_PRICE_INTERIM_ASSET_ID: string = '5';
+
+  @Transform(({ value }: { value: string }) => value)
+  readonly XYKPOOL_ASSET_PRICE_FALLBACK_INTERIM_ASSET_ID: string = '0';
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {

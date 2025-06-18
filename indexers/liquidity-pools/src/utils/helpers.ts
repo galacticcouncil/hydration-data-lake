@@ -6,7 +6,7 @@ import { join } from 'path';
 import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import v8 from 'v8';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { HYDRADX_SS58_PREFIX, BigNumber } from '@galacticcouncil/sdk';
+import { HYDRADX_SS58_PREFIX, BigNumber, Hop } from '@galacticcouncil/sdk';
 import crypto from 'node:crypto';
 import { YieldMetricsInterval } from '../apiSupport/types';
 import { performance, monitorEventLoopDelay } from 'perf_hooks';
@@ -208,3 +208,11 @@ export function isDeepEqual(a: any, b: any) {
   return deepEqual(a, b);
 }
 
+export function getPriceRouteDecorated(route: Hop[]): string[][] {
+  return route.map((hop) => [
+    hop.poolAddress,
+    hop.pool,
+    hop.assetIn,
+    hop.assetOut,
+  ]);
+}

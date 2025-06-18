@@ -2,12 +2,18 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
-import { Lbppool, LbppoolHistoricalData } from '../../../model';
+import {
+  Lbppool,
+  LbppoolHistoricalData,
+  XykpoolHistoricalData,
+} from '../../../model';
 import { getOrCreateAsset } from '../../assets/asset';
 import { getOrCreateLbppool } from './lbpPool';
 import { getOrCreateAccount } from '../../accounts';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import pMap from 'p-map';
+import { LessThan } from 'typeorm';
 
 export async function handleLbppoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -154,7 +160,109 @@ export async function handleLbppoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values())
+  if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values())
+    );
+    return;
+  }
+  const entitiesToSave = await getLbppoolHistDataWithUniqueData(
+    ctx.batchState.state.lbpPoolAllHistoricalData,
+    ctx
   );
+  await ctx.store.save(Array.from(entitiesToSave.values()));
+}
+
+export async function getLbppoolHistDataWithUniqueData(
+  poolsData: Map<string, LbppoolHistoricalData>,
+  ctx: SqdProcessorContext<Store>
+) {
+  const poolsResult: Map<string, LbppoolHistoricalData> = new Map();
+  const concurrencyLimit = 1000;
+
+  const poolsHistoryIndex = new Map<string, LbppoolHistoricalData[]>();
+
+  for (const i of (
+    poolsData || ctx.batchState.state.lbpPoolAllHistoricalData
+  ).values()) {
+    if (!poolsHistoryIndex.has(i.pool.id)) {
+      poolsHistoryIndex.set(i.pool.id, []);
+    }
+    poolsHistoryIndex.get(i.pool.id)!.push(i);
+  }
+
+  for (const [poolId, list] of poolsHistoryIndex.entries()) {
+    poolsHistoryIndex.set(
+      poolId,
+      list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    );
+  }
+
+  await pMap(
+    Array.from(poolsData.values()),
+    async (item) => {
+      if (
+        await isLbppoolHistoricalDataUniqueRegardingPreviousRecord({
+          currentRecord: item,
+          cachedIndexedRecords: poolsHistoryIndex,
+          ctx,
+        })
+      ) {
+        poolsResult.set(item.id, item);
+      }
+    },
+    { concurrency: concurrencyLimit }
+  );
+
+  return poolsResult;
+}
+
+export async function isLbppoolHistoricalDataUniqueRegardingPreviousRecord({
+  currentRecord,
+  cachedIndexedRecords,
+  ctx,
+}: {
+  currentRecord: LbppoolHistoricalData;
+  cachedIndexedRecords: Map<string, LbppoolHistoricalData[]>;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let previousItem = (
+    cachedIndexedRecords.get(currentRecord.pool.id) || []
+  ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
+
+  if (!previousItem) {
+    previousItem = await ctx.store.findOne(LbppoolHistoricalData, {
+      where: {
+        pool: { id: currentRecord.pool.id },
+        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
+    });
+  }
+
+  if (!previousItem) {
+    return true;
+  }
+
+  let isEqual = true;
+
+  if (
+    previousItem.assetABalance !== currentRecord.assetABalance ||
+    previousItem.assetBBalance !== currentRecord.assetBBalance ||
+    previousItem.owner !== currentRecord.owner ||
+    previousItem.feeCollector !== currentRecord.feeCollector ||
+    previousItem.startBlockNumber !== currentRecord.startBlockNumber ||
+    previousItem.endBlockNumber !== currentRecord.endBlockNumber ||
+    previousItem.initialWeight !== currentRecord.initialWeight ||
+    previousItem.finalWeight !== currentRecord.finalWeight ||
+    previousItem.repayTarget !== currentRecord.repayTarget ||
+    previousItem.weightCurve !== currentRecord.weightCurve ||
+    previousItem.fee.join(',') !== currentRecord.fee.join(',')
+  ) {
+    isEqual = false;
+  }
+
+  return !isEqual;
 }

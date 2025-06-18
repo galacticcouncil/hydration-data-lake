@@ -4,7 +4,7 @@
 
 manifestVersion: subsquid.io/v0.1
 name: hydration-storage-dictionary
-slot: 310
+slot: 312
 description: Hydration storage dictionary for Omnipool storage
 build:
 deploy:
@@ -108,7 +108,7 @@ deploy:
         PROCESS_OMNIPOOLS: true
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: false
-        INDEXING_IS_PAUSED: false
+        INDEXING_IS_PAUSED: true
         PROCESS_ONLY_MISSED_BLOCKS: false
         GQL_PORT: 8080
         NODE_ENV: production
@@ -119,6 +119,7 @@ deploy:
         SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 200
         ASSETS_TRACKER_PROCESSOR: true
+        PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: omnipool__batch_proc_5
 
 #    - name: omnipool-batch-proc-ensure-3
@@ -170,19 +171,19 @@ deploy:
     env:
       GQL_PORT: 8080
       NODE_ENV: production
-      SUB_PROCESSORS_RANGES: 'omnipool__batch_proc_1:1708100:2966000;omnipool__batch_proc_2:2966001:4224000;omnipool__batch_proc_3:4224001:5482000;omnipool__batch_proc_4:5482001:6740000;omnipool__batch_proc_5:6740001:-1;omnipool__batch_proc_ensure:1708100:-1;omnipool__batch_proc_ensure_2:1475996:1708100;omnipool__batch_proc_ensure_3:1475996:-1;omnipool__assets_tracker_proc:6740001:-1'
+      SUB_PROCESSORS_RANGES: 'omnipool__batch_proc_1:1708100:2966000;omnipool__batch_proc_2:2966001:4224000;omnipool__batch_proc_3:4224001:5482000;omnipool__batch_proc_4:5482001:6740000;omnipool__batch_proc_5:6740001:-1'
 
     cmd:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
       profile: medium
-      storage: 130G
+      storage: 81G
   processor:
     profile: small
   api:
-    profile: large
+    profile: small
 #    replicas: 5

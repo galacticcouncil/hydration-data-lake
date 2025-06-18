@@ -4,7 +4,7 @@
 
 manifestVersion: subsquid.io/v0.1
 name: hydration-storage-dictionary
-slot: 409
+slot: 411
 description: Hydration storage dictionary for Stablepool storage
 build:
 deploy:
@@ -114,6 +114,7 @@ deploy:
         STATE_SCHEMA_NAME: stablepool__batch_proc_5
         INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: true
+        PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
         ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__batch_proc_5
 
 #    - name: stablepool-batch-proc-ensure-2
@@ -162,7 +163,7 @@ deploy:
     env:
       GQL_PORT: 8080
       NODE_ENV: production
-      SUB_PROCESSORS_RANGES: 'stablepool__batch_proc_1:3640100:4512000;stablepool__batch_proc_2:4512001:5384000;stablepool__batch_proc_3:5384001:6256000;stablepool__batch_proc_4:6256001:7128000;stablepool__batch_proc_5:7128001:-1;stablepool__batch_proc_ensure:3640100:-1;stablepool__batch_proc_ensure_2:3640100:-1;stablepool__assets_tracker_proc:7128001:-1'
+      SUB_PROCESSORS_RANGES: 'stablepool__batch_proc_1:3640100:4512000;stablepool__batch_proc_2:4512001:5384000;stablepool__batch_proc_3:5384001:6256000;stablepool__batch_proc_4:6256001:7128000;stablepool__batch_proc_5:7128001:-1'
     cmd:
       - sqd
       - api:prod
