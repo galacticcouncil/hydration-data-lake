@@ -116,7 +116,6 @@ export async function getAssetHistDataWithUniqueData(
   ctx: SqdProcessorContext<Store>
 ) {
   const result: Map<string, AssetHistoricalData> = new Map();
-  const concurrencyLimit = 1000;
 
   const assetHistoryIndex = new Map<string, AssetHistoricalData[]>();
 
@@ -149,7 +148,7 @@ export async function getAssetHistDataWithUniqueData(
         result.set(item.id, item);
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   // for (const item of src.values()) {

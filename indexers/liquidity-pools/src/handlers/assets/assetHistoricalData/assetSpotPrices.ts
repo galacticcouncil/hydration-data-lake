@@ -179,7 +179,6 @@ export async function getAssetSpotPriceHistDataWithUniqueData(
   ctx: SqdProcessorContext<Store>
 ) {
   const result: AssetSpotPriceHistoricalData[] = [];
-  const concurrencyLimit = 1000;
 
   await pMap(
     Array.from(src.values()),
@@ -194,7 +193,7 @@ export async function getAssetSpotPriceHistDataWithUniqueData(
         result.push(item);
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   // for (const item of src.values()) {

@@ -178,7 +178,6 @@ export async function getLbppoolHistDataWithUniqueData(
   ctx: SqdProcessorContext<Store>
 ) {
   const poolsResult: Map<string, LbppoolHistoricalData> = new Map();
-  const concurrencyLimit = 1000;
 
   const poolsHistoryIndex = new Map<string, LbppoolHistoricalData[]>();
 
@@ -211,7 +210,7 @@ export async function getLbppoolHistDataWithUniqueData(
         poolsResult.set(item.id, item);
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return poolsResult;

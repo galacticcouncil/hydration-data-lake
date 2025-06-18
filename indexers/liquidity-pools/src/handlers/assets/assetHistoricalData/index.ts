@@ -8,6 +8,7 @@ import {
   isAssetHistoricalDataUniqueRegardingPreviousRecord,
   processAssetsHistoricalDataAtBlock,
 } from './assetHistoricalData';
+import pMap from 'p-map';
 
 export async function handleAssetHistoricalData({
   blockNumbersToProcess,
@@ -38,14 +39,15 @@ export async function handleAssetHistoricalData({
     blocksToProcess,
     ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
   )) {
-    await Promise.all(
-      blocksSubBatch.map((block) =>
+    await pMap(
+      blocksSubBatch,
+      async (block) =>
         processAssetsHistoricalDataAtBlock({
           assetRegistryIds,
           block: block.header,
           ctx,
-        })
-      )
+        }),
+      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
   }
 
@@ -87,23 +89,24 @@ export async function handleAssetSpotPriceRelatedHistoricalData({
       ctx,
     });
 
-    await Promise.all(
-      blocksSubBatch.map((block) =>
+    await pMap(
+      blocksSubBatch,
+      async (block) =>
         handleAssetSpotPricesHistoricalData({
           blockHeader: block.header,
           ctx,
-        })
-      )
+        }),
+      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
 
-    await Promise.all(
-      blocksSubBatch.map((block) =>
+    await pMap(
+      blocksSubBatch,
+      async (block) =>
         handleAssetPairVolumesHistoricalData({
           blockHeader: block.header,
           ctx,
-        })
-      )
+        }),
+      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
   }
-
 }

@@ -19,6 +19,7 @@ import {
   StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolPoolPegsInfo,
 } from '../../../parsers/types/storage';
+import pMap from 'p-map';
 
 async function getStableswapDataPromise({
   ctx,
@@ -53,8 +54,9 @@ async function getStableswapDataPromise({
       block: blockHeader,
     }));
 
-  const assetsData = await Promise.all(
-    poolStorageData.assets.map(async (assetId) => ({
+  const assetsData = await pMap(
+    poolStorageData.assets,
+    async (assetId) => ({
       assetId,
       data: await parsers.storage.stableswap.getPoolAssetInfo({
         poolId,
@@ -68,7 +70,8 @@ async function getStableswapDataPromise({
         block: blockHeader,
         poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
       }),
-    }))
+    }),
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   const getPoolPegsDetails = (): Pick<
@@ -200,8 +203,9 @@ export async function handleStableswapHistoricalData(
       blockHeader: BlockHeader;
       poolsDataMap: Map<number, StablepoolAllPoolsInfoWithPoolId>;
       poolsPegsMap: Map<number, StablepoolManyPoolsPegsInfoWithPoolId>;
-    }> = await Promise.all(
-      blocksSubBatch.map(async ({ header: blockHeader }) => {
+    }> = await pMap(
+      blocksSubBatch,
+      async ({ header: blockHeader }) => {
         const [blockAllPoolsData, blockAllPoolsPegs] = await Promise.all([
           parsers.storage.stableswap.getAllPoolsData({
             block: blockHeader,
@@ -220,11 +224,12 @@ export async function handleStableswapHistoricalData(
             (blockAllPoolsPegs || []).map((data) => [data.poolId, data])
           ),
         };
-      })
+      },
+      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
 
     predefinedEntities.push(
-      await Promise.all(
+      await pMap(
         allPoolsPerBlock
           .map(({ blockHeader, poolsDataMap, poolsPegsMap }) =>
             [...poolsDataMap.values()].map((poolDataWithId) => ({
@@ -234,8 +239,9 @@ export async function handleStableswapHistoricalData(
               poolPegs: poolsPegsMap.get(poolDataWithId.poolId)?.data,
             }))
           )
-          .flat()
-          .map((item) => getStableswapDataPromise({ ...item, ctx }))
+          .flat(),
+        async (item) => getStableswapDataPromise({ ...item, ctx }),
+        { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
       )
     );
   }

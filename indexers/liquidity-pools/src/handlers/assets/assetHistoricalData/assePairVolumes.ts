@@ -66,12 +66,12 @@ export async function handleAssetPairVolumesHistoricalData({
   blockHeader: BlockHeader;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const routerAssetPairs = await new RouterAssetPairs().init(blockHeader);
-
-  if (routerAssetPairs.pairsListEmpty) {
-    console.log(`routerAssetPairs is empty on block ${blockHeader.height}`);
-    return;
-  }
+  // const routerAssetPairs = await new RouterAssetPairs().init(blockHeader);
+  //
+  // if (routerAssetPairs.pairsListEmpty) {
+  //   console.log(`routerAssetPairs is empty on block ${blockHeader.height}`);
+  //   return;
+  // }
 
   const currentBlockEntity = ctx.batchState.getParaBlockFromCacheByHeight(
     blockHeader.height
@@ -124,14 +124,17 @@ export async function handleAssetPairVolumesHistoricalData({
     )
       continue assetsPairLoop;
 
-    if (
-      !routerAssetPairs.isPairTradable(
-        assetInData.asset.assetRegistryId,
-        assetOutData.asset.assetRegistryId
-      )
-    ) {
-      continue assetsPairLoop;
-    }
+    // if (
+    //   !routerAssetPairs.isPairTradable(
+    //     assetInData.asset.assetRegistryId,
+    //     assetOutData.asset.assetRegistryId
+    //   )
+    // ) {
+    //   console.log(
+    //     `Pair is not tradable: ${assetInData.asset.assetRegistryId}-${assetOutData.asset.assetRegistryId} on block ${blockHeader.height} `
+    //   );
+    //   continue assetsPairLoop;
+    // }
 
     const assetInSpotPrice = getAssetSpotPriceFromHistoricalData({
       assetId: assetInData.asset.id,

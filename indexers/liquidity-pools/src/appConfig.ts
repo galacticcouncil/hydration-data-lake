@@ -232,6 +232,13 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value)
   readonly XYKPOOL_ASSET_PRICE_FALLBACK_INTERIM_ASSET_ID: string = '0';
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: boolean = false;
+
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       AppConfig.instance = new AppConfig();
