@@ -86,14 +86,17 @@ export async function getLbppoolHistDataWithUniqueData({
          */
         const assetAHistDataId = `${item.poolAddress}-${item.assetAId}-${item.paraBlockHeight}`;
         const assetBHistDataId = `${item.poolAddress}-${item.assetBId}-${item.paraBlockHeight}`;
-        poolAssetsResult.set(
-          assetAHistDataId,
-          poolAssetsData.get(assetAHistDataId)!
-        );
-        poolAssetsResult.set(
-          assetBHistDataId,
-          poolAssetsData.get(assetBHistDataId)!
-        );
+
+        if (poolAssetsData.has(assetAHistDataId))
+          poolAssetsResult.set(
+            assetAHistDataId,
+            poolAssetsData.get(assetAHistDataId)!
+          );
+        if (poolAssetsData.has(assetBHistDataId))
+          poolAssetsResult.set(
+            assetBHistDataId,
+            poolAssetsData.get(assetBHistDataId)!
+          );
       }
     },
     { concurrency: concurrencyLimit }

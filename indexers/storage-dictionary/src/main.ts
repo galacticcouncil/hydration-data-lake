@@ -228,8 +228,10 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
         poolAssetsData: ctx.batchState.state.lbpPoolAssetsData,
       });
 
-    await ctx.store.save(Array.from(lbppools.values()));
-    await ctx.store.save(Array.from(lbppoolAssets.values()));
+    if (lbppools.size !== 0)
+      await ctx.store.upsert(Array.from(lbppools.values()));
+    if (lbppoolAssets.size !== 0)
+      await ctx.store.upsert(Array.from(lbppoolAssets.values()));
   }
 
   if (appConfig.PROCESS_XYK_POOLS) {
@@ -239,8 +241,10 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
         ctx
       );
 
-    await ctx.store.save(Array.from(xykpools.values()));
-    await ctx.store.save(Array.from(xykpoolAssets.values()));
+    if (xykpools.size !== 0)
+      await ctx.store.upsert(Array.from(xykpools.values()));
+    if (xykpoolAssets.size !== 0)
+      await ctx.store.upsert(Array.from(xykpoolAssets.values()));
   }
 
   if (appConfig.PROCESS_OMNIPOOLS) {
@@ -251,8 +255,10 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
         poolAssetsData: ctx.batchState.state.omnipoolAssetsData,
       });
 
-    await ctx.store.save(Array.from(omnipools.values()));
-    await ctx.store.save(Array.from(omnipoolAssets.values()));
+    if (omnipools.size !== 0)
+      await ctx.store.upsert(Array.from(omnipools.values()));
+    if (omnipoolAssets.size !== 0)
+      await ctx.store.upsert(Array.from(omnipoolAssets.values()));
   }
 
   if (appConfig.PROCESS_STABLEPOOLS) {
@@ -263,8 +269,10 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
         poolAssetsData: ctx.batchState.state.stablepoolAssetsData,
       });
 
-    await ctx.store.save(Array.from(stableswaps.values()));
-    await ctx.store.save(Array.from(stableswapAssets.values()));
+    if (stableswaps.size !== 0)
+      await ctx.store.upsert(Array.from(stableswaps.values()));
+    if (stableswapAssets.size !== 0)
+      await ctx.store.upsert(Array.from(stableswapAssets.values()));
   }
 
   if (appConfig.PROCESS_GENERIC_HIST_DATA) {
@@ -280,9 +288,12 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
       ctx.batchState.state.emaOracles,
       ctx
     );
-    await ctx.store.save(Array.from(aavepoolsToSave.values()));
-    await ctx.store.save(Array.from(eassetHistDataToSave.values()));
-    await ctx.store.save(Array.from(emaOracleDataToSave.values()));
+    if (aavepoolsToSave.size !== 0)
+      await ctx.store.upsert(Array.from(aavepoolsToSave.values()));
+    if (eassetHistDataToSave.size !== 0)
+      await ctx.store.upsert(Array.from(eassetHistDataToSave.values()));
+    if (emaOracleDataToSave.size !== 0)
+      await ctx.store.upsert(Array.from(emaOracleDataToSave.values()));
   }
 
   for (const block of ctx.blocks) {

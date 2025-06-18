@@ -86,6 +86,9 @@ export async function getStableswapHistDataWithUniqueData({
           .get(item.poolAddress)!
           .keys()) {
           const pairAssetRecordId = `${item.poolId}-${assetId}-${item.paraBlockHeight}`;
+
+          if (!poolAssetsData.has(pairAssetRecordId)) continue;
+
           poolAssetsResult.set(
             pairAssetRecordId,
             poolAssetsData.get(pairAssetRecordId)!
@@ -121,6 +124,9 @@ export async function getStableswapHistDataWithUniqueData({
           if (assetId === item.assetId) continue innerLoop;
 
           const pairAssetRecordId = `${item.pool.poolId}-${assetId}-${item.paraBlockHeight}`;
+
+          if (!poolAssetsData.has(pairAssetRecordId)) continue innerLoop;
+
           poolAssetsResult.set(
             pairAssetRecordId,
             poolAssetsData.get(pairAssetRecordId)!

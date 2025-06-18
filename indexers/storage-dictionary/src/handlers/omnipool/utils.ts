@@ -70,6 +70,9 @@ export async function getOmnipoolHistDataWithUniqueData({
          */
         for (const assetId of poolAssetsHistoryIndex.keys()) {
           const pairAssetRecordId = `${item.poolAddress}-${assetId}-${item.paraBlockHeight}`;
+
+          if (!poolAssetsData.has(pairAssetRecordId)) continue;
+
           poolAssetsResult.set(
             pairAssetRecordId,
             poolAssetsData.get(pairAssetRecordId)!
@@ -103,6 +106,9 @@ export async function getOmnipoolHistDataWithUniqueData({
           if (assetId === item.assetId) continue innerLoop;
 
           const pairAssetRecordId = `${item.pool.poolAddress}-${assetId}-${item.paraBlockHeight}`;
+
+          if (!poolAssetsData.has(pairAssetRecordId)) continue innerLoop;
+
           poolAssetsResult.set(
             pairAssetRecordId,
             poolAssetsData.get(pairAssetRecordId)!

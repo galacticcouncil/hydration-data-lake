@@ -57,10 +57,13 @@ export async function getXykpoolHistDataWithUniqueData(
         } else {
           pairAssetRecordId = `${item.pool.poolAddress}-${item.pool.assetAId}-${item.paraBlockHeight}`;
         }
-        poolAssetsResult.set(
-          pairAssetRecordId,
-          poolAssetsData.get(pairAssetRecordId)!
-        );
+
+        if (poolAssetsData.has(pairAssetRecordId)) {
+          poolAssetsResult.set(
+            pairAssetRecordId,
+            poolAssetsData.get(pairAssetRecordId)!
+          );
+        }
       }
     },
     { concurrency: concurrencyLimit }
