@@ -3,30 +3,37 @@ import { Store } from '@subsquid/typeorm-store';
 import { AssetHistoricalData } from '../../model';
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 
 export async function getAssetHistDataWithUniqueData(
   src: Map<string, AssetHistoricalData>,
   ctx: ProcessorContext<Store>
 ) {
   const result: Map<string, AssetHistoricalData> = new Map();
-  const concurrencyLimit = 1000;
 
-  const assetHistoryIndex = new Map<string, AssetHistoricalData[]>();
+  const assetHistoryIndexByAsset = new Map<string, AssetHistoricalData[]>();
 
   for (const i of (
     src || ctx.batchState.state.assetHistoricalDataItems
   ).values()) {
-    if (!assetHistoryIndex.has(i.asset.id)) {
-      assetHistoryIndex.set(i.asset.id, []);
+    if (!assetHistoryIndexByAsset.has(i.asset.id)) {
+      assetHistoryIndexByAsset.set(i.asset.id, []);
     }
-    assetHistoryIndex.get(i.asset.id)!.push(i);
+    assetHistoryIndexByAsset.get(i.asset.id)!.push(i);
   }
 
-  for (const [assetId, list] of assetHistoryIndex.entries()) {
-    assetHistoryIndex.set(
-      assetId,
-      list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+  for (const [assetId, list] of assetHistoryIndexByAsset.entries()) {
+    const listToSort = list;
+    const latestCachedItem =
+      LatestProcessedDataCacheManager.getInstance().getLastAssetHistoricalDataItem(
+        assetId
+      );
+    if (latestCachedItem) listToSort.push(latestCachedItem);
+
+    const orderedList = listToSort.sort(
+      (a, b) => b.paraBlockHeight - a.paraBlockHeight
     );
+    assetHistoryIndexByAsset.set(assetId, orderedList);
   }
 
   await pMap(
@@ -35,14 +42,14 @@ export async function getAssetHistDataWithUniqueData(
       if (
         await isAssetHistoricalDataUniqueRegardingPreviousRecord({
           currentRecord: item,
-          cachedIndexedRecords: assetHistoryIndex,
+          cachedIndexedRecords: assetHistoryIndexByAsset,
           ctx,
         })
       ) {
         result.set(item.id, item);
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return result;

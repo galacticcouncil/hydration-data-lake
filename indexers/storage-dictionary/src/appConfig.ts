@@ -150,7 +150,7 @@ export class AppConfig {
   readonly PERSIST_HIST_DATA_ONLY_ON_CHANGE: boolean = false;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
+  readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 100;
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {

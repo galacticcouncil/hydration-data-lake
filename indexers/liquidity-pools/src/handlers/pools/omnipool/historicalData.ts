@@ -47,7 +47,7 @@ export async function handleOmnipoolHistoricalData(
         };
       },
       {
-        concurrency: 50,
+        concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
       }
     );
 
@@ -161,9 +161,7 @@ export async function handleOmnipoolHistoricalData(
 
           return newEntity;
         },
-        {
-          concurrency: 50,
-        }
+        { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
       )
     );
   }

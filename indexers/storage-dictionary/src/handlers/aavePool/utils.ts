@@ -3,13 +3,13 @@ import { Store } from '@subsquid/typeorm-store';
 import { Aavepool, AssetHistoricalData } from '../../model';
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 
 export async function getAavepoolHistDataWithUniqueData(
   src: Map<string, Aavepool>,
   ctx: ProcessorContext<Store>
 ) {
   const result: Map<string, Aavepool> = new Map();
-  const concurrencyLimit = 1000;
 
   const poolsHistoryIndex = new Map<string, Aavepool[]>();
 
@@ -21,10 +21,16 @@ export async function getAavepoolHistDataWithUniqueData(
   }
 
   for (const [poolId, list] of poolsHistoryIndex.entries()) {
-    poolsHistoryIndex.set(
-      poolId,
-      list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    const listToSort = list;
+    const latestCachedItem =
+      LatestProcessedDataCacheManager.getInstance().getLastAavepool(poolId);
+    if (latestCachedItem) listToSort.push(latestCachedItem);
+
+    const orderedList = listToSort.sort(
+      (a, b) => b.paraBlockHeight - a.paraBlockHeight
     );
+
+    poolsHistoryIndex.set(poolId, orderedList);
   }
 
   await pMap(
@@ -40,7 +46,7 @@ export async function getAavepoolHistDataWithUniqueData(
         result.set(item.id, item);
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return result;

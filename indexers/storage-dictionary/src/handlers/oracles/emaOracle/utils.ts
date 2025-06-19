@@ -4,15 +4,21 @@ import pMap from 'p-map';
 import { LessThan } from 'typeorm';
 import { EmaOracle } from '../../../model';
 import { isDeepEqual } from '../../../utils/helpers';
+import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 
 export async function getEmaOracleHistDataWithUniqueData(
   src: Map<string, EmaOracle>,
   ctx: ProcessorContext<Store>
 ) {
   const result: Map<string, EmaOracle> = new Map();
-  const concurrencyLimit = 1000;
 
-  const sortedRecords = Array.from(src.values()).sort(
+  const listToSort = Array.from(src.values());
+
+  const latestCachedItem =
+    LatestProcessedDataCacheManager.getInstance().getLastEmaOracle();
+  if (latestCachedItem) listToSort.push(latestCachedItem);
+
+  const sortedRecords = listToSort.sort(
     (a, b) => b.paraBlockHeight - a.paraBlockHeight
   );
 
@@ -29,7 +35,7 @@ export async function getEmaOracleHistDataWithUniqueData(
         result.set(item.id, item);
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return result;

@@ -47,6 +47,7 @@ import { getAavepoolHistDataWithUniqueData } from './handlers/aavePool/utils';
 import { getAssetHistDataWithUniqueData } from './handlers/asset/utils';
 import { getEmaOracleHistDataWithUniqueData } from './handlers/oracles/emaOracle/utils';
 import { getLbppoolHistDataWithUniqueData } from './handlers/lbpPool/utils';
+import { LatestProcessedDataCacheManager } from './utils/latestProcessedDataCacheManager';
 
 const appConfig = AppConfig.getInstance();
 
@@ -241,10 +242,14 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
         ctx
       );
 
-    if (xykpools.size !== 0)
-      await ctx.store.upsert(Array.from(xykpools.values()));
-    if (xykpoolAssets.size !== 0)
-      await ctx.store.upsert(Array.from(xykpoolAssets.values()));
+    const xykpoolAssetsToSaveList = Array.from(xykpoolAssets.values());
+
+    LatestProcessedDataCacheManager.getInstance().setLastXykpoolAssetHistDataItem(
+      xykpoolAssetsToSaveList
+    );
+
+    await ctx.store.upsert(Array.from(xykpools.values()));
+    await ctx.store.upsert(xykpoolAssetsToSaveList);
   }
 
   if (appConfig.PROCESS_OMNIPOOLS) {
@@ -288,12 +293,22 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
       ctx.batchState.state.emaOracles,
       ctx
     );
-    if (aavepoolsToSave.size !== 0)
-      await ctx.store.upsert(Array.from(aavepoolsToSave.values()));
-    if (eassetHistDataToSave.size !== 0)
-      await ctx.store.upsert(Array.from(eassetHistDataToSave.values()));
-    if (emaOracleDataToSave.size !== 0)
-      await ctx.store.upsert(Array.from(emaOracleDataToSave.values()));
+    const aavepoolsToSaveList = Array.from(aavepoolsToSave.values());
+    const eassetHistDataToSaveList = Array.from(eassetHistDataToSave.values());
+    const emaOracleDataToSaveList = Array.from(emaOracleDataToSave.values());
+
+    LatestProcessedDataCacheManager.getInstance().setLastAssetHistoricalDataItem(
+      eassetHistDataToSaveList
+    );
+    LatestProcessedDataCacheManager.getInstance().setLastAavepool(
+      aavepoolsToSaveList
+    );
+    LatestProcessedDataCacheManager.getInstance().setLastEmaOracle(
+      emaOracleDataToSaveList
+    );
+    await ctx.store.upsert(aavepoolsToSaveList);
+    await ctx.store.upsert(eassetHistDataToSaveList);
+    await ctx.store.upsert(emaOracleDataToSaveList);
   }
 
   for (const block of ctx.blocks) {

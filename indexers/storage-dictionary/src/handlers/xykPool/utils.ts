@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { AssetHistoricalData, Xykpool, XykpoolAssetsData } from '../../model';
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 
 export async function getXykpoolHistDataWithUniqueData(
   poolAssetsData: Map<string, XykpoolAssetsData>,
@@ -10,7 +11,6 @@ export async function getXykpoolHistDataWithUniqueData(
 ) {
   const poolsResult: Map<string, Xykpool> = new Map();
   const poolAssetsResult: Map<string, XykpoolAssetsData> = new Map();
-  const concurrencyLimit = 1000;
 
   const poolAssetsHistoryIndex = new Map<
     string,
@@ -31,9 +31,17 @@ export async function getXykpoolHistDataWithUniqueData(
 
   for (const [poolId, assetsMap] of poolAssetsHistoryIndex.entries()) {
     for (const [assetId, entriesList] of assetsMap.entries()) {
+      const listToSort = entriesList;
+      const latestCachedItem =
+        LatestProcessedDataCacheManager.getInstance().getLastXykpoolAssetHistoricalDataItem(
+          poolId,
+          `${assetId}`
+        );
+      if (latestCachedItem) listToSort.push(latestCachedItem);
+
       poolAssetsHistoryIndex.get(poolId)!.set(
         assetId,
-        entriesList.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+        listToSort.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
       );
     }
   }
@@ -66,7 +74,7 @@ export async function getXykpoolHistDataWithUniqueData(
         }
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return {

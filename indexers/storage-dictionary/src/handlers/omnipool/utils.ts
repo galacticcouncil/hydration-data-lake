@@ -15,7 +15,6 @@ export async function getOmnipoolHistDataWithUniqueData({
 }) {
   const poolsResult: Map<string, Omnipool> = new Map();
   const poolAssetsResult: Map<string, OmnipoolAssetData> = new Map();
-  const concurrencyLimit = 1000;
 
   const poolsHistoryIndex = new Map<string, Omnipool[]>();
 
@@ -80,7 +79,7 @@ export async function getOmnipoolHistDataWithUniqueData({
         }
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   await pMap(
@@ -116,7 +115,7 @@ export async function getOmnipoolHistDataWithUniqueData({
         }
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return {

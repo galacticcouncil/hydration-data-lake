@@ -24,7 +24,6 @@ export async function getLbppoolHistDataWithUniqueData({
 }) {
   const poolsResult: Map<string, Lbppool> = new Map();
   const poolAssetsResult: Map<string, LbppoolAssetsData> = new Map();
-  const concurrencyLimit = 1000;
 
   const poolsHistoryIndex = new Map<string, Lbppool[]>();
 
@@ -99,7 +98,7 @@ export async function getLbppoolHistDataWithUniqueData({
           );
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   await pMap(
@@ -133,7 +132,7 @@ export async function getLbppoolHistDataWithUniqueData({
         );
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return {

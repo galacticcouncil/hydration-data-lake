@@ -22,7 +22,6 @@ export async function getStableswapHistDataWithUniqueData({
 }) {
   const poolsResult: Map<string, Stableswap> = new Map();
   const poolAssetsResult: Map<string, StableswapAssetData> = new Map();
-  const concurrencyLimit = 1000;
 
   const poolsHistoryIndex = new Map<string, Stableswap[]>();
 
@@ -96,7 +95,7 @@ export async function getStableswapHistDataWithUniqueData({
         }
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   await pMap(
@@ -134,7 +133,7 @@ export async function getStableswapHistDataWithUniqueData({
         }
       }
     },
-    { concurrency: concurrencyLimit }
+    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return {
