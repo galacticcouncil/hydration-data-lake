@@ -45,7 +45,7 @@ export class ProcessingPoolManager {
   async commitBlocksForProcessing(blockNumbers: number[]) {
     for (const blockNumber of this.pendingBlocks) {
       const existingJob = await this.processingPoolQueue.getJob(blockNumber);
-      if (!existingJob) return;
+      if (!existingJob) continue;
       try {
         await existingJob.update({
           ...existingJob.data,
@@ -111,20 +111,18 @@ export class ProcessingPoolManager {
    * blocks batch handler.
    */
   async releaseCompletedJobs() {
-    await Promise.all(
-      [...this.completedJobs.values()].map(async (job) => {
-        try {
-          await job.update({
-            ...job.data,
-            status: JobProcessingStatus.COMPLETED,
-          });
-          await job.releaseLock();
-          await job.remove();
-        } catch (e) {
-          console.log(e);
-        }
-      })
-    );
+    for (const job of this.completedJobs.values()) {
+      try {
+        await job.update({
+          ...job.data,
+          status: JobProcessingStatus.COMPLETED,
+        });
+        await job.releaseLock();
+        await job.remove();
+      } catch (e) {
+        console.log(e);
+      }
+    }
 
     this.completedJobs = new Map();
   }

@@ -5,6 +5,11 @@ import {
   Xykpool,
   XykpoolAssetsData,
 } from '../model';
+import { ProcessorContext } from '../processor';
+import parsers from '../parsers';
+import { LessThan } from 'typeorm';
+import { Store } from '@subsquid/typeorm-store';
+import { AssetDetailsWithId } from '../parsers/types/storage';
 
 export class LatestProcessedDataCacheManager {
   private static instance: LatestProcessedDataCacheManager;
@@ -25,6 +30,35 @@ export class LatestProcessedDataCacheManager {
         new LatestProcessedDataCacheManager();
     }
     return LatestProcessedDataCacheManager.instance;
+  }
+
+  async prefetchLastAssetHistDataItem(ctx: ProcessorContext<Store>) {
+    if (this.assetHistoricalDataItemsCache.size !== 0) return;
+    const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
+
+    const storageDataAllAssets = (
+      await parsers.storage.assetRegistry.getAssetsAll(currentBlockHeader)
+    ).filter((res) => !!res.data);
+
+    const latestEntities = await Promise.all(
+      storageDataAllAssets.map((assetData): AssetHistoricalData | undefined => {
+        // @ts-ignore
+        return ctx.store.findOne(AssetHistoricalData, {
+          where: {
+            asset: { id: assetData.assetId.toString() },
+            paraBlockHeight: LessThan(currentBlockHeader.height),
+          },
+          order: {
+            paraBlockHeight: 'DESC',
+          },
+          relations: {
+            asset: true,
+          },
+        });
+      })
+    );
+
+    this.setLastAssetHistoricalDataItem(latestEntities.filter((i) => !!i));
   }
 
   setLastAssetHistoricalDataItem(items: AssetHistoricalData[]) {
@@ -87,6 +121,40 @@ export class LatestProcessedDataCacheManager {
   }
   getLastAavepool(poolId: string): Aavepool | undefined {
     return this.aavepoolsCache.get(poolId);
+  }
+
+  async prefetchLastXykpoolAssetHistDataItem(ctx: ProcessorContext<Store>) {
+    if (this.xykpoolsCache.size !== 0) return;
+    const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
+    const allPoolsWithAssets =
+      await parsers.storage.xyk.getAllPoolsWithAssets(currentBlockHeader);
+
+    const latestEntities = await Promise.all(
+      allPoolsWithAssets
+        .map((pool): [string, number][] => [
+          [pool.poolAddress, pool.assetAId],
+          [pool.poolAddress, pool.assetBId],
+        ])
+        .flat()
+        .map(([poolId, assetId]): XykpoolAssetsData | undefined => {
+          // @ts-ignore
+          return ctx.store.findOne(XykpoolAssetsData, {
+            where: {
+              assetId: +assetId,
+              pool: { poolAddress: poolId },
+              paraBlockHeight: LessThan(currentBlockHeader.height),
+            },
+            order: {
+              paraBlockHeight: 'DESC',
+            },
+            relations: {
+              pool: true,
+            },
+          });
+        })
+    );
+
+    this.setLastXykpoolAssetHistDataItem(latestEntities.filter((i) => !!i));
   }
 
   setLastXykpoolAssetHistDataItem(items: XykpoolAssetsData[]) {

@@ -183,8 +183,10 @@ processor.run(
           }
 
           /**
-           * Should avoid compressing in case PERSIST_HIST_DATA_ONLY_ON_CHANGE === true
+           * Should avoid compressing in this point in case
+           * PERSIST_HIST_DATA_ONLY_ON_CHANGE === true
            * because compressBlockStorage mutates cached entities.
+           * Will be done in "persistUniqueEntities" function.
            */
           if (!appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE)
             await compressBlockStorage(
@@ -236,6 +238,10 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
   }
 
   if (appConfig.PROCESS_XYK_POOLS) {
+    await LatestProcessedDataCacheManager.getInstance().prefetchLastXykpoolAssetHistDataItem(
+      ctx
+    );
+
     const { pools: xykpools, poolAssets: xykpoolAssets } =
       await getXykpoolHistDataWithUniqueData(
         ctx.batchState.state.xykPoolAssetsData,
@@ -281,6 +287,10 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
   }
 
   if (appConfig.PROCESS_GENERIC_HIST_DATA) {
+    await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetHistDataItem(
+      ctx
+    );
+
     const aavepoolsToSave = await getAavepoolHistDataWithUniqueData(
       ctx.batchState.state.aavepools,
       ctx

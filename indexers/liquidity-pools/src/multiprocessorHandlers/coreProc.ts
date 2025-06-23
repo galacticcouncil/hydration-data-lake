@@ -169,64 +169,64 @@ export async function execCoreProcessorHandlers(
 
   await saveAllMoneyMarketEvents(ctx);
 
-  // console.time('pools hist data Promise.all');
-  // await Promise.all([
-  //   (async () => {
-  //     console.time('handleConstantsHistoricalData');
-  //     await handleConstantsHistoricalData(ctx);
-  //     console.timeEnd('handleConstantsHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleStableswapHistoricalData');
-  //     await handleStableswapHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleStableswapHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleOmnipoolHistoricalData');
-  //     await handleOmnipoolHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleOmnipoolHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleXykPoolHistoricalData');
-  //     await handleXykPoolHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleXykPoolHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleLbppoolHistoricalData');
-  //     await handleLbppoolHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleLbppoolHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleAavepoolHistoricalData');
-  //     await handleAavepoolHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleAavepoolHistoricalData');
-  //   })(),
-  // ]);
-  // console.timeEnd('pools hist data Promise.all');
-
-  console.time('handleConstantsHistoricalData');
-  await handleConstantsHistoricalData(ctx);
-  console.timeEnd('handleConstantsHistoricalData');
-
-  console.time('handleStableswapHistoricalData');
-  await handleStableswapHistoricalData(ctx, parsedData);
-  console.timeEnd('handleStableswapHistoricalData');
-
-  console.time('handleOmnipoolHistoricalData');
-  await handleOmnipoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleOmnipoolHistoricalData');
-
-  console.time('handleXykPoolHistoricalData');
-  await handleXykPoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleXykPoolHistoricalData');
-
-  console.time('handleLbppoolHistoricalData');
-  await handleLbppoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleLbppoolHistoricalData');
-
-  console.time('handleAavepoolHistoricalData');
-  await handleAavepoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleAavepoolHistoricalData');
+  console.time('pools hist data Promise.all');
+  await Promise.all([
+    (async () => {
+      console.time('handleConstantsHistoricalData');
+      await handleConstantsHistoricalData(ctx);
+      console.timeEnd('handleConstantsHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleStableswapHistoricalData');
+      await handleStableswapHistoricalData(ctx, parsedData);
+      console.timeEnd('handleStableswapHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleOmnipoolHistoricalData');
+      await handleOmnipoolHistoricalData(ctx, parsedData);
+      console.timeEnd('handleOmnipoolHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleXykPoolHistoricalData');
+      await handleXykPoolHistoricalData(ctx, parsedData);
+      console.timeEnd('handleXykPoolHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleLbppoolHistoricalData');
+      await handleLbppoolHistoricalData(ctx, parsedData);
+      console.timeEnd('handleLbppoolHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleAavepoolHistoricalData');
+      await handleAavepoolHistoricalData(ctx, parsedData);
+      console.timeEnd('handleAavepoolHistoricalData');
+    })(),
+  ]);
+  console.timeEnd('pools hist data Promise.all');
+  //
+  // console.time('handleConstantsHistoricalData');
+  // await handleConstantsHistoricalData(ctx);
+  // console.timeEnd('handleConstantsHistoricalData');
+  //
+  // console.time('handleStableswapHistoricalData');
+  // await handleStableswapHistoricalData(ctx, parsedData);
+  // console.timeEnd('handleStableswapHistoricalData');
+  //
+  // console.time('handleOmnipoolHistoricalData');
+  // await handleOmnipoolHistoricalData(ctx, parsedData);
+  // console.timeEnd('handleOmnipoolHistoricalData');
+  //
+  // console.time('handleXykPoolHistoricalData');
+  // await handleXykPoolHistoricalData(ctx, parsedData);
+  // console.timeEnd('handleXykPoolHistoricalData');
+  //
+  // console.time('handleLbppoolHistoricalData');
+  // await handleLbppoolHistoricalData(ctx, parsedData);
+  // console.timeEnd('handleLbppoolHistoricalData');
+  //
+  // console.time('handleAavepoolHistoricalData');
+  // await handleAavepoolHistoricalData(ctx, parsedData);
+  // console.timeEnd('handleAavepoolHistoricalData');
 
   console.time('ensurePoolsDestroyedStatus');
   await ensurePoolsDestroyedStatus(ctx);
