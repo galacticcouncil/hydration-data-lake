@@ -7,7 +7,7 @@ x-storage-dictionary-omnipool-db-creds: &storage-dictionary-omnipool-db-creds
   DB_NAME: ""
   DB_USER: ""
   DB_PASS: ""
-  DB_HOST: ""
+  DB_HOST: "pg.squid.subsquid.io"
 
 x-processor-unit-envs: &processor-unit-envs
   NODE_ENV: "self-hosted"
@@ -25,6 +25,7 @@ x-processor-unit-envs: &processor-unit-envs
   SUB_BATCH_MAX_TIMEOUT_MS: 500
   INDEXER_SUB_PROCESSORS_NUMBER: 5
   ASSETS_TRACKER_PROCESSOR: "false"
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
 
 x-common-db-setup: &common-db-setup
   image: postgres:15
@@ -35,9 +36,13 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-improve-pools-historical-data-aggregation
+  image: ghcr.io/mckrava/storage-dictionary-indexer:e8f6106a76712e0e0e461ebd1c126dbbd9c21096
   networks:
     - default
+  command:
+    - sh
+    - -c
+    - "sqd migration:apply && node lib/main.js"
   deploy:
     restart_policy:
       condition: on-failure
@@ -51,15 +56,11 @@ x-omnipools-services-setup: &omnipools-services-setup
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
-      PROCESS_FROM_BLOCK: 1708100 # First event related with Omnipool has been occurred
+      PROCESS_FROM_BLOCK: 1475996 # First event related with Omnipool has been occurred
       PROCESS_TO_BLOCK: 2966000
       PROCESS_OMNIPOOLS: "true"
       STATE_SCHEMA_NAME: "omnipool__batch_proc_1"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 30 && node lib/main.js"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
 
   omnipools-stor-dict-proc-2:
     <<: *common-processor-setup
@@ -69,11 +70,7 @@ x-omnipools-services-setup: &omnipools-services-setup
       PROCESS_TO_BLOCK: 4224000
       PROCESS_OMNIPOOLS: "true"
       STATE_SCHEMA_NAME: "omnipool__batch_proc_2"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 40 && node lib/main.js"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
 
   omnipools-stor-dict-proc-3:
     <<: *common-processor-setup
@@ -83,11 +80,7 @@ x-omnipools-services-setup: &omnipools-services-setup
       PROCESS_TO_BLOCK: 5482000
       PROCESS_OMNIPOOLS: "true"
       STATE_SCHEMA_NAME: "omnipool__batch_proc_3"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 50 && node lib/main.js"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
 
   omnipools-stor-dict-proc-4:
     <<: *common-processor-setup
@@ -97,11 +90,7 @@ x-omnipools-services-setup: &omnipools-services-setup
       PROCESS_TO_BLOCK: 6740000
       PROCESS_OMNIPOOLS: "true"
       STATE_SCHEMA_NAME: "omnipool__batch_proc_4"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 60 && node lib/main.js"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
 
   omnipools-stor-dict-proc-5:
     <<: *common-processor-setup
@@ -110,27 +99,19 @@ x-omnipools-services-setup: &omnipools-services-setup
       PROCESS_FROM_BLOCK: 6740001
       PROCESS_TO_BLOCK: -1
       PROCESS_OMNIPOOLS: "true"
-      STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 70 && node lib/main.js"
-
-  omnipools-stor-dict-proc-assets-tracker:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
-      PROCESS_FROM_BLOCK: 6740001 # The end of a blocks batch which processing by xyk-pools-storage-dict-processor-1 processor
-      PROCESS_TO_BLOCK: -1
-      PROCESS_OMNIPOOLS: "true"
-      STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
       ASSETS_TRACKER_PROCESSOR: "true"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
+      STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+
+#  omnipools-stor-dict-proc-assets-tracker:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
+#      PROCESS_FROM_BLOCK: 6740001 # The end of a blocks batch which processing by xyk-pools-storage-dict-processor-1 processor
+#      PROCESS_TO_BLOCK: -1
+#      STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
+#      ASSETS_TRACKER_PROCESSOR: "true"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__assets_tracker_proc"
 
 # =================================================================================
 # ============================ M A I N   S E T U P ================================

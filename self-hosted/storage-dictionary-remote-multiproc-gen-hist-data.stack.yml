@@ -2,8 +2,7 @@ version: "3.7"
 
 x-chain-name: &chain-name "hydration"
 
-x-storage-dictionary-g-hist-db-creds:
-  &storage-dictionary-g-hist-db-creds
+x-storage-dictionary-g-hist-db-creds: &storage-dictionary-g-hist-db-creds
   DB_PORT: 5432
   DB_NAME: ""
   DB_USER: ""
@@ -26,6 +25,7 @@ x-processor-unit-envs: &processor-unit-envs
   SUB_BATCH_MAX_TIMEOUT_MS: 500
   INDEXER_SUB_PROCESSORS_NUMBER: 5
   ASSETS_TRACKER_PROCESSOR: "false"
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
 
 x-common-db-setup: &common-db-setup
   image: postgres:15
@@ -36,9 +36,13 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-improve-pools-historical-data-aggregation
+  image: ghcr.io/mckrava/storage-dictionary-indexer:19f48f3a2ec08a5b5ba7753664cd2c501fed80bb
   networks:
     - default
+  command:
+    - sh
+    - -c
+    - "sqd migration:apply && node lib/main.js"
   deploy:
     restart_policy:
       condition: on-failure
@@ -47,89 +51,78 @@ x-common-processor-setup: &common-processor-setup
 # ====================== GENERIC HIST DATA SERVICES SETUP =========================
 # =================================================================================
 x-g-hist-services-setup: &g-hist-services-setup
-  g-hist-stor-dict-proc-1:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
-      PROCESS_FROM_BLOCK: 1439857 # First event related with Omnipool has been occurred
-      PROCESS_TO_BLOCK: 2752000
-      PROCESS_GENERIC_HIST_DATA: "true"
-      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_1"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
+#  g-hist-stor-dict-proc-1:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+#      PROCESS_FROM_BLOCK: 1439857 # First event related with Omnipool has been occurred
+#      PROCESS_TO_BLOCK: 2752000
+#      PROCESS_GENERIC_HIST_DATA: "true"
+#      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_1"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_5"
+#
+#  g-hist-stor-dict-proc-2:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+#      PROCESS_FROM_BLOCK: 2752001
+#      PROCESS_TO_BLOCK: 4064000
+#      PROCESS_GENERIC_HIST_DATA: "true"
+#      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_2"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_5"
+#
+#  g-hist-stor-dict-proc-3:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+#      PROCESS_FROM_BLOCK: 4064001
+#      PROCESS_TO_BLOCK: 5376000
+#      PROCESS_GENERIC_HIST_DATA: "true"
+#      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_3"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_5"
+#
+#  g-hist-stor-dict-proc-4:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+#      PROCESS_FROM_BLOCK: 5376001
+#      PROCESS_TO_BLOCK: 6688000
+#      PROCESS_GENERIC_HIST_DATA: "true"
+#      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_4"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_5"
 
-  g-hist-stor-dict-proc-2:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
-      PROCESS_FROM_BLOCK: 2752001
-      PROCESS_TO_BLOCK: 4064000
-      PROCESS_GENERIC_HIST_DATA: "true"
-      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_2"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
-
-  g-hist-stor-dict-proc-3:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
-      PROCESS_FROM_BLOCK: 4064001
-      PROCESS_TO_BLOCK: 5376000
-      PROCESS_GENERIC_HIST_DATA: "true"
-      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_3"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
-
-  g-hist-stor-dict-proc-4:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
-      PROCESS_FROM_BLOCK: 5376001
-      PROCESS_TO_BLOCK: 6688000
-      PROCESS_GENERIC_HIST_DATA: "true"
-      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_4"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
+#  g-hist-stor-dict-proc-5:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+#      PROCESS_FROM_BLOCK: 6688001
+#      PROCESS_TO_BLOCK: -1
+#      PROCESS_GENERIC_HIST_DATA: "true"
+#      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_5"
+#      ASSETS_TRACKER_PROCESSOR: "true"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_5"
 
   g-hist-stor-dict-proc-5:
     <<: *common-processor-setup
     environment:
-      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
-      PROCESS_FROM_BLOCK: 6688001
+      <<: [ *processor-unit-envs, *storage-dictionary-g-hist-db-creds ]
+      PROCESS_FROM_BLOCK: 7990000
       PROCESS_TO_BLOCK: -1
       PROCESS_GENERIC_HIST_DATA: "true"
-      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_5"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
-
-  g-hist-stor-dict-proc-assets-tracker:
-    <<: *common-processor-setup
-    environment:
-      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
-      PROCESS_FROM_BLOCK: 6688001
-      PROCESS_TO_BLOCK: -1
-      STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
+      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_6"
       ASSETS_TRACKER_PROCESSOR: "true"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
-    command:
-      - sh
-      - -c
-      - "sleep 10 && node lib/main.js"
+      PROCESS_ONLY_MISSED_BLOCKS: "false"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_6"
+
+#  g-hist-stor-dict-proc-assets-tracker:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+#      PROCESS_FROM_BLOCK: 6688001
+#      PROCESS_TO_BLOCK: -1
+#      STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
+#      ASSETS_TRACKER_PROCESSOR: "true"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__assets_tracker_proc"
 
 # =================================================================================
 # ============================ M A I N   S E T U P ================================

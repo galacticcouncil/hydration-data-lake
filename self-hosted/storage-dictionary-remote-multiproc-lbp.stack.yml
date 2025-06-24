@@ -7,7 +7,7 @@ x-storage-dictionary-xyk-db-creds: &storage-dictionary-xyk-db-creds
   DB_NAME: ""
   DB_USER: ""
   DB_PASS: ""
-  DB_HOST: "pg.squid.subsquid.io"
+  DB_HOST: ""
 
 x-processor-unit-envs: &processor-unit-envs
   NODE_ENV: "self-hosted"
@@ -36,7 +36,7 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:19f48f3a2ec08a5b5ba7753664cd2c501fed80bb
+  image: ghcr.io/mckrava/storage-dictionary-indexer:e8f6106a76712e0e0e461ebd1c126dbbd9c21096
   networks:
     - default
   command:
@@ -50,88 +50,83 @@ x-common-processor-setup: &common-processor-setup
 # =================================================================================
 # ========================== XYK SERVICES SETUP ===========================
 # =================================================================================
-x-xyk-services-setup: &xyk-services-setup
-  xyk-stor-dict-proc-1:
+x-lbp-services-setup: &lbp-services-setup
+  lbp-stor-dict-proc-1:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 3934550
-      PROCESS_TO_BLOCK: 4748000
-      PROCESS_XYK_POOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_1"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
+      PROCESS_FROM_BLOCK: 3681428
+      PROCESS_TO_BLOCK: 4512000
+      PROCESS_LBP_POOLS: "true"
+      STATE_SCHEMA_NAME: "lbp_pool__batch_proc_1"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "lbp_pool__batch_proc_5"
 
-  xyk-stor-dict-proc-2:
+  lbp-stor-dict-proc-2:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 4748001
-      PROCESS_TO_BLOCK: 5561000
-      PROCESS_XYK_POOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_2"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
+      PROCESS_FROM_BLOCK: 4512001
+      PROCESS_TO_BLOCK: 5384000
+      PROCESS_LBP_POOLS: "true"
+      STATE_SCHEMA_NAME: "lbp_pool__batch_proc_2"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "lbp_pool__batch_proc_5"
 
-  xyk-stor-dict-proc-3:
+  lbp-stor-dict-proc-3:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 5561001
-      PROCESS_TO_BLOCK: 6374000
-      PROCESS_XYK_POOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_3"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
+      PROCESS_FROM_BLOCK: 5384001
+      PROCESS_TO_BLOCK: 6256000
+      PROCESS_LBP_POOLS: "true"
+      STATE_SCHEMA_NAME: "lbp_pool__batch_proc_3"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "lbp_pool__batch_proc_5"
 
-  xyk-stor-dict-proc-4:
+  lbp-stor-dict-proc-4:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 6374001
-      PROCESS_TO_BLOCK: 7187000
-      PROCESS_XYK_POOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_4"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
+      PROCESS_FROM_BLOCK: 6256001
+      PROCESS_TO_BLOCK: 7128000
+      PROCESS_LBP_POOLS: "true"
+      STATE_SCHEMA_NAME: "lbp_pool__batch_proc_4"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "lbp_pool__batch_proc_5"
 
-  xyk-stor-dict-proc-5:
+  lbp-stor-dict-proc-5:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-      PROCESS_FROM_BLOCK: 7187001
+      PROCESS_FROM_BLOCK: 7128001
       PROCESS_TO_BLOCK: -1
-      PROCESS_XYK_POOLS: "true"
-      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
+      PROCESS_LBP_POOLS: "true"
+      STATE_SCHEMA_NAME: "lbp_pool__batch_proc_5"
       ASSETS_TRACKER_PROCESSOR: "true"
-      PROCESS_ONLY_MISSED_BLOCKS: "false"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "lbp_pool__batch_proc_5"
 
-#  xyk-stor-dict-proc-ensure-2:
-#    <<: *common-processor-setup
-#    environment:
-#      <<: [ *processor-unit-envs, *storage-dictionary-xyk-db-creds ]
-#      PROCESS_FROM_BLOCK: 3934550
-#      PROCESS_TO_BLOCK: -1
-#      PROCESS_XYK_POOLS: "true"
-#      PROCESS_ONLY_MISSED_BLOCKS: "true"
-#      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_ensure_2"
-#      INDEXER_MAX_SUB_BATCH_SIZE: 3000
-#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
-#    command:
-#      - sh
-#      - -c
-#      - "sleep 10 && node lib/main.js"
+  #  xyk-stor-dict-proc-ensure-2:
+  #    <<: *common-processor-setup
+  #    environment:
+  #      <<: [ *processor-unit-envs, *storage-dictionary-xyk-db-creds ]
+  #      PROCESS_FROM_BLOCK: 3934550
+  #      PROCESS_TO_BLOCK: -1
+  #      PROCESS_XYK_POOLS: "true"
+  #      PROCESS_ONLY_MISSED_BLOCKS: "true"
+  #      STATE_SCHEMA_NAME: "xyk_pool__batch_proc_ensure_2"
+  #      INDEXER_MAX_SUB_BATCH_SIZE: 3000
+  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__batch_proc_5"
+  #    command:
+  #      - sh
+  #      - -c
+  #      - "sleep 10 && node lib/main.js"
 
-#  xyk-stor-dict-proc-assets-tracker:
+#  lbp-stor-dict-proc-assets-tracker:
 #    <<: *common-processor-setup
 #    environment:
 #      <<: [*processor-unit-envs, *storage-dictionary-xyk-db-creds]
-#      PROCESS_FROM_BLOCK: 7187001
+#      PROCESS_FROM_BLOCK: 7128001
 #      PROCESS_TO_BLOCK: -1
-#      STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
+#      STATE_SCHEMA_NAME: "lbp_pool__assets_tracker_proc"
 #      ASSETS_TRACKER_PROCESSOR: "true"
-#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "xyk_pool__assets_tracker_proc"
-#    command:
-#      - sh
-#      - -c
-#      - "sleep 10 && node lib/main.js"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "lbp_pool__assets_tracker_proc"
 
 # =================================================================================
 # ============================ M A I N   S E T U P ================================
@@ -140,5 +135,9 @@ networks:
   default:
     driver: overlay
 
+#volumes:
+#  stablepools-storage-dict-db:
+#    driver: local
+
 services:
-  <<: *xyk-services-setup
+  <<: *lbp-services-setup

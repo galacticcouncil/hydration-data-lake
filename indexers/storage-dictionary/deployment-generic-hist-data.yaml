@@ -101,8 +101,33 @@ deploy:
     #        SUB_BATCH_SIZE: 300
     #        INDEXER_MAX_SUB_BATCH_SIZE: 500
     #        ASSETS_TRACKER_PROCESSOR: false
-    #        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__assets_tracker_proc
-    - name: batch-proc-5
+    #        PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
+    #        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
+    #    - name: batch-proc-5
+    #      cmd: ['sqd', 'process:prod']
+    #      env:
+    #        RPC_URL: wss://node.kril.hydration.cloud
+    #        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
+    #        PROCESS_LBP_POOLS: false
+    #        PROCESS_XYK_POOLS: false
+    #        PROCESS_OMNIPOOLS: false
+    #        PROCESS_STABLEPOOLS: false
+    #        PROCESS_GENERIC_HIST_DATA: true
+    #        INDEXING_IS_PAUSED: true
+    #        PROCESS_ONLY_MISSED_BLOCKS: false
+    #        GQL_PORT: 8080
+    #        NODE_ENV: production
+    #        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+    #        PROCESS_FROM_BLOCK: 6688001
+    #        PROCESS_TO_BLOCK: -1
+    #        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
+    #        SUB_BATCH_SIZE: 300
+    #        INDEXER_MAX_SUB_BATCH_SIZE: 4000
+    #        ASSETS_TRACKER_PROCESSOR: true
+    #        PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
+    #        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
+
+    - name: batch-proc-6
       cmd: ['sqd', 'process:prod']
       env:
         RPC_URL: wss://node.kril.hydration.cloud
@@ -112,19 +137,19 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: true
-        INDEXING_IS_PAUSED: true
+        INDEXING_IS_PAUSED: false
         PROCESS_ONLY_MISSED_BLOCKS: false
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 6688001
+        PROCESS_FROM_BLOCK: 7990000
         PROCESS_TO_BLOCK: -1
-        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
+        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_6
         SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 4000
         ASSETS_TRACKER_PROCESSOR: true
         PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
+        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_6
 
   #    - name: batch-proc-ensure-2
   #      cmd: ['sqd', 'process:prod']
@@ -180,13 +205,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
       profile: large
       storage: 200G
   processor:
-    profile: small
+    profile: large
   api:
-    profile: small
+    profile: large
 #    replicas: 2
