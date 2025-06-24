@@ -209,3 +209,17 @@ export async function compressBlockStorage(
     })
   );
 }
+
+type BlockData = {
+  lbppool: Lbppool[]
+  lbppoolAssetsData: LbppoolAssetsData[];
+  xykpool: Xykpool[];
+  xykpoolAssetsData: XykpoolAssetsData[];
+  stableswap: Stableswap[];
+  stableswapAssetData: StableswapAssetData[]
+  omnipool: Omnipool[];
+  omnipoolAssetData: OmnipoolAssetData[];
+  aavepool: Aavepool[];
+  emaOracle: EmaOracle[];
+  assetHistoricalData: AssetHistoricalData[];
+};

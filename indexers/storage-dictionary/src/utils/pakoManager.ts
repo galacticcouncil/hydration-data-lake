@@ -1,28 +1,6 @@
 import pako from 'pako';
 
 export class PakoManager {
-  // static uint8ArrayToBase64(array: Uint8Array) {
-  //   return Buffer.from(array).toString('base64');
-  // }
-  //
-  // static base64ToUint8Array(base64: string) {
-  //   return Uint8Array.from(Buffer.from(base64, 'base64'));
-  // }
-  //
-  // static compress(payload: any) {
-  //   const input = Buffer.isBuffer(payload)
-  //     ? payload
-  //     : Buffer.from(
-  //         typeof payload === 'object' ? JSON.stringify(payload) : payload,
-  //         'base64'
-  //       );
-  //   try {
-  //     return this.uint8ArrayToBase64(pako.deflate(input));
-  //   } catch (e) {
-  //     console.log(e);
-  //     return payload;
-  //   }
-  // }
   static uint8ArrayToBase64(array: Uint8Array) {
     return Buffer.from(array).toString('base64');
   }
@@ -43,7 +21,6 @@ export class PakoManager {
         pako.gzip(stringifyPayload ? JSON.stringify(payload) : payload, {
           level: 8,
         })
-        // pako.deflate(stringifyPayload ? JSON.stringify(payload) : payload)
       );
     } catch (e) {
       console.log(e);

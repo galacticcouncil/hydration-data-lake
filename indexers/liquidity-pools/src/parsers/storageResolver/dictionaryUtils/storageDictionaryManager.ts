@@ -70,6 +70,7 @@ import {
 } from './helpers/blockCompressedDataHandler';
 import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
 import { MinifiedDataStructureManager } from './helpers/minifiedDataStructureManager';
+import { BatchStorageStateSectionCollection } from './helpers/batchStorageStateSectionCollection';
 
 export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
   ? XykpoolGlq
@@ -92,25 +93,79 @@ export class StorageDictionaryManager extends QueriesHelper {
 
   batchStorageState: Map<
     ProcessingTopic,
-    Map<
-      string,
-      | LbpPoolGlq
-      | XykpoolGlq
-      | OmnipoolGql
-      | StableswapGql
-      | AavepoolGlq
-      | EmaOracleGql
-      | AssetHistoricalDatumGql
-    >
+    | BatchStorageStateSectionCollection<ProcessingTopic.LBP>
+    | BatchStorageStateSectionCollection<ProcessingTopic.XYK>
+    | BatchStorageStateSectionCollection<ProcessingTopic.OMNIPOOL>
+    | BatchStorageStateSectionCollection<ProcessingTopic.STABLESWAP>
+    | BatchStorageStateSectionCollection<ProcessingTopic.AAVE>
+    | BatchStorageStateSectionCollection<ProcessingTopic.EMA_ORACLE>
+    | BatchStorageStateSectionCollection<ProcessingTopic.ASSET_HIST_DATA>
+    // @ts-ignore
   > = new Map([
-    [ProcessingTopic.LBP, new Map()],
-    [ProcessingTopic.XYK, new Map()],
-    [ProcessingTopic.OMNIPOOL, new Map()],
-    [ProcessingTopic.STABLESWAP, new Map()],
-    [ProcessingTopic.AAVE, new Map()],
-    [ProcessingTopic.EMA_ORACLE, new Map()],
-    [ProcessingTopic.ASSET_HIST_DATA, new Map()],
+    [
+      ProcessingTopic.LBP,
+      new BatchStorageStateSectionCollection<ProcessingTopic.LBP>({
+        section: ProcessingTopic.LBP,
+      }),
+    ],
+    [
+      ProcessingTopic.XYK,
+      new BatchStorageStateSectionCollection<ProcessingTopic.XYK>({
+        section: ProcessingTopic.XYK,
+      }),
+    ],
+    [
+      ProcessingTopic.OMNIPOOL,
+      new BatchStorageStateSectionCollection<ProcessingTopic.OMNIPOOL>({
+        section: ProcessingTopic.OMNIPOOL,
+      }),
+    ],
+    [
+      ProcessingTopic.STABLESWAP,
+      new BatchStorageStateSectionCollection<ProcessingTopic.STABLESWAP>({
+        section: ProcessingTopic.STABLESWAP,
+      }),
+    ],
+    [
+      ProcessingTopic.AAVE,
+      new BatchStorageStateSectionCollection<ProcessingTopic.AAVE>({
+        section: ProcessingTopic.AAVE,
+      }),
+    ],
+    [
+      ProcessingTopic.EMA_ORACLE,
+      new BatchStorageStateSectionCollection<ProcessingTopic.EMA_ORACLE>({
+        section: ProcessingTopic.EMA_ORACLE,
+      }),
+    ],
+    [
+      ProcessingTopic.ASSET_HIST_DATA,
+      new BatchStorageStateSectionCollection<ProcessingTopic.ASSET_HIST_DATA>({
+        section: ProcessingTopic.ASSET_HIST_DATA,
+      }),
+    ],
   ]);
+  // batchStorageState: Map<
+  //     ProcessingTopic,
+  //     Map<
+  //       string,
+  //       | LbpPoolGlq
+  //       | XykpoolGlq
+  //       | OmnipoolGql
+  //       | StableswapGql
+  //       | AavepoolGlq
+  //       | EmaOracleGql
+  //       | AssetHistoricalDatumGql
+  //     >
+  //   > = new Map([
+  //     [ProcessingTopic.LBP, new Map()],
+  //     [ProcessingTopic.XYK, new Map()],
+  //     [ProcessingTopic.OMNIPOOL, new Map()],
+  //     [ProcessingTopic.STABLESWAP, new Map()],
+  //     [ProcessingTopic.AAVE, new Map()],
+  //     [ProcessingTopic.EMA_ORACLE, new Map()],
+  //     [ProcessingTopic.ASSET_HIST_DATA, new Map()],
+  //   ]);
 
   constructor({ batchCtx }: { batchCtx: SqdProcessorContext<Store> }) {
     super({ appConfig: batchCtx.appConfig });
@@ -123,24 +178,70 @@ export class StorageDictionaryManager extends QueriesHelper {
 
   getBatchStorageStatePart<T extends ProcessingTopic>(
     section: T
-  ): Map<string, BatchStorageStateSectionNode<T>> {
-    return (
-      (this.batchStorageState.get(section) as Map<
-        string,
-        BatchStorageStateSectionNode<T>
-      >) || new Map<string, BatchStorageStateSectionNode<T>>()
-    );
+  ): BatchStorageStateSectionCollection<T> {
+    return this.batchStorageState.get(
+      section
+    ) as BatchStorageStateSectionCollection<T>;
   }
+  //
+  // getBatchStorageStatePart<T extends ProcessingTopic>(
+  //   section: T
+  // ): Map<string, BatchStorageStateSectionNode<T>> {
+  //   return (
+  //     (this.batchStorageState.get(section) as Map<
+  //       string,
+  //       BatchStorageStateSectionNode<T>
+  //     >) || new Map<string, BatchStorageStateSectionNode<T>>()
+  //   );
+  // }
 
   wipeBatchStorageState() {
+    // @ts-ignore
     this.batchStorageState = new Map([
-      [ProcessingTopic.LBP, new Map()],
-      [ProcessingTopic.XYK, new Map()],
-      [ProcessingTopic.OMNIPOOL, new Map()],
-      [ProcessingTopic.STABLESWAP, new Map()],
-      [ProcessingTopic.AAVE, new Map()],
-      [ProcessingTopic.EMA_ORACLE, new Map()],
-      [ProcessingTopic.ASSET_HIST_DATA, new Map()],
+      [
+        ProcessingTopic.LBP,
+        new BatchStorageStateSectionCollection<ProcessingTopic.LBP>({
+          section: ProcessingTopic.LBP,
+        }),
+      ],
+      [
+        ProcessingTopic.XYK,
+        new BatchStorageStateSectionCollection<ProcessingTopic.XYK>({
+          section: ProcessingTopic.XYK,
+        }),
+      ],
+      [
+        ProcessingTopic.OMNIPOOL,
+        new BatchStorageStateSectionCollection<ProcessingTopic.OMNIPOOL>({
+          section: ProcessingTopic.OMNIPOOL,
+        }),
+      ],
+      [
+        ProcessingTopic.STABLESWAP,
+        new BatchStorageStateSectionCollection<ProcessingTopic.STABLESWAP>({
+          section: ProcessingTopic.STABLESWAP,
+        }),
+      ],
+      [
+        ProcessingTopic.AAVE,
+        new BatchStorageStateSectionCollection<ProcessingTopic.AAVE>({
+          section: ProcessingTopic.AAVE,
+        }),
+      ],
+      [
+        ProcessingTopic.EMA_ORACLE,
+        new BatchStorageStateSectionCollection<ProcessingTopic.EMA_ORACLE>({
+          section: ProcessingTopic.EMA_ORACLE,
+        }),
+      ],
+      [
+        ProcessingTopic.ASSET_HIST_DATA,
+        new BatchStorageStateSectionCollection<ProcessingTopic.ASSET_HIST_DATA>(
+          {
+            section: ProcessingTopic.ASSET_HIST_DATA,
+          }
+        ),
+      ],
     ]);
   }
 
@@ -685,63 +786,94 @@ export class StorageDictionaryManager extends QueriesHelper {
         case ProcessingTopic.ASSET_HIST_DATA:
           this.batchStorageState.set(
             ProcessingTopic.ASSET_HIST_DATA,
-            new Map(
-              (palletData.data as AssetHistoricalDatumGql[]).map((item) => [
-                item.id,
-                item,
-              ])
-            )
+            new BatchStorageStateSectionCollection<ProcessingTopic.ASSET_HIST_DATA>(
+              {
+                section: ProcessingTopic.ASSET_HIST_DATA,
+                data: palletData.data as AssetHistoricalDatumGql[],
+              }
+            ) as any
+            // new Map(
+            //   (palletData.data as AssetHistoricalDatumGql[]).map((item) => [
+            //     item.id,
+            //     item,
+            //   ])er
+            // )
           );
           break;
         case ProcessingTopic.EMA_ORACLE:
           this.batchStorageState.set(
             ProcessingTopic.EMA_ORACLE,
-            new Map(
-              (palletData.data as EmaOracleGql[]).map((item) => [item.id, item])
-            )
+            new BatchStorageStateSectionCollection<ProcessingTopic.EMA_ORACLE>({
+              section: ProcessingTopic.EMA_ORACLE,
+              data: palletData.data as EmaOracleGql[],
+            }) as any
+            // new Map(
+            //   (palletData.data as EmaOracleGql[]).map((item) => [item.id, item])
+            // )
           );
           break;
         case ProcessingTopic.AAVE:
           this.batchStorageState.set(
             ProcessingTopic.AAVE,
-            new Map(
-              (palletData.data as AavepoolGlq[]).map((item) => [item.id, item])
-            )
+            new BatchStorageStateSectionCollection<ProcessingTopic.AAVE>({
+              section: ProcessingTopic.AAVE,
+              data: palletData.data as AavepoolGlq[],
+            }) as any
+
+            // new Map(
+            //   (palletData.data as AavepoolGlq[]).map((item) => [item.id, item])
+            // )
           );
           break;
         case ProcessingTopic.LBP:
           this.batchStorageState.set(
             ProcessingTopic.LBP,
-            new Map(
-              (palletData.data as LbpPoolGlq[]).map((item) => [item.id, item])
-            )
+            // new Map(
+            //   (palletData.data as LbpPoolGlq[]).map((item) => [item.id, item])
+            // )
+            new BatchStorageStateSectionCollection<ProcessingTopic.LBP>({
+              section: ProcessingTopic.LBP,
+              data: palletData.data as LbpPoolGlq[],
+            }) as any
           );
           break;
         case ProcessingTopic.XYK:
           this.batchStorageState.set(
             ProcessingTopic.XYK,
-            new Map(
-              (palletData.data as XykpoolGlq[]).map((item) => [item.id, item])
-            )
+            new BatchStorageStateSectionCollection<ProcessingTopic.XYK>({
+              section: ProcessingTopic.XYK,
+              data: palletData.data as XykpoolGlq[],
+            }) as any
+            // new Map(
+            //   (palletData.data as XykpoolGlq[]).map((item) => [item.id, item])
+            // )
           );
           break;
         case ProcessingTopic.OMNIPOOL:
           this.batchStorageState.set(
             ProcessingTopic.OMNIPOOL,
-            new Map(
-              (palletData.data as OmnipoolGql[]).map((item) => [item.id, item])
-            )
+            new BatchStorageStateSectionCollection<ProcessingTopic.OMNIPOOL>({
+              section: ProcessingTopic.OMNIPOOL,
+              data: palletData.data as OmnipoolGql[],
+            }) as any
+            // new Map(
+            //   (palletData.data as OmnipoolGql[]).map((item) => [item.id, item])
+            // )
           );
           break;
         case ProcessingTopic.STABLESWAP:
           this.batchStorageState.set(
             ProcessingTopic.STABLESWAP,
-            new Map(
-              (palletData.data as StableswapGql[]).map((item) => [
-                item.id,
-                item,
-              ])
-            )
+            new BatchStorageStateSectionCollection<ProcessingTopic.STABLESWAP>({
+              section: ProcessingTopic.STABLESWAP,
+              data: palletData.data as StableswapGql[],
+            }) as any
+            // new Map(
+            //   (palletData.data as StableswapGql[]).map((item) => [
+            //     item.id,
+            //     item,
+            //   ])
+            // )
           );
           break;
         default:
@@ -753,9 +885,9 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolId,
     block,
   }: StablepoolGetPoolDataInput): StablepoolInfo | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
-      `${poolId}-${block.height}`
-    );
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.STABLESWAP
+    ).getEntityById(`${poolId}-${block.height}`);
 
     if (!node) return null;
 
@@ -788,18 +920,22 @@ export class StorageDictionaryManager extends QueriesHelper {
     //     data.stableswapAssetDataByPoolId.nodes.length > 0
     // );
 
-    const nodes =
-      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.STABLESWAP>({
-        blockNumber: block.height,
-        fullData: this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP),
-        additionalFilter: ([key, data]) =>
-          !!data.stableswapAssetDataByPoolId.nodes &&
-          data.stableswapAssetDataByPoolId.nodes.length > 0,
-      });
+    // const nodes =
+    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.STABLESWAP>({
+    //     blockNumber: block.height,
+    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP),
+    //     additionalFilter: ([key, data]) =>
+    //       !!data.stableswapAssetDataByPoolId.nodes &&
+    //       data.stableswapAssetDataByPoolId.nodes.length > 0,
+    //   });
 
-    if (nodes.length === 0) return null;
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.STABLESWAP
+    ).getEntitiesByBlockNumber(block.height);
 
-    return nodes.map(([id, node]) => ({
+    if (!nodes || nodes.size === 0) return null;
+
+    return Array.from(nodes.values()).map((node) => ({
       poolId: node.poolId,
       data: {
         assets: node.stableswapAssetDataByPoolId.nodes.map(
@@ -818,9 +954,9 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolId,
     block,
   }: StablepoolGetPoolPegsInput): StablepoolPoolPegsInfo | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
-      `${poolId}-${block.height}`
-    );
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.STABLESWAP
+    ).getEntityById(`${poolId}-${block.height}`);
 
     if (!node || node.maxPegUpdate === undefined) return null;
 
@@ -857,38 +993,44 @@ export class StorageDictionaryManager extends QueriesHelper {
     //     data.maxPegUpdate !== undefined
     // );
 
-    const nodes =
-      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.STABLESWAP>({
-        blockNumber: block.height,
-        fullData: this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP),
-        additionalFilter: ([key, data]) => data.maxPegUpdate !== undefined,
-      });
+    // const nodes =
+    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.STABLESWAP>({
+    //     blockNumber: block.height,
+    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP),
+    //     additionalFilter: ([key, data]) => data.maxPegUpdate !== undefined,
+    //   });
 
-    if (nodes.length === 0) return null;
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.STABLESWAP
+    ).getEntitiesByBlockNumber(block.height);
 
-    return nodes.map(([key, data]) => ({
-      poolId: data.poolId,
-      data: {
-        source: data.pegSources
-          ? data.pegSources.map(
-              (src: any): StableswapPegSource => ({
-                sourceKind: src.sourceKind,
-                oracleName: src.oracleName,
-                oraclePeriod: src.oraclePeriod,
-                oracleAsset: src.oracleAsset,
-                valuePoints: src.valuePoints
-                  ? src.valuePoints.map((p: any) => BigInt(p))
-                  : undefined,
-              })
-            )
-          : undefined,
-        maxPegUpdate: data.maxPegUpdate ?? undefined,
-        current: data.pegs.map(([pegA, pegB]: string[]) => [
-          BigInt(pegA),
-          BigInt(pegB),
-        ]),
-      },
-    }));
+    if (!nodes || nodes.size === 0) return null;
+
+    return Array.from(nodes.values())
+      .filter((node) => node && node.maxPegUpdate !== undefined)
+      .map((data) => ({
+        poolId: data.poolId,
+        data: {
+          source: data.pegSources
+            ? data.pegSources.map(
+                (src: any): StableswapPegSource => ({
+                  sourceKind: src.sourceKind,
+                  oracleName: src.oracleName,
+                  oraclePeriod: src.oraclePeriod,
+                  oracleAsset: src.oracleAsset,
+                  valuePoints: src.valuePoints
+                    ? src.valuePoints.map((p: any) => BigInt(p))
+                    : undefined,
+                })
+              )
+            : undefined,
+          maxPegUpdate: data.maxPegUpdate ?? undefined,
+          current: data.pegs.map(([pegA, pegB]: string[]) => [
+            BigInt(pegA),
+            BigInt(pegB),
+          ]),
+        },
+      }));
   }
 
   getStableswapPoolAssetInfo({
@@ -896,21 +1038,25 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
-      `${poolId}-${block.height}`
-    );
+    // const node = this.getBatchStorageStatePart(
+    //   ProcessingTopic.STABLESWAP
+    // ).getEntityById(`${poolId}-${block.height}`);
+    //
+    // if (!node) return null;
+    //
+    // if (
+    //   !node.stableswapAssetDataByPoolId.nodes ||
+    //   node.stableswapAssetDataByPoolId.nodes.length === 0
+    // )
+    //   return null;
+    //
+    // const assetInfo = node.stableswapAssetDataByPoolId.nodes.find(
+    //   (asset) => asset?.assetId.toString() === assetId.toString()
+    // );
+    const assetInfo = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP)
+      .getAssetsByParentId(`${poolId}-${block.height}`)
+      ?.get(assetId);
 
-    if (!node) return null;
-
-    if (
-      !node.stableswapAssetDataByPoolId.nodes ||
-      node.stableswapAssetDataByPoolId.nodes.length === 0
-    )
-      return null;
-
-    const assetInfo = node.stableswapAssetDataByPoolId.nodes.find(
-      (asset) => asset?.assetId.toString() === assetId.toString()
-    );
     if (!assetInfo || !assetInfo.balances) return null;
     // const balances = assetInfo.balances as AccountBalancesGql;
     const balances =
@@ -932,22 +1078,28 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): StablepoolAssetState | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
-      `${poolId}-${block.height}`
-    );
+    // const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
+    //   `${poolId}-${block.height}`
+    // );
+    //
+    // if (!node) return null;
+    //
+    // if (
+    //   !node.stableswapAssetDataByPoolId.nodes ||
+    //   node.stableswapAssetDataByPoolId.nodes.length === 0
+    // )
+    //   return null;
+    //
+    // const assetState = node.stableswapAssetDataByPoolId.nodes.find(
+    //   (asset) => asset?.assetId === assetId
+    // );
+    // if (!assetState) return null;
 
-    if (!node) return null;
+    const assetState = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP)
+      .getAssetsByParentId(`${poolId}-${block.height}`)
+      ?.get(assetId);
 
-    if (
-      !node.stableswapAssetDataByPoolId.nodes ||
-      node.stableswapAssetDataByPoolId.nodes.length === 0
-    )
-      return null;
-
-    const assetState = node.stableswapAssetDataByPoolId.nodes.find(
-      (asset) => asset?.assetId === assetId
-    );
-    if (!assetState) return null;
+    if (!assetState || !assetState.balances) return null;
 
     return {
       tradable: { bits: assetState.tradable.bits ?? 0 },
@@ -959,9 +1111,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolAddress,
     block,
   }: LbpGetPoolDataInput): OmnipoolData | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
-      `${poolAddress}-${block.height}`
-    );
+    const node = null;
 
     if (!node) return null;
 
@@ -975,7 +1125,9 @@ export class StorageDictionaryManager extends QueriesHelper {
   getOmnipoolHubAssetTradability({
     block,
   }: OmnipoolGetHubAssetTradabilityInput): OmnipoolAssetTradability | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.OMNIPOOL
+    ).getEntityById(
       `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
     );
 
@@ -991,21 +1143,31 @@ export class StorageDictionaryManager extends QueriesHelper {
   getOmnipoolAllAssetIds({
     block,
   }: OmnipoolGetHubAssetTradabilityInput): number[] | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
+    // const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
+    //   `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
+    // );
+    //
+    // if (!node) return null;
+
+    // const assetIds = node.omnipoolAssetDataByPoolId.nodes
+    //   .map((omnipoolAsset) =>
+    //     omnipoolAsset?.assetId !== undefined && omnipoolAsset?.assetId !== null
+    //       ? +omnipoolAsset.assetId
+    //       : null
+    //   )
+    //   .filter((id) => id !== undefined && id !== null);
+
+    const assetNodes = this.getBatchStorageStatePart(
+      ProcessingTopic.OMNIPOOL
+    ).getAssetsByParentId(
       `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
     );
 
-    if (!node) return null;
+    if (!assetNodes || assetNodes.size === 0) return null;
 
-    const assetIds = node.omnipoolAssetDataByPoolId.nodes
-      .map((omnipoolAsset) =>
-        omnipoolAsset?.assetId !== undefined && omnipoolAsset?.assetId !== null
-          ? +omnipoolAsset.assetId
-          : null
-      )
-      .filter((id) => id !== undefined && id !== null);
-
-    if (!assetIds || assetIds.length === 0) return null;
+    const assetIds = Array.from(assetNodes.values()).map(
+      (asset) => asset.assetId
+    );
 
     return assetIds;
   }
@@ -1015,14 +1177,20 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
-      `${poolAddress}-${block.height}`
-    );
+    // const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
+    //   `${poolAddress}-${block.height}`
+    // );
+    //
+    // if (!node) return null;
+    // const asset = node.omnipoolAssetDataByPoolId.nodes.find(
+    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
+    // );
+    const asset = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL)
+      .getAssetsByParentId(
+        `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
+      )
+      ?.get(assetId);
 
-    if (!node) return null;
-    const asset = node.omnipoolAssetDataByPoolId.nodes.find(
-      (asset) => asset && asset.assetId.toString() === assetId.toString()
-    );
     if (!asset) return null;
 
     // const { balances } = asset;
@@ -1045,14 +1213,22 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: OmnipoolGetAssetDataInput): OmnipoolAssetData | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
-      `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
-    );
+    // const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
+    //   `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
+    // );
+    //
+    // if (!node) return null;
+    // const asset = node.omnipoolAssetDataByPoolId.nodes.find(
+    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
+    // );
+    // if (!asset) return null;
 
-    if (!node) return null;
-    const asset = node.omnipoolAssetDataByPoolId.nodes.find(
-      (asset) => asset && asset.assetId.toString() === assetId.toString()
-    );
+    const asset = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL)
+      .getAssetsByParentId(
+        `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
+      )
+      ?.get(assetId);
+
     if (!asset) return null;
 
     // const { assetState } = asset;
@@ -1074,9 +1250,9 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolAddress,
     block,
   }: LbpGetPoolDataInput): XykPoolData | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
-      `${poolAddress}-${block.height}`
-    );
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.XYK
+    ).getEntityById(`${poolAddress}-${block.height}`);
 
     if (!node) return null;
 
@@ -1093,9 +1269,9 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolAddress,
     block,
   }: XykGetShareTokenInput): number | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
-      `${poolAddress}-${block.height}`
-    );
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.XYK
+    ).getEntityById(`${poolAddress}-${block.height}`);
 
     if (!node) return null;
 
@@ -1113,15 +1289,18 @@ export class StorageDictionaryManager extends QueriesHelper {
     //   ...this.getBatchStorageStatePart(ProcessingTopic.XYK).entries(),
     // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
 
-    const nodes =
-      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.XYK>({
-        blockNumber: block.height,
-        fullData: this.getBatchStorageStatePart(ProcessingTopic.XYK),
-      });
+    // const nodes =
+    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.XYK>({
+    //     blockNumber: block.height,
+    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.XYK),
+    //   });
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.XYK
+    ).getEntitiesByBlockNumber(block.height);
 
-    if (nodes.length === 0) return null;
+    if (!nodes || nodes.size === 0) return null;
 
-    return nodes.map(([key, data]) => ({
+    return Array.from(nodes.values()).map((data) => ({
       poolId: data.poolAddress,
       shareTokenId: +data.shareTokenId!, //TODO fix type casting
     }));
@@ -1131,9 +1310,9 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolAddress,
     block,
   }: XykGetAssetsInput): XykPoolAssetIds | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
-      `${poolAddress}-${block.height}`
-    );
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.XYK
+    ).getEntityById(`${poolAddress}-${block.height}`);
 
     if (!node) return null;
 
@@ -1145,19 +1324,26 @@ export class StorageDictionaryManager extends QueriesHelper {
       assetBId,
     };
   }
+
   getXykPoolAssetInfo({
     poolAddress,
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
-      `${poolAddress}-${block.height}`
-    );
+    // const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
+    //   `${poolAddress}-${block.height}`
+    // );
+    //
+    // if (!node) return null;
+    // const asset = node.xykpoolAssetsDataByPoolId.nodes.find(
+    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
+    // );
+    // if (!asset) return null;
 
-    if (!node) return null;
-    const asset = node.xykpoolAssetsDataByPoolId.nodes.find(
-      (asset) => asset && asset.assetId.toString() === assetId.toString()
-    );
+    const asset = this.getBatchStorageStatePart(ProcessingTopic.XYK)
+      .getAssetsByParentId(`${poolAddress}-${block.height}`)
+      ?.get(assetId);
+
     if (!asset) return null;
 
     // const { balances } = asset;
@@ -1181,9 +1367,9 @@ export class StorageDictionaryManager extends QueriesHelper {
     poolAddress,
     block,
   }: LbpGetPoolDataInput): LbpPoolData | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.LBP).get(
-      `${poolAddress}-${block.height}`
-    );
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.LBP
+    ).getEntityById(`${poolAddress}-${block.height}`);
 
     if (!node) return null;
 
@@ -1222,14 +1408,20 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    const node = this.getBatchStorageStatePart(ProcessingTopic.LBP).get(
-      `${poolAddress}-${block.height}`
-    );
+    // const node = this.getBatchStorageStatePart(ProcessingTopic.LBP).get(
+    //   `${poolAddress}-${block.height}`
+    // );
+    //
+    // if (!node) return null;
+    // const asset = node.lbppoolAssetsDataByPoolId.nodes.find(
+    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
+    // );
+    // if (!asset) return null;
 
-    if (!node) return null;
-    const asset = node.lbppoolAssetsDataByPoolId.nodes.find(
-      (asset) => asset && asset.assetId.toString() === assetId.toString()
-    );
+    const asset = this.getBatchStorageStatePart(ProcessingTopic.LBP)
+      .getAssetsByParentId(`${poolAddress}-${block.height}`)
+      ?.get(assetId);
+
     if (!asset) return null;
 
     // const { balances } = asset;
@@ -1257,15 +1449,21 @@ export class StorageDictionaryManager extends QueriesHelper {
     //   ...this.getBatchStorageStatePart(ProcessingTopic.AAVE).entries(),
     // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
 
-    const nodes =
-      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.AAVE>({
-        blockNumber: block.height,
-        fullData: this.getBatchStorageStatePart(ProcessingTopic.AAVE),
-      });
+    // const nodes =
+    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.AAVE>({
+    //     blockNumber: block.height,
+    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.AAVE),
+    //   });
+    //
+    // if (nodes.length === 0) return null;
 
-    if (nodes.length === 0) return null;
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.AAVE
+    ).getEntitiesByBlockNumber(block.height);
 
-    return nodes
+    if (!nodes || nodes.size === 0) return null;
+
+    return Array.from(nodes)
       .filter(
         ([key, data]) =>
           data.reserveAssetId !== undefined &&
@@ -1292,43 +1490,47 @@ export class StorageDictionaryManager extends QueriesHelper {
     //     ProcessingTopic.ASSET_HIST_DATA
     //   ).entries(),
     // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
+    //
+    // const nodes =
+    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
+    //     {
+    //       blockNumber: block.height,
+    //       fullData: this.getBatchStorageStatePart(
+    //         ProcessingTopic.ASSET_HIST_DATA
+    //       ),
+    //       additionalFilter: ([key, data]) =>
+    //         data.assetId !== undefined && data.assetId !== null,
+    //     }
+    //   );
+    //
+    // if (nodes.length === 0) return null;
 
-    const nodes =
-      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
-        {
-          blockNumber: block.height,
-          fullData: this.getBatchStorageStatePart(
-            ProcessingTopic.ASSET_HIST_DATA
-          ),
-          additionalFilter: ([key, data]) =>
-            data.assetId !== undefined && data.assetId !== null,
-        }
-      );
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.ASSET_HIST_DATA
+    ).getEntitiesByBlockNumber(block.height);
 
-    if (nodes.length === 0) return null;
+    if (!nodes || nodes.size === 0) return null;
 
-    return (
-      nodes
-        // .filter(
-        //   ([key, data]) => data.assetId !== undefined && data.assetId !== null
-        // )
-        .map(([key, data]) => {
-          if (!data.dynamicFee) return null;
+    return Array.from(nodes)
+      .filter(
+        ([key, data]) => data.assetId !== undefined && data.assetId !== null
+      )
+      .map(([key, data]) => {
+        if (!data.dynamicFee) return null;
 
-          const dynamicFeeEncoded =
-            MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.AssetDynamicFee>(
-              data.dynamicFee
-            );
+        const dynamicFeeEncoded =
+          MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.AssetDynamicFee>(
+            data.dynamicFee
+          );
 
-          return {
-            assetId: +data.assetId!,
-            assetFee: dynamicFeeEncoded.assetFee,
-            protocolFee: dynamicFeeEncoded.protocolFee,
-            timestamp: dynamicFeeEncoded.timestamp,
-          };
-        })
-        .filter((item) => item !== null) as AssetDynamicFeeData[]
-    );
+        return {
+          assetId: +data.assetId!,
+          assetFee: dynamicFeeEncoded.assetFee,
+          protocolFee: dynamicFeeEncoded.protocolFee,
+          timestamp: dynamicFeeEncoded.timestamp,
+        };
+      })
+      .filter((item) => item !== null) as AssetDynamicFeeData[];
   }
 
   getTokenTotalIssuance({
@@ -1337,7 +1539,7 @@ export class StorageDictionaryManager extends QueriesHelper {
   }: TokensGetTokenTotalIssuanceInput): bigint | null {
     const node = this.getBatchStorageStatePart(
       ProcessingTopic.ASSET_HIST_DATA
-    ).get(`${tokenId}-${block.height}`);
+    ).getEntityById(`${tokenId}-${block.height}`);
 
     if (
       !node ||
@@ -1348,10 +1550,11 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     return BigInt(node.totalIssuance);
   }
+
   getNativeTokenTotalIssuance({ block }: GetConstantsInput): bigint | null {
     const node = this.getBatchStorageStatePart(
       ProcessingTopic.ASSET_HIST_DATA
-    ).get(`0-${block.height}`);
+    ).getEntityById(`0-${block.height}`);
 
     if (
       !node ||
@@ -1379,23 +1582,33 @@ export class StorageDictionaryManager extends QueriesHelper {
     //     idsSet.has(key.split('-')[0])
     // );
 
-    const nodes =
-      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
-        {
-          blockNumber: block.height,
-          fullData: this.getBatchStorageStatePart(
-            ProcessingTopic.ASSET_HIST_DATA
-          ),
-          additionalFilter: ([key, data]) => idsSet.has(key.split('-')[0]),
-        }
-      );
+    // const nodes =
+    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
+    //     {
+    //       blockNumber: block.height,
+    //       fullData: this.getBatchStorageStatePart(
+    //         ProcessingTopic.ASSET_HIST_DATA
+    //       ),
+    //       additionalFilter: ([key, data]) => idsSet.has(key.split('-')[0]),
+    //     }
+    //   );
+    //
+    // if (nodes.length === 0) return null;
 
-    if (nodes.length === 0) return null;
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.ASSET_HIST_DATA
+    ).getEntitiesByBlockNumber(block.height);
 
-    return nodes.map(([key, data]) => ({
-      tokenId: `${data.assetId}`,
-      amount: BigInt(data.totalIssuance),
-    }));
+    if (!nodes || nodes.size === 0) return null;
+
+    return Array.from(nodes.values())
+      .filter(
+        (node) => node.assetId !== undefined && idsSet.has(`${node.assetId}`)
+      )
+      .map((data) => ({
+        tokenId: `${data.assetId}`,
+        amount: BigInt(data.totalIssuance),
+      }));
   }
 
   getAssetsExistentialDepositAll({
@@ -1407,19 +1620,25 @@ export class StorageDictionaryManager extends QueriesHelper {
     //   ).entries(),
     // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
 
-    const nodes =
-      getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
-        {
-          blockNumber: block.height,
-          fullData: this.getBatchStorageStatePart(
-            ProcessingTopic.ASSET_HIST_DATA
-          ),
-        }
-      );
+    // const nodes =
+    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
+    //     {
+    //       blockNumber: block.height,
+    //       fullData: this.getBatchStorageStatePart(
+    //         ProcessingTopic.ASSET_HIST_DATA
+    //       ),
+    //     }
+    //   );
+    //
+    // if (nodes.length === 0) return null;
 
-    if (nodes.length === 0) return null;
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.ASSET_HIST_DATA
+    ).getEntitiesByBlockNumber(block.height);
 
-    return nodes.map(([key, data]) => ({
+    if (!nodes || nodes.size === 0) return null;
+
+    return Array.from(nodes.values()).map((data) => ({
       assetId: `${data.assetId!}`,
       existentialDeposit: BigInt(data.existentialDeposit),
     }));
@@ -1428,11 +1647,17 @@ export class StorageDictionaryManager extends QueriesHelper {
   getEmaOracleEntriesAll({
     block,
   }: GetEmaOraclesInput): EmaOracleEntryData[] | null {
-    const nodes = [
-      ...this.getBatchStorageStatePart(ProcessingTopic.EMA_ORACLE).entries(),
-    ].filter(([key, data]) => key === block.height.toString());
+    // const nodes = [
+    //   ...this.getBatchStorageStatePart(ProcessingTopic.EMA_ORACLE).entries(),
+    // ].filter(([key, data]) => key === block.height.toString());
+    //
+    // if (nodes.length === 0) return null;
 
-    if (nodes.length === 0) return null;
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.EMA_ORACLE
+    ).getEntitiesByBlockNumber(block.height);
+
+    if (!nodes || nodes.size === 0) return null;
 
     const entries: EmaOracleEntryData[] = [];
 
