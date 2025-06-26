@@ -1463,23 +1463,25 @@ export class StorageDictionaryManager extends QueriesHelper {
 
     if (!nodes || nodes.size === 0) return null;
 
-    return Array.from(nodes)
-      .filter(
-        ([key, data]) =>
-          data.reserveAssetId !== undefined &&
-          data.reserveAssetId !== null &&
-          data.aTokenId !== undefined &&
-          data.aTokenId !== null
-      )
-      .map(([key, data]) => ({
-        poolId: key,
-        data: {
-          reserve: +data.reserveAssetId!,
-          aToken: +data.aTokenId!,
-          liquidityIn: BigInt(data.liquidityIn),
-          liquidityOut: BigInt(data.liquidityOut),
-        },
-      }));
+    return (
+      Array.from(nodes)
+        // .filter(
+        //   ([key, data]) =>
+        //     data.reserveAssetId !== undefined &&
+        //     data.reserveAssetId !== null &&
+        //     data.aTokenId !== undefined &&
+        //     data.aTokenId !== null
+        // )
+        .map(([key, data]) => ({
+          poolId: key,
+          data: {
+            reserve: +data.reserveAssetId!,
+            aToken: +data.aTokenId!,
+            liquidityIn: BigInt(data.liquidityIn),
+            liquidityOut: BigInt(data.liquidityOut),
+          },
+        }))
+    );
   }
 
   getAssetDynamicFeesAll({

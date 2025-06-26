@@ -2,7 +2,7 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
-import { AavepoolHistoricalData, XykpoolHistoricalData } from '../../../model';
+import { Aavepool, AavepoolHistoricalData } from '../../../model';
 import { getOrCreateAavepool } from './aavepool';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -13,6 +13,15 @@ export async function handleAavepoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
+  ctx.batchState.state.aavePools = new Map(
+    (
+      await ctx.store.find(Aavepool, {
+        where: {},
+        relations: { reserveAsset: true, aToken: true, historicalData: true },
+      })
+    ).map((p) => [p.id, p])
+  );
+
   const predefinedEntities = [];
 
   for (const blocksSubBatch of splitIntoBatches(
@@ -36,7 +45,6 @@ export async function handleAavepoolHistoricalData(
       },
       { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
-
     predefinedEntities.push(
       await pMap(
         allPoolsPerBlock

@@ -55,9 +55,19 @@ export class BatchStorageStateSectionCollection<T extends ProcessingTopic> {
       if (!this.stateIndexedByBlockNumber.has(dataItem.paraBlockHeight)) {
         this.stateIndexedByBlockNumber.set(dataItem.paraBlockHeight, new Map());
       }
-      this.stateIndexedByBlockNumber
-        .get(dataItem.paraBlockHeight)!
-        .set(dataItem.id, dataItem);
+
+      if (
+        section !== ProcessingTopic.AAVE ||
+        (section === ProcessingTopic.AAVE &&
+          (dataItem as AavepoolGlq).reserveAssetId !== undefined &&
+          (dataItem as AavepoolGlq).reserveAssetId !== null &&
+          (dataItem as AavepoolGlq).aTokenId !== undefined &&
+          (dataItem as AavepoolGlq).aTokenId !== null)
+      ) {
+        this.stateIndexedByBlockNumber
+          .get(dataItem.paraBlockHeight)!
+          .set(dataItem.id, dataItem);
+      }
 
       switch (section) {
         case ProcessingTopic.LBP: {
