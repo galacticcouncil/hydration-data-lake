@@ -25,10 +25,10 @@ import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
 import cors from 'cors';
 import { SwapPlugin } from './apiSupport/plugins/query/swap';
 import { StableswapYieldMetricsPlugin } from './apiSupport/plugins/query/stableswapYieldMetrics';
-import { HydrationSdkManager } from './apiSupport/utils/hydrationSdk';
 import { CacheManager } from './apiSupport/utils/cacheManager';
 import { Request, Response, NextFunction } from 'express';
 import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolYieldMetrics';
+import { GlobalYieldMetricsPlugin } from './apiSupport/plugins/query/globalYieldMetrics';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -79,6 +79,7 @@ async function initializeServer() {
           SwapPlugin,
           StableswapYieldMetricsPlugin,
           OmnipoolYieldMetricsPlugin,
+          GlobalYieldMetricsPlugin,
           makePgSmartTagsFromFilePlugin(
             getEnvPath('apiSupport/postgraphile.tags.json5')
           ),
@@ -128,8 +129,6 @@ async function initializeServer() {
       methods: ['GET', 'POST'],
     };
 
-    app.use(express.json());
-
     app.use((req: Request, res: Response, next: NextFunction): void => {
       const query: unknown = req.body?.query;
 
@@ -149,8 +148,10 @@ async function initializeServer() {
 
     app.use(postgraphileInstance);
 
+    app.use(express.json());
+
     app.post(
-      `${ProxyApiRoute.subscan}/*`,
+      `${ProxyApiRoute.subscan}/*all`,
       cors(corsOptions),
       // @ts-ignore
       handleProxyReqSubscan
