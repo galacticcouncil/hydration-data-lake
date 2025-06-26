@@ -29,6 +29,7 @@ import { HydrationSdkManager } from './apiSupport/utils/hydrationSdk';
 import { CacheManager } from './apiSupport/utils/cacheManager';
 import { Request, Response, NextFunction } from 'express';
 import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolYieldMetrics';
+import { GlobalYieldMetricsPlugin } from './apiSupport/plugins/query/globalYieldMetrics';
 import { getBullBoardExpressAdapter } from './utils/processingPoolManager/bullBoard';
 
 // const pgTypes = new TypeOverrides();
@@ -50,6 +51,7 @@ async function initializeServer() {
         database: appConfig.DB_NAME,
         user: appConfig.DB_USER,
         password: appConfig.DB_PASS,
+
         // types: pgTypes,
       },
       'public',
@@ -79,6 +81,7 @@ async function initializeServer() {
           SwapPlugin,
           StableswapYieldMetricsPlugin,
           OmnipoolYieldMetricsPlugin,
+          GlobalYieldMetricsPlugin,
           makePgSmartTagsFromFilePlugin(
             getEnvPath('apiSupport/postgraphile.tags.json5')
           ),
@@ -129,8 +132,6 @@ async function initializeServer() {
       methods: ['GET', 'POST'],
     };
 
-    app.use(express.json());
-
     app.use((req: Request, res: Response, next: NextFunction): void => {
       const query: unknown = req.body?.query;
 
@@ -151,9 +152,11 @@ async function initializeServer() {
     app.use('/admin/queues', getBullBoardExpressAdapter().getRouter());
 
     app.use(postgraphileInstance);
+    
+    app.use(express.json());
 
     app.post(
-      `${ProxyApiRoute.subscan}/*`,
+      `${ProxyApiRoute.subscan}/*all`,
       cors(corsOptions),
       // @ts-ignore
       handleProxyReqSubscan

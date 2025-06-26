@@ -7,8 +7,8 @@ const appConfig = AppConfig.getInstance();
 
 export async function handleProxyReqSubscan(req: Request, res: Response) {
   try {
-    const requestPath = req.params[0] || '';
-    const [network, section, query] = requestPath.split('/');
+    const requestPath = req.params.all || [];
+    const [network, section, query] = requestPath;
 
     if (
       !allowedQueries.has(network) ||

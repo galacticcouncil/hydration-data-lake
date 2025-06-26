@@ -20,8 +20,13 @@
   "dependencies": {
     "@aave/math-utils": "^1.32.1",
     "@galacticcouncil/api-augment": "^0.3.1",
+    "@aave/contract-helpers": "1.28.0",
     "graphile-build": "^4.13.0",
     "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/typescript-document-nodes": "^4.0.11"
   },
   "resolutions": {
     "@polkadot/util": "~13.1.1",
