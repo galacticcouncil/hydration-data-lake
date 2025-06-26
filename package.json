@@ -19,10 +19,12 @@
   ],
   "dependencies": {
     "@aave/math-utils": "^1.32.1",
-    "@galacticcouncil/api-augment": "^0.3.1",
+    "@galacticcouncil/api-augment": "^0.7.0",
     "@aave/contract-helpers": "1.28.0",
     "graphile-build": "^4.13.0",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "@keyv/postgres": "^2.1.6",
+    "p-map": "^7.0.3"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.3",

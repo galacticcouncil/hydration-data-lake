@@ -11,7 +11,7 @@ import PgPubsub from '@graphile/pg-pubsub';
 import { getEnvPath } from './utils/helpers';
 import { ApiTypesAugmentPlugin } from './apiSupport/plugins/query/apiTypesAugment.plugin';
 import compression from 'compression';
-import zlib from 'zlib';
+// import zlib from 'zlib';
 // import { PakoManager } from './utils/pakoManager';
 
 // const pgTypes = new TypeOverrides();
@@ -69,9 +69,9 @@ app.use(
   compression({
     filter: shouldCompress,
     threshold: 1,
-    level: zlib.constants.Z_BEST_COMPRESSION,
+    level: 9,
     zlib: {
-      level: zlib.constants.Z_BEST_COMPRESSION,
+      level: 9,
     },
   })
 );

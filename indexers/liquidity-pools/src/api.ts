@@ -25,7 +25,7 @@ import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
 import cors from 'cors';
 import { SwapPlugin } from './apiSupport/plugins/query/swap';
 import { StableswapYieldMetricsPlugin } from './apiSupport/plugins/query/stableswapYieldMetrics';
-import { HydrationSdkManager } from './apiSupport/utils/hydrationSdk';
+// import { HydrationSdkManager } from './apiSupport/utils/hydrationSdk';
 import { CacheManager } from './apiSupport/utils/cacheManager';
 import { Request, Response, NextFunction } from 'express';
 import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolYieldMetrics';
@@ -152,7 +152,7 @@ async function initializeServer() {
     app.use('/admin/queues', getBullBoardExpressAdapter().getRouter());
 
     app.use(postgraphileInstance);
-    
+
     app.use(express.json());
 
     app.post(
