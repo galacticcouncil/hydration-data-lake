@@ -6,7 +6,10 @@ import { Aavepool, AavepoolHistoricalData } from '../../../model';
 import { getOrCreateAavepool } from './aavepool';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { BlockHeader } from '@subsquid/substrate-processor';
-import { AaveTradeExecutorPoolDataWithPoolId } from '../../../parsers/runtimeApiResolver/types';
+import {
+  AaveTradeExecutorPoolData,
+  AaveTradeExecutorPoolDataWithPoolId,
+} from '../../../parsers/runtimeApiResolver/types';
 import pMap from 'p-map';
 
 export async function handleAavepoolHistoricalData(
@@ -22,7 +25,7 @@ export async function handleAavepoolHistoricalData(
     ).map((p) => [p.id, p])
   );
 
-  const predefinedEntities = [];
+  const predefinedEntities: AavepoolHistoricalData[] = [];
 
   for (const blocksSubBatch of splitIntoBatches(
     ctx.blocks,
@@ -30,73 +33,71 @@ export async function handleAavepoolHistoricalData(
   )) {
     const allPoolsPerBlock: Array<{
       blockHeader: BlockHeader;
-      poolsData: AaveTradeExecutorPoolDataWithPoolId[];
-    }> = await pMap(
+      poolData: AaveTradeExecutorPoolDataWithPoolId;
+    }> = [];
+
+    // console.time(`:: >>> handleAavepoolHistoricalData - getPools`);
+    await pMap(
       blocksSubBatch,
-      async ({ header: blockHeader }) => {
+      async ({ header: blockHeader }): Promise<void> => {
         const poolsData = await parsers.storage.aaveTradeExecutor.getPools({
           block: blockHeader,
         });
+        if (!poolsData) return;
 
-        return {
-          blockHeader,
-          poolsData: poolsData || [],
-        };
+        for (const poolData of poolsData) {
+          allPoolsPerBlock.push({
+            blockHeader: blockHeader,
+            poolData: poolData,
+          });
+        }
       },
       { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
-    predefinedEntities.push(
-      await pMap(
-        allPoolsPerBlock
-          .map(({ blockHeader, poolsData }) =>
-            poolsData.map((poolData) => ({
-              blockHeader: blockHeader,
-              poolData,
-            }))
-          )
-          .flat(),
-        async ({ poolData, blockHeader }) => {
-          const pool = await getOrCreateAavepool({
-            ctx,
-            reserveAssetId: `${poolData.data.reserve}`,
-            aTokenId: `${poolData.data.aToken}`,
-            ensure: true,
-            blockHeader,
-          });
+    // console.timeEnd(`:: >>> handleAavepoolHistoricalData - getPools`);
+    //
+    // console.time(`:: >>> handleAavepoolHistoricalData - getOrCreateAavepool`);
+    await pMap(
+      allPoolsPerBlock,
+      async ({ poolData, blockHeader }) => {
+        const pool = await getOrCreateAavepool({
+          ctx,
+          reserveAssetId: `${poolData.data.reserve}`,
+          aTokenId: `${poolData.data.aToken}`,
+          ensure: true,
+          blockHeader,
+        });
 
-          if (!pool) return null;
+        if (!pool) return;
 
-          const poolHistoricalDataEntity = new AavepoolHistoricalData({
-            id: `${pool.id}-${blockHeader.height}`,
-            pool,
+        const poolHistoricalDataEntity = new AavepoolHistoricalData({
+          id: `${pool.id}-${blockHeader.height}`,
+          pool,
 
-            liquidityIn: poolData.data.liquidityIn,
-            liquidityOut: poolData.data.liquidityOut,
+          liquidityIn: poolData.data.liquidityIn,
+          liquidityOut: poolData.data.liquidityOut,
 
-            relayBlockHeight:
-              ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-                ?.relaychainBlockNumber ?? 0,
-            paraBlockHeight: blockHeader.height,
-            block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
-          });
+          relayBlockHeight:
+            ctx.batchState.state.relayChainInfo.get(blockHeader.height)
+              ?.relaychainBlockNumber ?? 0,
+          paraBlockHeight: blockHeader.height,
+          block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+        });
 
-          return poolHistoricalDataEntity;
-        },
-        { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
-      )
+        predefinedEntities.push(poolHistoricalDataEntity);
+      },
+      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
+    // console.timeEnd(
+    //   `:: >>> handleAavepoolHistoricalData - getOrCreateAavepool`
+    // );
   }
 
   ctx.batchState.state.aavePoolsHistoricalData = new Map(
-    predefinedEntities
-      .flat()
-      .filter((item) => !!item)
-      .map((item) => [item.id, item])
+    predefinedEntities.map((item) => [item.id, item])
   );
 
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.aavePoolsHistoricalData.values())
-  );
+  await ctx.store.save(predefinedEntities);
 }
 
 //

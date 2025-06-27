@@ -4,6 +4,7 @@ import parsers from '../../../parsers';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { EmaOracleEntryHistoricalData } from '../../../model';
 import { getOrCreateAsset } from '../../assets/asset';
+import pMap from 'p-map';
 
 export async function handleEmaOracleHistoricalData(
   ctx: SqdProcessorContext<Store>
@@ -15,8 +16,9 @@ export async function handleEmaOracleHistoricalData(
     ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
   )) {
     predefinedEntities.push(
-      await Promise.all(
-        blocksSubBatch.map(async ({ header: blockHeader }) => {
+      await pMap(
+        blocksSubBatch,
+        async ({ header: blockHeader }) => {
           const entries = await parsers.storage.emaOracle.getOracles({
             block: blockHeader,
           });
@@ -94,7 +96,8 @@ export async function handleEmaOracleHistoricalData(
           }
 
           return newEntities;
-        })
+        },
+        { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
       )
     );
   }
