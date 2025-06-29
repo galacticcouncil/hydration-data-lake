@@ -28,7 +28,6 @@ processor.run(
     isolationLevel: 'READ COMMITTED',
   }),
   async (ctx) => {
-
     printV8MemoryHeap();
 
     console.time('TOTAL BATCH EXECUTION TIME');
@@ -57,7 +56,5 @@ processor.run(
     (ctxWithBatchState as SqdProcessorContext<Store>).batchState.wipeState();
 
     console.timeEnd('TOTAL BATCH EXECUTION TIME');
-
-    // await new Promise((res) => setTimeout(res, 30_000));
   }
 );

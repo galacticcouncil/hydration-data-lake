@@ -6,10 +6,7 @@ import { Aavepool, AavepoolHistoricalData } from '../../../model';
 import { getOrCreateAavepool } from './aavepool';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { BlockHeader } from '@subsquid/substrate-processor';
-import {
-  AaveTradeExecutorPoolData,
-  AaveTradeExecutorPoolDataWithPoolId,
-} from '../../../parsers/runtimeApiResolver/types';
+import { AaveTradeExecutorPoolDataWithPoolId } from '../../../parsers/runtimeApiResolver/types';
 import pMap from 'p-map';
 
 export async function handleAavepoolHistoricalData(
@@ -20,7 +17,7 @@ export async function handleAavepoolHistoricalData(
     (
       await ctx.store.find(Aavepool, {
         where: {},
-        relations: { reserveAsset: true, aToken: true, historicalData: true },
+        relations: { reserveAsset: true, aToken: true },
       })
     ).map((p) => [p.id, p])
   );
@@ -36,7 +33,6 @@ export async function handleAavepoolHistoricalData(
       poolData: AaveTradeExecutorPoolDataWithPoolId;
     }> = [];
 
-    // console.time(`:: >>> handleAavepoolHistoricalData - getPools`);
     await pMap(
       blocksSubBatch,
       async ({ header: blockHeader }): Promise<void> => {
@@ -54,9 +50,7 @@ export async function handleAavepoolHistoricalData(
       },
       { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
-    // console.timeEnd(`:: >>> handleAavepoolHistoricalData - getPools`);
-    //
-    // console.time(`:: >>> handleAavepoolHistoricalData - getOrCreateAavepool`);
+
     await pMap(
       allPoolsPerBlock,
       async ({ poolData, blockHeader }) => {
@@ -88,9 +82,6 @@ export async function handleAavepoolHistoricalData(
       },
       { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
-    // console.timeEnd(
-    //   `:: >>> handleAavepoolHistoricalData - getOrCreateAavepool`
-    // );
   }
 
   ctx.batchState.state.aavePoolsHistoricalData = new Map(
