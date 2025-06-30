@@ -158,12 +158,13 @@ export async function execAllInOneProcessorHandlers(
 
   await saveAllMoneyMarketEvents(ctx);
 
-
-
-
   console.time('handleConstantsHistoricalData');
   await handleConstantsHistoricalData(ctx);
   console.timeEnd('handleConstantsHistoricalData');
+
+  console.time('handleAavepoolHistoricalData');
+  await handleAavepoolHistoricalData(ctx, parsedData);
+  console.timeEnd('handleAavepoolHistoricalData');
 
   console.time('handleStableswapHistoricalData');
   await handleStableswapHistoricalData(ctx, parsedData);
@@ -180,10 +181,6 @@ export async function execAllInOneProcessorHandlers(
   console.time('handleLbppoolHistoricalData');
   await handleLbppoolHistoricalData(ctx, parsedData);
   console.timeEnd('handleLbppoolHistoricalData');
-
-  console.time('handleAavepoolHistoricalData');
-  await handleAavepoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleAavepoolHistoricalData');
 
   // console.time('pools hist data Promise.all');
   // await Promise.all([

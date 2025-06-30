@@ -216,3 +216,16 @@ export enum YieldMetricsInterval {
   '1MON' = '1MON',
   '1Y' = '1Y',
 }
+
+export enum AssetsPairPriceTimeRange {
+  '_5M_' = '_5M_',
+  '_15M_' = '_15M_',
+  '_30M_' = '_30M_',
+  '_1H_' = '_1H_',
+  '_4H_' = '_4H_',
+  '_24H_' = '_24H_',
+  '_1W_' = '_1W_',
+  '_1MON_' = '_1MON_',
+  '_1Y_' = '_1Y_',
+  '_ALL_' = '_ALL_',
+}

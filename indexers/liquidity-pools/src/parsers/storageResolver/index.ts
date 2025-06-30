@@ -10,7 +10,8 @@ import {
   GetDataAtBlockInput,
   GetEmaOraclesInput,
   GetPoolAssetInfoInput,
-  LbpGetPoolDataInput, OmnipoolGetAllAssetIdsInput,
+  LbpGetPoolDataInput,
+  OmnipoolGetAllAssetIdsInput,
   OmnipoolGetAssetDataInput,
   OmnipoolGetHubAssetTradabilityInput,
   OmnipoolGetPoolDataInput,
@@ -240,10 +241,9 @@ export class StorageResolver {
           }
 
           if (method === 'getOmnipoolAllAssetIds') {
-            const resp =
-              this.storageDictionaryManager.getOmnipoolAllAssetIds(
-                args as unknown as OmnipoolGetAllAssetIdsInput // TODO fix types
-              ) as R;
+            const resp = this.storageDictionaryManager.getOmnipoolAllAssetIds(
+              args as unknown as OmnipoolGetAllAssetIdsInput // TODO fix types
+            ) as R;
 
             if (resp) return resp;
 

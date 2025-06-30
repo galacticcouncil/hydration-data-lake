@@ -8,7 +8,6 @@ import { ProcessorStatusPlugin } from './apiSupport/plugins/query/processorStatu
 import { AppConfig } from './appConfig';
 import { XykpoolsVolumePlugin } from './apiSupport/plugins/query/xykPoolsVolume';
 import PgPubsub from '@graphile/pg-pubsub';
-// import TypeOverrides from 'pg/lib/type-overrides';
 import { runMigrations } from './apiSupport/apiMigrations/runMigrations';
 import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/xykPoolVolumeSubscriptions';
 import { getEnvPath } from './utils/helpers';
@@ -25,12 +24,11 @@ import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
 import cors from 'cors';
 import { SwapPlugin } from './apiSupport/plugins/query/swap';
 import { StableswapYieldMetricsPlugin } from './apiSupport/plugins/query/stableswapYieldMetrics';
-// import { HydrationSdkManager } from './apiSupport/utils/hydrationSdk';
-import { CacheManager } from './apiSupport/utils/cacheManager';
 import { Request, Response, NextFunction } from 'express';
 import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolYieldMetrics';
 import { GlobalYieldMetricsPlugin } from './apiSupport/plugins/query/globalYieldMetrics';
 import { getBullBoardExpressAdapter } from './utils/processingPoolManager/bullBoard';
+import { AssetHistoricalDataPlugin } from './apiSupport/plugins/query/assetHistoricalData';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -82,6 +80,7 @@ async function initializeServer() {
           StableswapYieldMetricsPlugin,
           OmnipoolYieldMetricsPlugin,
           GlobalYieldMetricsPlugin,
+          AssetHistoricalDataPlugin,
           makePgSmartTagsFromFilePlugin(
             getEnvPath('apiSupport/postgraphile.tags.json5')
           ),
