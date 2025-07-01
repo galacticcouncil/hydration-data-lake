@@ -168,6 +168,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly API_CACHE_TTL_MS: number = 600000;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly EVM_TRANSFER_EVENT_FIX_SINCE_BLOCK_HEIGHT: number = 8155014;
+
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       AppConfig.instance = new AppConfig();

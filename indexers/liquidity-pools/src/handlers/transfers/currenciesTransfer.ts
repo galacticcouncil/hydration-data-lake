@@ -22,7 +22,13 @@ export async function handleCurrenciesTransfer(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  if (!assetEntity || assetEntity.assetType !== AssetType.Erc20) return;
+  if (
+    !assetEntity ||
+    assetEntity.assetType !== AssetType.Erc20 ||
+    eventMetadata.blockHeader.height >=
+      ctx.appConfig.EVM_TRANSFER_EVENT_FIX_SINCE_BLOCK_HEIGHT
+  )
+    return;
 
   const existingTransfer = [...ctx.batchState.state.transfers.values()].find(
     (transfer) =>
