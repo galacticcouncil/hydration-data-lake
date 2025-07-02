@@ -23,6 +23,15 @@ function parseScheduleArgs(call: SqdCall): DcaScheduleCallArgs {
       scheduleData: decorateDcaSchedule(schedule),
     };
   }
+  if (calls.dca.schedule.v323.is(call)) {
+    const { startExecutionBlock, schedule } =
+      calls.dca.schedule.v323.decode(call);
+
+    return {
+      startExecutionBlock,
+      scheduleData: decorateDcaSchedule(schedule),
+    };
+  }
 
   throw new UnknownVersionError(call.name);
 }

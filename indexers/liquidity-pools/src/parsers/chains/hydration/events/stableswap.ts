@@ -15,6 +15,12 @@ function parsePoolCreatedParams(
   if (events.stableswap.poolCreated.v183.is(event)) {
     return events.stableswap.poolCreated.v183.decode(event);
   }
+  if (events.stableswap.poolCreated.v305.is(event)) {
+    return events.stableswap.poolCreated.v305.decode(event);
+  }
+  if (events.stableswap.poolCreated.v323.is(event)) {
+    return events.stableswap.poolCreated.v323.decode(event);
+  }
 
   throw new UnknownVersionError(event.name);
 }
