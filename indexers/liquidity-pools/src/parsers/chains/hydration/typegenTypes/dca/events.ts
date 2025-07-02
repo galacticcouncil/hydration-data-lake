@@ -3,6 +3,7 @@ import * as v160 from '../v160'
 import * as v201 from '../v201'
 import * as v205 from '../v205'
 import * as v295 from '../v295'
+import * as v323 from '../v323'
 
 export const executionStarted =  {
     name: 'DCA.ExecutionStarted',
@@ -54,6 +55,19 @@ export const scheduled =  {
             period: sts.number(),
             totalAmount: sts.bigint(),
             order: v295.Order,
+        })
+    ),
+    /**
+     * The DCA is scheduled for next execution
+     */
+    v323: new EventType(
+        'DCA.Scheduled',
+        sts.struct({
+            id: sts.number(),
+            who: v323.AccountId32,
+            period: sts.number(),
+            totalAmount: sts.bigint(),
+            order: v323.Order,
         })
     ),
 }

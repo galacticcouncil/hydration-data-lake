@@ -36,6 +36,14 @@ function parseScheduledParams(event: SqdEvent): DcaScheduledEventParams {
       who,
     };
   }
+  if (events.dca.scheduled.v323.is(event)) {
+    const { id, who } = events.dca.scheduled.v323.decode(event);
+
+    return {
+      id,
+      who,
+    };
+  }
 
   throw new UnknownVersionError(event.name);
 }
