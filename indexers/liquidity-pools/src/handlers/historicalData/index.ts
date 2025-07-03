@@ -69,18 +69,6 @@ export class HistoricalDataManager {
         ctx
       );
 
-    // const [assetHistDataToSaveMap, assetSpotPriceHistDataToSaveList] =
-    //   await Promise.all([
-    //     getAssetHistDataWithUniqueData(
-    //       ctx.batchState.state.assetsHistoricalDataBatch,
-    //       ctx
-    //     ),
-    //     getAssetSpotPriceHistDataWithUniqueData(
-    //       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch,
-    //       ctx
-    //     ),
-    //   ]);
-
     for (const priceHistData of assetSpotPriceHistDataToSaveList) {
       assetHistDataToSaveMap.set(
         priceHistData.assetInHistData.id,

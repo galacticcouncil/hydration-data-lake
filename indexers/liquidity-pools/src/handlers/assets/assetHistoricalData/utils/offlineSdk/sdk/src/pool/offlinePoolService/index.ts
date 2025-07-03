@@ -12,4 +12,5 @@ export {
   IPersistentEmaOracleEntry,
   IPersistentEmaOracleEntryData,
   IPersistentConstants,
+  IPersistentMmOracleEntry,
 } from './types';

@@ -32,6 +32,18 @@ export interface ExecutionType_XcmExchange {
     value: number
 }
 
+export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
+    return  {
+        assetId: sts.number(),
+        amount: sts.bigint(),
+    }
+})
+
+export interface AssetAmount {
+    assetId: number
+    amount: bigint
+}
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -4825,18 +4837,6 @@ export interface Type_240 {
 }
 
 export const Permill = sts.number()
-
-export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
-    return  {
-        assetId: sts.number(),
-        amount: sts.bigint(),
-    }
-})
-
-export interface AssetAmount {
-    assetId: number
-    amount: bigint
-}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.

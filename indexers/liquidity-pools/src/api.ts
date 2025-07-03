@@ -29,6 +29,7 @@ import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolY
 import { GlobalYieldMetricsPlugin } from './apiSupport/plugins/query/globalYieldMetrics';
 import { getBullBoardExpressAdapter } from './utils/processingPoolManager/bullBoard';
 import { AssetHistoricalDataPlugin } from './apiSupport/plugins/query/assetHistoricalData';
+import { TimeSeriesApiSupportManager } from './apiSupport/utils/timeSeriesSupportManager';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -164,6 +165,8 @@ async function initializeServer() {
     app.listen(appConfig.GQL_PORT, () => {
       console.log(`Squid API listening on port ${appConfig.GQL_PORT}`);
     });
+
+    TimeSeriesApiSupportManager.getInstance().initAssetHistDataScraper().then();
   } catch (error) {
     console.error('Failed to initialize server:', error);
     process.exit(1);

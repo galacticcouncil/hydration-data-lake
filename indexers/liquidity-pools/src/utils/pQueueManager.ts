@@ -5,8 +5,13 @@ export class PQueueManager {
 
   private runtimeApiCallsQueueInst: PQueue;
 
+  private mmOracleContractCallsQueueInst: PQueue;
+
   constructor() {
     this.runtimeApiCallsQueueInst = new PQueue({
+      concurrency: 10,
+    });
+    this.mmOracleContractCallsQueueInst = new PQueue({
       concurrency: 10,
     });
   }
@@ -20,5 +25,8 @@ export class PQueueManager {
 
   get runtimeApiCallsQueue() {
     return this.runtimeApiCallsQueueInst;
+  }
+  get mmOracleContractCallsQueue() {
+    return this.mmOracleContractCallsQueueInst;
   }
 }

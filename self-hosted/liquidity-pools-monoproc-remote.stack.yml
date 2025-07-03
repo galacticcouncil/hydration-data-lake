@@ -190,7 +190,7 @@ x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_HOST: *postgres-host
 
 x-proc-default-envs: &proc-default-envs
-  INDEXER_ID: "730"
+  INDEXER_ID: "731"
   NODE_OPTIONS: "--max-old-space-size=8072"
   NODE_ENV: "self-hosted"
   CHAIN: *chain-name

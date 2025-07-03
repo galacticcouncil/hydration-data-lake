@@ -205,13 +205,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
-      profile: large
-      storage: 200G
+      profile: xlarge
+      storage: 300G
   processor:
     profile: large
   api:
-    profile: large
+    profile: small
 #    replicas: 2

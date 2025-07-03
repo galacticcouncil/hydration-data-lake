@@ -42,7 +42,7 @@ export class TimeSeriesApiSupportManager {
 
   async initAssetHistDataScraper() {
     console.log('initAssetHistDataScraper');
-    let latestProcessedBlockHeight = 8166747;
+    let latestProcessedBlockHeight = 8154900;
     const processingBlocksRange = 1000;
     const pgClient = SupportPgClient.getInstance();
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();

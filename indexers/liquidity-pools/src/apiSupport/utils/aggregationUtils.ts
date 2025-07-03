@@ -1,5 +1,9 @@
 import { AggregationTimeRange } from './index';
-import { AggregationTimeRangeLabel, YieldMetricsInterval } from '../types';
+import {
+  AggregationTimeRangeLabel,
+  AssetsPairPriceTimeRange,
+  YieldMetricsInterval,
+} from '../types';
 import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,
@@ -87,5 +91,36 @@ export function getPeriodsNumberFromInterval(interval: YieldMetricsInterval) {
       return 1;
     default:
       return 12;
+  }
+}
+
+export function getBucketSizeMsFromAssetsPairPriceTimeRange(
+  range: AssetsPairPriceTimeRange
+): number {
+  switch (range) {
+    case AssetsPairPriceTimeRange['_15S_']:
+      return 1000 * 15;
+    case AssetsPairPriceTimeRange['_1M_']:
+      return 1000 * 60;
+    case AssetsPairPriceTimeRange['_5M_']:
+      return 1000 * 60 * 5;
+    case AssetsPairPriceTimeRange['_15M_']:
+      return 1000 * 60 * 15;
+    case AssetsPairPriceTimeRange['_30M_']:
+      return 1000 * 60 * 30;
+    case AssetsPairPriceTimeRange['_1H_']:
+      return 1000 * 60 * 60;
+    case AssetsPairPriceTimeRange['_4H_']:
+      return 1000 * 60 * 60 * 4;
+    case AssetsPairPriceTimeRange['_24H_']:
+      return 1000 * 60 * 60 * 24;
+    case AssetsPairPriceTimeRange['_1W_']:
+      return 1000 * 60 * 60 * 24 * 7;
+    case AssetsPairPriceTimeRange['_1MON_']:
+      return 1000 * 60 * 60 * 24 * 30;
+    case AssetsPairPriceTimeRange['_1Y_']:
+      return 1000 * 60 * 60 * 24 * 356;
+    default:
+      return 1000 * 60 * 60;
   }
 }

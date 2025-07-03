@@ -52,7 +52,7 @@
     "marked": "^15.0.7",
     "marked-terminal": "^7.3.0",
     "polkadot-api": "^1.9.1",
-    "redis": "^4.7.0",
+    "redis": "^4.7.1",
     "redis-om": "^0.4.7",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"

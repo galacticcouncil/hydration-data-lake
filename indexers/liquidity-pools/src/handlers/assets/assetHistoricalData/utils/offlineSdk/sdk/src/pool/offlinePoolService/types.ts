@@ -192,6 +192,13 @@ export interface IPersistentEmaOracleEntryRatio {
   d: string;
 }
 
+export interface IPersistentMmOracleEntry {
+  address: string;
+  price: string;
+  decimals: number;
+  updatedAt: number;
+}
+
 export interface IPersistentDataInput {
   assets: Array<PersistentAsset>;
   pools: {
@@ -203,6 +210,7 @@ export interface IPersistentDataInput {
   };
   constants: IPersistentConstants;
   emaOracle: Array<IPersistentEmaOracleEntry>;
+  mmOracle: Array<IPersistentMmOracleEntry>;
   meta: IPersistentMetaData;
 }
 
@@ -217,6 +225,7 @@ export interface IOfflinePoolServiceDataSource {
   };
   constants: IPersistentConstants;
   emaOracle: Array<IPersistentEmaOracleEntry>;
+  mmOracle: Array<IPersistentMmOracleEntry>;
   meta: IPersistentMetaData;
 }
 

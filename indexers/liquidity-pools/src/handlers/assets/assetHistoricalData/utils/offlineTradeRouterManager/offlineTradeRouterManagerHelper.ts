@@ -37,6 +37,7 @@ import {
   IPersistentEmaOracleEntry,
   PoolType,
   IPersistentConstants,
+  IPersistentMmOracleEntry,
   AMOUNT_MAX,
   TRADEABLE_DEFAULT,
 } from '../offlineSdk/sdk/src';
@@ -53,6 +54,8 @@ import {
   fetchEmaOracleEntriesHistoricalData,
   fetchEmaOracleEntriesHistoricalDataForBlocksRange,
 } from './fetchHistoricalDataHelpers/fetchEmaOraclesHistoricalData';
+import pMap from 'p-map';
+import { MmOracleManager } from '../../../../../utils/evmTools/mmOracleEvmManager';
 
 export class OfflineTradeRouterManagerHelper {
   protected SUPPORTED_ASSET_TYPES_SET = new Set([
@@ -67,6 +70,10 @@ export class OfflineTradeRouterManagerHelper {
   protected emaOraclesHistData: Map<
     number,
     Map<string, EmaOracleEntryHistoricalData>
+  > = new Map();
+  protected mmOraclesHistData: Map<
+    number,
+    Map<string, IPersistentMmOracleEntry>
   > = new Map();
   protected assetsHistData: Map<number, Map<string, AssetHistoricalData>> =
     new Map();
@@ -107,6 +114,7 @@ export class OfflineTradeRouterManagerHelper {
       this.lbppoolsHistData.set(blockNumber, new Map());
       this.xykpoolsHistData.set(blockNumber, new Map());
       this.stableswapHistData.set(blockNumber, new Map());
+      this.mmOraclesHistData.set(blockNumber, new Map());
     }
   }
 
@@ -412,6 +420,32 @@ export class OfflineTradeRouterManagerHelper {
         ctx,
       }
     );
+
+    const mmOracleContractCalls: { blockHeight: number; address: string }[] =
+      [];
+
+    for (const blockData of this.stableswapHistData.values()) {
+      for (const poolData of blockData.values()) {
+        const mmOracleSource = (poolData.pegSources || []).find(
+          (s) => s.sourceKind === 'MMOracle'
+        );
+        if (!mmOracleSource || !mmOracleSource.oracleName) continue;
+        mmOracleContractCalls.push({
+          blockHeight: poolData.paraBlockHeight,
+          address: mmOracleSource.oracleName,
+        });
+      }
+    }
+
+    await pMap(mmOracleContractCalls, async ({ address, blockHeight }) => {
+      const oracleData =
+        await MmOracleManager.getInstance().getAggregatorMmOracleData({
+          address,
+          blockHeight,
+        });
+      if (oracleData)
+        this.mmOraclesHistData.get(blockHeight)?.set(address, oracleData);
+    });
   }
 
   protected async fetchOmnipoolHistoricalDataForBlocksRange({

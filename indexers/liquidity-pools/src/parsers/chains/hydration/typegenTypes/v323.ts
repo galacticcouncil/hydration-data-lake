@@ -1,5 +1,90 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export interface PoolSnapshot {
+    assets: number[]
+    reserves: AssetReserve[]
+    amplification: bigint
+    fee: Permill
+    pegs: [bigint, bigint][]
+    shareIssuance: bigint
+}
+
+export type Permill = number
+
+export interface AssetReserve {
+    amount: bigint
+    decimals: number
+}
+
+export const PoolSnapshot: sts.Type<PoolSnapshot> = sts.struct(() => {
+    return  {
+        assets: sts.array(() => sts.number()),
+        reserves: sts.array(() => AssetReserve),
+        amplification: sts.bigint(),
+        fee: Permill,
+        pegs: sts.array(() => sts.tuple(() => [sts.bigint(), sts.bigint()])),
+        shareIssuance: sts.bigint(),
+    }
+})
+
+export const AssetReserve: sts.Type<AssetReserve> = sts.struct(() => {
+    return  {
+        amount: sts.bigint(),
+        decimals: sts.number(),
+    }
+})
+
+export interface PoolPegInfo {
+    source: PegSource[]
+    maxPegUpdate: Permill
+    current: [bigint, bigint][]
+}
+
+export type PegSource = PegSource_MMOracle | PegSource_Oracle | PegSource_Value
+
+export interface PegSource_MMOracle {
+    __kind: 'MMOracle'
+    value: H160
+}
+
+export interface PegSource_Oracle {
+    __kind: 'Oracle'
+    value: [Bytes, OraclePeriod, number]
+}
+
+export interface PegSource_Value {
+    __kind: 'Value'
+    value: [bigint, bigint]
+}
+
+export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
+
+export interface OraclePeriod_Day {
+    __kind: 'Day'
+}
+
+export interface OraclePeriod_Hour {
+    __kind: 'Hour'
+}
+
+export interface OraclePeriod_LastBlock {
+    __kind: 'LastBlock'
+}
+
+export interface OraclePeriod_Short {
+    __kind: 'Short'
+}
+
+export interface OraclePeriod_TenMinutes {
+    __kind: 'TenMinutes'
+}
+
+export interface OraclePeriod_Week {
+    __kind: 'Week'
+}
+
+export type H160 = Bytes
+
 export interface Schedule {
     owner: AccountId32
     period: number
@@ -62,8 +147,6 @@ export interface PoolType_Stableswap {
 export interface PoolType_XYK {
     __kind: 'XYK'
 }
-
-export type Permill = number
 
 export type AccountId32 = Bytes
 
@@ -600,8 +683,6 @@ export interface Type_99_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: H160
 }
-
-export type H160 = Bytes
 
 export const Type_116: sts.Type<Type_116> = sts.closedEnum(() => {
     return  {
@@ -4872,49 +4953,6 @@ export const OraclePeriod: sts.Type<OraclePeriod> = sts.closedEnum(() => {
         Week: sts.unit(),
     }
 })
-
-export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
-
-export interface OraclePeriod_Day {
-    __kind: 'Day'
-}
-
-export interface OraclePeriod_Hour {
-    __kind: 'Hour'
-}
-
-export interface OraclePeriod_LastBlock {
-    __kind: 'LastBlock'
-}
-
-export interface OraclePeriod_Short {
-    __kind: 'Short'
-}
-
-export interface OraclePeriod_TenMinutes {
-    __kind: 'TenMinutes'
-}
-
-export interface OraclePeriod_Week {
-    __kind: 'Week'
-}
-
-export type PegSource = PegSource_MMOracle | PegSource_Oracle | PegSource_Value
-
-export interface PegSource_MMOracle {
-    __kind: 'MMOracle'
-    value: H160
-}
-
-export interface PegSource_Oracle {
-    __kind: 'Oracle'
-    value: [Bytes, OraclePeriod, number]
-}
-
-export interface PegSource_Value {
-    __kind: 'Value'
-    value: [bigint, bigint]
-}
 
 export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
     return  {
@@ -16053,12 +16091,6 @@ export const PoolPegInfo: sts.Type<PoolPegInfo> = sts.struct(() => {
         current: sts.array(() => sts.tuple(() => [sts.bigint(), sts.bigint()])),
     }
 })
-
-export interface PoolPegInfo {
-    source: PegSource[]
-    maxPegUpdate: Permill
-    current: [bigint, bigint][]
-}
 
 export const Permill = sts.number()
 

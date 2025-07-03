@@ -7,6 +7,7 @@ import {
 import { DcaScheduleOrderType, SwapFillerType } from '../../../model';
 import { Erc20AssetContractDetails } from '../../types/storage';
 import { AssetRegistryAssetLocation } from '../../types/events';
+import { hexToString } from '@polkadot/util';
 
 export function decorateDcaSchedule(scheduleRaw: Schedule) {
   const {
@@ -99,4 +100,10 @@ export function getErc20AssetContractFromLocation(
   } catch (e) {
     return null;
   }
+}
+
+export function fetOracleNameFromStableswapPegsSource(data: any) {
+  if (data.__kind === 'Oracle') return hexToString(data.value[0]);
+  if (data.__kind === 'MMOracle') return data.value;
+  return undefined;
 }

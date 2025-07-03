@@ -108,7 +108,7 @@ async function getStableswapDataPromise({
           new StableswapPegsSource({
             sourceKind,
             oracleName,
-            oraclePeriod,
+            oraclePeriod: oraclePeriod ?? null,
             oracleAsset: oracleAsset !== null ? oracleAsset.toString() : null,
             valuePoints: valuePoints
               ? valuePoints.map((vp) => vp.toString())

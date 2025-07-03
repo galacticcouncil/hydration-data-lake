@@ -8,6 +8,7 @@ import {
   IPersistentEmaOracleEntryData,
   IPersistentLbpPoolBase,
   IPersistentMetaData,
+  IPersistentMmOracleEntry,
   IPersistentOmniPoolBase,
   IPersistentOmniPoolToken,
   IPersistentPoolBase,
@@ -54,6 +55,7 @@ export class OfflinePoolUtils {
             src: pool,
             assets: persistentData.assets,
             emaOraclesData: persistentData.emaOracle,
+            mmOraclesData: persistentData.mmOracle,
             metaData: persistentData.meta,
           })
         ),
@@ -66,6 +68,7 @@ export class OfflinePoolUtils {
       },
       constants: persistentData.constants,
       emaOracle: persistentData.emaOracle,
+      mmOracle: persistentData.mmOracle,
       meta: persistentData.meta,
     };
   }
@@ -334,11 +337,13 @@ export class OfflinePoolUtils {
     src,
     assets,
     emaOraclesData,
+    mmOraclesData,
     metaData,
   }: {
     src: IPersistentStableSwapBase;
     assets: Array<PersistentAsset>;
     emaOraclesData: IPersistentEmaOracleEntry[];
+    mmOraclesData: IPersistentMmOracleEntry[];
     metaData: IPersistentMetaData;
   }): StableSwapBase {
     if (!src) throw new Error('Pool can not be empty');
@@ -383,6 +388,7 @@ export class OfflinePoolUtils {
       ...StableSwapOfflineUtils.getStableswapPegsFromPersistentData({
         src,
         emaOraclesData,
+        mmOraclesData,
         metaData,
       }),
     };

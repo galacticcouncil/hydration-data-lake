@@ -182,41 +182,6 @@ export async function execAllInOneProcessorHandlers(
   await handleLbppoolHistoricalData(ctx, parsedData);
   console.timeEnd('handleLbppoolHistoricalData');
 
-  // console.time('pools hist data Promise.all');
-  // await Promise.all([
-  //   (async () => {
-  //     console.time('handleConstantsHistoricalData');
-  //     await handleConstantsHistoricalData(ctx);
-  //     console.timeEnd('handleConstantsHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleStableswapHistoricalData');
-  //     await handleStableswapHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleStableswapHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleOmnipoolHistoricalData');
-  //     await handleOmnipoolHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleOmnipoolHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleXykPoolHistoricalData');
-  //     await handleXykPoolHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleXykPoolHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleLbppoolHistoricalData');
-  //     await handleLbppoolHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleLbppoolHistoricalData');
-  //   })(),
-  //   (async () => {
-  //     console.time('handleAavepoolHistoricalData');
-  //     await handleAavepoolHistoricalData(ctx, parsedData);
-  //     console.timeEnd('handleAavepoolHistoricalData');
-  //   })(),
-  // ]);
-  // console.timeEnd('pools hist data Promise.all');
-
   console.time('ensurePoolsDestroyedStatus');
   await ensurePoolsDestroyedStatus(ctx);
   console.timeEnd('ensurePoolsDestroyedStatus');

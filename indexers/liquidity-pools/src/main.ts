@@ -9,6 +9,7 @@ import {
   execCoreProcessorHandlers,
 } from './multiprocessorHandlers';
 import { execSpotPricesProcessorHandlers } from './multiprocessorHandlers/spotPricesProc';
+import { RedisTimeSeriesManager } from './utils/redisTimeSeriesManager';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -40,6 +41,8 @@ processor.run(
       new BatchState();
     (ctxWithBatchState as SqdProcessorContext<Store>).appConfig =
       AppConfig.getInstance();
+
+    await RedisTimeSeriesManager.getInstance().initClient();
 
     await execAllInOneProcessorHandlers(
       ctxWithBatchState as SqdProcessorContext<Store>

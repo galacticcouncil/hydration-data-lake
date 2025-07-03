@@ -68,6 +68,9 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
       emaOracle: this.getDecoratedEmaOraclesHistDataAsPersistentDataInput({
         blockNumber,
       }),
+      mmOracle: Array.from(
+        this.mmOraclesHistData.get(blockNumber)?.values() || []
+      ),
       assets: this.getDecoratedAssetsHistDataAsPersistentDataInput({
         blockNumber,
       }),

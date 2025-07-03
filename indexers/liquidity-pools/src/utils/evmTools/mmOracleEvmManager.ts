@@ -35,29 +35,34 @@ export class MmOracleManager {
     blockHeight: number;
     address: string;
     blockTimeInSec?: number;
-  }): Promise<IPersistentMmOracleEntry> {
-    const aggregatorContract = this.getAggregatorContractInstance(address);
+  }): Promise<IPersistentMmOracleEntry | null> {
+    try {
+      const aggregatorContract = this.getAggregatorContractInstance(address);
 
-    const [data, decimals, block] = await Promise.all([
-      aggregatorContract.latestRoundData({
-        blockTag: blockHeight,
-      }),
-      aggregatorContract.decimals({
-        blockTag: blockHeight,
-      }),
-      this.provider.getBlock(blockHeight),
-    ]);
+      const [data, decimals, block] = await Promise.all([
+        aggregatorContract.latestRoundData({
+          blockTag: blockHeight,
+        }),
+        aggregatorContract.decimals({
+          blockTag: blockHeight,
+        }),
+        this.provider.getBlock(blockHeight),
+      ]);
 
-    const [roundId, answer, startedAt, updatedAt] = data;
-    const updatedAtBlock =
-      block.number - (block.timestamp - updatedAt) / blockTimeInSec;
-    const updatedAtNum = Math.round(updatedAtBlock);
+      const [roundId, answer, startedAt, updatedAt] = data;
+      const updatedAtBlock =
+        block.number - (block.timestamp - updatedAt) / blockTimeInSec;
+      const updatedAtNum = Math.round(updatedAtBlock);
 
-    return {
-      address,
-      price: (answer as BigNumber).toString(),
-      decimals: decimals,
-      updatedAt: updatedAtNum < 0 ? 0 : updatedAtNum,
-    };
+      return {
+        address,
+        price: (answer as BigNumber).toString(),
+        decimals: decimals,
+        updatedAt: updatedAtNum < 0 ? 0 : updatedAtNum,
+      };
+    } catch (e) {
+      console.log(e);
+    }
+    return null;
   }
 }

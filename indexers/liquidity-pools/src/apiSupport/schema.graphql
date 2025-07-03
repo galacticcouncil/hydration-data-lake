@@ -116297,6 +116297,8 @@ enum YieldMetricsInterval {
 }
 
 enum AssetsPairPriceTimeRange {
+  _15S_
+  _1M_
   _5M_
   _15M_
   _30M_
@@ -116306,7 +116308,6 @@ enum AssetsPairPriceTimeRange {
   _1W_
   _1MON_
   _1Y_
-  _ALL_
 }
 
 type XykpoolVolumeAggregated {
@@ -119777,9 +119778,9 @@ input AssetLatestSpotPricesFilter {
 }
 
 input AssetPairPricesAndVolumesByPeriodFilter {
-  bucketSize: AssetsPairPriceTimeRange = _1H_
-  startTimestamp: String!
-  endTimestamp: String!
+  bucketSize: AssetsPairPriceTimeRange = _5M_
+  startTimestamp: String
+  endTimestamp: String
   assetInId: String
   assetOutId: String
   assetInRegistryId: String
@@ -119801,12 +119802,7 @@ type AssetLatestSpotPricesResponse {
   totalCount: Int!
 }
 
-type AssetPairPriceSnapshot {
-  referenceAssetId: String!
-  assetInId: String!
-  assetInAssetRegistryId: String
-  assetOutId: String!
-  assetOutAssetRegistryId: String
+type AssetPairPriceBucket {
   priceAvrgNorm: String!
   priceMinNorm: String!
   priceMaxNorm: String!
@@ -119814,7 +119810,15 @@ type AssetPairPriceSnapshot {
   priceCloseNorm: String!
   referenceAssetVolNorm: String!
   timestamp: String!
-  paraBlockHeight: Int!
+}
+
+type AssetPairPriceSnapshot {
+  referenceAssetId: String!
+  assetInId: String!
+  assetInAssetRegistryId: String
+  assetOutId: String!
+  assetOutAssetRegistryId: String
+  buckets: [AssetPairPriceBucket!]!
 }
 
 type AssetPairPricesAndVolumeByPeriodResponse {

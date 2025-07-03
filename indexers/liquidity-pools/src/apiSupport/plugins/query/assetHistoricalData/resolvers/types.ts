@@ -1,25 +1,57 @@
-import { YieldMetricsInterval } from '../../../../types';
+import { AssetsPairPriceTimeRange } from '../../../../types';
 
-export type AllAssetsYieldMetricsFilter = {
-  feeMetricsInterval: YieldMetricsInterval;
+export type AssetLatestSpotPricesFilter = {
+  assetInIds?: string[];
+  assetInRegistryIds?: string[];
+  assetOutId?: string;
+  assetOutRegistryId?: string;
 };
 
-export type AssetYieldMetrics = {
-  id: string;
-  poolType: string;
-  feeApyPerc: string;
-  incentivesApyPerc: string;
-  incentivesTokens: string[];
+export type AssetLatestSpotPrice = {
+  assetInId: string;
+  assetInRegistryId?: string;
+  assetOutId: string;
+  assetOutRegistryId?: string;
+  priceNorm: string;
+  timestamp: string;
+  paraBlockHeight: number;
 };
 
-export type AllAssetsYieldMetricsResponse = {
-  nodes: AssetYieldMetrics[];
+export type AssetLatestSpotPricesResponse = {
+  nodes: AssetLatestSpotPrice[];
   totalCount: number;
 };
 
-export type AssetFarmsYieldMetrics = {
-  id: string;
-  poolType: 'omnipool' | 'isolatedpool';
-  farmApy: string;
-  incentivesTokens: string[];
+export type AssetPairPricesAndVolumesByPeriodFilter = {
+  bucketSize: AssetsPairPriceTimeRange;
+  startTimestamp?: string;
+  endTimestamp?: string;
+  assetInId: string;
+  assetOutId?: string;
+  assetInRegistryId?: string;
+  assetOutRegistryId?: string;
+};
+
+export type AssetPairPriceBucket = {
+  priceAvrgNorm: string;
+  priceMinNorm: string;
+  priceMaxNorm: string;
+  priceOpenNorm: string;
+  priceCloseNorm: string;
+  referenceAssetVolNorm: string;
+  timestamp: string;
+};
+
+export type AssetPairPriceSnapshot = {
+  referenceAssetId: string;
+  assetInId: string;
+  assetInAssetRegistryId?: string;
+  assetOutId: string;
+  assetOutAssetRegistryId?: string;
+  buckets: AssetPairPriceBucket[];
+};
+
+export type AssetPairPricesAndVolumeByPeriodResponse = {
+  nodes: AssetPairPriceSnapshot[];
+  totalCount: number;
 };

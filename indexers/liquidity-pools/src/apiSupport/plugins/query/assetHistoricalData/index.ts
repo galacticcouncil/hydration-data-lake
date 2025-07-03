@@ -16,9 +16,9 @@ export const AssetHistoricalDataPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         input AssetPairPricesAndVolumesByPeriodFilter {
-          bucketSize: AssetsPairPriceTimeRange = _1H_
-          startTimestamp: String!
-          endTimestamp: String!
+          bucketSize: AssetsPairPriceTimeRange = _5M_
+          startTimestamp: String
+          endTimestamp: String
           assetInId: String
           assetOutId: String
           assetInRegistryId: String
@@ -40,12 +40,7 @@ export const AssetHistoricalDataPlugin: Plugin = makeExtendSchemaPlugin(
           totalCount: Int!
         }
 
-        type AssetPairPriceSnapshot {
-          referenceAssetId: String!
-          assetInId: String!
-          assetInAssetRegistryId: String
-          assetOutId: String!
-          assetOutAssetRegistryId: String
+        type AssetPairPriceBucket {
           priceAvrgNorm: String!
           priceMinNorm: String!
           priceMaxNorm: String!
@@ -53,7 +48,15 @@ export const AssetHistoricalDataPlugin: Plugin = makeExtendSchemaPlugin(
           priceCloseNorm: String!
           referenceAssetVolNorm: String!
           timestamp: String!
-          paraBlockHeight: Int!
+        }
+
+        type AssetPairPriceSnapshot {
+          referenceAssetId: String!
+          assetInId: String!
+          assetInAssetRegistryId: String
+          assetOutId: String!
+          assetOutAssetRegistryId: String
+          buckets: [AssetPairPriceBucket!]!
         }
 
         type AssetPairPricesAndVolumeByPeriodResponse {

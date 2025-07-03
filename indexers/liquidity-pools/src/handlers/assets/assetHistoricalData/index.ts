@@ -9,6 +9,8 @@ import {
   processAssetsHistoricalDataAtBlock,
 } from './assetHistoricalData';
 import pMap from 'p-map';
+import { AssetSpotPriceHistoricalData } from '../../../model';
+import { RedisTimeSeriesManager } from '../../../utils/redisTimeSeriesManager';
 
 export async function handleAssetHistoricalData({
   blockNumbersToProcess,
@@ -110,3 +112,14 @@ export async function handleAssetSpotPriceRelatedHistoricalData({
     );
   }
 }
+
+// export async function addAssetSpotPricesToTimeSeries(
+//   entities: AssetSpotPriceHistoricalData[]
+// ) {
+//
+//   const timeSeriesManager = RedisTimeSeriesManager.getInstance();
+//
+//   for (const entity of entities) {
+//     await timeSeriesManager.addToTimeSeries({name: 'price', assetInId: entity.})
+//   }
+// }
