@@ -15,6 +15,7 @@ export const OmnipoolAssetVolumePlugin: Plugin = makeExtendSchemaPlugin(
       typeDefs: gql`
         input OmnipoolAssetVolumesByPeriodFilter {
           assetIds: [String!]
+          assetRegistryIds: [String!]
           startBlockNumber: Int
           endBlockNumber: Int
           period: AggregationTimeRange

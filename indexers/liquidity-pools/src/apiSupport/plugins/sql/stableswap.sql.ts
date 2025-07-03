@@ -1,3 +1,8 @@
+export const getAllStableswapIds = `
+    SELECT ss.id as pool_id
+    FROM stableswap ss;
+`;
+
 export const getAssetIdsByStableswapIds = `
     SELECT pool_id,
            json_agg(asset_id) AS asset_ids

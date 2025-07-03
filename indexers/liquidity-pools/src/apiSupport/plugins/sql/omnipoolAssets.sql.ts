@@ -19,6 +19,17 @@ export const getOmnipoolAssetsByAssetIds = `
     WHERE ast.id = ANY ($1);
 `;
 
+export const getOmnipoolAssetsByAssetRegistryIds = `
+    SELECT 
+      omast.id AS omnipool_asset_id,
+      ast.id AS asset_id,
+      ast.asset_registry_id AS asset_registry_id,
+      ast.decimals AS decimals
+    FROM omnipool_asset omast
+    JOIN asset ast ON ast.id = omast.asset_id
+    WHERE ast.asset_registry_id = ANY ($1);
+`;
+
 export const getOmnipoolAssetsAll = `
     SELECT 
       omast.id AS omnipool_asset_id,

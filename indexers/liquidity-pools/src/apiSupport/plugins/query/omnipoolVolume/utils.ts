@@ -3,6 +3,7 @@ import { OmnipoolAssetVolumeAggregated } from './resolvers';
 import {
   getAllOmnipoolAssets,
   getOmnipoolAssetsByAssetIds,
+  getOmnipoolAssetsByAssetRegistryIds,
 } from '../../sql/omnipoolAssets.sql';
 import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../../sql/omnipoolAssetsVolume.sql';
 import { OmnipoolAssetHistoricalVolumeRaw } from '../../../types';
@@ -11,12 +12,14 @@ import { getAssetsByIds } from '../../sql/asset.sql';
 export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
   omnipoolAddress,
   assetIds: assetIdsFilter,
+  assetRegistryIds: assetRegistryIdsFilter,
   startBlockNumber,
   endBlockNumber: endBlockNumberFilter,
   pgClient,
 }: {
   omnipoolAddress: string;
   assetIds?: string[];
+  assetRegistryIds?: string[];
   startBlockNumber: number;
   endBlockNumber?: number;
   pgClient: pg.Client;
@@ -31,10 +34,24 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
     (assetId) => `${omnipoolAddress}-${assetId}`
   );
 
-  if (!omnipoolAssetIds) {
+  if (
+    (!assetIdsFilter || assetIdsFilter.length === 0) &&
+    !!assetRegistryIdsFilter &&
+    assetRegistryIdsFilter.length > 0
+  ) {
+    const ominipoolAssetsByAssetRegistryIds = await pgClient.query<{
+      omnipool_asset_id: string;
+    }>(getOmnipoolAssetsByAssetRegistryIds, [assetRegistryIdsFilter]);
+
+    omnipoolAssetIds = ominipoolAssetsByAssetRegistryIds.rows.map(
+      (omniAsset) => omniAsset.omnipool_asset_id
+    );
+  }
+
+  if (!omnipoolAssetIds || omnipoolAssetIds.length === 0) {
     const allOminipoolAssetsForBlocksRange = await pgClient.query<{
       id: string;
-    }>(getAllOmnipoolAssets, [omnipoolAddress, endBlockNumber]);
+    }>(getAllOmnipoolAssets, [omnipoolAddress]);
 
     omnipoolAssetIds = allOminipoolAssetsForBlocksRange.rows
       .map((row) => row.id)

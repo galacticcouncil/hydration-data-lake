@@ -5,7 +5,7 @@ import {
 } from '../../../../types';
 
 export type StableswapVolumesByPeriodFilter = {
-  poolIds: string[];
+  poolIds?: string[];
   startBlockNumber?: number;
   endBlockNumber?: number;
   period?: AggregationTimeRangeLabel;

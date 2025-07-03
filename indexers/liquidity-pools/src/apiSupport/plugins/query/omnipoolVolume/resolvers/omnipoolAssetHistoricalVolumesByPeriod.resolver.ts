@@ -23,7 +23,13 @@ export async function omnipoolAssetHistoricalVolumesByPeriodResolver(
   });
 
   const {
-    filter: { assetIds, startBlockNumber, endBlockNumber, period },
+    filter: {
+      assetIds,
+      assetRegistryIds,
+      startBlockNumber,
+      endBlockNumber,
+      period,
+    },
   } = args;
 
   const blocksRange = await getStartStopBlocksFromInput({
@@ -41,6 +47,7 @@ export async function omnipoolAssetHistoricalVolumesByPeriodResolver(
       startBlockNumber: blocksRange.startBlockHeight,
       endBlockNumber: blocksRange.stopBlockHeight,
       assetIds,
+      assetRegistryIds,
       pgClient,
     });
 

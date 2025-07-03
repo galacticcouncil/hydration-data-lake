@@ -6,3 +6,4 @@ export const getAssetsByIds = `
     FROM asset a
     WHERE a.id = ANY ($1)
 `;
+
