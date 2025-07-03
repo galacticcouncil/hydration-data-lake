@@ -4,7 +4,7 @@
 
 manifestVersion: subsquid.io/v0.1
 name: hydration-storage-dictionary
-slot: 411
+slot: 412
 description: Hydration storage dictionary for Stablepool storage
 build:
 deploy:
@@ -94,30 +94,7 @@ deploy:
     #        INDEXER_MAX_SUB_BATCH_SIZE: 50
     #        ASSETS_TRACKER_PROCESSOR: false
     #        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__assets_tracker_proc
-    #    - name: stablepool-batch-proc-5
-    #      cmd: ['sqd', 'process:prod']
-    #      env:
-    #        RPC_URL: wss://node.kril.hydration.cloud
-    #        GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
-    #        PROCESS_LBP_POOLS: false
-    #        PROCESS_XYK_POOLS: false
-    #        PROCESS_OMNIPOOLS: false
-    #        PROCESS_STABLEPOOLS: true
-    #        PROCESS_GENERIC_HIST_DATA: false
-    #        INDEXING_IS_PAUSED: true
-    #        PROCESS_ONLY_MISSED_BLOCKS: false
-    #        GQL_PORT: 8080
-    #        NODE_ENV: production
-    #        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-    #        PROCESS_FROM_BLOCK: 7128001
-    #        PROCESS_TO_BLOCK: -1
-    #        STATE_SCHEMA_NAME: stablepool__batch_proc_5
-    #        INDEXER_MAX_SUB_BATCH_SIZE: 500
-    #        ASSETS_TRACKER_PROCESSOR: true
-    #        PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
-    #        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__batch_proc_5
-
-    - name: stablepool-batch-proc-6
+    - name: stablepool-batch-proc-5
       cmd: ['sqd', 'process:prod']
       env:
         RPC_URL: wss://node.kril.hydration.cloud
@@ -127,18 +104,18 @@ deploy:
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: true
         PROCESS_GENERIC_HIST_DATA: false
-        INDEXING_IS_PAUSED: false
+        INDEXING_IS_PAUSED: true
         PROCESS_ONLY_MISSED_BLOCKS: false
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
         PROCESS_FROM_BLOCK: 7128001
         PROCESS_TO_BLOCK: -1
-        STATE_SCHEMA_NAME: stablepool__batch_proc_6
+        STATE_SCHEMA_NAME: stablepool__batch_proc_5
         INDEXER_MAX_SUB_BATCH_SIZE: 500
         ASSETS_TRACKER_PROCESSOR: true
         PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__batch_proc_6
+        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: stablepool__batch_proc_5
 
   #    - name: stablepool-batch-proc-ensure-2
   #      cmd: ['sqd', 'process:prod']
@@ -191,13 +168,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
       profile: large
-      storage: 80G
+      storage: 90G
   processor:
-    profile: medium
+    profile: small
   api:
-    profile: large
+    profile: small
 #    replicas: 5

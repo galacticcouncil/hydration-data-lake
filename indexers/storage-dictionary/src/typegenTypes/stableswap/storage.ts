@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v183 from '../v183'
 import * as v305 from '../v305'
+import * as v323 from '../v323'
 
 export const pools =  {
     /**
@@ -60,6 +61,10 @@ export const poolPegs =  {
      *  Pool peg info.
      */
     v305: new StorageType('Stableswap.PoolPegs', 'Optional', [sts.number()], v305.PoolPegInfo) as PoolPegsV305,
+    /**
+     *  Pool peg info.
+     */
+    v323: new StorageType('Stableswap.PoolPegs', 'Optional', [sts.number()], v323.PoolPegInfo) as PoolPegsV323,
 }
 
 /**
@@ -77,4 +82,45 @@ export interface PoolPegsV305  {
     getPairs(block: Block, key: number): Promise<[k: number, v: (v305.PoolPegInfo | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v305.PoolPegInfo | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v305.PoolPegInfo | undefined)][]>
+}
+
+/**
+ *  Pool peg info.
+ */
+export interface PoolPegsV323  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v323.PoolPegInfo | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v323.PoolPegInfo | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v323.PoolPegInfo | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v323.PoolPegInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v323.PoolPegInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v323.PoolPegInfo | undefined)][]>
+}
+
+export const poolSnapshots =  {
+    /**
+     *  Temporary pool state storage. Used to save a state of pool in a single block.
+     */
+    v323: new StorageType('Stableswap.PoolSnapshots', 'Optional', [sts.number()], v323.PoolSnapshot) as PoolSnapshotsV323,
+}
+
+/**
+ *  Temporary pool state storage. Used to save a state of pool in a single block.
+ */
+export interface PoolSnapshotsV323  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v323.PoolSnapshot | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v323.PoolSnapshot | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v323.PoolSnapshot | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v323.PoolSnapshot | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v323.PoolSnapshot | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v323.PoolSnapshot | undefined)][]>
 }

@@ -164,7 +164,7 @@ export interface StablepoolAssetState {
 }
 
 export type StableswapPegSource = {
-  sourceKind: 'Oracle' | 'Value';
+  sourceKind: 'Oracle' | 'Value' | 'MMOracle';
   oracleName?: string;
   oraclePeriod?: EmaOraclePeriod;
   oracleAsset?: number;

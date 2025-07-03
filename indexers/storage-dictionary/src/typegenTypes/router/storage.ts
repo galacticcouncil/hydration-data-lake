@@ -2,6 +2,7 @@ import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../sup
 import * as v193 from '../v193'
 import * as v257 from '../v257'
 import * as v295 from '../v295'
+import * as v323 from '../v323'
 
 export const routes =  {
     /**
@@ -12,6 +13,10 @@ export const routes =  {
      *  Storing routes for asset pairs
      */
     v295: new StorageType('Router.Routes', 'Optional', [v295.AssetPair], sts.array(() => v295.Trade)) as RoutesV295,
+    /**
+     *  Storing routes for asset pairs
+     */
+    v323: new StorageType('Router.Routes', 'Optional', [v323.AssetPair], sts.array(() => v323.Trade)) as RoutesV323,
 }
 
 /**
@@ -46,6 +51,23 @@ export interface RoutesV295  {
     getPairs(block: Block, key: v295.AssetPair): Promise<[k: v295.AssetPair, v: (v295.Trade[] | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v295.AssetPair, v: (v295.Trade[] | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v295.AssetPair): AsyncIterable<[k: v295.AssetPair, v: (v295.Trade[] | undefined)][]>
+}
+
+/**
+ *  Storing routes for asset pairs
+ */
+export interface RoutesV323  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v323.AssetPair): Promise<(v323.Trade[] | undefined)>
+    getMany(block: Block, keys: v323.AssetPair[]): Promise<(v323.Trade[] | undefined)[]>
+    getKeys(block: Block): Promise<v323.AssetPair[]>
+    getKeys(block: Block, key: v323.AssetPair): Promise<v323.AssetPair[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v323.AssetPair[]>
+    getKeysPaged(pageSize: number, block: Block, key: v323.AssetPair): AsyncIterable<v323.AssetPair[]>
+    getPairs(block: Block): Promise<[k: v323.AssetPair, v: (v323.Trade[] | undefined)][]>
+    getPairs(block: Block, key: v323.AssetPair): Promise<[k: v323.AssetPair, v: (v323.Trade[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v323.AssetPair, v: (v323.Trade[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v323.AssetPair): AsyncIterable<[k: v323.AssetPair, v: (v323.Trade[] | undefined)][]>
 }
 
 export const skipEd =  {

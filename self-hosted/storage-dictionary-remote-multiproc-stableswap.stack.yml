@@ -53,67 +53,56 @@ x-common-processor-setup: &common-processor-setup
 # ========================== STABLEPOOLS SERVICES SETUP ===========================
 # =================================================================================
 x-stablepools-services-setup: &stablepools-services-setup
-  #  stableswap-stor-dict-proc-1:
-  #    <<: *common-processor-setup
-  #    environment:
-  #      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
-  #      PROCESS_FROM_BLOCK: 3640100 # First event related with Omnipool has been occurred
-  #      PROCESS_TO_BLOCK: 4512000
-  #      PROCESS_STABLEPOOLS: "true"
-  #      STATE_SCHEMA_NAME: "stablepool__batch_proc_1"
-  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
-  #
-  #  stableswap-stor-dict-proc-2:
-  #    <<: *common-processor-setup
-  #    environment:
-  #      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
-  #      PROCESS_FROM_BLOCK: 4512001
-  #      PROCESS_TO_BLOCK: 5384000
-  #      PROCESS_STABLEPOOLS: "true"
-  #      STATE_SCHEMA_NAME: "stablepool__batch_proc_2"
-  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
-  #
-  #  stableswap-stor-dict-proc-3:
-  #    <<: *common-processor-setup
-  #    environment:
-  #      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
-  #      PROCESS_FROM_BLOCK: 5384001
-  #      PROCESS_TO_BLOCK: 6256000
-  #      PROCESS_STABLEPOOLS: "true"
-  #      STATE_SCHEMA_NAME: "stablepool__batch_proc_3"
-  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
-  #
-  #  stableswap-stor-dict-proc-4:
-  #    <<: *common-processor-setup
-  #    environment:
-  #      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
-  #      PROCESS_FROM_BLOCK: 6256001
-  #      PROCESS_TO_BLOCK: 7128000
-  #      PROCESS_STABLEPOOLS: "true"
-  #      STATE_SCHEMA_NAME: "stablepool__batch_proc_4"
-  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
-
-  #  stableswap-stor-dict-proc-5:
-  #    <<: *common-processor-setup
-  #    environment:
-  #      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
-  #      PROCESS_FROM_BLOCK: 7128001
-  #      PROCESS_TO_BLOCK: -1
-  #      PROCESS_STABLEPOOLS: "true"
-  #      ASSETS_TRACKER_PROCESSOR: "true"
-  #      STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
-  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
-
-  stableswap-stor-dict-proc-6:
+  stableswap-stor-dict-proc-1:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
-      PROCESS_FROM_BLOCK: 7966500
+      PROCESS_FROM_BLOCK: 3640100 # First event related with Omnipool has been occurred
+      PROCESS_TO_BLOCK: 4512000
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_1"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+
+  stableswap-stor-dict-proc-2:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 4512001
+      PROCESS_TO_BLOCK: 5384000
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_2"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+
+  stableswap-stor-dict-proc-3:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 5384001
+      PROCESS_TO_BLOCK: 6256000
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_3"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+
+  stableswap-stor-dict-proc-4:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 6256001
+      PROCESS_TO_BLOCK: 7128000
+      PROCESS_STABLEPOOLS: "true"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_4"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+
+  stableswap-stor-dict-proc-5:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+      PROCESS_FROM_BLOCK: 7128001
       PROCESS_TO_BLOCK: -1
       PROCESS_STABLEPOOLS: "true"
       ASSETS_TRACKER_PROCESSOR: "true"
-      STATE_SCHEMA_NAME: "stablepool__batch_proc_6"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_6"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
 
 #  stableswap-stor-dict-proc-assets-tracker:
 #    <<: *common-processor-setup
