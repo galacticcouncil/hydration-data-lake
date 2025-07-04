@@ -21,7 +21,9 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _1Y_
         }
 
-        enum AssetsPairPriceTimeRange {
+        enum TimeSeriesBucketTimeRange {
+          _NONE_
+          _1S_
           _15S_
           _1M_
           _5M_
@@ -29,10 +31,9 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _30M_
           _1H_
           _4H_
-          _24H_
-          _1W_
-          _1MON_
-          _1Y_
+          _1D_
+          _7D_
+          _30D_
         }
 
         type XykpoolVolumeAggregated {
@@ -94,7 +95,9 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _1Y_: '1Y',
         },
 
-        AssetsPairPriceTimeRange: {
+        TimeSeriesBucketTimeRange: {
+          _NONE_: '_NONE_',
+          _1S_: '_1S_',
           _15S_: '_15S_',
           _1M_: '_1M_',
           _5M_: '_5M_',
@@ -102,10 +105,9 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _30M_: '_30M_',
           _1H_: '_1H_',
           _4H_: '_4H_',
-          _24H_: '_24H_',
-          _1W_: '_1W_',
-          _1MON_: '_1MON_',
-          _1Y_: '_1Y_',
+          _1D_: '_1D_',
+          _7D_: '_7D_',
+          _30D_: '_30D_',
         },
       },
     };

@@ -305,14 +305,16 @@ export class RedisTimeSeriesManager {
         startTimestamp,
         endTimestamp,
         [assetAIdFilter, assetBIdFilter, `name=(price,volume)`],
-        {
-          AGGREGATION: {
-            type: TimeSeriesAggregationType.AVG,
-            timeBucket: bucketSizeMs,
-            EMPTY: true,
-            BUCKETTIMESTAMP: TimeSeriesBucketTimestamp.MID,
-          },
-        }
+        bucketSizeMs !== 0
+          ? {
+              AGGREGATION: {
+                type: TimeSeriesAggregationType.AVG,
+                timeBucket: bucketSizeMs,
+                EMPTY: true,
+                BUCKETTIMESTAMP: TimeSeriesBucketTimestamp.MID,
+              },
+            }
+          : undefined
       );
 
       const resultFiltered: TimeSeriesPriceAndVolumeBuckets = {

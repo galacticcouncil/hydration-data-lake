@@ -1,5 +1,5 @@
 import {
-  AssetsPairPriceTimeRange,
+  TimeSeriesBucketTimeRange,
   QueryResolverContext,
 } from '../../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
@@ -31,8 +31,15 @@ export async function assetPairPricesAndVolumesByPeriodResolver(
   const pgClient: pg.Client = context.pgClient;
 
   const filter = args.filter || {
-    bucketSize: AssetsPairPriceTimeRange['_5M_'],
+    bucketSize: TimeSeriesBucketTimeRange['_5M_'],
   };
+
+  const startTimestampNormalised = filter.startTimestamp
+    ? +filter.startTimestamp
+    : 0;
+  const endTimestampNormalised = filter.endTimestamp
+    ? +filter.endTimestamp
+    : Date.now();
 
   let assetInId = filter.assetInId;
   let assetInRegistryId = filter.assetInRegistryId;
@@ -87,8 +94,8 @@ export async function assetPairPricesAndVolumesByPeriodResolver(
     await redisTimeSeriesManager.getPricesAndVolumesFromTimeSeries({
       assetInId: assetInUnifiedId,
       assetOutId: assetOutUnifiedId,
-      startTimestamp: +filter.startTimestamp!,
-      endTimestamp: +filter.endTimestamp!,
+      startTimestamp: startTimestampNormalised,
+      endTimestamp: endTimestampNormalised,
       indexerId: appConfig.INDEXER_ID,
       bucketSizeMs: getBucketSizeMsFromAssetsPairPriceTimeRange(
         filter.bucketSize

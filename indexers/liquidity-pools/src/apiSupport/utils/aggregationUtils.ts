@@ -1,7 +1,7 @@
 import { AggregationTimeRange } from './index';
 import {
   AggregationTimeRangeLabel,
-  AssetsPairPriceTimeRange,
+  TimeSeriesBucketTimeRange,
   YieldMetricsInterval,
 } from '../types';
 import {
@@ -94,32 +94,39 @@ export function getPeriodsNumberFromInterval(interval: YieldMetricsInterval) {
   }
 }
 
+/**
+ * Returns number of milliseconds in a selected period.
+ * Default value is _1H_.
+ * @param range
+ */
 export function getBucketSizeMsFromAssetsPairPriceTimeRange(
-  range: AssetsPairPriceTimeRange
+  range: TimeSeriesBucketTimeRange
 ): number {
   switch (range) {
-    case AssetsPairPriceTimeRange['_15S_']:
+    case TimeSeriesBucketTimeRange['_NONE_']:
+      return 1000;
+    case TimeSeriesBucketTimeRange['_1S_']:
+      return 1000;
+    case TimeSeriesBucketTimeRange['_15S_']:
       return 1000 * 15;
-    case AssetsPairPriceTimeRange['_1M_']:
+    case TimeSeriesBucketTimeRange['_1M_']:
       return 1000 * 60;
-    case AssetsPairPriceTimeRange['_5M_']:
+    case TimeSeriesBucketTimeRange['_5M_']:
       return 1000 * 60 * 5;
-    case AssetsPairPriceTimeRange['_15M_']:
+    case TimeSeriesBucketTimeRange['_15M_']:
       return 1000 * 60 * 15;
-    case AssetsPairPriceTimeRange['_30M_']:
+    case TimeSeriesBucketTimeRange['_30M_']:
       return 1000 * 60 * 30;
-    case AssetsPairPriceTimeRange['_1H_']:
+    case TimeSeriesBucketTimeRange['_1H_']:
       return 1000 * 60 * 60;
-    case AssetsPairPriceTimeRange['_4H_']:
+    case TimeSeriesBucketTimeRange['_4H_']:
       return 1000 * 60 * 60 * 4;
-    case AssetsPairPriceTimeRange['_24H_']:
+    case TimeSeriesBucketTimeRange['_1D_']:
       return 1000 * 60 * 60 * 24;
-    case AssetsPairPriceTimeRange['_1W_']:
+    case TimeSeriesBucketTimeRange['_7D_']:
       return 1000 * 60 * 60 * 24 * 7;
-    case AssetsPairPriceTimeRange['_1MON_']:
+    case TimeSeriesBucketTimeRange['_30D_']:
       return 1000 * 60 * 60 * 24 * 30;
-    case AssetsPairPriceTimeRange['_1Y_']:
-      return 1000 * 60 * 60 * 24 * 356;
     default:
       return 1000 * 60 * 60;
   }

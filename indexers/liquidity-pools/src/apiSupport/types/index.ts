@@ -217,7 +217,9 @@ export enum YieldMetricsInterval {
   '1Y' = '1Y',
 }
 
-export enum AssetsPairPriceTimeRange {
+export enum TimeSeriesBucketTimeRange {
+  '_NONE_' = '_NONE_',
+  '_1S_' = '_1S_',
   '_15S_' = '_15S_',
   '_1M_' = '_1M_',
   '_5M_' = '_5M_',
@@ -225,8 +227,7 @@ export enum AssetsPairPriceTimeRange {
   '_30M_' = '_30M_',
   '_1H_' = '_1H_',
   '_4H_' = '_4H_',
-  '_24H_' = '_24H_',
-  '_1W_' = '_1W_',
-  '_1MON_' = '_1MON_',
-  '_1Y_' = '_1Y_',
+  '_1D_' = '_1D_',
+  '_7D_' = '_7D_',
+  '_30D_' = '_30D_',
 }

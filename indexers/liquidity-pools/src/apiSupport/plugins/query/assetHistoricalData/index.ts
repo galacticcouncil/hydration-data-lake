@@ -16,7 +16,7 @@ export const AssetHistoricalDataPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         input AssetPairPricesAndVolumesByPeriodFilter {
-          bucketSize: AssetsPairPriceTimeRange = _5M_
+          bucketSize: TimeSeriesBucketTimeRange = _5M_
           startTimestamp: String
           endTimestamp: String
           assetInId: String

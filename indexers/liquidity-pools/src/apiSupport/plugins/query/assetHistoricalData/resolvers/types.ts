@@ -1,4 +1,4 @@
-import { AssetsPairPriceTimeRange } from '../../../../types';
+import { TimeSeriesBucketTimeRange } from '../../../../types';
 
 export type AssetLatestSpotPricesFilter = {
   assetInIds?: string[];
@@ -23,7 +23,7 @@ export type AssetLatestSpotPricesResponse = {
 };
 
 export type AssetPairPricesAndVolumesByPeriodFilter = {
-  bucketSize: AssetsPairPriceTimeRange;
+  bucketSize: TimeSeriesBucketTimeRange;
   startTimestamp?: string;
   endTimestamp?: string;
   assetInId: string;

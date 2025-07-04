@@ -70,7 +70,8 @@ export class TimeSeriesApiSupportManager {
     job: Job<T>,
     done: DoneCallback
   ) {
-    const processingBlocksRange = 100;
+    const processingBlocksRange =
+      appConfig.ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE;
     const pgClient = SupportPgClient.getInstance();
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     const bullQueueClient = BullQueueClient.getInstance();

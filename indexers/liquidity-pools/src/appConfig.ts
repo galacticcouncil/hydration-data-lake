@@ -120,6 +120,9 @@ export class AppConfig {
   readonly TS_REDIS_KEY_SPACE_ID: number = 3;
 
   @Transform(({ value }: { value: string }) => +value)
+  readonly ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE: number = 1000;
+
+  @Transform(({ value }: { value: string }) => +value)
   readonly MAX_JOB_BATCH_SIZE: number = 10;
 
   @Transform(({ value }: { value: string }) => value === 'true')

@@ -116296,7 +116296,9 @@ enum YieldMetricsInterval {
   _1Y_
 }
 
-enum AssetsPairPriceTimeRange {
+enum TimeSeriesBucketTimeRange {
+  _NONE_
+  _1S_
   _15S_
   _1M_
   _5M_
@@ -116304,10 +116306,9 @@ enum AssetsPairPriceTimeRange {
   _30M_
   _1H_
   _4H_
-  _24H_
-  _1W_
-  _1MON_
-  _1Y_
+  _1D_
+  _7D_
+  _30D_
 }
 
 type XykpoolVolumeAggregated {
@@ -119778,7 +119779,7 @@ input AssetLatestSpotPricesFilter {
 }
 
 input AssetPairPricesAndVolumesByPeriodFilter {
-  bucketSize: AssetsPairPriceTimeRange = _5M_
+  bucketSize: TimeSeriesBucketTimeRange = _5M_
   startTimestamp: String
   endTimestamp: String
   assetInId: String
