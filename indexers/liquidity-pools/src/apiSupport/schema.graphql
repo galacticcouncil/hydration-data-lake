@@ -101694,7 +101694,7 @@ type OmnipoolAssetHistoricalVolumeEntity {
 }
 
 input StableswapVolumesByPeriodFilter {
-  poolIds: [String!]!
+  poolIds: [String!]
   startBlockNumber: Int
   endBlockNumber: Int
   period: AggregationTimeRange
