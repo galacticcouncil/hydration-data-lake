@@ -8,7 +8,8 @@ export const getAssetSpotPricesByBlocksRange = `
         asp.para_block_height AS para_block_height
     FROM asset_spot_price_historical_data asp
         JOIN block b ON b.height = asp.para_block_height
-    WHERE asp.para_block_height >= $1 AND asp.para_block_height <= $2;
+    WHERE asp.para_block_height >= $1 AND asp.para_block_height <= $2
+    ORDER BY asp.para_block_height ASC;
 `;
 
 export const getFirstAvailableAssetSpotPriceEntity = `
@@ -16,6 +17,6 @@ export const getFirstAvailableAssetSpotPriceEntity = `
         asp.id AS id, 
         asp.para_block_height AS para_block_height
     FROM asset_spot_price_historical_data asp
-    ORDER BY id ASC
+    ORDER BY asp.id ASC
       LIMIT 1;
 `;

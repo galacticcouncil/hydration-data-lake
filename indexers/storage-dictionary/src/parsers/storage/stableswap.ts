@@ -176,7 +176,7 @@ async function getAllPoolsPegs({
     }
     return pairsPaged;
   }
-  if (storage.stableswap.poolPegs.v323.is(block) || block.specVersion >= 323) {
+  if (storage.stableswap.poolPegs.v323.is(block) || block.specVersion === 323) {
     for await (let page of storage.stableswap.poolPegs.v323.getPairsPaged(
       500,
       block

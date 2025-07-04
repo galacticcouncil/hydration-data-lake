@@ -127,7 +127,7 @@ deploy:
     #        PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
     #        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_5
 
-    - name: batch-proc-6
+    - name: batch-proc-7
       cmd: ['sqd', 'process:prod']
       env:
         RPC_URL: wss://node.kril.hydration.cloud
@@ -142,14 +142,14 @@ deploy:
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 7990000
+        PROCESS_FROM_BLOCK: 8110000
         PROCESS_TO_BLOCK: -1
-        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_6
+        STATE_SCHEMA_NAME: gen_hist_data__batch_proc_7
         SUB_BATCH_SIZE: 300
         INDEXER_MAX_SUB_BATCH_SIZE: 4000
         ASSETS_TRACKER_PROCESSOR: true
         PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
-        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_6
+        ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: gen_hist_data__batch_proc_7
 
   #    - name: batch-proc-ensure-2
   #      cmd: ['sqd', 'process:prod']
@@ -208,7 +208,7 @@ scale:
   dedicated: true
   addons:
     postgres:
-      profile: xlarge
+      profile: large
       storage: 300G
   processor:
     profile: large

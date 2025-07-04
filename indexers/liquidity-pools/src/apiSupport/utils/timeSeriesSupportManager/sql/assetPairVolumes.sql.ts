@@ -11,4 +11,5 @@ export const getAssetPairVolumesByBlocksRange = `
         JOIN asset asta ON asta.id = aspvol.asset_a_id
         JOIN asset astb ON astb.id = aspvol.asset_b_id
     WHERE aspvol.para_block_height >= $1 AND aspvol.para_block_height <= $2
+    ORDER BY aspvol.para_block_height ASC;
 `;
