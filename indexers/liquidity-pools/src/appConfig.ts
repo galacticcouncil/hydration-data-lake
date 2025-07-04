@@ -107,6 +107,18 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly ORCHESTRATOR_QUEUE_REDIS_PORT: number = 6379;
 
+  @IsNotEmpty()
+  readonly TS_REDIS_HOST: string = 'localhost';
+
+  @IsNotEmpty()
+  readonly TS_REDIS_PASS: string = 'orchestra';
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly TS_REDIS_PORT: number = 6379;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly TS_REDIS_KEY_SPACE_ID: number = 3;
+
   @Transform(({ value }: { value: string }) => +value)
   readonly MAX_JOB_BATCH_SIZE: number = 10;
 

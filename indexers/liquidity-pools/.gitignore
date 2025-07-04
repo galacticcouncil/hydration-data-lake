@@ -10,3 +10,5 @@
 /.idea
 
 !.papi/descriptors/dist
+
+.env.hydration.local

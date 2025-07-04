@@ -7,6 +7,8 @@ deploy:
   env:
     ORCHESTRATOR_QUEUE_REDIS_HOST: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_HOST }}
     ORCHESTRATOR_QUEUE_REDIS_PASS: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_PASS }}
+    TS_REDIS_HOST: ${{ secrets.TS_REDIS_HOST }}
+    TS_REDIS_PASS: ${{ secrets.TS_REDIS_PASS }}
   addons:
     postgres:
       config:
@@ -19,6 +21,8 @@ deploy:
       RPC_URL: 'wss://node.kril.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
+      TS_REDIS_PORT: 6378
+      TS_REDIS_KEY_SPACE_ID: 4
       MAX_JOB_BATCH_SIZE: 10
 
       PROCESS_LBP_POOLS: true
@@ -56,6 +60,8 @@ deploy:
       CHAIN: 'hydration'
       GQL_PORT: 8080
       INDEXER_ID: 728
+      TS_REDIS_PORT: 6378
+      TS_REDIS_KEY_SPACE_ID: 4
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app'
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
@@ -73,9 +79,6 @@ scale:
     profile: large
   api:
     profile: small
-
-
-
 #
 #manifestVersion: subsquid.io/v0.1
 #name: hydration-pools
@@ -152,7 +155,6 @@ scale:
 #    profile: small
 #  api:
 #    profile: small
-
 
 #
 #manifestVersion: subsquid.io/v0.1

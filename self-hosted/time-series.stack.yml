@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+  time-series-redis-dev:
+    image: redis/redis-stack:latest
+    command:
+      - sh
+      - -c
+      - |
+        redis-stack-server \
+        --requirepass $$(cat /run/secrets/TIME_SERIES_REDIS_DEV_PASS)
+    ports:
+      - 6378:6379
+    volumes:
+      - time-series-redis-dev:/data
+    networks:
+      - net
+    secrets:
+      - TIME_SERIES_REDIS_DEV_PASS
+    logging:
+      driver: json-file
+
+secrets:
+  TIME_SERIES_REDIS_DEV_PASS:
+    external: true
+
+networks:
+  net:
+    driver: overlay
+volumes:
+  time-series-redis-dev:
+    driver: local

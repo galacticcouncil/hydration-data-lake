@@ -22,9 +22,10 @@ export class BullQueueClient {
   constructor() {
     this.assetPriceScrapperQueue = new Queue(this.queueName, {
       redis: {
-        port: appConfig.ORCHESTRATOR_QUEUE_REDIS_PORT,
-        host: appConfig.ORCHESTRATOR_QUEUE_REDIS_HOST,
-        password: appConfig.ORCHESTRATOR_QUEUE_REDIS_PASS,
+        port: appConfig.TS_REDIS_PORT,
+        host: appConfig.TS_REDIS_HOST,
+        password: appConfig.TS_REDIS_PASS,
+        db: appConfig.TS_REDIS_KEY_SPACE_ID,
       },
     });
   }
@@ -40,14 +41,4 @@ export class BullQueueClient {
       console.log(e);
     }
   }
-
-  // async addProcessorForScrapperJob<T extends object>(
-  //   processorFn: (job: Job<T>, done: DoneCallback) => Promise<void> | string
-  // ) {
-  //   await this.assetPriceScrapperQueue.process(
-  //     'scrapperNextTickJob',
-  //     1,
-  //     processorFn
-  //   );
-  // }
 }

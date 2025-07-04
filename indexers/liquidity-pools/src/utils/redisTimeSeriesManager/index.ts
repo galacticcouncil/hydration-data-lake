@@ -47,11 +47,11 @@ export class RedisTimeSeriesManager {
 
     const client = createClient({
       socket: {
-        port: appConfig.ORCHESTRATOR_QUEUE_REDIS_PORT,
-        host: appConfig.ORCHESTRATOR_QUEUE_REDIS_HOST,
+        port: appConfig.TS_REDIS_PORT,
+        host: appConfig.TS_REDIS_HOST,
       },
-      password: appConfig.ORCHESTRATOR_QUEUE_REDIS_PASS,
-      database: 3,
+      password: appConfig.TS_REDIS_PASS,
+      database: appConfig.TS_REDIS_KEY_SPACE_ID,
       // ...(appConfig.REDIS_ENABLE_SSL
       //   ? { tls: {}, connectTimeout: 60_000 }
       //   : {}),

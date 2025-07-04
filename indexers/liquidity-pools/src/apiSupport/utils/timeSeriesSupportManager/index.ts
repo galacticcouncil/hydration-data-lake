@@ -69,7 +69,7 @@ export class TimeSeriesApiSupportManager {
     done: DoneCallback
   ) {
     console.log('assetHistDataScraperHandler');
-    const processingBlocksRange = 10;
+    const processingBlocksRange = 100;
     const pgClient = SupportPgClient.getInstance();
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     const bullQueueClient = BullQueueClient.getInstance();
@@ -101,6 +101,7 @@ export class TimeSeriesApiSupportManager {
     console.time('adding data to redis');
 
     while (!isResultEmpty) {
+      console.log(`Pulling data to TS: ${fromBlockHeight}/${toBlockHeight}`);
       const assetSpotPriceHistDataChunk =
         await pgClient.query<AssetSpotPriceHistDataResponse>(
           getAssetSpotPricesByBlocksRange,

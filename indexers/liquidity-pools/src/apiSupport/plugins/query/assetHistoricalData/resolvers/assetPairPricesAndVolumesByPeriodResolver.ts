@@ -111,6 +111,8 @@ export async function assetPairPricesAndVolumesByPeriodResolver(
     if (!pairPrices) throw Error(`pairPrices is not available`);
 
     for (const priceSnapshot of pairPrices.values()) {
+      const volume = dbResponse.volumeData.get(priceSnapshot.timestamp)?.value;
+
       finalResponseNode.buckets.push({
         timestamp: priceSnapshot.timestamp.toString(),
         priceAvrgNorm: priceSnapshot.value.toString(),
@@ -119,9 +121,7 @@ export async function assetPairPricesAndVolumesByPeriodResolver(
         priceOpenNorm: '0',
         priceCloseNorm: '0',
         referenceAssetVolNorm:
-          dbResponse.volumeData
-            .get(priceSnapshot.timestamp)
-            ?.value.toString() ?? '0',
+          !!volume && !Number.isNaN(volume) ? volume.toString() : '0',
       } as AssetPairPriceBucket);
     }
   } else {
