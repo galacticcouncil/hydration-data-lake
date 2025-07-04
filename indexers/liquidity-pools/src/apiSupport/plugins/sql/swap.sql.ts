@@ -1,3 +1,4 @@
+
 export const aggregateSwapAssetFeesByBlocksRange = `
     WITH fee_data AS (
       SELECT
@@ -6,9 +7,9 @@ export const aggregateSwapAssetFeesByBlocksRange = `
         asf.para_block_height AS para_block_height,
         asf.amount AS amount,
         asf.total_amount AS total_amount
-      FROM historical_asset_swap_fee asf
+      FROM asset_swap_fee_historical_data asf
              JOIN asset ast ON ast.id = asf.asset_id
-      WHERE para_block_height BETWEEN $1 AND $2
+        WHERE para_block_height BETWEEN $1 AND $2
     ),
     start_data AS (
        SELECT
