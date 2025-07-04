@@ -30,6 +30,29 @@ export class BullQueueClient {
     });
   }
 
+  async cleanUpScrapperNextTickJobs() {
+    try {
+      const jobs = await this.assetPriceScrapperQueue.getJobs([
+        'active',
+        'delayed',
+        'completed',
+        'paused',
+        'waiting',
+      ]);
+
+      for (const job of jobs) {
+        if (job.name !== 'scrapperNextTickJob') continue;
+        try {
+          await job.remove();
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async setScrapperNextTickJob(jobId: string = '0') {
     try {
       await this.assetPriceScrapperQueue.add(

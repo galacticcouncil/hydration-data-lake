@@ -251,12 +251,26 @@ export class RedisTimeSeriesManager {
         ],
       ]);
 
-      const volumeKey = this.getSeriesKey({
-        keyPrefix: appConfig.INDEXER_ID,
-        name: 'volume',
-        assetAId: assetInId,
-        assetBId: assetOutId,
-      });
+      const volumeKeysMap = new Map([
+        [
+          this.getSeriesKey({
+            keyPrefix: appConfig.INDEXER_ID,
+            name: 'volume',
+            assetAId: assetInId,
+            assetBId: assetOutId,
+          }),
+          `${assetInId}:${assetOutId}`,
+        ],
+        [
+          this.getSeriesKey({
+            keyPrefix: appConfig.INDEXER_ID,
+            name: 'volume',
+            assetAId: assetOutId,
+            assetBId: assetInId,
+          }),
+          `${assetOutId}:${assetInId}`,
+        ],
+      ]);
 
       let assetAIdFilter = `astAId=${assetInId}`;
       let assetBIdFilter = `astBId=${appConfig.ASSET_PRICE_BASE_ASSET_ID}`;
@@ -314,7 +328,7 @@ export class RedisTimeSeriesManager {
           );
           continue;
         }
-        if (bucket.key === volumeKey) {
+        if (volumeKeysMap.has(bucket.key)) {
           resultFiltered.volumeData = new Map(
             bucket.samples.map((s) => [s.timestamp, s])
           );

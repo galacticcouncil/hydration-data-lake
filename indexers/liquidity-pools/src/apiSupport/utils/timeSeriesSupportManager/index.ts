@@ -51,6 +51,8 @@ export class TimeSeriesApiSupportManager {
     const latestProcessedBlockHeight = (await pgClient.getApiState())
       .assetPriceLatestProcessedBlock;
 
+    await bullQueueClient.cleanUpScrapperNextTickJobs();
+
     await bullQueueClient.setScrapperNextTickJob(
       latestProcessedBlockHeight.toString()
     );
@@ -68,7 +70,6 @@ export class TimeSeriesApiSupportManager {
     job: Job<T>,
     done: DoneCallback
   ) {
-    console.log('assetHistDataScraperHandler');
     const processingBlocksRange = 100;
     const pgClient = SupportPgClient.getInstance();
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
@@ -88,8 +89,6 @@ export class TimeSeriesApiSupportManager {
       }
     }
 
-    console.log('latestProcessedBlockHeight - ', latestProcessedBlockHeight);
-
     latestProcessedBlockHeight++;
 
     let fromBlockHeight = latestProcessedBlockHeight;
@@ -98,7 +97,6 @@ export class TimeSeriesApiSupportManager {
     let isResultEmpty = false;
 
     let processedBlockHeight = 0;
-    console.time('adding data to redis');
 
     while (!isResultEmpty) {
       console.log(`Pulling data to TS: ${fromBlockHeight}/${toBlockHeight}`);
@@ -163,7 +161,6 @@ export class TimeSeriesApiSupportManager {
       fromBlockHeight = processedBlockHeight + 1;
       toBlockHeight = fromBlockHeight + processingBlocksRange;
     }
-    console.timeEnd('adding data to redis');
 
     await bullQueueClient.setScrapperNextTickJob(
       // processedBlockHeight.toString()
