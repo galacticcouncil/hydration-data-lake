@@ -205,7 +205,7 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
       profile: large
@@ -213,5 +213,5 @@ scale:
   processor:
     profile: large
   api:
-    profile: small
+    profile: large
 #    replicas: 2

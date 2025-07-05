@@ -9,10 +9,8 @@ export const AssetHistoricalDataPlugin: Plugin = makeExtendSchemaPlugin(
     return {
       typeDefs: gql`
         input AssetLatestSpotPricesFilter {
-          assetInIds: [String!]
-          assetInRegistryIds: [String!]
-          assetOutId: String
-          assetOutRegistryId: String
+          assetIdPairs: [[String!]!]
+          assetRegistryIdPairs: [[String!]!]
         }
 
         input AssetPairPricesAndVolumesByPeriodFilter {
@@ -31,7 +29,6 @@ export const AssetHistoricalDataPlugin: Plugin = makeExtendSchemaPlugin(
           assetOutId: String!
           assetOutRegistryId: String
           priceNorm: String!
-          timestamp: String!
           paraBlockHeight: Int!
         }
 

@@ -1,10 +1,8 @@
 import { TimeSeriesBucketTimeRange } from '../../../../types';
 
 export type AssetLatestSpotPricesFilter = {
-  assetInIds?: string[];
-  assetInRegistryIds?: string[];
-  assetOutId?: string;
-  assetOutRegistryId?: string;
+  assetIdPairs: string[][];
+  assetRegistryIdPairs: string[][];
 };
 
 export type AssetLatestSpotPrice = {
@@ -13,7 +11,6 @@ export type AssetLatestSpotPrice = {
   assetOutId: string;
   assetOutRegistryId?: string;
   priceNorm: string;
-  timestamp: string;
   paraBlockHeight: number;
 };
 
@@ -54,4 +51,18 @@ export type AssetPairPriceSnapshot = {
 export type AssetPairPricesAndVolumeByPeriodResponse = {
   nodes: AssetPairPriceSnapshot[];
   totalCount: number;
+};
+
+export type AssetSpotPriceHistoricalDataRaw = {
+  id: string;
+  asset_in_asset_registry_id: string;
+  asset_out_asset_registry_id: string;
+  asset_out_decimals: number;
+  price: string;
+  price_normalised: string;
+  price_route: string;
+  para_block_height: number;
+  asset_in_hist_data_id: string;
+  asset_in_id: string;
+  asset_out_id: string;
 };

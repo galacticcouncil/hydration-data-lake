@@ -119772,10 +119772,8 @@ type Subscription {
 }
 
 input AssetLatestSpotPricesFilter {
-  assetInIds: [String!]
-  assetInRegistryIds: [String!]
-  assetOutId: String
-  assetOutRegistryId: String
+  assetIdPairs: [[String!]!]
+  assetRegistryIdPairs: [[String!]!]
 }
 
 input AssetPairPricesAndVolumesByPeriodFilter {
@@ -119794,7 +119792,6 @@ type AssetLatestSpotPrice {
   assetOutId: String!
   assetOutRegistryId: String
   priceNorm: String!
-  timestamp: String!
   paraBlockHeight: Int!
 }
 
