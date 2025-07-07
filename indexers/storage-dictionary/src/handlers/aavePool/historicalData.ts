@@ -55,7 +55,8 @@ export async function handleAavePoolsStorage(
 }
 
 export async function prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks(
-  ctx: ProcessorContext<Store>
+  ctx: ProcessorContext<Store>,
+  orderedBlockNumbers: number[]
 ) {
   if (
     !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
@@ -63,15 +64,11 @@ export async function prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBloc
   )
     return;
 
-  const orderedNumbers = ctx.blocks
-    .map((b) => b.header.height)
-    .sort((a, b) => a - b);
-
   const records = await ctx.store.find(Aavepool, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
     relations: {
@@ -85,7 +82,7 @@ export async function prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBloc
     records.map((r) => r.paraBlockHeight)
   );
   console.log(
-    `Aavepool :: Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
-    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.aavepoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+    `Aavepool :: Blocks range: ${orderedBlockNumbers[0]}/${orderedBlockNumbers[orderedBlockNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.aavepoolsProcessedBlocks.has(b)).length}/${orderedBlockNumbers.length}`
   );
 }

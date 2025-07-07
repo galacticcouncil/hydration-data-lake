@@ -2,6 +2,7 @@ import {
   Aavepool,
   AssetHistoricalData,
   EmaOracle,
+  MmAggregatorOracle,
   Xykpool,
   XykpoolAssetsData,
 } from '../model';
@@ -19,6 +20,8 @@ export class LatestProcessedDataCacheManager {
 
   private emaOracleCache: EmaOracle | null = null;
 
+  private mmAggregatorOracleCache: Map<string, MmAggregatorOracle> = new Map();
+
   private aavepoolsCache: Map<string, Aavepool> = new Map();
 
   private xykpoolsCache: Map<string, Map<string, XykpoolAssetsData>> =
@@ -32,6 +35,9 @@ export class LatestProcessedDataCacheManager {
     return LatestProcessedDataCacheManager.instance;
   }
 
+  /**
+   * ======================  Asset Historical Data =============================
+   */
   async prefetchLastAssetHistDataItem(ctx: ProcessorContext<Store>) {
     if (this.assetHistoricalDataItemsCache.size !== 0) return;
     const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
@@ -86,6 +92,10 @@ export class LatestProcessedDataCacheManager {
     return this.assetHistoricalDataItemsCache.get(assetId);
   }
 
+  /**
+   * =============================  EMA Oracle =================================
+   */
+
   setLastEmaOracle(items: EmaOracle[]) {
     if (!items) return;
 
@@ -99,6 +109,37 @@ export class LatestProcessedDataCacheManager {
     return this.emaOracleCache;
   }
 
+  /**
+   * =====================   MM Aggregator Oracle ==============================
+   */
+
+  setLastMmAggregatorOracle(items: MmAggregatorOracle[]) {
+    if (!items) return;
+
+    const oraclesHistoryIndex = new Map<string, MmAggregatorOracle[]>();
+
+    for (const i of items) {
+      if (!oraclesHistoryIndex.has(i.address)) {
+        oraclesHistoryIndex.set(i.address, []);
+      }
+      oraclesHistoryIndex.get(i.address)!.push(i);
+    }
+
+    for (const [address, list] of oraclesHistoryIndex.entries()) {
+      const orderedList = list.sort(
+        (a, b) => b.paraBlockHeight - a.paraBlockHeight
+      );
+
+      this.mmAggregatorOracleCache.set(address, orderedList[0]);
+    }
+  }
+  getLastMmAggregatorOracle(address: string): MmAggregatorOracle | null {
+    return this.mmAggregatorOracleCache.get(address) || null;
+  }
+
+  /**
+   * ==========================   Aave pool ====================================
+   */
   setLastAavepool(items: Aavepool[]) {
     if (!items) return;
 
@@ -123,6 +164,9 @@ export class LatestProcessedDataCacheManager {
     return this.aavepoolsCache.get(poolId);
   }
 
+  /**
+   * ========================   Xykpool Asset ==================================
+   */
   async prefetchLastXykpoolAssetHistDataItem(ctx: ProcessorContext<Store>) {
     if (this.xykpoolsCache.size !== 0) return;
     const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
@@ -195,6 +239,9 @@ export class LatestProcessedDataCacheManager {
     return this.xykpoolsCache.get(poolId)?.get(assetId);
   }
 
+  /**
+   * ===========================   SUPPORT =====================================
+   */
   log() {
     console.log('assetHistoricalDataItemsCache >>>');
     console.dir(

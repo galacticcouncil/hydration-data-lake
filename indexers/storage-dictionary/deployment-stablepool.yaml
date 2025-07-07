@@ -98,6 +98,8 @@ deploy:
       cmd: ['sqd', 'process:prod']
       env:
         RPC_URL: wss://node.kril.hydration.cloud
+        RPC_URL_HTTPS: https://node.kril.hydration.cloud
+
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false

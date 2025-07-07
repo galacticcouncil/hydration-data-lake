@@ -97,7 +97,8 @@ export async function handleEmaOracleHistoricalData(
 }
 
 export async function prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks(
-  ctx: ProcessorContext<Store>
+  ctx: ProcessorContext<Store>,
+  orderedBlockNumbers: number[]
 ) {
   if (
     !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
@@ -105,15 +106,11 @@ export async function prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlo
   )
     return;
 
-  const orderedNumbers = ctx.blocks
-    .map((b) => b.header.height)
-    .sort((a, b) => a - b);
-
   const records = await ctx.store.find(EmaOracle, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
   });
@@ -123,7 +120,7 @@ export async function prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlo
     records.map((r) => r.paraBlockHeight)
   );
   console.log(
-    `EmaOracle :: Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
-    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.emaOraclesProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+    `EmaOracle :: Blocks range: ${orderedBlockNumbers[0]}/${orderedBlockNumbers[orderedBlockNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.emaOraclesProcessedBlocks.has(b)).length}/${orderedBlockNumbers.length}`
   );
 }

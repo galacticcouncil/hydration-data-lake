@@ -6,6 +6,7 @@ import {
   EmaOracle,
   Lbppool,
   LbppoolAssetsData,
+  MmAggregatorOracle,
   Omnipool,
   OmnipoolAssetData,
   Stableswap,
@@ -15,6 +16,21 @@ import {
 } from '../../model';
 import { Store } from '@subsquid/typeorm-store';
 import { PakoManager } from '../../utils/pakoManager';
+
+export type CompressedBlockData = {
+  lbppool: Lbppool[];
+  lbppoolAssetsData: LbppoolAssetsData[];
+  xykpool: Xykpool[];
+  xykpoolAssetsData: XykpoolAssetsData[];
+  stableswap: Stableswap[];
+  stableswapAssetData: StableswapAssetData[];
+  omnipool: Omnipool[];
+  omnipoolAssetData: OmnipoolAssetData[];
+  aavepool: Aavepool[];
+  emaOracle: EmaOracle[];
+  mmAggregatorOracle: MmAggregatorOracle[];
+  assetHistoricalData: AssetHistoricalData[];
+};
 
 export async function compressBlockStorage(
   ctx: ProcessorContext<Store>,
@@ -117,6 +133,10 @@ export async function compressBlockStorage(
     ctx.batchState.state.stablepoolAssetsData.values()
   ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
 
+  let mmAggregatorOracles = Array.from(
+    ctx.batchState.state.mmAggregatorOracles.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
   let omnipools = Array.from(ctx.batchState.state.omnipools.values()).filter(
     (e) => e.paraBlockHeight === currentBlockHeader.height
   );
@@ -185,7 +205,7 @@ export async function compressBlockStorage(
     asset.pool = { id: asset.pool.id };
   }
 
-  const blockData = {
+  const blockData: CompressedBlockData = {
     lbppool: lbppools,
     lbppoolAssetsData: lbppoolAssets,
     xykpool: xykPools,
@@ -196,6 +216,7 @@ export async function compressBlockStorage(
     omnipoolAssetData: omnipoolAssets,
     aavepool: aavepools,
     emaOracle: emaOraces,
+    mmAggregatorOracle: mmAggregatorOracles,
     assetHistoricalData: assetHistoricalData,
   };
 
@@ -209,17 +230,3 @@ export async function compressBlockStorage(
     })
   );
 }
-
-type BlockData = {
-  lbppool: Lbppool[]
-  lbppoolAssetsData: LbppoolAssetsData[];
-  xykpool: Xykpool[];
-  xykpoolAssetsData: XykpoolAssetsData[];
-  stableswap: Stableswap[];
-  stableswapAssetData: StableswapAssetData[]
-  omnipool: Omnipool[];
-  omnipoolAssetData: OmnipoolAssetData[];
-  aavepool: Aavepool[];
-  emaOracle: EmaOracle[];
-  assetHistoricalData: AssetHistoricalData[];
-};

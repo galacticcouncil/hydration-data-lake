@@ -121,7 +121,8 @@ export async function handleAssetsStorage(
 }
 
 export async function prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
-  ctx: ProcessorContext<Store>
+  ctx: ProcessorContext<Store>,
+  orderedBlockNumbers: number[]
 ) {
   if (
     !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
@@ -129,15 +130,11 @@ export async function prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMisse
   )
     return;
 
-  const orderedNumbers = ctx.blocks
-    .map((b) => b.header.height)
-    .sort((a, b) => a - b);
-
   const records = await ctx.store.find(AssetHistoricalData, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
     relations: { asset: true },
@@ -150,7 +147,7 @@ export async function prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMisse
     records.map((r) => r.paraBlockHeight)
   );
   console.log(
-    `AssetHistoricalData :: Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
-    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.assetHistoricalDataProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+    `AssetHistoricalData :: Blocks range: ${orderedBlockNumbers[0]}/${orderedBlockNumbers[orderedBlockNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.assetHistoricalDataProcessedBlocks.has(b)).length}/${orderedBlockNumbers.length}`
   );
 }

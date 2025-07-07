@@ -114,7 +114,8 @@ export async function handleXykPoolsStorage(
 }
 
 export async function prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks(
-  ctx: ProcessorContext<Store>
+  ctx: ProcessorContext<Store>,
+  orderedBlockNumbers: number[]
 ) {
   if (
     !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
@@ -122,15 +123,11 @@ export async function prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlock
   )
     return;
 
-  const orderedNumbers = ctx.blocks
-    .map((b) => b.header.height)
-    .sort((a, b) => a - b);
-
   const pools = await ctx.store.find(Xykpool, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
   });
@@ -138,8 +135,8 @@ export async function prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlock
   const assets = await ctx.store.find(XykpoolAssetsData, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
     relations: { pool: true },
@@ -153,7 +150,7 @@ export async function prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlock
     pools.map((r) => r.paraBlockHeight)
   );
   console.log(
-    `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
-    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.xykPoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+    `Blocks range: ${orderedBlockNumbers[0]}/${orderedBlockNumbers[orderedBlockNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.xykPoolsProcessedBlocks.has(b)).length}/${orderedBlockNumbers.length}`
   );
 }

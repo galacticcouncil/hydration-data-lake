@@ -8,9 +8,7 @@ import {
   StableswapHistoricalData,
 } from '../../../../../../model';
 import { In, Not } from 'typeorm';
-import { fetchAssetsHistoricalDataForBlocksRange } from './fetchAssetsHistoricalData';
 import { Between } from 'typeorm/find-options/operator/Between';
-import { MmOracleManager } from '../../../../../../utils/evmTools/mmOracleEvmManager';
 
 export async function fetchStableswapHistoricalData({
   blockNumber,

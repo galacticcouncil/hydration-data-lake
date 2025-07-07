@@ -237,6 +237,16 @@ type StableswapAssetData @entity {
   paraBlockHeight: Int! @index
 }
 
+type MmAggregatorOracle @entity {
+  "<oracle_address>-<paraBlockHeight>"
+  id: ID!
+  address: String!
+  price: String!
+  decimals: Int!
+  updatedAt: Int!
+  paraBlockHeight: Int! @index
+}
+
 # ======================================================================================================================
 # *** AAVE Pool ***
 # ======================================================================================================================

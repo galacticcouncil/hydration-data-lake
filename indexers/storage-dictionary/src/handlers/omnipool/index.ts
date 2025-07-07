@@ -115,7 +115,8 @@ export async function handleOmnipoolStorage(
 }
 
 export async function prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBlocks(
-  ctx: ProcessorContext<Store>
+  ctx: ProcessorContext<Store>,
+  orderedBlockNumbers: number[]
 ) {
   if (
     !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
@@ -123,15 +124,11 @@ export async function prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBloc
   )
     return;
 
-  const orderedNumbers = ctx.blocks
-    .map((b) => b.header.height)
-    .sort((a, b) => a - b);
-
   const pools = await ctx.store.find(Omnipool, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
   });
@@ -139,8 +136,8 @@ export async function prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBloc
   const assets = await ctx.store.find(OmnipoolAssetData, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
     relations: { pool: true },
@@ -155,7 +152,7 @@ export async function prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBloc
   );
 
   console.log(
-    `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
-    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.omnipoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+    `Blocks range: ${orderedBlockNumbers[0]}/${orderedBlockNumbers[orderedBlockNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.omnipoolsProcessedBlocks.has(b)).length}/${orderedBlockNumbers.length}`
   );
 }

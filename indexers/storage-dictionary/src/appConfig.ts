@@ -58,6 +58,8 @@ export class AppConfig {
    */
   readonly RPC_URL: string | null = null;
 
+  readonly RPC_URL_HTTPS: string | null = null;
+
   /**
    * Maximum number of ongoing concurrent requests (default 10)
    */

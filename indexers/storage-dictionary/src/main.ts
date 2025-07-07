@@ -33,7 +33,7 @@ import {
   handleAssetsStorage,
   prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks,
 } from './handlers/asset/historicalData';
-import { handleOracles } from './handlers/oracles/emaOracle';
+import { handleOracles } from './handlers/oracles';
 import {
   handleAavePoolsStorage,
   prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks,
@@ -48,6 +48,8 @@ import { getAssetHistDataWithUniqueData } from './handlers/asset/utils';
 import { getEmaOracleHistDataWithUniqueData } from './handlers/oracles/emaOracle/utils';
 import { getLbppoolHistDataWithUniqueData } from './handlers/lbpPool/utils';
 import { LatestProcessedDataCacheManager } from './utils/latestProcessedDataCacheManager';
+import { prefetchAllMmAggregatorOracleRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/oracles/mmAggregatorOracle/historicalData';
+import { getMmAggregatorOraclesWithUniqueData } from './handlers/oracles/mmAggregatorOracle/utils';
 
 const appConfig = AppConfig.getInstance();
 
@@ -74,13 +76,6 @@ processor.run(
     (ctxWithBatchState as ProcessorContext<Store>).appConfig =
       AppConfig.getInstance();
 
-    // if (
-    //   (ctxWithBatchState as ProcessorContext<Store>).appConfig
-    //     .INDEXING_IS_PAUSED
-    // ) {
-    //   await new Promise((res) => console.log('Indexing is paused. Waiting...'));
-    // }
-
     const subProcessorStatusManager = new SubProcessorStatusManager(
       ctxWithBatchState as ProcessorContext<Store>
     );
@@ -104,26 +99,43 @@ processor.run(
       subProcessorStatusManager
     );
 
-    await prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks(
+    const orderedBlockNumbers = (
       ctxWithBatchState as ProcessorContext<Store>
+    ).blocks
+      .map((b) => b.header.height)
+      .sort((a, b) => a - b);
+
+    await prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
     );
     await prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
     );
     await prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
     );
     await prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
     );
     await prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
     );
     await prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
     );
     await prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
+    );
+    await prefetchAllMmAggregatorOracleRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
     );
 
     let blocksSubBatchIndex = 1;
@@ -280,10 +292,17 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
         poolAssetsData: ctx.batchState.state.stablepoolAssetsData,
       });
 
+    const mmAggregatorOracles = await getMmAggregatorOraclesWithUniqueData(
+      ctx.batchState.state.mmAggregatorOracles,
+      ctx
+    );
+
     if (stableswaps.size !== 0)
       await ctx.store.upsert(Array.from(stableswaps.values()));
     if (stableswapAssets.size !== 0)
       await ctx.store.upsert(Array.from(stableswapAssets.values()));
+    if (mmAggregatorOracles.size !== 0)
+      await ctx.store.upsert(Array.from(mmAggregatorOracles.values()));
   }
 
   if (appConfig.PROCESS_GENERIC_HIST_DATA) {

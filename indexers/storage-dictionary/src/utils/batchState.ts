@@ -12,6 +12,7 @@ import {
   Xykpool,
   XykpoolAssetsData,
   Block,
+  MmAggregatorOracle,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/common';
 
@@ -43,6 +44,9 @@ export type BatchStatePayload = {
 
   emaOracles: Map<string, EmaOracle>;
   emaOraclesProcessedBlocks: Set<number>;
+
+  mmAggregatorOracles: Map<string, MmAggregatorOracle>;
+  mmAggregatorOraclesBlocks: Set<number>;
 
   assetHistoricalDataItems: Map<string, AssetHistoricalData>;
   assetHistoricalDataProcessedBlocks: Set<number>;
@@ -76,6 +80,9 @@ export class BatchState {
 
     emaOracles: new Map(),
     emaOraclesProcessedBlocks: new Set(),
+
+    mmAggregatorOracles: new Map(),
+    mmAggregatorOraclesBlocks: new Set(),
 
     assetHistoricalDataItems: new Map(),
     assetHistoricalDataProcessedBlocks: new Set(),

@@ -17,6 +17,7 @@ import { AccountData } from '../../parsers/types/storage';
 import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
 import { getXykpoolHistDataWithUniqueData } from '../xykPool/utils';
 import { getStableswapHistDataWithUniqueData } from './utils';
+import { handleMmAggregatorOracleHistoricalData } from '../oracles/mmAggregatorOracle/historicalData';
 
 export async function handleStablepoolStorage(
   ctx: ProcessorContext<Store>,
@@ -108,9 +109,8 @@ export async function handleStablepoolStorage(
     fee,
     assetIds,
   } of allPools) {
-    const getPoolPegsDetails = (): Pick<
-      Stableswap,
-      'pegs' | 'maxPegUpdate' | 'pegSources'
+    const getPoolPegsDetails = async (): Promise<
+      Pick<Stableswap, 'pegs' | 'maxPegUpdate' | 'pegSources'>
     > => {
       if (!allPoolsPegsDataMap.has(poolId))
         return {
@@ -120,11 +120,33 @@ export async function handleStablepoolStorage(
         };
 
       const poolPegsData = allPoolsPegsDataMap.get(poolId)!;
+
+      let mmAggregatorOracleData = null;
+      for (const pegSrc of poolPegsData.source) {
+        if (pegSrc.sourceKind === 'MMOracle' && pegSrc.oracleName)
+          mmAggregatorOracleData = await handleMmAggregatorOracleHistoricalData(
+            {
+              address: pegSrc.oracleName,
+              ctx,
+              blockHeader: currentBlockHeader,
+            }
+          );
+      }
+
+      let pegs = poolPegsData.current.map(([a, b]) => [
+        a.toString(),
+        b.toString(),
+      ]);
+
+      if (mmAggregatorOracleData) {
+        const { price, decimals } = mmAggregatorOracleData;
+
+        const priceDenom = 10 ** decimals;
+        pegs = [[price.toString(), priceDenom.toString()]];
+      }
+
       return {
-        pegs: poolPegsData.current.map(([a, b]) => [
-          a.toString(),
-          b.toString(),
-        ]),
+        pegs,
         maxPegUpdate: poolPegsData.maxPegUpdate,
         pegSources: poolPegsData.source.map(
           ({
@@ -150,7 +172,7 @@ export async function handleStablepoolStorage(
     const newPoolEntity = new Stableswap({
       id: `${poolId}-${currentBlockHeader.height}`,
       paraBlockHeight: currentBlockHeader.height,
-      ...getPoolPegsDetails(),
+      ...(await getPoolPegsDetails()),
       poolAddress,
       poolId,
       initialAmplification,
@@ -197,7 +219,8 @@ export async function handleStablepoolStorage(
 }
 
 export async function prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBlocks(
-  ctx: ProcessorContext<Store>
+  ctx: ProcessorContext<Store>,
+  orderedBlockNumbers: number[]
 ) {
   if (
     !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
@@ -205,15 +228,11 @@ export async function prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBl
   )
     return;
 
-  const orderedNumbers = ctx.blocks
-    .map((b) => b.header.height)
-    .sort((a, b) => a - b);
-
   const pools = await ctx.store.find(Stableswap, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
   });
@@ -221,8 +240,8 @@ export async function prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBl
   const assets = await ctx.store.find(StableswapAssetData, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
     relations: { pool: true },
@@ -236,7 +255,7 @@ export async function prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBl
     pools.map((r) => r.paraBlockHeight)
   );
   console.log(
-    `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
-    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.stablepoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+    `Blocks range: ${orderedBlockNumbers[0]}/${orderedBlockNumbers[orderedBlockNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.stablepoolsProcessedBlocks.has(b)).length}/${orderedBlockNumbers.length}`
   );
 }

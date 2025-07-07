@@ -109,7 +109,8 @@ export async function handleLbpPoolsStorage(
 }
 
 export async function prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlocks(
-  ctx: ProcessorContext<Store>
+  ctx: ProcessorContext<Store>,
+  orderedBlockNumbers: number[]
 ) {
   if (
     !ctx.appConfig.PROCESS_ONLY_MISSED_BLOCKS ||
@@ -117,23 +118,19 @@ export async function prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlock
   )
     return;
 
-  const orderedNumbers = ctx.blocks
-    .map((b) => b.header.height)
-    .sort((a, b) => a - b);
-
   const pools = await ctx.store.find(Lbppool, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
   });
   const assets = await ctx.store.find(LbppoolAssetsData, {
     where: {
       paraBlockHeight: Between(
-        orderedNumbers[0],
-        orderedNumbers[orderedNumbers.length - 1]
+        orderedBlockNumbers[0],
+        orderedBlockNumbers[orderedBlockNumbers.length - 1]
       ),
     },
     relations: { pool: true },
@@ -147,7 +144,7 @@ export async function prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlock
     pools.map((r) => r.paraBlockHeight)
   );
   console.log(
-    `Blocks range: ${orderedNumbers[0]}/${orderedNumbers[orderedNumbers.length - 1]}. 
-    Number of missed blocks: ${orderedNumbers.filter((b) => !ctx.batchState.state.lbpPoolsProcessedBlocks.has(b)).length}/${orderedNumbers.length}`
+    `Blocks range: ${orderedBlockNumbers[0]}/${orderedBlockNumbers[orderedBlockNumbers.length - 1]}. 
+    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.lbpPoolsProcessedBlocks.has(b)).length}/${orderedBlockNumbers.length}`
   );
 }
