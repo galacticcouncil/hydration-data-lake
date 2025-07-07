@@ -2,7 +2,7 @@ import { YieldMetricsInterval } from '../../../../types';
 
 export type StableswapYieldMetricsFilter = {
   interval: YieldMetricsInterval;
-  poolIds: string[];
+  poolIds?: string[];
 };
 
 export type StableswapYieldMetricsRaw = {

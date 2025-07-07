@@ -7,7 +7,7 @@ import {
   getStableswapAssetSwapFeesByPeriod,
   getLatestStableswapAssetBalance,
 } from '../../sql/stableswapYieldMetrics.sql';
-import { getAssetsByStableswapIds } from '../../sql/stableswap.sql';
+import { getAllStableswapIds, getAssetsByStableswapIds } from '../../sql/stableswap.sql';
 import {
   AggregationTimeRangeLabel,
   YieldMetricsInterval,
@@ -27,14 +27,24 @@ export async function handlestableswapYieldMetricsAggregation({
   interval,
   pgClient,
 }: {
-  poolIds: string[];
+  poolIds?: string[];
   interval: YieldMetricsInterval;
   pgClient: pg.Client;
 }): Promise<StableswapYieldMetricsAggregated[]> {
+
+  let poolIdsToProcess = poolIds;
+
+  if (!poolIdsToProcess || poolIdsToProcess.length === 0)
+    poolIdsToProcess = (
+      await pgClient.query<{
+        pool_id: string;
+      }>(getAllStableswapIds)
+    ).rows.map((row) => row.pool_id);
+
   const assetsDataByPool = await pgClient.query<{
     pool_id: string;
     assets: { asset_id: string; decimals: number }[];
-  }>(getAssetsByStableswapIds, [poolIds]);
+  }>(getAssetsByStableswapIds, [poolIdsToProcess]);
 
   if (!assetsDataByPool.rows || assetsDataByPool.rows.length === 0) return [];
 
@@ -95,7 +105,7 @@ export async function handlestableswapYieldMetricsAggregation({
       free_balance: string;
       para_block_height: number;
     }[];
-  }>(getLatestStableswapAssetBalance, [poolIds]);
+  }>(getLatestStableswapAssetBalance, [poolIdsToProcess]);
 
   if (!latestBalances.rows || latestBalances.rows.length === 0) return [];
 

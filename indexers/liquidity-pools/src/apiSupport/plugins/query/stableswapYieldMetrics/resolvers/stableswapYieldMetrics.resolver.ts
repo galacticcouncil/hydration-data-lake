@@ -1,4 +1,4 @@
-import { QueryResolverContext } from '../../../../types';
+import { QueryResolverContext, YieldMetricsInterval } from '../../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
@@ -18,11 +18,18 @@ export async function stableswapYieldMetricsResolver(
 ): Promise<StableswapYieldMetricsResponse> {
   const pgClient: pg.Client = context.pgClient;
 
-  const {
-    filter: { interval, poolIds },
-  } = args;
+  // const {
+  //   filter: { interval, poolIds },
+  // } = args;
 
-  const cacheKey = `STABLESWAP_YIELD_METRICS::${crypto.createHash('md5').update(JSON.stringify(args.filter)).digest('hex')}`;
+  const filter = args.filter || {
+    interval: YieldMetricsInterval['1MON'],
+  };
+
+  const cacheKey = `STABLESWAP_YIELD_METRICS::${crypto
+    .createHash('md5')
+    .update(JSON.stringify(filter))
+    .digest('hex')}`;
 
   const cachedData =
     await CacheManager.getInstance().cache.get<StableswapYieldMetricsResponse>(
@@ -32,8 +39,8 @@ export async function stableswapYieldMetricsResolver(
   if (cachedData) return cachedData;
 
   const decoratedNodes = await handlestableswapYieldMetricsAggregation({
-    poolIds,
-    interval,
+    poolIds: filter.poolIds,
+    interval: filter.interval,
     pgClient,
   });
 

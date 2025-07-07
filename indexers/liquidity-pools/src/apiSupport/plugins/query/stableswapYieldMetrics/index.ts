@@ -7,13 +7,13 @@ export const StableswapYieldMetricsPlugin: Plugin = makeExtendSchemaPlugin(
       typeDefs: gql`
         input StableswapYieldMetricsFilter {
           interval: YieldMetricsInterval = _1MON_
-          poolIds: [String!]!
+          poolIds: [String!]
         }
 
         type StableswapYieldMetricsAggregated {
           poolId: String!
-          projectedApyPerc: BigFloat!
-          projectedAprPerc: BigFloat!
+          projectedApyPerc: String!
+          projectedAprPerc: String!
         }
 
         type StableswapYieldMetricsResponse {
@@ -23,7 +23,7 @@ export const StableswapYieldMetricsPlugin: Plugin = makeExtendSchemaPlugin(
 
         extend type Query {
           stableswapYieldMetrics(
-            filter: StableswapYieldMetricsFilter!
+            filter: StableswapYieldMetricsFilter
           ): StableswapYieldMetricsResponse!
         }
       `,
