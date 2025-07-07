@@ -262,6 +262,15 @@ export interface BondDetails {
   maturity: bigint;
 }
 
+export interface MmAggregatorDictionaryData {
+  id: string;
+  address: string;
+  price: string;
+  decimals: number;
+  updatedAt: number;
+  paraBlockHeight: number;
+}
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================

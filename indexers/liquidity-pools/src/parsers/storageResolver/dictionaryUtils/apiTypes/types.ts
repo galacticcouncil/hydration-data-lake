@@ -3624,6 +3624,306 @@ export enum MinifiedDataStructureTypeName {
   OmnipoolAssetState = 'OmnipoolAssetState'
 }
 
+export type MmAggregatorOracle = {
+  __typename?: 'MmAggregatorOracle';
+  address: Scalars['String']['output'];
+  decimals: Scalars['Int']['output'];
+  id: Scalars['String']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
+  price: Scalars['String']['output'];
+  updatedAt: Scalars['Int']['output'];
+};
+
+export type MmAggregatorOracleAggregates = {
+  __typename?: 'MmAggregatorOracleAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<MmAggregatorOracleAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<MmAggregatorOracleDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<MmAggregatorOracleMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<MmAggregatorOracleMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<MmAggregatorOracleStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<MmAggregatorOracleStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<MmAggregatorOracleSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<MmAggregatorOracleVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<MmAggregatorOracleVarianceSampleAggregates>;
+};
+
+export type MmAggregatorOracleAverageAggregates = {
+  __typename?: 'MmAggregatorOracleAverageAggregates';
+  /** Mean average of decimals across the matching connection */
+  decimals?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Mean average of updatedAt across the matching connection */
+  updatedAt?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/**
+ * A condition to be used against `MmAggregatorOracle` object types. All fields are
+ * tested for equality and combined with a logical ‘and.’
+ */
+export type MmAggregatorOracleCondition = {
+  /** Checks for equality with the object’s `address` field. */
+  address?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `decimals` field. */
+  decimals?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `price` field. */
+  price?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `updatedAt` field. */
+  updatedAt?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type MmAggregatorOracleDistinctCountAggregates = {
+  __typename?: 'MmAggregatorOracleDistinctCountAggregates';
+  /** Distinct count of address across the matching connection */
+  address?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of decimals across the matching connection */
+  decimals?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of price across the matching connection */
+  price?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of updatedAt across the matching connection */
+  updatedAt?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `MmAggregatorOracle` object types. All fields are combined with a logical ‘and.’ */
+export type MmAggregatorOracleFilter = {
+  /** Filter by the object’s `address` field. */
+  address?: InputMaybe<StringFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<MmAggregatorOracleFilter>>;
+  /** Filter by the object’s `decimals` field. */
+  decimals?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<MmAggregatorOracleFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<MmAggregatorOracleFilter>>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `price` field. */
+  price?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `updatedAt` field. */
+  updatedAt?: InputMaybe<IntFilter>;
+};
+
+/** Grouping methods for `MmAggregatorOracle` for usage during aggregation. */
+export enum MmAggregatorOracleGroupBy {
+  Address = 'ADDRESS',
+  Decimals = 'DECIMALS',
+  ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
+  Price = 'PRICE',
+  UpdatedAt = 'UPDATED_AT'
+}
+
+export type MmAggregatorOracleHavingAverageInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+export type MmAggregatorOracleHavingDistinctCountInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `MmAggregatorOracle` aggregates. */
+export type MmAggregatorOracleHavingInput = {
+  AND?: InputMaybe<Array<MmAggregatorOracleHavingInput>>;
+  OR?: InputMaybe<Array<MmAggregatorOracleHavingInput>>;
+  average?: InputMaybe<MmAggregatorOracleHavingAverageInput>;
+  distinctCount?: InputMaybe<MmAggregatorOracleHavingDistinctCountInput>;
+  max?: InputMaybe<MmAggregatorOracleHavingMaxInput>;
+  min?: InputMaybe<MmAggregatorOracleHavingMinInput>;
+  stddevPopulation?: InputMaybe<MmAggregatorOracleHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<MmAggregatorOracleHavingStddevSampleInput>;
+  sum?: InputMaybe<MmAggregatorOracleHavingSumInput>;
+  variancePopulation?: InputMaybe<MmAggregatorOracleHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<MmAggregatorOracleHavingVarianceSampleInput>;
+};
+
+export type MmAggregatorOracleHavingMaxInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+export type MmAggregatorOracleHavingMinInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+export type MmAggregatorOracleHavingStddevPopulationInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+export type MmAggregatorOracleHavingStddevSampleInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+export type MmAggregatorOracleHavingSumInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+export type MmAggregatorOracleHavingVariancePopulationInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+export type MmAggregatorOracleHavingVarianceSampleInput = {
+  decimals?: InputMaybe<HavingIntFilter>;
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+  updatedAt?: InputMaybe<HavingIntFilter>;
+};
+
+export type MmAggregatorOracleMaxAggregates = {
+  __typename?: 'MmAggregatorOracleMaxAggregates';
+  /** Maximum of decimals across the matching connection */
+  decimals?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Maximum of updatedAt across the matching connection */
+  updatedAt?: Maybe<Scalars['Int']['output']>;
+};
+
+export type MmAggregatorOracleMinAggregates = {
+  __typename?: 'MmAggregatorOracleMinAggregates';
+  /** Minimum of decimals across the matching connection */
+  decimals?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
+  /** Minimum of updatedAt across the matching connection */
+  updatedAt?: Maybe<Scalars['Int']['output']>;
+};
+
+export type MmAggregatorOracleStddevPopulationAggregates = {
+  __typename?: 'MmAggregatorOracleStddevPopulationAggregates';
+  /** Population standard deviation of decimals across the matching connection */
+  decimals?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population standard deviation of updatedAt across the matching connection */
+  updatedAt?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type MmAggregatorOracleStddevSampleAggregates = {
+  __typename?: 'MmAggregatorOracleStddevSampleAggregates';
+  /** Sample standard deviation of decimals across the matching connection */
+  decimals?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample standard deviation of updatedAt across the matching connection */
+  updatedAt?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type MmAggregatorOracleSumAggregates = {
+  __typename?: 'MmAggregatorOracleSumAggregates';
+  /** Sum of decimals across the matching connection */
+  decimals: Scalars['BigInt']['output'];
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
+  /** Sum of updatedAt across the matching connection */
+  updatedAt: Scalars['BigInt']['output'];
+};
+
+export type MmAggregatorOracleVariancePopulationAggregates = {
+  __typename?: 'MmAggregatorOracleVariancePopulationAggregates';
+  /** Population variance of decimals across the matching connection */
+  decimals?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Population variance of updatedAt across the matching connection */
+  updatedAt?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type MmAggregatorOracleVarianceSampleAggregates = {
+  __typename?: 'MmAggregatorOracleVarianceSampleAggregates';
+  /** Sample variance of decimals across the matching connection */
+  decimals?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+  /** Sample variance of updatedAt across the matching connection */
+  updatedAt?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A connection to a list of `MmAggregatorOracle` values. */
+export type MmAggregatorOraclesConnection = {
+  __typename?: 'MmAggregatorOraclesConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<MmAggregatorOracleAggregates>;
+  /** A list of edges which contains the `MmAggregatorOracle` and cursor to aid in pagination. */
+  edges: Array<MmAggregatorOraclesEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<MmAggregatorOracleAggregates>>;
+  /** A list of `MmAggregatorOracle` objects. */
+  nodes: Array<Maybe<MmAggregatorOracle>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `MmAggregatorOracle` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `MmAggregatorOracle` values. */
+export type MmAggregatorOraclesConnectionGroupedAggregatesArgs = {
+  groupBy: Array<MmAggregatorOracleGroupBy>;
+  having?: InputMaybe<MmAggregatorOracleHavingInput>;
+};
+
+/** A `MmAggregatorOracle` edge in the connection. */
+export type MmAggregatorOraclesEdge = {
+  __typename?: 'MmAggregatorOraclesEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `MmAggregatorOracle` at the end of the edge. */
+  node?: Maybe<MmAggregatorOracle>;
+};
+
+/** Methods to use when ordering `MmAggregatorOracle`. */
+export enum MmAggregatorOraclesOrderBy {
+  AddressAsc = 'ADDRESS_ASC',
+  AddressDesc = 'ADDRESS_DESC',
+  DecimalsAsc = 'DECIMALS_ASC',
+  DecimalsDesc = 'DECIMALS_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  ParaBlockHeightAsc = 'PARA_BLOCK_HEIGHT_ASC',
+  ParaBlockHeightDesc = 'PARA_BLOCK_HEIGHT_DESC',
+  PriceAsc = 'PRICE_ASC',
+  PriceDesc = 'PRICE_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  UpdatedAtAsc = 'UPDATED_AT_ASC',
+  UpdatedAtDesc = 'UPDATED_AT_DESC'
+}
+
 export type Omnipool = {
   __typename?: 'Omnipool';
   hubAssetTradability: Scalars['JSON']['output'];
@@ -4312,6 +4612,9 @@ export type Query = {
   migration?: Maybe<Migration>;
   /** Reads and enables pagination through a set of `Migration`. */
   migrations?: Maybe<MigrationsConnection>;
+  mmAggregatorOracle?: Maybe<MmAggregatorOracle>;
+  /** Reads and enables pagination through a set of `MmAggregatorOracle`. */
+  mmAggregatorOracles?: Maybe<MmAggregatorOraclesConnection>;
   omnipool?: Maybe<Omnipool>;
   /** Reads and enables pagination through a set of `OmnipoolAssetDatum`. */
   omnipoolAssetData?: Maybe<OmnipoolAssetDataConnection>;
@@ -4528,6 +4831,25 @@ export type QueryMigrationsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<MigrationsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryMmAggregatorOracleArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryMmAggregatorOraclesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<MmAggregatorOracleCondition>;
+  filter?: InputMaybe<MmAggregatorOracleFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<MmAggregatorOraclesOrderBy>>;
 };
 
 
@@ -6708,6 +7030,16 @@ export type GetAssetHistDataBlocksStorageStateQueryVariables = Exact<{
 
 export type GetAssetHistDataBlocksStorageStateQuery = { __typename?: 'Query', assetHistoricalData?: { __typename?: 'AssetHistoricalDataConnection', totalCount: number, nodes: Array<{ __typename?: 'AssetHistoricalDatum', id: string, assetId?: string | null, dynamicFee?: any | null, existentialDeposit: string, totalIssuance: string, paraBlockHeight: number } | null> } | null };
 
+export type GetMmAggregatorOracleBlocksStorageStateQueryVariables = Exact<{
+  filter?: InputMaybe<MmAggregatorOracleFilter>;
+  first: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
+  orderBy?: InputMaybe<Array<MmAggregatorOraclesOrderBy> | MmAggregatorOraclesOrderBy>;
+}>;
+
+
+export type GetMmAggregatorOracleBlocksStorageStateQuery = { __typename?: 'Query', mmAggregatorOracles?: { __typename?: 'MmAggregatorOraclesConnection', nodes: Array<{ __typename?: 'MmAggregatorOracle', id: string, address: string, price: string, decimals: number, updatedAt: number, paraBlockHeight: number } | null> } | null };
+
 export type GetBlockCompressedDataQueryVariables = Exact<{
   filter?: InputMaybe<BlockCompressedDatumFilter>;
   first: Scalars['Int']['input'];
@@ -6872,6 +7204,25 @@ export const GetAssetHistDataBlocksStorageState = gql`
       paraBlockHeight
     }
     totalCount
+  }
+}
+    `;
+export const GetMmAggregatorOracleBlocksStorageState = gql`
+    query GetMmAggregatorOracleBlocksStorageState($filter: MmAggregatorOracleFilter, $first: Int!, $offset: Int!, $orderBy: [MmAggregatorOraclesOrderBy!]) {
+  mmAggregatorOracles(
+    filter: $filter
+    orderBy: $orderBy
+    first: $first
+    offset: $offset
+  ) {
+    nodes {
+      id
+      address
+      price
+      decimals
+      updatedAt
+      paraBlockHeight
+    }
   }
 }
     `;

@@ -59,6 +59,10 @@ export class QueriesHelper {
       [ProcessingTopic.LBP, appConfig.STORAGE_DICTIONARY_LBPPOOL_URL],
       [ProcessingTopic.OMNIPOOL, appConfig.STORAGE_DICTIONARY_OMNIPOOL_URL],
       [ProcessingTopic.STABLESWAP, appConfig.STORAGE_DICTIONARY_STABLEPOOL_URL],
+      [
+        ProcessingTopic.MM_AGGREGATOR_ORACLE,
+        appConfig.STORAGE_DICTIONARY_STABLEPOOL_URL,
+      ],
       [ProcessingTopic.AAVE, appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL],
       [
         ProcessingTopic.ASSET_HIST_DATA,

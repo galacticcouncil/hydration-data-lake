@@ -18,6 +18,7 @@ import {
   StableswapAssetDatum as StableswapAssetDatumGql,
   Xykpool as XykpoolGlq,
   XykpoolAssetsDatum as XykpoolAssetsDatumGlq,
+  MmAggregatorOracle as MmAggregatorOracleGlq,
   GetBlockCompressedDataQuery,
   BlockCompressedDatum,
   Scalars,
@@ -40,6 +41,7 @@ export enum BlockCompressedDataKey {
   omnipoolAssetData = 'omnipoolAssetData',
   aavepool = 'aavepool',
   emaOracle = 'emaOracle',
+  mmAggregatorOracle = 'mmAggregatorOracle',
   assetHistoricalData = 'assetHistoricalData',
 }
 
@@ -54,6 +56,7 @@ export type BlockCompressedDataPayloadDecompressed = {
   [BlockCompressedDataKey.omnipoolAssetData]: any[];
   [BlockCompressedDataKey.aavepool]: any[];
   [BlockCompressedDataKey.emaOracle]: any[];
+  [BlockCompressedDataKey.mmAggregatorOracle]: any[];
   [BlockCompressedDataKey.assetHistoricalData]: any[];
 };
 
@@ -82,6 +85,22 @@ export function encodeBlockCompressedData<R>({
                 paraBlockHeight: emaOracle.paraBlockHeight,
                 relayBlockHeight: emaOracle.relayBlockHeight,
               }) as EmaOracleGql as R
+          )
+        );
+        break;
+      }
+      case BlockCompressedDataKey.mmAggregatorOracle: {
+        resultList.push(
+          (decompressedData[dataKey] || []).map(
+            (mmOracle) =>
+              ({
+                id: mmOracle.id,
+                address: mmOracle.address,
+                price: mmOracle.price,
+                decimals: mmOracle.decimals,
+                updatedAt: mmOracle.updatedAt,
+                paraBlockHeight: mmOracle.paraBlockHeight,
+              }) as MmAggregatorOracleGlq as R
           )
         );
         break;

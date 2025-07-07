@@ -56,6 +56,7 @@ import {
 } from './fetchHistoricalDataHelpers/fetchEmaOraclesHistoricalData';
 import pMap from 'p-map';
 import { MmOracleManager } from '../../../../../utils/evmTools/mmOracleEvmManager';
+import { StorageResolver } from '../../../../../parsers/storageResolver';
 
 export class OfflineTradeRouterManagerHelper {
   protected SUPPORTED_ASSET_TYPES_SET = new Set([
@@ -439,10 +440,14 @@ export class OfflineTradeRouterManagerHelper {
 
     await pMap(mmOracleContractCalls, async ({ address, blockHeight }) => {
       const oracleData =
-        await MmOracleManager.getInstance().getAggregatorMmOracleData({
+        StorageResolver.getInstance().storageDictionaryManager?.getMmAggregatorOracle(
+          { address, blockHeight }
+        ) ||
+        (await MmOracleManager.getInstance().getAggregatorMmOracleData({
           address,
           blockHeight,
-        });
+        }));
+
       if (oracleData)
         this.mmOraclesHistData.get(blockHeight)?.set(address, oracleData);
     });

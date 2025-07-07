@@ -4548,6 +4548,381 @@ input BigIntFilter {
   greaterThanOrEqualTo: BigInt
 }
 
+"""A connection to a list of `MmAggregatorOracle` values."""
+type MmAggregatorOraclesConnection {
+  """A list of `MmAggregatorOracle` objects."""
+  nodes: [MmAggregatorOracle]!
+
+  """
+  A list of edges which contains the `MmAggregatorOracle` and cursor to aid in pagination.
+  """
+  edges: [MmAggregatorOraclesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `MmAggregatorOracle` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: MmAggregatorOracleAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `MmAggregatorOracle` for these aggregates.
+    """
+    groupBy: [MmAggregatorOracleGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: MmAggregatorOracleHavingInput
+  ): [MmAggregatorOracleAggregates!]
+}
+
+type MmAggregatorOracle {
+  id: String!
+  address: String!
+  price: String!
+  decimals: Int!
+  updatedAt: Int!
+  paraBlockHeight: Int!
+}
+
+"""A `MmAggregatorOracle` edge in the connection."""
+type MmAggregatorOraclesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `MmAggregatorOracle` at the end of the edge."""
+  node: MmAggregatorOracle
+}
+
+type MmAggregatorOracleAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: MmAggregatorOracleSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: MmAggregatorOracleDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: MmAggregatorOracleMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: MmAggregatorOracleMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: MmAggregatorOracleAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: MmAggregatorOracleStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: MmAggregatorOracleStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: MmAggregatorOracleVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: MmAggregatorOracleVariancePopulationAggregates
+}
+
+type MmAggregatorOracleSumAggregates {
+  """Sum of decimals across the matching connection"""
+  decimals: BigInt!
+
+  """Sum of updatedAt across the matching connection"""
+  updatedAt: BigInt!
+
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type MmAggregatorOracleDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of address across the matching connection"""
+  address: BigInt
+
+  """Distinct count of price across the matching connection"""
+  price: BigInt
+
+  """Distinct count of decimals across the matching connection"""
+  decimals: BigInt
+
+  """Distinct count of updatedAt across the matching connection"""
+  updatedAt: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+}
+
+type MmAggregatorOracleMinAggregates {
+  """Minimum of decimals across the matching connection"""
+  decimals: Int
+
+  """Minimum of updatedAt across the matching connection"""
+  updatedAt: Int
+
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type MmAggregatorOracleMaxAggregates {
+  """Maximum of decimals across the matching connection"""
+  decimals: Int
+
+  """Maximum of updatedAt across the matching connection"""
+  updatedAt: Int
+
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type MmAggregatorOracleAverageAggregates {
+  """Mean average of decimals across the matching connection"""
+  decimals: BigFloat
+
+  """Mean average of updatedAt across the matching connection"""
+  updatedAt: BigFloat
+
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type MmAggregatorOracleStddevSampleAggregates {
+  """Sample standard deviation of decimals across the matching connection"""
+  decimals: BigFloat
+
+  """Sample standard deviation of updatedAt across the matching connection"""
+  updatedAt: BigFloat
+
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type MmAggregatorOracleStddevPopulationAggregates {
+  """
+  Population standard deviation of decimals across the matching connection
+  """
+  decimals: BigFloat
+
+  """
+  Population standard deviation of updatedAt across the matching connection
+  """
+  updatedAt: BigFloat
+
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type MmAggregatorOracleVarianceSampleAggregates {
+  """Sample variance of decimals across the matching connection"""
+  decimals: BigFloat
+
+  """Sample variance of updatedAt across the matching connection"""
+  updatedAt: BigFloat
+
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type MmAggregatorOracleVariancePopulationAggregates {
+  """Population variance of decimals across the matching connection"""
+  decimals: BigFloat
+
+  """Population variance of updatedAt across the matching connection"""
+  updatedAt: BigFloat
+
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `MmAggregatorOracle` for usage during aggregation.
+"""
+enum MmAggregatorOracleGroupBy {
+  ADDRESS
+  PRICE
+  DECIMALS
+  UPDATED_AT
+  PARA_BLOCK_HEIGHT
+}
+
+"""Conditions for `MmAggregatorOracle` aggregates."""
+input MmAggregatorOracleHavingInput {
+  AND: [MmAggregatorOracleHavingInput!]
+  OR: [MmAggregatorOracleHavingInput!]
+  sum: MmAggregatorOracleHavingSumInput
+  distinctCount: MmAggregatorOracleHavingDistinctCountInput
+  min: MmAggregatorOracleHavingMinInput
+  max: MmAggregatorOracleHavingMaxInput
+  average: MmAggregatorOracleHavingAverageInput
+  stddevSample: MmAggregatorOracleHavingStddevSampleInput
+  stddevPopulation: MmAggregatorOracleHavingStddevPopulationInput
+  varianceSample: MmAggregatorOracleHavingVarianceSampleInput
+  variancePopulation: MmAggregatorOracleHavingVariancePopulationInput
+}
+
+input MmAggregatorOracleHavingSumInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input MmAggregatorOracleHavingDistinctCountInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input MmAggregatorOracleHavingMinInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input MmAggregatorOracleHavingMaxInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input MmAggregatorOracleHavingAverageInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input MmAggregatorOracleHavingStddevSampleInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input MmAggregatorOracleHavingStddevPopulationInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input MmAggregatorOracleHavingVarianceSampleInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input MmAggregatorOracleHavingVariancePopulationInput {
+  decimals: HavingIntFilter
+  updatedAt: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `MmAggregatorOracle`."""
+enum MmAggregatorOraclesOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ADDRESS_ASC
+  ADDRESS_DESC
+  PRICE_ASC
+  PRICE_DESC
+  DECIMALS_ASC
+  DECIMALS_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `MmAggregatorOracle` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input MmAggregatorOracleCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `address` field."""
+  address: String
+
+  """Checks for equality with the object’s `price` field."""
+  price: String
+
+  """Checks for equality with the object’s `decimals` field."""
+  decimals: Int
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Int
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+}
+
+"""
+A filter to be used against `MmAggregatorOracle` object types. All fields are combined with a logical ‘and.’
+"""
+input MmAggregatorOracleFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `address` field."""
+  address: StringFilter
+
+  """Filter by the object’s `price` field."""
+  price: StringFilter
+
+  """Filter by the object’s `decimals` field."""
+  decimals: IntFilter
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: IntFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [MmAggregatorOracleFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [MmAggregatorOracleFilter!]
+
+  """Negates the expression."""
+  not: MmAggregatorOracleFilter
+}
+
 """A connection to a list of `Omnipool` values."""
 type OmnipoolsConnection {
   """A list of `Omnipool` objects."""
@@ -8015,6 +8390,40 @@ type Query {
     filter: MigrationFilter
   ): MigrationsConnection
 
+  """Reads and enables pagination through a set of `MmAggregatorOracle`."""
+  mmAggregatorOracles(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MmAggregatorOracle`."""
+    orderBy: [MmAggregatorOraclesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MmAggregatorOracleCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MmAggregatorOracleFilter
+  ): MmAggregatorOraclesConnection
+
   """Reads and enables pagination through a set of `Omnipool`."""
   omnipools(
     """Only read the first `n` values of the set."""
@@ -8262,6 +8671,7 @@ type Query {
   lbppool(id: String!): Lbppool
   lbppoolAssetsDatum(id: String!): LbppoolAssetsDatum
   migration(id: Int!): Migration
+  mmAggregatorOracle(id: String!): MmAggregatorOracle
   omnipool(id: String!): Omnipool
   omnipoolAssetDatum(id: String!): OmnipoolAssetDatum
   stableswap(id: String!): Stableswap

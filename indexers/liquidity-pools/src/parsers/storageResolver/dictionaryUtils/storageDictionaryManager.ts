@@ -16,6 +16,7 @@ import {
   Omnipool as OmnipoolGql,
   Stableswap as StableswapGql,
   Xykpool as XykpoolGlq,
+  MmAggregatorOracle as MmAggregatorOracleGlq,
 } from './apiTypes/types';
 import { QueriesHelper } from './queriesHelper';
 import {
@@ -35,6 +36,7 @@ import {
   GetPoolAssetInfoInput,
   LbpGetPoolDataInput,
   LbpPoolData,
+  MmAggregatorDictionaryData,
   OmnipoolAssetData,
   OmnipoolAssetTradability,
   OmnipoolData,
@@ -86,7 +88,9 @@ export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
             ? EmaOracleGql
             : T extends ProcessingTopic.ASSET_HIST_DATA
               ? AssetHistoricalDatumGql
-              : never;
+              : T extends ProcessingTopic.MM_AGGREGATOR_ORACLE
+                ? MmAggregatorOracleGlq
+                : never;
 
 export class StorageDictionaryManager extends QueriesHelper {
   protected batchCtx: SqdProcessorContext<Store>;
@@ -100,6 +104,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     | BatchStorageStateSectionCollection<ProcessingTopic.AAVE>
     | BatchStorageStateSectionCollection<ProcessingTopic.EMA_ORACLE>
     | BatchStorageStateSectionCollection<ProcessingTopic.ASSET_HIST_DATA>
+    | BatchStorageStateSectionCollection<ProcessingTopic.MM_AGGREGATOR_ORACLE>
     // @ts-ignore
   > = new Map([
     [
@@ -144,28 +149,15 @@ export class StorageDictionaryManager extends QueriesHelper {
         section: ProcessingTopic.ASSET_HIST_DATA,
       }),
     ],
+    [
+      ProcessingTopic.MM_AGGREGATOR_ORACLE,
+      new BatchStorageStateSectionCollection<ProcessingTopic.MM_AGGREGATOR_ORACLE>(
+        {
+          section: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+        }
+      ),
+    ],
   ]);
-  // batchStorageState: Map<
-  //     ProcessingTopic,
-  //     Map<
-  //       string,
-  //       | LbpPoolGlq
-  //       | XykpoolGlq
-  //       | OmnipoolGql
-  //       | StableswapGql
-  //       | AavepoolGlq
-  //       | EmaOracleGql
-  //       | AssetHistoricalDatumGql
-  //     >
-  //   > = new Map([
-  //     [ProcessingTopic.LBP, new Map()],
-  //     [ProcessingTopic.XYK, new Map()],
-  //     [ProcessingTopic.OMNIPOOL, new Map()],
-  //     [ProcessingTopic.STABLESWAP, new Map()],
-  //     [ProcessingTopic.AAVE, new Map()],
-  //     [ProcessingTopic.EMA_ORACLE, new Map()],
-  //     [ProcessingTopic.ASSET_HIST_DATA, new Map()],
-  //   ]);
 
   constructor({ batchCtx }: { batchCtx: SqdProcessorContext<Store> }) {
     super({ appConfig: batchCtx.appConfig });
@@ -183,17 +175,6 @@ export class StorageDictionaryManager extends QueriesHelper {
       section
     ) as BatchStorageStateSectionCollection<T>;
   }
-  //
-  // getBatchStorageStatePart<T extends ProcessingTopic>(
-  //   section: T
-  // ): Map<string, BatchStorageStateSectionNode<T>> {
-  //   return (
-  //     (this.batchStorageState.get(section) as Map<
-  //       string,
-  //       BatchStorageStateSectionNode<T>
-  //     >) || new Map<string, BatchStorageStateSectionNode<T>>()
-  //   );
-  // }
 
   wipeBatchStorageState() {
     // @ts-ignore
@@ -242,6 +223,14 @@ export class StorageDictionaryManager extends QueriesHelper {
           }
         ),
       ],
+      [
+        ProcessingTopic.MM_AGGREGATOR_ORACLE,
+        new BatchStorageStateSectionCollection<ProcessingTopic.MM_AGGREGATOR_ORACLE>(
+          {
+            section: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+          }
+        ),
+      ],
     ]);
   }
 
@@ -249,296 +238,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     blockNumberFrom: number;
     blockNumberTo: number;
   }) {
-    // const fetchAllAssetHistDataPaginated = async ({
-    //   pageSize,
-    //   offset,
-    // }: PaginationConfig) => {
-    //   const filter: InputMaybe<AssetHistoricalDatumFilter> = {
-    //     paraBlockHeight: {
-    //       greaterThanOrEqualTo: args.blockNumberFrom,
-    //     },
-    //     and: [
-    //       {
-    //         paraBlockHeight: {
-    //           lessThanOrEqualTo: args.blockNumberTo,
-    //         },
-    //       },
-    //     ],
-    //   };
-    //
-    //   const resp = await this.dictionaryGqlRequest<
-    //     GetAssetHistDataBlocksStorageStateQuery,
-    //     GetAssetHistDataBlocksStorageStateQueryVariables
-    //   >({
-    //     query: GetAssetHistDataBlocksStorageState,
-    //     variables: {
-    //       filter,
-    //       orderBy: AssetHistoricalDataOrderBy.ParaBlockHeightAsc,
-    //       first: pageSize,
-    //       offset,
-    //     },
-    //     dictName: ProcessingTopic.ASSET_HIST_DATA,
-    //   });
-    //
-    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
-    //
-    //   return {
-    //     data:
-    //       resp.data && resp.data.assetHistoricalData
-    //         ? resp.data.assetHistoricalData.nodes
-    //         : [],
-    //     totalCount:
-    //       resp.data && resp.data.assetHistoricalData
-    //         ? resp.data.assetHistoricalData.totalCount
-    //         : 0,
-    //   };
-    // };
-    //
-    // const fetchAllEmaOraclesPaginated = async ({
-    //   pageSize,
-    //   offset,
-    // }: PaginationConfig) => {
-    //   const filter: InputMaybe<EmaOracleFilter> = {
-    //     paraBlockHeight: {
-    //       greaterThanOrEqualTo: args.blockNumberFrom,
-    //     },
-    //     and: [
-    //       {
-    //         paraBlockHeight: {
-    //           lessThanOrEqualTo: args.blockNumberTo,
-    //         },
-    //       },
-    //     ],
-    //   };
-    //
-    //   const resp = await this.dictionaryGqlRequest<
-    //     GetEmaOracleBlocksStorageStateQuery,
-    //     GetEmaOracleBlocksStorageStateQueryVariables
-    //   >({
-    //     query: GetEmaOracleBlocksStorageState,
-    //     variables: {
-    //       filter,
-    //       orderBy: EmaOraclesOrderBy.ParaBlockHeightAsc,
-    //       first: pageSize,
-    //       offset,
-    //     },
-    //     dictName: ProcessingTopic.EMA_ORACLE,
-    //   });
-    //
-    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
-    //
-    //   return {
-    //     data:
-    //       resp.data && resp.data.emaOracles ? resp.data.emaOracles.nodes : [],
-    //     totalCount:
-    //       resp.data && resp.data.emaOracles
-    //         ? resp.data.emaOracles.totalCount
-    //         : 0,
-    //   };
-    // };
-    //
-    // const fetchAllAavepoolsPaginated = async ({
-    //   pageSize,
-    //   offset,
-    // }: PaginationConfig) => {
-    //   const filter: InputMaybe<AavepoolFilter> = {
-    //     paraBlockHeight: {
-    //       greaterThanOrEqualTo: args.blockNumberFrom,
-    //     },
-    //     and: [
-    //       {
-    //         paraBlockHeight: {
-    //           lessThanOrEqualTo: args.blockNumberTo,
-    //         },
-    //       },
-    //     ],
-    //   };
-    //
-    //   const resp = await this.dictionaryGqlRequest<
-    //     GetAavePoolBlocksStorageStateQuery,
-    //     GetAavePoolBlocksStorageStateQueryVariables
-    //   >({
-    //     query: GetAavePoolBlocksStorageState,
-    //     variables: {
-    //       filter,
-    //       orderBy: AavepoolsOrderBy.ParaBlockHeightAsc,
-    //       first: pageSize,
-    //       offset,
-    //     },
-    //     dictName: ProcessingTopic.AAVE,
-    //   });
-    //
-    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
-    //
-    //   return {
-    //     data: resp.data && resp.data.aavepools ? resp.data.aavepools.nodes : [],
-    //     totalCount:
-    //       resp.data && resp.data.aavepools ? resp.data.aavepools.totalCount : 0,
-    //   };
-    // };
-    //
-    // const fetchAllLbpPoolsPaginated = async ({
-    //   pageSize,
-    //   offset,
-    // }: PaginationConfig) => {
-    //   const filter: InputMaybe<LbppoolFilter> = {
-    //     paraBlockHeight: {
-    //       greaterThanOrEqualTo: args.blockNumberFrom,
-    //     },
-    //     and: [
-    //       {
-    //         paraBlockHeight: {
-    //           lessThanOrEqualTo: args.blockNumberTo,
-    //         },
-    //       },
-    //     ],
-    //   };
-    //
-    //   const resp = await this.dictionaryGqlRequest<
-    //     GetLbppoolBlocksStorageStateQuery,
-    //     GetLbppoolBlocksStorageStateQueryVariables
-    //   >({
-    //     query: GetLbppoolBlocksStorageState,
-    //     variables: {
-    //       filter,
-    //       orderBy: LbppoolsOrderBy.ParaBlockHeightAsc,
-    //       first: pageSize,
-    //       offset,
-    //     },
-    //     dictName: ProcessingTopic.LBP,
-    //   });
-    //
-    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
-    //
-    //   return {
-    //     data: resp.data && resp.data.lbppools ? resp.data.lbppools.nodes : [],
-    //     totalCount:
-    //       resp.data && resp.data.lbppools ? resp.data.lbppools.totalCount : 0,
-    //   };
-    // };
-    //
-    // const fetchAllXykPoolsPaginated = async ({
-    //   pageSize,
-    //   offset,
-    // }: PaginationConfig) => {
-    //   const filter: InputMaybe<XykpoolFilter> = {
-    //     paraBlockHeight: {
-    //       greaterThanOrEqualTo: args.blockNumberFrom,
-    //     },
-    //     and: [
-    //       {
-    //         paraBlockHeight: {
-    //           lessThanOrEqualTo: args.blockNumberTo,
-    //         },
-    //       },
-    //     ],
-    //   };
-    //
-    //   const resp = await this.dictionaryGqlRequest<
-    //     GetXykpoolBlocksStorageStateQuery,
-    //     GetXykpoolBlocksStorageStateQueryVariables
-    //   >({
-    //     query: GetXykpoolBlocksStorageState,
-    //     variables: {
-    //       filter,
-    //       orderBy: XykpoolsOrderBy.ParaBlockHeightAsc,
-    //       first: pageSize,
-    //       offset,
-    //     },
-    //     dictName: ProcessingTopic.XYK,
-    //   });
-    //
-    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
-    //
-    //   return {
-    //     data: resp.data && resp.data.xykpools ? resp.data.xykpools.nodes : [],
-    //     totalCount:
-    //       resp.data && resp.data.xykpools ? resp.data.xykpools.totalCount : 0,
-    //   };
-    // };
-    //
-    // const fetchAllOmnipoolsPaginated = async ({
-    //   pageSize,
-    //   offset,
-    // }: PaginationConfig) => {
-    //   const filter: InputMaybe<OmnipoolFilter> = {
-    //     paraBlockHeight: {
-    //       greaterThanOrEqualTo: args.blockNumberFrom,
-    //     },
-    //     and: [
-    //       {
-    //         paraBlockHeight: {
-    //           lessThanOrEqualTo: args.blockNumberTo,
-    //         },
-    //       },
-    //     ],
-    //   };
-    //   const resp = await this.dictionaryGqlRequest<
-    //     GetOmnipoolBlocksStorageStateQuery,
-    //     GetOmnipoolBlocksStorageStateQueryVariables
-    //   >({
-    //     query: GetOmnipoolBlocksStorageState,
-    //     variables: {
-    //       filter,
-    //       orderBy: OmnipoolsOrderBy.ParaBlockHeightAsc,
-    //       first: pageSize,
-    //       offset,
-    //     },
-    //     dictName: ProcessingTopic.OMNIPOOL,
-    //   });
-    //
-    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
-    //
-    //   return {
-    //     data: resp.data && resp.data.omnipools ? resp.data.omnipools.nodes : [],
-    //     totalCount:
-    //       resp.data && resp.data.omnipools ? resp.data.omnipools.totalCount : 0,
-    //   };
-    // };
-    //
-    // const fetchAllStablepoolAssetsPaginated = async ({
-    //   pageSize,
-    //   offset,
-    // }: PaginationConfig) => {
-    //   const filter: InputMaybe<StableswapFilter> = {
-    //     paraBlockHeight: {
-    //       greaterThanOrEqualTo: args.blockNumberFrom,
-    //     },
-    //     and: [
-    //       {
-    //         paraBlockHeight: {
-    //           lessThanOrEqualTo: args.blockNumberTo,
-    //         },
-    //       },
-    //     ],
-    //   };
-    //
-    //   const resp = await this.dictionaryGqlRequest<
-    //     GetStableswapBlocksStorageStateQuery,
-    //     GetStableswapBlocksStorageStateQueryVariables
-    //   >({
-    //     query: GetStableswapBlocksStorageState,
-    //     variables: {
-    //       filter,
-    //       orderBy: StableswapsOrderBy.ParaBlockHeightAsc,
-    //       first: pageSize,
-    //       offset,
-    //     },
-    //     dictName: ProcessingTopic.STABLESWAP,
-    //   });
-    //
-    //   // if (resp.error) console.log(resp.error); //TODO make this log configurable
-    //
-    //   return {
-    //     data:
-    //       resp.data && resp.data.stableswaps ? resp.data.stableswaps.nodes : [],
-    //     totalCount:
-    //       resp.data && resp.data.stableswaps
-    //         ? resp.data.stableswaps.totalCount
-    //         : 0,
-    //   };
-    // };
-
     const fetchBlockCompressedDataPaginated = async ({
       pageSize,
       offset,
@@ -758,6 +457,30 @@ export class StorageDictionaryManager extends QueriesHelper {
       return { pallet: ProcessingTopic.STABLESWAP, data: data.flat() };
     };
 
+    const allMmAggregatorOraclesStorageFetchPromise = async () => {
+      const data = [];
+
+      for await (const page of this.fetchAllPages({
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+      })) {
+        if (!page) continue;
+        const encodedPageData: MmAggregatorOracleGlq[] =
+          encodeBlockCompressedData<MmAggregatorOracleGlq>({
+            data: page,
+            dataKey: BlockCompressedDataKey.mmAggregatorOracle,
+          });
+        console.dir(encodedPageData, { depth: null });
+        data.push(encodedPageData);
+      }
+
+      return {
+        pallet: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+        data: data.flat(),
+      };
+    };
+
     console.time('Dictionary API call executed in');
     const fullResponse = await Promise.all([
       allLbpPoolStorageFetchPromise(),
@@ -767,6 +490,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       allAavepoolsStorageFetchPromise(),
       allEmaOraclesStorageFetchPromise(),
       allAssetHistDataStorageFetchPromise(),
+      allMmAggregatorOraclesStorageFetchPromise(),
     ]);
 
     console.log(
@@ -792,12 +516,6 @@ export class StorageDictionaryManager extends QueriesHelper {
                 data: palletData.data as AssetHistoricalDatumGql[],
               }
             ) as any
-            // new Map(
-            //   (palletData.data as AssetHistoricalDatumGql[]).map((item) => [
-            //     item.id,
-            //     item,
-            //   ])er
-            // )
           );
           break;
         case ProcessingTopic.EMA_ORACLE:
@@ -807,9 +525,6 @@ export class StorageDictionaryManager extends QueriesHelper {
               section: ProcessingTopic.EMA_ORACLE,
               data: palletData.data as EmaOracleGql[],
             }) as any
-            // new Map(
-            //   (palletData.data as EmaOracleGql[]).map((item) => [item.id, item])
-            // )
           );
           break;
         case ProcessingTopic.AAVE:
@@ -819,18 +534,11 @@ export class StorageDictionaryManager extends QueriesHelper {
               section: ProcessingTopic.AAVE,
               data: palletData.data as AavepoolGlq[],
             }) as any
-
-            // new Map(
-            //   (palletData.data as AavepoolGlq[]).map((item) => [item.id, item])
-            // )
           );
           break;
         case ProcessingTopic.LBP:
           this.batchStorageState.set(
             ProcessingTopic.LBP,
-            // new Map(
-            //   (palletData.data as LbpPoolGlq[]).map((item) => [item.id, item])
-            // )
             new BatchStorageStateSectionCollection<ProcessingTopic.LBP>({
               section: ProcessingTopic.LBP,
               data: palletData.data as LbpPoolGlq[],
@@ -844,9 +552,6 @@ export class StorageDictionaryManager extends QueriesHelper {
               section: ProcessingTopic.XYK,
               data: palletData.data as XykpoolGlq[],
             }) as any
-            // new Map(
-            //   (palletData.data as XykpoolGlq[]).map((item) => [item.id, item])
-            // )
           );
           break;
         case ProcessingTopic.OMNIPOOL:
@@ -856,9 +561,6 @@ export class StorageDictionaryManager extends QueriesHelper {
               section: ProcessingTopic.OMNIPOOL,
               data: palletData.data as OmnipoolGql[],
             }) as any
-            // new Map(
-            //   (palletData.data as OmnipoolGql[]).map((item) => [item.id, item])
-            // )
           );
           break;
         case ProcessingTopic.STABLESWAP:
@@ -868,12 +570,17 @@ export class StorageDictionaryManager extends QueriesHelper {
               section: ProcessingTopic.STABLESWAP,
               data: palletData.data as StableswapGql[],
             }) as any
-            // new Map(
-            //   (palletData.data as StableswapGql[]).map((item) => [
-            //     item.id,
-            //     item,
-            //   ])
-            // )
+          );
+          break;
+        case ProcessingTopic.MM_AGGREGATOR_ORACLE:
+          this.batchStorageState.set(
+            ProcessingTopic.MM_AGGREGATOR_ORACLE,
+            new BatchStorageStateSectionCollection<ProcessingTopic.MM_AGGREGATOR_ORACLE>(
+              {
+                section: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+                data: palletData.data as MmAggregatorOracleGlq[],
+              }
+            ) as any
           );
           break;
         default:
@@ -1689,5 +1396,21 @@ export class StorageDictionaryManager extends QueriesHelper {
     }
 
     return entries;
+  }
+
+  getMmAggregatorOracle({
+    address,
+    blockHeight,
+  }: {
+    address: string;
+    blockHeight: number;
+  }): MmAggregatorDictionaryData | null {
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.MM_AGGREGATOR_ORACLE
+    ).getEntityById(`${address}-${blockHeight}`);
+
+    if (!node) return null;
+
+    return node;
   }
 }

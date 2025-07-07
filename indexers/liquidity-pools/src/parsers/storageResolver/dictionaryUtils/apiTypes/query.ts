@@ -8,6 +8,8 @@ import {
   XykpoolsOrderBy,
   LbppoolFilter,
   LbppoolsOrderBy,
+  MmAggregatorOracleFilter,
+  MmAggregatorOraclesOrderBy,
 } from './types';
 
 export const GET_OMNIPOOL_BLOCKS_STORAGE_STATE = gql`
@@ -234,6 +236,31 @@ export const GET_ASSET_HIST_DATA_BLOCKS_STORAGE_STATE = gql`
         paraBlockHeight
       }
       totalCount
+    }
+  }
+`;
+
+export const GET_MM_AGGREGATOR_ORACLE_BLOCKS_STORAGE_STATE = gql`
+  query GetMmAggregatorOracleBlocksStorageState(
+    $filter: MmAggregatorOracleFilter
+    $first: Int!
+    $offset: Int!
+    $orderBy: [MmAggregatorOraclesOrderBy!]
+  ) {
+    mmAggregatorOracles(
+      filter: $filter
+      orderBy: $orderBy
+      first: $first
+      offset: $offset
+    ) {
+      nodes {
+        id
+        address
+        price
+        decimals
+        updatedAt
+        paraBlockHeight
+      }
     }
   }
 `;
