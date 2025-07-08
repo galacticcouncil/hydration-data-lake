@@ -81,6 +81,7 @@ export async function processAssetsHistoricalDataAtBlock({
         id: `${asset.id}-${block.height}`,
         asset,
 
+        assetRegistryId: asset.assetRegistryId ?? null,
         totalIssuance: totalIssuancePerAssetMap.get(assetRegistryId) ?? 0n,
         existentialDeposit:
           existentialDepositPerAssetMap.get(assetRegistryId)
@@ -195,29 +196,6 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
   if (!previousItem) {
     return true;
   }
-
-  // const overwriteProps = {
-  //   paraBlockHeight: null,
-  //   relayBlockHeight: null,
-  //   spotPrices: null,
-  //   assetPairVolumes: null,
-  //   asset: null,
-  //   id: null,
-  //   block: null,
-  // };
-  //
-  // const prevItemDecorated = {
-  //   ...previousItem,
-  //   ...overwriteProps,
-  // };
-  //
-  // const currentItemDecorated = {
-  //   ...currentRecord,
-  //   ...overwriteProps,
-  // };
-
-  // return blockHash(prevItemDecorated) !== blockHash(currentItemDecorated);
-  // return !isDeepEqual(prevItemDecorated, currentItemDecorated);
 
   let isEqual = true;
 
