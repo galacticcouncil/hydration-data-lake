@@ -151,6 +151,8 @@ export class RedisTimeSeriesManager {
     timestamp: number;
     keyPrefix?: string | number;
   }) {
+    if (!appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES) return;
+
     try {
       const key = this.getSeriesKey({ keyPrefix, name, assetAId, assetBId });
       await this.ensureTimeSeries(key, {
@@ -177,6 +179,8 @@ export class RedisTimeSeriesManager {
       keyPrefix?: string | number;
     }[]
   ) {
+    if (!appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES) return;
+
     try {
       const openClient = await this.getOpenClient();
 
@@ -236,6 +240,13 @@ export class RedisTimeSeriesManager {
     indexerId: string;
     bucketSizeMs: number;
   }): Promise<TimeSeriesPriceAndVolumeBuckets> {
+    const defaultResponse = {
+      priceData: new Map(),
+      volumeData: new Map(),
+    };
+
+    if (!appConfig.USE_HIST_DATA_FROM_REDIS_TIME_SERIES) return defaultResponse;
+
     try {
       const openClient = await this.getOpenClient();
 
@@ -340,10 +351,7 @@ export class RedisTimeSeriesManager {
       return resultFiltered;
     } catch (e) {
       console.log(e);
-      return {
-        priceData: new Map(),
-        volumeData: new Map(),
-      };
+      return defaultResponse;
     }
   }
 }

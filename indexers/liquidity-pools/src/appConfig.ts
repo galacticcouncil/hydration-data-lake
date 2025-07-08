@@ -254,6 +254,14 @@ export class AppConfig {
   @IsBoolean()
   readonly USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: boolean = false;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
+
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       AppConfig.instance = new AppConfig();

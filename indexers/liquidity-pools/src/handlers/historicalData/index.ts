@@ -1,6 +1,8 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  AssetsPairVolumeHistoricalData,
+  AssetSpotPriceHistoricalData,
   BatchLbppoolHistVolsList,
   BatchOmnipoolAssetHistVolsList,
   BatchStableswapHistVolsList,
@@ -8,6 +10,7 @@ import {
 } from '../../model';
 import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/assetHistoricalData';
 import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
+import { RedisTimeSeriesManager } from '../../utils/redisTimeSeriesManager';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -39,21 +42,29 @@ export class HistoricalDataManager {
 
   static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
     if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+      const assetsSpotPricesListToSave = Array.from(
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+      );
+      const assetsPairVolumesListToSave = Array.from(
+        ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
+      );
+
       await ctx.store.save(
         Array.from(ctx.batchState.state.assetsHistoricalDataBatch.values())
       );
-      await ctx.store.save(
-        Array.from(
-          ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
-        )
-      );
-      await ctx.store.save(
-        Array.from(
-          ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
-        )
-      );
+      await ctx.store.save(assetsSpotPricesListToSave);
+      await ctx.store.save(assetsPairVolumesListToSave);
       await ctx.store.save(
         Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
+      );
+
+      await this.commitAssetPricesToRedisTimeSeries(
+        assetsSpotPricesListToSave,
+        ctx
+      );
+      await this.commitAssetsPairVolumeToRedisTimeSeries(
+        assetsPairVolumesListToSave,
+        ctx
       );
       return;
     }
@@ -68,6 +79,10 @@ export class HistoricalDataManager {
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch,
         ctx
       );
+
+    const assetsPairVolumesHistDataToSaveList = Array.from(
+      ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
+    );
 
     for (const priceHistData of assetSpotPriceHistDataToSaveList) {
       assetHistDataToSaveMap.set(
@@ -84,13 +99,83 @@ export class HistoricalDataManager {
 
     await ctx.store.save(Array.from(assetHistDataToSaveMap.values()));
     await ctx.store.save(assetSpotPriceHistDataToSaveList);
-    await ctx.store.save(
-      Array.from(
-        ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
-      )
-    );
+    await ctx.store.save(assetsPairVolumesHistDataToSaveList);
     await ctx.store.save(
       Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
+    );
+
+    await this.commitAssetPricesToRedisTimeSeries(
+      assetSpotPriceHistDataToSaveList,
+      ctx
+    );
+    await this.commitAssetsPairVolumeToRedisTimeSeries(
+      assetsPairVolumesHistDataToSaveList,
+      ctx
+    );
+  }
+
+  static async commitAssetPricesToRedisTimeSeries(
+    src: AssetSpotPriceHistoricalData[],
+    ctx: SqdProcessorContext<Store>
+  ) {
+    if (
+      !src ||
+      !src.length ||
+      !ctx.appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES
+    )
+      return;
+
+    const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
+    await redisTimeSeriesManager.addMultiplePrices(
+      src
+        .filter(
+          (item) =>
+            !!item.assetIn.assetRegistryId && !!item.assetOut.assetRegistryId
+        )
+        .map((item) => ({
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: 'price',
+          assetAId: item.assetIn.assetRegistryId!,
+          assetBId: item.assetOut.assetRegistryId!,
+          timestamp: item.block.timestamp.getTime(),
+          value: +item.priceNormalised,
+        }))
+    );
+  }
+
+  static async commitAssetsPairVolumeToRedisTimeSeries(
+    src: AssetsPairVolumeHistoricalData[],
+    ctx: SqdProcessorContext<Store>
+  ) {
+    if (
+      !src ||
+      !src.length ||
+      !ctx.appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES
+    )
+      return;
+
+    const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
+    await redisTimeSeriesManager.addMultiplePrices(
+      src
+        .filter(
+          (item) =>
+            !!item.assetA.assetRegistryId && !!item.assetB.assetRegistryId
+        )
+        .map((item) => ({
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: 'volume',
+          assetAId:
+            +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
+              ? item.assetA.assetRegistryId!
+              : item.assetB.assetRegistryId!,
+          assetBId:
+            +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
+              ? item.assetB.assetRegistryId!
+              : item.assetA.assetRegistryId!,
+
+          timestamp: item.block.timestamp.getTime(),
+          value: +item.totalVolumeNormalised,
+        }))
     );
   }
 

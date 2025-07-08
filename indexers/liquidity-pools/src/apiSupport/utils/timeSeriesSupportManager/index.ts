@@ -44,6 +44,8 @@ export class TimeSeriesApiSupportManager {
   }
 
   async initAssetHistDataScraper() {
+    if (!appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES) return;
+
     console.log('initAssetHistDataScraper');
 
     const bullQueueClient = BullQueueClient.getInstance();
