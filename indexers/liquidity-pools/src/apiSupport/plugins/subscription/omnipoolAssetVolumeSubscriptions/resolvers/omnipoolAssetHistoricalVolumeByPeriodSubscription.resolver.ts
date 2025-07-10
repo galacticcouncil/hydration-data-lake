@@ -10,8 +10,8 @@ import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,
 } from '../../../sql/block.sql';
-import { getLatestOmnipoolAssetHistoricalVolumesBatchEntriesList } from '../../../sql/omnipoolAssetsVolumeByPeriod.sql';
-import { handleOmnipoolAssetHistoricalVolumesByPeriodAggregation } from '../../../query/omnipoolVolume/utils';
+import { getLatestOmnipoolAssetHistoricalVolumesBatchEntriesList } from '../../../sql/omnipool/omnipoolAssetsVolumeByPeriod.sql';
+import { handleOmnipoolAssetHistoricalVolumesByPeriodAggregation } from '../../../query/omnipool/omnipoolVolume/utils';
 
 export async function omnipoolAssetHistoricalVolumeByPeriodSubscriptionResolver(
   event: any,

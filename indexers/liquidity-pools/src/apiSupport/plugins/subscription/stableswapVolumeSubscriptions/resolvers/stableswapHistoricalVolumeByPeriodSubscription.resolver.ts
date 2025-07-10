@@ -10,8 +10,8 @@ import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,
 } from '../../../sql/block.sql';
-import { getLatestStableswapHistoricalVolumesBatchEntriesList } from '../../../sql/stableswapVolumeByPeriod.sql';
-import { handleStableswapHistoricalVolumesByPeriodAggregation } from '../../../query/stableswapVolume/utils';
+import { getLatestStableswapHistoricalVolumesBatchEntriesList } from '../../../sql/stableswap/stableswapVolumeByPeriod.sql';
+import { handleStableswapHistoricalVolumesByPeriodAggregation } from '../../../query/stableswap/stableswapVolume/utils';
 
 export async function stableswapHistoricalVolumeByPeriodSubscriptionResolver(
   event: any,

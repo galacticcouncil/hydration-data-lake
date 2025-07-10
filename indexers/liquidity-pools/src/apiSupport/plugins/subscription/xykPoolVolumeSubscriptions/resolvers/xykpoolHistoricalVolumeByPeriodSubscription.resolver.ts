@@ -5,9 +5,9 @@ import {
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
-import { getLatestXykpoolHistoricalVolumesBatchEntriesList } from '../../../sql/xykPoolsVolumeByPeriod.sql';
+import { getLatestXykpoolHistoricalVolumesBatchEntriesList } from '../../../sql/xykpool/xykPoolsVolumeByPeriod.sql';
 import { AggregationTimeRange } from '../../../../utils';
-import { handleXykPoolHistoricalVolumesByPeriodAggregation } from '../../../query/xykPoolsVolume/utils';
+import { handleXykPoolHistoricalVolumesByPeriodAggregation } from '../../../query/xykpool/xykPoolsVolume/utils';
 import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,

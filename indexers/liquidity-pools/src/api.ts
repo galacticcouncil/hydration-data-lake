@@ -6,14 +6,14 @@ import { postgraphile, makePluginHook } from 'postgraphile';
 import FilterPlugin from 'postgraphile-plugin-connection-filter';
 import { ProcessorStatusPlugin } from './apiSupport/plugins/query/processorStatus.plugin';
 import { AppConfig } from './appConfig';
-import { XykpoolsVolumePlugin } from './apiSupport/plugins/query/xykPoolsVolume';
+import { XykpoolsVolumePlugin } from './apiSupport/plugins/query/xykpool/xykPoolsVolume';
 import PgPubsub from '@graphile/pg-pubsub';
 import { runMigrations } from './apiSupport/apiMigrations/runMigrations';
 import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/xykPoolVolumeSubscriptions';
 import { getEnvPath } from './utils/helpers';
-import { OmnipoolAssetVolumePlugin } from './apiSupport/plugins/query/omnipoolVolume';
+import { OmnipoolAssetVolumePlugin } from './apiSupport/plugins/query/omnipool/omnipoolVolume';
 import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/omnipoolAssetVolumeSubscriptions';
-import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswapVolume';
+import { StableswapVolumePlugin } from './apiSupport/plugins/query/stableswap/stableswapVolume';
 import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/plugins/subscription/stableswapVolumeSubscriptions';
 import { NodeEnv } from './utils/types';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
@@ -23,13 +23,16 @@ import { handleProxyReqSubscan } from './apiSupport/proxyApiHandlers';
 import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
 import cors from 'cors';
 import { SwapPlugin } from './apiSupport/plugins/query/swap';
-import { StableswapYieldMetricsPlugin } from './apiSupport/plugins/query/stableswapYieldMetrics';
+import { StableswapYieldMetricsPlugin } from './apiSupport/plugins/query/stableswap/stableswapYieldMetrics';
 import { Request, Response, NextFunction } from 'express';
-import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipoolYieldMetrics';
-import { GlobalYieldMetricsPlugin } from './apiSupport/plugins/query/globalYieldMetrics';
+import { OmnipoolYieldMetricsPlugin } from './apiSupport/plugins/query/omnipool/omnipoolYieldMetrics';
 import { getBullBoardExpressAdapter } from './utils/processingPoolManager/bullBoard';
-import { AssetHistoricalDataPlugin } from './apiSupport/plugins/query/assetHistoricalData';
+import { AssetHistoricalDataPlugin } from './apiSupport/plugins/query/asset/assetHistoricalData';
 import { TimeSeriesApiSupportManager } from './apiSupport/utils/timeSeriesSupportManager';
+import { GlobalMetricsPlugin } from './apiSupport/plugins/query/metrics/globalMetrics';
+import { OmnipoolTvlMetricsPlugin } from './apiSupport/plugins/query/omnipool/omnipoolTvlMetrics';
+import { StableswapTvlMetricsPlugin } from './apiSupport/plugins/query/stableswap/stableswapTvlMetrics';
+import { XykpoolTvlMetricsPlugin } from './apiSupport/plugins/query/xykpool/xykpoolTvlMetrics';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -72,6 +75,7 @@ async function initializeServer() {
           ProcessorStatusPlugin,
           XykpoolsVolumePlugin,
           XykpoolsVolumeSubscriptionsPlugin,
+          XykpoolTvlMetricsPlugin,
           OmnipoolAssetVolumePlugin,
           OmnipoolAssetVolumeSubscriptionsPlugin,
           StableswapVolumePlugin,
@@ -79,8 +83,10 @@ async function initializeServer() {
           RoutedTradesSubscriptionsPlugin,
           SwapPlugin,
           StableswapYieldMetricsPlugin,
+          StableswapTvlMetricsPlugin,
           OmnipoolYieldMetricsPlugin,
-          GlobalYieldMetricsPlugin,
+          OmnipoolTvlMetricsPlugin,
+          GlobalMetricsPlugin,
           AssetHistoricalDataPlugin,
           makePgSmartTagsFromFilePlugin(
             getEnvPath('apiSupport/postgraphile.tags.json5')

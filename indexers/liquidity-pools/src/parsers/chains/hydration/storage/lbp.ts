@@ -57,7 +57,7 @@ async function getPoolData({
 
   let poolStorageData: LbpPoolStorageData | null = null;
 
-  if (storage.lbp.poolData.v176.is(block)) {
+  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
     const resp = await storage.lbp.poolData.v176.get(block, poolAddress);
 
     if (!resp) return null;
@@ -88,7 +88,7 @@ async function getAllPoolsData({
 
   if (block.specVersion < 176) return [];
 
-  if (storage.lbp.poolData.v176.is(block)) {
+  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
     for await (const page of storage.lbp.poolData.v176.getPairsPaged(
       500,
       block
@@ -122,7 +122,7 @@ async function getAllPoolIds({
 }: LbpGetAllPoolIdsInput): Promise<string[]> {
   if (block.specVersion < 176) return [];
 
-  if (storage.lbp.poolData.v176.is(block)) {
+  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
     const ids = await storage.lbp.poolData.v176.getKeys(block);
 
     return ids;
