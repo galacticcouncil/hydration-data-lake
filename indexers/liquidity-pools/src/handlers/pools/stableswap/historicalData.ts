@@ -140,6 +140,7 @@ async function getStableswapDataPromise({
     initialAmplificationChangeAtBlockHeight: poolStorageData.initialBlock,
     finalAmplificationChangeAtBlockHeight: poolStorageData.finalBlock,
     fee: poolStorageData.fee,
+    tvlTotalInRefAssetNorm: '0',
     ...getPoolPegsDetails(),
 
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
@@ -171,6 +172,7 @@ async function getStableswapDataPromise({
         poolHistoricalData: poolHistoricalDataEntity,
         freeBalance: data!.free,
         tradable: storageData?.tradable.bits ?? 15,
+        tvlInRefAssetNorm: '0',
 
         relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           blockHeader.height

@@ -34,6 +34,9 @@ export class XykpoolHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   assetBBalance!: bigint
 
+  @Column_("text", {nullable: true})
+  tvlInRefAssetNorm!: string | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

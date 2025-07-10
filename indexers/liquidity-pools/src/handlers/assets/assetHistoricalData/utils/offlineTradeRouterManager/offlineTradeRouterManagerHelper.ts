@@ -38,8 +38,6 @@ import {
   PoolType,
   IPersistentConstants,
   IPersistentMmOracleEntry,
-  AMOUNT_MAX,
-  TRADEABLE_DEFAULT,
 } from '../offlineSdk/sdk/src';
 // } from '@galacticcouncil/sdk';
 import {

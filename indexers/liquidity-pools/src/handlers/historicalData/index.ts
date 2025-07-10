@@ -26,18 +26,46 @@ export class HistoricalDataManager {
 
     await this.saveAssetRelatedDataBulk(ctx);
 
-    await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);
-    await ctx.store.save([...ctx.batchState.state.xykPoolVolumes.values()]);
-    await ctx.store.save([
-      ...ctx.batchState.state.omnipoolAssetVolumes.values(),
-    ]);
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.lbpPoolVolumes.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.xykPoolVolumes.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.omnipoolAssetVolumes.values())
+    );
 
-    await ctx.store.save([
-      ...ctx.batchState.state.stablepoolVolumeCollections.values(),
-    ]);
-    await ctx.store.save([
-      ...ctx.batchState.state.stablepoolAssetVolumes.values(),
-    ]);
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.stablepoolVolumeCollections.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.stablepoolAssetVolumes.values())
+    );
+
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
+    );
+    await ctx.store.save(
+      Array.from(
+        ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
+      )
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.aavePoolsHistoricalData.values())
+    );
   }
 
   static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {

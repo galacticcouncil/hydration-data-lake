@@ -42,6 +42,9 @@ export class Xykpool {
   @ManyToOne_(() => Asset, {nullable: true})
   shareToken!: Asset
 
+  @Column_("text", {nullable: true})
+  tvlInRefAssetNorm!: string | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   createdAtParaBlockHeight!: number

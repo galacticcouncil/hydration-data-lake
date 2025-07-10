@@ -23,6 +23,8 @@ import { LbpPoolBase, WeightedPoolToken, LbpMath } from '../../lbp';
 import { StableSwapOfflineUtils } from './StableSwapOfflineUtils';
 import { FeeUtils } from '../../../utils/fee';
 
+export const AMOUNT_MAX = BigInt('340282366920938463463374607431768211455');
+
 export class OfflinePoolUtils {
   private static readonly MAX_FINAL_WEIGHT = scale(bnum(100), 6);
 
@@ -382,6 +384,7 @@ export class OfflinePoolUtils {
       totalIssuance,
       tokens: StableSwapOfflineUtils.getPoolTokensAugmented({
         poolId: src.id,
+        poolTotalIssuance: totalIssuance,
         poolTokens: tokens,
         assets,
       }),

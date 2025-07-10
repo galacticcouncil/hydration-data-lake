@@ -122,7 +122,7 @@ export async function handleLbppoolHistoricalData(
                 assetsData.get(assetAEntity.assetRegistryId)?.free ?? BigInt(0),
               assetBBalance:
                 assetsData.get(assetBEntity.assetRegistryId)?.free ?? BigInt(0),
-
+              tvlInRefAssetNorm: '0',
               owner: await getOrCreateAccount({
                 ctx,
                 id: poolStorageData.owner,

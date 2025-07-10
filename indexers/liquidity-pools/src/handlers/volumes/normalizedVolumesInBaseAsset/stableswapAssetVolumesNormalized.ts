@@ -1,7 +1,7 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { calcVolumeNormalized } from './index';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { calcPriceNormalized } from '../../../utils/helpers';
 
 export function processStableswapAssetNormalizedVolumes({
   blockNumbersToProcess,
@@ -37,34 +37,34 @@ export function processStableswapAssetNormalizedVolumes({
 
     if (!assetSpotPriceNorm || !asset.decimals) continue;
 
-    assetVolsHistData.assetFeeVolNorm = calcVolumeNormalized({
-      volume: assetVolsHistData.assetFeeVol,
+    assetVolsHistData.assetFeeVolNorm = calcPriceNormalized({
+      amount: assetVolsHistData.assetFeeVol,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
 
-    assetVolsHistData.assetTotalFeesVolNorm = calcVolumeNormalized({
-      volume: assetVolsHistData.assetTotalFeesVol,
+    assetVolsHistData.assetTotalFeesVolNorm = calcPriceNormalized({
+      amount: assetVolsHistData.assetTotalFeesVol,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
-    assetVolsHistData.assetVolInNorm = calcVolumeNormalized({
-      volume: assetVolsHistData.assetVolIn,
+    assetVolsHistData.assetVolInNorm = calcPriceNormalized({
+      amount: assetVolsHistData.assetVolIn,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
-    assetVolsHistData.assetVolOutNorm = calcVolumeNormalized({
-      volume: assetVolsHistData.assetVolOut,
+    assetVolsHistData.assetVolOutNorm = calcPriceNormalized({
+      amount: assetVolsHistData.assetVolOut,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
-    assetVolsHistData.assetTotalVolInNorm = calcVolumeNormalized({
-      volume: assetVolsHistData.assetTotalVolIn,
+    assetVolsHistData.assetTotalVolInNorm = calcPriceNormalized({
+      amount: assetVolsHistData.assetTotalVolIn,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
-    assetVolsHistData.assetTotalVolOutNorm = calcVolumeNormalized({
-      volume: assetVolsHistData.assetTotalVolOut,
+    assetVolsHistData.assetTotalVolOutNorm = calcPriceNormalized({
+      amount: assetVolsHistData.assetTotalVolOut,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });

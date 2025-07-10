@@ -47,6 +47,9 @@ export class OmnipoolAssetHistoricalData {
   @Column_("int4", {nullable: false})
   tradable!: number
 
+  @Column_("text", {nullable: true})
+  tvlInRefAssetNorm!: string | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

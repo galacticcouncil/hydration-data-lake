@@ -740,6 +740,8 @@ type LbppoolHistoricalData @entity {
   weightCurve: String!
   fee: [Int!]!
 
+  tvlInRefAssetNorm: String
+
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   block: Block!
@@ -759,6 +761,7 @@ type Xykpool @entity {
   assetABalance: BigInt!
   assetBBalance: BigInt!
   shareToken: Asset!
+  tvlInRefAssetNorm: String
 
   createdAtParaBlockHeight: Int! @index
   createdAtRelayBlockHeight: Int!
@@ -873,6 +876,7 @@ type XykpoolHistoricalData @entity {
   assetB: Asset!
   assetABalance: BigInt!
   assetBBalance: BigInt!
+  tvlInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -980,6 +984,7 @@ type OmnipoolHistoricalData @entity {
   pool: Omnipool!
   assetsHistoricalData: [OmnipoolAssetHistoricalData!]!
     @derivedFrom(field: "poolHistoricalData")
+  tvlTotalInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -999,6 +1004,7 @@ type OmnipoolAssetHistoricalData @entity {
   assetProtocolShares: BigInt!
   freeBalance: BigInt!
   tradable: Int!
+  tvlInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1159,6 +1165,7 @@ type StableswapHistoricalData @entity {
   pegs: [[BigInt!]!]!
   maxPegUpdate: Int
   pegSources: [StableswapPegsSource!]
+  tvlTotalInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1173,6 +1180,7 @@ type StableswapAssetHistoricalData @entity {
   poolHistoricalData: StableswapHistoricalData!
   freeBalance: BigInt!
   tradable: Int
+  tvlInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

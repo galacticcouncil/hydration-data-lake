@@ -64,6 +64,9 @@ export class LbppoolHistoricalData {
   @Column_("int4", {array: true, nullable: false})
   fee!: (number)[]
 
+  @Column_("text", {nullable: true})
+  tvlInRefAssetNorm!: string | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

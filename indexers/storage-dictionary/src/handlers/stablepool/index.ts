@@ -121,29 +121,10 @@ export async function handleStablepoolStorage(
 
       const poolPegsData = allPoolsPegsDataMap.get(poolId)!;
 
-      let mmAggregatorOracleData = null;
-      for (const pegSrc of poolPegsData.source) {
-        if (pegSrc.sourceKind === 'MMOracle' && pegSrc.oracleName)
-          mmAggregatorOracleData = await handleMmAggregatorOracleHistoricalData(
-            {
-              address: pegSrc.oracleName,
-              ctx,
-              blockHeader: currentBlockHeader,
-            }
-          );
-      }
-
       let pegs = poolPegsData.current.map(([a, b]) => [
         a.toString(),
         b.toString(),
       ]);
-
-      if (mmAggregatorOracleData) {
-        const { price, decimals } = mmAggregatorOracleData;
-
-        const priceDenom = 10 ** decimals;
-        pegs = [[price.toString(), priceDenom.toString()]];
-      }
 
       return {
         pegs,

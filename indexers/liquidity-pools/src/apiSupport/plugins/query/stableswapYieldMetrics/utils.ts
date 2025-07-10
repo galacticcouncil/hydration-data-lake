@@ -7,7 +7,10 @@ import {
   getStableswapAssetSwapFeesByPeriod,
   getLatestStableswapAssetBalance,
 } from '../../sql/stableswapYieldMetrics.sql';
-import { getAllStableswapIds, getAssetsByStableswapIds } from '../../sql/stableswap.sql';
+import {
+  getAllStableswapIds,
+  getAssetsByStableswapIds,
+} from '../../sql/stableswap.sql';
 import {
   AggregationTimeRangeLabel,
   YieldMetricsInterval,
@@ -31,7 +34,6 @@ export async function handlestableswapYieldMetricsAggregation({
   interval: YieldMetricsInterval;
   pgClient: pg.Client;
 }): Promise<StableswapYieldMetricsAggregated[]> {
-
   let poolIdsToProcess = poolIds;
 
   if (!poolIdsToProcess || poolIdsToProcess.length === 0)

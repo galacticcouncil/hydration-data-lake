@@ -22,6 +22,9 @@ export class OmnipoolHistoricalData {
   @OneToMany_(() => OmnipoolAssetHistoricalData, e => e.poolHistoricalData)
   assetsHistoricalData!: OmnipoolAssetHistoricalData[]
 
+  @Column_("text", {nullable: true})
+  tvlTotalInRefAssetNorm!: string | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

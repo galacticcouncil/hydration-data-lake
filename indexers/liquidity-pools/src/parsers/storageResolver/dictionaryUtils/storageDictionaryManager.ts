@@ -471,7 +471,6 @@ export class StorageDictionaryManager extends QueriesHelper {
             data: page,
             dataKey: BlockCompressedDataKey.mmAggregatorOracle,
           });
-        console.dir(encodedPageData, { depth: null });
         data.push(encodedPageData);
       }
 

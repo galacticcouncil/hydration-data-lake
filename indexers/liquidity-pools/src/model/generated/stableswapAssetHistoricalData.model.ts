@@ -35,6 +35,9 @@ export class StableswapAssetHistoricalData {
   @Column_("int4", {nullable: true})
   tradable!: number | undefined | null
 
+  @Column_("text", {nullable: true})
+  tvlInRefAssetNorm!: string | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

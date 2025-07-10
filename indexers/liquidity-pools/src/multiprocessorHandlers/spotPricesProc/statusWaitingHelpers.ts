@@ -9,10 +9,14 @@ import {
 } from '../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 import {
+  prefetchAllAvailableLbppoolHistDataForBlocksRange,
   prefetchAllAvailableLbppoolVolumesForBlocksRange,
+  prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange,
   prefetchAllAvailableOmnipoolAssetVolumesForBlocksRange,
   prefetchAllAvailableRoutedTradesForBlocksRange,
+  prefetchAllAvailableStableswapHistDataForBlocksRange,
   prefetchAllAvailableStableswapVolumesForBlocksRange,
+  prefetchAllAvailableXykpoolHistDataForBlocksRange,
   prefetchAllAvailableXykpoolVolumesForBlocksRange,
 } from './prefetchHelpers';
 
@@ -173,6 +177,26 @@ export async function waitForSpotPricesRelatedHistoricalData(
       ctx,
     }),
     prefetchAllAvailableLbppoolVolumesForBlocksRange({
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
+      ctx,
+    }),
+    prefetchAllAvailableXykpoolHistDataForBlocksRange({
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
+      ctx,
+    }),
+    prefetchAllAvailableLbppoolHistDataForBlocksRange({
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
+      ctx,
+    }),
+    prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
+      fromBlockNumber: blocksToProcess[0],
+      toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
+      ctx,
+    }),
+    prefetchAllAvailableStableswapHistDataForBlocksRange({
       fromBlockNumber: blocksToProcess[0],
       toBlockNumber: blocksToProcess[blocksToProcess.length - 1],
       ctx,

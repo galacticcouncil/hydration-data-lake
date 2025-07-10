@@ -44,6 +44,7 @@ import {
 import { processPoolsNormalizedVolumes } from '../handlers/volumes/normalizedVolumesInBaseAsset';
 import { HistoricalDataManager } from '../handlers/historicalData';
 import { ProcessorStatusManager } from '../processorStatusManager';
+import { processPoolsTvlNormalized } from '../handlers/pools/normalizedTvlBaseAsset';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -209,6 +210,10 @@ export async function execAllInOneProcessorHandlers(
   console.time('processPoolsNormalizedVolumes');
   processPoolsNormalizedVolumes({ ctx });
   console.timeEnd('processPoolsNormalizedVolumes');
+
+  console.time('processPoolsTvlNormalized');
+  processPoolsTvlNormalized({ ctx });
+  console.timeEnd('processPoolsTvlNormalized');
 
   console.time('saveHistoricalDataBulk');
   await HistoricalDataManager.saveHistoricalDataBulk(ctx);

@@ -77,6 +77,7 @@ export async function handleXykPoolHistoricalData(
           assetB: pool.assetB,
           assetABalance: assetsData.get(pool.assetA.id)?.free ?? BigInt(0),
           assetBBalance: assetsData.get(pool.assetB.id)?.free ?? BigInt(0),
+          tvlInRefAssetNorm: '0',
 
           relayBlockHeight:
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
@@ -194,3 +195,6 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
 
   return !isEqual;
 }
+
+
+

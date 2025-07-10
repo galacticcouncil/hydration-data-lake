@@ -6,9 +6,9 @@ import {
   IPersistentStableSwapBasePegSource,
   PersistentAsset,
 } from '../types';
-import { AMOUNT_MAX, StableMath, StableSwapBase } from '../../stable';
+import { StableMath, StableSwapBase } from '../../stable';
 import { Asset } from '../../../types';
-import { OfflinePoolUtils } from './OfflinePoolUtils';
+import { AMOUNT_MAX, OfflinePoolUtils } from './OfflinePoolUtils';
 import { BigNumber } from '../../../utils/bignumber';
 import { TRADEABLE_DEFAULT } from '../../../consts';
 import { PoolFee, PoolToken } from '../../types';
@@ -151,10 +151,12 @@ export class StableSwapOfflineUtils {
 
   static getPoolTokensAugmented({
     poolId,
+    poolTotalIssuance,
     poolTokens,
     assets,
   }: {
     poolId: string;
+    poolTotalIssuance: string;
     poolTokens: PoolToken[];
     assets: Array<PersistentAsset>;
   }): PoolToken[] {
@@ -167,7 +169,7 @@ export class StableSwapOfflineUtils {
         id: poolShareAsset.id,
         decimals: poolShareAsset.decimals,
         symbol: poolShareAsset.symbol,
-        balance: AMOUNT_MAX.toString(),
+        balance: poolTotalIssuance,
         existentialDeposit: poolShareAsset.existentialDeposit,
         isSufficient: poolShareAsset.isSufficient,
         type: poolShareAsset.type,

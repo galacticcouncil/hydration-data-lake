@@ -319,9 +319,9 @@ export class TradeRouter extends Router {
       throw new RouteNotFound(assetIn, assetOut);
     }
 
-    // Get pools with assetIn (except virtual shares)
+    // Get pools with assetIn
     const assetInPools = pools.filter((pool) =>
-      pool.tokens.some((t) => t.id === assetIn && t.id !== pool.id)
+      pool.tokens.some((t) => t.id === assetIn)
     );
 
     // Get liquidity of assetIn sorted by DESC

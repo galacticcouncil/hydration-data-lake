@@ -72,6 +72,7 @@ export async function handleOmnipoolHistoricalData(
               new OmnipoolHistoricalData({
                 id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`,
                 pool: ctx.batchState.state.omnipoolEntity!,
+                tvlTotalInRefAssetNorm: '0',
 
                 relayBlockHeight:
                   ctx.batchState.getRelayChainBlockDataFromCache(
@@ -151,6 +152,7 @@ export async function handleOmnipoolHistoricalData(
                 ? hubAssetTradeability!.bits
                 : assetStateStorageData!.tradable.bits,
             freeBalance: assetsBalances.free,
+            tvlInRefAssetNorm: '0',
 
             relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
               blockHeader.height

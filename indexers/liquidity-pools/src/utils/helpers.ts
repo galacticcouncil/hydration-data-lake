@@ -216,3 +216,17 @@ export function getPriceRouteDecorated(route: Hop[]): string[][] {
     hop.assetOut,
   ]);
 }
+
+export function calcPriceNormalized({
+  amount,
+  assetDecimals,
+  spotPrice,
+}: {
+  amount: bigint;
+  spotPrice: string;
+  assetDecimals: number;
+}): string {
+  return fromExponentialToDecimalNotation(amount.toString(), assetDecimals)
+    .multipliedBy(spotPrice)
+    .toFixed();
+}
