@@ -231,11 +231,12 @@ export function calcPriceNormalized({
     .toFixed();
 }
 
-export function tryExecOrReturnFallback<T>(fn: () => Promise<T>, fallback: T) {
-  try {
-    return fn();
-  } catch (e) {
-    console.log(e);
+export async function tryExecOrReturnFallback<T>(
+  fn: () => Promise<T>,
+  fallback: T
+): Promise<T> {
+  return fn().catch((e) => {
+    console.error(e);
     return fallback;
-  }
+  });
 }

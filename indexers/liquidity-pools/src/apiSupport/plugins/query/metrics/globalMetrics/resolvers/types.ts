@@ -25,10 +25,11 @@ export type AssetFarmsYieldMetrics = {
 };
 
 export type PlatformTotalTvl = {
-  totalTvlNorm: string;
+  totalTvlDecoratedNorm: string;
   omnipoolTvlNorm: string;
   stablepoolsTvlNorm: string;
   xykpoolsTvlNorm: string;
+  mmSupplyTvlNorm: string;
   paraBlockHeight: number;
 };
 

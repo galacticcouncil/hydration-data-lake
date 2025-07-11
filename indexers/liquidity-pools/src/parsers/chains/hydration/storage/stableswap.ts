@@ -71,18 +71,22 @@ async function getAllPoolsData({
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
-      for await (const page of storage.stableswap.pools.v183.getPairsPaged(
-        500,
-        block
-      )) {
-        pairsPaged.push(
-          ...page
-            .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
-            .map(([poolId, poolInfo]) => ({
-              poolId,
-              data: poolInfo!,
-            }))
-        );
+      try {
+        for await (const page of storage.stableswap.pools.v183.getPairsPaged(
+          500,
+          block
+        )) {
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
+              .map(([poolId, poolInfo]) => ({
+                poolId,
+                data: poolInfo!,
+              }))
+          );
+        }
+      } catch (e) {
+        throw e;
       }
       return pairsPaged;
     }, []);
@@ -218,31 +222,35 @@ async function getAllPoolsPegs({
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
-      for await (const page of storage.stableswap.poolPegs.v305.getPairsPaged(
-        500,
-        block
-      )) {
-        pairsPaged.push(
-          ...page
-            .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
-            .map(([poolId, pegsInfo]) => ({
-              poolId,
-              data: {
-                maxPegUpdate: pegsInfo!.maxPegUpdate,
-                current: pegsInfo!.current,
-                source: pegsInfo!.source.map((s) => ({
-                  sourceKind: s.__kind,
-                  oracleName: fetOracleNameFromStableswapPegsSource(s),
-                  oraclePeriod:
-                    s.__kind === 'Oracle'
-                      ? (s.value[1].__kind as EmaOraclePeriod)
-                      : undefined,
-                  oracleAsset: s.__kind === 'Oracle' ? s.value[2] : undefined,
-                  valuePoints: s.__kind === 'Value' ? s.value : undefined,
-                })),
-              },
-            }))
-        );
+      try {
+        for await (const page of storage.stableswap.poolPegs.v305.getPairsPaged(
+          500,
+          block
+        )) {
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
+              .map(([poolId, pegsInfo]) => ({
+                poolId,
+                data: {
+                  maxPegUpdate: pegsInfo!.maxPegUpdate,
+                  current: pegsInfo!.current,
+                  source: pegsInfo!.source.map((s) => ({
+                    sourceKind: s.__kind,
+                    oracleName: fetOracleNameFromStableswapPegsSource(s),
+                    oraclePeriod:
+                      s.__kind === 'Oracle'
+                        ? (s.value[1].__kind as EmaOraclePeriod)
+                        : undefined,
+                    oracleAsset: s.__kind === 'Oracle' ? s.value[2] : undefined,
+                    valuePoints: s.__kind === 'Value' ? s.value : undefined,
+                  })),
+                },
+              }))
+          );
+        }
+      } catch (e) {
+        throw e;
       }
       return pairsPaged;
     }, null);
@@ -251,32 +259,37 @@ async function getAllPoolsPegs({
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
-      for await (const page of storage.stableswap.poolPegs.v323.getPairsPaged(
-        500,
-        block
-      )) {
-        pairsPaged.push(
-          ...page
-            .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
-            .map(([poolId, pegsInfo]) => ({
-              poolId,
-              data: {
-                maxPegUpdate: pegsInfo!.maxPegUpdate,
-                current: pegsInfo!.current,
-                source: pegsInfo!.source.map((s) => ({
-                  sourceKind: s.__kind,
-                  oracleName: fetOracleNameFromStableswapPegsSource(s),
-                  oraclePeriod:
-                    s.__kind === 'Oracle'
-                      ? (s.value[1].__kind as EmaOraclePeriod)
-                      : undefined,
-                  oracleAsset: s.__kind === 'Oracle' ? s.value[2] : undefined,
-                  valuePoints: s.__kind === 'Value' ? s.value : undefined,
-                })),
-              },
-            }))
-        );
+      try {
+        for await (const page of storage.stableswap.poolPegs.v323.getPairsPaged(
+          500,
+          block
+        )) {
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
+              .map(([poolId, pegsInfo]) => ({
+                poolId,
+                data: {
+                  maxPegUpdate: pegsInfo!.maxPegUpdate,
+                  current: pegsInfo!.current,
+                  source: pegsInfo!.source.map((s) => ({
+                    sourceKind: s.__kind,
+                    oracleName: fetOracleNameFromStableswapPegsSource(s),
+                    oraclePeriod:
+                      s.__kind === 'Oracle'
+                        ? (s.value[1].__kind as EmaOraclePeriod)
+                        : undefined,
+                    oracleAsset: s.__kind === 'Oracle' ? s.value[2] : undefined,
+                    valuePoints: s.__kind === 'Value' ? s.value : undefined,
+                  })),
+                },
+              }))
+          );
+        }
+      } catch (e) {
+        throw e;
       }
+
       return pairsPaged;
     }, null);
   }

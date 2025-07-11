@@ -26,10 +26,11 @@ export const GlobalMetricsPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         type PlatformTotalTvl {
-          totalTvlNorm: String!
+          totalTvlDecoratedNorm: String!
           omnipoolTvlNorm: String!
           stablepoolsTvlNorm: String!
           xykpoolsTvlNorm: String!
+          mmSupplyTvlNorm: String!
           paraBlockHeight: Int!
         }
 

@@ -36,4 +36,7 @@ export class ProcessorStatus {
 
   @Column_("int4", {nullable: true})
   xykpoolHistDataLatestBlock!: number | undefined | null
+
+  @Column_("int4", {nullable: true})
+  aavepoolHistDataLatestBlock!: number | undefined | null
 }

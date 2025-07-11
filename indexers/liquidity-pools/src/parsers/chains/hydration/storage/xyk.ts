@@ -145,21 +145,26 @@ async function getPoolShareTokenPairsMany({
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
-      for await (const page of storage.xyk.shareToken.v183.getPairsPaged(
-        500,
-        block
-      )) {
-        pairsPaged.push(
-          ...page
-            .filter((p) => !!p && !!p[1])
-            .map(
-              ([poolId, shareTokenId]): XykPoolShareTokenPair => ({
-                poolId,
-                shareTokenId: shareTokenId!,
-              })
-            )
-        );
+      try {
+        for await (const page of storage.xyk.shareToken.v183.getPairsPaged(
+          500,
+          block
+        )) {
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && !!p[1])
+              .map(
+                ([poolId, shareTokenId]): XykPoolShareTokenPair => ({
+                  poolId,
+                  shareTokenId: shareTokenId!,
+                })
+              )
+          );
+        }
+      } catch (e) {
+        throw e;
       }
+
       return pairsPaged;
     }, []);
   }

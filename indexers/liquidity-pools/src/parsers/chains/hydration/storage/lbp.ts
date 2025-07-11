@@ -94,28 +94,33 @@ async function getAllPoolsData({
 
   if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
     return tryExecOrReturnFallback(async () => {
-      for await (const page of storage.lbp.poolData.v176.getPairsPaged(
-        500,
-        block
-      ))
-        pairsPaged.push(
-          ...page
-            .filter((p) => !!p && !!p[1])
-            .map(([poolAddress, poolData]) => ({
-              poolAddress,
-              assetAId: poolData!.assets[0],
-              assetBId: poolData!.assets[1],
-              owner: poolData!.owner,
-              start: poolData!.start,
-              end: poolData!.end,
-              initialWeight: poolData!.initialWeight,
-              finalWeight: poolData!.finalWeight,
-              weightCurve: poolData!.weightCurve,
-              fee: poolData!.fee,
-              feeCollector: poolData!.feeCollector,
-              repayTarget: BigInt(poolData!.repayTarget),
-            }))
-        );
+      try {
+        for await (const page of storage.lbp.poolData.v176.getPairsPaged(
+          500,
+          block
+        ))
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && !!p[1])
+              .map(([poolAddress, poolData]) => ({
+                poolAddress,
+                assetAId: poolData!.assets[0],
+                assetBId: poolData!.assets[1],
+                owner: poolData!.owner,
+                start: poolData!.start,
+                end: poolData!.end,
+                initialWeight: poolData!.initialWeight,
+                finalWeight: poolData!.finalWeight,
+                weightCurve: poolData!.weightCurve,
+                fee: poolData!.fee,
+                feeCollector: poolData!.feeCollector,
+                repayTarget: BigInt(poolData!.repayTarget),
+              }))
+          );
+      } catch (e) {
+        throw e;
+      }
+
       return pairsPaged;
     }, []);
   }

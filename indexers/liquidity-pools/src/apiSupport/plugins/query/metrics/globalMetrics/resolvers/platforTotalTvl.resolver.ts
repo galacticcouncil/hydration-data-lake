@@ -14,6 +14,7 @@ import {
   getXykpoolsTvl,
 } from '../../../../sql/xykpool/xykpoolsTvl.sql';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { getLatestTotalPlatformSupplyAmount } from '../../../../sql/moneyMarket/supply.sql';
 
 export async function platformTotalTvlResolver(
   parentObject: any,
@@ -60,12 +61,23 @@ export async function platformTotalTvlResolver(
     para_block_height: number;
   }>(getAllXykpoolsTvl);
 
+  const totalMmSupply = await pgClient.query<{
+    pool_id: string;
+    tvl_in_ref_asset_norm: string;
+    para_block_height: number;
+  }>(getLatestTotalPlatformSupplyAmount);
+
   const omnipoolTvlTotal = BigNumber(
     omnipoolTvl.rows[0]?.tvl_total_in_ref_asset_norm || '0'
   ).minus(omnipoolH2oTvl.rows[0]?.tvl_in_ref_asset_norm || '0');
 
   const stableswapsTvlTotal = stableswapsTvl.rows.reduce(
     (acc, val) => acc.plus(val.tvl_total_in_ref_asset_norm),
+    BigNumber(0)
+  );
+
+  const mmSupplyTvlTotal = totalMmSupply.rows.reduce(
+    (acc, val) => acc.plus(val.tvl_in_ref_asset_norm),
     BigNumber(0)
   );
   const xykpoolsTvlTotal = xykpoolsTvl.rows.reduce(
@@ -75,13 +87,16 @@ export async function platformTotalTvlResolver(
 
   const grandTotal = omnipoolTvlTotal
     .plus(stableswapsTvlTotal)
-    .plus(xykpoolsTvlTotal);
+    .plus(xykpoolsTvlTotal)
+    .plus(mmSupplyTvlTotal);
 
   result.nodes.push({
-    totalTvlNorm: grandTotal.toFixed(),
+    totalTvlDecoratedNorm: grandTotal.toFixed(),
     omnipoolTvlNorm: omnipoolTvlTotal.toFixed(),
     stablepoolsTvlNorm: stableswapsTvlTotal.toFixed(),
     xykpoolsTvlNorm: xykpoolsTvlTotal.toFixed(),
+    mmSupplyTvlNorm: mmSupplyTvlTotal.toFixed(),
+
     paraBlockHeight:
       omnipoolTvl.rows[0]?.para_block_height ||
       stableswapsTvl.rows[0]?.para_block_height ||

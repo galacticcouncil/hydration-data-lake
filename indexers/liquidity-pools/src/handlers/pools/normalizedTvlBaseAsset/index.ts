@@ -4,6 +4,7 @@ import { processXykPoolsNormalizedTvl } from './xykPoolTvlNormalized';
 import { processLbppoolsNormalizedTvl } from './lbpPoolTvlNormalized';
 import { processStableswapNormalizedTvl } from './stableswapAssetTvlNormalized';
 import { processOmnipoolNormalizedTvl } from './omnipoolAssetTvlNormalized';
+import { processAavepoolsNormalizedTvl } from './aavepoolTvlNormalized';
 
 export function processPoolsTvlNormalized({
   blockNumbersToProcess,
@@ -16,4 +17,5 @@ export function processPoolsTvlNormalized({
   processLbppoolsNormalizedTvl({ ctx, blockNumbersToProcess });
   processStableswapNormalizedTvl({ ctx, blockNumbersToProcess });
   processOmnipoolNormalizedTvl({ ctx, blockNumbersToProcess });
+  processAavepoolsNormalizedTvl({ ctx, blockNumbersToProcess });
 }

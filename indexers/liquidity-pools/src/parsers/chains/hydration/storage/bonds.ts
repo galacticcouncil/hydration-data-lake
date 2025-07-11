@@ -38,19 +38,23 @@ async function getBondsAll({
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
-      for await (const page of storage.bonds.bonds.v176.getPairsPaged(
-        500,
-        block
-      ))
-        pairsPaged.push(
-          ...page
-            .filter((p) => !!p && !!p[1])
-            .map(([bondId, bondDetails]) => ({
-              bondId,
-              underlyingAsset: bondDetails![0],
-              maturity: bondDetails![1],
-            }))
-        );
+      try {
+        for await (const page of storage.bonds.bonds.v176.getPairsPaged(
+          500,
+          block
+        ))
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && !!p[1])
+              .map(([bondId, bondDetails]) => ({
+                bondId,
+                underlyingAsset: bondDetails![0],
+                maturity: bondDetails![1],
+              }))
+          );
+      } catch (e) {
+        throw e;
+      }
       return pairsPaged;
     }, []);
   }

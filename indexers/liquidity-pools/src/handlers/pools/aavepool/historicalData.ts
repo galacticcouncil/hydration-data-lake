@@ -71,6 +71,8 @@ export async function handleAavepoolHistoricalData(
           liquidityIn: poolData.data.liquidityIn,
           liquidityOut: poolData.data.liquidityOut,
 
+          tvlInRefAssetNorm: '0',
+
           relayBlockHeight:
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,

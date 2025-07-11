@@ -38,25 +38,30 @@ async function getAssetFeesAll({
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
-      for await (const page of storage.dynamicFees.assetFee.v170.getPairsPaged(
-        500,
-        block
-      ))
-        pairsPaged.push(
-          ...page
-            .filter((p) => !!p && !!p[1])
-            .map(([assetId, fees]): AssetDynamicFeeData | null => {
-              if (!fees) return null;
+      try {
+        for await (const page of storage.dynamicFees.assetFee.v170.getPairsPaged(
+          500,
+          block
+        ))
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && !!p[1])
+              .map(([assetId, fees]): AssetDynamicFeeData | null => {
+                if (!fees) return null;
 
-              return {
-                assetId,
-                assetFee: fees.assetFee,
-                protocolFee: fees.protocolFee,
-                timestamp: fees.timestamp,
-              };
-            })
-            .filter((resp) => !!resp)
-        );
+                return {
+                  assetId,
+                  assetFee: fees.assetFee,
+                  protocolFee: fees.protocolFee,
+                  timestamp: fees.timestamp,
+                };
+              })
+              .filter((resp) => !!resp)
+          );
+      } catch (e) {
+        throw e;
+      }
+
       return pairsPaged;
     }, []);
   }

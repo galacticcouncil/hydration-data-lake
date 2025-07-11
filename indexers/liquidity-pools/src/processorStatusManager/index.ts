@@ -54,6 +54,7 @@ export class ProcessorStatusManager {
       stableswapHistDataLatestBlock: 0,
       omnipoolHistDataLatestBlock: 0,
       xykpoolHistDataLatestBlock: 0,
+      aavepoolHistDataLatestBlock: 0,
     });
 
     if (ensure) await this.ctx.store.save(statusEntity);
@@ -82,6 +83,8 @@ export class ProcessorStatusManager {
       status.omnipoolHistDataLatestBlock = payload.omnipoolHistDataLatestBlock;
     if (payload.xykpoolHistDataLatestBlock)
       status.xykpoolHistDataLatestBlock = payload.xykpoolHistDataLatestBlock;
+    if (payload.aavepoolHistDataLatestBlock)
+      status.aavepoolHistDataLatestBlock = payload.aavepoolHistDataLatestBlock;
 
     await this.ctx.store.save(status);
   }

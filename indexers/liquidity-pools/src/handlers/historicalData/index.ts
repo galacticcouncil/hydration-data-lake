@@ -75,6 +75,7 @@ export class HistoricalDataManager {
       xykpoolHistDataLatestBlock: latestBatchBlockHeight,
       omnipoolHistDataLatestBlock: latestBatchBlockHeight,
       stableswapHistDataLatestBlock: latestBatchBlockHeight,
+      aavepoolHistDataLatestBlock: latestBatchBlockHeight,
     });
   }
 

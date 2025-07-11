@@ -18,6 +18,7 @@ type ProcessorStatus @entity {
   stableswapHistDataLatestBlock: Int
   omnipoolHistDataLatestBlock: Int
   xykpoolHistDataLatestBlock: Int
+  aavepoolHistDataLatestBlock: Int
 }
 
 # ======================================================================================================================
@@ -1211,6 +1212,8 @@ type AavepoolHistoricalData @entity {
 
   liquidityIn: BigInt!
   liquidityOut: BigInt!
+
+  tvlInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
