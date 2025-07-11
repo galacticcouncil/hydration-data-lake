@@ -65,7 +65,7 @@ async function getAllPoolsData({
   if (block.specVersion < 183) return [];
 
   try {
-    if (storage.stableswap.pools.v183.is(block)) {
+    if (storage.stableswap.pools.v183.is(block) || block.specVersion >= 183) {
       const pairsPaged = [];
 
       for await (const page of storage.stableswap.pools.v183.getPairsPaged(

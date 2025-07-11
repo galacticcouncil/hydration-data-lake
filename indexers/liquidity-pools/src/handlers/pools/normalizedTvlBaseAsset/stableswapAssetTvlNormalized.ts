@@ -42,9 +42,9 @@ export function processStableswapNormalizedTvl({
       assetSpotPriceNorm = '1';
 
     if (!assetSpotPriceNorm || !asset.decimals) {
-      console.log(
-        `${asset.assetRegistryId} has no spot price or decimals. Skipping.`
-      );
+      // console.log(
+      //   `${asset.assetRegistryId} has no spot price or decimals. Skipping.`
+      // );
       continue;
     }
 
