@@ -230,3 +230,12 @@ export function calcPriceNormalized({
     .multipliedBy(spotPrice)
     .toFixed();
 }
+
+export function tryExecOrReturnFallback<T>(fn: () => Promise<T>, fallback: T) {
+  try {
+    return fn();
+  } catch (e) {
+    console.log(e);
+    return fallback;
+  }
+}

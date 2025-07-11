@@ -5,7 +5,10 @@ import {
   GetBondByIdInput,
   GetBondsAllInput,
 } from '../../../types/storage';
-import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
+import {
+  hexToStrWithNullCharCheck,
+  tryExecOrReturnFallback,
+} from '../../../../utils/helpers';
 import { AssetType } from '../../../../model';
 
 async function getBond({
@@ -31,20 +34,25 @@ async function getBondsAll({
 }: GetBondsAllInput): Promise<BondDetails[]> {
   if (block.specVersion < 176) return [];
 
-  if (storage.bonds.bonds.v176.is(block)) {
-    const pairsPaged = [];
+  if (storage.bonds.bonds.v176.is(block) || block.specVersion >= 176) {
+    return tryExecOrReturnFallback(async () => {
+      const pairsPaged = [];
 
-    for await (const page of storage.bonds.bonds.v176.getPairsPaged(500, block))
-      pairsPaged.push(
-        ...page
-          .filter((p) => !!p && !!p[1])
-          .map(([bondId, bondDetails]) => ({
-            bondId,
-            underlyingAsset: bondDetails![0],
-            maturity: bondDetails![1],
-          }))
-      );
-    return pairsPaged;
+      for await (const page of storage.bonds.bonds.v176.getPairsPaged(
+        500,
+        block
+      ))
+        pairsPaged.push(
+          ...page
+            .filter((p) => !!p && !!p[1])
+            .map(([bondId, bondDetails]) => ({
+              bondId,
+              underlyingAsset: bondDetails![0],
+              maturity: bondDetails![1],
+            }))
+        );
+      return pairsPaged;
+    }, []);
   }
 
   throw new UnknownVersionError('storage.bonds.bonds');

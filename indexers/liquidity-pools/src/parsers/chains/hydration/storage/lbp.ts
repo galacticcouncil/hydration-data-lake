@@ -9,6 +9,7 @@ import {
   LbpPoolStorageData,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
 function getConstants({ block }: GetConstantsInput): LbpConstants | null {
   if (block.specVersion < 176) return null;
@@ -57,8 +58,8 @@ async function getPoolData({
 
   let poolStorageData: LbpPoolStorageData | null = null;
 
-  try {
-    if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+    return tryExecOrReturnFallback(async () => {
       const resp = await storage.lbp.poolData.v176.get(block, poolAddress);
 
       if (!resp) return null;
@@ -78,10 +79,7 @@ async function getPoolData({
         repayTarget: BigInt(resp.repayTarget),
       };
       return poolStorageData;
-    }
-  } catch (e) {
-    console.log(e);
-    return null;
+    }, null);
   }
 
   throw new UnknownVersionError('storage.lbp.poolData');
@@ -94,8 +92,8 @@ async function getAllPoolsData({
 
   if (block.specVersion < 176) return [];
 
-  try {
-    if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+    return tryExecOrReturnFallback(async () => {
       for await (const page of storage.lbp.poolData.v176.getPairsPaged(
         500,
         block
@@ -119,10 +117,7 @@ async function getAllPoolsData({
             }))
         );
       return pairsPaged;
-    }
-  } catch (e) {
-    console.log(e);
-    return [];
+    }, []);
   }
 
   throw new UnknownVersionError('storage.lbp.poolData');
@@ -133,15 +128,11 @@ async function getAllPoolIds({
 }: LbpGetAllPoolIdsInput): Promise<string[]> {
   if (block.specVersion < 176) return [];
 
-  try {
-    if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+    return tryExecOrReturnFallback(async () => {
       const ids = await storage.lbp.poolData.v176.getKeys(block);
-
       return ids;
-    }
-  } catch (e) {
-    console.log(e);
-    return [];
+    }, []);
   }
   throw new UnknownVersionError('storage.lbp.poolData');
 }

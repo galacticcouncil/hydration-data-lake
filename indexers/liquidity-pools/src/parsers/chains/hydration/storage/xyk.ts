@@ -13,6 +13,7 @@ import {
   XykPoolShareTokenPair,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
 function getConstants({ block }: GetConstantsInput): XykConstants {
   let exchangeFee = null;
@@ -69,18 +70,20 @@ async function getPoolAssets({
 }: XykGetAssetsInput): Promise<XykPoolAssetIds | null> {
   if (block.specVersion < 183) return null;
 
-  if (storage.xyk.poolAssets.v183.is(block)) {
-    const resp = await storage.xyk.poolAssets.v183.get(block, poolAddress);
+  if (storage.xyk.poolAssets.v183.is(block) || block.specVersion >= 183) {
+    return tryExecOrReturnFallback(async () => {
+      const resp = await storage.xyk.poolAssets.v183.get(block, poolAddress);
 
-    if (!resp) return null;
+      if (!resp) return null;
 
-    const [assetAId, assetBId] = resp;
+      const [assetAId, assetBId] = resp;
 
-    return {
-      assetAId,
-      assetBId,
-      poolAddress,
-    };
+      return {
+        assetAId,
+        assetBId,
+        poolAddress,
+      };
+    }, null);
   }
 
   throw new UnknownVersionError('storage.xyk.poolAssets');
@@ -94,20 +97,22 @@ async function getPoolData({
 
   let poolAssetIds: XykPoolAssetIds | null = null;
 
-  if (storage.xyk.poolAssets.v183.is(block)) {
-    const resp = await storage.xyk.poolAssets.v183.get(block, poolAddress);
-    if (resp) {
-      const [assetAId, assetBId] = resp;
+  if (storage.xyk.poolAssets.v183.is(block) || block.specVersion >= 183) {
+    return tryExecOrReturnFallback(async () => {
+      const resp = await storage.xyk.poolAssets.v183.get(block, poolAddress);
+      if (resp) {
+        const [assetAId, assetBId] = resp;
 
-      poolAssetIds = {
-        assetAId,
-        assetBId,
-        poolAddress,
-      };
+        poolAssetIds = {
+          assetAId,
+          assetBId,
+          poolAddress,
+        };
 
-      return poolAssetIds;
-    }
-    return null;
+        return poolAssetIds;
+      }
+      return null;
+    }, null);
   }
   throw new UnknownVersionError('storage.xyk.poolAssets');
 }
@@ -118,12 +123,14 @@ async function getShareToken({
 }: XykGetShareTokenInput): Promise<number | null> {
   if (block.specVersion < 183) return null;
 
-  if (storage.xyk.shareToken.v183.is(block)) {
-    const resp = await storage.xyk.shareToken.v183.get(block, poolAddress);
+  if (storage.xyk.shareToken.v183.is(block) || block.specVersion >= 183) {
+    return tryExecOrReturnFallback(async () => {
+      const resp = await storage.xyk.shareToken.v183.get(block, poolAddress);
 
-    if (resp === undefined) return null;
+      if (resp === undefined) return null;
 
-    return resp;
+      return resp;
+    }, null);
   }
 
   throw new UnknownVersionError('storage.xyk.shareToken');
@@ -134,25 +141,27 @@ async function getPoolShareTokenPairsMany({
 }: XykGetPoolShareTokenPairsManyInput): Promise<XykPoolShareTokenPair[]> {
   if (block.specVersion < 183) return [];
 
-  if (storage.xyk.shareToken.v183.is(block)) {
-    const pairsPaged = [];
+  if (storage.xyk.shareToken.v183.is(block) || block.specVersion >= 183) {
+    return tryExecOrReturnFallback(async () => {
+      const pairsPaged = [];
 
-    for await (const page of storage.xyk.shareToken.v183.getPairsPaged(
-      500,
-      block
-    )) {
-      pairsPaged.push(
-        ...page
-          .filter((p) => !!p && !!p[1])
-          .map(
-            ([poolId, shareTokenId]): XykPoolShareTokenPair => ({
-              poolId,
-              shareTokenId: shareTokenId!,
-            })
-          )
-      );
-    }
-    return pairsPaged;
+      for await (const page of storage.xyk.shareToken.v183.getPairsPaged(
+        500,
+        block
+      )) {
+        pairsPaged.push(
+          ...page
+            .filter((p) => !!p && !!p[1])
+            .map(
+              ([poolId, shareTokenId]): XykPoolShareTokenPair => ({
+                poolId,
+                shareTokenId: shareTokenId!,
+              })
+            )
+        );
+      }
+      return pairsPaged;
+    }, []);
   }
 
   throw new UnknownVersionError('storage.xyk.shareToken');
