@@ -64,23 +64,28 @@ async function getAllPoolsData({
 }: GetDataAtBlockInput): Promise<StablepoolAllPoolsInfoWithPoolId[] | null> {
   if (block.specVersion < 183) return [];
 
-  if (storage.stableswap.pools.v183.is(block)) {
-    const pairsPaged = [];
+  try {
+    if (storage.stableswap.pools.v183.is(block)) {
+      const pairsPaged = [];
 
-    for await (const page of storage.stableswap.pools.v183.getPairsPaged(
-      500,
-      block
-    )) {
-      pairsPaged.push(
-        ...page
-          .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
-          .map(([poolId, poolInfo]) => ({
-            poolId,
-            data: poolInfo!,
-          }))
-      );
+      for await (const page of storage.stableswap.pools.v183.getPairsPaged(
+        500,
+        block
+      )) {
+        pairsPaged.push(
+          ...page
+            .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
+            .map(([poolId, poolInfo]) => ({
+              poolId,
+              data: poolInfo!,
+            }))
+        );
+      }
+      return pairsPaged;
     }
-    return pairsPaged;
+  } catch (e) {
+    console.log(e);
+    return [];
   }
 
   throw new UnknownVersionError('storage.stableswap.pools');
