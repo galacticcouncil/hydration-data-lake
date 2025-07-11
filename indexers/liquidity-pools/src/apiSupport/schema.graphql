@@ -116497,6 +116497,9 @@ type ProcessorStatus {
   initialIndexingStartedAt: Datetime!
   initialIndexingFinishedAt: Datetime
   latestProcessedBlock: Int!
+  stableswapHistDataLatestBlock: Int
+  omnipoolHistDataLatestBlock: Int
+  xykpoolHistDataLatestBlock: Int
 }
 
 """A `ProcessorStatus` edge in the connection."""
@@ -116566,6 +116569,15 @@ type ProcessorStatusSumAggregates {
 
   """Sum of latestProcessedBlock across the matching connection"""
   latestProcessedBlock: BigInt!
+
+  """Sum of stableswapHistDataLatestBlock across the matching connection"""
+  stableswapHistDataLatestBlock: BigInt!
+
+  """Sum of omnipoolHistDataLatestBlock across the matching connection"""
+  omnipoolHistDataLatestBlock: BigInt!
+
+  """Sum of xykpoolHistDataLatestBlock across the matching connection"""
+  xykpoolHistDataLatestBlock: BigInt!
 }
 
 type ProcessorStatusDistinctCountAggregates {
@@ -116594,6 +116606,21 @@ type ProcessorStatusDistinctCountAggregates {
 
   """Distinct count of latestProcessedBlock across the matching connection"""
   latestProcessedBlock: BigInt
+
+  """
+  Distinct count of stableswapHistDataLatestBlock across the matching connection
+  """
+  stableswapHistDataLatestBlock: BigInt
+
+  """
+  Distinct count of omnipoolHistDataLatestBlock across the matching connection
+  """
+  omnipoolHistDataLatestBlock: BigInt
+
+  """
+  Distinct count of xykpoolHistDataLatestBlock across the matching connection
+  """
+  xykpoolHistDataLatestBlock: BigInt
 }
 
 type ProcessorStatusMinAggregates {
@@ -116605,6 +116632,17 @@ type ProcessorStatusMinAggregates {
 
   """Minimum of latestProcessedBlock across the matching connection"""
   latestProcessedBlock: Int
+
+  """
+  Minimum of stableswapHistDataLatestBlock across the matching connection
+  """
+  stableswapHistDataLatestBlock: Int
+
+  """Minimum of omnipoolHistDataLatestBlock across the matching connection"""
+  omnipoolHistDataLatestBlock: Int
+
+  """Minimum of xykpoolHistDataLatestBlock across the matching connection"""
+  xykpoolHistDataLatestBlock: Int
 }
 
 type ProcessorStatusMaxAggregates {
@@ -116616,6 +116654,17 @@ type ProcessorStatusMaxAggregates {
 
   """Maximum of latestProcessedBlock across the matching connection"""
   latestProcessedBlock: Int
+
+  """
+  Maximum of stableswapHistDataLatestBlock across the matching connection
+  """
+  stableswapHistDataLatestBlock: Int
+
+  """Maximum of omnipoolHistDataLatestBlock across the matching connection"""
+  omnipoolHistDataLatestBlock: Int
+
+  """Maximum of xykpoolHistDataLatestBlock across the matching connection"""
+  xykpoolHistDataLatestBlock: Int
 }
 
 type ProcessorStatusAverageAggregates {
@@ -116631,6 +116680,21 @@ type ProcessorStatusAverageAggregates {
 
   """Mean average of latestProcessedBlock across the matching connection"""
   latestProcessedBlock: BigFloat
+
+  """
+  Mean average of stableswapHistDataLatestBlock across the matching connection
+  """
+  stableswapHistDataLatestBlock: BigFloat
+
+  """
+  Mean average of omnipoolHistDataLatestBlock across the matching connection
+  """
+  omnipoolHistDataLatestBlock: BigFloat
+
+  """
+  Mean average of xykpoolHistDataLatestBlock across the matching connection
+  """
+  xykpoolHistDataLatestBlock: BigFloat
 }
 
 type ProcessorStatusStddevSampleAggregates {
@@ -116648,6 +116712,21 @@ type ProcessorStatusStddevSampleAggregates {
   Sample standard deviation of latestProcessedBlock across the matching connection
   """
   latestProcessedBlock: BigFloat
+
+  """
+  Sample standard deviation of stableswapHistDataLatestBlock across the matching connection
+  """
+  stableswapHistDataLatestBlock: BigFloat
+
+  """
+  Sample standard deviation of omnipoolHistDataLatestBlock across the matching connection
+  """
+  omnipoolHistDataLatestBlock: BigFloat
+
+  """
+  Sample standard deviation of xykpoolHistDataLatestBlock across the matching connection
+  """
+  xykpoolHistDataLatestBlock: BigFloat
 }
 
 type ProcessorStatusStddevPopulationAggregates {
@@ -116665,6 +116744,21 @@ type ProcessorStatusStddevPopulationAggregates {
   Population standard deviation of latestProcessedBlock across the matching connection
   """
   latestProcessedBlock: BigFloat
+
+  """
+  Population standard deviation of stableswapHistDataLatestBlock across the matching connection
+  """
+  stableswapHistDataLatestBlock: BigFloat
+
+  """
+  Population standard deviation of omnipoolHistDataLatestBlock across the matching connection
+  """
+  omnipoolHistDataLatestBlock: BigFloat
+
+  """
+  Population standard deviation of xykpoolHistDataLatestBlock across the matching connection
+  """
+  xykpoolHistDataLatestBlock: BigFloat
 }
 
 type ProcessorStatusVarianceSampleAggregates {
@@ -116680,6 +116774,21 @@ type ProcessorStatusVarianceSampleAggregates {
 
   """Sample variance of latestProcessedBlock across the matching connection"""
   latestProcessedBlock: BigFloat
+
+  """
+  Sample variance of stableswapHistDataLatestBlock across the matching connection
+  """
+  stableswapHistDataLatestBlock: BigFloat
+
+  """
+  Sample variance of omnipoolHistDataLatestBlock across the matching connection
+  """
+  omnipoolHistDataLatestBlock: BigFloat
+
+  """
+  Sample variance of xykpoolHistDataLatestBlock across the matching connection
+  """
+  xykpoolHistDataLatestBlock: BigFloat
 }
 
 type ProcessorStatusVariancePopulationAggregates {
@@ -116697,6 +116806,21 @@ type ProcessorStatusVariancePopulationAggregates {
   Population variance of latestProcessedBlock across the matching connection
   """
   latestProcessedBlock: BigFloat
+
+  """
+  Population variance of stableswapHistDataLatestBlock across the matching connection
+  """
+  stableswapHistDataLatestBlock: BigFloat
+
+  """
+  Population variance of omnipoolHistDataLatestBlock across the matching connection
+  """
+  omnipoolHistDataLatestBlock: BigFloat
+
+  """
+  Population variance of xykpoolHistDataLatestBlock across the matching connection
+  """
+  xykpoolHistDataLatestBlock: BigFloat
 }
 
 """Grouping methods for `ProcessorStatus` for usage during aggregation."""
@@ -116710,6 +116834,9 @@ enum ProcessorStatusGroupBy {
   INITIAL_INDEXING_FINISHED_AT_TRUNCATED_TO_HOUR
   INITIAL_INDEXING_FINISHED_AT_TRUNCATED_TO_DAY
   LATEST_PROCESSED_BLOCK
+  STABLESWAP_HIST_DATA_LATEST_BLOCK
+  OMNIPOOL_HIST_DATA_LATEST_BLOCK
+  XYKPOOL_HIST_DATA_LATEST_BLOCK
 }
 
 """Conditions for `ProcessorStatus` aggregates."""
@@ -116733,6 +116860,9 @@ input ProcessorStatusHavingSumInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 input ProcessorStatusHavingDistinctCountInput {
@@ -116741,6 +116871,9 @@ input ProcessorStatusHavingDistinctCountInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 input ProcessorStatusHavingMinInput {
@@ -116749,6 +116882,9 @@ input ProcessorStatusHavingMinInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 input ProcessorStatusHavingMaxInput {
@@ -116757,6 +116893,9 @@ input ProcessorStatusHavingMaxInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 input ProcessorStatusHavingAverageInput {
@@ -116765,6 +116904,9 @@ input ProcessorStatusHavingAverageInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 input ProcessorStatusHavingStddevSampleInput {
@@ -116773,6 +116915,9 @@ input ProcessorStatusHavingStddevSampleInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 input ProcessorStatusHavingStddevPopulationInput {
@@ -116781,6 +116926,9 @@ input ProcessorStatusHavingStddevPopulationInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 input ProcessorStatusHavingVarianceSampleInput {
@@ -116789,6 +116937,9 @@ input ProcessorStatusHavingVarianceSampleInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 input ProcessorStatusHavingVariancePopulationInput {
@@ -116797,6 +116948,9 @@ input ProcessorStatusHavingVariancePopulationInput {
   initialIndexingStartedAt: HavingDatetimeFilter
   initialIndexingFinishedAt: HavingDatetimeFilter
   latestProcessedBlock: HavingIntFilter
+  stableswapHistDataLatestBlock: HavingIntFilter
+  omnipoolHistDataLatestBlock: HavingIntFilter
+  xykpoolHistDataLatestBlock: HavingIntFilter
 }
 
 """Methods to use when ordering `ProcessorStatus`."""
@@ -116814,6 +116968,12 @@ enum ProcessorStatusesOrderBy {
   INITIAL_INDEXING_FINISHED_AT_DESC
   LATEST_PROCESSED_BLOCK_ASC
   LATEST_PROCESSED_BLOCK_DESC
+  STABLESWAP_HIST_DATA_LATEST_BLOCK_ASC
+  STABLESWAP_HIST_DATA_LATEST_BLOCK_DESC
+  OMNIPOOL_HIST_DATA_LATEST_BLOCK_ASC
+  OMNIPOOL_HIST_DATA_LATEST_BLOCK_DESC
+  XYKPOOL_HIST_DATA_LATEST_BLOCK_ASC
+  XYKPOOL_HIST_DATA_LATEST_BLOCK_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -116848,6 +117008,21 @@ input ProcessorStatusCondition {
 
   """Checks for equality with the object’s `latestProcessedBlock` field."""
   latestProcessedBlock: Int
+
+  """
+  Checks for equality with the object’s `stableswapHistDataLatestBlock` field.
+  """
+  stableswapHistDataLatestBlock: Int
+
+  """
+  Checks for equality with the object’s `omnipoolHistDataLatestBlock` field.
+  """
+  omnipoolHistDataLatestBlock: Int
+
+  """
+  Checks for equality with the object’s `xykpoolHistDataLatestBlock` field.
+  """
+  xykpoolHistDataLatestBlock: Int
 }
 
 """
@@ -116871,6 +117046,15 @@ input ProcessorStatusFilter {
 
   """Filter by the object’s `latestProcessedBlock` field."""
   latestProcessedBlock: IntFilter
+
+  """Filter by the object’s `stableswapHistDataLatestBlock` field."""
+  stableswapHistDataLatestBlock: IntFilter
+
+  """Filter by the object’s `omnipoolHistDataLatestBlock` field."""
+  omnipoolHistDataLatestBlock: IntFilter
+
+  """Filter by the object’s `xykpoolHistDataLatestBlock` field."""
+  xykpoolHistDataLatestBlock: IntFilter
 
   """Checks for all expressions in this list."""
   and: [ProcessorStatusFilter!]
@@ -117318,6 +117502,7 @@ type PlatformTotalTvl {
   omnipoolTvlNorm: String!
   stablepoolsTvlNorm: String!
   xykpoolsTvlNorm: String!
+  paraBlockHeight: Int!
 }
 
 type PlatformTotalTvlResponse {

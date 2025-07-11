@@ -4,7 +4,10 @@ import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
 import { PlatformTotalTvlResponse } from './types';
 import { CacheManager } from '../../../../../utils/cacheManager';
-import { getOmnipoolTotalTvl } from '../../../../sql/omnipool/omnipoolTvl.sql';
+import {
+  getOmnipoolAssetsTvl,
+  getOmnipoolTotalTvl,
+} from '../../../../sql/omnipool/omnipoolTvl.sql';
 import { getStableswapsTotalTvl } from '../../../../sql/stableswap/stableswapTvl.sql';
 import {
   getAllXykpoolsTvl,
@@ -39,6 +42,12 @@ export async function platformTotalTvlResolver(
     para_block_height: number;
   }>(getOmnipoolTotalTvl);
 
+  const omnipoolH2oTvl = await pgClient.query<{
+    asset_id: string;
+    tvl_in_ref_asset_norm: string;
+    para_block_height: number;
+  }>(getOmnipoolAssetsTvl, [['1']]);
+
   const stableswapsTvl = await pgClient.query<{
     pool_id: string;
     tvl_total_in_ref_asset_norm: string;
@@ -52,8 +61,8 @@ export async function platformTotalTvlResolver(
   }>(getAllXykpoolsTvl);
 
   const omnipoolTvlTotal = BigNumber(
-    omnipoolTvl.rows[0]?.tvl_total_in_ref_asset_norm || BigNumber(0)
-  );
+    omnipoolTvl.rows[0]?.tvl_total_in_ref_asset_norm || '0'
+  ).minus(omnipoolH2oTvl.rows[0]?.tvl_in_ref_asset_norm || '0');
 
   const stableswapsTvlTotal = stableswapsTvl.rows.reduce(
     (acc, val) => acc.plus(val.tvl_total_in_ref_asset_norm),
@@ -73,6 +82,11 @@ export async function platformTotalTvlResolver(
     omnipoolTvlNorm: omnipoolTvlTotal.toFixed(),
     stablepoolsTvlNorm: stableswapsTvlTotal.toFixed(),
     xykpoolsTvlNorm: xykpoolsTvlTotal.toFixed(),
+    paraBlockHeight:
+      omnipoolTvl.rows[0]?.para_block_height ||
+      stableswapsTvl.rows[0]?.para_block_height ||
+      xykpoolsTvl.rows[0]?.para_block_height ||
+      0,
   });
   result.totalCount = 1;
 

@@ -11,6 +11,7 @@ import {
 import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/assetHistoricalData';
 import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
 import { RedisTimeSeriesManager } from '../../utils/redisTimeSeriesManager';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -66,6 +67,15 @@ export class HistoricalDataManager {
     await ctx.store.save(
       Array.from(ctx.batchState.state.aavePoolsHistoricalData.values())
     );
+
+    const latestBatchBlockHeight =
+      ctx.blocks[ctx.blocks.length - 1].header.height;
+
+    await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
+      xykpoolHistDataLatestBlock: latestBatchBlockHeight,
+      omnipoolHistDataLatestBlock: latestBatchBlockHeight,
+      stableswapHistDataLatestBlock: latestBatchBlockHeight,
+    });
   }
 
   static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {

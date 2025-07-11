@@ -51,6 +51,9 @@ export class ProcessorStatusManager {
       initialIndexingStartedAt: new Date(),
       initialIndexingFinishedAt: this.ctx.isHead ? new Date() : null,
       latestProcessedBlock: 0,
+      stableswapHistDataLatestBlock: 0,
+      omnipoolHistDataLatestBlock: 0,
+      xykpoolHistDataLatestBlock: 0,
     });
 
     if (ensure) await this.ctx.store.save(statusEntity);
@@ -72,6 +75,13 @@ export class ProcessorStatusManager {
         payload.poolsDestroyedUpdatedAtBlock;
     if (payload.latestProcessedBlock)
       status.latestProcessedBlock = payload.latestProcessedBlock;
+    if (payload.stableswapHistDataLatestBlock)
+      status.stableswapHistDataLatestBlock =
+        payload.stableswapHistDataLatestBlock;
+    if (payload.omnipoolHistDataLatestBlock)
+      status.omnipoolHistDataLatestBlock = payload.omnipoolHistDataLatestBlock;
+    if (payload.xykpoolHistDataLatestBlock)
+      status.xykpoolHistDataLatestBlock = payload.xykpoolHistDataLatestBlock;
 
     await this.ctx.store.save(status);
   }

@@ -29,6 +29,7 @@ export type PlatformTotalTvl = {
   omnipoolTvlNorm: string;
   stablepoolsTvlNorm: string;
   xykpoolsTvlNorm: string;
+  paraBlockHeight: number;
 };
 
 export type PlatformTotalTvlResponse = {

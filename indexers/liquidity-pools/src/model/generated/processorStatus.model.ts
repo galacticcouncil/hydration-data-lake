@@ -27,4 +27,13 @@ export class ProcessorStatus {
 
   @Column_("int4", {nullable: false})
   latestProcessedBlock!: number
+
+  @Column_("int4", {nullable: true})
+  stableswapHistDataLatestBlock!: number | undefined | null
+
+  @Column_("int4", {nullable: true})
+  omnipoolHistDataLatestBlock!: number | undefined | null
+
+  @Column_("int4", {nullable: true})
+  xykpoolHistDataLatestBlock!: number | undefined | null
 }

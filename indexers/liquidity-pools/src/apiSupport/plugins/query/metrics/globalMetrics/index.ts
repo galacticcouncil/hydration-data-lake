@@ -30,6 +30,7 @@ export const GlobalMetricsPlugin: Plugin = makeExtendSchemaPlugin(
           omnipoolTvlNorm: String!
           stablepoolsTvlNorm: String!
           xykpoolsTvlNorm: String!
+          paraBlockHeight: Int!
         }
 
         type PlatformTotalTvlResponse {

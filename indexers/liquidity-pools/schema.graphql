@@ -15,6 +15,9 @@ type ProcessorStatus @entity {
   initialIndexingStartedAt: DateTime!
   initialIndexingFinishedAt: DateTime
   latestProcessedBlock: Int!
+  stableswapHistDataLatestBlock: Int
+  omnipoolHistDataLatestBlock: Int
+  xykpoolHistDataLatestBlock: Int
 }
 
 # ======================================================================================================================
