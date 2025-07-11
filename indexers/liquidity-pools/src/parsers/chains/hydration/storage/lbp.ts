@@ -57,27 +57,33 @@ async function getPoolData({
 
   let poolStorageData: LbpPoolStorageData | null = null;
 
-  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
-    const resp = await storage.lbp.poolData.v176.get(block, poolAddress);
+  try {
+    if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+      const resp = await storage.lbp.poolData.v176.get(block, poolAddress);
 
-    if (!resp) return null;
+      if (!resp) return null;
 
-    poolStorageData = {
-      poolAddress,
-      assetAId: resp.assets[0],
-      assetBId: resp.assets[1],
-      owner: resp.owner,
-      start: resp.start,
-      end: resp.end,
-      initialWeight: resp.initialWeight,
-      finalWeight: resp.finalWeight,
-      weightCurve: resp.weightCurve,
-      fee: resp.fee,
-      feeCollector: resp.feeCollector,
-      repayTarget: BigInt(resp.repayTarget),
-    };
-    return poolStorageData;
+      poolStorageData = {
+        poolAddress,
+        assetAId: resp.assets[0],
+        assetBId: resp.assets[1],
+        owner: resp.owner,
+        start: resp.start,
+        end: resp.end,
+        initialWeight: resp.initialWeight,
+        finalWeight: resp.finalWeight,
+        weightCurve: resp.weightCurve,
+        fee: resp.fee,
+        feeCollector: resp.feeCollector,
+        repayTarget: BigInt(resp.repayTarget),
+      };
+      return poolStorageData;
+    }
+  } catch (e) {
+    console.log(e);
+    return null;
   }
+
   throw new UnknownVersionError('storage.lbp.poolData');
 }
 
@@ -88,30 +94,35 @@ async function getAllPoolsData({
 
   if (block.specVersion < 176) return [];
 
-  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
-    for await (const page of storage.lbp.poolData.v176.getPairsPaged(
-      500,
-      block
-    ))
-      pairsPaged.push(
-        ...page
-          .filter((p) => !!p && !!p[1])
-          .map(([poolAddress, poolData]) => ({
-            poolAddress,
-            assetAId: poolData!.assets[0],
-            assetBId: poolData!.assets[1],
-            owner: poolData!.owner,
-            start: poolData!.start,
-            end: poolData!.end,
-            initialWeight: poolData!.initialWeight,
-            finalWeight: poolData!.finalWeight,
-            weightCurve: poolData!.weightCurve,
-            fee: poolData!.fee,
-            feeCollector: poolData!.feeCollector,
-            repayTarget: BigInt(poolData!.repayTarget),
-          }))
-      );
-    return pairsPaged;
+  try {
+    if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+      for await (const page of storage.lbp.poolData.v176.getPairsPaged(
+        500,
+        block
+      ))
+        pairsPaged.push(
+          ...page
+            .filter((p) => !!p && !!p[1])
+            .map(([poolAddress, poolData]) => ({
+              poolAddress,
+              assetAId: poolData!.assets[0],
+              assetBId: poolData!.assets[1],
+              owner: poolData!.owner,
+              start: poolData!.start,
+              end: poolData!.end,
+              initialWeight: poolData!.initialWeight,
+              finalWeight: poolData!.finalWeight,
+              weightCurve: poolData!.weightCurve,
+              fee: poolData!.fee,
+              feeCollector: poolData!.feeCollector,
+              repayTarget: BigInt(poolData!.repayTarget),
+            }))
+        );
+      return pairsPaged;
+    }
+  } catch (e) {
+    console.log(e);
+    return [];
   }
 
   throw new UnknownVersionError('storage.lbp.poolData');
@@ -122,12 +133,16 @@ async function getAllPoolIds({
 }: LbpGetAllPoolIdsInput): Promise<string[]> {
   if (block.specVersion < 176) return [];
 
-  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
-    const ids = await storage.lbp.poolData.v176.getKeys(block);
+  try {
+    if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+      const ids = await storage.lbp.poolData.v176.getKeys(block);
 
-    return ids;
+      return ids;
+    }
+  } catch (e) {
+    console.log(e);
+    return [];
   }
-
   throw new UnknownVersionError('storage.lbp.poolData');
 }
 
