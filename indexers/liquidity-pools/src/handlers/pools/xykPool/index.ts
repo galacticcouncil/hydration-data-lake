@@ -11,14 +11,6 @@ export async function handleXykPools(
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   if (!ctx.appConfig.PROCESS_XYK_POOLS) return;
-  ctx.batchState.state.xykAllBatchPools = new Map(
-    (
-      await ctx.store.find(Xykpool, {
-        where: {},
-        relations: { assetA: true, assetB: true, account: true },
-      })
-    ).map((p) => [p.id, p])
-  );
 
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.XYK_PoolCreated).values(),

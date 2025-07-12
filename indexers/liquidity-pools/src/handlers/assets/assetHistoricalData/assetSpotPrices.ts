@@ -196,17 +196,6 @@ export async function getAssetSpotPriceHistDataWithUniqueData(
     { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
-  // for (const item of src.values()) {
-  //   if (
-  //     await isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecord({
-  //       currentRecord: item,
-  //       cachedRecords: src,
-  //       ctx,
-  //     })
-  //   )
-  //     result.push(item);
-  // }
-
   return result;
 }
 

@@ -1,4 +1,4 @@
-import { SqdProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   AssetHistoricalData,
@@ -6,7 +6,7 @@ import {
   EmaOracleEntryHistoricalData,
   ProcessorStatus,
   XykpoolHistoricalData,
-} from '../../model';
+} from '../../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 import {
   prefetchAllAvailableLbppoolHistDataForBlocksRange,

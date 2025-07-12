@@ -82,12 +82,6 @@ export async function handleAssetsStorage(
       !totalIssuancePerAssetMap.has(asset.id) ||
       !storageDataAllAssetsMap.has(asset.id)
     ) {
-      console.log(
-        'processAssetsHistoricalDataAtBlock :: assetRegistryId - ',
-        asset.id,
-        totalIssuancePerAssetMap.has(asset.id),
-        storageDataAllAssetsMap.has(asset.id)
-      );
       continue;
     }
 

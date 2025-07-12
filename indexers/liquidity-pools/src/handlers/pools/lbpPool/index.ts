@@ -12,15 +12,6 @@ export async function handleLbpPools(
 ) {
   if (!ctx.appConfig.PROCESS_LBP_POOLS) return;
 
-  ctx.batchState.state.lbpAllBatchPools = new Map(
-    (
-      await ctx.store.find(Lbppool, {
-        where: {},
-        relations: { account: true, assetA: true, assetB: true },
-      })
-    ).map((p) => [p.id, p])
-  );
-
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.LBP_PoolCreated).values(),
   ])) {

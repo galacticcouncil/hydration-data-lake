@@ -1,22 +1,22 @@
-import { SqdProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { handleRelayChainBlocks } from '../../handlers/relayChain';
-import { prefetchAllAssets } from '../../handlers/assets/utils';
+import { handleRelayChainBlocks } from '../../../handlers/relayChain';
+import { prefetchAllAssets } from '../../../handlers/assets/utils';
 import {
   handleAssetHistoricalData,
   handleAssetSpotPriceRelatedHistoricalData,
-} from '../../handlers/assets/assetHistoricalData';
-import { processPoolsNormalizedVolumes } from '../../handlers/volumes/normalizedVolumesInBaseAsset';
-import { ProcessorStatusManager } from '../../processorStatusManager';
-import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import { ProcessingPoolManager } from '../../utils/processingPoolManager';
-import { StorageResolver } from '../../parsers/storageResolver';
+} from '../../../handlers/assets/assetHistoricalData';
+import { processPoolsNormalizedVolumes } from '../../../handlers/volumes/normalizedVolumesInBaseAsset';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { ProcessingPoolManager } from '../../../utils/processingPoolManager';
+import { StorageResolver } from '../../../parsers/storageResolver';
 import {
   checkAndWaitForCoreProcStatus,
   waitForSpotPricesRelatedHistoricalData,
 } from './statusWaitingHelpers';
-import { savePreprocessedData } from '../../handlers/preprocessedDataBucket/persist';
-import { processPoolsTvlNormalized } from '../../handlers/pools/normalizedTvlBaseAsset';
+import { savePreprocessedData } from '../../../handlers/preprocessedDataBucket/persist';
+import { processPoolsTvlNormalized } from '../../../handlers/pools/normalizedTvlBaseAsset';
 
 export async function execSpotPricesProcessorHandlers(
   ctx: SqdProcessorContext<Store>

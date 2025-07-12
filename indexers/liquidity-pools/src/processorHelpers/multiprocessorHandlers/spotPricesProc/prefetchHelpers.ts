@@ -1,4 +1,4 @@
-import { SqdProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   LbppoolHistoricalData,
@@ -14,7 +14,7 @@ import {
   SwapAssetBalanceType,
   XykpoolHistoricalData,
   XykpoolVolumeHistoricalData,
-} from '../../model';
+} from '../../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function prefetchAllAvailableRoutedTradesForBlocksRange({

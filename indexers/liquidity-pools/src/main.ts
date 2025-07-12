@@ -7,8 +7,8 @@ import { printV8MemoryHeap } from './utils/helpers';
 import {
   execAllInOneProcessorHandlers,
   execCoreProcessorHandlers,
-} from './multiprocessorHandlers';
-import { execSpotPricesProcessorHandlers } from './multiprocessorHandlers/spotPricesProc';
+} from './processorHelpers/multiprocessorHandlers';
+import { execSpotPricesProcessorHandlers } from './processorHelpers/multiprocessorHandlers/spotPricesProc';
 import { RedisTimeSeriesManager } from './utils/redisTimeSeriesManager';
 
 console.log(
