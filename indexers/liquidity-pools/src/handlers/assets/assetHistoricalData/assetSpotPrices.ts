@@ -273,7 +273,8 @@ function getXykOnlyAssets(ctx: SqdProcessorContext<Store>) {
       .filter(
         (asset) =>
           !omnipoolInvolvedAssets.has(asset.id) &&
-          !stableswapInvolvedAssets.has(asset.id)
+          !stableswapInvolvedAssets.has(asset.id) &&
+          !ctx.appConfig.ARTIFICIAL_OMNIPOOL_ASSET_IDS_SET.has(asset.id)
       )
       .map((asset) => [asset.id, asset])
   );
@@ -456,6 +457,17 @@ async function processXykInvolvedAssetSpotPrices({
       const xykAssetSpotPrice = priceInInterimAssetNormalised.multipliedBy(
         interimAssetSpotPrice.priceNormalised
       );
+
+      if (
+        !xykAssetSpotPrice ||
+        !xykAssetSpotPrice.isFinite() ||
+        xykAssetSpotPrice.isNaN()
+      ) {
+        console.log(
+          `Invalid price for asset ${asset.id} at block ${blockHeader.height}: ${xykAssetSpotPrice.toString()}. Skipping...`
+        );
+        continue;
+      }
 
       const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 

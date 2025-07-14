@@ -195,7 +195,45 @@ export function fromDecimalToExponentialNotation(
   input: BigNumber | string,
   decimals: number
 ): BigNumber {
-  return BigNumber(input).multipliedBy(BigNumber(10).pow(decimals));
+  try {
+    if (!input && input !== '0') {
+      throw new Error(
+        "Invalid input: 'input' cannot be null, undefined, or empty"
+      );
+    }
+
+    const numericInput = BigNumber(input);
+
+    if (!numericInput.isFinite() || numericInput.isNaN()) {
+      throw new Error(
+        `Invalid input: 'input' is not a finite number. Received: ${input}`
+      );
+    }
+
+    if (!Number.isInteger(decimals) || decimals < 0) {
+      throw new Error(
+        `Invalid decimals: 'decimals' must be a non-negative integer. Received: ${decimals}`
+      );
+    }
+
+    const result = numericInput.multipliedBy(BigNumber(10).pow(decimals));
+
+    if (!result.isFinite() || result.isNaN()) {
+      throw new Error(
+        `Computation resulted in an invalid BigNumber: ${result}`
+      );
+    }
+
+    return result;
+  } catch (error) {
+    console.error(
+      // @ts-ignore
+      `Error in fromDecimalToExponentialNotation: ${error?.message}`
+    );
+    throw error;
+  }
+
+  // return BigNumber(input).multipliedBy(BigNumber(10).pow(decimals));
 }
 
 export function stringToMd5Hash(str: string) {
