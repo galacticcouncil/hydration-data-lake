@@ -245,9 +245,9 @@ export class AppConfig {
     ({ value }: { value: string }) =>
       new Set(value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id)))
   )
-  readonly ARTIFICIAL_OMNIPOOL_ASSET_IDS_SET: Set<string> = [
+  readonly ARTIFICIAL_OMNIPOOL_ASSET_IDS_SET: Set<string> = new Set([
     '0x34d5ffb83d14d82f87aaf2f13be895a3c814c2ad',
-  ];
+  ]);
 
   @Transform(({ value }: { value: string }) => value)
   readonly XYKPOOL_ASSET_PRICE_INTERIM_ASSET_ID: string = '5';
