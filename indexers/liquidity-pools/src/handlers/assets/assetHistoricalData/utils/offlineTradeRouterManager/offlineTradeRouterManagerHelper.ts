@@ -623,9 +623,6 @@ export class OfflineTradeRouterManagerHelper {
   }): IPersistentLbpPoolBase[] {
     const poolsMap: Map<string, IPersistentLbpPoolBase> = new Map();
 
-    // for (const [poolId, poolHistData] of [
-    //   ...(this.lbppoolsHistData.get(blockNumber) || new Map()).entries(),
-    // ] as [string, LbppoolHistoricalData][]) {
     for (const [poolId, poolHistData] of (this.lbppoolsHistData.get(
       blockNumber
     ) || new Map()) as Map<string, LbppoolHistoricalData>) {
@@ -642,6 +639,11 @@ export class OfflineTradeRouterManagerHelper {
       }
 
       const blockConstants = this.constantsHistData.get(blockNumber)!;
+
+      if (!poolHistData.startBlockNumber || !poolHistData.endBlockNumber) {
+        console.log(`>> missing start/end block for pool ${poolId}`);
+        continue;
+      }
 
       poolsMap.set(poolId, {
         id: publicKeyToSs58(poolHistData.pool.id),

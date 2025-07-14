@@ -106,14 +106,6 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
     },
   });
 
-  // const allActivePools: Map<string, Lbppool> = new Map([
-  //   ...allActivePoolsCached.map((pool): [string, Lbppool] => [pool.id, pool]),
-  //   ...allActivePoolsPersisted.map((pool): [string, Lbppool] => [
-  //     pool.id,
-  //     pool,
-  //   ]),
-  // ]);
-
   const allActivePools = new Map<string, Lbppool>();
   for (const histData of allActivePoolsPersisted) {
     allActivePools.set(histData.id, histData);
@@ -149,17 +141,6 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
       feeCollector: true,
     },
   });
-
-  // const mergedDataMap = new Map([
-  //   ...persistedHistData.map((histData): [string, LbppoolHistoricalData] => [
-  //     histData.id,
-  //     histData,
-  //   ]),
-  //   ...cachedHistData.map((histData): [string, LbppoolHistoricalData] => [
-  //     histData.id,
-  //     histData,
-  //   ]),
-  // ]);
 
   const mergedDataMap = new Map<string, LbppoolHistoricalData>();
   for (const histData of persistedHistData) {
