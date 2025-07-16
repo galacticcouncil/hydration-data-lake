@@ -18,6 +18,9 @@ import {
 import { LessThan } from 'typeorm';
 import pMap from 'p-map';
 import { PoolType } from './utils/offlineSdk/sdk/src';
+import { AppConfig } from '../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function handleAssetSpotPricesHistoricalData({
   blockHeader,
@@ -193,7 +196,7 @@ export async function getAssetSpotPriceHistDataWithUniqueData(
         result.push(item);
       }
     },
-    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return result;
@@ -295,44 +298,6 @@ function getXykPoolsIndexedByInterimAssetPair({
   const interimAssetId = ctx.appConfig.XYKPOOL_ASSET_PRICE_INTERIM_ASSET_ID;
   const interimFallbackAssetId =
     ctx.appConfig.XYKPOOL_ASSET_PRICE_FALLBACK_INTERIM_ASSET_ID;
-
-  // const addedPoolAddresses = new Set<string>();
-  //
-  // const poolsWithInterimAsset = new Map(
-  //   Array.from(ctx.batchState.state.xykAllBatchPools.values())
-  //     .filter(
-  //       (pool) =>
-  //         (pool.assetA.id === interimAssetId &&
-  //           xykPoolAssets.has(pool.assetB.id)) ||
-  //         (pool.assetB.id === interimAssetId &&
-  //           xykPoolAssets.has(pool.assetA.id))
-  //     )
-  //     .map((p) => {
-  //       addedPoolAddresses.add(p.id);
-  //       if (p.assetA.id === interimAssetId) return [p.assetB.id, p];
-  //       return [p.assetA.id, p];
-  //     })
-  // );
-  //
-  // /**
-  //  * We need find pools for fallback interim asset because some assets can have
-  //  * no existing XYK pools with main interim asset.
-  //  */
-  // const poolsWithInterimFallbackAsset = new Map(
-  //   Array.from(ctx.batchState.state.xykAllBatchPools.values())
-  //     .filter(
-  //       (pool) =>
-  //         !addedPoolAddresses.has(pool.id) &&
-  //         ((pool.assetA.id === interimFallbackAssetId &&
-  //           xykPoolAssets.has(pool.assetB.id)) ||
-  //           (pool.assetB.id === interimFallbackAssetId &&
-  //             xykPoolAssets.has(pool.assetA.id)))
-  //     )
-  //     .map((p) => {
-  //       if (p.assetA.id === interimFallbackAssetId) return [p.assetB.id, p];
-  //       return [p.assetA.id, p];
-  //     })
-  // );
 
   const pools = new Map<string, Xykpool>();
 
@@ -511,4 +476,43 @@ async function processXykInvolvedAssetSpotPrices({
   };
 
   await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
+}
+
+export function getAssetsPairPrice({
+  assetInId,
+  assetOutId = appConfig.ASSET_PRICE_BASE_ASSET_ID,
+  blockHeight,
+  usePersistentData = false,
+  ctx,
+}: {
+  assetInId: string;
+  assetOutId?: string;
+  blockHeight: number;
+  usePersistentData?: boolean;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  if (assetOutId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) {
+    const price = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+      `${assetInId}-${assetOutId}-${blockHeight}`
+    )?.priceNormalised;
+    return price ?? null;
+  }
+
+  const assetInRefPrice =
+    assetInId !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+      ? ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+          `${assetInId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
+        )?.priceNormalised
+      : '1';
+
+  const assetOutRefPrice =
+    assetOutId !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+      ? ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+          `${assetOutId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
+        )?.priceNormalised
+      : '1';
+
+  if (!assetInRefPrice || !assetOutRefPrice) return null;
+
+  return BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
 }

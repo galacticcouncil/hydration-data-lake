@@ -1,17 +1,16 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class AccountAssetBalanceHistoricalData {
-  constructor(props?: Partial<AccountAssetBalanceHistoricalData>) {
+export class AccountTotalBalanceHistoricalData {
+  constructor(props?: Partial<AccountTotalBalanceHistoricalData>) {
     Object.assign(this, props)
   }
 
   /**
-   * <address>-<assetId>-<paraBlockHeight>
+   * <address>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string
@@ -22,25 +21,13 @@ export class AccountAssetBalanceHistoricalData {
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
-  asset!: Asset
+  refAsset!: Asset
 
-  /**
-   * free property in storage
-   */
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  transferable!: bigint
+  @Column_("text", {nullable: false})
+  totalTransferableNorm!: string
 
-  /**
-   * reserved property in storage
-   */
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalLocked!: bigint
-
-  @Column_("text", {nullable: true})
-  transferableInRefAssetNorm!: string | undefined | null
-
-  @Column_("text", {nullable: true})
-  totalLockedInRefAssetNorm!: string | undefined | null
+  @Column_("text", {nullable: false})
+  totalLockedNorm!: string
 
   @Index_()
   @Column_("int4", {nullable: false})

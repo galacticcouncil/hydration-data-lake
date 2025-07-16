@@ -110,3 +110,8 @@ export enum SwappedExecutionTypeKind {
   Xcm = 'Xcm',
   XcmExchange = 'XcmExchange',
 }
+
+export type BalanceImpactedEventData = {
+  eventId: string;
+  addresses: string[];
+}

@@ -39,6 +39,9 @@ export class Account {
   @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
   assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]
 
+  @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
+  balanceHistoricalData!: AccountAssetBalanceHistoricalData[]
+
   @OneToMany_(() => AccountSwapFeeHistoricalData, e => e.account)
   historicalAccountSwapFees!: AccountSwapFeeHistoricalData[]
 

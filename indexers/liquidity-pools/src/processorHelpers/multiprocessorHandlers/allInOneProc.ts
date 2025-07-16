@@ -49,6 +49,7 @@ import { HistoricalDataManager } from '../../handlers/historicalData';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { processPoolsTvlNormalized } from '../../handlers/pools/normalizedTvlBaseAsset';
 import { prefetchPersistentData } from '../prefetchHelpers';
+import { handleAssetAccountBalancesPerBlock } from '../../handlers/balances';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -86,20 +87,12 @@ export async function execAllInOneProcessorHandlers(
   await prefetchPersistentData(ctx);
   console.timeEnd('prefetchPersistentData');
 
-  // console.time('prefetchOrInitAllBatchAccounts');
-  // await prefetchOrInitAllBatchAccounts(ctx);
-  // console.timeEnd('prefetchOrInitAllBatchAccounts');
-
   console.time('initContractInstances');
   await MoneyMarketContractsManager.getInstance().initContractInstances({
     ctx: ctx,
     blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
   console.timeEnd('initContractInstances');
-
-  // console.time('prefetchAllAssets');
-  // await prefetchAllAssets(ctx);
-  // console.timeEnd('prefetchAllAssets');
 
   await ensureNativeToken(ctx);
 
@@ -239,11 +232,9 @@ export async function execAllInOneProcessorHandlers(
   await HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(ctx);
   console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
 
-  // console.time('handleAssetAccountBalancesPerBlock');
-  // await handleAssetAccountBalancesPerBlock(
-  //   ctx
-  // );
-  // console.timeEnd('handleAssetAccountBalancesPerBlock');
+  console.time('handleAssetAccountBalancesPerBlock');
+  await handleAssetAccountBalancesPerBlock(ctx);
+  console.timeEnd('handleAssetAccountBalancesPerBlock');
 
   console.time('updateInitialIndexingFinishedAtTime');
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);

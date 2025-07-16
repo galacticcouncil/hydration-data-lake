@@ -238,15 +238,27 @@ type AccountAssetBalanceHistoricalData @entity {
   account: Account!
   asset: Asset!
 
+  "free property in storage"
   transferable: BigInt!
+  "reserved property in storage"
   totalLocked: BigInt!
-  free: BigInt
-  locked: BigInt
-  flags: BigInt
-  frozen: BigInt
-  reserved: BigInt
-  feeFrozen: BigInt
-  miscFrozen: BigInt
+
+  transferableInRefAssetNorm: String
+  totalLockedInRefAssetNorm: String
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type AccountTotalBalanceHistoricalData @entity {
+  "<address>-<paraBlockHeight>"
+  id: ID!
+  account: Account!
+  refAsset: Asset!
+
+  totalTransferableNorm: String!
+  totalLockedNorm: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -262,6 +274,9 @@ type Account @entity {
   evmAddressBoundEvent: Event
 
   assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
+    @derivedFrom(field: "account")
+
+  balanceHistoricalData: [AccountAssetBalanceHistoricalData]
     @derivedFrom(field: "account")
 
   historicalAccountSwapFees: [AccountSwapFeeHistoricalData]

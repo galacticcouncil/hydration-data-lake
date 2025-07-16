@@ -210,7 +210,7 @@ export async function getLbppoolHistDataWithUniqueData(
         poolsResult.set(item.id, item);
       }
     },
-    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return poolsResult;

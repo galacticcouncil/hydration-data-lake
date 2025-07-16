@@ -108,6 +108,7 @@ export class StorageResolver {
       | 'getAssetDynamicFeesAll'
       | 'getOracleEntries'
       | 'getTokenTotalIssuance'
+      | 'getTokenBalancesMany'
       | 'getManyTokensTotalIssuance'
       | 'getNativeTokenTotalIssuance'
       | 'getAssetsExistentialDepositAll';
@@ -393,6 +394,11 @@ export class StorageResolver {
 
             return this.resolveFallbackFunctions(args, fallbackFns);
           }
+
+          if (method === 'getTokenBalancesMany') {
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+
           if (method === 'getNativeTokenTotalIssuance') {
             const resp =
               this.storageDictionaryManager.getNativeTokenTotalIssuance(

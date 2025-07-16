@@ -25,20 +25,24 @@ import {
   GetDataAtBlockInput,
   GetEmaOraclesInput,
   GetPoolAssetInfoInput,
+  GetTokenBalancesManyInput,
   LbpGetPoolDataInput,
   LbpPoolData,
   OmnipoolAssetData,
   OmnipoolAssetTradability,
-  OmnipoolData, OmnipoolGetAllAssetIdsInput,
+  OmnipoolData,
+  OmnipoolGetAllAssetIdsInput,
   OmnipoolGetAssetDataInput,
   OmnipoolGetHubAssetTradabilityInput,
-  OmnipoolGetPoolDataInput, StablepoolAllPoolsInfoWithPoolId,
+  OmnipoolGetPoolDataInput,
+  StablepoolAllPoolsInfoWithPoolId,
   StablepoolAssetState,
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
   StablepoolInfo,
   StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolPoolPegsInfo,
+  TokenAccountBalancesWithAccountId,
   TokensGetTokensTotalIssuanceInput,
   TokensGetTokenTotalIssuanceInput,
   TokenTotalIssuance,
@@ -74,6 +78,7 @@ export default {
         method: 'getNativeTokenTotalIssuance',
         fallbackFns: [balances.getTotalIssuance],
       }),
+    getNativeTokenBalanceMany: balances.getNativeTokenBalanceMany,
   },
   bonds: {
     getBond: bonds.getBond,
@@ -81,6 +86,34 @@ export default {
   },
   tokens: {
     ...tokens,
+
+    getTokenBalancesMany: (
+      args: GetTokenBalancesManyInput
+    ): Promise<TokenAccountBalancesWithAccountId[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetTokenBalancesManyInput,
+        TokenAccountBalancesWithAccountId[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        method: 'getTokenBalancesMany',
+        fallbackFns: [
+          async (fallbackFnArgs) =>
+            await new RuntimeApiResolver().resolveRuntimeApiCall<
+              GetTokenBalancesManyInput,
+              TokenAccountBalancesWithAccountId[] | null
+            >({
+              apiName: RuntimeApiName.CurrenciesApi,
+              apiMethod: RuntimeApiMethodName.synthAccountsMany,
+              args: {
+                block: fallbackFnArgs.block,
+                accountIds: fallbackFnArgs.accountIds!,
+              },
+            }),
+          tokens.getTokenBalancesMany,
+        ],
+      }),
+
     getTokenTotalIssuance: (
       args: TokensGetTokenTotalIssuanceInput
     ): Promise<bigint | null> =>

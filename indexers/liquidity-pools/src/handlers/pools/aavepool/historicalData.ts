@@ -48,7 +48,7 @@ export async function handleAavepoolHistoricalData(
           });
         }
       },
-      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
 
     await pMap(
@@ -82,7 +82,7 @@ export async function handleAavepoolHistoricalData(
 
         predefinedEntities.push(poolHistoricalDataEntity);
       },
-      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
   }
 

@@ -33,6 +33,22 @@ export interface SystemAccountInfo {
   sufficients: number;
   data: AccountData;
 }
+
+export interface BalancesAccountInfoWithAccountId {
+  accountId: string;
+  data: AccountData;
+}
+
+export interface TokenAccountBalanceWithAssetId {
+  assetId: string;
+  data: AccountData;
+}
+
+export interface TokenAccountBalancesWithAccountId {
+  accountId: string;
+  assetBalances: TokenAccountBalanceWithAssetId[];
+}
+
 export type ParachainSystemLastRelayChainBlockNumber = number;
 
 export interface TokensAccountsAssetBalances {
@@ -392,5 +408,15 @@ export type GetBondByIdInput = {
 };
 
 export type GetBondsAllInput = {
+  block: BlockHeader;
+};
+
+export type GetNativeTokenBalanceManyInput = {
+  accountIds: string[];
+  block: BlockHeader;
+};
+
+export type GetTokenBalancesManyInput = {
+  accountIds: string[];
   block: BlockHeader;
 };

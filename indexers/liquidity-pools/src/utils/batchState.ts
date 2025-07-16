@@ -64,10 +64,11 @@ import {
   AssetSpotPriceHistoricalData,
   AssetsPairVolumeHistoricalData,
   AssetAssetsPairVolume,
+  AccountTotalBalanceHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
-import { SwapFillerContextDetails } from './types';
+import { BalanceImpactedEventData, SwapFillerContextDetails } from './types';
 
 type ParachainBlockNumber = number;
 
@@ -105,6 +106,11 @@ export type BatchStatePayload = {
     string,
     AccountAssetBalanceHistoricalData
   >;
+  accountTotalBalanceHistoricalData: Map<
+    string,
+    AccountTotalBalanceHistoricalData
+  >;
+  balanceImpactingEvents: Map<string, BalanceImpactedEventData>;
 
   swaps: Map<string, Swap>;
   swapFees: Map<string, SwapFee>;
@@ -231,6 +237,8 @@ export class BatchState {
     assetsAllBatch: new Map(),
 
     accountAssetBalanceHistoricalData: new Map(),
+    accountTotalBalanceHistoricalData: new Map(),
+    balanceImpactingEvents: new Map(),
 
     swaps: new Map(),
     swapFees: new Map(),
@@ -336,6 +344,8 @@ export class BatchState {
       assetsAllBatch: new Map(),
 
       accountAssetBalanceHistoricalData: new Map(),
+      accountTotalBalanceHistoricalData: new Map(),
+      balanceImpactingEvents: new Map(),
 
       swaps: new Map(),
       swapFees: new Map(),

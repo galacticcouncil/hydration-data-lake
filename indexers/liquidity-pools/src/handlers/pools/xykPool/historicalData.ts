@@ -38,7 +38,7 @@ export async function handleXykPoolHistoricalData(
           allPoolsPerBlock.push({ blockHeader, poolId: item.poolId });
         }
       },
-      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
 
     await pMap(
@@ -88,7 +88,7 @@ export async function handleXykPoolHistoricalData(
 
         predefinedEntities.push(poolHistoricalDataEntity);
       },
-      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
   }
 
@@ -149,7 +149,7 @@ export async function getXykpoolHistDataWithUniqueData(
         poolsResult.set(item.id, item);
       }
     },
-    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return poolsResult;

@@ -16,3 +16,48 @@ export const transferred =  {
         })
     ),
 }
+
+export const balanceUpdated =  {
+    name: 'Currencies.BalanceUpdated',
+    /**
+     * Update balance success.
+     */
+    v276: new EventType(
+        'Currencies.BalanceUpdated',
+        sts.struct({
+            currencyId: sts.number(),
+            who: v276.AccountId32,
+            amount: sts.bigint(),
+        })
+    ),
+}
+
+export const deposited =  {
+    name: 'Currencies.Deposited',
+    /**
+     * Deposit success.
+     */
+    v276: new EventType(
+        'Currencies.Deposited',
+        sts.struct({
+            currencyId: sts.number(),
+            who: v276.AccountId32,
+            amount: sts.bigint(),
+        })
+    ),
+}
+
+export const withdrawn =  {
+    name: 'Currencies.Withdrawn',
+    /**
+     * Withdraw success.
+     */
+    v276: new EventType(
+        'Currencies.Withdrawn',
+        sts.struct({
+            currencyId: sts.number(),
+            who: v276.AccountId32,
+            amount: sts.bigint(),
+        })
+    ),
+}

@@ -14,18 +14,18 @@
       "storage": true
     },
     "Balances": {
-      "events": ["Transfer"],
+      "events": true,
       "calls": true,
       "storage": true,
       "constants": []
     },
     "Tokens": {
-      "events": ["Transfer"],
+      "events": true,
       "calls": true,
       "storage": ["Accounts", "TotalIssuance"]
     },
     "Currencies": {
-      "events": ["Transferred"],
+      "events": true,
       "calls": false,
       "storage": false
     },

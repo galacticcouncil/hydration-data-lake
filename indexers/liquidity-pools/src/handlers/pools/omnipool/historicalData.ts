@@ -47,7 +47,7 @@ export async function handleOmnipoolHistoricalData(
         };
       },
       {
-        concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+        concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
       }
     );
 
@@ -163,7 +163,7 @@ export async function handleOmnipoolHistoricalData(
 
           return newEntity;
         },
-        { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+        { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
       )
     );
   }
@@ -294,7 +294,7 @@ export async function getOmnipoolHistDataWithUniqueData({
         }
       }
     },
-    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   return {

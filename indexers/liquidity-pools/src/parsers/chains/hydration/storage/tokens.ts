@@ -1,13 +1,21 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { storage } from '../typegenTypes/';
 import {
+  BalancesAccountInfoWithAccountId,
+  GetNativeTokenBalanceManyInput,
+  GetTokenBalancesManyInput,
+  TokenAccountBalancesWithAccountId,
+  TokenAccountBalanceWithAssetId,
   TokensAccountsAssetBalances,
   TokensGetTokensTotalIssuanceInput,
   TokensGetTokenTotalIssuanceInput,
   TokenTotalIssuance,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
+import {
+  hexToStrWithNullCharCheck,
+  tryExecOrReturnFallback,
+} from '../../../../utils/helpers';
 import { AssetType } from '../../../../model';
 
 async function getTokensAccountsAssetBalances(
@@ -72,8 +80,56 @@ async function getManyTokensTotalIssuance({
   throw new UnknownVersionError('storage.tokens.totalIssuance');
 }
 
+async function getTokenBalancesMany({
+  accountIds,
+  block,
+}: GetTokenBalancesManyInput): Promise<TokenAccountBalancesWithAccountId[]> {
+  if (block.specVersion < 108) return [];
+
+  if (storage.tokens.accounts.v108.is(block) || block.specVersion >= 108) {
+    return tryExecOrReturnFallback(async () => {
+      const accountBalances: TokenAccountBalancesWithAccountId[] = [];
+
+      for (const accountId of accountIds) {
+        const assetBalances: TokenAccountBalanceWithAssetId[] = [];
+
+        for await (const page of storage.tokens.accounts.v108.getPairsPaged(
+          500,
+          block,
+          accountId
+        ))
+          assetBalances.push(
+            ...page
+              .filter((p) => !!p && !!p[0] && !!p[0][1])
+              .map(([[accId, assetId], balance]) => ({
+                assetId: `${assetId}`,
+                data: {
+                  free: balance!.free,
+                  reserved: balance!.reserved,
+                  frozen: balance!.frozen,
+                  miscFrozen: 0n,
+                  feeFrozen: 0n,
+                  flags: 0n,
+                },
+              }))
+          );
+
+        accountBalances.push({
+          accountId,
+          assetBalances,
+        });
+      }
+
+      return accountBalances;
+    }, []);
+  }
+
+  throw new UnknownVersionError('storage.balances.account');
+}
+
 export default {
   getTokensAccountsAssetBalances,
   getTokenTotalIssuance,
   getManyTokensTotalIssuance,
+  getTokenBalancesMany,
 };

@@ -104,6 +104,10 @@ import {
   AssetExistentialDeposit,
   StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolAllPoolsInfoWithPoolId,
+  GetNativeTokenBalanceManyInput,
+  BalancesAccountInfoWithAccountId,
+  GetTokenBalancesManyInput,
+  TokenAccountBalancesWithAccountId,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -243,6 +247,9 @@ export type StorageParserMethods = {
   };
   balances: {
     getTotalIssuance: (args: GetConstantsInput) => Promise<bigint | null>;
+    getNativeTokenBalanceMany: (
+      args: GetNativeTokenBalanceManyInput
+    ) => Promise<BalancesAccountInfoWithAccountId[]>;
   };
   bonds: {
     getBond: (args: GetBondByIdInput) => Promise<BondDetails | null>;
@@ -260,6 +267,9 @@ export type StorageParserMethods = {
     getManyTokensTotalIssuance: (
       args: TokensGetTokensTotalIssuanceInput
     ) => Promise<TokenTotalIssuance[]>;
+    getTokenBalancesMany: (
+      args: GetTokenBalancesManyInput
+    ) => Promise<TokenAccountBalancesWithAccountId[]>;
   };
   assetRegistry: {
     getAsset: (

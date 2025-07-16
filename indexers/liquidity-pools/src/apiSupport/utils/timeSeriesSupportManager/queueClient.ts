@@ -58,7 +58,11 @@ export class BullQueueClient {
       await this.assetPriceScrapperQueue.add(
         'scrapperNextTickJob',
         {},
-        { jobId, delay: 3_000, removeOnComplete: true }
+        {
+          jobId,
+          delay: appConfig.redis.TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS,
+          removeOnComplete: true,
+        }
       );
     } catch (e) {
       console.log(e);

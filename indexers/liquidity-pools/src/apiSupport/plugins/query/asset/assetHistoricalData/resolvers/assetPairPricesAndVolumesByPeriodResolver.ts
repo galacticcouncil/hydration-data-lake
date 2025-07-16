@@ -115,7 +115,15 @@ export async function assetPairPricesAndVolumesByPeriodResolver(
     const pairPrices = dbResponse.priceData.get(
       `${assetInUnifiedId}:${appConfig.ASSET_PRICE_BASE_ASSET_ID}`
     );
-    if (!pairPrices) throw Error(`pairPrices is not available`);
+    if (!pairPrices) {
+      console.log(
+        `pairPrices is not found for ${assetInUnifiedId} and ${assetOutUnifiedId} pair.`
+      );
+      return {
+        nodes: [finalResponseNode],
+        totalCount: 0,
+      };
+    }
 
     for (const priceSnapshot of pairPrices.values()) {
       const volume = dbResponse.volumeData.get(priceSnapshot.timestamp)?.value;
@@ -132,12 +140,29 @@ export async function assetPairPricesAndVolumesByPeriodResolver(
       } as AssetPairPriceBucket);
     }
   } else {
-    const assetInRefPrices = dbResponse.priceData.get(
+    let assetInRefPrices = dbResponse.priceData.get(
       `${assetInUnifiedId}:${appConfig.ASSET_PRICE_BASE_ASSET_ID}`
     );
     const assetOutRefPrices = dbResponse.priceData.get(
       `${assetOutUnifiedId}:${appConfig.ASSET_PRICE_BASE_ASSET_ID}`
     );
+
+    /**
+     * We need fake prices in case assetId is Base asset because indexer
+     * doesn't have such prices. To keep a calculation process the same for any
+     * asset pairs combination, it's easier to mock prices for such case.
+     */
+    if (
+      assetInUnifiedId === appConfig.ASSET_PRICE_BASE_ASSET_ID &&
+      !!assetOutRefPrices
+    ) {
+      assetInRefPrices = new Map(
+        Array.from(assetOutRefPrices.entries()).map(([timestamp, bucket]) => [
+          timestamp,
+          { timestamp, value: 1 },
+        ])
+      );
+    }
 
     for (const priceSnapshot of assetInRefPrices?.values() || []) {
       const assetInRefPrice = priceSnapshot.value;

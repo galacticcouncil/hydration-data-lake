@@ -45,6 +45,65 @@ dotenv.config({
   })(),
 });
 
+class ConcurrencyConfig {
+  private static instance: ConcurrencyConfig;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
+
+  static getInstance(): ConcurrencyConfig {
+    if (!ConcurrencyConfig.instance) {
+      ConcurrencyConfig.instance = new ConcurrencyConfig();
+    }
+    try {
+      return transformAndValidateSync(ConcurrencyConfig, process.env, {
+        validator: { stopAtFirstError: true },
+      });
+    } catch (errors) {
+      if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+        errors.forEach((error: ValidationError) => {
+          // @ts-ignore
+          Object.values(error.constraints).forEach((msg) => console.error(msg));
+        });
+      } else {
+        console.error('Unexpected error during the environment validation');
+      }
+      throw new Error('Failed to validate environment variables');
+    }
+  }
+}
+
+class RedisConfig {
+  private static instance: RedisConfig;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: number = 5_000;
+
+  static getInstance(): RedisConfig {
+    if (!RedisConfig.instance) {
+      RedisConfig.instance = new RedisConfig();
+    }
+    try {
+      return transformAndValidateSync(RedisConfig, process.env, {
+        validator: { stopAtFirstError: true },
+      });
+    } catch (errors) {
+      if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+        errors.forEach((error: ValidationError) => {
+          // @ts-ignore
+          Object.values(error.constraints).forEach((msg) => console.error(msg));
+        });
+      } else {
+        console.error('Unexpected error during the environment validation');
+      }
+      throw new Error('Failed to validate environment variables');
+    }
+  }
+}
+
 export class AppConfig {
   private static instance: AppConfig;
 
@@ -255,9 +314,6 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value)
   readonly XYKPOOL_ASSET_PRICE_FALLBACK_INTERIM_ASSET_ID: string = '0';
 
-  @Transform(({ value }: { value: string }) => +value)
-  readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
-
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
   readonly USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: boolean = false;
@@ -269,6 +325,10 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
   readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
+
+  readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
+
+  readonly redis: RedisConfig = new RedisConfig();
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
@@ -308,15 +368,58 @@ export class AppConfig {
     }
 
     const eventsToListen = [
-      events.balances.transfer.name,
-      events.tokens.transfer.name,
-      events.currencies.transferred.name,
       events.assetRegistry.registered.name,
       events.assetRegistry.updated.name,
       events.assetRegistry.locationSet.name,
       events.broadcast.swapped.name,
       events.evm.log.name,
       events.evmAccounts.bound.name,
+
+      events.currencies.balanceUpdated.name,
+      events.currencies.deposited.name,
+      events.currencies.withdrawn.name,
+      events.currencies.transferred.name,
+
+      events.tokens.balanceSet.name,
+      events.tokens.deposited.name,
+      events.tokens.dustLost.name,
+      events.tokens.endowed.name,
+      events.tokens.issued.name,
+      events.tokens.locked.name,
+      events.tokens.lockRemoved.name,
+      events.tokens.lockSet.name,
+      events.tokens.rescinded.name,
+      events.tokens.reserved.name,
+      events.tokens.reserveRepatriated.name,
+      events.tokens.slashed.name,
+      events.tokens.totalIssuanceSet.name,
+      events.tokens.transfer.name,
+      events.tokens.unlocked.name,
+      events.tokens.unreserved.name,
+      events.tokens.withdrawn.name,
+
+      events.balances.balanceSet.name,
+      events.balances.burned.name,
+      events.balances.deposit.name,
+      events.balances.dustLost.name,
+      events.balances.endowed.name,
+      events.balances.frozen.name,
+      events.balances.issued.name,
+      events.balances.locked.name,
+      events.balances.minted.name,
+      events.balances.rescinded.name,
+      events.balances.reserved.name,
+      events.balances.reserveRepatriated.name,
+      events.balances.reserved.name,
+      events.balances.slashed.name,
+      events.balances.suspended.name,
+      events.balances.thawed.name,
+      events.balances.totalIssuanceForced.name,
+      events.balances.transfer.name,
+      events.balances.unlocked.name,
+      events.balances.unreserved.name,
+      events.balances.upgraded.name,
+      events.balances.withdraw.name,
     ];
 
     if (this.CHAIN === ChainName.hydration) {

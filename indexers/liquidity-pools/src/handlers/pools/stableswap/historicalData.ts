@@ -71,7 +71,7 @@ async function getStableswapDataPromise({
         poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
       }),
     }),
-    { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
   );
 
   const getPoolPegsDetails = (): Pick<
@@ -227,7 +227,7 @@ export async function handleStableswapHistoricalData(
           ),
         };
       },
-      { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
     );
 
     predefinedEntities.push(
@@ -243,7 +243,7 @@ export async function handleStableswapHistoricalData(
           )
           .flat(),
         async (item) => getStableswapDataPromise({ ...item, ctx }),
-        { concurrency: ctx.appConfig.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+        { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
       )
     );
   }
