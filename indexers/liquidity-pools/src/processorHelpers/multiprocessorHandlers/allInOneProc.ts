@@ -236,6 +236,10 @@ export async function execAllInOneProcessorHandlers(
   await handleAssetAccountBalancesPerBlock(ctx);
   console.timeEnd('handleAssetAccountBalancesPerBlock');
 
+  console.time('saveAccountBalancesRelatedDataBulk');
+  await HistoricalDataManager.saveAccountBalancesRelatedDataBulk(ctx);
+  console.timeEnd('saveAccountBalancesRelatedDataBulk');
+
   console.time('updateInitialIndexingFinishedAtTime');
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);
   console.timeEnd('updateInitialIndexingFinishedAtTime');

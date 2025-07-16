@@ -117985,6 +117985,59 @@ type PlatformTotalTvlResponse {
   totalCount: Int!
 }
 
+input AssetLatestSpotPricesFilter {
+  assetIdPairs: [[String!]!]
+  assetRegistryIdPairs: [[String!]!]
+}
+
+input AssetPairPricesAndVolumesByPeriodFilter {
+  bucketSize: TimeSeriesBucketTimeRange = _5M_
+  startTimestamp: String
+  endTimestamp: String
+  assetInId: String
+  assetOutId: String
+  assetInRegistryId: String
+  assetOutRegistryId: String
+}
+
+type AssetLatestSpotPrice {
+  assetInId: String!
+  assetInRegistryId: String
+  assetOutId: String!
+  assetOutRegistryId: String
+  priceNorm: String!
+  paraBlockHeight: Int!
+}
+
+type AssetLatestSpotPricesResponse {
+  nodes: [AssetLatestSpotPrice]!
+  totalCount: Int!
+}
+
+type AssetPairPriceBucket {
+  priceAvrgNorm: String!
+  priceMinNorm: String!
+  priceMaxNorm: String!
+  priceOpenNorm: String!
+  priceCloseNorm: String!
+  referenceAssetVolNorm: String!
+  timestamp: String!
+}
+
+type AssetPairPriceSnapshot {
+  referenceAssetId: String!
+  assetInId: String!
+  assetInAssetRegistryId: String
+  assetOutId: String!
+  assetOutAssetRegistryId: String
+  buckets: [AssetPairPriceBucket!]!
+}
+
+type AssetPairPricesAndVolumeByPeriodResponse {
+  nodes: [AssetPairPriceSnapshot]!
+  totalCount: Int!
+}
+
 """The root query type which gives access points into the data universe."""
 type Query {
   """
@@ -121151,6 +121204,7 @@ type Query {
   platformTotalTvl: PlatformTotalTvlResponse!
   assetLatestSpotPrices(filter: AssetLatestSpotPricesFilter): AssetLatestSpotPricesResponse!
   assetPairPricesAndVolumesByPeriod(filter: AssetPairPricesAndVolumesByPeriodFilter): AssetPairPricesAndVolumeByPeriodResponse!
+  accountTotalBalancesByPeriod(filter: AccountTotalBalancesByPeriodFilter): AccountTotalBalancesByPeriodResponse!
 }
 
 """
@@ -121179,55 +121233,26 @@ type Subscription {
   routedTrades(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
 }
 
-input AssetLatestSpotPricesFilter {
-  assetIdPairs: [[String!]!]
-  assetRegistryIdPairs: [[String!]!]
-}
-
-input AssetPairPricesAndVolumesByPeriodFilter {
+input AccountTotalBalancesByPeriodFilter {
   bucketSize: TimeSeriesBucketTimeRange = _5M_
   startTimestamp: String
   endTimestamp: String
-  assetInId: String
-  assetOutId: String
-  assetInRegistryId: String
-  assetOutRegistryId: String
+  accountId: String!
 }
 
-type AssetLatestSpotPrice {
-  assetInId: String!
-  assetInRegistryId: String
-  assetOutId: String!
-  assetOutRegistryId: String
-  priceNorm: String!
-  paraBlockHeight: Int!
-}
-
-type AssetLatestSpotPricesResponse {
-  nodes: [AssetLatestSpotPrice]!
-  totalCount: Int!
-}
-
-type AssetPairPriceBucket {
-  priceAvrgNorm: String!
-  priceMinNorm: String!
-  priceMaxNorm: String!
-  priceOpenNorm: String!
-  priceCloseNorm: String!
-  referenceAssetVolNorm: String!
+type AccountTotalBalanceBucket {
+  transferableNorm: String!
+  lockedNorm: String!
   timestamp: String!
 }
 
-type AssetPairPriceSnapshot {
+type AccountTotalBalanceSnapshot {
   referenceAssetId: String!
-  assetInId: String!
-  assetInAssetRegistryId: String
-  assetOutId: String!
-  assetOutAssetRegistryId: String
-  buckets: [AssetPairPriceBucket!]!
+  accountId: String!
+  buckets: [AccountTotalBalanceBucket!]!
 }
 
-type AssetPairPricesAndVolumeByPeriodResponse {
-  nodes: [AssetPairPriceSnapshot]!
+type AccountTotalBalancesByPeriodResponse {
+  nodes: [AccountTotalBalanceSnapshot]!
   totalCount: Int!
 }

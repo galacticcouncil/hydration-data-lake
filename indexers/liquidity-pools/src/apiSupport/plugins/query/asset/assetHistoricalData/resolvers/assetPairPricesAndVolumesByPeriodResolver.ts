@@ -175,15 +175,19 @@ export async function assetPairPricesAndVolumesByPeriodResolver(
       const price = BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
       const volume = dbResponse.volumeData.get(priceSnapshot.timestamp)?.value;
 
+      const priceDecorated =
+        !!price && !Number.isNaN(price) ? price.toString() : '0';
+      const valumeDecorated =
+        !!volume && !Number.isNaN(volume) ? volume.toString() : '0';
+
       finalResponseNode.buckets.push({
         timestamp: priceSnapshot.timestamp.toString(),
-        priceAvrgNorm: price,
-        priceMinNorm: price,
-        priceMaxNorm: price,
-        priceOpenNorm: price,
-        priceCloseNorm: price,
-        referenceAssetVolNorm:
-          !!volume && !Number.isNaN(volume) ? volume.toString() : '0',
+        priceAvrgNorm: priceDecorated,
+        priceMinNorm: priceDecorated,
+        priceMaxNorm: priceDecorated,
+        priceOpenNorm: priceDecorated,
+        priceCloseNorm: priceDecorated,
+        referenceAssetVolNorm: valumeDecorated,
       } as AssetPairPriceBucket);
     }
   }

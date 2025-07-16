@@ -251,11 +251,11 @@ export async function handleMmAssetAccountBalancesPerBlock(
     }
   }
 
-  await ctx.store.save([
-    ...ctx.batchState.state.accountAssetBalanceHistoricalData.values(),
-  ]);
-
-  await ctx.store.save([
-    ...ctx.batchState.state.accountTotalBalanceHistoricalData.values(),
-  ]);
+  // await ctx.store.save([
+  //   ...ctx.batchState.state.accountAssetBalanceHistoricalData.values(),
+  // ]);
+  //
+  // await ctx.store.save([
+  //   ...ctx.batchState.state.accountTotalBalanceHistoricalData.values(),
+  // ]);
 }

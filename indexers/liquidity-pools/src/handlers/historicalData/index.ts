@@ -1,6 +1,8 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  AccountAssetBalanceHistoricalData,
+  AccountTotalBalanceHistoricalData,
   AssetsPairVolumeHistoricalData,
   AssetSpotPriceHistoricalData,
   BatchLbppoolHistVolsList,
@@ -10,7 +12,10 @@ import {
 } from '../../model';
 import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/assetHistoricalData';
 import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
-import { RedisTimeSeriesManager } from '../../utils/redisTimeSeriesManager';
+import {
+  RedisTimeSeriesManager,
+  RedisTimeSeriesName,
+} from '../../utils/redisTimeSeriesManager';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 
 export class HistoricalDataManager {
@@ -153,6 +158,25 @@ export class HistoricalDataManager {
     );
   }
 
+  static async saveAccountBalancesRelatedDataBulk(
+    ctx: SqdProcessorContext<Store>
+  ) {
+    const accountAssetBalanceHistoricalDataList = Array.from(
+      ctx.batchState.state.accountAssetBalanceHistoricalData.values()
+    );
+    const accountTotalBalanceHistoricalDataList = Array.from(
+      ctx.batchState.state.accountTotalBalanceHistoricalData.values()
+    );
+
+    await ctx.store.save(accountAssetBalanceHistoricalDataList);
+    await ctx.store.save(accountTotalBalanceHistoricalDataList);
+
+    await this.commitAccountTotalBalancesToRedisTimeSeries(
+      accountTotalBalanceHistoricalDataList,
+      ctx
+    );
+  }
+
   static async commitAssetPricesToRedisTimeSeries(
     src: AssetSpotPriceHistoricalData[],
     ctx: SqdProcessorContext<Store>
@@ -173,7 +197,7 @@ export class HistoricalDataManager {
         )
         .map((item) => ({
           keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: 'price',
+          name: RedisTimeSeriesName.price,
           assetAId: item.assetIn.assetRegistryId!,
           assetBId: item.assetOut.assetRegistryId!,
           timestamp: item.block.timestamp.getTime(),
@@ -202,7 +226,7 @@ export class HistoricalDataManager {
         )
         .map((item) => ({
           keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: 'volume',
+          name: RedisTimeSeriesName.volume,
           assetAId:
             +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
               ? item.assetA.assetRegistryId!
@@ -215,6 +239,29 @@ export class HistoricalDataManager {
           timestamp: item.block.timestamp.getTime(),
           value: +item.totalVolumeNormalised,
         }))
+    );
+  }
+
+  static async commitAccountTotalBalancesToRedisTimeSeries(
+    src: AccountTotalBalanceHistoricalData[],
+    ctx: SqdProcessorContext<Store>
+  ) {
+    if (
+      !src ||
+      !src.length ||
+      !ctx.appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES
+    )
+      return;
+
+    const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
+    await redisTimeSeriesManager.addMultipleAccountTotalBalances(
+      src.map((item) => ({
+        keyPrefix: ctx.appConfig.INDEXER_ID,
+        name: RedisTimeSeriesName.acc_bal_tot_tns,
+        accountId: item.account.id,
+        timestamp: item.block.timestamp.getTime(),
+        value: +item.totalTransferableNorm,
+      }))
     );
   }
 

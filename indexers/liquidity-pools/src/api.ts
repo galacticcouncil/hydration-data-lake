@@ -33,6 +33,7 @@ import { GlobalMetricsPlugin } from './apiSupport/plugins/query/metrics/globalMe
 import { OmnipoolTvlMetricsPlugin } from './apiSupport/plugins/query/omnipool/omnipoolTvlMetrics';
 import { StableswapTvlMetricsPlugin } from './apiSupport/plugins/query/stableswap/stableswapTvlMetrics';
 import { XykpoolTvlMetricsPlugin } from './apiSupport/plugins/query/xykpool/xykpoolTvlMetrics';
+import { AccountBalancesHistoricalDataPlugin } from './apiSupport/plugins/query/balances/accountBalancesHistoricalData';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -88,6 +89,7 @@ async function initializeServer() {
           OmnipoolTvlMetricsPlugin,
           GlobalMetricsPlugin,
           AssetHistoricalDataPlugin,
+          AccountBalancesHistoricalDataPlugin,
           makePgSmartTagsFromFilePlugin(
             getEnvPath('apiSupport/postgraphile.tags.json5')
           ),

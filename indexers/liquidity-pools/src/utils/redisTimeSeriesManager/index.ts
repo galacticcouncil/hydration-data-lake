@@ -24,10 +24,24 @@ export type RedisInstance = RedisClientType<
   // TypeMapping
 >;
 
+export enum RedisTimeSeriesName {
+  price = 'price',
+  volume = 'volume',
+
+  acc_bal_tot_tns = 'acc_bal_tot_tns',
+  acc_bal_tot_loc = 'acc_bal_tot_loc',
+}
+
 export type TimeSeriesPriceAndVolumeBuckets = {
   priceData: Map<string, Map<number, { timestamp: number; value: number }>>;
   volumeData: Map<number, { timestamp: number; value: number }>;
 };
+export type TimeSeriesAccTotalBalancesBuckets = {
+  transferable: Map<number, { timestamp: number; value: number }>;
+  locked: Map<number, { timestamp: number; value: number }>;
+};
+
+export type RedisTimeSeriesKey = string;
 
 const appConfig = AppConfig.getInstance();
 
@@ -79,6 +93,20 @@ export class RedisTimeSeriesManager {
     await this.getOpenClient();
   }
 
+  private fillNaNWithPrevious(
+    data: Array<{ timestamp: number; value: number }>
+  ): Array<{ timestamp: number; value: number }> {
+    let previousValue: number | null = null;
+
+    return data.map((item) => {
+      if (isNaN(item.value)) {
+        return { ...item, value: previousValue !== null ? previousValue : 0 };
+      }
+      previousValue = item.value;
+      return item;
+    });
+  }
+
   getVolumeSeriesLabel(assetAId: string, assetBId: string) {
     const assetsSorted = [+assetAId, +assetBId].sort((a, b) => a - b);
     return { volPair: assetsSorted.join(':') };
@@ -95,14 +123,33 @@ export class RedisTimeSeriesManager {
     name,
     assetAId,
     assetBId = '10',
+    accountId,
     keyPrefix,
   }: {
-    name: 'price' | 'volume';
-    assetAId: string;
+    name: RedisTimeSeriesName;
+    assetAId?: string;
     assetBId?: string;
+    accountId?: string;
     keyPrefix?: string | number;
   }) {
-    return `ts:${keyPrefix ? keyPrefix : 'none'}:${name}:${assetAId}:${assetBId}`;
+    if (!assetAId && !accountId)
+      throw Error(`getSeriesKey function didn't receive enough args`);
+
+    const key = `ts:${keyPrefix ? keyPrefix : 'none'}:${name}`;
+
+    if (
+      name === RedisTimeSeriesName.price ||
+      name === RedisTimeSeriesName.volume
+    )
+      return key + `:${assetAId}:${assetBId}`;
+
+    if (
+      name === RedisTimeSeriesName.acc_bal_tot_loc ||
+      name === RedisTimeSeriesName.acc_bal_tot_tns
+    )
+      return key + `:${accountId}`;
+
+    throw Error(`getSeriesKey function didn't receive correct name`);
   }
 
   private async isTimeSeriesExists(key: string) {
@@ -144,7 +191,7 @@ export class RedisTimeSeriesManager {
     timestamp,
     keyPrefix,
   }: {
-    name: 'price' | 'volume';
+    name: RedisTimeSeriesName;
     assetAId: string;
     assetBId?: string;
     value: number;
@@ -171,7 +218,7 @@ export class RedisTimeSeriesManager {
 
   async addMultiplePrices(
     data: {
-      name: 'price' | 'volume';
+      name: RedisTimeSeriesName;
       assetAId: string;
       assetBId?: string;
       value: number;
@@ -185,7 +232,7 @@ export class RedisTimeSeriesManager {
       const openClient = await this.getOpenClient();
 
       const keysMap: Map<
-        string,
+        RedisTimeSeriesKey,
         { assetAId: string; assetBId: string; name: string }
       > = new Map();
       const listToSave = [];
@@ -225,6 +272,49 @@ export class RedisTimeSeriesManager {
     }
   }
 
+  async addMultipleAccountTotalBalances(
+    data: {
+      name: RedisTimeSeriesName;
+      accountId: string;
+      value: number;
+      timestamp: number;
+      keyPrefix?: string | number;
+    }[]
+  ) {
+    if (!appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES) return;
+
+    try {
+      const openClient = await this.getOpenClient();
+
+      const keysMap: Map<
+        RedisTimeSeriesKey,
+        { accountId: string; name: string }
+      > = new Map();
+
+      const listToSave = [];
+
+      for (const { keyPrefix, name, accountId, value, timestamp } of data) {
+        const key = this.getSeriesKey({
+          keyPrefix,
+          name,
+          accountId,
+        });
+        keysMap.set(key, { accountId, name });
+        listToSave.push({ key, timestamp, value });
+      }
+
+      for (const [uniqueKey, indexerData] of keysMap.entries())
+        await this.ensureTimeSeries(uniqueKey, {
+          name: indexerData.name,
+          accountId: indexerData.accountId,
+        });
+
+      await openClient.ts.mAdd(listToSave);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async getPricesAndVolumesFromTimeSeries({
     assetInId,
     assetOutId = appConfig.ASSET_PRICE_BASE_ASSET_ID,
@@ -254,7 +344,7 @@ export class RedisTimeSeriesManager {
         [
           this.getSeriesKey({
             keyPrefix: appConfig.INDEXER_ID,
-            name: 'price',
+            name: RedisTimeSeriesName.price,
             assetAId: assetInId,
             assetBId: assetOutId,
           }),
@@ -266,7 +356,7 @@ export class RedisTimeSeriesManager {
         [
           this.getSeriesKey({
             keyPrefix: appConfig.INDEXER_ID,
-            name: 'volume',
+            name: RedisTimeSeriesName.volume,
             assetAId: assetInId,
             assetBId: assetOutId,
           }),
@@ -275,7 +365,7 @@ export class RedisTimeSeriesManager {
         [
           this.getSeriesKey({
             keyPrefix: appConfig.INDEXER_ID,
-            name: 'volume',
+            name: RedisTimeSeriesName.volume,
             assetAId: assetOutId,
             assetBId: assetInId,
           }),
@@ -294,7 +384,7 @@ export class RedisTimeSeriesManager {
           [
             this.getSeriesKey({
               keyPrefix: appConfig.INDEXER_ID,
-              name: 'price',
+              name: RedisTimeSeriesName.price,
               assetAId: assetInId,
               assetBId: appConfig.ASSET_PRICE_BASE_ASSET_ID,
             }),
@@ -303,7 +393,7 @@ export class RedisTimeSeriesManager {
           [
             this.getSeriesKey({
               keyPrefix: appConfig.INDEXER_ID,
-              name: 'price',
+              name: RedisTimeSeriesName.price,
               assetAId: assetOutId,
               assetBId: appConfig.ASSET_PRICE_BASE_ASSET_ID,
             }),
@@ -344,6 +434,91 @@ export class RedisTimeSeriesManager {
         if (volumeKeysMap.has(bucket.key)) {
           resultFiltered.volumeData = new Map(
             bucket.samples.map((s) => [s.timestamp, s])
+          );
+        }
+      }
+
+      return resultFiltered;
+    } catch (e) {
+      console.log(e);
+      return defaultResponse;
+    }
+  }
+
+  async getAccTotalBalancesFromTimeSeries({
+    accountId,
+    startTimestamp,
+    endTimestamp,
+    indexerId,
+    bucketSizeMs,
+  }: {
+    accountId: string;
+    startTimestamp: number;
+    endTimestamp: number;
+    indexerId: string;
+    bucketSizeMs: number;
+  }): Promise<TimeSeriesAccTotalBalancesBuckets> {
+    const defaultResponse: TimeSeriesAccTotalBalancesBuckets = {
+      transferable: new Map(),
+      locked: new Map(),
+    };
+
+    if (!appConfig.USE_HIST_DATA_FROM_REDIS_TIME_SERIES) return defaultResponse;
+
+    try {
+      const openClient = await this.getOpenClient();
+
+      const totalTransferableBalanceKey = this.getSeriesKey({
+        name: RedisTimeSeriesName.acc_bal_tot_tns,
+        accountId,
+        keyPrefix: indexerId,
+      });
+      const totalLockedBalanceKey = this.getSeriesKey({
+        name: RedisTimeSeriesName.acc_bal_tot_loc,
+        accountId,
+        keyPrefix: indexerId,
+      });
+
+      const buckets = await openClient.ts.mRange(
+        startTimestamp,
+        endTimestamp,
+        [
+          `accountId=${accountId}`,
+          `name=(${RedisTimeSeriesName.acc_bal_tot_tns},${RedisTimeSeriesName.acc_bal_tot_loc})`,
+        ],
+        bucketSizeMs !== 0
+          ? {
+              AGGREGATION: {
+                type: TimeSeriesAggregationType.AVG,
+                timeBucket: bucketSizeMs,
+                EMPTY: true,
+                BUCKETTIMESTAMP: TimeSeriesBucketTimestamp.MID,
+              },
+            }
+          : undefined
+      );
+
+      const resultFiltered: TimeSeriesAccTotalBalancesBuckets = {
+        transferable: new Map(),
+        locked: new Map(),
+      };
+
+      for (const bucket of buckets) {
+        if (bucket.key === totalTransferableBalanceKey) {
+          resultFiltered.transferable = new Map(
+            this.fillNaNWithPrevious(bucket.samples).map((s) => [
+              s.timestamp,
+              s,
+            ])
+          );
+          continue;
+        }
+        if (bucket.key === totalLockedBalanceKey) {
+          resultFiltered.locked = new Map(
+            this.fillNaNWithPrevious(bucket.samples).map((s) => [
+              s.timestamp,
+              s,
+            ])
           );
         }
       }

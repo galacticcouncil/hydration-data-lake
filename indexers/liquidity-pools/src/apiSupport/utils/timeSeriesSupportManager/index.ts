@@ -4,8 +4,8 @@ import {
   getFirstAvailableAssetSpotPriceEntity,
 } from './sql/assetSpotPrice.sql';
 import {
-  RedisInstance,
   RedisTimeSeriesManager,
+  RedisTimeSeriesName,
 } from '../../../utils/redisTimeSeriesManager';
 import { AppConfig } from '../../../appConfig';
 import { getAssetPairVolumesByBlocksRange } from './sql/assetPairVolumes.sql';
@@ -130,7 +130,7 @@ export class TimeSeriesApiSupportManager {
         await redisTimeSeriesManager.addMultiplePrices(
           assetSpotPriceHistDataChunk.rows.map((row) => ({
             keyPrefix: appConfig.INDEXER_ID,
-            name: 'price',
+            name: RedisTimeSeriesName.price,
             assetAId: row.asset_in_asset_registry_id,
             assetBId: row.asset_out_asset_registry_id,
             timestamp: row.block_timestamp,
@@ -142,7 +142,7 @@ export class TimeSeriesApiSupportManager {
         await redisTimeSeriesManager.addMultiplePrices(
           assetPairVolumesChunk.rows.map((row) => ({
             keyPrefix: appConfig.INDEXER_ID,
-            name: 'volume',
+            name: RedisTimeSeriesName.volume,
             assetAId:
               +row.asset_a_registry_id < +row.asset_b_registry_id
                 ? row.asset_a_registry_id
