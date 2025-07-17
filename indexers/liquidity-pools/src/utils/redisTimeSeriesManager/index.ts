@@ -133,7 +133,9 @@ export class RedisTimeSeriesManager {
     keyPrefix?: string | number;
   }) {
     if (!assetAId && !accountId)
-      throw Error(`getSeriesKey function didn't receive enough args`);
+      throw Error(
+        `getSeriesKey function didn't receive enough args. [assetAId => ${assetAId} | accountId => ${accountId}]`
+      );
 
     const key = `ts:${keyPrefix ? keyPrefix : 'none'}:${name}`;
 

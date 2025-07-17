@@ -1,16 +1,23 @@
 import { AppConfig } from '../../../appConfig';
-import { Pool, QueryResult, QueryResultRow } from 'pg';
-import { getApiState, setApiState } from './sql/apiState.sql';
 import Queue, { DoneCallback, Job } from 'bull';
-import { JobProcessingStatus } from '../../../utils/processingPoolManager';
+import * as crypto from 'node:crypto';
 
 const appConfig = AppConfig.getInstance();
+
+export enum HistDataScrapperJobName {
+  assetPriceHistData = 'assetPriceHistData',
+  accountTotalBalancesHistData = 'accountTotalBalancesHistData',
+}
+
+export type HistDataScrapperJobData = {
+  blockHeight: number;
+};
 
 export class BullQueueClient {
   private static instance: BullQueueClient;
 
   private queueName = `${appConfig.INDEXER_ID}_PROCESSING_POOL`;
-  public assetPriceScrapperQueue: Queue.Queue<{}>;
+  public assetPriceScrapperQueue: Queue.Queue<HistDataScrapperJobData>;
 
   static getInstance(): BullQueueClient {
     if (!BullQueueClient.instance) {
@@ -30,7 +37,7 @@ export class BullQueueClient {
     });
   }
 
-  async cleanUpScrapperNextTickJobs() {
+  async cleanUpScrapperNextTickJobs(jobName: HistDataScrapperJobName) {
     try {
       const jobs = await this.assetPriceScrapperQueue.getJobs([
         'active',
@@ -41,7 +48,7 @@ export class BullQueueClient {
       ]);
 
       for (const job of jobs) {
-        if (job.name !== 'scrapperNextTickJob') continue;
+        if (job.name !== jobName) continue;
         try {
           await job.remove();
         } catch (e) {
@@ -53,17 +60,20 @@ export class BullQueueClient {
     }
   }
 
-  async setScrapperNextTickJob(jobId: string = '0') {
+  async setScrapperNextTickJob({
+    jobName,
+    data,
+  }: {
+    jobName: HistDataScrapperJobName;
+    data: HistDataScrapperJobData;
+  }) {
     try {
-      await this.assetPriceScrapperQueue.add(
-        'scrapperNextTickJob',
-        {},
-        {
-          jobId,
-          delay: appConfig.redis.TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS,
-          removeOnComplete: true,
-        }
-      );
+      await this.assetPriceScrapperQueue.add(jobName, data, {
+        // jobId: `${jobName}_${data.blockHeight}`,
+        jobId: crypto.randomUUID(),
+        delay: appConfig.redis.TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS,
+        removeOnComplete: true,
+      });
     } catch (e) {
       console.log(e);
     }

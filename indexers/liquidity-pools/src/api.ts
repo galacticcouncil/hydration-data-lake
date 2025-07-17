@@ -174,7 +174,7 @@ async function initializeServer() {
       console.log(`Squid API listening on port ${appConfig.GQL_PORT}`);
     });
 
-    TimeSeriesApiSupportManager.getInstance().initAssetHistDataScraper().then();
+    TimeSeriesApiSupportManager.getInstance().initHistDataScraper().then();
   } catch (error) {
     console.error('Failed to initialize server:', error);
     process.exit(1);

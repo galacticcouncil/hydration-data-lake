@@ -17,6 +17,6 @@ export const getFirstAvailableAssetSpotPriceEntity = `
         asp.id AS id, 
         asp.para_block_height AS para_block_height
     FROM asset_spot_price_historical_data asp
-    ORDER BY asp.id ASC
+    ORDER BY asp.para_block_height ASC
       LIMIT 1;
 `;
