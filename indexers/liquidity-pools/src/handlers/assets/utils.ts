@@ -20,10 +20,17 @@ import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydratio
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAllBatch = new Map(
-    (await ctx.store.find(Asset, { where: {} })).map((asset) => [
-      asset.id,
-      asset,
-    ])
+    (
+      await ctx.store.find(Asset, {
+        where: {},
+        relations: {
+          underlyingAsset: true,
+          aToken: true,
+          variableDebtToken: true,
+          bondUnderlyingAsset: true,
+        },
+      })
+    ).map((asset) => [asset.id, asset])
   );
 }
 

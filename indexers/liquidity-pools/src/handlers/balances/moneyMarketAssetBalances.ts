@@ -6,11 +6,12 @@ import {
   Asset,
   AssetType,
   Block,
+  ResourceType,
 } from '../../model';
 import { constants } from 'ethers';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import {
-  getAccountAssetBalanceHistoricalData,
+  getOrCreateAccountAssetBalanceHistoricalData,
   getOrCreateAccountTotalBalanceHistoricalData,
 } from './accountAssetBalance';
 import { getOrCreateAccount } from '../accounts';
@@ -96,23 +97,23 @@ export async function handleMmAssetAccountBalancesPerBlock(
 
   const batchState = ctx.batchState.state;
 
-  batchState.transfers.forEach((transfer) => {
-    const blockHeader = getBlockHeaderByBlockHeight(transfer.paraBlockHeight);
-    if (blockHeader) {
-      pushAccountsAssetsToBlockSlot({
-        blockHeader,
-        block: transfer.event.block,
-        assets: [transfer.asset],
-        account: transfer.from,
-      });
-      pushAccountsAssetsToBlockSlot({
-        blockHeader,
-        block: transfer.event.block,
-        assets: [transfer.asset],
-        account: transfer.to,
-      });
-    }
-  });
+  // batchState.transfers.forEach((transfer) => {
+  //   const blockHeader = getBlockHeaderByBlockHeight(transfer.paraBlockHeight);
+  //   if (blockHeader) {
+  //     pushAccountsAssetsToBlockSlot({
+  //       blockHeader,
+  //       block: transfer.event.block,
+  //       assets: [transfer.asset],
+  //       account: transfer.from,
+  //     });
+  //     pushAccountsAssetsToBlockSlot({
+  //       blockHeader,
+  //       block: transfer.event.block,
+  //       assets: [transfer.asset],
+  //       account: transfer.to,
+  //     });
+  //   }
+  // });
 
   console.log(
     'batchState.moneyMarketEvents - ',
@@ -153,7 +154,7 @@ export async function handleMmAssetAccountBalancesPerBlock(
       )
         continue accountAssetsMapLoop;
 
-      const accountTotalBalance =
+      const accountTotalBalanceHistData =
         await getOrCreateAccountTotalBalanceHistoricalData({
           account: accountAssetsMap.account,
           blockHeader: blockSlotData.blockHeader,
@@ -189,37 +190,54 @@ export async function handleMmAssetAccountBalancesPerBlock(
         if (assetBalance.balance === null || assetBalance.balance === undefined)
           continue assetBalancesLoop;
 
-        let historicalDataEntity = await getAccountAssetBalanceHistoricalData({
-          ctx,
-          asset: assetBalance.asset,
-          account: accountAssetsMap.account,
-          blockHeader: blockSlotData.blockHeader,
-          fetchFromDb: false,
-        });
+        const isExistingAssetBalanceHistoricalDataEntity =
+          ctx.batchState.state.accountAssetBalanceHistoricalData.has(
+            `${accountAssetsMap.account.id}-${assetBalance.asset.id}-${blockSlotData.blockHeader.height}`
+          );
 
-        if (!historicalDataEntity) {
-          historicalDataEntity = new AccountAssetBalanceHistoricalData({
-            id: `${accountAssetsMap.account.id}-${assetBalance.asset.id}-${blockSlotData.blockHeader.height}`,
-            account: accountAssetsMap.account,
+        if (isExistingAssetBalanceHistoricalDataEntity)
+          continue assetBalancesLoop;
+
+        const historicalDataEntity =
+          await getOrCreateAccountAssetBalanceHistoricalData({
+            ctx,
             asset: assetBalance.asset,
-
-            transferable: 0n,
-            totalLocked: 0n,
-
-            transferableInRefAssetNorm: '0',
-            totalLockedInRefAssetNorm: '0',
-
-            relayBlockHeight: blockSlotData.block.relayBlockHeight,
-            paraBlockHeight: blockSlotData.block.height,
-            block: blockSlotData.block,
+            account: accountAssetsMap.account,
+            blockHeader: blockSlotData.blockHeader,
+            fetchFromDb: false,
           });
-        }
+
+        if (!historicalDataEntity) continue assetBalancesLoop;
 
         historicalDataEntity.transferable = assetBalance.balance;
 
+        let assetInId = assetBalance.asset.id;
+
+        if (
+          assetBalance.asset.resourceType === ResourceType.Debt &&
+          assetBalance.asset.underlyingAsset
+        ) {
+          let assetFull: Asset | undefined = assetBalance.asset;
+          if (!assetFull.underlyingAsset) {
+            /**
+             * We need this re-fetch to be sure that cached Asset contains data
+             * about a related underlyingAsset
+             */
+            assetFull = await ctx.store.findOne(Asset, {
+              where: { id: assetBalance.asset.id },
+              relations: {
+                underlyingAsset: true,
+              },
+            });
+            if (!assetFull || !assetFull.underlyingAsset)
+              continue assetBalancesLoop;
+          }
+          assetInId = assetBalance.asset.underlyingAsset.id;
+        }
+
         const assetSpotPrice = getAssetsPairPrice({
           ctx,
-          assetInId: assetBalance.asset.id,
+          assetInId,
           blockHeight: blockSlotData.block.height,
         });
 
@@ -232,11 +250,25 @@ export async function handleMmAssetAccountBalancesPerBlock(
               })
             : '0';
 
-        accountTotalBalance.totalTransferableNorm = BigNumber(
-          accountTotalBalance.totalTransferableNorm
-        )
-          .plus(historicalDataEntity.transferableInRefAssetNorm || '0')
-          .toFixed();
+        if (assetBalance.asset.resourceType === ResourceType.Debt) {
+          accountTotalBalanceHistData.totalTransferableNorm = BigNumber(
+            accountTotalBalanceHistData.totalTransferableNorm
+          )
+            .minus(historicalDataEntity.transferableInRefAssetNorm || '0')
+            .toFixed();
+
+          accountTotalBalanceHistData.totalDebtNorm = BigNumber(
+            accountTotalBalanceHistData.totalDebtNorm || '0'
+          )
+            .plus(historicalDataEntity.transferableInRefAssetNorm || '0')
+            .toFixed();
+        } else {
+          accountTotalBalanceHistData.totalTransferableNorm = BigNumber(
+            accountTotalBalanceHistData.totalTransferableNorm
+          )
+            .plus(historicalDataEntity.transferableInRefAssetNorm || '0')
+            .toFixed();
+        }
 
         ctx.batchState.state.accountAssetBalanceHistoricalData.set(
           historicalDataEntity.id,
@@ -245,8 +277,8 @@ export async function handleMmAssetAccountBalancesPerBlock(
       }
 
       ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-        accountTotalBalance.id,
-        accountTotalBalance
+        accountTotalBalanceHistData.id,
+        accountTotalBalanceHistData
       );
     }
   }

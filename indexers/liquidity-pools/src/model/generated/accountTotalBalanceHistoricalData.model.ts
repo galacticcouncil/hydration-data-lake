@@ -29,6 +29,9 @@ export class AccountTotalBalanceHistoricalData {
   @Column_("text", {nullable: false})
   totalLockedNorm!: string
 
+  @Column_("text", {nullable: true})
+  totalDebtNorm!: string | undefined | null
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

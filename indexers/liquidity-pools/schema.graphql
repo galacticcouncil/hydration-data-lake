@@ -259,6 +259,7 @@ type AccountTotalBalanceHistoricalData @entity {
 
   totalTransferableNorm: String!
   totalLockedNorm: String!
+  totalDebtNorm: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!

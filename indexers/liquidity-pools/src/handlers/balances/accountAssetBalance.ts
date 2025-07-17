@@ -13,7 +13,7 @@ import { AppConfig } from '../../appConfig';
 
 const appConfig = AppConfig.getInstance();
 
-export async function getAccountAssetBalanceHistoricalData({
+export async function getOrCreateAccountAssetBalanceHistoricalData({
   account,
   asset,
   ctx,
@@ -36,14 +36,45 @@ export async function getAccountAssetBalanceHistoricalData({
   const entityId = `${account.id}-${asset.id}-${blockHeader.height}`;
 
   let dataEntity = batchState.accountAssetBalanceHistoricalData.get(entityId);
-  if (dataEntity || (!dataEntity && !fetchFromDb)) return dataEntity ?? null;
+  if (dataEntity) return dataEntity;
 
-  dataEntity = await ctx.store.findOne(AccountAssetBalanceHistoricalData, {
-    where: { id: entityId },
-    relations,
+  if (!dataEntity && fetchFromDb) {
+    dataEntity = await ctx.store.findOne(AccountAssetBalanceHistoricalData, {
+      where: { id: entityId },
+      relations,
+    });
+
+    if (dataEntity) {
+      ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+        dataEntity.id,
+        dataEntity
+      );
+      return dataEntity;
+    }
+  }
+
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(
+    blockHeader.height
+  );
+
+  if (!block) throw Error('Block not found');
+
+  dataEntity = new AccountAssetBalanceHistoricalData({
+    id: `${account.id}-${asset.id}-${blockHeader.height}`,
+    account,
+    asset,
+
+    transferable: 0n,
+    totalLocked: 0n,
+
+    transferableInRefAssetNorm: '0',
+    totalLockedInRefAssetNorm: '0',
+
+    relayBlockHeight: block.relayBlockHeight,
+    paraBlockHeight: block.height,
+    block,
   });
 
-  if (!dataEntity) return null;
   ctx.batchState.state.accountAssetBalanceHistoricalData.set(
     dataEntity.id,
     dataEntity
@@ -107,6 +138,7 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
     refAsset,
     totalTransferableNorm: '0',
     totalLockedNorm: '0',
+    totalDebtNorm: '0',
     paraBlockHeight: blockHeader.height,
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height

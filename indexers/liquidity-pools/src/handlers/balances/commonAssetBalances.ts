@@ -13,7 +13,10 @@ import { getOrCreateAsset } from '../assets/asset';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';
-import { getOrCreateAccountTotalBalanceHistoricalData } from './accountAssetBalance';
+import {
+  getOrCreateAccountAssetBalanceHistoricalData,
+  getOrCreateAccountTotalBalanceHistoricalData,
+} from './accountAssetBalance';
 
 type AccountId = string;
 type AssetRegistryId = string;
@@ -125,21 +128,6 @@ export async function handleCommonAssetAccountBalances(
     for (const [accountId, accountData] of blockData.data.entries()) {
       const account = await getOrCreateAccount({ ctx, id: accountId });
 
-      // const accountTotalBalance = new AccountTotalBalanceHistoricalData({
-      //   id: `${accountId}-${blockData.blockHeader.height}`,
-      //   account,
-      //   refAsset,
-      //   totalTransferableNorm: '0',
-      //   totalLockedNorm: '0',
-      //   paraBlockHeight: blockData.blockHeader.height,
-      //   relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      //     blockData.blockHeader.height
-      //   ).height,
-      //   block: ctx.batchState.getParaBlockFromCacheByHeight(
-      //     blockData.blockHeader.height
-      //   ),
-      // });
-
       const accountTotalBalance =
         await getOrCreateAccountTotalBalanceHistoricalData({
           account,
@@ -163,34 +151,31 @@ export async function handleCommonAssetAccountBalances(
           blockHeight: blockData.blockHeader.height,
         });
 
-        const assetBalanceHistData = new AccountAssetBalanceHistoricalData({
-          id: `${accountId}-${asset.id}-${blockData.blockHeader.height}`,
-          account,
-          asset,
-          transferable: balances.free,
-          totalLocked: balances.reserved,
-          transferableInRefAssetNorm: assetSpotPrice
-            ? calcPriceNormalized({
-                amount: balances.free,
-                assetDecimals: asset.decimals,
-                spotPrice: assetSpotPrice,
-              })
-            : '0',
-          totalLockedInRefAssetNorm: assetSpotPrice
-            ? calcPriceNormalized({
-                amount: balances.reserved,
-                assetDecimals: asset.decimals,
-                spotPrice: assetSpotPrice,
-              })
-            : '0',
-          paraBlockHeight: blockData.blockHeader.height,
-          relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-            blockData.blockHeader.height
-          ).height,
-          block: ctx.batchState.getParaBlockFromCacheByHeight(
-            blockData.blockHeader.height
-          ),
-        });
+        const assetBalanceHistData =
+          await getOrCreateAccountAssetBalanceHistoricalData({
+            ctx,
+            asset,
+            account,
+            blockHeader: blockData.blockHeader,
+            fetchFromDb: false,
+          });
+
+        assetBalanceHistData.transferable = balances.free;
+        assetBalanceHistData.totalLocked = balances.reserved;
+        assetBalanceHistData.transferableInRefAssetNorm = assetSpotPrice
+          ? calcPriceNormalized({
+              amount: balances.free,
+              assetDecimals: asset.decimals,
+              spotPrice: assetSpotPrice,
+            })
+          : '0';
+        assetBalanceHistData.totalLockedInRefAssetNorm = assetSpotPrice
+          ? calcPriceNormalized({
+              amount: balances.reserved,
+              assetDecimals: asset.decimals,
+              spotPrice: assetSpotPrice,
+            })
+          : '0';
 
         accountTotalBalance.totalTransferableNorm = BigNumber(
           accountTotalBalance.totalTransferableNorm

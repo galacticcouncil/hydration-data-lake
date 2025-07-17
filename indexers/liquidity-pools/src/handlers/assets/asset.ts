@@ -8,6 +8,8 @@ import {
   getNewAssetMultiLocation,
 } from './utils';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { FindOptionsRelations } from 'typeorm';
+import { Entity } from '@subsquid/typeorm-store/src/store';
 
 export async function getOrCreateAsset({
   id,
@@ -15,6 +17,7 @@ export async function getOrCreateAsset({
   evmAddress,
   ensure = false,
   blockHeader,
+  relations,
   ctx,
 }: {
   id?: string;
@@ -22,6 +25,7 @@ export async function getOrCreateAsset({
   evmAddress?: string;
   ensure?: boolean;
   blockHeader?: SqdBlock;
+  relations?: FindOptionsRelations<Asset>;
   ctx: SqdProcessorContext<Store>;
 }): Promise<Asset | null> {
   if (id === undefined && !evmAddress && assetRegistryId === undefined)
@@ -54,6 +58,7 @@ export async function getOrCreateAsset({
       ...(evmAddress ? { evmAddress } : {}),
       ...(assetRegistryId ? { assetRegistryId: `${assetRegistryId}` } : {}),
     },
+    ...(relations ? { relations } : {}),
   });
 
   if (asset) {
