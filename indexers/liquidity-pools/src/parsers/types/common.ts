@@ -108,6 +108,7 @@ import {
   BalancesAccountInfoWithAccountId,
   GetTokenBalancesManyInput,
   TokenAccountBalancesWithAccountId,
+  EvmAccountsAccountExtensionWithEvmAddress,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -367,6 +368,9 @@ export type StorageParserMethods = {
     getAccountExtension: (
       args: EvmAccountsGetAccountExtensionInput
     ) => Promise<EvmAccountsAccountExtension | null>;
+    getAllAccountsExtensions: (
+      args: GetDataAtBlockInput
+    ) => Promise<EvmAccountsAccountExtensionWithEvmAddress[] | null>;
   };
   aaveTradeExecutor: {
     getPools: (

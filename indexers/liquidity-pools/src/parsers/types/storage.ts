@@ -228,6 +228,11 @@ export type OtcOrderData = {
 
 export type EvmAccountsAccountExtension = string;
 
+export type EvmAccountsAccountExtensionWithEvmAddress = {
+  h160Address: string;
+  extension: EvmAccountsAccountExtension;
+};
+
 export type DynamicFeesParams = {
   minFee: number;
   maxFee: number;

@@ -76,7 +76,9 @@ export async function handleEvmLog(
         eventCallData
       );
       break;
+    case EvmEventName.OracleUpdate:
+      await mmEventHandlers.handleOracleUpdatedEvent(ctx, eventCallData);
+      break;
     default:
   }
 }
-

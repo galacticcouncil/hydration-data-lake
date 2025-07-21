@@ -20,6 +20,7 @@ import {
 } from './parsers/chains/hydration-paseo/typegenTypes';
 import { ChainName, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
+import aTokenHydration from './utils/evmTools/abi/aave/aTokenHydration.json';
 
 dotenv.config({
   path: (() => {
@@ -50,6 +51,9 @@ class ConcurrencyConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 250;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
@@ -88,6 +92,51 @@ class RedisConfig {
     }
     try {
       return transformAndValidateSync(RedisConfig, process.env, {
+        validator: { stopAtFirstError: true },
+      });
+    } catch (errors) {
+      if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+        errors.forEach((error: ValidationError) => {
+          // @ts-ignore
+          Object.values(error.constraints).forEach((msg) => console.error(msg));
+        });
+      } else {
+        console.error('Unexpected error during the environment validation');
+      }
+      throw new Error('Failed to validate environment variables');
+    }
+  }
+}
+
+class EvmConfig {
+  private static instance: EvmConfig;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly ATOKEN_CONTRACT_ADDRESS: string =
+    '0xc0DF4c545BaFA1788a4Ee55f79704D12fC2c7B5C';
+
+  @IsNotEmpty()
+  @IsString()
+  readonly UI_POOL_DATA_PROVIDER_CONTRACT_ADDRESS: string =
+    '0x112b087b60C1a166130d59266363C45F8aa99db0';
+
+  @IsNotEmpty()
+  @IsString()
+  readonly POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS: string =
+    '0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691';
+
+  @IsNotEmpty()
+  @IsString()
+  readonly POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS: string =
+    '0x1b02e051683b5cfac5929c25e84adb26ecf87b38';
+
+  static getInstance(): EvmConfig {
+    if (!EvmConfig.instance) {
+      EvmConfig.instance = new EvmConfig();
+    }
+    try {
+      return transformAndValidateSync(EvmConfig, process.env, {
         validator: { stopAtFirstError: true },
       });
     } catch (errors) {
@@ -329,6 +378,8 @@ export class AppConfig {
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
 
   readonly redis: RedisConfig = new RedisConfig();
+
+  readonly evm: EvmConfig = new EvmConfig();
 
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {

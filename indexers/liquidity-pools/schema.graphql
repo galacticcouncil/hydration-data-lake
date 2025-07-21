@@ -266,6 +266,25 @@ type AccountTotalBalanceHistoricalData @entity {
   block: Block!
 }
 
+type AccountMmPositionHistoricalData @entity {
+  "<address>-<paraBlockHeight>"
+  id: ID!
+  account: Account!
+  accountBoundEvmAddress: String
+
+  totalCollateralBase: String!
+  totalDebtBase: String!
+  availableBorrowsBase: String!
+  currentLiquidationThreshold: String!
+  ltv: String!
+  healthFactor: String
+  poolAddress: String!
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
 type Account @entity {
   "<address>"
   id: ID!
@@ -281,6 +300,9 @@ type Account @entity {
     @derivedFrom(field: "account")
 
   historicalAccountSwapFees: [AccountSwapFeeHistoricalData]
+    @derivedFrom(field: "account")
+
+  mmPositionHistoricalData: [AccountMmPositionHistoricalData]
     @derivedFrom(field: "account")
 
   lbppool: Lbppool
@@ -1630,6 +1652,12 @@ enum EvmEventName {
   LiquidationCall
   ReserveUsedAsCollateralEnabled
   ReserveUsedAsCollateralDisabled
+  OracleUpdate
+}
+enum EvmContractName {
+  AavePoolImpl
+  AaveAToken
+  DiaOracleV2
 }
 
 type MoneyMarketEvent @entity {
@@ -1637,6 +1665,7 @@ type MoneyMarketEvent @entity {
   id: ID!
   traceIds: [String!]
 
+  contractName: EvmContractName
   eventName: EvmEventName!
 
   allInvolvedAssetIds: [String!]!

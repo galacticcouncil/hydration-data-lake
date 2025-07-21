@@ -11,6 +11,7 @@ import {
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 import { EvmEventName } from '../../../model';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
+import { handleAccountMmPositionDataUpdate } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmTransferEvent(
   ctx: SqdProcessorContext<Store>,
@@ -111,5 +112,16 @@ export async function handleMmTransferEvent(
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
     transfer: transferEntity,
+  });
+
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.fromAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.toAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
   });
 }

@@ -6,6 +6,7 @@ import { EvmEventName, MmUserEModeSet } from '../../../model';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
+import { handleAccountMmPositionDataUpdate } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmUserEModeSetEvent(
   ctx: SqdProcessorContext<Store>,
@@ -66,5 +67,11 @@ export async function handleMmUserEModeSetEvent(
     allInvolvedAssetDetails: [],
     allInvolvedParticipants: [account.id],
     userEModeSet: mmUserEModeSetEventEntity,
+  });
+
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
   });
 }

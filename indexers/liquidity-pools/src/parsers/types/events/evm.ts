@@ -1,14 +1,16 @@
 import { utils } from 'ethers';
-import { EvmEventName } from '../../../model';
+import { EvmContractName, EvmEventName } from '../../../model';
 
 export type EvmLogEventParams = {
   eventName: EvmEventName;
   address: string;
+  contractName: EvmContractName;
   signature: string;
   args: utils.Result;
 };
 
 export type MmEventParamsWithEventName = {
+  contractName: EvmContractName;
   eventName: EvmEventName;
 };
 
@@ -78,3 +80,9 @@ export type MmReserveUsedAsCollateralDisabledEventParams =
     reserveAddress: string;
     userAddress: string;
   };
+
+export type OracleUpdateEventParams = MmEventParamsWithEventName & {
+  key: string;
+  value: bigint;
+  timestamp: number;
+};

@@ -8,4 +8,5 @@ export enum EvmEventName {
   LiquidationCall = "LiquidationCall",
   ReserveUsedAsCollateralEnabled = "ReserveUsedAsCollateralEnabled",
   ReserveUsedAsCollateralDisabled = "ReserveUsedAsCollateralDisabled",
+  OracleUpdate = "OracleUpdate",
 }

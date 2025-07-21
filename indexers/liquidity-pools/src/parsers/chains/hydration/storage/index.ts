@@ -157,7 +157,9 @@ export default {
   parachainSystem,
   dca,
   otc,
-  evmAccounts,
+  evmAccounts: {
+    ...evmAccounts,
+  },
   stableswap: {
     getAllPoolIds: stableswap.getAllPoolIds,
     getConstants: stableswap.getConstants,

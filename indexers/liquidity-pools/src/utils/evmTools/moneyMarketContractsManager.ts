@@ -3,8 +3,14 @@ import { Store } from '@subsquid/typeorm-store';
 import aTokenHydration from './abi/aave/aTokenHydration.json';
 import variableDebtTokenHydration from './abi/aave/variableDebtTokenHydration.json';
 import uiPoolDataProviderV3 from './abi/aave/uiPoolDataProviderV3.json';
+import poolImplementation from './abi/aave/aavePoolImplementation.json';
 import { Contract, ContractInterface, ethers } from 'ethers';
 import { ResourceType } from '../../model';
+import { AppConfig } from '../../appConfig';
+import { AccountMmPositionDataContractData } from './types';
+import { BigNumber } from '@galacticcouncil/sdk';
+
+const appConfig = AppConfig.getInstance();
 
 export type MoneyMarketResourceDetails = {
   underlyingAssetAddress: string;
@@ -28,6 +34,7 @@ export class MoneyMarketContractsManager {
   private readonly provider: ethers.providers.JsonRpcProvider;
   private erc20TokenContractInstance: Contract;
   private uiPoolDataProviderContractInstance: Contract;
+  private poolImplementationContractInstance: Contract;
   private moneyMarketTokenContracts: Map<string, Contract> = new Map();
   public moneyMarketResourcesDetailsMap: Map<
     string,
@@ -36,18 +43,24 @@ export class MoneyMarketContractsManager {
 
   private constructor() {
     this.provider = new ethers.providers.JsonRpcProvider(
-      'https://archive.rpc.hydration.cloud'
+      appConfig.RPC_URL_HTTPS || 'https://archive.rpc.hydration.cloud'
     );
 
     this.erc20TokenContractInstance = new Contract(
-      '0xc0DF4c545BaFA1788a4Ee55f79704D12fC2c7B5C',
+      appConfig.evm.ATOKEN_CONTRACT_ADDRESS,
       aTokenHydration.abi,
       this.provider
     );
 
     this.uiPoolDataProviderContractInstance = new Contract(
-      '0x112b087b60C1a166130d59266363C45F8aa99db0',
+      appConfig.evm.UI_POOL_DATA_PROVIDER_CONTRACT_ADDRESS,
       uiPoolDataProviderV3.abi,
+      this.provider
+    );
+
+    this.poolImplementationContractInstance = new Contract(
+      appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS,
+      poolImplementation.abi,
       this.provider
     );
   }
@@ -76,7 +89,7 @@ export class MoneyMarketContractsManager {
     try {
       const resourcesData =
         await this.uiPoolDataProviderContractInstance.getReservesData(
-          '0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691',
+          appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
           { blockTag: blockNumber }
         );
 
@@ -180,6 +193,49 @@ export class MoneyMarketContractsManager {
 
       if (balance !== undefined && balance !== null)
         return BigInt(balance.toString());
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+
+  async getAccountMmPositionData({
+    accountAddress,
+    blockNumber,
+  }: {
+    accountAddress: string;
+    blockNumber?: number;
+  }): Promise<AccountMmPositionDataContractData | null> {
+    const accountAddressNormalized = ethers.utils.getAddress(accountAddress);
+
+    try {
+      const data =
+        await this.poolImplementationContractInstance.getUserAccountData(
+          accountAddressNormalized,
+          blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+        );
+
+      if (!data) return null;
+
+      return {
+        totalCollateralBase: ethers.utils.formatUnits(
+          data.totalCollateralBase,
+          8
+        ),
+        totalDebtBase: ethers.utils.formatUnits(data.totalDebtBase, 8),
+        availableBorrowsBase: ethers.utils.formatUnits(
+          data.availableBorrowsBase,
+          8
+        ),
+        currentLiquidationThreshold: BigNumber(
+          data.currentLiquidationThreshold.toString()
+        )
+          .div(100)
+          .toFixed(), // Convert to percentage
+        ltv: BigNumber(data.ltv.toString()).div(100).toFixed(), // Convert to percentage
+        healthFactor: ethers.utils.formatUnits(data.healthFactor, 18),
+        pool: appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS,
+      };
     } catch (e) {
       console.log(e);
       return null;

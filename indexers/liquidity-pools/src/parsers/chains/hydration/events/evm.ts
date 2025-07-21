@@ -13,11 +13,14 @@ function parseLogParams(event: SqdEvent): EvmLogEventParams | null {
 
     if (!decodedLog) return null;
 
+    const { parsedLog, contractName } = decodedLog;
+
     return {
-      eventName: decodedLog.name as EvmEventName,
+      eventName: parsedLog.name as EvmEventName,
       address: log.address,
-      signature: decodedLog.signature,
-      args: decodedLog.args,
+      signature: parsedLog.signature,
+      contractName,
+      args: parsedLog.args,
     };
   }
 

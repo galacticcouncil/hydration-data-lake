@@ -15,6 +15,7 @@ import {
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
+import { handleAccountMmPositionDataUpdate } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmWithdrawEvent(
   ctx: SqdProcessorContext<Store>,
@@ -91,5 +92,16 @@ export async function handleMmWithdrawEvent(
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
     withdraw: mmWithdrawEntity,
+  });
+
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.toAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
   });
 }

@@ -177,6 +177,13 @@ export class HistoricalDataManager {
     );
   }
 
+  static async saveAccountMoneyMarketDataBulk(ctx: SqdProcessorContext<Store>) {
+    const accountMmPositionHistoricalDataList = Array.from(
+      ctx.batchState.state.accountMmPositionHistoricalData.values()
+    );
+    await ctx.store.save(accountMmPositionHistoricalDataList);
+  }
+
   static async commitAssetPricesToRedisTimeSeries(
     src: AssetSpotPriceHistoricalData[],
     ctx: SqdProcessorContext<Store>

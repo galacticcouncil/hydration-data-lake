@@ -278,3 +278,8 @@ export async function tryExecOrReturnFallback<T>(
     return fallback;
   });
 }
+
+export function isValueMaxUint256(value: string) {
+  const maxUint256 = BigInt('2') ** BigInt(256) - BigInt(1);
+  return value >= maxUint256.toString();
+}

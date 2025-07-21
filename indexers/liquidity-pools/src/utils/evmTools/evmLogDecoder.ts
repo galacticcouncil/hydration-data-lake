@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { MoneyMarketEventsParser } from './moneyMarketEventsParser';
 import { EvmLogEventParams } from '../../parsers/types/events';
 import { EvmEventParamsTypeDecorated } from './types';
-import { EvmEventName } from '../../model';
+import { EvmContractName, EvmEventName } from '../../model';
 
 export class EvmLogDecoder extends MoneyMarketEventsParser {
   private static instance: EvmLogDecoder;
@@ -37,22 +37,40 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
     address: string;
     data: string;
     topics: string[];
-  }) {
+  }): {
+    parsedLog: ethers.utils.LogDescription;
+    contractName: EvmContractName;
+  } | null {
     let parsedLog = null;
+    let contractName = null;
     try {
       parsedLog = this.interfacesMap
         .get(aavePoolImplementation.address)!
         .parseLog({ topics, data });
+      contractName = EvmContractName.AavePoolImpl;
     } catch (error) {}
+
     if (!parsedLog) {
       try {
         parsedLog = this.interfacesMap
           .get(aTokenHydration.address)!
           .parseLog({ topics, data });
+        contractName = EvmContractName.AaveAToken;
       } catch (error) {}
     }
 
-    return parsedLog;
+    if (!parsedLog) {
+      try {
+        parsedLog = this.interfacesMap
+          .get(diaOracleV2.address)!
+          .parseLog({ topics, data });
+        contractName = EvmContractName.DiaOracleV2;
+      } catch (error) {}
+    }
+
+    if (!parsedLog || !contractName) return null;
+
+    return { parsedLog, contractName };
   }
 
   getEvmEventFromLog<N extends EvmEventName>(
@@ -93,6 +111,10 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
         ) as unknown as EvmEventParamsTypeDecorated<N>;
       case EvmEventName.ReserveUsedAsCollateralDisabled:
         return this.parseReserveUsedAsCollateralDisabledEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.OracleUpdate:
+        return this.parseOracleUpdateEvent(
           evmLogParams
         ) as unknown as EvmEventParamsTypeDecorated<N>;
       default:

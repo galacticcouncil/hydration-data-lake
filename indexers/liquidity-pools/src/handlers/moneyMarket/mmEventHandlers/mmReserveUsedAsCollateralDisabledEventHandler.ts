@@ -14,6 +14,7 @@ import {
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
+import { handleAccountMmPositionDataUpdate } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmReserveUsedAsCollateralDisabledEvent(
   ctx: SqdProcessorContext<Store>,
@@ -87,5 +88,11 @@ export async function handleMmReserveUsedAsCollateralDisabledEvent(
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id],
     reserveUsedAsCollateralDisabled: mmNewEntity,
+  });
+
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
   });
 }

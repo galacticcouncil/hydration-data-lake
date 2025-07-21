@@ -315,7 +315,7 @@ export class OfflinePoolUtils {
     const accumulatedAsset = accumulated.id.toString();
     const accumulatedWeight = bnum(linearWeight);
     const distributedAsset = distributed.id.toString();
-    const distributedWeight = this.MAX_FINAL_WEIGHT.minus(
+    const distributedWeight = OfflinePoolUtils.MAX_FINAL_WEIGHT.minus(
       bnum(accumulatedWeight)
     );
 
