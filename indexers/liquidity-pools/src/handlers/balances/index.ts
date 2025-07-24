@@ -6,6 +6,6 @@ import { handleMmAssetAccountBalancesPerBlock } from './moneyMarketAssetBalances
 export async function handleAssetAccountBalancesPerBlock(
   ctx: SqdProcessorContext<Store>
 ) {
-  await handleCommonAssetAccountBalances(ctx);
-  await handleMmAssetAccountBalancesPerBlock(ctx);
+  const accountIdsToProcess = await handleMmAssetAccountBalancesPerBlock(ctx);
+  await handleCommonAssetAccountBalances({ accountIdsToProcess, ctx });
 }

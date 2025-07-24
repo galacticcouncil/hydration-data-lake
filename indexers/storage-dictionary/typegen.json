@@ -14,14 +14,17 @@
       "constants": true
     },
     "Balances": {
+      "events": true,
       "storage": true,
       "constants": true
     },
     "Tokens": {
+      "events": true,
       "storage": true,
       "constants": true
     },
     "Currencies": {
+      "events": true,
       "storage": true,
       "constants": true
     },
@@ -74,6 +77,7 @@
       "constants": true
     },
     "EVM": {
+      "events": true,
       "storage": true,
       "constants": true
     },

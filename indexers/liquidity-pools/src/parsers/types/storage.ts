@@ -399,6 +399,11 @@ export type EvmAccountsGetAccountExtensionInput = {
   block: BlockHeader;
 };
 
+export type EvmAccountsGetAccountExtensionManyInput = {
+  evmAddresses: string[];
+  block: BlockHeader;
+};
+
 export type GetEmaOraclesInput = {
   block: BlockHeader;
 };

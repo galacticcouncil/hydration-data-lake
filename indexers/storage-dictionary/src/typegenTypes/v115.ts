@@ -116,8 +116,6 @@ export const Type_404: sts.Type<Type_404> = sts.struct(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export interface StorageProof {
     trieNodes: Bytes[]
 }
@@ -4474,13 +4472,6 @@ export const TokensEvent: sts.Type<TokensEvent> = sts.closedEnum(() => {
     }
 })
 
-export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
-    return  {
-        Free: sts.unit(),
-        Reserved: sts.unit(),
-    }
-})
-
 /**
  * 
 			The [event](https://docs.substrate.io/main-docs/build/events-errors/) emitted
@@ -5692,3 +5683,12 @@ export const PerDispatchClass: sts.Type<PerDispatchClass> = sts.struct(() => {
         mandatory: Weight,
     }
 })
+
+export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
+    return  {
+        Free: sts.unit(),
+        Reserved: sts.unit(),
+    }
+})
+
+export const AccountId32 = sts.bytes()

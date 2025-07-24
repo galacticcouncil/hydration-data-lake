@@ -8,7 +8,7 @@ import {
 } from '../../model';
 import parsers from '../../parsers';
 import { AssetDetails, AssetDetailsWithId } from '../../parsers/types/storage';
-import { getOrCreateAsset } from './assetRegistry';
+import { getOrCreateAsset } from './asset';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
 

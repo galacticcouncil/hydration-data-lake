@@ -1,8 +1,6 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { storage } from '../typegenTypes/';
 import {
-  BalancesAccountInfoWithAccountId,
-  GetNativeTokenBalanceManyInput,
   GetTokenBalancesManyInput,
   TokenAccountBalancesWithAccountId,
   TokenAccountBalanceWithAssetId,
@@ -12,11 +10,7 @@ import {
   TokenTotalIssuance,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
-import {
-  hexToStrWithNullCharCheck,
-  tryExecOrReturnFallback,
-} from '../../../../utils/helpers';
-import { AssetType } from '../../../../model';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
 async function getTokensAccountsAssetBalances(
   account: string,

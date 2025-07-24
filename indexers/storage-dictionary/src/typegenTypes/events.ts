@@ -1,1 +1,5 @@
+export * as balances from './balances/events'
 export * as relayChainInfo from './relay-chain-info/events'
+export * as tokens from './tokens/events'
+export * as currencies from './currencies/events'
+export * as evm from './evm/events'

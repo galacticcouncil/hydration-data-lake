@@ -15,6 +15,7 @@ export enum RpcCallName {
 export enum RuntimeApiMethodName {
   account = 'account',
   accounts = 'accounts',
+  synthAccountsMany = 'synthAccountsMany',
   pool = 'pool',
   pools = 'pools',
 }

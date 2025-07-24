@@ -48,6 +48,56 @@ type MinifiedDataStructure {
 }
 
 # ======================================================================================================================
+# *** Account ***
+# ======================================================================================================================
+
+enum AccountType {
+  User
+  Omnipool
+  Stableswap
+  Xykpool
+  Lbppool
+}
+
+type Account @entity {
+  "<address>"
+  id: ID!
+  accountType: AccountType!
+  boundEvmAddress: String
+}
+
+type AccountAssetBalanceHistoricalData @entity {
+  "<address>-<assetId>-<paraBlockHeight>"
+  id: ID!
+  accountId: String! @index
+  assetId: String! @index
+
+  "free property in storage"
+  transferable: String!
+  "reserved property in storage"
+  totalLocked: String!
+
+  paraBlockHeight: Int! @index
+}
+
+type AccountMmPositionHistoricalData @entity {
+  "<address>-<paraBlockHeight>"
+  id: ID!
+  accountId: String!
+  accountBoundEvmAddress: String
+
+  totalCollateralBase: String!
+  totalDebtBase: String!
+  availableBorrowsBase: String!
+  currentLiquidationThreshold: String!
+  ltv: String!
+  healthFactor: String
+  poolAddress: String!
+
+  paraBlockHeight: Int! @index
+}
+
+# ======================================================================================================================
 # *** Asset ***
 # ======================================================================================================================
 
@@ -61,16 +111,29 @@ enum AssetType {
   PoolShare
 }
 
+enum ResourceType {
+  Underlying
+  Collateral
+  Debt
+}
+
 type Asset @entity {
   "Asset ID"
   id: ID!
+  evmAddress: String
+
+  bondUnderlyingAsset: Asset
+  underlyingAsset: Asset
+  aToken: Asset
+  variableDebtToken: Asset
+
   assetType: AssetType!
+  resourceType: ResourceType
   name: String
   symbol: String
   decimals: Int
   xcmRateLimit: BigInt
   isSufficient: Boolean!
-  bondUnderlyingAsset: Asset
   bondMaturity: BigInt
 }
 
@@ -318,3 +381,7 @@ type BlockCompressedData @entity {
   data: String!
   paraBlockHeight: Int! @index
 }
+
+# ======================================================================================================================
+# *** E V M ***
+# ======================================================================================================================

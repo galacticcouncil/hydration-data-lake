@@ -13,8 +13,12 @@ import {
   XykpoolAssetsData,
   Block,
   MmAggregatorOracle,
+  AccountAssetBalanceHistoricalData,
+  AccountMmPositionHistoricalData,
+  Account,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/common';
+import { MoneyMarketEvent } from '../handlers/evm/evmEventParser/utils/moneyMarketEvent';
 
 type ParachainBlockNumber = number;
 
@@ -22,6 +26,8 @@ export type BatchStatePayload = {
   relayChainInfo: Map<ParachainBlockNumber, RelayChainInfo>;
 
   blocks: Map<number, Block>;
+
+  accounts: Map<string, Account>;
 
   assetIdsToSave: Set<string>;
   assetsAllBatch: Map<string, Asset>;
@@ -53,12 +59,21 @@ export type BatchStatePayload = {
 
   aavepools: Map<string, Aavepool>;
   aavepoolsProcessedBlocks: Set<number>;
+
+  accAssetBalanceHistData: Map<string, AccountAssetBalanceHistoricalData>;
+  accAssetBalanceHistDataProcessedBlocks: Set<number>;
+
+  accMmPositionHistData: Map<string, AccountMmPositionHistoricalData>;
+  accMmPositionHistDataProcessedBlocks: Set<number>;
+
+  moneyMarketEvents: Map<string, MoneyMarketEvent>;
 };
 
 export class BatchState {
   public state: BatchStatePayload = {
     relayChainInfo: new Map(),
     blocks: new Map(),
+    accounts: new Map(),
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
 
@@ -89,6 +104,14 @@ export class BatchState {
 
     aavepools: new Map(),
     aavepoolsProcessedBlocks: new Set(),
+
+    accAssetBalanceHistData: new Map(),
+    accAssetBalanceHistDataProcessedBlocks: new Set(),
+
+    accMmPositionHistData: new Map(),
+    accMmPositionHistDataProcessedBlocks: new Set(),
+
+    moneyMarketEvents: new Map(),
   };
 
   // get state(): BatchStatePayload {

@@ -48,8 +48,6 @@ export interface BlockWeights {
 
 export type AccountId32 = Bytes
 
-export const AccountId32 = sts.bytes()
-
 export interface Schedule {
     owner: AccountId32
     period: number
@@ -7112,3 +7110,5 @@ export const PerDispatchClass: sts.Type<PerDispatchClass> = sts.struct(() => {
         mandatory: Weight,
     }
 })
+
+export const AccountId32 = sts.bytes()

@@ -3,10 +3,12 @@ import {
   EvmAccountsAccountExtension,
   EvmAccountsAccountExtensionWithEvmAddress,
   EvmAccountsGetAccountExtensionInput,
+  EvmAccountsGetAccountExtensionManyInput,
   GetDataAtBlockInput,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 import { tryExecOrReturnFallback } from '../../../../utils/helpers';
+import pMap from 'p-map';
 
 async function getAccountExtension({
   evmAddress,
@@ -72,4 +74,48 @@ async function getAllAccountsExtensions({
   throw new UnknownVersionError('storage.evmAccounts.accountExtension');
 }
 
-export default { getAccountExtension, getAllAccountsExtensions };
+async function getAccountExtensionsMany({
+  evmAddresses,
+  block,
+}: EvmAccountsGetAccountExtensionManyInput): Promise<
+  EvmAccountsAccountExtensionWithEvmAddress[] | null
+> {
+  if (block.specVersion < 222) return null;
+  if (
+    storage.evmAccounts.accountExtension.v222.is(block) ||
+    block.specVersion >= 222
+  ) {
+    return tryExecOrReturnFallback(async () => {
+      try {
+        const pairsPaged: EvmAccountsAccountExtensionWithEvmAddress[] = (
+          await pMap(evmAddresses, async (h160Address) => {
+            const extension =
+              await storage.evmAccounts.accountExtension.v222.get(
+                block,
+                h160Address
+              );
+
+            if (!extension) return null;
+
+            return {
+              h160Address,
+              extension,
+            };
+          })
+        ).filter((resp) => !!resp);
+
+        return pairsPaged;
+      } catch (e) {
+        throw e;
+      }
+    }, null);
+  }
+
+  throw new UnknownVersionError('storage.evmAccounts.accountExtension');
+}
+
+export default {
+  getAccountExtension,
+  getAllAccountsExtensions,
+  getAccountExtensionsMany,
+};

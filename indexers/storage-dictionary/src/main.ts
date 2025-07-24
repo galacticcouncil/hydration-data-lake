@@ -50,6 +50,11 @@ import { getLbppoolHistDataWithUniqueData } from './handlers/lbpPool/utils';
 import { LatestProcessedDataCacheManager } from './utils/latestProcessedDataCacheManager';
 import { prefetchAllMmAggregatorOracleRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/oracles/mmAggregatorOracle/historicalData';
 import { getMmAggregatorOraclesWithUniqueData } from './handlers/oracles/mmAggregatorOracle/utils';
+import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
+import { MoneyMarketContractsManager } from './utils/evm/moneyMarketContractsManager';
+import { prefetchAllAccountHistDataRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/balances/historicalData';
+import { getAccAssetBalanceHistDataWithUniqueData } from './handlers/balances/utils';
+import { handleEvmEventsInBlock } from './handlers/evm';
 
 const appConfig = AppConfig.getInstance();
 
@@ -137,6 +142,15 @@ processor.run(
       ctxWithBatchState as ProcessorContext<Store>,
       orderedBlockNumbers
     );
+    await prefetchAllAccountHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
+      ctxWithBatchState as ProcessorContext<Store>,
+      orderedBlockNumbers
+    );
+
+    await MoneyMarketContractsManager.getInstance().initContractInstances({
+      ctx: ctxWithBatchState as ProcessorContext<Store>,
+      blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+    });
 
     let blocksSubBatchIndex = 1;
 
@@ -192,6 +206,16 @@ processor.run(
                 block.header
               ),
             ]);
+          }
+          if (appConfig.PROCESS_ACCOUNTS) {
+            await handleEvmEventsInBlock(
+              block,
+              ctxWithBatchState as ProcessorContext<Store>
+            );
+            await handleAssetAccountBalancesPerBlock(
+              block,
+              ctxWithBatchState as ProcessorContext<Store>
+            );
           }
 
           /**
@@ -338,6 +362,21 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
     await ctx.store.upsert(aavepoolsToSaveList);
     await ctx.store.upsert(eassetHistDataToSaveList);
     await ctx.store.upsert(emaOracleDataToSaveList);
+  }
+
+  if (appConfig.PROCESS_ACCOUNTS) {
+    const items = await getAccAssetBalanceHistDataWithUniqueData(
+      ctx.batchState.state.accAssetBalanceHistData,
+      ctx
+    );
+
+    const itemsToSaveList = Array.from(items.values());
+
+    LatestProcessedDataCacheManager.getInstance().setLastAccAssetBalanceHistDataItem(
+      itemsToSaveList
+    );
+
+    if (items.size !== 0) await ctx.store.upsert(Array.from(items.values()));
   }
 
   for (const block of ctx.blocks) {

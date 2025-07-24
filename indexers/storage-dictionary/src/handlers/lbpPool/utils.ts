@@ -1,17 +1,8 @@
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  AssetHistoricalData,
-  Lbppool,
-  LbppoolAssetsData,
-  Stableswap,
-  StableswapAssetData,
-  Xykpool,
-  XykpoolAssetsData,
-} from '../../model';
+import { Lbppool, LbppoolAssetsData } from '../../model';
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
-import { isDeepEqual } from '../../utils/helpers';
 
 export async function getLbppoolHistDataWithUniqueData({
   poolsData,
@@ -107,7 +98,7 @@ export async function getLbppoolHistDataWithUniqueData({
     ),
     async (item) => {
       if (
-        await isStableswapAssetHistoricalDataUniqueRegardingPreviousRecord({
+        await isLbppoolAssetHistoricalDataUniqueRegardingPreviousRecord({
           currentRecord: item,
           cachedIndexedRecords: poolAssetsHistoryIndex,
           ctx,
@@ -189,7 +180,7 @@ export async function isLbppoolHistoricalDataUniqueRegardingPreviousRecord({
   return !isEqual;
 }
 
-export async function isStableswapAssetHistoricalDataUniqueRegardingPreviousRecord({
+export async function isLbppoolAssetHistoricalDataUniqueRegardingPreviousRecord({
   currentRecord,
   cachedIndexedRecords,
   ctx,

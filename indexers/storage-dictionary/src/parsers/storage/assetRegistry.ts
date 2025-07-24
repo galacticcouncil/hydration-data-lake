@@ -3,12 +3,14 @@ import { storage } from '../../typegenTypes/';
 import {
   AssetDetails,
   AssetDetailsWithId,
+  Erc20AssetContractDetails,
   OmnipoolAssetState,
   OmnipoolAssetWithDetails,
 } from '../types/storage';
 import { hexToStrWithNullCharCheck } from '../../utils/helpers';
 import { AssetType } from '../../model';
 import { UnknownVersionError } from '../../utils/errors';
+import { getErc20AssetContractFromLocation } from '../utils';
 
 async function getAsset(
   assetId: string | number,
@@ -350,4 +352,42 @@ async function getAssetsAll(block: BlockHeader): Promise<AssetDetailsWithId[]> {
   throw new UnknownVersionError('storage.assetRegistry.assets');
 }
 
-export default { getAsset, getAssetMany, getAssetsAll };
+async function getErc20AssetContractAddress(
+  assetId: string | number,
+  block: BlockHeader
+): Promise<Erc20AssetContractDetails | null> {
+  if (block.specVersion < 108) return null;
+
+  if (storage.assetRegistry.assetLocations.v108.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v108.get(
+      block,
+      +assetId
+    );
+    return getErc20AssetContractFromLocation(resp);
+  }
+
+  if (storage.assetRegistry.assetLocations.v160.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v160.get(
+      block,
+      +assetId
+    );
+    return getErc20AssetContractFromLocation(resp);
+  }
+
+  if (storage.assetRegistry.assetLocations.v244.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v244.get(
+      block,
+      +assetId
+    );
+    return getErc20AssetContractFromLocation(resp);
+  }
+
+  throw new UnknownVersionError('storage.assetRegistry.assetLocations');
+}
+
+export default {
+  getAsset,
+  getAssetMany,
+  getAssetsAll,
+  getErc20AssetContractAddress,
+};

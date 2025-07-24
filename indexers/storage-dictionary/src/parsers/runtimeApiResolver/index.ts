@@ -8,7 +8,16 @@ import {
   RuntimeApiName,
 } from './types';
 import runtimeApiCalls from './calls';
-import { AccountData, AccountDataMultiple } from '../types/storage';
+import {
+  AccountData,
+  AccountDataMultiple,
+  GetTokenBalancesManyInput,
+  TokenAccountBalancesWithAccountId,
+} from '../types/storage';
+import { AppConfig } from '../../appConfig';
+import pMap from 'p-map';
+
+const appConfig = AppConfig.getInstance();
 
 // TODO refactor to return response with status
 //  Promise<{ success: boolean; data: R | null }>
@@ -33,6 +42,11 @@ export class RuntimeApiResolver {
           if (apiMethod === RuntimeApiMethodName.account) {
             return (await this.handleCurrenciesApiGetAccountCall(
               args as unknown as CurrenciesApiAccountInput
+            )) as R;
+          }
+          if (apiMethod === RuntimeApiMethodName.synthAccountsMany) {
+            return (await this.handleCurrenciesApiGetAccountBalancesMany(
+              args as unknown as GetTokenBalancesManyInput
             )) as R;
           }
 
@@ -77,6 +91,34 @@ export class RuntimeApiResolver {
         flags: BigInt(0),
       },
     }));
+  }
+
+  async handleCurrenciesApiGetAccountBalancesMany({
+    accountIds,
+    block,
+  }: GetTokenBalancesManyInput): Promise<
+    TokenAccountBalancesWithAccountId[] | null
+  > {
+    const apiResponse = await pMap(
+      accountIds,
+      async (accountId) => {
+        const resp = await this.handleCurrenciesApiGetAccountsCall({
+          block,
+          address: accountId,
+        });
+        return {
+          accountId,
+          assetBalances:
+            resp?.map((assetBalance) => ({
+              assetId: `${assetBalance.assetId}`,
+              data: assetBalance.data,
+            })) ?? [],
+        } as TokenAccountBalancesWithAccountId;
+      },
+      { concurrency: appConfig.concurrency.RUNTIME_API_CALLS_CONCURRENCY }
+    );
+
+    return apiResponse;
   }
 
   async handleCurrenciesApiGetAccountCall(

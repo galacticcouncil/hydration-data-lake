@@ -35,6 +35,8 @@ export async function handleMmAssetAccountBalancesPerBlock(
     }
   > = new Map();
 
+  const accountIdsWithCommonAssetBalanceChanges = new Set<string>();
+
   const getBlockHeaderByBlockHeight = (
     blockHeight: number
   ): SqdBlock | undefined => {
@@ -123,12 +125,14 @@ export async function handleMmAssetAccountBalancesPerBlock(
   for (const mmEvent of [...batchState.moneyMarketEvents.values()]) {
     const assets: Asset[] = [];
     const blockHeader = getBlockHeaderByBlockHeight(mmEvent.paraBlockHeight);
+    let isCommonAssetInvolved = false;
 
     if (!blockHeader) continue;
 
     for (const assetId of mmEvent.allInvolvedAssetIds) {
       const asset = await getOrCreateAsset({ ctx, id: assetId, ensure: false });
       if (!asset) continue;
+      if (asset.assetType !== AssetType.Erc20) isCommonAssetInvolved = true;
       assets.push(asset);
     }
 
@@ -141,6 +145,8 @@ export async function handleMmAssetAccountBalancesPerBlock(
         assets,
         account,
       });
+      if (isCommonAssetInvolved)
+        accountIdsWithCommonAssetBalanceChanges.add(accountId);
     }
   }
 
@@ -164,10 +170,10 @@ export async function handleMmAssetAccountBalancesPerBlock(
       const assetBalances = (
         await Promise.allSettled(
           [...accountAssetsMap.assets.values()]
-            .filter(
-              (asset) =>
-                !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
-            )
+            // .filter(
+            //   (asset) =>
+            //     !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
+            // )
             .map(async (asset) => {
               return {
                 asset,
@@ -282,6 +288,8 @@ export async function handleMmAssetAccountBalancesPerBlock(
       );
     }
   }
+
+  return accountIdsWithCommonAssetBalanceChanges;
 
   // await ctx.store.save([
   //   ...ctx.batchState.state.accountAssetBalanceHistoricalData.values(),

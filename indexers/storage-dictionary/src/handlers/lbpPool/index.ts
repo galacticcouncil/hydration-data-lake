@@ -2,7 +2,7 @@ import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../parsers';
 import { DataStructureTypeName, Lbppool, LbppoolAssetsData } from '../../model';
-import { getAssetBalancesMany } from '../balances';
+import { getAssetBalancesMany } from '../balances/storageParsers';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { AccountData } from '../../parsers/types/storage';
 import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';

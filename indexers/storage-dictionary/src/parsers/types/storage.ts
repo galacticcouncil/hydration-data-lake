@@ -187,11 +187,41 @@ export interface XykPoolShareTokenPair {
   shareTokenId: number;
 }
 
+export interface BalancesAccountInfoWithAccountId {
+  accountId: string;
+  data: AccountData;
+}
+
+export interface TokenAccountBalanceWithAssetId {
+  assetId: string;
+  data: AccountData;
+}
+
+export interface TokenAccountBalancesWithAccountId {
+  accountId: string;
+  assetBalances: TokenAccountBalanceWithAssetId[];
+}
+
+export type EvmAccountsAccountExtension = string;
+
+export type EvmAccountsAccountExtensionWithEvmAddress = {
+  h160Address: string;
+  extension: EvmAccountsAccountExtension;
+};
+
+export interface Erc20AssetContractDetails {
+  address: string;
+}
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
  * =============================================================================
  */
+
+export type GetDataAtBlockInput = {
+  block: BlockHeader;
+};
 
 export type GetAssetBalancesInput = {
   address: string;
@@ -259,5 +289,25 @@ export type StablepoolGetPoolPegsInput = {
 };
 
 export type XykGetPoolShareTokenPairsManyInput = {
+  block: BlockHeader;
+};
+
+export type GetNativeTokenBalanceManyInput = {
+  accountIds: string[];
+  block: BlockHeader;
+};
+
+export type GetTokenBalancesManyInput = {
+  accountIds: string[];
+  block: BlockHeader;
+};
+
+export type EvmAccountsGetAccountExtensionInput = {
+  evmAddress: string;
+  block: BlockHeader;
+};
+
+export type EvmAccountsGetAccountExtensionManyInput = {
+  evmAddresses: string[];
   block: BlockHeader;
 };

@@ -9,6 +9,7 @@ import balances from './balances';
 import emaOracle from './emaOracle';
 import dynamicFees from './dynamicFees';
 import bonds from './bonds';
+import evmAccounts from './evmAccounts';
 
 export default {
   system,
@@ -22,4 +23,5 @@ export default {
   emaOracle,
   dynamicFees,
   bonds,
+  evmAccounts,
 };

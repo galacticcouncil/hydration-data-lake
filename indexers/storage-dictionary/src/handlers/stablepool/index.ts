@@ -9,7 +9,7 @@ import {
   Tradability,
   Xykpool,
 } from '../../model';
-import { getAssetBalancesMany } from '../balances';
+import { getAssetBalancesMany } from '../balances/storageParsers';
 import { StableMath } from '@galacticcouncil/sdk';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import { Between } from 'typeorm/find-options/operator/Between';

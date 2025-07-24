@@ -232,8 +232,6 @@ export function fromDecimalToExponentialNotation(
     );
     throw error;
   }
-
-  // return BigNumber(input).multipliedBy(BigNumber(10).pow(decimals));
 }
 
 export function stringToMd5Hash(str: string) {

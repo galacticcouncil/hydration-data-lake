@@ -8,6 +8,7 @@ import {
   IsPositive,
 } from 'class-validator';
 import dotenv from 'dotenv';
+import { events } from './typegenTypes';
 
 import { NodeEnv } from './utils/types';
 
@@ -26,6 +27,85 @@ dotenv.config({
     return `${__dirname}/../${envFileName}`;
   })(),
 });
+
+class EvmConfig {
+  private static instance: EvmConfig;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly ATOKEN_CONTRACT_ADDRESS: string =
+    '0xc0DF4c545BaFA1788a4Ee55f79704D12fC2c7B5C';
+
+  @IsNotEmpty()
+  @IsString()
+  readonly UI_POOL_DATA_PROVIDER_CONTRACT_ADDRESS: string =
+    '0x112b087b60C1a166130d59266363C45F8aa99db0';
+
+  @IsNotEmpty()
+  @IsString()
+  readonly POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS: string =
+    '0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691';
+
+  @IsNotEmpty()
+  @IsString()
+  readonly POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS: string =
+    '0x1b02e051683b5cfac5929c25e84adb26ecf87b38';
+
+  static getInstance(): EvmConfig {
+    if (!EvmConfig.instance) {
+      EvmConfig.instance = new EvmConfig();
+    }
+    try {
+      return transformAndValidateSync(EvmConfig, process.env, {
+        validator: { stopAtFirstError: true },
+      });
+    } catch (errors) {
+      if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+        errors.forEach((error: ValidationError) => {
+          // @ts-ignore
+          Object.values(error.constraints).forEach((msg) => console.error(msg));
+        });
+      } else {
+        console.error('Unexpected error during the environment validation');
+      }
+      throw new Error('Failed to validate environment variables');
+    }
+  }
+}
+
+class ConcurrencyConfig {
+  private static instance: ConcurrencyConfig;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 250;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
+
+  static getInstance(): ConcurrencyConfig {
+    if (!ConcurrencyConfig.instance) {
+      ConcurrencyConfig.instance = new ConcurrencyConfig();
+    }
+    try {
+      return transformAndValidateSync(ConcurrencyConfig, process.env, {
+        validator: { stopAtFirstError: true },
+      });
+    } catch (errors) {
+      if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+        errors.forEach((error: ValidationError) => {
+          // @ts-ignore
+          Object.values(error.constraints).forEach((msg) => console.error(msg));
+        });
+      } else {
+        console.error('Unexpected error during the environment validation');
+      }
+      throw new Error('Failed to validate environment variables');
+    }
+  }
+}
 
 export class AppConfig {
   private static instance: AppConfig;
@@ -100,6 +180,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_GENERIC_HIST_DATA: boolean = true;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly PROCESS_ACCOUNTS: boolean = true;
+
   @IsString()
   readonly OMNIPOOL_ADDRESS: string =
     '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000';
@@ -154,6 +237,10 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 100;
 
+  readonly evm: EvmConfig = new EvmConfig();
+
+  readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
+
   static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       AppConfig.instance = new AppConfig();
@@ -187,5 +274,61 @@ export class AppConfig {
       }
       throw new Error('Failed to validate environment variables');
     }
+  }
+
+  getEventsToListen() {
+    const eventsToListen = [
+      events.relayChainInfo.currentBlockNumbers.name,
+
+      events.evm.log.name,
+
+      events.currencies.balanceUpdated.name,
+      events.currencies.deposited.name,
+      events.currencies.withdrawn.name,
+      events.currencies.transferred.name,
+
+      events.tokens.balanceSet.name,
+      events.tokens.deposited.name,
+      events.tokens.dustLost.name,
+      events.tokens.endowed.name,
+      events.tokens.issued.name,
+      events.tokens.locked.name,
+      events.tokens.lockRemoved.name,
+      events.tokens.lockSet.name,
+      events.tokens.rescinded.name,
+      events.tokens.reserved.name,
+      events.tokens.reserveRepatriated.name,
+      events.tokens.slashed.name,
+      events.tokens.totalIssuanceSet.name,
+      events.tokens.transfer.name,
+      events.tokens.unlocked.name,
+      events.tokens.unreserved.name,
+      events.tokens.withdrawn.name,
+
+      events.balances.balanceSet.name,
+      events.balances.burned.name,
+      events.balances.deposit.name,
+      events.balances.dustLost.name,
+      events.balances.endowed.name,
+      events.balances.frozen.name,
+      events.balances.issued.name,
+      events.balances.locked.name,
+      events.balances.minted.name,
+      events.balances.rescinded.name,
+      events.balances.reserved.name,
+      events.balances.reserveRepatriated.name,
+      events.balances.reserved.name,
+      events.balances.slashed.name,
+      events.balances.suspended.name,
+      events.balances.thawed.name,
+      events.balances.totalIssuanceForced.name,
+      events.balances.transfer.name,
+      events.balances.unlocked.name,
+      events.balances.unreserved.name,
+      events.balances.upgraded.name,
+      events.balances.withdraw.name,
+    ];
+
+    return eventsToListen;
   }
 }

@@ -1087,13 +1087,6 @@ export const BalancesEvent: sts.Type<BalancesEvent> = sts.closedEnum(() => {
     }
 })
 
-export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
-    return  {
-        Free: sts.unit(),
-        Reserved: sts.unit(),
-    }
-})
-
 export interface Digest {
     logs: DigestItem[]
 }
@@ -1212,6 +1205,13 @@ export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
         providers: sts.number(),
         sufficients: sts.number(),
         data: AccountData,
+    }
+})
+
+export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
+    return  {
+        Free: sts.unit(),
+        Reserved: sts.unit(),
     }
 })
 

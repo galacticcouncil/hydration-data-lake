@@ -29,6 +29,7 @@ import * as v295 from '../v295'
 import * as v305 from '../v305'
 import * as v313 from '../v313'
 import * as v323 from '../v323'
+import * as v324 from '../v324'
 
 export const account =  {
     /**
@@ -552,6 +553,16 @@ export const events =  {
      *  just in case someone still reads them from within the runtime.
      */
     v323: new StorageType('System.Events', 'Default', [], sts.array(() => v323.EventRecord)) as EventsV323,
+    /**
+     *  Events deposited for the current block.
+     * 
+     *  NOTE: The item is unbound and should therefore never be read on chain.
+     *  It could otherwise inflate the PoV size of a block.
+     * 
+     *  Events have a large in-memory size. Box the events to not go out-of-memory
+     *  just in case someone still reads them from within the runtime.
+     */
+    v324: new StorageType('System.Events', 'Default', [], sts.array(() => v324.EventRecord)) as EventsV324,
 }
 
 /**
@@ -993,6 +1004,21 @@ export interface EventsV323  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): v323.EventRecord[]
     get(block: Block): Promise<(v323.EventRecord[] | undefined)>
+}
+
+/**
+ *  Events deposited for the current block.
+ * 
+ *  NOTE: The item is unbound and should therefore never be read on chain.
+ *  It could otherwise inflate the PoV size of a block.
+ * 
+ *  Events have a large in-memory size. Box the events to not go out-of-memory
+ *  just in case someone still reads them from within the runtime.
+ */
+export interface EventsV324  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): v324.EventRecord[]
+    get(block: Block): Promise<(v324.EventRecord[] | undefined)>
 }
 
 export const eventCount =  {

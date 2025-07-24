@@ -1,3 +1,4 @@
 import storage from './storage';
+import events from './events';
 
-export default { storage };
+export default { storage, events };

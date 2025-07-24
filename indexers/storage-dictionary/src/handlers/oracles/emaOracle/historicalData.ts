@@ -9,7 +9,7 @@ import {
   EmaOracleEntryPrice,
   EmaOracleEntryVolume,
 } from '../../../model';
-import { getOrCreateAsset } from '../../asset/assetRegistry';
+import { getOrCreateAsset } from '../../asset/asset';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function handleEmaOracleHistoricalData(

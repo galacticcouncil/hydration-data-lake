@@ -1,5 +1,6 @@
 import {
   Aavepool,
+  AccountAssetBalanceHistoricalData,
   AssetHistoricalData,
   EmaOracle,
   MmAggregatorOracle,
@@ -26,6 +27,11 @@ export class LatestProcessedDataCacheManager {
 
   private xykpoolsCache: Map<string, Map<string, XykpoolAssetsData>> =
     new Map();
+
+  private accAssetBalanceCache: Map<
+    string,
+    Map<string, AccountAssetBalanceHistoricalData>
+  > = new Map();
 
   static getInstance(): LatestProcessedDataCacheManager {
     if (!LatestProcessedDataCacheManager.instance) {
@@ -237,6 +243,55 @@ export class LatestProcessedDataCacheManager {
     assetId: string
   ): XykpoolAssetsData | undefined {
     return this.xykpoolsCache.get(poolId)?.get(assetId);
+  }
+
+  /**
+   * ========================   Account  ==================================
+   */
+
+  setLastAccAssetBalanceHistDataItem(
+    items: AccountAssetBalanceHistoricalData[]
+  ) {
+    if (!items) return;
+
+    const accAssetsBalanceHistoryIndex = new Map<
+      string,
+      Map<string, AccountAssetBalanceHistoricalData[]>
+    >();
+
+    for (const i of items) {
+      if (!accAssetsBalanceHistoryIndex.has(i.accountId)) {
+        accAssetsBalanceHistoryIndex.set(i.accountId, new Map());
+      }
+      if (!accAssetsBalanceHistoryIndex.get(i.accountId)!.has(i.assetId)) {
+        accAssetsBalanceHistoryIndex.get(i.accountId)!.set(i.assetId, []);
+      }
+      accAssetsBalanceHistoryIndex.get(i.accountId)!.get(i.assetId)!.push(i);
+    }
+
+    for (const [
+      accountId,
+      assetsMap,
+    ] of accAssetsBalanceHistoryIndex.entries()) {
+      for (const [assetId, entriesList] of assetsMap.entries()) {
+        const orderedList = entriesList.sort(
+          (a, b) => b.paraBlockHeight - a.paraBlockHeight
+        );
+
+        if (!this.accAssetBalanceCache.has(accountId)) {
+          this.accAssetBalanceCache.set(accountId, new Map());
+        }
+        this.accAssetBalanceCache
+          .get(accountId)!
+          .set(`${assetId}`, orderedList[0]);
+      }
+    }
+  }
+  getLastAccAssetBalanceHistoricalDataItem(
+    accountId: string,
+    assetId: string
+  ): AccountAssetBalanceHistoricalData | undefined {
+    return this.accAssetBalanceCache.get(accountId)?.get(assetId);
   }
 
   /**

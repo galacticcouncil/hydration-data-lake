@@ -784,8 +784,6 @@ export const TreasuryEvent: sts.Type<TreasuryEvent> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 /**
  * Event for the System pallet.
  */
@@ -969,13 +967,6 @@ export const BalancesEvent: sts.Type<BalancesEvent> = sts.closedEnum(() => {
     }
 })
 
-export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
-    return  {
-        Free: sts.unit(),
-        Reserved: sts.unit(),
-    }
-})
-
 export const Phase: sts.Type<Phase> = sts.closedEnum(() => {
     return  {
         ApplyExtrinsic: sts.number(),
@@ -1029,3 +1020,12 @@ export const DigestItem: sts.Type<DigestItem> = sts.closedEnum(() => {
         Seal: sts.tuple(() => [sts.bytes(), sts.bytes()]),
     }
 })
+
+export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
+    return  {
+        Free: sts.unit(),
+        Reserved: sts.unit(),
+    }
+})
+
+export const AccountId32 = sts.bytes()

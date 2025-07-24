@@ -28,8 +28,6 @@ export const Type_366: sts.Type<Type_366> = sts.struct(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export interface AssetMetadata {
     symbol: BoundedVec
     decimals: number
@@ -3663,13 +3661,6 @@ export const TokensEvent: sts.Type<TokensEvent> = sts.closedEnum(() => {
     }
 })
 
-export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
-    return  {
-        Free: sts.unit(),
-        Reserved: sts.unit(),
-    }
-})
-
 /**
  * 
 			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
@@ -4718,3 +4709,12 @@ export const Phase: sts.Type<Phase> = sts.closedEnum(() => {
         Initialization: sts.unit(),
     }
 })
+
+export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
+    return  {
+        Free: sts.unit(),
+        Reserved: sts.unit(),
+    }
+})
+
+export const AccountId32 = sts.bytes()

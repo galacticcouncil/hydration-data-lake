@@ -2,7 +2,7 @@ import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { Aavepool, Lbppool } from '../../model';
 import { getAllAavePools } from './index';
-import { getOrCreateAsset } from '../asset/assetRegistry';
+import { getOrCreateAsset } from '../asset/asset';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function handleAavePoolsStorage(

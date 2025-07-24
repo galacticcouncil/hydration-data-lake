@@ -1,9 +1,38 @@
 import { ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AssetHistoricalData } from '../../model';
+import { AssetHistoricalData, AssetType } from '../../model';
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
+import { EvmUtils } from '../../utils/evm/evmUtils';
+import parsers from '../../parsers';
+
+export async function getAssetEvmAddressByType({
+  assetId,
+  assetType,
+  ctx,
+}: {
+  assetId: number;
+  assetType: AssetType;
+  ctx: ProcessorContext<Store>;
+}) {
+  if (Number.isNaN(assetId)) return null;
+
+  switch (assetType) {
+    case AssetType.Erc20: {
+      return (
+        (
+          await parsers.storage.assetRegistry.getErc20AssetContractAddress(
+            +assetId,
+            ctx.blocks[0].header
+          )
+        )?.address ?? null
+      );
+    }
+    default:
+      return EvmUtils.convertAssetIdToH160Address(assetId);
+  }
+}
 
 export async function getAssetHistDataWithUniqueData(
   src: Map<string, AssetHistoricalData>,

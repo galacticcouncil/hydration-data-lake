@@ -8,7 +8,7 @@ import {
   Stableswap,
   Tradability,
 } from '../../model';
-import { getAssetBalancesMany } from '../balances';
+import { getAssetBalancesMany } from '../balances/storageParsers';
 import { AppConfig } from '../../appConfig';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { AccountData } from '../../parsers/types/storage';

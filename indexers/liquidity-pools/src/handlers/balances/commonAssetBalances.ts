@@ -21,9 +21,13 @@ import {
 type AccountId = string;
 type AssetRegistryId = string;
 
-export async function handleCommonAssetAccountBalances(
-  ctx: SqdProcessorContext<Store>
-) {
+export async function handleCommonAssetAccountBalances({
+  accountIdsToProcess = new Set(),
+  ctx,
+}: {
+  accountIdsToProcess?: Set<string>;
+  ctx: SqdProcessorContext<Store>;
+}) {
   const allInvolvedAccountsInBatchSet: Set<string> = new Set();
   const palletNamesSet = new Set(['Currencies', 'Tokens', 'Balances']);
   const accountBalancesPerBlock: Map<

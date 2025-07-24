@@ -6,8 +6,6 @@ export const H256 = sts.bytes()
 
 export type H160 = Bytes
 
-export const H160 = sts.bytes()
-
 export interface AssetPair {
     assetIn: number
     assetOut: number
@@ -7632,14 +7630,6 @@ export const EVMEvent: sts.Type<EVMEvent> = sts.closedEnum(() => {
     }
 })
 
-export const Log: sts.Type<Log> = sts.struct(() => {
-    return  {
-        address: H160,
-        topics: sts.array(() => H256),
-        data: sts.bytes(),
-    }
-})
-
 /**
  * 
 			The [event](https://docs.substrate.io/main-docs/build/events-errors/) emitted
@@ -8145,5 +8135,15 @@ export const Phase: sts.Type<Phase> = sts.closedEnum(() => {
         ApplyExtrinsic: sts.number(),
         Finalization: sts.unit(),
         Initialization: sts.unit(),
+    }
+})
+
+export const H160 = sts.bytes()
+
+export const Log: sts.Type<Log> = sts.struct(() => {
+    return  {
+        address: H160,
+        topics: sts.array(() => H256),
+        data: sts.bytes(),
     }
 })

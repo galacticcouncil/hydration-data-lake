@@ -1,18 +1,11 @@
-import { BlockHeader } from '@subsquid/substrate-processor';
 import { storage } from '../typegenTypes/';
 import { UnknownVersionError } from '../../../../utils/errors';
 import {
-  AssetDetailsWithId,
   BalancesAccountInfoWithAccountId,
   GetConstantsInput,
   GetNativeTokenBalanceManyInput,
 } from '../../../types/storage';
-import {
-  hexToStrWithNullCharCheck,
-  tryExecOrReturnFallback,
-} from '../../../../utils/helpers';
-import { AssetType } from '../../../../model';
-import { ExtraFlags } from '../typegenTypes/v205';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
 async function getTotalIssuance({
   block,

@@ -7,6 +7,7 @@ import {
   Event as _Event,
   Call as _Call,
   Extrinsic as _Extrinsic,
+  Block as FullBlock,
 } from '@subsquid/substrate-processor';
 
 import { events } from './typegenTypes';
@@ -29,7 +30,7 @@ let processor = new SubstrateBatchProcessor()
     // More RPC connection options at https://docs.subsquid.io/substrate-indexing/setup/general/#set-data-source
   })
   .addEvent({
-    name: [events.relayChainInfo.currentBlockNumbers.name],
+    name: appConfig.getEventsToListen(),
     call: true,
     extrinsic: true,
   })
@@ -73,6 +74,7 @@ export { processor };
 
 export type Fields = SubstrateBatchProcessorFields<typeof processor>;
 export type Block = BlockHeader<Fields>;
+export type BlockWithData = FullBlock<Fields>;
 export type Event = _Event<Fields>;
 export type Call = _Call<Fields>;
 export type Extrinsic = _Extrinsic<Fields>;
