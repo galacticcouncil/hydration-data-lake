@@ -8,6 +8,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
+import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
+import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
 
 export async function handleMmReserveUsedAsCollateralEnabledEvent(
   ctx: ProcessorContext<Store>,
@@ -37,6 +39,10 @@ export async function handleMmReserveUsedAsCollateralEnabledEvent(
     return;
   }
 
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.userAddress
+  );
+
   const account = await getOrCreateAccountByBoundEvmAddress({
     ctx,
     evmAddress: parsedEvmEventData.userAddress,
@@ -57,9 +63,9 @@ export async function handleMmReserveUsedAsCollateralEnabledEvent(
     allInvolvedParticipants: [account.id],
   });
 
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.userAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
 }

@@ -55,6 +55,7 @@ import { MoneyMarketContractsManager } from './utils/evm/moneyMarketContractsMan
 import { prefetchAllAccountHistDataRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/balances/historicalData';
 import { getAccAssetBalanceHistDataWithUniqueData } from './handlers/balances/utils';
 import { handleEvmEventsInBlock } from './handlers/evm';
+import { getAccMmPosiotionHistDataWithUniqueData } from './handlers/accounts/utils';
 
 const appConfig = AppConfig.getInstance();
 
@@ -365,18 +366,35 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
   }
 
   if (appConfig.PROCESS_ACCOUNTS) {
-    const items = await getAccAssetBalanceHistDataWithUniqueData(
+    const accountAssetBalances = await getAccAssetBalanceHistDataWithUniqueData(
       ctx.batchState.state.accAssetBalanceHistData,
       ctx
     );
-
-    const itemsToSaveList = Array.from(items.values());
-
-    LatestProcessedDataCacheManager.getInstance().setLastAccAssetBalanceHistDataItem(
-      itemsToSaveList
+    const accountMmPositionData = await getAccMmPosiotionHistDataWithUniqueData(
+      ctx.batchState.state.accMmPositionHistData,
+      ctx
     );
 
-    if (items.size !== 0) await ctx.store.upsert(Array.from(items.values()));
+    const accountAssetBalancesToSaveList = Array.from(
+      accountAssetBalances.values()
+    );
+
+    const accountMmPositionDataToSaveList = Array.from(
+      accountMmPositionData.values()
+    );
+
+    LatestProcessedDataCacheManager.getInstance().setLastAccAssetBalanceHistDataItem(
+      accountAssetBalancesToSaveList
+    );
+    LatestProcessedDataCacheManager.getInstance().setLastAccMmPositionHistDataItem(
+      accountMmPositionDataToSaveList
+    );
+
+    if (accountAssetBalancesToSaveList.length !== 0)
+      await ctx.store.upsert(accountAssetBalancesToSaveList);
+
+    if (accountMmPositionDataToSaveList.length !== 0)
+      await ctx.store.upsert(accountMmPositionDataToSaveList);
   }
 
   for (const block of ctx.blocks) {

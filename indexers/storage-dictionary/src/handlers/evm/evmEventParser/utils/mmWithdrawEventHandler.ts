@@ -8,6 +8,8 @@ import {
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
 import { getOrCreateAsset } from '../../../asset/asset';
+import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
+import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
 
 export async function handleMmWithdrawEvent(
   ctx: ProcessorContext<Store>,
@@ -35,6 +37,13 @@ export async function handleMmWithdrawEvent(
     );
     return;
   }
+
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.userAddress
+  );
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.toAddress
+  );
 
   const accountFrom = await getOrCreateAccountByBoundEvmAddress({
     ctx,
@@ -67,14 +76,14 @@ export async function handleMmWithdrawEvent(
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
   });
 
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.userAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.toAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.toAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
 }

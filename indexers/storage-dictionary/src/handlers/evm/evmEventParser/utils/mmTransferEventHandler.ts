@@ -8,6 +8,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
+import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
+import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
 
 export async function handleMmTransferEvent(
   ctx: ProcessorContext<Store>,
@@ -37,6 +39,13 @@ export async function handleMmTransferEvent(
     return;
   }
 
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.fromAddress
+  );
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.toAddress
+  );
+
   const accountFrom = await getOrCreateAccountByBoundEvmAddress({
     ctx,
     evmAddress: parsedEvmEventData.fromAddress,
@@ -52,11 +61,11 @@ export async function handleMmTransferEvent(
   if (!accountFrom || !accountTo) {
     if (!accountFrom)
       console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.fromAddress}`
+        `handleMmTransferEvent :: accountFrom cannot be found for EVM Address ${parsedEvmEventData.fromAddress}`
       );
     if (!accountTo)
       console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.toAddress}`
+        `handleMmTransferEvent :: accountTo cannot be found for EVM Address ${parsedEvmEventData.toAddress}`
       );
     return;
   }
@@ -68,14 +77,14 @@ export async function handleMmTransferEvent(
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
   });
 
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.fromAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.toAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.fromAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.toAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
 }

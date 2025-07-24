@@ -283,6 +283,270 @@ export enum AavepoolsOrderBy {
   ReserveAssetIdDesc = 'RESERVE_ASSET_ID_DESC'
 }
 
+export type Account = {
+  __typename?: 'Account';
+  accountType: Scalars['String']['output'];
+  boundEvmAddress?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+};
+
+export type AccountAggregates = {
+  __typename?: 'AccountAggregates';
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<AccountDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+/** A connection to a list of `AccountAssetBalanceHistoricalDatum` values. */
+export type AccountAssetBalanceHistoricalDataConnection = {
+  __typename?: 'AccountAssetBalanceHistoricalDataConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<AccountAssetBalanceHistoricalDatumAggregates>;
+  /** A list of edges which contains the `AccountAssetBalanceHistoricalDatum` and cursor to aid in pagination. */
+  edges: Array<AccountAssetBalanceHistoricalDataEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<AccountAssetBalanceHistoricalDatumAggregates>>;
+  /** A list of `AccountAssetBalanceHistoricalDatum` objects. */
+  nodes: Array<Maybe<AccountAssetBalanceHistoricalDatum>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `AccountAssetBalanceHistoricalDatum` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `AccountAssetBalanceHistoricalDatum` values. */
+export type AccountAssetBalanceHistoricalDataConnectionGroupedAggregatesArgs = {
+  groupBy: Array<AccountAssetBalanceHistoricalDataGroupBy>;
+  having?: InputMaybe<AccountAssetBalanceHistoricalDataHavingInput>;
+};
+
+/** A `AccountAssetBalanceHistoricalDatum` edge in the connection. */
+export type AccountAssetBalanceHistoricalDataEdge = {
+  __typename?: 'AccountAssetBalanceHistoricalDataEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `AccountAssetBalanceHistoricalDatum` at the end of the edge. */
+  node?: Maybe<AccountAssetBalanceHistoricalDatum>;
+};
+
+/** Grouping methods for `AccountAssetBalanceHistoricalDatum` for usage during aggregation. */
+export enum AccountAssetBalanceHistoricalDataGroupBy {
+  AccountId = 'ACCOUNT_ID',
+  AssetId = 'ASSET_ID',
+  ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
+  TotalLocked = 'TOTAL_LOCKED',
+  Transferable = 'TRANSFERABLE'
+}
+
+export type AccountAssetBalanceHistoricalDataHavingAverageInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountAssetBalanceHistoricalDataHavingDistinctCountInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `AccountAssetBalanceHistoricalDatum` aggregates. */
+export type AccountAssetBalanceHistoricalDataHavingInput = {
+  AND?: InputMaybe<Array<AccountAssetBalanceHistoricalDataHavingInput>>;
+  OR?: InputMaybe<Array<AccountAssetBalanceHistoricalDataHavingInput>>;
+  average?: InputMaybe<AccountAssetBalanceHistoricalDataHavingAverageInput>;
+  distinctCount?: InputMaybe<AccountAssetBalanceHistoricalDataHavingDistinctCountInput>;
+  max?: InputMaybe<AccountAssetBalanceHistoricalDataHavingMaxInput>;
+  min?: InputMaybe<AccountAssetBalanceHistoricalDataHavingMinInput>;
+  stddevPopulation?: InputMaybe<AccountAssetBalanceHistoricalDataHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<AccountAssetBalanceHistoricalDataHavingStddevSampleInput>;
+  sum?: InputMaybe<AccountAssetBalanceHistoricalDataHavingSumInput>;
+  variancePopulation?: InputMaybe<AccountAssetBalanceHistoricalDataHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<AccountAssetBalanceHistoricalDataHavingVarianceSampleInput>;
+};
+
+export type AccountAssetBalanceHistoricalDataHavingMaxInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountAssetBalanceHistoricalDataHavingMinInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountAssetBalanceHistoricalDataHavingStddevPopulationInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountAssetBalanceHistoricalDataHavingStddevSampleInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountAssetBalanceHistoricalDataHavingSumInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountAssetBalanceHistoricalDataHavingVariancePopulationInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountAssetBalanceHistoricalDataHavingVarianceSampleInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `AccountAssetBalanceHistoricalDatum`. */
+export enum AccountAssetBalanceHistoricalDataOrderBy {
+  AccountIdAsc = 'ACCOUNT_ID_ASC',
+  AccountIdDesc = 'ACCOUNT_ID_DESC',
+  AssetIdAsc = 'ASSET_ID_ASC',
+  AssetIdDesc = 'ASSET_ID_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  ParaBlockHeightAsc = 'PARA_BLOCK_HEIGHT_ASC',
+  ParaBlockHeightDesc = 'PARA_BLOCK_HEIGHT_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  TotalLockedAsc = 'TOTAL_LOCKED_ASC',
+  TotalLockedDesc = 'TOTAL_LOCKED_DESC',
+  TransferableAsc = 'TRANSFERABLE_ASC',
+  TransferableDesc = 'TRANSFERABLE_DESC'
+}
+
+export type AccountAssetBalanceHistoricalDatum = {
+  __typename?: 'AccountAssetBalanceHistoricalDatum';
+  accountId: Scalars['String']['output'];
+  assetId: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
+  totalLocked: Scalars['String']['output'];
+  transferable: Scalars['String']['output'];
+};
+
+export type AccountAssetBalanceHistoricalDatumAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<AccountAssetBalanceHistoricalDatumAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<AccountAssetBalanceHistoricalDatumDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<AccountAssetBalanceHistoricalDatumMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<AccountAssetBalanceHistoricalDatumMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<AccountAssetBalanceHistoricalDatumStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<AccountAssetBalanceHistoricalDatumStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<AccountAssetBalanceHistoricalDatumSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<AccountAssetBalanceHistoricalDatumVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<AccountAssetBalanceHistoricalDatumVarianceSampleAggregates>;
+};
+
+export type AccountAssetBalanceHistoricalDatumAverageAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumAverageAggregates';
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/**
+ * A condition to be used against `AccountAssetBalanceHistoricalDatum` object
+ * types. All fields are tested for equality and combined with a logical ‘and.’
+ */
+export type AccountAssetBalanceHistoricalDatumCondition = {
+  /** Checks for equality with the object’s `accountId` field. */
+  accountId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `assetId` field. */
+  assetId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `totalLocked` field. */
+  totalLocked?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `transferable` field. */
+  transferable?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AccountAssetBalanceHistoricalDatumDistinctCountAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumDistinctCountAggregates';
+  /** Distinct count of accountId across the matching connection */
+  accountId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of assetId across the matching connection */
+  assetId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of totalLocked across the matching connection */
+  totalLocked?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of transferable across the matching connection */
+  transferable?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `AccountAssetBalanceHistoricalDatum` object types. All fields are combined with a logical ‘and.’ */
+export type AccountAssetBalanceHistoricalDatumFilter = {
+  /** Filter by the object’s `accountId` field. */
+  accountId?: InputMaybe<StringFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<AccountAssetBalanceHistoricalDatumFilter>>;
+  /** Filter by the object’s `assetId` field. */
+  assetId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<AccountAssetBalanceHistoricalDatumFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<AccountAssetBalanceHistoricalDatumFilter>>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `totalLocked` field. */
+  totalLocked?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `transferable` field. */
+  transferable?: InputMaybe<StringFilter>;
+};
+
+export type AccountAssetBalanceHistoricalDatumMaxAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumMaxAggregates';
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type AccountAssetBalanceHistoricalDatumMinAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumMinAggregates';
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type AccountAssetBalanceHistoricalDatumStddevPopulationAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumStddevPopulationAggregates';
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type AccountAssetBalanceHistoricalDatumStddevSampleAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumStddevSampleAggregates';
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type AccountAssetBalanceHistoricalDatumSumAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumSumAggregates';
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
+};
+
+export type AccountAssetBalanceHistoricalDatumVariancePopulationAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumVariancePopulationAggregates';
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type AccountAssetBalanceHistoricalDatumVarianceSampleAggregates = {
+  __typename?: 'AccountAssetBalanceHistoricalDatumVarianceSampleAggregates';
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
 export type AccountBalances = {
   __typename?: 'AccountBalances';
   feeFrozen?: Maybe<Scalars['String']['output']>;
@@ -292,6 +556,400 @@ export type AccountBalances = {
   miscFrozen?: Maybe<Scalars['String']['output']>;
   reserved: Scalars['String']['output'];
 };
+
+/** A condition to be used against `Account` object types. All fields are tested for equality and combined with a logical ‘and.’ */
+export type AccountCondition = {
+  /** Checks for equality with the object’s `accountType` field. */
+  accountType?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `boundEvmAddress` field. */
+  boundEvmAddress?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AccountDistinctCountAggregates = {
+  __typename?: 'AccountDistinctCountAggregates';
+  /** Distinct count of accountType across the matching connection */
+  accountType?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of boundEvmAddress across the matching connection */
+  boundEvmAddress?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `Account` object types. All fields are combined with a logical ‘and.’ */
+export type AccountFilter = {
+  /** Filter by the object’s `accountType` field. */
+  accountType?: InputMaybe<StringFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<AccountFilter>>;
+  /** Filter by the object’s `boundEvmAddress` field. */
+  boundEvmAddress?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<AccountFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<AccountFilter>>;
+};
+
+/** Grouping methods for `Account` for usage during aggregation. */
+export enum AccountGroupBy {
+  AccountType = 'ACCOUNT_TYPE',
+  BoundEvmAddress = 'BOUND_EVM_ADDRESS'
+}
+
+/** Conditions for `Account` aggregates. */
+export type AccountHavingInput = {
+  AND?: InputMaybe<Array<AccountHavingInput>>;
+  OR?: InputMaybe<Array<AccountHavingInput>>;
+};
+
+/** A connection to a list of `AccountMmPositionHistoricalDatum` values. */
+export type AccountMmPositionHistoricalDataConnection = {
+  __typename?: 'AccountMmPositionHistoricalDataConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<AccountMmPositionHistoricalDatumAggregates>;
+  /** A list of edges which contains the `AccountMmPositionHistoricalDatum` and cursor to aid in pagination. */
+  edges: Array<AccountMmPositionHistoricalDataEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<AccountMmPositionHistoricalDatumAggregates>>;
+  /** A list of `AccountMmPositionHistoricalDatum` objects. */
+  nodes: Array<Maybe<AccountMmPositionHistoricalDatum>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `AccountMmPositionHistoricalDatum` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `AccountMmPositionHistoricalDatum` values. */
+export type AccountMmPositionHistoricalDataConnectionGroupedAggregatesArgs = {
+  groupBy: Array<AccountMmPositionHistoricalDataGroupBy>;
+  having?: InputMaybe<AccountMmPositionHistoricalDataHavingInput>;
+};
+
+/** A `AccountMmPositionHistoricalDatum` edge in the connection. */
+export type AccountMmPositionHistoricalDataEdge = {
+  __typename?: 'AccountMmPositionHistoricalDataEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `AccountMmPositionHistoricalDatum` at the end of the edge. */
+  node?: Maybe<AccountMmPositionHistoricalDatum>;
+};
+
+/** Grouping methods for `AccountMmPositionHistoricalDatum` for usage during aggregation. */
+export enum AccountMmPositionHistoricalDataGroupBy {
+  AccountBoundEvmAddress = 'ACCOUNT_BOUND_EVM_ADDRESS',
+  AccountId = 'ACCOUNT_ID',
+  AvailableBorrowsBase = 'AVAILABLE_BORROWS_BASE',
+  CurrentLiquidationThreshold = 'CURRENT_LIQUIDATION_THRESHOLD',
+  HealthFactor = 'HEALTH_FACTOR',
+  Ltv = 'LTV',
+  ParaBlockHeight = 'PARA_BLOCK_HEIGHT',
+  PoolAddress = 'POOL_ADDRESS',
+  TotalCollateralBase = 'TOTAL_COLLATERAL_BASE',
+  TotalDebtBase = 'TOTAL_DEBT_BASE'
+}
+
+export type AccountMmPositionHistoricalDataHavingAverageInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountMmPositionHistoricalDataHavingDistinctCountInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `AccountMmPositionHistoricalDatum` aggregates. */
+export type AccountMmPositionHistoricalDataHavingInput = {
+  AND?: InputMaybe<Array<AccountMmPositionHistoricalDataHavingInput>>;
+  OR?: InputMaybe<Array<AccountMmPositionHistoricalDataHavingInput>>;
+  average?: InputMaybe<AccountMmPositionHistoricalDataHavingAverageInput>;
+  distinctCount?: InputMaybe<AccountMmPositionHistoricalDataHavingDistinctCountInput>;
+  max?: InputMaybe<AccountMmPositionHistoricalDataHavingMaxInput>;
+  min?: InputMaybe<AccountMmPositionHistoricalDataHavingMinInput>;
+  stddevPopulation?: InputMaybe<AccountMmPositionHistoricalDataHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<AccountMmPositionHistoricalDataHavingStddevSampleInput>;
+  sum?: InputMaybe<AccountMmPositionHistoricalDataHavingSumInput>;
+  variancePopulation?: InputMaybe<AccountMmPositionHistoricalDataHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<AccountMmPositionHistoricalDataHavingVarianceSampleInput>;
+};
+
+export type AccountMmPositionHistoricalDataHavingMaxInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountMmPositionHistoricalDataHavingMinInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountMmPositionHistoricalDataHavingStddevPopulationInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountMmPositionHistoricalDataHavingStddevSampleInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountMmPositionHistoricalDataHavingSumInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountMmPositionHistoricalDataHavingVariancePopulationInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+export type AccountMmPositionHistoricalDataHavingVarianceSampleInput = {
+  paraBlockHeight?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `AccountMmPositionHistoricalDatum`. */
+export enum AccountMmPositionHistoricalDataOrderBy {
+  AccountBoundEvmAddressAsc = 'ACCOUNT_BOUND_EVM_ADDRESS_ASC',
+  AccountBoundEvmAddressDesc = 'ACCOUNT_BOUND_EVM_ADDRESS_DESC',
+  AccountIdAsc = 'ACCOUNT_ID_ASC',
+  AccountIdDesc = 'ACCOUNT_ID_DESC',
+  AvailableBorrowsBaseAsc = 'AVAILABLE_BORROWS_BASE_ASC',
+  AvailableBorrowsBaseDesc = 'AVAILABLE_BORROWS_BASE_DESC',
+  CurrentLiquidationThresholdAsc = 'CURRENT_LIQUIDATION_THRESHOLD_ASC',
+  CurrentLiquidationThresholdDesc = 'CURRENT_LIQUIDATION_THRESHOLD_DESC',
+  HealthFactorAsc = 'HEALTH_FACTOR_ASC',
+  HealthFactorDesc = 'HEALTH_FACTOR_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  LtvAsc = 'LTV_ASC',
+  LtvDesc = 'LTV_DESC',
+  Natural = 'NATURAL',
+  ParaBlockHeightAsc = 'PARA_BLOCK_HEIGHT_ASC',
+  ParaBlockHeightDesc = 'PARA_BLOCK_HEIGHT_DESC',
+  PoolAddressAsc = 'POOL_ADDRESS_ASC',
+  PoolAddressDesc = 'POOL_ADDRESS_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  TotalCollateralBaseAsc = 'TOTAL_COLLATERAL_BASE_ASC',
+  TotalCollateralBaseDesc = 'TOTAL_COLLATERAL_BASE_DESC',
+  TotalDebtBaseAsc = 'TOTAL_DEBT_BASE_ASC',
+  TotalDebtBaseDesc = 'TOTAL_DEBT_BASE_DESC'
+}
+
+export type AccountMmPositionHistoricalDatum = {
+  __typename?: 'AccountMmPositionHistoricalDatum';
+  accountBoundEvmAddress?: Maybe<Scalars['String']['output']>;
+  accountId: Scalars['String']['output'];
+  availableBorrowsBase: Scalars['String']['output'];
+  currentLiquidationThreshold: Scalars['String']['output'];
+  healthFactor?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  ltv: Scalars['String']['output'];
+  paraBlockHeight: Scalars['Int']['output'];
+  poolAddress: Scalars['String']['output'];
+  totalCollateralBase: Scalars['String']['output'];
+  totalDebtBase: Scalars['String']['output'];
+};
+
+export type AccountMmPositionHistoricalDatumAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<AccountMmPositionHistoricalDatumAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<AccountMmPositionHistoricalDatumDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']['output']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<AccountMmPositionHistoricalDatumMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<AccountMmPositionHistoricalDatumMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<AccountMmPositionHistoricalDatumStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<AccountMmPositionHistoricalDatumStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<AccountMmPositionHistoricalDatumSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<AccountMmPositionHistoricalDatumVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<AccountMmPositionHistoricalDatumVarianceSampleAggregates>;
+};
+
+export type AccountMmPositionHistoricalDatumAverageAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumAverageAggregates';
+  /** Mean average of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/**
+ * A condition to be used against `AccountMmPositionHistoricalDatum` object types.
+ * All fields are tested for equality and combined with a logical ‘and.’
+ */
+export type AccountMmPositionHistoricalDatumCondition = {
+  /** Checks for equality with the object’s `accountBoundEvmAddress` field. */
+  accountBoundEvmAddress?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `accountId` field. */
+  accountId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `availableBorrowsBase` field. */
+  availableBorrowsBase?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `currentLiquidationThreshold` field. */
+  currentLiquidationThreshold?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `healthFactor` field. */
+  healthFactor?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `id` field. */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `ltv` field. */
+  ltv?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `poolAddress` field. */
+  poolAddress?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `totalCollateralBase` field. */
+  totalCollateralBase?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `totalDebtBase` field. */
+  totalDebtBase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AccountMmPositionHistoricalDatumDistinctCountAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumDistinctCountAggregates';
+  /** Distinct count of accountBoundEvmAddress across the matching connection */
+  accountBoundEvmAddress?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of accountId across the matching connection */
+  accountId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of availableBorrowsBase across the matching connection */
+  availableBorrowsBase?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of currentLiquidationThreshold across the matching connection */
+  currentLiquidationThreshold?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of healthFactor across the matching connection */
+  healthFactor?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of ltv across the matching connection */
+  ltv?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of poolAddress across the matching connection */
+  poolAddress?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of totalCollateralBase across the matching connection */
+  totalCollateralBase?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of totalDebtBase across the matching connection */
+  totalDebtBase?: Maybe<Scalars['BigInt']['output']>;
+};
+
+/** A filter to be used against `AccountMmPositionHistoricalDatum` object types. All fields are combined with a logical ‘and.’ */
+export type AccountMmPositionHistoricalDatumFilter = {
+  /** Filter by the object’s `accountBoundEvmAddress` field. */
+  accountBoundEvmAddress?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `accountId` field. */
+  accountId?: InputMaybe<StringFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<AccountMmPositionHistoricalDatumFilter>>;
+  /** Filter by the object’s `availableBorrowsBase` field. */
+  availableBorrowsBase?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `currentLiquidationThreshold` field. */
+  currentLiquidationThreshold?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `healthFactor` field. */
+  healthFactor?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `ltv` field. */
+  ltv?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<AccountMmPositionHistoricalDatumFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<AccountMmPositionHistoricalDatumFilter>>;
+  /** Filter by the object’s `paraBlockHeight` field. */
+  paraBlockHeight?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `poolAddress` field. */
+  poolAddress?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `totalCollateralBase` field. */
+  totalCollateralBase?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `totalDebtBase` field. */
+  totalDebtBase?: InputMaybe<StringFilter>;
+};
+
+export type AccountMmPositionHistoricalDatumMaxAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumMaxAggregates';
+  /** Maximum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type AccountMmPositionHistoricalDatumMinAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumMinAggregates';
+  /** Minimum of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['Int']['output']>;
+};
+
+export type AccountMmPositionHistoricalDatumStddevPopulationAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumStddevPopulationAggregates';
+  /** Population standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type AccountMmPositionHistoricalDatumStddevSampleAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumStddevSampleAggregates';
+  /** Sample standard deviation of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type AccountMmPositionHistoricalDatumSumAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumSumAggregates';
+  /** Sum of paraBlockHeight across the matching connection */
+  paraBlockHeight: Scalars['BigInt']['output'];
+};
+
+export type AccountMmPositionHistoricalDatumVariancePopulationAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumVariancePopulationAggregates';
+  /** Population variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+export type AccountMmPositionHistoricalDatumVarianceSampleAggregates = {
+  __typename?: 'AccountMmPositionHistoricalDatumVarianceSampleAggregates';
+  /** Sample variance of paraBlockHeight across the matching connection */
+  paraBlockHeight?: Maybe<Scalars['BigFloat']['output']>;
+};
+
+/** A connection to a list of `Account` values. */
+export type AccountsConnection = {
+  __typename?: 'AccountsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<AccountAggregates>;
+  /** A list of edges which contains the `Account` and cursor to aid in pagination. */
+  edges: Array<AccountsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<AccountAggregates>>;
+  /** A list of `Account` objects. */
+  nodes: Array<Maybe<Account>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Account` you could get from the connection. */
+  totalCount: Scalars['Int']['output'];
+};
+
+
+/** A connection to a list of `Account` values. */
+export type AccountsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<AccountGroupBy>;
+  having?: InputMaybe<AccountHavingInput>;
+};
+
+/** A `Account` edge in the connection. */
+export type AccountsEdge = {
+  __typename?: 'AccountsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  /** The `Account` at the end of the edge. */
+  node?: Maybe<Account>;
+};
+
+/** Methods to use when ordering `Account`. */
+export enum AccountsOrderBy {
+  AccountTypeAsc = 'ACCOUNT_TYPE_ASC',
+  AccountTypeDesc = 'ACCOUNT_TYPE_DESC',
+  BoundEvmAddressAsc = 'BOUND_EVM_ADDRESS_ASC',
+  BoundEvmAddressDesc = 'BOUND_EVM_ADDRESS_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+}
 
 export type ApiSupportResponse = {
   __typename?: 'ApiSupportResponse';
@@ -305,6 +963,9 @@ export type ApiSupportResponse = {
 
 export type Asset = {
   __typename?: 'Asset';
+  /** Reads a single `Asset` that is related to this `Asset`. */
+  aToken?: Maybe<Asset>;
+  aTokenId?: Maybe<Scalars['String']['output']>;
   /** Reads and enables pagination through a set of `Aavepool`. */
   aavepoolsByATokenId: AavepoolsConnection;
   /** Reads and enables pagination through a set of `Aavepool`. */
@@ -313,16 +974,30 @@ export type Asset = {
   assetHistoricalData: AssetHistoricalDataConnection;
   assetType: Scalars['String']['output'];
   /** Reads and enables pagination through a set of `Asset`. */
+  assetsByATokenId: AssetsConnection;
+  /** Reads and enables pagination through a set of `Asset`. */
   assetsByBondUnderlyingAssetId: AssetsConnection;
+  /** Reads and enables pagination through a set of `Asset`. */
+  assetsByUnderlyingAssetId: AssetsConnection;
+  /** Reads and enables pagination through a set of `Asset`. */
+  assetsByVariableDebtTokenId: AssetsConnection;
   bondMaturity?: Maybe<Scalars['BigFloat']['output']>;
   /** Reads a single `Asset` that is related to this `Asset`. */
   bondUnderlyingAsset?: Maybe<Asset>;
   bondUnderlyingAssetId?: Maybe<Scalars['String']['output']>;
   decimals?: Maybe<Scalars['Int']['output']>;
+  evmAddress?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   isSufficient: Scalars['Boolean']['output'];
   name?: Maybe<Scalars['String']['output']>;
+  resourceType?: Maybe<Scalars['String']['output']>;
   symbol?: Maybe<Scalars['String']['output']>;
+  /** Reads a single `Asset` that is related to this `Asset`. */
+  underlyingAsset?: Maybe<Asset>;
+  underlyingAssetId?: Maybe<Scalars['String']['output']>;
+  /** Reads a single `Asset` that is related to this `Asset`. */
+  variableDebtToken?: Maybe<Asset>;
+  variableDebtTokenId?: Maybe<Scalars['String']['output']>;
   xcmRateLimit?: Maybe<Scalars['BigFloat']['output']>;
 };
 
@@ -363,7 +1038,43 @@ export type AssetAssetHistoricalDataArgs = {
 };
 
 
+export type AssetAssetsByATokenIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AssetCondition>;
+  filter?: InputMaybe<AssetFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AssetsOrderBy>>;
+};
+
+
 export type AssetAssetsByBondUnderlyingAssetIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AssetCondition>;
+  filter?: InputMaybe<AssetFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AssetsOrderBy>>;
+};
+
+
+export type AssetAssetsByUnderlyingAssetIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AssetCondition>;
+  filter?: InputMaybe<AssetFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AssetsOrderBy>>;
+};
+
+
+export type AssetAssetsByVariableDebtTokenIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
   condition?: InputMaybe<AssetCondition>;
@@ -409,6 +1120,8 @@ export type AssetAverageAggregates = {
 
 /** A condition to be used against `Asset` object types. All fields are tested for equality and combined with a logical ‘and.’ */
 export type AssetCondition = {
+  /** Checks for equality with the object’s `aTokenId` field. */
+  aTokenId?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `assetType` field. */
   assetType?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `bondMaturity` field. */
@@ -417,20 +1130,30 @@ export type AssetCondition = {
   bondUnderlyingAssetId?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `decimals` field. */
   decimals?: InputMaybe<Scalars['Int']['input']>;
+  /** Checks for equality with the object’s `evmAddress` field. */
+  evmAddress?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `id` field. */
   id?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `isSufficient` field. */
   isSufficient?: InputMaybe<Scalars['Boolean']['input']>;
   /** Checks for equality with the object’s `name` field. */
   name?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `resourceType` field. */
+  resourceType?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `symbol` field. */
   symbol?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `underlyingAssetId` field. */
+  underlyingAssetId?: InputMaybe<Scalars['String']['input']>;
+  /** Checks for equality with the object’s `variableDebtTokenId` field. */
+  variableDebtTokenId?: InputMaybe<Scalars['String']['input']>;
   /** Checks for equality with the object’s `xcmRateLimit` field. */
   xcmRateLimit?: InputMaybe<Scalars['BigFloat']['input']>;
 };
 
 export type AssetDistinctCountAggregates = {
   __typename?: 'AssetDistinctCountAggregates';
+  /** Distinct count of aTokenId across the matching connection */
+  aTokenId?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of assetType across the matching connection */
   assetType?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of bondMaturity across the matching connection */
@@ -439,14 +1162,22 @@ export type AssetDistinctCountAggregates = {
   bondUnderlyingAssetId?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of decimals across the matching connection */
   decimals?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of evmAddress across the matching connection */
+  evmAddress?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of id across the matching connection */
   id?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of isSufficient across the matching connection */
   isSufficient?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of name across the matching connection */
   name?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of resourceType across the matching connection */
+  resourceType?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of symbol across the matching connection */
   symbol?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of underlyingAssetId across the matching connection */
+  underlyingAssetId?: Maybe<Scalars['BigInt']['output']>;
+  /** Distinct count of variableDebtTokenId across the matching connection */
+  variableDebtTokenId?: Maybe<Scalars['BigInt']['output']>;
   /** Distinct count of xcmRateLimit across the matching connection */
   xcmRateLimit?: Maybe<Scalars['BigInt']['output']>;
 };
@@ -460,6 +1191,8 @@ export type AssetDynamicFee = {
 
 /** A filter to be used against `Asset` object types. All fields are combined with a logical ‘and.’ */
 export type AssetFilter = {
+  /** Filter by the object’s `aTokenId` field. */
+  aTokenId?: InputMaybe<StringFilter>;
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<AssetFilter>>;
   /** Filter by the object’s `assetType` field. */
@@ -470,6 +1203,8 @@ export type AssetFilter = {
   bondUnderlyingAssetId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `decimals` field. */
   decimals?: InputMaybe<IntFilter>;
+  /** Filter by the object’s `evmAddress` field. */
+  evmAddress?: InputMaybe<StringFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<StringFilter>;
   /** Filter by the object’s `isSufficient` field. */
@@ -480,8 +1215,14 @@ export type AssetFilter = {
   not?: InputMaybe<AssetFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<AssetFilter>>;
+  /** Filter by the object’s `resourceType` field. */
+  resourceType?: InputMaybe<StringFilter>;
   /** Filter by the object’s `symbol` field. */
   symbol?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `underlyingAssetId` field. */
+  underlyingAssetId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `variableDebtTokenId` field. */
+  variableDebtTokenId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `xcmRateLimit` field. */
   xcmRateLimit?: InputMaybe<BigFloatFilter>;
 };
@@ -489,12 +1230,17 @@ export type AssetFilter = {
 /** Grouping methods for `Asset` for usage during aggregation. */
 export enum AssetGroupBy {
   AssetType = 'ASSET_TYPE',
+  ATokenId = 'A_TOKEN_ID',
   BondMaturity = 'BOND_MATURITY',
   BondUnderlyingAssetId = 'BOND_UNDERLYING_ASSET_ID',
   Decimals = 'DECIMALS',
+  EvmAddress = 'EVM_ADDRESS',
   IsSufficient = 'IS_SUFFICIENT',
   Name = 'NAME',
+  ResourceType = 'RESOURCE_TYPE',
   Symbol = 'SYMBOL',
+  UnderlyingAssetId = 'UNDERLYING_ASSET_ID',
+  VariableDebtTokenId = 'VARIABLE_DEBT_TOKEN_ID',
   XcmRateLimit = 'XCM_RATE_LIMIT'
 }
 
@@ -1180,170 +1926,1022 @@ export enum AssetsOrderBy {
   AavepoolsByReserveAssetIdVarianceSamplePoolIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_POOL_ID_DESC',
   AavepoolsByReserveAssetIdVarianceSampleReserveAssetIdAsc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_RESERVE_ASSET_ID_ASC',
   AavepoolsByReserveAssetIdVarianceSampleReserveAssetIdDesc = 'AAVEPOOLS_BY_RESERVE_ASSET_ID_VARIANCE_SAMPLE_RESERVE_ASSET_ID_DESC',
+  AssetsByAtokenIdAverageAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_ASSET_TYPE_ASC',
+  AssetsByAtokenIdAverageAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_ASSET_TYPE_DESC',
+  AssetsByAtokenIdAverageATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdAverageATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdAverageBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_BOND_MATURITY_ASC',
+  AssetsByAtokenIdAverageBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_BOND_MATURITY_DESC',
+  AssetsByAtokenIdAverageBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdAverageBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdAverageDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_DECIMALS_ASC',
+  AssetsByAtokenIdAverageDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_DECIMALS_DESC',
+  AssetsByAtokenIdAverageEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdAverageEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdAverageIdAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_ID_ASC',
+  AssetsByAtokenIdAverageIdDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_ID_DESC',
+  AssetsByAtokenIdAverageIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdAverageIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdAverageNameAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_NAME_ASC',
+  AssetsByAtokenIdAverageNameDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_NAME_DESC',
+  AssetsByAtokenIdAverageResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdAverageResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdAverageSymbolAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_SYMBOL_ASC',
+  AssetsByAtokenIdAverageSymbolDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_SYMBOL_DESC',
+  AssetsByAtokenIdAverageUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdAverageUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdAverageVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdAverageVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdAverageXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdAverageXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_AVERAGE_XCM_RATE_LIMIT_DESC',
+  AssetsByAtokenIdCountAsc = 'ASSETS_BY_ATOKEN_ID_COUNT_ASC',
+  AssetsByAtokenIdCountDesc = 'ASSETS_BY_ATOKEN_ID_COUNT_DESC',
+  AssetsByAtokenIdDistinctCountAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_ASSET_TYPE_ASC',
+  AssetsByAtokenIdDistinctCountAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_ASSET_TYPE_DESC',
+  AssetsByAtokenIdDistinctCountATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdDistinctCountATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdDistinctCountBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_BOND_MATURITY_ASC',
+  AssetsByAtokenIdDistinctCountBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_BOND_MATURITY_DESC',
+  AssetsByAtokenIdDistinctCountBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdDistinctCountBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdDistinctCountDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_DECIMALS_ASC',
+  AssetsByAtokenIdDistinctCountDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_DECIMALS_DESC',
+  AssetsByAtokenIdDistinctCountEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdDistinctCountEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdDistinctCountIdAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_ID_ASC',
+  AssetsByAtokenIdDistinctCountIdDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_ID_DESC',
+  AssetsByAtokenIdDistinctCountIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdDistinctCountIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdDistinctCountNameAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_NAME_ASC',
+  AssetsByAtokenIdDistinctCountNameDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_NAME_DESC',
+  AssetsByAtokenIdDistinctCountResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdDistinctCountResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdDistinctCountSymbolAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_SYMBOL_ASC',
+  AssetsByAtokenIdDistinctCountSymbolDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_SYMBOL_DESC',
+  AssetsByAtokenIdDistinctCountUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdDistinctCountUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdDistinctCountVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdDistinctCountVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdDistinctCountXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdDistinctCountXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_DISTINCT_COUNT_XCM_RATE_LIMIT_DESC',
+  AssetsByAtokenIdMaxAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_MAX_ASSET_TYPE_ASC',
+  AssetsByAtokenIdMaxAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_MAX_ASSET_TYPE_DESC',
+  AssetsByAtokenIdMaxATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_MAX_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdMaxATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_MAX_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdMaxBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_MAX_BOND_MATURITY_ASC',
+  AssetsByAtokenIdMaxBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_MAX_BOND_MATURITY_DESC',
+  AssetsByAtokenIdMaxBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_MAX_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdMaxBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_MAX_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdMaxDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_MAX_DECIMALS_ASC',
+  AssetsByAtokenIdMaxDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_MAX_DECIMALS_DESC',
+  AssetsByAtokenIdMaxEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_MAX_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdMaxEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_MAX_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdMaxIdAsc = 'ASSETS_BY_ATOKEN_ID_MAX_ID_ASC',
+  AssetsByAtokenIdMaxIdDesc = 'ASSETS_BY_ATOKEN_ID_MAX_ID_DESC',
+  AssetsByAtokenIdMaxIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_MAX_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdMaxIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_MAX_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdMaxNameAsc = 'ASSETS_BY_ATOKEN_ID_MAX_NAME_ASC',
+  AssetsByAtokenIdMaxNameDesc = 'ASSETS_BY_ATOKEN_ID_MAX_NAME_DESC',
+  AssetsByAtokenIdMaxResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_MAX_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdMaxResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_MAX_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdMaxSymbolAsc = 'ASSETS_BY_ATOKEN_ID_MAX_SYMBOL_ASC',
+  AssetsByAtokenIdMaxSymbolDesc = 'ASSETS_BY_ATOKEN_ID_MAX_SYMBOL_DESC',
+  AssetsByAtokenIdMaxUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_MAX_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdMaxUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_MAX_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdMaxVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_MAX_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdMaxVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_MAX_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdMaxXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_MAX_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdMaxXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_MAX_XCM_RATE_LIMIT_DESC',
+  AssetsByAtokenIdMinAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_MIN_ASSET_TYPE_ASC',
+  AssetsByAtokenIdMinAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_MIN_ASSET_TYPE_DESC',
+  AssetsByAtokenIdMinATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_MIN_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdMinATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_MIN_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdMinBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_MIN_BOND_MATURITY_ASC',
+  AssetsByAtokenIdMinBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_MIN_BOND_MATURITY_DESC',
+  AssetsByAtokenIdMinBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_MIN_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdMinBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_MIN_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdMinDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_MIN_DECIMALS_ASC',
+  AssetsByAtokenIdMinDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_MIN_DECIMALS_DESC',
+  AssetsByAtokenIdMinEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_MIN_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdMinEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_MIN_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdMinIdAsc = 'ASSETS_BY_ATOKEN_ID_MIN_ID_ASC',
+  AssetsByAtokenIdMinIdDesc = 'ASSETS_BY_ATOKEN_ID_MIN_ID_DESC',
+  AssetsByAtokenIdMinIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_MIN_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdMinIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_MIN_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdMinNameAsc = 'ASSETS_BY_ATOKEN_ID_MIN_NAME_ASC',
+  AssetsByAtokenIdMinNameDesc = 'ASSETS_BY_ATOKEN_ID_MIN_NAME_DESC',
+  AssetsByAtokenIdMinResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_MIN_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdMinResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_MIN_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdMinSymbolAsc = 'ASSETS_BY_ATOKEN_ID_MIN_SYMBOL_ASC',
+  AssetsByAtokenIdMinSymbolDesc = 'ASSETS_BY_ATOKEN_ID_MIN_SYMBOL_DESC',
+  AssetsByAtokenIdMinUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_MIN_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdMinUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_MIN_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdMinVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_MIN_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdMinVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_MIN_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdMinXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_MIN_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdMinXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_MIN_XCM_RATE_LIMIT_DESC',
+  AssetsByAtokenIdStddevPopulationAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_ASSET_TYPE_ASC',
+  AssetsByAtokenIdStddevPopulationAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_ASSET_TYPE_DESC',
+  AssetsByAtokenIdStddevPopulationATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdStddevPopulationATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdStddevPopulationBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_BOND_MATURITY_ASC',
+  AssetsByAtokenIdStddevPopulationBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_BOND_MATURITY_DESC',
+  AssetsByAtokenIdStddevPopulationBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdStddevPopulationBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdStddevPopulationDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_DECIMALS_ASC',
+  AssetsByAtokenIdStddevPopulationDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_DECIMALS_DESC',
+  AssetsByAtokenIdStddevPopulationEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdStddevPopulationEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdStddevPopulationIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_ID_ASC',
+  AssetsByAtokenIdStddevPopulationIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_ID_DESC',
+  AssetsByAtokenIdStddevPopulationIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdStddevPopulationIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdStddevPopulationNameAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_NAME_ASC',
+  AssetsByAtokenIdStddevPopulationNameDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_NAME_DESC',
+  AssetsByAtokenIdStddevPopulationResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdStddevPopulationResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdStddevPopulationSymbolAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_SYMBOL_ASC',
+  AssetsByAtokenIdStddevPopulationSymbolDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_SYMBOL_DESC',
+  AssetsByAtokenIdStddevPopulationUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdStddevPopulationUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdStddevPopulationVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdStddevPopulationVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdStddevPopulationXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdStddevPopulationXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_POPULATION_XCM_RATE_LIMIT_DESC',
+  AssetsByAtokenIdStddevSampleAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_ASSET_TYPE_ASC',
+  AssetsByAtokenIdStddevSampleAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_ASSET_TYPE_DESC',
+  AssetsByAtokenIdStddevSampleATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdStddevSampleATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdStddevSampleBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_BOND_MATURITY_ASC',
+  AssetsByAtokenIdStddevSampleBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_BOND_MATURITY_DESC',
+  AssetsByAtokenIdStddevSampleBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdStddevSampleBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdStddevSampleDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_DECIMALS_ASC',
+  AssetsByAtokenIdStddevSampleDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_DECIMALS_DESC',
+  AssetsByAtokenIdStddevSampleEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdStddevSampleEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdStddevSampleIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_ID_ASC',
+  AssetsByAtokenIdStddevSampleIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_ID_DESC',
+  AssetsByAtokenIdStddevSampleIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdStddevSampleIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdStddevSampleNameAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_NAME_ASC',
+  AssetsByAtokenIdStddevSampleNameDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_NAME_DESC',
+  AssetsByAtokenIdStddevSampleResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdStddevSampleResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdStddevSampleSymbolAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_SYMBOL_ASC',
+  AssetsByAtokenIdStddevSampleSymbolDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_SYMBOL_DESC',
+  AssetsByAtokenIdStddevSampleUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdStddevSampleUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdStddevSampleVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdStddevSampleVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdStddevSampleXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdStddevSampleXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_STDDEV_SAMPLE_XCM_RATE_LIMIT_DESC',
+  AssetsByAtokenIdSumAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_SUM_ASSET_TYPE_ASC',
+  AssetsByAtokenIdSumAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_SUM_ASSET_TYPE_DESC',
+  AssetsByAtokenIdSumATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_SUM_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdSumATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_SUM_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdSumBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_SUM_BOND_MATURITY_ASC',
+  AssetsByAtokenIdSumBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_SUM_BOND_MATURITY_DESC',
+  AssetsByAtokenIdSumBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_SUM_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdSumBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_SUM_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdSumDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_SUM_DECIMALS_ASC',
+  AssetsByAtokenIdSumDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_SUM_DECIMALS_DESC',
+  AssetsByAtokenIdSumEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_SUM_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdSumEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_SUM_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdSumIdAsc = 'ASSETS_BY_ATOKEN_ID_SUM_ID_ASC',
+  AssetsByAtokenIdSumIdDesc = 'ASSETS_BY_ATOKEN_ID_SUM_ID_DESC',
+  AssetsByAtokenIdSumIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_SUM_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdSumIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_SUM_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdSumNameAsc = 'ASSETS_BY_ATOKEN_ID_SUM_NAME_ASC',
+  AssetsByAtokenIdSumNameDesc = 'ASSETS_BY_ATOKEN_ID_SUM_NAME_DESC',
+  AssetsByAtokenIdSumResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_SUM_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdSumResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_SUM_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdSumSymbolAsc = 'ASSETS_BY_ATOKEN_ID_SUM_SYMBOL_ASC',
+  AssetsByAtokenIdSumSymbolDesc = 'ASSETS_BY_ATOKEN_ID_SUM_SYMBOL_DESC',
+  AssetsByAtokenIdSumUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_SUM_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdSumUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_SUM_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdSumVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_SUM_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdSumVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_SUM_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdSumXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_SUM_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdSumXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_SUM_XCM_RATE_LIMIT_DESC',
+  AssetsByAtokenIdVariancePopulationAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_ASSET_TYPE_ASC',
+  AssetsByAtokenIdVariancePopulationAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_ASSET_TYPE_DESC',
+  AssetsByAtokenIdVariancePopulationATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdVariancePopulationATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdVariancePopulationBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_BOND_MATURITY_ASC',
+  AssetsByAtokenIdVariancePopulationBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_BOND_MATURITY_DESC',
+  AssetsByAtokenIdVariancePopulationBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdVariancePopulationBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdVariancePopulationDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_DECIMALS_ASC',
+  AssetsByAtokenIdVariancePopulationDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_DECIMALS_DESC',
+  AssetsByAtokenIdVariancePopulationEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdVariancePopulationEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdVariancePopulationIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_ID_ASC',
+  AssetsByAtokenIdVariancePopulationIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_ID_DESC',
+  AssetsByAtokenIdVariancePopulationIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdVariancePopulationIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdVariancePopulationNameAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_NAME_ASC',
+  AssetsByAtokenIdVariancePopulationNameDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_NAME_DESC',
+  AssetsByAtokenIdVariancePopulationResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdVariancePopulationResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdVariancePopulationSymbolAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_SYMBOL_ASC',
+  AssetsByAtokenIdVariancePopulationSymbolDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_SYMBOL_DESC',
+  AssetsByAtokenIdVariancePopulationUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdVariancePopulationUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdVariancePopulationVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdVariancePopulationVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdVariancePopulationXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdVariancePopulationXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_POPULATION_XCM_RATE_LIMIT_DESC',
+  AssetsByAtokenIdVarianceSampleAssetTypeAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_ASSET_TYPE_ASC',
+  AssetsByAtokenIdVarianceSampleAssetTypeDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_ASSET_TYPE_DESC',
+  AssetsByAtokenIdVarianceSampleATokenIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_A_TOKEN_ID_ASC',
+  AssetsByAtokenIdVarianceSampleATokenIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_A_TOKEN_ID_DESC',
+  AssetsByAtokenIdVarianceSampleBondMaturityAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_BOND_MATURITY_ASC',
+  AssetsByAtokenIdVarianceSampleBondMaturityDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_BOND_MATURITY_DESC',
+  AssetsByAtokenIdVarianceSampleBondUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdVarianceSampleBondUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdVarianceSampleDecimalsAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_DECIMALS_ASC',
+  AssetsByAtokenIdVarianceSampleDecimalsDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_DECIMALS_DESC',
+  AssetsByAtokenIdVarianceSampleEvmAddressAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_EVM_ADDRESS_ASC',
+  AssetsByAtokenIdVarianceSampleEvmAddressDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_EVM_ADDRESS_DESC',
+  AssetsByAtokenIdVarianceSampleIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_ID_ASC',
+  AssetsByAtokenIdVarianceSampleIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_ID_DESC',
+  AssetsByAtokenIdVarianceSampleIsSufficientAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_IS_SUFFICIENT_ASC',
+  AssetsByAtokenIdVarianceSampleIsSufficientDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_IS_SUFFICIENT_DESC',
+  AssetsByAtokenIdVarianceSampleNameAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_NAME_ASC',
+  AssetsByAtokenIdVarianceSampleNameDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_NAME_DESC',
+  AssetsByAtokenIdVarianceSampleResourceTypeAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_RESOURCE_TYPE_ASC',
+  AssetsByAtokenIdVarianceSampleResourceTypeDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_RESOURCE_TYPE_DESC',
+  AssetsByAtokenIdVarianceSampleSymbolAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_SYMBOL_ASC',
+  AssetsByAtokenIdVarianceSampleSymbolDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_SYMBOL_DESC',
+  AssetsByAtokenIdVarianceSampleUnderlyingAssetIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByAtokenIdVarianceSampleUnderlyingAssetIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByAtokenIdVarianceSampleVariableDebtTokenIdAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByAtokenIdVarianceSampleVariableDebtTokenIdDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByAtokenIdVarianceSampleXcmRateLimitAsc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_XCM_RATE_LIMIT_ASC',
+  AssetsByAtokenIdVarianceSampleXcmRateLimitDesc = 'ASSETS_BY_ATOKEN_ID_VARIANCE_SAMPLE_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdAverageAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdAverageAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdAverageATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdAverageATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdAverageBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdAverageBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdAverageBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdAverageBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdAverageDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdAverageDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdAverageEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdAverageEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdAverageIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_ID_ASC',
   AssetsByBondUnderlyingAssetIdAverageIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_ID_DESC',
   AssetsByBondUnderlyingAssetIdAverageIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdAverageIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdAverageNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_NAME_ASC',
   AssetsByBondUnderlyingAssetIdAverageNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdAverageResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdAverageResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdAverageSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdAverageSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdAverageUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdAverageUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdAverageVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdAverageVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdAverageXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdAverageXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_AVERAGE_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdCountAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_COUNT_ASC',
   AssetsByBondUnderlyingAssetIdCountDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_COUNT_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdDistinctCountATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdDistinctCountATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdDistinctCountEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdDistinctCountEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_ID_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_ID_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_NAME_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdDistinctCountResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdDistinctCountResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdDistinctCountUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdDistinctCountUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdDistinctCountVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdDistinctCountVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdDistinctCountXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdDistinctCountXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_DISTINCT_COUNT_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdMaxAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdMaxAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdMaxATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdMaxATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdMaxBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdMaxBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdMaxBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdMaxBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdMaxDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdMaxDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdMaxEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdMaxEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdMaxIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_ID_ASC',
   AssetsByBondUnderlyingAssetIdMaxIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_ID_DESC',
   AssetsByBondUnderlyingAssetIdMaxIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdMaxIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdMaxNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_NAME_ASC',
   AssetsByBondUnderlyingAssetIdMaxNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdMaxResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdMaxResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdMaxSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdMaxSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdMaxUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdMaxUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdMaxVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdMaxVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdMaxXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdMaxXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MAX_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdMinAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdMinAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdMinATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdMinATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdMinBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdMinBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdMinBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdMinBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdMinDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdMinDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdMinEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdMinEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdMinIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_ID_ASC',
   AssetsByBondUnderlyingAssetIdMinIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_ID_DESC',
   AssetsByBondUnderlyingAssetIdMinIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdMinIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdMinNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_NAME_ASC',
   AssetsByBondUnderlyingAssetIdMinNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdMinResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdMinResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdMinSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdMinSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdMinUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdMinUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdMinVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdMinVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdMinXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdMinXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_MIN_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_ID_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_ID_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_NAME_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdStddevPopulationVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdStddevPopulationXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdStddevPopulationXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_POPULATION_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdStddevSampleATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdStddevSampleATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdStddevSampleEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdStddevSampleEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_ID_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_ID_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_NAME_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdStddevSampleResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdStddevSampleResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdStddevSampleUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdStddevSampleUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdStddevSampleVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdStddevSampleVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdStddevSampleXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdStddevSampleXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdSumAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdSumAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdSumATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdSumATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdSumBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdSumBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdSumBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdSumBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdSumDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdSumDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdSumEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdSumEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdSumIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_ID_ASC',
   AssetsByBondUnderlyingAssetIdSumIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_ID_DESC',
   AssetsByBondUnderlyingAssetIdSumIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdSumIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdSumNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_NAME_ASC',
   AssetsByBondUnderlyingAssetIdSumNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdSumResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdSumResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdSumSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdSumSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdSumUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdSumUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdSumVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdSumVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdSumXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdSumXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_SUM_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_ID_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_ID_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_NAME_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdVariancePopulationVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdVariancePopulationXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdVariancePopulationXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_XCM_RATE_LIMIT_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleAssetTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_ASSET_TYPE_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleAssetTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_ASSET_TYPE_DESC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleATokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_A_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleATokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_A_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleBondMaturityAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_BOND_MATURITY_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleBondMaturityDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_BOND_MATURITY_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleBondUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_BOND_UNDERLYING_ASSET_ID_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleBondUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_BOND_UNDERLYING_ASSET_ID_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleDecimalsAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_DECIMALS_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleDecimalsDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_DECIMALS_DESC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleEvmAddressAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_EVM_ADDRESS_ASC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleEvmAddressDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_EVM_ADDRESS_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_ID_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_ID_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleIsSufficientAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_IS_SUFFICIENT_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleIsSufficientDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_IS_SUFFICIENT_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleNameAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_NAME_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleNameDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_NAME_DESC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleResourceTypeAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_RESOURCE_TYPE_ASC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleResourceTypeDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_RESOURCE_TYPE_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleSymbolAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_SYMBOL_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleSymbolDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_SYMBOL_DESC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleUnderlyingAssetIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleUnderlyingAssetIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleVariableDebtTokenIdAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByBondUnderlyingAssetIdVarianceSampleVariableDebtTokenIdDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_VARIABLE_DEBT_TOKEN_ID_DESC',
   AssetsByBondUnderlyingAssetIdVarianceSampleXcmRateLimitAsc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_XCM_RATE_LIMIT_ASC',
   AssetsByBondUnderlyingAssetIdVarianceSampleXcmRateLimitDesc = 'ASSETS_BY_BOND_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdAverageAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdAverageAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdAverageATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdAverageATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdAverageBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdAverageBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdAverageBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdAverageBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdAverageDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdAverageDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdAverageEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdAverageEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdAverageIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_ID_ASC',
+  AssetsByUnderlyingAssetIdAverageIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_ID_DESC',
+  AssetsByUnderlyingAssetIdAverageIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdAverageIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdAverageNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_NAME_ASC',
+  AssetsByUnderlyingAssetIdAverageNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_NAME_DESC',
+  AssetsByUnderlyingAssetIdAverageResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdAverageResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdAverageSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdAverageSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdAverageUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdAverageUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdAverageVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdAverageVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdAverageXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdAverageXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_AVERAGE_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdCountAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_COUNT_ASC',
+  AssetsByUnderlyingAssetIdCountDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_COUNT_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_ID_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_ID_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_NAME_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_NAME_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdDistinctCountXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdDistinctCountXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_DISTINCT_COUNT_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdMaxAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdMaxAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdMaxATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdMaxATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdMaxBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdMaxBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdMaxBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdMaxBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdMaxDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdMaxDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdMaxEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdMaxEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdMaxIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_ID_ASC',
+  AssetsByUnderlyingAssetIdMaxIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_ID_DESC',
+  AssetsByUnderlyingAssetIdMaxIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdMaxIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdMaxNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_NAME_ASC',
+  AssetsByUnderlyingAssetIdMaxNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_NAME_DESC',
+  AssetsByUnderlyingAssetIdMaxResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdMaxResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdMaxSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdMaxSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdMaxUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdMaxUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdMaxVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdMaxVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdMaxXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdMaxXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MAX_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdMinAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdMinAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdMinATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdMinATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdMinBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdMinBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdMinBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdMinBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdMinDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdMinDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdMinEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdMinEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdMinIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_ID_ASC',
+  AssetsByUnderlyingAssetIdMinIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_ID_DESC',
+  AssetsByUnderlyingAssetIdMinIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdMinIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdMinNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_NAME_ASC',
+  AssetsByUnderlyingAssetIdMinNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_NAME_DESC',
+  AssetsByUnderlyingAssetIdMinResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdMinResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdMinSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdMinSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdMinUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdMinUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdMinVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdMinVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdMinXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdMinXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_MIN_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_NAME_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_NAME_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevPopulationXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdStddevPopulationXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_POPULATION_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_NAME_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_NAME_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdStddevSampleXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdStddevSampleXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_STDDEV_SAMPLE_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdSumAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdSumAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdSumATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdSumATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdSumBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdSumBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdSumBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdSumBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdSumDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdSumDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdSumEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdSumEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdSumIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_ID_ASC',
+  AssetsByUnderlyingAssetIdSumIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_ID_DESC',
+  AssetsByUnderlyingAssetIdSumIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdSumIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdSumNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_NAME_ASC',
+  AssetsByUnderlyingAssetIdSumNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_NAME_DESC',
+  AssetsByUnderlyingAssetIdSumResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdSumResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdSumSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdSumSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdSumUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdSumUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdSumVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdSumVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdSumXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdSumXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_SUM_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_ID_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_ID_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_NAME_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_NAME_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdVariancePopulationXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdVariancePopulationXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_POPULATION_XCM_RATE_LIMIT_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleAssetTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_ASSET_TYPE_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleAssetTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_ASSET_TYPE_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleATokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_A_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleATokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_A_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleBondMaturityAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_BOND_MATURITY_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleBondMaturityDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_BOND_MATURITY_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleBondUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleBondUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleDecimalsAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_DECIMALS_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleDecimalsDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_DECIMALS_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleEvmAddressAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_EVM_ADDRESS_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleEvmAddressDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_EVM_ADDRESS_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_ID_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_ID_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleIsSufficientAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_IS_SUFFICIENT_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleIsSufficientDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_IS_SUFFICIENT_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleNameAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_NAME_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleNameDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_NAME_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleResourceTypeAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_RESOURCE_TYPE_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleResourceTypeDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_RESOURCE_TYPE_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleSymbolAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_SYMBOL_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleSymbolDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_SYMBOL_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleUnderlyingAssetIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleUnderlyingAssetIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleVariableDebtTokenIdAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleVariableDebtTokenIdDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByUnderlyingAssetIdVarianceSampleXcmRateLimitAsc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_XCM_RATE_LIMIT_ASC',
+  AssetsByUnderlyingAssetIdVarianceSampleXcmRateLimitDesc = 'ASSETS_BY_UNDERLYING_ASSET_ID_VARIANCE_SAMPLE_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdAverageAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdAverageAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdAverageATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdAverageATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdAverageBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdAverageBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdAverageBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdAverageBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdAverageDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdAverageDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdAverageEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdAverageEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdAverageIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_ID_ASC',
+  AssetsByVariableDebtTokenIdAverageIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_ID_DESC',
+  AssetsByVariableDebtTokenIdAverageIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdAverageIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdAverageNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_NAME_ASC',
+  AssetsByVariableDebtTokenIdAverageNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_NAME_DESC',
+  AssetsByVariableDebtTokenIdAverageResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdAverageResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdAverageSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdAverageSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdAverageUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdAverageUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdAverageVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdAverageVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdAverageXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdAverageXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_AVERAGE_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdCountAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_COUNT_ASC',
+  AssetsByVariableDebtTokenIdCountDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_COUNT_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_ID_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_ID_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_NAME_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_NAME_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdDistinctCountXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdDistinctCountXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_DISTINCT_COUNT_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdMaxAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdMaxAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdMaxATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdMaxATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdMaxBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdMaxBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdMaxBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdMaxBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdMaxDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdMaxDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdMaxEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdMaxEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdMaxIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_ID_ASC',
+  AssetsByVariableDebtTokenIdMaxIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_ID_DESC',
+  AssetsByVariableDebtTokenIdMaxIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdMaxIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdMaxNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_NAME_ASC',
+  AssetsByVariableDebtTokenIdMaxNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_NAME_DESC',
+  AssetsByVariableDebtTokenIdMaxResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdMaxResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdMaxSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdMaxSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdMaxUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdMaxUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdMaxVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdMaxVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdMaxXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdMaxXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MAX_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdMinAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdMinAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdMinATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdMinATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdMinBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdMinBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdMinBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdMinBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdMinDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdMinDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdMinEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdMinEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdMinIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_ID_ASC',
+  AssetsByVariableDebtTokenIdMinIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_ID_DESC',
+  AssetsByVariableDebtTokenIdMinIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdMinIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdMinNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_NAME_ASC',
+  AssetsByVariableDebtTokenIdMinNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_NAME_DESC',
+  AssetsByVariableDebtTokenIdMinResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdMinResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdMinSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdMinSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdMinUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdMinUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdMinVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdMinVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdMinXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdMinXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_MIN_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_NAME_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_NAME_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevPopulationXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdStddevPopulationXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_POPULATION_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_NAME_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_NAME_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdStddevSampleXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdStddevSampleXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_STDDEV_SAMPLE_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdSumAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdSumAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdSumATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdSumATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdSumBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdSumBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdSumBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdSumBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdSumDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdSumDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdSumEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdSumEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdSumIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_ID_ASC',
+  AssetsByVariableDebtTokenIdSumIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_ID_DESC',
+  AssetsByVariableDebtTokenIdSumIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdSumIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdSumNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_NAME_ASC',
+  AssetsByVariableDebtTokenIdSumNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_NAME_DESC',
+  AssetsByVariableDebtTokenIdSumResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdSumResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdSumSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdSumSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdSumUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdSumUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdSumVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdSumVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdSumXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdSumXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_SUM_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_ID_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_ID_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_NAME_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_NAME_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdVariancePopulationXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdVariancePopulationXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_POPULATION_XCM_RATE_LIMIT_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleAssetTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_ASSET_TYPE_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleAssetTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_ASSET_TYPE_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleATokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_A_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleATokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_A_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleBondMaturityAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_BOND_MATURITY_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleBondMaturityDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_BOND_MATURITY_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleBondUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_BOND_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleBondUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_BOND_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleDecimalsAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_DECIMALS_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleDecimalsDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_DECIMALS_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleEvmAddressAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_EVM_ADDRESS_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleEvmAddressDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_EVM_ADDRESS_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_ID_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_ID_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleIsSufficientAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_IS_SUFFICIENT_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleIsSufficientDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_IS_SUFFICIENT_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleNameAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_NAME_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleNameDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_NAME_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleResourceTypeAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_RESOURCE_TYPE_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleResourceTypeDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_RESOURCE_TYPE_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleSymbolAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_SYMBOL_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleSymbolDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_SYMBOL_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleUnderlyingAssetIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_UNDERLYING_ASSET_ID_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleUnderlyingAssetIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_UNDERLYING_ASSET_ID_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleVariableDebtTokenIdAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_VARIABLE_DEBT_TOKEN_ID_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleVariableDebtTokenIdDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_VARIABLE_DEBT_TOKEN_ID_DESC',
+  AssetsByVariableDebtTokenIdVarianceSampleXcmRateLimitAsc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_XCM_RATE_LIMIT_ASC',
+  AssetsByVariableDebtTokenIdVarianceSampleXcmRateLimitDesc = 'ASSETS_BY_VARIABLE_DEBT_TOKEN_ID_VARIANCE_SAMPLE_XCM_RATE_LIMIT_DESC',
   AssetHistoricalDataAverageAssetIdAsc = 'ASSET_HISTORICAL_DATA_AVERAGE_ASSET_ID_ASC',
   AssetHistoricalDataAverageAssetIdDesc = 'ASSET_HISTORICAL_DATA_AVERAGE_ASSET_ID_DESC',
   AssetHistoricalDataAverageDynamicFeeAsc = 'ASSET_HISTORICAL_DATA_AVERAGE_DYNAMIC_FEE_ASC',
@@ -1456,12 +3054,16 @@ export enum AssetsOrderBy {
   AssetHistoricalDataVarianceSampleTotalIssuanceDesc = 'ASSET_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_ISSUANCE_DESC',
   AssetTypeAsc = 'ASSET_TYPE_ASC',
   AssetTypeDesc = 'ASSET_TYPE_DESC',
+  ATokenIdAsc = 'A_TOKEN_ID_ASC',
+  ATokenIdDesc = 'A_TOKEN_ID_DESC',
   BondMaturityAsc = 'BOND_MATURITY_ASC',
   BondMaturityDesc = 'BOND_MATURITY_DESC',
   BondUnderlyingAssetIdAsc = 'BOND_UNDERLYING_ASSET_ID_ASC',
   BondUnderlyingAssetIdDesc = 'BOND_UNDERLYING_ASSET_ID_DESC',
   DecimalsAsc = 'DECIMALS_ASC',
   DecimalsDesc = 'DECIMALS_DESC',
+  EvmAddressAsc = 'EVM_ADDRESS_ASC',
+  EvmAddressDesc = 'EVM_ADDRESS_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   IsSufficientAsc = 'IS_SUFFICIENT_ASC',
@@ -1471,8 +3073,14 @@ export enum AssetsOrderBy {
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  ResourceTypeAsc = 'RESOURCE_TYPE_ASC',
+  ResourceTypeDesc = 'RESOURCE_TYPE_DESC',
   SymbolAsc = 'SYMBOL_ASC',
   SymbolDesc = 'SYMBOL_DESC',
+  UnderlyingAssetIdAsc = 'UNDERLYING_ASSET_ID_ASC',
+  UnderlyingAssetIdDesc = 'UNDERLYING_ASSET_ID_DESC',
+  VariableDebtTokenIdAsc = 'VARIABLE_DEBT_TOKEN_ID_ASC',
+  VariableDebtTokenIdDesc = 'VARIABLE_DEBT_TOKEN_ID_DESC',
   XcmRateLimitAsc = 'XCM_RATE_LIMIT_ASC',
   XcmRateLimitDesc = 'XCM_RATE_LIMIT_DESC'
 }
@@ -4585,6 +6193,15 @@ export type Query = {
   aavepool?: Maybe<Aavepool>;
   /** Reads and enables pagination through a set of `Aavepool`. */
   aavepools?: Maybe<AavepoolsConnection>;
+  account?: Maybe<Account>;
+  /** Reads and enables pagination through a set of `AccountAssetBalanceHistoricalDatum`. */
+  accountAssetBalanceHistoricalData?: Maybe<AccountAssetBalanceHistoricalDataConnection>;
+  accountAssetBalanceHistoricalDatum?: Maybe<AccountAssetBalanceHistoricalDatum>;
+  /** Reads and enables pagination through a set of `AccountMmPositionHistoricalDatum`. */
+  accountMmPositionHistoricalData?: Maybe<AccountMmPositionHistoricalDataConnection>;
+  accountMmPositionHistoricalDatum?: Maybe<AccountMmPositionHistoricalDatum>;
+  /** Reads and enables pagination through a set of `Account`. */
+  accounts?: Maybe<AccountsConnection>;
   asset?: Maybe<Asset>;
   /** Reads and enables pagination through a set of `AssetHistoricalDatum`. */
   assetHistoricalData?: Maybe<AssetHistoricalDataConnection>;
@@ -4660,6 +6277,63 @@ export type QueryAavepoolsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<AavepoolsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryAccountArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryAccountAssetBalanceHistoricalDataArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AccountAssetBalanceHistoricalDatumCondition>;
+  filter?: InputMaybe<AccountAssetBalanceHistoricalDatumFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AccountAssetBalanceHistoricalDataOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryAccountAssetBalanceHistoricalDatumArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryAccountMmPositionHistoricalDataArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AccountMmPositionHistoricalDatumCondition>;
+  filter?: InputMaybe<AccountMmPositionHistoricalDatumFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AccountMmPositionHistoricalDataOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryAccountMmPositionHistoricalDatumArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryAccountsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  condition?: InputMaybe<AccountCondition>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
 

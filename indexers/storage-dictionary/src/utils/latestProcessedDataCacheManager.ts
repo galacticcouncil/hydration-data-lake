@@ -1,6 +1,7 @@
 import {
   Aavepool,
   AccountAssetBalanceHistoricalData,
+  AccountMmPositionHistoricalData,
   AssetHistoricalData,
   EmaOracle,
   MmAggregatorOracle,
@@ -32,6 +33,9 @@ export class LatestProcessedDataCacheManager {
     string,
     Map<string, AccountAssetBalanceHistoricalData>
   > = new Map();
+
+  private accMmPositionCache: Map<string, AccountMmPositionHistoricalData> =
+    new Map();
 
   static getInstance(): LatestProcessedDataCacheManager {
     if (!LatestProcessedDataCacheManager.instance) {
@@ -246,7 +250,7 @@ export class LatestProcessedDataCacheManager {
   }
 
   /**
-   * ========================   Account  ==================================
+   * ========================   Account Balances  ==================================
    */
 
   setLastAccAssetBalanceHistDataItem(
@@ -292,6 +296,35 @@ export class LatestProcessedDataCacheManager {
     assetId: string
   ): AccountAssetBalanceHistoricalData | undefined {
     return this.accAssetBalanceCache.get(accountId)?.get(assetId);
+  }
+
+  /**
+   * ========================   Account MM Posiotion  ==================================
+   */
+
+  setLastAccMmPositionHistDataItem(items: AccountMmPositionHistoricalData[]) {
+    if (!items) return;
+
+    const itemsIndex = new Map<string, AccountMmPositionHistoricalData[]>();
+
+    for (const i of items) {
+      if (!itemsIndex.has(i.accountId)) {
+        itemsIndex.set(i.accountId, []);
+      }
+      itemsIndex.get(i.accountId)!.push(i);
+    }
+
+    for (const [accountId, recordsList] of itemsIndex.entries()) {
+      const orderedList = recordsList.sort(
+        (a, b) => b.paraBlockHeight - a.paraBlockHeight
+      );
+      this.accMmPositionCache.set(accountId, orderedList[0]);
+    }
+  }
+  getLastAccMmPositionHistoricalDataItem(
+    accountId: string
+  ): AccountMmPositionHistoricalData | undefined {
+    return this.accMmPositionCache.get(accountId);
   }
 
   /**

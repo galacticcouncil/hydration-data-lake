@@ -8,6 +8,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
+import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
+import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
 
 export async function handleMmSupplyEvent(
   ctx: ProcessorContext<Store>,
@@ -37,6 +39,13 @@ export async function handleMmSupplyEvent(
     return;
   }
 
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.userAddress
+  );
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.onBehalfOfUserAddress
+  );
+
   const account = await getOrCreateAccountByBoundEvmAddress({
     ctx,
     evmAddress: parsedEvmEventData.userAddress,
@@ -52,11 +61,11 @@ export async function handleMmSupplyEvent(
   if (!account || !accountOnBehalfOf) {
     if (!account)
       console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.userAddress}`
+        `handleMmSupplyEvent :: account cannot be found for EVM Address ${parsedEvmEventData.userAddress}`
       );
     if (!accountOnBehalfOf)
       console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.onBehalfOfUserAddress}`
+        `handleMmSupplyEvent :: accountOnBehalfOf cannot be found for EVM Address ${parsedEvmEventData.onBehalfOfUserAddress}`
       );
     return;
   }
@@ -68,14 +77,14 @@ export async function handleMmSupplyEvent(
     allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
   });
 
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.userAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.onBehalfOfUserAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.onBehalfOfUserAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
 }

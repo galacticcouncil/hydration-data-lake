@@ -8,6 +8,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
+import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
+import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
 
 export async function handleMmRepayEvent(
   ctx: ProcessorContext<Store>,
@@ -37,6 +39,13 @@ export async function handleMmRepayEvent(
     return;
   }
 
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.userAddress
+  );
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.repayerAddress
+  );
+
   const account = await getOrCreateAccountByBoundEvmAddress({
     ctx,
     evmAddress: parsedEvmEventData.userAddress,
@@ -52,11 +61,11 @@ export async function handleMmRepayEvent(
   if (!account || !repayerAccount) {
     if (!account)
       console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.userAddress}`
+        `liquidatorAccount :: account cannot be found for EVM Address ${parsedEvmEventData.userAddress}`
       );
     if (!repayerAccount)
       console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.repayerAddress}`
+        `liquidatorAccount :: repayerAccount cannot be found for EVM Address ${parsedEvmEventData.repayerAddress}`
       );
     return;
   }
@@ -68,15 +77,15 @@ export async function handleMmRepayEvent(
     allInvolvedParticipants: [account.id, repayerAccount.id],
   });
 
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.userAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
-  //
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.repayerAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
+
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.repayerAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
 }

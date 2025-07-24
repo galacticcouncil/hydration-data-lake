@@ -7,6 +7,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
+import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
+import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
 
 export async function handleMmUserEModeSetEvent(
   ctx: ProcessorContext<Store>,
@@ -22,6 +24,10 @@ export async function handleMmUserEModeSetEvent(
   if (!parsedEvmEventData) return;
 
   const { params: eventParams, metadata: eventMetadata } = eventData;
+
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.userAddress
+  );
 
   const account = await getOrCreateAccountByBoundEvmAddress({
     ctx,
@@ -43,9 +49,9 @@ export async function handleMmUserEModeSetEvent(
     allInvolvedParticipants: [account.id],
   });
 
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.userAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
 }

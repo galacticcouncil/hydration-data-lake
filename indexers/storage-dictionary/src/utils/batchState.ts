@@ -73,7 +73,9 @@ export class BatchState {
   public state: BatchStatePayload = {
     relayChainInfo: new Map(),
     blocks: new Map(),
+
     accounts: new Map(),
+
     assetIdsToSave: new Set(),
     assetsAllBatch: new Map(),
 

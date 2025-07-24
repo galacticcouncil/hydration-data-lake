@@ -1,6 +1,8 @@
 import { Block, ProcessorContext } from '../../processor';
 import {
   Aavepool,
+  AccountAssetBalanceHistoricalData,
+  AccountMmPositionHistoricalData,
   AssetHistoricalData,
   BlockCompressedData,
   EmaOracle,
@@ -30,6 +32,8 @@ export type CompressedBlockData = {
   emaOracle: EmaOracle[];
   mmAggregatorOracle: MmAggregatorOracle[];
   assetHistoricalData: AssetHistoricalData[];
+  accAssetBalancesHistoricalData: AccountAssetBalanceHistoricalData[];
+  accMmPositionHistoricalData: AccountMmPositionHistoricalData[];
 };
 
 export async function compressBlockStorage(
@@ -156,6 +160,14 @@ export async function compressBlockStorage(
     ctx.batchState.state.assetHistoricalDataItems.values()
   ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
 
+  let accAssetBalancesHistoricalData = Array.from(
+    ctx.batchState.state.accAssetBalanceHistData.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
+  let accMmPositionDataHistoricalData = Array.from(
+    ctx.batchState.state.accMmPositionHistData.values()
+  ).filter((e) => e.paraBlockHeight === currentBlockHeader.height);
+
   for (const asset of xykAssets) {
     // @ts-ignore
     asset.pool = { id: asset.pool.id };
@@ -218,6 +230,8 @@ export async function compressBlockStorage(
     emaOracle: emaOraces,
     mmAggregatorOracle: mmAggregatorOracles,
     assetHistoricalData: assetHistoricalData,
+    accAssetBalancesHistoricalData: accAssetBalancesHistoricalData,
+    accMmPositionHistoricalData: accMmPositionDataHistoricalData,
   };
 
   await ctx.store.save(

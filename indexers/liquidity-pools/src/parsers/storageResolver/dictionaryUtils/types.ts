@@ -7,6 +7,8 @@ import {
   EmaOracle as EmaOracleGlq,
   AssetHistoricalDatum as AssetHistoricalDatumGql,
   MmAggregatorOracle as MmAggregatorOracleGql,
+  AccountAssetBalanceHistoricalDatum as AccountAssetBalanceHistoricalDatumGql,
+  AccountMmPositionHistoricalDatum as AccountMmPositionHistoricalDatumGql,
 } from './apiTypes/types';
 
 export type PaginationConfig = {
@@ -25,7 +27,9 @@ export type PalletDictionaryCollectedData = {
     | AavepoolGlq[]
     | EmaOracleGlq[]
     | AssetHistoricalDatumGql[]
-    | MmAggregatorOracleGql[];
+    | MmAggregatorOracleGql[]
+    | AccountAssetBalanceHistoricalDatumGql[]
+    | AccountMmPositionHistoricalDatumGql[];
 };
 
 // TODO  create fetching of each entity separately, update fetching function -> use the same dict URL for all generic entities
@@ -39,4 +43,5 @@ export enum ProcessingTopic {
   MM_AGGREGATOR_ORACLE = 'MM_AGGREGATOR_ORACLE',
   ASSET_HIST_DATA = 'ASSET_HIST_DATA',
   GENERIC_HIST_DATA = 'GENERIC_HIST_DATA',
+  ACCOUNT_HIST_DATA = 'ACCOUNT_HIST_DATA',
 }

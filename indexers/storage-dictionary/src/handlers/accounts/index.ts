@@ -3,6 +3,8 @@ import { Account, AccountType } from '../../model';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmUtils } from '../../utils/evm/evmUtils';
 import parsers from '../../parsers';
+import { constants } from 'ethers';
+import { EvmAccountsUtils } from '../../utils/evm/evmAccountsUtils';
 
 export async function getOrCreateAccount({
   ctx,
@@ -122,12 +124,19 @@ export async function getOrCreateAccountByBoundEvmAddress({
       block: blockHeader,
     });
 
-  if (!accountExtension) return existingAccount;
+  const addressFromPrevBlocks =
+    EvmAccountsUtils.getInstance().extractAddressFromHistoryCache(evmAddress);
 
-  const accountId = EvmUtils.getSr25519FromH160AndExtension(
-    evmAddress,
-    accountExtension
-  );
+  if (
+    !accountExtension &&
+    evmAddress !== constants.AddressZero &&
+    !addressFromPrevBlocks
+  )
+    return existingAccount;
+
+  const accountId = accountExtension
+    ? EvmUtils.getSr25519FromH160AndExtension(evmAddress, accountExtension)
+    : EvmUtils.addressToHex(EvmUtils.getDerivedSs58FromH160(evmAddress));
 
   return getOrCreateAccount({
     ctx,

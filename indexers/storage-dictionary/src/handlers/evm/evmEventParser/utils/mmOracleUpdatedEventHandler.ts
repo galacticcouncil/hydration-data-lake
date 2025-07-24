@@ -1,13 +1,11 @@
 import { ProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmLogDecoder } from '../../../../utils/evm/evmLogDecoder';
-import { getOrCreateAsset } from '../../../asset/asset';
-import { getOrCreateAccountByBoundEvmAddress } from '../../../accounts';
-import { processNewMoneyMarketEvent } from './moneyMarketEvent';
 import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
+import { handleAllAccountsMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
 
 export async function handleOracleUpdatedEvent(
   ctx: ProcessorContext<Store>,
@@ -26,8 +24,8 @@ export async function handleOracleUpdatedEvent(
 
   console.log(`DIA Oracle has emitted Update event`);
 
-  // await handleAllAccountsMmPositionDataUpdate({
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
+  await handleAllAccountsMmPositionDataUpdate({
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
 }

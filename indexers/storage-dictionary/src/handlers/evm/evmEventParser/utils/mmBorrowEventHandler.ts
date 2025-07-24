@@ -8,7 +8,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
-// import { handleAccountMmPositionDataUpdate } from '../../accounts/moneyMarketPosition';
+import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
+import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
 
 export async function handleMmBorrowEvent(
   ctx: ProcessorContext<Store>,
@@ -38,6 +39,13 @@ export async function handleMmBorrowEvent(
     return;
   }
 
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.userAddress
+  );
+  EvmAccountsUtils.getInstance().addAddressToCache(
+    parsedEvmEventData.onBehalfOfUserAddress
+  );
+
   const account = await getOrCreateAccountByBoundEvmAddress({
     ctx,
     evmAddress: parsedEvmEventData.userAddress,
@@ -53,11 +61,11 @@ export async function handleMmBorrowEvent(
   if (!account || !accountOnBehalfOf) {
     if (!account)
       console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.userAddress}`
+        `handleMmBorrowEvent :: account cannot be found for EVM Address ${parsedEvmEventData.userAddress}`
       );
     if (!accountOnBehalfOf)
       console.log(
-        `AccountFrom cannot be found for EVM Address ${parsedEvmEventData.onBehalfOfUserAddress}`
+        `handleMmBorrowEvent :: accountOnBehalfOf cannot be found for EVM Address ${parsedEvmEventData.onBehalfOfUserAddress}`
       );
     return;
   }
@@ -69,9 +77,9 @@ export async function handleMmBorrowEvent(
     allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
   });
 
-  // await handleAccountMmPositionDataUpdate({
-  //   accountEvmAddress: parsedEvmEventData.userAddress,
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
+  await handleAccountMmPositionDataUpdate({
+    accountEvmAddress: parsedEvmEventData.userAddress,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
 }
