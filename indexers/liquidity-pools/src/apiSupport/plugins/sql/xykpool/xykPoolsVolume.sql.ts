@@ -31,11 +31,15 @@ export const aggregateXykPoolVolumesByBlocksRange = `
 `;
 
 export const getAssetIdsByPoolIds = `
-    SELECT id,
-           asset_a_id,
-           asset_b_id
-    FROM xykpool
-    WHERE id = ANY ($1);
+    SELECT xp.id,
+           xp.asset_a_id,
+           xp.asset_b_id,
+           asset_a.asset_registry_id AS asset_a_registry_id,
+           asset_b.asset_registry_id AS asset_b_registry_id
+    FROM xykpool xp
+           JOIN asset asset_a ON asset_a.id = xp.asset_a_id
+           JOIN asset asset_b ON asset_b.id = xp.asset_b_id
+    WHERE xp.id = ANY ($1);
 `;
 //
 // export const aggregateXykPoolVolumesByBlocksRange = `

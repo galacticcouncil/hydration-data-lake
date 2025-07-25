@@ -9,6 +9,7 @@ import {
 import { handleOmnipoolAssetsLatestTvlAggregation } from '../utils';
 import * as crypto from 'node:crypto';
 import { CacheManager } from '../../../../../utils/cacheManager';
+import { getAssetsByAssetRegistryIds } from '../../../../sql/asset.sql';
 
 export async function omnipoolAssetsLatestTvlResolver(
   parentObject: any,
@@ -35,8 +36,27 @@ export async function omnipoolAssetsLatestTvlResolver(
 
   if (cachedData) return cachedData;
 
+  const assetIdsFilter = filter.assetIds;
+  const assetRegistryIdsFilter = filter.assetRegistryIds;
+  const assetIdsFilterUnified = assetIdsFilter || [];
+
+  if (
+    (!assetIdsFilter || !assetIdsFilter.length) &&
+    !!assetRegistryIdsFilter &&
+    assetRegistryIdsFilter.length > 0
+  ) {
+    const assetRows = (
+      await pgClient.query<{
+        id: string;
+      }>(getAssetsByAssetRegistryIds, [filter.assetRegistryIds])
+    ).rows;
+    for (const a of assetRows) {
+      assetIdsFilterUnified.push(a.id);
+    }
+  }
+
   const nodes = await handleOmnipoolAssetsLatestTvlAggregation({
-    assetIds: filter.assetIds || [],
+    assetIds: assetIdsFilterUnified,
     pgClient,
   });
 

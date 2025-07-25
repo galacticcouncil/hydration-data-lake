@@ -5,7 +5,10 @@ import {
   StableswapVolumeAggregated,
 } from './resolvers';
 import { aggregateStablepoolVolumesByBlocksRange } from '../../../sql/stableswap/stableswapVolumes.sql';
-import { getAssetsByStableswapIds } from '../../../sql/stableswap/stableswap.sql';
+import {
+  getAssetsByStableswapIds,
+  getAllStableswapIds,
+} from '../../../sql/stableswap/stableswap.sql';
 import { BigNumber } from '@galacticcouncil/sdk';
 
 export async function handleStableswapHistoricalVolumesByPeriodAggregation({
@@ -14,7 +17,7 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
   endBlockNumber,
   pgClient,
 }: {
-  poolIds: string[];
+  poolIds?: string[];
   startBlockNumber: number;
   endBlockNumber?: number;
   pgClient: pg.Client;
@@ -23,10 +26,19 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
     await pgClient.query(`SELECT height FROM squid_processor.status`)
   ).rows[0];
 
+  let poolIdsToProcess = poolIds;
+
+  if (!poolIdsToProcess || poolIdsToProcess.length === 0)
+    poolIdsToProcess = (
+      await pgClient.query<{
+        pool_id: string;
+      }>(getAllStableswapIds)
+    ).rows.map((row) => row.pool_id);
+
   const groupedResult =
     await pgClient.query<AggregateStablepoolVolumesByBlocksRangeSqlResult>(
       aggregateStablepoolVolumesByBlocksRange,
-      [poolIds, startBlockNumber, endBlockNumber ?? squidStatus.height]
+      [poolIdsToProcess, startBlockNumber, endBlockNumber ?? squidStatus.height]
     );
 
   const decoratedNodes = new Map<string, StableswapVolumeAggregated>(
@@ -120,7 +132,7 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
   );
 
   const assetsData = await pgClient.query(getAssetsByStableswapIds, [
-    poolIds.filter((id) => !decoratedNodes.has(id)),
+    poolIdsToProcess.filter((id) => !decoratedNodes.has(id)),
   ]);
 
   for (const poolWithNoResult of assetsData.rows) {

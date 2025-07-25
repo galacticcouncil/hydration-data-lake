@@ -1,59 +1,65 @@
 export const aggregateOmnipoolAssetsVolumesByBlocksRange = `
     WITH omnipool_asset_start_block AS (
         SELECT 
-            id,
-            omnipool_asset_id,
-            asset_vol_in,
-            asset_total_vol_in,
-            asset_vol_out,
-            asset_total_vol_out,
-            asset_fee_vol,
-            asset_total_fees_vol,
-            asset_total_vol_out,
-            asset_vol_in_norm,
-            asset_vol_out_norm,
-            asset_fee_vol_norm,
-            asset_total_vol_in_norm,
-            asset_total_vol_out_norm,
-            asset_total_fees_vol_norm,
-            para_block_height,
-            ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_block_height ASC) AS rank
+            v.id,
+            v.omnipool_asset_id,
+            v.asset_vol_in,
+            v.asset_total_vol_in,
+            v.asset_vol_out,
+            v.asset_total_vol_out,
+            v.asset_fee_vol,
+            v.asset_total_fees_vol,
+            v.asset_total_vol_out,
+            v.asset_vol_in_norm,
+            v.asset_vol_out_norm,
+            v.asset_fee_vol_norm,
+            v.asset_total_vol_in_norm,
+            v.asset_total_vol_out_norm,
+            v.asset_total_fees_vol_norm,
+            v.para_block_height,
+            a.asset_registry_id,
+            ROW_NUMBER() OVER (PARTITION BY v.omnipool_asset_id ORDER BY v.para_block_height ASC) AS rank
         FROM 
-            omnipool_asset_volume_historical_data
+            omnipool_asset_volume_historical_data v
+        LEFT JOIN
+            asset a ON a.id = SPLIT_PART(v.omnipool_asset_id, '-', 2)
         WHERE 
-            omnipool_asset_id = ANY($1)
+            v.omnipool_asset_id = ANY($1)
         AND 
-            para_block_height >= $2
+            v.para_block_height >= $2
         AND 
-            para_block_height <= $3
+            v.para_block_height <= $3
     ),
     omnipool_asset_end_block AS (
         SELECT 
-            id,
-            omnipool_asset_id,
-            asset_vol_in,
-            asset_total_vol_in,
-            asset_vol_out,
-            asset_total_vol_out,
-            asset_fee_vol,
-            asset_total_fees_vol,
-            asset_total_vol_out,
-            asset_vol_in_norm,
-            asset_vol_out_norm,
-            asset_fee_vol_norm,
-            asset_total_vol_in_norm,
-            asset_total_vol_out_norm,
-            asset_total_fees_vol_norm,
-            para_block_height,
-            ROW_NUMBER() OVER (PARTITION BY omnipool_asset_id ORDER BY para_block_height DESC) AS rank
+            v.id,
+            v.omnipool_asset_id,
+            v.asset_vol_in,
+            v.asset_total_vol_in,
+            v.asset_vol_out,
+            v.asset_total_vol_out,
+            v.asset_fee_vol,
+            v.asset_total_fees_vol,
+            v.asset_total_vol_out,
+            v.asset_vol_in_norm,
+            v.asset_vol_out_norm,
+            v.asset_fee_vol_norm,
+            v.asset_total_vol_in_norm,
+            v.asset_total_vol_out_norm,
+            v.asset_total_fees_vol_norm,
+            v.para_block_height,
+            a.asset_registry_id,
+            ROW_NUMBER() OVER (PARTITION BY v.omnipool_asset_id ORDER BY v.para_block_height DESC) AS rank
         FROM 
-            omnipool_asset_volume_historical_data
+            omnipool_asset_volume_historical_data v
+        LEFT JOIN
+            asset a ON a.id = SPLIT_PART(v.omnipool_asset_id, '-', 2)
         WHERE 
-            omnipool_asset_id = ANY($1)
+            v.omnipool_asset_id = ANY($1)
         AND 
-            para_block_height <= $3
+            v.para_block_height <= $3
         AND 
-            para_block_height >= $2
+            v.para_block_height >= $2
     )
     SELECT 
         json_agg(ARRAY[start_entity, end_entity]) AS grouped_result
