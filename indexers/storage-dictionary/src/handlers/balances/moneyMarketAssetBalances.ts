@@ -13,6 +13,7 @@ import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBala
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getOrCreateAsset } from '../asset/asset';
 import { getOrCreateAccount } from '../accounts';
+import pMap from 'p-map';
 
 export async function handleMmAssetAccountBalancesPerBlock(
   block: BlockWithData,
@@ -65,72 +66,74 @@ export async function handleMmAssetAccountBalancesPerBlock(
     }
   }
 
-  accountAssetsMapLoop: for (const [
-    accountId,
-    assetsMap,
-  ] of involvedAccountsAssetsMap.entries()) {
-    const account = await getOrCreateAccount({ ctx, id: accountId });
-    if (
-      !account.boundEvmAddress ||
-      account.boundEvmAddress === constants.AddressZero
-    )
-      continue accountAssetsMapLoop;
-
-    const assetBalances = (
-      await Promise.allSettled(
-        Array.from(assetsMap.values())
-          .filter(
-            (asset) => !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
-          )
-          .map(async (asset) => {
-            return {
-              asset,
-              balance:
-                await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
-                  {
-                    contractAddress: asset.evmAddress!,
-                    accountAddress: account.boundEvmAddress!,
-                    blockNumber: block.header.height,
-                  }
-                ),
-            };
-          })
+  await pMap(
+    involvedAccountsAssetsMap.entries(),
+    async ([accountId, assetsMap]) => {
+      const account = await getOrCreateAccount({ ctx, id: accountId });
+      if (
+        !account.boundEvmAddress ||
+        account.boundEvmAddress === constants.AddressZero
       )
-    )
-      .filter((res) => res.status === 'fulfilled')
-      .map((res) => res.value);
+        return;
 
-    assetBalancesLoop: for (const assetBalance of assetBalances) {
-      if (assetBalance.balance === null || assetBalance.balance === undefined)
-        continue assetBalancesLoop;
+      const assetBalances = (
+        await Promise.allSettled(
+          Array.from(assetsMap.values())
+            .filter(
+              (asset) =>
+                !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
+            )
+            .map(async (asset) => {
+              return {
+                asset,
+                balance:
+                  await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
+                    {
+                      contractAddress: asset.evmAddress!,
+                      accountAddress: account.boundEvmAddress!,
+                      blockNumber: block.header.height,
+                    }
+                  ),
+              };
+            })
+        )
+      )
+        .filter((res) => res.status === 'fulfilled')
+        .map((res) => res.value);
 
-      const isExistingAssetBalanceHistoricalDataEntity =
-        ctx.batchState.state.accAssetBalanceHistData.has(
-          `${accountId}-${assetBalance.asset.id}-${block.header.height}`
+      assetBalancesLoop: for (const assetBalance of assetBalances) {
+        if (assetBalance.balance === null || assetBalance.balance === undefined)
+          continue assetBalancesLoop;
+
+        const isExistingAssetBalanceHistoricalDataEntity =
+          ctx.batchState.state.accAssetBalanceHistData.has(
+            `${accountId}-${assetBalance.asset.id}-${block.header.height}`
+          );
+
+        if (isExistingAssetBalanceHistoricalDataEntity)
+          continue assetBalancesLoop;
+
+        const historicalDataEntity =
+          await getOrCreateAccountAssetBalanceHistoricalData({
+            ctx,
+            assetId: assetBalance.asset.id,
+            accountId,
+            blockHeader: block.header,
+            fetchFromDb: false,
+          });
+
+        if (!historicalDataEntity) continue assetBalancesLoop;
+
+        historicalDataEntity.transferable = assetBalance.balance.toString();
+
+        ctx.batchState.state.accAssetBalanceHistData.set(
+          historicalDataEntity.id,
+          historicalDataEntity
         );
-
-      if (isExistingAssetBalanceHistoricalDataEntity)
-        continue assetBalancesLoop;
-
-      const historicalDataEntity =
-        await getOrCreateAccountAssetBalanceHistoricalData({
-          ctx,
-          assetId: assetBalance.asset.id,
-          accountId,
-          blockHeader: block.header,
-          fetchFromDb: false,
-        });
-
-      if (!historicalDataEntity) continue assetBalancesLoop;
-
-      historicalDataEntity.transferable = assetBalance.balance.toString();
-
-      ctx.batchState.state.accAssetBalanceHistData.set(
-        historicalDataEntity.id,
-        historicalDataEntity
-      );
-    }
-  }
+      }
+    },
+    { concurrency: 30 }
+  );
 
   return accountIdsWithCommonAssetBalanceChanges;
 }
