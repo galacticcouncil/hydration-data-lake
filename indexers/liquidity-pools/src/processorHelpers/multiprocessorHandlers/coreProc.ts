@@ -268,11 +268,11 @@ export async function execCoreProcessorHandlers(
   await HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(ctx);
   console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
 
-  // console.time('handleAssetAccountBalancesPerBlock');
-  // await handleAssetAccountBalancesPerBlock(
+  // console.time('handleAssetAccountBalances');
+  // await handleAssetAccountBalances(
   //   ctx
   // );
-  // console.timeEnd('handleAssetAccountBalancesPerBlock');
+  // console.timeEnd('handleAssetAccountBalances');
 
   console.time('updateInitialIndexingFinishedAtTime');
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);

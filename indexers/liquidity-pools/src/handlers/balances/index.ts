@@ -7,20 +7,29 @@ import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EvmEventName } from '../../model';
 import { handleAllAccountsMmPositionDataUpdate } from '../accounts/moneyMarketPosition';
 
-export async function handleAssetAccountBalancesPerBlock(
+export async function handleAssetAccountBalances(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   const accountIdsToProcess = await handleMmAssetAccountBalancesPerBlock(ctx);
   await handleCommonAssetAccountBalances({ accountIdsToProcess, ctx });
 
-  const diaOracleUpdatedEvent = Array.from(
-    parsedEvents.getSectionByEventName(EventName.EVM_Log).values()
-  ).find((e) => e.eventData.params?.eventName === EvmEventName.OracleUpdate);
+  const blocksWithOracleUpdate: Map<number, SqdBlock> = new Map();
 
-  if (diaOracleUpdatedEvent)
+  for (const event of Array.from(
+    parsedEvents.getSectionByEventName(EventName.EVM_Log).values()
+  )) {
+    if (event.eventData.params?.eventName === EvmEventName.OracleUpdate)
+      blocksWithOracleUpdate.set(
+        event.eventData.metadata.blockHeader.height,
+        event.eventData.metadata.blockHeader
+      );
+  }
+
+  for (const blockHeader of blocksWithOracleUpdate.values()) {
     await handleAllAccountsMmPositionDataUpdate({
-      blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+      blockHeader,
       ctx,
     });
+  }
 }

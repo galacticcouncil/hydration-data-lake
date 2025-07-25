@@ -49,7 +49,7 @@ import { HistoricalDataManager } from '../../handlers/historicalData';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { processPoolsTvlNormalized } from '../../handlers/pools/normalizedTvlBaseAsset';
 import { prefetchPersistentData } from '../prefetchHelpers';
-import { handleAssetAccountBalancesPerBlock } from '../../handlers/balances';
+import { handleAssetAccountBalances } from '../../handlers/balances';
 import { handleAllAccountsMmPositionDataUpdate } from '../../handlers/accounts/moneyMarketPosition';
 
 export async function execAllInOneProcessorHandlers(
@@ -235,9 +235,9 @@ export async function execAllInOneProcessorHandlers(
   await HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(ctx);
   console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
 
-  console.time('handleAssetAccountBalancesPerBlock');
-  await handleAssetAccountBalancesPerBlock(ctx);
-  console.timeEnd('handleAssetAccountBalancesPerBlock');
+  console.time('handleAssetAccountBalances');
+  await handleAssetAccountBalances(ctx, parsedData);
+  console.timeEnd('handleAssetAccountBalances');
 
   console.time('saveAccountBalancesRelatedDataBulk');
   await HistoricalDataManager.saveAccountBalancesRelatedDataBulk(ctx);
