@@ -1,6 +1,7 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { calcPriceNormalized } from '../../../utils/helpers';
+import { BigNumber } from '@galacticcouncil/sdk';
 
 export function processOmnipoolAssetNormalizedVolumes({
   blockNumbersToProcess,
