@@ -43,28 +43,23 @@ export function initOmnipoolAssetVolume({
     assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
     assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
 
-    assetTotalVolInNorm: currentVolume?.assetTotalVolInNorm || '0',
-    assetTotalVolOutNorm: currentVolume?.assetTotalVolOutNorm || '0',
-    assetTotalFeesVolNorm: currentVolume?.assetTotalFeesVolNorm || '0',
+    assetTotalVolInNorm:
+      currentVolume?.assetTotalVolInNorm ||
+      oldVolume?.assetTotalVolInNorm ||
+      '0',
+    assetTotalVolOutNorm:
+      currentVolume?.assetTotalVolOutNorm ||
+      oldVolume?.assetTotalVolOutNorm ||
+      '0',
+    assetTotalFeesVolNorm:
+      currentVolume?.assetTotalFeesVolNorm ||
+      oldVolume?.assetTotalFeesVolNorm ||
+      '0',
 
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
     block: swap.event.block,
   });
-
-  // const assetVolIn =
-  //   swap.inputs[0].asset.id === newVolume.omnipoolAsset.asset.id
-  //     ? swap.inputs[0].amount
-  //     : BigInt(0);
-  //
-  // const assetVolOut =
-  //   swap.outputs[0].asset.id === newVolume.omnipoolAsset.asset.id
-  //     ? swap.outputs[0].amount
-  //     : BigInt(0);
-  // const assetFeeVol =
-  //   swap.fees[0].asset.id === newVolume.omnipoolAsset.asset.id
-  //     ? swap.fees[0].amount
-  //     : BigInt(0);
 
   const assetVolIn =
     swap.inputs.find(

@@ -1,6 +1,9 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { fromExponentialToDecimalNotation } from '../../../utils/helpers';
+import {
+  calcPriceNormalized,
+  fromExponentialToDecimalNotation,
+} from '../../../utils/helpers';
 
 export function processLbpPoolsNormalizedVolumes({
   blockNumbersToProcess,
@@ -48,78 +51,76 @@ export function processLbpPoolsNormalizedVolumes({
     )
       continue;
 
-    poolVolsHistData.assetAVolInNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetAVolIn.toString(),
-      assetA.decimals
+    poolVolsHistData.assetAVolInNorm = calcPriceNormalized({
+      amount: poolVolsHistData.assetAVolIn,
+      spotPrice: assetASpotPriceNorm,
+      assetDecimals: assetA.decimals,
+    });
+
+    poolVolsHistData.assetAVolOutNorm = calcPriceNormalized({
+      amount: poolVolsHistData.assetAVolOut,
+      spotPrice: assetASpotPriceNorm,
+      assetDecimals: assetA.decimals,
+    });
+
+    poolVolsHistData.assetBVolInNorm = calcPriceNormalized({
+      amount: poolVolsHistData.assetBVolIn,
+      spotPrice: assetBSpotPriceNorm,
+      assetDecimals: assetB.decimals,
+    });
+
+    poolVolsHistData.assetBVolOutNorm = calcPriceNormalized({
+      amount: poolVolsHistData.assetBVolOut,
+      spotPrice: assetBSpotPriceNorm,
+      assetDecimals: assetB.decimals,
+    });
+
+    poolVolsHistData.assetAFeeVolNorm = calcPriceNormalized({
+      amount: poolVolsHistData.assetAFeeVol,
+      spotPrice: assetASpotPriceNorm,
+      assetDecimals: assetA.decimals,
+    });
+
+    poolVolsHistData.assetBFeeVolNorm = calcPriceNormalized({
+      amount: poolVolsHistData.assetBFeeVol,
+      spotPrice: assetBSpotPriceNorm,
+      assetDecimals: assetB.decimals,
+    });
+
+    poolVolsHistData.assetATotalVolInNorm = BigNumber(
+      poolVolsHistData.assetATotalVolInNorm ?? '0'
     )
-      .multipliedBy(assetASpotPriceNorm)
-      .toFixed();
-    poolVolsHistData.assetAVolOutNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetAVolOut.toString(),
-      assetA.decimals
-    )
-      .multipliedBy(assetASpotPriceNorm)
-      .toFixed();
-    poolVolsHistData.assetBVolInNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetBVolIn.toString(),
-      assetB.decimals
-    )
-      .multipliedBy(assetBSpotPriceNorm)
-      .toFixed();
-    poolVolsHistData.assetBVolOutNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetBVolOut.toString(),
-      assetB.decimals
-    )
-      .multipliedBy(assetBSpotPriceNorm)
-      .toFixed();
-    poolVolsHistData.assetAFeeVolNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetAFeeVol.toString(),
-      assetA.decimals
-    )
-      .multipliedBy(assetASpotPriceNorm)
-      .toFixed();
-    poolVolsHistData.assetBFeeVolNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetBFeeVol.toString(),
-      assetB.decimals
-    )
-      .multipliedBy(assetBSpotPriceNorm)
+      .plus(poolVolsHistData.assetAVolInNorm)
       .toFixed();
 
-    poolVolsHistData.assetATotalVolInNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetATotalVolIn.toString(),
-      assetA.decimals
+    poolVolsHistData.assetATotalVolOutNorm = BigNumber(
+      poolVolsHistData.assetATotalVolOutNorm ?? '0'
     )
-      .multipliedBy(assetASpotPriceNorm)
+      .plus(poolVolsHistData.assetAVolOutNorm)
       .toFixed();
-    poolVolsHistData.assetATotalVolOutNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetATotalVolOut.toString(),
-      assetA.decimals
+
+    poolVolsHistData.assetBTotalVolInNorm = BigNumber(
+      poolVolsHistData.assetBTotalVolInNorm ?? '0'
     )
-      .multipliedBy(assetASpotPriceNorm)
+      .plus(poolVolsHistData.assetBVolInNorm)
       .toFixed();
-    poolVolsHistData.assetBTotalVolInNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetBTotalVolIn.toString(),
-      assetB.decimals
+
+    poolVolsHistData.assetBTotalVolOutNorm = BigNumber(
+      poolVolsHistData.assetBTotalVolOutNorm ?? '0'
     )
-      .multipliedBy(assetBSpotPriceNorm)
+      .plus(poolVolsHistData.assetBVolOutNorm)
       .toFixed();
-    poolVolsHistData.assetBTotalVolOutNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetBTotalVolOut.toString(),
-      assetB.decimals
+
+    poolVolsHistData.assetAFeesTotalVolNorm = BigNumber(
+      poolVolsHistData.assetAFeesTotalVolNorm ?? '0'
     )
-      .multipliedBy(assetBSpotPriceNorm)
+      .plus(poolVolsHistData.assetAFeeVolNorm)
       .toFixed();
-    poolVolsHistData.assetAFeesTotalVolNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetAFeesTotalVol.toString(),
-      assetA.decimals
+
+    poolVolsHistData.assetBFeesTotalVolNorm = BigNumber(
+      poolVolsHistData.assetBFeesTotalVolNorm ?? '0'
     )
-      .multipliedBy(assetASpotPriceNorm)
-      .toFixed();
-    poolVolsHistData.assetBFeesTotalVolNorm = fromExponentialToDecimalNotation(
-      poolVolsHistData.assetBFeesTotalVol.toString(),
-      assetB.decimals
-    )
-      .multipliedBy(assetBSpotPriceNorm)
+      .plus(poolVolsHistData.assetBFeeVolNorm)
       .toFixed();
 
     ctx.batchState.state.lbpPoolVolumes.set(

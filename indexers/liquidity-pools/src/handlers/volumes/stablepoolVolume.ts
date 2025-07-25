@@ -168,9 +168,18 @@ export function initStablepoolAssetVolume({
     assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
     assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
 
-    assetTotalVolInNorm: currentVolume?.assetTotalVolInNorm || '0',
-    assetTotalVolOutNorm: currentVolume?.assetTotalVolOutNorm || '0',
-    assetTotalFeesVolNorm: currentVolume?.assetTotalFeesVolNorm || '0',
+    assetTotalVolInNorm:
+      currentVolume?.assetTotalVolInNorm ||
+      oldVolume?.assetTotalVolInNorm ||
+      '0',
+    assetTotalVolOutNorm:
+      currentVolume?.assetTotalVolOutNorm ||
+      oldVolume?.assetTotalVolOutNorm ||
+      '0',
+    assetTotalFeesVolNorm:
+      currentVolume?.assetTotalFeesVolNorm ||
+      oldVolume?.assetTotalFeesVolNorm ||
+      '0',
 
     relayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
@@ -178,39 +187,11 @@ export function initStablepoolAssetVolume({
     block,
   });
 
-  // let assetVolIn = BigInt(0);
-  // let assetVolOut = BigInt(0);
   let routedLiqAddedAmount = BigInt(0);
   let routedLiqRemovedAmount = BigInt(0);
-  // let assetFeeVol = BigInt(0);
   let routedLiqFee = BigInt(0);
 
   if (swap) {
-    // const inputsMap = new Map(
-    //   swap.inputs.map((inputAssetData) => [
-    //     inputAssetData.asset.id,
-    //     inputAssetData,
-    //   ])
-    // );
-    // const outputsMap = new Map(
-    //   swap.outputs.map((outputAssetData) => [
-    //     outputAssetData.asset.id,
-    //     outputAssetData,
-    //   ])
-    // );
-    // const feesMap = new Map(
-    //   swap.fees.map((feeAssetData) => [feeAssetData.asset.id, feeAssetData])
-    // );
-    // assetVolIn = inputsMap.has(newVolume.asset.id)
-    //   ? inputsMap.get(newVolume.asset.id)!.amount
-    //   : BigInt(0);
-    // assetVolOut = outputsMap.has(newVolume.asset.id)
-    //   ? outputsMap.get(newVolume.asset.id)!.amount
-    //   : BigInt(0);
-    // assetFeeVol = feesMap.has(newVolume.asset.id)
-    //   ? feesMap.get(newVolume.asset.id)!.amount
-    //   : BigInt(0);
-
     const assetVolIn =
       swap.inputs.find((input) => input.asset.id === newVolume.asset.id)
         ?.amount || BigInt(0);

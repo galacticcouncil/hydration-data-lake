@@ -43,31 +43,35 @@ export function processStableswapAssetNormalizedVolumes({
       assetDecimals: asset.decimals,
     });
 
-    assetVolsHistData.assetTotalFeesVolNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetTotalFeesVol,
-      spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
-    });
+    assetVolsHistData.assetTotalFeesVolNorm = BigNumber(
+      assetVolsHistData.assetTotalFeesVolNorm ?? '0'
+    )
+      .plus(assetVolsHistData.assetFeeVolNorm)
+      .toFixed();
+
     assetVolsHistData.assetVolInNorm = calcPriceNormalized({
       amount: assetVolsHistData.assetVolIn,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
+
     assetVolsHistData.assetVolOutNorm = calcPriceNormalized({
       amount: assetVolsHistData.assetVolOut,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
-    assetVolsHistData.assetTotalVolInNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetTotalVolIn,
-      spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
-    });
-    assetVolsHistData.assetTotalVolOutNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetTotalVolOut,
-      spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
-    });
+
+    assetVolsHistData.assetTotalVolInNorm = BigNumber(
+      assetVolsHistData.assetTotalVolInNorm ?? '0'
+    )
+      .plus(assetVolsHistData.assetVolInNorm)
+      .toFixed();
+
+    assetVolsHistData.assetTotalVolOutNorm = BigNumber(
+      assetVolsHistData.assetTotalVolOutNorm ?? '0'
+    )
+      .plus(assetVolsHistData.assetVolOutNorm)
+      .toFixed();
 
     const poolVolsHistData =
       ctx.batchState.state.stablepoolVolumeCollections.get(
@@ -96,19 +100,19 @@ export function processStableswapAssetNormalizedVolumes({
       poolVolsHistData.poolTotalVolInNorm = BigNumber(
         poolVolsHistData.poolTotalVolInNorm || '0'
       )
-        .plus(assetVolsHistData.assetTotalFeesVolNorm)
+        .plus(assetVolsHistData.assetVolInNorm)
         .toFixed();
 
       poolVolsHistData.poolTotalVolOutNorm = BigNumber(
         poolVolsHistData.poolTotalVolOutNorm || '0'
       )
-        .plus(assetVolsHistData.assetTotalVolOutNorm)
+        .plus(assetVolsHistData.assetVolOutNorm)
         .toFixed();
 
       poolVolsHistData.poolTotalFeesVolNorm = BigNumber(
         poolVolsHistData.poolTotalFeesVolNorm || '0'
       )
-        .plus(assetVolsHistData.assetTotalFeesVolNorm)
+        .plus(assetVolsHistData.assetFeeVolNorm)
         .toFixed();
 
       ctx.batchState.state.stablepoolVolumeCollections.set(

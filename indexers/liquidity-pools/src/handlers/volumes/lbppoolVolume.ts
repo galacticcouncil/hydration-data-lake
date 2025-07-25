@@ -54,48 +54,35 @@ export function initLbppoolVolume(
     assetAFeeVolNorm: currentVolume?.assetAFeeVolNorm || '0',
     assetBFeeVolNorm: currentVolume?.assetBFeeVolNorm || '0',
 
-    assetATotalVolInNorm: currentVolume?.assetATotalVolInNorm || '0',
-    assetATotalVolOutNorm: currentVolume?.assetATotalVolOutNorm || '0',
-    assetBTotalVolInNorm: currentVolume?.assetBTotalVolInNorm || '0',
-    assetBTotalVolOutNorm: currentVolume?.assetBTotalVolOutNorm || '0',
-    assetAFeesTotalVolNorm: currentVolume?.assetAFeesTotalVolNorm || '0',
-    assetBFeesTotalVolNorm: currentVolume?.assetBFeesTotalVolNorm || '0',
+    assetATotalVolInNorm:
+      currentVolume?.assetATotalVolInNorm ||
+      oldVolume?.assetATotalVolInNorm ||
+      '0',
+    assetATotalVolOutNorm:
+      currentVolume?.assetATotalVolOutNorm ||
+      oldVolume?.assetATotalVolOutNorm ||
+      '0',
+    assetBTotalVolInNorm:
+      currentVolume?.assetBTotalVolInNorm ||
+      oldVolume?.assetBTotalVolInNorm ||
+      '0',
+    assetBTotalVolOutNorm:
+      currentVolume?.assetBTotalVolOutNorm ||
+      oldVolume?.assetBTotalVolOutNorm ||
+      '0',
+    assetAFeesTotalVolNorm:
+      currentVolume?.assetAFeesTotalVolNorm ||
+      oldVolume?.assetAFeesTotalVolNorm ||
+      '0',
+    assetBFeesTotalVolNorm:
+      currentVolume?.assetBFeesTotalVolNorm ||
+      oldVolume?.assetBFeesTotalVolNorm ||
+      '0',
 
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
     block: swap.event.block,
   });
-
-  // const swapAssetInData = swap.inputs[0];
-  // const swapAssetOutData = swap.outputs[0];
-  // const swapAssetFeeData = swap.fees[0];
-  //
-  // const assetAVolIn =
-  //   swapAssetInData.asset.id === newVolume.assetA.id
-  //     ? swapAssetInData.amount
-  //     : BigInt(0);
-  // const assetBVolIn =
-  //   swapAssetInData.asset.id === newVolume.assetB.id
-  //     ? swapAssetInData.amount
-  //     : BigInt(0);
-  //
-  // const assetAVolOut =
-  //   swapAssetOutData.asset.id === newVolume.assetA.id
-  //     ? swapAssetOutData.amount
-  //     : BigInt(0);
-  // const assetBVolOut =
-  //   swapAssetOutData.asset.id === newVolume.assetB.id
-  //     ? swapAssetOutData.amount
-  //     : BigInt(0);
-  //
-  // const assetAFeeVol =
-  //   swapAssetFeeData.asset.id === newVolume.assetA.id
-  //     ? swapAssetFeeData.amount
-  //     : BigInt(0);
-  // const assetBFeeVol =
-  //   swapAssetFeeData.asset.id === newVolume.assetB.id
-  //     ? swapAssetFeeData.amount
-  //     : BigInt(0);
 
   const assetAVolIn =
     swap.inputs.find((input) => input.asset.id === newVolume.assetA.id)

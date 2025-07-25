@@ -41,11 +41,12 @@ export function processOmnipoolAssetNormalizedVolumes({
       assetDecimals: asset.decimals,
     });
 
-    assetVolsHistData.assetTotalFeesVolNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetTotalFeesVol,
-      spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
-    });
+    assetVolsHistData.assetTotalFeesVolNorm = BigNumber(
+      assetVolsHistData.assetTotalFeesVolNorm ?? '0'
+    )
+      .plus(assetVolsHistData.assetFeeVolNorm)
+      .toFixed();
+
     assetVolsHistData.assetVolInNorm = calcPriceNormalized({
       amount: assetVolsHistData.assetVolIn,
       spotPrice: assetSpotPriceNorm,
@@ -56,16 +57,18 @@ export function processOmnipoolAssetNormalizedVolumes({
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
-    assetVolsHistData.assetTotalVolInNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetTotalVolIn,
-      spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
-    });
-    assetVolsHistData.assetTotalVolOutNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetTotalVolOut,
-      spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
-    });
+
+    assetVolsHistData.assetTotalVolInNorm = BigNumber(
+      assetVolsHistData.assetTotalVolInNorm ?? '0'
+    )
+      .plus(assetVolsHistData.assetVolInNorm)
+      .toFixed();
+
+    assetVolsHistData.assetTotalVolOutNorm = BigNumber(
+      assetVolsHistData.assetTotalVolOutNorm ?? '0'
+    )
+      .plus(assetVolsHistData.assetVolOutNorm)
+      .toFixed();
 
     ctx.batchState.state.omnipoolAssetVolumes.set(
       assetVolsHistData.id,
