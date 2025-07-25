@@ -16,7 +16,11 @@ export class LbpPoolOfflineClient extends OfflinePoolClient {
     return PoolType.LBP;
   }
 
-  async getPoolFees(_poolPair: PoolPair, address: string): Promise<PoolFees> {
+  async getPoolFees(
+    _block: number,
+    _poolPair: PoolPair,
+    address: string
+  ): Promise<PoolFees> {
     const pool = this.pools.find(
       (pool) => pool.address === address
     ) as LbpPoolBase;

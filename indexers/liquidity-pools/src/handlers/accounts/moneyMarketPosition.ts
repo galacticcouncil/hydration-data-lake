@@ -1,7 +1,7 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
-import { AccountMmPositionHistoricalData } from '../../model';
+import { AccountMmPositionHistoricalData, EvmEventName } from '../../model';
 import {
   getOrCreateAccount,
   getOrCreateAccountByBoundEvmAddress,
@@ -10,11 +10,77 @@ import { constants, ethers } from 'ethers';
 import parsers from '../../parsers';
 import pMap from 'p-map';
 import { isValueMaxUint256 } from '../../utils/helpers';
+import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
+import { EventName } from '../../parsers/types/events';
 
 const maxHealthFactor =
   '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
 
-export async function handleAccountMmPositionDataUpdate({
+export async function handleAccountMmPositionData(
+  ctx: SqdProcessorContext<Store>,
+  parsedEvents: BatchBlocksParsedDataManager
+) {
+  const accountsToProcessPerBlock: Map<
+    number,
+    { blockHeader: SqdBlock; evmAddresses: Set<string> }
+  > = new Map();
+
+  for (const event of Array.from(
+    parsedEvents.getSectionByEventName(EventName.EVM_Log).values()
+  )) {
+    if (event.eventData.params?.eventName === EvmEventName.OracleUpdate)
+      continue;
+
+    if (
+      !accountsToProcessPerBlock.has(
+        event.eventData.metadata.blockHeader.height
+      )
+    )
+      accountsToProcessPerBlock.set(
+        event.eventData.metadata.blockHeader.height,
+        {
+          blockHeader: event.eventData.metadata.blockHeader,
+          evmAddresses: new Set(),
+        }
+      );
+
+    const blockSlotData = accountsToProcessPerBlock.get(
+      event.eventData.metadata.blockHeader.height
+    )!;
+
+    const mmEvent = ctx.batchState.state.moneyMarketEvents.get(
+      event.eventData.metadata.id
+    );
+
+    if (!mmEvent) continue;
+
+    involvedAccountsLoop: for (const accountId of mmEvent.allInvolvedParticipants) {
+      const account = await getOrCreateAccount({ id: accountId, ctx });
+      if (!account || !account.boundEvmAddress) continue involvedAccountsLoop;
+      blockSlotData.evmAddresses.add(account.boundEvmAddress);
+    }
+    accountsToProcessPerBlock.set(
+      blockSlotData.blockHeader.height,
+      blockSlotData
+    );
+  }
+
+  for (const blockSlotData of accountsToProcessPerBlock.values()) {
+    await pMap(
+      Array.from(blockSlotData.evmAddresses.values()),
+      async (accountEvmAddress) => {
+        await handleAccountMmPositionDataOnMmEvent({
+          ctx,
+          blockHeader: blockSlotData.blockHeader,
+          accountEvmAddress,
+        });
+      },
+      { concurrency: 50 }
+    );
+  }
+}
+
+export async function handleAccountMmPositionDataOnMmEvent({
   accountEvmAddress,
   blockHeader,
   ctx,
@@ -102,7 +168,7 @@ export async function handleAllAccountsMmPositionDataUpdate({
         boundEvmAddress: h160Address,
       });
 
-      await handleAccountMmPositionDataUpdate({
+      await handleAccountMmPositionDataOnMmEvent({
         ctx,
         blockHeader,
         accountEvmAddress: h160Address,

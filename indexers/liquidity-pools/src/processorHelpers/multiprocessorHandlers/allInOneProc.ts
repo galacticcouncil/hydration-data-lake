@@ -50,7 +50,10 @@ import { ProcessorStatusManager } from '../../processorStatusManager';
 import { processPoolsTvlNormalized } from '../../handlers/pools/normalizedTvlBaseAsset';
 import { prefetchPersistentData } from '../prefetchHelpers';
 import { handleAssetAccountBalances } from '../../handlers/balances';
-import { handleAllAccountsMmPositionDataUpdate } from '../../handlers/accounts/moneyMarketPosition';
+import {
+  handleAccountMmPositionData,
+  handleAllAccountsMmPositionDataUpdate,
+} from '../../handlers/accounts/moneyMarketPosition';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -154,6 +157,10 @@ export async function execAllInOneProcessorHandlers(
   console.time('handleEvm');
   await handleEvm(ctx, parsedData);
   console.timeEnd('handleEvm');
+
+  console.time('handleAccountMmPositionData');
+  await handleAccountMmPositionData(ctx, parsedData);
+  console.timeEnd('handleAccountMmPositionData');
 
   console.time('handleTransfers');
   await handleTransfers(ctx, parsedData);

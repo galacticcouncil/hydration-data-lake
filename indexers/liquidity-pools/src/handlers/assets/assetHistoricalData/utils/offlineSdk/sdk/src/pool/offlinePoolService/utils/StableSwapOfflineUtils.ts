@@ -43,7 +43,6 @@ export class StableSwapOfflineUtils {
       emaOraclesData,
       mmOraclesData,
     });
-
     const recentPegs = src.pegs!;
     const maxPegUpdate = src.maxPegUpdate!;
     const fee = src.fee;

@@ -10,7 +10,7 @@ import {
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataUpdate } from '../../accounts/moneyMarketPosition';
+import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmRepayEvent(
   ctx: SqdProcessorContext<Store>,
@@ -102,17 +102,5 @@ export async function handleMmRepayEvent(
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id, repayerAccount.id],
     repay: mmRepayEntity,
-  });
-
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.userAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
-
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.repayerAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
   });
 }

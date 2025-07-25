@@ -26,9 +26,4 @@ export async function handleOracleUpdatedEvent(
   } = eventCallData;
 
   console.log(`DIA Oracle has emitted Update event`);
-
-  // await handleAllAccountsMmPositionDataUpdate({
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
 }

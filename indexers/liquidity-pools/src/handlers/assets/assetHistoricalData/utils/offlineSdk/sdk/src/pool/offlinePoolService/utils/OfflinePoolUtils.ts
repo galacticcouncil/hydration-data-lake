@@ -391,8 +391,8 @@ export class OfflinePoolUtils {
       ...StableSwapOfflineUtils.getStableswapPegsFromPersistentData({
         src,
         emaOraclesData,
-        mmOraclesData,
         metaData,
+        mmOraclesData,
       }),
     };
 

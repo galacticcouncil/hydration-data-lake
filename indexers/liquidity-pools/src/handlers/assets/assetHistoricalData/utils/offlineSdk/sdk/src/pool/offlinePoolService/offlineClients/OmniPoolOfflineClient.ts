@@ -26,7 +26,11 @@ export class OmniPoolOfflineClient extends OfflinePoolClient {
     return PoolType.Omni;
   }
 
-  async getPoolFees(poolPair: PoolPair, _address: string): Promise<PoolFees> {
+  async getPoolFees(
+    block: number,
+    poolPair: PoolPair,
+    _address: string
+  ): Promise<PoolFees> {
     const feeAsset = poolPair.assetOut;
     const protocolAsset = poolPair.assetIn;
 
@@ -45,7 +49,7 @@ export class OmniPoolOfflineClient extends OfflinePoolClient {
 
     if (!dynamicFees) throw Error('Dynamic fees not found for pool type Omni');
 
-    const blockNumber = this.dataSourceMeta.paraBlockNumber;
+    const blockNumber = block ?? this.dataSourceMeta.paraBlockNumber;
     const oracleAssetFee = this.getAssetEmaOracleEntry(
       oracleName,
       oraclePeriod,

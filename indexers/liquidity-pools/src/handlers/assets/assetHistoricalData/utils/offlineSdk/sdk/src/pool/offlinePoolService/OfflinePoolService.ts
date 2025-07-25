@@ -20,6 +20,7 @@ import {
 } from '../types';
 
 export class OfflinePoolService implements IPoolService {
+  protected block: number = 0;
   protected readonly assetOfflineClient: AssetOfflineClient;
 
   protected readonly aaveOfflineClient: AavePoolOfflineClient;
@@ -47,6 +48,8 @@ export class OfflinePoolService implements IPoolService {
       this.stableOfflineClient,
       this.omniOfflineClient,
     ];
+
+    this.block = dataSource.meta.paraBlockNumber;
 
     this.syncRegistry();
   }
@@ -93,15 +96,35 @@ export class OfflinePoolService implements IPoolService {
   async getPoolFees(poolPair: PoolPair, pool: Pool): Promise<PoolFees> {
     switch (pool.type) {
       case PoolType.Aave:
-        return this.aaveOfflineClient.getPoolFees(poolPair, pool.address);
+        return this.aaveOfflineClient.getPoolFees(
+          this.block,
+          poolPair,
+          pool.address
+        );
       case PoolType.XYK:
-        return this.xykOfflineClient.getPoolFees(poolPair, pool.address);
+        return this.xykOfflineClient.getPoolFees(
+          this.block,
+          poolPair,
+          pool.address
+        );
       case PoolType.Omni:
-        return this.omniOfflineClient.getPoolFees(poolPair, pool.address);
+        return this.omniOfflineClient.getPoolFees(
+          this.block,
+          poolPair,
+          pool.address
+        );
       case PoolType.LBP:
-        return this.lbpOfflineClient.getPoolFees(poolPair, pool.address);
+        return this.lbpOfflineClient.getPoolFees(
+          this.block,
+          poolPair,
+          pool.address
+        );
       case PoolType.Stable:
-        return this.stableOfflineClient.getPoolFees(poolPair, pool.address);
+        return this.stableOfflineClient.getPoolFees(
+          this.block,
+          poolPair,
+          pool.address
+        );
       default:
         throw new PoolNotFound(pool.type);
     }

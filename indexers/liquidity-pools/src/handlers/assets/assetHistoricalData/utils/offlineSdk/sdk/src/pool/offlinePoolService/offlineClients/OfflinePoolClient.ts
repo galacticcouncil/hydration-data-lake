@@ -23,7 +23,11 @@ export abstract class OfflinePoolClient {
 
   abstract isSupported(): boolean;
   abstract getPoolType(): PoolType;
-  abstract getPoolFees(poolPair: PoolPair, address: string): Promise<PoolFees>;
+  abstract getPoolFees(
+    block: number,
+    pair: PoolPair,
+    address: string
+  ): Promise<PoolFees>;
 
   protected constructor(
     dataSource: IOfflinePoolServiceDataSource,

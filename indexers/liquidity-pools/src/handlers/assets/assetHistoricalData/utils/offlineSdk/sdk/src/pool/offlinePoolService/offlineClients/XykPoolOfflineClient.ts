@@ -16,7 +16,11 @@ export class XykPoolOfflineClient extends OfflinePoolClient {
     return PoolType.XYK;
   }
 
-  async getPoolFees(_poolPair: PoolPair, _address: string): Promise<PoolFees> {
+  async getPoolFees(
+    _block: number,
+    _poolPair: PoolPair,
+    _address: string
+  ): Promise<PoolFees> {
     return {
       exchangeFee: this.constants.xykGetExchangeFee,
     } as XykPoolFees;

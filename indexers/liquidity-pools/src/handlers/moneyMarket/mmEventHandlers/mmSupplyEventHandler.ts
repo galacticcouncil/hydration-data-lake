@@ -14,7 +14,7 @@ import {
   getNewMoneyMarketEventEntity,
   processNewMoneyMarketEvent,
 } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataUpdate } from '../../accounts/moneyMarketPosition';
+import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmSupplyEvent(
   ctx: SqdProcessorContext<Store>,
@@ -105,16 +105,5 @@ export async function handleMmSupplyEvent(
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
     allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
     supply: mmSupplyEntity,
-  });
-
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.userAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.onBehalfOfUserAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
   });
 }

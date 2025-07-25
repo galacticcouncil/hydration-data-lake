@@ -14,7 +14,11 @@ export class StableSwapOfflineClient extends OfflinePoolClient {
   getPoolType(): PoolType {
     return PoolType.Stable;
   }
-  async getPoolFees(_poolPair: PoolPair, address: string): Promise<PoolFees> {
+  async getPoolFees(
+    _block: number,
+    _poolPair: PoolPair,
+    address: string
+  ): Promise<PoolFees> {
     const pool = this.pools.find(
       (pool) => pool.address === address
     ) as StableSwapBase;

@@ -10,7 +10,7 @@ import {
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataUpdate } from '../../accounts/moneyMarketPosition';
+import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmLiquidationCallEvent(
   ctx: SqdProcessorContext<Store>,
@@ -120,14 +120,4 @@ export async function handleMmLiquidationCallEvent(
     liquidationCall: mmLiquidationCallEntity,
   });
 
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.userAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.liquidatorAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
 }

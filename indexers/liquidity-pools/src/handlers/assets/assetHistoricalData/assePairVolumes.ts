@@ -14,50 +14,50 @@ import {
   stringToMd5Hash,
 } from '../../../utils/helpers';
 
-class RouterAssetPairs {
-  public pairsSet: Set<string> = new Set();
-
-  get pairsListEmpty() {
-    return this.pairsSet.size === 0;
-  }
-
-  async init(blockHeader: BlockHeader) {
-    const router = OfflineTradeRouterManager.getInstance().getRouterForBlock(
-      blockHeader.height
-    );
-
-    if (!router) {
-      console.log('handleAssetPairVolumesHistoricalData :: router not found');
-      return this;
-    }
-    const possiblePairs = [];
-    const allRouterAssets = await router.getAllAssets();
-
-    for (const assetA of allRouterAssets) {
-      try {
-        const pair = await router.getAssetPairs(assetA.id);
-        possiblePairs.push(pair.map((pa) => [assetA.id, pa.id]));
-      } catch (e) {}
-    }
-
-    for (const pair of possiblePairs.flat()) {
-      if (
-        this.pairsSet.has(`${pair[0]}-${pair[1]}`) ||
-        this.pairsSet.has(`${pair[1]}-${pair[0]}`)
-      )
-        continue;
-      this.pairsSet.add(`${pair[0]}-${pair[1]}`);
-    }
-    return this;
-  }
-
-  isPairTradable(assetA: string, assetB: string) {
-    return (
-      this.pairsSet.has(`${assetA}-${assetB}`) ||
-      this.pairsSet.has(`${assetB}-${assetA}`)
-    );
-  }
-}
+// class RouterAssetPairs {
+//   public pairsSet: Set<string> = new Set();
+//
+//   get pairsListEmpty() {
+//     return this.pairsSet.size === 0;
+//   }
+//
+//   async init(blockHeader: BlockHeader) {
+//     const router = OfflineTradeRouterManager.getInstance().getRouterForBlock(
+//       blockHeader.height
+//     );
+//
+//     if (!router) {
+//       console.log('handleAssetPairVolumesHistoricalData :: router not found');
+//       return this;
+//     }
+//     const possiblePairs = [];
+//     const allRouterAssets = await router.getAllAssets();
+//
+//     for (const assetA of allRouterAssets) {
+//       try {
+//         const pair = await router.getAssetPairs(assetA.id);
+//         possiblePairs.push(pair.map((pa) => [assetA.id, pa.id]));
+//       } catch (e) {}
+//     }
+//
+//     for (const pair of possiblePairs.flat()) {
+//       if (
+//         this.pairsSet.has(`${pair[0]}-${pair[1]}`) ||
+//         this.pairsSet.has(`${pair[1]}-${pair[0]}`)
+//       )
+//         continue;
+//       this.pairsSet.add(`${pair[0]}-${pair[1]}`);
+//     }
+//     return this;
+//   }
+//
+//   isPairTradable(assetA: string, assetB: string) {
+//     return (
+//       this.pairsSet.has(`${assetA}-${assetB}`) ||
+//       this.pairsSet.has(`${assetB}-${assetA}`)
+//     );
+//   }
+// }
 
 export async function handleAssetPairVolumesHistoricalData({
   blockHeader,

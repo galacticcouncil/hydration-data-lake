@@ -196,7 +196,10 @@ export async function getAssetSpotPriceHistDataWithUniqueData(
         result.push(item);
       }
     },
-    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
   );
 
   return result;

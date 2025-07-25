@@ -10,7 +10,11 @@ export class AavePoolOfflineClient extends OfflinePoolClient {
   isSupported(): boolean {
     return this.pools.length > 0;
   }
-  async getPoolFees(_poolPair: PoolPair, _address: string): Promise<PoolFees> {
+  async getPoolFees(
+    _block: number,
+    _poolPair: PoolPair,
+    _address: string
+  ): Promise<PoolFees> {
     return {} as PoolFees;
   }
 
