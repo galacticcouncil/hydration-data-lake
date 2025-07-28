@@ -19,7 +19,7 @@ import { NodeEnv } from './utils/types';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
 import { RoutedTradesSubscriptionsPlugin } from './apiSupport/plugins/subscription/routedTradesSubscriptions';
 import { CommonApiTypesDefinitionPlugin } from './apiSupport/plugins/query/commonApiTypesDefinition.plugin';
-import { handleProxyReqSubscan } from './apiSupport/proxyApiHandlers';
+import { handleProxyReqSubscan } from './apiSupport/proxyApiHandlers/resources/subscan';
 import { ProxyApiRoute } from './apiSupport/proxyApiHandlers/types';
 import cors from 'cors';
 import { SwapPlugin } from './apiSupport/plugins/query/swap';
@@ -34,6 +34,7 @@ import { OmnipoolTvlMetricsPlugin } from './apiSupport/plugins/query/omnipool/om
 import { StableswapTvlMetricsPlugin } from './apiSupport/plugins/query/stableswap/stableswapTvlMetrics';
 import { XykpoolTvlMetricsPlugin } from './apiSupport/plugins/query/xykpool/xykpoolTvlMetrics';
 import { AccountBalancesHistoricalDataPlugin } from './apiSupport/plugins/query/balances/accountBalancesHistoricalData';
+import { handleProxyReqDefillama } from './apiSupport/proxyApiHandlers/resources/defillama';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -168,6 +169,13 @@ async function initializeServer() {
       cors(corsOptions),
       // @ts-ignore
       handleProxyReqSubscan
+    );
+
+    app.get(
+      `${ProxyApiRoute.defillama}/*all`,
+      cors(corsOptions),
+      // @ts-ignore
+      handleProxyReqDefillama
     );
 
     app.listen(appConfig.GQL_PORT, () => {

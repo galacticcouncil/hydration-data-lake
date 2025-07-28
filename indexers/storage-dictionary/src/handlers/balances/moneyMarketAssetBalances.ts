@@ -14,6 +14,9 @@ import { BigNumber } from '@galacticcouncil/sdk';
 import { getOrCreateAsset } from '../asset/asset';
 import { getOrCreateAccount } from '../accounts';
 import pMap from 'p-map';
+import { AppConfig } from '../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function handleMmAssetAccountBalancesPerBlock(
   block: BlockWithData,
@@ -132,7 +135,7 @@ export async function handleMmAssetAccountBalancesPerBlock(
         );
       }
     },
-    { concurrency: 30 }
+    { concurrency: appConfig.concurrency.RUNTIME_API_CALLS_CONCURRENCY }
   );
 
   return accountIdsWithCommonAssetBalanceChanges;

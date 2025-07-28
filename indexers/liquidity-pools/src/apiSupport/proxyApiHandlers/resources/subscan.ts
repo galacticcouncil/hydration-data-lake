@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import axios, { AxiosRequestConfig } from 'axios';
-import { allowedQueries } from './types';
-import { AppConfig } from '../../appConfig';
+import { allowedQueriesSubscan } from '../types';
+import { AppConfig } from '../../../appConfig';
 
 const appConfig = AppConfig.getInstance();
 
@@ -11,9 +11,9 @@ export async function handleProxyReqSubscan(req: Request, res: Response) {
     const [network, section, query] = requestPath;
 
     if (
-      !allowedQueries.has(network) ||
-      !allowedQueries.get(network)!.has(section) ||
-      !allowedQueries.get(network)!.get(section)!.has(query)
+      !allowedQueriesSubscan.has(network) ||
+      !allowedQueriesSubscan.get(network)!.has(section) ||
+      !allowedQueriesSubscan.get(network)!.get(section)!.has(query)
     ) {
       return res.status(403).send('Forbidden');
     }
