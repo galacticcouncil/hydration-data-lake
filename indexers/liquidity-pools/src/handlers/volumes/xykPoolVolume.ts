@@ -47,36 +47,64 @@ export function initXykPoolVolume(
     block: swap.event.block,
   });
 
-  const swapAssetInData = swap.inputs[0];
-  const swapAssetOutData = swap.outputs[0];
-  const swapAssetFeeData = swap.fees[0];
+  // const swapAssetInData = swap.inputs[0];
+  // const swapAssetOutData = swap.outputs[0];
+  // const swapAssetFeeData = swap.fees[0];
+
+  // const assetAVolumeIn =
+  //   swapAssetInData.asset.id === newVolume.assetA.id
+  //     ? swapAssetInData.amount
+  //     : BigInt(0);
+  // const assetBVolumeIn =
+  //   swapAssetInData.asset.id === newVolume.assetB.id
+  //     ? swapAssetInData.amount
+  //     : BigInt(0);
+  //
+  // const assetAVolumeOut =
+  //   swapAssetOutData.asset.id === newVolume.assetA.id
+  //     ? swapAssetOutData.amount
+  //     : BigInt(0);
+  // const assetBVolumeOut =
+  //   swapAssetOutData.asset.id === newVolume.assetB.id
+  //     ? swapAssetOutData.amount
+  //     : BigInt(0);
+  //
+  // const assetAFee =
+  //   swapAssetFeeData.asset.id === newVolume.assetA.id
+  //     ? swapAssetFeeData.amount
+  //     : BigInt(0);
+  // const assetBFee =
+  //   swapAssetFeeData.asset.id === newVolume.assetB.id
+  //     ? swapAssetFeeData.amount
+  //     : BigInt(0);
 
   const assetAVolumeIn =
-    swapAssetInData.asset.id === newVolume.assetA.id
-      ? swapAssetInData.amount
-      : BigInt(0);
-  const assetBVolumeIn =
-    swapAssetInData.asset.id === newVolume.assetB.id
-      ? swapAssetInData.amount
-      : BigInt(0);
+    swap.inputs.find((input) => input.asset.id === newVolume.assetA.id)
+      ?.amount || BigInt(0);
 
   const assetAVolumeOut =
-    swapAssetOutData.asset.id === newVolume.assetA.id
-      ? swapAssetOutData.amount
-      : BigInt(0);
-  const assetBVolumeOut =
-    swapAssetOutData.asset.id === newVolume.assetB.id
-      ? swapAssetOutData.amount
-      : BigInt(0);
+    swap.outputs.find((output) => output.asset.id === newVolume.assetA.id)
+      ?.amount || BigInt(0);
 
-  const assetAFee =
-    swapAssetFeeData.asset.id === newVolume.assetA.id
-      ? swapAssetFeeData.amount
-      : BigInt(0);
-  const assetBFee =
-    swapAssetFeeData.asset.id === newVolume.assetB.id
-      ? swapAssetFeeData.amount
-      : BigInt(0);
+  const assetAFee = swap.fees.reduce((acc, feeData) => {
+    if (feeData.asset.id !== newVolume.assetA.id || !feeData.recipient)
+      return acc;
+    return acc + feeData.amount;
+  }, 0n);
+
+  const assetBVolumeIn =
+    swap.inputs.find((input) => input.asset.id === newVolume.assetB.id)
+      ?.amount || BigInt(0);
+
+  const assetBVolumeOut =
+    swap.outputs.find((output) => output.asset.id === newVolume.assetB.id)
+      ?.amount || BigInt(0);
+
+  const assetBFee = swap.fees.reduce((acc, feeData) => {
+    if (feeData.asset.id !== newVolume.assetB.id || !feeData.recipient)
+      return acc;
+    return acc + feeData.amount;
+  }, 0n);
 
   // Block volumes
   newVolume.assetAVolumeIn += assetAVolumeIn;
