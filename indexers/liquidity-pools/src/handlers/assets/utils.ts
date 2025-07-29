@@ -171,11 +171,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
       let erc20AssetContractDetails = null;
 
-      if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress)
+      if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress) {
         erc20AssetContractDetails =
           await MoneyMarketContractsManager.getInstance().getTokenDetails(
             erc20AssetContractAddress
           );
+      }
 
       const assetCustomLocation = getNewAssetMultiLocation({
         assetRegistryId: assetId,

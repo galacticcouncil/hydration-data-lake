@@ -86,3 +86,12 @@ export type OracleUpdateEventParams = MmEventParamsWithEventName & {
   value: bigint;
   timestamp: number;
 };
+
+export type PoolReserveDataUpdatedEventParams = MmEventParamsWithEventName & {
+  reserveAddress: string;
+  liquidityRate: bigint;
+  stableBorrowRate: bigint;
+  variableBorrowRate: bigint;
+  liquidityIndex: bigint;
+  variableBorrowIndex: bigint;
+};

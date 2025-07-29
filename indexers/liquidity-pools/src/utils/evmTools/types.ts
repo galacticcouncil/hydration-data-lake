@@ -9,6 +9,7 @@ import {
   MmUserEModeSetEventParams,
   MmWithdrawEventParams,
   OracleUpdateEventParams,
+  PoolReserveDataUpdatedEventParams,
 } from '../../parsers/types/events';
 import { EvmEventName } from '../../model';
 
@@ -33,7 +34,9 @@ export type EvmEventParamsTypeDecorated<N extends EvmEventName> =
                     ? MmReserveUsedAsCollateralDisabledEventParams
                     : N extends EvmEventName.OracleUpdate
                       ? OracleUpdateEventParams
-                      : never;
+                      : N extends EvmEventName.ReserveDataUpdated
+                        ? PoolReserveDataUpdatedEventParams
+                        : never;
 
 export type AccountMmPositionDataContractData = {
   totalCollateralBase: string;

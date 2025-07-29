@@ -2,15 +2,10 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { OfflineTradeRouterManager } from './utils';
-import { handleAssetSpotPricesHistoricalData } from './assetSpotPrices';
-import { handleAssetPairVolumesHistoricalData } from './assePairVolumes';
-import {
-  isAssetHistoricalDataUniqueRegardingPreviousRecord,
-  processAssetsHistoricalDataAtBlock,
-} from './assetHistoricalData';
+import { handleAssetSpotPricesHistoricalDataAtBlock } from './assetSpotPrices';
+import { handleAssetPairVolumesHistoricalDataAtBlock } from './assePairVolumes';
+import { processAssetsHistoricalDataAtBlock } from './assetHistoricalData';
 import pMap from 'p-map';
-import { AssetSpotPriceHistoricalData } from '../../../model';
-import { RedisTimeSeriesManager } from '../../../utils/redisTimeSeriesManager';
 
 export async function handleAssetHistoricalData({
   blockNumbersToProcess,
@@ -49,26 +44,15 @@ export async function handleAssetHistoricalData({
           block: block.header,
           ctx,
         }),
-      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
     );
   }
-
-  // for (const entity of [
-  //   ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
-  // ].filter((e) => e !== null)) {
-  //   if (
-  //     ctx.appConfig.SAVE_ASSET_HISTORICAL_DATA_ON_CHANGE &&
-  //     !(await isAssetHistoricalDataUniqueRegardingPreviousRecord({
-  //       currentRecord: entity,
-  //       ctx,
-  //     }))
-  //   ) {
-  //     ctx.batchState.state.assetsHistoricalDataBatch.delete(entity.id);
-  //   }
-  // }
 }
 
-export async function handleAssetSpotPriceRelatedHistoricalData({
+export async function handleAssetSpotPricesHistoricalData({
   blockNumbersToProcess,
   ctx,
 }: {
@@ -94,32 +78,45 @@ export async function handleAssetSpotPriceRelatedHistoricalData({
     await pMap(
       blocksSubBatch,
       async (block) =>
-        handleAssetSpotPricesHistoricalData({
+        handleAssetSpotPricesHistoricalDataAtBlock({
           blockHeader: block.header,
           ctx,
         }),
-      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
-    );
-
-    await pMap(
-      blocksSubBatch,
-      async (block) =>
-        handleAssetPairVolumesHistoricalData({
-          blockHeader: block.header,
-          ctx,
-        }),
-      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
     );
   }
 }
 
-// export async function addAssetSpotPricesToTimeSeries(
-//   entities: AssetSpotPriceHistoricalData[]
-// ) {
-//
-//   const timeSeriesManager = RedisTimeSeriesManager.getInstance();
-//
-//   for (const entity of entities) {
-//     await timeSeriesManager.addToTimeSeries({name: 'price', assetInId: entity.})
-//   }
-// }
+export async function handleAssetPairVolumesHistoricalData({
+  blockNumbersToProcess,
+  ctx,
+}: {
+  blockNumbersToProcess?: number[];
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const blocksNumbersToProcessSet = new Set(blockNumbersToProcess || []);
+  const blocksToProcess = blockNumbersToProcess
+    ? ctx.blocks.filter((b) => blocksNumbersToProcessSet.has(b.header.height))
+    : ctx.blocks;
+
+  for (const blocksSubBatch of splitIntoBatches(
+    blocksToProcess,
+    ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
+  )) {
+    await pMap(
+      blocksSubBatch,
+      async (block) =>
+        handleAssetPairVolumesHistoricalDataAtBlock({
+          blockHeader: block.header,
+          ctx,
+        }),
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
+    );
+  }
+}

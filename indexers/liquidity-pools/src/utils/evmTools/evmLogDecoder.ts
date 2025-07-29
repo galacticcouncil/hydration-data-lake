@@ -117,6 +117,10 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
         return this.parseOracleUpdateEvent(
           evmLogParams
         ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.ReserveDataUpdated:
+        return this.parsePoolReserveDataUpdatedEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
       default:
         return null;
     }

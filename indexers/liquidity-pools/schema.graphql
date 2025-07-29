@@ -1230,35 +1230,6 @@ type StableswapAssetHistoricalData @entity {
 }
 
 # ======================================================================================================================
-# *** AAVE Pool ***
-# ======================================================================================================================
-
-# Fully synthetic entity to represent assets pair and their balances in AAVE protocol
-type Aavepool @entity {
-  "<address> - address is derived from reserve_asset_id + aToken_id"
-  id: ID!
-
-  reserveAsset: Asset!
-  aToken: Asset!
-  historicalData: [AavepoolHistoricalData!]! @derivedFrom(field: "pool")
-}
-
-type AavepoolHistoricalData @entity {
-  "<aavepoolId>-<paraBlockHeight>"
-  id: ID!
-  pool: Aavepool!
-
-  liquidityIn: BigInt!
-  liquidityOut: BigInt!
-
-  tvlInRefAssetNorm: String
-
-  paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  block: Block!
-}
-
-# ======================================================================================================================
 # *** Constants ***
 # ======================================================================================================================
 
@@ -1513,7 +1484,44 @@ type OtcOrderEvent @entity {
 }
 
 # ======================================================================================================================
-# *** Market making ***
+# *** AAVE Pool ***
+# ======================================================================================================================
+
+# Fully synthetic entity to represent assets pair and their balances in AAVE protocol
+type Aavepool @entity {
+  "<address> - address is derived from reserve_asset_id + aToken_id"
+  id: ID!
+
+  reserveAsset: Asset!
+  aToken: Asset!
+  historicalData: [AavepoolHistoricalData!]! @derivedFrom(field: "pool")
+}
+
+type AavepoolHistoricalData @entity {
+  "<aavepoolId>-<paraBlockHeight>"
+  id: ID!
+  pool: Aavepool!
+
+  reserveAsset: Asset
+  reserveAssetRegistryId: String
+  aToken: Asset
+  aTokenRegistryId: String
+
+  liquidityIn: BigInt!
+  liquidityOut: BigInt!
+
+  tvlInRefAssetNorm: String
+
+  aTokenTotalSupply: BigInt
+  variableDebtTokenTotalSupply: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+# ======================================================================================================================
+# *** Money Market ***
 # ======================================================================================================================
 
 type MmSupply @entity {
@@ -1653,6 +1661,7 @@ enum EvmEventName {
   ReserveUsedAsCollateralEnabled
   ReserveUsedAsCollateralDisabled
   OracleUpdate
+  ReserveDataUpdated
 }
 enum EvmContractName {
   AavePoolImpl
@@ -1686,6 +1695,39 @@ type MoneyMarketEvent @entity {
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   event: Event!
+}
+
+type MoneyMarketReserve @entity {
+  "<a_token_address>"
+  id: ID!
+  aToken: Asset
+  underlyingAsset: Asset
+  variableDebtToken: Asset
+
+  name: String!
+  symbol: String!
+  decimals: String!
+  interestRateStrategyAddress: String!
+  isPaused: Boolean
+  isSiloedBorrowing: Boolean
+
+  historicalData: [MoneyMarketReserveHistoricalData]!
+    @derivedFrom(field: "reserve")
+}
+
+type MoneyMarketReserveHistoricalData @entity {
+  "<underlying_asset_address>-<para_block_height>"
+  id: ID!
+  reserve: MoneyMarketReserve!
+
+  liquidityRate: BigInt
+  variableBorrowRate: BigInt
+  liquidityIndex: BigInt
+  variableBorrowIndex: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
 }
 
 # ======================================================================================================================

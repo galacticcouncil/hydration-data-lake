@@ -10,6 +10,7 @@ import {
   MmUserEModeSetEventParams,
   MmWithdrawEventParams,
   OracleUpdateEventParams,
+  PoolReserveDataUpdatedEventParams,
 } from '../../parsers/types/events';
 import { EvmEventName } from '../../model';
 import { ethers } from 'ethers';
@@ -126,6 +127,20 @@ export class MoneyMarketEventsParser {
       key: event.args[0],
       value: event.args[1],
       timestamp: event.args[2],
+    };
+  }
+  parsePoolReserveDataUpdatedEvent(
+    event: EvmLogEventParams
+  ): PoolReserveDataUpdatedEventParams {
+    return {
+      eventName: EvmEventName.OracleUpdate,
+      contractName: event.contractName,
+      reserveAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
+      liquidityRate: event.args[1],
+      stableBorrowRate: event.args[2],
+      variableBorrowRate: event.args[3],
+      liquidityIndex: event.args[4],
+      variableBorrowIndex: event.args[5],
     };
   }
 }

@@ -34,7 +34,12 @@ export function processAavepoolsNormalizedTvl({
     if (reserveAsset.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
       assetSpotPriceNorm = '1';
 
-    if (!assetSpotPriceNorm || !reserveAsset.decimals) continue;
+    if (!assetSpotPriceNorm || !reserveAsset.decimals) {
+      console.log(
+        `Spot price for asset ${reserveAsset.id} not found. Skipping.`
+      );
+      continue;
+    }
 
     poolHistData.tvlInRefAssetNorm = BigNumber(
       calcPriceNormalized({

@@ -4,7 +4,7 @@ import { handleRelayChainBlocks } from '../../../handlers/relayChain';
 import { prefetchAllAssets } from '../../../handlers/assets/utils';
 import {
   handleAssetHistoricalData,
-  handleAssetSpotPriceRelatedHistoricalData,
+  handleAssetSpotPricesHistoricalData,
 } from '../../../handlers/assets/assetHistoricalData';
 import { processPoolsNormalizedVolumes } from '../../../handlers/volumes/normalizedVolumesInBaseAsset';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
@@ -96,12 +96,12 @@ async function processLockedBlocksBatch(
   });
   console.timeEnd('handleAssetHistoricalData');
 
-  console.time('handleAssetSpotPricesHistoricalData');
-  await handleAssetSpotPriceRelatedHistoricalData({
+  console.time('handleAssetSpotPricesHistoricalDataAtBlock');
+  await handleAssetSpotPricesHistoricalData({
     ctx,
     blockNumbersToProcess,
   });
-  console.timeEnd('handleAssetSpotPricesHistoricalData');
+  console.timeEnd('handleAssetSpotPricesHistoricalDataAtBlock');
 
   console.time('processPoolsNormalizedVolumes');
   processPoolsNormalizedVolumes({ ctx });

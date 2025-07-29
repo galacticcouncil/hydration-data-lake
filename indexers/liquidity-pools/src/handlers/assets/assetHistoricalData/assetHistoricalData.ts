@@ -3,9 +3,14 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../../parsers';
 import { getOrCreateAsset } from '../asset';
-import { AssetDynamicFee, AssetHistoricalData } from '../../../model';
+import {
+  AssetDynamicFee,
+  AssetHistoricalData,
+  AssetType,
+} from '../../../model';
 import { LessThan } from 'typeorm';
 import pMap from 'p-map';
+import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
 
 export async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -16,29 +21,59 @@ export async function processAssetsHistoricalDataAtBlock({
   block: BlockHeader;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const totalIssuancePerAssetMap = new Map(
+  const indexedAssets: Map<string, string> = new Map(); // Map<assetRegistryId, id>
+  const mmAssets = [];
+  const otherAssets = [];
+
+  for (const asset of ctx.batchState.state.assetsAllBatch.values()) {
+    if (asset.assetRegistryId !== undefined || asset.assetRegistryId !== null)
+      indexedAssets.set(`${asset.assetRegistryId}`, asset.id);
+
+    if (asset.assetType === AssetType.Erc20) {
+      if (asset.evmAddress) mmAssets.push(asset);
+    } else {
+      if (asset.assetRegistryId !== undefined || asset.assetRegistryId !== null)
+        otherAssets.push(asset);
+    }
+  }
+
+  const totalIssuancePerAssetMapByAssetId = new Map(
     (
       await parsers.storage.tokens.getManyTokensTotalIssuance({
         block,
-        tokenIds: assetRegistryIds,
+        tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
       })
     )
       .filter((res) => res.amount !== null)
-      .map((res) => [res.tokenId, res.amount])
+      .map((res) => [indexedAssets.get(res.tokenId)!, res.amount])
   );
 
-  totalIssuancePerAssetMap.set(
+  totalIssuancePerAssetMapByAssetId.set(
     '0',
     await parsers.storage.balances.getTotalIssuance({ block })
   );
+
+  const mmAssetsTotalSupply =
+    await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupply({
+      addresses: mmAssets.map((a) => a.evmAddress!),
+      blockNumber: block.height,
+    });
+
+  for (const tSupply of mmAssetsTotalSupply) {
+    if (tSupply)
+      totalIssuancePerAssetMapByAssetId.set(
+        tSupply.address,
+        BigInt(tSupply.value)
+      );
+  }
 
   /**
    * We need this fallback because some assets are not present in
    * tokens.totalIssuance storage.
    */
-  for (const assetRegistryId of assetRegistryIds) {
-    if (!totalIssuancePerAssetMap.has(assetRegistryId))
-      totalIssuancePerAssetMap.set(`${assetRegistryId}`, 0n);
+  for (const asset of ctx.batchState.state.assetsAllBatch.values()) {
+    if (!totalIssuancePerAssetMapByAssetId.has(asset.id))
+      totalIssuancePerAssetMapByAssetId.set(asset.id, 0n);
   }
 
   const existentialDepositPerAssetMap = new Map(
@@ -55,25 +90,10 @@ export async function processAssetsHistoricalDataAtBlock({
     )
   );
 
-  await Promise.all(
-    assetRegistryIds.map(async (assetRegistryId) => {
-      if (
-        !totalIssuancePerAssetMap.has(assetRegistryId) ||
-        !existentialDepositPerAssetMap.has(assetRegistryId)
-      ) {
-        return null;
-      }
-      const asset = await getOrCreateAsset({
-        assetRegistryId: assetRegistryId,
-        ensure: false,
-        ctx,
-      });
-
-      if (!asset) {
-        console.log(
-          'processAssetsHistoricalDataAtBlock :: asset not found',
-          assetRegistryId
-        );
+  await pMap(
+    Array.from(ctx.batchState.state.assetsAllBatch.values()),
+    async (asset) => {
+      if (!totalIssuancePerAssetMapByAssetId.has(asset.id)) {
         return null;
       }
 
@@ -82,16 +102,19 @@ export async function processAssetsHistoricalDataAtBlock({
         asset,
 
         assetRegistryId: asset.assetRegistryId ?? null,
-        totalIssuance: totalIssuancePerAssetMap.get(assetRegistryId) ?? 0n,
+        totalIssuance: totalIssuancePerAssetMapByAssetId.get(asset.id) ?? 0n,
         existentialDeposit:
-          existentialDepositPerAssetMap.get(assetRegistryId)
+          existentialDepositPerAssetMap.get(asset.assetRegistryId ?? '')
             ?.existentialDeposit ?? 0n,
-        dynamicFee: dynamicFeePerAssetMap.has(assetRegistryId)
+        dynamicFee: dynamicFeePerAssetMap.has(asset.assetRegistryId ?? '')
           ? new AssetDynamicFee({
-              assetFee: dynamicFeePerAssetMap.get(assetRegistryId)!.assetFee,
-              protocolFee:
-                dynamicFeePerAssetMap.get(assetRegistryId)!.protocolFee,
-              timestamp: dynamicFeePerAssetMap.get(assetRegistryId)!.timestamp,
+              assetFee: dynamicFeePerAssetMap.get(asset.assetRegistryId ?? '')!
+                .assetFee,
+              protocolFee: dynamicFeePerAssetMap.get(
+                asset.assetRegistryId ?? ''
+              )!.protocolFee,
+              timestamp: dynamicFeePerAssetMap.get(asset.assetRegistryId ?? '')!
+                .timestamp,
             })
           : null,
         usdPriceNormalised: '0',
@@ -108,7 +131,7 @@ export async function processAssetsHistoricalDataAtBlock({
         newAssetHistoricalData.id,
         newAssetHistoricalData
       );
-    })
+    }
   );
 }
 
@@ -149,7 +172,10 @@ export async function getAssetHistDataWithUniqueData(
         result.set(item.id, item);
       }
     },
-    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
   );
 
   // for (const item of src.values()) {

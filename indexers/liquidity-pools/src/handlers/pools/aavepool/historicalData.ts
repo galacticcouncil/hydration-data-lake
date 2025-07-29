@@ -2,12 +2,14 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import parsers from '../../../parsers';
-import { Aavepool, AavepoolHistoricalData } from '../../../model';
+import { Aavepool, AavepoolHistoricalData, Asset } from '../../../model';
 import { getOrCreateAavepool } from './aavepool';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { AaveTradeExecutorPoolDataWithPoolId } from '../../../parsers/runtimeApiResolver/types';
 import pMap from 'p-map';
+import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
+import { getOrCreateAsset } from '../../assets/asset';
 
 export async function handleAavepoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -48,7 +50,10 @@ export async function handleAavepoolHistoricalData(
           });
         }
       },
-      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
     );
 
     await pMap(
@@ -64,12 +69,46 @@ export async function handleAavepoolHistoricalData(
 
         if (!pool) return;
 
+        const aTokenHistData =
+          ctx.batchState.state.assetsHistoricalDataBatch.get(
+            `${pool.aToken.id}-${blockHeader.height}`
+          );
+
+        let variableDebtTokenHistData;
+
+        if (pool.reserveAsset.variableDebtToken) {
+          variableDebtTokenHistData =
+            ctx.batchState.state.assetsHistoricalDataBatch.get(
+              `${pool.reserveAsset.variableDebtToken?.id}-${blockHeader.height}`
+            );
+        } else {
+          const reserveAssetWithRelations = await ctx.store.findOne(Asset, {
+            where: { id: pool.reserveAsset.id },
+            relations: {
+              variableDebtToken: true,
+            },
+          });
+          if (reserveAssetWithRelations)
+            variableDebtTokenHistData =
+              ctx.batchState.state.assetsHistoricalDataBatch.get(
+                `${reserveAssetWithRelations.variableDebtToken?.id}-${blockHeader.height}`
+              );
+        }
+
         const poolHistoricalDataEntity = new AavepoolHistoricalData({
           id: `${pool.id}-${blockHeader.height}`,
           pool,
+          reserveAsset: pool.reserveAsset,
+          reserveAssetRegistryId: pool.reserveAsset.assetRegistryId,
+          aToken: pool.aToken,
+          aTokenRegistryId: pool.aToken.assetRegistryId,
 
           liquidityIn: poolData.data.liquidityIn,
           liquidityOut: poolData.data.liquidityOut,
+
+          aTokenTotalSupply: aTokenHistData?.totalIssuance ?? 0n,
+          variableDebtTokenTotalSupply:
+            variableDebtTokenHistData?.totalIssuance ?? 0n,
 
           tvlInRefAssetNorm: '0',
 
@@ -82,7 +121,10 @@ export async function handleAavepoolHistoricalData(
 
         predefinedEntities.push(poolHistoricalDataEntity);
       },
-      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
     );
   }
 

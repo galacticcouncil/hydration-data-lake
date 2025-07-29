@@ -27,7 +27,7 @@ import {
 //     );
 //
 //     if (!router) {
-//       console.log('handleAssetPairVolumesHistoricalData :: router not found');
+//       console.log('handleAssetPairVolumesHistoricalDataAtBlock :: router not found');
 //       return this;
 //     }
 //     const possiblePairs = [];
@@ -59,7 +59,7 @@ import {
 //   }
 // }
 
-export async function handleAssetPairVolumesHistoricalData({
+export async function handleAssetPairVolumesHistoricalDataAtBlock({
   blockHeader,
   ctx,
 }: {

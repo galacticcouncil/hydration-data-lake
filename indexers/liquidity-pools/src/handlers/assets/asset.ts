@@ -9,7 +9,6 @@ import {
 } from './utils';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import { FindOptionsRelations } from 'typeorm';
-import { Entity } from '@subsquid/typeorm-store/src/store';
 
 export async function getOrCreateAsset({
   id,

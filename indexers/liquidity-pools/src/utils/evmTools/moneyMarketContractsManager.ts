@@ -9,6 +9,7 @@ import { ResourceType } from '../../model';
 import { AppConfig } from '../../appConfig';
 import { AccountMmPositionDataContractData } from './types';
 import { BigNumber } from '@galacticcouncil/sdk';
+import pMap from 'p-map';
 
 const appConfig = AppConfig.getInstance();
 
@@ -26,6 +27,11 @@ export type MoneyMarketTokenDetails = {
   name?: string;
   symbol?: string;
   decimals?: number;
+};
+
+export type MoneyMarketTokenTotalSupply = {
+  address: string;
+  value: string;
 };
 
 export class MoneyMarketContractsManager {
@@ -77,6 +83,16 @@ export class MoneyMarketContractsManager {
     abi: ContractInterface
   ): Contract {
     return new Contract(address, abi, this.provider);
+  }
+
+  async getReservesData({ blockNumber }: { blockNumber?: number }) {
+    const resourcesData =
+      await this.uiPoolDataProviderContractInstance.getReservesData(
+        appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+        { blockTag: blockNumber }
+      );
+
+    return resourcesData;
   }
 
   async initContractInstances({
@@ -167,6 +183,71 @@ export class MoneyMarketContractsManager {
     } catch (e) {}
 
     return response;
+  }
+
+  async getTokenTotalSupply(
+    address: string,
+    blockNumber?: number
+  ): Promise<MoneyMarketTokenTotalSupply | null> {
+    const addressNormalized = ethers.utils.getAddress(address);
+
+    const response: MoneyMarketTokenTotalSupply = {
+      address: ethers.utils.getAddress(address).toLowerCase(),
+      value: '0',
+    };
+
+    if (!this.moneyMarketTokenContracts.has(addressNormalized)) return null;
+
+    try {
+      response.value = (
+        await this.moneyMarketTokenContracts
+          .get(addressNormalized)!
+          .totalSupply({ blockTag: blockNumber })
+      ).toString();
+    } catch (e) {
+      console.log(e);
+    }
+
+    return response;
+  }
+
+  async getManyTokensTotalSupply({
+    addresses,
+    blockNumber,
+  }: {
+    addresses: string[];
+    blockNumber?: number;
+  }): Promise<MoneyMarketTokenTotalSupply[]> {
+    const addressNormalizedSet = new Set(
+      addresses.map((a) => ethers.utils.getAddress(a))
+    );
+    const totalResponse: MoneyMarketTokenTotalSupply[] = [];
+
+    await pMap(
+      Array.from(addressNormalizedSet.values()),
+      async (address) => {
+        const response: MoneyMarketTokenTotalSupply = {
+          address: ethers.utils.getAddress(address).toLowerCase(),
+          value: '0',
+        };
+
+        if (this.moneyMarketTokenContracts.has(address))
+          try {
+            response.value = (
+              await this.moneyMarketTokenContracts
+                .get(address)!
+                .totalSupply({ blockTag: blockNumber })
+            ).toString();
+          } catch (e) {
+            console.log(e);
+          }
+
+        totalResponse.push(response);
+      },
+      { concurrency: appConfig.concurrency.RUNTIME_API_CALLS_CONCURRENCY }
+    );
+
+    return totalResponse;
   }
 
   async getAccountTokenBalance({

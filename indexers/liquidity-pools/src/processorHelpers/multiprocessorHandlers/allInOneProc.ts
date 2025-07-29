@@ -42,7 +42,8 @@ import { handleEvmAccounts } from '../../handlers/evmAccounts';
 import { handleOracles } from '../../handlers/oracles/emaOracle';
 import {
   handleAssetHistoricalData,
-  handleAssetSpotPriceRelatedHistoricalData,
+  handleAssetPairVolumesHistoricalData,
+  handleAssetSpotPricesHistoricalData,
 } from '../../handlers/assets/assetHistoricalData';
 import { processPoolsNormalizedVolumes } from '../../handlers/volumes/normalizedVolumesInBaseAsset';
 import { HistoricalDataManager } from '../../handlers/historicalData';
@@ -54,6 +55,7 @@ import {
   handleAccountMmPositionData,
   handleAllAccountsMmPositionDataUpdate,
 } from '../../handlers/accounts/moneyMarketPosition';
+import { handleMmResourcesHistoricalData } from '../../handlers/moneyMarket/resourcesHistoricalData';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -98,6 +100,8 @@ export async function execAllInOneProcessorHandlers(
   });
   console.timeEnd('initContractInstances');
 
+  // await handleMmResourcesHistoricalData(ctx, parsedData);
+
   await ensureNativeToken(ctx);
 
   console.time('actualiseAssets');
@@ -124,6 +128,46 @@ export async function execAllInOneProcessorHandlers(
   console.time('handleStablepools');
   await handleStablepools(ctx, parsedData);
   console.timeEnd('handleStablepools');
+
+  /**
+   * functions handleConstantsHistoricalData, handleAssetHistoricalData,
+   * handleAssetSpotPricesHistoricalData must be executed in strict order.
+   */
+  console.time('handleAssetHistoricalData');
+  await handleAssetHistoricalData({ ctx });
+  console.timeEnd('handleAssetHistoricalData');
+
+  console.time('handleAavepoolHistoricalData');
+  await handleAavepoolHistoricalData(ctx, parsedData);
+  console.timeEnd('handleAavepoolHistoricalData');
+
+  console.time('handleStableswapHistoricalData');
+  await handleStableswapHistoricalData(ctx, parsedData);
+  console.timeEnd('handleStableswapHistoricalData');
+
+  console.time('handleOmnipoolHistoricalData');
+  await handleOmnipoolHistoricalData(ctx, parsedData);
+  console.timeEnd('handleOmnipoolHistoricalData');
+
+  console.time('handleXykPoolHistoricalData');
+  await handleXykPoolHistoricalData(ctx, parsedData);
+  console.timeEnd('handleXykPoolHistoricalData');
+
+  console.time('handleLbppoolHistoricalData');
+  await handleLbppoolHistoricalData(ctx, parsedData);
+  console.timeEnd('handleLbppoolHistoricalData');
+
+  console.time('handleConstantsHistoricalData');
+  await handleConstantsHistoricalData(ctx);
+  console.timeEnd('handleConstantsHistoricalData');
+
+  console.time('handleOracles');
+  await handleOracles(ctx);
+  console.timeEnd('handleOracles');
+
+  console.time('handleAssetSpotPricesHistoricalData');
+  await handleAssetSpotPricesHistoricalData({ ctx });
+  console.timeEnd('handleAssetSpotPricesHistoricalData');
 
   console.time('handleBroadcastSwappedEvents');
   await handleBroadcastSwappedEvents(ctx, parsedData);
@@ -170,30 +214,6 @@ export async function execAllInOneProcessorHandlers(
 
   await HistoricalDataManager.saveAccountMoneyMarketDataBulk(ctx);
 
-  console.time('handleConstantsHistoricalData');
-  await handleConstantsHistoricalData(ctx);
-  console.timeEnd('handleConstantsHistoricalData');
-
-  console.time('handleAavepoolHistoricalData');
-  await handleAavepoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleAavepoolHistoricalData');
-
-  console.time('handleStableswapHistoricalData');
-  await handleStableswapHistoricalData(ctx, parsedData);
-  console.timeEnd('handleStableswapHistoricalData');
-
-  console.time('handleOmnipoolHistoricalData');
-  await handleOmnipoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleOmnipoolHistoricalData');
-
-  console.time('handleXykPoolHistoricalData');
-  await handleXykPoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleXykPoolHistoricalData');
-
-  console.time('handleLbppoolHistoricalData');
-  await handleLbppoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleLbppoolHistoricalData');
-
   console.time('ensurePoolsDestroyedStatus');
   await ensurePoolsDestroyedStatus(ctx);
   console.timeEnd('ensurePoolsDestroyedStatus');
@@ -206,17 +226,9 @@ export async function execAllInOneProcessorHandlers(
   await saveAllBatchAccounts(ctx);
   console.timeEnd('saveAllBatchAccounts');
 
-  console.time('handleOracles');
-  await handleOracles(ctx);
-  console.timeEnd('handleOracles');
-
-  console.time('handleAssetHistoricalData');
-  await handleAssetHistoricalData({ ctx });
-  console.timeEnd('handleAssetHistoricalData');
-
-  console.time('handleAssetSpotPriceRelatedHistoricalData');
-  await handleAssetSpotPriceRelatedHistoricalData({ ctx });
-  console.timeEnd('handleAssetSpotPriceRelatedHistoricalData');
+  console.time('handleAssetPairVolumesHistoricalData');
+  await handleAssetPairVolumesHistoricalData({ ctx });
+  console.timeEnd('handleAssetPairVolumesHistoricalData');
 
   console.time('processPoolsNormalizedVolumes');
   processPoolsNormalizedVolumes({ ctx });

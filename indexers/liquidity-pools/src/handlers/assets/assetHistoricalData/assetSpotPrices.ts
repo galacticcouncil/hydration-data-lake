@@ -5,11 +5,12 @@ import {
   Asset,
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
+  ResourceType,
   Xykpool,
 } from '../../../model';
 import { OfflineTradeRouterManager } from './utils';
 import { getOrCreateAsset } from '../asset';
-import { Hop, BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '@galacticcouncil/sdk';
 import {
   fromDecimalToExponentialNotation,
   fromExponentialToDecimalNotation,
@@ -22,7 +23,7 @@ import { AppConfig } from '../../../appConfig';
 
 const appConfig = AppConfig.getInstance();
 
-export async function handleAssetSpotPricesHistoricalData({
+export async function handleAssetSpotPricesHistoricalDataAtBlock({
   blockHeader,
   ctx,
 }: {
@@ -87,15 +88,21 @@ async function processAssetSpotPrices({
   if (!router) return;
 
   const calcAssetUsdPriceNormalised = async () => {
-    if (asset.assetRegistryId === undefined || asset.assetRegistryId === null)
-      return;
+    let assetIdToProcess = asset.assetRegistryId;
+
+    if (asset.resourceType === ResourceType.Debt) {
+      const underliningAsset = asset.underlyingAsset;
+      assetIdToProcess = underliningAsset?.assetRegistryId;
+    }
+
+    if (assetIdToProcess === undefined || assetIdToProcess === null) return;
 
     try {
       /**
        * USD price must be calculation based on DIA Oracle data
        */
       const usdPriceDetails = await router.getBestSpotPrice(
-        asset.assetRegistryId,
+        assetIdToProcess,
         ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       );
 
