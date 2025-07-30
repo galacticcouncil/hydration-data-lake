@@ -1,4 +1,8 @@
-import { QueryResolverContext } from '../../../../../types';
+import {
+  AggregationTimeRangeLabel,
+  QueryResolverContext,
+  YieldMetricsInterval,
+} from '../../../../../types';
 import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
@@ -21,22 +25,26 @@ export async function stableswapHistoricalVolumesByPeriodResolver(
     return val;
   });
 
-  const {
-    filter: { poolIds, startBlockNumber, endBlockNumber, period },
-  } = args;
+  // const {
+  //   filter: { poolIds, startBlockNumber, endBlockNumber, period },
+  // } = args;
+
+  const filter = args.filter || {
+    period: AggregationTimeRangeLabel['24H'],
+  };
 
   const blocksRange = await getStartStopBlocksFromInput({
-    period,
+    period: filter.period,
     pgClient,
-    inputStopBlockNumber: endBlockNumber,
-    inputStartBlockNumber: startBlockNumber,
+    inputStopBlockNumber: filter.endBlockNumber,
+    inputStartBlockNumber: filter.startBlockNumber,
   });
 
   if (!blocksRange) return { nodes: [], totalCount: 0 };
 
   const decoratedNodes =
     await handleStableswapHistoricalVolumesByPeriodAggregation({
-      poolIds,
+      poolIds: filter.poolIds,
       startBlockNumber: blocksRange.startBlockHeight,
       endBlockNumber: blocksRange.stopBlockHeight,
       pgClient,

@@ -9,7 +9,7 @@ export const StableswapVolumePlugin: Plugin = makeExtendSchemaPlugin(
           poolIds: [String!]
           startBlockNumber: Int
           endBlockNumber: Int
-          period: AggregationTimeRange
+          period: AggregationTimeRange = _24H_
         }
 
         type StableswapVolumeHistoricalDataByPeriodResponse {
@@ -19,7 +19,7 @@ export const StableswapVolumePlugin: Plugin = makeExtendSchemaPlugin(
 
         extend type Query {
           stableswapVolumeHistoricalDataByPeriod(
-            filter: StableswapVolumeHistoricalDataByPeriodFilter!
+            filter: StableswapVolumeHistoricalDataByPeriodFilter
           ): StableswapVolumeHistoricalDataByPeriodResponse!
         }
       `,
