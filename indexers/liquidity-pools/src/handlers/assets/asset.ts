@@ -122,7 +122,7 @@ export async function getOrCreateAsset({
   const evmTokenContractData =
     storageData.assetType === AssetType.Erc20 &&
     (evmAddress || erc20AssetContractAddress)
-      ? await MoneyMarketContractsManager.getInstance().getTokenDetails(
+      ? await MoneyMarketContractsManager.getInstance().getResourceDetails(
           evmAddress ?? erc20AssetContractAddress ?? ''
         )
       : null;
@@ -235,7 +235,9 @@ export async function getOrCreateMoneyMarketAsset({
   if (!evmAddress) return null; //TODO fix this
 
   const contractData =
-    await MoneyMarketContractsManager.getInstance().getTokenDetails(evmAddress);
+    await MoneyMarketContractsManager.getInstance().getResourceDetails(
+      evmAddress
+    );
 
   if (!contractData) return null;
 

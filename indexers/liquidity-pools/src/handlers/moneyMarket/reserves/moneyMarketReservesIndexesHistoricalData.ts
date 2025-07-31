@@ -1,0 +1,87 @@
+import { SqdBlock, SqdProcessorContext } from '../../../processor';
+import { Store } from '@subsquid/typeorm-store';
+import { PoolReserveDataUpdatedEventParams } from '../../../parsers/types/events';
+import {
+  EvmEventName,
+  MmReserveIndexesHistoricalData,
+} from '../../../model';
+import { getOrCreateMoneyMarketReserve } from './moneyMarketReserve';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
+import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+
+export async function processMmReserveIndexesHistoricalData({
+  ctx,
+  eventCallData,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  eventCallData: EvmLogData;
+}) {
+  if (!eventCallData.eventData.params) return;
+
+  const parsedEvmEventData =
+    EvmLogDecoder.getInstance().getEvmEventFromLog<EvmEventName.ReserveDataUpdated>(
+      eventCallData.eventData.params
+    );
+
+  if (!parsedEvmEventData) return;
+
+  const {
+    eventData: { params: eventParams, metadata: eventMetadata },
+    callData,
+  } = eventCallData;
+
+  await processMmReserveIndexesHistoricalDataEntity({
+    data: parsedEvmEventData,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+  });
+}
+
+export async function processMmReserveIndexesHistoricalDataEntity({
+  data,
+  ctx,
+  blockHeader,
+}: {
+  data: PoolReserveDataUpdatedEventParams;
+  blockHeader: SqdBlock;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const mmReserve = await getOrCreateMoneyMarketReserve({
+    id: data.reserveAddress.toLowerCase(),
+    blockHeader,
+    ctx,
+  });
+
+  if (!mmReserve) {
+    console.log('Reserve not found');
+    return;
+  }
+
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(
+    blockHeader.height
+  );
+
+  if (!block) {
+    console.log(`Block not found at height ${blockHeader.height}`);
+    return;
+  }
+
+  const newHistDataEntity = new MmReserveIndexesHistoricalData({
+    id: `${mmReserve.id}-${blockHeader.height}`,
+    reserve: mmReserve,
+
+    liquidityRate: data.liquidityRate,
+    variableBorrowRate: data.variableBorrowRate,
+    liquidityIndex: data.liquidityIndex,
+    variableBorrowIndex: data.variableBorrowIndex,
+
+    paraBlockHeight: blockHeader.height,
+    relayBlockHeight: block.relayBlockHeight,
+    block,
+  });
+
+  ctx.batchState.state.moneyMarketReserveIndexesHistData.set(
+    newHistDataEntity.id,
+    newHistDataEntity
+  );
+}

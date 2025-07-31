@@ -1,6 +1,7 @@
 import aavePoolImplementation from './abi/aave/aavePoolImplementation.json';
 import aTokenHydration from './abi/aave/aTokenHydration.json';
 import diaOracleV2 from './abi/aave/diaOracleV2.json';
+import poolConfiguratorImplementation from './abi/aave/poolConfiguratorImplementation.json';
 import { ethers } from 'ethers';
 import { MoneyMarketEventsParser } from './moneyMarketEventsParser';
 import { EvmLogEventParams } from '../../parsers/types/events';
@@ -16,6 +17,10 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
     ],
     [aTokenHydration.address, new ethers.utils.Interface(aTokenHydration.abi)],
     [diaOracleV2.address, new ethers.utils.Interface(diaOracleV2.abi)],
+    [
+      poolConfiguratorImplementation.address,
+      new ethers.utils.Interface(poolConfiguratorImplementation.abi),
+    ],
   ]);
 
   constructor() {
@@ -43,6 +48,7 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
   } | null {
     let parsedLog = null;
     let contractName = null;
+
     try {
       parsedLog = this.interfacesMap
         .get(aavePoolImplementation.address)!
@@ -65,6 +71,19 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
           .get(diaOracleV2.address)!
           .parseLog({ topics, data });
         contractName = EvmContractName.DiaOracleV2;
+      } catch (error) {}
+    }
+
+    if (!parsedLog) {
+      try {
+        parsedLog = this.interfacesMap
+          .get(poolConfiguratorImplementation.address)!
+          .parseLog({ topics, data });
+
+        // console.log('----- parsedLog');
+        // console.dir(parsedLog, { depth: null });
+
+        contractName = EvmContractName.AavePoolConfiguratorImpl;
       } catch (error) {}
     }
 

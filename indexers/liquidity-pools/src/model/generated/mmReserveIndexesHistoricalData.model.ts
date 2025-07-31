@@ -4,8 +4,8 @@ import {MoneyMarketReserve} from "./moneyMarketReserve.model"
 import {Block} from "./block.model"
 
 @Entity_()
-export class MoneyMarketReserveHistoricalData {
-  constructor(props?: Partial<MoneyMarketReserveHistoricalData>) {
+export class MmReserveIndexesHistoricalData {
+  constructor(props?: Partial<MmReserveIndexesHistoricalData>) {
     Object.assign(this, props)
   }
 

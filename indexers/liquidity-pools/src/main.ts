@@ -38,7 +38,7 @@ processor.run(
       'batchState' | 'appConfig'
     > = ctx;
     (ctxWithBatchState as SqdProcessorContext<Store>).batchState =
-      new BatchState();
+      new BatchState(ctxWithBatchState as SqdProcessorContext<Store>);
     (ctxWithBatchState as SqdProcessorContext<Store>).appConfig =
       AppConfig.getInstance();
 

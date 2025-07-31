@@ -66,15 +66,21 @@ import {
   AssetAssetsPairVolume,
   AccountTotalBalanceHistoricalData,
   AccountMmPositionHistoricalData,
+  MoneyMarketReserve,
+  MmReserveIndexesHistoricalData,
+  MmReserveConfigHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { BalanceImpactedEventData, SwapFillerContextDetails } from './types';
+import { SqdBlock, SqdProcessorContext } from '../processor';
+import { Store } from '@subsquid/typeorm-store';
 
 type ParachainBlockNumber = number;
 
 export type BatchStatePayload = {
   relayChainInfo: Map<ParachainBlockNumber, RelayChainInfo>;
+  blockHeadersByHeight: Map<ParachainBlockNumber, SqdBlock>;
 
   batchBlocks: Map<string, BlockEntity>;
   batchExtrinsics: Map<string, ExtrinsicEntity>;
@@ -192,6 +198,16 @@ export type BatchStatePayload = {
     AccountAssetSwapFeeHistoricalData
   >;
 
+  moneyMarketReserves: Map<string, MoneyMarketReserve>;
+  moneyMarketReserveIndexesHistData: Map<
+    string,
+    MmReserveIndexesHistoricalData
+  >;
+  moneyMarketReserveConfigHistData: Map<
+    string,
+    MmReserveConfigHistoricalData
+  >;
+
   moneyMarketEvents: Map<string, MoneyMarketEvent>;
   mmSupplies: Map<string, MmSupply>;
   mmWithdrawals: Map<string, MmWithdraw>;
@@ -214,6 +230,7 @@ export type BatchStatePayload = {
 export class BatchState {
   public state: BatchStatePayload = {
     relayChainInfo: new Map(),
+    blockHeadersByHeight: new Map(),
 
     batchBlocks: new Map(),
     batchExtrinsics: new Map(),
@@ -302,6 +319,9 @@ export class BatchState {
     historicalAccountSwapFees: new Map(),
     historicalAccountAssetSwapFees: new Map(),
 
+    moneyMarketReserves: new Map(),
+    moneyMarketReserveIndexesHistData: new Map(),
+    moneyMarketReserveConfigHistData: new Map(),
     moneyMarketEvents: new Map(),
     mmSupplies: new Map(),
     mmWithdrawals: new Map(),
@@ -315,13 +335,15 @@ export class BatchState {
     emaOracleEntriesHistoricalData: new Map(),
   };
 
-  constructor() {
+  constructor(ctx: SqdProcessorContext<Store>) {
     this.initState();
+    this.indexBlockHeadersByHeight(ctx);
   }
 
   initState() {
     this.state = {
       relayChainInfo: new Map(),
+      blockHeadersByHeight: new Map(),
 
       batchBlocks: new Map(),
       batchExtrinsics: new Map(),
@@ -410,6 +432,9 @@ export class BatchState {
       historicalAccountSwapFees: new Map(),
       historicalAccountAssetSwapFees: new Map(),
 
+      moneyMarketReserves: new Map(),
+      moneyMarketReserveIndexesHistData: new Map(),
+      moneyMarketReserveConfigHistData: new Map(),
       moneyMarketEvents: new Map(),
       mmSupplies: new Map(),
       mmWithdrawals: new Map(),
@@ -422,6 +447,12 @@ export class BatchState {
 
       emaOracleEntriesHistoricalData: new Map(),
     };
+  }
+
+  indexBlockHeadersByHeight(ctx: SqdProcessorContext<Store>) {
+    this.state.blockHeadersByHeight = new Map(
+      ctx.blocks.map((b) => [b.header.height, b.header])
+    );
   }
 
   wipeState() {
@@ -445,5 +476,12 @@ export class BatchState {
     );
 
     return blockData;
+  }
+
+  getBlockHeaderByBlockHeight(height: number): SqdBlock {
+    if (!this.state.blockHeadersByHeight.has(height))
+      throw new Error(`Block header cannot be found for height ${height}`);
+
+    return this.state.blockHeadersByHeight.get(height)!;
   }
 }

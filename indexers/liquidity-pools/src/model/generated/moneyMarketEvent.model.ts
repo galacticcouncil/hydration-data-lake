@@ -27,7 +27,7 @@ export class MoneyMarketEvent {
   @Column_("text", {array: true, nullable: true})
   traceIds!: (string)[] | undefined | null
 
-  @Column_("varchar", {length: 12, nullable: true})
+  @Column_("varchar", {length: 24, nullable: true})
   contractName!: EvmContractName | undefined | null
 
   @Column_("varchar", {length: 31, nullable: false})

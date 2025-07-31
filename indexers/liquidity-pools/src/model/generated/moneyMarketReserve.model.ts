@@ -1,6 +1,8 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import {Asset} from "./asset.model"
-import {MoneyMarketReserveHistoricalData} from "./moneyMarketReserveHistoricalData.model"
+import {Aavepool} from "./aavepool.model"
+import {MmReserveIndexesHistoricalData} from "./mmReserveIndexesHistoricalData.model"
+import {MmReserveConfigHistoricalData} from "./mmReserveConfigHistoricalData.model"
 
 @Entity_()
 export class MoneyMarketReserve {
@@ -16,15 +18,19 @@ export class MoneyMarketReserve {
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
-  aToken!: Asset | undefined | null
+  aToken!: Asset
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
-  underlyingAsset!: Asset | undefined | null
+  underlyingAsset!: Asset
 
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
-  variableDebtToken!: Asset | undefined | null
+  variableDebtToken!: Asset
+
+  @Index_()
+  @ManyToOne_(() => Aavepool, {nullable: true})
+  aavePool!: Aavepool | undefined | null
 
   @Column_("text", {nullable: false})
   name!: string
@@ -32,18 +38,12 @@ export class MoneyMarketReserve {
   @Column_("text", {nullable: false})
   symbol!: string
 
-  @Column_("text", {nullable: false})
-  decimals!: string
+  @Column_("int4", {nullable: false})
+  decimals!: number
 
-  @Column_("text", {nullable: false})
-  interestRateStrategyAddress!: string
+  @OneToMany_(() => MmReserveIndexesHistoricalData, e => e.reserve)
+  indexesHistoricalData!: MmReserveIndexesHistoricalData[]
 
-  @Column_("bool", {nullable: true})
-  isPaused!: boolean | undefined | null
-
-  @Column_("bool", {nullable: true})
-  isSiloedBorrowing!: boolean | undefined | null
-
-  @OneToMany_(() => MoneyMarketReserveHistoricalData, e => e.reserve)
-  historicalData!: MoneyMarketReserveHistoricalData[]
+  @OneToMany_(() => MmReserveConfigHistoricalData, e => e.reserve)
+  configHistoricalData!: MmReserveConfigHistoricalData[]
 }

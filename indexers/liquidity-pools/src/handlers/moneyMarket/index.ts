@@ -6,6 +6,7 @@ import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
 import mmEventHandlers from './mmEventHandlers';
 import { EvmEventName, ResourceType, RoutedTrade } from '../../model';
+import { processMmReserveIndexesHistoricalData } from './reserves/moneyMarketReservesIndexesHistoricalData';
 
 export async function handleEvm(
   ctx: SqdProcessorContext<Store>,
@@ -78,6 +79,9 @@ export async function handleEvmLog(
       break;
     case EvmEventName.OracleUpdate:
       await mmEventHandlers.handleOracleUpdatedEvent(ctx, eventCallData);
+      break;
+    case EvmEventName.ReserveDataUpdated:
+      await processMmReserveIndexesHistoricalData({ ctx, eventCallData });
       break;
     default:
   }

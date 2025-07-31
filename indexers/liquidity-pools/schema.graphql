@@ -1494,6 +1494,8 @@ type Aavepool @entity {
 
   reserveAsset: Asset!
   aToken: Asset!
+  moneyMarketReserve: MoneyMarketReserve
+
   historicalData: [AavepoolHistoricalData!]! @derivedFrom(field: "pool")
 }
 
@@ -1510,6 +1512,7 @@ type AavepoolHistoricalData @entity {
   liquidityIn: BigInt!
   liquidityOut: BigInt!
 
+  "Ref asset value of liquidityIn property - what actual amount of collateral is locked in pool "
   tvlInRefAssetNorm: String
 
   aTokenTotalSupply: BigInt
@@ -1665,6 +1668,7 @@ enum EvmEventName {
 }
 enum EvmContractName {
   AavePoolImpl
+  AavePoolConfiguratorImpl
   AaveAToken
   DiaOracleV2
 }
@@ -1698,24 +1702,63 @@ type MoneyMarketEvent @entity {
 }
 
 type MoneyMarketReserve @entity {
-  "<a_token_address>"
+  "<underlying_asset_address>"
   id: ID!
-  aToken: Asset
-  underlyingAsset: Asset
-  variableDebtToken: Asset
+  aToken: Asset!
+  underlyingAsset: Asset!
+  variableDebtToken: Asset!
+  aavePool: Aavepool
 
   name: String!
   symbol: String!
-  decimals: String!
-  interestRateStrategyAddress: String!
-  isPaused: Boolean
-  isSiloedBorrowing: Boolean
+  decimals: Int!
 
-  historicalData: [MoneyMarketReserveHistoricalData]!
+  indexesHistoricalData: [MmReserveIndexesHistoricalData]!
+    @derivedFrom(field: "reserve")
+  configHistoricalData: [MmReserveConfigHistoricalData]!
     @derivedFrom(field: "reserve")
 }
 
-type MoneyMarketReserveHistoricalData @entity {
+type MmReserveConfigHistoricalData @entity {
+  "<underlying_asset_address>-<para_block_height>"
+  id: ID!
+  reserve: MoneyMarketReserve!
+
+  interestRateStrategyAddress: String!
+  priceOracle: String
+  reserveFactor: BigInt
+  usageAsCollateralEnabled: Boolean
+  borrowingEnabled: Boolean
+  isActive: Boolean
+  isFrozen: Boolean
+  isPaused: Boolean
+  isSiloedBorrowing: Boolean
+  accruedToTreasury: BigInt
+  unbacked: BigInt
+  flashLoanEnabled: Boolean
+
+  debtCeiling: BigInt
+  debtCeilingDecimals: BigInt
+  eModeCategoryId: Int
+  borrowCap: BigInt
+  supplyCap: BigInt
+  borrowableInIsolation: Boolean
+  baseLTVasCollateral: BigInt
+  reserveLiquidationThreshold: BigInt
+  reserveLiquidationBonus: BigInt
+  variableRateSlope1: BigInt
+  variableRateSlope2: BigInt
+  baseVariableBorrowRate: BigInt
+  optimalUsageRatio: BigInt
+
+  lastUpdateTimestamp: DateTime
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type MmReserveIndexesHistoricalData @entity {
   "<underlying_asset_address>-<para_block_height>"
   id: ID!
   reserve: MoneyMarketReserve!

@@ -55,7 +55,8 @@ import {
   handleAccountMmPositionData,
   handleAllAccountsMmPositionDataUpdate,
 } from '../../handlers/accounts/moneyMarketPosition';
-import { handleMmResourcesHistoricalData } from '../../handlers/moneyMarket/resourcesHistoricalData';
+import { actualizeMoneyMarketReserves } from '../../handlers/moneyMarket/reserves/moneyMarketReserve';
+import { handleMmReservesConfigsHistoricalData } from '../../handlers/moneyMarket/reserves';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -100,8 +101,6 @@ export async function execAllInOneProcessorHandlers(
   });
   console.timeEnd('initContractInstances');
 
-  // await handleMmResourcesHistoricalData(ctx, parsedData);
-
   await ensureNativeToken(ctx);
 
   console.time('actualiseAssets');
@@ -111,6 +110,16 @@ export async function execAllInOneProcessorHandlers(
   console.time('handleAssetRegistry');
   await handleAssetRegistry(ctx, parsedData);
   console.timeEnd('handleAssetRegistry');
+
+  console.time('actualizeMoneyMarketReserves');
+  await actualizeMoneyMarketReserves({
+    ctx,
+  });
+  console.timeEnd('actualizeMoneyMarketReserves');
+
+  console.time('handleMmReservesConfigsHistoricalData');
+  await handleMmReservesConfigsHistoricalData(ctx, parsedData);
+  console.timeEnd('handleMmReservesConfigsHistoricalData');
 
   console.time('handleLbpPools');
   await handleLbpPools(ctx, parsedData);

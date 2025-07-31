@@ -42,7 +42,12 @@ export async function getOrCreateAavepool({
 
   if (pool || (!pool && !ensure)) return pool ?? null;
 
-  if (!blockHeader) return null;
+  if (!blockHeader) {
+    console.log(
+      `getOrCreateAavepool :: no blockHeader provided for pool ${poolId}`
+    );
+    return null;
+  }
 
   const reserveAsset = await getOrCreateAsset({
     assetRegistryId: reserveAssetId,

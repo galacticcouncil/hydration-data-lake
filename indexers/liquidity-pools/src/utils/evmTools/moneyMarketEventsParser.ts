@@ -133,7 +133,7 @@ export class MoneyMarketEventsParser {
     event: EvmLogEventParams
   ): PoolReserveDataUpdatedEventParams {
     return {
-      eventName: EvmEventName.OracleUpdate,
+      eventName: EvmEventName.ReserveDataUpdated,
       contractName: event.contractName,
       reserveAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
       liquidityRate: event.args[1],

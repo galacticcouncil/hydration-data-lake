@@ -5,6 +5,7 @@ import { prefetchAllAssets } from '../handlers/assets/utils';
 import {
   Aavepool,
   Lbppool,
+  MoneyMarketReserve,
   OmnipoolAsset,
   Stableswap,
   StableswapAsset,
@@ -74,6 +75,19 @@ export async function prefetchPersistentData(ctx: SqdProcessorContext<Store>) {
         relations: {
           reserveAsset: true,
           aToken: true,
+        },
+      })
+    ).map((p) => [p.id, p])
+  );
+  ctx.batchState.state.moneyMarketReserves = new Map(
+    (
+      await ctx.store.find(MoneyMarketReserve, {
+        where: {},
+        relations: {
+          aToken: true,
+          underlyingAsset: true,
+          variableDebtToken: true,
+          aavePool: true,
         },
       })
     ).map((p) => [p.id, p])

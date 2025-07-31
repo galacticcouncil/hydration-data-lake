@@ -72,6 +72,17 @@ export class HistoricalDataManager {
     await ctx.store.save(
       Array.from(ctx.batchState.state.aavePoolsHistoricalData.values())
     );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.moneyMarketReserves.values())
+    );
+    await ctx.store.save(
+      Array.from(
+        ctx.batchState.state.moneyMarketReserveIndexesHistData.values()
+      )
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.moneyMarketReserveConfigHistData.values())
+    );
 
     const latestBatchBlockHeight =
       ctx.blocks[ctx.blocks.length - 1].header.height;

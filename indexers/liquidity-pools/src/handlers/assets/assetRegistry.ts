@@ -83,7 +83,7 @@ export async function assetRegistered(
 
   const evmTokenContractData =
     assetType === AssetType.Erc20
-      ? await MoneyMarketContractsManager.getInstance().getTokenDetails(
+      ? await MoneyMarketContractsManager.getInstance().getResourceDetails(
           erc20AssetContractAddress
         )
       : null;

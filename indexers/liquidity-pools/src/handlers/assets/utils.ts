@@ -173,7 +173,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
       if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress) {
         erc20AssetContractDetails =
-          await MoneyMarketContractsManager.getInstance().getTokenDetails(
+          await MoneyMarketContractsManager.getInstance().getResourceDetails(
             erc20AssetContractAddress
           );
       }
@@ -247,8 +247,11 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
       ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
     }
 
+    /**
+     * Iterate all available MM resources and create Asset entities.
+     */
     for (const mmResourceDetails of [
-      ...MoneyMarketContractsManager.getInstance().moneyMarketResourcesDetailsMap.values(),
+      ...MoneyMarketContractsManager.getInstance().moneyMarketReservesDetailsMap.values(),
     ]) {
       const mmTokenUnderlyingAsset = assetsToSave.find(
         (assetToSave) =>
@@ -360,7 +363,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
       ...ctx.batchState.state.assetsAllBatch.values(),
     ].filter((a) => a.assetType === AssetType.Erc20 && !!a.evmAddress)) {
       const erc20AssetContractDetails =
-        await MoneyMarketContractsManager.getInstance().getTokenDetails(
+        await MoneyMarketContractsManager.getInstance().getResourceDetails(
           erc20Asset.evmAddress!
         );
       let underlyingAsset: Asset | null = null;

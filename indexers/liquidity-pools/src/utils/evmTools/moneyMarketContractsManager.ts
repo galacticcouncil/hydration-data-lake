@@ -13,13 +13,6 @@ import pMap from 'p-map';
 
 const appConfig = AppConfig.getInstance();
 
-export type MoneyMarketResourceDetails = {
-  underlyingAssetAddress: string;
-  aTokenAddress: string;
-  variableDebtTokenAddress: string;
-  priceOracle: string;
-};
-
 export type MoneyMarketTokenDetails = {
   address: string;
   resourceType: ResourceType;
@@ -34,6 +27,49 @@ export type MoneyMarketTokenTotalSupply = {
   value: string;
 };
 
+export type MoneyMarketResourceDetails = {
+  underlyingAssetAddress: string;
+  aTokenAddress: string;
+  variableDebtTokenAddress: string;
+  interestRateStrategyAddress: string;
+
+  name: string;
+  symbol: string;
+  decimals: number;
+
+  priceOracle: string;
+  reserveFactor: string;
+  usageAsCollateralEnabled: boolean;
+  borrowingEnabled: boolean;
+  isActive: boolean;
+  isFrozen: boolean;
+  isPaused: boolean;
+  isSiloedBorrowing: boolean;
+  accruedToTreasury: string;
+  unbacked: string;
+  flashLoanEnabled: boolean;
+  debtCeiling: string;
+  debtCeilingDecimals: string;
+  eModeCategoryId: string;
+  borrowCap: string;
+  supplyCap: string;
+  borrowableInIsolation: boolean;
+  baseLTVasCollateral: string;
+  reserveLiquidationThreshold: string;
+  reserveLiquidationBonus: string;
+  variableRateSlope1: string;
+  variableRateSlope2: string;
+  baseVariableBorrowRate: string;
+  optimalUsageRatio: string;
+
+  liquidityIndex: string;
+  variableBorrowIndex: string;
+  liquidityRate: string;
+  variableBorrowRate: string;
+
+  lastUpdateTimestamp: string;
+};
+
 export class MoneyMarketContractsManager {
   private static instance: MoneyMarketContractsManager;
 
@@ -42,7 +78,7 @@ export class MoneyMarketContractsManager {
   private uiPoolDataProviderContractInstance: Contract;
   private poolImplementationContractInstance: Contract;
   private moneyMarketTokenContracts: Map<string, Contract> = new Map();
-  public moneyMarketResourcesDetailsMap: Map<
+  public moneyMarketReservesDetailsMap: Map<
     string,
     MoneyMarketResourceDetails
   > = new Map();
@@ -85,14 +121,80 @@ export class MoneyMarketContractsManager {
     return new Contract(address, abi, this.provider);
   }
 
-  async getReservesData({ blockNumber }: { blockNumber?: number }) {
-    const resourcesData =
-      await this.uiPoolDataProviderContractInstance.getReservesData(
-        appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
-        { blockTag: blockNumber }
-      );
+  async getReservesData({
+    blockNumber,
+  }: {
+    blockNumber?: number;
+  }): Promise<MoneyMarketResourceDetails[] | null> {
+    try {
+      const resourcesData =
+        await this.uiPoolDataProviderContractInstance.getReservesData(
+          appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+          { blockTag: blockNumber }
+        );
 
-    return resourcesData;
+      const reservesDecorated: MoneyMarketResourceDetails[] = [];
+
+      for (const reserve of resourcesData[0]) {
+        reservesDecorated.push({
+          underlyingAssetAddress: ethers.utils.getAddress(
+            reserve.underlyingAsset
+          ),
+          aTokenAddress: ethers.utils.getAddress(reserve.aTokenAddress),
+          variableDebtTokenAddress: ethers.utils.getAddress(
+            reserve.variableDebtTokenAddress
+          ),
+          interestRateStrategyAddress: ethers.utils.getAddress(
+            reserve.interestRateStrategyAddress
+          ),
+
+          name: reserve.name,
+          symbol: reserve.symbol,
+          decimals: +reserve.decimals.toString(),
+
+          priceOracle: reserve.priceOracle
+            ? ethers.utils.getAddress(reserve.priceOracle)
+            : '',
+
+          reserveFactor: reserve.reserveFactor.toString(),
+          usageAsCollateralEnabled: reserve.usageAsCollateralEnabled,
+          borrowingEnabled: reserve.borrowingEnabled,
+          isActive: reserve.isActive,
+          isFrozen: reserve.isFrozen,
+          isPaused: reserve.isPaused,
+          isSiloedBorrowing: reserve.isSiloedBorrowing,
+          accruedToTreasury: reserve.accruedToTreasury.toString(),
+          unbacked: reserve.unbacked.toString(),
+          flashLoanEnabled: reserve.flashLoanEnabled,
+          debtCeiling: reserve.debtCeiling.toString(),
+          debtCeilingDecimals: reserve.debtCeilingDecimals.toString(),
+          eModeCategoryId: reserve.eModeCategoryId.toString(),
+          borrowCap: reserve.borrowCap.toString(),
+          supplyCap: reserve.supplyCap.toString(),
+          borrowableInIsolation: reserve.borrowableInIsolation,
+          baseLTVasCollateral: reserve.baseLTVasCollateral.toString(),
+          reserveLiquidationThreshold:
+            reserve.reserveLiquidationThreshold.toString(),
+          reserveLiquidationBonus: reserve.reserveLiquidationBonus.toString(),
+          variableRateSlope1: reserve.variableRateSlope1.toString(),
+          variableRateSlope2: reserve.variableRateSlope2.toString(),
+          baseVariableBorrowRate: reserve.baseVariableBorrowRate.toString(),
+          optimalUsageRatio: reserve.optimalUsageRatio.toString(),
+
+          liquidityIndex: reserve.liquidityIndex.toString(),
+          variableBorrowIndex: reserve.variableBorrowIndex.toString(),
+          liquidityRate: reserve.liquidityRate.toString(),
+          variableBorrowRate: reserve.variableBorrowRate.toString(),
+
+          lastUpdateTimestamp: reserve.lastUpdateTimestamp.toString(),
+        });
+      }
+
+      return reservesDecorated;
+    } catch (e) {
+      console.log(e);
+    }
+    return null;
   }
 
   async initContractInstances({
@@ -103,33 +205,27 @@ export class MoneyMarketContractsManager {
     ctx: SqdProcessorContext<Store>;
   }) {
     try {
-      const resourcesData =
-        await this.uiPoolDataProviderContractInstance.getReservesData(
-          appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
-          { blockTag: blockNumber }
+      const reservesData = await this.getReservesData({ blockNumber });
+
+      if (!reservesData) {
+        console.log(`No reserves data found on initContractInstances`);
+        return;
+      }
+
+      for (const reserve of reservesData) {
+        this.moneyMarketReservesDetailsMap.set(
+          reserve.underlyingAssetAddress,
+          reserve
         );
 
-      for (const {
-        underlyingAsset,
-        aTokenAddress,
-        variableDebtTokenAddress,
-        priceOracle,
-      } of resourcesData[0]) {
-        this.moneyMarketResourcesDetailsMap.set(underlyingAsset, {
-          underlyingAssetAddress: underlyingAsset,
-          aTokenAddress: aTokenAddress,
-          variableDebtTokenAddress: variableDebtTokenAddress,
-          priceOracle: priceOracle,
-        });
-
         this.moneyMarketTokenContracts.set(
-          aTokenAddress,
-          this.getContractInstance(aTokenAddress, aTokenHydration.abi)
+          reserve.aTokenAddress,
+          this.getContractInstance(reserve.aTokenAddress, aTokenHydration.abi)
         );
         this.moneyMarketTokenContracts.set(
-          variableDebtTokenAddress,
+          reserve.variableDebtTokenAddress,
           this.getContractInstance(
-            variableDebtTokenAddress,
+            reserve.variableDebtTokenAddress,
             variableDebtTokenHydration.abi
           )
         );
@@ -139,19 +235,19 @@ export class MoneyMarketContractsManager {
     }
   }
 
-  async getTokenDetails(
+  async getResourceDetails(
     address: string
   ): Promise<MoneyMarketTokenDetails | null> {
     const addressNormalized = ethers.utils.getAddress(address);
 
     const response: MoneyMarketTokenDetails = {
-      address: ethers.utils.getAddress(address).toLowerCase(),
+      address: addressNormalized.toLowerCase(),
       resourceType: ResourceType.Underlying,
     };
 
     if (!this.moneyMarketTokenContracts.has(addressNormalized)) return null;
 
-    this.moneyMarketResourcesDetailsMap.forEach(
+    this.moneyMarketReservesDetailsMap.forEach(
       (resourceDetails, underlyingAssetAddress) => {
         if (resourceDetails.aTokenAddress === addressNormalized) {
           response.resourceType = ResourceType.Collateral;
