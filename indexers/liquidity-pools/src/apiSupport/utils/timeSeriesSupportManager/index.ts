@@ -1,4 +1,4 @@
-import { SupportPgClient } from './pgClient';
+import { SupportPgClient } from './apiSupportPgClient';
 import {
   getAssetSpotPricesByBlocksRange,
   getFirstAvailableAssetSpotPriceEntity,

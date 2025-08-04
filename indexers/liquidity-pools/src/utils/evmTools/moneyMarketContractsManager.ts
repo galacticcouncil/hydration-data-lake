@@ -10,6 +10,7 @@ import { AppConfig } from '../../appConfig';
 import { AccountMmPositionDataContractData } from './types';
 import { BigNumber } from '@galacticcouncil/sdk';
 import pMap from 'p-map';
+import { retryAsync } from '../helpers';
 
 const appConfig = AppConfig.getInstance();
 
@@ -295,11 +296,15 @@ export class MoneyMarketContractsManager {
     if (!this.moneyMarketTokenContracts.has(addressNormalized)) return null;
 
     try {
-      response.value = (
-        await this.moneyMarketTokenContracts
-          .get(addressNormalized)!
-          .totalSupply({ blockTag: blockNumber })
-      ).toString();
+      response.value = await retryAsync({
+        // passThrough: true,
+        fn: async () =>
+          (
+            await this.moneyMarketTokenContracts
+              .get(address)!
+              .totalSupply({ blockTag: blockNumber })
+          ).toString(),
+      });
     } catch (e) {
       console.log(e);
     }
@@ -329,14 +334,16 @@ export class MoneyMarketContractsManager {
 
         if (this.moneyMarketTokenContracts.has(address))
           try {
-            response.value = (
-              await this.moneyMarketTokenContracts
-                .get(address)!
-                .totalSupply({ blockTag: blockNumber })
-            ).toString();
-          } catch (e) {
-            console.log(e);
-          }
+            response.value = await retryAsync({
+              // passThrough: true,
+              fn: async () =>
+                (
+                  await this.moneyMarketTokenContracts
+                    .get(address)!
+                    .totalSupply({ blockTag: blockNumber })
+                ).toString(),
+            });
+          } catch (e) {}
 
         totalResponse.push(response);
       },
@@ -361,12 +368,23 @@ export class MoneyMarketContractsManager {
       return null;
 
     try {
-      const balance = await this.moneyMarketTokenContracts
-        .get(contractAddressNormalized)!
-        .balanceOf(
-          accountAddressNormalized,
-          blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-        );
+      // const balance = await this.moneyMarketTokenContracts
+      //   .get(contractAddressNormalized)!
+      //   .balanceOf(
+      //     accountAddressNormalized,
+      //     blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+      //   );
+
+      const balance = await retryAsync({
+        // passThrough: true,
+        fn: () =>
+          this.moneyMarketTokenContracts
+            .get(contractAddressNormalized)!
+            .balanceOf(
+              accountAddressNormalized,
+              blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+            ),
+      });
 
       if (balance !== undefined && balance !== null)
         return BigInt(balance.toString());
@@ -386,11 +404,20 @@ export class MoneyMarketContractsManager {
     const accountAddressNormalized = ethers.utils.getAddress(accountAddress);
 
     try {
-      const data =
-        await this.poolImplementationContractInstance.getUserAccountData(
-          accountAddressNormalized,
-          blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-        );
+      // const data =
+      //   await this.poolImplementationContractInstance.getUserAccountData(
+      //     accountAddressNormalized,
+      //     blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+      //   );
+
+      const data = await retryAsync<any>({
+        // passThrough: true,
+        fn: () =>
+          this.poolImplementationContractInstance.getUserAccountData(
+            accountAddressNormalized,
+            blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+          ),
+      });
 
       if (!data) return null;
 

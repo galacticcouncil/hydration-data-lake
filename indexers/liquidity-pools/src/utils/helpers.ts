@@ -281,3 +281,36 @@ export function isValueMaxUint256(value: string) {
   const maxUint256 = BigInt('2') ** BigInt(256) - BigInt(1);
   return value >= maxUint256.toString();
 }
+
+export async function retryAsync<T>({
+  fn,
+  delay = 500,
+  retries = 1,
+  retryIf = () => true,
+  passThrough = false,
+}: {
+  fn: () => Promise<T>;
+  retries?: number;
+  delay?: number;
+  passThrough?: boolean;
+  retryIf?: (error: any) => boolean;
+}): Promise<T> {
+  if (passThrough) return fn();
+
+  let attempt = 0;
+
+  while (attempt <= retries) {
+    try {
+      return await fn();
+    } catch (error) {
+      attempt++;
+      if (attempt > retries || !retryIf(error)) throw error;
+
+      console.log(`Retrying... attempt ${attempt} failed `);
+      // console.log(`Retrying... attempt ${attempt} failed with error:`, error);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+
+  throw new Error('Exceeded retry attempts');
+}

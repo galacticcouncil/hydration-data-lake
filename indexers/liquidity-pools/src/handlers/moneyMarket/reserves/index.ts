@@ -19,6 +19,7 @@ export async function handleMmReservesConfigsHistoricalData(
       event.eventData.params?.contractName ===
       EvmContractName.AavePoolConfiguratorImpl
     ) {
+      console.log('-----AavePoolConfiguratorImpl');
       blocksToBeProcessed.set(
         event.eventData.metadata.blockHeader.height,
         event.eventData.metadata.blockHeader

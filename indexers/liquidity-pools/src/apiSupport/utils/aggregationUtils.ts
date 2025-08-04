@@ -7,7 +7,7 @@ import {
 import {
   getBlockByTimestampGrtOrEq,
   getBlockByTimestampLtOrEq,
-} from '../plugins/sql/block.sql';
+} from '../sql/block.sql';
 import type * as pg from 'pg';
 
 export async function getStartStopBlocksFromInput({

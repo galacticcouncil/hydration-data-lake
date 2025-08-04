@@ -19,7 +19,7 @@ To ensure a consistent and coherent field set, the API employs decorators based 
 
 ### Common API definitions
 
-More common types can be found [here](./plugins/query/commonApiTypesDefinition.plugin.ts)
+More common types can be found [here](api/graphql/plugins/query/commonApiTypesDefinition.plugin.ts)
 
 ```graphql
 enum AggregationTimeRange {
