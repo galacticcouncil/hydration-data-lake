@@ -2,6 +2,7 @@ import { gql, makeExtendSchemaPlugin, Plugin } from 'postgraphile';
 import {
   allAssetsYieldMetricsResolver,
   platformTotalTvlResolver,
+  platformTotalVolumesByPeriodResolver,
 } from './resolvers';
 
 export const GlobalMetricsPlugin: Plugin = makeExtendSchemaPlugin(
@@ -10,6 +11,12 @@ export const GlobalMetricsPlugin: Plugin = makeExtendSchemaPlugin(
       typeDefs: gql`
         input AllAssetsYieldMetricsFilter {
           feeMetricsInterval: YieldMetricsInterval = _1MON_
+        }
+
+        input PlatformTotalVolumesByPeriodFilter {
+          startBlockNumber: Int
+          endBlockNumber: Int
+          period: AggregationTimeRange = _24H_
         }
 
         type AssetYieldMetrics {
@@ -34,8 +41,24 @@ export const GlobalMetricsPlugin: Plugin = makeExtendSchemaPlugin(
           paraBlockHeight: Int!
         }
 
+        type PlatformTotalVolumesByPeriod {
+          totalVolNorm: String!
+          omnipoolVolNorm: String!
+          omnipoolFeeVolNorm: String!
+          stableswapVolNorm: String!
+          stableswapFeeVolNorm: String!
+          xykpoolVolNorm: String!
+          xykpoolFeeVolNorm: String!
+          paraBlockHeight: Int!
+        }
+
         type PlatformTotalTvlResponse {
           nodes: [PlatformTotalTvl]!
+          totalCount: Int!
+        }
+
+        type PlatformTotalVolumesByPeriodResponse {
+          nodes: [PlatformTotalVolumesByPeriod]!
           totalCount: Int!
         }
 
@@ -45,12 +68,17 @@ export const GlobalMetricsPlugin: Plugin = makeExtendSchemaPlugin(
           ): AllAssetsYieldMetricsResponse!
 
           platformTotalTvl: PlatformTotalTvlResponse!
+
+          platformTotalVolumesByPeriod(
+            filter: PlatformTotalVolumesByPeriodFilter
+          ): PlatformTotalVolumesByPeriodResponse!
         }
       `,
       resolvers: {
         Query: {
           allAssetsYieldMetrics: allAssetsYieldMetricsResolver,
           platformTotalTvl: platformTotalTvlResolver,
+          platformTotalVolumesByPeriod: platformTotalVolumesByPeriodResolver,
         },
       },
     };

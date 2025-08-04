@@ -125766,6 +125766,12 @@ input AllAssetsYieldMetricsFilter {
   feeMetricsInterval: YieldMetricsInterval = _1MON_
 }
 
+input PlatformTotalVolumesByPeriodFilter {
+  startBlockNumber: Int
+  endBlockNumber: Int
+  period: AggregationTimeRange = _24H_
+}
+
 type AssetYieldMetrics {
   id: String!
   poolType: String!
@@ -125788,8 +125794,24 @@ type PlatformTotalTvl {
   paraBlockHeight: Int!
 }
 
+type PlatformTotalVolumesByPeriod {
+  totalVolNorm: String!
+  omnipoolVolNorm: String!
+  omnipoolFeeVolNorm: String!
+  stableswapVolNorm: String!
+  stableswapFeeVolNorm: String!
+  xykpoolVolNorm: String!
+  xykpoolFeeVolNorm: String!
+  paraBlockHeight: Int!
+}
+
 type PlatformTotalTvlResponse {
   nodes: [PlatformTotalTvl]!
+  totalCount: Int!
+}
+
+type PlatformTotalVolumesByPeriodResponse {
+  nodes: [PlatformTotalVolumesByPeriod]!
   totalCount: Int!
 }
 
@@ -129193,6 +129215,7 @@ type Query {
   omnipoolAssetsLatestTvl(filter: OmnipoolAssetsLatestTvlFilter): OmnipoolAssetsLatestTvlResponse!
   allAssetsYieldMetrics(filter: AllAssetsYieldMetricsFilter): AllAssetsYieldMetricsResponse!
   platformTotalTvl: PlatformTotalTvlResponse!
+  platformTotalVolumesByPeriod(filter: PlatformTotalVolumesByPeriodFilter): PlatformTotalVolumesByPeriodResponse!
   assetLatestSpotPrices(filter: AssetLatestSpotPricesFilter): AssetLatestSpotPricesResponse!
   assetPairPricesAndVolumesByPeriod(filter: AssetPairPricesAndVolumesByPeriodFilter): AssetPairPricesAndVolumeByPeriodResponse!
   accountTotalBalancesByPeriod(filter: AccountTotalBalancesByPeriodFilter): AccountTotalBalancesByPeriodResponse!
