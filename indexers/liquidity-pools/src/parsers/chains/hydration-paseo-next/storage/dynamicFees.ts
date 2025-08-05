@@ -1,0 +1,75 @@
+import { storage, constants } from '../typegenTypes/';
+import {
+  AssetDynamicFeeData,
+  DynamicFeesConstants,
+  GetAssetsDynamicFeesAllInput,
+  GetConstantsInput,
+} from '../../../types/storage';
+import { UnknownVersionError } from '../../../../utils/errors';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
+
+function getConstants({
+  block,
+}: GetConstantsInput): DynamicFeesConstants | null {
+  let assetFeeParameters = null;
+  let protocolFeeParameters = null;
+
+  if (constants.dynamicFees.assetFeeParameters.v324.is(block)) {
+    const resp = constants.dynamicFees.assetFeeParameters.v324.get(block);
+    if (resp) assetFeeParameters = resp;
+  }
+  if (constants.dynamicFees.protocolFeeParameters.v324.is(block)) {
+    const resp = constants.dynamicFees.protocolFeeParameters.v324.get(block);
+    if (resp) protocolFeeParameters = resp;
+  }
+
+  return {
+    assetFeeParameters,
+    protocolFeeParameters,
+  };
+}
+
+async function getAssetFeesAll({
+  block,
+}: GetAssetsDynamicFeesAllInput): Promise<Array<AssetDynamicFeeData>> {
+  if (block.specVersion < 324) return [];
+
+  if (storage.dynamicFees.assetFee.v324.is(block) || block.specVersion >= 324) {
+    return tryExecOrReturnFallback(async () => {
+      const pairsPaged = [];
+
+      try {
+        for await (const page of storage.dynamicFees.assetFee.v324.getPairsPaged(
+          500,
+          block
+        ))
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && !!p[1])
+              .map(([assetId, fees]): AssetDynamicFeeData | null => {
+                if (!fees) return null;
+
+                return {
+                  assetId,
+                  assetFee: fees.assetFee,
+                  protocolFee: fees.protocolFee,
+                  timestamp: fees.timestamp,
+                };
+              })
+              .filter((resp) => !!resp)
+          );
+      } catch (e) {
+        throw e;
+      }
+
+      return pairsPaged;
+    }, []);
+  }
+
+  throw new UnknownVersionError('storage.dynamicFees.assetFee');
+}
+
+export default {
+  getConstants,
+  getAssetFeesAll,
+};

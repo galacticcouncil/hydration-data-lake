@@ -9,8 +9,8 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseTokenAddedParams(event: SqdEvent): OmnipoolTokenAddedEventParams {
-  if (events.omnipool.tokenAdded.v276.is(event)) {
-    return events.omnipool.tokenAdded.v276.decode(event);
+  if (events.omnipool.tokenAdded.v287.is(event)) {
+    return events.omnipool.tokenAdded.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -19,8 +19,8 @@ function parseTokenAddedParams(event: SqdEvent): OmnipoolTokenAddedEventParams {
 function parseTokenRemovedParams(
   event: SqdEvent
 ): OmnipoolTokenRemovedEventParams {
-  if (events.omnipool.tokenRemoved.v276.is(event)) {
-    return events.omnipool.tokenRemoved.v276.decode(event);
+  if (events.omnipool.tokenRemoved.v287.is(event)) {
+    return events.omnipool.tokenRemoved.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -29,8 +29,8 @@ function parseTokenRemovedParams(
 function parseBuyExecutedParams(
   event: SqdEvent
 ): OmnipoolBuyExecutedEventParams {
-  if (events.omnipool.buyExecuted.v276.is(event)) {
-    return events.omnipool.buyExecuted.v276.decode(event);
+  if (events.omnipool.buyExecuted.v287.is(event)) {
+    return events.omnipool.buyExecuted.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -39,8 +39,8 @@ function parseBuyExecutedParams(
 function parseSellExecutedParams(
   event: SqdEvent
 ): OmnipoolSellExecutedEventParams {
-  if (events.omnipool.sellExecuted.v276.is(event)) {
-    return events.omnipool.sellExecuted.v276.decode(event);
+  if (events.omnipool.sellExecuted.v287.is(event)) {
+    return events.omnipool.sellExecuted.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

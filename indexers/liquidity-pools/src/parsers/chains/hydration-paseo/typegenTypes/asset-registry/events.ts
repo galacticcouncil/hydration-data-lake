@@ -1,17 +1,17 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
+import * as v287 from '../v287'
 
 export const registered =  {
     name: 'AssetRegistry.Registered',
     /**
      * Asset was registered.
      */
-    v276: new EventType(
+    v287: new EventType(
         'AssetRegistry.Registered',
         sts.struct({
             assetId: sts.number(),
             assetName: sts.option(() => sts.bytes()),
-            assetType: v276.AssetType,
+            assetType: v287.AssetType,
             existentialDeposit: sts.bigint(),
             xcmRateLimit: sts.option(() => sts.bigint()),
             symbol: sts.option(() => sts.bytes()),
@@ -26,12 +26,12 @@ export const updated =  {
     /**
      * Asset was updated.
      */
-    v276: new EventType(
+    v287: new EventType(
         'AssetRegistry.Updated',
         sts.struct({
             assetId: sts.number(),
             assetName: sts.option(() => sts.bytes()),
-            assetType: v276.AssetType,
+            assetType: v287.AssetType,
             existentialDeposit: sts.bigint(),
             xcmRateLimit: sts.option(() => sts.bigint()),
             symbol: sts.option(() => sts.bytes()),
@@ -46,11 +46,11 @@ export const locationSet =  {
     /**
      * Native location set for an asset.
      */
-    v276: new EventType(
+    v287: new EventType(
         'AssetRegistry.LocationSet',
         sts.struct({
             assetId: sts.number(),
-            location: v276.AssetLocation,
+            location: v287.AssetLocation,
         })
     ),
 }

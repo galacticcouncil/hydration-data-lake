@@ -13,10 +13,11 @@ export const sell =  {
      * - `amount_in`: Amount of asset to be sold to the pool
      * - `min_buy_amount`: Minimum amount required to receive
      * 
-     * Emits `SellExecuted` event when successful.
+     * Emits `SellExecuted` event when successful. Deprecated.
+     * Emits `pallet_broadcast::Swapped` event when successful.
      * 
      */
-    v276: new CallType(
+    v324: new CallType(
         'Stableswap.sell',
         sts.struct({
             poolId: sts.number(),
@@ -31,7 +32,7 @@ export const sell =  {
 export const buy =  {
     name: 'Stableswap.buy',
     /**
-     * Execute a swap of `asset_in` for `asset_out`.
+     * Execute a swap of `asset_out` for `asset_in`.
      * 
      * Parameters:
      * - `origin`:
@@ -41,10 +42,11 @@ export const buy =  {
      * - `amount_out`: Amount of asset to receive from the pool
      * - `max_sell_amount`: Maximum amount allowed to be sold
      * 
-     * Emits `BuyExecuted` event when successful.
+     * Emits `BuyExecuted` event when successful. Deprecated.
+     * Emits `pallet_broadcast::Swapped` event when successful.
      * 
      */
-    v276: new CallType(
+    v324: new CallType(
         'Stableswap.buy',
         sts.struct({
             poolId: sts.number(),

@@ -1,5 +1,6 @@
 import lbp from './lbp';
 import dca from './dca';
+import otc from './otc';
 import xyk from './xyk';
 import omnipool from './omnipool';
 import stableswap from './stableswap';
@@ -22,6 +23,7 @@ export default {
   assetRegistry,
   broadcast,
   dca,
+  otc,
   evm,
   evmAccounts,
   currencies,

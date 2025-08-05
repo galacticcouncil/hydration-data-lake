@@ -9,8 +9,8 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parsePoolCreatedParams(event: SqdEvent): XykPoolCreatedEventParams {
-  if (events.xyk.poolCreated.v276.is(event)) {
-    return events.xyk.poolCreated.v276.decode(event);
+  if (events.xyk.poolCreated.v287.is(event)) {
+    return events.xyk.poolCreated.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -19,24 +19,24 @@ function parsePoolCreatedParams(event: SqdEvent): XykPoolCreatedEventParams {
 function parsePoolDestroyedParams(
   event: SqdEvent
 ): XykPoolDestroyedEventParams {
-  if (events.xyk.poolDestroyed.v276.is(event)) {
-    return events.xyk.poolDestroyed.v276.decode(event);
+  if (events.xyk.poolDestroyed.v287.is(event)) {
+    return events.xyk.poolDestroyed.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseBuyExecutedParams(event: SqdEvent): XykBuyExecutedEventParams {
-  if (events.xyk.buyExecuted.v276.is(event)) {
-    return events.xyk.buyExecuted.v276.decode(event);
+  if (events.xyk.buyExecuted.v287.is(event)) {
+    return events.xyk.buyExecuted.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseSellExecutedParams(event: SqdEvent): XykSellExecutedEventParams {
-  if (events.xyk.sellExecuted.v276.is(event)) {
-    return events.xyk.sellExecuted.v276.decode(event);
+  if (events.xyk.sellExecuted.v287.is(event)) {
+    return events.xyk.sellExecuted.v287.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

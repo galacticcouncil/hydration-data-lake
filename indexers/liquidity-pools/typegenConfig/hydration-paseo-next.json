@@ -1,6 +1,6 @@
 {
   "outDir": "../src/parsers/chains/hydration-paseo-next/typegenTypes/",
-  "specVersions": "../typegenAssets/paseo-next-metadata.jsonl",
+  "specVersions": "../typegenAssets/one-lark-metadata.jsonl",
   "pallets": {
     "Sudo": {
       "calls": ["sudo", "sudo_unchecked_weight", "set_key", "sudo_as"]

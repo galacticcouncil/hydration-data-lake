@@ -3,7 +3,9 @@ import { storage } from '../typegenTypes/';
 import {
   AssetDetails,
   AssetDetailsWithId,
+  AssetExistentialDeposit,
   Erc20AssetContractDetails,
+  GetDataAtBlockInput,
 } from '../../../types/storage';
 import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
 import { AssetType } from '../../../../model';
@@ -14,10 +16,10 @@ async function getAsset(
   assetId: string | number,
   block: BlockHeader
 ): Promise<AssetDetails | null> {
-  if (block.specVersion < 276) return null;
+  if (block.specVersion < 287) return null;
 
-  if (storage.assetRegistry.assets.v276.is(block)) {
-    const resp = await storage.assetRegistry.assets.v276.get(block, +assetId);
+  if (storage.assetRegistry.assets.v287.is(block)) {
+    const resp = await storage.assetRegistry.assets.v287.get(block, +assetId);
 
     return !resp
       ? null
@@ -39,10 +41,10 @@ async function getAssetMany(
   assetIds: Array<string | number>,
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
-  if (block.specVersion < 276) return [];
+  if (block.specVersion < 287) return [];
 
-  if (storage.assetRegistry.assets.v276.is(block)) {
-    const resp = await storage.assetRegistry.assets.v276.getMany(
+  if (storage.assetRegistry.assets.v287.is(block)) {
+    const resp = await storage.assetRegistry.assets.v287.getMany(
       block,
       assetIds.map((id) => +id)
     );
@@ -76,12 +78,12 @@ async function getAssetMany(
 async function getAssetAll(
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
-  if (block.specVersion < 276) return [];
+  if (block.specVersion < 287) return [];
 
-  if (storage.assetRegistry.assets.v276.is(block)) {
+  if (storage.assetRegistry.assets.v287.is(block)) {
     const pairsPaged = [];
 
-    for await (const page of storage.assetRegistry.assets.v276.getPairsPaged(
+    for await (const page of storage.assetRegistry.assets.v287.getPairsPaged(
       100,
       block
     ))
@@ -111,10 +113,10 @@ async function getErc20AssetContractAddress(
   assetId: string | number,
   block: BlockHeader
 ): Promise<Erc20AssetContractDetails | null> {
-  if (block.specVersion < 276) return null;
+  if (block.specVersion < 287) return null;
 
-  if (storage.assetRegistry.assetLocations.v276.is(block)) {
-    const resp = await storage.assetRegistry.assetLocations.v276.get(
+  if (storage.assetRegistry.assetLocations.v287.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v287.get(
       block,
       +assetId
     );
@@ -125,9 +127,23 @@ async function getErc20AssetContractAddress(
   throw new UnknownVersionError('storage.assetRegistry.assetLocations');
 }
 
+async function getAssetsExistentialDepositAll({
+  block,
+}: GetDataAtBlockInput): Promise<Array<AssetExistentialDeposit>> {
+  const allAssetsData = await getAssetAll(block);
+
+  return allAssetsData
+    .filter((a) => !!a.data)
+    .map((asset) => ({
+      assetId: `${asset.assetId}`,
+      existentialDeposit: asset.data!.existentialDeposit,
+    }));
+}
+
 export default {
   getAsset,
   getAssetMany,
   getErc20AssetContractAddress,
   getAssetAll,
+  getAssetsExistentialDepositAll,
 };

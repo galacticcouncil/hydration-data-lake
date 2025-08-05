@@ -16,13 +16,13 @@ import { StorageResolver } from '../../../storageResolver';
 import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
 import {
   AccountData,
-  GetPoolAssetInfoInput,
+  GetPoolAssetInfoInput, GetTokenBalancesManyInput,
   LbpGetPoolDataInput,
   LbpPoolData,
   OmnipoolAssetData,
   OmnipoolGetAssetDataInput,
   StablepoolGetPoolDataInput,
-  StablepoolInfo,
+  StablepoolInfo, TokenAccountBalancesWithAccountId,
   XykGetAssetsInput,
   XykPoolAssetIds,
   XykPoolData,
@@ -45,9 +45,36 @@ export default {
     ...tokens,
     getTokenTotalIssuance: tokens.getTokenTotalIssuance,
     getManyTokensTotalIssuance: tokens.getManyTokensTotalIssuance,
+    getTokenBalancesMany: (
+      args: GetTokenBalancesManyInput
+    ): Promise<TokenAccountBalancesWithAccountId[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetTokenBalancesManyInput,
+        TokenAccountBalancesWithAccountId[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        method: 'getTokenBalancesMany',
+        fallbackFns: [
+          async (fallbackFnArgs) =>
+            await new RuntimeApiResolver().resolveRuntimeApiCall<
+              GetTokenBalancesManyInput,
+              TokenAccountBalancesWithAccountId[] | null
+            >({
+              apiName: RuntimeApiName.CurrenciesApi,
+              apiMethod: RuntimeApiMethodName.synthAccountsMany,
+              args: {
+                block: fallbackFnArgs.block,
+                accountIds: fallbackFnArgs.accountIds!,
+              },
+            }),
+          tokens.getTokenBalancesMany,
+        ],
+      }),
   },
   balances: {
     getTotalIssuance: balances.getTotalIssuance,
+    getNativeTokenBalanceMany: balances.getNativeTokenBalanceMany,
   },
   bonds: {
     getBond: bonds.getBond,
@@ -62,6 +89,9 @@ export default {
     getConstants: stableswap.getConstants,
     getPoolPegs: stableswap.getPoolPegs,
     getAllPoolIds: stableswap.getAllPoolIds,
+    getAllPoolsPegs: stableswap.getAllPoolsPegs,
+    getAllPoolsData: stableswap.getAllPoolsData,
+    getPoolAssetStorageData: stableswap.getPoolAssetStorageData,
     getPoolData: (
       args: StablepoolGetPoolDataInput
     ): Promise<StablepoolInfo | null> =>

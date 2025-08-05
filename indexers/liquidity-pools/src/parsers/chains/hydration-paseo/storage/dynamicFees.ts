@@ -6,6 +6,7 @@ import {
   GetConstantsInput,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
 function getConstants({
   block,
@@ -13,12 +14,12 @@ function getConstants({
   let assetFeeParameters = null;
   let protocolFeeParameters = null;
 
-  if (constants.dynamicFees.assetFeeParameters.v276.is(block)) {
-    const resp = constants.dynamicFees.assetFeeParameters.v276.get(block);
+  if (constants.dynamicFees.assetFeeParameters.v287.is(block)) {
+    const resp = constants.dynamicFees.assetFeeParameters.v287.get(block);
     if (resp) assetFeeParameters = resp;
   }
-  if (constants.dynamicFees.protocolFeeParameters.v276.is(block)) {
-    const resp = constants.dynamicFees.protocolFeeParameters.v276.get(block);
+  if (constants.dynamicFees.protocolFeeParameters.v287.is(block)) {
+    const resp = constants.dynamicFees.protocolFeeParameters.v287.get(block);
     if (resp) protocolFeeParameters = resp;
   }
 
@@ -31,31 +32,38 @@ function getConstants({
 async function getAssetFeesAll({
   block,
 }: GetAssetsDynamicFeesAllInput): Promise<Array<AssetDynamicFeeData>> {
-  if (block.specVersion < 170) return [];
+  if (block.specVersion < 287) return [];
 
-  if (storage.dynamicFees.assetFee.v276.is(block)) {
-    const pairsPaged = [];
+  if (storage.dynamicFees.assetFee.v287.is(block) || block.specVersion >= 287) {
+    return tryExecOrReturnFallback(async () => {
+      const pairsPaged = [];
 
-    for await (const page of storage.dynamicFees.assetFee.v276.getPairsPaged(
-      100,
-      block
-    ))
-      pairsPaged.push(
-        ...page
-          .filter((p) => !!p && !!p[1])
-          .map(([assetId, fees]): AssetDynamicFeeData | null => {
-            if (!fees) return null;
+      try {
+        for await (const page of storage.dynamicFees.assetFee.v287.getPairsPaged(
+          500,
+          block
+        ))
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && !!p[1])
+              .map(([assetId, fees]): AssetDynamicFeeData | null => {
+                if (!fees) return null;
 
-            return {
-              assetId,
-              assetFee: fees.assetFee,
-              protocolFee: fees.protocolFee,
-              timestamp: fees.timestamp,
-            };
-          })
-          .filter((resp) => !!resp)
-      );
-    return pairsPaged;
+                return {
+                  assetId,
+                  assetFee: fees.assetFee,
+                  protocolFee: fees.protocolFee,
+                  timestamp: fees.timestamp,
+                };
+              })
+              .filter((resp) => !!resp)
+          );
+      } catch (e) {
+        throw e;
+      }
+
+      return pairsPaged;
+    }, []);
   }
 
   throw new UnknownVersionError('storage.dynamicFees.assetFee');

@@ -7,8 +7,8 @@ async function getSystemAccount(
   account: string,
   block: BlockHeader
 ): Promise<SystemAccountInfo | null> {
-  if (storage.system.account.v276.is(block)) {
-    const resp = await storage.system.account.v276.get(block, account);
+  if (storage.system.account.v287.is(block)) {
+    const resp = await storage.system.account.v287.get(block, account);
     if (!resp) return null;
 
     return {

@@ -1,6 +1,7 @@
 import { events } from '../typegenTypes';
 import { SqdEvent } from '../../../../processor';
 import {
+  AssetRegistryLocationSetEventParams,
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
 } from '../../../types/events';
@@ -11,7 +12,7 @@ import { UnknownVersionError } from '../../../../utils/errors';
 function parseRegisteredParams(
   event: SqdEvent
 ): AssetRegistryRegisteredEventParams {
-  if (events.assetRegistry.registered.v276.is(event)) {
+  if (events.assetRegistry.registered.v324.is(event)) {
     const {
       assetId,
       assetType,
@@ -21,7 +22,7 @@ function parseRegisteredParams(
       symbol,
       xcmRateLimit,
       decimals,
-    } = events.assetRegistry.registered.v276.decode(event);
+    } = events.assetRegistry.registered.v324.decode(event);
     return {
       assetId,
       assetType: assetType.__kind as AssetType,
@@ -38,7 +39,7 @@ function parseRegisteredParams(
 }
 
 function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
-  if (events.assetRegistry.updated.v276.is(event)) {
+  if (events.assetRegistry.updated.v324.is(event)) {
     const {
       assetId,
       assetType,
@@ -48,7 +49,7 @@ function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
       symbol,
       xcmRateLimit,
       decimals,
-    } = events.assetRegistry.updated.v276.decode(event);
+    } = events.assetRegistry.updated.v324.decode(event);
     return {
       assetId,
       assetType: assetType.__kind as AssetType,
@@ -64,4 +65,23 @@ function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-export default { parseRegisteredParams, parseUpdatedParams };
+function parseLocationSetParams(
+  event: SqdEvent
+): AssetRegistryLocationSetEventParams {
+  if (events.assetRegistry.locationSet.v324.is(event)) {
+    const { assetId, location } =
+      events.assetRegistry.locationSet.v324.decode(event);
+    return {
+      assetId,
+      location,
+    };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+export default {
+  parseRegisteredParams,
+  parseUpdatedParams,
+  parseLocationSetParams,
+};

@@ -58,7 +58,7 @@ export enum NodeEnv {
 export enum ChainName {
   hydration = 'hydration',
   hydration_paseo = 'hydration_paseo',
-  // hydration_paseo_next = 'hydration_paseo_next',
+  hydration_paseo_next = 'hydration_paseo_next',
 }
 
 export enum TraceIdContext {
@@ -114,4 +114,4 @@ export enum SwappedExecutionTypeKind {
 export type BalanceImpactedEventData = {
   eventId: string;
   addresses: string[];
-}
+};

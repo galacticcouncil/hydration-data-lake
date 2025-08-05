@@ -1,15 +1,15 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
+import * as v287 from '../v287'
 
 export const endowed =  {
     name: 'Balances.Endowed',
     /**
      * An account was created with some free balance.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Endowed',
         sts.struct({
-            account: v276.AccountId32,
+            account: v287.AccountId32,
             freeBalance: sts.bigint(),
         })
     ),
@@ -21,10 +21,10 @@ export const dustLost =  {
      * An account was removed whose balance was non-zero but below ExistentialDeposit,
      * resulting in an outright loss.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.DustLost',
         sts.struct({
-            account: v276.AccountId32,
+            account: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -35,11 +35,11 @@ export const transfer =  {
     /**
      * Transfer succeeded.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Transfer',
         sts.struct({
-            from: v276.AccountId32,
-            to: v276.AccountId32,
+            from: v287.AccountId32,
+            to: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -50,10 +50,10 @@ export const balanceSet =  {
     /**
      * A balance was set by root.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.BalanceSet',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             free: sts.bigint(),
         })
     ),
@@ -64,10 +64,10 @@ export const reserved =  {
     /**
      * Some balance was reserved (moved from free to reserved).
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Reserved',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -78,10 +78,10 @@ export const unreserved =  {
     /**
      * Some balance was unreserved (moved from reserved to free).
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Unreserved',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -93,13 +93,13 @@ export const reserveRepatriated =  {
      * Some balance was moved from the reserve of the first account to the second account.
      * Final argument indicates the destination balance type.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.ReserveRepatriated',
         sts.struct({
-            from: v276.AccountId32,
-            to: v276.AccountId32,
+            from: v287.AccountId32,
+            to: v287.AccountId32,
             amount: sts.bigint(),
-            destinationStatus: v276.BalanceStatus,
+            destinationStatus: v287.BalanceStatus,
         })
     ),
 }
@@ -109,10 +109,10 @@ export const deposit =  {
     /**
      * Some amount was deposited (e.g. for transaction fees).
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Deposit',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -123,10 +123,10 @@ export const withdraw =  {
     /**
      * Some amount was withdrawn from the account (e.g. for transaction fees).
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Withdraw',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -137,10 +137,10 @@ export const slashed =  {
     /**
      * Some amount was removed from the account (e.g. for misbehavior).
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Slashed',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -151,10 +151,10 @@ export const minted =  {
     /**
      * Some amount was minted into an account.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Minted',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -165,10 +165,10 @@ export const burned =  {
     /**
      * Some amount was burned from an account.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Burned',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -179,10 +179,10 @@ export const suspended =  {
     /**
      * Some amount was suspended from an account (it can be restored later).
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Suspended',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -193,10 +193,10 @@ export const restored =  {
     /**
      * Some amount was restored into an account.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Restored',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -207,10 +207,10 @@ export const upgraded =  {
     /**
      * An account was upgraded.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Upgraded',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
         })
     ),
 }
@@ -220,7 +220,7 @@ export const issued =  {
     /**
      * Total issuance was increased by `amount`, creating a credit to be balanced.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Issued',
         sts.struct({
             amount: sts.bigint(),
@@ -233,7 +233,7 @@ export const rescinded =  {
     /**
      * Total issuance was decreased by `amount`, creating a debt to be balanced.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Rescinded',
         sts.struct({
             amount: sts.bigint(),
@@ -246,10 +246,10 @@ export const locked =  {
     /**
      * Some balance was locked.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Locked',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -260,10 +260,10 @@ export const unlocked =  {
     /**
      * Some balance was unlocked.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Unlocked',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -274,10 +274,10 @@ export const frozen =  {
     /**
      * Some balance was frozen.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Frozen',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -288,10 +288,10 @@ export const thawed =  {
     /**
      * Some balance was thawed.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.Thawed',
         sts.struct({
-            who: v276.AccountId32,
+            who: v287.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -302,7 +302,7 @@ export const totalIssuanceForced =  {
     /**
      * The `TotalIssuance` was forcefully changed.
      */
-    v276: new EventType(
+    v287: new EventType(
         'Balances.TotalIssuanceForced',
         sts.struct({
             old: sts.bigint(),

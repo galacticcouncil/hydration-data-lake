@@ -1,6 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
-import * as v278 from '../v278'
+import * as v324 from '../v324'
+import * as v335 from '../v335'
 
 export const batch =  {
     name: 'Utility.batch',
@@ -24,10 +24,10 @@ export const batch =  {
      * and the error of the failed call. If all were successful, then the `BatchCompleted`
      * event is deposited.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Utility.batch',
         sts.struct({
-            calls: sts.array(() => v276.Call),
+            calls: sts.array(() => v324.Call),
         })
     ),
     /**
@@ -50,10 +50,10 @@ export const batch =  {
      * and the error of the failed call. If all were successful, then the `BatchCompleted`
      * event is deposited.
      */
-    v278: new CallType(
+    v335: new CallType(
         'Utility.batch',
         sts.struct({
-            calls: sts.array(() => v278.Call),
+            calls: sts.array(() => v335.Call),
         })
     ),
 }
@@ -75,11 +75,11 @@ export const asDerivative =  {
      * 
      * The dispatch origin for this call must be _Signed_.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Utility.as_derivative',
         sts.struct({
             index: sts.number(),
-            call: v276.Call,
+            call: v324.Call,
         })
     ),
     /**
@@ -97,11 +97,11 @@ export const asDerivative =  {
      * 
      * The dispatch origin for this call must be _Signed_.
      */
-    v278: new CallType(
+    v335: new CallType(
         'Utility.as_derivative',
         sts.struct({
             index: sts.number(),
-            call: v278.Call,
+            call: v335.Call,
         })
     ),
 }
@@ -123,10 +123,10 @@ export const batchAll =  {
      * ## Complexity
      * - O(C) where C is the number of calls to be batched.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Utility.batch_all',
         sts.struct({
-            calls: sts.array(() => v276.Call),
+            calls: sts.array(() => v324.Call),
         })
     ),
     /**
@@ -144,10 +144,10 @@ export const batchAll =  {
      * ## Complexity
      * - O(C) where C is the number of calls to be batched.
      */
-    v278: new CallType(
+    v335: new CallType(
         'Utility.batch_all',
         sts.struct({
-            calls: sts.array(() => v278.Call),
+            calls: sts.array(() => v335.Call),
         })
     ),
 }
@@ -162,11 +162,11 @@ export const dispatchAs =  {
      * ## Complexity
      * - O(1).
      */
-    v276: new CallType(
+    v324: new CallType(
         'Utility.dispatch_as',
         sts.struct({
-            asOrigin: v276.OriginCaller,
-            call: v276.Call,
+            asOrigin: v324.OriginCaller,
+            call: v324.Call,
         })
     ),
     /**
@@ -177,11 +177,11 @@ export const dispatchAs =  {
      * ## Complexity
      * - O(1).
      */
-    v278: new CallType(
+    v335: new CallType(
         'Utility.dispatch_as',
         sts.struct({
-            asOrigin: v278.OriginCaller,
-            call: v278.Call,
+            asOrigin: v335.OriginCaller,
+            call: v335.Call,
         })
     ),
 }
@@ -203,10 +203,10 @@ export const forceBatch =  {
      * ## Complexity
      * - O(C) where C is the number of calls to be batched.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Utility.force_batch',
         sts.struct({
-            calls: sts.array(() => v276.Call),
+            calls: sts.array(() => v324.Call),
         })
     ),
     /**
@@ -224,10 +224,10 @@ export const forceBatch =  {
      * ## Complexity
      * - O(C) where C is the number of calls to be batched.
      */
-    v278: new CallType(
+    v335: new CallType(
         'Utility.force_batch',
         sts.struct({
-            calls: sts.array(() => v278.Call),
+            calls: sts.array(() => v335.Call),
         })
     ),
 }
@@ -242,11 +242,11 @@ export const withWeight =  {
      * 
      * The dispatch origin for this call must be _Root_.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Utility.with_weight',
         sts.struct({
-            call: v276.Call,
-            weight: v276.Weight,
+            call: v324.Call,
+            weight: v324.Weight,
         })
     ),
     /**
@@ -257,11 +257,11 @@ export const withWeight =  {
      * 
      * The dispatch origin for this call must be _Root_.
      */
-    v278: new CallType(
+    v335: new CallType(
         'Utility.with_weight',
         sts.struct({
-            call: v278.Call,
-            weight: v278.Weight,
+            call: v335.Call,
+            weight: v335.Weight,
         })
     ),
 }

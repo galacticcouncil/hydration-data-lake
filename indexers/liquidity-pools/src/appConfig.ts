@@ -18,6 +18,10 @@ import {
   calls as hydrationPaseoCalls,
   events as hydrationPaseoEvents,
 } from './parsers/chains/hydration-paseo/typegenTypes';
+import {
+  calls as hydrationPaseoNextCalls,
+  events as hydrationPaseoNextEvents,
+} from './parsers/chains/hydration-paseo-next/typegenTypes';
 import { ChainName, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
 import aTokenHydration from './utils/evmTools/abi/aave/aTokenHydration.json';
@@ -29,8 +33,8 @@ dotenv.config({
     if (process.env.CHAIN === 'hydration') envFileName = '.env.hydration';
     if (process.env.CHAIN === 'hydration_paseo')
       envFileName = '.env.hydration-paseo';
-    // if (process.env.CHAIN === 'hydration_paseo_next')
-    //   envFileName = '.env.hydration-paseo-next';
+    if (process.env.CHAIN === 'hydration_paseo_next')
+      envFileName = '.env.hydration-paseo-next';
 
     switch (process.env.NODE_ENV as NodeEnv) {
       case NodeEnv.TEST:
@@ -411,9 +415,9 @@ export class AppConfig {
       case ChainName.hydration_paseo:
         events = hydrationPaseoEvents;
         break;
-      // case ChainName.hydration_paseo_next:
-      //   events = hydrationPaseoNextEvents;
-      //   break;
+      case ChainName.hydration_paseo_next:
+        events = hydrationPaseoNextEvents;
+        break;
       default:
         return [];
     }
@@ -422,7 +426,7 @@ export class AppConfig {
       events.assetRegistry.registered.name,
       events.assetRegistry.updated.name,
       events.assetRegistry.locationSet.name,
-      events.broadcast.swapped.name,
+      // events.broadcast.swapped.name,
       events.evm.log.name,
       events.evmAccounts.bound.name,
 
@@ -473,14 +477,18 @@ export class AppConfig {
       events.balances.withdraw.name,
     ];
 
-    if (this.CHAIN === ChainName.hydration) {
+    if (
+      this.CHAIN === ChainName.hydration ||
+      this.CHAIN === ChainName.hydration_paseo
+    ) {
+      eventsToListen.push(hydrationEvents.broadcast.swapped.name);
       eventsToListen.push(hydrationEvents.broadcast.swapped2.name);
       eventsToListen.push(hydrationEvents.broadcast.swapped3.name);
     }
 
-    // if (this.CHAIN === ChainName.hydration_paseo_next) {
-    //   eventsToListen.push(hydrationPaseoNextEvents.ammSupport.swapped.name);
-    // }
+    if (this.CHAIN === ChainName.hydration_paseo_next) {
+      eventsToListen.push(hydrationPaseoNextEvents.broadcast.swapped3.name);
+    }
 
     if (this.PROCESS_LBP_POOLS) {
       eventsToListen.push(
@@ -560,9 +568,9 @@ export class AppConfig {
       case ChainName.hydration_paseo:
         calls = hydrationPaseoCalls;
         break;
-      // case ChainName.hydration_paseo_next:
-      //   calls = hydrationPaseoNextCalls;
-      //   break;
+      case ChainName.hydration_paseo_next:
+        calls = hydrationPaseoNextCalls;
+        break;
       default:
         return [];
     }

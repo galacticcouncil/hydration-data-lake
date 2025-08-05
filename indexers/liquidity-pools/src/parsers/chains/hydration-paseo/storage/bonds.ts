@@ -5,15 +5,14 @@ import {
   GetBondByIdInput,
   GetBondsAllInput,
 } from '../../../types/storage';
-import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
-import { AssetType } from '../../../../model';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
 async function getBond({
   bondId,
   block,
 }: GetBondByIdInput): Promise<BondDetails | null> {
-  if (storage.bonds.bonds.v276.is(block)) {
-    const resp = await storage.bonds.bonds.v276.get(block, bondId);
+  if (storage.bonds.bonds.v287.is(block)) {
+    const resp = await storage.bonds.bonds.v287.get(block, bondId);
     if (!resp) return null;
     return {
       bondId,
@@ -28,22 +27,31 @@ async function getBond({
 async function getBondsAll({
   block,
 }: GetBondsAllInput): Promise<BondDetails[]> {
-  if (block.specVersion < 276) return [];
+  if (block.specVersion < 287) return [];
 
-  if (storage.bonds.bonds.v276.is(block)) {
-    const pairsPaged = [];
+  if (storage.bonds.bonds.v287.is(block) || block.specVersion >= 287) {
+    return tryExecOrReturnFallback(async () => {
+      const pairsPaged = [];
 
-    for await (const page of storage.bonds.bonds.v276.getPairsPaged(100, block))
-      pairsPaged.push(
-        ...page
-          .filter((p) => !!p && !!p[1])
-          .map(([bondId, bondDetails]) => ({
-            bondId,
-            underlyingAsset: bondDetails![0],
-            maturity: bondDetails![1],
-          }))
-      );
-    return pairsPaged;
+      try {
+        for await (const page of storage.bonds.bonds.v287.getPairsPaged(
+          500,
+          block
+        ))
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && !!p[1])
+              .map(([bondId, bondDetails]) => ({
+                bondId,
+                underlyingAsset: bondDetails![0],
+                maturity: bondDetails![1],
+              }))
+          );
+      } catch (e) {
+        throw e;
+      }
+      return pairsPaged;
+    }, []);
   }
 
   throw new UnknownVersionError('storage.bonds.bonds');

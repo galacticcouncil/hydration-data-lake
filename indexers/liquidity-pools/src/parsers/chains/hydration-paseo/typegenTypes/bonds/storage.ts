@@ -5,14 +5,14 @@ export const bondIds =  {
      *  Registered bond ids.
      *  Maps (underlying asset ID, maturity) -> bond ID
      */
-    v276: new StorageType('Bonds.BondIds', 'Optional', [sts.tuple(() => [sts.number(), sts.bigint()])], sts.number()) as BondIdsV276,
+    v287: new StorageType('Bonds.BondIds', 'Optional', [sts.tuple(() => [sts.number(), sts.bigint()])], sts.number()) as BondIdsV287,
 }
 
 /**
  *  Registered bond ids.
  *  Maps (underlying asset ID, maturity) -> bond ID
  */
-export interface BondIdsV276  {
+export interface BondIdsV287  {
     is(block: RuntimeCtx): boolean
     get(block: Block, key: [number, bigint]): Promise<(number | undefined)>
     getMany(block: Block, keys: [number, bigint][]): Promise<(number | undefined)[]>
@@ -31,14 +31,14 @@ export const bonds =  {
      *  Registered bonds.
      *  Maps bond ID -> (underlying asset ID, maturity)
      */
-    v276: new StorageType('Bonds.Bonds', 'Optional', [sts.number()], sts.tuple(() => [sts.number(), sts.bigint()])) as BondsV276,
+    v287: new StorageType('Bonds.Bonds', 'Optional', [sts.number()], sts.tuple(() => [sts.number(), sts.bigint()])) as BondsV287,
 }
 
 /**
  *  Registered bonds.
  *  Maps bond ID -> (underlying asset ID, maturity)
  */
-export interface BondsV276  {
+export interface BondsV287  {
     is(block: RuntimeCtx): boolean
     get(block: Block, key: number): Promise<([number, bigint] | undefined)>
     getMany(block: Block, keys: number[]): Promise<([number, bigint] | undefined)[]>

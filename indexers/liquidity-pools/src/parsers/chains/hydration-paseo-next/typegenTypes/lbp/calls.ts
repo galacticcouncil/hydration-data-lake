@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
+import * as v324 from '../v324'
 
 export const createPool =  {
     name: 'LBP.create_pool',
@@ -38,19 +38,19 @@ export const createPool =  {
      * This increases the price of the sold asset on every trade. Make sure to only run this with
      * previously illiquid assets.
      */
-    v276: new CallType(
+    v324: new CallType(
         'LBP.create_pool',
         sts.struct({
-            poolOwner: v276.AccountId32,
+            poolOwner: v324.AccountId32,
             assetA: sts.number(),
             assetAAmount: sts.bigint(),
             assetB: sts.number(),
             assetBAmount: sts.bigint(),
             initialWeight: sts.number(),
             finalWeight: sts.number(),
-            weightCurve: v276.WeightCurveType,
+            weightCurve: v324.WeightCurveType,
             fee: sts.tuple(() => [sts.number(), sts.number()]),
-            feeCollector: v276.AccountId32,
+            feeCollector: v324.AccountId32,
             repayTarget: sts.bigint(),
         })
     ),
@@ -72,9 +72,10 @@ export const sell =  {
      * - `amount`: The amount of `asset_in`
      * - `max_limit`: minimum amount of `asset_out` / amount of asset_out to be obtained from the pool in exchange for `asset_in`.
      * 
-     * Emits `SellExecuted` when successful.
+     * Emits `SellExecuted` when successful. Deprecated.
+     * Emits `pallet_broadcast::Swapped` when successful.
      */
-    v276: new CallType(
+    v324: new CallType(
         'LBP.sell',
         sts.struct({
             assetIn: sts.number(),
@@ -101,9 +102,10 @@ export const buy =  {
      * - `amount`: The amount of `asset_out`.
      * - `max_limit`: maximum amount of `asset_in` to be sold in exchange for `asset_out`.
      * 
-     * Emits `BuyExecuted` when successful.
+     * Emits `BuyExecuted` when successful. Deprecated.
+     * Emits `pallet_broadcast::Swapped` when successful.
      */
-    v276: new CallType(
+    v324: new CallType(
         'LBP.buy',
         sts.struct({
             assetOut: sts.number(),

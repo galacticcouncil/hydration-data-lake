@@ -5,9 +5,8 @@ import {
   ParsedEventsCallsData,
   EventDataType,
   CallMetadata,
-  StoragePrefetchIdsGroup,
 } from './types';
-import { EventName, RelayChainInfo } from '../types/events';
+import { EventName } from '../types/events';
 import {
   SqdBlock,
   SqdCall,
@@ -16,9 +15,6 @@ import {
   SqdProcessorContext,
 } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import parsers from '../';
-// import { calls, events } from '../chains/hydration/typegenTypes'; // TODO fix for different CHAIN env value
-// import { calls, events } from '../chains/hydration-paseo-next/typegenTypes';
 
 import {
   calls as hydrationCalls,
@@ -28,10 +24,10 @@ import {
   calls as hydrationPaseoCalls,
   events as hydrationPaseoEvents,
 } from '../chains/hydration-paseo/typegenTypes';
-// import {
-//   calls as hydrationPaseoNextCalls,
-//   events as hydrationPaseoNextEvents,
-// } from '../chains/hydration-paseo-next/typegenTypes';
+import {
+  calls as hydrationPaseoNextCalls,
+  events as hydrationPaseoNextEvents,
+} from '../chains/hydration-paseo-next/typegenTypes';
 
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { EventDataParserHelper } from './eventDataParserHelper';
@@ -120,11 +116,10 @@ export async function getParsedEventsData(
       events = hydrationPaseoEvents;
       calls = hydrationPaseoCalls;
       break;
-
-    // case ChainName.hydration_paseo_next:
-    //   events = hydrationPaseoNextEvents;
-    //   calls = hydrationPaseoNextCalls;
-    //   break;
+    case ChainName.hydration_paseo_next:
+      events = hydrationPaseoNextEvents;
+      calls = hydrationPaseoNextCalls;
+      break;
   }
 
   const parsedDataManager = new BatchBlocksParsedDataManager();
@@ -707,7 +702,7 @@ export async function getParsedEventsData(
         /**
          * ==== Swapped ====
          */
-        case events.broadcast.swapped.name: {
+        case (events as typeof hydrationEvents).broadcast.swapped2?.name: {
           const preparedData = parserHelper.parseBroadcastSwappedData();
           parsedDataManager.set(EventName.Broadcast_Swapped, preparedData);
 
@@ -821,7 +816,7 @@ export async function getParsedEventsData(
         /**
          * ==== Swapped3 ====
          */
-        case (events as typeof hydrationEvents).broadcast.swapped3?.name: {
+        case events.broadcast.swapped3.name: {
           const preparedData = parserHelper.parseBroadcastSwapped3Data();
           parsedDataManager.set(EventName.Broadcast_Swapped3, preparedData);
 

@@ -4,8 +4,8 @@ import { EvmAccountsBoundEventParams } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseBoundParams(event: SqdEvent): EvmAccountsBoundEventParams | null {
-  if (events.evmAccounts.bound.v276.is(event)) {
-    const { address, account } = events.evmAccounts.bound.v276.decode(event);
+  if (events.evmAccounts.bound.v287.is(event)) {
+    const { address, account } = events.evmAccounts.bound.v287.decode(event);
 
     return {
       accountAddress: account,

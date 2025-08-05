@@ -17,10 +17,11 @@ export const sell =  {
      * - `amount`: Amount of asset sold
      * - `min_buy_amount`: Minimum amount required to receive
      * 
-     * Emits `SellExecuted` event when successful.
+     * Emits `SellExecuted` event when successful. Deprecated.
+     * Emits `pallet_broadcast::Swapped` event when successful.
      * 
      */
-    v276: new CallType(
+    v287: new CallType(
         'Omnipool.sell',
         sts.struct({
             assetIn: sts.number(),
@@ -48,10 +49,11 @@ export const buy =  {
      * - `amount`: Amount of asset sold
      * - `max_sell_amount`: Maximum amount to be sold.
      * 
-     * Emits `BuyExecuted` event when successful.
+     * Emits `BuyExecuted` event when successful. Deprecated.
+     * Emits `pallet_broadcast::Swapped` event when successful.
      * 
      */
-    v276: new CallType(
+    v287: new CallType(
         'Omnipool.buy',
         sts.struct({
             assetOut: sts.number(),

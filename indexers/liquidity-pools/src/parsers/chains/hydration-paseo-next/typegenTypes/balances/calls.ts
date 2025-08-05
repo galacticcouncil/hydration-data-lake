@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
+import * as v324 from '../v324'
 
 export const transferAllowDeath =  {
     name: 'Balances.transfer_allow_death',
@@ -12,10 +12,10 @@ export const transferAllowDeath =  {
      * 
      * The dispatch origin for this call must be `Signed` by the transactor.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Balances.transfer_allow_death',
         sts.struct({
-            dest: v276.AccountId32,
+            dest: v324.AccountId32,
             value: sts.bigint(),
         })
     ),
@@ -27,11 +27,11 @@ export const forceTransfer =  {
      * Exactly as `transfer_allow_death`, except the origin must be root and the source account
      * may be specified.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Balances.force_transfer',
         sts.struct({
-            source: v276.AccountId32,
-            dest: v276.AccountId32,
+            source: v324.AccountId32,
+            dest: v324.AccountId32,
             value: sts.bigint(),
         })
     ),
@@ -47,10 +47,10 @@ export const transferKeepAlive =  {
      * 
      * [`transfer_allow_death`]: struct.Pallet.html#method.transfer
      */
-    v276: new CallType(
+    v324: new CallType(
         'Balances.transfer_keep_alive',
         sts.struct({
-            dest: v276.AccountId32,
+            dest: v324.AccountId32,
             value: sts.bigint(),
         })
     ),
@@ -75,10 +75,10 @@ export const transferAll =  {
      *   transfer everything except at least the existential deposit, which will guarantee to
      *   keep the sender account alive (true).
      */
-    v276: new CallType(
+    v324: new CallType(
         'Balances.transfer_all',
         sts.struct({
-            dest: v276.AccountId32,
+            dest: v324.AccountId32,
             keepAlive: sts.boolean(),
         })
     ),
@@ -91,10 +91,10 @@ export const forceUnreserve =  {
      * 
      * Can only be called by ROOT.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Balances.force_unreserve',
         sts.struct({
-            who: v276.AccountId32,
+            who: v324.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -112,10 +112,10 @@ export const upgradeAccounts =  {
      * be upgraded. (We let some not have to be upgraded just in order to allow for the
      * possibility of churn).
      */
-    v276: new CallType(
+    v324: new CallType(
         'Balances.upgrade_accounts',
         sts.struct({
-            who: sts.array(() => v276.AccountId32),
+            who: sts.array(() => v324.AccountId32),
         })
     ),
 }
@@ -127,10 +127,10 @@ export const forceSetBalance =  {
      * 
      * The dispatch origin for this call is `root`.
      */
-    v276: new CallType(
+    v324: new CallType(
         'Balances.force_set_balance',
         sts.struct({
-            who: v276.AccountId32,
+            who: v324.AccountId32,
             newFree: sts.bigint(),
         })
     ),
@@ -145,11 +145,31 @@ export const forceAdjustTotalIssuance =  {
      * 
      * # Example
      */
-    v276: new CallType(
+    v324: new CallType(
         'Balances.force_adjust_total_issuance',
         sts.struct({
-            direction: v276.AdjustmentDirection,
+            direction: v324.AdjustmentDirection,
             delta: sts.bigint(),
+        })
+    ),
+}
+
+export const burn =  {
+    name: 'Balances.burn',
+    /**
+     * Burn the specified liquid free balance from the origin account.
+     * 
+     * If the origin's account ends up below the existential deposit as a result
+     * of the burn and `keep_alive` is false, the account will be reaped.
+     * 
+     * Unlike sending funds to a _burn_ address, which merely makes the funds inaccessible,
+     * this `burn` operation will reduce total issuance by the amount _burned_.
+     */
+    v324: new CallType(
+        'Balances.burn',
+        sts.struct({
+            value: sts.bigint(),
+            keepAlive: sts.boolean(),
         })
     ),
 }

@@ -5,7 +5,7 @@ export const addedToWhitelist =  {
     /**
      * Oracle was added to the whitelist.
      */
-    v276: new EventType(
+    v287: new EventType(
         'EmaOracle.AddedToWhitelist',
         sts.struct({
             source: sts.bytes(),
@@ -19,7 +19,7 @@ export const removedFromWhitelist =  {
     /**
      * Oracle was removed from the whitelist.
      */
-    v276: new EventType(
+    v287: new EventType(
         'EmaOracle.RemovedFromWhitelist',
         sts.struct({
             source: sts.bytes(),

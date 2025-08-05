@@ -12,6 +12,10 @@ import {
   calls as hydrationPaseoCalls,
   events as hydrationPaseoEvents,
 } from '../../parsers/chains/hydration-paseo/typegenTypes';
+import {
+  calls as hydrationPaseoNextCalls,
+  events as hydrationPaseoNextEvents,
+} from '../../parsers/chains/hydration-paseo-next/typegenTypes';
 
 export async function handleRelayChainBlocks(ctx: SqdProcessorContext<Store>) {
   let events = null;
@@ -26,11 +30,10 @@ export async function handleRelayChainBlocks(ctx: SqdProcessorContext<Store>) {
       events = hydrationPaseoEvents;
       calls = hydrationPaseoCalls;
       break;
-
-    // case ChainName.hydration_paseo_next:
-    //   events = hydrationPaseoNextEvents;
-    //   calls = hydrationPaseoNextCalls;
-    //   break;
+    case ChainName.hydration_paseo_next:
+      events = hydrationPaseoNextEvents;
+      calls = hydrationPaseoNextCalls;
+      break;
   }
 
   for (const block of ctx.blocks) {

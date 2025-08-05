@@ -1,6 +1,6 @@
 import lbp from './lbp';
-import xyk from './xyk';
 import dca from './dca';
+import xyk from './xyk';
 import parachainSystem from './parachainSystem';
 import { CallParserMethods } from '../../../types/common';
 

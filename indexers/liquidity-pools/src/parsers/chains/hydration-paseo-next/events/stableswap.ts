@@ -12,8 +12,11 @@ import { UnknownVersionError } from '../../../../utils/errors';
 function parsePoolCreatedParams(
   event: SqdEvent
 ): StableswapPoolCreatedEventParams {
-  if (events.stableswap.poolCreated.v276.is(event)) {
-    return events.stableswap.poolCreated.v276.decode(event);
+  if (events.stableswap.poolCreated.v324.is(event)) {
+    return events.stableswap.poolCreated.v324.decode(event);
+  }
+  if (events.stableswap.poolCreated.v324.is(event)) {
+    return events.stableswap.poolCreated.v324.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -22,8 +25,8 @@ function parsePoolCreatedParams(
 function parseLiquidityAddedParams(
   event: SqdEvent
 ): StableswapLiquidityAddedEventParams {
-  if (events.stableswap.liquidityAdded.v276.is(event)) {
-    return events.stableswap.liquidityAdded.v276.decode(event);
+  if (events.stableswap.liquidityAdded.v324.is(event)) {
+    return events.stableswap.liquidityAdded.v324.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -32,8 +35,8 @@ function parseLiquidityAddedParams(
 function parseLiquidityRemovedParams(
   event: SqdEvent
 ): StableswapLiquidityRemovedEventParams {
-  if (events.stableswap.liquidityRemoved.v276.is(event)) {
-    return events.stableswap.liquidityRemoved.v276.decode(event);
+  if (events.stableswap.liquidityRemoved.v324.is(event)) {
+    return events.stableswap.liquidityRemoved.v324.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -42,8 +45,8 @@ function parseLiquidityRemovedParams(
 function parseBuyExecutedParams(
   event: SqdEvent
 ): StableswapBuyExecutedEventParams {
-  if (events.stableswap.buyExecuted.v276.is(event)) {
-    return events.stableswap.buyExecuted.v276.decode(event);
+  if (events.stableswap.buyExecuted.v324.is(event)) {
+    return events.stableswap.buyExecuted.v324.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -52,8 +55,8 @@ function parseBuyExecutedParams(
 function parseSellExecutedParams(
   event: SqdEvent
 ): StableswapSellExecutedEventParams {
-  if (events.stableswap.sellExecuted.v276.is(event)) {
-    return events.stableswap.sellExecuted.v276.decode(event);
+  if (events.stableswap.sellExecuted.v324.is(event)) {
+    return events.stableswap.sellExecuted.v324.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

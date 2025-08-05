@@ -1,42 +1,42 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
+import * as v324 from '../v324'
 
 export const assets =  {
     /**
      *  State of an asset in the omnipool
      */
-    v276: new StorageType('Omnipool.Assets', 'Optional', [sts.number()], v276.AssetState) as AssetsV276,
+    v324: new StorageType('Omnipool.Assets', 'Optional', [sts.number()], v324.AssetState) as AssetsV324,
 }
 
 /**
  *  State of an asset in the omnipool
  */
-export interface AssetsV276  {
+export interface AssetsV324  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: number): Promise<(v276.AssetState | undefined)>
-    getMany(block: Block, keys: number[]): Promise<(v276.AssetState | undefined)[]>
+    get(block: Block, key: number): Promise<(v324.AssetState | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v324.AssetState | undefined)[]>
     getKeys(block: Block): Promise<number[]>
     getKeys(block: Block, key: number): Promise<number[]>
     getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
     getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
-    getPairs(block: Block): Promise<[k: number, v: (v276.AssetState | undefined)][]>
-    getPairs(block: Block, key: number): Promise<[k: number, v: (v276.AssetState | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v276.AssetState | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v276.AssetState | undefined)][]>
+    getPairs(block: Block): Promise<[k: number, v: (v324.AssetState | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v324.AssetState | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v324.AssetState | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v324.AssetState | undefined)][]>
 }
 
 export const hubAssetTradability =  {
     /**
      *  Tradable state of hub asset.
      */
-    v276: new StorageType('Omnipool.HubAssetTradability', 'Default', [], v276.Tradability) as HubAssetTradabilityV276,
+    v324: new StorageType('Omnipool.HubAssetTradability', 'Default', [], v324.Tradability) as HubAssetTradabilityV324,
 }
 
 /**
  *  Tradable state of hub asset.
  */
-export interface HubAssetTradabilityV276  {
+export interface HubAssetTradabilityV324  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v276.Tradability
-    get(block: Block): Promise<(v276.Tradability | undefined)>
+    getDefault(block: Block): v324.Tradability
+    get(block: Block): Promise<(v324.Tradability | undefined)>
 }
