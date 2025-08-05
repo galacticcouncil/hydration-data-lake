@@ -544,6 +544,7 @@ enum SwapFillerType {
   LBP
   OTC
   AAVE
+  HSM
 }
 
 enum TradeOperationType {

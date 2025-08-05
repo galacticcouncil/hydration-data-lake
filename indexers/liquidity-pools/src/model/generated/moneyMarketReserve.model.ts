@@ -11,7 +11,7 @@ export class MoneyMarketReserve {
   }
 
   /**
-   * <a_token_address>
+   * <underlying_asset_address>
    */
   @PrimaryColumn_()
   id!: string

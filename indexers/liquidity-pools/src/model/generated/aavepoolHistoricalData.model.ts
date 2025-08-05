@@ -40,6 +40,9 @@ export class AavepoolHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   liquidityOut!: bigint
 
+  /**
+   * Ref asset value of liquidityIn property - what actual amount of collateral is locked in pool 
+   */
   @Column_("text", {nullable: true})
   tvlInRefAssetNorm!: string | undefined | null
 

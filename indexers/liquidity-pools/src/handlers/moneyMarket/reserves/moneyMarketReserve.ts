@@ -78,6 +78,7 @@ export async function getOrCreateMoneyMarketReserve({
     ensure: true,
     blockHeader,
   });
+
   if (!underliningAssetEntity) {
     console.log(
       `getOrCreateMoneyMarketReserve :: underliningAssetEntity is not found`
@@ -85,11 +86,13 @@ export async function getOrCreateMoneyMarketReserve({
     return null;
   }
 
-  const aTokenEntity = await getOrCreateMoneyMarketAsset({
+  const aTokenEntity = await getOrCreateAsset({
     evmAddress: reserveDataToProcess.aTokenAddress.toLowerCase(),
     ctx,
     ensure: true,
+    blockHeader,
   });
+
   if (!aTokenEntity) {
     console.log(`getOrCreateMoneyMarketReserve :: aTokenEntity is not found`);
     return null;
@@ -107,24 +110,28 @@ export async function getOrCreateMoneyMarketReserve({
     return null;
   }
 
-  const aavepoolEntity = await getOrCreateAavepool({
-    reserveAssetId: underliningAssetEntity.assetRegistryId!,
-    aTokenId: aTokenEntity.assetRegistryId!,
-    ensure: true,
-    blockHeader,
-    ctx,
-  });
-  if (!aavepoolEntity) {
-    console.log(`getOrCreateMoneyMarketReserve :: aavepoolEntity is not found`);
-    return null;
-  }
+  let aavepoolEntity = null;
+
+  if (
+    underliningAssetEntity.assetRegistryId !== undefined &&
+    underliningAssetEntity.assetRegistryId !== null &&
+    aTokenEntity.assetRegistryId !== undefined &&
+    aTokenEntity.assetRegistryId !== null
+  )
+    aavepoolEntity = await getOrCreateAavepool({
+      reserveAssetId: underliningAssetEntity.assetRegistryId!,
+      aTokenId: aTokenEntity.assetRegistryId!,
+      ensure: true,
+      blockHeader,
+      ctx,
+    });
 
   reserveEntity = new MoneyMarketReserve({
     id: reserveDataToProcess.underlyingAssetAddress.toLowerCase(),
     aToken: aTokenEntity,
     underlyingAsset: underliningAssetEntity,
     variableDebtToken: variableDebtTokenEntity,
-    aavePool: aavepoolEntity,
+    aavePool: aavepoolEntity ?? null,
 
     name: reserveDataToProcess.name,
     symbol: reserveDataToProcess.symbol,
@@ -134,9 +141,11 @@ export async function getOrCreateMoneyMarketReserve({
   ctx.batchState.state.moneyMarketReserves.set(id, reserveEntity);
   await ctx.store.upsert(reserveEntity);
 
-  aavepoolEntity.moneyMarketReserve = reserveEntity;
-  ctx.batchState.state.aavePools.set(aavepoolEntity.id, aavepoolEntity);
-  await ctx.store.upsert(aavepoolEntity);
+  if (aavepoolEntity) {
+    aavepoolEntity.moneyMarketReserve = reserveEntity;
+    ctx.batchState.state.aavePools.set(aavepoolEntity.id, aavepoolEntity);
+    await ctx.store.upsert(aavepoolEntity);
+  }
 
   return reserveEntity;
 }
@@ -150,29 +159,35 @@ export async function actualizeMoneyMarketReserves({
   blockNumber?: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  if (ctx.batchState.state.moneyMarketReserves.size > 0) return;
-
-  const existingPersistentReserveEntities = await ctx.store.find(
-    MoneyMarketReserve,
-    {
-      where: {},
-      relations: {
-        aToken: true,
-        underlyingAsset: true,
-        variableDebtToken: true,
-        aavePool: true,
-      },
-    }
-  );
+  let existingPersistentReserveEntitiesMap =
+    ctx.batchState.state.moneyMarketReserves;
 
   if (
-    existingPersistentReserveEntities &&
-    existingPersistentReserveEntities.length > 0
+    !existingPersistentReserveEntitiesMap ||
+    existingPersistentReserveEntitiesMap.size === 0
   ) {
-    for (const entity of existingPersistentReserveEntities) {
-      ctx.batchState.state.moneyMarketReserves.set(entity.id, entity);
+    existingPersistentReserveEntitiesMap = new Map(
+      (
+        await ctx.store.find(MoneyMarketReserve, {
+          where: {},
+          relations: {
+            aToken: true,
+            underlyingAsset: true,
+            variableDebtToken: true,
+            aavePool: true,
+          },
+        })
+      ).map((r) => [r.id, r])
+    );
+
+    if (
+      existingPersistentReserveEntitiesMap &&
+      existingPersistentReserveEntitiesMap.size > 0
+    ) {
+      for (const entity of existingPersistentReserveEntitiesMap.values()) {
+        ctx.batchState.state.moneyMarketReserves.set(entity.id, entity);
+      }
     }
-    return;
   }
 
   const reservesToProcess =
@@ -182,15 +197,29 @@ export async function actualizeMoneyMarketReserves({
     );
 
   for (const reserveData of reservesToProcess) {
+    if (
+      existingPersistentReserveEntitiesMap.has(
+        reserveData.underlyingAssetAddress.toLowerCase()
+      )
+    )
+      continue;
+
     const blockHeader = ctx.batchState.getBlockHeaderByBlockHeight(
       blockNumber ?? ctx.blocks[ctx.blocks.length - 1].header.height
     );
-    await getOrCreateMoneyMarketReserve({
+    const reserveEntity = await getOrCreateMoneyMarketReserve({
       id: reserveData.underlyingAssetAddress.toLowerCase(),
       reserveData,
       blockHeader,
       ctx,
     });
+
+    if (!reserveEntity) {
+      console.log(
+        `actualizeMoneyMarketReserves :: reserveEntity ${reserveData.underlyingAssetAddress.toLowerCase()} is not found. Skipping ...`
+      );
+      continue;
+    }
 
     await handleMoneyMarketReserveConfigOnConfiguratorUpdate({
       reserveData,

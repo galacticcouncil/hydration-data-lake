@@ -80,9 +80,6 @@ export async function handleEvmLog(
     case EvmEventName.OracleUpdate:
       await mmEventHandlers.handleOracleUpdatedEvent(ctx, eventCallData);
       break;
-    case EvmEventName.ReserveDataUpdated:
-      await processMmReserveIndexesHistoricalData({ ctx, eventCallData });
-      break;
     default:
   }
 }

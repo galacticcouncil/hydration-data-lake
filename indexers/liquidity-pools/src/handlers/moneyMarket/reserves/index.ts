@@ -2,9 +2,10 @@ import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
-import { EvmContractName } from '../../../model';
+import { EvmContractName, EvmEventName } from '../../../model';
 import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
 import { handleMoneyMarketReserveConfigOnConfiguratorUpdate } from './moneyMarketReservesConfigHistoricalData';
+import { processMmReserveIndexesHistoricalData } from './moneyMarketReservesIndexesHistoricalData';
 
 export async function handleMmReservesConfigsHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -19,11 +20,16 @@ export async function handleMmReservesConfigsHistoricalData(
       event.eventData.params?.contractName ===
       EvmContractName.AavePoolConfiguratorImpl
     ) {
-      console.log('-----AavePoolConfiguratorImpl');
       blocksToBeProcessed.set(
         event.eventData.metadata.blockHeader.height,
         event.eventData.metadata.blockHeader
       );
+    }
+    if (event.eventData.params?.eventName === EvmEventName.ReserveDataUpdated) {
+      await processMmReserveIndexesHistoricalData({
+        ctx,
+        eventCallData: event,
+      });
     }
   }
 
