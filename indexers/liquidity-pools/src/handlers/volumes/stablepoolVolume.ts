@@ -14,7 +14,6 @@ import {
   getOldStablepoolAssetVolume,
   getPoolAssetLastVolumeFromCache,
 } from './index';
-import { getAssetsByStablepool } from '../pools/stableswap/assets';
 
 // TODO improve conditional usage with poolOperation and liquidityAction
 export async function handleStablepoolVolumeUpdates({
@@ -43,13 +42,11 @@ export async function handleStablepoolVolumeUpdates({
     (stableswapAsset) => stableswapAsset.asset
   );
 
-  const stablepoolVolumeCollections =
-    ctx.batchState.state.stablepoolVolumeCollections;
   const stablepoolAssetVolumes = ctx.batchState.state.stablepoolAssetVolumes;
   const stablepoolAssetVolumeIdsToSave =
     ctx.batchState.state.stablepoolAssetVolumeIdsToSave;
 
-  let volumesCollection = stablepoolVolumeCollections.get(
+  let volumesCollection = ctx.batchState.state.stablepoolVolumeCollections.get(
     pool.id + '-' + paraBlockHeight
   );
 
@@ -69,7 +66,10 @@ export async function handleStablepoolVolumeUpdates({
       paraBlockHeight,
       block: ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight),
     });
-    stablepoolVolumeCollections.set(volumesCollection.id, volumesCollection);
+    ctx.batchState.state.stablepoolVolumeCollections.set(
+      volumesCollection.id,
+      volumesCollection
+    );
   }
 
   for (const asset of allAssetsToProcess) {
@@ -83,7 +83,11 @@ export async function handleStablepoolVolumeUpdates({
         stablepoolAssetVolumes,
         `${pool.id}-${asset.id}`
       ) as StableswapAssetVolumeHistoricalData | undefined) ||
-      (await getOldStablepoolAssetVolume(ctx, asset.id, pool.id));
+      (await getOldStablepoolAssetVolume({
+        ctx,
+        assetId: asset.id,
+        poolId: pool.id,
+      }));
 
     const newVolume = initStablepoolAssetVolume({
       ...(!!swap ? { swap } : {}),
@@ -164,22 +168,30 @@ export function initStablepoolAssetVolume({
       oldVolume?.assetTotalVolOut ||
       BigInt(0),
 
-    assetVolInNorm: currentVolume?.assetVolInNorm || '0',
-    assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
-    assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
+    // assetVolInNorm: currentVolume?.assetVolInNorm || '0',
+    // assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
+    // assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
+    //
+    // assetTotalVolInNorm:
+    //   currentVolume?.assetTotalVolInNorm ||
+    //   oldVolume?.assetTotalVolInNorm ||
+    //   '0',
+    // assetTotalVolOutNorm:
+    //   currentVolume?.assetTotalVolOutNorm ||
+    //   oldVolume?.assetTotalVolOutNorm ||
+    //   '0',
+    // assetTotalFeesVolNorm:
+    //   currentVolume?.assetTotalFeesVolNorm ||
+    //   oldVolume?.assetTotalFeesVolNorm ||
+    //   '0',
 
-    assetTotalVolInNorm:
-      currentVolume?.assetTotalVolInNorm ||
-      oldVolume?.assetTotalVolInNorm ||
-      '0',
-    assetTotalVolOutNorm:
-      currentVolume?.assetTotalVolOutNorm ||
-      oldVolume?.assetTotalVolOutNorm ||
-      '0',
-    assetTotalFeesVolNorm:
-      currentVolume?.assetTotalFeesVolNorm ||
-      oldVolume?.assetTotalFeesVolNorm ||
-      '0',
+    assetVolInNorm: '0',
+    assetVolOutNorm: '0',
+    assetFeeVolNorm: '0',
+
+    assetTotalVolInNorm: '0',
+    assetTotalVolOutNorm: '0',
+    assetTotalFeesVolNorm: '0',
 
     relayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,

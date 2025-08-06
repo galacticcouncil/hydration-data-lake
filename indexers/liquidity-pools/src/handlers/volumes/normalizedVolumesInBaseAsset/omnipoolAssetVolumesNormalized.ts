@@ -2,8 +2,17 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import {
+  getOldOmnipoolAssetVolume,
+  getOldStablepoolAssetVolume,
+  getPoolAssetPreviousVolumeFromCache,
+} from '../index';
+import {
+  OmnipoolAssetVolumeHistoricalData,
+  StableswapAssetVolumeHistoricalData,
+} from '../../../model';
 
-export function processOmnipoolAssetNormalizedVolumes({
+export async function processOmnipoolAssetNormalizedVolumes({
   blockNumbersToProcess,
   ctx,
 }: {
@@ -24,11 +33,11 @@ export function processOmnipoolAssetNormalizedVolumes({
   const historicalSpotPricesMap =
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
-  for (const assetVolsHistData of omnipoolAssetHistVolsByBatchList) {
-    const asset = assetVolsHistData.omnipoolAsset.asset;
+  for (const currentAssetVolsHistData of omnipoolAssetHistVolsByBatchList) {
+    const asset = currentAssetVolsHistData.omnipoolAsset.asset;
 
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
-      `${asset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${assetVolsHistData.paraBlockHeight}`
+      `${asset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetVolsHistData.paraBlockHeight}`
     )?.priceNormalised;
 
     if (asset.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
@@ -36,44 +45,56 @@ export function processOmnipoolAssetNormalizedVolumes({
 
     if (!assetSpotPriceNorm || !asset.decimals) continue;
 
-    assetVolsHistData.assetFeeVolNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetFeeVol,
+    const previousAssetHistVolume =
+      (getPoolAssetPreviousVolumeFromCache(
+        ctx.batchState.state.omnipoolAssetVolumes,
+        currentAssetVolsHistData.omnipoolAsset.id,
+        currentAssetVolsHistData.paraBlockHeight
+      ) as OmnipoolAssetVolumeHistoricalData | undefined) ||
+      (await getOldOmnipoolAssetVolume({
+        ctx,
+        omnipoolAssetId: currentAssetVolsHistData.omnipoolAsset.id,
+        currentBlockHeight: currentAssetVolsHistData.paraBlockHeight,
+      }));
+
+    currentAssetVolsHistData.assetFeeVolNorm = calcPriceNormalized({
+      amount: currentAssetVolsHistData.assetFeeVol,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
 
-    assetVolsHistData.assetTotalFeesVolNorm = BigNumber(
-      assetVolsHistData.assetTotalFeesVolNorm ?? '0'
+    currentAssetVolsHistData.assetTotalFeesVolNorm = BigNumber(
+      previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0'
     )
-      .plus(assetVolsHistData.assetFeeVolNorm)
+      .plus(currentAssetVolsHistData.assetFeeVolNorm)
       .toFixed();
 
-    assetVolsHistData.assetVolInNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetVolIn,
+    currentAssetVolsHistData.assetVolInNorm = calcPriceNormalized({
+      amount: currentAssetVolsHistData.assetVolIn,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
-    assetVolsHistData.assetVolOutNorm = calcPriceNormalized({
-      amount: assetVolsHistData.assetVolOut,
+    currentAssetVolsHistData.assetVolOutNorm = calcPriceNormalized({
+      amount: currentAssetVolsHistData.assetVolOut,
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
 
-    assetVolsHistData.assetTotalVolInNorm = BigNumber(
-      assetVolsHistData.assetTotalVolInNorm ?? '0'
+    currentAssetVolsHistData.assetTotalVolInNorm = BigNumber(
+      previousAssetHistVolume?.assetTotalVolInNorm ?? '0'
     )
-      .plus(assetVolsHistData.assetVolInNorm)
+      .plus(currentAssetVolsHistData.assetVolInNorm)
       .toFixed();
 
-    assetVolsHistData.assetTotalVolOutNorm = BigNumber(
-      assetVolsHistData.assetTotalVolOutNorm ?? '0'
+    currentAssetVolsHistData.assetTotalVolOutNorm = BigNumber(
+      previousAssetHistVolume?.assetTotalVolOutNorm ?? '0'
     )
-      .plus(assetVolsHistData.assetVolOutNorm)
+      .plus(currentAssetVolsHistData.assetVolOutNorm)
       .toFixed();
 
     ctx.batchState.state.omnipoolAssetVolumes.set(
-      assetVolsHistData.id,
-      assetVolsHistData
+      currentAssetVolsHistData.id,
+      currentAssetVolsHistData
     );
   }
 }

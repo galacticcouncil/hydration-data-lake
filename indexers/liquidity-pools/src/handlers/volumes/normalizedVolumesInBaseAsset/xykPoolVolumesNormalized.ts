@@ -2,8 +2,18 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import {
+  getOldOmnipoolAssetVolume,
+  getOldXykVolume,
+  getPoolAssetPreviousVolumeFromCache,
+  getPreviousVolumeFromCache,
+} from '../index';
+import {
+  StableswapAssetVolumeHistoricalData,
+  XykpoolVolumeHistoricalData,
+} from '../../../model';
 
-export function processXykPoolsNormalizedVolumes({
+export async function processXykPoolsNormalizedVolumes({
   blockNumbersToProcess,
   ctx,
 }: {
@@ -24,15 +34,15 @@ export function processXykPoolsNormalizedVolumes({
   const historicalSpotPricesMap =
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
-  for (const poolVolsHistData of xykPoolHistVolsByBatchList) {
-    const assetA = poolVolsHistData.assetA;
-    const assetB = poolVolsHistData.assetB;
+  for (const currentPoolVolsHistData of xykPoolHistVolsByBatchList) {
+    const assetA = currentPoolVolsHistData.assetA;
+    const assetB = currentPoolVolsHistData.assetB;
 
     let assetASpotPriceNorm = historicalSpotPricesMap.get(
-      `${assetA.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${poolVolsHistData.paraBlockHeight}`
+      `${assetA.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentPoolVolsHistData.paraBlockHeight}`
     )?.priceNormalised;
     let assetBSpotPriceNorm = historicalSpotPricesMap.get(
-      `${assetB.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${poolVolsHistData.paraBlockHeight}`
+      `${assetB.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentPoolVolsHistData.paraBlockHeight}`
     )?.priceNormalised;
 
     if (assetA.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
@@ -49,81 +59,93 @@ export function processXykPoolsNormalizedVolumes({
     )
       continue;
 
-    poolVolsHistData.assetAVolInNorm = calcPriceNormalized({
-      amount: poolVolsHistData.assetAVolIn,
+    const previousPoolHistVolume =
+      (getPreviousVolumeFromCache(
+        ctx.batchState.state.xykPoolVolumes,
+        currentPoolVolsHistData.pool.id,
+        currentPoolVolsHistData.paraBlockHeight
+      ) as XykpoolVolumeHistoricalData | undefined) ||
+      (await getOldXykVolume({
+        ctx,
+        poolId: currentPoolVolsHistData.pool.id,
+        currentBlockHeight: currentPoolVolsHistData.paraBlockHeight,
+      }));
+
+    currentPoolVolsHistData.assetAVolInNorm = calcPriceNormalized({
+      amount: currentPoolVolsHistData.assetAVolIn,
       spotPrice: assetASpotPriceNorm,
       assetDecimals: assetA.decimals,
     });
 
-    poolVolsHistData.assetAVolOutNorm = calcPriceNormalized({
-      amount: poolVolsHistData.assetAVolOut,
+    currentPoolVolsHistData.assetAVolOutNorm = calcPriceNormalized({
+      amount: currentPoolVolsHistData.assetAVolOut,
       spotPrice: assetASpotPriceNorm,
       assetDecimals: assetA.decimals,
     });
 
-    poolVolsHistData.assetBVolInNorm = calcPriceNormalized({
-      amount: poolVolsHistData.assetBVolIn,
+    currentPoolVolsHistData.assetBVolInNorm = calcPriceNormalized({
+      amount: currentPoolVolsHistData.assetBVolIn,
       spotPrice: assetBSpotPriceNorm,
       assetDecimals: assetB.decimals,
     });
 
-    poolVolsHistData.assetBVolOutNorm = calcPriceNormalized({
-      amount: poolVolsHistData.assetBVolOut,
+    currentPoolVolsHistData.assetBVolOutNorm = calcPriceNormalized({
+      amount: currentPoolVolsHistData.assetBVolOut,
       spotPrice: assetBSpotPriceNorm,
       assetDecimals: assetB.decimals,
     });
 
-    poolVolsHistData.assetAFeeVolNorm = calcPriceNormalized({
-      amount: poolVolsHistData.assetAFeeVol,
+    currentPoolVolsHistData.assetAFeeVolNorm = calcPriceNormalized({
+      amount: currentPoolVolsHistData.assetAFeeVol,
       spotPrice: assetASpotPriceNorm,
       assetDecimals: assetA.decimals,
     });
 
-    poolVolsHistData.assetBFeeVolNorm = calcPriceNormalized({
-      amount: poolVolsHistData.assetBFeeVol,
+    currentPoolVolsHistData.assetBFeeVolNorm = calcPriceNormalized({
+      amount: currentPoolVolsHistData.assetBFeeVol,
       spotPrice: assetBSpotPriceNorm,
       assetDecimals: assetB.decimals,
     });
 
-    poolVolsHistData.assetATotalVolInNorm = BigNumber(
-      poolVolsHistData.assetATotalVolInNorm ?? '0'
+    currentPoolVolsHistData.assetATotalVolInNorm = BigNumber(
+      previousPoolHistVolume?.assetATotalVolInNorm ?? '0'
     )
-      .plus(poolVolsHistData.assetAVolInNorm)
+      .plus(currentPoolVolsHistData.assetAVolInNorm)
       .toFixed();
 
-    poolVolsHistData.assetATotalVolOutNorm = BigNumber(
-      poolVolsHistData.assetATotalVolOutNorm ?? '0'
+    currentPoolVolsHistData.assetATotalVolOutNorm = BigNumber(
+      previousPoolHistVolume?.assetATotalVolOutNorm ?? '0'
     )
-      .plus(poolVolsHistData.assetAVolOutNorm)
+      .plus(currentPoolVolsHistData.assetAVolOutNorm)
       .toFixed();
 
-    poolVolsHistData.assetBTotalVolInNorm = BigNumber(
-      poolVolsHistData.assetBTotalVolInNorm ?? '0'
+    currentPoolVolsHistData.assetBTotalVolInNorm = BigNumber(
+      previousPoolHistVolume?.assetBTotalVolInNorm ?? '0'
     )
-      .plus(poolVolsHistData.assetBVolInNorm)
+      .plus(currentPoolVolsHistData.assetBVolInNorm)
       .toFixed();
 
-    poolVolsHistData.assetBTotalVolOutNorm = BigNumber(
-      poolVolsHistData.assetBTotalVolOutNorm ?? '0'
+    currentPoolVolsHistData.assetBTotalVolOutNorm = BigNumber(
+      previousPoolHistVolume?.assetBTotalVolOutNorm ?? '0'
     )
-      .plus(poolVolsHistData.assetBVolOutNorm)
+      .plus(currentPoolVolsHistData.assetBVolOutNorm)
       .toFixed();
 
-    poolVolsHistData.assetAFeesTotalVolNorm = BigNumber(
-      poolVolsHistData.assetAFeesTotalVolNorm ?? '0'
+    currentPoolVolsHistData.assetAFeesTotalVolNorm = BigNumber(
+      previousPoolHistVolume?.assetAFeesTotalVolNorm ?? '0'
     )
-      .plus(poolVolsHistData.assetAFeeVolNorm)
+      .plus(currentPoolVolsHistData.assetAFeeVolNorm)
       .toFixed();
 
-    poolVolsHistData.assetBFeesTotalVolNorm = BigNumber(
-      poolVolsHistData.assetBFeesTotalVolNorm ?? '0'
+    currentPoolVolsHistData.assetBFeesTotalVolNorm = BigNumber(
+      previousPoolHistVolume?.assetBFeesTotalVolNorm ?? '0'
     )
-      .plus(poolVolsHistData.assetBFeeVolNorm)
+      .plus(currentPoolVolsHistData.assetBFeeVolNorm)
       .toFixed();
 
     ctx.batchState.state.xykPoolVolumes.set(
-      poolVolsHistData.id,
-      poolVolsHistData
+      currentPoolVolsHistData.id,
+      currentPoolVolsHistData
     );
   }
 }

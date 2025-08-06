@@ -47,37 +47,51 @@ export function initXykPoolVolume(
       oldVolume?.assetBTotalVolOut ||
       BigInt(0),
 
-    assetAVolInNorm: currentVolume?.assetAVolInNorm || '0',
-    assetAVolOutNorm: currentVolume?.assetAVolOutNorm || '0',
-    assetBVolInNorm: currentVolume?.assetBVolInNorm || '0',
-    assetBVolOutNorm: currentVolume?.assetBVolOutNorm || '0',
-    assetAFeeVolNorm: currentVolume?.assetAFeeVolNorm || '0',
-    assetBFeeVolNorm: currentVolume?.assetBFeeVolNorm || '0',
+    // assetAVolInNorm: currentVolume?.assetAVolInNorm || '0',
+    // assetAVolOutNorm: currentVolume?.assetAVolOutNorm || '0',
+    // assetBVolInNorm: currentVolume?.assetBVolInNorm || '0',
+    // assetBVolOutNorm: currentVolume?.assetBVolOutNorm || '0',
+    // assetAFeeVolNorm: currentVolume?.assetAFeeVolNorm || '0',
+    // assetBFeeVolNorm: currentVolume?.assetBFeeVolNorm || '0',
+    //
+    // assetATotalVolInNorm:
+    //   currentVolume?.assetATotalVolInNorm ||
+    //   oldVolume?.assetATotalVolInNorm ||
+    //   '0',
+    // assetATotalVolOutNorm:
+    //   currentVolume?.assetATotalVolOutNorm ||
+    //   oldVolume?.assetATotalVolOutNorm ||
+    //   '0',
+    // assetBTotalVolInNorm:
+    //   currentVolume?.assetBTotalVolInNorm ||
+    //   oldVolume?.assetBTotalVolInNorm ||
+    //   '0',
+    // assetBTotalVolOutNorm:
+    //   currentVolume?.assetBTotalVolOutNorm ||
+    //   oldVolume?.assetBTotalVolOutNorm ||
+    //   '0',
+    // assetAFeesTotalVolNorm:
+    //   currentVolume?.assetAFeesTotalVolNorm ||
+    //   oldVolume?.assetAFeesTotalVolNorm ||
+    //   '0',
+    // assetBFeesTotalVolNorm:
+    //   currentVolume?.assetBFeesTotalVolNorm ||
+    //   oldVolume?.assetBFeesTotalVolNorm ||
+    //   '0',
 
-    assetATotalVolInNorm:
-      currentVolume?.assetATotalVolInNorm ||
-      oldVolume?.assetATotalVolInNorm ||
-      '0',
-    assetATotalVolOutNorm:
-      currentVolume?.assetATotalVolOutNorm ||
-      oldVolume?.assetATotalVolOutNorm ||
-      '0',
-    assetBTotalVolInNorm:
-      currentVolume?.assetBTotalVolInNorm ||
-      oldVolume?.assetBTotalVolInNorm ||
-      '0',
-    assetBTotalVolOutNorm:
-      currentVolume?.assetBTotalVolOutNorm ||
-      oldVolume?.assetBTotalVolOutNorm ||
-      '0',
-    assetAFeesTotalVolNorm:
-      currentVolume?.assetAFeesTotalVolNorm ||
-      oldVolume?.assetAFeesTotalVolNorm ||
-      '0',
-    assetBFeesTotalVolNorm:
-      currentVolume?.assetBFeesTotalVolNorm ||
-      oldVolume?.assetBFeesTotalVolNorm ||
-      '0',
+    assetAVolInNorm: '0',
+    assetAVolOutNorm: '0',
+    assetBVolInNorm: '0',
+    assetBVolOutNorm: '0',
+    assetAFeeVolNorm: '0',
+    assetBFeeVolNorm: '0',
+
+    assetATotalVolInNorm: '0',
+    assetATotalVolOutNorm: '0',
+    assetBTotalVolInNorm: '0',
+    assetBTotalVolOutNorm: '0',
+    assetAFeesTotalVolNorm: '0',
+    assetBFeesTotalVolNorm: '0',
 
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
@@ -161,7 +175,10 @@ export async function handleXykPoolVolumeUpdates({
       ctx.batchState.state.xykPoolVolumes,
       swap.filler.id
     ) as XykpoolVolumeHistoricalData | undefined) ||
-    (await getOldXykVolume(ctx, swap.filler.id));
+    (await getOldXykVolume({
+      ctx,
+      poolId: swap.filler.id,
+    }));
 
   const newVolume = initXykPoolVolume(swap, pool, currentVolume, oldVolume);
 

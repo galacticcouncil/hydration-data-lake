@@ -86,12 +86,20 @@ export async function getOrCreateMoneyMarketReserve({
     return null;
   }
 
-  const aTokenEntity = await getOrCreateAsset({
+  let aTokenEntity = await getOrCreateAsset({
     evmAddress: reserveDataToProcess.aTokenAddress.toLowerCase(),
     ctx,
     ensure: true,
     blockHeader,
   });
+
+  if (!aTokenEntity) {
+    aTokenEntity = await getOrCreateMoneyMarketAsset({
+      evmAddress: reserveDataToProcess.aTokenAddress.toLowerCase(),
+      ctx,
+      ensure: true,
+    });
+  }
 
   if (!aTokenEntity) {
     console.log(`getOrCreateMoneyMarketReserve :: aTokenEntity is not found`);

@@ -5,15 +5,15 @@ import { processLbpPoolsNormalizedVolumes } from './lbpPoolVolumesNormalized';
 import { processStableswapAssetNormalizedVolumes } from './stableswapAssetVolumesNormalized';
 import { processOmnipoolAssetNormalizedVolumes } from './omnipoolAssetVolumesNormalized';
 
-export function processPoolsNormalizedVolumes({
+export async function processPoolsNormalizedVolumes({
   blockNumbersToProcess,
   ctx,
 }: {
   blockNumbersToProcess?: number[];
   ctx: SqdProcessorContext<Store>;
 }) {
-  processXykPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
-  processLbpPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
-  processStableswapAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
-  processOmnipoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
+  await processXykPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
+  await processLbpPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
+  await processStableswapAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
+  await processOmnipoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
 }
