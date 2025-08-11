@@ -126,7 +126,7 @@ export class OfflineTradeRouterManagerHelper {
   }) {
     const blockNumbersSorted = blockNumbers.sort((a, b) => a - b);
 
-    await Promise.all([
+    const promises = [
       this.fetchConstantsHistoricalDataForBlocksRange({
         ctx,
         blockFromNumber: blockNumbersSorted[0],
@@ -147,11 +147,6 @@ export class OfflineTradeRouterManagerHelper {
         blockFromNumber: blockNumbersSorted[0],
         blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
       }),
-      this.fetchXykPoolsHistoricalDataForBlocksRange({
-        ctx,
-        blockFromNumber: blockNumbersSorted[0],
-        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
-      }),
       this.fetchStableswapHistoricalDataForBlocksRange({
         ctx,
         blockFromNumber: blockNumbersSorted[0],
@@ -167,7 +162,18 @@ export class OfflineTradeRouterManagerHelper {
         blockFromNumber: blockNumbersSorted[0],
         blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
       }),
-    ]);
+    ];
+
+    if (ctx.appConfig.USE_XYKPOOLS_DATA_IN_TRADE_ROUTER)
+      promises.push(
+        this.fetchXykPoolsHistoricalDataForBlocksRange({
+          ctx,
+          blockFromNumber: blockNumbersSorted[0],
+          blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+        })
+      );
+
+    await Promise.all(promises);
   }
 
   protected async prefetchAllHistoricalDataForBlock({

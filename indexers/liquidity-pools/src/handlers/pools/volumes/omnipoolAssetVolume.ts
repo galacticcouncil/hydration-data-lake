@@ -39,30 +39,30 @@ export function initOmnipoolAssetVolume({
       oldVolume?.assetTotalVolOut ||
       BigInt(0),
 
-    // assetVolInNorm: currentVolume?.assetVolInNorm || '0',
-    // assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
-    // assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
+    assetVolInNorm: currentVolume?.assetVolInNorm || '0',
+    assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
+    assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
+
+    assetTotalVolInNorm:
+      currentVolume?.assetTotalVolInNorm ||
+      oldVolume?.assetTotalVolInNorm ||
+      '0',
+    assetTotalVolOutNorm:
+      currentVolume?.assetTotalVolOutNorm ||
+      oldVolume?.assetTotalVolOutNorm ||
+      '0',
+    assetTotalFeesVolNorm:
+      currentVolume?.assetTotalFeesVolNorm ||
+      oldVolume?.assetTotalFeesVolNorm ||
+      '0',
+
+    // assetVolInNorm: '0',
+    // assetVolOutNorm: '0',
+    // assetFeeVolNorm: '0',
     //
-    // assetTotalVolInNorm:
-    //   currentVolume?.assetTotalVolInNorm ||
-    //   oldVolume?.assetTotalVolInNorm ||
-    //   '0',
-    // assetTotalVolOutNorm:
-    //   currentVolume?.assetTotalVolOutNorm ||
-    //   oldVolume?.assetTotalVolOutNorm ||
-    //   '0',
-    // assetTotalFeesVolNorm:
-    //   currentVolume?.assetTotalFeesVolNorm ||
-    //   oldVolume?.assetTotalFeesVolNorm ||
-    //   '0',
-
-    assetVolInNorm: '0',
-    assetVolOutNorm: '0',
-    assetFeeVolNorm: '0',
-
-    assetTotalVolInNorm: '0',
-    assetTotalVolOutNorm: '0',
-    assetTotalFeesVolNorm: '0',
+    // assetTotalVolInNorm: '0',
+    // assetTotalVolOutNorm: '0',
+    // assetTotalFeesVolNorm: '0',
 
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,

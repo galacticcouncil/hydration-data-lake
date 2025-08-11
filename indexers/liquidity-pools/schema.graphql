@@ -1317,6 +1317,27 @@ type HsmpoolAssetHistoricalData @entity {
   block: Block!
 }
 
+type AaveFacilitator @entity {
+  "<facilitator_h160_address>"
+  id: ID!
+  asset: Asset!
+  label: String!
+}
+
+type AaveFacilitatorHistoricalData @entity {
+  "<facilitator_h160_address>-<block_height>"
+  id: ID!
+  facilitator: AaveFacilitator!
+
+  bucketCapacity: BigInt!
+  bucketLevel: BigInt!
+
+  paraTimestamp: DateTime! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  event: Event!
+}
+
 # ======================================================================================================================
 # *** Constants ***
 # ======================================================================================================================

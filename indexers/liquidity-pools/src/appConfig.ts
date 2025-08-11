@@ -135,6 +135,16 @@ class EvmConfig {
   readonly POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS: string =
     '0x1b02e051683b5cfac5929c25e84adb26ecf87b38';
 
+  @IsNotEmpty()
+  @IsString()
+  readonly HSMPOOL_FICILITATOR_ADDRESS: string =
+    '0x6d6f646c70792f68736d6f640000000000000000';
+
+  @IsNotEmpty()
+  @IsString()
+  readonly HOLLAR_CONTRACT_ADDRESS: string =
+    '0xfdb15f9fe2252044b08230449d4278cfd4df52e1';
+
   static getInstance(): EvmConfig {
     if (!EvmConfig.instance) {
       EvmConfig.instance = new EvmConfig();

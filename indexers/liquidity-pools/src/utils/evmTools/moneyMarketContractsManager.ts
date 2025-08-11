@@ -72,10 +72,18 @@ export type MoneyMarketResourceDetails = {
   lastUpdateTimestamp: string;
 };
 
+export type AaveFacilitatorContractData = {
+  address: string;
+  label: string;
+  bucketCapacity: string;
+  bucketLevel: string;
+};
+
 export class MoneyMarketContractsManager {
   private static instance: MoneyMarketContractsManager;
 
   private readonly provider: ethers.providers.JsonRpcProvider;
+  private hollarContractInstance: Contract;
   private erc20TokenContractInstance: Contract;
   private uiPoolDataProviderContractInstance: Contract;
   private poolImplementationContractInstance: Contract;
@@ -105,6 +113,12 @@ export class MoneyMarketContractsManager {
     this.poolImplementationContractInstance = new Contract(
       appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS,
       poolImplementation.abi,
+      this.provider
+    );
+
+    this.hollarContractInstance = new Contract(
+      appConfig.evm.HOLLAR_CONTRACT_ADDRESS,
+      hollarAbi,
       this.provider
     );
   }
@@ -208,31 +222,6 @@ export class MoneyMarketContractsManager {
   }) {
     try {
       const reservesData = await this.getReservesData({ blockNumber });
-
-      // const hollarContract = this.getContractInstance(
-      //   '0xfDB15f9Fe2252044b08230449D4278CFd4DF52E1',
-      //   hollarAbi
-      // );
-      //
-      // const facilitatorsList = await hollarContract.getFacilitatorsList();
-      //
-      // console.log('getFacilitatorsList');
-      // console.dir(await hollarContract.getFacilitatorsList(), { depth: null });
-      //
-      // const facilitatorsData: any[] = [];
-      // for (const facilitatorAddress of facilitatorsList) {
-      //   const facilitatorData =
-      //     await hollarContract.getFacilitator(facilitatorAddress);
-      //
-      //   facilitatorsData.push({
-      //     address: facilitatorAddress,
-      //     label: facilitatorData.label,
-      //     bucketCapacity: facilitatorData.bucketCapacity.toString(),
-      //     bucketLevel: facilitatorData.bucketLevel.toString(),
-      //   });
-      // }
-      //
-      // console.dir(facilitatorsData, { depth: null });
 
       if (!reservesData) {
         console.log(`No reserves data found on initContractInstances`);
@@ -472,7 +461,64 @@ export class MoneyMarketContractsManager {
     }
   }
 
+  /**
+   * IMPORTANT: Method cannot provide data at a specific block.
+   */
+  async getAllAaveFacilitators() {
+    const facilitatorsList: string[] = await retryAsync({
+      // passThrough: true,
+      fn: () =>
+        this.hollarContractInstance
+          .getFacilitatorsList
+          // blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+          (),
+    });
 
+    if (!facilitatorsList) {
+      console.log(`No facilitators found`);
+      return null;
+    }
+
+    const facilitatorsData: Array<AaveFacilitatorContractData | null> = [];
+
+    await pMap(
+      facilitatorsList,
+      async (facilitatorAddress: string) => {
+        facilitatorsData.push(
+          await this.getAaveFacilitator({ facilitatorAddress })
+        );
+      },
+      { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
+    );
+
+    return facilitatorsData.filter((facilitator) => !!facilitator);
+  }
+
+  /**
+   * IMPORTANT: Method cannot provide data at a specific block.
+   */
+  async getAaveFacilitator({
+    facilitatorAddress,
+  }: {
+    facilitatorAddress: string;
+  }): Promise<AaveFacilitatorContractData | null> {
+    const facilitatorData: any = await retryAsync({
+      // passThrough: true,
+      fn: () => this.hollarContractInstance.getFacilitator(facilitatorAddress),
+    });
+
+    if (!facilitatorData) {
+      console.log(`No facilitator with address ${facilitatorAddress} found `);
+      return null;
+    }
+
+    return {
+      address: facilitatorAddress,
+      label: facilitatorData.label,
+      bucketCapacity: facilitatorData.bucketCapacity.toString(),
+      bucketLevel: facilitatorData.bucketLevel.toString(),
+    };
+  }
 
   // async getUserPoolReservesData({
   //   ctx,

@@ -114,14 +114,6 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
     },
   });
 
-  // const allActivePools: Map<string, Xykpool> = new Map([
-  //   ...allActivePoolsCached.map((pool): [string, Xykpool] => [pool.id, pool]),
-  //   ...allActivePoolsPersisted.map((pool): [string, Xykpool] => [
-  //     pool.id,
-  //     pool,
-  //   ]),
-  // ]);
-
   const allActivePools = new Map<string, Xykpool>();
   for (const histData of allActivePoolsCached) {
     allActivePools.set(histData.id, histData);
@@ -156,18 +148,8 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
     },
   });
 
-  // const mergedDataMap = new Map([
-  //   ...persistedHistData.map((histData): [string, XykpoolHistoricalData] => [
-  //     histData.id,
-  //     histData,
-  //   ]),
-  //   ...cachedHistData.map((histData): [string, XykpoolHistoricalData] => [
-  //     histData.id,
-  //     histData,
-  //   ]),
-  // ]);
-
   const mergedDataMap = new Map<string, XykpoolHistoricalData>();
+
   for (const histData of persistedHistData) {
     mergedDataMap.set(histData.id, histData);
   }

@@ -26,7 +26,7 @@ import { handleStablepoolLiquidityEvents } from '../../handlers/pools/pools/stab
 import { handleDcaSchedules, saveDcaEntities } from '../../handlers/dca';
 import { handleOtcOrders } from '../../handlers/otc';
 import { createMoneyMarketEventsFromRoutedTrades } from '../../handlers/moneyMarket/routedTradeToMmEventHandler';
-import { handleEvm, saveAllMoneyMarketEvents } from '../../handlers/moneyMarket';
+import { saveAllMoneyMarketEvents } from '../../handlers/moneyMarket';
 import { handleTransfers } from '../../handlers/transfers';
 import { handleConstantsHistoricalData } from '../../handlers/constants/constantsHistoricalData';
 import { handleStableswapHistoricalData } from '../../handlers/pools/pools/stableswap/historicalData';
@@ -43,6 +43,7 @@ import { HistoricalDataManager } from '../../handlers/historicalData';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { ProcessingPoolManager } from '../../utils/processingPoolManager';
 import { processPreprocessedDataBuckets } from '../../handlers/preprocessedDataBucket';
+import { handleEvm } from '../../handlers/evmLog';
 
 export async function execCoreProcessorHandlers(
   ctx: SqdProcessorContext<Store>

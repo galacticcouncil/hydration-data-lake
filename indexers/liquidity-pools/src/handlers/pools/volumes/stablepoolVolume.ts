@@ -12,7 +12,9 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   getOldStablepoolAssetVolume,
+  getOldStablepoolVolume,
   getPoolAssetLastVolumeFromCache,
+  getPoolPreviousVolumeFromCache,
 } from './index';
 
 // TODO improve conditional usage with poolOperation and liquidityAction
@@ -46,29 +48,43 @@ export async function handleStablepoolVolumeUpdates({
   const stablepoolAssetVolumeIdsToSave =
     ctx.batchState.state.stablepoolAssetVolumeIdsToSave;
 
-  let volumesCollection = ctx.batchState.state.stablepoolVolumeCollections.get(
-    pool.id + '-' + paraBlockHeight
-  );
+  let currentVolumesCollection =
+    ctx.batchState.state.stablepoolVolumeCollections.get(
+      pool.id + '-' + paraBlockHeight
+    );
 
-  if (!volumesCollection) {
-    volumesCollection = new StableswapVolumeHistoricalData({
+  if (!currentVolumesCollection) {
+    const oldVolumesCollection =
+      currentVolumesCollection ||
+      (getPoolPreviousVolumeFromCache(
+        ctx.batchState.state.stablepoolVolumeCollections,
+        `${pool.id}`,
+        paraBlockHeight
+      ) as StableswapVolumeHistoricalData | undefined) ||
+      (await getOldStablepoolVolume({
+        ctx,
+        poolId: pool.id,
+        // currentBlockHeight: paraBlockHeight,
+      }));
+
+    currentVolumesCollection = new StableswapVolumeHistoricalData({
       id: `${pool.id}-${paraBlockHeight}`,
       pool,
 
-      poolVolInNorm: '0',
-      poolVolOutNorm: '0',
-      poolFeesVolNorm: '0',
-      poolTotalVolInNorm: '0',
-      poolTotalVolOutNorm: '0',
-      poolTotalFeesVolNorm: '0',
+      poolVolInNorm: oldVolumesCollection?.poolVolInNorm || '0',
+      poolVolOutNorm: oldVolumesCollection?.poolVolOutNorm || '0',
+      poolFeesVolNorm: oldVolumesCollection?.poolFeesVolNorm || '0',
+      poolTotalVolInNorm: oldVolumesCollection?.poolTotalVolInNorm || '0',
+      poolTotalVolOutNorm: oldVolumesCollection?.poolTotalVolOutNorm || '0',
+      poolTotalFeesVolNorm: oldVolumesCollection?.poolTotalFeesVolNorm || '0',
 
       relayBlockHeight,
       paraBlockHeight,
       block: ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight),
     });
     ctx.batchState.state.stablepoolVolumeCollections.set(
-      volumesCollection.id,
-      volumesCollection
+      currentVolumesCollection.id,
+      currentVolumesCollection
     );
   }
 
@@ -105,7 +121,7 @@ export async function handleStablepoolVolumeUpdates({
       oldVolume,
       asset,
       pool,
-      volumesCollection,
+      volumesCollection: currentVolumesCollection,
       ctx,
     });
 
@@ -168,30 +184,30 @@ export function initStablepoolAssetVolume({
       oldVolume?.assetTotalVolOut ||
       BigInt(0),
 
-    // assetVolInNorm: currentVolume?.assetVolInNorm || '0',
-    // assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
-    // assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
+    assetVolInNorm: currentVolume?.assetVolInNorm || '0',
+    assetVolOutNorm: currentVolume?.assetVolOutNorm || '0',
+    assetFeeVolNorm: currentVolume?.assetFeeVolNorm || '0',
+
+    assetTotalVolInNorm:
+      currentVolume?.assetTotalVolInNorm ||
+      oldVolume?.assetTotalVolInNorm ||
+      '0',
+    assetTotalVolOutNorm:
+      currentVolume?.assetTotalVolOutNorm ||
+      oldVolume?.assetTotalVolOutNorm ||
+      '0',
+    assetTotalFeesVolNorm:
+      currentVolume?.assetTotalFeesVolNorm ||
+      oldVolume?.assetTotalFeesVolNorm ||
+      '0',
+
+    // assetVolInNorm: '0',
+    // assetVolOutNorm: '0',
+    // assetFeeVolNorm: '0',
     //
-    // assetTotalVolInNorm:
-    //   currentVolume?.assetTotalVolInNorm ||
-    //   oldVolume?.assetTotalVolInNorm ||
-    //   '0',
-    // assetTotalVolOutNorm:
-    //   currentVolume?.assetTotalVolOutNorm ||
-    //   oldVolume?.assetTotalVolOutNorm ||
-    //   '0',
-    // assetTotalFeesVolNorm:
-    //   currentVolume?.assetTotalFeesVolNorm ||
-    //   oldVolume?.assetTotalFeesVolNorm ||
-    //   '0',
-
-    assetVolInNorm: '0',
-    assetVolOutNorm: '0',
-    assetFeeVolNorm: '0',
-
-    assetTotalVolInNorm: '0',
-    assetTotalVolOutNorm: '0',
-    assetTotalFeesVolNorm: '0',
+    // assetTotalVolInNorm: '0',
+    // assetTotalVolOutNorm: '0',
+    // assetTotalFeesVolNorm: '0',
 
     relayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
