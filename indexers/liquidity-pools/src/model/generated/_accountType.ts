@@ -4,4 +4,5 @@ export enum AccountType {
   Stableswap = "Stableswap",
   Xykpool = "Xykpool",
   Lbppool = "Lbppool",
+  Hsmpool = "Hsmpool",
 }

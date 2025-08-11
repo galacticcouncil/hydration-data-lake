@@ -48,9 +48,6 @@
       "storage": ["Assets", "HubAssetTradability"],
       "constants": true
     },
-    "OmnipoolLiquidityMining": {
-      "calls": true
-    },
     "Stableswap": {
       "events": [
         "PoolCreated",
@@ -100,8 +97,18 @@
       "calls": [],
       "storage": true
     },
-    "EmaOracle": {
+    "OmnipoolLiquidityMining": {
       "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "OmnipoolWarehouseLM": {
+      "events": true,
+      "calls": [],
+      "storage": true
+    },
+    "EmaOracle": {
+      "events": [],
       "calls": [],
       "storage": true
     },
@@ -110,6 +117,11 @@
       "calls": [],
       "storage": true,
       "constants": true
+    },
+    "HSM": {
+      "events": true,
+      "calls": true,
+      "storage": true
     }
   }
 }

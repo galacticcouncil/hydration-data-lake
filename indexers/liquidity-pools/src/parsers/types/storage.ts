@@ -16,6 +16,7 @@ import {
   Volume,
 } from '../chains/hydration/typegenTypes/v170';
 import { OraclePeriod, PegSource } from '../chains/hydration/typegenTypes/v305';
+import { Perbill } from '../chains/hydration-paseo-next/typegenTypes/v324';
 
 export interface AccountData {
   free: bigint;
@@ -292,6 +293,16 @@ export interface MmAggregatorDictionaryData {
   paraBlockHeight: number;
 }
 
+export interface HsmCollateralData {
+  collateralAssetId: number;
+  poolId: number;
+  purchaseFee: number;
+  maxBuyPriceCoefficient: bigint;
+  buybackRate: number;
+  buyBackFee: number;
+  maxInHolding?: bigint;
+}
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================
@@ -428,5 +439,10 @@ export type GetNativeTokenBalanceManyInput = {
 
 export type GetTokenBalancesManyInput = {
   accountIds: string[];
+  block: BlockHeader;
+};
+
+export type GetHsmCollateralInput = {
+  collateralId: string;
   block: BlockHeader;
 };

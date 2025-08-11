@@ -10,6 +10,7 @@ import {
 } from './processorHelpers/multiprocessorHandlers';
 import { execSpotPricesProcessorHandlers } from './processorHelpers/multiprocessorHandlers/spotPricesProc';
 import { RedisTimeSeriesManager } from './utils/redisTimeSeriesManager';
+import { handleReaggregationProcessing } from './processorHelpers/multiprocessorHandlers/recalculationProcessing';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -44,17 +45,26 @@ processor.run(
 
     await RedisTimeSeriesManager.getInstance().initClient();
 
-    await execAllInOneProcessorHandlers(
-      ctxWithBatchState as SqdProcessorContext<Store>
-    );
+    if (
+      (ctxWithBatchState as SqdProcessorContext<Store>).appConfig
+        .REAGGREGATION_PROCESSING_MODE
+    ) {
+      await handleReaggregationProcessing(
+        ctxWithBatchState as SqdProcessorContext<Store>
+      );
+    } else {
+      await execAllInOneProcessorHandlers(
+        ctxWithBatchState as SqdProcessorContext<Store>
+      );
 
-    await execCoreProcessorHandlers(
-      ctxWithBatchState as SqdProcessorContext<Store>
-    );
+      await execCoreProcessorHandlers(
+        ctxWithBatchState as SqdProcessorContext<Store>
+      );
 
-    await execSpotPricesProcessorHandlers(
-      ctxWithBatchState as SqdProcessorContext<Store>
-    );
+      await execSpotPricesProcessorHandlers(
+        ctxWithBatchState as SqdProcessorContext<Store>
+      );
+    }
 
     (ctxWithBatchState as SqdProcessorContext<Store>).batchState.wipeState();
 

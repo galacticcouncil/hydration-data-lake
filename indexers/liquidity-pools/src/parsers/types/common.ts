@@ -109,6 +109,8 @@ import {
   GetTokenBalancesManyInput,
   TokenAccountBalancesWithAccountId,
   EvmAccountsAccountExtensionWithEvmAddress,
+  HsmCollateralData,
+  GetHsmCollateralInput,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -385,6 +387,14 @@ export type StorageParserMethods = {
   };
   emaOracle: {
     getOracles: (args: GetEmaOraclesInput) => Promise<EmaOracleEntryData[]>;
+  };
+  hsm: {
+    getAllCollaterals: (
+      args: GetDataAtBlockInput
+    ) => Promise<HsmCollateralData[] | null>;
+    getCollateral: (
+      args: GetHsmCollateralInput
+    ) => Promise<HsmCollateralData | null>;
   };
 };
 

@@ -69,6 +69,11 @@ import {
   MoneyMarketReserve,
   MmReserveIndexesHistoricalData,
   MmReserveConfigHistoricalData,
+  Hsmpool,
+  HsmCollateral,
+  HsmpoolHistoricalData,
+  HsmCollateralConfigHistoricalData,
+  HsmpoolAssetHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -152,6 +157,12 @@ export type BatchStatePayload = {
   aavePools: Map<string, Aavepool>;
   aavePoolsHistoricalData: Map<string, AavepoolHistoricalData>;
 
+  hsmpoolEntity: Hsmpool | null;
+  hsmpoolHistData: Map<string, HsmpoolHistoricalData>;
+  hsmCollaterals: Map<string, HsmCollateral>;
+  hsmCollateralsConfigHistData: Map<string, HsmCollateralConfigHistoricalData>;
+  hsmpoolAssetHistData: Map<string, HsmpoolAssetHistoricalData>;
+
   omnipoolEntity: Omnipool | null;
   omnipoolAssets: Map<string, OmnipoolAsset>;
   omnipoolAssetIdsToSave: Set<string>;
@@ -203,10 +214,7 @@ export type BatchStatePayload = {
     string,
     MmReserveIndexesHistoricalData
   >;
-  moneyMarketReserveConfigHistData: Map<
-    string,
-    MmReserveConfigHistoricalData
-  >;
+  moneyMarketReserveConfigHistData: Map<string, MmReserveConfigHistoricalData>;
 
   moneyMarketEvents: Map<string, MoneyMarketEvent>;
   mmSupplies: Map<string, MmSupply>;
@@ -285,6 +293,12 @@ export class BatchState {
 
     aavePools: new Map(),
     aavePoolsHistoricalData: new Map(),
+
+    hsmpoolEntity: null,
+    hsmpoolHistData: new Map(),
+    hsmCollaterals: new Map(),
+    hsmCollateralsConfigHistData: new Map(),
+    hsmpoolAssetHistData: new Map(),
 
     omnipoolEntity: null,
     omnipoolAssets: new Map(),
@@ -398,6 +412,12 @@ export class BatchState {
 
       aavePools: new Map(),
       aavePoolsHistoricalData: new Map(),
+
+      hsmpoolEntity: null,
+      hsmpoolHistData: new Map(),
+      hsmCollaterals: new Map(),
+      hsmCollateralsConfigHistData: new Map(),
+      hsmpoolAssetHistData: new Map(),
 
       omnipoolEntity: null,
       omnipoolAssets: new Map(),

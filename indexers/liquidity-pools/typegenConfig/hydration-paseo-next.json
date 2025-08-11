@@ -6,19 +6,28 @@
       "calls": ["sudo", "sudo_unchecked_weight", "set_key", "sudo_as"]
     },
     "AssetRegistry": {
-      "events": ["Registered", "Updated"],
-      "storage": ["Assets"]
+      "events": ["Registered", "Updated", "LocationSet"],
+      "storage": ["Assets", "AssetLocations"]
+    },
+    "Bonds": {
+      "events": [],
+      "storage": true
     },
     "Balances": {
-      "events": ["Transfer"],
+      "events": true,
       "calls": true,
-      "storage": [],
+      "storage": true,
       "constants": []
     },
     "Tokens": {
-      "events": ["Transfer"],
+      "events": true,
       "calls": true,
       "storage": ["Accounts", "TotalIssuance"]
+    },
+    "Currencies": {
+      "events": true,
+      "calls": false,
+      "storage": false
     },
     "Router": {
       "calls": ["sell", "buy"]
@@ -30,15 +39,14 @@
     "XYK": {
       "events": ["PoolCreated", "PoolDestroyed", "SellExecuted", "BuyExecuted"],
       "calls": ["create_pool", "sell", "buy"],
-      "storage": ["PoolAssets", "ShareToken"]
+      "storage": ["PoolAssets", "ShareToken"],
+      "constants": true
     },
     "Omnipool": {
       "events": ["TokenAdded", "TokenRemoved", "SellExecuted", "BuyExecuted"],
       "calls": ["sell", "buy"],
-      "storage": ["Assets", "HubAssetTradability"]
-    },
-    "OmnipoolLiquidityMining": {
-      "calls": true
+      "storage": ["Assets", "HubAssetTradability"],
+      "constants": true
     },
     "Stableswap": {
       "events": [
@@ -49,12 +57,14 @@
         "LiquidityRemoved"
       ],
       "calls": ["sell", "buy"],
-      "storage": ["Pools", "AssetTradability"]
+      "storage": true,
+      "constants": true
     },
     "LBP": {
       "events": ["PoolUpdated", "PoolCreated", "SellExecuted", "BuyExecuted"],
       "calls": ["create_pool", "sell", "buy"],
-      "storage": ["PoolData"]
+      "storage": ["PoolData"],
+      "constants": true
     },
     "System": {
       "storage": ["Account"]
@@ -73,6 +83,42 @@
       "calls": true
     },
     "Broadcast": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "EVM": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "EVMAccounts": {
+      "events": ["Bound"],
+      "calls": [],
+      "storage": true
+    },
+    "OmnipoolLiquidityMining": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "OmnipoolWarehouseLM": {
+      "events": true,
+      "calls": [],
+      "storage": true
+    },
+    "EmaOracle": {
+      "events": [],
+      "calls": [],
+      "storage": true
+    },
+    "DynamicFees": {
+      "events": [],
+      "calls": [],
+      "storage": true,
+      "constants": true
+    },
+    "HSM": {
       "events": true,
       "calls": true,
       "storage": true

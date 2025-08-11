@@ -17,7 +17,7 @@ import {
   getOrCreateAsset,
   getOrCreateMoneyMarketAsset,
 } from '../../assets/asset';
-import { getOrCreateAavepool } from '../../pools/aavepool';
+import { getOrCreateAavepool } from '../../pools/pools/aavepool';
 import { handleMoneyMarketReserveConfigOnConfiguratorUpdate } from './moneyMarketReservesConfigHistoricalData';
 
 export async function getOrCreateMoneyMarketReserve({

@@ -299,6 +299,10 @@ export class AppConfig {
     '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000';
 
   @IsString()
+  readonly HSMPOOL_ADDRESS: string =
+    '0x6d6f646c70792f68736d6f640000000000000000000000000000000000000000';
+
+  @IsString()
   readonly OMNIPOOL_PROTOCOL_ASSET_ID: string = '1';
 
   @Transform(({ value }: { value: string }) => value === 'true')
@@ -378,6 +382,10 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
   readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly REAGGREGATION_PROCESSING_MODE: boolean = false;
 
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
 

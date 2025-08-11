@@ -9,10 +9,10 @@ import {
   LbpBuyExecutedData,
   LbpSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { handleLbppoolVolumeUpdates } from '../../volumes';
+import { handleLbppoolVolumeUpdates } from '../../pools/volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
 import { handleSwap } from '../../swap/swap';
-import { getOrCreateLbppool } from '../../pools/lbpPool/lbpPool';
+import { getOrCreateLbppool } from '../../pools/pools/lbpPool/lbpPool';
 
 export async function lpbBuyExecuted(
   ctx: SqdProcessorContext<Store>,

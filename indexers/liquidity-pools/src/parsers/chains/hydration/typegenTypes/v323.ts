@@ -1,5 +1,33 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type H160 = Bytes
+
+export interface CollateralInfo {
+    poolId: number
+    purchaseFee: Permill
+    maxBuyPriceCoefficient: FixedU128
+    buybackRate: Perbill
+    buyBackFee: Permill
+    maxInHolding?: (bigint | undefined)
+}
+
+export type Perbill = number
+
+export type FixedU128 = bigint
+
+export type Permill = number
+
+export const CollateralInfo: sts.Type<CollateralInfo> = sts.struct(() => {
+    return  {
+        poolId: sts.number(),
+        purchaseFee: Permill,
+        maxBuyPriceCoefficient: FixedU128,
+        buybackRate: Perbill,
+        buyBackFee: Permill,
+        maxInHolding: sts.option(() => sts.bigint()),
+    }
+})
+
 export interface PoolSnapshot {
     assets: number[]
     reserves: AssetReserve[]
@@ -8,8 +36,6 @@ export interface PoolSnapshot {
     pegs: [bigint, bigint][]
     shareIssuance: bigint
 }
-
-export type Permill = number
 
 export interface AssetReserve {
     amount: bigint
@@ -82,8 +108,6 @@ export interface OraclePeriod_TenMinutes {
 export interface OraclePeriod_Week {
     __kind: 'Week'
 }
-
-export type H160 = Bytes
 
 export interface Schedule {
     owner: AccountId32
@@ -675,8 +699,6 @@ export const Type_99: sts.Type<Type_99> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_99 = Type_99_EthereumTransaction
 
 export interface Type_99_EthereumTransaction {
@@ -956,8 +978,6 @@ export interface LoyaltyCurve {
     scaleCoef: number
 }
 
-export type FixedU128 = bigint
-
 export const Type_287: sts.Type<Type_287> = sts.struct(() => {
     return  {
         assetIn: sts.number(),
@@ -969,8 +989,6 @@ export interface Type_287 {
     assetIn: number
     assetOut: number
 }
-
-export const FixedU128 = sts.bigint()
 
 export const Perquintill = sts.bigint()
 
@@ -12741,8 +12759,6 @@ export const HSMCall: sts.Type<HSMCall> = sts.closedEnum(() => {
     }
 })
 
-export const Perbill = sts.number()
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -12945,8 +12961,6 @@ export interface HSMCall_update_collateral_asset {
     buybackRate?: (Perbill | undefined)
     maxInHolding: Option<(bigint | undefined)>
 }
-
-export type Perbill = number
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -15919,6 +15933,12 @@ export interface Call_XYKWarehouseLM {
     __kind: 'XYKWarehouseLM'
     value: XYKWarehouseLMCall
 }
+
+export const H160 = sts.bytes()
+
+export const Perbill = sts.number()
+
+export const FixedU128 = sts.bigint()
 
 export const ExecutionType: sts.Type<ExecutionType> = sts.closedEnum(() => {
     return  {

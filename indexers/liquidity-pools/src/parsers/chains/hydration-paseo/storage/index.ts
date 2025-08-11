@@ -8,6 +8,7 @@ import xyk from './xyk';
 import lbp from './lbp';
 import dca from './dca';
 import otc from './otc';
+import hsm from './hsm';
 import balances from './balances';
 import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
@@ -16,13 +17,15 @@ import { StorageResolver } from '../../../storageResolver';
 import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
 import {
   AccountData,
-  GetPoolAssetInfoInput, GetTokenBalancesManyInput,
+  GetPoolAssetInfoInput,
+  GetTokenBalancesManyInput,
   LbpGetPoolDataInput,
   LbpPoolData,
   OmnipoolAssetData,
   OmnipoolGetAssetDataInput,
   StablepoolGetPoolDataInput,
-  StablepoolInfo, TokenAccountBalancesWithAccountId,
+  StablepoolInfo,
+  TokenAccountBalancesWithAccountId,
   XykGetAssetsInput,
   XykPoolAssetIds,
   XykPoolData,
@@ -304,4 +307,5 @@ export default {
   emaOracle: {
     getOracles: emaOracle.getOracles,
   },
+  hsm,
 } as StorageParserMethods;

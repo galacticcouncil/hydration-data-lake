@@ -4,6 +4,8 @@ import { prefetchOrInitAllBatchAccounts } from '../handlers/accounts';
 import { prefetchAllAssets } from '../handlers/assets/utils';
 import {
   Aavepool,
+  HsmCollateral,
+  Hsmpool,
   Lbppool,
   MoneyMarketReserve,
   OmnipoolAsset,
@@ -91,5 +93,29 @@ export async function prefetchPersistentData(ctx: SqdProcessorContext<Store>) {
         },
       })
     ).map((p) => [p.id, p])
+  );
+
+  ctx.batchState.state.hsmpoolEntity =
+    (await ctx.store.findOne(Hsmpool, {
+      where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
+      relations: {
+        account: true,
+      },
+    })) ?? null;
+
+  ctx.batchState.state.hsmCollaterals = new Map(
+    (
+      await ctx.store.find(HsmCollateral, {
+        where: { isRemoved: false },
+        relations: {
+          pool: true,
+          asset: true,
+          stableswap: {
+            account: true,
+            shareToken: true,
+          },
+        },
+      })
+    ).map((c) => [c.id, c])
   );
 }

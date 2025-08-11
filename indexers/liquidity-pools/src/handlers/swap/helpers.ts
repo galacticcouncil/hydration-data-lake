@@ -9,16 +9,16 @@ import {
   Swap,
   SwapFillerType,
 } from '../../model';
-import { getOrCreateStableswap } from '../pools/stableswap/stablepool';
-import { getOrCreateLbppool } from '../pools/lbpPool/lbpPool';
+import { getOrCreateStableswap } from '../pools/pools/stableswap/stablepool';
+import { getOrCreateLbppool } from '../pools/pools/lbpPool/lbpPool';
 import {
   handleLbppoolVolumeUpdates,
   handleOmnipoolAssetVolumeUpdates,
   handleXykPoolVolumeUpdates,
-} from '../volumes';
+} from '../pools/volumes';
 import { handleAssetVolumeUpdates } from '../assets/volume';
-import { getOrCreateXykPool } from '../pools/xykPool/xykPool';
-import { handleStablepoolVolumeUpdates } from '../volumes/stablepoolVolume';
+import { getOrCreateXykPool } from '../pools/pools/xykPool/xykPool';
+import { handleStablepoolVolumeUpdates } from '../pools/volumes/stablepoolVolume';
 import { SwapFillerContextDetails } from '../../utils/types';
 import { handleAccountAssetSwapFee } from '../accounts/historicalAccountSwapFee';
 import { handleAssetSwapFee } from '../assets/historicalAssetSwapFee';

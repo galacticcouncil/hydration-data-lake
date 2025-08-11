@@ -236,8 +236,6 @@ export const CodeMetadata: sts.Type<CodeMetadata> = sts.struct(() => {
     }
 })
 
-export type H160 = Bytes
-
 export interface Type_705 {
     free: bigint
     reserved: bigint
@@ -249,6 +247,30 @@ export const Type_705: sts.Type<Type_705> = sts.struct(() => {
         free: sts.bigint(),
         reserved: sts.bigint(),
         frozen: sts.bigint(),
+    }
+})
+
+export type H160 = Bytes
+
+export interface CollateralInfo {
+    poolId: number
+    purchaseFee: Permill
+    maxBuyPriceCoefficient: FixedU128
+    buybackRate: Perbill
+    buyBackFee: Permill
+    maxInHolding?: (bigint | undefined)
+}
+
+export type Perbill = number
+
+export const CollateralInfo: sts.Type<CollateralInfo> = sts.struct(() => {
+    return  {
+        poolId: sts.number(),
+        purchaseFee: Permill,
+        maxBuyPriceCoefficient: FixedU128,
+        buybackRate: Perbill,
+        buyBackFee: Permill,
+        maxInHolding: sts.option(() => sts.bigint()),
     }
 })
 
@@ -13351,8 +13373,6 @@ export const HSMCall: sts.Type<HSMCall> = sts.closedEnum(() => {
     }
 })
 
-export const Perbill = sts.number()
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -13555,8 +13575,6 @@ export interface HSMCall_update_collateral_asset {
     buybackRate?: (Perbill | undefined)
     maxInHolding: Option<(bigint | undefined)>
 }
-
-export type Perbill = number
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -16821,8 +16839,6 @@ export const Order: sts.Type<Order> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export const Log: sts.Type<Log> = sts.struct(() => {
     return  {
         address: H160,
@@ -16836,6 +16852,10 @@ export interface Log {
     topics: H256[]
     data: Bytes
 }
+
+export const H160 = sts.bytes()
+
+export const Perbill = sts.number()
 
 export const Pool: sts.Type<Pool> = sts.struct(() => {
     return  {

@@ -1,5 +1,6 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
+import hollarAbi from './abi/aave/hollar_unstableAbi.json';
 import aTokenHydration from './abi/aave/aTokenHydration.json';
 import variableDebtTokenHydration from './abi/aave/variableDebtTokenHydration.json';
 import uiPoolDataProviderV3 from './abi/aave/uiPoolDataProviderV3.json';
@@ -207,6 +208,31 @@ export class MoneyMarketContractsManager {
   }) {
     try {
       const reservesData = await this.getReservesData({ blockNumber });
+
+      // const hollarContract = this.getContractInstance(
+      //   '0xfDB15f9Fe2252044b08230449D4278CFd4DF52E1',
+      //   hollarAbi
+      // );
+      //
+      // const facilitatorsList = await hollarContract.getFacilitatorsList();
+      //
+      // console.log('getFacilitatorsList');
+      // console.dir(await hollarContract.getFacilitatorsList(), { depth: null });
+      //
+      // const facilitatorsData: any[] = [];
+      // for (const facilitatorAddress of facilitatorsList) {
+      //   const facilitatorData =
+      //     await hollarContract.getFacilitator(facilitatorAddress);
+      //
+      //   facilitatorsData.push({
+      //     address: facilitatorAddress,
+      //     label: facilitatorData.label,
+      //     bucketCapacity: facilitatorData.bucketCapacity.toString(),
+      //     bucketLevel: facilitatorData.bucketLevel.toString(),
+      //   });
+      // }
+      //
+      // console.dir(facilitatorsData, { depth: null });
 
       if (!reservesData) {
         console.log(`No reserves data found on initContractInstances`);
@@ -445,6 +471,8 @@ export class MoneyMarketContractsManager {
       return null;
     }
   }
+
+
 
   // async getUserPoolReservesData({
   //   ctx,

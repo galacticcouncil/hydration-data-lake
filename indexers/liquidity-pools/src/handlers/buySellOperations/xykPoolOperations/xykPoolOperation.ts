@@ -9,10 +9,10 @@ import {
   XykBuyExecutedData,
   XykSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { handleXykPoolVolumeUpdates } from '../../volumes';
+import { handleXykPoolVolumeUpdates } from '../../pools/volumes';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
 import { handleSwap } from '../../swap/swap';
-import { getOrCreateXykPool } from '../../pools/xykPool/xykPool';
+import { getOrCreateXykPool } from '../../pools/pools/xykPool/xykPool';
 
 export async function xykBuyExecuted(
   ctx: SqdProcessorContext<Store>,

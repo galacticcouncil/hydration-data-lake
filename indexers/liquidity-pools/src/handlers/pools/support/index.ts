@@ -9,8 +9,8 @@ import {
   StableswapDestroyedData,
 } from '../../../model';
 import parsers from '../../../parsers';
-import { addStableswapDestroyedLifeState } from '../stableswap/stablepool';
-import { addLbppoolDestroyedLifeState } from '../lbpPool/lbpPool';
+import { addStableswapDestroyedLifeState } from '../pools/stableswap/stablepool';
+import { addLbppoolDestroyedLifeState } from '../pools/lbpPool/lbpPool';
 
 export async function ensurePoolsDestroyedStatus(
   ctx: SqdProcessorContext<Store>

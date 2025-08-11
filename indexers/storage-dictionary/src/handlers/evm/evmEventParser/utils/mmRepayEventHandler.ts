@@ -30,6 +30,7 @@ export async function handleMmRepayEvent(
     ctx,
     evmAddress: parsedEvmEventData.reserveAddress,
     ensure: true,
+    blockHeader: eventMetadata.blockHeader,
   });
 
   if (!assetEntity) {

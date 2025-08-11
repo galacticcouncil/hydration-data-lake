@@ -30,6 +30,7 @@ export async function handleMmLiquidationCallEvent(
     ctx,
     evmAddress: parsedEvmEventData.collateralAssetAddress,
     ensure: true,
+    blockHeader: eventMetadata.blockHeader,
   });
 
   if (!collateralAssetEntity) {

@@ -8,6 +8,7 @@ import {Lbppool} from "./lbppool.model"
 import {Xykpool} from "./xykpool.model"
 import {Omnipool} from "./omnipool.model"
 import {Stableswap} from "./stableswap.model"
+import {Hsmpool} from "./hsmpool.model"
 import {ChainActivityTrace} from "./chainActivityTrace.model"
 import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
 import {Swap} from "./swap.model"
@@ -64,6 +65,10 @@ export class Account {
   @Index_()
   @ManyToOne_(() => Stableswap, {nullable: true})
   stableswap!: Stableswap | undefined | null
+
+  @Index_()
+  @ManyToOne_(() => Hsmpool, {nullable: true})
+  hsmpool!: Hsmpool | undefined | null
 
   @OneToMany_(() => ChainActivityTrace, e => e.originator)
   initiatedActions!: ChainActivityTrace[]

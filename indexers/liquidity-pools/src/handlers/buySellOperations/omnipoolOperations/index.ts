@@ -16,7 +16,7 @@ import {
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
-import { handleOmnipoolAssetVolumeUpdates } from '../../volumes';
+import { handleOmnipoolAssetVolumeUpdates } from '../../pools/volumes';
 import { handleSwap } from '../../swap/swap';
 import { In } from 'typeorm';
 

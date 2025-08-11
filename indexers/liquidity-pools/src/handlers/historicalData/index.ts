@@ -83,6 +83,15 @@ export class HistoricalDataManager {
     await ctx.store.save(
       Array.from(ctx.batchState.state.moneyMarketReserveConfigHistData.values())
     );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.hsmCollateralsConfigHistData.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.hsmpoolHistData.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.hsmpoolAssetHistData.values())
+    );
 
     const latestBatchBlockHeight =
       ctx.blocks[ctx.blocks.length - 1].header.height;

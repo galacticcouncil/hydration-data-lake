@@ -230,6 +230,7 @@ enum AccountType {
   Stableswap
   Xykpool
   Lbppool
+  Hsmpool
 }
 
 type AccountAssetBalanceHistoricalData @entity {
@@ -309,6 +310,7 @@ type Account @entity {
   xykpool: Xykpool
   omnipool: Omnipool
   stableswap: Stableswap
+  hsmpool: Hsmpool
 
   initiatedActions: [ChainActivityTrace!] @derivedFrom(field: "originator")
   participatedActions: [AccountChainActivityTrace!]
@@ -1243,11 +1245,76 @@ type Hsmpool @entity {
 }
 
 type HsmCollateral @entity {
-  "poolId"
+  "<hsmpool_address>-<colateral_id>"
   id: ID!
   pool: Hsmpool!
   asset: Asset!
   stableswap: Stableswap!
+  isRemoved: Boolean!
+}
+
+type HsmpoolHistoricalData @entity {
+  "<hsm_collateral_id>-<block_height>"
+  id: ID!
+  pool: Hsmpool!
+
+  bucketCapacity: BigInt!
+  bucketLevel: BigInt!
+
+  paraTimestamp: DateTime! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type HsmCollateralConfigHistoricalData @entity {
+  "<hsm_collateral_id>-<block_height>"
+  id: ID!
+  collateral: HsmCollateral!
+
+  purchaseFee: BigInt!
+  maxBuyPriceCoefficient: BigInt!
+  buybackRate: BigInt!
+  buyBackFee: BigInt!
+  maxInHolding: BigInt!
+
+  paraTimestamp: DateTime! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}
+
+type HsmpoolAssetHistoricalData @entity {
+  "<hsm_collateral_id>-<block_height>"
+  id: ID!
+  asset: Asset!
+  "Can be null if snapshot is for Hollar"
+  collateral: HsmCollateral
+
+  "Can be 0 for Hollar as HSM pool "
+  freeBalance: BigInt!
+  tvlInRefAssetNorm: String
+
+  assetVolIn: BigInt!
+  assetVolOut: BigInt!
+  assetFeeVol: BigInt!
+
+  assetTotalVolIn: BigInt!
+  assetTotalVolOut: BigInt!
+  assetTotalFeesVol: BigInt!
+
+  assetVolInNorm: String!
+  assetVolOutNorm: String!
+  assetFeeVolNorm: String!
+
+  assetTotalVolInNorm: String!
+  assetTotalVolOutNorm: String!
+  assetTotalFeesVolNorm: String!
+
+  paraTimestamp: DateTime! @index
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
 }
 
 # ======================================================================================================================

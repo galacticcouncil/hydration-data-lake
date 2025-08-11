@@ -17,9 +17,9 @@ import {
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
-import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
-import { getOrCreateStableswap } from '../../pools/stableswap/stablepool';
-import { stablepoolLiquidityAddedRemoved } from '../../pools/stableswap/liquidity';
+import { handleStablepoolVolumeUpdates } from '../../pools/volumes/stablepoolVolume';
+import { getOrCreateStableswap } from '../../pools/pools/stableswap/stablepool';
+import { stablepoolLiquidityAddedRemoved } from '../../pools/pools/stableswap/liquidity';
 import { handleSwap } from '../../swap/swap';
 
 export async function handleStablepoolOperations(

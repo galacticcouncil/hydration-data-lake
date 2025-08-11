@@ -8,6 +8,7 @@ import xyk from './xyk';
 import lbp from './lbp';
 import dca from './dca';
 import otc from './otc';
+import hsm from './hsm';
 import emaOracle from './emaOracle';
 import balances from './balances';
 import evmAccounts from './evmAccounts';
@@ -487,4 +488,5 @@ export default {
         fallbackFns: [emaOracle.getOracles],
       }),
   },
+  hsm,
 } as StorageParserMethods;

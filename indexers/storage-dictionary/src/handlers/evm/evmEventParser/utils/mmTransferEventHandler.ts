@@ -30,6 +30,7 @@ export async function handleMmTransferEvent(
     ctx,
     evmAddress: parsedEvmEventData.reserveAddress,
     ensure: true,
+    blockHeader: eventMetadata.blockHeader,
   });
 
   if (!assetEntity) {
