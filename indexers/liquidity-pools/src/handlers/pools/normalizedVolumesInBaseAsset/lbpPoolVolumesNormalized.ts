@@ -12,7 +12,7 @@ export async function processLbpPoolsNormalizedVolumes({
 }) {
   let lbpPoolHistVolsByBatchList = Array.from(
     ctx.batchState.state.lbpPoolVolumes.values()
-  );
+  ).sort((a, b) => (a.paraBlockHeight > b.paraBlockHeight ? 1 : -1));
 
   if (blockNumbersToProcess) {
     const blockNumbersToProcessSet = new Set(blockNumbersToProcess);

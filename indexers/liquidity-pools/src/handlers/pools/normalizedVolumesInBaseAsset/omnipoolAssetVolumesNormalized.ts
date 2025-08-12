@@ -21,7 +21,7 @@ export async function processOmnipoolAssetNormalizedVolumes({
 }) {
   let omnipoolAssetHistVolsByBatchList = Array.from(
     ctx.batchState.state.omnipoolAssetVolumes.values()
-  );
+  ).sort((a, b) => (a.paraBlockHeight > b.paraBlockHeight ? 1 : -1));
 
   if (blockNumbersToProcess) {
     const blockNumbersToProcessSet = new Set(blockNumbersToProcess);

@@ -23,7 +23,7 @@ export async function processStableswapAssetNormalizedVolumes({
 }) {
   let stableswapAssetHistVolsByBatchList = Array.from(
     ctx.batchState.state.stablepoolAssetVolumes.values()
-  );
+  ).sort((a, b) => (a.paraBlockHeight > b.paraBlockHeight ? 1 : -1));
 
   if (blockNumbersToProcess) {
     const blockNumbersToProcessSet = new Set(blockNumbersToProcess);
@@ -72,7 +72,9 @@ export async function processStableswapAssetNormalizedVolumes({
     if (asset.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
       assetSpotPriceNorm = '1';
 
-    if (!assetSpotPriceNorm || !asset.decimals) continue;
+    if (!assetSpotPriceNorm || !asset.decimals) {
+      continue;
+    }
 
     currentAssetVolsHistData.assetFeeVolNorm = calcPriceNormalized({
       amount: currentAssetVolsHistData.assetFeeVol,

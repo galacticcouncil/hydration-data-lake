@@ -22,7 +22,7 @@ export async function processXykPoolsNormalizedVolumes({
 }) {
   let xykPoolHistVolsByBatchList = Array.from(
     ctx.batchState.state.xykPoolVolumes.values()
-  );
+  ).sort((a, b) => (a.paraBlockHeight > b.paraBlockHeight ? 1 : -1));
 
   if (blockNumbersToProcess) {
     const blockNumbersToProcessSet = new Set(blockNumbersToProcess);
