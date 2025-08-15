@@ -24,25 +24,13 @@ export async function getStartStopBlocksFromInput({
   if (!period && inputStartBlockNumber === undefined) return null;
 
   const requestedRange = new AggregationTimeRange(
-    period ?? AggregationTimeRangeLabel['24H']
+    period ?? AggregationTimeRangeLabel['1D']
   );
 
   let startBlockHeight = 0;
   let stopBlockHeight = 0;
 
-  if (period) {
-    const startBlock = await pgClient.query(getBlockByTimestampGrtOrEq, [
-      requestedRange.startDate,
-    ]);
-    const stopBlock = await pgClient.query(getBlockByTimestampLtOrEq, [
-      requestedRange.nowDate,
-    ]);
-
-    if (!startBlock?.rows?.length || !stopBlock?.rows?.length) return null;
-
-    startBlockHeight = startBlock.rows[0].height;
-    stopBlockHeight = stopBlock.rows[0].height;
-  } else {
+  if (inputStartBlockNumber !== undefined && inputStartBlockNumber !== null) {
     startBlockHeight = inputStartBlockNumber ?? 0;
     if (!inputStopBlockNumber) {
       const stopBlock = await pgClient.query(getBlockByTimestampLtOrEq, [
@@ -54,6 +42,18 @@ export async function getStartStopBlocksFromInput({
     } else {
       stopBlockHeight = inputStopBlockNumber;
     }
+  } else {
+    const startBlock = await pgClient.query(getBlockByTimestampGrtOrEq, [
+      requestedRange.startDate,
+    ]);
+    const stopBlock = await pgClient.query(getBlockByTimestampLtOrEq, [
+      requestedRange.nowDate,
+    ]);
+
+    if (!startBlock?.rows?.length || !stopBlock?.rows?.length) return null;
+
+    startBlockHeight = startBlock.rows[0].height;
+    stopBlockHeight = stopBlock.rows[0].height;
   }
 
   return {
@@ -67,15 +67,15 @@ export function getPeriodFromInterval(
 ): AggregationTimeRangeLabel {
   switch (interval) {
     case YieldMetricsInterval['1D']:
-      return AggregationTimeRangeLabel['24H'];
+      return AggregationTimeRangeLabel['1D'];
     case YieldMetricsInterval['1W']:
-      return AggregationTimeRangeLabel['1W'];
+      return AggregationTimeRangeLabel['7D'];
     case YieldMetricsInterval['1MON']:
-      return AggregationTimeRangeLabel['1M'];
+      return AggregationTimeRangeLabel['30D'];
     case YieldMetricsInterval['1Y']:
-      return AggregationTimeRangeLabel['1Y'];
+      return AggregationTimeRangeLabel['365D'];
     default:
-      return AggregationTimeRangeLabel['1M'];
+      return AggregationTimeRangeLabel['30D'];
   }
 }
 

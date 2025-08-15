@@ -1,14 +1,18 @@
-import aavePoolImplementation from './abi/aave/aavePoolImplementation.json';
-import aTokenHydration from './abi/aave/aTokenHydration.json';
-import diaOracleV2 from './abi/aave/diaOracleV2.json';
-import poolConfiguratorImplementation from './abi/aave/poolConfiguratorImplementation.json';
+import aavePoolImplementation from '../abi/aave/aavePoolImplementation.json';
+import aTokenHydration from '../abi/aave/aTokenHydration.json';
+import diaOracleV2 from '../abi/aave/diaOracleV2.json';
+import poolConfiguratorImplementation from '../abi/aave/poolConfiguratorImplementation.json';
+import hollarAbi from '../abi/aave/hollar_unstableAbi.json';
 import { ethers } from 'ethers';
-import { MoneyMarketEventsParser } from './moneyMarketEventsParser';
-import { EvmLogEventParams } from '../../parsers/types/events';
-import { EvmEventParamsTypeDecorated } from './types';
-import { EvmContractName, EvmEventName } from '../../model';
+import { EvmLogEventParsers } from './eventParsers';
+import { EvmLogEventParams } from '../../../parsers/types/events';
+import { EvmEventParamsTypeDecorated } from '../types';
+import { EvmContractName, EvmEventName } from '../../../model';
+import { AppConfig } from '../../../appConfig';
 
-export class EvmLogDecoder extends MoneyMarketEventsParser {
+const appConfig = AppConfig.getInstance();
+
+export class EvmLogDecoder extends EvmLogEventParsers {
   private static instance: EvmLogDecoder;
   private interfacesMap = new Map([
     [
@@ -20,6 +24,10 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
     [
       poolConfiguratorImplementation.address,
       new ethers.utils.Interface(poolConfiguratorImplementation.abi),
+    ],
+    [
+      appConfig.evm.HOLLAR_CONTRACT_ADDRESS,
+      new ethers.utils.Interface(hollarAbi),
     ],
   ]);
 
@@ -79,11 +87,16 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
         parsedLog = this.interfacesMap
           .get(poolConfiguratorImplementation.address)!
           .parseLog({ topics, data });
-
-        // console.log('----- parsedLog');
-        // console.dir(parsedLog, { depth: null });
-
         contractName = EvmContractName.AavePoolConfiguratorImpl;
+      } catch (error) {}
+    }
+
+    if (!parsedLog) {
+      try {
+        parsedLog = this.interfacesMap
+          .get(appConfig.evm.HOLLAR_CONTRACT_ADDRESS)!
+          .parseLog({ topics, data });
+        contractName = EvmContractName.HollarToken;
       } catch (error) {}
     }
 
@@ -138,6 +151,22 @@ export class EvmLogDecoder extends MoneyMarketEventsParser {
         ) as unknown as EvmEventParamsTypeDecorated<N>;
       case EvmEventName.ReserveDataUpdated:
         return this.parsePoolReserveDataUpdatedEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.FacilitatorAdded:
+        return this.parseHsmFasilitatorAddedEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.FacilitatorRemoved:
+        return this.parseHsmFasilitatorRemovedEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.FacilitatorBucketCapacityUpdated:
+        return this.parseHsmFacilitatorBucketCapacityUpdatedEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.FacilitatorBucketLevelUpdated:
+        return this.parseHsmFacilitatorBucketLevelUpdatedEvent(
           evmLogParams
         ) as unknown as EvmEventParamsTypeDecorated<N>;
       default:

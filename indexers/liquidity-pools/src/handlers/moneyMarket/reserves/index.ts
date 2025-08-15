@@ -44,7 +44,6 @@ export async function handleMmReservesConfigsHistoricalData(
       );
       continue;
     }
-    console.log(`-- Update MM Reserve data at block ${blockHeader.height}`);
     for (const reserveData of reservesData) {
       await handleMoneyMarketReserveConfigOnConfiguratorUpdate({
         reserveData,

@@ -25,5 +25,5 @@ export async function handleOracleUpdatedEvent(
     callData,
   } = eventCallData;
 
-  console.log(`DIA Oracle has emitted Update event`);
+  // console.log(`DIA Oracle has emitted Update event`);
 }

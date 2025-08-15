@@ -25,7 +25,8 @@ const responsePreprocessingExchange: Exchange =
             (result.operation.context.fetchOptions as RequestInit)?.headers
           );
           console.error(
-            `Storage dictionary [] GraphQL Error:`,
+            // @ts-ignore
+            `Storage dictionary [${(result.operation.context.fetchOptions as RequestInit)?.headers?.ProcessingTopic}] GraphQL Error:`,
             result.error.message
           );
         }
@@ -93,11 +94,11 @@ export class QueriesHelper {
 
     const client = new GqlClient({
       url: this.gqlClientUrlsMap.get(clientName)!,
-      // fetchOptions: {
-      //   headers: {
-      //     ProcessingTopic: clientName,
-      //   },
-      // },
+      fetchOptions: {
+        headers: {
+          ProcessingTopic: clientName,
+        },
+      },
       exchanges: [
         retryExchange(retryOptions),
         responsePreprocessingExchange,

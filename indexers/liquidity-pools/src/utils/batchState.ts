@@ -74,6 +74,8 @@ import {
   HsmpoolHistoricalData,
   HsmCollateralConfigHistoricalData,
   HsmpoolAssetHistoricalData,
+  AaveFacilitator,
+  AaveFacilitatorHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -162,6 +164,8 @@ export type BatchStatePayload = {
   hsmCollaterals: Map<string, HsmCollateral>;
   hsmCollateralsConfigHistData: Map<string, HsmCollateralConfigHistoricalData>;
   hsmpoolAssetHistData: Map<string, HsmpoolAssetHistoricalData>;
+  aaveFacilitators: Map<string, AaveFacilitator>;
+  aaveFacilitatorsHistData: Map<string, AaveFacilitatorHistoricalData>;
 
   omnipoolEntity: Omnipool | null;
   omnipoolAssets: Map<string, OmnipoolAsset>;
@@ -299,6 +303,8 @@ export class BatchState {
     hsmCollaterals: new Map(),
     hsmCollateralsConfigHistData: new Map(),
     hsmpoolAssetHistData: new Map(),
+    aaveFacilitators: new Map(),
+    aaveFacilitatorsHistData: new Map(),
 
     omnipoolEntity: null,
     omnipoolAssets: new Map(),
@@ -418,6 +424,8 @@ export class BatchState {
       hsmCollaterals: new Map(),
       hsmCollateralsConfigHistData: new Map(),
       hsmpoolAssetHistData: new Map(),
+      aaveFacilitators: new Map(),
+      aaveFacilitatorsHistData: new Map(),
 
       omnipoolEntity: null,
       omnipoolAssets: new Map(),

@@ -12,6 +12,13 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _1M_
           _1Y_
           _ALL_
+          _12H_
+          _1D_
+          _7D_
+          _30D_
+          _90D_
+          _180D_
+          _365D_
         }
 
         enum YieldMetricsInterval {
@@ -86,6 +93,13 @@ export const CommonApiTypesDefinitionPlugin: Plugin = makeExtendSchemaPlugin(
           _1M_: '1M',
           _1Y_: '1Y',
           _ALL_: 'ALL',
+          _12H_: '12H',
+          _1D_: '1D',
+          _7D_: '7D',
+          _30D_: '30D',
+          _90D_: '90D',
+          _180D_: '180D',
+          _365D_: '365D',
         },
 
         YieldMetricsInterval: {

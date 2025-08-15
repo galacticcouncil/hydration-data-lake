@@ -11,7 +11,11 @@ import {
   TraceEntityType,
   EventGroup,
 } from '../model';
-import { getCallOriginParts, jsonToString } from '../utils/helpers';
+import {
+  getCallOriginParts,
+  jsonToString,
+  upsertWithBatches,
+} from '../utils/helpers';
 import { getOrCreateAccount } from '../handlers/accounts';
 import {
   EventPhase,
@@ -596,17 +600,53 @@ export class ChainActivityTraceManager {
   static async saveActivityTraceEntities(ctx: SqdProcessorContext<Store>) {
     const state = ctx.batchState.state;
 
-    await ctx.store.upsert([...state.batchBlocks.values()].reverse());
-    await ctx.store.upsert([...state.batchExtrinsics.values()].reverse());
-    await ctx.store.upsert([...state.batchCalls.values()].reverse());
-    await ctx.store.upsert([...state.batchEvents.values()].reverse());
-    await ctx.store.upsert([...state.chainActivityTraces.values()].reverse());
-    await ctx.store.upsert(
-      [...state.accountChainActivityTraces.values()].reverse()
+    await upsertWithBatches(
+      Array.from(state.batchBlocks.values()).reverse(),
+      ctx,
+      500
     );
-    await ctx.store.upsert(
-      [...state.chainActivityTraceRelations.values()].reverse()
+    await upsertWithBatches(
+      Array.from(state.batchExtrinsics.values()).reverse(),
+      ctx,
+      500
     );
+    await upsertWithBatches(
+      Array.from(state.batchCalls.values()).reverse(),
+      ctx,
+      500
+    );
+    await upsertWithBatches(
+      Array.from(state.batchEvents.values()).reverse(),
+      ctx,
+      500
+    );
+    await upsertWithBatches(
+      Array.from(state.chainActivityTraces.values()).reverse(),
+      ctx,
+      500
+    );
+    await upsertWithBatches(
+      Array.from(state.accountChainActivityTraces.values()).reverse(),
+      ctx,
+      500
+    );
+    await upsertWithBatches(
+      Array.from(state.chainActivityTraceRelations.values()).reverse(),
+      ctx,
+      500
+    );
+
+    // await ctx.store.upsert([...state.batchBlocks.values()].reverse());
+    // await ctx.store.upsert([...state.batchExtrinsics.values()].reverse());
+    // await ctx.store.upsert([...state.batchCalls.values()].reverse());
+    // await ctx.store.upsert([...state.batchEvents.values()].reverse());
+    // await ctx.store.upsert([...state.chainActivityTraces.values()].reverse());
+    // await ctx.store.upsert(
+    //   [...state.accountChainActivityTraces.values()].reverse()
+    // );
+    // await ctx.store.upsert(
+    //   [...state.chainActivityTraceRelations.values()].reverse()
+    // );
   }
 
   static async getChainActivityTrace({

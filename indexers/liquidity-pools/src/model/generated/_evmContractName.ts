@@ -3,4 +3,5 @@ export enum EvmContractName {
   AavePoolConfiguratorImpl = "AavePoolConfiguratorImpl",
   AaveAToken = "AaveAToken",
   DiaOracleV2 = "DiaOracleV2",
+  HollarToken = "HollarToken",
 }

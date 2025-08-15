@@ -1,4 +1,8 @@
 import {
+  HsmFacilitatorAddedEventParams,
+  HsmFacilitatorBucketCapacityUpdatedEventParams,
+  HsmFacilitatorBucketLevelUpdatedEventParams,
+  HsmFacilitatorRemovedEventParams,
   MmBorrowEventParams,
   MmLiquidationCallEventParams,
   MmRepayEventParams,
@@ -36,7 +40,15 @@ export type EvmEventParamsTypeDecorated<N extends EvmEventName> =
                       ? OracleUpdateEventParams
                       : N extends EvmEventName.ReserveDataUpdated
                         ? PoolReserveDataUpdatedEventParams
-                        : never;
+                        : N extends EvmEventName.FacilitatorBucketCapacityUpdated
+                          ? HsmFacilitatorBucketCapacityUpdatedEventParams
+                          : N extends EvmEventName.FacilitatorBucketLevelUpdated
+                            ? HsmFacilitatorBucketLevelUpdatedEventParams
+                            : N extends EvmEventName.FacilitatorAdded
+                              ? HsmFacilitatorAddedEventParams
+                              : N extends EvmEventName.FacilitatorRemoved
+                                ? HsmFacilitatorRemovedEventParams
+                                : never;
 
 export type AccountMmPositionDataContractData = {
   totalCollateralBase: string;

@@ -702,7 +702,7 @@ export async function getParsedEventsData(
         /**
          * ==== Swapped ====
          */
-        case (events as typeof hydrationEvents).broadcast.swapped2?.name: {
+        case (events as typeof hydrationEvents).broadcast.swapped?.name: {
           const preparedData = parserHelper.parseBroadcastSwappedData();
           parsedDataManager.set(EventName.Broadcast_Swapped, preparedData);
 

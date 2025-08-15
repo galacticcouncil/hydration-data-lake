@@ -1,5 +1,9 @@
 import {
   EvmLogEventParams,
+  HsmFacilitatorAddedEventParams,
+  HsmFacilitatorBucketCapacityUpdatedEventParams,
+  HsmFacilitatorBucketLevelUpdatedEventParams,
+  HsmFacilitatorRemovedEventParams,
   MmBorrowEventParams,
   MmLiquidationCallEventParams,
   MmRepayEventParams,
@@ -11,11 +15,12 @@ import {
   MmWithdrawEventParams,
   OracleUpdateEventParams,
   PoolReserveDataUpdatedEventParams,
-} from '../../parsers/types/events';
-import { EvmEventName } from '../../model';
+} from '../../../parsers/types/events';
+import { EvmEventName } from '../../../model';
 import { ethers } from 'ethers';
+import { hexToString } from '@polkadot/util';
 
-export class MoneyMarketEventsParser {
+export class EvmLogEventParsers {
   parseTransferEvent(event: EvmLogEventParams): MmTransferEventParams {
     return {
       eventName: EvmEventName.Transfer,
@@ -141,6 +146,67 @@ export class MoneyMarketEventsParser {
       variableBorrowRate: event.args[3],
       liquidityIndex: event.args[4],
       variableBorrowIndex: event.args[5],
+    };
+  }
+  parseHsmFasilitatorAddedEvent(
+    event: EvmLogEventParams
+  ): HsmFacilitatorAddedEventParams {
+    let label = null;
+
+    try {
+      label = ethers.utils.parseBytes32String(event.args[1]);
+    } catch (e) {}
+
+    if (!label) {
+      try {
+        label = ethers.utils.toUtf8String(event.args[1]);
+      } catch (e) {}
+    }
+    if (!label) {
+      try {
+        label = event.args[1].toString();
+      } catch (e) {}
+    }
+
+    if (!label) label = event.args[1];
+
+    return {
+      eventName: EvmEventName.FacilitatorAdded,
+      contractName: event.contractName,
+      facilitatorAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
+      label,
+      bucketCapacity: event.args[2],
+    };
+  }
+  parseHsmFasilitatorRemovedEvent(
+    event: EvmLogEventParams
+  ): HsmFacilitatorRemovedEventParams {
+    return {
+      eventName: EvmEventName.FacilitatorRemoved,
+      contractName: event.contractName,
+      facilitatorAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
+    };
+  }
+  parseHsmFacilitatorBucketCapacityUpdatedEvent(
+    event: EvmLogEventParams
+  ): HsmFacilitatorBucketCapacityUpdatedEventParams {
+    return {
+      eventName: EvmEventName.FacilitatorBucketCapacityUpdated,
+      contractName: event.contractName,
+      facilitatorAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
+      oldCapacity: event.args[1],
+      newCapacity: event.args[2],
+    };
+  }
+  parseHsmFacilitatorBucketLevelUpdatedEvent(
+    event: EvmLogEventParams
+  ): HsmFacilitatorBucketLevelUpdatedEventParams {
+    return {
+      eventName: EvmEventName.FacilitatorBucketLevelUpdated,
+      contractName: event.contractName,
+      facilitatorAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
+      oldLevel: event.args[1],
+      newLevel: event.args[2],
     };
   }
 }

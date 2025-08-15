@@ -12,6 +12,9 @@ import { YieldMetricsInterval } from '../apiSupport/types';
 import { performance, monitorEventLoopDelay } from 'perf_hooks';
 import { deepEqual } from 'fast-equals';
 import blockHash from 'object-hash';
+import { Entity } from '@subsquid/typeorm-store/src/store';
+import { SqdProcessorContext } from '../processor';
+import { Store } from '@subsquid/typeorm-store';
 const hdl = monitorEventLoopDelay();
 hdl.enable();
 
@@ -288,29 +291,58 @@ export async function retryAsync<T>({
   retries = 1,
   retryIf = () => true,
   passThrough = false,
+  fallbackResponse,
+  throwErrorOnRetriesLimit = false,
 }: {
   fn: () => Promise<T>;
   retries?: number;
   delay?: number;
   passThrough?: boolean;
+  throwErrorOnRetriesLimit?: boolean;
+  fallbackResponse: T;
   retryIf?: (error: any) => boolean;
 }): Promise<T> {
   if (passThrough) return fn();
 
-  let attempt = 0;
+  const retiesLoopId = crypto.randomUUID();
 
-  while (attempt <= retries) {
-    try {
-      return await fn();
-    } catch (error) {
-      attempt++;
-      if (attempt > retries || !retryIf(error)) throw error;
+  try {
+    let attempt = 0;
+    while (attempt <= retries) {
+      try {
+        return await fn();
+      } catch (error) {
+        attempt++;
+        if (attempt > retries || !retryIf(error)) throw error;
 
-      console.log(`Retrying... attempt ${attempt} failed `);
-      // console.log(`Retrying... attempt ${attempt} failed with error:`, error);
-      await new Promise((resolve) => setTimeout(resolve, delay));
+        console.log(
+          `${retiesLoopId} :: Retrying... attempt ${attempt} failed `
+        );
+        // console.log(`Retrying... attempt ${attempt} failed with error:`, error);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
     }
+  } catch (e) {
+    // @ts-ignore
+    // console.log(e?.message);
+    console.log(
+      `${retiesLoopId} :: Retries loop finished with unresolved error.`
+    );
   }
 
-  throw new Error('Exceeded retry attempts');
+  if (throwErrorOnRetriesLimit) {
+    throw new Error(`${retiesLoopId} Exceeded retry attempts`);
+  } else {
+    return fallbackResponse;
+  }
+}
+
+export async function upsertWithBatches(
+  data: Entity[],
+  ctx: SqdProcessorContext<Store>,
+  maxBatchSize: number = 1000
+) {
+  for (const batch of splitIntoBatches(data, maxBatchSize)) {
+    await ctx.store.upsert(batch);
+  }
 }

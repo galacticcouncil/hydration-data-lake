@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { prefetchOrInitAllBatchAccounts } from '../handlers/accounts';
 import { prefetchAllAssets } from '../handlers/assets/utils';
 import {
+  AaveFacilitator,
   Aavepool,
   HsmCollateral,
   Hsmpool,
@@ -110,11 +111,15 @@ export async function prefetchPersistentData(ctx: SqdProcessorContext<Store>) {
         relations: {
           pool: true,
           asset: true,
-          stableswap: {
-            account: true,
-            shareToken: true,
-          },
+          stableswap: true,
         },
+      })
+    ).map((c) => [c.id, c])
+  );
+  ctx.batchState.state.aaveFacilitators = new Map(
+    (
+      await ctx.store.find(AaveFacilitator, {
+        where: { isRemoved: false },
       })
     ).map((c) => [c.id, c])
   );

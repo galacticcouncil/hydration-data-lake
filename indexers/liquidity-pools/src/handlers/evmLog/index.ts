@@ -6,6 +6,12 @@ import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
 import mmEventHandlers from '../moneyMarket/mmEventHandlers';
 import { EvmEventName, ResourceType, RoutedTrade } from '../../model';
+import {
+  handleFacilitatorBucketCapacityUpdatedEvent,
+  handleFacilitatorBucketLevelUpdatedEvent,
+} from '../facilitator/facilitatorUpdated';
+import { handleFacilitatorAddedEvent } from '../facilitator/facilitatorAdded';
+import { handleFacilitatorRemovedEvent } from '../facilitator/facilitatorRemoved';
 
 export async function handleEvm(
   ctx: SqdProcessorContext<Store>,
@@ -60,6 +66,18 @@ export async function handleEvmLog(
       break;
     case EvmEventName.OracleUpdate:
       await mmEventHandlers.handleOracleUpdatedEvent(ctx, eventCallData);
+      break;
+    case EvmEventName.FacilitatorAdded:
+      await handleFacilitatorAddedEvent({ ctx, eventCallData });
+      break;
+    case EvmEventName.FacilitatorRemoved:
+      await handleFacilitatorRemovedEvent({ ctx, eventCallData });
+      break;
+    case EvmEventName.FacilitatorBucketLevelUpdated:
+      await handleFacilitatorBucketLevelUpdatedEvent({ ctx, eventCallData });
+      break;
+    case EvmEventName.FacilitatorBucketCapacityUpdated:
+      await handleFacilitatorBucketCapacityUpdatedEvent({ ctx, eventCallData });
       break;
     default:
   }

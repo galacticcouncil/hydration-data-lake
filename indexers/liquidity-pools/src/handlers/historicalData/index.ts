@@ -92,6 +92,9 @@ export class HistoricalDataManager {
     await ctx.store.save(
       Array.from(ctx.batchState.state.hsmpoolAssetHistData.values())
     );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.aaveFacilitatorsHistData.values())
+    );
 
     const latestBatchBlockHeight =
       ctx.blocks[ctx.blocks.length - 1].header.height;

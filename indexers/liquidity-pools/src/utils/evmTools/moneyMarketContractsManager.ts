@@ -319,6 +319,7 @@ export class MoneyMarketContractsManager {
               .get(address)!
               .totalSupply({ blockTag: blockNumber })
           ).toString(),
+        fallbackResponse: '0',
       });
     } catch (e) {
       console.log(e);
@@ -357,6 +358,7 @@ export class MoneyMarketContractsManager {
                     .get(address)!
                     .totalSupply({ blockTag: blockNumber })
                 ).toString(),
+              fallbackResponse: '0',
             });
           } catch (e) {}
 
@@ -390,7 +392,7 @@ export class MoneyMarketContractsManager {
       //     blockNumber !== undefined ? { blockTag: blockNumber } : undefined
       //   );
 
-      const balance = await retryAsync({
+      const balance: any = await retryAsync({
         // passThrough: true,
         fn: () =>
           this.moneyMarketTokenContracts
@@ -399,6 +401,7 @@ export class MoneyMarketContractsManager {
               accountAddressNormalized,
               blockNumber !== undefined ? { blockTag: blockNumber } : undefined
             ),
+        fallbackResponse: null,
       });
 
       if (balance !== undefined && balance !== null)
@@ -419,12 +422,6 @@ export class MoneyMarketContractsManager {
     const accountAddressNormalized = ethers.utils.getAddress(accountAddress);
 
     try {
-      // const data =
-      //   await this.poolImplementationContractInstance.getUserAccountData(
-      //     accountAddressNormalized,
-      //     blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-      //   );
-
       const data = await retryAsync<any>({
         // passThrough: true,
         fn: () =>
@@ -432,6 +429,7 @@ export class MoneyMarketContractsManager {
             accountAddressNormalized,
             blockNumber !== undefined ? { blockTag: blockNumber } : undefined
           ),
+        fallbackResponse: null,
       });
 
       if (!data) return null;
@@ -464,14 +462,11 @@ export class MoneyMarketContractsManager {
   /**
    * IMPORTANT: Method cannot provide data at a specific block.
    */
-  async getAllAaveFacilitators() {
+  async getAllAaveFacilitators({ blockNumber }: { blockNumber?: number }) {
     const facilitatorsList: string[] = await retryAsync({
       // passThrough: true,
-      fn: () =>
-        this.hollarContractInstance
-          .getFacilitatorsList
-          // blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-          (),
+      fn: () => this.hollarContractInstance.getFacilitatorsList(),
+      fallbackResponse: [],
     });
 
     if (!facilitatorsList) {
@@ -485,7 +480,7 @@ export class MoneyMarketContractsManager {
       facilitatorsList,
       async (facilitatorAddress: string) => {
         facilitatorsData.push(
-          await this.getAaveFacilitator({ facilitatorAddress })
+          await this.getAaveFacilitator({ facilitatorAddress, blockNumber })
         );
       },
       { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
@@ -499,12 +494,19 @@ export class MoneyMarketContractsManager {
    */
   async getAaveFacilitator({
     facilitatorAddress,
+    blockNumber,
   }: {
     facilitatorAddress: string;
+    blockNumber?: number;
   }): Promise<AaveFacilitatorContractData | null> {
     const facilitatorData: any = await retryAsync({
       // passThrough: true,
-      fn: () => this.hollarContractInstance.getFacilitator(facilitatorAddress),
+      fn: () =>
+        this.hollarContractInstance.getFacilitator(
+          ethers.utils.getAddress(facilitatorAddress),
+          blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+        ),
+      fallbackResponse: null,
     });
 
     if (!facilitatorData) {
@@ -513,7 +515,7 @@ export class MoneyMarketContractsManager {
     }
 
     return {
-      address: facilitatorAddress,
+      address: facilitatorAddress.toLowerCase(),
       label: facilitatorData.label,
       bucketCapacity: facilitatorData.bucketCapacity.toString(),
       bucketLevel: facilitatorData.bucketLevel.toString(),

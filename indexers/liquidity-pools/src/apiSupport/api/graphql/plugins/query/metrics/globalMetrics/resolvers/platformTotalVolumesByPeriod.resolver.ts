@@ -144,7 +144,7 @@ export async function platformTotalVolumesByPeriodResolver(
   await CacheManager.getInstance().cache.set<PlatformTotalVolumesByPeriodResponse>(
     cacheKey,
     result,
-    6_000
+    12_000
   );
 
   return result;

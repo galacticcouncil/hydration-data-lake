@@ -20,7 +20,7 @@ export async function runMigrations() {
 
   try {
     const migrationsResult: RunMigration[] = await migrations.runner({
-      migrationsSchema: 'squid_processor',
+      migrationsSchema: appConfig.STATE_SCHEMA_NAME,
       migrationsTable: 'node_pg_migrations',
       schema: 'public',
       dbClient: pgClient,

@@ -1,13 +1,13 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import parsers from '../../../../parsers';
-import { HsmCollateralData } from '../../../../parsers/types/storage';
+import parsers from '../../../../../parsers';
+import { HsmCollateralData } from '../../../../../parsers/types/storage';
 import {
   HsmCollateral,
   HsmCollateralConfigHistoricalData,
-} from '../../../../model';
-import { getOrCreateAsset } from '../../../assets/asset';
-import { getOrCreateStableswap } from '../stableswap/stablepool';
+} from '../../../../../model';
+import { getOrCreateAsset } from '../../../../assets/asset';
+import { getOrCreateStableswap } from '../../stableswap/stablepool';
 
 export async function getOrCreateHsmCollateral({
   id,

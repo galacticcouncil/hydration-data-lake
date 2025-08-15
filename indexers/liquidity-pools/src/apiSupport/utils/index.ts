@@ -58,21 +58,37 @@ export class AggregationTimeRange {
         this.rangeMs = hourMs;
         this.rangeStartDatetime = this.nowDatetime.subtract(1, 'hour');
         break;
+      case AggregationTimeRangeLabel['12H']:
+        this.rangeMs = hourMs * 12;
+        this.rangeStartDatetime = this.nowDatetime.subtract(12, 'hour');
+        break;
+      case AggregationTimeRangeLabel['1D']:
       case AggregationTimeRangeLabel['24H']:
         this.rangeMs = hourMs * 24;
         this.rangeStartDatetime = this.nowDatetime.subtract(24, 'hours');
         break;
+      case AggregationTimeRangeLabel['7D']:
       case AggregationTimeRangeLabel['1W']:
         this.rangeMs = hourMs * 24 * 7;
         this.rangeStartDatetime = this.nowDatetime.subtract(7, 'days');
         break;
+      case AggregationTimeRangeLabel['30D']:
       case AggregationTimeRangeLabel['1M']:
         this.rangeMs = hourMs * 24 * 30;
         this.rangeStartDatetime = this.nowDatetime.subtract(30, 'days');
         break;
+      case AggregationTimeRangeLabel['90D']:
+        this.rangeMs = hourMs * 24 * 90;
+        this.rangeStartDatetime = this.nowDatetime.subtract(90, 'days');
+        break;
+      case AggregationTimeRangeLabel['180D']:
+        this.rangeMs = hourMs * 24 * 180;
+        this.rangeStartDatetime = this.nowDatetime.subtract(180, 'days');
+        break;
+      case AggregationTimeRangeLabel['365D']:
       case AggregationTimeRangeLabel['1Y']:
         this.rangeMs = hourMs * 24 * 365;
-        this.rangeStartDatetime = this.nowDatetime.subtract(1, 'year');
+        this.rangeStartDatetime = this.nowDatetime.subtract(365, 'days');
         break;
       default:
         this.rangeMs = this.nowDatetime.valueOf();

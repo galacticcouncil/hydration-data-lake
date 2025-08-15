@@ -1240,6 +1240,7 @@ type Hsmpool @entity {
   "poolId"
   id: ID!
   account: Account!
+  facilitator: AaveFacilitator!
 
   collaterals: [HsmCollateral!]! @derivedFrom(field: "pool")
 }
@@ -1320,8 +1321,8 @@ type HsmpoolAssetHistoricalData @entity {
 type AaveFacilitator @entity {
   "<facilitator_h160_address>"
   id: ID!
-  asset: Asset!
   label: String!
+  isRemoved: Boolean!
 }
 
 type AaveFacilitatorHistoricalData @entity {
@@ -1335,7 +1336,7 @@ type AaveFacilitatorHistoricalData @entity {
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  event: Event!
+  block: Block!
 }
 
 # ======================================================================================================================
@@ -1774,12 +1775,17 @@ enum EvmEventName {
   ReserveUsedAsCollateralDisabled
   OracleUpdate
   ReserveDataUpdated
+  FacilitatorAdded
+  FacilitatorRemoved
+  FacilitatorBucketCapacityUpdated
+  FacilitatorBucketLevelUpdated
 }
 enum EvmContractName {
   AavePoolImpl
   AavePoolConfiguratorImpl
   AaveAToken
   DiaOracleV2
+  HollarToken
 }
 
 type MoneyMarketEvent @entity {

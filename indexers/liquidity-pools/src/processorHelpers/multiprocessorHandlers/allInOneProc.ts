@@ -55,8 +55,9 @@ import {
 import { actualizeMoneyMarketReserves } from '../../handlers/moneyMarket/reserves/moneyMarketReserve';
 import { handleMmReservesConfigsHistoricalData } from '../../handlers/moneyMarket/reserves';
 import { ensureHsmpool } from '../../handlers/pools/pools/hsmpool/hsmPool';
-import { ensureHsmCollaterals } from '../../handlers/pools/pools/hsmpool/hsmCollateral';
+import { ensureHsmCollaterals } from '../../handlers/pools/pools/hsmpool/collaterals/hsmCollateral';
 import { handleEvm } from '../../handlers/evmLog';
+import { ensureAaveFacilitators } from '../../handlers/facilitator';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -137,6 +138,10 @@ export async function execAllInOneProcessorHandlers(
   console.time('handleStablepools');
   await handleStablepools(ctx, parsedData);
   console.timeEnd('handleStablepools');
+
+  console.time('ensureAaveFacilitators');
+  await ensureAaveFacilitators(ctx);
+  console.timeEnd('ensureAaveFacilitators');
 
   console.time('ensureHsmpool && ensureHsmCollaterals');
   await ensureHsmpool(ctx);

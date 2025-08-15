@@ -95,3 +95,27 @@ export type PoolReserveDataUpdatedEventParams = MmEventParamsWithEventName & {
   liquidityIndex: bigint;
   variableBorrowIndex: bigint;
 };
+
+export type HsmFacilitatorAddedEventParams = MmEventParamsWithEventName & {
+  facilitatorAddress: string;
+  label: string;
+  bucketCapacity: bigint;
+};
+
+export type HsmFacilitatorRemovedEventParams = MmEventParamsWithEventName & {
+  facilitatorAddress: string;
+};
+
+export type HsmFacilitatorBucketCapacityUpdatedEventParams =
+  MmEventParamsWithEventName & {
+    facilitatorAddress: string;
+    oldCapacity: bigint;
+    newCapacity: bigint;
+  };
+
+export type HsmFacilitatorBucketLevelUpdatedEventParams =
+  MmEventParamsWithEventName & {
+    facilitatorAddress: string;
+    oldLevel: bigint;
+    newLevel: bigint;
+  };

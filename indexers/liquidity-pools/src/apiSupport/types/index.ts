@@ -209,6 +209,13 @@ export enum AggregationTimeRangeLabel {
   '1M' = '1M',
   '1Y' = '1Y',
   'ALL' = 'ALL',
+  '12H' = '12H',
+  '1D' = '1D',
+  '7D' = '7D',
+  '30D' = '30D',
+  '90D' = '90D',
+  '180D' = '180D',
+  '365D' = '365D',
 }
 
 export enum YieldMetricsInterval {
