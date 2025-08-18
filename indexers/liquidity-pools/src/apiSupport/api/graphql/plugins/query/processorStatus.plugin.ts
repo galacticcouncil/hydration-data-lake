@@ -5,6 +5,9 @@ import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type { QueryBuilder, SQL } from 'graphile-build-pg';
 import type { Build } from 'graphile-build';
+import { AppConfig } from '../../../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export const ProcessorStatusPlugin: Plugin = makeExtendSchemaPlugin(
   (build: Build, options) => {
@@ -59,7 +62,7 @@ export const ProcessorStatusPlugin: Plugin = makeExtendSchemaPlugin(
           ) => {
             const rows =
               await resolveInfo.graphile.selectGraphQLResultFromTable(
-                sql.fragment`squid_processor.status`,
+                sql.fragment`${appConfig.STATE_SCHEMA_NAME}.status`,
                 (tableAlias: SQL, sqlBuilder: QueryBuilder) => {
                   sqlBuilder.where(
                     sql.fragment`${tableAlias}.id = ${sql.value(event.__node__[2])}`
@@ -74,7 +77,7 @@ export const ProcessorStatusPlugin: Plugin = makeExtendSchemaPlugin(
 
             return {
               node: {
-                name: 'squid_processor', // TODO add real value
+                name: appConfig.STATE_SCHEMA_NAME,
                 height: rows[0].height,
                 hash: rows[0].hash,
               },

@@ -58,6 +58,7 @@ import { ensureHsmpool } from '../../handlers/pools/pools/hsmpool/hsmPool';
 import { ensureHsmCollaterals } from '../../handlers/pools/pools/hsmpool/collaterals/hsmCollateral';
 import { handleEvm } from '../../handlers/evmLog';
 import { ensureAaveFacilitators } from '../../handlers/facilitator';
+import { handleHsmCollateralEvents } from '../../handlers/pools/pools/hsmpool/collaterals';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -147,6 +148,10 @@ export async function execAllInOneProcessorHandlers(
   await ensureHsmpool(ctx);
   await ensureHsmCollaterals(ctx);
   console.timeEnd('ensureHsmpool && ensureHsmCollaterals');
+
+  console.time('handleHsmCollateralEvents');
+  await handleHsmCollateralEvents(ctx, parsedData);
+  console.timeEnd('handleHsmCollateralEvents');
 
   /**
    * functions handleConstantsHistoricalData, handleAssetHistoricalData,

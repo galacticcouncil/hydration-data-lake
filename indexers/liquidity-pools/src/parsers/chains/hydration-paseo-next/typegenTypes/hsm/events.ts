@@ -43,6 +43,18 @@ export const collateralRemoved =  {
             amount: sts.bigint(),
         })
     ),
+    /**
+     * A collateral asset was removed
+     * 
+     * Parameters:
+     * - `asset_id`: The ID of the asset removed from collaterals
+     */
+    v337: new EventType(
+        'HSM.CollateralRemoved',
+        sts.struct({
+            assetId: sts.number(),
+        })
+    ),
 }
 
 export const collateralUpdated =  {

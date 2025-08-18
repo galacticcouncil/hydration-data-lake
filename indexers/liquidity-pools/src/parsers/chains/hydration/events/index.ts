@@ -11,6 +11,8 @@ import broadcast from './broadcast';
 import evm from './evm';
 import evmAccounts from './evmAccounts';
 import currencies from './currencies';
+import hsm from './hsm';
+
 import { EventParserMethods } from '../../../types/common';
 
 export default {
@@ -27,4 +29,5 @@ export default {
   evm,
   evmAccounts,
   currencies,
+  hsm,
 } as EventParserMethods;

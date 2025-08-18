@@ -43,6 +43,9 @@ import {
   EvmAccountsBoundEventParams,
   CurrenciesTransferredEventParams,
   AssetRegistryLocationSetEventParams,
+  HsmCollateralAddedEventParams,
+  HsmCollateralRemovedEventParams,
+  HsmCollateralUpdatedEventParams,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -239,6 +242,17 @@ export type EventParserMethods = {
   };
   evmAccounts: {
     parseBoundParams: (event: SqdEvent) => EvmAccountsBoundEventParams;
+  };
+  hsm: {
+    parseCollateralAddedParams: (
+      event: SqdEvent
+    ) => HsmCollateralAddedEventParams;
+    parseCollateralRemovedParams: (
+      event: SqdEvent
+    ) => HsmCollateralRemovedEventParams;
+    parseCollateralUpdatedParams: (
+      event: SqdEvent
+    ) => HsmCollateralUpdatedEventParams;
   };
 };
 export type StorageParserMethods = {

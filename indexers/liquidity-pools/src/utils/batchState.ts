@@ -512,4 +512,32 @@ export class BatchState {
 
     return this.state.blockHeadersByHeight.get(height)!;
   }
+
+  getPreviousHistDataEntity<E extends { id: string }>({
+    entitiesMap,
+    entityId,
+    currentBlockHeight,
+    blockHeightValPosition,
+  }: {
+    entitiesMap: Map<string, E>;
+    entityId: string;
+    currentBlockHeight: number;
+    blockHeightValPosition: number;
+  }) {
+    return entitiesMap.get(
+      Array.from(entitiesMap.keys())
+        .filter((k) => {
+          return (
+            k.startsWith(entityId + '-') &&
+            parseInt(k.split('-')[blockHeightValPosition]) < currentBlockHeight
+          );
+        })
+        .sort((a, b) => {
+          return (
+            parseInt(b.split('-')[blockHeightValPosition]) -
+            parseInt(a.split('-')[blockHeightValPosition])
+          );
+        })[0]
+    );
+  }
 }

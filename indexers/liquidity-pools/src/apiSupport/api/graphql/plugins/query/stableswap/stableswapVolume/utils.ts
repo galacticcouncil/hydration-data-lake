@@ -10,6 +10,9 @@ import {
   getAllStableswapIds,
 } from '../../../../../../sql/stableswap/stableswap.sql';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { AppConfig } from '../../../../../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function handleStableswapHistoricalVolumesByPeriodAggregation({
   poolIds,
@@ -23,7 +26,9 @@ export async function handleStableswapHistoricalVolumesByPeriodAggregation({
   pgClient: pg.Client;
 }): Promise<Map<string, StableswapVolumeAggregated>> {
   const squidStatus = (
-    await pgClient.query(`SELECT height FROM squid_processor.status`)
+    await pgClient.query(
+      `SELECT height FROM ${appConfig.STATE_SCHEMA_NAME}.status`
+    )
   ).rows[0];
 
   let poolIdsToProcess = poolIds;

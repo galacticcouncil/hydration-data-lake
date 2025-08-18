@@ -10,6 +10,7 @@ import { SwappedExecutionTypeKind } from '../../../utils/types';
 export * from './evm';
 export * from './evmAccounts';
 export * from './assetRegistry';
+export * from './hsm';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -59,8 +60,13 @@ export enum EventName {
   'Broadcast_Swapped' = 'Broadcast.Swapped',
   'Broadcast_Swapped2' = 'Broadcast.Swapped2',
   'Broadcast_Swapped3' = 'Broadcast.Swapped3',
+
   'EVM_Log' = 'EVM.Log',
   'EVMAccounts_Bound' = 'EVMAccounts.Bound',
+
+  'HSM_CollateralAdded' = 'HSM.CollateralAdded',
+  'HSM_CollateralRemoved' = 'HSM.CollateralRemoved',
+  'HSM_CollateralUpdated' = 'HSM.CollateralUpdated',
 }
 
 export type RelayChainInfo = {

@@ -222,6 +222,39 @@ export const executeArbitrage =  {
             collateralAssetId: sts.number(),
         })
     ),
+    /**
+     * Execute arbitrage opportunity between HSM and collateral stable pool
+     * 
+     * This call is designed to be triggered automatically by offchain workers. It:
+     * 1. Detects price imbalances between HSM and a stable pool for a collateral
+     * 2. If an opportunity exists, mints Hollar, swaps it for collateral on HSM
+     * 3. Swaps that collateral for Hollar on the stable pool
+     * 4. Burns the Hollar received from the arbitrage
+     * 
+     * This helps maintain the peg of Hollar by profiting from and correcting price imbalances.
+     * The call is unsigned and should only be executed by offchain workers.
+     * 
+     * Parameters:
+     * - `origin`: Must be None (unsigned)
+     * - `collateral_asset_id`: The ID of the collateral asset to check for arbitrage
+     * 
+     * Emits:
+     * - `ArbitrageExecuted` when the arbitrage is successful
+     * 
+     * Errors:
+     * - `AssetNotApproved` if the asset is not a registered collateral
+     * - `NoArbitrageOpportunity` if there's no profitable arbitrage opportunity
+     * - `MaxBuyPriceExceeded` if the arbitrage would exceed the maximum buy price
+     * - `InvalidEVMInteraction` if there's an error interacting with the Hollar ERC20 contract
+     * - Other errors from underlying calls
+     */
+    v337: new CallType(
+        'HSM.execute_arbitrage',
+        sts.struct({
+            collateralAssetId: sts.number(),
+            flashAmount: sts.option(() => sts.bigint()),
+        })
+    ),
 }
 
 export const setFlashMinter =  {

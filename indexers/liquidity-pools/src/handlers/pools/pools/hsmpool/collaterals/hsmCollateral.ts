@@ -2,12 +2,10 @@ import { SqdBlock, SqdProcessorContext } from '../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../../../../parsers';
 import { HsmCollateralData } from '../../../../../parsers/types/storage';
-import {
-  HsmCollateral,
-  HsmCollateralConfigHistoricalData,
-} from '../../../../../model';
+import { HsmCollateral } from '../../../../../model';
 import { getOrCreateAsset } from '../../../../assets/asset';
 import { getOrCreateStableswap } from '../../stableswap/stablepool';
+import { handleHsmCollateralConfigHistoricalDataEntity } from './historicalData';
 
 export async function getOrCreateHsmCollateral({
   id,
@@ -132,7 +130,7 @@ export async function ensureHsmCollaterals(ctx: SqdProcessorContext<Store>) {
     await handleHsmCollateralConfigHistoricalDataEntity({
       ctx,
       blockHeader: processingBlockHeader,
-      data: collateralData,
+      fullStorageData: collateralData,
     });
   }
 
@@ -169,50 +167,4 @@ export async function ensureHsmCollaterals(ctx: SqdProcessorContext<Store>) {
   // await ctx.store.save(
   //   Array.from(existingCollateralsIndexedByAssetRegistryIdsMap.values())
   // );
-}
-
-export async function handleHsmCollateralConfigHistoricalDataEntity({
-  data,
-  ctx,
-  blockHeader,
-}: {
-  data: HsmCollateralData;
-  blockHeader: SqdBlock;
-  ctx: SqdProcessorContext<Store>;
-}) {
-  const collateral = await getOrCreateHsmCollateral({
-    assetRegistryId: `${data.collateralAssetId}`,
-    ctx,
-    blockHeader,
-    collateralData: data,
-  });
-
-  if (!collateral) return;
-
-  const block = ctx.batchState.getParaBlockFromCacheByHeight(
-    blockHeader.height
-  );
-
-  if (!block) return;
-
-  const histDataEntity = new HsmCollateralConfigHistoricalData({
-    id: `${collateral.id}-${blockHeader.height}`,
-    collateral,
-
-    purchaseFee: BigInt(data.purchaseFee),
-    maxBuyPriceCoefficient: data.maxBuyPriceCoefficient,
-    buybackRate: BigInt(data.buybackRate),
-    buyBackFee: BigInt(data.buyBackFee),
-    maxInHolding: data.maxInHolding,
-
-    paraTimestamp: new Date(block.timestamp),
-    relayBlockHeight: block.relayBlockHeight,
-    paraBlockHeight: blockHeader.height,
-    block,
-  });
-
-  ctx.batchState.state.hsmCollateralsConfigHistData.set(
-    histDataEntity.id,
-    histDataEntity
-  );
 }

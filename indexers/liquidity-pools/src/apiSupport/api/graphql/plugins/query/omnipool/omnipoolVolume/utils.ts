@@ -8,6 +8,9 @@ import {
 import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../../../../../../sql/omnipool/omnipoolAssetsVolume.sql';
 import { OmnipoolAssetHistoricalVolumeRaw } from '../../../../../../types';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { AppConfig } from '../../../../../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
   omnipoolAddress,
@@ -25,7 +28,9 @@ export async function handleOmnipoolAssetHistoricalVolumesByPeriodAggregation({
   pgClient: pg.Client;
 }): Promise<Map<string, OmnipoolAssetVolumeAggregated>> {
   const squidStatus = (
-    await pgClient.query(`SELECT height FROM squid_processor.status`)
+    await pgClient.query(
+      `SELECT height FROM ${appConfig.STATE_SCHEMA_NAME}.status`
+    )
   ).rows[0];
 
   const endBlockNumber = endBlockNumberFilter ?? squidStatus.height;

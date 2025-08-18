@@ -861,4 +861,62 @@ export class EventDataParserHelper {
       },
     };
   }
+
+  /**
+   * ==== HSM Collateral Added ====
+   */
+  parseHsmCollateralAddedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams = parsers.events.hsm.parseCollateralAddedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== HSM Collateral Added ====
+   */
+  parseHsmCollateralRemovedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams = parsers.events.hsm.parseCollateralRemovedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  parseHsmCollateralUpdatedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
+    const eventParams = parsers.events.hsm.parseCollateralUpdatedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
 }

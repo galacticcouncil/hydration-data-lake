@@ -6,6 +6,9 @@ import {
 import { XykpoolHistoricalVolumeRaw } from '../../../../../../types';
 import { XykpoolVolumeAggregated } from './resolvers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { AppConfig } from '../../../../../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
   poolIds,
@@ -19,7 +22,9 @@ export async function handleXykPoolHistoricalVolumesByPeriodAggregation({
   pgClient: pg.Client;
 }): Promise<Map<string, XykpoolVolumeAggregated>> {
   const squidStatus = (
-    await pgClient.query(`SELECT height FROM squid_processor.status`)
+    await pgClient.query(
+      `SELECT height FROM ${appConfig.STATE_SCHEMA_NAME}.status`
+    )
   ).rows[0];
 
   const groupedResult = await pgClient.query(

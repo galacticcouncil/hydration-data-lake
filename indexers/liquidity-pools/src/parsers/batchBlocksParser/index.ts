@@ -900,6 +900,33 @@ export async function getParsedEventsData(
           break;
         }
 
+        /**
+         * ============================== H S M ================================
+         */
+
+        case (events as typeof hydrationEvents).hsm.collateralAdded.name: {
+          const preparedData = parserHelper.parseHsmCollateralAddedData();
+          parsedDataManager.set(EventName.HSM_CollateralAdded, preparedData);
+
+          parserHelper.addIdsForStoragePrefetch(
+            'stableswapIdsForStoragePrefetch',
+            preparedData.eventData.params.poolId
+          );
+          break;
+        }
+        case (events as typeof hydrationEvents).hsm.collateralRemoved.name: {
+          const preparedData = parserHelper.parseHsmCollateralRemovedData();
+          parsedDataManager.set(EventName.HSM_CollateralRemoved, preparedData);
+
+          break;
+        }
+        case (events as typeof hydrationEvents).hsm.collateralUpdated.name: {
+          const preparedData = parserHelper.parseHsmCollateralUpdatedData();
+          parsedDataManager.set(EventName.HSM_CollateralUpdated, preparedData);
+
+          break;
+        }
+
         default:
           totalEventsNumber--;
       }

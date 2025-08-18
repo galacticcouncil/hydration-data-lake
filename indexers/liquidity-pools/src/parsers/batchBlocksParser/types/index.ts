@@ -55,6 +55,11 @@ import {
 import { EvmLogData } from './evm';
 import { EvmAccountsBoundData } from './evmAccounts';
 import { CurrenciesTransferredData } from './currencies';
+import {
+  HsmCollateralAddedData,
+  HsmCollateralRemovedData,
+  HsmCollateralUpdatedData,
+} from './hsm';
 
 export * from './assetRegistry';
 export * from './lbp';
@@ -66,6 +71,7 @@ export * from './stableswap';
 export * from './xyk';
 export * from './otc';
 export * from './broadcast';
+export * from './hsm';
 
 export type EventId = string;
 
@@ -153,7 +159,13 @@ export type EventDataType<T> = T extends EventName.Tokens_Transfer
                                                                             ? EvmLogData
                                                                             : T extends EventName.EVMAccounts_Bound
                                                                               ? EvmAccountsBoundData
-                                                                              : never;
+                                                                              : T extends EventName.HSM_CollateralAdded
+                                                                                ? HsmCollateralAddedData
+                                                                                : T extends EventName.HSM_CollateralRemoved
+                                                                                  ? HsmCollateralRemovedData
+                                                                                  : T extends EventName.HSM_CollateralUpdated
+                                                                                    ? HsmCollateralUpdatedData
+                                                                                    : never;
 
 export type BatchBlocksParsedDataScope = Map<
   EventName,
@@ -198,7 +210,10 @@ export type ParsedEventsCallsData =
   | BroadcastSwapped2Data
   | EvmLogData
   | EvmAccountsBoundData
-  | CurrenciesTransferredData;
+  | CurrenciesTransferredData
+  | HsmCollateralAddedData
+  | HsmCollateralRemovedData
+  | HsmCollateralUpdatedData;
 
 export interface CallMetadata {
   name: string;
