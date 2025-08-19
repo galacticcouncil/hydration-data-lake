@@ -4,6 +4,7 @@ import * as v201 from '../v201'
 import * as v205 from '../v205'
 import * as v295 from '../v295'
 import * as v323 from '../v323'
+import * as v335 from '../v335'
 
 export const executionStarted =  {
     name: 'DCA.ExecutionStarted',
@@ -189,6 +190,20 @@ export const randomnessGenerationFailed =  {
         sts.struct({
             block: sts.number(),
             error: v205.DispatchError,
+        })
+    ),
+}
+
+export const reserveUnlocked =  {
+    name: 'DCA.ReserveUnlocked',
+    /**
+     * DCA reserve for the given asset have been unlocked for a user
+     */
+    v335: new EventType(
+        'DCA.ReserveUnlocked',
+        sts.struct({
+            who: v335.AccountId32,
+            assetId: sts.number(),
         })
     ),
 }

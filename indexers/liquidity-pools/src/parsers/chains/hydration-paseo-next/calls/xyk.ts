@@ -4,8 +4,8 @@ import { calls } from '../typegenTypes';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseCreatePoolArgs(call: SqdCall): XykCreatePoolCallArgs {
-  if (calls.xyk.createPool.v276.is(call)) {
-    return calls.xyk.createPool.v276.decode(call);
+  if (calls.xyk.createPool.v324.is(call)) {
+    return calls.xyk.createPool.v324.decode(call);
   }
 
   throw new UnknownVersionError(call.name);

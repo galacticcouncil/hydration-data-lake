@@ -11,8 +11,8 @@ async function getTokensAccountsAssetBalances(
   assetId: number,
   block: BlockHeader
 ): Promise<TokensAccountsAssetBalances | null> {
-  if (storage.tokens.accounts.v276.is(block)) {
-    const resp = await storage.tokens.accounts.v276.get(
+  if (storage.tokens.accounts.v324.is(block)) {
+    const resp = await storage.tokens.accounts.v324.get(
       block,
       account,
       assetId
@@ -27,8 +27,8 @@ async function getTokenTotalIssuance({
   tokenId,
   block,
 }: TokensGetTokenTotalIssuanceInput): Promise<bigint | null> {
-  if (storage.tokens.totalIssuance.v276.is(block)) {
-    const resp = await storage.tokens.totalIssuance.v276.get(block, tokenId);
+  if (storage.tokens.totalIssuance.v324.is(block)) {
+    const resp = await storage.tokens.totalIssuance.v324.get(block, tokenId);
     return resp ?? null;
   }
 

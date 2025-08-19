@@ -1,17 +1,17 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
+import * as v324 from '../v324'
 
 export const tokenAdded =  {
     name: 'Omnipool.TokenAdded',
     /**
      * An asset was added to Omnipool
      */
-    v276: new EventType(
+    v324: new EventType(
         'Omnipool.TokenAdded',
         sts.struct({
             assetId: sts.number(),
             initialAmount: sts.bigint(),
-            initialPrice: v276.FixedU128,
+            initialPrice: v324.FixedU128,
         })
     ),
 }
@@ -21,7 +21,7 @@ export const tokenRemoved =  {
     /**
      * An asset was removed from Omnipool
      */
-    v276: new EventType(
+    v324: new EventType(
         'Omnipool.TokenRemoved',
         sts.struct({
             assetId: sts.number(),
@@ -35,11 +35,12 @@ export const sellExecuted =  {
     name: 'Omnipool.SellExecuted',
     /**
      * Sell trade executed.
+     * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v276: new EventType(
+    v324: new EventType(
         'Omnipool.SellExecuted',
         sts.struct({
-            who: v276.AccountId32,
+            who: v324.AccountId32,
             assetIn: sts.number(),
             assetOut: sts.number(),
             amountIn: sts.bigint(),
@@ -56,11 +57,12 @@ export const buyExecuted =  {
     name: 'Omnipool.BuyExecuted',
     /**
      * Buy trade executed.
+     * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v276: new EventType(
+    v324: new EventType(
         'Omnipool.BuyExecuted',
         sts.struct({
-            who: v276.AccountId32,
+            who: v324.AccountId32,
             assetIn: sts.number(),
             assetOut: sts.number(),
             amountIn: sts.bigint(),

@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v276 from '../v276'
+import * as v324 from '../v324'
+import * as v335 from '../v335'
 
 export const schedule =  {
     name: 'DCA.schedule',
@@ -14,7 +15,8 @@ export const schedule =  {
      * The reservation currency will be the `amount_in` currency of the order.
      * 
      * Trades are executed as long as there is budget remaining
-     * from the initial `total_amount` allocation.
+     * from the initial `total_amount` allocation, unless `total_amount` is 0, then trades
+     * are executed until schedule is terminated.
      * 
      * If a trade fails due to slippage limit or price stability errors, it will be retried.
      * If the number of retries reaches the maximum allowed,
@@ -29,10 +31,10 @@ export const schedule =  {
      * Emits `Scheduled` and `ExecutionPlanned` event when successful.
      * 
      */
-    v276: new CallType(
+    v324: new CallType(
         'DCA.schedule',
         sts.struct({
-            schedule: v276.Schedule,
+            schedule: v324.Schedule,
             startExecutionBlock: sts.option(() => sts.number()),
         })
     ),
@@ -53,11 +55,37 @@ export const terminate =  {
      * Emits `Terminated` event when successful.
      * 
      */
-    v276: new CallType(
+    v324: new CallType(
         'DCA.terminate',
         sts.struct({
             scheduleId: sts.number(),
             nextExecutionBlock: sts.option(() => sts.number()),
+        })
+    ),
+}
+
+export const unlockReserves =  {
+    name: 'DCA.unlock_reserves',
+    /**
+     * Unlocks DCA reserves of provided asset for the caller if they have no active schedules.
+     * 
+     * This is a utility function to help users recover their reserved funds in case
+     * a DCA schedule was terminated but left some reserved amounts.
+     * 
+     * This can only be called when the user has no active DCA schedules.
+     * 
+     * Parameters:
+     * - `origin`: The account to unlock reserves for (must be signed)
+     * - `asset_id`: The asset ID for which reserves should be unlocked.
+     * 
+     * Emits `ReserveUnlocked` event when successful.
+     * 
+     */
+    v335: new CallType(
+        'DCA.unlock_reserves',
+        sts.struct({
+            who: v335.AccountId32,
+            assetId: sts.number(),
         })
     ),
 }

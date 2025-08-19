@@ -1,7 +1,7 @@
 manifestVersion: subsquid.io/v0.1
-name: hydration-testnet-pools
-slot: 105
-description: Hydration Testnet pools indexer
+name: hydration-pools-hollar-testnet
+slot: 201
+description: Hydration Hollar pools indexer (UNIFIED inDEXer)
 build:
 deploy:
   addons:
@@ -12,19 +12,23 @@ deploy:
   processor:
     env:
       CHAIN: 'hydration_paseo_next'
-      RPC_URL: 'wss://max.lark.hydration.cloud'
+      RPC_URL: 'wss://node.lark.hydration.cloud'
+      IGNORE_ARCHIVE_DATA_SOURCE: true
+      GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
       PROCESS_XYK_POOLS: true
       PROCESS_OMNIPOOLS: true
       PROCESS_STABLEPOOLS: true
       PROCESS_DCA: true
       PROCESS_OTC: true
-      GQL_PORT: 8080
       NODE_ENV: 'production'
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-      PROCESS_FROM_BLOCK: 1000
+      UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 1
 
-      USE_STORAGE_DICTIONARY: false
+      PROCESS_FROM_BLOCK: 1
+      PROCESS_TO_BLOCK: -1
+
+      USE_STORAGE_DICTIONARY: true
       STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql'
       STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql'
       STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql'
@@ -34,9 +38,13 @@ deploy:
       - process:prod
   api:
     env:
+      NODE_ENV: 'production'
       CHAIN: 'hydration_paseo_next'
       GQL_PORT: 8080
-      NODE_ENV: 'production'
+      SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
+      SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app'
+      SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
+
     cmd:
       - sqd
       - api:prod
@@ -44,7 +52,9 @@ scale:
   dedicated: false
   addons:
     postgres:
-      profile: small
-      storage: 50G
+      profile: large
+      storage: 60G
   processor:
     profile: large
+  api:
+    profile: small

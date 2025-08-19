@@ -6,8 +6,8 @@
       "calls": ["sudo", "sudo_unchecked_weight", "set_key", "sudo_as"]
     },
     "AssetRegistry": {
-      "events": ["Registered", "Updated"],
-      "storage": ["Assets"]
+      "events": ["Registered", "Updated", "LocationSet"],
+      "storage": ["Assets", "AssetLocations"]
     },
     "Balances": {
       "events": ["Transfer"],
@@ -19,6 +19,11 @@
       "events": ["Transfer"],
       "calls": true,
       "storage": ["Accounts", "TotalIssuance"]
+    },
+    "Currencies": {
+      "events": ["Transferred"],
+      "calls": false,
+      "storage": false
     },
     "Router": {
       "calls": ["sell", "buy"]
@@ -75,6 +80,26 @@
     "Broadcast": {
       "events": true,
       "calls": true,
+      "storage": true
+    },
+    "EVM": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "EVMAccounts": {
+      "events": ["Bound"],
+      "calls": [],
+      "storage": true
+    },
+    "OmnipoolLiquidityMining": {
+      "events": true,
+      "calls": [],
+      "storage": true
+    },
+    "OmnipoolWarehouseLM": {
+      "events": true,
+      "calls": [],
       "storage": true
     }
   }

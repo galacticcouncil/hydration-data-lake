@@ -5,9 +5,27 @@ import { UnknownVersionError } from '../../../../utils/errors';
 import { decorateDcaSchedule } from '../utils';
 
 function parseScheduleArgs(call: SqdCall): DcaScheduleCallArgs {
-  if (calls.dca.schedule.v276.is(call)) {
+  if (calls.dca.schedule.v324.is(call)) {
     const { startExecutionBlock, schedule } =
-      calls.dca.schedule.v276.decode(call);
+      calls.dca.schedule.v324.decode(call);
+
+    return {
+      startExecutionBlock,
+      scheduleData: decorateDcaSchedule(schedule),
+    };
+  }
+  if (calls.dca.schedule.v324.is(call)) {
+    const { startExecutionBlock, schedule } =
+      calls.dca.schedule.v324.decode(call);
+
+    return {
+      startExecutionBlock,
+      scheduleData: decorateDcaSchedule(schedule),
+    };
+  }
+  if (calls.dca.schedule.v324.is(call)) {
+    const { startExecutionBlock, schedule } =
+      calls.dca.schedule.v324.decode(call);
 
     return {
       startExecutionBlock,

@@ -6,8 +6,8 @@ async function getOtcOrder({
   orderId,
   block,
 }: OtcGetOrderInput): Promise<OtcOrderData | null> {
-  if (storage.otc.orders.v276.is(block)) {
-    const resp = await storage.otc.orders.v276.get(block, orderId);
+  if (storage.otc.orders.v324.is(block)) {
+    const resp = await storage.otc.orders.v324.get(block, orderId);
 
     if (!resp) return null;
 

@@ -28,10 +28,10 @@ import {
   calls as hydrationPaseoCalls,
   events as hydrationPaseoEvents,
 } from '../chains/hydration-paseo/typegenTypes';
-// import {
-//   calls as hydrationPaseoNextCalls,
-//   events as hydrationPaseoNextEvents,
-// } from '../chains/hydration-paseo-next/typegenTypes';
+import {
+  calls as hydrationPaseoNextCalls,
+  events as hydrationPaseoNextEvents,
+} from '../chains/hydration-paseo-next/typegenTypes';
 
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { EventDataParserHelper } from './eventDataParserHelper';
@@ -121,10 +121,10 @@ export async function getParsedEventsData(
       calls = hydrationPaseoCalls;
       break;
 
-    // case ChainName.hydration_paseo_next:
-    //   events = hydrationPaseoNextEvents;
-    //   calls = hydrationPaseoNextCalls;
-    //   break;
+    case ChainName.hydration_paseo_next:
+      events = hydrationPaseoNextEvents;
+      calls = hydrationPaseoNextCalls;
+      break;
   }
 
   const parsedDataManager = new BatchBlocksParsedDataManager();
@@ -707,7 +707,7 @@ export async function getParsedEventsData(
         /**
          * ==== Swapped ====
          */
-        case events.broadcast.swapped.name: {
+        case (events as typeof hydrationEvents).broadcast.swapped?.name: {
           const preparedData = parserHelper.parseBroadcastSwappedData();
           parsedDataManager.set(EventName.Broadcast_Swapped, preparedData);
 
@@ -764,7 +764,7 @@ export async function getParsedEventsData(
         /**
          * ==== Swapped2 ====
          */
-        case events.broadcast.swapped2.name: {
+        case (events as typeof hydrationEvents).broadcast.swapped2?.name: {
           const preparedData = parserHelper.parseBroadcastSwapped2Data();
           parsedDataManager.set(EventName.Broadcast_Swapped2, preparedData);
 

@@ -10,10 +10,10 @@ async function getPoolData({
   poolAddress,
   block,
 }: LbpGetPoolDataInput): Promise<LbpPoolData | null> {
-  if (block.specVersion < 276) return null;
+  if (block.specVersion < 324) return null;
 
-  if (storage.lbp.poolData.v276.is(block)) {
-    const resp = await storage.lbp.poolData.v276.get(block, poolAddress);
+  if (storage.lbp.poolData.v324.is(block)) {
+    const resp = await storage.lbp.poolData.v324.get(block, poolAddress);
 
     if (!resp) return null;
 
@@ -41,10 +41,10 @@ async function getAllPoolsData({
 }: LbpGetAllPoolsDataInput): Promise<LbpPoolData[]> {
   let pairsPaged: LbpPoolData[] = [];
 
-  if (block.specVersion < 276) return [];
+  if (block.specVersion < 324) return [];
 
-  if (storage.lbp.poolData.v276.is(block)) {
-    for await (let page of storage.lbp.poolData.v276.getPairsPaged(100, block))
+  if (storage.lbp.poolData.v324.is(block)) {
+    for await (let page of storage.lbp.poolData.v324.getPairsPaged(100, block))
       pairsPaged.push(
         ...page
           .filter((p) => !!p && !!p[1])

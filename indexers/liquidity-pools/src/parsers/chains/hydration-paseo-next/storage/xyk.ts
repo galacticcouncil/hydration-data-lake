@@ -10,10 +10,10 @@ async function getPoolAssets({
   block,
   poolAddress,
 }: XykGetAssetsInput): Promise<XykPoolWithAssets | null> {
-  if (block.specVersion < 276) return null;
+  if (block.specVersion < 324) return null;
 
-  if (storage.xyk.poolAssets.v276.is(block)) {
-    const resp = await storage.xyk.poolAssets.v276.get(block, poolAddress);
+  if (storage.xyk.poolAssets.v324.is(block)) {
+    const resp = await storage.xyk.poolAssets.v324.get(block, poolAddress);
 
     if (!resp) return null;
 
@@ -33,10 +33,10 @@ async function getShareToken({
   block,
   poolAddress,
 }: XykGetShareTokenInput): Promise<number | null> {
-  if (block.specVersion < 276) return null;
+  if (block.specVersion < 324) return null;
 
-  if (storage.xyk.shareToken.v276.is(block)) {
-    const resp = await storage.xyk.shareToken.v276.get(block, poolAddress);
+  if (storage.xyk.shareToken.v324.is(block)) {
+    const resp = await storage.xyk.shareToken.v324.get(block, poolAddress);
 
     if (resp === undefined) return null;
 
