@@ -22,6 +22,7 @@ import { handleStablepoolVolumeUpdates } from '../pools/volumes/stablepoolVolume
 import { SwapFillerContextDetails } from '../../utils/types';
 import { handleAccountAssetSwapFee } from '../accounts/historicalAccountSwapFee';
 import { handleAssetSwapFee } from '../assets/historicalAssetSwapFee';
+import { handleHsmAssetHistoricalData } from '../pools/pools/hsmpool/hsmpoolAssetHistData';
 
 export async function getFillerContextData(
   ctx: SqdProcessorContext<Store>,
@@ -53,7 +54,7 @@ export async function getFillerContextData(
   return null;
 }
 
-export async function supportSwapperEventPreHook(
+export async function broadcastSwappedEventPreHook(
   eventCallData: BroadcastSwappedData
 ) {
   const {
@@ -73,7 +74,7 @@ export async function supportSwapperEventPreHook(
   }
 }
 
-export async function supportSwappedEventPostHook({
+export async function broadcastSwappedEventPostHook({
   swap,
   ctx,
   eventCallData,
@@ -191,6 +192,24 @@ export async function supportSwappedEventPostHook({
         ctx,
         swap,
         pool,
+      });
+
+      await handleAssetVolumeUpdates(ctx, {
+        paraBlockHeight: swap.paraBlockHeight,
+        relayBlockHeight: swap.relayBlockHeight,
+        assetIn: swap.inputs[0].asset,
+        assetInAmount: swap.inputs[0].amount,
+        assetOut: swap.outputs[0].asset,
+        assetOutAmount: swap.outputs[0].amount,
+      });
+
+      break;
+    }
+    case SwapFillerType.HSM: {
+      await handleHsmAssetHistoricalData({
+        ctx,
+        swap,
+        blockHeader: eventCallData.eventData.metadata.blockHeader,
       });
 
       await handleAssetVolumeUpdates(ctx, {

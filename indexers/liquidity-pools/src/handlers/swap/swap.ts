@@ -26,8 +26,8 @@ import {
 import {
   getFillerContextData,
   handleSwapFeeHistoricalData,
-  supportSwappedEventPostHook,
-  supportSwapperEventPreHook,
+  broadcastSwappedEventPostHook,
+  broadcastSwappedEventPreHook,
 } from './helpers';
 import { processRouteTradeHop } from './routedTrade';
 import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
@@ -345,11 +345,11 @@ export async function handleSwap({
   return swapData;
 }
 
-export async function handleSupportSwapperEvent(
+export async function handleBroadcastSwappedEvent(
   ctx: SqdProcessorContext<Store>,
   eventCallData: BroadcastSwappedData
 ) {
-  await supportSwapperEventPreHook(eventCallData);
+  await broadcastSwappedEventPreHook(eventCallData);
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
     callData: { traceId: callTraceId },
@@ -429,7 +429,7 @@ export async function handleSupportSwapperEvent(
   if (chainActivityTrace)
     state.chainActivityTraces.set(chainActivityTrace.id, chainActivityTrace);
 
-  await supportSwappedEventPostHook({
+  await broadcastSwappedEventPostHook({
     swap: newSwapDetails.swap,
     ctx,
     eventCallData,

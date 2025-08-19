@@ -118,11 +118,6 @@ export async function handleMmAssetAccountBalancesPerBlock(
   //   }
   // });
 
-  console.log(
-    'batchState.moneyMarketEvents - ',
-    batchState.moneyMarketEvents.size
-  );
-
   for (const mmEvent of [...batchState.moneyMarketEvents.values()]) {
     const assets: Asset[] = [];
     const blockHeader = getBlockHeaderByBlockHeight(mmEvent.paraBlockHeight);

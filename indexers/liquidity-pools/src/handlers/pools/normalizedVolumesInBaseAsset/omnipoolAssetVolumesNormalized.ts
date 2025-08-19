@@ -4,13 +4,9 @@ import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
 import {
   getOldOmnipoolAssetVolume,
-  getOldStablepoolAssetVolume,
   getPoolAssetPreviousVolumeFromCache,
 } from '../volumes';
-import {
-  OmnipoolAssetVolumeHistoricalData,
-  StableswapAssetVolumeHistoricalData,
-} from '../../../model';
+import { OmnipoolAssetVolumeHistoricalData } from '../../../model';
 
 export async function processOmnipoolAssetNormalizedVolumes({
   blockNumbersToProcess,

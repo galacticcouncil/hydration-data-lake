@@ -71,7 +71,9 @@ export async function getOrCreateHsmCollateral({
     : null;
 
   if (!collateralStorageData) {
-    console.log(`getOrCreateHsmCollateral :: collateralStorageData not found.`);
+    console.log(
+      `getOrCreateHsmCollateral :: collateralStorageData not found for asset ${assetRegistryId ?? asset.assetRegistryId}.`
+    );
     return null;
   }
 

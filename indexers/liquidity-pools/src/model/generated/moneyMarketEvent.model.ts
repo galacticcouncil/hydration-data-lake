@@ -30,8 +30,8 @@ export class MoneyMarketEvent {
   @Column_("varchar", {length: 24, nullable: true})
   contractName!: EvmContractName | undefined | null
 
-  @Column_("varchar", {length: 32, nullable: false})
-  eventName!: EvmEventName
+  @Column_("varchar", {length: 32, nullable: true})
+  eventName!: EvmEventName | undefined | null
 
   @Column_("text", {array: true, nullable: false})
   allInvolvedAssetIds!: (string)[]

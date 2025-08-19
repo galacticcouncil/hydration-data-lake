@@ -59,6 +59,7 @@ import { ensureHsmCollaterals } from '../../handlers/pools/pools/hsmpool/collate
 import { handleEvm } from '../../handlers/evmLog';
 import { ensureAaveFacilitators } from '../../handlers/facilitator';
 import { handleHsmCollateralEvents } from '../../handlers/pools/pools/hsmpool/collaterals';
+import { processHsmpoolAssetBalanceHistoricalData } from '../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -254,9 +255,17 @@ export async function execAllInOneProcessorHandlers(
   await handleAssetPairVolumesHistoricalData({ ctx });
   console.timeEnd('handleAssetPairVolumesHistoricalData');
 
+  console.time('handleAssetAccountBalances');
+  await handleAssetAccountBalances(ctx, parsedData);
+  console.timeEnd('handleAssetAccountBalances');
+
   console.time('processPoolsNormalizedVolumes');
   await processPoolsNormalizedVolumes({ ctx });
   console.timeEnd('processPoolsNormalizedVolumes');
+
+  console.time('processHsmpoolAssetBalanceHistoricalData');
+  await processHsmpoolAssetBalanceHistoricalData({ ctx });
+  console.timeEnd('processHsmpoolAssetBalanceHistoricalData');
 
   console.time('processPoolsTvlNormalized');
   processPoolsTvlNormalized({ ctx });
@@ -277,10 +286,6 @@ export async function execAllInOneProcessorHandlers(
   console.time('handleHistoricalVolumesBatchEntriesLists');
   await HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(ctx);
   console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
-
-  console.time('handleAssetAccountBalances');
-  await handleAssetAccountBalances(ctx, parsedData);
-  console.timeEnd('handleAssetAccountBalances');
 
   console.time('saveAccountBalancesRelatedDataBulk');
   await HistoricalDataManager.saveAccountBalancesRelatedDataBulk(ctx);

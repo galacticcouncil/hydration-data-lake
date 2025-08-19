@@ -206,10 +206,4 @@ export async function handleCommonAssetAccountBalances({
     }
   }
 
-  // await ctx.store.save(
-  //   Array.from(ctx.batchState.state.accountAssetBalanceHistoricalData.values())
-  // );
-  // await ctx.store.save(
-  //   Array.from(ctx.batchState.state.accountTotalBalanceHistoricalData.values())
-  // );
 }

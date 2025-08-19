@@ -4,6 +4,7 @@ import { processXykPoolsNormalizedVolumes } from './xykPoolVolumesNormalized';
 import { processLbpPoolsNormalizedVolumes } from './lbpPoolVolumesNormalized';
 import { processStableswapAssetNormalizedVolumes } from './stableswapAssetVolumesNormalized';
 import { processOmnipoolAssetNormalizedVolumes } from './omnipoolAssetVolumesNormalized';
+import { processHsmpoolAssetNormalizedVolumes } from './hsmpoolAssetVolumesNormalized';
 
 export async function processPoolsNormalizedVolumes({
   blockNumbersToProcess,
@@ -16,4 +17,5 @@ export async function processPoolsNormalizedVolumes({
   await processLbpPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
   await processStableswapAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
   await processOmnipoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
+  await processHsmpoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
 }

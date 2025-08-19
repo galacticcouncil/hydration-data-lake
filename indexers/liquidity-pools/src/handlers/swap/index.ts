@@ -6,7 +6,7 @@ import {
   getOrderedListByBlockNumber,
   isUnifiedEventsSupportSpecVersion,
 } from '../../utils/helpers';
-import { handleSupportSwapperEvent } from './swap';
+import { handleBroadcastSwappedEvent } from './swap';
 
 export async function handleBroadcastSwappedEvents(
   ctx: SqdProcessorContext<Store>,
@@ -26,7 +26,7 @@ export async function handleBroadcastSwappedEvents(
       ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
     )
   )) {
-    await handleSupportSwapperEvent(ctx, eventData);
+    await handleBroadcastSwappedEvent(ctx, eventData);
   }
 
   // await OperationStackManager.saveOperationStackEntities(ctx);

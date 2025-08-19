@@ -2,6 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {HsmCollateral} from "./hsmCollateral.model"
+import {AaveFacilitatorHistoricalData} from "./aaveFacilitatorHistoricalData.model"
 import {Block} from "./block.model"
 
 @Entity_()
@@ -11,7 +12,7 @@ export class HsmpoolAssetHistoricalData {
   }
 
   /**
-   * <hsm_collateral_id>-<block_height>
+   * <asset_id>-<block_height>
    */
   @PrimaryColumn_()
   id!: string
@@ -26,6 +27,13 @@ export class HsmpoolAssetHistoricalData {
   @Index_()
   @ManyToOne_(() => HsmCollateral, {nullable: true})
   collateral!: HsmCollateral | undefined | null
+
+  /**
+   * Actual only for Hollar asset as Hsm pool doesn't have any balance of Hollar
+   */
+  @Index_()
+  @ManyToOne_(() => AaveFacilitatorHistoricalData, {nullable: true})
+  facilitatorHistData!: AaveFacilitatorHistoricalData | undefined | null
 
   /**
    * Can be 0 for Hollar as HSM pool 

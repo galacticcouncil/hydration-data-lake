@@ -1286,11 +1286,13 @@ type HsmCollateralConfigHistoricalData @entity {
 }
 
 type HsmpoolAssetHistoricalData @entity {
-  "<hsm_collateral_id>-<block_height>"
+  "<asset_id>-<block_height>"
   id: ID!
   asset: Asset!
   "Can be null if snapshot is for Hollar"
   collateral: HsmCollateral
+  "Actual only for Hollar asset as Hsm pool doesn't have any balance of Hollar"
+  facilitatorHistData: AaveFacilitatorHistoricalData
 
   "Can be 0 for Hollar as HSM pool "
   freeBalance: BigInt!
@@ -1794,7 +1796,7 @@ type MoneyMarketEvent @entity {
   traceIds: [String!]
 
   contractName: EvmContractName
-  eventName: EvmEventName!
+  eventName: EvmEventName
 
   allInvolvedAssetIds: [String!]!
   allInvolvedAssetRegistryIds: [String!]!
