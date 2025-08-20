@@ -465,7 +465,10 @@ export class MoneyMarketContractsManager {
   async getAllAaveFacilitators({ blockNumber }: { blockNumber?: number }) {
     const facilitatorsList: string[] = await retryAsync({
       // passThrough: true,
-      fn: () => this.hollarContractInstance.getFacilitatorsList(),
+      fn: () =>
+        this.hollarContractInstance.getFacilitatorsList({
+          blockTag: blockNumber,
+        }),
       fallbackResponse: [],
     });
 
