@@ -4,7 +4,7 @@ import {
   AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
   AssetsPairVolumeHistoricalData,
-  AssetSpotPriceHistoricalData,
+  AssetSpotPriceHistoricalData, BatchHsmpoolAssetHistVolsList,
   BatchLbppoolHistVolsList,
   BatchOmnipoolAssetHistVolsList,
   BatchStableswapHistVolsList,
@@ -108,6 +108,19 @@ export class HistoricalDataManager {
   }
 
   static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
+    await this.commitAssetPricesToRedisTimeSeries(
+      Array.from(
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+      ),
+      ctx
+    );
+    await this.commitAssetsPairVolumeToRedisTimeSeries(
+      Array.from(
+        ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
+      ),
+      ctx
+    );
+
     if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
       const assetsSpotPricesListToSave = Array.from(
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
@@ -125,14 +138,6 @@ export class HistoricalDataManager {
         Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
       );
 
-      await this.commitAssetPricesToRedisTimeSeries(
-        assetsSpotPricesListToSave,
-        ctx
-      );
-      await this.commitAssetsPairVolumeToRedisTimeSeries(
-        assetsPairVolumesListToSave,
-        ctx
-      );
       return;
     }
 
@@ -169,15 +174,6 @@ export class HistoricalDataManager {
     await ctx.store.save(assetsPairVolumesHistDataToSaveList);
     await ctx.store.save(
       Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
-    );
-
-    await this.commitAssetPricesToRedisTimeSeries(
-      assetSpotPriceHistDataToSaveList,
-      ctx
-    );
-    await this.commitAssetsPairVolumeToRedisTimeSeries(
-      assetsPairVolumesHistDataToSaveList,
-      ctx
     );
   }
 
@@ -329,6 +325,14 @@ export class HistoricalDataManager {
       ).values(),
     ];
 
+    const hsmpoolAssetHistoricalVolumeEntries = [
+      ...new Set(
+        [...ctx.batchState.state.hsmpoolAssetHistData.values()].map(
+          (item) => item.asset.id
+        )
+      ).values(),
+    ];
+
     if (lbppoolHistoricalVolumeEntries.length)
       await ctx.store.save(
         new BatchLbppoolHistVolsList({
@@ -368,6 +372,17 @@ export class HistoricalDataManager {
         new BatchStableswapHistVolsList({
           id: `${ctx.blocks[0].header.height}`,
           poolIds: stableswapHistoricalVolumeEntries,
+          batchStartParaBlockHeight: ctx.blocks[0].header.height,
+          batchEndParaBlockHeight:
+            ctx.blocks[ctx.blocks.length - 1].header.height,
+        })
+      );
+
+    if (hsmpoolAssetHistoricalVolumeEntries.length)
+      await ctx.store.save(
+        new BatchHsmpoolAssetHistVolsList({
+          id: `${ctx.blocks[0].header.height}`,
+          assetIds: hsmpoolAssetHistoricalVolumeEntries,
           batchStartParaBlockHeight: ctx.blocks[0].header.height,
           batchEndParaBlockHeight:
             ctx.blocks[ctx.blocks.length - 1].header.height,
