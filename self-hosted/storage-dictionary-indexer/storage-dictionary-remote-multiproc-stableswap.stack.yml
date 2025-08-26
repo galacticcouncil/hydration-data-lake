@@ -8,7 +8,7 @@ x-storage-dictionary-stableswap-db-creds:
   DB_NAME: ""
   DB_USER: ""
   DB_PASS: ""
-  DB_HOST: "pg.squid.subsquid.io"
+  DB_HOST: ""
 
 x-processor-unit-envs: &processor-unit-envs
   NODE_ENV: "self-hosted"
@@ -40,7 +40,7 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:cd4aa9654c54fcae6b1c965d4fc41e82bb25e156
+  image: ghcr.io/mckrava/storage-dictionary-indexer:c98829ff48e952fdbb4929bef3350cba629699eb
   networks:
     - default
   command:
@@ -95,16 +95,27 @@ x-stablepools-services-setup: &stablepools-services-setup
 #      STATE_SCHEMA_NAME: "stablepool__batch_proc_4"
 #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
 
-  stableswap-stor-dict-proc-5:
+#  stableswap-stor-dict-proc-5:
+#    <<: *common-processor-setup
+#    environment:
+#      <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
+#      PROCESS_FROM_BLOCK: 7128001
+#      PROCESS_TO_BLOCK: -1
+#      PROCESS_STABLEPOOLS: "true"
+#      ASSETS_TRACKER_PROCESSOR: "true"
+#      STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+
+  stableswap-stor-dict-proc-6:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-stableswap-db-creds]
-      PROCESS_FROM_BLOCK: 7128001
+      PROCESS_FROM_BLOCK: 8466149
       PROCESS_TO_BLOCK: -1
       PROCESS_STABLEPOOLS: "true"
       ASSETS_TRACKER_PROCESSOR: "true"
-      STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_5"
+      STATE_SCHEMA_NAME: "stablepool__batch_proc_6"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "stablepool__batch_proc_6"
 
 #  stableswap-stor-dict-proc-assets-tracker:
 #    <<: *common-processor-setup

@@ -9,6 +9,19 @@ services:
     shm_size: 1gb
     ports:
       - "${DB_PORT}:5432"
+    volumes:
+      - ./db/init-scripts:/docker-entrypoint-initdb.d
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.max=10000
+      - -c
+      - pg_stat_statements.track=all
+      - -c
+      - pg_stat_statements.save=on
+
       # command: ["postgres", "-c", "log_statement=all"]
 #    volumes:
 #      - ./data/db:/var/lib/postgresql/data
@@ -21,3 +34,17 @@ services:
       - "6379:6379"
 #    networks:
 #      - epic_data_hub_dev
+
+#  pgwatch2:
+#    image: cybertec/pgwatch2-postgres:latest
+#    container_name: pgwatch2
+#    environment:
+#      # auto-monitor your local DB (replace ${DB_NAME} if needed)
+#      PW2_ADHOC_CONN_STR: postgres://postgres:postgres@db:5432/${DB_NAME:-app}?sslmode=disable
+#      # optional preset (try "exhaustive" if you grant pg_monitor, else "unprivileged")
+#      PW2_ADHOC_CONFIG: exhaustive
+#    depends_on:
+#      - db
+#    ports:
+#      - "3022:3000"  # Grafana UI
+#      - "8022:8080"  # Admin web UI (manage monitored DBs/metrics)

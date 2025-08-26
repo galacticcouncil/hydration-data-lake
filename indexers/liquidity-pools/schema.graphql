@@ -1341,6 +1341,23 @@ type AaveFacilitatorHistoricalData @entity {
   block: Block!
 }
 
+#
+# BatchHsmpoolAssetHistVolsList is a support entity for the OmnipoolAssetHistoricalVolumeByPeriod API subscription.
+# It contains all OmnipoolAsset IDs and Asset IDs involved in volume aggregations (OmnipoolAssetVolumeHistoricalData)
+# within a single indexer blocks batch, which may consist of one or more blocks. Since the processor saves all
+# processed data from a batch of blocks in a single database transaction, this entity may include IDs from multiple
+# blocks. This approach ensures that the subscription event is triggered only after all volume entities in the batch
+# are saved, rather than after each individual volume aggregation, optimizing event handling and consistency.
+#
+type BatchHsmpoolAssetHistVolsList @entity {
+  "<batchStartParaBlockHeight> (e.g. 101312)"
+  id: ID!
+  assetIds: [String!]
+
+  batchStartParaBlockHeight: Int! @index
+  batchEndParaBlockHeight: Int! @index
+}
+
 # ======================================================================================================================
 # *** Constants ***
 # ======================================================================================================================

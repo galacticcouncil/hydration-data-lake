@@ -7,7 +7,7 @@ x-storage-dictionary-g-hist-db-creds: &storage-dictionary-g-hist-db-creds
   DB_NAME: ""
   DB_USER: ""
   DB_PASS: ""
-  DB_HOST: "pg.squid.subsquid.io"
+  DB_HOST: ""
 
 x-processor-unit-envs: &processor-unit-envs
   NODE_ENV: "self-hosted"
@@ -37,7 +37,7 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:19f48f3a2ec08a5b5ba7753664cd2c501fed80bb
+  image: ghcr.io/mckrava/storage-dictionary-indexer:c98829ff48e952fdbb4929bef3350cba629699eb
   networks:
     - default
   command:
@@ -115,17 +115,29 @@ x-g-hist-services-setup: &g-hist-services-setup
   #      PROCESS_ONLY_MISSED_BLOCKS: "false"
   #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_6"
 
-  g-hist-stor-dict-proc-7:
+  #  g-hist-stor-dict-proc-7:
+  #    <<: *common-processor-setup
+  #    environment:
+  #      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+  #      PROCESS_FROM_BLOCK: 8110000
+  #      PROCESS_TO_BLOCK: -1
+  #      PROCESS_GENERIC_HIST_DATA: "true"
+  #      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_7"
+  #      ASSETS_TRACKER_PROCESSOR: "true"
+  #      PROCESS_ONLY_MISSED_BLOCKS: "false"
+  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_7"
+
+  g-hist-stor-dict-proc-8:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
-      PROCESS_FROM_BLOCK: 8110000
+      PROCESS_FROM_BLOCK: 8466149
       PROCESS_TO_BLOCK: -1
       PROCESS_GENERIC_HIST_DATA: "true"
-      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_7"
+      STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_8"
       ASSETS_TRACKER_PROCESSOR: "true"
       PROCESS_ONLY_MISSED_BLOCKS: "false"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_7"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "gen_hist_data__batch_proc_8"
 
 #  g-hist-stor-dict-proc-assets-tracker:
 #    <<: *common-processor-setup

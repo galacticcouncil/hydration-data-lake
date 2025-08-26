@@ -7,7 +7,7 @@ x-storage-dictionary-omnipool-db-creds: &storage-dictionary-omnipool-db-creds
   DB_NAME: ""
   DB_USER: ""
   DB_PASS: ""
-  DB_HOST: "pg.squid.subsquid.io"
+  DB_HOST: ""
 
 x-processor-unit-envs: &processor-unit-envs
   NODE_ENV: "self-hosted"
@@ -37,7 +37,7 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:e8f6106a76712e0e0e461ebd1c126dbbd9c21096
+  image: ghcr.io/mckrava/storage-dictionary-indexer:c98829ff48e952fdbb4929bef3350cba629699eb
   networks:
     - default
   command:
@@ -53,56 +53,67 @@ x-common-processor-setup: &common-processor-setup
 # =================================================================================
 
 x-omnipools-services-setup: &omnipools-services-setup
-#  omnipools-stor-dict-proc-1:
-#    <<: *common-processor-setup
-#    environment:
-#      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
-#      PROCESS_FROM_BLOCK: 1475996 # First event related with Omnipool has been occurred
-#      PROCESS_TO_BLOCK: 2966000
-#      PROCESS_OMNIPOOLS: "true"
-#      STATE_SCHEMA_NAME: "omnipool__batch_proc_1"
-#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
-#
-#  omnipools-stor-dict-proc-2:
-#    <<: *common-processor-setup
-#    environment:
-#      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
-#      PROCESS_FROM_BLOCK: 2966001
-#      PROCESS_TO_BLOCK: 4224000
-#      PROCESS_OMNIPOOLS: "true"
-#      STATE_SCHEMA_NAME: "omnipool__batch_proc_2"
-#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
-#
-#  omnipools-stor-dict-proc-3:
-#    <<: *common-processor-setup
-#    environment:
-#      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
-#      PROCESS_FROM_BLOCK: 4224001
-#      PROCESS_TO_BLOCK: 5482000
-#      PROCESS_OMNIPOOLS: "true"
-#      STATE_SCHEMA_NAME: "omnipool__batch_proc_3"
-#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
-#
-#  omnipools-stor-dict-proc-4:
-#    <<: *common-processor-setup
-#    environment:
-#      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
-#      PROCESS_FROM_BLOCK: 5482001
-#      PROCESS_TO_BLOCK: 6740000
-#      PROCESS_OMNIPOOLS: "true"
-#      STATE_SCHEMA_NAME: "omnipool__batch_proc_4"
-#      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+  #  omnipools-stor-dict-proc-1:
+  #    <<: *common-processor-setup
+  #    environment:
+  #      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
+  #      PROCESS_FROM_BLOCK: 1475996 # First event related with Omnipool has been occurred
+  #      PROCESS_TO_BLOCK: 2966000
+  #      PROCESS_OMNIPOOLS: "true"
+  #      STATE_SCHEMA_NAME: "omnipool__batch_proc_1"
+  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+  #
+  #  omnipools-stor-dict-proc-2:
+  #    <<: *common-processor-setup
+  #    environment:
+  #      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
+  #      PROCESS_FROM_BLOCK: 2966001
+  #      PROCESS_TO_BLOCK: 4224000
+  #      PROCESS_OMNIPOOLS: "true"
+  #      STATE_SCHEMA_NAME: "omnipool__batch_proc_2"
+  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+  #
+  #  omnipools-stor-dict-proc-3:
+  #    <<: *common-processor-setup
+  #    environment:
+  #      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
+  #      PROCESS_FROM_BLOCK: 4224001
+  #      PROCESS_TO_BLOCK: 5482000
+  #      PROCESS_OMNIPOOLS: "true"
+  #      STATE_SCHEMA_NAME: "omnipool__batch_proc_3"
+  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+  #
+  #  omnipools-stor-dict-proc-4:
+  #    <<: *common-processor-setup
+  #    environment:
+  #      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
+  #      PROCESS_FROM_BLOCK: 5482001
+  #      PROCESS_TO_BLOCK: 6740000
+  #      PROCESS_OMNIPOOLS: "true"
+  #      STATE_SCHEMA_NAME: "omnipool__batch_proc_4"
+  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
 
-  omnipools-stor-dict-proc-5:
+  #  omnipools-stor-dict-proc-5:
+  #    <<: *common-processor-setup
+  #    environment:
+  #      <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
+  #      PROCESS_FROM_BLOCK: 6740001
+  #      PROCESS_TO_BLOCK: -1
+  #      PROCESS_OMNIPOOLS: "true"
+  #      ASSETS_TRACKER_PROCESSOR: "true"
+  #      STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+  #      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+
+  omnipools-stor-dict-proc-6:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-omnipool-db-creds]
-      PROCESS_FROM_BLOCK: 6740001
+      PROCESS_FROM_BLOCK: 8466149
       PROCESS_TO_BLOCK: -1
       PROCESS_OMNIPOOLS: "true"
       ASSETS_TRACKER_PROCESSOR: "true"
-      STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_5"
+      STATE_SCHEMA_NAME: "omnipool__batch_proc_6"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "omnipool__batch_proc_6"
 
 #  omnipools-stor-dict-proc-assets-tracker:
 #    <<: *common-processor-setup

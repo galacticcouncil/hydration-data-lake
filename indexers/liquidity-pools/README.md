@@ -110,4 +110,4 @@ A Docker image has been built and published based on the [Dockerfile](Dockerfile
 - **`STORAGE_DICTIONARY_<LBPPOOL | XYKPOOL | OMNIPOOL | STABLEPOOL>_URL: string`**  
   API URL for the Storage Dictionary Indexer containing the appropriate data. If the dictionary is a single instance indexer that processes all types of pools, all four variables will share the same value.
 
-**Examples of environment variable usage can be found in the [SQD cloud deployment manifest files](./deployment-hydration-indexer.yaml) and [Docker Swarm stack files](../../self-hosted/liquidity-pools.stack.yml).**
+**Examples of environment variable usage can be found in the [SQD cloud deployment manifest files](./deployment-hydration-indexer.yaml) and [Docker Swarm stack files](../../self-hosted/data-lake-indexer/liquidity-pools.stack.yml).**

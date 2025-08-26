@@ -139,7 +139,7 @@ A Docker image has been built and published based on the [Dockerfile](Dockerfile
 - **`SUB_PROCESSORS_RANGES: string`**  
   Encodes configurations of all running processors within a particular indexer, necessary for the API application to handle `squidStatus` API queries with data for each processor's processing block ranges. The pattern is: `processor_1_state_schema_name:process_from_block:process_to_block;processor_2_state_schema_name:process_from_block:process_to_block; ...`
 
-**Examples of environment variable usage can be found in the [SQD cloud deployment manifest files](deployment-lbp-pool.yaml) and [Docker Swarm stack files](../../self-hosted/storage-dictionary-multiprocessor.stack.yml).**
+**Examples of environment variable usage can be found in the [SQD cloud deployment manifest files](deployment-lbp-pool.yaml) and [Docker Swarm stack files](../../self-hosted/storage-dictionary-indexer/storage-dictionary-multiprocessor.stack.yml).**
 
 ---
 
