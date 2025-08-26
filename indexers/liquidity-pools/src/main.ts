@@ -11,11 +11,26 @@ import {
 import { execSpotPricesProcessorHandlers } from './processorHelpers/multiprocessorHandlers/spotPricesProc';
 import { RedisTimeSeriesManager } from './utils/redisTimeSeriesManager';
 import { handleReaggregationProcessing } from './processorHelpers/multiprocessorHandlers/recalculationProcessing';
+import {
+  getProcessingMode,
+  ProcessingMode,
+} from './processorHelpers/getProcessingMode';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
 );
 
+/**
+ * Pause mechanism for indexing operations.
+ *
+ * When INDEXING_IS_PAUSED environment variable is set to 'true',
+ * the processor enters a waiting state without terminating the application.
+ * This allows for graceful pause/resume functionality during maintenance
+ * or debugging without requiring a full restart.
+ *
+ * Note: The processor will remain in this loop until the environment
+ * variable is changed and the application is restarted.
+ */
 if (process.env.INDEXING_IS_PAUSED === 'true') {
   console.log('Indexing is paused. Waiting...');
   while (true) {}
@@ -34,40 +49,49 @@ processor.run(
 
     console.time('TOTAL BATCH EXECUTION TIME');
 
-    const ctxWithBatchState: Omit<
-      SqdProcessorContext<Store>,
-      'batchState' | 'appConfig'
-    > = ctx;
-    (ctxWithBatchState as SqdProcessorContext<Store>).batchState =
-      new BatchState(ctxWithBatchState as SqdProcessorContext<Store>);
-    (ctxWithBatchState as SqdProcessorContext<Store>).appConfig =
-      AppConfig.getInstance();
+    const ctxWithBatchState = ctx as SqdProcessorContext<Store>;
+    ctxWithBatchState.batchState = new BatchState(
+      ctxWithBatchState as SqdProcessorContext<Store>
+    );
+    ctxWithBatchState.appConfig = AppConfig.getInstance();
 
     await RedisTimeSeriesManager.getInstance().initClient();
 
-    if (
-      (ctxWithBatchState as SqdProcessorContext<Store>).appConfig
-        .REAGGREGATION_PROCESSING_MODE
-    ) {
-      await handleReaggregationProcessing(
-        ctxWithBatchState as SqdProcessorContext<Store>
-      );
-    } else {
-      await execAllInOneProcessorHandlers(
-        ctxWithBatchState as SqdProcessorContext<Store>
-      );
+    console.log(`Processing mode >>> ${getProcessingMode(ctxWithBatchState)}`);
 
-      await execCoreProcessorHandlers(
-        ctxWithBatchState as SqdProcessorContext<Store>
-      );
+    switch (getProcessingMode(ctxWithBatchState)) {
+      case ProcessingMode.SINGLE_PROCESSOR:
+        /**
+         * -------------- S I N G L E   P R O C E S S O R ------------------->>>
+         */
+        await execAllInOneProcessorHandlers(ctxWithBatchState);
+        break;
+      case ProcessingMode.REAGGREGATION_SINGLE_PROCESSOR:
+        /**
+         * ------------------ R E A G G R E G A T I O N --------------------->>>
+         *
+         * This block executes when the processor runs in reaggregation mode.
+         * It performs data recalculation or reaggregation operations using
+         * existing database records, bypassing normal event processing.
+         */
+        await handleReaggregationProcessing(ctxWithBatchState);
+        break;
 
-      await execSpotPricesProcessorHandlers(
-        ctxWithBatchState as SqdProcessorContext<Store>
-      );
+      case ProcessingMode.MULTI_PROCESSOR_CORE_PROCESSOR:
+        /**
+         * ----------- M U L T I  P R O C E S S O R :: C O R E -------------->>>
+         */
+        await execCoreProcessorHandlers(ctxWithBatchState);
+        break;
+      case ProcessingMode.MULTI_PROCESSOR_SPOT_PRICES_PROCESSOR:
+        /**
+         * ---------- M U L T I  P R O C E S S O R :: P R I C E S ----------->>>
+         */
+        await execSpotPricesProcessorHandlers(ctxWithBatchState);
+        break;
     }
 
-    (ctxWithBatchState as SqdProcessorContext<Store>).batchState.wipeState();
-
+    ctxWithBatchState.batchState.wipeState();
     console.timeEnd('TOTAL BATCH EXECUTION TIME');
   }
 );
