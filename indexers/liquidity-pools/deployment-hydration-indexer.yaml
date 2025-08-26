@@ -82,8 +82,6 @@
 #  api:
 #    profile: medium
 
-
-
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
 slot: 735
@@ -104,8 +102,8 @@ deploy:
     env:
       CHAIN: 'hydration'
       INDEXER_ID: 735
-      RPC_URL: 'wss://3.rpc.hydration.cloud'
-      RPC_URL_HTTPS: 'https://3.rpc.hydration.cloud'
+      RPC_URL: 'wss://node-subwhale.kril.hydration.cloud'
+      RPC_URL_HTTPS: 'https://node-subwhale.kril.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
       TS_REDIS_PORT: 6377
@@ -167,8 +165,6 @@ scale:
     profile: large
   api:
     profile: small
-
-
 #manifestVersion: subsquid.io/v0.1
 #name: hydration-pools
 #slot: 800
