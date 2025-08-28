@@ -120,7 +120,16 @@ export class ChainActivityTraceManager {
               subcallParent && subcallParent.id !== subcall.id
                 ? subcallParent
                 : undefined;
-          } catch (e) {}
+          } catch (e) {
+            try {
+              const subcallExtrinsic = subcall.getExtrinsic();
+              const extrinsicCall = subcallExtrinsic.getCall();
+              subcallRawData.parent =
+                extrinsicCall && extrinsicCall.id !== subcall.id
+                  ? extrinsicCall
+                  : undefined;
+            } catch (e) {}
+          }
 
           const callEntityOriginData = getCallOriginParts(subcall.origin);
           const callEntity = callEntitiesMap.has(subcall.id)
