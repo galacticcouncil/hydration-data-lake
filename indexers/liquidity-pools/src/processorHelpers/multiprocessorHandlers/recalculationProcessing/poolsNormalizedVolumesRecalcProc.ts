@@ -2,7 +2,7 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { prefetchPersistentData } from '../../prefetchHelpers';
+import { prefetchGenericPersistentData } from '../../prefetchHelpers';
 import {
   Asset,
   AssetSpotPriceHistoricalData,
@@ -18,15 +18,15 @@ import { Between } from 'typeorm/find-options/operator/Between';
 export async function recalculatePoolsNormalizedVolumes(
   ctx: SqdProcessorContext<Store>
 ) {
-  if (!ctx.appConfig.ALL_IN_ONE_PROCESSOR_MODE) return;
+  if (!ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE) return;
 
   console.log('recalculatePoolsNormalizedVolumes');
 
-  console.time('prefetchPersistentData');
-  await prefetchPersistentData(ctx);
-  console.timeEnd('prefetchPersistentData');
+  console.time('prefetchGenericPersistentData');
+  await prefetchGenericPersistentData(ctx);
+  console.timeEnd('prefetchGenericPersistentData');
 
-  ctx.batchState.state.assetsAllBatch = new Map(
+  ctx.batchState.state.assetsAll = new Map(
     (
       await ctx.store.find(Asset, {
         where: {},

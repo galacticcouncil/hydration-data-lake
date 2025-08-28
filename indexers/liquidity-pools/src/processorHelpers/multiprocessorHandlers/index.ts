@@ -1,2 +1,2 @@
-export { execAllInOneProcessorHandlers } from './allInOneProc';
+export { execAllInOneProcessorHandlers } from './allInOneProcessor';
 export { execCoreProcessorHandlers } from './coreProc';

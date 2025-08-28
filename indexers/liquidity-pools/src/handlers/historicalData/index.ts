@@ -4,7 +4,8 @@ import {
   AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
   AssetsPairVolumeHistoricalData,
-  AssetSpotPriceHistoricalData, BatchHsmpoolAssetHistVolsList,
+  AssetSpotPriceHistoricalData,
+  BatchHsmpoolAssetHistVolsList,
   BatchLbppoolHistVolsList,
   BatchOmnipoolAssetHistVolsList,
   BatchStableswapHistVolsList,
@@ -17,9 +18,69 @@ import {
   RedisTimeSeriesName,
 } from '../../utils/redisTimeSeriesManager';
 import { ProcessorStatusManager } from '../../processorStatusManager';
+import {
+  getProcessingMode,
+  ProcessingMode,
+} from '../../processorHelpers/getProcessingMode';
+import { MultiFlowProcessingPhase } from '../../utils/types';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
+    if (
+      getProcessingMode(ctx) !==
+        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR ||
+      (getProcessingMode(ctx) ===
+        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR &&
+        ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+          MultiFlowProcessingPhase.INITIAL)
+    ) {
+      await this.saveSwapFeeRelatedDataBulk(ctx);
+    }
+
+    if (
+      getProcessingMode(ctx) !==
+        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR ||
+      (getProcessingMode(ctx) ===
+        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR &&
+        (ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+          MultiFlowProcessingPhase.HIST_DATA_AGGREGATION ||
+          ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+            MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
+    ) {
+      await this.saveAssetRelatedDataBulk(ctx);
+    }
+
+    await this.savePoolVolumesRelatedDataBulk(ctx);
+
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.moneyMarketReserves.values())
+    );
+
+    if (
+      getProcessingMode(ctx) !==
+        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR ||
+      (getProcessingMode(ctx) ===
+        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR &&
+        (ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+          MultiFlowProcessingPhase.HIST_DATA_AGGREGATION ||
+          ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+            MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
+    ) {
+      await this.saveGeneralHistoricalDataBulk(ctx);
+    }
+
+    const latestBatchBlockHeight =
+      ctx.blocks[ctx.blocks.length - 1].header.height;
+
+    await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
+      xykpoolHistDataLatestBlock: latestBatchBlockHeight,
+      omnipoolHistDataLatestBlock: latestBatchBlockHeight,
+      stableswapHistDataLatestBlock: latestBatchBlockHeight,
+      aavepoolHistDataLatestBlock: latestBatchBlockHeight,
+    });
+  }
+
+  static async saveSwapFeeRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
     await ctx.store.save([
       ...ctx.batchState.state.historicalAssetSwapFees.values(),
     ]);
@@ -29,9 +90,9 @@ export class HistoricalDataManager {
     await ctx.store.save([
       ...ctx.batchState.state.historicalAccountAssetSwapFees.values(),
     ]);
+  }
 
-    await this.saveAssetRelatedDataBulk(ctx);
-
+  static async savePoolVolumesRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
     await ctx.store.save(
       Array.from(ctx.batchState.state.lbpPoolVolumes.values())
     );
@@ -48,7 +109,9 @@ export class HistoricalDataManager {
     await ctx.store.save(
       Array.from(ctx.batchState.state.stablepoolAssetVolumes.values())
     );
+  }
 
+  static async saveGeneralHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
     await ctx.store.save(
       Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
     );
@@ -72,9 +135,7 @@ export class HistoricalDataManager {
     await ctx.store.save(
       Array.from(ctx.batchState.state.aavePoolsHistoricalData.values())
     );
-    await ctx.store.save(
-      Array.from(ctx.batchState.state.moneyMarketReserves.values())
-    );
+
     await ctx.store.save(
       Array.from(
         ctx.batchState.state.moneyMarketReserveIndexesHistData.values()
@@ -95,16 +156,6 @@ export class HistoricalDataManager {
     await ctx.store.save(
       Array.from(ctx.batchState.state.hsmpoolAssetHistData.values())
     );
-
-    const latestBatchBlockHeight =
-      ctx.blocks[ctx.blocks.length - 1].header.height;
-
-    await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
-      xykpoolHistDataLatestBlock: latestBatchBlockHeight,
-      omnipoolHistDataLatestBlock: latestBatchBlockHeight,
-      stableswapHistDataLatestBlock: latestBatchBlockHeight,
-      aavepoolHistDataLatestBlock: latestBatchBlockHeight,
-    });
   }
 
   static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -197,6 +248,10 @@ export class HistoricalDataManager {
   }
 
   static async saveAccountMoneyMarketDataBulk(ctx: SqdProcessorContext<Store>) {
+    console.log(
+      '-------saveAccountMoneyMarketDataBulk-----',
+      ctx.batchState.state.accountMmPositionHistoricalData.size
+    );
     const accountMmPositionHistoricalDataList = Array.from(
       ctx.batchState.state.accountMmPositionHistoricalData.values()
     );

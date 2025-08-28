@@ -111,6 +111,11 @@ async function processAssetSpotPrices({
           usdPriceDetails.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
           usdPriceDetails.decimals
         ).toFixed();
+
+        ctx.batchState.state.assetsHistoricalDataBatch.set(
+          assetHistData.id,
+          assetHistData
+        );
       }
     } catch (e) {}
   };
@@ -276,7 +281,7 @@ function getXykOnlyAssets(ctx: SqdProcessorContext<Store>) {
     )
   );
   const stableswapInvolvedAssets = new Map<string, Asset>(
-    Array.from(ctx.batchState.state.stableswapAssetsAllBatch.values()).map(
+    Array.from(ctx.batchState.state.stableswapAssets.values()).map(
       (pool): [string, Asset] => [pool.asset.id, pool.asset]
     )
   );

@@ -7,6 +7,7 @@ import {
   IsArray,
   IsBoolean,
   ValidationError,
+  IsEnum,
 } from 'class-validator';
 import dotenv from 'dotenv';
 
@@ -22,7 +23,7 @@ import {
   calls as hydrationPaseoNextCalls,
   events as hydrationPaseoNextEvents,
 } from './parsers/chains/hydration-paseo-next/typegenTypes';
-import { ChainName, NodeEnv } from './utils/types';
+import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
 import aTokenHydration from './utils/evmTools/abi/aave/aTokenHydration.json';
 
@@ -63,13 +64,17 @@ class ConcurrencyConfig {
   readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
 
   static getInstance(): ConcurrencyConfig {
-    if (!ConcurrencyConfig.instance) {
-      ConcurrencyConfig.instance = new ConcurrencyConfig();
-    }
+    if (ConcurrencyConfig.instance) return ConcurrencyConfig.instance;
+
     try {
-      return transformAndValidateSync(ConcurrencyConfig, process.env, {
-        validator: { stopAtFirstError: true },
-      });
+      ConcurrencyConfig.instance = transformAndValidateSync(
+        ConcurrencyConfig,
+        process.env,
+        {
+          validator: { stopAtFirstError: true },
+        }
+      );
+      return ConcurrencyConfig.instance;
     } catch (errors) {
       if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
         errors.forEach((error: ValidationError) => {
@@ -91,13 +96,17 @@ class RedisConfig {
   readonly TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: number = 5_000;
 
   static getInstance(): RedisConfig {
-    if (!RedisConfig.instance) {
-      RedisConfig.instance = new RedisConfig();
-    }
+    if (RedisConfig.instance) return RedisConfig.instance;
+
     try {
-      return transformAndValidateSync(RedisConfig, process.env, {
-        validator: { stopAtFirstError: true },
-      });
+      RedisConfig.instance = transformAndValidateSync(
+        RedisConfig,
+        process.env,
+        {
+          validator: { stopAtFirstError: true },
+        }
+      );
+      return RedisConfig.instance;
     } catch (errors) {
       if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
         errors.forEach((error: ValidationError) => {
@@ -146,13 +155,66 @@ class EvmConfig {
     '0xfdb15f9fe2252044b08230449d4278cfd4df52e1';
 
   static getInstance(): EvmConfig {
-    if (!EvmConfig.instance) {
-      EvmConfig.instance = new EvmConfig();
-    }
+    if (EvmConfig.instance) return EvmConfig.instance;
+
     try {
-      return transformAndValidateSync(EvmConfig, process.env, {
+      EvmConfig.instance = transformAndValidateSync(EvmConfig, process.env, {
         validator: { stopAtFirstError: true },
       });
+      return EvmConfig.instance;
+    } catch (errors) {
+      if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+        errors.forEach((error: ValidationError) => {
+          // @ts-ignore
+          Object.values(error.constraints).forEach((msg) => console.error(msg));
+        });
+      } else {
+        console.error('Unexpected error during the environment validation');
+      }
+      throw new Error('Failed to validate environment variables');
+    }
+  }
+}
+
+class ProcessingModeConfig {
+  private static instance: ProcessingModeConfig;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly ALL_IN_ONE_PROCESSOR_MODE: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: boolean = false;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly REAGGREGATION_PROCESSING_MODE: boolean = false;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly IS_CORE_PROCESSOR: boolean = false;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly IS_SPOT_PRICES_PROCESSOR: boolean = false;
+
+  @IsEnum(MultiFlowProcessingPhase)
+  readonly MULTI_FLOW_PROCESSING_PHASE: MultiFlowProcessingPhase =
+    MultiFlowProcessingPhase.INITIAL;
+
+  static getInstance(): ProcessingModeConfig {
+    if (ProcessingModeConfig.instance) return ProcessingModeConfig.instance;
+
+    try {
+      ProcessingModeConfig.instance = transformAndValidateSync(
+        ProcessingModeConfig,
+        process.env,
+        {
+          validator: { stopAtFirstError: true },
+        }
+      );
+      return ProcessingModeConfig.instance;
     } catch (errors) {
       if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
         errors.forEach((error: ValidationError) => {
@@ -253,15 +315,6 @@ export class AppConfig {
   @IsNotEmpty()
   @IsString()
   readonly INDEXER_ID!: string;
-
-  @Transform(({ value }: { value: string }) => value === 'true')
-  readonly ALL_IN_ONE_PROCESSOR_MODE: boolean = true;
-
-  @Transform(({ value }: { value: string }) => value === 'true')
-  readonly IS_CORE_PROCESSOR: boolean = false;
-
-  @Transform(({ value }: { value: string }) => value === 'true')
-  readonly IS_SPOT_PRICES_PROCESSOR: boolean = false;
 
   @IsString()
   readonly STATE_SCHEMA_NAME: string = 'squid_processor';
@@ -393,24 +446,22 @@ export class AppConfig {
   @IsBoolean()
   readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
 
-  @Transform(({ value }: { value: string }) => value === 'true')
-  @IsBoolean()
-  readonly REAGGREGATION_PROCESSING_MODE: boolean = false;
-
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
 
   readonly redis: RedisConfig = new RedisConfig();
 
   readonly evm: EvmConfig = new EvmConfig();
 
+  readonly processingMode: ProcessingModeConfig =
+    ProcessingModeConfig.getInstance();
+
   static getInstance(): AppConfig {
-    if (!AppConfig.instance) {
-      AppConfig.instance = new AppConfig();
-    }
+    if (AppConfig.instance) return AppConfig.instance;
     try {
-      return transformAndValidateSync(AppConfig, process.env, {
+      AppConfig.instance = transformAndValidateSync(AppConfig, process.env, {
         validator: { stopAtFirstError: true },
       });
+      return AppConfig.instance;
     } catch (errors) {
       if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
         errors.forEach((error: ValidationError) => {

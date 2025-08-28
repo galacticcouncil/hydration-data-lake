@@ -730,21 +730,23 @@ export class OfflineTradeRouterManagerHelper {
         type: PoolType.Stable,
 
         tokens: [
-          ...(poolHistData.assetsHistoricalData.map((assetHistData) => ({
-            id: assetHistData.asset.assetRegistryId,
-            decimals: assetHistData.asset.decimals,
-            symbol: assetHistData.asset.symbol,
-            balance: assetHistData.freeBalance.toString(),
-            existentialDeposit: this.assetsHistData
-              .get(blockNumber)!
-              .get(assetHistData.asset.id)!
-              .existentialDeposit.toString(),
-            isSufficient: this.assetsHistData
-              .get(blockNumber)!
-              .get(assetHistData.asset.id)!.asset.isSufficient, // TODO fix data
-            type: assetHistData.asset.assetType,
-            tradable: assetHistData.tradable,
-          })) as IPersistentPoolToken[]),
+          ...(poolHistData.assetsHistoricalData.map((assetHistData) => {
+            return {
+              id: assetHistData.asset.assetRegistryId,
+              decimals: assetHistData.asset.decimals,
+              symbol: assetHistData.asset.symbol,
+              balance: assetHistData.freeBalance.toString(),
+              existentialDeposit: this.assetsHistData
+                .get(blockNumber)!
+                .get(assetHistData.asset.id)!
+                .existentialDeposit.toString(),
+              isSufficient: this.assetsHistData
+                .get(blockNumber)!
+                .get(assetHistData.asset.id)!.asset.isSufficient, // TODO fix data
+              type: assetHistData.asset.assetType,
+              tradable: assetHistData.tradable,
+            };
+          }) as IPersistentPoolToken[]),
         ],
 
         maxInRatio: 0,

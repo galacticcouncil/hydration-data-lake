@@ -107,7 +107,7 @@ export type BatchStatePayload = {
   assetVolumes: Map<string, AssetVolumeHistoricalData>;
 
   assetIdsToSave: Set<string>;
-  assetsAllBatch: Map<string, Asset>;
+  assetsAll: Map<string, Asset>;
   assetsHistoricalDataBatch: Map<string, AssetHistoricalData>;
   assetsSpotPriceHistoricalDataBatch: Map<string, AssetSpotPriceHistoricalData>;
   assetsPairVolumeHistoricalDataBatch: Map<
@@ -179,8 +179,8 @@ export type BatchStatePayload = {
   omnipoolAssetAllHistoricalData: Map<string, OmnipoolAssetHistoricalData>;
 
   stableswapIdsToSave: Set<string>;
-  stableswapAssetsAllBatch: Map<string, StableswapAsset>;
-  stableswapAllBatchPools: Map<string, Stableswap>;
+  stableswapAssets: Map<string, StableswapAsset>;
+  stableswapPools: Map<string, Stableswap>;
   stablepoolVolumeCollections: Map<string, StableswapVolumeHistoricalData>;
   stablepoolAssetVolumes: Map<string, StableswapAssetVolumeHistoricalData>;
   stablepoolAssetVolumeIdsToSave: Set<string>;
@@ -265,7 +265,7 @@ export class BatchState {
     assetAssetsPairVolumesBatch: new Map(),
 
     assetIdsToSave: new Set(),
-    assetsAllBatch: new Map(),
+    assetsAll: new Map(),
 
     accountAssetBalanceHistoricalData: new Map(),
     accountTotalBalanceHistoricalData: new Map(),
@@ -315,8 +315,8 @@ export class BatchState {
     omnipoolAssetAllHistoricalData: new Map(),
 
     stableswapIdsToSave: new Set(),
-    stableswapAllBatchPools: new Map(),
-    stableswapAssetsAllBatch: new Map(),
+    stableswapPools: new Map(),
+    stableswapAssets: new Map(),
     stablepoolAssetVolumes: new Map(),
     stablepoolAssetVolumeIdsToSave: new Set(),
     stablepoolVolumeCollections: new Map(),
@@ -386,7 +386,7 @@ export class BatchState {
       assetAssetsPairVolumesBatch: new Map(),
 
       assetIdsToSave: new Set(),
-      assetsAllBatch: new Map(),
+      assetsAll: new Map(),
 
       accountAssetBalanceHistoricalData: new Map(),
       accountTotalBalanceHistoricalData: new Map(),
@@ -436,8 +436,8 @@ export class BatchState {
       omnipoolAssetAllHistoricalData: new Map(),
 
       stableswapIdsToSave: new Set(),
-      stableswapAllBatchPools: new Map(),
-      stableswapAssetsAllBatch: new Map(),
+      stableswapPools: new Map(),
+      stableswapAssets: new Map(),
       stablepoolAssetVolumes: new Map(),
       stablepoolAssetVolumeIdsToSave: new Set(),
       stablepoolVolumeCollections: new Map(),

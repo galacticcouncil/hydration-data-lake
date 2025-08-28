@@ -122,7 +122,7 @@ export async function getOrCreateStableswap({
 }) {
   const batchState = ctx.batchState.state;
 
-  let pool = batchState.stableswapAllBatchPools.get(`${poolId}`);
+  let pool = batchState.stableswapPools.get(`${poolId}`);
   if (pool) return pool;
 
   pool = await ctx.store.findOne(Stableswap, {
@@ -147,13 +147,13 @@ export async function getOrCreateStableswap({
   const state = ctx.batchState.state;
 
   for (const poolAsset of poolAssets) {
-    state.stableswapAssetsAllBatch.set(poolAsset.id, poolAsset);
+    state.stableswapAssets.set(poolAsset.id, poolAsset);
     await ctx.store.upsert(poolAsset);
   }
   await ctx.store.save(newPool.account);
 
   state.stableswapIdsToSave.add(newPool.id);
-  state.stableswapAllBatchPools.set(newPool.id, newPool);
+  state.stableswapPools.set(newPool.id, newPool);
 
   newPool.account.stableswap = newPool;
   state.accounts.set(newPool.account.id, newPool.account);
@@ -197,7 +197,7 @@ export async function stableswapCreated(
       }),
     });
 
-    ctx.batchState.state.stableswapAllBatchPools.set(
+    ctx.batchState.state.stableswapPools.set(
       existingPool.id,
       existingPool
     );
@@ -217,12 +217,12 @@ export async function stableswapCreated(
   const state = ctx.batchState.state;
 
   for (const poolAsset of poolAssets) {
-    state.stableswapAssetsAllBatch.set(poolAsset.id, poolAsset);
+    state.stableswapAssets.set(poolAsset.id, poolAsset);
   }
 
   state.stableswapIdsToSave.add(pool.id);
 
-  state.stableswapAllBatchPools.set(pool.id, pool);
+  state.stableswapPools.set(pool.id, pool);
 
   await ctx.store.save(pool.account);
   pool.account.stableswap = pool;

@@ -158,7 +158,7 @@ export async function stablepoolBuySellExecuted(
     },
   });
 
-  const stableswapAllBatchPools = ctx.batchState.state.stableswapAllBatchPools;
+  const stableswapAllBatchPools = ctx.batchState.state.stableswapPools;
   stableswapAllBatchPools.set(pool.id, pool);
 
   await handleStablepoolVolumeUpdates({

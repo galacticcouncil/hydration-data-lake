@@ -61,6 +61,12 @@ export enum ChainName {
   hydration_paseo_next = 'hydration_paseo_next',
 }
 
+export enum MultiFlowProcessingPhase {
+  INITIAL = 'INITIAL',
+  HIST_DATA_AGGREGATION = 'HIST_DATA_AGGREGATION',
+  SPOT_PRICES_CALCULATION = 'SPOT_PRICES_CALCULATION',
+}
+
 export enum TraceIdContext {
   call = 'call',
   event = 'event',

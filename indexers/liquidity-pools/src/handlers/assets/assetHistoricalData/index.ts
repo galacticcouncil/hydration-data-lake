@@ -15,7 +15,7 @@ export async function handleAssetHistoricalData({
   ctx: SqdProcessorContext<Store>;
 }) {
   const assetRegistryIds: Array<string> = [
-    ...ctx.batchState.state.assetsAllBatch.values(),
+    ...ctx.batchState.state.assetsAll.values(),
   ]
     .filter((a) => !!a.assetRegistryId)
     .map((a) => `${a.assetRegistryId}`);

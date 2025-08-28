@@ -49,8 +49,8 @@ export async function execCoreProcessorHandlers(
   ctx: SqdProcessorContext<Store>
 ) {
   if (
-    ctx.appConfig.ALL_IN_ONE_PROCESSOR_MODE ||
-    !ctx.appConfig.IS_CORE_PROCESSOR
+    ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE ||
+    !ctx.appConfig.processingMode.IS_CORE_PROCESSOR
   )
     return;
 

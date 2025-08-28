@@ -188,7 +188,7 @@ export async function actualiseAssets(
   // await ctx.store.upsert(assetsToUpdate);
 
   // ctx.batchState.state = {
-  //   assetsAllBatch: allExistingAssets,
+  //   assetsAll: allExistingAssets,
   // };
 
   await statusManager.setSubProcessorStatus({

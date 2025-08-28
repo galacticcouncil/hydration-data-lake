@@ -20,15 +20,15 @@ export async function handleStablepools(
   }
 
   // await ctx.store.save(
-  //   [...ctx.batchState.state.stableswapAllBatchPools.values()].filter((pool) =>
+  //   [...ctx.batchState.state.stableswapPools.values()].filter((pool) =>
   //     ctx.batchState.state.stableswapIdsToSave.has(pool.id)
   //   )
   // );
   // ctx.batchState.state.stableswapIdsToSave = new Set();
   await ctx.store.save([
-    ...ctx.batchState.state.stableswapAllBatchPools.values(),
+    ...ctx.batchState.state.stableswapPools.values(),
   ]);
   await ctx.store.save([
-    ...ctx.batchState.state.stableswapAssetsAllBatch.values(),
+    ...ctx.batchState.state.stableswapAssets.values(),
   ]);
 }

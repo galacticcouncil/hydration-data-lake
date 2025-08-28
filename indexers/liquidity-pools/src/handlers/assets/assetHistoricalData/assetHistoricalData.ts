@@ -25,7 +25,7 @@ export async function processAssetsHistoricalDataAtBlock({
   const mmAssets = [];
   const otherAssets = [];
 
-  for (const asset of ctx.batchState.state.assetsAllBatch.values()) {
+  for (const asset of ctx.batchState.state.assetsAll.values()) {
     if (asset.assetRegistryId !== undefined || asset.assetRegistryId !== null)
       indexedAssets.set(`${asset.assetRegistryId}`, asset.id);
 
@@ -71,7 +71,7 @@ export async function processAssetsHistoricalDataAtBlock({
    * We need this fallback because some assets are not present in
    * tokens.totalIssuance storage.
    */
-  for (const asset of ctx.batchState.state.assetsAllBatch.values()) {
+  for (const asset of ctx.batchState.state.assetsAll.values()) {
     if (!totalIssuancePerAssetMapByAssetId.has(asset.id))
       totalIssuancePerAssetMapByAssetId.set(asset.id, 0n);
   }
@@ -91,7 +91,7 @@ export async function processAssetsHistoricalDataAtBlock({
   );
 
   await pMap(
-    Array.from(ctx.batchState.state.assetsAllBatch.values()),
+    Array.from(ctx.batchState.state.assetsAll.values()),
     async (asset) => {
       if (!totalIssuancePerAssetMapByAssetId.has(asset.id)) {
         return null;

@@ -22,8 +22,8 @@ export async function execSpotPricesProcessorHandlers(
   ctx: SqdProcessorContext<Store>
 ) {
   if (
-    ctx.appConfig.ALL_IN_ONE_PROCESSOR_MODE ||
-    !ctx.appConfig.IS_SPOT_PRICES_PROCESSOR
+    ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE ||
+    !ctx.appConfig.processingMode.IS_SPOT_PRICES_PROCESSOR
   )
     return;
 

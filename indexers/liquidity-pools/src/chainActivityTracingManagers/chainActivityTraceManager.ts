@@ -644,18 +644,6 @@ export class ChainActivityTraceManager {
       ctx,
       500
     );
-
-    // await ctx.store.upsert([...state.batchBlocks.values()].reverse());
-    // await ctx.store.upsert([...state.batchExtrinsics.values()].reverse());
-    // await ctx.store.upsert([...state.batchCalls.values()].reverse());
-    // await ctx.store.upsert([...state.batchEvents.values()].reverse());
-    // await ctx.store.upsert([...state.chainActivityTraces.values()].reverse());
-    // await ctx.store.upsert(
-    //   [...state.accountChainActivityTraces.values()].reverse()
-    // );
-    // await ctx.store.upsert(
-    //   [...state.chainActivityTraceRelations.values()].reverse()
-    // );
   }
 
   static async getChainActivityTrace({

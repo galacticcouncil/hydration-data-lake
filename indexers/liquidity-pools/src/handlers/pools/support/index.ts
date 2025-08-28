@@ -157,11 +157,11 @@ async function handleStableoolsDestroyedStatus(
     });
 
     state.stableswapIdsToSave.add(pool.id);
-    state.stableswapAllBatchPools.set(pool.id, pool);
+    state.stableswapPools.set(pool.id, pool);
   }
 
   await ctx.store.save(
-    [...ctx.batchState.state.stableswapAllBatchPools.values()].filter((pool) =>
+    [...ctx.batchState.state.stableswapPools.values()].filter((pool) =>
       ctx.batchState.state.stableswapIdsToSave.has(pool.id)
     )
   );

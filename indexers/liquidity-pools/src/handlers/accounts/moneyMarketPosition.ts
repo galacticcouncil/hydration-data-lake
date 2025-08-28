@@ -56,7 +56,10 @@ export async function handleAccountMmPositionData(
 
     involvedAccountsLoop: for (const accountId of mmEvent.allInvolvedParticipants) {
       const account = await getOrCreateAccount({ id: accountId, ctx });
-      if (!account || !account.boundEvmAddress) continue involvedAccountsLoop;
+      if (!account || !account.boundEvmAddress) {
+        console.log(`No account found ${accountId}`);
+        continue involvedAccountsLoop;
+      }
       blockSlotData.evmAddresses.add(account.boundEvmAddress);
     }
     accountsToProcessPerBlock.set(
@@ -64,6 +67,13 @@ export async function handleAccountMmPositionData(
       blockSlotData
     );
   }
+  //
+  // console.dir(
+  //   Array.from(accountsToProcessPerBlock.entries()).map(
+  //     ([blockHeight, data]) => [blockHeight, data.evmAddresses]
+  //   ),
+  //   { depth: null }
+  // );
 
   for (const blockSlotData of accountsToProcessPerBlock.values()) {
     await pMap(
@@ -97,7 +107,10 @@ export async function handleAccountMmPositionDataOnMmEvent({
       blockNumber: blockHeader.height,
     });
 
-  if (!contractData) return;
+  if (!contractData) {
+    // console.log(`No contract data for address ${accountEvmAddress}`);
+    return;
+  }
 
   const account = await getOrCreateAccountByBoundEvmAddress({
     ctx,

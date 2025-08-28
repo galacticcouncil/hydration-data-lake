@@ -260,7 +260,6 @@ function getAssetSpotPriceFromHistoricalData({
 }) {
   if (assetId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) return '1';
 
-  // if (!ctx.appConfig.SAVE_ASSET_HISTORICAL_DATA_ON_CHANGE)
   return (
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
       `${assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`

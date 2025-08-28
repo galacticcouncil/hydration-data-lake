@@ -47,10 +47,10 @@ export async function handleStablepoolLiquidityEvents(
   }
 
   await ctx.store.save([
-    ...ctx.batchState.state.stableswapAllBatchPools.values(),
+    ...ctx.batchState.state.stableswapPools.values(),
   ]);
   await ctx.store.save([
-    ...ctx.batchState.state.stableswapAssetsAllBatch.values(),
+    ...ctx.batchState.state.stableswapAssets.values(),
   ]);
 
   await ctx.store.save([

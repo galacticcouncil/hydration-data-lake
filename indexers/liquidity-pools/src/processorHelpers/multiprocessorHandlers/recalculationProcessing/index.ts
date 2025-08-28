@@ -5,7 +5,7 @@ import { aggregateHsmRelatedDataOnPostAggregationMode } from './hsmPostaggregati
 export async function handleReaggregationProcessing(
   ctx: SqdProcessorContext<Store>
 ) {
-  if (!ctx.appConfig.REAGGREGATION_PROCESSING_MODE) return;
+  if (!ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_MODE) return;
 
   await aggregateHsmRelatedDataOnPostAggregationMode(ctx);
 }

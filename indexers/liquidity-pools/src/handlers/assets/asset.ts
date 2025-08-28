@@ -30,7 +30,7 @@ export async function getOrCreateAsset({
   if (id === undefined && !evmAddress && assetRegistryId === undefined)
     return null;
 
-  const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
+  const assetsAllBatch = ctx.batchState.state.assetsAll;
 
   let asset = null;
 
@@ -61,7 +61,7 @@ export async function getOrCreateAsset({
   });
 
   if (asset) {
-    ctx.batchState.state.assetsAllBatch.set(asset.id, asset);
+    ctx.batchState.state.assetsAll.set(asset.id, asset);
     return asset;
   }
 
@@ -167,7 +167,7 @@ export async function getOrCreateAsset({
 
   await ctx.store.save(newAsset);
 
-  ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
+  ctx.batchState.state.assetsAll.set(newAsset.id, newAsset);
 
   return newAsset;
 }
@@ -192,7 +192,7 @@ export async function getOrCreateMoneyMarketAsset({
   if (id === undefined && assetRegistryId === undefined && !evmAddress)
     return null;
 
-  const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
+  const assetsAllBatch = ctx.batchState.state.assetsAll;
 
   let asset = null;
 
@@ -220,7 +220,7 @@ export async function getOrCreateMoneyMarketAsset({
   });
 
   if (asset) {
-    ctx.batchState.state.assetsAllBatch.set(asset.id, asset);
+    ctx.batchState.state.assetsAll.set(asset.id, asset);
     return asset;
   }
 
@@ -289,7 +289,7 @@ export async function getOrCreateMoneyMarketAsset({
     await ctx.store.upsert(underlyingAsset);
   }
 
-  ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
+  ctx.batchState.state.assetsAll.set(newAsset.id, newAsset);
 
   return newAsset;
 }

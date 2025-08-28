@@ -64,7 +64,7 @@ export async function assetRegistered(
 
   if (existingAsset) {
     existingAsset.assetRegistryId = `${assetId}`;
-    state.assetsAllBatch.set(existingAsset.id, existingAsset);
+    state.assetsAll.set(existingAsset.id, existingAsset);
     state.assetIdsToSave.add(existingAsset.id);
     return;
   }
@@ -139,7 +139,7 @@ export async function assetRegistered(
     bondMaturity,
   });
 
-  state.assetsAllBatch.set(newAsset.id, newAsset);
+  state.assetsAll.set(newAsset.id, newAsset);
   state.assetIdsToSave.add(newAsset.id);
 }
 
@@ -181,7 +181,7 @@ export async function assetUpdated(
   if (isSufficient) asset.isSufficient = isSufficient;
 
   const state = ctx.batchState.state;
-  state.assetsAllBatch.set(asset.id, asset);
+  state.assetsAll.set(asset.id, asset);
   state.assetIdsToSave.add(asset.id);
 }
 
@@ -217,6 +217,6 @@ export async function assetLocationSet(
   if (assetMultiLocation) asset.multiLocationsMetadata = [assetMultiLocation];
 
   const state = ctx.batchState.state;
-  state.assetsAllBatch.set(asset.id, asset);
+  state.assetsAll.set(asset.id, asset);
   state.assetIdsToSave.add(asset.id);
 }

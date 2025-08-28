@@ -8,7 +8,7 @@ export async function getAssetsByStablepool(
 ) {
   const batchState = ctx.batchState.state;
 
-  const cachedAssets = [...batchState.stableswapAssetsAllBatch.values()].filter(
+  const cachedAssets = [...batchState.stableswapAssets.values()].filter(
     (asset) => asset.pool.id === poolId
   );
   const persistentAssets = await ctx.store.find(StableswapAsset, {

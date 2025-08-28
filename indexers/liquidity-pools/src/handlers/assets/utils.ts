@@ -19,7 +19,7 @@ import { AssetRegistryLocationSetData } from '../../parsers/batchBlocksParser/ty
 import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
-  ctx.batchState.state.assetsAllBatch = new Map(
+  ctx.batchState.state.assetsAll = new Map(
     (
       await ctx.store.find(Asset, {
         where: {},
@@ -59,7 +59,7 @@ export async function ensureNativeToken(ctx: SqdProcessorContext<Store>) {
   });
 
   await ctx.store.upsert(nativeToken);
-  const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
+  const assetsAllBatch = ctx.batchState.state.assetsAll;
   assetsAllBatch.set(nativeToken.id, nativeToken);
 }
 
@@ -244,7 +244,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
       });
 
       assetsToSave.push(newAsset);
-      ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
+      ctx.batchState.state.assetsAll.set(newAsset.id, newAsset);
     }
 
     /**
@@ -278,7 +278,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           // mmTokenUnderlyingAsset.aToken = aTokenEntity;
           // aTokenEntity.underlyingAsset = mmTokenUnderlyingAsset;
           mmAssetsToSave.push(aTokenEntity);
-          ctx.batchState.state.assetsAllBatch.set(
+          ctx.batchState.state.assetsAll.set(
             aTokenEntity.id,
             aTokenEntity
           );
@@ -303,7 +303,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           // mmTokenUnderlyingAsset.variableDebtToken = variableDebtTokenEntity;
           // variableDebtTokenEntity.underlyingAsset = mmTokenUnderlyingAsset;
           mmAssetsToSave.push(variableDebtTokenEntity);
-          ctx.batchState.state.assetsAllBatch.set(
+          ctx.batchState.state.assetsAll.set(
             variableDebtTokenEntity.id,
             variableDebtTokenEntity
           );
@@ -346,7 +346,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
       assetsToSave.push(assetEntity);
       allExistingAssets.set(assetEntity.id, assetEntity);
-      ctx.batchState.state.assetsAllBatch.set(assetEntity.id, assetEntity);
+      ctx.batchState.state.assetsAll.set(assetEntity.id, assetEntity);
     }
   }
 
@@ -360,7 +360,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
     const erc20AssetToSave: Map<string, Asset> = new Map();
 
     for (const erc20Asset of [
-      ...ctx.batchState.state.assetsAllBatch.values(),
+      ...ctx.batchState.state.assetsAll.values(),
     ].filter((a) => a.assetType === AssetType.Erc20 && !!a.evmAddress)) {
       const erc20AssetContractDetails =
         await MoneyMarketContractsManager.getInstance().getResourceDetails(

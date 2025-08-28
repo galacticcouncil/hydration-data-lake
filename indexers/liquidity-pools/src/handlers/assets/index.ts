@@ -30,7 +30,7 @@ export async function handleAssetRegistry(
   ];
 
   if (updatedAssetsList.length > 0) {
-    const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
+    const assetsAllBatch = ctx.batchState.state.assetsAll;
     const existingAssets = await ctx.store.find(Asset, {
       where: {
         id: In(
@@ -55,7 +55,7 @@ export async function handleAssetRegistry(
   }
 
   await ctx.store.save(
-    [...ctx.batchState.state.assetsAllBatch.values()].filter((asset) =>
+    [...ctx.batchState.state.assetsAll.values()].filter((asset) =>
       ctx.batchState.state.assetIdsToSave.has(asset.id)
     )
   );

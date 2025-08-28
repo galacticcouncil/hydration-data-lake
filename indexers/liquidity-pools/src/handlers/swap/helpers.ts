@@ -186,7 +186,7 @@ export async function broadcastSwappedEventPostHook({
         );
         return;
       }
-      ctx.batchState.state.stableswapAllBatchPools.set(pool.id, pool);
+      ctx.batchState.state.stableswapPools.set(pool.id, pool);
 
       await handleStablepoolVolumeUpdates({
         ctx,
