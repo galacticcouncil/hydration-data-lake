@@ -6,129 +6,6 @@ import { getAssetEvmAddressByType } from './utils';
 import { MoneyMarketContractsManager } from '../../utils/evm/moneyMarketContractsManager';
 import { Store } from '@subsquid/typeorm-store';
 
-export async function getAsset({
-  ctx,
-  id,
-  ensure = false,
-  blockHeader,
-}: {
-  ctx: ProcessorContext<Store>;
-  id: string | number;
-  ensure?: boolean;
-  blockHeader?: Block;
-}): Promise<Asset | null> {
-  let asset = ctx.batchState.state.assetsAllBatch.get(`${id}`);
-  if (asset) return asset;
-
-  asset = await ctx.store.findOne(Asset, { where: { id: `${id}` } });
-
-  if (asset) return asset;
-
-  if (!asset && !ensure) return null;
-
-  /**
-   * Following logic below is implemented and will be used only if indexer
-   * has been started not from genesis block and some assets have not been
-   * pre-created before indexing start point.
-   */
-
-  if (!blockHeader) return null;
-  const storageData = await parsers.storage.assetRegistry.getAsset(
-    +id,
-    blockHeader
-  );
-
-  if (!storageData) return null;
-
-  const newAsset = new Asset({
-    id: `${id}`,
-    name: storageData.name,
-    assetType: storageData.assetType,
-    symbol: storageData.symbol ?? null,
-    decimals: storageData.decimals ?? null,
-    xcmRateLimit: storageData.xcmRateLimit ?? null,
-    isSufficient: storageData.isSufficient ?? true,
-  });
-
-  await ctx.store.save(newAsset);
-
-  ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
-
-  return newAsset;
-}
-
-export async function createAsset({
-  id,
-  blockHeader,
-  ctx,
-  assetStorageData,
-}: {
-  id: string | number;
-  blockHeader: Block;
-  ctx: ProcessorContext<Store>;
-  assetStorageData?: AssetDetails;
-}) {
-  const storageData =
-    assetStorageData ||
-    (await parsers.storage.assetRegistry.getAsset(+id, blockHeader));
-
-  if (!storageData) return null;
-
-  let bondUnderlyingAsset = null;
-  let bondMaturity = null;
-
-  if (storageData.assetType === AssetType.Bond) {
-    const bondDetails = await parsers.storage.bonds.getBond({
-      bondId: +id,
-      block: blockHeader,
-    });
-    if (bondDetails) {
-      bondUnderlyingAsset = await getOrCreateAsset({
-        id: bondDetails.underlyingAsset,
-        ctx,
-        ensure: true,
-        blockHeader,
-      });
-      bondMaturity = bondDetails.maturity;
-    }
-  }
-
-  const getDecimals = () => {
-    if (storageData.assetType !== AssetType.Bond)
-      return storageData.decimals ?? null;
-    if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
-    return null;
-  };
-
-  const getSymbol = () => {
-    if (storageData.assetType !== AssetType.Bond)
-      return storageData.symbol ?? null;
-    if (bondUnderlyingAsset)
-      return bondUnderlyingAsset.symbol
-        ? `${bondUnderlyingAsset.symbol}b`
-        : null;
-    return null;
-  };
-
-  const newAsset = new Asset({
-    id: `${id}`,
-    name: storageData.name,
-    assetType: storageData.assetType,
-    symbol: getSymbol(),
-    decimals: getDecimals(),
-    xcmRateLimit: storageData.xcmRateLimit ?? null,
-    isSufficient: storageData.isSufficient ?? true,
-    bondUnderlyingAsset,
-    bondMaturity,
-  });
-
-  await ctx.store.save(newAsset);
-
-  ctx.batchState.state.assetsAllBatch.set(newAsset.id, newAsset);
-
-  return newAsset;
-}
-
 export async function getOrCreateAsset({
   id,
   evmAddress,
@@ -145,6 +22,13 @@ export async function getOrCreateAsset({
   assetStorageData?: AssetDetails;
 }): Promise<Asset | null> {
   if (id === undefined && !evmAddress) return null;
+
+  if (
+    (id && ctx.appConfig.BLACKLISTED_ASSET_IDS.has(`${id}`)) ||
+    (evmAddress && ctx.appConfig.BLACKLISTED_ASSET_IDS.has(evmAddress))
+  )
+    return null;
+
   const assetsAllBatch = ctx.batchState.state.assetsAllBatch;
 
   let asset = null;

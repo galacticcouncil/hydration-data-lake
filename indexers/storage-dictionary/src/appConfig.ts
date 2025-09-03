@@ -237,6 +237,27 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 100;
 
+  @Transform(
+    ({ value }: { value: string }) =>
+      new Set(
+        value
+          .split(',')
+          .filter((str) => !!str && str.length > 0 && str.startsWith('0x'))
+      )
+  )
+  BLACKLISTED_ASSET_IDS: Set<string> = new Set([
+    '0x2514a429e5f6ae70806ccf4a0657bfc926b498dd',
+    '0x32a8090e20748e530670ff520c4abc903db7e127',
+    '0x34321cb7334807eb718b3e1ddfaeb0c6c0403f1a',
+    '0x5c2209375bbf32ac443ba9f10b9a7558cd7f99e6',
+    '0x6bc2a0ac2495c0cdf5116d0df5d8052fccbc4d4e',
+    '0x6efd31920f48d9e82ae262c9c6bd7660fb807a8a',
+    '0x89c28953e5aa32fa61cd2314868461b77b3d88e7',
+    '0xa8733d52c53ec96e44dd171dc6c2bff4f8132947',
+    '0xf006621efdc155f5996c3afa23f5a6379c578010',
+    '0xfb2e66d76d2841443ab41102369ff33df9bc9a93',
+  ]);
+
   readonly evm: EvmConfig = new EvmConfig();
 
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
