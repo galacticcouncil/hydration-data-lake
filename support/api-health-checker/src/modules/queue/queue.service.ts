@@ -53,7 +53,7 @@ export class QueueService {
         removeOnComplete: false,
         jobId: 'check_notification_triggers_state',
         repeat: {
-          every: 5_000,
+          every: this.appConfig.EVENT_CHECK_JOB_DELAY_MS,
         },
       },
     );

@@ -3,10 +3,28 @@ import {
   AnyVariables,
   Client as GqlClient,
   DocumentInput,
+  Exchange,
   fetchExchange,
 } from '@urql/core';
 import { retryExchange } from '@urql/exchange-retry';
 import { AppConfig } from '../config.module';
+import { map, pipe } from 'wonka';
+
+const responsePreprocessingExchange: Exchange =
+  ({ forward }) =>
+  (ops$) => {
+    return pipe(
+      forward(ops$),
+      map((result) => {
+        if (result.error) {
+          console.error(result.error.message);
+          console.dir(result.error, { depth: null });
+        }
+
+        return result;
+      }),
+    );
+  };
 
 @Injectable()
 export class GraphQlClientProvider {
@@ -27,7 +45,11 @@ export class GraphQlClientProvider {
 
     const client = new GqlClient({
       url: this.appConfig.INDEXER_GRAPHQL_API_URL,
-      exchanges: [fetchExchange, retryExchange(retryOptions)],
+      exchanges: [
+        fetchExchange,
+        responsePreprocessingExchange,
+        retryExchange(retryOptions),
+      ],
     });
 
     this.gqlClient = client;

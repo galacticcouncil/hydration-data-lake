@@ -40,14 +40,14 @@ export class IndexerApiService {
         query: GetProcessorStatusData,
         variables: {
           filter: {
-            id: { equalTo: '1' },
+            id: { equalTo: 'squid_processor' },
           },
         },
       });
 
       if (response.data?.processorStatuses?.nodes.length > 0)
         return response.data.processorStatuses.nodes;
-
+      console.dir(response.data?.processorStatuses?.nodes, { depth: null });
       return null;
     } catch (e) {
       console.log(e);

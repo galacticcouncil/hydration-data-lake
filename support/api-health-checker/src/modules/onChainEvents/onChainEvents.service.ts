@@ -13,7 +13,7 @@ import {
   SwappedExecutionTypeKind,
   TradeOperationType,
 } from '../../types/events';
-import { Ieud99mk6qrhbc } from '@polkadot-api/descriptors/dist/common-types';
+import { Iflbjpb22ffvu4 } from '@polkadot-api/descriptors/dist/common-types';
 import { CryptoUtils } from '../../utils/cryptoUtils';
 import * as crypto from 'node:crypto';
 import { EvmLogDecoder } from '../../utils/evmTools/evmLogDecoder';
@@ -39,7 +39,7 @@ export class OnChainEventsService {
   ) {}
 
   decorateBroadcastSwappedEventPayload(
-    payload: Ieud99mk6qrhbc,
+    payload: Iflbjpb22ffvu4,
   ): BroadcastSwappedEventParams {
     return {
       swapper: this.cryptoUtils.ss58ToHex(payload.swapper),
@@ -75,7 +75,7 @@ export class OnChainEventsService {
   }
 
   subscribeToBroadcastSwapped() {
-    this.polkadotApiProvider.typedApi.event.Broadcast.Swapped.watch()
+    this.polkadotApiProvider.typedApi.event.Broadcast.Swapped3.watch()
       .pipe()
       .forEach((event) => {
         if (this.broadcastSwappedEventsLastBlock === event.meta.block.number)
@@ -85,14 +85,14 @@ export class OnChainEventsService {
 
         this.queueService
           .setEventCheckJob({
-            eventName: EventName.Broadcast_Swapped,
+            eventName: EventName.Broadcast_Swapped3,
             payload: {
               meta: {
                 uuid: crypto.randomUUID(),
                 blockHeight: event.meta.block.number,
                 blockHash: event.meta.block.hash,
                 timestamp: Date.now(),
-                eventName: EventName.Broadcast_Swapped,
+                eventName: EventName.Broadcast_Swapped3,
                 jobExecAttempt: 0,
               },
               payload: this.decorateBroadcastSwappedEventPayload(event.payload),

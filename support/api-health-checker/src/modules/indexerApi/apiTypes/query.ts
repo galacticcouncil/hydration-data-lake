@@ -26,12 +26,18 @@ export const GET_BROADCAST_SWAPPED_EVENT_DATA = gql`
               nodes {
                 assetId
                 amount
+                asset {
+                  assetRegistryId
+                }
               }
             }
             swapOutputs {
               nodes {
                 assetId
                 amount
+                asset {
+                  assetRegistryId
+                }
               }
             }
             swapFees {
@@ -39,6 +45,9 @@ export const GET_BROADCAST_SWAPPED_EVENT_DATA = gql`
                 assetId
                 amount
                 recipientId
+                asset {
+                  assetRegistryId
+                }
               }
             }
           }
@@ -58,6 +67,7 @@ export const GET_MONEY_MARKET_EVENT_SUPPLY_DATA = gql`
           amount
           asset {
             id
+            assetRegistryId
             evmAddress
           }
           account {
@@ -78,6 +88,7 @@ export const GET_MONEY_MARKET_EVENT_BORROW_DATA = gql`
           amount
           asset {
             id
+            assetRegistryId
             evmAddress
           }
           account {

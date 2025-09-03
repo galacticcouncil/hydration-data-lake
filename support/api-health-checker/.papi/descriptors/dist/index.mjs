@@ -1,29 +1,35 @@
+import {
+  __name
+} from "./chunk-O6YSETKJ.mjs";
+
+// .papi/descriptors/src/common.ts
+var table = new Uint8Array(128);
+for (let i = 0; i < 64; i++) table[i < 26 ? i + 65 : i < 52 ? i + 71 : i < 62 ? i - 4 : i * 4 - 205] = i;
+var toBinary = /* @__PURE__ */ __name((base64) => {
+  const n = base64.length, bytes = new Uint8Array((n - Number(base64[n - 1] === "=") - Number(base64[n - 2] === "=")) * 3 / 4 | 0);
+  for (let i2 = 0, j = 0; i2 < n; ) {
+    const c0 = table[base64.charCodeAt(i2++)], c1 = table[base64.charCodeAt(i2++)];
+    const c2 = table[base64.charCodeAt(i2++)], c3 = table[base64.charCodeAt(i2++)];
+    bytes[j++] = c0 << 2 | c1 >> 4;
+    bytes[j++] = c1 << 4 | c2 >> 2;
+    bytes[j++] = c2 << 6 | c3;
+  }
+  return bytes;
+}, "toBinary");
+
 // .papi/descriptors/src/hydration.ts
-var toBinary = (() => {
-  const table = new Uint8Array(128);
-  for (let i = 0; i < 64; i++) table[i < 26 ? i + 65 : i < 52 ? i + 71 : i < 62 ? i - 4 : i * 4 - 205] = i;
-  return (base64) => {
-    const n = base64.length, bytes = new Uint8Array((n - Number(base64[n - 1] === "=") - Number(base64[n - 2] === "=")) * 3 / 4 | 0);
-    for (let i2 = 0, j = 0; i2 < n; ) {
-      const c0 = table[base64.charCodeAt(i2++)], c1 = table[base64.charCodeAt(i2++)];
-      const c2 = table[base64.charCodeAt(i2++)], c3 = table[base64.charCodeAt(i2++)];
-      bytes[j++] = c0 << 2 | c1 >> 4;
-      bytes[j++] = c1 << 4 | c2 >> 2;
-      bytes[j++] = c2 << 6 | c3;
-    }
-    return bytes;
-  };
-})();
-var descriptorValues = import("./descriptors-CWPLFIAZ.mjs").then((module) => module["Hydration"]);
-var metadataTypes = import("./metadataTypes-W2WGMYIH.mjs").then(
-  (module) => toBinary("default" in module ? module.default : module)
-);
+var descriptorValues = import("./descriptors-WWPJU5NF.mjs").then((module) => module["Hydration"]);
+var metadataTypes = import("./metadataTypes-MRGB5OO3.mjs").then((module) => toBinary("default" in module ? module.default : module));
 var asset = {};
-var getMetadata = () => import("./hydration_metadata-DO4ISWNV.mjs").then(
-  (module) => toBinary("default" in module ? module.default : module)
-);
+var getMetadata = /* @__PURE__ */ __name(() => import("./hydration_metadata-U232AZOJ.mjs").then((module) => toBinary("default" in module ? module.default : module)), "getMetadata");
 var genesis = "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d";
-var _allDescriptors = { descriptors: descriptorValues, metadataTypes, asset, getMetadata, genesis };
+var _allDescriptors = {
+  descriptors: descriptorValues,
+  metadataTypes,
+  asset,
+  getMetadata,
+  genesis
+};
 var hydration_default = _allDescriptors;
 
 // .papi/descriptors/src/common-types.ts
@@ -37,7 +43,7 @@ var TransactionalError = _Enum;
 var BalanceStatus = _Enum;
 var TransactionPaymentEvent = _Enum;
 var PreimageEvent = _Enum;
-var ConvictionVotingEvent = _Enum;
+var ConvictionVotingVoteAccountVote = _Enum;
 var PreimagesBounded = _Enum;
 var XcmV3Junctions = _Enum;
 var XcmV3Junction = _Enum;
@@ -79,7 +85,6 @@ var BalancesAdjustmentDirection = _Enum;
 var DispatchRawOrigin = _Enum;
 var XcmPalletOrigin = _Enum;
 var MultiSignature = _Enum;
-var ConvictionVotingVoteAccountVote = _Enum;
 var TraitsScheduleDispatchTime = _Enum;
 var XcmVersionedXcm = _Enum;
 var XcmV2Instruction = _Enum;
@@ -104,12 +109,23 @@ var TransactionValidityError = _Enum;
 var TransactionValidityInvalidTransaction = _Enum;
 var TransactionValidityUnknownTransaction = _Enum;
 var TransactionValidityTransactionSource = _Enum;
+
+// .papi/descriptors/src/index.ts
+var metadatas = {
+  ["0x5b3789c70537a0508cf6065fcd09ba930a24918afc8f00a49c7e6474eb643af6"]: hydration_default
+};
+var getMetadata2 = /* @__PURE__ */ __name(async (codeHash) => {
+  try {
+    return await metadatas[codeHash].getMetadata();
+  } catch {
+  }
+  return null;
+}, "getMetadata");
 export {
   ArithmeticError,
   BalanceStatus,
   BalancesAdjustmentDirection,
   BalancesTypesReasons,
-  ConvictionVotingEvent,
   ConvictionVotingVoteAccountVote,
   ConvictionVotingVoteVoting,
   DigestItem,
@@ -181,5 +197,6 @@ export {
   XcmVersionedLocation,
   XcmVersionedResponse,
   XcmVersionedXcm,
+  getMetadata2 as getMetadata,
   hydration_default as hydration
 };

@@ -42,6 +42,8 @@ export enum EventName {
 
   'AmmSupport_Swapped' = 'AmmSupport.Swapped',
   'Broadcast_Swapped' = 'Broadcast.Swapped',
+  'Broadcast_Swapped2' = 'Broadcast.Swapped2',
+  'Broadcast_Swapped3' = 'Broadcast.Swapped3',
   'BestBlock' = 'BestBlock',
   MoneyMarket_Transfer = 'MoneyMarket.Transfer',
   MoneyMarket_Supply = 'MoneyMarket.Supply',

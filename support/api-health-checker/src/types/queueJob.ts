@@ -18,7 +18,7 @@ export type EventMetadata = {
 };
 
 export type EventCheckJobPayloadData<T extends EventName> =
-  T extends EventName.Broadcast_Swapped
+  T extends EventName.Broadcast_Swapped3
     ? BroadcastSwappedEventParams
     : T extends EventName.BestBlock
       ? BestBlock

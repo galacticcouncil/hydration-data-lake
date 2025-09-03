@@ -27,7 +27,7 @@ export class QueueSupportService {
     job: Job<EventCheckJobPayload>,
   ): Promise<EventCheckJobResult> {
     switch (job.data.meta.eventName) {
-      case EventName.Broadcast_Swapped:
+      case EventName.Broadcast_Swapped3:
         return this.healthCheckCoreService.handleBroadcastSwappedOnChainEvent(
           job.data,
         );

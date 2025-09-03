@@ -31,7 +31,7 @@ export class HealthCheckCoreService {
   ) {}
 
   async handleBroadcastSwappedOnChainEvent(
-    jobData: EventCheckJobPayload<EventName.Broadcast_Swapped>,
+    jobData: EventCheckJobPayload<EventName.Broadcast_Swapped3>,
   ): Promise<EventCheckJobResult> {
     const { payload: jobPayload, meta: jobMeta } = jobData;
 
@@ -70,13 +70,13 @@ export class HealthCheckCoreService {
       });
       return;
     }
-    const swapToCheck = indexerEventData[0].swaps.nodes[0];
+    const indexedSwapToCheck = indexerEventData[0].swaps.nodes[0];
     let isIndexerDataValid = true;
 
     if (
-      swapToCheck.filler.id !== jobPayload.filler ||
-      swapToCheck.swapper.id !== jobPayload.swapper ||
-      swapToCheck.operationType !== jobPayload.operation
+      indexedSwapToCheck.filler.id !== jobPayload.filler ||
+      indexedSwapToCheck.swapper.id !== jobPayload.swapper ||
+      indexedSwapToCheck.operationType !== jobPayload.operation
     ) {
       await this.healthCheckStatusService.updateGlobalStatusScore({
         scoreDiff: -1,
@@ -98,17 +98,18 @@ export class HealthCheckCoreService {
       ]),
     );
 
-    for (const input of swapToCheck.swapInputs.nodes) {
+    for (const input of indexedSwapToCheck.swapInputs.nodes) {
       if (
-        !onChainSwapInputs.has(input.assetId) ||
-        onChainSwapInputs.get(input.assetId) !== input.amount
+        !onChainSwapInputs.has(`${input.asset.assetRegistryId}`) ||
+        onChainSwapInputs.get(`${input.asset.assetRegistryId}`) !== input.amount
       )
         isIndexerDataValid = false;
     }
-    for (const output of swapToCheck.swapOutputs.nodes) {
+    for (const output of indexedSwapToCheck.swapOutputs.nodes) {
       if (
-        !onChainSwapOutputs.has(output.assetId) ||
-        onChainSwapOutputs.get(output.assetId) !== output.amount
+        !onChainSwapOutputs.has(`${output.asset.assetRegistryId}`) ||
+        onChainSwapOutputs.get(`${output.asset.assetRegistryId}`) !==
+          output.amount
       )
         isIndexerDataValid = false;
     }
@@ -187,12 +188,12 @@ export class HealthCheckCoreService {
       });
       return;
     }
-    const supplyToCheck = indexerEventData[0].supply;
+    const indexedSupplyToCheck = indexerEventData[0].supply;
 
     if (
-      supplyToCheck.amount !== jobPayload.amount ||
-      supplyToCheck.account.boundEvmAddress !== jobPayload.userAddress ||
-      supplyToCheck.asset.evmAddress !== jobPayload.reserveAddress
+      indexedSupplyToCheck.amount !== jobPayload.amount ||
+      indexedSupplyToCheck.account.boundEvmAddress !== jobPayload.userAddress ||
+      indexedSupplyToCheck.asset.evmAddress !== jobPayload.reserveAddress
     ) {
       await this.healthCheckStatusService.updateGlobalStatusScore({
         scoreDiff: -1,
@@ -251,12 +252,12 @@ export class HealthCheckCoreService {
       });
       return;
     }
-    const borrowToCheck = indexerEventData[0].borrow;
+    const indexedBorrowToCheck = indexerEventData[0].borrow;
 
     if (
-      borrowToCheck.amount !== jobPayload.amount ||
-      borrowToCheck.account.boundEvmAddress !== jobPayload.userAddress ||
-      borrowToCheck.asset.evmAddress !== jobPayload.reserveAddress
+      indexedBorrowToCheck.amount !== jobPayload.amount ||
+      indexedBorrowToCheck.account.boundEvmAddress !== jobPayload.userAddress ||
+      indexedBorrowToCheck.asset.evmAddress !== jobPayload.reserveAddress
     ) {
       await this.healthCheckStatusService.updateGlobalStatusScore({
         scoreDiff: -1,

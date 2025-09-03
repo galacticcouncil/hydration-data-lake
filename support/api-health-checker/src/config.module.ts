@@ -28,7 +28,7 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsNotEmpty()
-  readonly REDIS_QUEUE_ENABLE_SSL: boolean = false
+  readonly REDIS_QUEUE_ENABLE_SSL: boolean = false;
 
   @IsNotEmpty()
   readonly INDEXER_GRAPHQL_API_URL: string;
@@ -47,7 +47,7 @@ export class AppConfig {
 
   @IsNotEmpty()
   @IsNumber()
-  readonly EVENT_CHECK_JOB_DELAY_MS: number = 1000;
+  readonly EVENT_CHECK_JOB_DELAY_MS: number = 10000;
 
   @IsNotEmpty()
   @IsNumber()
@@ -55,7 +55,7 @@ export class AppConfig {
 
   @IsNotEmpty()
   @IsNumber()
-  readonly BLOCKS_DIFF_ALERT_THRESHOLD: number = 5;
+  readonly BLOCKS_DIFF_ALERT_THRESHOLD: number = 10;
 
   @IsNotEmpty()
   @IsNumber()

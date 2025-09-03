@@ -20,6 +20,8 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noEmit": false,
+    "emitDeclarationOnly": false
   }
 }
