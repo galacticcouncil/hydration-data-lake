@@ -5,7 +5,6 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
-import { handleAllAccountsMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
 
 export async function handleOracleUpdatedEvent(
   ctx: ProcessorContext<Store>,
@@ -21,8 +20,6 @@ export async function handleOracleUpdatedEvent(
   if (!parsedEvmEventData) return;
 
   const { params: eventParams, metadata: eventMetadata } = eventData;
-
-  console.log(`DIA Oracle has emitted Update event`);
 
   // await handleAllAccountsMmPositionDataUpdate({
   //   blockHeader: eventMetadata.blockHeader,
