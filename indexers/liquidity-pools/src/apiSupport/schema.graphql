@@ -118442,6 +118442,338 @@ input AaveFacilitatorFilter {
   not: AaveFacilitatorFilter
 }
 
+"""A connection to a list of `BatchHsmpoolAssetHistVolsList` values."""
+type BatchHsmpoolAssetHistVolsListsConnection {
+  """A list of `BatchHsmpoolAssetHistVolsList` objects."""
+  nodes: [BatchHsmpoolAssetHistVolsList]!
+
+  """
+  A list of edges which contains the `BatchHsmpoolAssetHistVolsList` and cursor to aid in pagination.
+  """
+  edges: [BatchHsmpoolAssetHistVolsListsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `BatchHsmpoolAssetHistVolsList` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: BatchHsmpoolAssetHistVolsListAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `BatchHsmpoolAssetHistVolsList` for these aggregates.
+    """
+    groupBy: [BatchHsmpoolAssetHistVolsListGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: BatchHsmpoolAssetHistVolsListHavingInput
+  ): [BatchHsmpoolAssetHistVolsListAggregates!]
+}
+
+type BatchHsmpoolAssetHistVolsList {
+  id: String!
+  assetIds: [String]
+  batchStartParaBlockHeight: Int!
+  batchEndParaBlockHeight: Int!
+}
+
+"""A `BatchHsmpoolAssetHistVolsList` edge in the connection."""
+type BatchHsmpoolAssetHistVolsListsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `BatchHsmpoolAssetHistVolsList` at the end of the edge."""
+  node: BatchHsmpoolAssetHistVolsList
+}
+
+type BatchHsmpoolAssetHistVolsListAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: BatchHsmpoolAssetHistVolsListSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: BatchHsmpoolAssetHistVolsListDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: BatchHsmpoolAssetHistVolsListMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: BatchHsmpoolAssetHistVolsListMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: BatchHsmpoolAssetHistVolsListAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: BatchHsmpoolAssetHistVolsListStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: BatchHsmpoolAssetHistVolsListStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: BatchHsmpoolAssetHistVolsListVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: BatchHsmpoolAssetHistVolsListVariancePopulationAggregates
+}
+
+type BatchHsmpoolAssetHistVolsListSumAggregates {
+  """Sum of batchStartParaBlockHeight across the matching connection"""
+  batchStartParaBlockHeight: BigInt!
+
+  """Sum of batchEndParaBlockHeight across the matching connection"""
+  batchEndParaBlockHeight: BigInt!
+}
+
+type BatchHsmpoolAssetHistVolsListDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of assetIds across the matching connection"""
+  assetIds: BigInt
+
+  """
+  Distinct count of batchStartParaBlockHeight across the matching connection
+  """
+  batchStartParaBlockHeight: BigInt
+
+  """
+  Distinct count of batchEndParaBlockHeight across the matching connection
+  """
+  batchEndParaBlockHeight: BigInt
+}
+
+type BatchHsmpoolAssetHistVolsListMinAggregates {
+  """Minimum of batchStartParaBlockHeight across the matching connection"""
+  batchStartParaBlockHeight: Int
+
+  """Minimum of batchEndParaBlockHeight across the matching connection"""
+  batchEndParaBlockHeight: Int
+}
+
+type BatchHsmpoolAssetHistVolsListMaxAggregates {
+  """Maximum of batchStartParaBlockHeight across the matching connection"""
+  batchStartParaBlockHeight: Int
+
+  """Maximum of batchEndParaBlockHeight across the matching connection"""
+  batchEndParaBlockHeight: Int
+}
+
+type BatchHsmpoolAssetHistVolsListAverageAggregates {
+  """
+  Mean average of batchStartParaBlockHeight across the matching connection
+  """
+  batchStartParaBlockHeight: BigFloat
+
+  """Mean average of batchEndParaBlockHeight across the matching connection"""
+  batchEndParaBlockHeight: BigFloat
+}
+
+type BatchHsmpoolAssetHistVolsListStddevSampleAggregates {
+  """
+  Sample standard deviation of batchStartParaBlockHeight across the matching connection
+  """
+  batchStartParaBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of batchEndParaBlockHeight across the matching connection
+  """
+  batchEndParaBlockHeight: BigFloat
+}
+
+type BatchHsmpoolAssetHistVolsListStddevPopulationAggregates {
+  """
+  Population standard deviation of batchStartParaBlockHeight across the matching connection
+  """
+  batchStartParaBlockHeight: BigFloat
+
+  """
+  Population standard deviation of batchEndParaBlockHeight across the matching connection
+  """
+  batchEndParaBlockHeight: BigFloat
+}
+
+type BatchHsmpoolAssetHistVolsListVarianceSampleAggregates {
+  """
+  Sample variance of batchStartParaBlockHeight across the matching connection
+  """
+  batchStartParaBlockHeight: BigFloat
+
+  """
+  Sample variance of batchEndParaBlockHeight across the matching connection
+  """
+  batchEndParaBlockHeight: BigFloat
+}
+
+type BatchHsmpoolAssetHistVolsListVariancePopulationAggregates {
+  """
+  Population variance of batchStartParaBlockHeight across the matching connection
+  """
+  batchStartParaBlockHeight: BigFloat
+
+  """
+  Population variance of batchEndParaBlockHeight across the matching connection
+  """
+  batchEndParaBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `BatchHsmpoolAssetHistVolsList` for usage during aggregation.
+"""
+enum BatchHsmpoolAssetHistVolsListGroupBy {
+  ASSET_IDS
+  BATCH_START_PARA_BLOCK_HEIGHT
+  BATCH_END_PARA_BLOCK_HEIGHT
+}
+
+"""Conditions for `BatchHsmpoolAssetHistVolsList` aggregates."""
+input BatchHsmpoolAssetHistVolsListHavingInput {
+  AND: [BatchHsmpoolAssetHistVolsListHavingInput!]
+  OR: [BatchHsmpoolAssetHistVolsListHavingInput!]
+  sum: BatchHsmpoolAssetHistVolsListHavingSumInput
+  distinctCount: BatchHsmpoolAssetHistVolsListHavingDistinctCountInput
+  min: BatchHsmpoolAssetHistVolsListHavingMinInput
+  max: BatchHsmpoolAssetHistVolsListHavingMaxInput
+  average: BatchHsmpoolAssetHistVolsListHavingAverageInput
+  stddevSample: BatchHsmpoolAssetHistVolsListHavingStddevSampleInput
+  stddevPopulation: BatchHsmpoolAssetHistVolsListHavingStddevPopulationInput
+  varianceSample: BatchHsmpoolAssetHistVolsListHavingVarianceSampleInput
+  variancePopulation: BatchHsmpoolAssetHistVolsListHavingVariancePopulationInput
+}
+
+input BatchHsmpoolAssetHistVolsListHavingSumInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+input BatchHsmpoolAssetHistVolsListHavingDistinctCountInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+input BatchHsmpoolAssetHistVolsListHavingMinInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+input BatchHsmpoolAssetHistVolsListHavingMaxInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+input BatchHsmpoolAssetHistVolsListHavingAverageInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+input BatchHsmpoolAssetHistVolsListHavingStddevSampleInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+input BatchHsmpoolAssetHistVolsListHavingStddevPopulationInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+input BatchHsmpoolAssetHistVolsListHavingVarianceSampleInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+input BatchHsmpoolAssetHistVolsListHavingVariancePopulationInput {
+  batchStartParaBlockHeight: HavingIntFilter
+  batchEndParaBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `BatchHsmpoolAssetHistVolsList`."""
+enum BatchHsmpoolAssetHistVolsListsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ASSET_IDS_ASC
+  ASSET_IDS_DESC
+  BATCH_START_PARA_BLOCK_HEIGHT_ASC
+  BATCH_START_PARA_BLOCK_HEIGHT_DESC
+  BATCH_END_PARA_BLOCK_HEIGHT_ASC
+  BATCH_END_PARA_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `BatchHsmpoolAssetHistVolsList` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input BatchHsmpoolAssetHistVolsListCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `assetIds` field."""
+  assetIds: [String]
+
+  """
+  Checks for equality with the object’s `batchStartParaBlockHeight` field.
+  """
+  batchStartParaBlockHeight: Int
+
+  """Checks for equality with the object’s `batchEndParaBlockHeight` field."""
+  batchEndParaBlockHeight: Int
+}
+
+"""
+A filter to be used against `BatchHsmpoolAssetHistVolsList` object types. All fields are combined with a logical ‘and.’
+"""
+input BatchHsmpoolAssetHistVolsListFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `assetIds` field."""
+  assetIds: StringListFilter
+
+  """Filter by the object’s `batchStartParaBlockHeight` field."""
+  batchStartParaBlockHeight: IntFilter
+
+  """Filter by the object’s `batchEndParaBlockHeight` field."""
+  batchEndParaBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [BatchHsmpoolAssetHistVolsListFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [BatchHsmpoolAssetHistVolsListFilter!]
+
+  """Negates the expression."""
+  not: BatchHsmpoolAssetHistVolsListFilter
+}
+
 """A connection to a list of `BatchLbppoolHistoricalVolumesList` values."""
 type BatchLbppoolHistoricalVolumesListsConnection {
   """A list of `BatchLbppoolHistoricalVolumesList` objects."""
@@ -133138,6 +133470,42 @@ type Query {
   ): AssetsPairVolumeHistoricalDataConnection
 
   """
+  Reads and enables pagination through a set of `BatchHsmpoolAssetHistVolsList`.
+  """
+  batchHsmpoolAssetHistVolsLists(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `BatchHsmpoolAssetHistVolsList`."""
+    orderBy: [BatchHsmpoolAssetHistVolsListsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BatchHsmpoolAssetHistVolsListCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: BatchHsmpoolAssetHistVolsListFilter
+  ): BatchHsmpoolAssetHistVolsListsConnection
+
+  """
   Reads and enables pagination through a set of `BatchLbppoolHistoricalVolumesList`.
   """
   batchLbppoolHistoricalVolumesLists(
@@ -136000,6 +136368,7 @@ type Query {
   assetSwapFeeHistoricalDatum(id: String!): AssetSwapFeeHistoricalDatum
   assetVolumeHistoricalDatum(id: String!): AssetVolumeHistoricalDatum
   assetsPairVolumeHistoricalDatum(id: String!): AssetsPairVolumeHistoricalDatum
+  batchHsmpoolAssetHistVolsList(id: String!): BatchHsmpoolAssetHistVolsList
   batchLbppoolHistoricalVolumesList(id: String!): BatchLbppoolHistoricalVolumesList
   batchOmnipoolAssetHistoricalVolumesList(id: String!): BatchOmnipoolAssetHistoricalVolumesList
   batchStableswapHistoricalVolumesList(id: String!): BatchStableswapHistoricalVolumesList

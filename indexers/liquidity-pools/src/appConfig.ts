@@ -25,31 +25,34 @@ import {
 } from './parsers/chains/hydration-paseo-next/typegenTypes';
 import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
-import aTokenHydration from './utils/evmTools/abi/aave/aTokenHydration.json';
 
-dotenv.config({
-  path: (() => {
-    let envFileName = '.env.hydration';
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({
+    path: (() => {
+      let envFileName = '.env.hydration';
 
-    if (process.env.CHAIN === 'hydration') envFileName = '.env.hydration';
-    if (process.env.CHAIN === 'hydration_paseo')
-      envFileName = '.env.hydration-paseo';
-    if (process.env.CHAIN === 'hydration_paseo_next')
-      envFileName = '.env.hydration-paseo-next';
+      if (process.env.CHAIN === 'hydration') envFileName = '.env.hydration';
+      if (process.env.CHAIN === 'hydration_paseo')
+        envFileName = '.env.hydration-paseo';
+      if (process.env.CHAIN === 'hydration_paseo_next')
+        envFileName = '.env.hydration-paseo-next';
 
-    switch (process.env.NODE_ENV as NodeEnv) {
-      case NodeEnv.TEST:
-        envFileName = envFileName + '.test';
-        break;
-      default:
-        envFileName = envFileName + '.local';
-    }
+      switch (process.env.NODE_ENV as NodeEnv) {
+        case NodeEnv.TEST:
+          envFileName = envFileName + '.test';
+          break;
+        default:
+          envFileName = envFileName + '.local';
+      }
 
-    console.log(`${__dirname}/../${envFileName}`);
+      console.log(`${__dirname}/../${envFileName}`);
 
-    return `${__dirname}/../${envFileName}`;
-  })(),
-});
+      return `${__dirname}/../${envFileName}`;
+    })(),
+  });
+} else {
+  dotenv.config();
+}
 
 class ConcurrencyConfig {
   private static instance: ConcurrencyConfig;

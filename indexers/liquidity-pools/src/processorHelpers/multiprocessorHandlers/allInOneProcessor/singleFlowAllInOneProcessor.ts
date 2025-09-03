@@ -243,10 +243,6 @@ export async function singleFlowAllInOneProcessor(
   await handleEvmAccounts(ctx, parsedData);
   console.timeEnd('handleEvmAccounts');
 
-  console.time('saveAllBatchAccounts');
-  await saveAllBatchAccounts(ctx);
-  console.timeEnd('saveAllBatchAccounts');
-
   console.time('handleAssetPairVolumesHistoricalData');
   await handleAssetPairVolumesHistoricalData({ ctx });
   console.timeEnd('handleAssetPairVolumesHistoricalData');
@@ -266,6 +262,10 @@ export async function singleFlowAllInOneProcessor(
   console.time('processPoolsTvlNormalized');
   processPoolsTvlNormalized({ ctx });
   console.timeEnd('processPoolsTvlNormalized');
+
+  console.time('saveAllBatchAccounts');
+  await saveAllBatchAccounts(ctx);
+  console.timeEnd('saveAllBatchAccounts');
 
   console.time('saveHistoricalDataBulk');
   await HistoricalDataManager.saveHistoricalDataBulk(ctx);

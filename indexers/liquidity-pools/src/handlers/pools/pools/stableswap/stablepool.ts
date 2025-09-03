@@ -150,12 +150,14 @@ export async function getOrCreateStableswap({
     state.stableswapAssets.set(poolAsset.id, poolAsset);
     await ctx.store.upsert(poolAsset);
   }
+
+  newPool.account.stableswap = newPool;
+
   await ctx.store.save(newPool.account);
 
   state.stableswapIdsToSave.add(newPool.id);
   state.stableswapPools.set(newPool.id, newPool);
 
-  newPool.account.stableswap = newPool;
   state.accounts.set(newPool.account.id, newPool.account);
 
   return newPool;
@@ -197,10 +199,7 @@ export async function stableswapCreated(
       }),
     });
 
-    ctx.batchState.state.stableswapPools.set(
-      existingPool.id,
-      existingPool
-    );
+    ctx.batchState.state.stableswapPools.set(existingPool.id, existingPool);
     ctx.batchState.state.stableswapIdsToSave.add(existingPool.id);
     return existingPool;
   }
@@ -225,6 +224,9 @@ export async function stableswapCreated(
   state.stableswapPools.set(pool.id, pool);
 
   await ctx.store.save(pool.account);
+
+  // Account must be saved one more time later after pool save to persist pool
+  // relationshit which is not existing at the time.
   pool.account.stableswap = pool;
 
   state.accounts.set(pool.account.id, pool.account);

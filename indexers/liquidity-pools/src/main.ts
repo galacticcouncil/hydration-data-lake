@@ -64,6 +64,7 @@ processor.run(
       case ProcessingMode.ALL_IN_ONE_SINGLE_FLOW_PROCESSOR:
         /**
          * ----- A L L  I N  O N E  S I N G L E  P R O C E S S O R ---------->>>
+         *                            A N D
          * --- A L L  I N  O N E  M U L T I F L O W  P R O C E S S O R ------>>>
          */
         await execAllInOneProcessorHandlers(ctxWithBatchState);

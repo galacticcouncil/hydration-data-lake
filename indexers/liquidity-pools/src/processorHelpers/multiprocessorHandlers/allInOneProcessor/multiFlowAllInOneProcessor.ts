@@ -402,6 +402,10 @@ async function handleHistoricalDataAggregationPhase(
   await handleAccountMmPositionData(ctx, parsedData);
   console.timeEnd('handleAccountMmPositionData');
 
+  console.time('saveAllBatchAccounts');
+  await saveAllBatchAccounts(ctx);
+  console.timeEnd('saveAllBatchAccounts');
+
   await HistoricalDataManager.saveAccountMoneyMarketDataBulk(ctx);
 
   console.time('saveHistoricalDataBulk');
@@ -438,6 +442,10 @@ async function handleSpotPricesCalculationPhase(
   console.time('handleAssetAccountBalances');
   await handleAssetAccountBalances(ctx, parsedData);
   console.timeEnd('handleAssetAccountBalances');
+
+  console.time('saveAllBatchAccounts');
+  await saveAllBatchAccounts(ctx);
+  console.timeEnd('saveAllBatchAccounts');
 
   console.time('saveHistoricalDataBulk');
   await HistoricalDataManager.saveHistoricalDataBulk(ctx);

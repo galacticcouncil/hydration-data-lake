@@ -19,16 +19,6 @@ export async function handleStablepools(
     await stableswapCreated(ctx, eventData);
   }
 
-  // await ctx.store.save(
-  //   [...ctx.batchState.state.stableswapPools.values()].filter((pool) =>
-  //     ctx.batchState.state.stableswapIdsToSave.has(pool.id)
-  //   )
-  // );
-  // ctx.batchState.state.stableswapIdsToSave = new Set();
-  await ctx.store.save([
-    ...ctx.batchState.state.stableswapPools.values(),
-  ]);
-  await ctx.store.save([
-    ...ctx.batchState.state.stableswapAssets.values(),
-  ]);
+  await ctx.store.save([...ctx.batchState.state.stableswapPools.values()]);
+  await ctx.store.save([...ctx.batchState.state.stableswapAssets.values()]);
 }

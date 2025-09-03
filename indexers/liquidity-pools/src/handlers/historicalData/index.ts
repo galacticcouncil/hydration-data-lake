@@ -248,10 +248,6 @@ export class HistoricalDataManager {
   }
 
   static async saveAccountMoneyMarketDataBulk(ctx: SqdProcessorContext<Store>) {
-    console.log(
-      '-------saveAccountMoneyMarketDataBulk-----',
-      ctx.batchState.state.accountMmPositionHistoricalData.size
-    );
     const accountMmPositionHistoricalDataList = Array.from(
       ctx.batchState.state.accountMmPositionHistoricalData.values()
     );

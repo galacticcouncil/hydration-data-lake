@@ -610,7 +610,12 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           ),
         },
         relations: {
-          asset: true,
+          asset: {
+            underlyingAsset: true,
+            aToken: true,
+            variableDebtToken: true,
+            bondUnderlyingAsset: true,
+          },
           block: true,
         },
         order: {
