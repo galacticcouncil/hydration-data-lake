@@ -3,6 +3,7 @@ import { AppConfig } from '../config.module';
 import {
   Client,
   GatewayIntentBits,
+  Message,
   MessageCreateOptions,
   MessagePayload,
 } from 'discord.js';
@@ -10,6 +11,11 @@ import {
 @Injectable()
 export class DiscordClientProvider {
   private client: Client | null = null;
+
+  private channelMessageHandlers: Map<
+    string,
+    (message: Message) => Promise<void>
+  > = new Map();
 
   constructor(private appConfig: AppConfig) {}
 
@@ -20,7 +26,17 @@ export class DiscordClientProvider {
 
   async init(): Promise<void> {
     this.client = new Client({
-      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+      ],
+    });
+
+    this.client.on('messageCreate', async (message: Message) => {
+      for (const handler of this.channelMessageHandlers.values()) {
+        await handler(message);
+      }
     });
 
     return new Promise((resolve) => {
@@ -30,6 +46,17 @@ export class DiscordClientProvider {
       });
       this.client.login(this.appConfig.DISCORD_ALERTS_BOT_TOKEN);
     });
+  }
+
+  addHandlerToChannelMessage(
+    id: string,
+    handler: (message: Message) => Promise<void>,
+  ) {
+    this.channelMessageHandlers.set(id, handler);
+  }
+
+  deleteHandlerToChannelMessage(id: string) {
+    this.channelMessageHandlers.delete(id);
   }
 
   async broadcastMessage(

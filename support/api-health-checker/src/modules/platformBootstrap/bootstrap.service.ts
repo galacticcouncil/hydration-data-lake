@@ -32,11 +32,6 @@ export class BootstrapService implements OnApplicationBootstrap {
 
     this.onChainEventsService.subscribeToEvents().then();
 
-    // await this.notificationsDispatcherService.broadcastGlobalStatusUpdate({
-    //   changeDirection: 'increase',
-    //   statusName: GlobalStatusName.SWAPS,
-    // });
-
     console.log('onApplicationBootstrap finish');
   }
 }

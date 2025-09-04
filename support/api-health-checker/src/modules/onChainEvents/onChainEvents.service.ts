@@ -220,6 +220,6 @@ export class OnChainEventsService {
     console.log('subscribeToEvents');
     this.subscribeToBroadcastSwapped();
     this.subscribeToNewBlock();
-    this.subscribeToEvmLogEvent();
+    // this.subscribeToEvmLogEvent();
   }
 }

@@ -18,9 +18,14 @@ dotenv.config({
 
 export class AppConfig {
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly APP_PORT: number = 8081;
+
+  @IsNotEmpty()
   readonly REDIS_HOST: string;
 
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => +value)
   readonly REDIS_PORT: string;
 
   @IsNotEmpty()
@@ -46,18 +51,22 @@ export class AppConfig {
   readonly WSS_URL: string;
 
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => +value)
   @IsNumber()
   readonly EVENT_CHECK_JOB_DELAY_MS: number = 10000;
 
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => +value)
   @IsNumber()
   readonly EVENT_CHECK_JOB_ATTEMPTS_NUMBER_THRESHOLD: number = 10;
 
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => +value)
   @IsNumber()
   readonly BLOCKS_DIFF_ALERT_THRESHOLD: number = 10;
 
   @IsNotEmpty()
+  @Transform(({ value }: { value: string }) => +value)
   @IsNumber()
   readonly EVENT_STATUS_MAX_SCORE: number = 5;
 

@@ -1,4 +1,9 @@
-import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import {
   DiscordClientProvider,
   DiscordClientProviderToken,
@@ -23,7 +28,7 @@ export enum MessageThemeColor {
 }
 
 @Injectable()
-export class NotificationsDispatcherService {
+export class NotificationsDispatcherService implements OnModuleInit {
   private bnFormatConfig = {
     decimalSeparator: ',',
     groupSeparator: ' ',
@@ -37,6 +42,34 @@ export class NotificationsDispatcherService {
     @Inject(RedisOmClientProviderToken)
     private readonly redisOmClientProvider: RedisOmClientProvider,
   ) {}
+
+  async onModuleInit() {
+    this.discordClientProvider.addHandlerToChannelMessage(
+      'check_status',
+      async (message) => {
+        // Ignore messages from bots (including your own bot)
+        if (message.author.bot) return;
+
+        // Only listen to messages from specific channel if needed
+        if (message.channelId === this.appConfig.DISCORD_ALERTS_CHANEL) {
+          console.log(
+            `New message from ${message.author.username}: ${message.content}`,
+          );
+
+          // // Your reaction logic here
+          // // For example, react to messages containing certain keywords
+          // if (message.content.toLowerCase().includes('hello')) {
+          //   message.reply('Hello there! 👋');
+          // }
+          //
+          // // Or add emoji reactions
+          // if (message.content.toLowerCase().includes('good')) {
+          //   message.react('👍');
+          // }
+        }
+      },
+    );
+  }
 
   async updateNotificationTriggersState({
     changeDirection,
@@ -172,13 +205,13 @@ export class NotificationsDispatcherService {
     switch (triggersState.mmEventsTrackingStatus) {
       case -1:
         preFields.push({
-          name: ` - :warning: Money Market events status score reduced.`,
+          name: ` - :warning: MM events status score reduced.`,
           value: '',
         });
         break;
       case 1:
         preFields.push({
-          name: ` - :arrow_upper_right: Money Market events status score improved.`,
+          name: ` - :arrow_upper_right: MM events status score improved.`,
           value: '',
         });
         break;
@@ -273,7 +306,7 @@ export class NotificationsDispatcherService {
           value: '',
         },
         {
-          name: `- :moneybag: Money Market events status score - ${this.getNumberIcon(globalStatuses.mmEventsTrackingStatusScore)}`,
+          name: `- :moneybag: MM events status score - ${this.getNumberIcon(globalStatuses.mmEventsTrackingStatusScore)}`,
           value: '',
         },
         {

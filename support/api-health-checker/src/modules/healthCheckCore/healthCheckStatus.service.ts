@@ -86,6 +86,7 @@ export class HealthCheckStatusService {
         await this.notificationsDispatcherService.updateNotificationTriggersState(
           { changeDirection, statusName },
         );
+        break;
       }
     }
   }
