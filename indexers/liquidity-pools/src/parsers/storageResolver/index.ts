@@ -9,7 +9,9 @@ import {
   GetConstantsInput,
   GetDataAtBlockInput,
   GetEmaOraclesInput,
+  GetNativeTokenBalanceManyInput,
   GetPoolAssetInfoInput,
+  GetTokenBalancesManyInput,
   LbpGetPoolDataInput,
   OmnipoolGetAllAssetIdsInput,
   OmnipoolGetAssetDataInput,
@@ -111,6 +113,7 @@ export class StorageResolver {
       | 'getTokenBalancesMany'
       | 'getManyTokensTotalIssuance'
       | 'getNativeTokenTotalIssuance'
+      | 'getNativeTokenBalanceMany'
       | 'getAssetsExistentialDepositAll';
     args: Args;
     fallbackFns: Array<(args: Args) => Promise<R>>;
@@ -395,10 +398,6 @@ export class StorageResolver {
             return this.resolveFallbackFunctions(args, fallbackFns);
           }
 
-          if (method === 'getTokenBalancesMany') {
-            return this.resolveFallbackFunctions(args, fallbackFns);
-          }
-
           if (method === 'getNativeTokenTotalIssuance') {
             const resp =
               this.storageDictionaryManager.getNativeTokenTotalIssuance(
@@ -437,6 +436,29 @@ export class StorageResolver {
             const resp = this.storageDictionaryManager.getEmaOracleEntriesAll(
               args as unknown as GetEmaOraclesInput // TODO fix types
             ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+
+          break;
+        }
+        case ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA: {
+          if (method === 'getTokenBalancesMany') {
+            const resp = this.storageDictionaryManager.getTokenBalancesMany(
+              args as unknown as GetTokenBalancesManyInput // TODO fix types
+            ) as R;
+
+            if (resp) return resp;
+            return this.resolveFallbackFunctions(args, fallbackFns);
+          }
+
+          if (method === 'getNativeTokenBalanceMany') {
+            const resp =
+              this.storageDictionaryManager.getNativeTokenBalanceMany(
+                args as unknown as GetNativeTokenBalanceManyInput // TODO fix types
+              ) as R;
 
             if (resp) return resp;
 

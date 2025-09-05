@@ -446,3 +446,9 @@ export type GetHsmCollateralInput = {
   collateralId: string;
   block: BlockHeader;
 };
+
+
+export type GetAccountMmPositionDataInput = {
+  accountId: string;
+  block: BlockHeader;
+};

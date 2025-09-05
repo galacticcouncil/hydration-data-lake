@@ -205,5 +205,4 @@ export async function handleCommonAssetAccountBalances({
       );
     }
   }
-
 }

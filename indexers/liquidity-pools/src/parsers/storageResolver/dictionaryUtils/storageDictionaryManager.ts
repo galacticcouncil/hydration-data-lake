@@ -4,6 +4,8 @@ import {
   Aavepool as AavepoolGlq,
   AccountBalances as AccountBalancesGql,
   AssetHistoricalDatum as AssetHistoricalDatumGql,
+  AccountAssetBalanceHistoricalDatum as AccountAssetBalanceHistoricalDatumGql,
+  AccountMmPositionHistoricalDatum as AccountMmPositionHistoricalDatumGql,
   BlockCompressedDataOrderBy,
   BlockCompressedDatumFilter,
   EmaOracle as EmaOracleGql,
@@ -28,12 +30,16 @@ import {
   AccountData,
   AssetDynamicFeeData,
   AssetExistentialDeposit,
+  BalancesAccountInfoWithAccountId,
   EmaOracleEntryData,
+  GetAccountMmPositionDataInput,
   GetAssetsDynamicFeesAllInput,
   GetConstantsInput,
   GetDataAtBlockInput,
   GetEmaOraclesInput,
+  GetNativeTokenBalanceManyInput,
   GetPoolAssetInfoInput,
+  GetTokenBalancesManyInput,
   LbpGetPoolDataInput,
   LbpPoolData,
   MmAggregatorDictionaryData,
@@ -50,6 +56,8 @@ import {
   StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolPoolPegsInfo,
   StableswapPegSource,
+  TokenAccountBalancesWithAccountId,
+  TokenAccountBalanceWithAssetId,
   TokensGetTokensTotalIssuanceInput,
   TokensGetTokenTotalIssuanceInput,
   TokenTotalIssuance,
@@ -73,6 +81,7 @@ import {
 import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
 import { MinifiedDataStructureManager } from './helpers/minifiedDataStructureManager';
 import { BatchStorageStateSectionCollection } from './helpers/batchStorageStateSectionCollection';
+import { AccountMmPositionDataContractData } from '../../../utils/evmTools/types';
 
 export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
   ? XykpoolGlq
@@ -90,7 +99,11 @@ export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
               ? AssetHistoricalDatumGql
               : T extends ProcessingTopic.MM_AGGREGATOR_ORACLE
                 ? MmAggregatorOracleGlq
-                : never;
+                : T extends ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA
+                  ? AccountAssetBalanceHistoricalDatumGql
+                  : T extends ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA
+                    ? AccountMmPositionHistoricalDatumGql
+                    : never;
 
 export class StorageDictionaryManager extends QueriesHelper {
   protected batchCtx: SqdProcessorContext<Store>;
@@ -105,6 +118,8 @@ export class StorageDictionaryManager extends QueriesHelper {
     | BatchStorageStateSectionCollection<ProcessingTopic.EMA_ORACLE>
     | BatchStorageStateSectionCollection<ProcessingTopic.ASSET_HIST_DATA>
     | BatchStorageStateSectionCollection<ProcessingTopic.MM_AGGREGATOR_ORACLE>
+    | BatchStorageStateSectionCollection<ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA>
+    | BatchStorageStateSectionCollection<ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA>
     // @ts-ignore
   > = new Map([
     [
@@ -154,6 +169,22 @@ export class StorageDictionaryManager extends QueriesHelper {
       new BatchStorageStateSectionCollection<ProcessingTopic.MM_AGGREGATOR_ORACLE>(
         {
           section: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+        }
+      ),
+    ],
+    [
+      ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+      new BatchStorageStateSectionCollection<ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA>(
+        {
+          section: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+        }
+      ),
+    ],
+    [
+      ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+      new BatchStorageStateSectionCollection<ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA>(
+        {
+          section: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
         }
       ),
     ],
@@ -228,6 +259,22 @@ export class StorageDictionaryManager extends QueriesHelper {
         new BatchStorageStateSectionCollection<ProcessingTopic.MM_AGGREGATOR_ORACLE>(
           {
             section: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+          }
+        ),
+      ],
+      [
+        ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+        new BatchStorageStateSectionCollection<ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA>(
+          {
+            section: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+          }
+        ),
+      ],
+      [
+        ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+        new BatchStorageStateSectionCollection<ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA>(
+          {
+            section: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
           }
         ),
       ],
@@ -480,6 +527,54 @@ export class StorageDictionaryManager extends QueriesHelper {
       };
     };
 
+    const allAccountAssetBalanceHistDataStorageFetchPromise = async () => {
+      const data: AccountAssetBalanceHistoricalDatumGql[][] = [];
+
+      for await (const page of this.fetchAllPages({
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+      })) {
+        if (!page) continue;
+        const encodedPageData: AccountAssetBalanceHistoricalDatumGql[] =
+          encodeBlockCompressedData<AccountAssetBalanceHistoricalDatumGql>({
+            data: page,
+            dataKey: BlockCompressedDataKey.accAssetBalancesHistoricalData,
+          });
+
+        data.push(encodedPageData as AccountAssetBalanceHistoricalDatumGql[]);
+      }
+
+      return {
+        pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+        data: data.flat(),
+      };
+    };
+
+    const allAccountMmPositionHistDataStorageFetchPromise = async () => {
+      const data: AccountMmPositionHistoricalDatumGql[][] = [];
+
+      for await (const page of this.fetchAllPages({
+        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+        requestPromise: fetchBlockCompressedDataPaginated,
+        topic: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+      })) {
+        if (!page) continue;
+        const encodedPageData: AccountMmPositionHistoricalDatumGql[] =
+          encodeBlockCompressedData<AccountMmPositionHistoricalDatumGql>({
+            data: page,
+            dataKey: BlockCompressedDataKey.accMmPositionHistoricalData,
+          });
+
+        data.push(encodedPageData as AccountMmPositionHistoricalDatumGql[]);
+      }
+
+      return {
+        pallet: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+        data: data.flat(),
+      };
+    };
+
     console.time('Dictionary API call executed in');
     const fullResponse = await Promise.all([
       allLbpPoolStorageFetchPromise(),
@@ -490,6 +585,8 @@ export class StorageDictionaryManager extends QueriesHelper {
       allEmaOraclesStorageFetchPromise(),
       allAssetHistDataStorageFetchPromise(),
       allMmAggregatorOraclesStorageFetchPromise(),
+      allAccountAssetBalanceHistDataStorageFetchPromise(),
+      allAccountMmPositionHistDataStorageFetchPromise(),
     ]);
 
     console.log(
@@ -582,6 +679,28 @@ export class StorageDictionaryManager extends QueriesHelper {
             ) as any
           );
           break;
+        case ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA:
+          this.batchStorageState.set(
+            ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+            new BatchStorageStateSectionCollection<ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA>(
+              {
+                section: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+                data: palletData.data as AccountAssetBalanceHistoricalDatumGql[],
+              }
+            ) as any
+          );
+          break;
+        case ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA:
+          this.batchStorageState.set(
+            ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+            new BatchStorageStateSectionCollection<ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA>(
+              {
+                section: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+                data: palletData.data as AccountMmPositionHistoricalDatumGql[],
+              }
+            ) as any
+          );
+          break;
         default:
       }
     }
@@ -617,24 +736,6 @@ export class StorageDictionaryManager extends QueriesHelper {
   getStableswapAllPoolsData({
     block,
   }: GetDataAtBlockInput): StablepoolAllPoolsInfoWithPoolId[] | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).entries(),
-    // ].filter(
-    //   ([key, data]) =>
-    //     key.split('-')[1] === block.height.toString() &&
-    //     data.stableswapAssetDataByPoolId.nodes &&
-    //     data.stableswapAssetDataByPoolId.nodes.length > 0
-    // );
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.STABLESWAP>({
-    //     blockNumber: block.height,
-    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP),
-    //     additionalFilter: ([key, data]) =>
-    //       !!data.stableswapAssetDataByPoolId.nodes &&
-    //       data.stableswapAssetDataByPoolId.nodes.length > 0,
-    //   });
-
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.STABLESWAP
     ).getEntitiesByBlockNumber(block.height);
@@ -691,21 +792,6 @@ export class StorageDictionaryManager extends QueriesHelper {
   getStableswapAllPoolsPegsData({
     block,
   }: GetDataAtBlockInput): StablepoolManyPoolsPegsInfoWithPoolId[] | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).entries(),
-    // ].filter(
-    //   ([key, data]) =>
-    //     key.split('-')[1] === block.height.toString() &&
-    //     data.maxPegUpdate !== undefined
-    // );
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.STABLESWAP>({
-    //     blockNumber: block.height,
-    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP),
-    //     additionalFilter: ([key, data]) => data.maxPegUpdate !== undefined,
-    //   });
-
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.STABLESWAP
     ).getEntitiesByBlockNumber(block.height);
@@ -744,21 +830,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    // const node = this.getBatchStorageStatePart(
-    //   ProcessingTopic.STABLESWAP
-    // ).getEntityById(`${poolId}-${block.height}`);
-    //
-    // if (!node) return null;
-    //
-    // if (
-    //   !node.stableswapAssetDataByPoolId.nodes ||
-    //   node.stableswapAssetDataByPoolId.nodes.length === 0
-    // )
-    //   return null;
-    //
-    // const assetInfo = node.stableswapAssetDataByPoolId.nodes.find(
-    //   (asset) => asset?.assetId.toString() === assetId.toString()
-    // );
     const assetInfo = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP)
       .getAssetsByParentId(`${poolId}-${block.height}`)
       ?.get(assetId);
@@ -784,23 +855,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): StablepoolAssetState | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP).get(
-    //   `${poolId}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-    //
-    // if (
-    //   !node.stableswapAssetDataByPoolId.nodes ||
-    //   node.stableswapAssetDataByPoolId.nodes.length === 0
-    // )
-    //   return null;
-    //
-    // const assetState = node.stableswapAssetDataByPoolId.nodes.find(
-    //   (asset) => asset?.assetId === assetId
-    // );
-    // if (!assetState) return null;
-
     const assetState = this.getBatchStorageStatePart(ProcessingTopic.STABLESWAP)
       .getAssetsByParentId(`${poolId}-${block.height}`)
       ?.get(assetId);
@@ -849,20 +903,6 @@ export class StorageDictionaryManager extends QueriesHelper {
   getOmnipoolAllAssetIds({
     block,
   }: OmnipoolGetHubAssetTradabilityInput): number[] | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
-    //   `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-
-    // const assetIds = node.omnipoolAssetDataByPoolId.nodes
-    //   .map((omnipoolAsset) =>
-    //     omnipoolAsset?.assetId !== undefined && omnipoolAsset?.assetId !== null
-    //       ? +omnipoolAsset.assetId
-    //       : null
-    //   )
-    //   .filter((id) => id !== undefined && id !== null);
-
     const assetNodes = this.getBatchStorageStatePart(
       ProcessingTopic.OMNIPOOL
     ).getAssetsByParentId(
@@ -883,14 +923,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
-    //   `${poolAddress}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-    // const asset = node.omnipoolAssetDataByPoolId.nodes.find(
-    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
-    // );
     const asset = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL)
       .getAssetsByParentId(
         `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
@@ -1322,24 +1354,6 @@ export class StorageDictionaryManager extends QueriesHelper {
   getAssetsExistentialDepositAll({
     block,
   }: GetDataAtBlockInput): AssetExistentialDeposit[] | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(
-    //     ProcessingTopic.ASSET_HIST_DATA
-    //   ).entries(),
-    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
-    //     {
-    //       blockNumber: block.height,
-    //       fullData: this.getBatchStorageStatePart(
-    //         ProcessingTopic.ASSET_HIST_DATA
-    //       ),
-    //     }
-    //   );
-    //
-    // if (nodes.length === 0) return null;
-
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.ASSET_HIST_DATA
     ).getEntitiesByBlockNumber(block.height);
@@ -1411,5 +1425,110 @@ export class StorageDictionaryManager extends QueriesHelper {
     if (!node) return null;
 
     return node;
+  }
+
+  getNativeTokenBalanceMany({
+    accountIds,
+    block,
+  }: GetNativeTokenBalanceManyInput):
+    | BalancesAccountInfoWithAccountId[]
+    | null {
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA
+    ).getEntitiesByBlockNumber(block.height);
+
+    if (!nodes || nodes.size === 0) return null;
+
+    const response = [];
+    const accountIdsSet = new Set(accountIds);
+
+    for (const balanceData of Array.from(nodes.values())) {
+      if (
+        balanceData.assetId !== '0' ||
+        (balanceData.assetId === '0' &&
+          !accountIdsSet.has(balanceData.accountId))
+      )
+        continue;
+
+      response.push({
+        accountId: balanceData.accountId,
+        data: {
+          free: BigInt(balanceData.transferable),
+          reserved: BigInt(balanceData.totalLocked),
+          miscFrozen: 0n,
+          feeFrozen: 0n,
+          flags: 0n,
+        },
+      } as BalancesAccountInfoWithAccountId);
+    }
+
+    return response.length ? response : null;
+  }
+
+  getTokenBalancesMany({
+    accountIds,
+    block,
+  }: GetTokenBalancesManyInput): TokenAccountBalancesWithAccountId[] | null {
+    const nodes = this.getBatchStorageStatePart(
+      ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA
+    ).getEntitiesByBlockNumber(block.height);
+
+    if (!nodes || nodes.size === 0) return null;
+
+    const responseMap: Map<string, TokenAccountBalanceWithAssetId[]> =
+      new Map();
+
+    const accountIdsSet = new Set(accountIds);
+
+    for (const balanceData of Array.from(nodes.values())) {
+      if (
+        balanceData.assetId === '0' ||
+        !accountIdsSet.has(balanceData.accountId)
+      )
+        continue;
+
+      if (responseMap.get(balanceData.accountId) === undefined) {
+        responseMap.set(balanceData.accountId, []);
+      }
+
+      responseMap.get(balanceData.accountId)?.push({
+        assetId: balanceData.assetId,
+        data: {
+          free: BigInt(balanceData.transferable),
+          reserved: BigInt(balanceData.totalLocked),
+          miscFrozen: 0n,
+          feeFrozen: 0n,
+          flags: 0n,
+        },
+      } as TokenAccountBalanceWithAssetId);
+    }
+
+    return responseMap.size === 0
+      ? null
+      : Array.from(responseMap.entries()).map(([accountId, assetBalances]) => ({
+          accountId,
+          assetBalances,
+        }));
+  }
+
+  getAccountMmPositionData({
+    accountId,
+    block,
+  }: GetAccountMmPositionDataInput): AccountMmPositionDataContractData | null {
+    const node = this.getBatchStorageStatePart(
+      ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA
+    ).getEntityById(`${accountId}-${block.height}`);
+
+    return !node
+      ? null
+      : ({
+          totalCollateralBase: node.totalCollateralBase,
+          totalDebtBase: node.totalDebtBase,
+          availableBorrowsBase: node.availableBorrowsBase,
+          currentLiquidationThreshold: node.currentLiquidationThreshold,
+          ltv: node.ltv,
+          healthFactor: node.healthFactor,
+          pool: node.poolAddress,
+        } as AccountMmPositionDataContractData);
   }
 }

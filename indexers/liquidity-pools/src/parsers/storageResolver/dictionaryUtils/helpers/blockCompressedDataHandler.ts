@@ -4,6 +4,8 @@ import {
   Aavepool as AavepoolGlq,
   AccountBalances as AccountBalancesGql,
   AssetHistoricalDatum as AssetHistoricalDatumGql,
+  AccountAssetBalanceHistoricalDatum as AccountAssetBalanceHistoricalDatumGql,
+  AccountMmPositionHistoricalDatum as AccountMmPositionHistoricalDatumGql,
   BlockCompressedDataOrderBy,
   BlockCompressedDatumFilter,
   EmaOracle as EmaOracleGql,
@@ -43,6 +45,8 @@ export enum BlockCompressedDataKey {
   emaOracle = 'emaOracle',
   mmAggregatorOracle = 'mmAggregatorOracle',
   assetHistoricalData = 'assetHistoricalData',
+  accAssetBalancesHistoricalData = 'accAssetBalancesHistoricalData',
+  accMmPositionHistoricalData = 'accMmPositionHistoricalData',
 }
 
 export type BlockCompressedDataPayloadDecompressed = {
@@ -58,6 +62,8 @@ export type BlockCompressedDataPayloadDecompressed = {
   [BlockCompressedDataKey.emaOracle]: any[];
   [BlockCompressedDataKey.mmAggregatorOracle]: any[];
   [BlockCompressedDataKey.assetHistoricalData]: any[];
+  [BlockCompressedDataKey.accAssetBalancesHistoricalData]: any[];
+  [BlockCompressedDataKey.accMmPositionHistoricalData]: any[];
 };
 
 export function encodeBlockCompressedData<R>({
@@ -286,6 +292,45 @@ export function encodeBlockCompressedData<R>({
                 paraBlockHeight: assetData.paraBlockHeight,
                 relayBlockHeight: assetData.relayBlockHeight,
               }) as AssetHistoricalDatumGql as R
+          )
+        );
+        break;
+      }
+      case BlockCompressedDataKey.accAssetBalancesHistoricalData: {
+        resultList.push(
+          (decompressedData[dataKey] || []).map(
+            (accBalanceData: any) =>
+              ({
+                id: accBalanceData.id,
+                assetId: accBalanceData.assetId,
+                accountId: accBalanceData.accountId,
+                totalLocked: accBalanceData.totalLocked,
+                transferable: accBalanceData.transferable,
+                paraBlockHeight: accBalanceData.paraBlockHeight,
+              }) as AccountAssetBalanceHistoricalDatumGql as R
+          )
+        );
+        break;
+      }
+      case BlockCompressedDataKey.accMmPositionHistoricalData: {
+        resultList.push(
+          (decompressedData[dataKey] || []).map(
+            (accMmPositionData: any) =>
+              ({
+                id: accMmPositionData.id,
+                accountId: accMmPositionData.accountId,
+                accountBoundEvmAddress:
+                  accMmPositionData.accountBoundEvmAddress,
+                availableBorrowsBase: accMmPositionData.availableBorrowsBase,
+                currentLiquidationThreshold:
+                  accMmPositionData.currentLiquidationThreshold,
+                healthFactor: accMmPositionData.healthFactor,
+                ltv: accMmPositionData.ltv,
+                poolAddress: accMmPositionData.poolAddress,
+                totalCollateralBase: accMmPositionData.totalCollateralBase,
+                totalDebtBase: accMmPositionData.totalDebtBase,
+                paraBlockHeight: accMmPositionData.paraBlockHeight,
+              }) as AccountMmPositionHistoricalDatumGql as R
           )
         );
         break;

@@ -6,12 +6,14 @@ import { EventName } from '../../parsers/types/events';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EvmEventName } from '../../model';
 import { handleAllAccountsMmPositionDataUpdate } from '../accounts/moneyMarketPosition';
+import parsers from '../../parsers';
 
 export async function handleAssetAccountBalances(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
   const accountIdsToProcess = await handleMmAssetAccountBalancesPerBlock(ctx);
+
   await handleCommonAssetAccountBalances({ accountIdsToProcess, ctx });
 
   const blocksWithOracleUpdate: Map<number, SqdBlock> = new Map();
@@ -26,8 +28,22 @@ export async function handleAssetAccountBalances(
       );
   }
 
+  if (blocksWithOracleUpdate.size === 0) return;
+
+  const latestBlockWithOracleUpdate = Array.from(
+    blocksWithOracleUpdate.keys()
+  ).sort((a, b) => b - a)[0];
+
+  const allEvmAccounts =
+    await parsers.storage.evmAccounts.getAllAccountsExtensions({
+      block: blocksWithOracleUpdate.get(latestBlockWithOracleUpdate)!,
+    });
+
+  if (!allEvmAccounts) return;
+
   for (const blockHeader of blocksWithOracleUpdate.values()) {
     await handleAllAccountsMmPositionDataUpdate({
+      allEvmAccounts,
       blockHeader,
       ctx,
     });

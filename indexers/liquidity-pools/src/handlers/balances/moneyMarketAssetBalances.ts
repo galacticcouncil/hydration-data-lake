@@ -20,6 +20,7 @@ import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrice
 import { calcPriceNormalized } from '../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
 import pMap from 'p-map';
+import { StorageResolver } from '../../parsers/storageResolver';
 
 export async function handleMmAssetAccountBalancesPerBlock(
   ctx: SqdProcessorContext<Store>
@@ -163,6 +164,23 @@ export async function handleMmAssetAccountBalancesPerBlock(
             ctx,
           });
 
+        const accountStorageDictionaryBalancesPerAsset =
+          (StorageResolver.getInstance().storageDictionaryManager?.getTokenBalancesMany(
+            {
+              accountIds: [accountAssetsMap.account.id],
+              block: blockSlotData.blockHeader,
+            }
+          ) || [])[0];
+
+        const accountStorageDictionaryBalancesPerAssetMap: Map<string, bigint> =
+          accountStorageDictionaryBalancesPerAsset
+            ? new Map(
+                accountStorageDictionaryBalancesPerAsset.assetBalances.map(
+                  (assetData) => [assetData.assetId, assetData.data.free]
+                )
+              )
+            : new Map();
+
         const assetBalances = (
           await Promise.allSettled(
             [...accountAssetsMap.assets.values()]
@@ -171,17 +189,21 @@ export async function handleMmAssetAccountBalancesPerBlock(
                   !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
               )
               .map(async (asset) => {
+                const balance =
+                  accountStorageDictionaryBalancesPerAssetMap.get(
+                    asset?.assetRegistryId ?? ''
+                  ) ??
+                  (await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
+                    {
+                      contractAddress: asset.evmAddress!,
+                      accountAddress: accountAssetsMap.account.boundEvmAddress!,
+                      blockNumber: blockSlotData.block.height,
+                    }
+                  ));
+
                 return {
                   asset,
-                  balance:
-                    await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
-                      {
-                        contractAddress: asset.evmAddress!,
-                        accountAddress:
-                          accountAssetsMap.account.boundEvmAddress!,
-                        blockNumber: blockSlotData.block.height,
-                      }
-                    ),
+                  balance,
                 };
               })
           )

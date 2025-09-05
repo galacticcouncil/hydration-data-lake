@@ -20,11 +20,13 @@ import {
   AccountData,
   AssetDynamicFeeData,
   AssetExistentialDeposit,
+  BalancesAccountInfoWithAccountId,
   EmaOracleEntryData,
   GetAssetsDynamicFeesAllInput,
   GetConstantsInput,
   GetDataAtBlockInput,
   GetEmaOraclesInput,
+  GetNativeTokenBalanceManyInput,
   GetPoolAssetInfoInput,
   GetTokenBalancesManyInput,
   LbpGetPoolDataInput,
@@ -79,7 +81,18 @@ export default {
         method: 'getNativeTokenTotalIssuance',
         fallbackFns: [balances.getTotalIssuance],
       }),
-    getNativeTokenBalanceMany: balances.getNativeTokenBalanceMany,
+    getNativeTokenBalanceMany: (
+      args: GetNativeTokenBalanceManyInput
+    ): Promise<BalancesAccountInfoWithAccountId[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetNativeTokenBalanceManyInput,
+        BalancesAccountInfoWithAccountId[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+        method: 'getNativeTokenBalanceMany',
+        fallbackFns: [balances.getNativeTokenBalanceMany],
+      }),
   },
   bonds: {
     getBond: bonds.getBond,
@@ -96,7 +109,7 @@ export default {
         TokenAccountBalancesWithAccountId[] | null
       >({
         args,
-        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
         method: 'getTokenBalancesMany',
         fallbackFns: [
           async (fallbackFnArgs) =>

@@ -77,6 +77,14 @@ export class QueriesHelper {
         ProcessingTopic.GENERIC_HIST_DATA,
         appConfig.STORAGE_DICTIONARY_GEN_HIST_DATA_URL,
       ],
+      [
+        ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+        appConfig.STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL,
+      ],
+      [
+        ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+        appConfig.STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL,
+      ],
     ]);
   }
 

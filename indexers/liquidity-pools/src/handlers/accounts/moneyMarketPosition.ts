@@ -7,11 +7,11 @@ import {
   getOrCreateAccountByBoundEvmAddress,
 } from './index';
 import { constants, ethers } from 'ethers';
-import parsers from '../../parsers';
 import pMap from 'p-map';
-import { isValueMaxUint256 } from '../../utils/helpers';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
+import { StorageResolver } from '../../parsers/storageResolver';
+import { EvmAccountsAccountExtensionWithEvmAddress } from '../../parsers/types/storage';
 
 const maxHealthFactor =
   '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
@@ -101,22 +101,25 @@ export async function handleAccountMmPositionDataOnMmEvent({
 }) {
   if (accountEvmAddress === constants.AddressZero) return;
 
-  const contractData =
-    await MoneyMarketContractsManager.getInstance().getAccountMmPositionData({
-      accountAddress: accountEvmAddress,
-      blockNumber: blockHeader.height,
-    });
-
-  if (!contractData) {
-    // console.log(`No contract data for address ${accountEvmAddress}`);
-    return;
-  }
-
   const account = await getOrCreateAccountByBoundEvmAddress({
     ctx,
     evmAddress: accountEvmAddress,
     blockHeader: blockHeader,
   });
+
+  const positionData =
+    StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(
+      { accountId: account.id, block: blockHeader }
+    ) ??
+    (await MoneyMarketContractsManager.getInstance().getAccountMmPositionData({
+      accountAddress: accountEvmAddress,
+      blockNumber: blockHeader.height,
+    }));
+
+  if (!positionData) {
+    // console.log(`No contract data for address ${accountEvmAddress}`);
+    return;
+  }
 
   const block = ctx.batchState.getParaBlockFromCacheByHeight(
     blockHeader.height
@@ -132,7 +135,7 @@ export async function handleAccountMmPositionDataOnMmEvent({
     ltv,
     healthFactor,
     pool: poolAddress,
-  } = contractData;
+  } = positionData;
 
   const newPositionHistData = new AccountMmPositionHistoricalData({
     id: `${account.id}-${blockHeader.height}`,
@@ -160,17 +163,14 @@ export async function handleAccountMmPositionDataOnMmEvent({
 }
 
 export async function handleAllAccountsMmPositionDataUpdate({
+  allEvmAccounts,
   blockHeader,
   ctx,
 }: {
+  allEvmAccounts: EvmAccountsAccountExtensionWithEvmAddress[];
   blockHeader: SqdBlock;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const allEvmAccounts =
-    await parsers.storage.evmAccounts.getAllAccountsExtensions({
-      block: blockHeader,
-    });
-
   await pMap(
     allEvmAccounts || [],
     async ({ h160Address, extension }) => {

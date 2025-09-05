@@ -389,6 +389,9 @@ export class AppConfig {
   @IsString()
   readonly STORAGE_DICTIONARY_GEN_HIST_DATA_URL: string = '';
 
+  @IsString()
+  readonly STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: string = '';
+
   @Transform(({ value }: { value: string }) => +value)
   readonly STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE: number = 300;
 

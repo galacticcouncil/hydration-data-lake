@@ -24,6 +24,13 @@ export type PoolAssetHistDataNode<T> = T extends ProcessingTopic.XYK
         ? LbppoolAssetsDatum
         : never;
 
+/**
+ * A collection class that manages and organizes batch storage state sections
+ * and their relationships. Provides indexed access to stored data, enabling
+ * efficient retrieval by entity ID, block number, or parent ID. Indexing by
+ * parent ID is actual only for entities which have a parent collection,
+ * e.g. Stableswap nad StableswapAssets.
+ */
 export class BatchStorageStateSectionCollection<T extends ProcessingTopic> {
   private readonly stateRaw: BatchStorageStateSectionNode<T>[];
 
