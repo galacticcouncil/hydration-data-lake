@@ -112,7 +112,7 @@ scale:
   addons:
     postgres:
       profile: medium
-      storage: 160G
+      storage: 200G
   processor:
     profile: medium
   api:
