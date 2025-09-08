@@ -1,5 +1,26 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type Type_80 = Type_80_V1Ancient | Type_80_V2
+
+export interface Type_80_V1Ancient {
+    __kind: 'V1Ancient'
+}
+
+export interface Type_80_V2 {
+    __kind: 'V2'
+}
+
+export const Type_80: sts.Type<Type_80> = sts.closedEnum(() => {
+    return  {
+        V1Ancient: sts.unit(),
+        V2: sts.unit(),
+    }
+})
+
+export type FixedU128 = bigint
+
+export const FixedU128 = sts.bigint()
+
 export type Releases = Releases_V1_0_0 | Releases_V2_0_0
 
 export interface Releases_V1_0_0 {

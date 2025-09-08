@@ -68,6 +68,7 @@ import { ensureAaveFacilitators } from '../../../handlers/facilitator';
 import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool/collaterals';
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { MultiFlowProcessingPhase } from '../../../utils/types';
+import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
 
 export async function multiFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -393,6 +394,10 @@ async function handleHistoricalDataAggregationPhase(
   console.time('handleConstantsHistoricalData');
   await handleConstantsHistoricalData(ctx);
   console.timeEnd('handleConstantsHistoricalData');
+
+  console.time('handleTransactionPaymentHistoricalData');
+  await handleTransactionPaymentHistoricalData(ctx);
+  console.timeEnd('handleTransactionPaymentHistoricalData');
 
   console.time('handleOracles');
   await handleOracles(ctx);

@@ -114,6 +114,7 @@ import {
   EvmAccountsAccountExtensionWithEvmAddress,
   HsmCollateralData,
   GetHsmCollateralInput,
+  TransactionPaymentNextFeeMultiplier,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -271,6 +272,11 @@ export type StorageParserMethods = {
   bonds: {
     getBond: (args: GetBondByIdInput) => Promise<BondDetails | null>;
     getBondsAll: (args: GetBondsAllInput) => Promise<BondDetails[]>;
+  };
+  transactionPayment: {
+    getNextFeeMultiplier: (
+      args: GetDataAtBlockInput
+    ) => Promise<TransactionPaymentNextFeeMultiplier | null>;
   };
   tokens: {
     getTokensAccountsAssetBalances: (

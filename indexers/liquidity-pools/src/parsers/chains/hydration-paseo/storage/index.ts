@@ -13,6 +13,7 @@ import balances from './balances';
 import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
 import emaOracle from './emaOracle';
+import transactionPayment from './transactionPayment';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -44,6 +45,7 @@ import bonds from '../../hydration/storage/bonds';
 
 export default {
   system,
+  transactionPayment,
   tokens: {
     ...tokens,
     getTokenTotalIssuance: tokens.getTokenTotalIssuance,

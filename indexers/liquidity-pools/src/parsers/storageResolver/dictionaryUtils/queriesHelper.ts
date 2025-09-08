@@ -29,6 +29,7 @@ const responsePreprocessingExchange: Exchange =
             `Storage dictionary [${(result.operation.context.fetchOptions as RequestInit)?.headers?.ProcessingTopic}] GraphQL Error:`,
             result.error.message
           );
+          console.dir(result.error, { depth: null });
         }
 
         return result;

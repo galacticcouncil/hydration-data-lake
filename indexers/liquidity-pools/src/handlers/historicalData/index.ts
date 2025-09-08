@@ -48,6 +48,7 @@ export class HistoricalDataManager {
             MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
     ) {
       await this.saveAssetRelatedDataBulk(ctx);
+      await this.saveGeneralHistoricalDataBulk(ctx);
     }
 
     await this.savePoolVolumesRelatedDataBulk(ctx);
@@ -56,18 +57,18 @@ export class HistoricalDataManager {
       Array.from(ctx.batchState.state.moneyMarketReserves.values())
     );
 
-    if (
-      getProcessingMode(ctx) !==
-        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR ||
-      (getProcessingMode(ctx) ===
-        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR &&
-        (ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
-          MultiFlowProcessingPhase.HIST_DATA_AGGREGATION ||
-          ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
-            MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
-    ) {
-      await this.saveGeneralHistoricalDataBulk(ctx);
-    }
+    // if (
+    //   getProcessingMode(ctx) !==
+    //     ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR ||
+    //   (getProcessingMode(ctx) ===
+    //     ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR &&
+    //     (ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+    //       MultiFlowProcessingPhase.HIST_DATA_AGGREGATION ||
+    //       ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+    //         MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
+    // ) {
+    //   await this.saveGeneralHistoricalDataBulk(ctx);
+    // }
 
     const latestBatchBlockHeight =
       ctx.blocks[ctx.blocks.length - 1].header.height;
@@ -155,6 +156,9 @@ export class HistoricalDataManager {
     );
     await ctx.store.save(
       Array.from(ctx.batchState.state.hsmpoolAssetHistData.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.transactionPaymentHistData.values())
     );
   }
 

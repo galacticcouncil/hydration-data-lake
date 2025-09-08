@@ -2268,3 +2268,18 @@ type XykYieldFarmDepositEvent @entity {
   relayBlockHeight: Int!
   event: Event!
 }
+
+# ======================================================================================================================
+# *** Transaction Payment ***
+# ======================================================================================================================
+
+type TransactionPaymentHistoricalData @entity {
+  "block_height"
+  id: ID!
+
+  nextFeeMultiplier: BigInt
+
+  paraBlockHeight: Int! @index
+  relayBlockHeight: Int!
+  block: Block!
+}

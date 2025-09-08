@@ -14,6 +14,7 @@ import balances from './balances';
 import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
 import bonds from './bonds';
+import transactionPayment from './transactionPayment';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -70,6 +71,7 @@ import { BlockHeader } from '@subsquid/substrate-processor';
 
 export default {
   system,
+  transactionPayment,
   balances: {
     getTotalIssuance: (args: GetConstantsInput): Promise<bigint | null> =>
       StorageResolver.getInstance().resolveStorageData<

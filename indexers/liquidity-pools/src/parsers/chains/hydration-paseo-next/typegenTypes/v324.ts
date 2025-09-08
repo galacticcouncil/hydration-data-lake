@@ -30,8 +30,6 @@ export interface FeeParams {
     amplification: FixedU128
 }
 
-export type FixedU128 = bigint
-
 export type Permill = number
 
 export type ExecutionType = ExecutionType_Batch | ExecutionType_DCA | ExecutionType_Omnipool | ExecutionType_Router | ExecutionType_Xcm | ExecutionType_XcmExchange
@@ -860,6 +858,25 @@ export const AssetDetails: sts.Type<AssetDetails> = sts.struct(() => {
         isSufficient: sts.boolean(),
     }
 })
+
+export type Releases = Releases_V1Ancient | Releases_V2
+
+export interface Releases_V1Ancient {
+    __kind: 'V1Ancient'
+}
+
+export interface Releases_V2 {
+    __kind: 'V2'
+}
+
+export const Releases: sts.Type<Releases> = sts.closedEnum(() => {
+    return  {
+        V1Ancient: sts.unit(),
+        V2: sts.unit(),
+    }
+})
+
+export type FixedU128 = bigint
 
 export interface Type_521 {
     amount: bigint

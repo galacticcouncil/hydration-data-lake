@@ -122,6 +122,11 @@
       "events": true,
       "calls": true,
       "storage": true
+    },
+    "TransactionPayment": {
+      "events": false,
+      "calls": false,
+      "storage": true
     }
   }
 }

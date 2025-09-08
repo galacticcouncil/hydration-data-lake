@@ -76,6 +76,7 @@ import {
   HsmpoolAssetHistoricalData,
   AaveFacilitator,
   AaveFacilitatorHistoricalData,
+  TransactionPaymentHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -237,6 +238,8 @@ export type BatchStatePayload = {
   >;
 
   emaOracleEntriesHistoricalData: Map<string, EmaOracleEntryHistoricalData>;
+
+  transactionPaymentHistData: Map<string, TransactionPaymentHistoricalData>;
 };
 
 export class BatchState {
@@ -353,6 +356,8 @@ export class BatchState {
     mmReserveUsedAsCollateralDisabledEvents: new Map(),
 
     emaOracleEntriesHistoricalData: new Map(),
+
+    transactionPaymentHistData: new Map(),
   };
 
   constructor(ctx: SqdProcessorContext<Store>) {
@@ -474,6 +479,8 @@ export class BatchState {
       mmReserveUsedAsCollateralDisabledEvents: new Map(),
 
       emaOracleEntriesHistoricalData: new Map(),
+
+      transactionPaymentHistData: new Map(),
     };
   }
 
@@ -518,24 +525,27 @@ export class BatchState {
     entityId,
     currentBlockHeight,
     blockHeightValPosition,
+    separator = '-',
   }: {
     entitiesMap: Map<string, E>;
     entityId: string;
     currentBlockHeight: number;
     blockHeightValPosition: number;
+    separator?: string;
   }) {
     return entitiesMap.get(
       Array.from(entitiesMap.keys())
         .filter((k) => {
           return (
-            k.startsWith(entityId + '-') &&
-            parseInt(k.split('-')[blockHeightValPosition]) < currentBlockHeight
+            k.startsWith(entityId + separator) &&
+            parseInt(k.split(separator)[blockHeightValPosition]) <
+              currentBlockHeight
           );
         })
         .sort((a, b) => {
           return (
-            parseInt(b.split('-')[blockHeightValPosition]) -
-            parseInt(a.split('-')[blockHeightValPosition])
+            parseInt(b.split(separator)[blockHeightValPosition]) -
+            parseInt(a.split(separator)[blockHeightValPosition])
           );
         })[0]
     );

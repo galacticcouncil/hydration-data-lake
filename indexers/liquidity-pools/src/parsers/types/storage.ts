@@ -303,6 +303,10 @@ export interface HsmCollateralData {
   maxInHolding?: bigint;
 }
 
+export interface TransactionPaymentNextFeeMultiplier {
+  nextFeeMultiplier: bigint;
+}
+
 /**
  * =============================================================================
  * =========================== I N P U T    T Y P E S===========================

@@ -60,6 +60,7 @@ import { handleEvm } from '../../../handlers/evmLog';
 import { ensureAaveFacilitators } from '../../../handlers/facilitator';
 import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool/collaterals';
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
+import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -181,6 +182,10 @@ export async function singleFlowAllInOneProcessor(
   console.time('handleConstantsHistoricalData');
   await handleConstantsHistoricalData(ctx);
   console.timeEnd('handleConstantsHistoricalData');
+
+  console.time('handleTransactionPaymentHistoricalData');
+  await handleTransactionPaymentHistoricalData(ctx);
+  console.timeEnd('handleTransactionPaymentHistoricalData');
 
   console.time('handleOracles');
   await handleOracles(ctx);
