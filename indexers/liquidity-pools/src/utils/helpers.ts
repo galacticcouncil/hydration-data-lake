@@ -293,6 +293,7 @@ export async function retryAsync<T>({
   passThrough = false,
   fallbackResponse,
   throwErrorOnRetriesLimit = false,
+  tag,
 }: {
   fn: () => Promise<T>;
   retries?: number;
@@ -301,6 +302,7 @@ export async function retryAsync<T>({
   throwErrorOnRetriesLimit?: boolean;
   fallbackResponse: T;
   retryIf?: (error: any) => boolean;
+  tag?: string;
 }): Promise<T> {
   if (passThrough) return fn();
 
@@ -316,7 +318,7 @@ export async function retryAsync<T>({
         if (attempt > retries || !retryIf(error)) throw error;
 
         console.log(
-          `${retiesLoopId} :: Retrying... attempt ${attempt} failed `
+          `${retiesLoopId} ${tag ? ` :: ${tag} ` : ''}:: Retrying... attempt ${attempt} failed `
         );
         // console.log(`Retrying... attempt ${attempt} failed with error:`, error);
         await new Promise((resolve) => setTimeout(resolve, delay));
@@ -326,7 +328,7 @@ export async function retryAsync<T>({
     // @ts-ignore
     // console.log(e?.message);
     console.log(
-      `${retiesLoopId} :: Retries loop finished with unresolved error.`
+      `${retiesLoopId} ${tag ? ` :: ${tag} ` : ''}:: Retries loop finished with unresolved error.`
     );
   }
 

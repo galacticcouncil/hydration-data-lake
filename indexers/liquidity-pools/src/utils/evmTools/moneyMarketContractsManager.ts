@@ -320,6 +320,7 @@ export class MoneyMarketContractsManager {
               .totalSupply({ blockTag: blockNumber })
           ).toString(),
         fallbackResponse: '0',
+        tag: `${address}.totalSupply.at(${blockNumber})`,
       });
     } catch (e) {
       console.log(e);
@@ -359,6 +360,7 @@ export class MoneyMarketContractsManager {
                     .totalSupply({ blockTag: blockNumber })
                 ).toString(),
               fallbackResponse: '0',
+              tag: `${address}.totalSupply.at(${blockNumber})`,
             });
           } catch (e) {}
 
@@ -402,6 +404,7 @@ export class MoneyMarketContractsManager {
               blockNumber !== undefined ? { blockTag: blockNumber } : undefined
             ),
         fallbackResponse: null,
+        tag: `${contractAddressNormalized}.balanceOf(${accountAddressNormalized}).at(${blockNumber})`,
       });
 
       if (balance !== undefined && balance !== null)
@@ -470,6 +473,7 @@ export class MoneyMarketContractsManager {
           blockTag: blockNumber,
         }),
       fallbackResponse: [],
+      tag: `getFacilitatorsList.at(${blockNumber})`,
     });
 
     if (!facilitatorsList) {
@@ -510,6 +514,7 @@ export class MoneyMarketContractsManager {
           blockNumber !== undefined ? { blockTag: blockNumber } : undefined
         ),
       fallbackResponse: null,
+      tag: `getFacilitator(${facilitatorAddress}).at(${blockNumber})`,
     });
 
     if (!facilitatorData) {
