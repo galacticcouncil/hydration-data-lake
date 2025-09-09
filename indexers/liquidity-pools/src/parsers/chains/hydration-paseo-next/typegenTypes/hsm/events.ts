@@ -97,6 +97,22 @@ export const arbitrageExecuted =  {
             hollarAmount: sts.bigint(),
         })
     ),
+    /**
+     * Arbitrage executed successfully
+     * 
+     * Parameters:
+     * - `asset_id`: The collateral asset used in the arbitrage
+     * - `hollar_amount`: Amount of Hollar that was included in the arbitrage operation
+     */
+    v347: new EventType(
+        'HSM.ArbitrageExecuted',
+        sts.struct({
+            arbitrage: sts.number(),
+            assetId: sts.number(),
+            hollarAmount: sts.bigint(),
+            profit: sts.bigint(),
+        })
+    ),
 }
 
 export const flashMinterSet =  {

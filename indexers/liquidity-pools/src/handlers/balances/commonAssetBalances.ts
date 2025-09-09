@@ -38,7 +38,7 @@ export async function handleCommonAssetAccountBalances({
     }
   > = new Map();
 
-  for (const block of ctx.blocks) {
+  blocksLoop: for (const block of ctx.blocks) {
     const allInvolvedAccountsInBlockSet: Set<string> = new Set();
     if (!accountBalancesPerBlock.has(block.header.height))
       accountBalancesPerBlock.set(block.header.height, {
@@ -46,10 +46,10 @@ export async function handleCommonAssetAccountBalances({
         data: new Map(),
       });
 
-    for (const event of block.events) {
+    eventsLoop: for (const event of block.events) {
       const eventPalletName = event.name.split('.')[0];
 
-      if (!palletNamesSet.has(eventPalletName)) continue;
+      if (!palletNamesSet.has(eventPalletName)) continue eventsLoop;
 
       if (event.args.from) {
         allInvolvedAccountsInBlockSet.add(event.args.from);
@@ -64,6 +64,8 @@ export async function handleCommonAssetAccountBalances({
         allInvolvedAccountsInBatchSet.add(event.args.who);
       }
     }
+
+    if (allInvolvedAccountsInBlockSet.size === 0) continue blocksLoop;
 
     const [nativeTokenBalances, otherTokenBalances] = await Promise.all([
       parsers.storage.balances.getNativeTokenBalanceMany({

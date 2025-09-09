@@ -1,0 +1,102 @@
+version: "3.7"
+
+networks:
+  default:
+    driver: overlay
+  gateway:
+    external: true
+
+services:
+  whale-health-checker-dev:
+    image: ghcr.io/mckrava/hydration-indexer-api-health-checker:353c76d931e6f05cfc05642c19d4bdcce7eeaadd
+    ports:
+      - "8085:8081"
+    environment:
+      APP_PORT: 8081
+
+      # Redis configuration
+      REDIS_HOST: "redis"
+      REDIS_PASSWORD: "password"
+      REDIS_PORT: 6379
+
+      # External APIs
+      WSS_URL: "wss://hydration-rpc.n.dwellir.com"
+      INDEXER_GRAPHQL_API_URL: "https://galacticcouncil.squids.live/hydration-pools:whale-prod/api/graphql"
+
+      # App configuration
+      NODE_ENV: "production"
+      APP_TERMINATED: "false"
+      HOST: "0.0.0.0"
+
+    command:
+      - sh
+      - -c
+      - |
+        export DISCORD_ALERTS_BOT_TOKEN=$$(cat /run/secrets/WHALE_HEALTH_CHECKER_DEV_DISCORD_BOT_TOKEN)
+        export DISCORD_ALERTS_SERVER=$$(cat /run/secrets/WHALE_HEALTH_CHECKER_DEV_DISCORD_SERVER)
+        export DISCORD_ALERTS_CHANEL=$$(cat /run/secrets/WHALE_HEALTH_CHECKER_DEV_DISCORD_CHANNEL)
+        node dist/main.js
+
+    networks:
+      - gateway
+      - default
+    depends_on:
+      - redis
+    deploy:
+      labels:
+        # Enable Traefik
+        traefik.enable: "true"
+
+        # HTTP to HTTPS redirect
+        traefik.http.routers.whale-health-checker-dev-http.rule: Host(`whale-health-checker-dev.kril.hydration.cloud`)
+        traefik.http.routers.whale-health-checker-dev-http.entrypoints: web
+        traefik.http.routers.whale-health-checker-dev-http.middlewares: https-redirect
+
+        # HTTPS configuration
+        traefik.http.routers.whale-health-checker-dev.rule: Host(`whale-health-checker-dev.kril.hydration.cloud`)
+        traefik.http.routers.whale-health-checker-dev.entrypoints: websecure
+        traefik.http.routers.whale-health-checker-dev.tls: "true"
+        traefik.http.routers.whale-health-checker-dev.tls.certresolver: myresolver
+
+        # Service configuration
+        traefik.http.services.whale-health-checker-dev.loadbalancer.server.port: "8085"
+
+        # HTTPS redirect middleware
+        traefik.http.middlewares.https-redirect.redirectscheme.scheme: https
+        traefik.http.middlewares.https-redirect.redirectscheme.permanent: "true"
+
+      restart_policy:
+        condition: on-failure
+
+  redis:
+    image: redis/redis-stack:latest
+    command:
+      - sh
+      - -c
+      - |
+        redis-stack-server \
+        --requirepass password \
+        --appendonly yes
+
+    volumes:
+      - redis-data:/data
+    networks:
+      - default
+    deploy:
+      restart_policy:
+        condition: on-failure
+      # Redis is not exposed to gateway network, so it's not publicly accessible
+
+volumes:
+  redis-data:
+    driver: local
+
+
+secrets:
+  WHALE_HEALTH_CHECKER_DEV_DISCORD_BOT_TOKEN:
+    external: true
+  WHALE_HEALTH_CHECKER_DEV_DISCORD_SERVER:
+    external: true
+  WHALE_HEALTH_CHECKER_DEV_DISCORD_CHANNEL:
+    external: true
+

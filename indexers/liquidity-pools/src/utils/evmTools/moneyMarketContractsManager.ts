@@ -143,7 +143,7 @@ export class MoneyMarketContractsManager {
     blockNumber?: number;
   }): Promise<MoneyMarketResourceDetails[] | null> {
     try {
-      const resourcesData =
+      const reservesData =
         await this.uiPoolDataProviderContractInstance.getReservesData(
           appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
           { blockTag: blockNumber }
@@ -151,7 +151,7 @@ export class MoneyMarketContractsManager {
 
       const reservesDecorated: MoneyMarketResourceDetails[] = [];
 
-      for (const reserve of resourcesData[0]) {
+      for (const reserve of reservesData[0]) {
         reservesDecorated.push({
           underlyingAssetAddress: ethers.utils.getAddress(
             reserve.underlyingAsset

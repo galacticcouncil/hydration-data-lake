@@ -15,6 +15,7 @@
     "multi-typegen": ". ./scripts/typegen.sh",
     "api-codegen:dictionary-api": "npx graphql-codegen --require dotenv/config --config dictionaryGqlTypesConfig/codegen-dictionary-common.ts",
     "explore-metadata": "npx squid-substrate-metadata-explorer --rpc wss://paseo-rpc.play.hydration.cloud --out ./typegenAssets/paseo-metadata.jsonl",
+    "explore-metadata-hollar": "npx squid-substrate-metadata-explorer --rpc wss://nomax.lark.hydration.cloud --out ./typegenAssets/one-lark-metadata.jsonl",
     "papi-typegen": "npx papi add -w wss://hydration-rpc.n.dwellir.com hydration",
     "postpapi-typegen": "rm .papi/descriptors/.gitignore",
     "clinic:frame": "sqd build && sqd migration:apply && clinic flame -- node --require=dotenv/config lib/main.js"

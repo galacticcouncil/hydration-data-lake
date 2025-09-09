@@ -2,6 +2,7 @@ import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   ChainActivityTraceRelation,
+  DcaSchedule,
   DcaScheduleExecution,
   DcaScheduleExecutionEvent,
   DcaScheduleExecutionStatus,
@@ -36,9 +37,9 @@ export async function getDcaScheduleExecutionEvent({
   if (id) {
     executionAction = batchState.dcaScheduleExecutionEvents.get(id);
   } else if (executionId) {
-    executionAction = [...batchState.dcaScheduleExecutionEvents.values()].find(
-      (action) => action.scheduleExecution.id === executionId
-    );
+    executionAction = Array.from(
+      batchState.dcaScheduleExecutionEvents.values()
+    ).find((action) => action.scheduleExecution.id === executionId);
   }
 
   if (executionAction || (!executionAction && !fetchFromDb))
@@ -125,7 +126,7 @@ export async function processDcaScheduleExecutionEvent({
       ctx.batchState.state.dcaSchedules.set(dcaSchedule.id, dcaSchedule);
     }
 
-    const relatedSwaps = [...ctx.batchState.state.swaps.values()].filter(
+    const relatedSwaps = Array.from(ctx.batchState.state.swaps.values()).filter(
       (swap) =>
         swap.paraBlockHeight === paraBlockHeight &&
         !!swap.operationId &&
@@ -142,15 +143,18 @@ export async function processDcaScheduleExecutionEvent({
           swap: relatedSwap,
           scheduleId: scheduleExecution.id.split('-')[0],
           ctx,
+          ...(dcaSchedule && { schedule: dcaSchedule }),
         });
 
-        executionEvent.swaps = [...(executionEvent.swaps || []), relatedSwap];
-        executionEvent.operationIds = [
-          ...new Set([
-            ...(executionEvent.operationIds || []),
-            relatedSwap.operationId,
-          ]).values(),
-        ];
+        if (!executionEvent.swaps) executionEvent.swaps = [];
+        executionEvent.swaps.push(relatedSwap);
+
+        if (!executionEvent.operationIds) executionEvent.operationIds = [];
+        executionEvent.operationIds.push(relatedSwap.operationId);
+        executionEvent.operationIds = Array.from(
+          new Set(executionEvent.operationIds).values()
+        );
+
         relatedSwap.dcaScheduleExecutionEvent = executionEvent;
         ctx.batchState.state.swaps.set(relatedSwap.id, relatedSwap);
       }
@@ -168,18 +172,22 @@ export async function processDcaScheduleExecutionEvent({
 async function processChainActivityTracesOnDcaExecutionEvent({
   swap,
   scheduleId,
+  schedule,
   ctx,
 }: {
   executionEvent: DcaScheduleExecutionEvent;
   swap: Swap;
   scheduleId: string;
+  schedule?: DcaSchedule;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const dcaSchedule = await getDcaSchedule({
-    ctx,
-    id: scheduleId,
-    fetchFromDb: true,
-  });
+  const dcaSchedule =
+    schedule ??
+    (await getDcaSchedule({
+      ctx,
+      id: scheduleId,
+      fetchFromDb: true,
+    }));
 
   if (
     !dcaSchedule ||

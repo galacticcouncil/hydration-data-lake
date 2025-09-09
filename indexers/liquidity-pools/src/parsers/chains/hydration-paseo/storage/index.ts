@@ -58,7 +58,7 @@ export default {
         TokenAccountBalancesWithAccountId[] | null
       >({
         args,
-        pallet: ProcessingTopic.ASSET_HIST_DATA,
+        pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
         method: 'getTokenBalancesMany',
         fallbackFns: [
           async (fallbackFnArgs) =>
