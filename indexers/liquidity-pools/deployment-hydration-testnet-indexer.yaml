@@ -12,7 +12,7 @@ deploy:
   processor:
     env:
       CHAIN: 'hydration_paseo_next'
-      RPC_URL: 'wss://node.lark.hydration.cloud'
+      RPC_URL: 'wss://nomax.lark.hydration.cloud'
       IGNORE_ARCHIVE_DATA_SOURCE: true
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
