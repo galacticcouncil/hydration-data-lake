@@ -64,6 +64,9 @@ class ConcurrencyConfig {
   readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 250;
 
   @Transform(({ value }: { value: string }) => +value)
+  readonly EVM_CONTRACT_CALL_RETRIES: number = 1;
+
+  @Transform(({ value }: { value: string }) => +value)
   readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
 
   static getInstance(): ConcurrencyConfig {

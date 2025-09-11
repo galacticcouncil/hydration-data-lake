@@ -288,7 +288,7 @@ export function isValueMaxUint256(value: string) {
 export async function retryAsync<T>({
   fn,
   delay = 500,
-  retries = 1,
+  retries = appConfig.concurrency.EVM_CONTRACT_CALL_RETRIES,
   retryIf = () => true,
   passThrough = false,
   fallbackResponse,
