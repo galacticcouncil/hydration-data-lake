@@ -1,8 +1,11 @@
 import lbp from './lbp';
+import xyk from './xyk';
+import xykLiquidityMining from './xykLiquidityMining';
 import dca from './dca';
 import otc from './otc';
-import xyk from './xyk';
 import omnipool from './omnipool';
+import omnipoolLiquidityMining from './omnipoolLiquidityMining';
+import omnipoolWarehouseLm from './omnipoolWarehouseLm';
 import stableswap from './stableswap';
 import balances from './balances';
 import tokens from './tokens';
@@ -12,19 +15,23 @@ import evm from './evm';
 import evmAccounts from './evmAccounts';
 import currencies from './currencies';
 import hsm from './hsm';
+
 import { EventParserMethods } from '../../../types/common';
 
 export default {
   lbp,
   xyk,
+  xykLiquidityMining,
+  dca,
+  otc,
   omnipool,
+  omnipoolLiquidityMining,
+  omnipoolWarehouseLm,
   stableswap,
   tokens,
   balances,
   assetRegistry,
   broadcast,
-  dca,
-  otc,
   evm,
   evmAccounts,
   currencies,

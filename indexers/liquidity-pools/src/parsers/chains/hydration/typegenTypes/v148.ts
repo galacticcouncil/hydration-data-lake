@@ -21,8 +21,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
 
 export interface RawOrigin_None {
@@ -5875,8 +5873,6 @@ export interface LoyaltyCurve {
 
 export type FixedU128 = bigint
 
-export const FixedU128 = sts.bigint()
-
 export const Perquintill = sts.bigint()
 
 /**
@@ -9565,3 +9561,7 @@ export interface Call_XTokens {
     __kind: 'XTokens'
     value: XTokensCall
 }
+
+export const FixedU128 = sts.bigint()
+
+export const AccountId32 = sts.bytes()

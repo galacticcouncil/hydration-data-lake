@@ -1,5 +1,7 @@
 import {
   XykBuyExecutedEventParams,
+  XykLiquidityAddedEventParams,
+  XykLiquidityRemovedEventParams,
   XykPoolCreatedEventParams,
   XykPoolDestroyedEventParams,
   XykSellExecutedEventParams,
@@ -54,3 +56,27 @@ export type XykSellExecutedData = ParsedEventCallData<
 
 export type XykSellExecutedEventParsedData =
   EventParsedData<XykSellExecutedEventParams>;
+
+/**
+ *  ==== XYK :: LiquidityAdded ====
+ */
+
+export type XykLiquidityAddedData = ParsedEventCallData<
+  XykLiquidityAddedEventParsedData,
+  CallParsedData
+>;
+
+export type XykLiquidityAddedEventParsedData =
+  EventParsedData<XykLiquidityAddedEventParams>;
+
+/**
+ *  ==== XYK :: LiquidityRemoved ====
+ */
+
+export type XykLiquidityRemovedData = ParsedEventCallData<
+  XykLiquidityRemovedEventParsedData,
+  CallParsedData
+>;
+
+export type XykLiquidityRemovedEventParsedData =
+  EventParsedData<XykLiquidityRemovedEventParams>;

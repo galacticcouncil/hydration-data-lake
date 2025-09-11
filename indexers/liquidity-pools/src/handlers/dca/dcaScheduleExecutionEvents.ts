@@ -199,12 +199,14 @@ async function processChainActivityTracesOnDcaExecutionEvent({
   const swapChainActivityTrace =
     await ChainActivityTraceManager.getChainActivityTraceByTraceIdsBatch({
       ids: swap.traceIds ?? [],
+      relations: {},
       ctx,
     });
 
   const rootChainActivityTrace =
     await ChainActivityTraceManager.getChainActivityTraceByTraceIdsBatch({
       ids: dcaSchedule.traceIds,
+      relations: {},
       ctx,
     });
 

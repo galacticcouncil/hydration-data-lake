@@ -1937,8 +1937,12 @@ type NftAsset @entity {
 }
 
 # ======================================================================================================================
-# *** Liquidity Mining ***
+# *** Liquidity Providing and Farming ***
 # ======================================================================================================================
+
+#   --------------------------------------------------------------------------------------------------------------------
+#       Farm generics
+#   --------------------------------------------------------------------------------------------------------------------
 
 enum FarmLifeStateEventName {
   GlobalFarmCreated
@@ -2013,6 +2017,7 @@ type OmnipoolLiquidityPosition @entity {
   account: Account!
   asset: Asset!
   omnipoolAsset: OmnipoolAsset!
+  initialAmount: BigInt!
   amount: BigInt!
   sharesAmount: BigInt!
   positionNft: NftAsset!

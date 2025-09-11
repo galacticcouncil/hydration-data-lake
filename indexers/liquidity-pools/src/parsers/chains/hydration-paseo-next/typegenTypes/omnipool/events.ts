@@ -31,6 +31,56 @@ export const tokenRemoved =  {
     ),
 }
 
+export const liquidityAdded =  {
+    name: 'Omnipool.LiquidityAdded',
+    /**
+     * Liquidity of an asset was added to Omnipool.
+     */
+    v324: new EventType(
+        'Omnipool.LiquidityAdded',
+        sts.struct({
+            who: v324.AccountId32,
+            assetId: sts.number(),
+            amount: sts.bigint(),
+            positionId: sts.bigint(),
+        })
+    ),
+}
+
+export const liquidityRemoved =  {
+    name: 'Omnipool.LiquidityRemoved',
+    /**
+     * Liquidity of an asset was removed from Omnipool.
+     */
+    v324: new EventType(
+        'Omnipool.LiquidityRemoved',
+        sts.struct({
+            who: v324.AccountId32,
+            positionId: sts.bigint(),
+            assetId: sts.number(),
+            sharesRemoved: sts.bigint(),
+            fee: v324.FixedU128,
+        })
+    ),
+}
+
+export const protocolLiquidityRemoved =  {
+    name: 'Omnipool.ProtocolLiquidityRemoved',
+    /**
+     * PRotocol Liquidity was removed from Omnipool.
+     */
+    v324: new EventType(
+        'Omnipool.ProtocolLiquidityRemoved',
+        sts.struct({
+            who: v324.AccountId32,
+            assetId: sts.number(),
+            amount: sts.bigint(),
+            hubAmount: sts.bigint(),
+            sharesRemoved: sts.bigint(),
+        })
+    ),
+}
+
 export const sellExecuted =  {
     name: 'Omnipool.SellExecuted',
     /**
@@ -71,6 +121,99 @@ export const buyExecuted =  {
             hubAmountOut: sts.bigint(),
             assetFeeAmount: sts.bigint(),
             protocolFeeAmount: sts.bigint(),
+        })
+    ),
+}
+
+export const positionCreated =  {
+    name: 'Omnipool.PositionCreated',
+    /**
+     * LP Position was created and NFT instance minted.
+     */
+    v324: new EventType(
+        'Omnipool.PositionCreated',
+        sts.struct({
+            positionId: sts.bigint(),
+            owner: v324.AccountId32,
+            asset: sts.number(),
+            amount: sts.bigint(),
+            shares: sts.bigint(),
+            price: v324.FixedU128,
+        })
+    ),
+}
+
+export const positionDestroyed =  {
+    name: 'Omnipool.PositionDestroyed',
+    /**
+     * LP Position was destroyed and NFT instance burned.
+     */
+    v324: new EventType(
+        'Omnipool.PositionDestroyed',
+        sts.struct({
+            positionId: sts.bigint(),
+            owner: v324.AccountId32,
+        })
+    ),
+}
+
+export const positionUpdated =  {
+    name: 'Omnipool.PositionUpdated',
+    /**
+     * LP Position was updated.
+     */
+    v324: new EventType(
+        'Omnipool.PositionUpdated',
+        sts.struct({
+            positionId: sts.bigint(),
+            owner: v324.AccountId32,
+            asset: sts.number(),
+            amount: sts.bigint(),
+            shares: sts.bigint(),
+            price: v324.FixedU128,
+        })
+    ),
+}
+
+export const tradableStateUpdated =  {
+    name: 'Omnipool.TradableStateUpdated',
+    /**
+     * Asset's tradable state has been updated.
+     */
+    v324: new EventType(
+        'Omnipool.TradableStateUpdated',
+        sts.struct({
+            assetId: sts.number(),
+            state: v324.Tradability,
+        })
+    ),
+}
+
+export const assetRefunded =  {
+    name: 'Omnipool.AssetRefunded',
+    /**
+     * Amount has been refunded for asset which has not been accepted to add to omnipool.
+     */
+    v324: new EventType(
+        'Omnipool.AssetRefunded',
+        sts.struct({
+            assetId: sts.number(),
+            amount: sts.bigint(),
+            recipient: v324.AccountId32,
+        })
+    ),
+}
+
+export const assetWeightCapUpdated =  {
+    name: 'Omnipool.AssetWeightCapUpdated',
+    /**
+     * Asset's weight cap has been updated.
+     */
+    v324: new EventType(
+        'Omnipool.AssetWeightCapUpdated',
+        sts.struct({
+            assetId: sts.number(),
+            cap: v324.Permill,
         })
     ),
 }

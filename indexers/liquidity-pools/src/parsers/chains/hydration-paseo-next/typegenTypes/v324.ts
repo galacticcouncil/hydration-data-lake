@@ -1,5 +1,7 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const PalletId = sts.bytes()
+
 export const RangeInclusive: sts.Type<RangeInclusive> = sts.struct(() => {
     return  {
         start: NonZeroU16,
@@ -219,6 +221,149 @@ export interface PoolType_Stableswap {
 export interface PoolType_XYK {
     __kind: 'XYK'
 }
+
+export interface Type_738 {
+    shares: bigint
+    ammPoolId: AccountId32
+    yieldFarmEntries: Type_740[]
+}
+
+export interface Type_740 {
+    globalFarmId: number
+    yieldFarmId: number
+    valuedShares: bigint
+    accumulatedRpvs: FixedU128
+    accumulatedClaimedRewards: bigint
+    enteredAt: number
+    updatedAt: number
+    stoppedAtCreation: number
+}
+
+export const Type_738: sts.Type<Type_738> = sts.struct(() => {
+    return  {
+        shares: sts.bigint(),
+        ammPoolId: AccountId32,
+        yieldFarmEntries: sts.array(() => Type_740),
+    }
+})
+
+export const Type_740: sts.Type<Type_740> = sts.struct(() => {
+    return  {
+        globalFarmId: sts.number(),
+        yieldFarmId: sts.number(),
+        valuedShares: sts.bigint(),
+        accumulatedRpvs: FixedU128,
+        accumulatedClaimedRewards: sts.bigint(),
+        enteredAt: sts.number(),
+        updatedAt: sts.number(),
+        stoppedAtCreation: sts.number(),
+    }
+})
+
+export interface Type_737 {
+    id: number
+    updatedAt: number
+    totalShares: bigint
+    totalValuedShares: bigint
+    accumulatedRpvs: FixedU128
+    accumulatedRpz: FixedU128
+    loyaltyCurve?: (LoyaltyCurve | undefined)
+    multiplier: FixedU128
+    state: FarmState
+    entriesCount: bigint
+    leftToDistribute: bigint
+    totalStopped: number
+}
+
+export type FarmState = FarmState_Active | FarmState_Stopped | FarmState_Terminated
+
+export interface FarmState_Active {
+    __kind: 'Active'
+}
+
+export interface FarmState_Stopped {
+    __kind: 'Stopped'
+}
+
+export interface FarmState_Terminated {
+    __kind: 'Terminated'
+}
+
+export interface LoyaltyCurve {
+    initialRewardPercentage: FixedU128
+    scaleCoef: number
+}
+
+export const Type_737: sts.Type<Type_737> = sts.struct(() => {
+    return  {
+        id: sts.number(),
+        updatedAt: sts.number(),
+        totalShares: sts.bigint(),
+        totalValuedShares: sts.bigint(),
+        accumulatedRpvs: FixedU128,
+        accumulatedRpz: FixedU128,
+        loyaltyCurve: sts.option(() => LoyaltyCurve),
+        multiplier: FixedU128,
+        state: FarmState,
+        entriesCount: sts.bigint(),
+        leftToDistribute: sts.bigint(),
+        totalStopped: sts.number(),
+    }
+})
+
+export const FarmState: sts.Type<FarmState> = sts.closedEnum(() => {
+    return  {
+        Active: sts.unit(),
+        Stopped: sts.unit(),
+        Terminated: sts.unit(),
+    }
+})
+
+export interface Type_735 {
+    id: number
+    owner: AccountId32
+    updatedAt: number
+    totalSharesZ: bigint
+    accumulatedRpz: FixedU128
+    rewardCurrency: number
+    pendingRewards: bigint
+    accumulatedPaidRewards: bigint
+    yieldPerPeriod: Perquintill
+    plannedYieldingPeriods: number
+    blocksPerPeriod: number
+    incentivizedAsset: number
+    maxRewardPerPeriod: bigint
+    minDeposit: bigint
+    liveYieldFarmsCount: number
+    totalYieldFarmsCount: number
+    priceAdjustment: FixedU128
+    state: FarmState
+}
+
+export type Perquintill = bigint
+
+export const Type_735: sts.Type<Type_735> = sts.struct(() => {
+    return  {
+        id: sts.number(),
+        owner: AccountId32,
+        updatedAt: sts.number(),
+        totalSharesZ: sts.bigint(),
+        accumulatedRpz: FixedU128,
+        rewardCurrency: sts.number(),
+        pendingRewards: sts.bigint(),
+        accumulatedPaidRewards: sts.bigint(),
+        yieldPerPeriod: Perquintill,
+        plannedYieldingPeriods: sts.number(),
+        blocksPerPeriod: sts.number(),
+        incentivizedAsset: sts.number(),
+        maxRewardPerPeriod: sts.bigint(),
+        minDeposit: sts.bigint(),
+        liveYieldFarmsCount: sts.number(),
+        totalYieldFarmsCount: sts.number(),
+        priceAdjustment: FixedU128,
+        state: FarmState,
+    }
+})
 
 export type H256 = Bytes
 
@@ -463,25 +608,6 @@ export interface YieldFarmData {
     totalStopped: number
 }
 
-export type FarmState = FarmState_Active | FarmState_Stopped | FarmState_Terminated
-
-export interface FarmState_Active {
-    __kind: 'Active'
-}
-
-export interface FarmState_Stopped {
-    __kind: 'Stopped'
-}
-
-export interface FarmState_Terminated {
-    __kind: 'Terminated'
-}
-
-export interface LoyaltyCurve {
-    initialRewardPercentage: FixedU128
-    scaleCoef: number
-}
-
 export const YieldFarmData: sts.Type<YieldFarmData> = sts.struct(() => {
     return  {
         id: sts.number(),
@@ -496,14 +622,6 @@ export const YieldFarmData: sts.Type<YieldFarmData> = sts.struct(() => {
         entriesCount: sts.bigint(),
         leftToDistribute: sts.bigint(),
         totalStopped: sts.number(),
-    }
-})
-
-export const FarmState: sts.Type<FarmState> = sts.closedEnum(() => {
-    return  {
-        Active: sts.unit(),
-        Stopped: sts.unit(),
-        Terminated: sts.unit(),
     }
 })
 
@@ -527,8 +645,6 @@ export interface GlobalFarmData {
     priceAdjustment: FixedU128
     state: FarmState
 }
-
-export type Perquintill = bigint
 
 export const GlobalFarmData: sts.Type<GlobalFarmData> = sts.struct(() => {
     return  {
@@ -556,12 +672,6 @@ export const GlobalFarmData: sts.Type<GlobalFarmData> = sts.struct(() => {
 export interface Tradability {
     bits: number
 }
-
-export const Tradability: sts.Type<Tradability> = sts.struct(() => {
-    return  {
-        bits: sts.number(),
-    }
-})
 
 export interface AssetState {
     hubReserve: bigint
@@ -1828,18 +1938,6 @@ export const XYKLiquidityMiningCall: sts.Type<XYKLiquidityMiningCall> = sts.clos
     }
 })
 
-export const Type_287: sts.Type<Type_287> = sts.struct(() => {
-    return  {
-        assetIn: sts.number(),
-        assetOut: sts.number(),
-    }
-})
-
-export interface Type_287 {
-    assetIn: number
-    assetOut: number
-}
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -2221,6 +2319,11 @@ export interface XYKLiquidityMiningCall_withdraw_shares {
     depositId: bigint
     yieldFarmId: number
     assetPair: Type_287
+}
+
+export interface Type_287 {
+    assetIn: number
+    assetOut: number
 }
 
 /**
@@ -16856,6 +16959,13 @@ export const Order: sts.Type<Order> = sts.closedEnum(() => {
     }
 })
 
+export const Type_287: sts.Type<Type_287> = sts.struct(() => {
+    return  {
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+    }
+})
+
 export const Log: sts.Type<Log> = sts.struct(() => {
     return  {
         address: H160,
@@ -16904,8 +17014,6 @@ export const PoolPegInfo: sts.Type<PoolPegInfo> = sts.struct(() => {
     }
 })
 
-export const Permill = sts.number()
-
 export const NonZeroU16 = sts.number()
 
 export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
@@ -16916,6 +17024,14 @@ export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
 })
 
 export const Perquintill = sts.bigint()
+
+export const Permill = sts.number()
+
+export const Tradability: sts.Type<Tradability> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
 
 export const FixedU128 = sts.bigint()
 

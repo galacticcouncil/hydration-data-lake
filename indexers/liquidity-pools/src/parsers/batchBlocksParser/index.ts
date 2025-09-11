@@ -5,6 +5,7 @@ import {
   ParsedEventsCallsData,
   EventDataType,
   CallMetadata,
+  EventDataMap,
 } from './types';
 import { EventName } from '../types/events';
 import {
@@ -54,7 +55,7 @@ export class BatchBlocksParsedDataManager {
     );
   }
 
-  getSectionByEventName<T extends EventName>(
+  getSectionByEventName<T extends keyof EventDataMap>(
     section: T
   ): Map<EventId, EventDataType<T>> {
     return (

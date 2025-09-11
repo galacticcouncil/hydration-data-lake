@@ -1,5 +1,10 @@
 import {
   OmnipoolBuyExecutedEventParams,
+  OmnipoolLiquidityAddedEventParams,
+  OmnipoolLiquidityRemovedEventParams,
+  OmnipoolPositionCreatedEventParams,
+  OmnipoolPositionDestroyedEventParams,
+  OmnipoolPositionUpdatedEventParams,
   OmnipoolSellExecutedEventParams,
   OmnipoolTokenAddedEventParams,
   OmnipoolTokenRemovedEventParams,
@@ -53,3 +58,60 @@ export type OmnipoolSellExecutedData = ParsedEventCallData<
 
 export type OmnipoolSellExecutedEventParsedData =
   EventParsedData<OmnipoolSellExecutedEventParams>;
+
+/**
+ *  ==== Omnipool :: LiquidityAdded ====
+ */
+export type OmnipoolLiquidityAddedData = ParsedEventCallData<
+  OmnipoolLiquidityAddedEventParsedData,
+  CallParsedData
+>;
+
+export type OmnipoolLiquidityAddedEventParsedData =
+  EventParsedData<OmnipoolLiquidityAddedEventParams>;
+
+/**
+ *  ==== Omnipool :: LiquidityRemoved ====
+ */
+export type OmnipoolLiquidityRemovedData = ParsedEventCallData<
+  OmnipoolLiquidityRemovedEventParsedData,
+  CallParsedData
+>;
+
+export type OmnipoolLiquidityRemovedEventParsedData =
+  EventParsedData<OmnipoolLiquidityRemovedEventParams>;
+
+/**
+ *  ==== Omnipool :: PositionCreated ====
+ */
+export type OmnipoolPositionCreatedData = ParsedEventCallData<
+  OmnipoolPositionCreatedEventParsedData,
+  CallParsedData
+>;
+
+export type OmnipoolPositionCreatedEventParsedData =
+  EventParsedData<OmnipoolPositionCreatedEventParams>;
+
+/**
+ *  ==== Omnipool :: PositionDestroyed ====
+ */
+
+export type OmnipoolPositionDestroyedData = ParsedEventCallData<
+  OmnipoolPositionDestroyedEventParsedData,
+  CallParsedData
+>;
+
+export type OmnipoolPositionDestroyedEventParsedData =
+  EventParsedData<OmnipoolPositionDestroyedEventParams>;
+
+/**
+ *  ==== Omnipool :: PositionUpdated ====
+ */
+
+export type OmnipoolPositionUpdatedData = ParsedEventCallData<
+  OmnipoolPositionUpdatedEventParsedData,
+  CallParsedData
+>;
+
+export type OmnipoolPositionUpdatedEventParsedData =
+  EventParsedData<OmnipoolPositionUpdatedEventParams>;

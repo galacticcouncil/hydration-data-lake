@@ -1,14 +1,34 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export const Permill = sts.number()
+export interface Position {
+    assetId: number
+    amount: bigint
+    shares: bigint
+    price: bigint
+}
+
+export const Position: sts.Type<Position> = sts.struct(() => {
+    return  {
+        assetId: sts.number(),
+        amount: sts.bigint(),
+        shares: sts.bigint(),
+        price: sts.bigint(),
+    }
+})
 
 export interface Tradability {
     bits: number
 }
 
-export const Tradability: sts.Type<Tradability> = sts.struct(() => {
+export interface SimpleImbalance {
+    value: bigint
+    negative: boolean
+}
+
+export const SimpleImbalance: sts.Type<SimpleImbalance> = sts.struct(() => {
     return  {
-        bits: sts.number(),
+        value: sts.bigint(),
+        negative: sts.boolean(),
     }
 })
 
@@ -8850,6 +8870,14 @@ export interface Call_XTokens {
     __kind: 'XTokens'
     value: XTokensCall
 }
+
+export const Permill = sts.number()
+
+export const Tradability: sts.Type<Tradability> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
 
 export const FixedU128 = sts.bigint()
 

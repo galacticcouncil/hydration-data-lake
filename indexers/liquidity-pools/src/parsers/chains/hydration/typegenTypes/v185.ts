@@ -31,8 +31,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
 
 export interface RawOrigin_None {
@@ -11084,3 +11082,5 @@ export interface Call_XYK {
     __kind: 'XYK'
     value: XYKCall
 }
+
+export const AccountId32 = sts.bytes()

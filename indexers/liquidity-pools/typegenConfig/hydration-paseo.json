@@ -37,13 +37,25 @@
       "storage": ["LastRelayChainBlockNumber"]
     },
     "XYK": {
-      "events": ["PoolCreated", "PoolDestroyed", "SellExecuted", "BuyExecuted"],
+      "events": true,
       "calls": ["create_pool", "sell", "buy"],
       "storage": ["PoolAssets", "ShareToken"],
       "constants": true
     },
+    "XYKLiquidityMining": {
+      "events": true,
+      "calls": true,
+      "storage": true,
+      "constants": true
+    },
+    "XYKWarehouseLM": {
+      "events": true,
+      "calls": true,
+      "storage": true,
+      "constants": true
+    },
     "Omnipool": {
-      "events": ["TokenAdded", "TokenRemoved", "SellExecuted", "BuyExecuted"],
+      "events": true,
       "calls": ["sell", "buy"],
       "storage": ["Assets", "HubAssetTradability"],
       "constants": true

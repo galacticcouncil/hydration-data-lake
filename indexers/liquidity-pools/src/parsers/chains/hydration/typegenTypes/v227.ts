@@ -1,5 +1,154 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const PalletId = sts.bytes()
+
+export interface Type_585 {
+    shares: bigint
+    ammPoolId: AccountId32
+    yieldFarmEntries: Type_587[]
+}
+
+export interface Type_587 {
+    globalFarmId: number
+    yieldFarmId: number
+    valuedShares: bigint
+    accumulatedRpvs: FixedU128
+    accumulatedClaimedRewards: bigint
+    enteredAt: number
+    updatedAt: number
+    stoppedAtCreation: number
+}
+
+export type FixedU128 = bigint
+
+export const Type_585: sts.Type<Type_585> = sts.struct(() => {
+    return  {
+        shares: sts.bigint(),
+        ammPoolId: AccountId32,
+        yieldFarmEntries: sts.array(() => Type_587),
+    }
+})
+
+export const Type_587: sts.Type<Type_587> = sts.struct(() => {
+    return  {
+        globalFarmId: sts.number(),
+        yieldFarmId: sts.number(),
+        valuedShares: sts.bigint(),
+        accumulatedRpvs: FixedU128,
+        accumulatedClaimedRewards: sts.bigint(),
+        enteredAt: sts.number(),
+        updatedAt: sts.number(),
+        stoppedAtCreation: sts.number(),
+    }
+})
+
+export type AccountId32 = Bytes
+
+export interface Type_584 {
+    id: number
+    updatedAt: number
+    totalShares: bigint
+    totalValuedShares: bigint
+    accumulatedRpvs: FixedU128
+    accumulatedRpz: FixedU128
+    loyaltyCurve?: (LoyaltyCurve | undefined)
+    multiplier: FixedU128
+    state: FarmState
+    entriesCount: bigint
+    leftToDistribute: bigint
+    totalStopped: number
+}
+
+export type FarmState = FarmState_Active | FarmState_Stopped | FarmState_Terminated
+
+export interface FarmState_Active {
+    __kind: 'Active'
+}
+
+export interface FarmState_Stopped {
+    __kind: 'Stopped'
+}
+
+export interface FarmState_Terminated {
+    __kind: 'Terminated'
+}
+
+export interface LoyaltyCurve {
+    initialRewardPercentage: FixedU128
+    scaleCoef: number
+}
+
+export const Type_584: sts.Type<Type_584> = sts.struct(() => {
+    return  {
+        id: sts.number(),
+        updatedAt: sts.number(),
+        totalShares: sts.bigint(),
+        totalValuedShares: sts.bigint(),
+        accumulatedRpvs: FixedU128,
+        accumulatedRpz: FixedU128,
+        loyaltyCurve: sts.option(() => LoyaltyCurve),
+        multiplier: FixedU128,
+        state: FarmState,
+        entriesCount: sts.bigint(),
+        leftToDistribute: sts.bigint(),
+        totalStopped: sts.number(),
+    }
+})
+
+export const FarmState: sts.Type<FarmState> = sts.closedEnum(() => {
+    return  {
+        Active: sts.unit(),
+        Stopped: sts.unit(),
+        Terminated: sts.unit(),
+    }
+})
+
+export interface Type_582 {
+    id: number
+    owner: AccountId32
+    updatedAt: number
+    totalSharesZ: bigint
+    accumulatedRpz: FixedU128
+    rewardCurrency: number
+    pendingRewards: bigint
+    accumulatedPaidRewards: bigint
+    yieldPerPeriod: Perquintill
+    plannedYieldingPeriods: number
+    blocksPerPeriod: number
+    incentivizedAsset: number
+    maxRewardPerPeriod: bigint
+    minDeposit: bigint
+    liveYieldFarmsCount: number
+    totalYieldFarmsCount: number
+    priceAdjustment: FixedU128
+    state: FarmState
+}
+
+export type Perquintill = bigint
+
+export const Type_582: sts.Type<Type_582> = sts.struct(() => {
+    return  {
+        id: sts.number(),
+        owner: AccountId32,
+        updatedAt: sts.number(),
+        totalSharesZ: sts.bigint(),
+        accumulatedRpz: FixedU128,
+        rewardCurrency: sts.number(),
+        pendingRewards: sts.bigint(),
+        accumulatedPaidRewards: sts.bigint(),
+        yieldPerPeriod: Perquintill,
+        plannedYieldingPeriods: sts.number(),
+        blocksPerPeriod: sts.number(),
+        incentivizedAsset: sts.number(),
+        maxRewardPerPeriod: sts.bigint(),
+        minDeposit: sts.bigint(),
+        liveYieldFarmsCount: sts.number(),
+        totalYieldFarmsCount: sts.number(),
+        priceAdjustment: FixedU128,
+        state: FarmState,
+    }
+})
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -32,8 +181,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
 
 export interface RawOrigin_None {
@@ -48,8 +195,6 @@ export interface RawOrigin_Signed {
     __kind: 'Signed'
     value: AccountId32
 }
-
-export type AccountId32 = Bytes
 
 export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {
@@ -694,36 +839,6 @@ export const XYKLiquidityMiningCall: sts.Type<XYKLiquidityMiningCall> = sts.clos
     }
 })
 
-export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
-    return  {
-        initialRewardPercentage: FixedU128,
-        scaleCoef: sts.number(),
-    }
-})
-
-export interface LoyaltyCurve {
-    initialRewardPercentage: FixedU128
-    scaleCoef: number
-}
-
-export type FixedU128 = bigint
-
-export const AssetPair: sts.Type<AssetPair> = sts.struct(() => {
-    return  {
-        assetIn: sts.number(),
-        assetOut: sts.number(),
-    }
-})
-
-export interface AssetPair {
-    assetIn: number
-    assetOut: number
-}
-
-export const FixedU128 = sts.bigint()
-
-export const Perquintill = sts.bigint()
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -854,7 +969,10 @@ export interface XYKLiquidityMiningCall_withdraw_shares {
     assetPair: AssetPair
 }
 
-export type Perquintill = bigint
+export interface AssetPair {
+    assetIn: number
+    assetOut: number
+}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -9258,3 +9376,23 @@ export interface Call_XcmRateLimiter {
     __kind: 'XcmRateLimiter'
     value: XcmRateLimiterCall
 }
+
+export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
+    return  {
+        initialRewardPercentage: FixedU128,
+        scaleCoef: sts.number(),
+    }
+})
+
+export const AssetPair: sts.Type<AssetPair> = sts.struct(() => {
+    return  {
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+    }
+})
+
+export const FixedU128 = sts.bigint()
+
+export const Perquintill = sts.bigint()
+
+export const AccountId32 = sts.bytes()

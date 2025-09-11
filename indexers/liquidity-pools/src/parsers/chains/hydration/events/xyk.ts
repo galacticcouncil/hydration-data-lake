@@ -2,11 +2,14 @@ import { events } from '../typegenTypes';
 import { SqdEvent } from '../../../../processor';
 import {
   XykBuyExecutedEventParams,
+  XykLiquidityAddedEventParams,
+  XykLiquidityRemovedEventParams,
   XykPoolCreatedEventParams,
   XykPoolDestroyedEventParams,
   XykSellExecutedEventParams,
 } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { XykLiquidityAddedData } from '../../../batchBlocksParser/types';
 
 function parsePoolCreatedParams(event: SqdEvent): XykPoolCreatedEventParams {
   if (events.xyk.poolCreated.v183.is(event)) {
@@ -42,9 +45,31 @@ function parseSellExecutedParams(event: SqdEvent): XykSellExecutedEventParams {
   throw new UnknownVersionError(event.name);
 }
 
+function parseLiquidityAddedParams(
+  event: SqdEvent
+): XykLiquidityAddedEventParams {
+  if (events.xyk.liquidityAdded.v183.is(event)) {
+    return events.xyk.liquidityAdded.v183.decode(event);
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+function parseLiquidityRemovedParams(
+  event: SqdEvent
+): XykLiquidityRemovedEventParams {
+  if (events.xyk.liquidityRemoved.v183.is(event)) {
+    return events.xyk.liquidityRemoved.v183.decode(event);
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
 export default {
   parsePoolCreatedParams,
   parsePoolDestroyedParams,
   parseBuyExecutedParams,
   parseSellExecutedParams,
+  parseLiquidityAddedParams,
+  parseLiquidityRemovedParams,
 };

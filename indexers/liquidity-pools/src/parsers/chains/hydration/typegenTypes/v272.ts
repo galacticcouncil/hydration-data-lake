@@ -1,5 +1,17 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const AssetPair: sts.Type<AssetPair> = sts.struct(() => {
+    return  {
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+    }
+})
+
+export interface AssetPair {
+    assetIn: number
+    assetOut: number
+}
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -717,18 +729,6 @@ export interface LoyaltyCurve {
 }
 
 export type FixedU128 = bigint
-
-export const AssetPair: sts.Type<AssetPair> = sts.struct(() => {
-    return  {
-        assetIn: sts.number(),
-        assetOut: sts.number(),
-    }
-})
-
-export interface AssetPair {
-    assetIn: number
-    assetOut: number
-}
 
 export const FixedU128 = sts.bigint()
 

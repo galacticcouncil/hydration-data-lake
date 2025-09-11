@@ -1,6 +1,39 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v324 from '../v324'
 
+export const liquidityAdded =  {
+    name: 'XYK.LiquidityAdded',
+    /**
+     * New liquidity was provided to the pool.
+     */
+    v324: new EventType(
+        'XYK.LiquidityAdded',
+        sts.struct({
+            who: v324.AccountId32,
+            assetA: sts.number(),
+            assetB: sts.number(),
+            amountA: sts.bigint(),
+            amountB: sts.bigint(),
+        })
+    ),
+}
+
+export const liquidityRemoved =  {
+    name: 'XYK.LiquidityRemoved',
+    /**
+     * Liquidity was removed from the pool.
+     */
+    v324: new EventType(
+        'XYK.LiquidityRemoved',
+        sts.struct({
+            who: v324.AccountId32,
+            assetA: sts.number(),
+            assetB: sts.number(),
+            shares: sts.bigint(),
+        })
+    ),
+}
+
 export const poolCreated =  {
     name: 'XYK.PoolCreated',
     /**

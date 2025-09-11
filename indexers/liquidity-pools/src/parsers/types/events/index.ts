@@ -6,11 +6,17 @@ import {
   TradeOperationType,
 } from '../../../model';
 import { SwappedExecutionTypeKind } from '../../../utils/types';
+import { sts } from '../../chains/hydration/typegenTypes/support';
+import { FixedU128 } from '../../chains/hydration/typegenTypes/v227';
 
+export * from './xyk';
 export * from './evm';
 export * from './evmAccounts';
 export * from './assetRegistry';
 export * from './hsm';
+export * from './omnipool';
+export * from './omnipoolLiquidityMining';
+export * from './omnipoolWarehouseLM';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -30,11 +36,50 @@ export enum EventName {
   'XYK_PoolDestroyed' = 'XYK.Destroyed',
   'XYK_BuyExecuted' = 'XYK.BuyExecuted',
   'XYK_SellExecuted' = 'XYK.SellExecuted',
+  'XYK_LiquidityAdded' = 'XYK.LiquidityAdded',
+  'XYK_LiquidityRemoved' = 'XYK.LiquidityRemoved',
+
+  'XYKLiquidityMining_GlobalFarmCreated' = 'XYKLiquidityMining.GlobalFarmCreated',
+  'XYKLiquidityMining_GlobalFarmUpdated' = 'XYKLiquidityMining.GlobalFarmUpdated',
+  'XYKLiquidityMining_GlobalFarmTerminated' = 'XYKLiquidityMining.GlobalFarmTerminated',
+  'XYKLiquidityMining_YieldFarmCreated' = 'XYKLiquidityMining.YieldFarmCreated',
+  'XYKLiquidityMining_YieldFarmStopped' = 'XYKLiquidityMining.YieldFarmStopped',
+  'XYKLiquidityMining_YieldFarmTerminated' = 'XYKLiquidityMining.YieldFarmTerminated',
+  'XYKLiquidityMining_YieldFarmResumed' = 'XYKLiquidityMining.YieldFarmResumed',
+  'XYKLiquidityMining_YieldFarmUpdated' = 'XYKLiquidityMining.YieldFarmUpdated',
+  'XYKLiquidityMining_SharesDeposited' = 'XYKLiquidityMining.SharesDeposited',
+  'XYKLiquidityMining_SharesRedeposited' = 'XYKLiquidityMining.SharesRedeposited',
+  'XYKLiquidityMining_SharesWithdrawn' = 'XYKLiquidityMining.SharesWithdrawn',
+  'XYKLiquidityMining_DepositDestroyed' = 'XYKLiquidityMining.DepositDestroyed',
+  'XYKLiquidityMining_RewardClaimed' = 'XYKLiquidityMining.RewardClaimed',
 
   'Omnipool_TokenAdded' = 'Omnipool.TokenAdded',
   'Omnipool_TokenRemoved' = 'Omnipool.TokenRemoved',
   'Omnipool_BuyExecuted' = 'Omnipool.BuyExecuted',
   'Omnipool_SellExecuted' = 'Omnipool.SellExecuted',
+  'Omnipool_LiquidityAdded' = 'Omnipool.LiquidityAdded',
+  'Omnipool_LiquidityRemoved' = 'Omnipool.LiquidityRemoved',
+  'Omnipool_PositionCreated' = 'Omnipool.PositionCreated',
+  'Omnipool_PositionDestroyed' = 'Omnipool.PositionDestroyed',
+  'Omnipool_PositionUpdated' = 'Omnipool.PositionUpdated',
+
+  'OmnipoolLiquidityMining_GlobalFarmCreated' = 'OmnipoolLiquidityMining.GlobalFarmCreated',
+  'OmnipoolLiquidityMining_GlobalFarmUpdated' = 'OmnipoolLiquidityMining.GlobalFarmUpdated',
+  'OmnipoolLiquidityMining_GlobalFarmTerminated' = 'OmnipoolLiquidityMining.GlobalFarmTerminated',
+  'OmnipoolLiquidityMining_YieldFarmCreated' = 'OmnipoolLiquidityMining.YieldFarmCreated',
+  'OmnipoolLiquidityMining_YieldFarmStopped' = 'OmnipoolLiquidityMining.YieldFarmStopped',
+  'OmnipoolLiquidityMining_YieldFarmResumed' = 'OmnipoolLiquidityMining.YieldFarmResumed',
+  'OmnipoolLiquidityMining_YieldFarmUpdated' = 'OmnipoolLiquidityMining.YieldFarmUpdated',
+  'OmnipoolLiquidityMining_YieldFarmTerminated' = 'OmnipoolLiquidityMining.YieldFarmTerminated',
+  'OmnipoolLiquidityMining_SharesDeposited' = 'OmnipoolLiquidityMining.SharesDeposited',
+  'OmnipoolLiquidityMining_SharesRedeposited' = 'OmnipoolLiquidityMining.SharesRedeposited',
+  'OmnipoolLiquidityMining_RewardClaimed' = 'OmnipoolLiquidityMining.RewardClaimed',
+  'OmnipoolLiquidityMining_SharesWithdrawn' = 'OmnipoolLiquidityMining.SharesWithdrawn',
+  'OmnipoolLiquidityMining_DepositDestroyed' = 'OmnipoolLiquidityMining.DepositDestroyed',
+
+  'OmnipoolWarehouseLM_GlobalFarmAccRPZUpdated' = 'OmnipoolWarehouseLM.GlobalFarmAccRPZUpdated',
+  'OmnipoolWarehouseLM_YieldFarmAccRPVSUpdated' = 'OmnipoolWarehouseLM.YieldFarmAccRPVSUpdated',
+  'OmnipoolWarehouseLM_AllRewardsDistributed' = 'OmnipoolWarehouseLM.AllRewardsDistributed',
 
   'Stableswap_PoolCreated' = 'Stableswap.PoolCreated',
   'Stableswap_BuyExecuted' = 'Stableswap.BuyExecuted',
@@ -122,81 +167,6 @@ export type LbpSellExecutedEventParams = {
   salePrice: bigint;
   feeAsset: number;
   feeAmount: bigint;
-};
-
-export type XykPoolCreatedEventParams = {
-  pool: string;
-  who: string;
-  assetA: number;
-  assetB: number;
-  initialSharesAmount: bigint;
-  shareToken: number;
-};
-
-export type XykPoolDestroyedEventParams = {
-  pool: string;
-  who: string;
-  assetA: number;
-  assetB: number;
-  shareToken: number;
-};
-
-export type XykBuyExecutedEventParams = {
-  pool: string;
-  who: string;
-  assetOut: number;
-  assetIn: number;
-  amount: bigint;
-  buyPrice: bigint;
-  feeAsset: number;
-  feeAmount: bigint;
-};
-
-export type XykSellExecutedEventParams = {
-  pool: string;
-  who: string;
-  assetIn: number;
-  assetOut: number;
-  amount: bigint;
-  salePrice: bigint;
-  feeAsset: number;
-  feeAmount: bigint;
-};
-
-export type OmnipoolTokenAddedEventParams = {
-  assetId: number;
-  initialAmount: bigint;
-  initialPrice: bigint;
-};
-
-export type OmnipoolTokenRemovedEventParams = {
-  assetId: number;
-  amount: bigint;
-  hubWithdrawn: bigint;
-};
-
-export type OmnipoolBuyExecutedEventParams = {
-  who: string;
-  assetIn: number;
-  assetOut: number;
-  amountIn: bigint;
-  amountOut: bigint;
-  hubAmountIn: bigint;
-  hubAmountOut: bigint;
-  assetFeeAmount: bigint;
-  protocolFeeAmount: bigint;
-};
-
-export type OmnipoolSellExecutedEventParams = {
-  who: string;
-  assetIn: number;
-  assetOut: number;
-  amountIn: bigint;
-  amountOut: bigint;
-  hubAmountIn: bigint;
-  hubAmountOut: bigint;
-  assetFeeAmount: bigint;
-  protocolFeeAmount: bigint;
 };
 
 export type StableswapPoolCreatedEventParams = {
@@ -351,3 +321,13 @@ export type BroadcastSwapped2EventParams = {
 };
 
 export type BroadcastSwapped3EventParams = BroadcastSwapped2EventParams;
+
+export type LiquidityMiningAssetPair = {
+  assetIn: number;
+  assetOut: number;
+};
+
+export type LiquidityMiningLoyaltyCurve = {
+  initialRewardPercentage: bigint;
+  scaleCoef: number;
+};
