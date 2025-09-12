@@ -5,7 +5,7 @@ type RetryableFn<T> = () => Promise<T>;
 const appConfig = AppConfig.getInstance();
 
 export class TypeormDatabaseUtils {
-  private retryableCodes = new Set(['40P01', '40001', '55P03']); // deadlock, serialization, lock timeout/nowait
+  private retryableCodes = new Set(['25P02', '40P01', '40001', '55P03']); // deadlock, serialization, lock timeout/nowait
 
   private isRetryablePg(err: any) {
     const code = err?.code || err?.driverError?.code;
