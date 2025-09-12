@@ -264,6 +264,15 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_PORT: number = 5432;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_ACTION_RETRIES_NUMBER: number = 3;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_ACTION_RETRIES_BASE_DELAY_MS: number = 50;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_ACTION_RETRIES_MAX_DELAY_MS: number = 1000;
+
   /**
    * RPC endpoint URL (either http(s) or ws(s))
    */

@@ -153,7 +153,8 @@ export async function getOrCreateStableswap({
 
   newPool.account.stableswap = newPool;
 
-  await ctx.store.save(newPool.account);
+  // await ctx.store.save(newPool.account);
+  await ctx.storeUtils.runWithRetry(() => ctx.store.save(newPool.account));
 
   state.stableswapIdsToSave.add(newPool.id);
   state.stableswapPools.set(newPool.id, newPool);

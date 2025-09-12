@@ -11,6 +11,7 @@ import {
 
 import { BatchState } from './utils/batchState';
 import { AppConfig } from './appConfig';
+import { TypeormDatabaseUtils } from './utils/typeormDatabaseUtils';
 const appConfig = AppConfig.getInstance();
 
 console.log('appConfig.RPC_URL', appConfig.RPC_URL);
@@ -91,4 +92,5 @@ export type SqdProcessorContext<Store> = DataHandlerContext<
 > & {
   batchState: BatchState;
   appConfig: AppConfig;
+  storeUtils: TypeormDatabaseUtils;
 };

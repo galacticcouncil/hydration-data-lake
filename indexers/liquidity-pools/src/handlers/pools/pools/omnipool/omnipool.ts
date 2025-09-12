@@ -70,7 +70,10 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   await ctx.store.save(internalOmnipoolToken);
 
   omnipoolEntity.account.omnipool = omnipoolEntity;
-  await ctx.store.save(omnipoolEntity.account);
+  // await ctx.store.save(omnipoolEntity.account);
+  await ctx.storeUtils.runWithRetry(() =>
+    ctx.store.save(omnipoolEntity.account)
+  );
 
   ctx.batchState.state.omnipoolEntity = omnipoolEntity;
   ctx.batchState.state.accounts.set(

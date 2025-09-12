@@ -15,6 +15,7 @@ import {
   getProcessingMode,
   ProcessingMode,
 } from './processorHelpers/getProcessingMode';
+import { TypeormDatabaseUtils } from './utils/typeormDatabaseUtils';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -54,6 +55,7 @@ processor.run(
       ctxWithBatchState as SqdProcessorContext<Store>
     );
     ctxWithBatchState.appConfig = AppConfig.getInstance();
+    ctxWithBatchState.storeUtils = new TypeormDatabaseUtils();
 
     await RedisTimeSeriesManager.getInstance().initClient();
 

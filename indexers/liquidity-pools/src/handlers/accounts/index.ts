@@ -37,6 +37,8 @@ export async function getOrCreateAccount({
     if (boundEvmAddress && ensureBoundEvmAddress)
       acc.boundEvmAddress = boundEvmAddress;
 
+    await ctx.storeUtils.runWithRetry(() => ctx.store.save(acc!));
+    // await ctx.store.save(acc);
     ctx.batchState.state.accounts.set(acc.id, acc);
   }
 
@@ -53,7 +55,8 @@ export async function getOrCreateAccount({
     if (boundEvmAddress && ensureBoundEvmAddress)
       acc.boundEvmAddress = boundEvmAddress;
 
-    await ctx.store.save(acc);
+    await ctx.storeUtils.runWithRetry(() => ctx.store.save(acc!));
+    // await ctx.store.save(acc);
   }
 
   if (!acc) {
@@ -71,7 +74,8 @@ export async function getOrCreateAccount({
     acc.id = id;
     acc.accountType = accountType;
     acc.boundEvmAddress = boundEvmAddressToSave;
-    await ctx.store.save(acc);
+    // await ctx.store.save(acc);
+    await ctx.storeUtils.runWithRetry(() => ctx.store.save(acc!));
   }
   ctx.batchState.state.accounts.set(acc.id, acc);
 
@@ -203,5 +207,8 @@ export async function prefetchOrInitAllBatchAccounts(
 }
 
 export async function saveAllBatchAccounts(ctx: SqdProcessorContext<Store>) {
-  await ctx.store.save(Array.from(ctx.batchState.state.accounts.values()));
+  // await ctx.store.save(Array.from(ctx.batchState.state.accounts.values()));
+  await ctx.storeUtils.runWithRetry(() =>
+    ctx.store.save(Array.from(ctx.batchState.state.accounts.values()))
+  );
 }

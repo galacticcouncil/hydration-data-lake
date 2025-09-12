@@ -229,7 +229,8 @@ export async function getOrCreateLbppool({
 
   await ctx.store.upsert(newPool);
   newPool.account.lbppool = newPool;
-  await ctx.store.upsert(newPool.account);
+  await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(newPool.account));
+  // await ctx.store.upsert(newPool.account);
 
   const state = ctx.batchState.state;
   state.lbpAllBatchPools.set(newPool.id, newPool);

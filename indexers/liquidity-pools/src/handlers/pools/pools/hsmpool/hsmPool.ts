@@ -32,7 +32,10 @@ export async function ensureHsmpool(ctx: SqdProcessorContext<Store>) {
   await ctx.store.save(hsmpoolEntity);
 
   hsmpoolEntity.account.hsmpool = hsmpoolEntity;
-  await ctx.store.save(hsmpoolEntity.account);
+  // await ctx.store.save(hsmpoolEntity.account);
+  await ctx.storeUtils.runWithRetry(() =>
+    ctx.store.save(hsmpoolEntity.account)
+  );
 
   ctx.batchState.state.hsmpoolEntity = hsmpoolEntity;
   ctx.batchState.state.accounts.set(

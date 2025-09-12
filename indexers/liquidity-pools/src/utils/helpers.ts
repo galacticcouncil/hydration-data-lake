@@ -345,6 +345,7 @@ export async function upsertWithBatches(
   maxBatchSize: number = 1000
 ) {
   for (const batch of splitIntoBatches(data, maxBatchSize)) {
-    await ctx.store.upsert(batch);
+    await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(batch));
+    // await ctx.store.upsert(batch);
   }
 }

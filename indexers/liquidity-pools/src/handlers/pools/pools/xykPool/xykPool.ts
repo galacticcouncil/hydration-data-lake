@@ -194,7 +194,8 @@ export async function getOrCreateXykPool({
 
   await ctx.store.upsert(newPool);
   newPool.account.xykpool = newPool;
-  await ctx.store.upsert(newPool.account);
+  // await ctx.store.upsert(newPool.account);
+  await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(newPool.account));
 
   const state = ctx.batchState.state;
   state.xykAllBatchPools.set(newPool.id, newPool);
