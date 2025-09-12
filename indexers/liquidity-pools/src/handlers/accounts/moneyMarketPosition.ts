@@ -67,13 +67,6 @@ export async function handleAccountMmPositionData(
       blockSlotData
     );
   }
-  //
-  // console.dir(
-  //   Array.from(accountsToProcessPerBlock.entries()).map(
-  //     ([blockHeight, data]) => [blockHeight, data.evmAddresses]
-  //   ),
-  //   { depth: null }
-  // );
 
   for (const blockSlotData of accountsToProcessPerBlock.values()) {
     await pMap(

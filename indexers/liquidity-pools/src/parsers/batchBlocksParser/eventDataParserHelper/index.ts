@@ -1,18 +1,34 @@
-import { RelayChainInfo } from '../types/events';
-import { CallMetadata, EventMetadata, StoragePrefetchIdsGroup } from './types';
-import { SqdCall, SqdEvent, SqdProcessorContext } from '../../processor';
-import parsers from '../index';
-import { BatchStatePayload } from '../../utils/batchState';
-import { calls, events } from '../chains/hydration/typegenTypes';
-import { Store } from '@subsquid/typeorm-store'; // TODO fix for different CHAIN env value
+import { RelayChainInfo } from '../../types/events';
+import { CallMetadata, EventMetadata, StoragePrefetchIdsGroup } from '../types';
+import { SqdCall, SqdEvent, SqdProcessorContext } from '../../../processor';
+import parsers from '../../index';
+import { BatchStatePayload } from '../../../utils/batchState';
+import { calls, events } from '../../chains/hydration/typegenTypes';
+import { Store } from '@subsquid/typeorm-store';
+import { BroadcastEventParserHelper } from './helpers/broadcast';
+import { OmnipoolEventParserHelper } from './helpers/omnipool';
+import { XykEventParserHelper } from './helpers/xyk';
+import { LbpEventParserHelper } from './helpers/lbp';
+import { OmnipoolLiquidityMiningEventParserHelper } from './helpers/omnipoolLiquidityMining';
+import { OmnipoolWarehouseLMEventParserHelper } from './helpers/omnipoolWarehouseLM';
+import { XykLiquidityMiningEventParserHelper } from './helpers/xykLiquidityMining'; // TODO fix for different CHAIN env value
 
 export class EventDataParserHelper {
-  private readonly relayChainInfo: RelayChainInfo;
-  private readonly callMetadata: CallMetadata;
-  private readonly eventMetadata: EventMetadata;
-  private readonly event: SqdEvent;
-  private readonly call?: SqdCall | null;
+  readonly relayChainInfo: RelayChainInfo;
+  readonly callMetadata: CallMetadata;
+  readonly eventMetadata: EventMetadata;
+  readonly event: SqdEvent;
+  readonly call?: SqdCall | null;
   readonly batchState: BatchStatePayload;
+  readonly parsers: {
+    xyk: XykEventParserHelper;
+    xykLM: XykLiquidityMiningEventParserHelper;
+    lbp: LbpEventParserHelper;
+    broadcast: BroadcastEventParserHelper;
+    omnipool: OmnipoolEventParserHelper;
+    omnipoolLM: OmnipoolLiquidityMiningEventParserHelper;
+    omnipoolWarehouseLM: OmnipoolWarehouseLMEventParserHelper;
+  };
 
   constructor({
     relayChainInfo,
@@ -35,6 +51,16 @@ export class EventDataParserHelper {
     this.call = call;
     this.event = event;
     this.batchState = batchState;
+
+    this.parsers = {
+      xyk: new XykEventParserHelper(this),
+      xykLM: new XykLiquidityMiningEventParserHelper(this),
+      lbp: new LbpEventParserHelper(this),
+      broadcast: new BroadcastEventParserHelper(this),
+      omnipool: new OmnipoolEventParserHelper(this),
+      omnipoolLM: new OmnipoolLiquidityMiningEventParserHelper(this),
+      omnipoolWarehouseLM: new OmnipoolWarehouseLMEventParserHelper(this),
+    };
   }
 
   addIdsForStoragePrefetch(
@@ -68,253 +94,6 @@ export class EventDataParserHelper {
       this.batchState.accountIdForPrefetch;
   }
 
-  /**
-   * ==== LBP Poll Created ====
-   */
-  parseLbpPoolCreatedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-
-    const callArgs = call
-      ? parsers.calls.lbp.parseCreatePoolArgs(call)
-      : undefined;
-    const eventParams = parsers.events.lbp.parsePoolCreatedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-        args: callArgs,
-      },
-    };
-  }
-  /**
-   * ==== LBP Poll Updated ====
-   */
-  parseLbpPoolUpdatedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
-    const eventParams = parsers.events.lbp.parsePoolUpdatedParams(event);
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== LBP Buy Executed ====
-   */
-  parseLbpBuyExecutedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
-    const eventParams = parsers.events.lbp.parseBuyExecutedParams(event);
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== LBP Sell Executed ====
-   */
-  parseLbpSellExecutedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const eventParams = parsers.events.lbp.parseSellExecutedParams(event);
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== XYK Pool Created ====
-   */
-  parseXykPoolCreatedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const callArgs =
-      call && call.name === calls.xyk.createPool.name
-        ? parsers.calls.xyk.parseCreatePoolArgs(call)
-        : undefined;
-    const eventParams = parsers.events.xyk.parsePoolCreatedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-        args: callArgs,
-      },
-    };
-  }
-  /**
-   * ==== XYK Pool Destroyed ====
-   */
-  parseXykPoolDestroyedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const eventParams = parsers.events.xyk.parsePoolDestroyedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== XYK Buy Executed ====
-   */
-  parseXykBuyExecutedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const eventParams = parsers.events.xyk.parseBuyExecutedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== XYK Sell Executed ====
-   */
-  parseXykSellExecutedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const eventParams = parsers.events.xyk.parseSellExecutedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== Omnipool Token Added ====
-   */
-  parseOmnipoolTokenAddedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const eventParams = parsers.events.omnipool.parseTokenAddedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== Omnipool Token Removed ====
-   */
-  parseOmnipoolTokenRemovedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const eventParams = parsers.events.omnipool.parseTokenRemovedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== Omnipool Buy Executed ====
-   */
-  parseOmnipoolBuyExecutedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const eventParams = parsers.events.omnipool.parseBuyExecutedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== Omnipool Sell Executed ====
-   */
-  parseOmnipoolSellExecutedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
-    const eventParams = parsers.events.omnipool.parseSellExecutedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
   /**
    * ==== Stableswap Pool Created ====
    */
@@ -744,67 +523,6 @@ export class EventDataParserHelper {
   parseAssetRegistryUpdatedData() {
     const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
     const eventParams = parsers.events.assetRegistry.parseUpdatedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-
-  /**
-   * ==== Broadcast Swapped ====
-   */
-  parseBroadcastSwappedData() {
-    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
-    const eventParams = parsers.events.broadcast.parseSwappedParams(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== Broadcast Swapped2 ====
-   */
-  parseBroadcastSwapped2Data() {
-    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
-    const eventParams = parsers.events.broadcast.parseSwapped2Params(event);
-
-    return {
-      relayChainInfo,
-      id: eventMetadata.id,
-      eventData: {
-        name: eventMetadata.name,
-        metadata: eventMetadata,
-        params: eventParams,
-      },
-      callData: {
-        ...callMetadata,
-      },
-    };
-  }
-  /**
-   * ==== Broadcast Swapped3 ====
-   */
-  parseBroadcastSwapped3Data() {
-    const { relayChainInfo, eventMetadata, callMetadata, event } = this;
-    const eventParams = parsers.events.broadcast.parseSwapped3Params(event);
 
     return {
       relayChainInfo,

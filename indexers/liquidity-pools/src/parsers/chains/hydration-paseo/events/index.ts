@@ -5,7 +5,7 @@ import dca from './dca';
 import otc from './otc';
 import omnipool from './omnipool';
 import omnipoolLiquidityMining from './omnipoolLiquidityMining';
-import omnipoolWarehouseLm from './omnipoolWarehouseLm';
+import omnipoolWarehouseLM from './omnipoolWarehouseLm';
 import stableswap from './stableswap';
 import balances from './balances';
 import tokens from './tokens';
@@ -26,7 +26,7 @@ export default {
   otc,
   omnipool,
   omnipoolLiquidityMining,
-  omnipoolWarehouseLm,
+  omnipoolWarehouseLM,
   stableswap,
   tokens,
   balances,

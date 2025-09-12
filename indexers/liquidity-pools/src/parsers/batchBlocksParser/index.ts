@@ -175,7 +175,8 @@ export async function getParsedEventsData(
          * ==== LBP Poll Created ====
          */
         case events.lbp.poolCreated.name: {
-          const preparedData = parserHelper.parseLbpPoolCreatedData();
+          const preparedData =
+            parserHelper.parsers.lbp.parseLbpPoolCreatedData();
           parsedDataManager.set(EventName.LBP_PoolCreated, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -192,7 +193,8 @@ export async function getParsedEventsData(
          * ==== LBP Poll Updated ====
          */
         case events.lbp.poolUpdated.name: {
-          const preparedData = parserHelper.parseLbpPoolUpdatedData();
+          const preparedData =
+            parserHelper.parsers.lbp.parseLbpPoolUpdatedData();
           parsedDataManager.set(EventName.LBP_PoolUpdated, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -210,7 +212,8 @@ export async function getParsedEventsData(
          * ==== LBP Buy Executed ====
          */
         case events.lbp.buyExecuted.name: {
-          const preparedData = parserHelper.parseLbpBuyExecutedData();
+          const preparedData =
+            parserHelper.parsers.lbp.parseLbpBuyExecutedData();
           parsedDataManager.set(EventName.LBP_BuyExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -226,7 +229,8 @@ export async function getParsedEventsData(
          * ==== LBP Sell Executed ====
          */
         case events.lbp.sellExecuted.name: {
-          const preparedData = parserHelper.parseLbpSellExecutedData();
+          const preparedData =
+            parserHelper.parsers.lbp.parseLbpSellExecutedData();
           parsedDataManager.set(EventName.LBP_SellExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -247,7 +251,8 @@ export async function getParsedEventsData(
          * ==== XYK Pool Created ====
          */
         case events.xyk.poolCreated.name: {
-          const preparedData = parserHelper.parseXykPoolCreatedData();
+          const preparedData =
+            parserHelper.parsers.xyk.parseXykPoolCreatedData();
           parsedDataManager.set(EventName.XYK_PoolCreated, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -264,7 +269,8 @@ export async function getParsedEventsData(
          * ==== XYK Pool Destroyed ====
          */
         case events.xyk.poolDestroyed.name: {
-          const preparedData = parserHelper.parseXykPoolDestroyedData();
+          const preparedData =
+            parserHelper.parsers.xyk.parseXykPoolDestroyedData();
           parsedDataManager.set(EventName.XYK_PoolDestroyed, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -281,7 +287,8 @@ export async function getParsedEventsData(
          * ==== XYK Buy Executed ====
          */
         case events.xyk.buyExecuted.name: {
-          const preparedData = parserHelper.parseXykBuyExecutedData();
+          const preparedData =
+            parserHelper.parsers.xyk.parseXykBuyExecutedData();
           parsedDataManager.set(EventName.XYK_BuyExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -298,7 +305,8 @@ export async function getParsedEventsData(
          * ==== XYK Sell Executed ====
          */
         case events.xyk.sellExecuted.name: {
-          const preparedData = parserHelper.parseXykSellExecutedData();
+          const preparedData =
+            parserHelper.parsers.xyk.parseXykSellExecutedData();
           parsedDataManager.set(EventName.XYK_SellExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -313,6 +321,211 @@ export async function getParsedEventsData(
         }
 
         /**
+         * ==== XYK Liquidity Added ====
+         */
+        case events.xyk.liquidityAdded.name: {
+          const preparedData =
+            parserHelper.parsers.xyk.parseXykLiquidityAddedData();
+          parsedDataManager.set(EventName.XYK_LiquidityAdded, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== XYK Liquidity Removed ====
+         */
+        case events.xyk.liquidityRemoved.name: {
+          const preparedData =
+            parserHelper.parsers.xyk.parseXykLiquidityRemovedData();
+          parsedDataManager.set(EventName.XYK_LiquidityRemoved, preparedData);
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ========== X Y K    L I Q U I D I T Y    M I N I N G ================
+         */
+
+        /**
+         * ==== XYK LM :: GlobalFarmCreated ====
+         */
+        case events.xykLiquidityMining.globalFarmCreated.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMGlobalFarmCreatedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_GlobalFarmCreated,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.owner,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: GlobalFarmUpdated ====
+         */
+        case events.xykLiquidityMining.globalFarmUpdated.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMGlobalFarmUpdatedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_GlobalFarmUpdated,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: GlobalFarmTerminated ====
+         */
+        case events.xykLiquidityMining.globalFarmTerminated.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMGlobalFarmTerminatedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_GlobalFarmTerminated,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: YieldFarmCreated ====
+         */
+        case events.xykLiquidityMining.yieldFarmCreated.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMYieldFarmCreatedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_YieldFarmCreated,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: YieldFarmStopped ====
+         */
+        case events.xykLiquidityMining.yieldFarmStopped.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMYieldFarmStoppedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_YieldFarmStopped,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: YieldFarmTerminated ====
+         */
+        case events.xykLiquidityMining.yieldFarmTerminated.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMYieldFarmTerminatedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_YieldFarmTerminated,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: YieldFarmResumed ====
+         */
+        case events.xykLiquidityMining.yieldFarmResumed.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMYieldFarmResumedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_YieldFarmResumed,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: YieldFarmUpdated ====
+         */
+        case events.xykLiquidityMining.yieldFarmUpdated.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMYieldFarmUpdatedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_YieldFarmUpdated,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: SharesDeposited ====
+         */
+        case events.xykLiquidityMining.sharesDeposited.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMSharesDepositedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_SharesDeposited,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: SharesRedeposited ====
+         */
+        case events.xykLiquidityMining.sharesRedeposited.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMSharesRedepositedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_SharesRedeposited,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: SharesWithdrawn ====
+         */
+        case events.xykLiquidityMining.sharesWithdrawn.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMSharesWithdrawnData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_SharesWithdrawn,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: DepositDestroyed ====
+         */
+        case events.xykLiquidityMining.depositDestroyed.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMDepositDestroyedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_DepositDestroyed,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== XYK LM :: RewardClaimed ====
+         */
+        case events.xykLiquidityMining.rewardClaimed.name: {
+          const preparedData =
+            parserHelper.parsers.xykLM.parseXykLMRewardClaimedData();
+          parsedDataManager.set(
+            EventName.XYKLiquidityMining_RewardClaimed,
+            preparedData
+          );
+          break;
+        }
+
+        /**
          * ======================== O M N I P O O L ============================
          */
 
@@ -320,7 +533,8 @@ export async function getParsedEventsData(
          * ==== Omnipool Token Added ====
          */
         case events.omnipool.tokenAdded.name: {
-          const preparedData = parserHelper.parseOmnipoolTokenAddedData();
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolTokenAddedData();
           parsedDataManager.set(EventName.Omnipool_TokenAdded, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -333,7 +547,8 @@ export async function getParsedEventsData(
          * ==== Omnipool Token Removed ====
          */
         case events.omnipool.tokenRemoved.name: {
-          const preparedData = parserHelper.parseOmnipoolTokenRemovedData();
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolTokenRemovedData();
           parsedDataManager.set(EventName.Omnipool_TokenRemoved, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -346,7 +561,8 @@ export async function getParsedEventsData(
          * ==== Omnipool Buy Executed ====
          */
         case events.omnipool.buyExecuted.name: {
-          const preparedData = parserHelper.parseOmnipoolBuyExecutedData();
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolBuyExecutedData();
           parsedDataManager.set(EventName.Omnipool_BuyExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -366,7 +582,8 @@ export async function getParsedEventsData(
          * ==== Omnipool Sell Executed ====
          */
         case events.omnipool.sellExecuted.name: {
-          const preparedData = parserHelper.parseOmnipoolSellExecutedData();
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolSellExecutedData();
           parsedDataManager.set(EventName.Omnipool_SellExecuted, preparedData);
 
           parserHelper.addIdsForStoragePrefetch(
@@ -380,6 +597,368 @@ export async function getParsedEventsData(
           parserHelper.addAccountIdsForPrefetch([
             preparedData.eventData.params.who,
           ]);
+          break;
+        }
+
+        /**
+         * ==== Omnipool Liquidity Added ====
+         */
+        case events.omnipool.liquidityAdded.name: {
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolLiquidityAddedData();
+          parsedDataManager.set(
+            EventName.Omnipool_LiquidityAdded,
+            preparedData
+          );
+
+          parserHelper.addIdsForStoragePrefetch(
+            'omnipoolAssetIdsForStoragePrefetch',
+            preparedData.eventData.params.assetId
+          );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== Omnipool Liquidity Removed ====
+         */
+        case events.omnipool.liquidityRemoved.name: {
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolLiquidityRemovedData();
+          parsedDataManager.set(
+            EventName.Omnipool_LiquidityRemoved,
+            preparedData
+          );
+
+          parserHelper.addIdsForStoragePrefetch(
+            'omnipoolAssetIdsForStoragePrefetch',
+            preparedData.eventData.params.assetId
+          );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== Omnipool Position Created ====
+         */
+        case events.omnipool.positionCreated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolPositionCreatedData();
+          parsedDataManager.set(
+            EventName.Omnipool_PositionCreated,
+            preparedData
+          );
+
+          parserHelper.addIdsForStoragePrefetch(
+            'omnipoolAssetIdsForStoragePrefetch',
+            preparedData.eventData.params.asset
+          );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.owner,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== Omnipool Position Updated ====
+         */
+        case events.omnipool.positionUpdated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolPositionUpdatedData();
+          parsedDataManager.set(
+            EventName.Omnipool_PositionUpdated,
+            preparedData
+          );
+
+          parserHelper.addIdsForStoragePrefetch(
+            'omnipoolAssetIdsForStoragePrefetch',
+            preparedData.eventData.params.asset
+          );
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.owner,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== Omnipool Position Destroyed ====
+         */
+        case events.omnipool.positionDestroyed.name: {
+          const preparedData =
+            parserHelper.parsers.omnipool.parseOmnipoolPositionDestroyedData();
+          parsedDataManager.set(
+            EventName.Omnipool_PositionDestroyed,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.owner,
+          ]);
+          break;
+        }
+
+        /**
+         * ====== O M N I P O O L   L I Q U I D I T Y    M I N I N G ===========
+         */
+
+        /**
+         * ==== GlobalFarmCreated ====
+         */
+        case events.omnipoolLiquidityMining.globalFarmCreated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMGlobalFarmCreatedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_GlobalFarmCreated,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.owner,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== GlobalFarmUpdated ====
+         */
+        case events.omnipoolLiquidityMining.globalFarmUpdated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMGlobalFarmUpdatedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_GlobalFarmUpdated,
+            preparedData
+          );
+
+          break;
+        }
+
+        /**
+         * ==== GlobalFarmTerminated ====
+         */
+        case events.omnipoolLiquidityMining.globalFarmTerminated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMGlobalFarmTerminatedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_GlobalFarmTerminated,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== YieldFarmCreated ====
+         */
+        case events.omnipoolLiquidityMining.yieldFarmCreated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMYieldFarmCreatedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_YieldFarmCreated,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== YieldFarmStopped ====
+         */
+        case events.omnipoolLiquidityMining.yieldFarmStopped.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMYieldFarmStoppedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_YieldFarmStopped,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== YieldFarmResumed ====
+         */
+        case events.omnipoolLiquidityMining.yieldFarmResumed.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMYieldFarmResumedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_YieldFarmResumed,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== YieldFarmUpdated ====
+         */
+        case events.omnipoolLiquidityMining.yieldFarmUpdated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMYieldFarmUpdatedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_YieldFarmUpdated,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== YieldFarmTerminated ====
+         */
+        case events.omnipoolLiquidityMining.yieldFarmTerminated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMYieldFarmTerminatedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_YieldFarmTerminated,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== SharesDeposited ====
+         */
+        case events.omnipoolLiquidityMining.sharesDeposited.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMSharesDepositedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_SharesDeposited,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== SharesRedeposited ====
+         */
+        case events.omnipoolLiquidityMining.sharesRedeposited.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMSharesRedepositedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_SharesRedeposited,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== SharesWithdrawn ====
+         */
+        case events.omnipoolLiquidityMining.sharesWithdrawn.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMSharesWithdrawnData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_SharesWithdrawn,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== RewardClaimed ====
+         */
+        case events.omnipoolLiquidityMining.rewardClaimed.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMRewardClaimedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_RewardClaimed,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ==== DepositDestroyed ====
+         */
+        case events.omnipoolLiquidityMining.depositDestroyed.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolLM.parseOmnipoolLMDepositDestroyedData();
+          parsedDataManager.set(
+            EventName.OmnipoolLiquidityMining_DepositDestroyed,
+            preparedData
+          );
+
+          parserHelper.addAccountIdsForPrefetch([
+            preparedData.eventData.params.who,
+          ]);
+          break;
+        }
+
+        /**
+         * ========== O M N I P O O L   W A R E H O U S E    L M ===============
+         */
+
+        /**
+         * ==== GlobalFarmAccRPZUpdated ====
+         */
+        case events.omnipoolWarehouseLm.globalFarmAccRpzUpdated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolWarehouseLM.parseOmnipoolWarehouseLMGlobalFarmAccRPZUpdatedData();
+          parsedDataManager.set(
+            EventName.OmnipoolWarehouseLM_GlobalFarmAccRPZUpdated,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== YieldFarmAccRPVSUpdated ====
+         */
+        case events.omnipoolWarehouseLm.yieldFarmAccRpvsUpdated.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolWarehouseLM.parseOmnipoolWarehouseLMYieldFarmAccRPVSUpdatedData();
+          parsedDataManager.set(
+            EventName.OmnipoolWarehouseLM_YieldFarmAccRPVSUpdated,
+            preparedData
+          );
+          break;
+        }
+
+        /**
+         * ==== AllRewardsDistributed ====
+         */
+        case events.omnipoolWarehouseLm.allRewardsDistributed.name: {
+          const preparedData =
+            parserHelper.parsers.omnipoolWarehouseLM.parseOmnipoolWarehouseLMAllRewardsDistributedData();
+          parsedDataManager.set(
+            EventName.OmnipoolWarehouseLM_AllRewardsDistributed,
+            preparedData
+          );
           break;
         }
 
@@ -704,7 +1283,8 @@ export async function getParsedEventsData(
          * ==== Swapped ====
          */
         case (events as typeof hydrationEvents).broadcast.swapped?.name: {
-          const preparedData = parserHelper.parseBroadcastSwappedData();
+          const preparedData =
+            parserHelper.parsers.broadcast.parseBroadcastSwappedData();
           parsedDataManager.set(EventName.Broadcast_Swapped, preparedData);
 
           parserHelper.addAccountIdsForPrefetch([
@@ -761,7 +1341,8 @@ export async function getParsedEventsData(
          * ==== Swapped2 ====
          */
         case (events as typeof hydrationEvents).broadcast.swapped2?.name: {
-          const preparedData = parserHelper.parseBroadcastSwapped2Data();
+          const preparedData =
+            parserHelper.parsers.broadcast.parseBroadcastSwapped2Data();
           parsedDataManager.set(EventName.Broadcast_Swapped2, preparedData);
 
           parserHelper.addAccountIdsForPrefetch([
@@ -818,7 +1399,8 @@ export async function getParsedEventsData(
          * ==== Swapped3 ====
          */
         case events.broadcast.swapped3.name: {
-          const preparedData = parserHelper.parseBroadcastSwapped3Data();
+          const preparedData =
+            parserHelper.parsers.broadcast.parseBroadcastSwapped3Data();
           parsedDataManager.set(EventName.Broadcast_Swapped3, preparedData);
 
           parserHelper.addAccountIdsForPrefetch([

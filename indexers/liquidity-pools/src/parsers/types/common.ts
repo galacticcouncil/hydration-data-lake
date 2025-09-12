@@ -46,6 +46,29 @@ import {
   HsmCollateralAddedEventParams,
   HsmCollateralRemovedEventParams,
   HsmCollateralUpdatedEventParams,
+  OmnipoolLiquidityAddedEventParams,
+  OmnipoolLiquidityRemovedEventParams,
+  OmnipoolPositionCreatedEventParams,
+  OmnipoolPositionDestroyedEventParams,
+  OmnipoolPositionUpdatedEventParams,
+  XykLiquidityAddedEventParams,
+  XykLiquidityRemovedEventParams,
+  OmnipoolLMGlobalFarmCreatedEventParams,
+  OmnipoolLMGlobalFarmUpdatedEventParams,
+  OmnipoolLMGlobalFarmTerminatedEventParams,
+  OmnipoolLMYieldFarmCreatedEventParams,
+  OmnipoolLMYieldFarmStoppedEventParams,
+  OmnipoolLMYieldFarmResumedEventParams,
+  OmnipoolLMYieldFarmUpdatedEventParams,
+  OmnipoolLMYieldFarmTerminatedEventParams,
+  OmnipoolLMSharesDepositedEventParams,
+  OmnipoolLMSharesRedepositedEventParams,
+  OmnipoolLMRewardClaimedEventParams,
+  OmnipoolLMSharesWithdrawnEventParams,
+  OmnipoolLMDepositDestroyedEventParams,
+  OmnipoolWarehouseLMGlobalFarmAccRPZUpdatedEventParams,
+  OmnipoolWarehouseLMYieldFarmAccRPVSUpdatedEventParams,
+  OmnipoolWarehouseLMAllRewardsDistributedEventParams,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -120,6 +143,21 @@ import {
   AaveTradeExecutorPoolDataWithPoolId,
   AaveTradeExecutorPoolsInput,
 } from '../runtimeApiResolver/types';
+import {
+  XykLMDepositDestroyedEventParams,
+  XykLMGlobalFarmCreatedEventParams,
+  XykLMGlobalFarmTerminatedEventParams,
+  XykLMGlobalFarmUpdatedEventParams,
+  XykLMRewardClaimedEventParams,
+  XykLMSharesDepositedEventParams,
+  XykLMSharesRedepositedEventParams,
+  XykLMSharesWithdrawnEventParams,
+  XykLMYieldFarmCreatedEventParams,
+  XykLMYieldFarmResumedEventParams,
+  XykLMYieldFarmStoppedEventParams,
+  XykLMYieldFarmTerminatedEventParams,
+  XykLMYieldFarmUpdatedEventParams,
+} from './events/xykLiquidityMining';
 
 export interface PoolData {
   owner: string;
@@ -162,6 +200,53 @@ export type EventParserMethods = {
     parsePoolDestroyedParams: (event: SqdEvent) => XykPoolDestroyedEventParams;
     parseBuyExecutedParams: (event: SqdEvent) => XykBuyExecutedEventParams;
     parseSellExecutedParams: (event: SqdEvent) => XykSellExecutedEventParams;
+    parseLiquidityAddedParams: (
+      event: SqdEvent
+    ) => XykLiquidityAddedEventParams;
+    parseLiquidityRemovedParams: (
+      event: SqdEvent
+    ) => XykLiquidityRemovedEventParams;
+  };
+  xykLiquidityMining: {
+    parseGlobalFarmCreatedParams: (
+      event: SqdEvent
+    ) => XykLMGlobalFarmCreatedEventParams;
+    parseGlobalFarmUpdatedParams: (
+      event: SqdEvent
+    ) => XykLMGlobalFarmUpdatedEventParams;
+    parseGlobalFarmTerminatedParams: (
+      event: SqdEvent
+    ) => XykLMGlobalFarmTerminatedEventParams;
+    parseYieldFarmCreatedParams: (
+      event: SqdEvent
+    ) => XykLMYieldFarmCreatedEventParams;
+    parseYieldFarmStopedParams: (
+      event: SqdEvent
+    ) => XykLMYieldFarmStoppedEventParams;
+    parseYieldFarmTerminatedParams: (
+      event: SqdEvent
+    ) => XykLMYieldFarmTerminatedEventParams;
+    parseYieldFarmResumedParams: (
+      event: SqdEvent
+    ) => XykLMYieldFarmResumedEventParams;
+    parseYieldFarmUpdatedParams: (
+      event: SqdEvent
+    ) => XykLMYieldFarmUpdatedEventParams;
+    parseSharesDepositedParams: (
+      event: SqdEvent
+    ) => XykLMSharesDepositedEventParams;
+    parseSharesRedepositedParams: (
+      event: SqdEvent
+    ) => XykLMSharesRedepositedEventParams;
+    parseSharesWithdrawnParams: (
+      event: SqdEvent
+    ) => XykLMSharesWithdrawnEventParams;
+    parseDepositDestroyedParams: (
+      event: SqdEvent
+    ) => XykLMDepositDestroyedEventParams;
+    parseRewardClaimedParams: (
+      event: SqdEvent
+    ) => XykLMRewardClaimedEventParams;
   };
   omnipool: {
     parseTokenAddedParams: (event: SqdEvent) => OmnipoolTokenAddedEventParams;
@@ -172,6 +257,73 @@ export type EventParserMethods = {
     parseSellExecutedParams: (
       event: SqdEvent
     ) => OmnipoolSellExecutedEventParams;
+    parseLiquidityAddedParams: (
+      event: SqdEvent
+    ) => OmnipoolLiquidityAddedEventParams;
+    parseLiquidityRemovedParams: (
+      event: SqdEvent
+    ) => OmnipoolLiquidityRemovedEventParams;
+    parsePositionCreatedParams: (
+      event: SqdEvent
+    ) => OmnipoolPositionCreatedEventParams;
+    parsePositionDestroyedParams: (
+      event: SqdEvent
+    ) => OmnipoolPositionDestroyedEventParams;
+    parsePositionUpdatedParams: (
+      event: SqdEvent
+    ) => OmnipoolPositionUpdatedEventParams;
+  };
+  omnipoolLiquidityMining: {
+    parseGlobalFarmCreatedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMGlobalFarmCreatedEventParams;
+    parseGlobalFarmUpdatedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMGlobalFarmUpdatedEventParams;
+    parseGlobalFarmTerminatedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMGlobalFarmTerminatedEventParams;
+    parseYieldFarmCreatedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMYieldFarmCreatedEventParams;
+    parseYieldFarmStoppedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMYieldFarmStoppedEventParams;
+    parseYieldFarmResumedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMYieldFarmResumedEventParams;
+    parseYieldFarmUpdatedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMYieldFarmUpdatedEventParams;
+    parseYieldFarmTerminatedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMYieldFarmTerminatedEventParams;
+    parseSharesDepositedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMSharesDepositedEventParams;
+    parseSharesRedepositedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMSharesRedepositedEventParams;
+    parseRewardClaimedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMRewardClaimedEventParams;
+    parseSharesWithdrawnParams: (
+      event: SqdEvent
+    ) => OmnipoolLMSharesWithdrawnEventParams;
+    parseDepositDestroyedParams: (
+      event: SqdEvent
+    ) => OmnipoolLMDepositDestroyedEventParams;
+  };
+  omnipoolWarehouseLM: {
+    parseWarehouseLMGlobalFarmAccRPZUpdatedParams: (
+      event: SqdEvent
+    ) => OmnipoolWarehouseLMGlobalFarmAccRPZUpdatedEventParams;
+    parseYieldFarmAccRPVSUpdatedParams: (
+      event: SqdEvent
+    ) => OmnipoolWarehouseLMYieldFarmAccRPVSUpdatedEventParams;
+    parseAllRewardsDistributedParams: (
+      event: SqdEvent
+    ) => OmnipoolWarehouseLMAllRewardsDistributedEventParams;
   };
   stableswap: {
     parsePoolCreatedParams: (
