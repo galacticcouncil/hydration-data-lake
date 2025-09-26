@@ -143,11 +143,20 @@ export class MoneyMarketContractsManager {
     blockNumber?: number;
   }): Promise<MoneyMarketResourceDetails[] | null> {
     try {
-      const reservesData =
-        await this.uiPoolDataProviderContractInstance.getReservesData(
-          appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
-          { blockTag: blockNumber }
-        );
+      // const reservesData =
+      //   await this.uiPoolDataProviderContractInstance.getReservesData(
+      //     appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+      //     { blockTag: blockNumber }
+      //   );
+      const reservesData = await retryAsync({
+        fn: async () =>
+          this.uiPoolDataProviderContractInstance.getReservesData(
+            appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+            { blockTag: blockNumber }
+          ),
+        fallbackResponse: [],
+        tag: `getReservesData.at(${blockNumber})`,
+      });
 
       const reservesDecorated: MoneyMarketResourceDetails[] = [];
 

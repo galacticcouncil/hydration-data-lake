@@ -158,7 +158,7 @@ class EvmConfig {
   @IsNotEmpty()
   @IsString()
   readonly HOLLAR_CONTRACT_ADDRESS: string =
-    '0xfdb15f9fe2252044b08230449d4278cfd4df52e1';
+    '0x531a654d1696ed52e7275a8cede955e82620f99a';
 
   static getInstance(): EvmConfig {
     if (EvmConfig.instance) return EvmConfig.instance;
