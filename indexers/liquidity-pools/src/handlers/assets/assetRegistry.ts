@@ -241,16 +241,42 @@ export async function assetLocationSet(
 
   if (!asset) return;
 
-  if (asset.assetType !== AssetType.Erc20) return;
+  const assetMultiLocationFromStorage =
+    await getNewAssetMultiLocationFromStorageData({
+      blockHeader: eventMetadata.blockHeader,
+      assetRegistryId: assetId,
+      storageMultilocation: location,
+    });
 
-  asset.evmAddress = getErc20AssetContractFromLocation(location)?.address;
+  if (!assetMultiLocationFromStorage) return;
 
-  const assetMultiLocation = getNewCustomAssetMultiLocation({
-    evmAddress: asset.evmAddress,
-    assetType: AssetType.Erc20,
-  });
+  let externalAssetMetadata = null;
 
-  if (assetMultiLocation) asset.multiLocationsMetadata = [assetMultiLocation];
+  if (assetMultiLocationFromStorage && asset.assetType === AssetType.External) {
+    externalAssetMetadata =
+      await AssetHubManager.getInstance().getExternalAssetDataFromAssetHub({
+        assetMultilocation: assetMultiLocationFromStorage,
+      });
+  }
+
+  asset.multiLocations = [assetMultiLocationFromStorage];
+
+  if (asset.assetType === AssetType.External) {
+    asset.name = externalAssetMetadata?.name ?? asset.name;
+    asset.symbol = externalAssetMetadata?.symbol ?? asset.symbol;
+    asset.decimals = externalAssetMetadata?.decimals ?? asset.decimals;
+  }
+
+  if (asset.assetType === AssetType.Erc20) {
+    asset.evmAddress = getErc20AssetContractFromLocation(location)?.address;
+
+    const assetMultiLocation = getNewCustomAssetMultiLocation({
+      evmAddress: asset.evmAddress,
+      assetType: AssetType.Erc20,
+    });
+
+    if (assetMultiLocation) asset.multiLocationsMetadata = [assetMultiLocation];
+  }
 
   const state = ctx.batchState.state;
   state.assetsAll.set(asset.id, asset);

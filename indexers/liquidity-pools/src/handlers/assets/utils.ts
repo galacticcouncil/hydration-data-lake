@@ -590,8 +590,19 @@ function getNewAssetMultiLocationsInterior(
     if (k === 'value' && typeof valueRaw === 'object') {
       newInterior.valueJson = anyToStringAllKeys(valueRaw);
     } else {
-      newInterior[k as keyof AssetMultiLocationsInterior] =
-        anyToStringAllKeys(valueRaw);
+      const decoratedValue = anyToStringAllKeys(valueRaw);
+      if (typeof decoratedValue === 'string') {
+        newInterior[k as keyof AssetMultiLocationsInterior] =
+          decoratedValue as any;
+      } else {
+        try {
+          newInterior[k as keyof AssetMultiLocationsInterior] = JSON.stringify(
+            decoratedValue
+          ) as any;
+        } catch (e) {
+          console.log(e);
+        }
+      }
     }
   }
 
