@@ -19,7 +19,7 @@ import { UnknownVersionError } from '../../../../utils/errors';
 import { hexToString } from '@polkadot/util';
 import { EmaOraclePeriod } from '../../../../model';
 import { tryExecOrReturnFallback } from '../../../../utils/helpers';
-import { fetOracleNameFromStableswapPegsSource } from '../../hydration/utils';
+import { getOracleNameFromStableswapPegsSource } from '../../hydration/utils';
 
 function getConstants({ block }: GetConstantsInput): StableswapConstants {
   let minTradingLimit = null;
@@ -158,7 +158,7 @@ async function getPoolPegs({
         current: pegsInfo.current,
         source: pegsInfo.source.map((s) => ({
           sourceKind: s.__kind,
-          oracleName: fetOracleNameFromStableswapPegsSource(s),
+          oracleName: getOracleNameFromStableswapPegsSource(s),
           oraclePeriod:
             s.__kind === 'Oracle'
               ? (s.value[1].__kind as EmaOraclePeriod)
@@ -200,7 +200,7 @@ async function getAllPoolsPegs({
                   current: pegsInfo!.current,
                   source: pegsInfo!.source.map((s) => ({
                     sourceKind: s.__kind,
-                    oracleName: fetOracleNameFromStableswapPegsSource(s),
+                    oracleName: getOracleNameFromStableswapPegsSource(s),
                     oraclePeriod:
                       s.__kind === 'Oracle'
                         ? (s.value[1].__kind as EmaOraclePeriod)

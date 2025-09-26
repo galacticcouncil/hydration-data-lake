@@ -64,6 +64,7 @@ type Asset @entity {
   multiLocationIds: [String]
   "list of all asset multi-locations from current and other chains related with this Asset"
   multiLocationsMetadata: [AssetMultiLocation]
+  multiLocations: [AssetMultiLocation]
 
   underlyingAsset: Asset
   aToken: Asset
@@ -104,6 +105,7 @@ type AssetMultiLocationsInterior {
   index: String
   key: String
   value: String
+  valueJson: JSON
   data: String
   part: String
   nom: String

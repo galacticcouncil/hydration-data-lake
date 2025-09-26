@@ -33,6 +33,9 @@ export class OmnipoolLiquidityPosition {
   omnipoolAsset!: OmnipoolAsset
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  initialAmount!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   amount!: bigint
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})

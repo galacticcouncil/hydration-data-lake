@@ -297,6 +297,9 @@ export class AppConfig {
    */
   readonly RPC_REQUEST_TIMEOUT: number = 30_000;
 
+  readonly ASSET_HUB_RPC_URL: string =
+    'wss://polkadot-asset-hub-rpc.polkadot.io';
+
   @IsNotEmpty()
   readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
 

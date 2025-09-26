@@ -77,6 +77,18 @@ import {
   AaveFacilitator,
   AaveFacilitatorHistoricalData,
   TransactionPaymentHistoricalData,
+  OmnipoolLiquidityPositionEvent,
+  OmnipoolLiquidityPosition,
+  OmnipoolGlobalFarm,
+  OmnipoolYieldFarm,
+  OmnipoolYieldFarmDeposit,
+  OmnipoolYieldFarmEntry,
+  OmnipoolYieldFarmDepositEvent,
+  XykGlobalFarm,
+  XykYieldFarm,
+  XykYieldFarmDeposit,
+  XykYieldFarmEntry,
+  XykYieldFarmDepositEvent,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -240,6 +252,20 @@ export type BatchStatePayload = {
   emaOracleEntriesHistoricalData: Map<string, EmaOracleEntryHistoricalData>;
 
   transactionPaymentHistData: Map<string, TransactionPaymentHistoricalData>;
+
+  // omnipoolLiquidityPositions: Map<string, OmnipoolLiquidityPosition>;
+  // omnipoolLiquidityPositionEvents: Map<string, OmnipoolLiquidityPositionEvent>;
+  // omnipoolGlobalFarms: Map<string, OmnipoolGlobalFarm>;
+  // omnipoolYieldFarms: Map<string, OmnipoolYieldFarm>;
+  // omnipoolYieldFarmDeposits: Map<string, OmnipoolYieldFarmDeposit>;
+  // omnipoolYieldFarmEntries: Map<string, OmnipoolYieldFarmEntry>;
+  // omnipoolYieldFarmDepositEvents: Map<string, OmnipoolYieldFarmDepositEvent>;
+  //
+  // xykGlobalFarms: Map<string, XykGlobalFarm>;
+  // xykYieldFarms: Map<string, XykYieldFarm>;
+  // xykYieldFarmDeposits: Map<string, XykYieldFarmDeposit>;
+  // xykYieldFarmEntries: Map<string, XykYieldFarmEntry>;
+  // xykYieldFarmDepositEvents: Map<string, XykYieldFarmDepositEvent>;
 };
 
 export class BatchState {

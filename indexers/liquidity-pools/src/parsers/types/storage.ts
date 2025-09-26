@@ -451,8 +451,17 @@ export type GetHsmCollateralInput = {
   block: BlockHeader;
 };
 
-
 export type GetAccountMmPositionDataInput = {
   accountId: string;
+  block: BlockHeader;
+};
+
+export type GetAssetLocationDataInput = {
+  assetId: string | number;
+  block: BlockHeader;
+};
+
+export type GetAssetLocationsDataManyInput = {
+  assetIds: Array<string | number>;
   block: BlockHeader;
 };

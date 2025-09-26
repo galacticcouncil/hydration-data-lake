@@ -7,8 +7,9 @@ import {
 } from '../../parsers/batchBlocksParser/types';
 import {
   getAssetEvmAddressByType,
-  getAssetIdFromMultiLocation,
-  getNewAssetMultiLocation,
+  getAssetIdFromCustomMultiLocation,
+  getNewAssetMultiLocationFromStorageData,
+  getNewCustomAssetMultiLocation,
 } from './utils';
 import { Asset, AssetType, ResourceType } from '../../model';
 import { getOrCreateAsset } from './asset';
@@ -17,6 +18,7 @@ import { EventName } from '../../parsers/types/events';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import parsers from '../../parsers';
+import { AssetHubManager } from '../../utils/assetHubManager';
 
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
@@ -69,7 +71,7 @@ export async function assetRegistered(
     return;
   }
 
-  const assetCustomLocation = getNewAssetMultiLocation({
+  const assetCustomLocation = getNewCustomAssetMultiLocation({
     assetRegistryId: assetId,
     evmAddress: erc20AssetContractAddress,
     assetType,
@@ -77,7 +79,22 @@ export async function assetRegistered(
 
   if (!assetCustomLocation) return null;
 
-  const assetEntityId = getAssetIdFromMultiLocation(assetCustomLocation);
+  const assetMultiLocationFromStorage =
+    await getNewAssetMultiLocationFromStorageData({
+      blockHeader: eventMetadata.blockHeader,
+      assetRegistryId: assetId,
+    });
+
+  let externalAssetMetadata = null;
+
+  if (assetMultiLocationFromStorage && assetType === AssetType.External) {
+    externalAssetMetadata =
+      await AssetHubManager.getInstance().getExternalAssetDataFromAssetHub({
+        assetMultilocation: assetMultiLocationFromStorage,
+      });
+  }
+
+  const assetEntityId = getAssetIdFromCustomMultiLocation(assetCustomLocation);
 
   if (!assetEntityId) return null;
 
@@ -108,17 +125,33 @@ export async function assetRegistered(
   }
 
   const getDecimals = () => {
+    if (assetType === AssetType.External)
+      return externalAssetMetadata?.decimals ?? decimals ?? null;
+
     if (assetType !== AssetType.Bond) return decimals ?? null;
+
     if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
+
     return null;
   };
   const getSymbol = () => {
+    if (assetType === AssetType.External)
+      return externalAssetMetadata?.symbol ?? symbol ?? null;
+
     if (assetType !== AssetType.Bond) return symbol ?? null;
+
     if (bondUnderlyingAsset)
       return bondUnderlyingAsset.symbol
         ? `${bondUnderlyingAsset.symbol}b`
         : null;
+
     return null;
+  };
+
+  const getName = () => {
+    if (assetType === AssetType.External)
+      return externalAssetMetadata?.name ?? assetName ?? null;
+    return assetName ?? null;
   };
 
   const newAsset = new Asset({
@@ -127,7 +160,10 @@ export async function assetRegistered(
     assetRegistryId: `${assetId}`,
     multiLocationIds: [assetEntityId],
     multiLocationsMetadata: [assetCustomLocation],
-    name: assetName,
+    multiLocations: assetMultiLocationFromStorage
+      ? [assetMultiLocationFromStorage]
+      : [],
+    name: getName(),
     resourceType: evmTokenContractData?.resourceType ?? ResourceType.Underlying,
     assetType,
     existentialDeposit,
@@ -209,7 +245,7 @@ export async function assetLocationSet(
 
   asset.evmAddress = getErc20AssetContractFromLocation(location)?.address;
 
-  const assetMultiLocation = getNewAssetMultiLocation({
+  const assetMultiLocation = getNewCustomAssetMultiLocation({
     evmAddress: asset.evmAddress,
     assetType: AssetType.Erc20,
   });

@@ -4,11 +4,13 @@ import { Asset, AssetType, ResourceType } from '../../model';
 import parsers from '../../parsers';
 import {
   getAssetEvmAddressByType,
-  getAssetIdFromMultiLocation,
-  getNewAssetMultiLocation,
+  getAssetIdFromCustomMultiLocation,
+  getNewAssetMultiLocationFromStorageData,
+  getNewCustomAssetMultiLocation,
 } from './utils';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import { FindOptionsRelations } from 'typeorm';
+import { AssetHubManager } from '../../utils/assetHubManager';
 
 export async function getOrCreateAsset({
   id,
@@ -88,13 +90,31 @@ export async function getOrCreateAsset({
     ctx,
   });
 
-  const assetCustomLocation = getNewAssetMultiLocation({
+  const assetCustomLocation = getNewCustomAssetMultiLocation({
     assetRegistryId,
     evmAddress: evmAddress ?? erc20AssetContractAddress,
     assetType: storageData.assetType,
   });
 
   if (!assetCustomLocation) return null;
+
+  const assetMultiLocationFromStorage =
+    await getNewAssetMultiLocationFromStorageData({
+      assetRegistryId,
+      blockHeader,
+    });
+
+  let externalAssetMetadata = null;
+
+  if (
+    assetMultiLocationFromStorage &&
+    storageData.assetType === AssetType.External
+  ) {
+    externalAssetMetadata =
+      await AssetHubManager.getInstance().getExternalAssetDataFromAssetHub({
+        assetMultilocation: assetMultiLocationFromStorage,
+      });
+  }
 
   let bondUnderlyingAsset = null;
   let bondMaturity = null;
@@ -115,7 +135,7 @@ export async function getOrCreateAsset({
     }
   }
 
-  const assetEntityId = getAssetIdFromMultiLocation(assetCustomLocation);
+  const assetEntityId = getAssetIdFromCustomMultiLocation(assetCustomLocation);
 
   if (!assetEntityId) return null;
 
@@ -128,20 +148,36 @@ export async function getOrCreateAsset({
       : null;
 
   const getDecimals = () => {
+    if (storageData.assetType === AssetType.External)
+      return externalAssetMetadata?.decimals ?? storageData.decimals ?? null;
+
     if (storageData.assetType !== AssetType.Bond)
       return storageData.decimals ?? null;
+
     if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
+
     return null;
   };
 
   const getSymbol = () => {
+    if (storageData.assetType === AssetType.External)
+      return externalAssetMetadata?.symbol ?? storageData.symbol ?? null;
+
     if (storageData.assetType !== AssetType.Bond)
       return storageData.symbol ?? null;
+
     if (bondUnderlyingAsset)
       return bondUnderlyingAsset.symbol
         ? `${bondUnderlyingAsset.symbol}b`
         : null;
+
     return null;
+  };
+
+  const getName = () => {
+    if (storageData.assetType === AssetType.External)
+      return externalAssetMetadata?.name ?? storageData.name ?? null;
+    return storageData.name ?? null;
   };
 
   const newAsset = new Asset({
@@ -149,9 +185,13 @@ export async function getOrCreateAsset({
     evmAddress: erc20AssetContractAddress,
     assetRegistryId: `${assetRegistryId}`,
     multiLocationIds: [assetEntityId],
-    multiLocationsMetadata: [assetCustomLocation],
 
-    name: storageData.name,
+    multiLocationsMetadata: [assetCustomLocation],
+    multiLocations: assetMultiLocationFromStorage
+      ? [assetMultiLocationFromStorage]
+      : [],
+
+    name: getName(),
     assetType: storageData.assetType,
     resourceType: evmTokenContractData
       ? evmTokenContractData.resourceType
@@ -241,14 +281,14 @@ export async function getOrCreateMoneyMarketAsset({
 
   if (!contractData) return null;
 
-  const assetCustomLocation = getNewAssetMultiLocation({
+  const assetCustomLocation = getNewCustomAssetMultiLocation({
     evmAddress,
     assetType: AssetType.Erc20,
   });
 
   if (!assetCustomLocation) return null;
 
-  const assetEntityId = getAssetIdFromMultiLocation(assetCustomLocation);
+  const assetEntityId = getAssetIdFromCustomMultiLocation(assetCustomLocation);
 
   if (!assetEntityId) return null;
 
@@ -266,6 +306,7 @@ export async function getOrCreateMoneyMarketAsset({
     evmAddress: contractData.address,
     multiLocationIds: [assetEntityId],
     multiLocationsMetadata: [assetCustomLocation],
+    multiLocations: [],
     name: contractData.name,
     assetType: AssetType.Erc20,
     resourceType: resourceType ?? contractData.resourceType,

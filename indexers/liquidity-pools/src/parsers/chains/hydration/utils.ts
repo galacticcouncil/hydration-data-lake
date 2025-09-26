@@ -102,7 +102,7 @@ export function getErc20AssetContractFromLocation(
   }
 }
 
-export function fetOracleNameFromStableswapPegsSource(data: any) {
+export function getOracleNameFromStableswapPegsSource(data: any) {
   if (data.__kind === 'Oracle') return hexToString(data.value[0]);
   if (data.__kind === 'MMOracle') return data.value;
   return undefined;

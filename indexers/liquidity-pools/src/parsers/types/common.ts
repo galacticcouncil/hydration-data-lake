@@ -69,6 +69,7 @@ import {
   OmnipoolWarehouseLMGlobalFarmAccRPZUpdatedEventParams,
   OmnipoolWarehouseLMYieldFarmAccRPVSUpdatedEventParams,
   OmnipoolWarehouseLMAllRewardsDistributedEventParams,
+  AssetRegistryAssetLocation, AssetRegistryLocationWithAssetId,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -138,6 +139,8 @@ import {
   HsmCollateralData,
   GetHsmCollateralInput,
   TransactionPaymentNextFeeMultiplier,
+  GetAssetLocationDataInput,
+  GetAssetLocationsDataManyInput,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -456,6 +459,12 @@ export type StorageParserMethods = {
       block: BlockHeader
     ) => Promise<Array<AssetDetailsWithId>>;
     getAssetAll: (block: BlockHeader) => Promise<Array<AssetDetailsWithId>>;
+    getAssetLocation: (
+      args: GetAssetLocationDataInput
+    ) => Promise<AssetRegistryAssetLocation | null>;
+    getAssetLocationsMany: (
+      args: GetAssetLocationsDataManyInput
+    ) => Promise<AssetRegistryLocationWithAssetId[] | null>;
     getErc20AssetContractAddress: (
       assetId: string | number,
       block: BlockHeader

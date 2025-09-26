@@ -9,6 +9,7 @@ export class AssetMultiLocationsInterior {
   private _index!: string | undefined | null
   private _key!: string | undefined | null
   private _value!: string | undefined | null
+  private _valueJson!: unknown | undefined | null
   private _data!: string | undefined | null
   private _part!: string | undefined | null
   private _nom!: string | undefined | null
@@ -27,6 +28,7 @@ export class AssetMultiLocationsInterior {
       this._index = json.index == null ? undefined : marshal.string.fromJSON(json.index)
       this._key = json.key == null ? undefined : marshal.string.fromJSON(json.key)
       this._value = json.value == null ? undefined : marshal.string.fromJSON(json.value)
+      this._valueJson = json.valueJson
       this._data = json.data == null ? undefined : marshal.string.fromJSON(json.data)
       this._part = json.part == null ? undefined : marshal.string.fromJSON(json.part)
       this._nom = json.nom == null ? undefined : marshal.string.fromJSON(json.nom)
@@ -85,6 +87,14 @@ export class AssetMultiLocationsInterior {
 
   set value(value: string | undefined | null) {
     this._value = value
+  }
+
+  get valueJson(): unknown | undefined | null {
+    return this._valueJson
+  }
+
+  set valueJson(value: unknown | undefined | null) {
+    this._valueJson = value
   }
 
   get data(): string | undefined | null {
@@ -159,6 +169,7 @@ export class AssetMultiLocationsInterior {
       index: this.index,
       key: this.key,
       value: this.value,
+      valueJson: this.valueJson,
       data: this.data,
       part: this.part,
       nom: this.nom,

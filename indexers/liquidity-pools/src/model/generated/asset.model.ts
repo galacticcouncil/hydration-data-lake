@@ -40,6 +40,9 @@ export class Asset {
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val == null ? undefined : val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => val == null ? undefined : new AssetMultiLocation(undefined, val))}, nullable: true})
   multiLocationsMetadata!: (AssetMultiLocation | undefined | null)[] | undefined | null
 
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val == null ? undefined : val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => val == null ? undefined : new AssetMultiLocation(undefined, val))}, nullable: true})
+  multiLocations!: (AssetMultiLocation | undefined | null)[] | undefined | null
+
   @Index_()
   @ManyToOne_(() => Asset, {nullable: true})
   underlyingAsset!: Asset | undefined | null

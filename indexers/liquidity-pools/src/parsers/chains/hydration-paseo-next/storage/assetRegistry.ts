@@ -5,12 +5,22 @@ import {
   AssetDetailsWithId,
   AssetExistentialDeposit,
   Erc20AssetContractDetails,
+  GetAssetLocationDataInput,
+  GetAssetLocationsDataManyInput,
   GetDataAtBlockInput,
 } from '../../../types/storage';
-import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
+import {
+  hexToStrWithNullCharCheck,
+  splitIntoBatches,
+  tryExecOrReturnFallback,
+} from '../../../../utils/helpers';
 import { AssetType } from '../../../../model';
 import { UnknownVersionError } from '../../../../utils/errors';
 import { getErc20AssetContractFromLocation } from '../utils';
+import {
+  AssetRegistryAssetLocation,
+  AssetRegistryLocationWithAssetId,
+} from '../../../types/events';
 
 async function getAsset(
   assetId: string | number,
@@ -140,10 +150,77 @@ async function getAssetsExistentialDepositAll({
     }));
 }
 
+async function getAssetLocation({
+  assetId,
+  block,
+}: GetAssetLocationDataInput): Promise<AssetRegistryAssetLocation | null> {
+  if (block.specVersion < 324) return null;
+
+  if (storage.assetRegistry.assetLocations.v324.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v324.get(
+      block,
+      +assetId
+    );
+    return resp ?? null;
+  }
+
+  throw new UnknownVersionError('storage.assetRegistry.assetLocations');
+}
+
+async function getAssetLocationsMany({
+  assetIds,
+  block,
+}: GetAssetLocationsDataManyInput): Promise<
+  AssetRegistryLocationWithAssetId[] | null
+> {
+  if (block.specVersion < 324) return null;
+
+  const idsDecorated = assetIds.map((id) => +id);
+
+  const responseMap: Map<number, AssetRegistryLocationWithAssetId> = new Map(
+    assetIds.map((id) => [
+      +id,
+      {
+        assetId: +id,
+        location: null,
+      },
+    ])
+  );
+
+  for (const subBatch of splitIntoBatches(
+    Array.from(responseMap.keys()),
+    100
+  )) {
+    if (storage.assetRegistry.assetLocations.v324.is(block)) {
+      await tryExecOrReturnFallback(async () => {
+        const resp = await storage.assetRegistry.assetLocations.v324.getMany(
+          block,
+          idsDecorated
+        );
+
+        subBatch.forEach((assetId, index) => {
+          if (resp[index]) {
+            responseMap.set(assetId, {
+              assetId: assetId,
+              location: resp[index],
+            });
+          }
+        });
+      }, null);
+    }
+
+    throw new UnknownVersionError('storage.assetRegistry.assetLocations');
+  }
+
+  return Array.from(responseMap.values());
+}
+
 export default {
   getAsset,
   getAssetMany,
   getErc20AssetContractAddress,
   getAssetAll,
   getAssetsExistentialDepositAll,
+  getAssetLocation,
+  getAssetLocationsMany,
 };

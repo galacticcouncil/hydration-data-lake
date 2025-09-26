@@ -18,7 +18,7 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 import { hexToString, stringToHex } from '@polkadot/util';
 import { EmaOraclePeriod } from '../../../../model';
-import { fetOracleNameFromStableswapPegsSource } from '../utils';
+import { getOracleNameFromStableswapPegsSource } from '../utils';
 import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
 function getConstants({ block }: GetConstantsInput): StableswapConstants {
@@ -166,7 +166,7 @@ async function getPoolPegs({
         current: pegsInfo.current,
         source: pegsInfo.source.map((s) => ({
           sourceKind: s.__kind,
-          oracleName: fetOracleNameFromStableswapPegsSource(s),
+          oracleName: getOracleNameFromStableswapPegsSource(s),
           oraclePeriod:
             s.__kind === 'Oracle'
               ? (s.value[1].__kind as EmaOraclePeriod)
@@ -192,7 +192,7 @@ async function getPoolPegs({
         current: pegsInfo.current,
         source: pegsInfo.source.map((s) => ({
           sourceKind: s.__kind,
-          oracleName: fetOracleNameFromStableswapPegsSource(s),
+          oracleName: getOracleNameFromStableswapPegsSource(s),
           oraclePeriod:
             s.__kind === 'Oracle'
               ? (s.value[1].__kind as EmaOraclePeriod)
@@ -237,7 +237,7 @@ async function getAllPoolsPegs({
                   current: pegsInfo!.current,
                   source: pegsInfo!.source.map((s) => ({
                     sourceKind: s.__kind,
-                    oracleName: fetOracleNameFromStableswapPegsSource(s),
+                    oracleName: getOracleNameFromStableswapPegsSource(s),
                     oraclePeriod:
                       s.__kind === 'Oracle'
                         ? (s.value[1].__kind as EmaOraclePeriod)
@@ -274,7 +274,7 @@ async function getAllPoolsPegs({
                   current: pegsInfo!.current,
                   source: pegsInfo!.source.map((s) => ({
                     sourceKind: s.__kind,
-                    oracleName: fetOracleNameFromStableswapPegsSource(s),
+                    oracleName: getOracleNameFromStableswapPegsSource(s),
                     oraclePeriod:
                       s.__kind === 'Oracle'
                         ? (s.value[1].__kind as EmaOraclePeriod)

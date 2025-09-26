@@ -4,13 +4,24 @@ import {
   AssetDetails,
   AssetDetailsWithId,
   AssetExistentialDeposit,
+  BalancesAccountInfoWithAccountId,
   Erc20AssetContractDetails,
+  GetAssetLocationDataInput,
+  GetAssetLocationsDataManyInput,
   GetDataAtBlockInput,
 } from '../../../types/storage';
-import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
+import {
+  hexToStrWithNullCharCheck,
+  splitIntoBatches,
+  tryExecOrReturnFallback,
+} from '../../../../utils/helpers';
 import { AssetType } from '../../../../model';
 import { UnknownVersionError } from '../../../../utils/errors';
 import { getErc20AssetContractFromLocation } from '../utils';
+import {
+  AssetRegistryAssetLocation,
+  AssetRegistryLocationWithAssetId,
+} from '../../../types/events';
 
 async function getAsset(
   assetId: string | number,
@@ -413,10 +424,132 @@ async function getErc20AssetContractAddress(
   throw new UnknownVersionError('storage.assetRegistry.assetLocations');
 }
 
+async function getAssetLocation({
+  assetId,
+  block,
+}: GetAssetLocationDataInput): Promise<AssetRegistryAssetLocation | null> {
+  if (block.specVersion < 108) return null;
+
+  if (storage.assetRegistry.assetLocations.v108.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v108.get(
+      block,
+      +assetId
+    );
+    return resp ?? null;
+  }
+
+  if (storage.assetRegistry.assetLocations.v160.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v160.get(
+      block,
+      +assetId
+    );
+    return resp ?? null;
+  }
+
+  if (storage.assetRegistry.assetLocations.v244.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v244.get(
+      block,
+      +assetId
+    );
+    return resp ?? null;
+  }
+
+  throw new UnknownVersionError('storage.assetRegistry.assetLocations');
+}
+
+async function getAssetLocationsMany({
+  assetIds,
+  block,
+}: GetAssetLocationsDataManyInput): Promise<
+  AssetRegistryLocationWithAssetId[] | null
+> {
+  if (block.specVersion < 108) return null;
+
+  const idsDecorated = assetIds.map((id) => +id);
+
+  const responseMap: Map<number, AssetRegistryLocationWithAssetId> = new Map(
+    assetIds.map((id) => [
+      +id,
+      {
+        assetId: +id,
+        location: null,
+      },
+    ])
+  );
+
+  for (const subBatch of splitIntoBatches(
+    Array.from(responseMap.keys()),
+    200
+  )) {
+    if (storage.assetRegistry.assetLocations.v108.is(block)) {
+      await tryExecOrReturnFallback(async () => {
+        const resp = await storage.assetRegistry.assetLocations.v108.getMany(
+          block,
+          idsDecorated
+        );
+
+        subBatch.forEach((assetId, index) => {
+          if (resp[index]) {
+            responseMap.set(assetId, {
+              assetId: assetId,
+              location: resp[index],
+            });
+          }
+        });
+      }, null);
+      continue;
+    }
+
+    if (storage.assetRegistry.assetLocations.v160.is(block)) {
+      await tryExecOrReturnFallback(async () => {
+        const resp = await storage.assetRegistry.assetLocations.v160.getMany(
+          block,
+          idsDecorated
+        );
+
+        subBatch.forEach((assetId, index) => {
+          if (resp[index]) {
+            responseMap.set(assetId, {
+              assetId: assetId,
+              location: resp[index],
+            });
+          }
+        });
+      }, null);
+      continue;
+    }
+
+    if (storage.assetRegistry.assetLocations.v244.is(block)) {
+      await tryExecOrReturnFallback(async () => {
+        const resp = await storage.assetRegistry.assetLocations.v244.getMany(
+          block,
+          idsDecorated
+        );
+
+        subBatch.forEach((assetId, index) => {
+          if (resp[index]) {
+            responseMap.set(assetId, {
+              assetId: assetId,
+              location: resp[index],
+            });
+          }
+        });
+      }, null);
+      continue;
+    }
+
+    throw new UnknownVersionError('storage.assetRegistry.assetLocations');
+  }
+
+  return Array.from(responseMap.values());
+}
+
 export default {
   getAsset,
   getAssetMany,
   getErc20AssetContractAddress,
   getAssetAll,
   getAssetsExistentialDepositAll,
+  getAssetLocation,
+  getAssetLocationsMany,
 };

@@ -346,6 +346,57 @@ export async function upsertWithBatches(
 ) {
   for (const batch of splitIntoBatches(data, maxBatchSize)) {
     await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(batch));
-    // await ctx.store.upsert(batch);
   }
+}
+
+export function bigintToStringAllKeys(maybeObj: any): any {
+  if (maybeObj === null || maybeObj === undefined) {
+    return maybeObj;
+  }
+
+  if (typeof maybeObj === 'bigint') {
+    return maybeObj.toString();
+  }
+
+  if (Array.isArray(maybeObj)) {
+    return maybeObj.map((item: any) => bigintToStringAllKeys(item));
+  }
+
+  if (typeof maybeObj === 'object') {
+    const result: any = {};
+    for (const key in maybeObj) {
+      if (maybeObj.hasOwnProperty(key)) {
+        result[key] = bigintToStringAllKeys(maybeObj[key]);
+      }
+    }
+    return result;
+  }
+
+  return maybeObj;
+}
+
+export function anyToStringAllKeys(maybeObj: any): any {
+  if (maybeObj === null || maybeObj === undefined) {
+    return maybeObj;
+  }
+
+  if (typeof maybeObj === 'bigint' || typeof maybeObj === 'number') {
+    return maybeObj.toString();
+  }
+
+  if (Array.isArray(maybeObj)) {
+    return maybeObj.map((item: any) => anyToStringAllKeys(item));
+  }
+
+  if (typeof maybeObj === 'object') {
+    const result: any = {};
+    for (const key in maybeObj) {
+      if (maybeObj.hasOwnProperty(key)) {
+        result[key] = anyToStringAllKeys(maybeObj[key]);
+      }
+    }
+    return result;
+  }
+
+  return maybeObj;
 }

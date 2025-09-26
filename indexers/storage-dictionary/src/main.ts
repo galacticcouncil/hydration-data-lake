@@ -331,22 +331,34 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
   }
 
   if (appConfig.PROCESS_GENERIC_HIST_DATA) {
+    console.time('prefetchLastAssetHistDataItem');
     await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetHistDataItem(
       ctx
     );
+    console.timeEnd('prefetchLastAssetHistDataItem');
 
+    console.time('getAavepoolHistDataWithUniqueData');
     const aavepoolsToSave = await getAavepoolHistDataWithUniqueData(
       ctx.batchState.state.aavepools,
       ctx
     );
+    console.timeEnd('getAavepoolHistDataWithUniqueData');
+
+    console.time('getAssetHistDataWithUniqueData');
     const eassetHistDataToSave = await getAssetHistDataWithUniqueData(
       ctx.batchState.state.assetHistoricalDataItems,
       ctx
     );
+    console.timeEnd('getAssetHistDataWithUniqueData');
+
+    console.time('getEmaOracleHistDataWithUniqueData');
     const emaOracleDataToSave = await getEmaOracleHistDataWithUniqueData(
       ctx.batchState.state.emaOracles,
       ctx
     );
+    console.timeEnd('getEmaOracleHistDataWithUniqueData');
+
+    console.time('set last data to cache');
     const aavepoolsToSaveList = Array.from(aavepoolsToSave.values());
     const eassetHistDataToSaveList = Array.from(eassetHistDataToSave.values());
     const emaOracleDataToSaveList = Array.from(emaOracleDataToSave.values());
@@ -360,9 +372,13 @@ async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
     LatestProcessedDataCacheManager.getInstance().setLastEmaOracle(
       emaOracleDataToSaveList
     );
+    console.timeEnd('set last data to cache');
+
+    console.time('SAVE');
     await ctx.store.upsert(aavepoolsToSaveList);
     await ctx.store.upsert(eassetHistDataToSaveList);
     await ctx.store.upsert(emaOracleDataToSaveList);
+    console.timeEnd('SAVE');
   }
 
   if (appConfig.PROCESS_ACCOUNTS) {

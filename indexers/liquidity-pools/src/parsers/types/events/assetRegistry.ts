@@ -1,4 +1,4 @@
-import { AssetType } from '../../../model';
+import { AssetMultiLocationsInteriorKind, AssetType } from '../../../model';
 
 export type AssetRegistryRegisteredEventParams = {
   assetId: number;
@@ -25,6 +25,11 @@ export type AssetRegistryUpdatedEventParams = {
 export type AssetRegistryLocationSetEventParams = {
   assetId: number;
   location: AssetRegistryAssetLocation;
+};
+
+export type AssetRegistryLocationWithAssetId = {
+  assetId: number;
+  location: AssetRegistryAssetLocation | null;
 };
 
 export type AssetRegistryAssetLocation = {
@@ -126,11 +131,12 @@ export type AssetLocationJunction =
   | AssetLocationJunction_AccountKey20
   | AssetLocationJunction_Any;
 
-export interface AssetLocationJunction_AccountKey20 {
+export type AssetLocationJunction_AccountKey20 = {
+  // __kind: AssetMultiLocationsInteriorKind.AccountKey20;
   __kind: 'AccountKey20';
   network?: string | undefined | null;
   key: string;
-}
+} & Record<string, any>;
 
 export type AssetLocationJunction_Any = {
   __kind: string;

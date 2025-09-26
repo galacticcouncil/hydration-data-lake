@@ -149,7 +149,7 @@ export async function handleCommonAssetAccountBalances({
           ensure: true,
           blockHeader: blockData.blockHeader,
         });
-        if (!asset || !asset.decimals) continue;
+        if (!asset) continue;
 
         const assetSpotPrice = getAssetsPairPrice({
           ctx,
@@ -168,20 +168,22 @@ export async function handleCommonAssetAccountBalances({
 
         assetBalanceHistData.transferable = balances.free;
         assetBalanceHistData.totalLocked = balances.reserved;
-        assetBalanceHistData.transferableInRefAssetNorm = assetSpotPrice
-          ? calcPriceNormalized({
-              amount: balances.free,
-              assetDecimals: asset.decimals,
-              spotPrice: assetSpotPrice,
-            })
-          : '0';
-        assetBalanceHistData.totalLockedInRefAssetNorm = assetSpotPrice
-          ? calcPriceNormalized({
-              amount: balances.reserved,
-              assetDecimals: asset.decimals,
-              spotPrice: assetSpotPrice,
-            })
-          : '0';
+        assetBalanceHistData.transferableInRefAssetNorm =
+          assetSpotPrice && asset.decimals
+            ? calcPriceNormalized({
+                amount: balances.free,
+                assetDecimals: asset.decimals,
+                spotPrice: assetSpotPrice,
+              })
+            : '0';
+        assetBalanceHistData.totalLockedInRefAssetNorm =
+          assetSpotPrice && asset.decimals
+            ? calcPriceNormalized({
+                amount: balances.reserved,
+                assetDecimals: asset.decimals,
+                spotPrice: assetSpotPrice,
+              })
+            : '0';
 
         accountTotalBalance.totalTransferableNorm = BigNumber(
           accountTotalBalance.totalTransferableNorm
