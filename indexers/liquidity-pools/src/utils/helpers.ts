@@ -315,7 +315,8 @@ export async function retryAsync<T>({
         return await fn();
       } catch (error) {
         attempt++;
-        if (attempt > retries || !retryIf(error)) throw error;
+        // if (attempt > retries || !retryIf(error)) throw error;
+        if (attempt > retries) throw error;
 
         console.log(
           `${retiesLoopId} ${tag ? ` :: ${tag} ` : ''}:: Retrying... attempt ${attempt} failed `

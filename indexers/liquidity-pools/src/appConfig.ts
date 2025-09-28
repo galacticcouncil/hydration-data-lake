@@ -447,6 +447,19 @@ export class AppConfig {
   )
   readonly ARTIFICIAL_OMNIPOOL_ASSET_IDS_SET: Set<string> = new Set([
     '0x34d5ffb83d14d82f87aaf2f13be895a3c814c2ad',
+    '34',
+    '1000765',
+    '103',
+    '110',
+    '111',
+    '112',
+    '113',
+    '15',
+    '19',
+    '22',
+    '420',
+    '5',
+    '690',
   ]);
 
   @Transform(({ value }: { value: string }) => value)
