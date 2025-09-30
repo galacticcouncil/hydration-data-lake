@@ -1,0 +1,312 @@
+version: "3.7"
+
+# ======================================================================================================================
+# =============================================== V A R I A B L E S ====================================================
+# ======================================================================================================================
+
+x-chain-name: &chain-name "hydration"
+
+x-aggregator-pg-db: &aggregator-pg-db "aggregator_indexer"
+x-aggregator-pg-user: &aggregator-pg-user "postgres"
+x-aggregator-pg-password: &aggregator-pg-password "postgres"
+x-aggregator-pg-host: &aggregator-pg-host "db-aggregator-indexer"
+
+x-dictionary-pg-db: &dictionary-pg-db "dictionary_indexer"
+x-dictionary-pg-user: &dictionary-pg-user "postgres"
+x-dictionary-pg-password: &dictionary-pg-password "postgres"
+x-dictionary-pg-host: &dictionary-pg-host "db-dictionary-indexer"
+
+x-ts-redis-host: &ts-redis-host "db-ts-redis"
+x-ts-redis-pass: &ts-redis-pass "password"
+x-ts-redis-port: &ts-redis-port 6379
+
+x-aggregator-indexer-id: &aggregator-indexer-id "swarm_1"
+
+x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
+
+x-aggregator-rpc-url-wss: &aggregator-rpc-url-wss "wss://node-subwhale-4.shellfish.hydration.cloud"
+x-aggregator-rpc-url-https: &aggregator-rpc-url-https "https://node-subwhale-4.shellfish.hydration.cloud"
+
+x-dictionary-rpc-url-wss: &dictionary-rpc-url-wss "wss://node-subwhale-5.shellfish.hydration.cloud"
+x-dictionary-rpc-url-https: &dictionary-rpc-url-https "https://node-subwhale-5.shellfish.hydration.cloud"
+
+x-aggregator-indexer-image: &aggregator-indexer-image "ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-improve-pools-historical-data-aggregation"
+x-dictionary-indexer-image: &dictionary-indexer-image "ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-improve-pools-historical-data-aggregation"
+
+# ======================================================================================================================
+# ======================================== C O N F I G   S E G M E N T S ===============================================
+# ======================================================================================================================
+
+x-db-ts-redis-creds: &db-ts-redis-creds
+  TS_REDIS_HOST: *ts-redis-host
+  TS_REDIS_PORT: *ts-redis-port
+  TS_REDIS_PASS: *ts-redis-pass
+  TS_REDIS_KEY_SPACE_ID: 5
+
+# ------------------------------------ A G G R E G A T I O N   I N D E X E R -------------------------------------------
+
+x-db-aggregator-creds: &db-aggregator-creds
+  DB_PORT: 5432
+  DB_NAME: *aggregator-pg-db
+  DB_USER: *aggregator-pg-user
+  DB_PASS: *aggregator-pg-password
+  DB_HOST: *aggregator-pg-host
+
+x-aggregator-proc-default-envs: &aggregator-proc-default-envs
+  INDEXER_ID: *aggregator-indexer-id
+  NODE_OPTIONS: "--max-old-space-size=8048"
+  NODE_ENV: "self-hosted"
+  CHAIN: *chain-name
+  RPC_URL: *aggregator-rpc-url-wss
+  RPC_URL_HTTPS: *aggregator-rpc-url-https
+
+  # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
+  IGNORE_ARCHIVE_DATA_SOURCE: "false"
+  GATEWAY_HYDRATION_HTTPS: *gateway-hydration-url
+
+  OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+  HSMPOOL_ADDRESS: "0x6d6f646c70792f68736d6f640000000000000000000000000000000000000000"
+  HOLLAR_CONTRACT_ADDRESS: "0x531a654d1696ed52e7275a8cede955e82620f99a"
+
+  MAX_JOB_BATCH_SIZE: 20
+  HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 10
+
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
+  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
+  INDEXING_IS_PAUSED: "false"
+  # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
+  USE_STORAGE_DICTIONARY: "true"
+  # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
+  # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
+  # For example, if the Storage Dictionary is running as a single processor indexer
+  # within the same Swarm stack as the Liquidity Pools indexer,
+  # the URL for all pools should be set uniformly, such as:
+  #   http://storage-dictionary-api:8090/graphql
+  STORAGE_DICTIONARY_LBPPOOL_URL: "http://dictionary-api:8080/graphql"
+  STORAGE_DICTIONARY_XYKPOOL_URL: "http://dictionary-api:8080/graphql"
+  STORAGE_DICTIONARY_OMNIPOOL_URL: "http://dictionary-api:8080/graphql"
+  STORAGE_DICTIONARY_STABLEPOOL_URL: "http://dictionary-api:8080/graphql"
+  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "http://dictionary-api:8080/graphql"
+  STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: "http://dictionary-api:8080/graphql"
+
+#  STORAGE_DICTIONARY_LBPPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql"
+#  STORAGE_DICTIONARY_XYKPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql"
+#  STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql"
+#  STORAGE_DICTIONARY_STABLEPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql"
+#  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql"
+#  STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql"
+
+x-aggregator-proc-default-config: &aggregator-proc-default-config
+  image: *aggregator-indexer-image
+  networks:
+    - default
+  command:
+    - sh
+    - -c
+    - "sqd migration:apply && node lib/main.js"
+  deploy:
+    restart_policy:
+      condition: on-failure
+
+# -------------------------------------- D I C T I O N A R Y   I N D E X E R -------------------------------------------
+
+x-db-dictionary-creds: &db-dictionary-creds
+  DB_PORT: 5432
+  DB_NAME: *dictionary-pg-db
+  DB_USER: *dictionary-pg-user
+  DB_PASS: *dictionary-pg-password
+  DB_HOST: *dictionary-pg-host
+
+x-dictionary-proc-default-envs: &dictionary-proc-default-envs
+  NODE_ENV: "self-hosted"
+  CHAIN: *chain-name
+  RPC_URL: *dictionary-rpc-url-wss
+  RPC_URL_HTTPS: *dictionary-rpc-url-https
+  IGNORE_ARCHIVE_DATA_SOURCE: "false"
+  GATEWAY_HYDRATION_HTTPS: *gateway-hydration-url
+
+  PROCESS_LBP_POOLS: "true"
+  PROCESS_XYK_POOLS: "true"
+  PROCESS_OMNIPOOLS: "true"
+  PROCESS_STABLEPOOLS: "true"
+  PROCESS_GENERIC_HIST_DATA: "true"
+  PROCESS_ACCOUNTS: "true"
+
+  INDEXER_MAX_SUB_BATCH_SIZE: 500
+  SUB_BATCH_MAX_TIMEOUT_MS: 500
+  RUNTIME_API_CALLS_CONCURRENCY: 5
+  ASSETS_TRACKER_PROCESSOR: "true"
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
+  INDEXING_IS_PAUSED: "false"
+
+x-dictionary-proc-default-config: &dictionary-proc-default-config
+  image: *dictionary-indexer-image
+  networks:
+    - default
+  command:
+    - sh
+    - -c
+    - "sqd migration:apply && node lib/main.js"
+  deploy:
+    restart_policy:
+      condition: on-failure
+
+# ======================================================================================================================
+# ============================================ S T A C K   C O N F I G =================================================
+# ======================================================================================================================
+
+networks:
+  default:
+    driver: overlay
+
+volumes:
+  db-aggregator-indexer:
+    driver: local
+  db-dictionary-indexer:
+    driver: local
+  db-ts-redis:
+    driver: local
+
+services:
+  # ------------------------------------ A G G R E G A T I O N   I N D E X E R -------------------------------------------
+  db-ts-redis:
+    image: redis/redis-stack:latest
+    command:
+      - sh
+      - -c
+      - |
+        redis-stack-server \
+        --requirepass password
+    ports:
+      - "6379:6379"
+    volumes:
+      - "db-ts-redis:/var/lib/redis/data"
+    networks:
+      - default
+    logging:
+      driver: json-file
+
+  db-aggregator-indexer:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: *aggregator-pg-db
+      POSTGRES_USER: *aggregator-pg-user
+      POSTGRES_PASSWORD: *aggregator-pg-password
+    command:
+      - "postgres"
+      - "-c"
+      - "statement_timeout=3000000"
+    volumes:
+      - "db-aggregator-indexer:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    logging:
+      driver: json-file
+    networks:
+      - default
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  aggregator-processor:
+    <<: *aggregator-proc-default-config
+    depends_on:
+      - db-aggregator-indexer
+    environment:
+      <<:
+        [
+          *db-aggregator-creds,
+          *db-ts-redis-creds,
+          *aggregator-proc-default-envs,
+        ]
+
+      PROCESS_FROM_BLOCK: 9333143
+      PROCESS_TO_BLOCK: -1
+
+  aggregator-api:
+    image: *aggregator-indexer-image
+    depends_on:
+      - db-aggregator-indexer
+    environment:
+      <<: [*db-aggregator-creds, *db-ts-redis-creds]
+      INDEXER_ID: *aggregator-indexer-id
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      GQL_PORT: 8080
+      SUB_PROCESSOR_SCHEMAS: "core_processor"
+    ports:
+      - "8088:8080"
+    networks:
+      - default
+    logging:
+      driver: json-file
+    command:
+      - sh
+      - -c
+      - "sqd api:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  # -------------------------------------- D I C T I O N A R Y   I N D E X E R -------------------------------------------
+
+  db-dictionary-indexer:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: *dictionary-pg-db
+      POSTGRES_USER: *dictionary-pg-user
+      POSTGRES_PASSWORD: *dictionary-pg-password
+    command:
+      - "postgres"
+      - "-c"
+      - "statement_timeout=3000000"
+    volumes:
+      - "db-dictionary-indexer:/var/lib/postgresql/data"
+    ports:
+      - "5433:5432"
+    logging:
+      driver: json-file
+    networks:
+      - default
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  dictionary-processor:
+    <<: *dictionary-proc-default-config
+    depends_on:
+      - db-dictionary-indexer
+    environment:
+      <<: [*db-dictionary-creds, *dictionary-proc-default-envs]
+
+      PROCESS_FROM_BLOCK: 9333143
+      PROCESS_TO_BLOCK: -1
+
+  dictionary-api:
+    image: *dictionary-indexer-image
+    depends_on:
+      - db-dictionary-indexer
+    environment:
+      <<: *db-dictionary-creds
+      NODE_ENV: "self-hosted"
+      CHAIN: *chain-name
+      GQL_PORT: 8080
+      #
+      # Configuration settings for running the indexer in multiprocessor mode.
+      #
+      # Config for squidStatus API query to show statuses of all running processors with information about target
+      # blocks range of each processor.
+      SUB_PROCESSORS_RANGES: "squid_processor:9333143:-1"
+    ports:
+      - "8089:8080"
+    networks:
+      - default
+    logging:
+      driver: json-file
+    command:
+      - sh
+      - -c
+      - "sqd api:prod"
+    deploy:
+      restart_policy:
+        condition: on-failure
