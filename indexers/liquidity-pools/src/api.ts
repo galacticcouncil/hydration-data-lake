@@ -162,7 +162,7 @@ async function initializeServer() {
       next();
     });
 
-    app.use('/admin/queues', getBullBoardExpressAdapter().getRouter());
+    // app.use('/admin/queues', getBullBoardExpressAdapter().getRouter());
 
     app.use(postgraphileInstance);
 

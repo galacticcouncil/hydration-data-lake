@@ -101,27 +101,6 @@ class RedisConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: number = 5_000;
 
-  @IsNotEmpty()
-  readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
-
-  @IsNotEmpty()
-  readonly ORCHESTRATOR_QUEUE_REDIS_PASS: string = 'orchestra';
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly ORCHESTRATOR_QUEUE_REDIS_PORT: number = 6379;
-
-  @IsNotEmpty()
-  readonly TS_REDIS_HOST: string = 'localhost';
-
-  @IsNotEmpty()
-  readonly TS_REDIS_PASS: string = 'orchestra';
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly TS_REDIS_PORT: number = 6379;
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly TS_REDIS_KEY_SPACE_ID: number = 3;
-
   static getInstance(): RedisConfig {
     if (RedisConfig.instance) return RedisConfig.instance;
 
@@ -293,6 +272,27 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_ACTION_RETRIES_MAX_DELAY_MS: number = 1000;
+
+  @IsNotEmpty()
+  readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
+
+  @IsNotEmpty()
+  readonly ORCHESTRATOR_QUEUE_REDIS_PASS: string = 'orchestra';
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ORCHESTRATOR_QUEUE_REDIS_PORT: number = 6379;
+
+  @IsNotEmpty()
+  readonly TS_REDIS_HOST: string = 'localhost';
+
+  @IsNotEmpty()
+  readonly TS_REDIS_PASS: string = 'orchestra';
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly TS_REDIS_PORT: number = 6379;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly TS_REDIS_KEY_SPACE_ID: number = 3;
 
   /**
    * RPC endpoint URL (either http(s) or ws(s))

@@ -11,9 +11,9 @@ export function getBullBoardExpressAdapter() {
     `${appConfig.INDEXER_ID}_PROCESSING_POOL`,
     {
       redis: {
-        port: appConfig.redis.ORCHESTRATOR_QUEUE_REDIS_PORT,
-        host: appConfig.redis.ORCHESTRATOR_QUEUE_REDIS_HOST,
-        password: appConfig.redis.ORCHESTRATOR_QUEUE_REDIS_PASS,
+        port: appConfig.ORCHESTRATOR_QUEUE_REDIS_PORT,
+        host: appConfig.ORCHESTRATOR_QUEUE_REDIS_HOST,
+        password: appConfig.ORCHESTRATOR_QUEUE_REDIS_PASS,
       },
     }
   );
