@@ -29,10 +29,10 @@ export class BullQueueClient {
   constructor() {
     this.assetPriceScrapperQueue = new Queue(this.queueName, {
       redis: {
-        port: appConfig.TS_REDIS_PORT,
-        host: appConfig.TS_REDIS_HOST,
-        password: appConfig.TS_REDIS_PASS,
-        db: appConfig.TS_REDIS_KEY_SPACE_ID,
+        port: appConfig.redis.TS_REDIS_PORT,
+        host: appConfig.redis.TS_REDIS_HOST,
+        password: appConfig.redis.TS_REDIS_PASS,
+        db: appConfig.redis.TS_REDIS_KEY_SPACE_ID,
       },
     });
   }

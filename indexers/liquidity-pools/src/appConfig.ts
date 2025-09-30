@@ -64,7 +64,7 @@ class ConcurrencyConfig {
   readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 250;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly EVM_CONTRACT_CALL_RETRIES: number = 1;
+  readonly EVM_CONTRACT_CALL_RETRIES: number = 2;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
@@ -100,6 +100,27 @@ class RedisConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: number = 5_000;
+
+  @IsNotEmpty()
+  readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
+
+  @IsNotEmpty()
+  readonly ORCHESTRATOR_QUEUE_REDIS_PASS: string = 'orchestra';
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ORCHESTRATOR_QUEUE_REDIS_PORT: number = 6379;
+
+  @IsNotEmpty()
+  readonly TS_REDIS_HOST: string = 'localhost';
+
+  @IsNotEmpty()
+  readonly TS_REDIS_PASS: string = 'orchestra';
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly TS_REDIS_PORT: number = 6379;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly TS_REDIS_KEY_SPACE_ID: number = 3;
 
   static getInstance(): RedisConfig {
     if (RedisConfig.instance) return RedisConfig.instance;
@@ -299,27 +320,6 @@ export class AppConfig {
 
   readonly ASSET_HUB_RPC_URL: string =
     'wss://polkadot-asset-hub-rpc.polkadot.io';
-
-  @IsNotEmpty()
-  readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
-
-  @IsNotEmpty()
-  readonly ORCHESTRATOR_QUEUE_REDIS_PASS: string = 'orchestra';
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly ORCHESTRATOR_QUEUE_REDIS_PORT: number = 6379;
-
-  @IsNotEmpty()
-  readonly TS_REDIS_HOST: string = 'localhost';
-
-  @IsNotEmpty()
-  readonly TS_REDIS_PASS: string = 'orchestra';
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly TS_REDIS_PORT: number = 6379;
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly TS_REDIS_KEY_SPACE_ID: number = 3;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE: number = 1000;

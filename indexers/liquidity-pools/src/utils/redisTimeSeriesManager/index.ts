@@ -15,6 +15,7 @@ import {
   TimeSeriesDuplicatePolicies,
 } from '@redis/time-series';
 import { TimeSeriesBucketTimestamp } from '@redis/time-series/dist/commands';
+import pMap from 'p-map';
 
 export type RedisInstance = RedisClientType<
   RedisDefaultModules,
@@ -257,16 +258,20 @@ export class RedisTimeSeriesManager {
         listToSave.push({ key, timestamp, value });
       }
 
-      for (const [uniqueKey, indexerData] of keysMap.entries())
-        await this.ensureTimeSeries(uniqueKey, {
-          name: indexerData.name,
-          astAId: indexerData.assetAId,
-          astBId: indexerData.assetBId,
-          ...this.getVolumeSeriesLabel(
-            indexerData.assetAId,
-            indexerData.assetBId
-          ),
-        });
+      await pMap(
+        Array.from(keysMap.entries()),
+        ([uniqueKey, indexerData]) =>
+          this.ensureTimeSeries(uniqueKey, {
+            name: indexerData.name,
+            astAId: indexerData.assetAId,
+            astBId: indexerData.assetBId,
+            ...this.getVolumeSeriesLabel(
+              indexerData.assetAId,
+              indexerData.assetBId
+            ),
+          }),
+        { concurrency: 100 }
+      );
 
       await openClient.ts.mAdd(listToSave);
     } catch (e) {

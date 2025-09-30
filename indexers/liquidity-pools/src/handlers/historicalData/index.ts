@@ -34,7 +34,9 @@ export class HistoricalDataManager {
         ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
           MultiFlowProcessingPhase.INITIAL)
     ) {
+      console.time('saveHistoricalDataBulk > saveSwapFeeRelatedDataBulk');
       await this.saveSwapFeeRelatedDataBulk(ctx);
+      console.timeEnd('saveHistoricalDataBulk > saveSwapFeeRelatedDataBulk');
     }
 
     if (
@@ -47,11 +49,18 @@ export class HistoricalDataManager {
           ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
             MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
     ) {
+      console.time('saveHistoricalDataBulk > saveAssetRelatedDataBulk');
       await this.saveAssetRelatedDataBulk(ctx);
+      console.timeEnd('saveHistoricalDataBulk > saveAssetRelatedDataBulk');
+
+      console.time('saveHistoricalDataBulk > saveGeneralHistoricalDataBulk');
       await this.saveGeneralHistoricalDataBulk(ctx);
+      console.timeEnd('saveHistoricalDataBulk > saveGeneralHistoricalDataBulk');
     }
 
+    console.time('saveHistoricalDataBulk > savePoolVolumesRelatedDataBulk');
     await this.savePoolVolumesRelatedDataBulk(ctx);
+    console.timeEnd('saveHistoricalDataBulk > savePoolVolumesRelatedDataBulk');
 
     await ctx.store.save(
       Array.from(ctx.batchState.state.moneyMarketReserves.values())
@@ -82,15 +91,15 @@ export class HistoricalDataManager {
   }
 
   static async saveSwapFeeRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
-    await ctx.store.save([
-      ...ctx.batchState.state.historicalAssetSwapFees.values(),
-    ]);
-    await ctx.store.save([
-      ...ctx.batchState.state.historicalAccountSwapFees.values(),
-    ]);
-    await ctx.store.save([
-      ...ctx.batchState.state.historicalAccountAssetSwapFees.values(),
-    ]);
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.historicalAssetSwapFees.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.historicalAccountSwapFees.values())
+    );
+    await ctx.store.save(
+      Array.from(ctx.batchState.state.historicalAccountAssetSwapFees.values())
+    );
   }
 
   static async savePoolVolumesRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -163,6 +172,9 @@ export class HistoricalDataManager {
   }
 
   static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
+    console.time(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > commitAssetPrices'
+    );
     await this.commitAssetPricesToRedisTimeSeries(
       Array.from(
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
@@ -175,8 +187,12 @@ export class HistoricalDataManager {
       ),
       ctx
     );
+    console.timeEnd(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > commitAssetPrices'
+    );
 
     if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+      console.time('saveHistoricalDataBulk > saveAssetRelatedDataBulk > save');
       const assetsSpotPricesListToSave = Array.from(
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
       );
@@ -191,6 +207,9 @@ export class HistoricalDataManager {
       await ctx.store.save(assetsPairVolumesListToSave);
       await ctx.store.save(
         Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
+      );
+      console.timeEnd(
+        'saveHistoricalDataBulk > saveAssetRelatedDataBulk > save'
       );
 
       return;

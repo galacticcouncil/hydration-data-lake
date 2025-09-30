@@ -35,6 +35,7 @@ import {
   XykpoolVolumeHistoricalData,
 } from '../model';
 import { Between } from 'typeorm/find-options/operator/Between';
+import { Entity } from '@subsquid/typeorm-store/src/store';
 
 export async function prefetchGenericPersistentData(
   ctx: SqdProcessorContext<Store>
@@ -43,31 +44,34 @@ export async function prefetchGenericPersistentData(
 
   await prefetchAllAssets(ctx);
 
-  ctx.batchState.state.lbpAllBatchPools = new Map(
-    (
-      await ctx.store.find(Lbppool, {
-        where: {},
-        relations: { account: true, assetA: true, assetB: true },
-      })
-    ).map((p) => [p.id, p])
-  );
+  const fetchAndCachePersistentData = async (
+    cacheContainer: Map<string, Entity>,
+    fetchFn: () => Promise<Entity[]>
+  ) => {
+    const resp = await fetchFn();
 
-  ctx.batchState.state.xykAllBatchPools = new Map(
-    (
-      await ctx.store.find(Xykpool, {
-        where: {},
-        relations: { assetA: true, assetB: true, account: true },
-      })
-    ).map((p) => [p.id, p])
-  );
+    for (const entity of resp) {
+      cacheContainer.set(entity.id, entity);
+    }
+  };
 
-  ctx.batchState.state.omnipoolAssets = new Map(
-    (
-      await ctx.store.find(OmnipoolAsset, {
-        where: {},
-        relations: { asset: true, pool: true, addedAtBlock: true },
-      })
-    ).map((p) => [p.id, p])
+  await fetchAndCachePersistentData(ctx.batchState.state.lbpAllBatchPools, () =>
+    ctx.store.find(Lbppool, {
+      where: {},
+      relations: { account: true, assetA: true, assetB: true },
+    })
+  );
+  await fetchAndCachePersistentData(ctx.batchState.state.xykAllBatchPools, () =>
+    ctx.store.find(Xykpool, {
+      where: {},
+      relations: { assetA: true, assetB: true, account: true },
+    })
+  );
+  await fetchAndCachePersistentData(ctx.batchState.state.omnipoolAssets, () =>
+    ctx.store.find(OmnipoolAsset, {
+      where: {},
+      relations: { asset: true, pool: true, addedAtBlock: true },
+    })
   );
 
   ctx.batchState.state.omnipoolEntity =
@@ -76,44 +80,39 @@ export async function prefetchGenericPersistentData(
       relations: { account: true },
     })) ?? null;
 
-  ctx.batchState.state.stableswapPools = new Map(
-    (
-      await ctx.store.find(Stableswap, {
-        where: {},
-        relations: {
-          account: true,
-          shareToken: true,
-          createdAtBlock: true,
-          assets: { asset: true },
-        },
-      })
-    ).map((p) => [p.id, p])
+  await fetchAndCachePersistentData(ctx.batchState.state.stableswapPools, () =>
+    ctx.store.find(Stableswap, {
+      where: {},
+      relations: {
+        account: true,
+        shareToken: true,
+        createdAtBlock: true,
+        assets: { asset: true },
+      },
+    })
   );
-  ctx.batchState.state.stableswapAssets = new Map(
-    (
-      await ctx.store.find(StableswapAsset, {
-        where: {},
-        relations: {
-          pool: true,
-          asset: true,
-        },
-      })
-    ).map((p) => [p.id, p])
+  await fetchAndCachePersistentData(ctx.batchState.state.stableswapAssets, () =>
+    ctx.store.find(StableswapAsset, {
+      where: {},
+      relations: {
+        pool: true,
+        asset: true,
+      },
+    })
   );
-  ctx.batchState.state.aavePools = new Map(
-    (
-      await ctx.store.find(Aavepool, {
-        where: {},
-        relations: {
-          reserveAsset: true,
-          aToken: true,
-        },
-      })
-    ).map((p) => [p.id, p])
+  await fetchAndCachePersistentData(ctx.batchState.state.aavePools, () =>
+    ctx.store.find(Aavepool, {
+      where: {},
+      relations: {
+        reserveAsset: true,
+        aToken: true,
+      },
+    })
   );
-  ctx.batchState.state.moneyMarketReserves = new Map(
-    (
-      await ctx.store.find(MoneyMarketReserve, {
+  await fetchAndCachePersistentData(
+    ctx.batchState.state.moneyMarketReserves,
+    () =>
+      ctx.store.find(MoneyMarketReserve, {
         where: {},
         relations: {
           aToken: true,
@@ -122,9 +121,7 @@ export async function prefetchGenericPersistentData(
           aavePool: true,
         },
       })
-    ).map((p) => [p.id, p])
   );
-
   ctx.batchState.state.hsmpoolEntity =
     (await ctx.store.findOne(Hsmpool, {
       where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
@@ -133,25 +130,132 @@ export async function prefetchGenericPersistentData(
       },
     })) ?? null;
 
-  ctx.batchState.state.hsmCollaterals = new Map(
-    (
-      await ctx.store.find(HsmCollateral, {
-        where: { isRemoved: false },
-        relations: {
-          pool: true,
-          asset: true,
-          stableswap: true,
-        },
-      })
-    ).map((c) => [c.id, c])
+  await fetchAndCachePersistentData(ctx.batchState.state.hsmCollaterals, () =>
+    ctx.store.find(HsmCollateral, {
+      where: { isRemoved: false },
+      relations: {
+        pool: true,
+        asset: true,
+        stableswap: true,
+      },
+    })
   );
-  ctx.batchState.state.aaveFacilitators = new Map(
-    (
-      await ctx.store.find(AaveFacilitator, {
-        where: { isRemoved: false },
-      })
-    ).map((c) => [c.id, c])
+
+  await fetchAndCachePersistentData(ctx.batchState.state.aaveFacilitators, () =>
+    ctx.store.find(AaveFacilitator, {
+      where: { isRemoved: false },
+    })
   );
+
+  // ctx.batchState.state.lbpAllBatchPools = new Map(
+  //   (
+  //     await ctx.store.find(Lbppool, {
+  //       where: {},
+  //       relations: { account: true, assetA: true, assetB: true },
+  //     })
+  //   ).map((p) => [p.id, p])
+  // );
+
+  // ctx.batchState.state.xykAllBatchPools = new Map(
+  //   (
+  //     await ctx.store.find(Xykpool, {
+  //       where: {},
+  //       relations: { assetA: true, assetB: true, account: true },
+  //     })
+  //   ).map((p) => [p.id, p])
+  // );
+
+  // ctx.batchState.state.omnipoolAssets = new Map(
+  //   (
+  //     await ctx.store.find(OmnipoolAsset, {
+  //       where: {},
+  //       relations: { asset: true, pool: true, addedAtBlock: true },
+  //     })
+  //   ).map((p) => [p.id, p])
+  // );
+
+  // ctx.batchState.state.omnipoolEntity =
+  //   (await ctx.store.findOne(Omnipool, {
+  //     where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
+  //     relations: { account: true },
+  //   })) ?? null;
+
+  // ctx.batchState.state.stableswapPools = new Map(
+  //   (
+  //     await ctx.store.find(Stableswap, {
+  //       where: {},
+  //       relations: {
+  //         account: true,
+  //         shareToken: true,
+  //         createdAtBlock: true,
+  //         assets: { asset: true },
+  //       },
+  //     })
+  //   ).map((p) => [p.id, p])
+  // );
+  // ctx.batchState.state.stableswapAssets = new Map(
+  //   (
+  //     await ctx.store.find(StableswapAsset, {
+  //       where: {},
+  //       relations: {
+  //         pool: true,
+  //         asset: true,
+  //       },
+  //     })
+  //   ).map((p) => [p.id, p])
+  // );
+  // ctx.batchState.state.aavePools = new Map(
+  //   (
+  //     await ctx.store.find(Aavepool, {
+  //       where: {},
+  //       relations: {
+  //         reserveAsset: true,
+  //         aToken: true,
+  //       },
+  //     })
+  //   ).map((p) => [p.id, p])
+  // );
+  // ctx.batchState.state.moneyMarketReserves = new Map(
+  //   (
+  //     await ctx.store.find(MoneyMarketReserve, {
+  //       where: {},
+  //       relations: {
+  //         aToken: true,
+  //         underlyingAsset: true,
+  //         variableDebtToken: true,
+  //         aavePool: true,
+  //       },
+  //     })
+  //   ).map((p) => [p.id, p])
+  // );
+
+  // ctx.batchState.state.hsmpoolEntity =
+  //   (await ctx.store.findOne(Hsmpool, {
+  //     where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
+  //     relations: {
+  //       account: true,
+  //     },
+  //   })) ?? null;
+
+  // ctx.batchState.state.hsmCollaterals = new Map(
+  //   (
+  //     await ctx.store.find(HsmCollateral, {
+  //       where: { isRemoved: false },
+  //       relations: {
+  //         pool: true,
+  //         asset: true,
+  //         stableswap: true,
+  //       },
+  //     })
+  //   ).map((c) => [c.id, c])
+  // );
+  // ctx.batchState.state.aaveFacilitators = new Map(
+  //   (
+  //     await ctx.store.find(AaveFacilitator, {
+  //       where: { isRemoved: false },
+  //     })
+  //   ).map((c) => [c.id, c])
+  // );
 }
 
 export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationPhase(
