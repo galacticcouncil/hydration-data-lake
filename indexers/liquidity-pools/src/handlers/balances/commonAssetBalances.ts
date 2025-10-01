@@ -122,7 +122,7 @@ export async function handleCommonAssetAccountBalances({
   }
 
   const refAsset = await getOrCreateAsset({
-    id: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+    assetRegistryId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
     ctx,
     ensure: true,
     blockHeader: ctx.blocks[ctx.blocks.length - 1].header,

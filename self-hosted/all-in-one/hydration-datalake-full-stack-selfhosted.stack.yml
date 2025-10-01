@@ -71,6 +71,9 @@ x-aggregator-proc-default-envs: &aggregator-proc-default-envs
   MAX_JOB_BATCH_SIZE: 20
   HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 10
 
+  ASSET_SPOT_PRICE_ASSET_OUT_IDS: "10"
+  ASSET_PRICE_BASE_ASSET_ID: "10"
+
   PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
   UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
   INDEXING_IS_PAUSED: "false"
@@ -234,6 +237,8 @@ services:
       CHAIN: *chain-name
       GQL_PORT: 8080
       SUB_PROCESSOR_SCHEMAS: "core_processor"
+      ASSET_SPOT_PRICE_ASSET_OUT_IDS: "10"
+      ASSET_PRICE_BASE_ASSET_ID: "10"
     ports:
       - "8088:8080"
     networks:

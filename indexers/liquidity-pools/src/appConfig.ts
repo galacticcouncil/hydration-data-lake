@@ -195,6 +195,10 @@ class ProcessingModeConfig {
 
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
+  readonly SIMPLIFIED_PROCESSING: boolean = false;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
   readonly REAGGREGATION_PROCESSING_MODE: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')

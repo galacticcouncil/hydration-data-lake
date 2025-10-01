@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { singleFlowAllInOneProcessor } from './singleFlowAllInOneProcessor';
 import { getProcessingMode, ProcessingMode } from '../../getProcessingMode';
 import { multiFlowAllInOneProcessor } from './multiFlowAllInOneProcessor';
+import { singleFlowSimplifiedAllInOneProcessor } from './simplifiedAllInOneProcessor';
 
 export async function execAllInOneProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -11,7 +12,11 @@ export async function execAllInOneProcessorHandlers(
 
   switch (getProcessingMode(ctx)) {
     case ProcessingMode.ALL_IN_ONE_SINGLE_FLOW_PROCESSOR:
-      await singleFlowAllInOneProcessor(ctx);
+      if (ctx.appConfig.processingMode.SIMPLIFIED_PROCESSING) {
+        await singleFlowSimplifiedAllInOneProcessor(ctx);
+      } else {
+        await singleFlowAllInOneProcessor(ctx);
+      }
       break;
     case ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR:
       await multiFlowAllInOneProcessor(ctx);
