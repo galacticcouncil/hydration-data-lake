@@ -340,16 +340,6 @@ export async function retryAsync<T>({
   }
 }
 
-export async function upsertWithBatches(
-  data: Entity[],
-  ctx: SqdProcessorContext<Store>,
-  maxBatchSize: number = 1000
-) {
-  for (const batch of splitIntoBatches(data, maxBatchSize)) {
-    await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(batch));
-  }
-}
-
 export function bigintToStringAllKeys(maybeObj: any): any {
   if (maybeObj === null || maybeObj === undefined) {
     return maybeObj;

@@ -12,17 +12,9 @@ export async function handleTransfers(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
-  const allPoolsIds = [
-    ...ctx.batchState.state.lbpAllBatchPools.keys(),
-    ...ctx.batchState.state.xykAllBatchPools.keys(),
-  ];
-
   const balancesTransferEvents = [
     ...parsedEvents.getSectionByEventName(EventName.Balances_Transfer).values(),
   ];
-  //   .filter((e) =>
-  //   isPoolTransfer(allPoolsIds, e.eventData.params.from, e.eventData.params.to)
-  // );
   const tokensTransferEvents = [
     ...parsedEvents.getSectionByEventName(EventName.Tokens_Transfer).values(),
   ];
@@ -46,5 +38,8 @@ export async function handleTransfers(
     await handleCurrenciesTransfer(ctx, eventData);
   }
 
-  await ctx.store.save([...ctx.batchState.state.transfers.values()]);
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.transfers.values()),
+    ctx
+  );
 }

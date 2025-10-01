@@ -54,10 +54,11 @@ export async function handleAssetRegistry(
     await assetLocationSet(ctx, eventData);
   }
 
-  await ctx.store.save(
-    [...ctx.batchState.state.assetsAll.values()].filter((asset) =>
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.assetsAll.values()).filter((asset) =>
       ctx.batchState.state.assetIdsToSave.has(asset.id)
-    )
+    ),
+    ctx
   );
   ctx.batchState.state.assetIdsToSave = new Set();
 }

@@ -71,7 +71,10 @@ async function getStableswapDataPromise({
         poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
       }),
     }),
-    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
   );
 
   const getPoolPegsDetails = (): Pick<
@@ -227,7 +230,10 @@ export async function handleStableswapHistoricalData(
           ),
         };
       },
-      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
     );
 
     predefinedEntities.push(
@@ -243,7 +249,10 @@ export async function handleStableswapHistoricalData(
           )
           .flat(),
         async (item) => getStableswapDataPromise({ ...item, ctx }),
-        { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+        {
+          concurrency:
+            ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+        }
       )
     );
   }
@@ -266,10 +275,12 @@ export async function handleStableswapHistoricalData(
     }
   }
 
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values()),
+    ctx
   );
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values())
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()),
+    ctx
   );
 }

@@ -14,7 +14,6 @@ import {
 import {
   getCallOriginParts,
   jsonToString,
-  upsertWithBatches,
 } from '../utils/helpers';
 import { getOrCreateAccount } from '../handlers/accounts';
 import {
@@ -609,40 +608,34 @@ export class ChainActivityTraceManager {
   static async saveActivityTraceEntities(ctx: SqdProcessorContext<Store>) {
     const state = ctx.batchState.state;
 
-    await upsertWithBatches(
+    await ctx.storeUtils.upsertWithBatches(
       Array.from(state.batchBlocks.values()).reverse(),
-      ctx,
-      500
+      ctx
     );
-    await upsertWithBatches(
+
+    await ctx.storeUtils.upsertWithBatches(
       Array.from(state.batchExtrinsics.values()).reverse(),
-      ctx,
-      500
+      ctx
     );
-    await upsertWithBatches(
+    await ctx.storeUtils.upsertWithBatches(
       Array.from(state.batchCalls.values()).reverse(),
-      ctx,
-      500
+      ctx
     );
-    await upsertWithBatches(
+    await ctx.storeUtils.upsertWithBatches(
       Array.from(state.batchEvents.values()).reverse(),
-      ctx,
-      500
+      ctx
     );
-    await upsertWithBatches(
+    await ctx.storeUtils.upsertWithBatches(
       Array.from(state.chainActivityTraces.values()).reverse(),
-      ctx,
-      500
+      ctx
     );
-    await upsertWithBatches(
+    await ctx.storeUtils.upsertWithBatches(
       Array.from(state.accountChainActivityTraces.values()).reverse(),
-      ctx,
-      500
+      ctx
     );
-    await upsertWithBatches(
+    await ctx.storeUtils.upsertWithBatches(
       Array.from(state.chainActivityTraceRelations.values()).reverse(),
-      ctx,
-      500
+      ctx
     );
   }
 

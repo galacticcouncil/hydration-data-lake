@@ -97,7 +97,10 @@ export async function handleEmaOracleHistoricalData(
 
           return newEntities;
         },
-        { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+        {
+          concurrency:
+            ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+        }
       )
     );
   }
@@ -109,7 +112,8 @@ export async function handleEmaOracleHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save([
-    ...ctx.batchState.state.emaOracleEntriesHistoricalData.values(),
-  ]);
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.emaOracleEntriesHistoricalData.values()),
+    ctx
+  );
 }

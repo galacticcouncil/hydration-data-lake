@@ -47,7 +47,8 @@ export async function handleOmnipoolHistoricalData(
         };
       },
       {
-        concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
       }
     );
 
@@ -163,7 +164,10 @@ export async function handleOmnipoolHistoricalData(
 
           return newEntity;
         },
-        { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+        {
+          concurrency:
+            ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+        }
       )
     );
   }
@@ -175,11 +179,13 @@ export async function handleOmnipoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values()),
+    ctx
   );
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values())
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values()),
+    ctx
   );
 }
 
@@ -294,7 +300,10 @@ export async function getOmnipoolHistDataWithUniqueData({
         }
       }
     },
-    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
   );
 
   return {

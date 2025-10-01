@@ -132,5 +132,5 @@ export async function handleAavepoolHistoricalData(
     predefinedEntities.map((item) => [item.id, item])
   );
 
-  await ctx.store.save(predefinedEntities);
+  await ctx.storeUtils.upsertWithBatches(predefinedEntities, ctx);
 }

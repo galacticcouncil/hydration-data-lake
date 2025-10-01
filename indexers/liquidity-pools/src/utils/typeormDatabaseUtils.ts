@@ -1,4 +1,8 @@
 import { AppConfig } from '../appConfig';
+import { Entity } from '@subsquid/typeorm-store/src/store';
+import { SqdProcessorContext } from '../processor';
+import { Store } from '@subsquid/typeorm-store';
+import { splitIntoBatches } from './helpers';
 
 type RetryableFn<T> = () => Promise<T>;
 
@@ -34,6 +38,16 @@ export class TypeormDatabaseUtils {
         );
         await new Promise((r) => setTimeout(r, delay));
       }
+    }
+  }
+
+  async upsertWithBatches(
+    data: Entity[],
+    ctx: SqdProcessorContext<Store>,
+    maxBatchSize: number = appConfig.DB_ACTION_MAX_BATCH_SIZE
+  ) {
+    for (const batch of splitIntoBatches(data, maxBatchSize)) {
+      await this.runWithRetry(() => ctx.store.upsert(batch));
     }
   }
 }

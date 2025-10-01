@@ -207,8 +207,8 @@ export async function prefetchOrInitAllBatchAccounts(
 }
 
 export async function saveAllBatchAccounts(ctx: SqdProcessorContext<Store>) {
-  // await ctx.store.save(Array.from(ctx.batchState.state.accounts.values()));
-  await ctx.storeUtils.runWithRetry(() =>
-    ctx.store.save(Array.from(ctx.batchState.state.accounts.values()))
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.accounts.values()),
+    ctx
   );
 }

@@ -161,8 +161,9 @@ export async function handleLbppoolHistoricalData(
   );
 
   if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
-    await ctx.store.save(
-      Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values())
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values()),
+      ctx
     );
     return;
   }
@@ -170,7 +171,10 @@ export async function handleLbppoolHistoricalData(
     ctx.batchState.state.lbpPoolAllHistoricalData,
     ctx
   );
-  await ctx.store.save(Array.from(entitiesToSave.values()));
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(entitiesToSave.values()),
+    ctx
+  );
 }
 
 export async function getLbppoolHistDataWithUniqueData(
@@ -210,7 +214,10 @@ export async function getLbppoolHistDataWithUniqueData(
         poolsResult.set(item.id, item);
       }
     },
-    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
   );
 
   return poolsResult;

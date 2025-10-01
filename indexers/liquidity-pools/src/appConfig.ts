@@ -277,6 +277,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_ACTION_RETRIES_MAX_DELAY_MS: number = 1000;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_ACTION_MAX_BATCH_SIZE: number = 2500;
+
   @IsNotEmpty()
   readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
 

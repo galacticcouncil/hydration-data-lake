@@ -4,17 +4,44 @@ import { Store } from '@subsquid/typeorm-store';
 export async function saveAllMoneyMarketEvents(
   ctx: SqdProcessorContext<Store>
 ) {
-  await ctx.store.save([...ctx.batchState.state.mmSupplies.values()]);
-  await ctx.store.save([...ctx.batchState.state.mmWithdrawals.values()]);
-  await ctx.store.save([...ctx.batchState.state.mmBorrows.values()]);
-  await ctx.store.save([...ctx.batchState.state.mmRepays.values()]);
-  await ctx.store.save([...ctx.batchState.state.mmLiquidationCalls.values()]);
-  await ctx.store.save([...ctx.batchState.state.mmUserEModeSetEvents.values()]);
-  await ctx.store.save([
-    ...ctx.batchState.state.mmReserveUsedAsCollateralEnabledEvents.values(),
-  ]);
-  await ctx.store.save([
-    ...ctx.batchState.state.mmReserveUsedAsCollateralDisabledEvents.values(),
-  ]);
-  await ctx.store.save([...ctx.batchState.state.moneyMarketEvents.values()]);
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.mmSupplies.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.mmWithdrawals.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.mmBorrows.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.mmRepays.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.mmLiquidationCalls.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.mmUserEModeSetEvents.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(
+      ctx.batchState.state.mmReserveUsedAsCollateralEnabledEvents.values()
+    ),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(
+      ctx.batchState.state.mmReserveUsedAsCollateralDisabledEvents.values()
+    ),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.moneyMarketEvents.values()),
+    ctx
+  );
 }

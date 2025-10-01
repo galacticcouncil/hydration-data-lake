@@ -38,7 +38,10 @@ export async function handleXykPoolHistoricalData(
           allPoolsPerBlock.push({ blockHeader, poolId: item.poolId });
         }
       },
-      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
     );
 
     await pMap(
@@ -88,7 +91,10 @@ export async function handleXykPoolHistoricalData(
 
         predefinedEntities.push(poolHistoricalDataEntity);
       },
-      { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
     );
   }
 
@@ -96,7 +102,7 @@ export async function handleXykPoolHistoricalData(
     predefinedEntities.map((item) => [item.id, item])
   );
 
-  await ctx.store.save(predefinedEntities);
+  await ctx.storeUtils.upsertWithBatches(predefinedEntities, ctx);
 
   // if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
   //   await ctx.store.save(
@@ -149,7 +155,10 @@ export async function getXykpoolHistDataWithUniqueData(
         poolsResult.set(item.id, item);
       }
     },
-    { concurrency: ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON }
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
   );
 
   return poolsResult;
@@ -195,6 +204,3 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
 
   return !isEqual;
 }
-
-
-

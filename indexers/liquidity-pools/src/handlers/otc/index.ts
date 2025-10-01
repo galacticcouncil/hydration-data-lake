@@ -43,9 +43,18 @@ export async function handleOtcOrders(
     await handleOtcOrderPartiallyFilled(ctx, eventData);
   }
 
-  await ctx.store.save([...ctx.batchState.state.otcOrders.values()]);
-  await ctx.store.save([...ctx.batchState.state.otcOrderEvents.values()]);
-  await ctx.store.save([...ctx.batchState.state.swaps.values()]);
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.otcOrders.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.otcOrderEvents.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.swaps.values()),
+    ctx
+  );
 }
 
 async function prefetchEntities(

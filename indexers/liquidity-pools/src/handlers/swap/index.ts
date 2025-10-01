@@ -31,29 +31,82 @@ export async function handleBroadcastSwappedEvents(
 
   // await OperationStackManager.saveOperationStackEntities(ctx);
 
-  await ctx.store.save([...ctx.batchState.state.routeTrades.values()]);
+  // await ctx.store.save([...ctx.batchState.state.routeTrades.values()]);
 
-  await ctx.store.save([
-    ...ctx.batchState.state.routeTradesInputs.values(),
-    ...ctx.batchState.state.routeTradesOutputs.values(),
-  ]);
+  // await ctx.store.save([
+  //   ...ctx.batchState.state.routeTradesInputs.values(),
+  //   ...ctx.batchState.state.routeTradesOutputs.values(),
+  // ]);
+  //
+  // await ctx.store.save([...ctx.batchState.state.swaps.values()]);
+  // await ctx.store.save([...ctx.batchState.state.swapFees.values()]);
+  // await ctx.store.save([
+  //   ...ctx.batchState.state.swapInputs.values(),
+  //   ...ctx.batchState.state.swapOutputs.values(),
+  // ]);
+  //
+  // await ctx.store.save([...ctx.batchState.state.assetVolumes.values()]);
+  // await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);
+  // await ctx.store.save([...ctx.batchState.state.xykPoolVolumes.values()]);
+  // await ctx.store.save([...ctx.batchState.state.omnipoolAssetVolumes.values()]);
+  //
+  // await ctx.store.save([
+  //   ...ctx.batchState.state.stablepoolVolumeCollections.values(),
+  // ]);
+  // await ctx.store.save([
+  //   ...ctx.batchState.state.stablepoolAssetVolumes.values(),
+  // ]);
 
-  await ctx.store.save([...ctx.batchState.state.swaps.values()]);
-  await ctx.store.save([...ctx.batchState.state.swapFees.values()]);
-  await ctx.store.save([
-    ...ctx.batchState.state.swapInputs.values(),
-    ...ctx.batchState.state.swapOutputs.values(),
-  ]);
-
-  await ctx.store.save([...ctx.batchState.state.assetVolumes.values()]);
-  await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);
-  await ctx.store.save([...ctx.batchState.state.xykPoolVolumes.values()]);
-  await ctx.store.save([...ctx.batchState.state.omnipoolAssetVolumes.values()]);
-
-  await ctx.store.save([
-    ...ctx.batchState.state.stablepoolVolumeCollections.values(),
-  ]);
-  await ctx.store.save([
-    ...ctx.batchState.state.stablepoolAssetVolumes.values(),
-  ]);
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.routeTrades.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.routeTradesInputs.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.routeTradesOutputs.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.swaps.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.swapFees.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.swapInputs.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.swapOutputs.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.assetVolumes.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.lbpPoolVolumes.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.xykPoolVolumes.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.omnipoolAssetVolumes.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.stablepoolVolumeCollections.values()),
+    ctx
+  );
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.stablepoolAssetVolumes.values()),
+    ctx
+  );
 }
