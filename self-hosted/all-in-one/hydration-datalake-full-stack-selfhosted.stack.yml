@@ -9,7 +9,7 @@ x-chain-name: &chain-name "hydration"
 x-aggregator-pg-db: &aggregator-pg-db "aggregator_indexer"
 x-aggregator-pg-user: &aggregator-pg-user "postgres"
 x-aggregator-pg-password: &aggregator-pg-password "postgres"
-x-aggregator-pg-host: &aggregator-pg-host "db-aggregator-indexer"
+x-aggregator-pg-host: &aggregator-pg-host "db-aggregator-pgbouncer"
 
 x-dictionary-pg-db: &dictionary-pg-db "dictionary_indexer"
 x-dictionary-pg-user: &dictionary-pg-user "postgres"
@@ -199,14 +199,64 @@ services:
       - "postgres"
       - "-c"
       - "statement_timeout=3000000"
+      - "-c"
+      - "tcp_keepalives_idle=600"
+      - "-c"
+      - "tcp_keepalives_interval=30"
+      - "-c"
+      - "tcp_keepalives_count=3"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "idle_in_transaction_session_timeout=1800000"
+      - "-c"
+      - "log_disconnections=on"
+      - "-c"
+      - "log_connections=on"
     volumes:
       - "db-aggregator-indexer:/var/lib/postgresql/data"
-    ports:
-      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d aggregator_indexer"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     logging:
       driver: json-file
     networks:
       - default
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  db-aggregator-pgbouncer:
+    image: edoburu/pgbouncer:latest
+    environment:
+      DB_HOST: db-aggregator-indexer
+      DB_PORT: 5432
+      DB_USER: *aggregator-pg-user
+      DB_PASSWORD: *aggregator-pg-password
+      DB_DBNAME: *aggregator-pg-db
+      AUTH_TYPE: scram-sha-256
+      DNS_MAX_TTL: 15
+      DNS_NXDOMAIN_TTL: 15
+      PGBOUNCER_LISTEN_PORT: 5433
+      POOL_MODE: transaction
+      SERVER_RESET_QUERY: DISCARD ALL
+      MAX_CLIENT_CONN: 100
+      DEFAULT_POOL_SIZE: 20
+      MIN_POOL_SIZE: 5
+      RESERVE_POOL_SIZE: 5
+      SERVER_LIFETIME: 3600
+      SERVER_IDLE_TIMEOUT: 2400
+    ports:
+      - "5490:5432"
+    depends_on:
+      - db-aggregator-indexer
+    networks:
+      - default
+    logging:
+      driver: json-file
     deploy:
       restart_policy:
         condition: on-failure
@@ -214,7 +264,7 @@ services:
   aggregator-processor:
     <<: *aggregator-proc-default-config
     depends_on:
-      - db-aggregator-indexer
+      - db-aggregator-pgbouncer
     environment:
       <<:
         [
@@ -229,7 +279,7 @@ services:
   aggregator-api:
     image: *aggregator-indexer-image
     depends_on:
-      - db-aggregator-indexer
+      - db-aggregator-pgbouncer
     environment:
       <<: [*db-aggregator-creds, *db-ts-redis-creds]
       INDEXER_ID: *aggregator-indexer-id
@@ -265,10 +315,27 @@ services:
       - "postgres"
       - "-c"
       - "statement_timeout=3000000"
+      - "-c"
+      - "tcp_keepalives_idle=600"
+      - "-c"
+      - "tcp_keepalives_interval=30"
+      - "-c"
+      - "tcp_keepalives_count=3"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "idle_in_transaction_session_timeout=1800000"
+      - "-c"
+      - "log_disconnections=on"
+      - "-c"
+      - "log_connections=on"
     volumes:
       - "db-dictionary-indexer:/var/lib/postgresql/data"
-    ports:
-      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d aggregator_indexer"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     logging:
       driver: json-file
     networks:
@@ -277,10 +344,42 @@ services:
       restart_policy:
         condition: on-failure
 
+  db-dictionary-pgbouncer:
+    image: edoburu/pgbouncer:latest
+    environment:
+      DB_HOST: db-dictionary-indexer
+      DB_PORT: 5432
+      DB_USER: *dictionary-pg-user
+      DB_PASSWORD: *dictionary-pg-password
+      DB_DBNAME: *dictionary-pg-db
+      AUTH_TYPE: scram-sha-256
+      DNS_MAX_TTL: 15
+      DNS_NXDOMAIN_TTL: 15
+      PGBOUNCER_LISTEN_PORT: 5433
+      POOL_MODE: transaction
+      SERVER_RESET_QUERY: DISCARD ALL
+      MAX_CLIENT_CONN: 100
+      DEFAULT_POOL_SIZE: 20
+      MIN_POOL_SIZE: 5
+      RESERVE_POOL_SIZE: 5
+      SERVER_LIFETIME: 3600
+      SERVER_IDLE_TIMEOUT: 2400
+    ports:
+      - "5490:5432"
+    depends_on:
+      - db-dictionary-indexer
+    networks:
+      - default
+    logging:
+      driver: json-file
+    deploy:
+      restart_policy:
+        condition: on-failure
+
   dictionary-processor:
     <<: *dictionary-proc-default-config
     depends_on:
-      - db-dictionary-indexer
+      - db-dictionary-pgbouncer
     environment:
       <<: [*db-dictionary-creds, *dictionary-proc-default-envs]
 
@@ -290,7 +389,7 @@ services:
   dictionary-api:
     image: *dictionary-indexer-image
     depends_on:
-      - db-dictionary-indexer
+      - db-dictionary-pgbouncer
     environment:
       <<: *db-dictionary-creds
       NODE_ENV: "self-hosted"
