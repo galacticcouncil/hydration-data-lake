@@ -23,6 +23,7 @@ import {
   ProcessingMode,
 } from '../../processorHelpers/getProcessingMode';
 import { MultiFlowProcessingPhase } from '../../utils/types';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -209,18 +210,20 @@ export class HistoricalDataManager {
     console.time(
       'saveHistoricalDataBulk > saveAssetRelatedDataBulk > commitAssetPrices'
     );
-    await this.commitAssetPricesToRedisTimeSeries(
-      Array.from(
-        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+    await Promise.all([
+      this.commitAssetsPairVolumeToRedisTimeSeries(
+        Array.from(
+          ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
+        ),
+        ctx
       ),
-      ctx
-    );
-    await this.commitAssetsPairVolumeToRedisTimeSeries(
-      Array.from(
-        ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
+      this.commitAssetPricesToRedisTimeSeries(
+        Array.from(
+          ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+        ),
+        ctx
       ),
-      ctx
-    );
+    ]);
     console.timeEnd(
       'saveHistoricalDataBulk > saveAssetRelatedDataBulk > commitAssetPrices'
     );
@@ -252,16 +255,48 @@ export class HistoricalDataManager {
       return;
     }
 
+    console.time(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > prefetchLastAssetHistDataItem'
+    );
+    await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetHistDataItem(
+      ctx
+    );
+    console.timeEnd(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > prefetchLastAssetHistDataItem'
+    );
+
+    console.time(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > prefetchLastAssetSpotPriceHistDataItem'
+    );
+    await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
+      ctx
+    );
+    console.timeEnd(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > prefetchLastAssetSpotPriceHistDataItem'
+    );
+
+    console.time(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData'
+    );
     const assetHistDataToSaveMap = await getAssetHistDataWithUniqueData(
       ctx.batchState.state.assetsHistoricalDataBatch,
       ctx
     );
+    console.timeEnd(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData'
+    );
 
+    console.time(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetSpotPriceHistDataWithUniqueData'
+    );
     const assetSpotPriceHistDataToSaveList =
       await getAssetSpotPriceHistDataWithUniqueData(
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch,
         ctx
       );
+    console.timeEnd(
+      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetSpotPriceHistDataWithUniqueData'
+    );
 
     const assetsPairVolumesHistDataToSaveList = Array.from(
       ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
@@ -280,14 +315,22 @@ export class HistoricalDataManager {
       );
     }
 
-    await ctx.storeUtils.upsertWithBatches(
-      Array.from(assetHistDataToSaveMap.values()),
-      ctx
+    const assetHistDataToSaveList = Array.from(assetHistDataToSaveMap.values());
+
+    await ctx.storeUtils.upsertWithBatches(assetHistDataToSaveList, ctx);
+
+    LatestProcessedDataCacheManager.getInstance().setLastAssetHistoricalDataItem(
+      assetHistDataToSaveList
     );
+
     await ctx.storeUtils.upsertWithBatches(
       assetSpotPriceHistDataToSaveList,
       ctx
     );
+    LatestProcessedDataCacheManager.getInstance().setLastAssetSpotPriceHistoricalDataItem(
+      assetSpotPriceHistDataToSaveList
+    );
+
     await ctx.storeUtils.upsertWithBatches(
       assetsPairVolumesHistDataToSaveList,
       ctx

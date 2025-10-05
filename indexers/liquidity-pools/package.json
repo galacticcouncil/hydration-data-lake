@@ -89,6 +89,8 @@
     "p-queue": "^8.1.0",
     "pako": "^2.1.0",
     "pg": "^8.15.6",
+    "pino": "^9.13.1",
+    "pino-pretty": "^13.1.1",
     "polkadot-api": "^1.9.7",
     "postgraphile": "^4.13.0",
     "postgraphile-plugin-connection-filter": "^2.3.0",

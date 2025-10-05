@@ -11,6 +11,7 @@ import {
 import { LessThan } from 'typeorm';
 import pMap from 'p-map';
 import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
+import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 
 export async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -141,31 +142,48 @@ export async function getAssetHistDataWithUniqueData(
 ) {
   const result: Map<string, AssetHistoricalData> = new Map();
 
-  const assetHistoryIndex = new Map<string, AssetHistoricalData[]>();
+  const assetHistoryIndexByAsset = new Map<string, AssetHistoricalData[]>();
 
   for (const i of (
     src || ctx.batchState.state.assetsHistoricalDataBatch
   ).values()) {
-    if (!assetHistoryIndex.has(i.asset.id)) {
-      assetHistoryIndex.set(i.asset.id, []);
+    if (!assetHistoryIndexByAsset.has(i.asset.id)) {
+      assetHistoryIndexByAsset.set(i.asset.id, []);
     }
-    assetHistoryIndex.get(i.asset.id)!.push(i);
+    assetHistoryIndexByAsset.get(i.asset.id)!.push(i);
   }
 
-  for (const [assetId, list] of assetHistoryIndex.entries()) {
-    assetHistoryIndex.set(
-      assetId,
-      list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+  console.time(
+    `saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData > getLastAssetHistoricalDataItem`
+  );
+
+  for (const [assetId, list] of assetHistoryIndexByAsset.entries()) {
+    const listToSort = list;
+    const latestCachedItem =
+      LatestProcessedDataCacheManager.getInstance().getLastAssetHistoricalDataItem(
+        assetId
+      );
+    if (latestCachedItem) listToSort.push(latestCachedItem);
+
+    const orderedList = listToSort.sort(
+      (a, b) => b.paraBlockHeight - a.paraBlockHeight
     );
+    assetHistoryIndexByAsset.set(assetId, orderedList);
   }
+  console.timeEnd(
+    `saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData > getLastAssetHistoricalDataItem`
+  );
 
+  console.time(
+    `saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData > Check`
+  );
   await pMap(
     Array.from(src.values()),
     async (item) => {
       if (
         await isAssetHistoricalDataUniqueRegardingPreviousRecord({
           currentRecord: item,
-          cachedIndexedRecords: assetHistoryIndex,
+          cachedIndexedRecords: assetHistoryIndexByAsset,
           ctx,
         })
       ) {
@@ -176,6 +194,9 @@ export async function getAssetHistDataWithUniqueData(
       concurrency:
         ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
     }
+  );
+  console.timeEnd(
+    `saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData > Check`
   );
 
   // for (const item of src.values()) {
@@ -201,9 +222,9 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
   cachedIndexedRecords: Map<string, AssetHistoricalData[]>;
   ctx: SqdProcessorContext<Store>;
 }) {
-  let previousItem = (cachedIndexedRecords.get(currentRecord.asset.id) || [])
-    // .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
-    .find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
+  let previousItem = (
+    cachedIndexedRecords.get(currentRecord.asset.id) || []
+  ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
     previousItem = await ctx.store.findOne(AssetHistoricalData, {

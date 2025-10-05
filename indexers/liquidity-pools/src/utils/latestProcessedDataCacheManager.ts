@@ -1,0 +1,175 @@
+import { AssetHistoricalData, AssetSpotPriceHistoricalData } from '../model';
+import { SqdProcessorContext } from '../processor';
+import parsers from '../parsers';
+import { LessThan } from 'typeorm';
+import { Store } from '@subsquid/typeorm-store';
+
+export class LatestProcessedDataCacheManager {
+  private static instance: LatestProcessedDataCacheManager;
+
+  private assetHistoricalDataItemsCache: Map<string, AssetHistoricalData> =
+    new Map();
+
+  private assetSpotPriceHistoricalDataItemsCache: Map<
+    string,
+    AssetSpotPriceHistoricalData
+  > = new Map();
+
+  static getInstance(): LatestProcessedDataCacheManager {
+    if (!LatestProcessedDataCacheManager.instance) {
+      LatestProcessedDataCacheManager.instance =
+        new LatestProcessedDataCacheManager();
+    }
+    return LatestProcessedDataCacheManager.instance;
+  }
+
+  /**
+   * ======================  Asset Historical Data =============================
+   */
+  async prefetchLastAssetHistDataItem(ctx: SqdProcessorContext<Store>) {
+    if (this.assetHistoricalDataItemsCache.size !== 0) return;
+    const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
+
+    const storageDataAllAssets = (
+      await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
+    ).filter((res) => !!res.data);
+
+    const latestEntities = await Promise.all(
+      storageDataAllAssets.map((assetData): AssetHistoricalData | undefined => {
+        // @ts-ignore
+        return ctx.store.findOne(AssetHistoricalData, {
+          where: {
+            asset: { assetRegistryId: assetData.assetId.toString() },
+            paraBlockHeight: LessThan(currentBlockHeader.height),
+          },
+          order: {
+            paraBlockHeight: 'DESC',
+          },
+          relations: {
+            asset: true,
+          },
+        });
+      })
+    );
+
+    this.setLastAssetHistoricalDataItem(latestEntities.filter((i) => !!i));
+  }
+
+  setLastAssetHistoricalDataItem(items: AssetHistoricalData[]) {
+    if (!items) return;
+
+    const assetHistoryIndexByAsset = new Map<string, AssetHistoricalData[]>();
+
+    for (const i of items) {
+      if (!assetHistoryIndexByAsset.has(i.asset.id)) {
+        assetHistoryIndexByAsset.set(i.asset.id, []);
+      }
+      assetHistoryIndexByAsset.get(i.asset.id)!.push(i);
+    }
+
+    for (const [assetId, list] of assetHistoryIndexByAsset.entries()) {
+      const orderedList = list.sort(
+        (a, b) => b.paraBlockHeight - a.paraBlockHeight
+      );
+      this.assetHistoricalDataItemsCache.set(assetId, orderedList[0]);
+    }
+  }
+
+  getLastAssetHistoricalDataItem(
+    assetId: string
+  ): AssetHistoricalData | undefined {
+    return this.assetHistoricalDataItemsCache.get(assetId);
+  }
+
+  /**
+   * ======================  Asset Spot Price Historical Data =============================
+   */
+  async prefetchLastAssetSpotPriceHistDataItem(
+    ctx: SqdProcessorContext<Store>
+  ) {
+    if (this.assetSpotPriceHistoricalDataItemsCache.size !== 0) return;
+    const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
+
+    const storageDataAllAssets = (
+      await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
+    ).filter((res) => !!res.data);
+
+    const latestEntities = await Promise.all(
+      storageDataAllAssets.map(
+        (assetData): AssetSpotPriceHistoricalData | undefined => {
+          // @ts-ignore
+          return ctx.store.findOne(AssetSpotPriceHistoricalData, {
+            where: {
+              assetIn: { assetRegistryId: assetData.assetId.toString() },
+              paraBlockHeight: LessThan(currentBlockHeader.height),
+            },
+            order: {
+              paraBlockHeight: 'DESC',
+            },
+            relations: {
+              assetIn: true,
+              assetOut: true,
+              assetInHistData: true,
+            },
+          });
+        }
+      )
+    );
+
+    this.setLastAssetSpotPriceHistoricalDataItem(
+      latestEntities.filter((i) => !!i)
+    );
+  }
+
+  // TODO add support multiple assetOut options
+
+  setLastAssetSpotPriceHistoricalDataItem(
+    items: AssetSpotPriceHistoricalData[]
+  ) {
+    if (!items) return;
+
+    const assetSpotPriceHistoryIndexByAssetIn = new Map<
+      string,
+      AssetSpotPriceHistoricalData[]
+    >();
+
+    for (const i of items) {
+      if (!assetSpotPriceHistoryIndexByAssetIn.has(i.assetIn.id)) {
+        assetSpotPriceHistoryIndexByAssetIn.set(i.assetIn.id, []);
+      }
+      assetSpotPriceHistoryIndexByAssetIn.get(i.assetIn.id)!.push(i);
+    }
+
+    for (const [
+      assetInId,
+      list,
+    ] of assetSpotPriceHistoryIndexByAssetIn.entries()) {
+      const orderedList = list.sort(
+        (a, b) => b.paraBlockHeight - a.paraBlockHeight
+      );
+      this.assetSpotPriceHistoricalDataItemsCache.set(
+        assetInId,
+        orderedList[0]
+      );
+    }
+  }
+
+  getLastAssetSpotPriceHistoricalDataItem(
+    assetInId: string
+  ): AssetSpotPriceHistoricalData | undefined {
+    return this.assetSpotPriceHistoricalDataItemsCache.get(assetInId);
+  }
+
+  /**
+   * ===========================   SUPPORT =====================================
+   */
+  log() {
+    console.log('assetHistoricalDataItemsCache >>>');
+    console.dir(
+      Array.from(this.assetHistoricalDataItemsCache.entries()).map(
+        ([key, item]) => `${key} => ${item.id}`
+      ),
+      { depth: null }
+    );
+  }
+}

@@ -20,6 +20,7 @@ import { LessThan } from 'typeorm';
 import pMap from 'p-map';
 import { PoolType } from './utils/offlineSdk/sdk/src';
 import { AppConfig } from '../../../appConfig';
+import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 
 const appConfig = AppConfig.getInstance();
 
@@ -195,13 +196,41 @@ export async function getAssetSpotPriceHistDataWithUniqueData(
 ) {
   const result: AssetSpotPriceHistoricalData[] = [];
 
+  const assetSportPriceHistoryIndexByAsset = new Map<
+    string,
+    AssetSpotPriceHistoricalData[]
+  >();
+
+  for (const i of (
+    src || ctx.batchState.state.assetsSpotPriceHistoricalDataBatch
+  ).values()) {
+    if (!assetSportPriceHistoryIndexByAsset.has(i.assetIn.id)) {
+      assetSportPriceHistoryIndexByAsset.set(i.assetIn.id, []);
+    }
+    assetSportPriceHistoryIndexByAsset.get(i.assetIn.id)!.push(i);
+  }
+
+  for (const [assetId, list] of assetSportPriceHistoryIndexByAsset.entries()) {
+    const listToSort = list;
+    const latestCachedItem =
+      LatestProcessedDataCacheManager.getInstance().getLastAssetSpotPriceHistoricalDataItem(
+        assetId
+      );
+    if (latestCachedItem) listToSort.push(latestCachedItem);
+
+    const orderedList = listToSort.sort(
+      (a, b) => b.paraBlockHeight - a.paraBlockHeight
+    );
+    assetSportPriceHistoryIndexByAsset.set(assetId, orderedList);
+  }
+
   await pMap(
     Array.from(src.values()),
     async (item) => {
       if (
         await isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecord({
           currentRecord: item,
-          cachedRecords: src,
+          cachedIndexedRecords: assetSportPriceHistoryIndexByAsset,
           ctx,
         })
       ) {
@@ -219,25 +248,29 @@ export async function getAssetSpotPriceHistDataWithUniqueData(
 
 export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecord({
   currentRecord,
-  cachedRecords,
+  cachedIndexedRecords,
   ctx,
 }: {
   currentRecord: AssetSpotPriceHistoricalData;
-  cachedRecords?: Map<string, AssetSpotPriceHistoricalData>;
+  cachedIndexedRecords: Map<string, AssetSpotPriceHistoricalData[]>;
   ctx: SqdProcessorContext<Store>;
 }) {
-  let previousItem = Array.from(
-    (
-      cachedRecords || ctx.batchState.state.assetsSpotPriceHistoricalDataBatch
-    ).values()
-  )
-    .filter(
-      (i) =>
-        i.assetIn.id === currentRecord.assetIn.id &&
-        i.assetOut.id === currentRecord.assetOut.id
-    )
-    .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
-    .find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
+  // let previousItem = Array.from(
+  //   (
+  //     cachedRecords || ctx.batchState.state.assetsSpotPriceHistoricalDataBatch
+  //   ).values()
+  // )
+  //   .filter(
+  //     (i) =>
+  //       i.assetIn.id === currentRecord.assetIn.id &&
+  //       i.assetOut.id === currentRecord.assetOut.id
+  //   )
+  //   .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+  //   .find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
+
+  let previousItem = (
+    cachedIndexedRecords.get(currentRecord.assetIn.id) || []
+  ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
     previousItem = await ctx.store.findOne(AssetSpotPriceHistoricalData, {
