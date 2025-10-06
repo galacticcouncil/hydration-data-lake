@@ -16,6 +16,7 @@ import {
   ProcessingMode,
 } from './processorHelpers/getProcessingMode';
 import { TypeormDatabaseUtils } from './utils/typeormDatabaseUtils';
+import { initHydratedLogger } from './utils/hydratedLogger';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -38,6 +39,8 @@ if (process.env.INDEXING_IS_PAUSED === 'true') {
 }
 
 const appConfig = AppConfig.getInstance();
+
+initHydratedLogger().then();
 
 processor.run(
   new TypeormDatabase({

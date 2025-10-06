@@ -1,5 +1,5 @@
 import { AppConfig } from '../../../../../appConfig';
-import { CommonPgClient } from '../../../../utils/pgClient';
+import { CommonPgClient } from '../../../../../utils/pgClient';
 import { getLatestAavepoolHistData } from '../../../../sql/aavepool/aavepoolHistData';
 import { BigNumber } from '@galacticcouncil/sdk';
 

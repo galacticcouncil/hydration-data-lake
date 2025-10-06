@@ -61,10 +61,13 @@ import { ensureAaveFacilitators } from '../../../handlers/facilitator';
 import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool/collaterals';
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
+import { HydratedLogger } from '../../../utils/hydratedLogger';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
 ) {
+  const logger = HydratedLogger.getInstance();
+
   await handleRelayChainBlocks(ctx);
 
   console.time('processExtrinsics');
@@ -90,9 +93,12 @@ export async function singleFlowAllInOneProcessor(
     blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
 
-  console.time('prefetchGenericPersistentData');
-  await prefetchGenericPersistentData(ctx);
-  console.timeEnd('prefetchGenericPersistentData');
+  await logger.measure(
+    () => prefetchGenericPersistentData(ctx),
+    'other',
+    'prefetchGenericPersistentData',
+    { paraBlockHeight: ctx.blocks[0].header.height }
+  );
 
   console.time('initContractInstances');
   await MoneyMarketContractsManager.getInstance().initContractInstances({

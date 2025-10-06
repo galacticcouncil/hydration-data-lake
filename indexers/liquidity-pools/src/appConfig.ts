@@ -54,6 +54,52 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
+class LogConfig {
+  private static instance: LogConfig;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly HLOG_LOG_FILE_ENABLED: boolean = false;
+
+  @IsString()
+  readonly HLOG_LOG_FILE_PATH: string = './logs/app.log';
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly HLOG_CONSOLE_LOGS_ENABLED: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly HLOG_CONSOLE_LOGS_VERBOSE: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly HLOG_DB_FLUSH_ENABLED: boolean = true;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly HLOG_DB_FLUSH_MAX_BATCH_SIZE: number = 100;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly HLOG_DB_FLUSH_INTERVAL_MS: number = 1000;
+
+  static getInstance(): LogConfig {
+    if (LogConfig.instance) return LogConfig.instance;
+
+    try {
+      LogConfig.instance = transformAndValidateSync(LogConfig, process.env, {
+        validator: { stopAtFirstError: true },
+      });
+      return LogConfig.instance;
+    } catch (errors) {
+      if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+        errors.forEach((error: ValidationError) => {
+          // @ts-ignore
+          Object.values(error.constraints).forEach((msg) => console.error(msg));
+        });
+      } else {
+        console.error('Unexpected error during the environment validation');
+      }
+      throw new Error('Failed to validate environment variables');
+    }
+  }
+}
+
 class ConcurrencyConfig {
   private static instance: ConcurrencyConfig;
 
@@ -492,6 +538,8 @@ export class AppConfig {
   readonly redis: RedisConfig = new RedisConfig();
 
   readonly evm: EvmConfig = new EvmConfig();
+
+  readonly log: LogConfig = LogConfig.getInstance();
 
   readonly processingMode: ProcessingModeConfig =
     ProcessingModeConfig.getInstance();
