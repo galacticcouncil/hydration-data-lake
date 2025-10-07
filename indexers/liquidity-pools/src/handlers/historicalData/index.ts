@@ -93,116 +93,92 @@ export class HistoricalDataManager {
 
   static async saveSwapFeeRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.historicalAssetSwapFees.values()),
-      ctx
+      Array.from(ctx.batchState.state.historicalAssetSwapFees.values())
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.historicalAccountSwapFees.values()),
-      ctx
+      Array.from(ctx.batchState.state.historicalAccountSwapFees.values())
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.historicalAccountAssetSwapFees.values()),
-      ctx
+      Array.from(ctx.batchState.state.historicalAccountAssetSwapFees.values())
     );
   }
 
   static async savePoolVolumesRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.lbpPoolVolumes.values()),
-      ctx
+      Array.from(ctx.batchState.state.lbpPoolVolumes.values())
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.xykPoolVolumes.values()),
-      ctx
+      Array.from(ctx.batchState.state.xykPoolVolumes.values())
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.omnipoolAssetVolumes.values()),
-      ctx
+      Array.from(ctx.batchState.state.omnipoolAssetVolumes.values())
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.stablepoolVolumeCollections.values()),
-      ctx
+      Array.from(ctx.batchState.state.stablepoolVolumeCollections.values())
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.stablepoolAssetVolumes.values()),
-      ctx
+      Array.from(ctx.batchState.state.stablepoolAssetVolumes.values())
     );
   }
 
   static async saveGeneralHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values()),
-      ctx
+      Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values()),
-      ctx
+      Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values()),
-      ctx
+      Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
       Array.from(
         ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
-      ),
-      ctx
+      )
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values()),
-      ctx
+      Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values()),
-      ctx
+      Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.aavePoolsHistoricalData.values()),
-      ctx
+      Array.from(ctx.batchState.state.aavePoolsHistoricalData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
       Array.from(
         ctx.batchState.state.moneyMarketReserveIndexesHistData.values()
-      ),
-      ctx
+      )
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(
-        ctx.batchState.state.moneyMarketReserveConfigHistData.values()
-      ),
-      ctx
+      Array.from(ctx.batchState.state.moneyMarketReserveConfigHistData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.aaveFacilitatorsHistData.values()),
-      ctx
+      Array.from(ctx.batchState.state.aaveFacilitatorsHistData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.hsmCollateralsConfigHistData.values()),
-      ctx
+      Array.from(ctx.batchState.state.hsmCollateralsConfigHistData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.hsmpoolHistData.values()),
-      ctx
+      Array.from(ctx.batchState.state.hsmpoolHistData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.hsmpoolAssetHistData.values()),
-      ctx
+      Array.from(ctx.batchState.state.hsmpoolAssetHistData.values())
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.transactionPaymentHistData.values()),
-      ctx
+      Array.from(ctx.batchState.state.transactionPaymentHistData.values())
     );
   }
 
@@ -238,14 +214,12 @@ export class HistoricalDataManager {
       );
 
       await ctx.storeUtils.upsertWithBatches(
-        Array.from(ctx.batchState.state.assetsHistoricalDataBatch.values()),
-        ctx
+        Array.from(ctx.batchState.state.assetsHistoricalDataBatch.values())
       );
-      await ctx.storeUtils.upsertWithBatches(assetsSpotPricesListToSave, ctx);
-      await ctx.storeUtils.upsertWithBatches(assetsPairVolumesListToSave, ctx);
+      await ctx.storeUtils.upsertWithBatches(assetsSpotPricesListToSave);
+      await ctx.storeUtils.upsertWithBatches(assetsPairVolumesListToSave);
       await ctx.storeUtils.upsertWithBatches(
-        Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values()),
-        ctx
+        Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
       );
 
       console.timeEnd(
@@ -317,27 +291,20 @@ export class HistoricalDataManager {
 
     const assetHistDataToSaveList = Array.from(assetHistDataToSaveMap.values());
 
-    await ctx.storeUtils.upsertWithBatches(assetHistDataToSaveList, ctx);
+    await ctx.storeUtils.upsertWithBatches(assetHistDataToSaveList);
 
     LatestProcessedDataCacheManager.getInstance().setLastAssetHistoricalDataItem(
       assetHistDataToSaveList
     );
 
-    await ctx.storeUtils.upsertWithBatches(
-      assetSpotPriceHistDataToSaveList,
-      ctx
-    );
+    await ctx.storeUtils.upsertWithBatches(assetSpotPriceHistDataToSaveList);
     LatestProcessedDataCacheManager.getInstance().setLastAssetSpotPriceHistoricalDataItem(
       assetSpotPriceHistDataToSaveList
     );
 
+    await ctx.storeUtils.upsertWithBatches(assetsPairVolumesHistDataToSaveList);
     await ctx.storeUtils.upsertWithBatches(
-      assetsPairVolumesHistDataToSaveList,
-      ctx
-    );
-    await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values()),
-      ctx
+      Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
     );
   }
 
@@ -352,12 +319,10 @@ export class HistoricalDataManager {
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      accountAssetBalanceHistoricalDataList,
-      ctx
+      accountAssetBalanceHistoricalDataList
     );
     await ctx.storeUtils.upsertWithBatches(
-      accountTotalBalanceHistoricalDataList,
-      ctx
+      accountTotalBalanceHistoricalDataList
     );
 
     await this.commitAccountTotalBalancesToRedisTimeSeries(
@@ -370,10 +335,7 @@ export class HistoricalDataManager {
     const accountMmPositionHistoricalDataList = Array.from(
       ctx.batchState.state.accountMmPositionHistoricalData.values()
     );
-    await ctx.storeUtils.upsertWithBatches(
-      accountMmPositionHistoricalDataList,
-      ctx
-    );
+    await ctx.storeUtils.upsertWithBatches(accountMmPositionHistoricalDataList);
   }
 
   static async commitAssetPricesToRedisTimeSeries(

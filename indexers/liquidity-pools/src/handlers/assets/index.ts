@@ -57,8 +57,7 @@ export async function handleAssetRegistry(
   await ctx.storeUtils.upsertWithBatches(
     Array.from(ctx.batchState.state.assetsAll.values()).filter((asset) =>
       ctx.batchState.state.assetIdsToSave.has(asset.id)
-    ),
-    ctx
+    )
   );
   ctx.batchState.state.assetIdsToSave = new Set();
 }

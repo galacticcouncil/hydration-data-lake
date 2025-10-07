@@ -79,28 +79,22 @@ export async function handleDcaSchedules(
 
 export async function saveDcaEntities(ctx: SqdProcessorContext<Store>) {
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.dcaSchedules.values()),
-    ctx
+    Array.from(ctx.batchState.state.dcaSchedules.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.dcaScheduleOrderRoutes.values()),
-    ctx
+    Array.from(ctx.batchState.state.dcaScheduleOrderRoutes.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.dcaScheduleEvents.values()),
-    ctx
+    Array.from(ctx.batchState.state.dcaScheduleEvents.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.dcaScheduleExecutions.values()),
-    ctx
+    Array.from(ctx.batchState.state.dcaScheduleExecutions.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.dcaScheduleExecutionEvents.values()),
-    ctx
+    Array.from(ctx.batchState.state.dcaScheduleExecutionEvents.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.swaps.values()),
-    ctx
+    Array.from(ctx.batchState.state.swaps.values())
   );
 }
 

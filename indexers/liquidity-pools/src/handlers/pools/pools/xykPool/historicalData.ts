@@ -102,7 +102,7 @@ export async function handleXykPoolHistoricalData(
     predefinedEntities.map((item) => [item.id, item])
   );
 
-  await ctx.storeUtils.upsertWithBatches(predefinedEntities, ctx);
+  await ctx.storeUtils.upsertWithBatches(predefinedEntities);
 
   // if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
   //   await ctx.store.save(

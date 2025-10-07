@@ -276,11 +276,9 @@ export async function handleStableswapHistoricalData(
   }
 
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values()),
-    ctx
+    Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()),
-    ctx
+    Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values())
   );
 }

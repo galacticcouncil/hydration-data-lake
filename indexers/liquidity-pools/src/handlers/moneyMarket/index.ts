@@ -5,43 +5,34 @@ export async function saveAllMoneyMarketEvents(
   ctx: SqdProcessorContext<Store>
 ) {
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.mmSupplies.values()),
-    ctx
+    Array.from(ctx.batchState.state.mmSupplies.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.mmWithdrawals.values()),
-    ctx
+    Array.from(ctx.batchState.state.mmWithdrawals.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.mmBorrows.values()),
-    ctx
+    Array.from(ctx.batchState.state.mmBorrows.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.mmRepays.values()),
-    ctx
+    Array.from(ctx.batchState.state.mmRepays.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.mmLiquidationCalls.values()),
-    ctx
+    Array.from(ctx.batchState.state.mmLiquidationCalls.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.mmUserEModeSetEvents.values()),
-    ctx
+    Array.from(ctx.batchState.state.mmUserEModeSetEvents.values())
   );
   await ctx.storeUtils.upsertWithBatches(
     Array.from(
       ctx.batchState.state.mmReserveUsedAsCollateralEnabledEvents.values()
-    ),
-    ctx
+    )
   );
   await ctx.storeUtils.upsertWithBatches(
     Array.from(
       ctx.batchState.state.mmReserveUsedAsCollateralDisabledEvents.values()
-    ),
-    ctx
+    )
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.moneyMarketEvents.values()),
-    ctx
+    Array.from(ctx.batchState.state.moneyMarketEvents.values())
   );
 }

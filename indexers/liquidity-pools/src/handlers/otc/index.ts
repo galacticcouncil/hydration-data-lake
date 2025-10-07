@@ -44,16 +44,13 @@ export async function handleOtcOrders(
   }
 
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.otcOrders.values()),
-    ctx
+    Array.from(ctx.batchState.state.otcOrders.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.otcOrderEvents.values()),
-    ctx
+    Array.from(ctx.batchState.state.otcOrderEvents.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.swaps.values()),
-    ctx
+    Array.from(ctx.batchState.state.swaps.values())
   );
 }
 

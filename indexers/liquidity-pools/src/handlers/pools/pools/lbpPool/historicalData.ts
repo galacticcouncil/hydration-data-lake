@@ -162,8 +162,7 @@ export async function handleLbppoolHistoricalData(
 
   if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values()),
-      ctx
+      Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values())
     );
     return;
   }
@@ -171,10 +170,7 @@ export async function handleLbppoolHistoricalData(
     ctx.batchState.state.lbpPoolAllHistoricalData,
     ctx
   );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(entitiesToSave.values()),
-    ctx
-  );
+  await ctx.storeUtils.upsertWithBatches(Array.from(entitiesToSave.values()));
 }
 
 export async function getLbppoolHistDataWithUniqueData(

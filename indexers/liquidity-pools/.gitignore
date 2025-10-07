@@ -12,3 +12,4 @@
 !.papi/descriptors/dist
 
 .env.hydration.local
+/logs

@@ -11,10 +11,7 @@ import {
   TraceEntityType,
   EventGroup,
 } from '../model';
-import {
-  getCallOriginParts,
-  jsonToString,
-} from '../utils/helpers';
+import { getCallOriginParts, jsonToString } from '../utils/helpers';
 import { getOrCreateAccount } from '../handlers/accounts';
 import {
   EventPhase,
@@ -609,33 +606,26 @@ export class ChainActivityTraceManager {
     const state = ctx.batchState.state;
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(state.batchBlocks.values()).reverse(),
-      ctx
+      Array.from(state.batchBlocks.values()).reverse()
     );
 
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(state.batchExtrinsics.values()).reverse(),
-      ctx
+      Array.from(state.batchExtrinsics.values()).reverse()
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(state.batchCalls.values()).reverse(),
-      ctx
+      Array.from(state.batchCalls.values()).reverse()
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(state.batchEvents.values()).reverse(),
-      ctx
+      Array.from(state.batchEvents.values()).reverse()
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(state.chainActivityTraces.values()).reverse(),
-      ctx
+      Array.from(state.chainActivityTraces.values()).reverse()
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(state.accountChainActivityTraces.values()).reverse(),
-      ctx
+      Array.from(state.accountChainActivityTraces.values()).reverse()
     );
     await ctx.storeUtils.upsertWithBatches(
-      Array.from(state.chainActivityTraceRelations.values()).reverse(),
-      ctx
+      Array.from(state.chainActivityTraceRelations.values()).reverse()
     );
   }
 
@@ -733,12 +723,16 @@ export class ChainActivityTraceManager {
     ctx: SqdProcessorContext<Store>;
     relations?: FindOptionsRelations<Block>;
   }) {
-    const persistentBlocks = await ctx.store.find(Block, {
-      where: {
-        height: In(blockHeights),
+    const persistentBlocks = await ctx.storeUtils.findWithLogs(
+      Block,
+      {
+        where: {
+          height: In(blockHeights),
+        },
+        ...(relations ? { relations } : {}),
       },
-      ...(relations ? { relations } : {}),
-    });
+      { className: 'Block' }
+    );
 
     ctx.batchState.state.batchBlocks = new Map(
       persistentBlocks.map((b) => [b.id, b])

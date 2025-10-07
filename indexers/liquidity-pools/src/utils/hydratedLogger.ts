@@ -13,10 +13,12 @@ type HydratedLoggerActionType =
   | 'evm_read'
   | 'other';
 
-type Meta = {
+export type HydratedLoggerMeta = {
   name?: string;
   actionType?: HydratedLoggerActionType;
   paraBlockHeight?: number;
+  paraBlocksRange?: string;
+  opId?: string;
 } & Record<string, any>;
 
 export interface HydratedLoggerConfig {
@@ -33,6 +35,9 @@ export interface HydratedLoggerConfig {
     enabled?: boolean; // default: true
   };
 }
+export interface HydratedLoggerRuntimeConfig {
+  ignoreConsoleLogs?: boolean;
+}
 
 interface HydratedLoggerDbRow {
   ts: Date;
@@ -42,7 +47,11 @@ interface HydratedLoggerDbRow {
   message?: string;
   duration_ms?: number;
   success?: boolean;
-  meta?: any;
+  meta?: {
+    para_block_height?: number;
+    op_id?: string;
+    para_blocks_range?: string;
+  } & Record<string, any>;
 }
 
 export class HydratedLogger {
@@ -134,20 +143,22 @@ export class HydratedLogger {
           BEGIN;
           CREATE SCHEMA IF NOT EXISTS support;
           CREATE TABLE IF NOT EXISTS support.app_logs (
-            id                BIGSERIAL PRIMARY KEY,
-            ts                timestamptz NOT NULL DEFAULT now(),
-            level             text        NOT NULL,
-            name              text,
-            action_type       text,
-            para_block_height int4,
-            duration_ms       double precision,
-            success           boolean,
-            meta              jsonb
+            id                  BIGSERIAL PRIMARY KEY,
+            ts                  timestamptz NOT NULL DEFAULT now(),
+            level               text        NOT NULL,
+            name                text,
+            action_type         text,
+            para_block_height   int4,
+            op_id               text,
+            para_blocks_range   text,
+            duration_ms         double precision,
+            success             boolean,
+            meta                jsonb
           );
           CREATE INDEX IF NOT EXISTS app_logs_ts_idx   ON support.app_logs (ts);
           CREATE INDEX IF NOT EXISTS app_logs_name_idx ON support.app_logs (name);
           CREATE INDEX IF NOT EXISTS app_logs_action_type_idx ON support.app_logs (action_type);
-          CREATE INDEX IF NOT EXISTS app_logs_para_block_height_idx ON support.app_logs (para_block_height);
+          CREATE INDEX IF NOT EXISTS app_logs_para_blocks_range_idx ON support.app_logs (para_blocks_range);
           COMMIT;
         `);
       } catch (e) {
@@ -163,41 +174,50 @@ export class HydratedLogger {
     return this.ensureSchemaOnce;
   }
 
-  info(obj: Meta, message?: string): void;
-  info(message: string, meta?: Meta): void;
-  info(a: any, b?: any) {
-    this.log('info', a, b);
+  info(
+    obj: HydratedLoggerMeta,
+    message?: string,
+    options?: HydratedLoggerRuntimeConfig
+  ): void;
+  info(
+    message: string,
+    meta?: HydratedLoggerMeta,
+    options?: HydratedLoggerRuntimeConfig
+  ): void;
+  info(a: any, b?: any, options?: HydratedLoggerRuntimeConfig) {
+    this.log('info', a, b, options);
   }
 
-  warn(a: any, b?: any) {
-    this.log('warn', a, b);
+  warn(a: any, b?: any, options?: HydratedLoggerRuntimeConfig) {
+    this.log('warn', a, b, options);
   }
-  error(a: any, b?: any) {
-    this.log('error', a, b);
+  error(a: any, b?: any, options?: HydratedLoggerRuntimeConfig) {
+    this.log('error', a, b, options);
   }
-  debug(a: any, b?: any) {
-    this.log('debug', a, b);
+  debug(a: any, b?: any, options?: HydratedLoggerRuntimeConfig) {
+    this.log('debug', a, b, options);
   }
-  trace(a: any, b?: any) {
-    this.log('trace', a, b);
+  trace(a: any, b?: any, options?: HydratedLoggerRuntimeConfig) {
+    this.log('trace', a, b, options);
   }
-  fatal(a: any, b?: any) {
-    this.log('fatal', a, b);
+  fatal(a: any, b?: any, options?: HydratedLoggerRuntimeConfig) {
+    this.log('fatal', a, b, options);
   }
 
-  log(level: LogLevel, a: any, b?: any) {
+  log(level: LogLevel, a: any, b?: any, options?: HydratedLoggerRuntimeConfig) {
     let message: string | undefined;
-    let meta: Meta | undefined;
+    let meta: HydratedLoggerMeta | undefined;
+    const ignoreConsoleLogs = (options && options.ignoreConsoleLogs) ?? false;
 
     if (typeof a === 'string') {
       message = a;
       meta = b;
-      if (this.consoleLogsEnabled)
+      if (this.consoleLogsEnabled && !ignoreConsoleLogs)
         this.pino[level](this.consoleLogsVerbose && meta ? meta : {}, message);
     } else {
       meta = a;
       message = b;
-      if (this.consoleLogsEnabled)
+      if (this.consoleLogsEnabled && !ignoreConsoleLogs)
         this.pino[level](this.consoleLogsVerbose && meta ? meta : {}, message);
     }
 
@@ -210,7 +230,13 @@ export class HydratedLogger {
         action_type: meta?.actionType ?? 'other',
         duration_ms: meta?.durationMs,
         success: meta?.success,
-        meta: { ...meta, message },
+        meta: {
+          message,
+          para_block_height: meta?.paraBlockHeight,
+          para_blocks_range: meta?.paraBlocksRange,
+          op_id: meta?.opId,
+
+        },
       };
       this.buffer.push(row);
       if (this.buffer.length >= this.maxBatchSize) {
@@ -219,40 +245,55 @@ export class HydratedLogger {
     }
   }
 
-  async measure<T>(
-    fn: () => Promise<T> | T,
-    actionType: HydratedLoggerActionType,
-    name: string,
-    meta: Meta = {}
-  ): Promise<T> {
+  async measure<T>({
+    fn,
+    name,
+    actionType,
+    meta = {},
+    options,
+  }: {
+    fn: () => Promise<T> | T;
+    actionType: HydratedLoggerActionType;
+    name: string;
+    meta: HydratedLoggerMeta;
+    options?: HydratedLoggerRuntimeConfig;
+  }): Promise<T> {
     const start = process.hrtime.bigint();
     try {
       const result = await fn();
       const durationMs = Number(process.hrtime.bigint() - start) / 1_000_000;
       const formattedDuration = this.formatDuration(durationMs);
 
-      this.info(`✔ ${name} - ${formattedDuration}`, {
-        event: 'timing',
-        name,
-        actionType,
-        durationMs,
-        success: true,
-        ...meta,
-      });
+      this.info(
+        `✔ ${name} - ${formattedDuration}`,
+        {
+          event: 'timing',
+          name,
+          actionType,
+          durationMs,
+          success: true,
+          ...meta,
+        },
+        options
+      );
 
       return result;
     } catch (err: any) {
       const durationMs = Number(process.hrtime.bigint() - start) / 1_000_000;
       const formattedDuration = this.formatDuration(durationMs);
-      this.error(`✖ ${name} - ${formattedDuration}`, {
-        event: 'timing',
-        name,
-        actionType,
-        durationMs,
-        success: false,
-        error: { message: err?.message, stack: err?.stack },
-        ...meta,
-      });
+      this.error(
+        `✖ ${name} - ${formattedDuration}`,
+        {
+          event: 'timing',
+          name,
+          actionType,
+          durationMs,
+          success: false,
+          error: { message: err?.message, stack: err?.stack },
+          ...meta,
+        },
+        options
+      );
       throw err;
     }
   }
@@ -269,6 +310,8 @@ export class HydratedLogger {
       'name',
       'action_type',
       'para_block_height',
+      'op_id',
+      'para_blocks_range',
       'duration_ms',
       'success',
       'meta',
@@ -279,7 +322,7 @@ export class HydratedLogger {
     batch.forEach((r, i) => {
       const base = i * cols.length;
       placeholders.push(
-        `($${base + 1},$${base + 2},$${base + 3},$${base + 4},$${base + 5},$${base + 6},$${base + 7},$${base + 8})`
+        `($${base + 1},$${base + 2},$${base + 3},$${base + 4},$${base + 5},$${base + 6},$${base + 7},$${base + 8},$${base + 9},$${base + 10})`
       );
       values.push(
         r.ts,
@@ -287,6 +330,8 @@ export class HydratedLogger {
         r.name ?? null,
         r.action_type ?? null,
         r.meta?.paraBlockHeight ?? null,
+        r.meta?.opId ?? null,
+        r.meta?.paraBlocksRange ?? null,
         r.duration_ms ?? null,
         r.success ?? null,
         r.meta ?? null
@@ -337,7 +382,7 @@ export class HydratedLogger {
   }
 }
 
-export async function initHydratedLogger(cfg?: HydratedLoggerConfig) {
+export async function getHydratedLogger() {
   const log = await HydratedLogger.getInstance({
     level: 'info',
     prettyInDev: true,
@@ -351,6 +396,11 @@ export async function initHydratedLogger(cfg?: HydratedLoggerConfig) {
       flushIntervalMs: appConfig.log.HLOG_DB_FLUSH_INTERVAL_MS,
     },
   }).init();
+  return log;
+}
+
+export async function initHydratedLogger(cfg?: HydratedLoggerConfig) {
+  const log = await getHydratedLogger();
 
   process.on('SIGINT', async () => {
     await log.shutdown();

@@ -113,7 +113,6 @@ export async function handleEmaOracleHistoricalData(
   );
 
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.emaOracleEntriesHistoricalData.values()),
-    ctx
+    Array.from(ctx.batchState.state.emaOracleEntriesHistoricalData.values())
   );
 }

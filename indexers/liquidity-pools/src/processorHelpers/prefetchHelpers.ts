@@ -36,6 +36,18 @@ import {
 } from '../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { Entity } from '@subsquid/typeorm-store/src/store';
+import { getHydratedLogger, HydratedLogger } from '../utils/hydratedLogger';
+
+export async function prefetchGenericPersistentDataWithLogs(
+  ctx: SqdProcessorContext<Store>
+) {
+  await ctx.extLogger.measure({
+    fn: () => prefetchGenericPersistentData(ctx),
+    name: 'prefetchGenericPersistentData',
+    actionType: 'other',
+    meta: { paraBlockHeight: ctx.blocks[0].header.height },
+  });
+}
 
 export async function prefetchGenericPersistentData(
   ctx: SqdProcessorContext<Store>

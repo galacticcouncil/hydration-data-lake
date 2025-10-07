@@ -46,7 +46,10 @@ import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalize
 import { HistoricalDataManager } from '../../../handlers/historicalData';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
 import { processPoolsTvlNormalized } from '../../../handlers/pools/normalizedTvlBaseAsset';
-import { prefetchGenericPersistentData } from '../../prefetchHelpers';
+import {
+  prefetchGenericPersistentData,
+  prefetchGenericPersistentDataWithLogs,
+} from '../../prefetchHelpers';
 import { handleAssetAccountBalances } from '../../../handlers/balances';
 import {
   handleAccountMmPositionData,
@@ -61,13 +64,10 @@ import { ensureAaveFacilitators } from '../../../handlers/facilitator';
 import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool/collaterals';
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
-import { HydratedLogger } from '../../../utils/hydratedLogger';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
 ) {
-  const logger = HydratedLogger.getInstance();
-
   await handleRelayChainBlocks(ctx);
 
   console.time('processExtrinsics');
@@ -93,12 +93,7 @@ export async function singleFlowAllInOneProcessor(
     blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
 
-  await logger.measure(
-    () => prefetchGenericPersistentData(ctx),
-    'other',
-    'prefetchGenericPersistentData',
-    { paraBlockHeight: ctx.blocks[0].header.height }
-  );
+  await prefetchGenericPersistentDataWithLogs(ctx);
 
   console.time('initContractInstances');
   await MoneyMarketContractsManager.getInstance().initContractInstances({

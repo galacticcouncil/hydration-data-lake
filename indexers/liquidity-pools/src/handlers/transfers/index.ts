@@ -39,7 +39,6 @@ export async function handleTransfers(
   }
 
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.transfers.values()),
-    ctx
+    Array.from(ctx.batchState.state.transfers.values())
   );
 }

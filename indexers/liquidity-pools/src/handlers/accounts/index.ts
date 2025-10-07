@@ -192,9 +192,18 @@ export async function getOrCreateAccountByBoundEvmAddress({
 export async function prefetchOrInitAllBatchAccounts(
   ctx: SqdProcessorContext<Store>
 ) {
-  const existingAccounts = await ctx.store.find(Account, {
-    where: { id: In([...ctx.batchState.state.accountIdForPrefetch.values()]) },
-  });
+  const existingAccounts = await ctx.storeUtils.findWithLogs(
+    Account,
+    {
+      where: {
+        id: In([...ctx.batchState.state.accountIdForPrefetch.values()]),
+      },
+    },
+    {
+      className: 'Account',
+      paraBlockHeight: ctx.blocks[ctx.blocks.length - 1].header.height,
+    }
+  );
 
   for (const existingAccount of existingAccounts)
     ctx.batchState.state.accounts.set(existingAccount.id, existingAccount);
@@ -208,7 +217,6 @@ export async function prefetchOrInitAllBatchAccounts(
 
 export async function saveAllBatchAccounts(ctx: SqdProcessorContext<Store>) {
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.accounts.values()),
-    ctx
+    Array.from(ctx.batchState.state.accounts.values())
   );
 }

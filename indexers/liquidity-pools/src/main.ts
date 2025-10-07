@@ -16,7 +16,7 @@ import {
   ProcessingMode,
 } from './processorHelpers/getProcessingMode';
 import { TypeormDatabaseUtils } from './utils/typeormDatabaseUtils';
-import { initHydratedLogger } from './utils/hydratedLogger';
+import { getHydratedLogger, initHydratedLogger } from './utils/hydratedLogger';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -40,8 +40,6 @@ if (process.env.INDEXING_IS_PAUSED === 'true') {
 
 const appConfig = AppConfig.getInstance();
 
-initHydratedLogger().then();
-
 processor.run(
   new TypeormDatabase({
     supportHotBlocks: true,
@@ -54,11 +52,17 @@ processor.run(
     console.time('TOTAL BATCH EXECUTION TIME');
 
     const ctxWithBatchState = ctx as SqdProcessorContext<Store>;
+    const extLogger = await getHydratedLogger();
+
     ctxWithBatchState.batchState = new BatchState(
       ctxWithBatchState as SqdProcessorContext<Store>
     );
     ctxWithBatchState.appConfig = AppConfig.getInstance();
-    ctxWithBatchState.storeUtils = new TypeormDatabaseUtils();
+    ctxWithBatchState.storeUtils = new TypeormDatabaseUtils(
+      ctxWithBatchState,
+      extLogger
+    );
+    ctxWithBatchState.extLogger = extLogger;
 
     await RedisTimeSeriesManager.getInstance().initClient();
 

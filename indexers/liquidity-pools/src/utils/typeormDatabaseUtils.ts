@@ -1,8 +1,15 @@
 import { AppConfig } from '../appConfig';
-import { Entity } from '@subsquid/typeorm-store/src/store';
+import {
+  Entity,
+  EntityClass,
+  FindManyOptions,
+  FindOneOptions,
+} from '@subsquid/typeorm-store/src/store';
 import { SqdProcessorContext } from '../processor';
-import { Store } from '@subsquid/typeorm-store';
 import { splitIntoBatches } from './helpers';
+import * as crypto from 'node:crypto';
+import { Store } from '@subsquid/typeorm-store';
+import { HydratedLogger, HydratedLoggerMeta } from './hydratedLogger';
 
 type RetryableFn<T> = () => Promise<T>;
 
@@ -10,6 +17,14 @@ const appConfig = AppConfig.getInstance();
 
 export class TypeormDatabaseUtils {
   private retryableCodes = new Set(['25P02', '40P01', '40001', '55P03']); // deadlock, serialization, lock timeout/nowait
+  private currentProcessingBlocksRangeTag: string;
+
+  constructor(
+    private sqdCtx: SqdProcessorContext<Store>,
+    private extLogger: HydratedLogger
+  ) {
+    this.currentProcessingBlocksRangeTag = `${this.sqdCtx.blocks[0].header.height}-${this.sqdCtx.blocks[this.sqdCtx.blocks.length - 1].header.height}`;
+  }
 
   private isRetryablePg(err: any) {
     const code = err?.code || err?.driverError?.code;
@@ -41,13 +56,81 @@ export class TypeormDatabaseUtils {
     }
   }
 
-  async upsertWithBatches(
-    data: Entity[],
-    ctx: SqdProcessorContext<Store>,
+  async upsertWithBatches<E extends Entity>(
+    data: E[],
     maxBatchSize: number = appConfig.DB_ACTION_MAX_BATCH_SIZE
   ) {
+    if (!data.length) return;
+
+    const upsertOpId = crypto.randomUUID();
+
     for (const batch of splitIntoBatches(data, maxBatchSize)) {
-      await this.runWithRetry(() => ctx.store.upsert(batch));
+      await this.extLogger.measure({
+        fn: () => this.runWithRetry(() => this.sqdCtx.store.upsert(batch)),
+        name: `upsertBatch_${batch[0]?.constructor.name}`,
+        actionType: 'db_write',
+        meta: {
+          paraBlockHeight: this.sqdCtx.blocks[0].header.height,
+          opId: upsertOpId,
+          upsertBatchSize: batch.length,
+          paraBlocksRange: this.currentProcessingBlocksRangeTag,
+        },
+        options: {
+          ignoreConsoleLogs: true,
+        },
+      });
     }
+  }
+
+  async findWithLogs<E extends Entity>(
+    entityClass: EntityClass<E>,
+    options?: FindManyOptions<E>,
+    meta?: { className: string } & Record<string, any>
+  ): Promise<E[]> {
+    let findOptionsDecorated = null;
+
+    try {
+      if (options) findOptionsDecorated = JSON.stringify(options);
+    } catch (e) {}
+
+    return this.extLogger.measure({
+      fn: () => this.sqdCtx.store.find(entityClass, options),
+      name: `find_${meta?.className ?? entityClass?.constructor.name}`,
+      actionType: 'db_read',
+      meta: {
+        paraBlockHeight: meta?.paraBlockHeight,
+        paraBlocksRange: this.currentProcessingBlocksRangeTag,
+        findOptions: findOptionsDecorated,
+      },
+      options: {
+        ignoreConsoleLogs: true,
+      },
+    });
+  }
+
+  async findOneWithLogs<E extends Entity>(
+    entityClass: EntityClass<E>,
+    options: FindOneOptions<E>,
+    meta?: { className: string } & Record<string, any>
+  ): Promise<E | undefined> {
+    let findOptionsDecorated = null;
+
+    try {
+      if (options) findOptionsDecorated = JSON.stringify(options);
+    } catch (e) {}
+
+    return this.extLogger.measure({
+      fn: () => this.sqdCtx.store.findOne(entityClass, options),
+      name: `findOne_${meta?.className ?? entityClass?.constructor.name}`,
+      actionType: 'db_read',
+      meta: {
+        paraBlockHeight: meta?.paraBlockHeight,
+        paraBlocksRange: this.currentProcessingBlocksRangeTag,
+        findOptions: findOptionsDecorated,
+      },
+      options: {
+        ignoreConsoleLogs: true,
+      },
+    });
   }
 }

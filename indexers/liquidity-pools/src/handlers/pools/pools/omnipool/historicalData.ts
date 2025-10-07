@@ -180,12 +180,10 @@ export async function handleOmnipoolHistoricalData(
   );
 
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values()),
-    ctx
+    Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
   );
   await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values()),
-    ctx
+    Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values())
   );
 }
 
