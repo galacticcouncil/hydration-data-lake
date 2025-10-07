@@ -144,10 +144,10 @@ export async function getDcaSchedule({
   let schedule = batchState.dcaSchedules.get(id);
   if (schedule || (!schedule && !fetchFromDb)) return schedule ?? null;
 
-  schedule = await ctx.store.findOne(DcaSchedule, {
+  schedule = await ctx.storeUtils.findOneWithLogs(DcaSchedule, {
     where: { id },
     relations,
-  });
+  }, { className: 'DcaSchedule' });
 
   if (!schedule) return null;
   ctx.batchState.state.dcaSchedules.set(schedule.id, schedule);

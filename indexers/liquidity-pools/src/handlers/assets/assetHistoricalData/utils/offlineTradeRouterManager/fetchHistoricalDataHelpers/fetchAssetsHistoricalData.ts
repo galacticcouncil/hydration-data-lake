@@ -24,14 +24,14 @@ export async function fetchAssetsHistoricalData({
     ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
   ].filter((item) => item.paraBlockHeight === blockNumber);
 
-  const persistedHistData = await ctx.store.find(AssetHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(AssetHistoricalData, {
     where: {
       paraBlockHeight: blockNumber,
     },
     relations: {
       asset: true,
     },
-  });
+  }, { className: 'AssetHistoricalData' });
 
   return new Map([
     ...persistedHistData.map((ahd): [string, AssetHistoricalData] => [
@@ -67,14 +67,14 @@ export async function fetchAssetsHistoricalDataForBlocksRange({
       item.paraBlockHeight < blockToNumber + 1
   );
 
-  const persistedHistData = await ctx.store.find(AssetHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(AssetHistoricalData, {
     where: {
       paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
     },
     relations: {
       asset: true,
     },
-  });
+  }, { className: 'AssetHistoricalData' });
 
   const mergedDataMap = new Map([
     ...persistedHistData.map((ahd): [string, AssetHistoricalData] => [

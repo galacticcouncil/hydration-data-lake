@@ -251,12 +251,12 @@ export async function handleMmAssetAccountBalancesPerBlock(
                * We need this re-fetch to be sure that cached Asset contains data
                * about a related underlyingAsset
                */
-              assetFull = await ctx.store.findOne(Asset, {
+              assetFull = await ctx.storeUtils.findOneWithLogs(Asset, {
                 where: { id: assetBalance.asset.id },
                 relations: {
                   underlyingAsset: true,
                 },
-              });
+              }, { className: 'Asset' });
               if (!assetFull || !assetFull.underlyingAsset)
                 continue assetBalancesLoop;
             }

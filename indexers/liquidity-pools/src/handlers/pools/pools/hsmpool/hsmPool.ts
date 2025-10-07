@@ -7,13 +7,13 @@ export async function ensureHsmpool(ctx: SqdProcessorContext<Store>) {
   if (ctx.batchState.state.hsmpoolEntity) return;
 
   let hsmpoolEntity =
-    (await ctx.store.findOne(Hsmpool, {
+    (await ctx.storeUtils.findOneWithLogs(Hsmpool, {
       where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
       relations: {
         collaterals: { asset: true, stableswap: true },
         account: true,
       },
-    })) ?? null;
+    }, { className: 'Hsmpool' })) ?? null;
 
   if (!!hsmpoolEntity) {
     ctx.batchState.state.hsmpoolEntity = hsmpoolEntity;

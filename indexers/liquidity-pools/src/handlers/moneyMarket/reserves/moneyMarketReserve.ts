@@ -35,7 +35,7 @@ export async function getOrCreateMoneyMarketReserve({
 
   if (reserveEntity) return reserveEntity;
 
-  reserveEntity = await ctx.store.findOne(MoneyMarketReserve, {
+  reserveEntity = await ctx.storeUtils.findOneWithLogs(MoneyMarketReserve, {
     where: { id },
     relations: {
       aToken: true,
@@ -43,7 +43,7 @@ export async function getOrCreateMoneyMarketReserve({
       variableDebtToken: true,
       aavePool: true,
     },
-  });
+  }, { className: 'MoneyMarketReserve' });
 
   if (reserveEntity) {
     ctx.batchState.state.moneyMarketReserves.set(id, reserveEntity);
@@ -176,7 +176,7 @@ export async function actualizeMoneyMarketReserves({
   ) {
     existingPersistentReserveEntitiesMap = new Map(
       (
-        await ctx.store.find(MoneyMarketReserve, {
+        await ctx.storeUtils.findWithLogs(MoneyMarketReserve, {
           where: {},
           relations: {
             aToken: true,
@@ -184,7 +184,7 @@ export async function actualizeMoneyMarketReserves({
             variableDebtToken: true,
             aavePool: true,
           },
-        })
+        }, { className: 'MoneyMarketReserve' })
       ).map((r) => [r.id, r])
     );
 

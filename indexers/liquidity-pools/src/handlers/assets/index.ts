@@ -31,13 +31,13 @@ export async function handleAssetRegistry(
 
   if (updatedAssetsList.length > 0) {
     const assetsAllBatch = ctx.batchState.state.assetsAll;
-    const existingAssets = await ctx.store.find(Asset, {
+    const existingAssets = await ctx.storeUtils.findWithLogs(Asset, {
       where: {
         id: In(
           updatedAssetsList.map((asset) => asset.eventData.params.assetId)
         ),
       },
-    });
+    }, { className: 'Asset' });
 
     existingAssets.forEach((asset) => assetsAllBatch.set(asset.id, asset));
   }

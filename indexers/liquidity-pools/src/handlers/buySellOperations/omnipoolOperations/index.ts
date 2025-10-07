@@ -190,10 +190,10 @@ async function prefetchEntities(
 
   const state = ctx.batchState.state;
 
-  const prefetchedOmnipoolAssets = await ctx.store.find(OmnipoolAsset, {
+  const prefetchedOmnipoolAssets = await ctx.storeUtils.findWithLogs(OmnipoolAsset, {
     where: { id: In(omnipoolAssetsToPrefetch) },
     relations: { asset: true, pool: true },
-  });
+  }, { className: 'OmnipoolAsset' });
 
   if (omnipoolAssetsToPrefetch.length > 0)
     state.omnipoolAssets = new Map(

@@ -102,9 +102,13 @@ export async function handlePreprocDataBuckets({
 
     const block =
       prefetchedCache.blocks.get(preprocData.block) ??
-      (await ctx.store.findOne(BlockEntity, {
-        where: { id: preprocData.block },
-      }));
+      (await ctx.storeUtils.findOneWithLogs(
+        BlockEntity,
+        {
+          where: { id: preprocData.block },
+        },
+        { className: 'BlockEntity' }
+      ));
 
     const newEntity = new AssetHistoricalData({
       id: preprocData.id,
@@ -143,9 +147,13 @@ export async function handlePreprocDataBuckets({
 
     const block =
       prefetchedCache.blocks.get(preprocData.block) ??
-      (await ctx.store.findOne(BlockEntity, {
-        where: { id: preprocData.block },
-      }));
+      (await ctx.storeUtils.findOneWithLogs(
+        BlockEntity,
+        {
+          where: { id: preprocData.block },
+        },
+        { className: 'BlockEntity' }
+      ));
 
     if (!block) continue;
 
@@ -179,9 +187,13 @@ export async function handlePreprocDataBuckets({
 
     const block =
       prefetchedCache.blocks.get(preprocData.block) ??
-      (await ctx.store.findOne(BlockEntity, {
-        where: { id: preprocData.block },
-      }));
+      (await ctx.storeUtils.findOneWithLogs(
+        BlockEntity,
+        {
+          where: { id: preprocData.block },
+        },
+        { className: 'BlockEntity' }
+      ));
     if (!block) continue;
 
     const assetA = await getOrCreateAsset({
@@ -431,29 +443,53 @@ export async function getPrefetchedCache({
     stableswapVolumesList,
     stableswapAssetVolumesList,
   ] = await Promise.all([
-    ctx.store.find(BlockEntity, {
-      where: { id: In(bockIdsToPrefetch) },
-    }),
-    ctx.store.find(XykpoolVolumeHistoricalData, {
-      where: { id: In(xykpoolVolIdsToPrefetch) },
-      relations: { pool: true, block: true },
-    }),
-    ctx.store.find(LbppoolVolumeHistoricalData, {
-      where: { id: In(lbppoolVolIdsToPrefetch) },
-      relations: { pool: true, block: true },
-    }),
-    ctx.store.find(OmnipoolAssetVolumeHistoricalData, {
-      where: { id: In(omnipoolAssetVolIdsToPrefetch) },
-      relations: { omnipoolAsset: true, block: true },
-    }),
-    ctx.store.find(StableswapVolumeHistoricalData, {
-      where: { id: In(stableswapVolIdsToPrefetch) },
-      relations: { pool: true, block: true },
-    }),
-    ctx.store.find(StableswapAssetVolumeHistoricalData, {
-      where: { id: In(stableswapAssetVolIdsToPrefetch) },
-      relations: { volumesCollection: true, asset: true },
-    }),
+    ctx.storeUtils.findWithLogs(
+      BlockEntity,
+      {
+        where: { id: In(bockIdsToPrefetch) },
+      },
+      { className: 'BlockEntity' }
+    ),
+    ctx.storeUtils.findWithLogs(
+      XykpoolVolumeHistoricalData,
+      {
+        where: { id: In(xykpoolVolIdsToPrefetch) },
+        relations: { pool: true, block: true },
+      },
+      { className: 'XykpoolVolumeHistoricalData' }
+    ),
+    ctx.storeUtils.findWithLogs(
+      LbppoolVolumeHistoricalData,
+      {
+        where: { id: In(lbppoolVolIdsToPrefetch) },
+        relations: { pool: true, block: true },
+      },
+      { className: 'LbppoolVolumeHistoricalData' }
+    ),
+    ctx.storeUtils.findWithLogs(
+      OmnipoolAssetVolumeHistoricalData,
+      {
+        where: { id: In(omnipoolAssetVolIdsToPrefetch) },
+        relations: { omnipoolAsset: true, block: true },
+      },
+      { className: 'OmnipoolAssetVolumeHistoricalData' }
+    ),
+    ctx.storeUtils.findWithLogs(
+      StableswapVolumeHistoricalData,
+      {
+        where: { id: In(stableswapVolIdsToPrefetch) },
+        relations: { pool: true, block: true },
+      },
+      { className: 'StableswapVolumeHistoricalData' }
+    ),
+    ctx.storeUtils.findWithLogs(
+      StableswapAssetVolumeHistoricalData,
+      {
+        where: { id: In(stableswapAssetVolIdsToPrefetch) },
+        relations: { volumesCollection: true, asset: true },
+      },
+      { className: 'StableswapAssetVolumeHistoricalData' }
+    ),
   ]);
 
   return {

@@ -44,7 +44,7 @@ export async function getOrCreateAccount({
 
   if (acc) return acc;
 
-  acc = await ctx.store.findOne(Account, { where: { id }, relations });
+  acc = await ctx.storeUtils.findOneWithLogs(Account, { where: { id }, relations }, { className: 'Account' });
 
   if (
     acc &&
@@ -100,10 +100,10 @@ export async function getAccountByBoundEvmAddress({
   );
   if (accout) return accout;
 
-  accout = await ctx.store.findOne(Account, {
+  accout = await ctx.storeUtils.findOneWithLogs(Account, {
     where: { boundEvmAddress: evmAddress },
     relations,
-  });
+  }, { className: 'Account' });
 
   if (!accout) return null;
 
@@ -130,10 +130,10 @@ export async function getAccountByAddressPart({
   );
   if (account) return account;
 
-  account = await ctx.store.findOne(Account, {
+  account = await ctx.storeUtils.findOneWithLogs(Account, {
     where: { id: Like(substring) },
     relations,
-  });
+  }, { className: 'Account' });
 
   if (!account) return null;
 
@@ -201,7 +201,6 @@ export async function prefetchOrInitAllBatchAccounts(
     },
     {
       className: 'Account',
-      paraBlockHeight: ctx.blocks[ctx.blocks.length - 1].header.height,
     }
   );
 

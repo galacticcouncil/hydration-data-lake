@@ -181,7 +181,7 @@ export async function getOldHsmAssetHistDataEntity({
   assetId: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.store.findOne(HsmpoolAssetHistoricalData, {
+  return await ctx.storeUtils.findOneWithLogs(HsmpoolAssetHistoricalData, {
     where: {
       asset: { id: assetId },
       ...(currentBlockHeight
@@ -195,7 +195,7 @@ export async function getOldHsmAssetHistDataEntity({
     order: {
       paraBlockHeight: 'DESC',
     },
-  });
+  }, { className: 'HsmpoolAssetHistoricalData' });
 }
 
 export async function processHsmpoolAssetBalanceHistoricalData({

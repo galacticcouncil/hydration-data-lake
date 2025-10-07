@@ -26,7 +26,7 @@ export async function fetchXykPoolsHistoricalData({
     allActivePoolsCached.push(item);
   }
 
-  const allActivePoolsPersisted = await ctx.store.find(Xykpool, {
+  const allActivePoolsPersisted = await ctx.storeUtils.findWithLogs(Xykpool, {
     where: {
       isDestroyed: false,
     },
@@ -36,7 +36,7 @@ export async function fetchXykPoolsHistoricalData({
       assetB: true,
       shareToken: true,
     },
-  });
+  }, { className: 'Xykpool' });
 
   const allActivePools: Map<string, Xykpool> = new Map([
     ...allActivePoolsCached.map((pool): [string, Xykpool] => [pool.id, pool]),
@@ -59,7 +59,7 @@ export async function fetchXykPoolsHistoricalData({
     cachedHistData.push(item);
   }
 
-  const persistedHistData = await ctx.store.find(XykpoolHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(XykpoolHistoricalData, {
     where: {
       // paraBlockHeight: LessThanOrEqual(blockNumber),
       paraBlockHeight: blockNumber,
@@ -75,7 +75,7 @@ export async function fetchXykPoolsHistoricalData({
       assetA: true,
       assetB: true,
     },
-  });
+  }, { className: 'XykpoolHistoricalData' });
 
   return new Map([
     ...persistedHistData.map((histData): [string, XykpoolHistoricalData] => [
@@ -102,7 +102,7 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
     ...ctx.batchState.state.xykAllBatchPools.values(),
   ].filter((item) => !item.isDestroyed);
 
-  const allActivePoolsPersisted = await ctx.store.find(Xykpool, {
+  const allActivePoolsPersisted = await ctx.storeUtils.findWithLogs(Xykpool, {
     where: {
       isDestroyed: false,
     },
@@ -112,7 +112,7 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
       assetB: true,
       shareToken: true,
     },
-  });
+  }, { className: 'Xykpool' });
 
   const allActivePools = new Map<string, Xykpool>();
   for (const histData of allActivePoolsCached) {
@@ -130,7 +130,7 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
       item.paraBlockHeight < blockToNumber + 1 &&
       allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
-  const persistedHistData = await ctx.store.find(XykpoolHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(XykpoolHistoricalData, {
     where: {
       // paraBlockHeight: LessThanOrEqual(blockNumber),
       paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
@@ -146,7 +146,7 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
       assetA: true,
       assetB: true,
     },
-  });
+  }, { className: 'XykpoolHistoricalData' });
 
   const mergedDataMap = new Map<string, XykpoolHistoricalData>();
 

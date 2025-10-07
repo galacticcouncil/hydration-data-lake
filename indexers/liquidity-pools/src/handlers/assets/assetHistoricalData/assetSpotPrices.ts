@@ -273,7 +273,7 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.store.findOne(AssetSpotPriceHistoricalData, {
+    previousItem = await ctx.storeUtils.findOneWithLogs(AssetSpotPriceHistoricalData, {
       where: {
         assetIn: {
           id: currentRecord.assetIn.id,
@@ -286,7 +286,7 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
       order: {
         paraBlockHeight: 'DESC',
       },
-    });
+    }, { className: 'AssetSpotPriceHistoricalData' });
   }
 
   if (!previousItem) {

@@ -17,7 +17,7 @@ export async function fetchEmaOracleEntriesHistoricalData({
     ...ctx.batchState.state.emaOracleEntriesHistoricalData.values(),
   ].filter((item) => item.paraBlockHeight === blockNumber);
 
-  const persistedHistData = await ctx.store.find(EmaOracleEntryHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(EmaOracleEntryHistoricalData, {
     where: {
       paraBlockHeight: blockNumber,
     },
@@ -26,7 +26,7 @@ export async function fetchEmaOracleEntriesHistoricalData({
       assetB: true,
       block: true,
     },
-  });
+  }, { className: 'EmaOracleEntryHistoricalData' });
 
   return new Map([
     ...persistedHistData.map(
@@ -61,7 +61,7 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRange({
       item.paraBlockHeight < blockToNumber + 1
   );
 
-  const persistedHistData = await ctx.store.find(EmaOracleEntryHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(EmaOracleEntryHistoricalData, {
     where: {
       paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
     },
@@ -70,7 +70,7 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRange({
       assetB: true,
       block: true,
     },
-  });
+  }, { className: 'EmaOracleEntryHistoricalData' });
 
   // const mergedDataMap = new Map([
   //   ...persistedHistData.map(

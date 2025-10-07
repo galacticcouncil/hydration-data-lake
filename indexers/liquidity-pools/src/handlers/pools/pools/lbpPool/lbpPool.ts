@@ -150,7 +150,7 @@ export async function getOrCreateLbppool({
   );
   if (pool) return pool;
 
-  pool = await ctx.store.findOne(Lbppool, {
+  pool = await ctx.storeUtils.findOneWithLogs(Lbppool, {
     where: [
       { assetA: { id: `${assetIds[0]}` }, assetB: { id: `${assetIds[1]}` } },
       { assetB: { id: `${assetIds[0]}` }, assetA: { id: `${assetIds[1]}` } },
@@ -160,7 +160,7 @@ export async function getOrCreateLbppool({
       assetB: true,
       account: true,
     },
-  });
+  }, { className: 'Lbppool' });
 
   if (pool) {
     ctx.batchState.state.lbpAllBatchPools.set(pool.id, pool);

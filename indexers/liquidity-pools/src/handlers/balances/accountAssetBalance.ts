@@ -39,10 +39,10 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
   if (dataEntity) return dataEntity;
 
   if (!dataEntity && fetchFromDb) {
-    dataEntity = await ctx.store.findOne(AccountAssetBalanceHistoricalData, {
+    dataEntity = await ctx.storeUtils.findOneWithLogs(AccountAssetBalanceHistoricalData, {
       where: { id: entityId },
       relations,
-    });
+    }, { className: 'AccountAssetBalanceHistoricalData' });
 
     if (dataEntity) {
       ctx.batchState.state.accountAssetBalanceHistoricalData.set(
@@ -109,10 +109,10 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
   if (dataEntity) return dataEntity;
 
   if (!dataEntity && fetchFromDb) {
-    dataEntity = await ctx.store.findOne(AccountTotalBalanceHistoricalData, {
+    dataEntity = await ctx.storeUtils.findOneWithLogs(AccountTotalBalanceHistoricalData, {
       where: { id: entityId },
       relations,
-    });
+    }, { className: 'AccountTotalBalanceHistoricalData' });
 
     if (dataEntity) {
       ctx.batchState.state.accountTotalBalanceHistoricalData.set(

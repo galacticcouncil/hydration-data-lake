@@ -11,13 +11,13 @@ export async function getAssetsByStablepool(
   const cachedAssets = [...batchState.stableswapAssets.values()].filter(
     (asset) => asset.pool.id === poolId
   );
-  const persistentAssets = await ctx.store.find(StableswapAsset, {
+  const persistentAssets = await ctx.storeUtils.findWithLogs(StableswapAsset, {
     where: { pool: { id: `${poolId}` } },
     relations: {
       pool: true,
       asset: true,
     },
-  });
+  }, { className: 'StableswapAsset' });
   const compiledMap = new Map(
     [...cachedAssets, ...persistentAssets].map((asset) => [asset.id, asset])
   );

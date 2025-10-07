@@ -24,11 +24,11 @@ export async function getOrCreateAaveFacilitator({
 
   if (facilitator) return facilitator;
 
-  facilitator = await ctx.store.findOne(AaveFacilitator, {
+  facilitator = await ctx.storeUtils.findOneWithLogs(AaveFacilitator, {
     where: {
       id,
     },
-  });
+  }, { className: 'AaveFacilitator' });
 
   if (facilitator) {
     ctx.batchState.state.aaveFacilitators.set(facilitator.id, facilitator);
@@ -156,7 +156,7 @@ export async function getOldAaveFacilitatorHistDataEntity({
   address: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.store.findOne(AaveFacilitatorHistoricalData, {
+  return await ctx.storeUtils.findOneWithLogs(AaveFacilitatorHistoricalData, {
     where: {
       facilitator: { id: address },
       ...(currentBlockHeight
@@ -169,5 +169,5 @@ export async function getOldAaveFacilitatorHistDataEntity({
     order: {
       paraBlockHeight: 'DESC',
     },
-  });
+  }, { className: 'AaveFacilitatorHistoricalData' });
 }

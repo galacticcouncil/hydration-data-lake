@@ -13,13 +13,13 @@ export async function fetchAavePoolsHistoricalData({
 }) {
   const allPoolsCached = [...ctx.batchState.state.aavePools.values()];
 
-  const allPoolsPersisted = await ctx.store.find(Aavepool, {
+  const allPoolsPersisted = await ctx.storeUtils.findWithLogs(Aavepool, {
     where: {},
     relations: {
       reserveAsset: true,
       aToken: true,
     },
-  });
+  }, { className: 'Aavepool' });
 
   const allPools: Map<string, Aavepool> = new Map([
     ...allPoolsCached.map((pool): [string, Aavepool] => [pool.id, pool]),
@@ -31,7 +31,7 @@ export async function fetchAavePoolsHistoricalData({
   ].filter(
     (item) => item.paraBlockHeight === blockNumber && allPools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
-  const persistedHistData = await ctx.store.find(AavepoolHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(AavepoolHistoricalData, {
     where: {
       // paraBlockHeight: LessThanOrEqual(blockNumber),
       paraBlockHeight: blockNumber,
@@ -45,7 +45,7 @@ export async function fetchAavePoolsHistoricalData({
     relations: {
       pool: { reserveAsset: true, aToken: true },
     },
-  });
+  }, { className: 'AavepoolHistoricalData' });
 
   return new Map([
     ...persistedHistData.map((histData): [string, AavepoolHistoricalData] => [
@@ -70,13 +70,13 @@ export async function fetchAavePoolsHistoricalDataForBlocksRange({
 }) {
   const allPoolsCached = [...ctx.batchState.state.aavePools.values()];
 
-  const allPoolsPersisted = await ctx.store.find(Aavepool, {
+  const allPoolsPersisted = await ctx.storeUtils.findWithLogs(Aavepool, {
     where: {},
     relations: {
       reserveAsset: true,
       aToken: true,
     },
-  });
+  }, { className: 'Aavepool' });
 
   // const allPools: Map<string, Aavepool> = new Map([
   //   ...allPoolsCached.map((pool): [string, Aavepool] => [pool.id, pool]),
@@ -99,7 +99,7 @@ export async function fetchAavePoolsHistoricalDataForBlocksRange({
       item.paraBlockHeight < blockToNumber + 1 &&
       allPools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
-  const persistedHistData = await ctx.store.find(AavepoolHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(AavepoolHistoricalData, {
     where: {
       paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
       pool: {
@@ -112,7 +112,7 @@ export async function fetchAavePoolsHistoricalDataForBlocksRange({
     relations: {
       pool: { reserveAsset: true, aToken: true },
     },
-  });
+  }, { className: 'AavepoolHistoricalData' });
 
   // const mergedDataMap = new Map([
   //   ...persistedHistData.map((histData): [string, AavepoolHistoricalData] => [

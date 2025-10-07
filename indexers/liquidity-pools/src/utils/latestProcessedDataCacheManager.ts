@@ -37,7 +37,7 @@ export class LatestProcessedDataCacheManager {
     const latestEntities = await Promise.all(
       storageDataAllAssets.map((assetData): AssetHistoricalData | undefined => {
         // @ts-ignore
-        return ctx.store.findOne(AssetHistoricalData, {
+        return ctx.storeUtils.findOneWithLogs(AssetHistoricalData, {
           where: {
             asset: { assetRegistryId: assetData.assetId.toString() },
             paraBlockHeight: LessThan(currentBlockHeader.height),
@@ -48,7 +48,7 @@ export class LatestProcessedDataCacheManager {
           relations: {
             asset: true,
           },
-        });
+        }, { className: 'AssetHistoricalData' });
       })
     );
 
@@ -98,7 +98,7 @@ export class LatestProcessedDataCacheManager {
       storageDataAllAssets.map(
         (assetData): AssetSpotPriceHistoricalData | undefined => {
           // @ts-ignore
-          return ctx.store.findOne(AssetSpotPriceHistoricalData, {
+          return ctx.storeUtils.findOneWithLogs(AssetSpotPriceHistoricalData, {
             where: {
               assetIn: { assetRegistryId: assetData.assetId.toString() },
               paraBlockHeight: LessThan(currentBlockHeader.height),
@@ -111,7 +111,7 @@ export class LatestProcessedDataCacheManager {
               assetOut: true,
               assetInHistData: true,
             },
-          });
+          }, { className: 'AssetSpotPriceHistoricalData' });
         }
       )
     );

@@ -82,10 +82,10 @@ export async function getOtcOrder({
   let order = batchState.otcOrders.get(id);
   if (order || (!order && !fetchFromDb)) return order ?? null;
 
-  order = await ctx.store.findOne(OtcOrder, {
+  order = await ctx.storeUtils.findOneWithLogs(OtcOrder, {
     where: { id },
     relations,
-  });
+  }, { className: 'OtcOrder' });
 
   if (order) {
     ctx.batchState.state.otcOrders.set(order.id, order);

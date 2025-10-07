@@ -38,7 +38,7 @@ export async function handleAssetVolumeUpdates(
   const oldAssetInVolume =
     currentAssetInVolume ||
     cachedVolumeIn ||
-    (await ctx.store.findOne(AssetVolumeHistoricalData, {
+    (await ctx.storeUtils.findOneWithLogs(AssetVolumeHistoricalData, {
       where: {
         asset: { id: swapDetails.assetIn.id },
       },
@@ -46,13 +46,13 @@ export async function handleAssetVolumeUpdates(
       order: {
         paraBlockHeight: 'DESC',
       },
-    }));
+    }, { className: 'AssetVolumeHistoricalData' }));
 
   // Last known volume for total volume
   const oldAssetOutVolume =
     currentAssetOutVolume ||
     cachedVolumeOut ||
-    (await ctx.store.findOne(AssetVolumeHistoricalData, {
+    (await ctx.storeUtils.findOneWithLogs(AssetVolumeHistoricalData, {
       where: {
         asset: { id: swapDetails.assetOut.id },
       },
@@ -60,7 +60,7 @@ export async function handleAssetVolumeUpdates(
       order: {
         paraBlockHeight: 'DESC',
       },
-    }));
+    }, { className: 'AssetVolumeHistoricalData' }));
 
   // Create new entry
   const assetInVolume = initAssetVolume(

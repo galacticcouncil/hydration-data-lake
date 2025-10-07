@@ -28,7 +28,7 @@ export async function recalculatePoolsNormalizedVolumes(
 
   ctx.batchState.state.assetsAll = new Map(
     (
-      await ctx.store.find(Asset, {
+      await ctx.storeUtils.findWithLogs(Asset, {
         where: {},
         relations: {
           underlyingAsset: true,
@@ -36,26 +36,26 @@ export async function recalculatePoolsNormalizedVolumes(
           variableDebtToken: true,
           bondUnderlyingAsset: true,
         },
-      })
+      }, { className: 'Asset' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.batchBlocks = new Map(
     (
-      await ctx.store.find(Block, {
+      await ctx.storeUtils.findWithLogs(Block, {
         where: {
           height: Between(
             ctx.blocks[0].header.height,
             ctx.blocks[ctx.blocks.length - 1].header.height
           ),
         },
-      })
+      }, { className: 'Block' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.assetsSpotPriceHistoricalDataBatch = new Map(
     (
-      await ctx.store.find(AssetSpotPriceHistoricalData, {
+      await ctx.storeUtils.findWithLogs(AssetSpotPriceHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -68,13 +68,13 @@ export async function recalculatePoolsNormalizedVolumes(
           assetOut: true,
           block: true,
         },
-      })
+      }, { className: 'AssetSpotPriceHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.xykPoolVolumes = new Map(
     (
-      await ctx.store.find(XykpoolVolumeHistoricalData, {
+      await ctx.storeUtils.findWithLogs(XykpoolVolumeHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -87,12 +87,12 @@ export async function recalculatePoolsNormalizedVolumes(
           assetB: true,
           block: true,
         },
-      })
+      }, { className: 'XykpoolVolumeHistoricalData' })
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.omnipoolAssetVolumes = new Map(
     (
-      await ctx.store.find(OmnipoolAssetVolumeHistoricalData, {
+      await ctx.storeUtils.findWithLogs(OmnipoolAssetVolumeHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -102,13 +102,13 @@ export async function recalculatePoolsNormalizedVolumes(
         relations: {
           omnipoolAsset: { asset: true },
         },
-      })
+      }, { className: 'OmnipoolAssetVolumeHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolVolumeCollections = new Map(
     (
-      await ctx.store.find(StableswapVolumeHistoricalData, {
+      await ctx.storeUtils.findWithLogs(StableswapVolumeHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -119,13 +119,13 @@ export async function recalculatePoolsNormalizedVolumes(
           pool: true,
           block: true,
         },
-      })
+      }, { className: 'StableswapVolumeHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolAssetVolumes = new Map(
     (
-      await ctx.store.find(StableswapAssetVolumeHistoricalData, {
+      await ctx.storeUtils.findWithLogs(StableswapAssetVolumeHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -137,7 +137,7 @@ export async function recalculatePoolsNormalizedVolumes(
           asset: true,
           block: true,
         },
-      })
+      }, { className: 'StableswapAssetVolumeHistoricalData' })
     ).map((p) => [p.id, p])
   );
 

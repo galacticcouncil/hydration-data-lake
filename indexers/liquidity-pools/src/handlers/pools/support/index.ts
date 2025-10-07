@@ -34,7 +34,7 @@ export async function ensurePoolsDestroyedStatus(
 }
 
 async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
-  const lbpPoolsToProcess = await ctx.store.find(Lbppool, {
+  const lbpPoolsToProcess = await ctx.storeUtils.findWithLogs(Lbppool, {
     where: {
       isDestroyed: false,
     },
@@ -43,7 +43,7 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
       assetA: true,
       assetB: true,
     },
-  });
+  }, { className: 'Lbppool' });
 
   if (lbpPoolsToProcess.length === 0) return;
 
@@ -106,14 +106,14 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
 async function handleStableoolsDestroyedStatus(
   ctx: SqdProcessorContext<Store>
 ) {
-  const stableswapsToProcess = await ctx.store.find(Stableswap, {
+  const stableswapsToProcess = await ctx.storeUtils.findWithLogs(Stableswap, {
     where: {
       isDestroyed: false,
     },
     relations: {
       account: true,
     },
-  });
+  }, { className: 'Stableswap' });
 
   if (stableswapsToProcess.length === 0) return;
 

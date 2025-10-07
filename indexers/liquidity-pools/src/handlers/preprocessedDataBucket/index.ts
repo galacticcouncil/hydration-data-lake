@@ -18,10 +18,10 @@ export async function processPreprocessedDataBuckets(
   console.timeEnd('totalBucketsCount fetch - ');
 
   while (isBlockNumberToProcess) {
-    const anyBucket = await ctx.store.findOne(PreprocessedDataBucket, {
+    const anyBucket = await ctx.storeUtils.findOneWithLogs(PreprocessedDataBucket, {
       where: {},
       order: { paraBlockHeight: 'ASC' },
-    });
+    }, { className: 'PreprocessedDataBucket' });
     if (!anyBucket) {
       isBlockNumberToProcess = false;
       break;

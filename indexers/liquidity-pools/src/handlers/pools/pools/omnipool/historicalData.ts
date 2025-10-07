@@ -365,7 +365,7 @@ export async function isOmnipoolAssetHistoricalDataUniqueRegardingPreviousRecord
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.store.findOne(OmnipoolAssetHistoricalData, {
+    previousItem = await ctx.storeUtils.findOneWithLogs(OmnipoolAssetHistoricalData, {
       where: {
         asset: { id: currentRecord.asset.id },
         paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
@@ -373,7 +373,7 @@ export async function isOmnipoolAssetHistoricalDataUniqueRegardingPreviousRecord
       order: {
         paraBlockHeight: 'DESC',
       },
-    });
+    }, { className: 'OmnipoolAssetHistoricalData' });
   }
 
   if (!previousItem) {

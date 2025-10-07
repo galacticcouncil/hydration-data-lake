@@ -45,7 +45,7 @@ export async function getDcaScheduleEvent({
   if (executionEvent || (!executionEvent && !fetchFromDb))
     return executionEvent ?? null;
 
-  executionEvent = await ctx.store.findOne(DcaScheduleEvent, {
+  executionEvent = await ctx.storeUtils.findOneWithLogs(DcaScheduleEvent, {
     where: {
       ...(id ? { id } : {}),
       ...(scheduleId && scheduleEventName
@@ -53,7 +53,7 @@ export async function getDcaScheduleEvent({
         : {}),
     } as FindOptionsWhere<DcaScheduleEvent>,
     relations,
-  });
+  }, { className: 'DcaScheduleEvent' });
 
   if (!executionEvent) return null;
 

@@ -74,7 +74,7 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
 
   ctx.batchState.state.assetsAll = new Map(
     (
-      await ctx.store.find(Asset, {
+      await ctx.storeUtils.findWithLogs(Asset, {
         where: {},
         relations: {
           underlyingAsset: true,
@@ -82,12 +82,12 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
           variableDebtToken: true,
           bondUnderlyingAsset: true,
         },
-      })
+      }, { className: 'Asset' })
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.assetsSpotPriceHistoricalDataBatch = new Map(
     (
-      await ctx.store.find(AssetSpotPriceHistoricalData, {
+      await ctx.storeUtils.findWithLogs(AssetSpotPriceHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -100,13 +100,13 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
           assetOut: true,
           block: true,
         },
-      })
+      }, { className: 'AssetSpotPriceHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.accountAssetBalanceHistoricalData = new Map(
     (
-      await ctx.store.find(AccountAssetBalanceHistoricalData, {
+      await ctx.storeUtils.findWithLogs(AccountAssetBalanceHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -118,7 +118,7 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
           asset: true,
           block: true,
         },
-      })
+      }, { className: 'AccountAssetBalanceHistoricalData' })
     ).map((p) => [p.id, p])
   );
 

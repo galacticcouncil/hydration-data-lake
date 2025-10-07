@@ -42,7 +42,7 @@ export async function getOldCollateralHistDataEntity({
   collateralId: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.store.findOne(HsmCollateralConfigHistoricalData, {
+  return await ctx.storeUtils.findOneWithLogs(HsmCollateralConfigHistoricalData, {
     where: {
       collateral: { id: collateralId },
       ...(currentBlockHeight
@@ -55,5 +55,5 @@ export async function getOldCollateralHistDataEntity({
     order: {
       paraBlockHeight: 'DESC',
     },
-  });
+  }, { className: 'HsmCollateralConfigHistoricalData' });
 }

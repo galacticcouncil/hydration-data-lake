@@ -12,7 +12,7 @@ export async function getOldAaveFacilitatorHistDataEntity({
   address: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.store.findOne(AaveFacilitatorHistoricalData, {
+  return await ctx.storeUtils.findOneWithLogs(AaveFacilitatorHistoricalData, {
     where: {
       facilitator: { id: address },
       ...(currentBlockHeight
@@ -25,5 +25,5 @@ export async function getOldAaveFacilitatorHistDataEntity({
     order: {
       paraBlockHeight: 'DESC',
     },
-  });
+  }, { className: 'AaveFacilitatorHistoricalData' });
 }

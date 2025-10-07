@@ -32,7 +32,7 @@ import { AssetHubManager } from '../../utils/assetHubManager';
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAll = new Map(
     (
-      await ctx.store.find(Asset, {
+      await ctx.storeUtils.findWithLogs(Asset, {
         where: {},
         relations: {
           underlyingAsset: true,
@@ -40,7 +40,7 @@ export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
           variableDebtToken: true,
           bondUnderlyingAsset: true,
         },
-      })
+      }, { className: 'Asset' })
     ).map((asset) => [asset.id, asset])
   );
 }
@@ -152,7 +152,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   let bondsStorageData: BondDetails[] = [];
 
   const allExistingAssets = new Map(
-    (await ctx.store.find(Asset)).map((asset) => [asset.id, asset])
+    (await ctx.storeUtils.findWithLogs(Asset, {}, { className: 'Asset' })).map((asset) => [asset.id, asset])
   );
 
   const assetsToSave: Asset[] = [];

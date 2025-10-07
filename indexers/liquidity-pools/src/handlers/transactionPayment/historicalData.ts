@@ -118,10 +118,10 @@ async function getPreviousPersistedTransactionPaymentHistDataEntity({
   ctx: SqdProcessorContext<Store>;
   currentBlockHeight: number;
 }) {
-  return await ctx.store.findOne(TransactionPaymentHistoricalData, {
+  return await ctx.storeUtils.findOneWithLogs(TransactionPaymentHistoricalData, {
     where: { paraBlockHeight: LessThan(currentBlockHeight) },
     order: {
       paraBlockHeight: 'DESC',
     },
-  });
+  }, { className: 'TransactionPaymentHistoricalData' });
 }

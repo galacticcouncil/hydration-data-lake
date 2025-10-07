@@ -68,32 +68,32 @@ export async function prefetchGenericPersistentData(
   };
 
   await fetchAndCachePersistentData(ctx.batchState.state.lbpAllBatchPools, () =>
-    ctx.store.find(Lbppool, {
+    ctx.storeUtils.findWithLogs(Lbppool, {
       where: {},
       relations: { account: true, assetA: true, assetB: true },
-    })
+    }, { className: 'Lbppool' })
   );
   await fetchAndCachePersistentData(ctx.batchState.state.xykAllBatchPools, () =>
-    ctx.store.find(Xykpool, {
+    ctx.storeUtils.findWithLogs(Xykpool, {
       where: {},
       relations: { assetA: true, assetB: true, account: true },
-    })
+    }, { className: 'Xykpool' })
   );
   await fetchAndCachePersistentData(ctx.batchState.state.omnipoolAssets, () =>
-    ctx.store.find(OmnipoolAsset, {
+    ctx.storeUtils.findWithLogs(OmnipoolAsset, {
       where: {},
       relations: { asset: true, pool: true, addedAtBlock: true },
-    })
+    }, { className: 'OmnipoolAsset' })
   );
 
   ctx.batchState.state.omnipoolEntity =
-    (await ctx.store.findOne(Omnipool, {
+    (await ctx.storeUtils.findOneWithLogs(Omnipool, {
       where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
       relations: { account: true },
-    })) ?? null;
+    }, { className: 'Omnipool' })) ?? null;
 
   await fetchAndCachePersistentData(ctx.batchState.state.stableswapPools, () =>
-    ctx.store.find(Stableswap, {
+    ctx.storeUtils.findWithLogs(Stableswap, {
       where: {},
       relations: {
         account: true,
@@ -101,30 +101,30 @@ export async function prefetchGenericPersistentData(
         createdAtBlock: true,
         assets: { asset: true },
       },
-    })
+    }, { className: 'Stableswap' })
   );
   await fetchAndCachePersistentData(ctx.batchState.state.stableswapAssets, () =>
-    ctx.store.find(StableswapAsset, {
+    ctx.storeUtils.findWithLogs(StableswapAsset, {
       where: {},
       relations: {
         pool: true,
         asset: true,
       },
-    })
+    }, { className: 'StableswapAsset' })
   );
   await fetchAndCachePersistentData(ctx.batchState.state.aavePools, () =>
-    ctx.store.find(Aavepool, {
+    ctx.storeUtils.findWithLogs(Aavepool, {
       where: {},
       relations: {
         reserveAsset: true,
         aToken: true,
       },
-    })
+    }, { className: 'Aavepool' })
   );
   await fetchAndCachePersistentData(
     ctx.batchState.state.moneyMarketReserves,
     () =>
-      ctx.store.find(MoneyMarketReserve, {
+      ctx.storeUtils.findWithLogs(MoneyMarketReserve, {
         where: {},
         relations: {
           aToken: true,
@@ -132,31 +132,31 @@ export async function prefetchGenericPersistentData(
           variableDebtToken: true,
           aavePool: true,
         },
-      })
+      }, { className: 'MoneyMarketReserve' })
   );
   ctx.batchState.state.hsmpoolEntity =
-    (await ctx.store.findOne(Hsmpool, {
+    (await ctx.storeUtils.findOneWithLogs(Hsmpool, {
       where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
       relations: {
         account: true,
       },
-    })) ?? null;
+    }, { className: 'Hsmpool' })) ?? null;
 
   await fetchAndCachePersistentData(ctx.batchState.state.hsmCollaterals, () =>
-    ctx.store.find(HsmCollateral, {
+    ctx.storeUtils.findWithLogs(HsmCollateral, {
       where: { isRemoved: false },
       relations: {
         pool: true,
         asset: true,
         stableswap: true,
       },
-    })
+    }, { className: 'HsmCollateral' })
   );
 
   await fetchAndCachePersistentData(ctx.batchState.state.aaveFacilitators, () =>
-    ctx.store.find(AaveFacilitator, {
+    ctx.storeUtils.findWithLogs(AaveFacilitator, {
       where: { isRemoved: false },
-    })
+    }, { className: 'AaveFacilitator' })
   );
 
   // ctx.batchState.state.lbpAllBatchPools = new Map(
@@ -277,7 +277,7 @@ export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationP
 
   ctx.batchState.state.batchBlocks = new Map(
     (
-      await ctx.store.find(Block, {
+      await ctx.storeUtils.findWithLogs(Block, {
         where: {
           height: Between(
             ctx.blocks[0].header.height,
@@ -287,12 +287,12 @@ export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationP
         order: {
           height: 'ASC',
         },
-      })
+      }, { className: 'Block' })
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.moneyMarketEvents = new Map(
     (
-      await ctx.store.find(MoneyMarketEvent, {
+      await ctx.storeUtils.findWithLogs(MoneyMarketEvent, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -306,7 +306,7 @@ export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationP
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'MoneyMarketEvent' })
     ).map((p) => [p.id, p])
   );
 }
@@ -316,7 +316,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
 ) {
   ctx.batchState.state.batchBlocks = new Map(
     (
-      await ctx.store.find(Block, {
+      await ctx.storeUtils.findWithLogs(Block, {
         where: {
           height: Between(
             ctx.blocks[0].header.height,
@@ -326,13 +326,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
         order: {
           height: 'ASC',
         },
-      })
+      }, { className: 'Block' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.routeTrades = new Map(
     (
-      await ctx.store.find(RoutedTrade, {
+      await ctx.storeUtils.findWithLogs(RoutedTrade, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -354,7 +354,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'RoutedTrade' })
     ).map((p) => [
       p.id,
       {
@@ -374,7 +374,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
 
   ctx.batchState.state.swaps = new Map(
     (
-      await ctx.store.find(Swap, {
+      await ctx.storeUtils.findWithLogs(Swap, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -394,7 +394,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'Swap' })
     ).map((s) => [
       s.id,
       {
@@ -411,7 +411,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
 
   ctx.batchState.state.xykPoolVolumes = new Map(
     (
-      await ctx.store.find(XykpoolVolumeHistoricalData, {
+      await ctx.storeUtils.findWithLogs(XykpoolVolumeHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -428,12 +428,12 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'XykpoolVolumeHistoricalData' })
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.omnipoolAssetVolumes = new Map(
     (
-      await ctx.store.find(OmnipoolAssetVolumeHistoricalData, {
+      await ctx.storeUtils.findWithLogs(OmnipoolAssetVolumeHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -447,13 +447,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'OmnipoolAssetVolumeHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolVolumeCollections = new Map(
     (
-      await ctx.store.find(StableswapVolumeHistoricalData, {
+      await ctx.storeUtils.findWithLogs(StableswapVolumeHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -468,13 +468,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'StableswapVolumeHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolAssetVolumes = new Map(
     (
-      await ctx.store.find(StableswapAssetVolumeHistoricalData, {
+      await ctx.storeUtils.findWithLogs(StableswapAssetVolumeHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -490,13 +490,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'StableswapAssetVolumeHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.lbpPoolAllHistoricalData = new Map(
     (
-      await ctx.store.find(LbppoolHistoricalData, {
+      await ctx.storeUtils.findWithLogs(LbppoolHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -513,13 +513,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'LbppoolHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.xykPoolAllHistoricalData = new Map(
     (
-      await ctx.store.find(XykpoolHistoricalData, {
+      await ctx.storeUtils.findWithLogs(XykpoolHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -536,13 +536,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'XykpoolHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.omnipoolAllHistoricalData = new Map(
     (
-      await ctx.store.find(OmnipoolHistoricalData, {
+      await ctx.storeUtils.findWithLogs(OmnipoolHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -557,13 +557,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'OmnipoolHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.omnipoolAssetAllHistoricalData = new Map(
     (
-      await ctx.store.find(OmnipoolAssetHistoricalData, {
+      await ctx.storeUtils.findWithLogs(OmnipoolAssetHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -580,13 +580,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'OmnipoolAssetHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolAllHistoricalData = new Map(
     (
-      await ctx.store.find(StableswapHistoricalData, {
+      await ctx.storeUtils.findWithLogs(StableswapHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -606,13 +606,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'StableswapHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolAssetsAllHistoricalData = new Map(
     (
-      await ctx.store.find(StableswapAssetHistoricalData, {
+      await ctx.storeUtils.findWithLogs(StableswapAssetHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -629,13 +629,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'StableswapAssetHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.aavePoolsHistoricalData = new Map(
     (
-      await ctx.store.find(AavepoolHistoricalData, {
+      await ctx.storeUtils.findWithLogs(AavepoolHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -652,13 +652,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'AavepoolHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.hsmpoolAssetHistData = new Map(
     (
-      await ctx.store.find(HsmpoolAssetHistoricalData, {
+      await ctx.storeUtils.findWithLogs(HsmpoolAssetHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -674,12 +674,12 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'HsmpoolAssetHistoricalData' })
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.moneyMarketEvents = new Map(
     (
-      await ctx.store.find(MoneyMarketEvent, {
+      await ctx.storeUtils.findWithLogs(MoneyMarketEvent, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -693,12 +693,12 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'MoneyMarketEvent' })
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.constantsHistoricalData = new Map(
     (
-      await ctx.store.find(ConstantsHistoricalData, {
+      await ctx.storeUtils.findWithLogs(ConstantsHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -712,13 +712,13 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'ConstantsHistoricalData' })
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.assetsHistoricalDataBatch = new Map(
     (
-      await ctx.store.find(AssetHistoricalData, {
+      await ctx.storeUtils.findWithLogs(AssetHistoricalData, {
         where: {
           paraBlockHeight: Between(
             ctx.blocks[0].header.height,
@@ -738,7 +738,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           paraBlockHeight: 'ASC',
           id: 'ASC',
         },
-      })
+      }, { className: 'AssetHistoricalData' })
     ).map((p) => [p.id, p])
   );
 }

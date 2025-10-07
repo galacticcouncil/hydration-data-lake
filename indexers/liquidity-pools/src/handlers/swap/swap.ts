@@ -62,13 +62,13 @@ export async function getSwap({
   }
   if (swap || (!swap && !fetchFromDb)) return swap ?? null;
 
-  swap = await ctx.store.findOne(Swap, {
+  swap = await ctx.storeUtils.findOneWithLogs(Swap, {
     where: {
       ...(id ? { id } : {}),
       ...(eventTraceId ? { traceIds: In([eventTraceId]) } : {}),
     },
     relations,
-  });
+  }, { className: 'Swap' });
 
   if (!swap) return null;
   ctx.batchState.state.swaps.set(swap.id, swap);

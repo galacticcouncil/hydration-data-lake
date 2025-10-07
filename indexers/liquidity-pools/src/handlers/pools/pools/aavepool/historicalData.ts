@@ -17,10 +17,10 @@ export async function handleAavepoolHistoricalData(
 ) {
   ctx.batchState.state.aavePools = new Map(
     (
-      await ctx.store.find(Aavepool, {
+      await ctx.storeUtils.findWithLogs(Aavepool, {
         where: {},
         relations: { reserveAsset: true, aToken: true },
-      })
+      }, { className: 'Aavepool' })
     ).map((p) => [p.id, p])
   );
 
@@ -82,12 +82,12 @@ export async function handleAavepoolHistoricalData(
               `${pool.reserveAsset.variableDebtToken?.id}-${blockHeader.height}`
             );
         } else {
-          const reserveAssetWithRelations = await ctx.store.findOne(Asset, {
+          const reserveAssetWithRelations = await ctx.storeUtils.findOneWithLogs(Asset, {
             where: { id: pool.reserveAsset.id },
             relations: {
               variableDebtToken: true,
             },
-          });
+          }, { className: 'Asset' });
           if (reserveAssetWithRelations)
             variableDebtTokenHistData =
               ctx.batchState.state.assetsHistoricalDataBatch.get(

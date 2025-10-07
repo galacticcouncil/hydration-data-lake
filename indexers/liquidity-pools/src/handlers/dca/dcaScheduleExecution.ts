@@ -32,10 +32,10 @@ export async function getDcaScheduleExecution({
 
   if (execution || (!execution && !fetchFromDb)) return execution ?? null;
 
-  execution = await ctx.store.findOne(DcaScheduleExecution, {
+  execution = await ctx.storeUtils.findOneWithLogs(DcaScheduleExecution, {
     where: { id },
     relations,
-  });
+  }, { className: 'DcaScheduleExecution' });
 
   if (!execution) return null;
 

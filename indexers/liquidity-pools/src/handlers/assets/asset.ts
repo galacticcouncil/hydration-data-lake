@@ -52,7 +52,7 @@ export async function getOrCreateAsset({
     return asset;
   }
 
-  asset = await ctx.store.findOne(Asset, {
+  asset = await ctx.storeUtils.findOneWithLogs(Asset, {
     // @ts-ignore
     where: {
       ...(id ? { id: `${id}` } : {}),
@@ -60,7 +60,7 @@ export async function getOrCreateAsset({
       ...(assetRegistryId ? { assetRegistryId: `${assetRegistryId}` } : {}),
     },
     ...(relations ? { relations } : {}),
-  });
+  }, { className: 'Asset' });
 
   if (asset) {
     ctx.batchState.state.assetsAll.set(asset.id, asset);
@@ -250,14 +250,14 @@ export async function getOrCreateMoneyMarketAsset({
 
   if (asset) return asset;
 
-  asset = await ctx.store.findOne(Asset, {
+  asset = await ctx.storeUtils.findOneWithLogs(Asset, {
     // @ts-ignore
     where: {
       ...(id ? { id: `${id}` } : {}),
       ...(evmAddress ? { evmAddress } : {}),
       ...(assetRegistryId ? { assetRegistryId } : {}),
     },
-  });
+  }, { className: 'Asset' });
 
   if (asset) {
     ctx.batchState.state.assetsAll.set(asset.id, asset);

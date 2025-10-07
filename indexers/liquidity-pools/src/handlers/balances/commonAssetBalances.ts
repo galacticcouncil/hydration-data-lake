@@ -113,9 +113,9 @@ export async function handleCommonAssetAccountBalances({
     }
   }
 
-  const persistedAccounts = await ctx.store.find(Account, {
+  const persistedAccounts = await ctx.storeUtils.findWithLogs(Account, {
     where: { id: In(Array.from(allInvolvedAccountsInBatchSet.keys())) },
-  });
+  }, { className: 'Account' });
 
   for (const acc of persistedAccounts) {
     ctx.batchState.state.accounts.set(acc.id, acc);

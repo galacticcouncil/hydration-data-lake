@@ -26,7 +26,7 @@ export async function prefetchAllAvailableRoutedTradesForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const routes = await ctx.store.find(RoutedTrade, {
+  const routes = await ctx.storeUtils.findWithLogs(RoutedTrade, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -48,7 +48,7 @@ export async function prefetchAllAvailableRoutedTradesForBlocksRange({
       },
       block: true,
     },
-  });
+  }, { className: 'RoutedTrade' });
 
   for (const route of routes) {
     for (const swap of route.swaps) {
@@ -73,7 +73,7 @@ export async function prefetchAllAvailableXykpoolVolumesForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const records = await ctx.store.find(XykpoolVolumeHistoricalData, {
+  const records = await ctx.storeUtils.findWithLogs(XykpoolVolumeHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -83,7 +83,7 @@ export async function prefetchAllAvailableXykpoolVolumesForBlocksRange({
       pool: true,
       block: true,
     },
-  });
+  }, { className: 'XykpoolVolumeHistoricalData' });
 
   ctx.batchState.state.xykPoolVolumes = new Map(records.map((r) => [r.id, r]));
 }
@@ -97,7 +97,7 @@ export async function prefetchAllAvailableLbppoolVolumesForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const records = await ctx.store.find(LbppoolVolumeHistoricalData, {
+  const records = await ctx.storeUtils.findWithLogs(LbppoolVolumeHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -107,7 +107,7 @@ export async function prefetchAllAvailableLbppoolVolumesForBlocksRange({
       pool: true,
       block: true,
     },
-  });
+  }, { className: 'LbppoolVolumeHistoricalData' });
 
   ctx.batchState.state.lbpPoolVolumes = new Map(records.map((r) => [r.id, r]));
 }
@@ -121,7 +121,7 @@ export async function prefetchAllAvailableOmnipoolAssetVolumesForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const records = await ctx.store.find(OmnipoolAssetVolumeHistoricalData, {
+  const records = await ctx.storeUtils.findWithLogs(OmnipoolAssetVolumeHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -131,7 +131,7 @@ export async function prefetchAllAvailableOmnipoolAssetVolumesForBlocksRange({
       },
       block: true,
     },
-  });
+  }, { className: 'OmnipoolAssetVolumeHistoricalData' });
 
   ctx.batchState.state.omnipoolAssetVolumes = new Map(
     records.map((r) => [r.id, r])
@@ -147,7 +147,7 @@ export async function prefetchAllAvailableStableswapVolumesForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const records = await ctx.store.find(StableswapVolumeHistoricalData, {
+  const records = await ctx.storeUtils.findWithLogs(StableswapVolumeHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -160,7 +160,7 @@ export async function prefetchAllAvailableStableswapVolumesForBlocksRange({
       },
       block: true,
     },
-  });
+  }, { className: 'StableswapVolumeHistoricalData' });
 
   ctx.batchState.state.stablepoolAssetVolumes = new Map(
     records
@@ -185,7 +185,7 @@ export async function prefetchAllAvailableXykpoolHistDataForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const records = await ctx.store.find(XykpoolHistoricalData, {
+  const records = await ctx.storeUtils.findWithLogs(XykpoolHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -195,7 +195,7 @@ export async function prefetchAllAvailableXykpoolHistDataForBlocksRange({
       pool: true,
       block: true,
     },
-  });
+  }, { className: 'XykpoolHistoricalData' });
 
   ctx.batchState.state.xykPoolAllHistoricalData = new Map(
     records.map((r) => [r.id, r])
@@ -211,7 +211,7 @@ export async function prefetchAllAvailableLbppoolHistDataForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const records = await ctx.store.find(LbppoolHistoricalData, {
+  const records = await ctx.storeUtils.findWithLogs(LbppoolHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -221,7 +221,7 @@ export async function prefetchAllAvailableLbppoolHistDataForBlocksRange({
       pool: true,
       block: true,
     },
-  });
+  }, { className: 'LbppoolHistoricalData' });
 
   ctx.batchState.state.lbpPoolAllHistoricalData = new Map(
     records.map((r) => [r.id, r])
@@ -237,7 +237,7 @@ export async function prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const poolData = await ctx.store.find(OmnipoolHistoricalData, {
+  const poolData = await ctx.storeUtils.findWithLogs(OmnipoolHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -245,8 +245,8 @@ export async function prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
       pool: true,
       block: true,
     },
-  });
-  const assetsData = await ctx.store.find(OmnipoolAssetHistoricalData, {
+  }, { className: 'OmnipoolHistoricalData' });
+  const assetsData = await ctx.storeUtils.findWithLogs(OmnipoolAssetHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -256,7 +256,7 @@ export async function prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
       asset: true,
       block: true,
     },
-  });
+  }, { className: 'OmnipoolAssetHistoricalData' });
 
   ctx.batchState.state.omnipoolAllHistoricalData = new Map(
     poolData.map((r) => [r.id, r])
@@ -275,7 +275,7 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
   toBlockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const poolData = await ctx.store.find(StableswapHistoricalData, {
+  const poolData = await ctx.storeUtils.findWithLogs(StableswapHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -283,8 +283,8 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
       pool: true,
       block: true,
     },
-  });
-  const poolAssetsData = await ctx.store.find(StableswapAssetHistoricalData, {
+  }, { className: 'StableswapHistoricalData' });
+  const poolAssetsData = await ctx.storeUtils.findWithLogs(StableswapAssetHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
@@ -294,7 +294,7 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
       poolHistoricalData: true,
       block: true,
     },
-  });
+  }, { className: 'StableswapAssetHistoricalData' });
 
   ctx.batchState.state.stablepoolAssetsAllHistoricalData = new Map(
     poolAssetsData.map((r) => [r.id, r])

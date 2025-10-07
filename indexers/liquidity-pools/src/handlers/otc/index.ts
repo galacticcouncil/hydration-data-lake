@@ -77,7 +77,7 @@ async function prefetchEntities(
     ]).values(),
   ];
 
-  const prefetchedOrders = await ctx.store.find(OtcOrder, {
+  const prefetchedOrders = await ctx.storeUtils.findWithLogs(OtcOrder, {
     where: { id: In(orderIds) },
     relations: {
       owner: true,
@@ -91,7 +91,7 @@ async function prefetchEntities(
         event: true,
       },
     },
-  });
+  }, { className: 'OtcOrder' });
 
   const state = ctx.batchState.state;
 

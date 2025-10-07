@@ -153,10 +153,10 @@ export async function getOrCreateXykPool({
   let pool = batchState.xykAllBatchPools.get(id);
   if (pool) return pool;
 
-  pool = await ctx.store.findOne(Xykpool, {
+  pool = await ctx.storeUtils.findOneWithLogs(Xykpool, {
     where: { id },
     relations: { assetA: true, assetB: true, account: true, shareToken: true },
-  });
+  }, { className: 'Xykpool' });
 
   if (pool) {
     ctx.batchState.state.xykAllBatchPools.set(pool.id, pool);
@@ -284,14 +284,14 @@ export async function xykPoolDestroyed(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = await ctx.store.findOne(Xykpool, {
+  const pool = await ctx.storeUtils.findOneWithLogs(Xykpool, {
     where: { id: eventParams.pool },
     relations: {
       assetA: true,
       assetB: true,
       account: true,
     },
-  });
+  }, { className: 'Xykpool' });
 
   if (!pool) return;
 

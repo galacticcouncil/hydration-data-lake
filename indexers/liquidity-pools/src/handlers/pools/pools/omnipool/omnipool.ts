@@ -15,10 +15,10 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   if (ctx.batchState.state.omnipoolEntity) return;
 
   let omnipoolEntity =
-    (await ctx.store.findOne(Omnipool, {
+    (await ctx.storeUtils.findOneWithLogs(Omnipool, {
       where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
       relations: { assets: { asset: true }, account: true },
-    })) ?? null;
+    }, { className: 'Omnipool' })) ?? null;
 
   if (!!omnipoolEntity) {
     ctx.batchState.state.omnipoolEntity = omnipoolEntity;

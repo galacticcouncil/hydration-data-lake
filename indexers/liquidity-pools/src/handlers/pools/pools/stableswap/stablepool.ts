@@ -125,10 +125,10 @@ export async function getOrCreateStableswap({
   let pool = batchState.stableswapPools.get(`${poolId}`);
   if (pool) return pool;
 
-  pool = await ctx.store.findOne(Stableswap, {
+  pool = await ctx.storeUtils.findOneWithLogs(Stableswap, {
     where: { id: `${poolId}` },
     relations: { assets: { asset: true }, account: true, shareToken: true },
-  });
+  }, { className: 'Stableswap' });
 
   if (pool || (!pool && !ensure)) return pool ?? null;
 

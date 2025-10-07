@@ -20,14 +20,14 @@ export async function fetchOmnipoolHistoricalData({
     ...ctx.batchState.state.omnipoolAssets.values(),
   ].filter((oAsset) => !oAsset.isRemoved);
 
-  const allActiveOmnipoolAssetsPersisted = await ctx.store.find(OmnipoolAsset, {
+  const allActiveOmnipoolAssetsPersisted = await ctx.storeUtils.findWithLogs(OmnipoolAsset, {
     where: {
       isRemoved: false,
     },
     relations: {
       asset: true,
     },
-  });
+  }, { className: 'OmnipoolAsset' });
 
   const allActiveOmnipoolAssets: Map<string, OmnipoolAsset> = new Map([
     ...allActiveOmnipoolAssetsPersisted.map(
@@ -51,7 +51,7 @@ export async function fetchOmnipoolHistoricalData({
       allActiveOmnipoolAssets.has(histData.omnipoolAsset.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
-  const persistedOmnipoolHistData = await ctx.store.findOne(
+  const persistedOmnipoolHistData = await ctx.storeUtils.findOneWithLogs(
     OmnipoolHistoricalData,
     {
       where: {
@@ -64,7 +64,8 @@ export async function fetchOmnipoolHistoricalData({
           asset: true,
         },
       },
-    }
+    },
+    { className: 'OmnipoolHistoricalData' }
   );
 
   if (!persistedOmnipoolHistData) return null;
@@ -108,14 +109,14 @@ export async function fetchOmnipoolHistoricalDataForBlocksRange({
     ...ctx.batchState.state.omnipoolAssets.values(),
   ].filter((oAsset) => !oAsset.isRemoved);
 
-  const allActiveOmnipoolAssetsPersisted = await ctx.store.find(OmnipoolAsset, {
+  const allActiveOmnipoolAssetsPersisted = await ctx.storeUtils.findWithLogs(OmnipoolAsset, {
     where: {
       isRemoved: false,
     },
     relations: {
       asset: true,
     },
-  });
+  }, { className: 'OmnipoolAsset' });
 
   // const allActiveOmnipoolAssets: Map<string, OmnipoolAsset> = new Map([
   //   ...allActiveOmnipoolAssetsPersisted.map(
@@ -152,7 +153,7 @@ export async function fetchOmnipoolHistoricalDataForBlocksRange({
       allActiveOmnipoolAssets.has(item.omnipoolAsset.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
-  const persistedOmnipoolHistData = await ctx.store.find(
+  const persistedOmnipoolHistData = await ctx.storeUtils.findWithLogs(
     OmnipoolHistoricalData,
     {
       where: {
@@ -165,7 +166,8 @@ export async function fetchOmnipoolHistoricalDataForBlocksRange({
           asset: true,
         },
       },
-    }
+    },
+    { className: 'OmnipoolHistoricalData' }
   );
 
   // const mergedOmnipoolHistDataMap = new Map([

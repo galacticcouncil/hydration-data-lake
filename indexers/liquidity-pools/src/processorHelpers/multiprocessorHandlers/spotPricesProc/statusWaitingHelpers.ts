@@ -28,14 +28,14 @@ export async function waitForSpotPricesRelatedHistoricalData(
     fromBlockNumber: number,
     toBlockNumber: number
   ) => {
-    const records = await ctx.store.find(ConstantsHistoricalData, {
+    const records = await ctx.storeUtils.findWithLogs(ConstantsHistoricalData, {
       where: {
         paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
       },
       relations: {
         block: true,
       },
-    });
+    }, { className: 'ConstantsHistoricalData' });
 
     ctx.batchState.state.constantsHistoricalData = new Map(
       records.map((r) => [r.id, r])
@@ -51,7 +51,7 @@ export async function waitForSpotPricesRelatedHistoricalData(
     fromBlockNumber: number,
     toBlockNumber: number
   ) => {
-    const records = await ctx.store.find(AssetHistoricalData, {
+    const records = await ctx.storeUtils.findWithLogs(AssetHistoricalData, {
       where: {
         paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
       },
@@ -59,7 +59,7 @@ export async function waitForSpotPricesRelatedHistoricalData(
         asset: true,
         block: true,
       },
-    });
+    }, { className: 'AssetHistoricalData' });
 
     ctx.batchState.state.assetsHistoricalDataBatch = new Map(
       records.map((r) => [r.id, r])
@@ -75,7 +75,7 @@ export async function waitForSpotPricesRelatedHistoricalData(
     fromBlockNumber: number,
     toBlockNumber: number
   ) => {
-    const records = await ctx.store.find(EmaOracleEntryHistoricalData, {
+    const records = await ctx.storeUtils.findWithLogs(EmaOracleEntryHistoricalData, {
       where: {
         paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
       },
@@ -84,7 +84,7 @@ export async function waitForSpotPricesRelatedHistoricalData(
         assetB: true,
         block: true,
       },
-    });
+    }, { className: 'EmaOracleEntryHistoricalData' });
 
     ctx.batchState.state.emaOracleEntriesHistoricalData = new Map(
       records.map((r) => [r.id, r])
@@ -100,7 +100,7 @@ export async function waitForSpotPricesRelatedHistoricalData(
     fromBlockNumber: number,
     toBlockNumber: number
   ) => {
-    const records = await ctx.store.find(XykpoolHistoricalData, {
+    const records = await ctx.storeUtils.findWithLogs(XykpoolHistoricalData, {
       where: {
         paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
       },
@@ -110,7 +110,7 @@ export async function waitForSpotPricesRelatedHistoricalData(
         assetB: true,
         block: true,
       },
-    });
+    }, { className: 'XykpoolHistoricalData' });
 
     ctx.batchState.state.xykPoolAllHistoricalData = new Map(
       records.map((r) => [r.id, r])
@@ -209,11 +209,11 @@ export async function waitForSpotPricesRelatedHistoricalData(
 export async function checkAndWaitForCoreProcStatus(
   ctx: SqdProcessorContext<Store>
 ) {
-  const coreProcStatus = await ctx.store.findOne(ProcessorStatus, {
+  const coreProcStatus = await ctx.storeUtils.findOneWithLogs(ProcessorStatus, {
     where: {
       id: 'squid_processor',
     },
-  });
+  }, { className: 'ProcessorStatus' });
 
   const coreProcLatestProcessedBlock = coreProcStatus?.latestProcessedBlock;
 

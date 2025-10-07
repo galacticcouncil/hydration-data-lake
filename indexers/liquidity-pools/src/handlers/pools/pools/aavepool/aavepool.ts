@@ -30,10 +30,10 @@ export async function getOrCreateAavepool({
 
   let pool = batchState.aavePools.get(poolId);
   if (pool) return pool;
-  pool = await ctx.store.findOne(Aavepool, {
+  pool = await ctx.storeUtils.findOneWithLogs(Aavepool, {
     where: { id: poolId },
     relations,
-  });
+  }, { className: 'Aavepool' });
 
   if (pool) {
     ctx.batchState.state.aavePools.set(pool.id, pool);

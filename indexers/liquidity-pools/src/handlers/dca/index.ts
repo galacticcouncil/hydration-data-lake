@@ -162,14 +162,14 @@ async function prefetchEntities(
 
   const [prefetchedSchedules, prefetchedScheduleExecutions] = await Promise.all(
     [
-      ctx.store.find(DcaSchedule, {
+      ctx.storeUtils.findWithLogs(DcaSchedule, {
         where: { id: In(scheduleIds) },
         relations: {
           owner: true,
           executions: true,
         },
-      }),
-      ctx.store.find(DcaScheduleExecution, {
+      }, { className: 'DcaSchedule' }),
+      ctx.storeUtils.findWithLogs(DcaScheduleExecution, {
         where: { id: In(scheduleExecutions) },
         relations: {
           schedule: {
@@ -181,7 +181,7 @@ async function prefetchEntities(
             event: true,
           },
         },
-      }),
+      }, { className: 'DcaScheduleExecution' }),
     ]
   );
 

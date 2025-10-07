@@ -44,10 +44,10 @@ export async function getOrCreateOmnipoolAsset({
   );
   if (omnipoolAsset) return omnipoolAsset;
 
-  omnipoolAsset = await ctx.store.findOne(OmnipoolAsset, {
+  omnipoolAsset = await ctx.storeUtils.findOneWithLogs(OmnipoolAsset, {
     where: { asset: { id: `${assetEntity.id}` } },
     relations: { asset: true, pool: true },
-  });
+  }, { className: 'OmnipoolAsset' });
 
   if (omnipoolAsset) {
     batchState.omnipoolAssets.set(omnipoolAsset.id, omnipoolAsset);

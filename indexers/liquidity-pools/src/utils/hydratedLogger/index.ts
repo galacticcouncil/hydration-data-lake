@@ -1,6 +1,8 @@
 import pino, { Logger as PinoLogger } from 'pino';
-import { CommonPgClient } from './pgClient';
-import { AppConfig } from '../appConfig';
+import { CommonPgClient } from '../pgClient';
+import { AppConfig } from '../../appConfig';
+import BaseMigration from './db/baseMigration';
+import ViewsMigration from './db/viewsMigration';
 
 const appConfig = AppConfig.getInstance();
 
@@ -74,7 +76,6 @@ export class HydratedLogger {
     const isProd = process.env.NODE_ENV === 'production';
     const level = cfg.level ?? 'info';
 
-    // --- Pino setup (file + pretty console in dev)
     const targets: any[] = [];
     if (cfg.consoleLogsEnabled) {
       targets.push({ target: 'pino-pretty', options: { colorize: true } });
@@ -139,28 +140,8 @@ export class HydratedLogger {
 
     this.ensureSchemaOnce = (async () => {
       try {
-        await this.pgClient!.query(`
-          BEGIN;
-          CREATE SCHEMA IF NOT EXISTS support;
-          CREATE TABLE IF NOT EXISTS support.app_logs (
-            id                  BIGSERIAL PRIMARY KEY,
-            ts                  timestamptz NOT NULL DEFAULT now(),
-            level               text        NOT NULL,
-            name                text,
-            action_type         text,
-            para_block_height   int4,
-            op_id               text,
-            para_blocks_range   text,
-            duration_ms         double precision,
-            success             boolean,
-            meta                jsonb
-          );
-          CREATE INDEX IF NOT EXISTS app_logs_ts_idx   ON support.app_logs (ts);
-          CREATE INDEX IF NOT EXISTS app_logs_name_idx ON support.app_logs (name);
-          CREATE INDEX IF NOT EXISTS app_logs_action_type_idx ON support.app_logs (action_type);
-          CREATE INDEX IF NOT EXISTS app_logs_para_blocks_range_idx ON support.app_logs (para_blocks_range);
-          COMMIT;
-        `);
+        await this.pgClient!.query(BaseMigration);
+        await this.pgClient!.query(ViewsMigration);
       } catch (e) {
         await this.pgClient!.query('ROLLBACK');
         // don’t crash prod if ensure fails — log and continue
@@ -235,7 +216,6 @@ export class HydratedLogger {
           para_block_height: meta?.paraBlockHeight,
           para_blocks_range: meta?.paraBlocksRange,
           op_id: meta?.opId,
-
         },
       };
       this.buffer.push(row);
@@ -309,7 +289,6 @@ export class HydratedLogger {
       'level',
       'name',
       'action_type',
-      'para_block_height',
       'op_id',
       'para_blocks_range',
       'duration_ms',
@@ -322,16 +301,15 @@ export class HydratedLogger {
     batch.forEach((r, i) => {
       const base = i * cols.length;
       placeholders.push(
-        `($${base + 1},$${base + 2},$${base + 3},$${base + 4},$${base + 5},$${base + 6},$${base + 7},$${base + 8},$${base + 9},$${base + 10})`
+        `($${base + 1},$${base + 2},$${base + 3},$${base + 4},$${base + 5},$${base + 6},$${base + 7},$${base + 8},$${base + 9})`
       );
       values.push(
         r.ts,
         r.level,
         r.name ?? null,
         r.action_type ?? null,
-        r.meta?.paraBlockHeight ?? null,
-        r.meta?.opId ?? null,
-        r.meta?.paraBlocksRange ?? null,
+        r.meta?.op_id ?? null,
+        r.meta?.para_blocks_range ?? null,
         r.duration_ms ?? null,
         r.success ?? null,
         r.meta ?? null

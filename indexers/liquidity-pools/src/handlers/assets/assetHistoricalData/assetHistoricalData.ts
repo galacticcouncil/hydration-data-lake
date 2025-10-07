@@ -227,7 +227,7 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.store.findOne(AssetHistoricalData, {
+    previousItem = await ctx.storeUtils.findOneWithLogs(AssetHistoricalData, {
       where: {
         asset: {
           id: currentRecord.asset.id,
@@ -237,7 +237,7 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
       order: {
         paraBlockHeight: 'DESC',
       },
-    });
+    }, { className: 'AssetHistoricalData' });
   }
 
   if (!previousItem) {

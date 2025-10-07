@@ -178,7 +178,7 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.store.findOne(XykpoolHistoricalData, {
+    previousItem = await ctx.storeUtils.findOneWithLogs(XykpoolHistoricalData, {
       where: {
         pool: { id: currentRecord.pool.id },
         paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
@@ -186,7 +186,7 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
       order: {
         paraBlockHeight: 'DESC',
       },
-    });
+    }, { className: 'XykpoolHistoricalData' });
   }
 
   if (!previousItem) {

@@ -33,7 +33,7 @@ export async function getOrCreateHsmCollateral({
 
   if (collateral) return collateral;
 
-  collateral = await ctx.store.findOne(HsmCollateral, {
+  collateral = await ctx.storeUtils.findOneWithLogs(HsmCollateral, {
     where: {
       ...(id ? { id } : {}),
       ...(assetRegistryId ? { asset: { assetRegistryId } } : {}),
@@ -43,7 +43,7 @@ export async function getOrCreateHsmCollateral({
       pool: true,
       stableswap: true,
     },
-  });
+  }, { className: 'HsmCollateral' });
 
   if (collateral) {
     ctx.batchState.state.hsmCollaterals.set(collateral.id, collateral);

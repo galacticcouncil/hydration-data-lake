@@ -27,7 +27,7 @@ export async function fetchStableswapHistoricalData({
     ...ctx.batchState.state.stableswapAssets.values(),
   ].filter((sAsset) => allActiveStableswapsCachedMap.has(sAsset.pool.id));
 
-  const allActiveStableswapsPersisted = await ctx.store.find(Stableswap, {
+  const allActiveStableswapsPersisted = await ctx.storeUtils.findWithLogs(Stableswap, {
     where: {
       isDestroyed: false,
     },
@@ -39,7 +39,7 @@ export async function fetchStableswapHistoricalData({
         pool: true,
       },
     },
-  });
+  }, { className: 'Stableswap' });
 
   const allStableswapAssetsPersisted = allActiveStableswapsPersisted
     .map((pool) => pool.assets)
@@ -94,7 +94,7 @@ export async function fetchStableswapHistoricalData({
     cachedStableswapAssetsHistDataByPoolMap.get(poolId)!.push(sAssetHistData);
   }
 
-  const persistedStableswapHistData = await ctx.store.find(
+  const persistedStableswapHistData = await ctx.storeUtils.findWithLogs(
     StableswapHistoricalData,
     {
       where: {
@@ -113,7 +113,8 @@ export async function fetchStableswapHistoricalData({
           stableswapAsset: true,
         },
       },
-    }
+    },
+    { className: 'StableswapHistoricalData' }
   );
 
   const persistedStableswapAssetsHistDataMap = new Map<
@@ -180,7 +181,7 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
     ...ctx.batchState.state.stableswapAssets.values(),
   ].filter((sAsset) => allActiveStableswapsCachedMap.has(sAsset.pool.id));
 
-  const allActiveStableswapsPersisted = await ctx.store.find(Stableswap, {
+  const allActiveStableswapsPersisted = await ctx.storeUtils.findWithLogs(Stableswap, {
     where: {
       isDestroyed: false,
     },
@@ -192,7 +193,7 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
         pool: true,
       },
     },
-  });
+  }, { className: 'Stableswap' });
 
   const allStableswapAssetsPersisted = allActiveStableswapsPersisted
     .map((pool) => pool.assets)
@@ -264,7 +265,7 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
       .push(sAssetHistData);
   }
 
-  const persistedStableswapHistData = await ctx.store.find(
+  const persistedStableswapHistData = await ctx.storeUtils.findWithLogs(
     StableswapHistoricalData,
     {
       where: {
@@ -283,7 +284,8 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
           stableswapAsset: true,
         },
       },
-    }
+    },
+    { className: 'StableswapHistoricalData' }
   );
 
   const persistedStableswapAssetsHistDataMap = new Map<

@@ -88,14 +88,14 @@ export async function getOtcOrderEvents({
   }
   if (events.length > 0 || (events.length === 0 && !fetchFromDb)) return events;
 
-  events = await ctx.store.find(OtcOrderEvent, {
+  events = await ctx.storeUtils.findWithLogs(OtcOrderEvent, {
     where: {
       ...(id ? { id } : {}),
       ...(orderId ? { order: { id: orderId } } : {}),
       ...(eventName ? { eventName } : {}),
     },
     relations,
-  });
+  }, { className: 'OtcOrderEvent' });
 
   if (events && events.length > 0) {
     for (const action of events) {

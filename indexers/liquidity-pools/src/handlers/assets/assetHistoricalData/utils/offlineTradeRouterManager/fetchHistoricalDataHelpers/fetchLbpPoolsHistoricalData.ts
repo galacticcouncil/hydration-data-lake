@@ -20,7 +20,7 @@ export async function fetchLbpPoolsHistoricalData({
     ...ctx.batchState.state.lbpAllBatchPools.values(),
   ].filter((item) => !item.isDestroyed);
 
-  const allActivePoolsPersisted = await ctx.store.find(Lbppool, {
+  const allActivePoolsPersisted = await ctx.storeUtils.findWithLogs(Lbppool, {
     where: {
       isDestroyed: false,
     },
@@ -31,7 +31,7 @@ export async function fetchLbpPoolsHistoricalData({
       owner: true,
       feeCollector: true,
     },
-  });
+  }, { className: 'Lbppool' });
 
   const allActivePools: Map<string, Lbppool> = new Map([
     ...allActivePoolsCached.map((pool): [string, Lbppool] => [pool.id, pool]),
@@ -48,7 +48,7 @@ export async function fetchLbpPoolsHistoricalData({
       item.paraBlockHeight === blockNumber && allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
-  const persistedHistData = await ctx.store.find(LbppoolHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(LbppoolHistoricalData, {
     where: {
       // paraBlockHeight: LessThanOrEqual(blockNumber),
       paraBlockHeight: blockNumber,
@@ -66,7 +66,7 @@ export async function fetchLbpPoolsHistoricalData({
       owner: true,
       feeCollector: true,
     },
-  });
+  }, { className: 'LbppoolHistoricalData' });
 
   return new Map([
     ...persistedHistData.map((histData): [string, LbppoolHistoricalData] => [
@@ -93,7 +93,7 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
     ...ctx.batchState.state.lbpAllBatchPools.values(),
   ].filter((item) => !item.isDestroyed);
 
-  const allActivePoolsPersisted = await ctx.store.find(Lbppool, {
+  const allActivePoolsPersisted = await ctx.storeUtils.findWithLogs(Lbppool, {
     where: {
       isDestroyed: false,
     },
@@ -104,7 +104,7 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
       owner: true,
       feeCollector: true,
     },
-  });
+  }, { className: 'Lbppool' });
 
   const allActivePools = new Map<string, Lbppool>();
   for (const histData of allActivePoolsPersisted) {
@@ -123,7 +123,7 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
       allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
-  const persistedHistData = await ctx.store.find(LbppoolHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findWithLogs(LbppoolHistoricalData, {
     where: {
       paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
       pool: {
@@ -140,7 +140,7 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
       owner: true,
       feeCollector: true,
     },
-  });
+  }, { className: 'LbppoolHistoricalData' });
 
   const mergedDataMap = new Map<string, LbppoolHistoricalData>();
   for (const histData of persistedHistData) {

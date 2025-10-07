@@ -22,11 +22,11 @@ export async function fetchConstantsHistoricalData({
 
   if (cachedHistData) return cachedHistData;
 
-  const persistedHistData = await ctx.store.findOne(ConstantsHistoricalData, {
+  const persistedHistData = await ctx.storeUtils.findOneWithLogs(ConstantsHistoricalData, {
     where: {
       paraBlockHeight: blockNumber,
     },
-  });
+  }, { className: 'ConstantsHistoricalData' });
 
   return persistedHistData;
 }
@@ -51,11 +51,11 @@ export async function fetchConstantsHistoricalDataForBlocksRange({
   let persistedHistData: ConstantsHistoricalData[] = [];
 
   if (!cachedHistData || cachedHistData.length === 0)
-    persistedHistData = await ctx.store.find(ConstantsHistoricalData, {
+    persistedHistData = await ctx.storeUtils.findWithLogs(ConstantsHistoricalData, {
       where: {
         paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
       },
-    });
+    }, { className: 'ConstantsHistoricalData' });
 
   const histDataPerBlock = new Map<number, ConstantsHistoricalData>();
 

@@ -233,7 +233,7 @@ export async function isLbppoolHistoricalDataUniqueRegardingPreviousRecord({
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.store.findOne(LbppoolHistoricalData, {
+    previousItem = await ctx.storeUtils.findOneWithLogs(LbppoolHistoricalData, {
       where: {
         pool: { id: currentRecord.pool.id },
         paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
@@ -241,7 +241,7 @@ export async function isLbppoolHistoricalDataUniqueRegardingPreviousRecord({
       order: {
         paraBlockHeight: 'DESC',
       },
-    });
+    }, { className: 'LbppoolHistoricalData' });
   }
 
   if (!previousItem) {
