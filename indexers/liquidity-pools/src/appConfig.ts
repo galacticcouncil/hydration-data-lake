@@ -67,10 +67,10 @@ class LogConfig {
   readonly HLOG_CONSOLE_LOGS_ENABLED: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  readonly HLOG_CONSOLE_LOGS_VERBOSE: boolean = true;
+  readonly HLOG_CONSOLE_LOGS_VERBOSE: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  readonly HLOG_DB_FLUSH_ENABLED: boolean = true;
+  readonly HLOG_DB_FLUSH_ENABLED: boolean = false;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly HLOG_DB_FLUSH_MAX_BATCH_SIZE: number = 100;
