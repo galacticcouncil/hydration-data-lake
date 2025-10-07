@@ -7,53 +7,72 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 import { storage } from '../typegenTypes/';
 import { tryExecOrReturnFallback } from '../../../../utils/helpers';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 
 async function getCollateral({
   collateralId,
   block,
 }: GetHsmCollateralInput): Promise<HsmCollateralData | null> {
-  if (block.specVersion < 323) return null;
+  return measureStorageFetch({
+    storageName: 'hsm.collaterals',
+    originFn: 'getCollateral',
+    blockHeight: block.height,
+    args: { collateralId },
+    fn: async () => {
+      if (block.specVersion < 323) return null;
 
-  if (storage.hsm.collaterals.v323.is(block)) {
-    return tryExecOrReturnFallback(async () => {
-      const resp = await storage.hsm.collaterals.v323.get(block, +collateralId);
+      if (storage.hsm.collaterals.v323.is(block)) {
+        return tryExecOrReturnFallback(async () => {
+          const resp = await storage.hsm.collaterals.v323.get(
+            block,
+            +collateralId
+          );
 
-      return resp
-        ? {
-            collateralAssetId: +collateralId,
-            ...resp,
-          }
-        : null;
-    }, null);
-  }
+          return resp
+            ? {
+                collateralAssetId: +collateralId,
+                ...resp,
+              }
+            : null;
+        }, null);
+      }
 
-  throw new UnknownVersionError('storage.hsm.collaterals');
+      throw new UnknownVersionError('storage.hsm.collaterals');
+    },
+  });
 }
 
 async function getAllCollaterals({
   block,
 }: GetDataAtBlockInput): Promise<HsmCollateralData[] | null> {
-  if (block.specVersion < 323) return null;
+  return measureStorageFetch({
+    storageName: 'hsm.collaterals',
+    originFn: 'getAllCollaterals',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 323) return null;
 
-  if (storage.hsm.collaterals.v323.is(block)) {
-    return tryExecOrReturnFallback(async () => {
-      const resp = await storage.hsm.collaterals.v323.getPairs(block);
-      const result: HsmCollateralData[] = [];
+      if (storage.hsm.collaterals.v323.is(block)) {
+        return tryExecOrReturnFallback(async () => {
+          const resp = await storage.hsm.collaterals.v323.getPairs(block);
+          const result: HsmCollateralData[] = [];
 
-      for (const [collateralAssetId, collateralData] of resp) {
-        if (!collateralData) continue;
+          for (const [collateralAssetId, collateralData] of resp) {
+            if (!collateralData) continue;
 
-        result.push({
-          collateralAssetId,
-          ...collateralData,
-        });
+            result.push({
+              collateralAssetId,
+              ...collateralData,
+            });
+          }
+
+          return result.length ? result : null;
+        }, null);
       }
 
-      return result.length ? result : null;
-    }, null);
-  }
-
-  throw new UnknownVersionError('storage.hsm.collaterals');
+      throw new UnknownVersionError('storage.hsm.collaterals');
+    },
+  });
 }
 
 export default { getAllCollaterals, getCollateral };

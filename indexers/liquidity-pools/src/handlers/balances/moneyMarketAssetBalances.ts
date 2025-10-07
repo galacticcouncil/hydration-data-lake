@@ -193,7 +193,7 @@ export async function handleMmAssetAccountBalancesPerBlock(
                   accountStorageDictionaryBalancesPerAssetMap.get(
                     asset?.assetRegistryId ?? ''
                   ) ??
-                  (await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
+                  (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
                     {
                       contractAddress: asset.evmAddress!,
                       accountAddress: accountAssetsMap.account.boundEvmAddress!,

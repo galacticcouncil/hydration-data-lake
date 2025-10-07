@@ -104,7 +104,7 @@ export async function handleAccountMmPositionDataOnMmEvent({
     StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(
       { accountId: account.id, block: blockHeader }
     ) ??
-    (await MoneyMarketContractsManager.getInstance().getAccountMmPositionData({
+    (await MoneyMarketContractsManager.getInstance().getAccountMmPositionDataWithLogs({
       accountAddress: accountEvmAddress,
       blockNumber: blockHeader.height,
     }));

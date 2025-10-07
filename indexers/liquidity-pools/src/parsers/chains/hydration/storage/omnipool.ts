@@ -11,6 +11,7 @@ import {
   OmnipoolGetPoolDataInput,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 
 function getConstants({ block }: GetConstantsInput): OmnipoolConstants {
   let burnProtocolFee = null;
@@ -71,32 +72,47 @@ async function getOmnipoolAssetData({
   assetId,
   block,
 }: OmnipoolGetAssetDataInput): Promise<OmnipoolAssetData | null> {
-  if (block.specVersion < 115) return null;
-  if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
-    try {
-      const resp = await storage.omnipool.assets.v115.get(block, assetId);
-      return resp ?? null;
-    } catch (e) {
-      return null;
-    }
-  }
-  throw new UnknownVersionError('storage.omnipool.assets');
+  return measureStorageFetch({
+    storageName: 'omnipool.assets',
+    originFn: 'getOmnipoolAssetData',
+    blockHeight: block.height,
+    args: { assetId },
+    fn: async () => {
+      if (block.specVersion < 115) return null;
+      if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
+        try {
+          const resp = await storage.omnipool.assets.v115.get(block, assetId);
+          return resp ?? null;
+        } catch (e) {
+          return null;
+        }
+      }
+      throw new UnknownVersionError('storage.omnipool.assets');
+    },
+  });
 }
 
 async function getOmnipoolAllAssetIds({
   block,
 }: OmnipoolGetAllAssetIdsInput): Promise<number[]> {
-  if (block.specVersion < 115) return [];
+  return measureStorageFetch({
+    storageName: 'omnipool.assets',
+    originFn: 'getOmnipoolAllAssetIds',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 115) return [];
 
-  if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
-    try {
-      const resp = await storage.omnipool.assets.v115.getKeys(block);
-      return resp;
-    } catch (e) {
-      return [];
-    }
-  }
-  throw new UnknownVersionError('storage.omnipool.assets');
+      if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
+        try {
+          const resp = await storage.omnipool.assets.v115.getKeys(block);
+          return resp;
+        } catch (e) {
+          return [];
+        }
+      }
+      throw new UnknownVersionError('storage.omnipool.assets');
+    },
+  });
 }
 
 async function getPoolData({
@@ -112,17 +128,25 @@ async function getPoolData({
 async function getOmnipoolHubAssetTradability({
   block,
 }: OmnipoolGetHubAssetTradabilityInput): Promise<OmnipoolAssetTradability | null> {
-  if (block.specVersion < 115) return null;
+  return measureStorageFetch({
+    storageName: 'omnipool.assets',
+    originFn: 'getOmnipoolHubAssetTradability',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 115) return null;
 
-  if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
-    try {
-      const resp = await storage.omnipool.hubAssetTradability.v115.get(block);
-      return resp ?? null;
-    } catch (e) {
-      return null;
-    }
-  }
-  throw new UnknownVersionError('storage.omnipool.hubAssetTradability');
+      if (storage.omnipool.assets.v115.is(block) || block.specVersion >= 115) {
+        try {
+          const resp =
+            await storage.omnipool.hubAssetTradability.v115.get(block);
+          return resp ?? null;
+        } catch (e) {
+          return null;
+        }
+      }
+      throw new UnknownVersionError('storage.omnipool.hubAssetTradability');
+    },
+  });
 }
 
 export default {

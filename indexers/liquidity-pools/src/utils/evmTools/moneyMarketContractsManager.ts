@@ -12,6 +12,7 @@ import { AccountMmPositionDataContractData } from './types';
 import { BigNumber } from '@galacticcouncil/sdk';
 import pMap from 'p-map';
 import { retryAsync } from '../helpers';
+import { measureEvmContractCall } from '../hydratedLogger/utils';
 
 const appConfig = AppConfig.getInstance();
 
@@ -143,19 +144,34 @@ export class MoneyMarketContractsManager {
     blockNumber?: number;
   }): Promise<MoneyMarketResourceDetails[] | null> {
     try {
-      // const reservesData =
-      //   await this.uiPoolDataProviderContractInstance.getReservesData(
-      //     appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
-      //     { blockTag: blockNumber }
-      //   );
-      const reservesData = await retryAsync({
-        fn: async () =>
-          this.uiPoolDataProviderContractInstance.getReservesData(
+      // const reservesData = await retryAsync({
+      //   fn: async () =>
+      //     this.uiPoolDataProviderContractInstance.getReservesData(
+      //       appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+      //       { blockTag: blockNumber }
+      //     ),
+      //   fallbackResponse: [],
+      //   tag: `getReservesData.at(${blockNumber})`,
+      // });
+
+      const reservesData = await measureEvmContractCall({
+        call: `uiPoolDataProviderContractInstance.getReservesData`,
+        originFn: 'getReservesData',
+        blockHeight: blockNumber ?? 0,
+        args: {
+          POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS:
             appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
-            { blockTag: blockNumber }
-          ),
-        fallbackResponse: [],
-        tag: `getReservesData.at(${blockNumber})`,
+        },
+        fn: () =>
+          retryAsync({
+            fn: async () =>
+              this.uiPoolDataProviderContractInstance.getReservesData(
+                appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+                { blockTag: blockNumber }
+              ),
+            fallbackResponse: [],
+            tag: `getReservesData.at(${blockNumber})`,
+          }),
       });
 
       const reservesDecorated: MoneyMarketResourceDetails[] = [];
@@ -306,6 +322,20 @@ export class MoneyMarketContractsManager {
     return response;
   }
 
+  async getResourceDetailsWithLogs(
+    address: string
+  ): Promise<MoneyMarketTokenDetails | null> {
+    return measureEvmContractCall({
+      call: `moneyMarketTokenContracts.name|symbol|decimals`,
+      originFn: 'getResourceDetailsWithLogs',
+      blockHeight: 0,
+      args: {
+        address,
+      },
+      fn: () => this.getResourceDetails(address),
+    });
+  }
+
   async getTokenTotalSupply(
     address: string,
     blockNumber?: number
@@ -381,6 +411,19 @@ export class MoneyMarketContractsManager {
     return totalResponse;
   }
 
+  async getManyTokensTotalSupplyWithLogs(args: {
+    addresses: string[];
+    blockNumber?: number;
+  }): Promise<MoneyMarketTokenTotalSupply[]> {
+    return measureEvmContractCall({
+      call: `moneyMarketTokenContracts.get(address).totalSupply`,
+      originFn: 'getManyTokensTotalSupplyWithLogs',
+      blockHeight: args?.blockNumber ?? 0,
+      args: args,
+      fn: () => this.getManyTokensTotalSupply(args),
+    });
+  }
+
   async getAccountTokenBalance({
     accountAddress,
     contractAddress,
@@ -396,13 +439,6 @@ export class MoneyMarketContractsManager {
       return null;
 
     try {
-      // const balance = await this.moneyMarketTokenContracts
-      //   .get(contractAddressNormalized)!
-      //   .balanceOf(
-      //     accountAddressNormalized,
-      //     blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-      //   );
-
       const balance: any = await retryAsync({
         // passThrough: true,
         fn: () =>
@@ -422,6 +458,20 @@ export class MoneyMarketContractsManager {
       console.log(e);
       return null;
     }
+  }
+
+  async getAccountTokenBalanceWithLogs(args: {
+    accountAddress: string;
+    contractAddress: string;
+    blockNumber?: number;
+  }) {
+    return measureEvmContractCall({
+      call: `moneyMarketTokenContracts.get().balanceOf`,
+      originFn: 'getAccountTokenBalanceWithLogs',
+      blockHeight: args?.blockNumber ?? 0,
+      args: args,
+      fn: () => this.getAccountTokenBalance(args),
+    });
   }
 
   async getAccountMmPositionData({
@@ -471,18 +521,37 @@ export class MoneyMarketContractsManager {
     }
   }
 
+  async getAccountMmPositionDataWithLogs(args: {
+    accountAddress: string;
+    blockNumber?: number;
+  }): Promise<AccountMmPositionDataContractData | null> {
+    return measureEvmContractCall({
+      call: `poolImplementationContractInstance.getUserAccountData`,
+      originFn: 'getAccountMmPositionDataWithLogs',
+      blockHeight: args?.blockNumber ?? 0,
+      args: args,
+      fn: () => this.getAccountMmPositionData(args),
+    });
+  }
+
   /**
    * IMPORTANT: Method cannot provide data at a specific block.
    */
   async getAllAaveFacilitators({ blockNumber }: { blockNumber?: number }) {
-    const facilitatorsList: string[] = await retryAsync({
-      // passThrough: true,
+    const facilitatorsList: string[] = await measureEvmContractCall({
+      call: `hollarContractInstance.getFacilitatorsList`,
+      originFn: 'getAllAaveFacilitators',
+      blockHeight: blockNumber ?? 0,
       fn: () =>
-        this.hollarContractInstance.getFacilitatorsList({
-          blockTag: blockNumber,
+        retryAsync({
+          // passThrough: true,
+          fn: () =>
+            this.hollarContractInstance.getFacilitatorsList({
+              blockTag: blockNumber,
+            }),
+          fallbackResponse: [],
+          tag: `getFacilitatorsList.at(${blockNumber})`,
         }),
-      fallbackResponse: [],
-      tag: `getFacilitatorsList.at(${blockNumber})`,
     });
 
     if (!facilitatorsList) {
@@ -496,7 +565,10 @@ export class MoneyMarketContractsManager {
       facilitatorsList,
       async (facilitatorAddress: string) => {
         facilitatorsData.push(
-          await this.getAaveFacilitator({ facilitatorAddress, blockNumber })
+          await this.getAaveFacilitatorWithLogs({
+            facilitatorAddress,
+            blockNumber,
+          })
         );
       },
       { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
@@ -539,233 +611,16 @@ export class MoneyMarketContractsManager {
     };
   }
 
-  // async getUserPoolReservesData({
-  //   ctx,
-  //   blockHeader,
-  //   contractAddress,
-  //   accountH160Address,
-  // }: {
-  //   ctx: SqdProcessorContext<Store>;
-  //   blockHeader: SqdBlock;
-  //   contractAddress: string;
-  //   accountH160Address: string;
-  // }) {
-  //   // const userReserves = await this.poolDataProviderContract.getReservesHumanized({
-  //   //   lendingPoolAddressProvider: contractAddress,
-  //   // });
-  //   const userReserves =
-  //     await this.poolDataProviderContract.getReservesHumanized({
-  //       lendingPoolAddressProvider: contractAddress,
-  //       // user: accountH160Address,
-  //     });
-  //
-  //   return userReserves;
-  // }
-
-  // async getUserWalletBalances({
-  //   ctx,
-  //   blockHeader,
-  //   contractAddress,
-  //   accountH160Address,
-  // }: {
-  //   ctx: SqdProcessorContext<Store>;
-  //   blockHeader: SqdBlock;
-  //   contractAddress: string;
-  //   accountH160Address: string;
-  // }) {
-  //   const userReserves =
-  //     await this.walletBalanceProviderContract.getUserWalletBalancesForLendingPoolProvider(
-  //       accountH160Address,
-  //       contractAddress
-  //     );
-  //
-  //   return userReserves;
-  // }
-
-  // async getATokenBalance({
-  //   ctx,
-  //   blockHeader,
-  //   token,
-  //   accountH160Address,
-  // }: {
-  //   ctx: SqdProcessorContext<Store>;
-  //   blockHeader: SqdBlock;
-  //   token: 'USDT' | 'USDC';
-  //   accountH160Address: string;
-  // }) {
-  //   const userReserves =
-  //     await this.usdtATokenV3ServiceContract.balanceOf(accountH160Address);
-  //
-  //   return userReserves;
-  // }
-
-  // private static async contractRpcCall({
-  //   ctx,
-  //   blockNumber = 'latest',
-  //   abi,
-  //   toAddress,
-  //   functionName,
-  //   functionData,
-  // }: {
-  //   ctx: SqdProcessorContext<Store>;
-  //   blockNumber?: number | string;
-  //   abi: any[];
-  //   toAddress: string;
-  //   functionName: string;
-  //   functionData: any[];
-  // }) {
-  //   const iface = new Interface(abi);
-  //
-  //   const response = await fetch(ctx.appConfig.RPC_URL_HTTPS || '', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({
-  //       id: 1,
-  //       jsonrpc: '2.0',
-  //       method: 'eth_call',
-  //       params: [
-  //         {
-  //           to: toAddress,
-  //           data: iface.encodeFunctionData(functionName, functionData),
-  //         },
-  //         blockNumber,
-  //       ],
-  //     }),
-  //   });
-  //
-  //   if (response.status !== 200) {
-  //     const message = `[${response.statusText}]: Error fetching ${toAddress}.${functionName}(...)`;
-  //     console.error(message);
-  //     return null;
-  //   }
-  //
-  //   const { result } = await response.json();
-  //
-  //   if (!result) return null;
-  //
-  //   try {
-  //     return iface.decodeFunctionResult(functionName, result);
-  //   } catch (error) {
-  //     const message = `Error decoding Result [${toAddress}.${functionName}]`;
-  //     console.error(message);
-  //     return null;
-  //   }
-  //
-  //   // return formatReserves({
-  //   //   reserves: decodedResult,
-  //   //   currentTimestamp: Math.floor(Date.now() / 1000),
-  //   //   marketReferencePriceInUsd: decodedResult[1].marketReferencePriceInUsd,
-  //   //   marketReferenceCurrencyDecimals:
-  //   //     decodedResult[1].marketReferenceCurrencyDecimals,
-  //   // });
-  //
-  //   // const result = decoders.v264.EthCall.balanceOf.dec(
-  //   //   await blockHeader._runtime.rpc.call(`eth_call`, [
-  //   //     {
-  //   //       to: toAddress,
-  //   //       data: iface.encodeFunctionData(functionName, functionData),
-  //   //     },
-  //   //   ])
-  //   // );
-  //   // const result = await blockHeader._runtime.rpc.call(`eth_call`, [
-  //   //   {
-  //   //     to: toAddress,
-  //   //     data: iface.encodeFunctionData(functionName, functionData),
-  //   //   },
-  //   // ]);
-  //
-  //   // return result;
-  // }
-
-  // static async getATokenAccountBalance({
-  //   ctx,
-  //   blockNumber,
-  //   contractAddress,
-  //   accountH160Address,
-  // }: {
-  //   ctx: SqdProcessorContext<Store>;
-  //   blockNumber?: number;
-  //   contractAddress: string;
-  //   accountH160Address: string;
-  // }) {
-  //   // return this.contractRpcCall({
-  //   //   ctx,
-  //   //   blockNumber,
-  //   //   abi: aTokenHydration.abi,
-  //   //   toAddress: contractAddress,
-  //   //   functionName: 'balanceOf',
-  //   //   functionData: [accountH160Address],
-  //   // });
-  //
-  //   const provider = new ethers.providers.JsonRpcProvider(
-  //     'https://archive.rpc.hydration.cloud'
-  //   );
-  //
-  //   const contract = new Contract(
-  //     contractAddress,
-  //     aTokenHydration.abi,
-  //     provider
-  //   );
-  //
-  //   return contract.balanceOf(accountH160Address, { blockTag: blockNumber });
-  // }
-
-  // static async getReservesData({
-  //   ctx,
-  //   blockNumber,
-  // }: {
-  //   ctx: SqdProcessorContext<Store>;
-  //   blockNumber?: number;
-  // }) {
-  //   // return this.contractRpcCall({
-  //   //   ctx,
-  //   //   blockNumber,
-  //   //   abi: uiPoolDataProviderV3.abi,
-  //   //   toAddress: '0x112b087b60C1a166130d59266363C45F8aa99db0',
-  //   //   functionName: 'getReservesData',
-  //   //   functionData: ['0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691'],
-  //   // });
-  //
-  //   const provider = new ethers.providers.JsonRpcProvider(
-  //     'https://archive.rpc.hydration.cloud'
-  //   );
-  //
-  //   // const contract = new Contract(
-  //   //   '0x112b087b60C1a166130d59266363C45F8aa99db0',
-  //   //   uiPoolDataProviderV3.abi,
-  //   //   provider
-  //   // );
-  //
-  //   const contract = new Contract(
-  //     '0x32a8090E20748e530670FF520C4AbC903dB7e127',
-  //     aTokenHydration.abi,
-  //     provider
-  //   );
-  //
-  //   // return contract.getReservesData(
-  //   //   '0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691',
-  //   //   { blockTag: blockNumber }
-  //   // );
-  //
-  //   return contract.symbol({ blockTag: blockNumber });
-  // }
-
-  // static async getDebtTokenContractDetails({
-  //   ctx,
-  //   blockNumber,
-  //   contractAddress,
-  // }: {
-  //   ctx: SqdProcessorContext<Store>;
-  //   blockNumber?: number;
-  //   contractAddress: string;
-  // }) {
-  //   return this.contractRpcCall({
-  //     ctx,
-  //     blockNumber,
-  //     abi: variableDebtTokenHydration.abi,
-  //     toAddress: contractAddress,
-  //     functionName: 'getReservesData',
-  //     functionData: [],
-  //   });
-  // }
+  async getAaveFacilitatorWithLogs(args: {
+    facilitatorAddress: string;
+    blockNumber?: number;
+  }): Promise<AaveFacilitatorContractData | null> {
+    return measureEvmContractCall({
+      call: `hollarContractInstance.getFacilitator`,
+      originFn: 'getAaveFacilitatorWithLogs',
+      blockHeight: args?.blockNumber ?? 0,
+      args: args,
+      fn: () => this.getAaveFacilitator(args),
+    });
+  }
 }

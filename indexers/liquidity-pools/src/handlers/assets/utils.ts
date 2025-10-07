@@ -197,7 +197,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
       if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress) {
         erc20AssetContractDetails =
-          await MoneyMarketContractsManager.getInstance().getResourceDetails(
+          await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
             erc20AssetContractAddress
           );
       }
@@ -417,7 +417,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
       ...ctx.batchState.state.assetsAll.values(),
     ].filter((a) => a.assetType === AssetType.Erc20 && !!a.evmAddress)) {
       const erc20AssetContractDetails =
-        await MoneyMarketContractsManager.getInstance().getResourceDetails(
+        await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
           erc20Asset.evmAddress!
         );
       let underlyingAsset: Asset | null = null;

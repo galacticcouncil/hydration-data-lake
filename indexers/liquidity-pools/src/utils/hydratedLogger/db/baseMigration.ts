@@ -7,6 +7,7 @@ export default `
     level               text        NOT NULL,
     name                text,
     action_type         text,
+    para_block_height   int4,
     op_id               text,
     para_blocks_range   text,
     duration_ms         double precision,

@@ -24,11 +24,15 @@ export async function getOrCreateAaveFacilitator({
 
   if (facilitator) return facilitator;
 
-  facilitator = await ctx.storeUtils.findOneWithLogs(AaveFacilitator, {
-    where: {
-      id,
+  facilitator = await ctx.storeUtils.findOneWithLogs(
+    AaveFacilitator,
+    {
+      where: {
+        id,
+      },
     },
-  }, { className: 'AaveFacilitator' });
+    { className: 'AaveFacilitator' }
+  );
 
   if (facilitator) {
     ctx.batchState.state.aaveFacilitators.set(facilitator.id, facilitator);
@@ -36,10 +40,12 @@ export async function getOrCreateAaveFacilitator({
   }
 
   const facilitatorContractData = facilitatorData
-    ? await MoneyMarketContractsManager.getInstance().getAaveFacilitator({
-        facilitatorAddress: id,
-        blockNumber: blockHeader.height,
-      })
+    ? await MoneyMarketContractsManager.getInstance().getAaveFacilitatorWithLogs(
+        {
+          facilitatorAddress: id,
+          blockNumber: blockHeader.height,
+        }
+      )
     : null;
 
   if (!facilitatorContractData) {
@@ -156,18 +162,22 @@ export async function getOldAaveFacilitatorHistDataEntity({
   address: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.storeUtils.findOneWithLogs(AaveFacilitatorHistoricalData, {
-    where: {
-      facilitator: { id: address },
-      ...(currentBlockHeight
-        ? { paraBlockHeight: LessThan(currentBlockHeight) }
-        : {}),
+  return await ctx.storeUtils.findOneWithLogs(
+    AaveFacilitatorHistoricalData,
+    {
+      where: {
+        facilitator: { id: address },
+        ...(currentBlockHeight
+          ? { paraBlockHeight: LessThan(currentBlockHeight) }
+          : {}),
+      },
+      relations: {
+        facilitator: true,
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
     },
-    relations: {
-      facilitator: true,
-    },
-    order: {
-      paraBlockHeight: 'DESC',
-    },
-  }, { className: 'AaveFacilitatorHistoricalData' });
+    { className: 'AaveFacilitatorHistoricalData' }
+  );
 }

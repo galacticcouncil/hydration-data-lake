@@ -17,6 +17,7 @@ import {
 import { PQueueManager } from '../../utils/pQueueManager';
 import pMap from 'p-map';
 import { AppConfig } from '../../appConfig';
+import { measureRpcCall } from '../../utils/hydratedLogger/utils';
 
 const appConfig = AppConfig.getInstance();
 
@@ -33,37 +34,48 @@ export class RuntimeApiResolver {
     args: Args;
   }): Promise<R | null> {
     // const pQueueInst = PQueueManager.getInstance();
+
     try {
-      switch (apiName) {
-        case RuntimeApiName.CurrenciesApi:
-          if (apiMethod === RuntimeApiMethodName.accounts) {
-            return (await this.handleCurrenciesApiGetAccountsCall(
-              args as unknown as CurrenciesApiAccountsInput
-            )) as R;
-          }
-          if (apiMethod === RuntimeApiMethodName.account) {
-            return (await this.handleCurrenciesApiGetAccountCall(
-              args as unknown as CurrenciesApiAccountInput
-            )) as R;
-          }
-          if (apiMethod === RuntimeApiMethodName.synthAccountsMany) {
-            return (await this.handleCurrenciesApiGetAccountBalancesMany(
-              args as unknown as GetTokenBalancesManyInput
-            )) as R;
-          }
+      const { block, ...restArgs } = args;
+      return measureRpcCall({
+        call: `${apiName}.${apiMethod}`,
+        originFn: 'resolveRuntimeApiCall',
+        blockHeight: args.block.height,
+        args: restArgs,
+        fn: async () => {
+          switch (apiName) {
+            case RuntimeApiName.CurrenciesApi:
+              if (apiMethod === RuntimeApiMethodName.accounts) {
+                return (await this.handleCurrenciesApiGetAccountsCall(
+                  args as unknown as CurrenciesApiAccountsInput
+                )) as R;
+              }
+              if (apiMethod === RuntimeApiMethodName.account) {
+                return (await this.handleCurrenciesApiGetAccountCall(
+                  args as unknown as CurrenciesApiAccountInput
+                )) as R;
+              }
+              if (apiMethod === RuntimeApiMethodName.synthAccountsMany) {
+                return (await this.handleCurrenciesApiGetAccountBalancesMany(
+                  args as unknown as GetTokenBalancesManyInput
+                )) as R;
+              }
 
-          break;
-        case RuntimeApiName.AaveTradeExecutor:
-          if (apiMethod === RuntimeApiMethodName.pools) {
-            return (await this.handleAaveTradeExecutorPoolsCall(
-              args as AaveTradeExecutorPoolsInput
-            )) as R;
-          }
-          break;
+              break;
+            case RuntimeApiName.AaveTradeExecutor:
+              if (apiMethod === RuntimeApiMethodName.pools) {
+                return (await this.handleAaveTradeExecutorPoolsCall(
+                  args as AaveTradeExecutorPoolsInput
+                )) as R;
+              }
+              break;
 
-        default:
+            default:
+              return null;
+          }
           return null;
-      }
+        },
+      });
     } catch (e) {
       // @ts-ignore
       // if (e.message) console.log(e.message);

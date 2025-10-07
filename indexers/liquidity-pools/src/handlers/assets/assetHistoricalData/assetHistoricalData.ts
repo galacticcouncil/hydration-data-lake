@@ -55,7 +55,7 @@ export async function processAssetsHistoricalDataAtBlock({
   );
 
   const mmAssetsTotalSupply =
-    await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupply({
+    await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs({
       addresses: mmAssets.map((a) => a.evmAddress!),
       blockNumber: block.height,
     });

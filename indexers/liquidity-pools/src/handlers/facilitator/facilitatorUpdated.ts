@@ -113,7 +113,7 @@ export async function handleFacilitatorUpdatedEvent({
        * just stated.
        */
       const facilitatorContractData =
-        await MoneyMarketContractsManager.getInstance().getAaveFacilitator({
+        await MoneyMarketContractsManager.getInstance().getAaveFacilitatorWithLogs({
           facilitatorAddress,
           blockNumber: blockHeader.height,
         });

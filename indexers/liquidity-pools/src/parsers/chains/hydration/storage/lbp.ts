@@ -10,6 +10,7 @@ import {
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 import { tryExecOrReturnFallback } from '../../../../utils/helpers';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 
 function getConstants({ block }: GetConstantsInput): LbpConstants | null {
   if (block.specVersion < 176) return null;
@@ -54,92 +55,114 @@ async function getPoolData({
   poolAddress,
   block,
 }: LbpGetPoolDataInput): Promise<LbpPoolData | null> {
-  if (block.specVersion < 176) return null;
+  return measureStorageFetch({
+    storageName: 'lbp.poolData',
+    originFn: 'getPoolData',
+    blockHeight: block.height,
+    args: { poolAddress },
+    fn: async () => {
+      if (block.specVersion < 176) return null;
 
-  let poolStorageData: LbpPoolStorageData | null = null;
+      let poolStorageData: LbpPoolStorageData | null = null;
 
-  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
-    return tryExecOrReturnFallback(async () => {
-      const resp = await storage.lbp.poolData.v176.get(block, poolAddress);
+      if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+        return tryExecOrReturnFallback(async () => {
+          const resp = await storage.lbp.poolData.v176.get(block, poolAddress);
 
-      if (!resp) return null;
+          if (!resp) return null;
 
-      poolStorageData = {
-        poolAddress,
-        assetAId: resp.assets[0],
-        assetBId: resp.assets[1],
-        owner: resp.owner,
-        start: resp.start,
-        end: resp.end,
-        initialWeight: resp.initialWeight,
-        finalWeight: resp.finalWeight,
-        weightCurve: resp.weightCurve,
-        fee: resp.fee,
-        feeCollector: resp.feeCollector,
-        repayTarget: BigInt(resp.repayTarget),
-      };
-      return poolStorageData;
-    }, null);
-  }
+          poolStorageData = {
+            poolAddress,
+            assetAId: resp.assets[0],
+            assetBId: resp.assets[1],
+            owner: resp.owner,
+            start: resp.start,
+            end: resp.end,
+            initialWeight: resp.initialWeight,
+            finalWeight: resp.finalWeight,
+            weightCurve: resp.weightCurve,
+            fee: resp.fee,
+            feeCollector: resp.feeCollector,
+            repayTarget: BigInt(resp.repayTarget),
+          };
+          return poolStorageData;
+        }, null);
+      }
 
-  throw new UnknownVersionError('storage.lbp.poolData');
+      throw new UnknownVersionError('storage.lbp.poolData');
+    },
+  });
 }
 
 async function getAllPoolsData({
   block,
 }: LbpGetAllPoolsDataInput): Promise<LbpPoolData[]> {
-  let pairsPaged: LbpPoolData[] = [];
+  return measureStorageFetch({
+    storageName: 'lbp.poolData',
+    originFn: 'getAllPoolsData',
+    blockHeight: block.height,
+    fn: async () => {
+      let pairsPaged: LbpPoolData[] = [];
 
-  if (block.specVersion < 176) return [];
+      if (block.specVersion < 176) return [];
 
-  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
-    return tryExecOrReturnFallback(async () => {
-      try {
-        for await (const page of storage.lbp.poolData.v176.getPairsPaged(
-          500,
-          block
-        ))
-          pairsPaged.push(
-            ...page
-              .filter((p) => !!p && !!p[1])
-              .map(([poolAddress, poolData]) => ({
-                poolAddress,
-                assetAId: poolData!.assets[0],
-                assetBId: poolData!.assets[1],
-                owner: poolData!.owner,
-                start: poolData!.start,
-                end: poolData!.end,
-                initialWeight: poolData!.initialWeight,
-                finalWeight: poolData!.finalWeight,
-                weightCurve: poolData!.weightCurve,
-                fee: poolData!.fee,
-                feeCollector: poolData!.feeCollector,
-                repayTarget: BigInt(poolData!.repayTarget),
-              }))
-          );
-      } catch (e) {
-        throw e;
+      if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+        return tryExecOrReturnFallback(async () => {
+          try {
+            for await (const page of storage.lbp.poolData.v176.getPairsPaged(
+              500,
+              block
+            ))
+              pairsPaged.push(
+                ...page
+                  .filter((p) => !!p && !!p[1])
+                  .map(([poolAddress, poolData]) => ({
+                    poolAddress,
+                    assetAId: poolData!.assets[0],
+                    assetBId: poolData!.assets[1],
+                    owner: poolData!.owner,
+                    start: poolData!.start,
+                    end: poolData!.end,
+                    initialWeight: poolData!.initialWeight,
+                    finalWeight: poolData!.finalWeight,
+                    weightCurve: poolData!.weightCurve,
+                    fee: poolData!.fee,
+                    feeCollector: poolData!.feeCollector,
+                    repayTarget: BigInt(poolData!.repayTarget),
+                  }))
+              );
+          } catch (e) {
+            throw e;
+          }
+
+          return pairsPaged;
+        }, []);
       }
 
-      return pairsPaged;
-    }, []);
-  }
-
-  throw new UnknownVersionError('storage.lbp.poolData');
+      throw new UnknownVersionError('storage.lbp.poolData');
+    },
+  });
 }
 
 async function getAllPoolIds({
   block,
 }: LbpGetAllPoolIdsInput): Promise<string[]> {
-  if (block.specVersion < 176) return [];
+  return measureStorageFetch({
+    storageName: 'lbp.poolData',
+    originFn: 'getAllPoolIds',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 176) return [];
 
-  if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
-    return tryExecOrReturnFallback(async () => {
-      const ids = await storage.lbp.poolData.v176.getKeys(block);
-      return ids;
-    }, []);
-  }
-  throw new UnknownVersionError('storage.lbp.poolData');
+      if (storage.lbp.poolData.v176.is(block) || block.specVersion >= 176) {
+        return tryExecOrReturnFallback(async () => {
+          const ids = await storage.lbp.poolData.v176.getKeys(block);
+          return ids;
+        }, []);
+      }
+      throw new UnknownVersionError('storage.lbp.poolData');
+    },
+  });
 }
 
 export default { getPoolData, getAllPoolsData, getAllPoolIds, getConstants };

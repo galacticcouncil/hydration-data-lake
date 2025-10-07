@@ -71,6 +71,7 @@ export class HydratedLogger {
   private flushIntervalMs: number;
   private flushTimer: NodeJS.Timeout | null = null;
   private dbEnabled: boolean;
+  private initDone = false;
 
   private constructor(cfg: HydratedLoggerConfig = {}) {
     const isProd = process.env.NODE_ENV === 'production';
@@ -128,9 +129,13 @@ export class HydratedLogger {
   }
 
   async init() {
+    if (this.initDone) return this;
+
     if (this.dbEnabled) {
       await this.ensureSchema();
     }
+    this.initDone = true;
+
     return this;
   }
 
@@ -212,6 +217,7 @@ export class HydratedLogger {
         duration_ms: meta?.durationMs,
         success: meta?.success,
         meta: {
+          ...meta,
           message,
           para_block_height: meta?.paraBlockHeight,
           para_blocks_range: meta?.paraBlocksRange,
@@ -289,6 +295,7 @@ export class HydratedLogger {
       'level',
       'name',
       'action_type',
+      'para_block_height',
       'op_id',
       'para_blocks_range',
       'duration_ms',
@@ -301,13 +308,14 @@ export class HydratedLogger {
     batch.forEach((r, i) => {
       const base = i * cols.length;
       placeholders.push(
-        `($${base + 1},$${base + 2},$${base + 3},$${base + 4},$${base + 5},$${base + 6},$${base + 7},$${base + 8},$${base + 9})`
+        `($${base + 1},$${base + 2},$${base + 3},$${base + 4},$${base + 5},$${base + 6},$${base + 7},$${base + 8},$${base + 9},$${base + 10})`
       );
       values.push(
         r.ts,
         r.level,
         r.name ?? null,
         r.action_type ?? null,
+        r.meta?.para_block_height ?? null,
         r.meta?.op_id ?? null,
         r.meta?.para_blocks_range ?? null,
         r.duration_ms ?? null,

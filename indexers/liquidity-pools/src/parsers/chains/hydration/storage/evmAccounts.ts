@@ -9,29 +9,38 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 import pMap from 'p-map';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 
 async function getAccountExtension({
   evmAddress,
   block,
 }: EvmAccountsGetAccountExtensionInput): Promise<EvmAccountsAccountExtension | null> {
-  if (block.specVersion < 222) return null;
-  if (
-    storage.evmAccounts.accountExtension.v222.is(block) ||
-    block.specVersion >= 222
-  ) {
-    return tryExecOrReturnFallback(async () => {
-      const resp = await storage.evmAccounts.accountExtension.v222.get(
-        block,
-        evmAddress
-      );
+  return measureStorageFetch({
+    storageName: 'evmAccounts.accountExtension',
+    originFn: 'getAccountExtension',
+    blockHeight: block.height,
+    args: { evmAddress },
+    fn: async () => {
+      if (block.specVersion < 222) return null;
+      if (
+        storage.evmAccounts.accountExtension.v222.is(block) ||
+        block.specVersion >= 222
+      ) {
+        return tryExecOrReturnFallback(async () => {
+          const resp = await storage.evmAccounts.accountExtension.v222.get(
+            block,
+            evmAddress
+          );
 
-      if (!resp) return null;
+          if (!resp) return null;
 
-      return resp;
-    }, null);
-  }
+          return resp;
+        }, null);
+      }
 
-  throw new UnknownVersionError('storage.evmAccounts.accountExtension');
+      throw new UnknownVersionError('storage.evmAccounts.accountExtension');
+    },
+  });
 }
 
 async function getAllAccountsExtensions({
@@ -39,39 +48,46 @@ async function getAllAccountsExtensions({
 }: GetDataAtBlockInput): Promise<
   EvmAccountsAccountExtensionWithEvmAddress[] | null
 > {
-  if (block.specVersion < 222) return null;
-  if (
-    storage.evmAccounts.accountExtension.v222.is(block) ||
-    block.specVersion >= 222
-  ) {
-    return tryExecOrReturnFallback(async () => {
-      try {
-        const pairsPaged: EvmAccountsAccountExtensionWithEvmAddress[] = [];
+  return measureStorageFetch({
+    storageName: 'evmAccounts.accountExtension',
+    originFn: 'getAllAccountsExtensions',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 222) return null;
+      if (
+        storage.evmAccounts.accountExtension.v222.is(block) ||
+        block.specVersion >= 222
+      ) {
+        return tryExecOrReturnFallback(async () => {
+          try {
+            const pairsPaged: EvmAccountsAccountExtensionWithEvmAddress[] = [];
 
-        for await (const page of storage.evmAccounts.accountExtension.v222.getPairsPaged(
-          500,
-          block
-        )) {
-          pairsPaged.push(
-            ...page
-              .filter((p) => !!p)
-              .map(
-                ([h160Address, extension]) =>
-                  ({
-                    h160Address,
-                    extension,
-                  }) as EvmAccountsAccountExtensionWithEvmAddress
-              )
-          );
-        }
-        return pairsPaged;
-      } catch (e) {
-        throw e;
+            for await (const page of storage.evmAccounts.accountExtension.v222.getPairsPaged(
+              500,
+              block
+            )) {
+              pairsPaged.push(
+                ...page
+                  .filter((p) => !!p)
+                  .map(
+                    ([h160Address, extension]) =>
+                      ({
+                        h160Address,
+                        extension,
+                      }) as EvmAccountsAccountExtensionWithEvmAddress
+                  )
+              );
+            }
+            return pairsPaged;
+          } catch (e) {
+            throw e;
+          }
+        }, null);
       }
-    }, null);
-  }
 
-  throw new UnknownVersionError('storage.evmAccounts.accountExtension');
+      throw new UnknownVersionError('storage.evmAccounts.accountExtension');
+    },
+  });
 }
 
 async function getAccountExtensionsMany({
@@ -80,38 +96,46 @@ async function getAccountExtensionsMany({
 }: EvmAccountsGetAccountExtensionManyInput): Promise<
   EvmAccountsAccountExtensionWithEvmAddress[] | null
 > {
-  if (block.specVersion < 222) return null;
-  if (
-    storage.evmAccounts.accountExtension.v222.is(block) ||
-    block.specVersion >= 222
-  ) {
-    return tryExecOrReturnFallback(async () => {
-      try {
-        const pairsPaged: EvmAccountsAccountExtensionWithEvmAddress[] = (
-          await pMap(evmAddresses, async (h160Address) => {
-            const extension =
-              await storage.evmAccounts.accountExtension.v222.get(
-                block,
-                h160Address
-              );
+  return measureStorageFetch({
+    storageName: 'evmAccounts.accountExtension',
+    originFn: 'getAccountExtensionsMany',
+    blockHeight: block.height,
+    args: { evmAddresses },
+    fn: async () => {
+      if (block.specVersion < 222) return null;
+      if (
+        storage.evmAccounts.accountExtension.v222.is(block) ||
+        block.specVersion >= 222
+      ) {
+        return tryExecOrReturnFallback(async () => {
+          try {
+            const pairsPaged: EvmAccountsAccountExtensionWithEvmAddress[] = (
+              await pMap(evmAddresses, async (h160Address) => {
+                const extension =
+                  await storage.evmAccounts.accountExtension.v222.get(
+                    block,
+                    h160Address
+                  );
 
-            if (!extension) return null;
+                if (!extension) return null;
 
-            return {
-              h160Address,
-              extension,
-            };
-          })
-        ).filter((resp) => !!resp);
+                return {
+                  h160Address,
+                  extension,
+                };
+              })
+            ).filter((resp) => !!resp);
 
-        return pairsPaged;
-      } catch (e) {
-        throw e;
+            return pairsPaged;
+          } catch (e) {
+            throw e;
+          }
+        }, null);
       }
-    }, null);
-  }
 
-  throw new UnknownVersionError('storage.evmAccounts.accountExtension');
+      throw new UnknownVersionError('storage.evmAccounts.accountExtension');
+    },
+  });
 }
 
 export default {
