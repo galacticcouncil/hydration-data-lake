@@ -57,7 +57,7 @@ type Asset @entity {
   "assetRegistry ID or actual contract EVM address (e.g. 0xc64980e4eaf9a1151bd21712b9946b81e41e2b92 || 10)"
   id: ID!
   "Hydration AssetRegistry ID"
-  assetRegistryId: String
+  assetRegistryId: String @index
   "real EVM contract address"
   evmAddress: String
   "list of all asset ids from current and other chains related with this Asset"

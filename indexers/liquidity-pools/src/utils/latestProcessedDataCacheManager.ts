@@ -3,6 +3,7 @@ import { SqdProcessorContext } from '../processor';
 import parsers from '../parsers';
 import { LessThan } from 'typeorm';
 import { Store } from '@subsquid/typeorm-store';
+import pMap from 'p-map';
 
 export class LatestProcessedDataCacheManager {
   private static instance: LatestProcessedDataCacheManager;
@@ -34,22 +35,30 @@ export class LatestProcessedDataCacheManager {
       await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
     ).filter((res) => !!res.data);
 
-    const latestEntities = await Promise.all(
-      storageDataAllAssets.map((assetData): AssetHistoricalData | undefined => {
+    const latestEntities = await pMap(
+      storageDataAllAssets,
+      (assetData): AssetHistoricalData | undefined => {
         // @ts-ignore
-        return ctx.storeUtils.findOneWithLogs(AssetHistoricalData, {
-          where: {
-            asset: { assetRegistryId: assetData.assetId.toString() },
-            paraBlockHeight: LessThan(currentBlockHeader.height),
+        return ctx.storeUtils.findOneWithLogs(
+          AssetHistoricalData,
+          {
+            where: {
+              asset: { assetRegistryId: assetData.assetId.toString() },
+              paraBlockHeight: LessThan(currentBlockHeader.height),
+            },
+            order: {
+              paraBlockHeight: 'DESC',
+            },
+            relations: {
+              asset: true,
+            },
           },
-          order: {
-            paraBlockHeight: 'DESC',
-          },
-          relations: {
-            asset: true,
-          },
-        }, { className: 'AssetHistoricalData' });
-      })
+          { className: 'AssetHistoricalData' }
+        );
+      },
+      {
+        concurrency: 8,
+      }
     );
 
     this.setLastAssetHistoricalDataItem(latestEntities.filter((i) => !!i));
@@ -94,11 +103,13 @@ export class LatestProcessedDataCacheManager {
       await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
     ).filter((res) => !!res.data);
 
-    const latestEntities = await Promise.all(
-      storageDataAllAssets.map(
-        (assetData): AssetSpotPriceHistoricalData | undefined => {
-          // @ts-ignore
-          return ctx.storeUtils.findOneWithLogs(AssetSpotPriceHistoricalData, {
+    const latestEntities = await pMap(
+      storageDataAllAssets,
+      (assetData): AssetSpotPriceHistoricalData | undefined => {
+        // @ts-ignore
+        return ctx.storeUtils.findOneWithLogs(
+          AssetSpotPriceHistoricalData,
+          {
             where: {
               assetIn: { assetRegistryId: assetData.assetId.toString() },
               paraBlockHeight: LessThan(currentBlockHeader.height),
@@ -111,9 +122,13 @@ export class LatestProcessedDataCacheManager {
               assetOut: true,
               assetInHistData: true,
             },
-          }, { className: 'AssetSpotPriceHistoricalData' });
-        }
-      )
+          },
+          { className: 'AssetSpotPriceHistoricalData' }
+        );
+      },
+      {
+        concurrency: 8,
+      }
     );
 
     this.setLastAssetSpotPriceHistoricalDataItem(
