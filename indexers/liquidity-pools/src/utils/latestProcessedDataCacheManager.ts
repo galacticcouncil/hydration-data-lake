@@ -31,6 +31,17 @@ export class LatestProcessedDataCacheManager {
     if (this.assetHistoricalDataItemsCache.size !== 0) return;
     const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
 
+    const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
+      AssetHistoricalData,
+      {},
+      { className: 'AssetHistoricalData' }
+    );
+
+    if (!hasAnyRecord) {
+      console.log('AssetHistoricalData table is empty, skipping prefetch');
+      return;
+    }
+
     const storageDataAllAssets = (
       await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
     ).filter((res) => !!res.data);
@@ -98,6 +109,19 @@ export class LatestProcessedDataCacheManager {
   ) {
     if (this.assetSpotPriceHistoricalDataItemsCache.size !== 0) return;
     const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
+
+    const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
+      AssetSpotPriceHistoricalData,
+      {},
+      { className: 'AssetSpotPriceHistoricalData' }
+    );
+
+    if (!hasAnyRecord) {
+      console.log(
+        'AssetSpotPriceHistoricalData table is empty, skipping prefetch'
+      );
+      return;
+    }
 
     const storageDataAllAssets = (
       await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)

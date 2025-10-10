@@ -104,7 +104,7 @@ export class HydratedLogger {
     this.consoleLogsVerbose = cfg.consoleLogsVerbose ?? true;
 
     // DB transport (batched)
-    this.dbEnabled = cfg.db?.enabled ?? true;
+    this.dbEnabled = cfg.db?.enabled ?? false;
     if (this.dbEnabled) {
       this.pgClient = new CommonPgClient();
 
@@ -131,7 +131,7 @@ export class HydratedLogger {
   async init() {
     if (this.initDone) return this;
 
-    if (this.dbEnabled) {
+    if (appConfig.log.HLOG_DB_FLUSH_ENABLED && this.dbEnabled) {
       await this.ensureSchema();
     }
     this.initDone = true;

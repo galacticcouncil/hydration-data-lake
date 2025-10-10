@@ -52,67 +52,109 @@ async function initializeServer() {
 
     await runMigrations();
 
-    const postgraphileInstance = postgraphile(
-      {
-        host: appConfig.DB_HOST,
-        port: appConfig.DB_PORT,
-        database: appConfig.DB_NAME,
-        user: appConfig.DB_USER,
-        password: appConfig.DB_PASS,
+    let postgraphileInstance = null;
 
-        // types: pgTypes,
-      },
-      'public',
-      {
-        graphiql: true,
-        watchPg: true,
-        showErrorStack: false,
-        enhanceGraphiql: true,
-        dynamicJson: true,
-        disableDefaultMutations: true,
-        skipPlugins: [NodePlugin],
-        subscriptions: true,
-        pluginHook: makePluginHook([PgPubsub]),
-        appendPlugins: [
-          CommonApiTypesDefinitionPlugin,
-          AggregatesPluggin,
-          FilterPlugin,
-          SimplifyInflectorPlugin,
-          ProcessorStatusPlugin,
-          XykpoolsVolumePlugin,
-          XykpoolsVolumeSubscriptionsPlugin,
-          XykpoolTvlMetricsPlugin,
-          OmnipoolAssetVolumePlugin,
-          OmnipoolAssetVolumeSubscriptionsPlugin,
-          StableswapVolumePlugin,
-          StableswapVolumeSubscriptionsPlugin,
-          RoutedTradesSubscriptionsPlugin,
-          SwapPlugin,
-          StableswapYieldMetricsPlugin,
-          StableswapTvlMetricsPlugin,
-          OmnipoolYieldMetricsPlugin,
-          OmnipoolTvlMetricsPlugin,
-          GlobalMetricsPlugin,
-          AssetHistoricalDataPlugin,
-          AccountBalancesHistoricalDataPlugin,
-          makePgSmartTagsFromFilePlugin(
-            getEnvPath('apiSupport/postgraphile.tags.json5')
-          ),
-        ],
-        disableQueryLog: appConfig.NODE_ENV !== NodeEnv.DEV,
-        externalUrlBase: process.env.BASE_PATH
-          ? process.env.BASE_PATH + '/api'
-          : undefined,
-        graphileBuildOptions: {
-          // stateSchemas: ['squid_processor'],
-          stateSchemas: appConfig.SUB_PROCESSOR_SCHEMAS,
-          omnipoolAddress: appConfig.OMNIPOOL_ADDRESS,
-          enableSmartTags: true,
-        },
-        allowExplain: true,
-        exportGqlSchemaPath: getEnvPath('apiSupport/schema.graphql'),
+    const initWithRetry = async (
+      max = 5,
+      baseDelayMs = 1000,
+      maxDelayMs = 10000
+    ): Promise<void> => {
+      let attempt = 0;
+
+      while (true) {
+        try {
+          postgraphileInstance = postgraphile(
+            {
+              host: appConfig.DB_HOST,
+              port: appConfig.DB_PORT,
+              database: appConfig.DB_NAME,
+              user: appConfig.DB_USER,
+              password: appConfig.DB_PASS,
+
+              // types: pgTypes,
+            },
+            'public',
+            {
+              graphiql: true,
+              watchPg: true,
+              showErrorStack: false,
+              enhanceGraphiql: true,
+              dynamicJson: true,
+              disableDefaultMutations: true,
+              skipPlugins: [NodePlugin],
+              subscriptions: true,
+              pluginHook: makePluginHook([PgPubsub]),
+              appendPlugins: [
+                CommonApiTypesDefinitionPlugin,
+                AggregatesPluggin,
+                FilterPlugin,
+                SimplifyInflectorPlugin,
+                ProcessorStatusPlugin,
+                XykpoolsVolumePlugin,
+                XykpoolsVolumeSubscriptionsPlugin,
+                XykpoolTvlMetricsPlugin,
+                OmnipoolAssetVolumePlugin,
+                OmnipoolAssetVolumeSubscriptionsPlugin,
+                StableswapVolumePlugin,
+                StableswapVolumeSubscriptionsPlugin,
+                RoutedTradesSubscriptionsPlugin,
+                SwapPlugin,
+                StableswapYieldMetricsPlugin,
+                StableswapTvlMetricsPlugin,
+                OmnipoolYieldMetricsPlugin,
+                OmnipoolTvlMetricsPlugin,
+                GlobalMetricsPlugin,
+                AssetHistoricalDataPlugin,
+                AccountBalancesHistoricalDataPlugin,
+                makePgSmartTagsFromFilePlugin(
+                  getEnvPath('apiSupport/postgraphile.tags.json5')
+                ),
+              ],
+              disableQueryLog: appConfig.NODE_ENV !== NodeEnv.DEV,
+              externalUrlBase: process.env.BASE_PATH
+                ? process.env.BASE_PATH + '/api'
+                : undefined,
+              graphileBuildOptions: {
+                // stateSchemas: ['squid_processor'],
+                stateSchemas: appConfig.SUB_PROCESSOR_SCHEMAS,
+                omnipoolAddress: appConfig.OMNIPOOL_ADDRESS,
+                enableSmartTags: true,
+              },
+              allowExplain: true,
+              exportGqlSchemaPath: getEnvPath('apiSupport/schema.graphql'),
+            }
+          );
+          console.log('[postgraphileInstance] initialized successfully');
+          return;
+        } catch (e: any) {
+          if (attempt >= max) {
+            console.error(
+              `Failed to init [postgraphileInstance] after ${max} attempts:`,
+              e
+            );
+            throw e;
+          }
+
+          attempt++;
+          console.log(
+            `[postgraphileInstance] init retry #${attempt}... Error: ${e.message}`
+          );
+
+          const delay = Math.min(
+            baseDelayMs * 2 ** attempt +
+              Math.floor(Math.random() * baseDelayMs),
+            maxDelayMs
+          );
+
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
       }
-    );
+    };
+
+    await initWithRetry();
+
+    if (!postgraphileInstance)
+      throw new Error('postgraphileInstance is not initialized');
 
     const corsOptions = {
       origin: (

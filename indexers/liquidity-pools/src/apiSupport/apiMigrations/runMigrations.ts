@@ -16,7 +16,45 @@ export async function runMigrations() {
     password: appConfig.DB_PASS,
   });
 
-  await pgClient.connect();
+  const connectWithRetry = async (
+    max = 5,
+    baseDelayMs = 1000,
+    maxDelayMs = 10000
+  ): Promise<void> => {
+    let attempt = 0;
+
+    while (true) {
+      try {
+        await pgClient.connect();
+        console.log(
+          '[PostgreSQL :: Migrations] connection established successfully'
+        );
+        return;
+      } catch (e: any) {
+        if (attempt >= max) {
+          console.error(
+            `Failed to connect to [PostgreSQL :: Migrations] after ${max} attempts:`,
+            e
+          );
+          throw e;
+        }
+
+        attempt++;
+        console.log(
+          `[PostgreSQL :: Migrations] DB connection retry #${attempt}... Error: ${e.message}`
+        );
+
+        const delay = Math.min(
+          baseDelayMs * 2 ** attempt + Math.floor(Math.random() * baseDelayMs),
+          maxDelayMs
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  };
+
+  await connectWithRetry();
 
   try {
     const migrationsResult: RunMigration[] = await migrations.runner({
@@ -33,7 +71,25 @@ export async function runMigrations() {
     } else {
       console.log(`There are no pending API DB migrations.`);
     }
-  } catch (err) {
+    await pgClient.end();
+  } catch (err: any) {
     console.error('Error executing migrations:', err);
+
+    try {
+      await pgClient.end();
+    } catch (closeErr) {
+      console.error('Error closing database connection:', closeErr);
+    }
+
+    // Provide specific messaging for lock conflicts
+    if (err.message?.includes('already running at lock')) {
+      console.log(
+        '[PostgreSQL :: Migrations] Another instance is running migrations. ' +
+          'This instance will crash and restart to retry after the lock is released.'
+      );
+    }
+
+    // Throw error to crash the app and trigger restart
+    throw err;
   }
 }
