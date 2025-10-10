@@ -1,4 +1,4 @@
-# 🌊 Liquidity Pools Indexer
+# 🌊 Aggregation Indexer
 
 An indexer for the **Hydration mainnet** and **Pareo testnet**, designed to collect and organize data on liquidity pools across chains.
 
@@ -12,7 +12,7 @@ For more details on the indexer's GraphQL API queries and subscriptions, refer t
 
 ## 📊 Blockchain Storage Datasource
 
-The Liquidity Pools Indexer is implemented with the flexibility to use multiple sources of blockchain data. These data sources are prioritized in a fallback sequence to ensure robust data retrieval:
+Aggregation Indexer is implemented with the flexibility to use multiple sources of blockchain data. These data sources are prioritized in a fallback sequence to ensure robust data retrieval:
 
 1. **Storage Dictionary** (primary source for prefetched data)
 2. **Runtime API Calls** (specific data on-demand)

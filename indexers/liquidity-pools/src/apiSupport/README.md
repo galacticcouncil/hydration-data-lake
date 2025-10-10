@@ -1,6 +1,6 @@
-# Liquidity Pools Indexer API
+# Aggregation Indexer API
 
-The Liquidity Pools Indexer API leverages the [PostGraphile](https://www.npmjs.com/package/postgraphile) library, adhering to official [SQD recommendations](https://docs.sqd.ai/sdk/resources/serving-graphql/#postgraphile). For implementation details, refer to the [api.ts](../api.ts) file.
+Aggregation Indexer API leverages the [PostGraphile](https://www.npmjs.com/package/postgraphile) library, adhering to official [SQD recommendations](https://docs.sqd.ai/sdk/resources/serving-graphql/#postgraphile). For implementation details, refer to the [api.ts](../api.ts) file.
 
 ## Database Migrations
 
