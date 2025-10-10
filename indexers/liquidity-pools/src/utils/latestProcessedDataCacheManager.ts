@@ -33,7 +33,7 @@ export class LatestProcessedDataCacheManager {
 
     const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
       AssetHistoricalData,
-      {},
+      { where: {} },
       { className: 'AssetHistoricalData' }
     );
 
@@ -112,7 +112,7 @@ export class LatestProcessedDataCacheManager {
 
     const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
       AssetSpotPriceHistoricalData,
-      {},
+      { where: {} },
       { className: 'AssetSpotPriceHistoricalData' }
     );
 
