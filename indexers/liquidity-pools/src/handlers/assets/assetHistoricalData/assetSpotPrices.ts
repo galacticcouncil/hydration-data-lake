@@ -285,6 +285,11 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
           },
           paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
         },
+        relations: {
+          assetIn: true,
+          assetOut: true,
+          assetInHistData: true,
+        },
         order: {
           paraBlockHeight: 'DESC',
         },

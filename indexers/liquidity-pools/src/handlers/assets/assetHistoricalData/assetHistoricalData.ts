@@ -238,6 +238,9 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
           },
           paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
         },
+        relations: {
+          asset: true,
+        },
         order: {
           paraBlockHeight: 'DESC',
         },

@@ -4,25 +4,29 @@ import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { initTransfer } from '../../transfers/utils';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 import { EvmEventName } from '../../../model';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmTransferEvent(
   ctx: SqdProcessorContext<Store>,
   eventCallData: EvmLogData
 ) {
+  // console.log(
+  //   'eventCallData.eventData.params - ',
+  //   eventCallData.eventData.metadata.id
+  // );
+  // console.dir(eventCallData.eventData.params, { depth: null });
+
   if (!eventCallData.eventData.params) return;
 
   const parsedEvmEventData =
     EvmLogDecoder.getInstance().getEvmEventFromLog<EvmEventName.Transfer>(
       eventCallData.eventData.params
     );
+
+  // console.dir(parsedEvmEventData, { depth: null });
 
   if (!parsedEvmEventData) return;
 
@@ -31,14 +35,35 @@ export async function handleMmTransferEvent(
     callData,
   } = eventCallData;
 
-  const existingTransfer = [...ctx.batchState.state.transfers.values()].find(
+  const existingTransfer = Array.from(
+    ctx.batchState.state.transfers.values()
+  ).find(
     (transfer) =>
       transfer.to.id === parsedEvmEventData.toAddress &&
       transfer.from.id === parsedEvmEventData.fromAddress &&
       transfer.amount === parsedEvmEventData.amount
   );
 
-  if (!!existingTransfer) return;
+  // console.log('is existingTransfer', !!existingTransfer);
+
+  if (!!existingTransfer) {
+    const assetEntity = existingTransfer.asset;
+    if (!assetEntity) return;
+
+    await processNewMoneyMarketEvent({
+      ctx,
+      eventCallData,
+      allInvolvedAssetIds: [assetEntity.id],
+      allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
+      allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
+      allInvolvedParticipants: [
+        existingTransfer.from.id,
+        existingTransfer.to.id,
+      ],
+      transfer: existingTransfer,
+    });
+    return;
+  }
 
   const assetEntity = await getOrCreateMoneyMarketAsset({
     ctx,
@@ -113,4 +138,6 @@ export async function handleMmTransferEvent(
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
     transfer: transferEntity,
   });
+  // console.log('processed!');
+  // console.log('\n\n\n');
 }

@@ -181,35 +181,40 @@ export async function handleMmAssetAccountBalancesPerBlock(
               )
             : new Map();
 
-        const assetBalances = (
-          await Promise.allSettled(
-            [...accountAssetsMap.assets.values()]
-              .filter(
-                (asset) =>
-                  !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
-              )
-              .map(async (asset) => {
-                const balance =
-                  accountStorageDictionaryBalancesPerAssetMap.get(
-                    asset?.assetRegistryId ?? ''
-                  ) ??
-                  (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
-                    {
-                      contractAddress: asset.evmAddress!,
-                      accountAddress: accountAssetsMap.account.boundEvmAddress!,
-                      blockNumber: blockSlotData.block.height,
-                    }
-                  ));
+        const assetBalances: {
+          asset: Asset;
+          balance: bigint | null | undefined;
+        }[] = [];
 
-                return {
-                  asset,
-                  balance,
-                };
-              })
-          )
-        )
-          .filter((res) => res.status === 'fulfilled')
-          .map((res) => res.value);
+        await pMap(
+          Array.from(accountAssetsMap.assets.values()).filter(
+            (asset) => !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
+          ),
+          async (asset) => {
+            if (!accountAssetsMap.account.boundEvmAddress) return;
+
+            const balance =
+              accountStorageDictionaryBalancesPerAssetMap.get(
+                asset?.assetRegistryId ?? ''
+              ) ??
+              (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+                {
+                  contractAddress: asset.evmAddress!,
+                  accountAddress: accountAssetsMap.account.boundEvmAddress!,
+                  blockNumber: blockSlotData.block.height,
+                }
+              ));
+
+            assetBalances.push({
+              asset,
+              balance,
+            });
+          },
+          {
+            concurrency:
+              ctx.appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY,
+          }
+        );
 
         assetBalancesLoop: for (const assetBalance of assetBalances) {
           if (
@@ -241,26 +246,29 @@ export async function handleMmAssetAccountBalancesPerBlock(
 
           let assetInId = assetBalance.asset.id;
 
-          if (
-            assetBalance.asset.resourceType === ResourceType.Debt &&
-            assetBalance.asset.underlyingAsset
-          ) {
+          if (assetBalance.asset.resourceType === ResourceType.Debt) {
             let assetFull: Asset | undefined = assetBalance.asset;
             if (!assetFull.underlyingAsset) {
               /**
                * We need this re-fetch to be sure that cached Asset contains data
                * about a related underlyingAsset
                */
-              assetFull = await ctx.storeUtils.findOneWithLogs(Asset, {
-                where: { id: assetBalance.asset.id },
-                relations: {
-                  underlyingAsset: true,
+              assetFull = await ctx.storeUtils.findOneWithLogs(
+                Asset,
+                {
+                  where: { id: assetBalance.asset.id },
+                  relations: {
+                    underlyingAsset: true,
+                  },
                 },
-              }, { className: 'Asset' });
-              if (!assetFull || !assetFull.underlyingAsset)
-                continue assetBalancesLoop;
+                {
+                  className: 'Asset',
+                  originCallFn: 'handleMmAssetAccountBalancesPerBlock',
+                }
+              );
             }
-            assetInId = assetBalance.asset.underlyingAsset.id;
+            if (assetFull && assetFull.underlyingAsset)
+              assetInId = assetFull.underlyingAsset.id;
           }
 
           const assetSpotPrice = getAssetsPairPrice({

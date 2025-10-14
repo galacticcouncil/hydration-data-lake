@@ -85,7 +85,7 @@ export class TypeormDatabaseUtils {
   async findWithLogs<E extends Entity>(
     entityClass: EntityClass<E>,
     options?: FindManyOptions<E>,
-    meta?: { className: string } & Record<string, any>
+    meta?: { className: string; originCallFn?: string } & Record<string, any>
   ): Promise<E[]> {
     let findOptionsDecorated = null;
 
@@ -112,7 +112,7 @@ export class TypeormDatabaseUtils {
   async findOneWithLogs<E extends Entity>(
     entityClass: EntityClass<E>,
     options: FindOneOptions<E>,
-    meta?: { className: string } & Record<string, any>
+    meta?: { className: string; originCallFn?: string } & Record<string, any>
   ): Promise<E | undefined> {
     let findOptionsDecorated = null;
 

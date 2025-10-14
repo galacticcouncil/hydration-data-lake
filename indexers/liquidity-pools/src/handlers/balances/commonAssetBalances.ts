@@ -28,8 +28,13 @@ export async function handleCommonAssetAccountBalances({
   accountIdsToProcess?: Set<string>;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const allInvolvedAccountsInBatchSet: Set<string> = new Set();
-  const palletNamesSet = new Set(['Currencies', 'Tokens', 'Balances']);
+  const allInvolvedAccountsInBatchSet: Set<string> = accountIdsToProcess;
+  const palletNamesSet = new Set([
+    'Currencies',
+    'Tokens',
+    'Balances',
+    'Duster',
+  ]);
   const accountBalancesPerBlock: Map<
     number,
     {
@@ -113,9 +118,13 @@ export async function handleCommonAssetAccountBalances({
     }
   }
 
-  const persistedAccounts = await ctx.storeUtils.findWithLogs(Account, {
-    where: { id: In(Array.from(allInvolvedAccountsInBatchSet.keys())) },
-  }, { className: 'Account' });
+  const persistedAccounts = await ctx.storeUtils.findWithLogs(
+    Account,
+    {
+      where: { id: In(Array.from(allInvolvedAccountsInBatchSet.keys())) },
+    },
+    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' },
+  );
 
   for (const acc of persistedAccounts) {
     ctx.batchState.state.accounts.set(acc.id, acc);
