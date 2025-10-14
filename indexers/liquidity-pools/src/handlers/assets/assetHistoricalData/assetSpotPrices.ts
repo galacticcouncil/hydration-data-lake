@@ -295,6 +295,13 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
           'isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecord',
       }
     );
+    /**
+     * We need this action here to be sure that cache contains latest entity from DB.
+     */
+    if (previousItem)
+      LatestProcessedDataCacheManager.getInstance().setLastAssetSpotPriceHistoricalDataItem(
+        [previousItem]
+      );
   }
 
   if (!previousItem) {

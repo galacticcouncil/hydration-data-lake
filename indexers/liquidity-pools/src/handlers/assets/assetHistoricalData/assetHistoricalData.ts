@@ -247,6 +247,13 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
         originCallFn: 'isAssetHistoricalDataUniqueRegardingPreviousRecord',
       }
     );
+    /**
+     * We need this action here to be sure that cache contains latest entity from DB.
+     */
+    if (previousItem)
+      LatestProcessedDataCacheManager.getInstance().setLastAssetHistoricalDataItem(
+        [previousItem]
+      );
   }
 
   if (!previousItem) {
