@@ -64,7 +64,10 @@ export class LatestProcessedDataCacheManager {
               asset: true,
             },
           },
-          { className: 'AssetHistoricalData' }
+          {
+            className: 'AssetHistoricalData',
+            originCallFn: 'prefetchLastAssetHistDataItem',
+          }
         );
       },
       {
@@ -147,7 +150,10 @@ export class LatestProcessedDataCacheManager {
               assetInHistData: true,
             },
           },
-          { className: 'AssetSpotPriceHistoricalData' }
+          {
+            className: 'AssetSpotPriceHistoricalData',
+            originCallFn: 'prefetchLastAssetSpotPriceHistDataItem',
+          }
         );
       },
       {

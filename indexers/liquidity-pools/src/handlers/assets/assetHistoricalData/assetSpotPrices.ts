@@ -273,20 +273,28 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.storeUtils.findOneWithLogs(AssetSpotPriceHistoricalData, {
-      where: {
-        assetIn: {
-          id: currentRecord.assetIn.id,
+    previousItem = await ctx.storeUtils.findOneWithLogs(
+      AssetSpotPriceHistoricalData,
+      {
+        where: {
+          assetIn: {
+            id: currentRecord.assetIn.id,
+          },
+          assetOut: {
+            id: currentRecord.assetOut.id,
+          },
+          paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
         },
-        assetOut: {
-          id: currentRecord.assetOut.id,
+        order: {
+          paraBlockHeight: 'DESC',
         },
-        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
       },
-      order: {
-        paraBlockHeight: 'DESC',
-      },
-    }, { className: 'AssetSpotPriceHistoricalData' });
+      {
+        className: 'AssetSpotPriceHistoricalData',
+        originCallFn:
+          'isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecord',
+      }
+    );
   }
 
   if (!previousItem) {

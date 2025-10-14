@@ -99,6 +99,7 @@ export class TypeormDatabaseUtils {
       actionType: 'db_read',
       meta: {
         paraBlockHeight: meta?.paraBlockHeight,
+        originCallFn: meta?.originCallFn,
         paraBlocksRange: this.currentProcessingBlocksRangeTag,
         findOptions: findOptionsDecorated,
       },
@@ -125,6 +126,7 @@ export class TypeormDatabaseUtils {
       actionType: 'db_read',
       meta: {
         paraBlockHeight: meta?.paraBlockHeight,
+        originCallFn: meta?.originCallFn,
         paraBlocksRange: this.currentProcessingBlocksRangeTag,
         findOptions: findOptionsDecorated,
       },

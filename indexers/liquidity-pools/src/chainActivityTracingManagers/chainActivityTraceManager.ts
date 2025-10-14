@@ -569,11 +569,15 @@ export class ChainActivityTraceManager {
 
     if (traceId) return traceId;
 
-    const savedCall = await ctx.storeUtils.findOneWithLogs(Call, {
-      where: {
-        id: callId,
+    const savedCall = await ctx.storeUtils.findOneWithLogs(
+      Call,
+      {
+        where: {
+          id: callId,
+        },
       },
-    }, { className: 'Call' });
+      { className: 'Call', originCallFn: 'getTraceIdByCallId' }
+    );
     if (!savedCall)
       throw Error(
         `Call with ID ${callId} has not been found neither in batch state or DB.`
@@ -645,10 +649,14 @@ export class ChainActivityTraceManager {
     let entity = batchState.chainActivityTraces.get(id);
     if (entity || (!entity && !fetchFromDb)) return entity ?? null;
 
-    entity = await ctx.storeUtils.findOneWithLogs(ChainActivityTrace, {
-      where: { id },
-      relations,
-    }, { className: 'ChainActivityTrace' });
+    entity = await ctx.storeUtils.findOneWithLogs(
+      ChainActivityTrace,
+      {
+        where: { id },
+        relations,
+      },
+      { className: 'ChainActivityTrace' }
+    );
 
     if (!entity) return null;
     ctx.batchState.state.chainActivityTraces.set(id, entity);

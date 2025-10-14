@@ -45,15 +45,19 @@ export async function getDcaScheduleEvent({
   if (executionEvent || (!executionEvent && !fetchFromDb))
     return executionEvent ?? null;
 
-  executionEvent = await ctx.storeUtils.findOneWithLogs(DcaScheduleEvent, {
-    where: {
-      ...(id ? { id } : {}),
-      ...(scheduleId && scheduleEventName
-        ? { schedule: { id: scheduleId }, eventName: scheduleEventName }
-        : {}),
-    } as FindOptionsWhere<DcaScheduleEvent>,
-    relations,
-  }, { className: 'DcaScheduleEvent' });
+  executionEvent = await ctx.storeUtils.findOneWithLogs(
+    DcaScheduleEvent,
+    {
+      where: {
+        ...(id ? { id } : {}),
+        ...(scheduleId && scheduleEventName
+          ? { schedule: { id: scheduleId }, eventName: scheduleEventName }
+          : {}),
+      } as FindOptionsWhere<DcaScheduleEvent>,
+      relations,
+    },
+    { className: 'DcaScheduleEvent', originCallFn: 'getDcaScheduleEvent' }
+  );
 
   if (!executionEvent) return null;
 

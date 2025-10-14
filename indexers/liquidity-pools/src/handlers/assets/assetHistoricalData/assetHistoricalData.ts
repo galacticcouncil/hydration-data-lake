@@ -55,10 +55,12 @@ export async function processAssetsHistoricalDataAtBlock({
   );
 
   const mmAssetsTotalSupply =
-    await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs({
-      addresses: mmAssets.map((a) => a.evmAddress!),
-      blockNumber: block.height,
-    });
+    await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs(
+      {
+        addresses: mmAssets.map((a) => a.evmAddress!),
+        blockNumber: block.height,
+      }
+    );
 
   for (const tSupply of mmAssetsTotalSupply) {
     if (tSupply)
@@ -227,17 +229,24 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.storeUtils.findOneWithLogs(AssetHistoricalData, {
-      where: {
-        asset: {
-          id: currentRecord.asset.id,
+    previousItem = await ctx.storeUtils.findOneWithLogs(
+      AssetHistoricalData,
+      {
+        where: {
+          asset: {
+            id: currentRecord.asset.id,
+          },
+          paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
         },
-        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+        order: {
+          paraBlockHeight: 'DESC',
+        },
       },
-      order: {
-        paraBlockHeight: 'DESC',
-      },
-    }, { className: 'AssetHistoricalData' });
+      {
+        className: 'AssetHistoricalData',
+        originCallFn: 'isAssetHistoricalDataUniqueRegardingPreviousRecord',
+      }
+    );
   }
 
   if (!previousItem) {
