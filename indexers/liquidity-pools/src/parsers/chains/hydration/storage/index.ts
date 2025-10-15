@@ -70,7 +70,21 @@ import {
 import { BlockHeader } from '@subsquid/substrate-processor';
 
 export default {
-  system,
+  system: {
+    ...system,
+    getNativeTokenBalanceMany: (
+      args: GetNativeTokenBalanceManyInput
+    ): Promise<BalancesAccountInfoWithAccountId[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetNativeTokenBalanceManyInput,
+        BalancesAccountInfoWithAccountId[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+        method: 'getNativeTokenBalanceMany',
+        fallbackFns: [system.getNativeTokenBalanceMany],
+      }),
+  },
   transactionPayment,
   balances: {
     getTotalIssuance: (args: GetConstantsInput): Promise<bigint | null> =>
@@ -82,18 +96,6 @@ export default {
         pallet: ProcessingTopic.ASSET_HIST_DATA,
         method: 'getNativeTokenTotalIssuance',
         fallbackFns: [balances.getTotalIssuance],
-      }),
-    getNativeTokenBalanceMany: (
-      args: GetNativeTokenBalanceManyInput
-    ): Promise<BalancesAccountInfoWithAccountId[] | null> =>
-      StorageResolver.getInstance().resolveStorageData<
-        GetNativeTokenBalanceManyInput,
-        BalancesAccountInfoWithAccountId[] | null
-      >({
-        args,
-        pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
-        method: 'getNativeTokenBalanceMany',
-        fallbackFns: [balances.getNativeTokenBalanceMany],
       }),
   },
   bonds: {

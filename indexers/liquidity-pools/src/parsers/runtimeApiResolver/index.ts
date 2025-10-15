@@ -37,7 +37,7 @@ export class RuntimeApiResolver {
 
     try {
       const { block, ...restArgs } = args;
-      return measureRpcCall({
+      return await measureRpcCall({
         call: `${apiName}.${apiMethod}`,
         originFn: 'resolveRuntimeApiCall',
         blockHeight: args.block.height,

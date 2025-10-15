@@ -13,20 +13,12 @@ export async function handleMmTransferEvent(
   ctx: SqdProcessorContext<Store>,
   eventCallData: EvmLogData
 ) {
-  // console.log(
-  //   'eventCallData.eventData.params - ',
-  //   eventCallData.eventData.metadata.id
-  // );
-  // console.dir(eventCallData.eventData.params, { depth: null });
-
   if (!eventCallData.eventData.params) return;
 
   const parsedEvmEventData =
     EvmLogDecoder.getInstance().getEvmEventFromLog<EvmEventName.Transfer>(
       eventCallData.eventData.params
     );
-
-  // console.dir(parsedEvmEventData, { depth: null });
 
   if (!parsedEvmEventData) return;
 
@@ -43,8 +35,6 @@ export async function handleMmTransferEvent(
       transfer.from.id === parsedEvmEventData.fromAddress &&
       transfer.amount === parsedEvmEventData.amount
   );
-
-  // console.log('is existingTransfer', !!existingTransfer);
 
   if (!!existingTransfer) {
     const assetEntity = existingTransfer.asset;
@@ -138,6 +128,4 @@ export async function handleMmTransferEvent(
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
     transfer: transferEntity,
   });
-  // console.log('processed!');
-  // console.log('\n\n\n');
 }

@@ -43,6 +43,18 @@ export const collateralRemoved =  {
             amount: sts.bigint(),
         })
     ),
+    /**
+     * A collateral asset was removed
+     * 
+     * Parameters:
+     * - `asset_id`: The ID of the asset removed from collaterals
+     */
+    v347: new EventType(
+        'HSM.CollateralRemoved',
+        sts.struct({
+            assetId: sts.number(),
+        })
+    ),
 }
 
 export const collateralUpdated =  {
@@ -83,6 +95,22 @@ export const arbitrageExecuted =  {
         sts.struct({
             assetId: sts.number(),
             hollarAmount: sts.bigint(),
+        })
+    ),
+    /**
+     * Arbitrage executed successfully
+     * 
+     * Parameters:
+     * - `asset_id`: The collateral asset used in the arbitrage
+     * - `hollar_amount`: Amount of Hollar that was included in the arbitrage operation
+     */
+    v347: new EventType(
+        'HSM.ArbitrageExecuted',
+        sts.struct({
+            arbitrage: sts.number(),
+            assetId: sts.number(),
+            hollarAmount: sts.bigint(),
+            profit: sts.bigint(),
         })
     ),
 }

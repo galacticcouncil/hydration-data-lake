@@ -8,8 +8,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
-import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
 import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
+import { AccountMoneyMarketPositionDataManager } from '../../../accounts/moneyMarketPosition';
 
 export async function handleMmReserveUsedAsCollateralDisabledEvent(
   ctx: ProcessorContext<Store>,
@@ -64,9 +64,10 @@ export async function handleMmReserveUsedAsCollateralDisabledEvent(
     allInvolvedParticipants: [account.id],
   });
 
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.userAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
+  AccountMoneyMarketPositionDataManager.getInstance().addAccountEvmAddressToProcessingQueue(
+    {
+      accountEvmAddress: parsedEvmEventData.userAddress,
+      blockHeader: eventMetadata.blockHeader,
+    }
+  );
 }

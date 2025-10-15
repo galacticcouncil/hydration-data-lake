@@ -633,6 +633,8 @@ export class AppConfig {
       events.balances.unreserved.name,
       events.balances.upgraded.name,
       events.balances.withdraw.name,
+
+      events.duster.dusted.name,
     ];
 
     if (

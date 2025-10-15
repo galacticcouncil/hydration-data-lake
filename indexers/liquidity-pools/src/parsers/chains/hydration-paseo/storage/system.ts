@@ -1,7 +1,13 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { storage } from '../typegenTypes/';
-import { SystemAccountInfo } from '../../../types/storage';
+import {
+  BalancesAccountInfoWithAccountId,
+  GetNativeTokenBalanceManyInput,
+  SystemAccountInfo,
+} from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
 async function getSystemAccount(
   account: string,
@@ -30,4 +36,63 @@ async function getSystemAccount(
   throw new UnknownVersionError('storage.system.account');
 }
 
-export default { getSystemAccount };
+async function getNativeTokenBalanceMany({
+  accountIds,
+  block,
+}: GetNativeTokenBalanceManyInput): Promise<
+  BalancesAccountInfoWithAccountId[]
+> {
+  return measureStorageFetch({
+    storageName: 'system.account',
+    originFn: 'getNativeTokenBalanceMany',
+    blockHeight: block.height,
+    args: { accountIds },
+    fn: async () => {
+      if (block.specVersion < 287) return [];
+
+      if (storage.system.account.v287.is(block)) {
+        return tryExecOrReturnFallback(async () => {
+          const resp = await storage.system.account.v287.getMany(
+            block,
+            accountIds
+          );
+
+          const decoratedResp: BalancesAccountInfoWithAccountId[] = [];
+
+          accountIds.forEach((accountId, index) => {
+            if (!resp[index]) {
+              decoratedResp.push({
+                accountId,
+                data: {
+                  free: 0n,
+                  reserved: 0n,
+                  miscFrozen: 0n,
+                  feeFrozen: 0n,
+                  flags: 0n,
+                },
+              });
+            } else {
+              decoratedResp.push({
+                accountId,
+                data: {
+                  free: resp[index].data.free,
+                  reserved: resp[index].data.reserved,
+                  frozen: resp[index].data.frozen,
+                  miscFrozen: 0n,
+                  feeFrozen: 0n,
+                  flags: resp[index].data.flags,
+                },
+              });
+            }
+          });
+
+          return decoratedResp;
+        }, []);
+      }
+
+      throw new UnknownVersionError('storage.system.account');
+    },
+  });
+}
+
+export default { getSystemAccount, getNativeTokenBalanceMany };

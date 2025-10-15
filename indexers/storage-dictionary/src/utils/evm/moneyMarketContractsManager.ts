@@ -9,10 +9,11 @@ import { ResourceType } from '../../model';
 import { AppConfig } from '../../appConfig';
 import {
   AccountMmPositionDataContractData,
-  MoneyMarketResourceDetails,
+  MoneyMarketReserveDetails,
   MoneyMarketTokenDetails,
 } from './types';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { retryAsync } from '../helpers';
 
 const appConfig = AppConfig.getInstance();
 
@@ -24,10 +25,8 @@ export class MoneyMarketContractsManager {
   private uiPoolDataProviderContractInstance: Contract;
   private poolImplementationContractInstance: Contract;
   private moneyMarketTokenContracts: Map<string, Contract> = new Map();
-  public moneyMarketResourcesDetailsMap: Map<
-    string,
-    MoneyMarketResourceDetails
-  > = new Map();
+  public moneyMarketReservesDetailsMap: Map<string, MoneyMarketReserveDetails> =
+    new Map();
 
   private constructor() {
     this.provider = new ethers.providers.JsonRpcProvider(
@@ -67,6 +66,86 @@ export class MoneyMarketContractsManager {
     return new Contract(address, abi, this.provider);
   }
 
+  async getReservesData({
+    blockNumber,
+  }: {
+    blockNumber?: number;
+  }): Promise<MoneyMarketReserveDetails[] | null> {
+    try {
+      const reservesData = await retryAsync({
+        fn: async () =>
+          this.uiPoolDataProviderContractInstance.getReservesData(
+            appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+            { blockTag: blockNumber }
+          ),
+        fallbackResponse: [],
+        tag: `getReservesData.at(${blockNumber})`,
+      });
+
+      const reservesDecorated: MoneyMarketReserveDetails[] = [];
+
+      for (const reserve of reservesData[0]) {
+        reservesDecorated.push({
+          underlyingAssetAddress: ethers.utils.getAddress(
+            reserve.underlyingAsset
+          ),
+          aTokenAddress: ethers.utils.getAddress(reserve.aTokenAddress),
+          variableDebtTokenAddress: ethers.utils.getAddress(
+            reserve.variableDebtTokenAddress
+          ),
+          interestRateStrategyAddress: ethers.utils.getAddress(
+            reserve.interestRateStrategyAddress
+          ),
+
+          name: reserve.name,
+          symbol: reserve.symbol,
+          decimals: +reserve.decimals.toString(),
+
+          priceOracle: reserve.priceOracle
+            ? ethers.utils.getAddress(reserve.priceOracle)
+            : '',
+
+          reserveFactor: reserve.reserveFactor.toString(),
+          usageAsCollateralEnabled: reserve.usageAsCollateralEnabled,
+          borrowingEnabled: reserve.borrowingEnabled,
+          isActive: reserve.isActive,
+          isFrozen: reserve.isFrozen,
+          isPaused: reserve.isPaused,
+          isSiloedBorrowing: reserve.isSiloedBorrowing,
+          accruedToTreasury: reserve.accruedToTreasury.toString(),
+          unbacked: reserve.unbacked.toString(),
+          flashLoanEnabled: reserve.flashLoanEnabled,
+          debtCeiling: reserve.debtCeiling.toString(),
+          debtCeilingDecimals: reserve.debtCeilingDecimals.toString(),
+          eModeCategoryId: reserve.eModeCategoryId.toString(),
+          borrowCap: reserve.borrowCap.toString(),
+          supplyCap: reserve.supplyCap.toString(),
+          borrowableInIsolation: reserve.borrowableInIsolation,
+          baseLTVasCollateral: reserve.baseLTVasCollateral.toString(),
+          reserveLiquidationThreshold:
+            reserve.reserveLiquidationThreshold.toString(),
+          reserveLiquidationBonus: reserve.reserveLiquidationBonus.toString(),
+          variableRateSlope1: reserve.variableRateSlope1.toString(),
+          variableRateSlope2: reserve.variableRateSlope2.toString(),
+          baseVariableBorrowRate: reserve.baseVariableBorrowRate.toString(),
+          optimalUsageRatio: reserve.optimalUsageRatio.toString(),
+
+          liquidityIndex: reserve.liquidityIndex.toString(),
+          variableBorrowIndex: reserve.variableBorrowIndex.toString(),
+          liquidityRate: reserve.liquidityRate.toString(),
+          variableBorrowRate: reserve.variableBorrowRate.toString(),
+
+          lastUpdateTimestamp: reserve.lastUpdateTimestamp.toString(),
+        });
+      }
+
+      return reservesDecorated;
+    } catch (e) {
+      console.log(e);
+    }
+    return null;
+  }
+
   async initContractInstances({
     blockNumber,
     ctx,
@@ -75,33 +154,27 @@ export class MoneyMarketContractsManager {
     ctx: ProcessorContext<Store>;
   }) {
     try {
-      const resourcesData =
-        await this.uiPoolDataProviderContractInstance.getReservesData(
-          appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
-          { blockTag: blockNumber }
+      const reservesData = await this.getReservesData({ blockNumber });
+
+      if (!reservesData) {
+        console.log(`No reserves data found on initContractInstances`);
+        return;
+      }
+
+      for (const reserve of reservesData) {
+        this.moneyMarketReservesDetailsMap.set(
+          reserve.underlyingAssetAddress,
+          reserve
         );
 
-      for (const {
-        underlyingAsset,
-        aTokenAddress,
-        variableDebtTokenAddress,
-        priceOracle,
-      } of resourcesData[0]) {
-        this.moneyMarketResourcesDetailsMap.set(underlyingAsset, {
-          underlyingAssetAddress: underlyingAsset,
-          aTokenAddress: aTokenAddress,
-          variableDebtTokenAddress: variableDebtTokenAddress,
-          priceOracle: priceOracle,
-        });
-
         this.moneyMarketTokenContracts.set(
-          aTokenAddress,
-          this.getContractInstance(aTokenAddress, aTokenHydration.abi)
+          reserve.aTokenAddress,
+          this.getContractInstance(reserve.aTokenAddress, aTokenHydration.abi)
         );
         this.moneyMarketTokenContracts.set(
-          variableDebtTokenAddress,
+          reserve.variableDebtTokenAddress,
           this.getContractInstance(
-            variableDebtTokenAddress,
+            reserve.variableDebtTokenAddress,
             variableDebtTokenHydration.abi
           )
         );
@@ -123,7 +196,7 @@ export class MoneyMarketContractsManager {
 
     if (!this.moneyMarketTokenContracts.has(addressNormalized)) return null;
 
-    this.moneyMarketResourcesDetailsMap.forEach(
+    this.moneyMarketReservesDetailsMap.forEach(
       (resourceDetails, underlyingAssetAddress) => {
         if (resourceDetails.aTokenAddress === addressNormalized) {
           response.resourceType = ResourceType.Collateral;
@@ -172,12 +245,18 @@ export class MoneyMarketContractsManager {
       return null;
 
     try {
-      const balance = await this.moneyMarketTokenContracts
-        .get(contractAddressNormalized)!
-        .balanceOf(
-          accountAddressNormalized,
-          blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-        );
+      const balance: any = await retryAsync({
+        // passThrough: true,
+        fn: () =>
+          this.moneyMarketTokenContracts
+            .get(contractAddressNormalized)!
+            .balanceOf(
+              accountAddressNormalized,
+              blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+            ),
+        fallbackResponse: null,
+        tag: `${contractAddressNormalized}.balanceOf(${accountAddressNormalized}).at(${blockNumber})`,
+      });
 
       if (balance !== undefined && balance !== null)
         return BigInt(balance.toString());
@@ -197,11 +276,16 @@ export class MoneyMarketContractsManager {
     const accountAddressNormalized = ethers.utils.getAddress(accountAddress);
 
     try {
-      const data =
-        await this.poolImplementationContractInstance.getUserAccountData(
-          accountAddressNormalized,
-          blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-        );
+      const data = await retryAsync<any>({
+        // passThrough: true,
+        fn: () =>
+          this.poolImplementationContractInstance.getUserAccountData(
+            accountAddressNormalized,
+            blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+          ),
+        fallbackResponse: null,
+        tag: `getAccountMmPositionData :: getUserAccountData(${accountAddressNormalized}).at(${blockNumber})`,
+      });
 
       if (!data) return null;
 

@@ -54,7 +54,11 @@ import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
 import { MoneyMarketContractsManager } from './utils/evm/moneyMarketContractsManager';
 import { prefetchAllAccountHistDataRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/balances/historicalData';
 import { getAccAssetBalanceHistDataWithUniqueData } from './handlers/balances/utils';
-import { handleEvmEventsInBlock } from './handlers/evm';
+import {
+  handleEvmEventsInBlock,
+  handleEvmEventsInBlocksBatch,
+  prefetchAllAccountsExtensions,
+} from './handlers/evm';
 import { getAccMmPosiotionHistDataWithUniqueData } from './handlers/accounts/utils';
 
 const appConfig = AppConfig.getInstance();
@@ -153,6 +157,14 @@ processor.run(
       blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
     });
 
+    /**
+     * This must be processed outside the parallel processing
+     */
+    if (appConfig.PROCESS_ACCOUNTS) {
+      await prefetchAllAccountsExtensions(ctx as ProcessorContext<Store>);
+      await handleEvmEventsInBlocksBatch(ctx as ProcessorContext<Store>);
+    }
+
     let blocksSubBatchIndex = 1;
 
     console.log('START processing blocks');
@@ -209,10 +221,10 @@ processor.run(
             ]);
           }
           if (appConfig.PROCESS_ACCOUNTS) {
-            await handleEvmEventsInBlock(
-              block,
-              ctxWithBatchState as ProcessorContext<Store>
-            );
+            // await handleEvmEventsInBlock(
+            //   block,
+            //   ctxWithBatchState as ProcessorContext<Store>
+            // );
             await handleAssetAccountBalancesPerBlock(
               block,
               ctxWithBatchState as ProcessorContext<Store>

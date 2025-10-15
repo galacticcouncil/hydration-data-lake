@@ -117,12 +117,15 @@ export async function getOrCreateAccountByBoundEvmAddress({
 
   if (existingAccount && existingAccount.boundEvmAddress)
     return existingAccount;
+  //
+  // const accountExtension =
+  //   await parsers.storage.evmAccounts.getAccountExtension({
+  //     evmAddress,
+  //     block: blockHeader,
+  //   });
 
   const accountExtension =
-    await parsers.storage.evmAccounts.getAccountExtension({
-      evmAddress,
-      block: blockHeader,
-    });
+    ctx.batchState.state.evmAccountExtensions.get(evmAddress);
 
   const addressFromPrevBlocks =
     EvmAccountsUtils.getInstance().extractAddressFromHistoryCache(evmAddress);

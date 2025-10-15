@@ -3,7 +3,7 @@ import { handleCommonAssetAccountBalances } from './commonAssetBalances';
 import { handleMmAssetAccountBalancesPerBlock } from './moneyMarketAssetBalances';
 import { Block, BlockWithData, ProcessorContext } from '../../processor';
 import { EvmEventName } from '../../parsers/types/events';
-import { handleAllAccountsMmPositionDataUpdate } from '../accounts/moneyMarketPosition';
+import { AccountMoneyMarketPositionDataManager } from '../accounts/moneyMarketPosition';
 
 export async function handleAssetAccountBalancesPerBlock(
   block: BlockWithData,
@@ -29,10 +29,12 @@ export async function handleAssetAccountBalancesPerBlock(
   }
 
   for (const blockHeader of blocksWithOracleUpdate.values()) {
-    await handleAllAccountsMmPositionDataUpdate({
-      blockHeader,
-      ctx,
-    });
+    await AccountMoneyMarketPositionDataManager.getInstance().handleAllAccountsMmPositionDataUpdate(
+      {
+        blockHeader,
+        ctx,
+      }
+    );
   }
 
   if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {

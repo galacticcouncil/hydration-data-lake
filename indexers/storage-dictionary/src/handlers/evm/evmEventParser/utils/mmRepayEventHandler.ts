@@ -8,8 +8,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
-import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
 import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
+import { AccountMoneyMarketPositionDataManager } from '../../../accounts/moneyMarketPosition';
 
 export async function handleMmRepayEvent(
   ctx: ProcessorContext<Store>,
@@ -78,15 +78,16 @@ export async function handleMmRepayEvent(
     allInvolvedParticipants: [account.id, repayerAccount.id],
   });
 
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.userAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
-
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.repayerAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
+  AccountMoneyMarketPositionDataManager.getInstance().addAccountEvmAddressToProcessingQueue(
+    {
+      accountEvmAddress: parsedEvmEventData.userAddress,
+      blockHeader: eventMetadata.blockHeader,
+    }
+  );
+  AccountMoneyMarketPositionDataManager.getInstance().addAccountEvmAddressToProcessingQueue(
+    {
+      accountEvmAddress: parsedEvmEventData.repayerAddress,
+      blockHeader: eventMetadata.blockHeader,
+    }
+  );
 }

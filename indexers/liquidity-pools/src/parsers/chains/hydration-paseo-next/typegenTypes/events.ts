@@ -1,6 +1,7 @@
 export * as balances from './balances/events'
 export * as assetRegistry from './asset-registry/events'
 export * as omnipool from './omnipool/events'
+export * as duster from './duster/events'
 export * as omnipoolWarehouseLm from './omnipool-warehouse-lm/events'
 export * as omnipoolLiquidityMining from './omnipool-liquidity-mining/events'
 export * as otc from './otc/events'

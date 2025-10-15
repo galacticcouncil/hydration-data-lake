@@ -102,8 +102,6 @@ export interface Order {
     partiallyFillable: boolean
 }
 
-export type AccountId32 = Bytes
-
 export const Order: sts.Type<Order> = sts.struct(() => {
     return  {
         owner: AccountId32,
@@ -259,6 +257,8 @@ export const GlobalFarmData: sts.Type<GlobalFarmData> = sts.struct(() => {
         state: FarmState,
     }
 })
+
+export type AccountId32 = Bytes
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
@@ -9834,6 +9834,6 @@ export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
 
 export const Perquintill = sts.bigint()
 
-export const AccountId32 = sts.bytes()
-
 export const FixedU128 = sts.bigint()
+
+export const AccountId32 = sts.bytes()

@@ -23,6 +23,17 @@ import { AppConfig } from '../../appConfig';
  *
  * EvmAccountsUtils allows cache EVM addresses throughout the blocks and support
  * functionality explained above.
+ *
+ * Main drawback of such an approach - when an indexer meets some EVM account 0x123
+ * first time and storage evmAccounts.accountExtension doesn't contain extension
+ * for this particular evmAddress, a new Account entity won't be created in indexer
+ * at this block. Address will be added to the cache. If address 0x123 is found
+ * in further blocks and this address exists in cache, only than indexer will
+ * create a new Account entity because ether account extension will be available
+ * in the storage or Account entity will be created with Substrate address which
+ * will be derived from address 0x123. It means that some events or storage
+ * snapshots won't be persisted in DB only for one block, where account has been
+ * found firstly and didn't have account extension in storage.
  */
 export class EvmAccountsUtils {
   private static instance: EvmAccountsUtils;

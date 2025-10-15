@@ -79,7 +79,6 @@ export default {
   },
   balances: {
     getTotalIssuance: balances.getTotalIssuance,
-    getNativeTokenBalanceMany: balances.getNativeTokenBalanceMany,
   },
   bonds: {
     getBond: bonds.getBond,

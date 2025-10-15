@@ -85,14 +85,42 @@ class ConcurrencyConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly EVM_CONTRACT_CALL_RETRIES: number = 2;
+
+  // static getInstance(): ConcurrencyConfig {
+  //   if (!ConcurrencyConfig.instance) {
+  //     ConcurrencyConfig.instance = new ConcurrencyConfig();
+  //   }
+  //   try {
+  //     return transformAndValidateSync(ConcurrencyConfig, process.env, {
+  //       validator: { stopAtFirstError: true },
+  //     });
+  //   } catch (errors) {
+  //     if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+  //       errors.forEach((error: ValidationError) => {
+  //         // @ts-ignore
+  //         Object.values(error.constraints).forEach((msg) => console.error(msg));
+  //       });
+  //     } else {
+  //       console.error('Unexpected error during the environment validation');
+  //     }
+  //     throw new Error('Failed to validate environment variables');
+  //   }
+  // }
+
   static getInstance(): ConcurrencyConfig {
-    if (!ConcurrencyConfig.instance) {
-      ConcurrencyConfig.instance = new ConcurrencyConfig();
-    }
+    if (ConcurrencyConfig.instance) return ConcurrencyConfig.instance;
+
     try {
-      return transformAndValidateSync(ConcurrencyConfig, process.env, {
-        validator: { stopAtFirstError: true },
-      });
+      ConcurrencyConfig.instance = transformAndValidateSync(
+        ConcurrencyConfig,
+        process.env,
+        {
+          validator: { stopAtFirstError: true, whitelist: true },
+        }
+      );
+      return ConcurrencyConfig.instance;
     } catch (errors) {
       if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
         errors.forEach((error: ValidationError) => {
@@ -263,27 +291,29 @@ export class AppConfig {
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
 
   static getInstance(): AppConfig {
-    if (!AppConfig.instance) {
-      AppConfig.instance = new AppConfig();
-    }
+    if (AppConfig.instance) return AppConfig.instance;
+
     try {
-      const config = transformAndValidateSync(AppConfig, process.env, {
+      AppConfig.instance = transformAndValidateSync(AppConfig, process.env, {
         validator: { stopAtFirstError: true },
       });
 
       if (
-        !config.SUB_PROCESSORS_RANGES ||
-        config.SUB_PROCESSORS_RANGES.size === 0
+        !AppConfig.instance.SUB_PROCESSORS_RANGES ||
+        AppConfig.instance.SUB_PROCESSORS_RANGES.size === 0
       ) {
-        config.SUB_PROCESSORS_RANGES = new Map([
+        AppConfig.instance.SUB_PROCESSORS_RANGES = new Map([
           [
-            config.STATE_SCHEMA_NAME,
-            { from: config.PROCESS_FROM_BLOCK, to: config.PROCESS_TO_BLOCK },
+            AppConfig.instance.STATE_SCHEMA_NAME,
+            {
+              from: AppConfig.instance.PROCESS_FROM_BLOCK,
+              to: AppConfig.instance.PROCESS_TO_BLOCK,
+            },
           ],
         ]);
       }
 
-      return config;
+      return AppConfig.instance;
     } catch (errors) {
       if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
         errors.forEach((error: ValidationError) => {

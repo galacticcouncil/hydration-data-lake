@@ -8,8 +8,8 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
-import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
 import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
+import { AccountMoneyMarketPositionDataManager } from '../../../accounts/moneyMarketPosition';
 
 export async function handleMmTransferEvent(
   ctx: ProcessorContext<Store>,
@@ -52,22 +52,22 @@ export async function handleMmTransferEvent(
     evmAddress: parsedEvmEventData.fromAddress,
     blockHeader: eventMetadata.blockHeader,
   });
+  if (!accountFrom) {
+    console.log(
+      `handleMmTransferEvent :: [${eventMetadata.blockHeader.height}] accountFrom cannot be found for EVM Address ${parsedEvmEventData.fromAddress}`
+    );
+    return;
+  }
 
   const accountTo = await getOrCreateAccountByBoundEvmAddress({
     ctx,
     evmAddress: parsedEvmEventData.toAddress,
     blockHeader: eventMetadata.blockHeader,
   });
-
-  if (!accountFrom || !accountTo) {
-    if (!accountFrom)
-      console.log(
-        `handleMmTransferEvent :: accountFrom cannot be found for EVM Address ${parsedEvmEventData.fromAddress}`
-      );
-    if (!accountTo)
-      console.log(
-        `handleMmTransferEvent :: accountTo cannot be found for EVM Address ${parsedEvmEventData.toAddress}`
-      );
+  if (!accountTo) {
+    console.log(
+      `handleMmTransferEvent :: [${eventMetadata.blockHeader.height}] accountTo cannot be found for EVM Address ${parsedEvmEventData.toAddress}`
+    );
     return;
   }
 
@@ -78,14 +78,16 @@ export async function handleMmTransferEvent(
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
   });
 
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.fromAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.toAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
+  AccountMoneyMarketPositionDataManager.getInstance().addAccountEvmAddressToProcessingQueue(
+    {
+      accountEvmAddress: parsedEvmEventData.fromAddress,
+      blockHeader: eventMetadata.blockHeader,
+    }
+  );
+  AccountMoneyMarketPositionDataManager.getInstance().addAccountEvmAddressToProcessingQueue(
+    {
+      accountEvmAddress: parsedEvmEventData.toAddress,
+      blockHeader: eventMetadata.blockHeader,
+    }
+  );
 }

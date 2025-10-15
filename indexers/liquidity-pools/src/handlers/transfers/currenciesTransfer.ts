@@ -5,6 +5,8 @@ import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { AssetType } from '../../model';
 import { getOrCreateAsset } from '../assets/asset';
 import { CurrenciesTransferredData } from '../../parsers/batchBlocksParser/types/currencies';
+import { processNewMoneyMarketEvent } from '../moneyMarket/moneyMarketEvent';
+import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
 
 export async function handleCurrenciesTransfer(
   ctx: SqdProcessorContext<Store>,
@@ -22,6 +24,11 @@ export async function handleCurrenciesTransfer(
     blockHeader: eventMetadata.blockHeader,
   });
 
+  /**
+   * This is a workaround for EVM and Currencies pallets to issue when on
+   * Currencies.transfer call even EVM.Transfer will not be emitted. n such
+   * cases we need process such Transfers here.
+   */
   if (!assetEntity || assetEntity.assetType !== AssetType.Erc20) return;
 
   const existingTransfer = [...ctx.batchState.state.transfers.values()].find(
@@ -58,5 +65,15 @@ export async function handleCurrenciesTransfer(
     participants: [transferEntity.to, transferEntity.from],
     traceIds: transferEntity.traceIds,
     ctx,
+  });
+
+  await processNewMoneyMarketEvent({
+    ctx,
+    eventCallData: eventCallData as unknown as EvmLogData, // TODO should be reviewed and improved
+    allInvolvedAssetIds: [assetEntity.id],
+    allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
+    allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
+    allInvolvedParticipants: [transferEntity.from.id, transferEntity.to.id],
+    transfer: transferEntity,
   });
 }

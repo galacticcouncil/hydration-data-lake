@@ -79,30 +79,55 @@ export async function handleMmAssetAccountBalancesPerBlock(
       )
         return;
 
-      const assetBalances = (
-        await Promise.allSettled(
-          Array.from(assetsMap.values())
-            .filter(
-              (asset) =>
-                !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
-            )
-            .map(async (asset) => {
-              return {
-                asset,
-                balance:
-                  await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
-                    {
-                      contractAddress: asset.evmAddress!,
-                      accountAddress: account.boundEvmAddress!,
-                      blockNumber: block.header.height,
-                    }
-                  ),
-              };
-            })
-        )
-      )
-        .filter((res) => res.status === 'fulfilled')
-        .map((res) => res.value);
+      // const assetBalances = (
+      //   await Promise.allSettled(
+      //     Array.from(assetsMap.values())
+      //       .filter(
+      //         (asset) =>
+      //           !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
+      //       )
+      //       .map(async (asset) => {
+      //         return {
+      //           asset,
+      //           balance:
+      //             await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
+      //               {
+      //                 contractAddress: asset.evmAddress!,
+      //                 accountAddress: account.boundEvmAddress!,
+      //                 blockNumber: block.header.height,
+      //               }
+      //             ),
+      //         };
+      //       })
+      //   )
+      // )
+      //   .filter((res) => res.status === 'fulfilled')
+      //   .map((res) => res.value);
+
+      const assetBalances: {
+        asset: Asset;
+        balance: bigint | undefined | null;
+      }[] = [];
+
+      await pMap(
+        Array.from(assetsMap.values()).filter(
+          (asset) => !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
+        ),
+        async (asset) => {
+          assetBalances.push({
+            asset,
+            balance:
+              await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
+                {
+                  contractAddress: asset.evmAddress!,
+                  accountAddress: account.boundEvmAddress!,
+                  blockNumber: block.header.height,
+                }
+              ),
+          });
+        },
+        { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
+      );
 
       assetBalancesLoop: for (const assetBalance of assetBalances) {
         if (assetBalance.balance === null || assetBalance.balance === undefined)

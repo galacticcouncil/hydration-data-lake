@@ -73,7 +73,7 @@ export async function handleCommonAssetAccountBalances({
     if (allInvolvedAccountsInBlockSet.size === 0) continue blocksLoop;
 
     const [nativeTokenBalances, otherTokenBalances] = await Promise.all([
-      parsers.storage.balances.getNativeTokenBalanceMany({
+      parsers.storage.system.getNativeTokenBalanceMany({
         block: block.header,
         accountIds: Array.from(allInvolvedAccountsInBlockSet.keys()),
       }),

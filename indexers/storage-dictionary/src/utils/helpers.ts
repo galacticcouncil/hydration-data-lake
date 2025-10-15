@@ -6,6 +6,7 @@ import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { HYDRADX_SS58_PREFIX, BigNumber } from '@galacticcouncil/sdk';
 import { deepEqual } from 'fast-equals';
+import crypto from 'node:crypto';
 
 const appConfig = AppConfig.getInstance();
 
@@ -143,4 +144,57 @@ export async function tryExecOrReturnFallback<T>(
 export function isValueMaxUint256(value: string) {
   const maxUint256 = BigInt('2') ** BigInt(256) - BigInt(1);
   return value >= maxUint256.toString();
+}
+
+export async function retryAsync<T>({
+  fn,
+  delay = 500,
+  retries = appConfig.concurrency.EVM_CONTRACT_CALL_RETRIES,
+  retryIf = () => true,
+  passThrough = false,
+  fallbackResponse,
+  throwErrorOnRetriesLimit = false,
+  tag,
+}: {
+  fn: () => Promise<T>;
+  retries?: number;
+  delay?: number;
+  passThrough?: boolean;
+  throwErrorOnRetriesLimit?: boolean;
+  fallbackResponse: T;
+  retryIf?: (error: any) => boolean;
+  tag?: string;
+}): Promise<T> {
+  if (passThrough) return fn();
+
+  const retiesLoopId = crypto.randomUUID();
+
+  try {
+    let attempt = 0;
+    while (attempt <= retries) {
+      try {
+        return await fn();
+      } catch (error) {
+        attempt++;
+        // if (attempt > retries || !retryIf(error)) throw error;
+        if (attempt > retries) throw error;
+
+        console.log(
+          `${retiesLoopId} ${tag ? ` :: ${tag} ` : ''}:: Retrying... attempt ${attempt} failed `
+        );
+        // console.log(`Retrying... attempt ${attempt} failed with error:`, error);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  } catch (e) {
+    console.log(
+      `${retiesLoopId} ${tag ? ` :: ${tag} ` : ''}:: Retries loop finished with unresolved error.`
+    );
+  }
+
+  if (throwErrorOnRetriesLimit) {
+    throw new Error(`${retiesLoopId} Exceeded retry attempts`);
+  } else {
+    return fallbackResponse;
+  }
 }

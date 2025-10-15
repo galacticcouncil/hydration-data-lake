@@ -67,6 +67,8 @@ export type BatchStatePayload = {
   accMmPositionHistDataProcessedBlocks: Set<number>;
 
   moneyMarketEvents: Map<string, MoneyMarketEvent>;
+
+  evmAccountExtensions: Map<string, string>;
 };
 
 export class BatchState {
@@ -114,6 +116,8 @@ export class BatchState {
     accMmPositionHistDataProcessedBlocks: new Set(),
 
     moneyMarketEvents: new Map(),
+
+    evmAccountExtensions: new Map(),
   };
 
   // get state(): BatchStatePayload {

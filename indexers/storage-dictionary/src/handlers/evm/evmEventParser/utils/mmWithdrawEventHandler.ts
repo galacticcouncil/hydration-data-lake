@@ -8,8 +8,8 @@ import {
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
 import { getOrCreateAsset } from '../../../asset/asset';
-import { handleAccountMmPositionDataUpdate } from '../../../accounts/moneyMarketPosition';
 import { EvmAccountsUtils } from '../../../../utils/evm/evmAccountsUtils';
+import { AccountMoneyMarketPositionDataManager } from '../../../accounts/moneyMarketPosition';
 
 export async function handleMmWithdrawEvent(
   ctx: ProcessorContext<Store>,
@@ -77,14 +77,16 @@ export async function handleMmWithdrawEvent(
     allInvolvedParticipants: [accountFrom.id, accountTo.id],
   });
 
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.userAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
-  await handleAccountMmPositionDataUpdate({
-    accountEvmAddress: parsedEvmEventData.toAddress,
-    blockHeader: eventMetadata.blockHeader,
-    ctx,
-  });
+  AccountMoneyMarketPositionDataManager.getInstance().addAccountEvmAddressToProcessingQueue(
+    {
+      accountEvmAddress: parsedEvmEventData.userAddress,
+      blockHeader: eventMetadata.blockHeader,
+    }
+  );
+  AccountMoneyMarketPositionDataManager.getInstance().addAccountEvmAddressToProcessingQueue(
+    {
+      accountEvmAddress: parsedEvmEventData.toAddress,
+      blockHeader: eventMetadata.blockHeader,
+    }
+  );
 }

@@ -139,6 +139,11 @@
       "events": false,
       "calls": false,
       "storage": true
+    },
+    "Duster": {
+      "events": true,
+      "calls": true,
+      "storage": true
     }
   }
 }

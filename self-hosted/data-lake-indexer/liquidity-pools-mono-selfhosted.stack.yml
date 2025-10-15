@@ -19,10 +19,10 @@ x-aggregator-indexer-id: &aggregator-indexer-id "swarm_1"
 
 x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
 
-x-aggregator-rpc-url-wss: &aggregator-rpc-url-wss "wss://node-subwhale-8.shellfish.hydration.cloud"
-x-aggregator-rpc-url-https: &aggregator-rpc-url-https "https://node-subwhale-8.shellfish.hydration.cloud"
+x-aggregator-rpc-url-wss: &aggregator-rpc-url-wss "wss://node-subwhale-9.shellfish.hydration.cloud"
+x-aggregator-rpc-url-https: &aggregator-rpc-url-https "https://node-subwhale-9.shellfish.hydration.cloud"
 
-x-aggregator-indexer-image: &aggregator-indexer-image "ghcr.io/mckrava/liquidity-pools-indexer:d7b5b6c16591aab727b3484341058e2b3317304b"
+x-aggregator-indexer-image: &aggregator-indexer-image "ghcr.io/mckrava/liquidity-pools-indexer:33600f29998c3a35d48a4ed16bad7959c2b4d16d"
 
 # ======================================================================================================================
 # ======================================== C O N F I G   S E G M E N T S ===============================================
@@ -118,7 +118,7 @@ services:
         redis-stack-server \
         --requirepass password
     ports:
-      - "6391:6379"
+      - "6394:6379"
     volumes:
       - "db-ts-redis:/var/lib/redis/data"
     networks:
@@ -150,6 +150,32 @@ services:
       - "log_disconnections=on"
       - "-c"
       - "log_connections=on"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "log_statement=all"
+      - "-c"
+      - "log_min_duration_statement=1000"
+      - "-c"
+      - "track_io_timing=on"
+      - "-c"
+      - "logging_collector=on"
+      - "-c"
+      - "log_directory=/var/log/postgresql"
+      - "-c"
+      - "log_filename=postgresql-%Y-%m-%d_%H%M%S.log"
+      - "-c"
+      - "log_rotation_age=1d"
+      - "-c"
+      - "log_rotation_size=100MB"
+      - "-c"
+      - "log_line_prefix=%t [%p]: [ %l-1 ] user=%u,db=%d,app=%a,client=%h"
+      - "-c"
+      - "log_checkpoints=on"
+      - "-c"
+      - "log_lock_waits=on"
+      - "-c"
+      - "log_temp_files=0"
     volumes:
       - "db-aggregator-indexer:/var/lib/postgresql/data"
     healthcheck:
@@ -187,7 +213,7 @@ services:
       SERVER_LIFETIME: 3600
       SERVER_IDLE_TIMEOUT: 2400
     ports:
-      - "5491:5432"
+      - "5494:5432"
     depends_on:
       - db-aggregator-indexer
     networks:
@@ -209,6 +235,7 @@ services:
           *db-ts-redis-creds,
           *aggregator-proc-default-envs,
         ]
+      SIMPLIFIED_PROCESSING: "true"
       PROCESS_FROM_BLOCK: 8000000
       PROCESS_TO_BLOCK: -1
     deploy:
@@ -230,7 +257,7 @@ services:
       GQL_PORT: 8080
       SUB_PROCESSOR_SCHEMAS: "core_processor"
     ports:
-      - "8091:8080"
+      - "8094:8080"
     networks:
       - default
     logging:

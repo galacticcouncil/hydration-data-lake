@@ -69,7 +69,8 @@ import {
   OmnipoolWarehouseLMGlobalFarmAccRPZUpdatedEventParams,
   OmnipoolWarehouseLMYieldFarmAccRPVSUpdatedEventParams,
   OmnipoolWarehouseLMAllRewardsDistributedEventParams,
-  AssetRegistryAssetLocation, AssetRegistryLocationWithAssetId,
+  AssetRegistryAssetLocation,
+  AssetRegistryLocationWithAssetId,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -417,12 +418,12 @@ export type StorageParserMethods = {
       account: string,
       block: BlockHeader
     ) => Promise<SystemAccountInfo | null>;
-  };
-  balances: {
-    getTotalIssuance: (args: GetConstantsInput) => Promise<bigint | null>;
     getNativeTokenBalanceMany: (
       args: GetNativeTokenBalanceManyInput
     ) => Promise<BalancesAccountInfoWithAccountId[]>;
+  };
+  balances: {
+    getTotalIssuance: (args: GetConstantsInput) => Promise<bigint | null>;
   };
   bonds: {
     getBond: (args: GetBondByIdInput) => Promise<BondDetails | null>;

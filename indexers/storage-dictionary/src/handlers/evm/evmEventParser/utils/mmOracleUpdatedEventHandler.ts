@@ -20,9 +20,4 @@ export async function handleOracleUpdatedEvent(
   if (!parsedEvmEventData) return;
 
   const { params: eventParams, metadata: eventMetadata } = eventData;
-
-  // await handleAllAccountsMmPositionDataUpdate({
-  //   blockHeader: eventMetadata.blockHeader,
-  //   ctx,
-  // });
 }
