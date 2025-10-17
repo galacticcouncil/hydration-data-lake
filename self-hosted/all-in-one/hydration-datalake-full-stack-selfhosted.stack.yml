@@ -250,7 +250,7 @@ services:
       SERVER_LIFETIME: 3600
       SERVER_IDLE_TIMEOUT: 2400
     ports:
-      - "5490:5432"
+      - "5491:5432"
     depends_on:
       - db-aggregator-indexer
     networks:
