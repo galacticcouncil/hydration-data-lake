@@ -1,16 +1,9 @@
 import { BlockWithData, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  AccountAssetBalanceHistoricalData,
-  Asset,
-  AssetType,
-  Block,
-  ResourceType,
-} from '../../model';
+import { Asset, AssetType } from '../../model';
 import { constants } from 'ethers';
 import { MoneyMarketContractsManager } from '../../utils/evm/moneyMarketContractsManager';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
-import { BigNumber } from '@galacticcouncil/sdk';
 import { getOrCreateAsset } from '../asset/asset';
 import { getOrCreateAccount } from '../accounts';
 import pMap from 'p-map';
@@ -78,31 +71,6 @@ export async function handleMmAssetAccountBalancesPerBlock(
         account.boundEvmAddress === constants.AddressZero
       )
         return;
-
-      // const assetBalances = (
-      //   await Promise.allSettled(
-      //     Array.from(assetsMap.values())
-      //       .filter(
-      //         (asset) =>
-      //           !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
-      //       )
-      //       .map(async (asset) => {
-      //         return {
-      //           asset,
-      //           balance:
-      //             await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
-      //               {
-      //                 contractAddress: asset.evmAddress!,
-      //                 accountAddress: account.boundEvmAddress!,
-      //                 blockNumber: block.header.height,
-      //               }
-      //             ),
-      //         };
-      //       })
-      //   )
-      // )
-      //   .filter((res) => res.status === 'fulfilled')
-      //   .map((res) => res.value);
 
       const assetBalances: {
         asset: Asset;

@@ -1,11 +1,6 @@
 import { SqdProcessorContext } from '../../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  AavepoolHistoricalData,
-  AssetHistoricalData,
-} from '../../../../../../model';
-import { In } from 'typeorm';
-import { fetchAavePoolsHistoricalDataForBlocksRange } from './fetchAavePoolsHistoricalData';
+import { AssetHistoricalData } from '../../../../../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function fetchAssetsHistoricalData({
@@ -24,14 +19,21 @@ export async function fetchAssetsHistoricalData({
     ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
   ].filter((item) => item.paraBlockHeight === blockNumber);
 
-  const persistedHistData = await ctx.storeUtils.findWithLogs(AssetHistoricalData, {
-    where: {
-      paraBlockHeight: blockNumber,
+  const persistedHistData = await ctx.storeUtils.findWithLogs(
+    AssetHistoricalData,
+    {
+      where: {
+        paraBlockHeight: blockNumber,
+      },
+      relations: {
+        asset: true,
+      },
     },
-    relations: {
-      asset: true,
-    },
-  }, { className: 'AssetHistoricalData' });
+    {
+      className: 'AssetHistoricalData',
+      originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+    }
+  );
 
   return new Map([
     ...persistedHistData.map((ahd): [string, AssetHistoricalData] => [
@@ -45,7 +47,7 @@ export async function fetchAssetsHistoricalData({
   ]);
 }
 
-export async function fetchAssetsHistoricalDataForBlocksRange({
+export async function fetchAssetsHistoricalDataForBlocksRangeResolver({
   blockFromNumber,
   blockToNumber,
   ctx,
@@ -67,14 +69,24 @@ export async function fetchAssetsHistoricalDataForBlocksRange({
       item.paraBlockHeight < blockToNumber + 1
   );
 
-  const persistedHistData = await ctx.storeUtils.findWithLogs(AssetHistoricalData, {
-    where: {
-      paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-    },
-    relations: {
-      asset: true,
-    },
-  }, { className: 'AssetHistoricalData' });
+  const persistedHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        AssetHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+          },
+          relations: {
+            asset: true,
+          },
+        },
+        {
+          className: 'AssetHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const mergedDataMap = new Map([
     ...persistedHistData.map((ahd): [string, AssetHistoricalData] => [

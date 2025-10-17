@@ -52,7 +52,7 @@ export type BatchStatePayload = {
   emaOraclesProcessedBlocks: Set<number>;
 
   mmAggregatorOracles: Map<string, MmAggregatorOracle>;
-  mmAggregatorOraclesBlocks: Set<number>;
+  mmAggregatorOraclesProcessedBlocks: Set<number>;
 
   assetHistoricalDataItems: Map<string, AssetHistoricalData>;
   assetHistoricalDataProcessedBlocks: Set<number>;
@@ -101,7 +101,7 @@ export class BatchState {
     emaOraclesProcessedBlocks: new Set(),
 
     mmAggregatorOracles: new Map(),
-    mmAggregatorOraclesBlocks: new Set(),
+    mmAggregatorOraclesProcessedBlocks: new Set(),
 
     assetHistoricalDataItems: new Map(),
     assetHistoricalDataProcessedBlocks: new Set(),

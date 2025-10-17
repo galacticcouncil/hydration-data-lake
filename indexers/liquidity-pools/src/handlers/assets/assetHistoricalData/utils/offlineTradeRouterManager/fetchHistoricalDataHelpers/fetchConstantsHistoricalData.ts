@@ -4,7 +4,7 @@ import {
   ConstantsHistoricalData,
   EmaOracleEntryHistoricalData,
 } from '../../../../../../model';
-import { fetchEmaOracleEntriesHistoricalDataForBlocksRange } from './fetchEmaOraclesHistoricalData';
+import { fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver } from './fetchEmaOraclesHistoricalData';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function fetchConstantsHistoricalData({
@@ -22,16 +22,20 @@ export async function fetchConstantsHistoricalData({
 
   if (cachedHistData) return cachedHistData;
 
-  const persistedHistData = await ctx.storeUtils.findOneWithLogs(ConstantsHistoricalData, {
-    where: {
-      paraBlockHeight: blockNumber,
+  const persistedHistData = await ctx.storeUtils.findOneWithLogs(
+    ConstantsHistoricalData,
+    {
+      where: {
+        paraBlockHeight: blockNumber,
+      },
     },
-  }, { className: 'ConstantsHistoricalData' });
+    { className: 'ConstantsHistoricalData' }
+  );
 
   return persistedHistData;
 }
 
-export async function fetchConstantsHistoricalDataForBlocksRange({
+export async function fetchConstantsHistoricalDataForBlocksRangeResolver({
   blockFromNumber,
   blockToNumber,
   ctx,
@@ -51,11 +55,18 @@ export async function fetchConstantsHistoricalDataForBlocksRange({
   let persistedHistData: ConstantsHistoricalData[] = [];
 
   if (!cachedHistData || cachedHistData.length === 0)
-    persistedHistData = await ctx.storeUtils.findWithLogs(ConstantsHistoricalData, {
-      where: {
-        paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+    persistedHistData = await ctx.storeUtils.findWithLogs(
+      ConstantsHistoricalData,
+      {
+        where: {
+          paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+        },
       },
-    }, { className: 'ConstantsHistoricalData' });
+      {
+        className: 'ConstantsHistoricalData',
+        originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+      }
+    );
 
   const histDataPerBlock = new Map<number, ConstantsHistoricalData>();
 

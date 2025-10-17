@@ -270,7 +270,7 @@ export class RedisTimeSeriesManager {
               indexerData.assetBId
             ),
           }),
-        { concurrency: 100 }
+        { concurrency: 10 }
       );
 
       await openClient.ts.mAdd(listToSave);

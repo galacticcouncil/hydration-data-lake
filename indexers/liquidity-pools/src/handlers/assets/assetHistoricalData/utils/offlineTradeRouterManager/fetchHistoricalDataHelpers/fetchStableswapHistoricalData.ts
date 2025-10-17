@@ -27,19 +27,29 @@ export async function fetchStableswapHistoricalData({
     ...ctx.batchState.state.stableswapAssets.values(),
   ].filter((sAsset) => allActiveStableswapsCachedMap.has(sAsset.pool.id));
 
-  const allActiveStableswapsPersisted = await ctx.storeUtils.findWithLogs(Stableswap, {
-    where: {
-      isDestroyed: false,
-    },
-    relations: {
-      account: true,
-      shareToken: true,
-      assets: {
-        asset: true,
-        pool: true,
-      },
-    },
-  }, { className: 'Stableswap' });
+  const allActiveStableswapsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        Stableswap,
+        {
+          where: {
+            isDestroyed: false,
+          },
+          relations: {
+            account: true,
+            shareToken: true,
+            assets: {
+              asset: true,
+              pool: true,
+            },
+          },
+        },
+        {
+          className: 'Stableswap',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allStableswapAssetsPersisted = allActiveStableswapsPersisted
     .map((pool) => pool.assets)
@@ -94,28 +104,34 @@ export async function fetchStableswapHistoricalData({
     cachedStableswapAssetsHistDataByPoolMap.get(poolId)!.push(sAssetHistData);
   }
 
-  const persistedStableswapHistData = await ctx.storeUtils.findWithLogs(
-    StableswapHistoricalData,
-    {
-      where: {
-        paraBlockHeight: blockNumber,
-        pool: {
-          id: In([...allActiveStablewaps.keys()]),
+  const persistedStableswapHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        StableswapHistoricalData,
+        {
+          where: {
+            paraBlockHeight: blockNumber,
+            pool: {
+              id: In([...allActiveStablewaps.keys()]),
+            },
+            ...(cachedStableswapHistData.length > 0
+              ? { id: Not(In(cachedStableswapHistData.map((i) => i.id))) }
+              : {}),
+          },
+          relations: {
+            pool: { account: true, shareToken: true },
+            assetsHistoricalData: {
+              asset: true,
+              stableswapAsset: true,
+            },
+          },
         },
-        ...(cachedStableswapHistData.length > 0
-          ? { id: Not(In(cachedStableswapHistData.map((i) => i.id))) }
-          : {}),
-      },
-      relations: {
-        pool: { account: true, shareToken: true },
-        assetsHistoricalData: {
-          asset: true,
-          stableswapAsset: true,
-        },
-      },
-    },
-    { className: 'StableswapHistoricalData' }
-  );
+        {
+          className: 'StableswapHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const persistedStableswapAssetsHistDataMap = new Map<
     string,
@@ -162,7 +178,7 @@ export async function fetchStableswapHistoricalData({
   return allStableswapHistDataMap;
 }
 
-export async function fetchStableswapHistoricalDataForBlocksRange({
+export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
   blockFromNumber,
   blockToNumber,
   ctx,
@@ -181,19 +197,29 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
     ...ctx.batchState.state.stableswapAssets.values(),
   ].filter((sAsset) => allActiveStableswapsCachedMap.has(sAsset.pool.id));
 
-  const allActiveStableswapsPersisted = await ctx.storeUtils.findWithLogs(Stableswap, {
-    where: {
-      isDestroyed: false,
-    },
-    relations: {
-      account: true,
-      shareToken: true,
-      assets: {
-        asset: true,
-        pool: true,
-      },
-    },
-  }, { className: 'Stableswap' });
+  const allActiveStableswapsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        Stableswap,
+        {
+          where: {
+            isDestroyed: false,
+          },
+          relations: {
+            account: true,
+            shareToken: true,
+            assets: {
+              asset: true,
+              pool: true,
+            },
+          },
+        },
+        {
+          className: 'Stableswap',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allStableswapAssetsPersisted = allActiveStableswapsPersisted
     .map((pool) => pool.assets)
@@ -265,28 +291,34 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
       .push(sAssetHistData);
   }
 
-  const persistedStableswapHistData = await ctx.storeUtils.findWithLogs(
-    StableswapHistoricalData,
-    {
-      where: {
-        paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-        pool: {
-          id: In([...allActiveStablewaps.keys()]),
+  const persistedStableswapHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        StableswapHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+            pool: {
+              id: In([...allActiveStablewaps.keys()]),
+            },
+            ...(cachedStableswapHistData.length > 0
+              ? { id: Not(In(cachedStableswapHistData.map((i) => i.id))) }
+              : {}),
+          },
+          relations: {
+            pool: { account: true, shareToken: true },
+            assetsHistoricalData: {
+              asset: true,
+              stableswapAsset: true,
+            },
+          },
         },
-        ...(cachedStableswapHistData.length > 0
-          ? { id: Not(In(cachedStableswapHistData.map((i) => i.id))) }
-          : {}),
-      },
-      relations: {
-        pool: { account: true, shareToken: true },
-        assetsHistoricalData: {
-          asset: true,
-          stableswapAsset: true,
-        },
-      },
-    },
-    { className: 'StableswapHistoricalData' }
-  );
+        {
+          className: 'StableswapHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const persistedStableswapAssetsHistDataMap = new Map<
     number,
@@ -309,19 +341,6 @@ export async function fetchStableswapHistoricalDataForBlocksRange({
       .get(stableswapHistData.paraBlockHeight)!
       .set(stableswapHistData.pool.id, stableswapHistData.assetsHistoricalData);
   }
-
-  // const allStableswapHistDataMap = new Map<string, StableswapHistoricalData>([
-  //   ...persistedStableswapHistData.map(
-  //     (
-  //       poolData: StableswapHistoricalData
-  //     ): [string, StableswapHistoricalData] => [poolData.id, poolData]
-  //   ),
-  //   ...cachedStableswapHistData.map(
-  //     (
-  //       poolData: StableswapHistoricalData
-  //     ): [string, StableswapHistoricalData] => [poolData.id, poolData]
-  //   ),
-  // ]);
 
   const allStableswapHistDataMap = new Map<string, StableswapHistoricalData>();
   for (const histData of persistedStableswapHistData) {

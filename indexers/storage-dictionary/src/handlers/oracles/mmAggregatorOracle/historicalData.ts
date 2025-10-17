@@ -13,8 +13,12 @@ export async function handleMmAggregatorOracleHistoricalData({
   ctx: ProcessorContext<Store>;
   blockHeader: Block;
 }) {
-  // if (ctx.batchState.state.mmAggregatorOraclesBlocks.has(blockHeader.height))
-  //   return;
+  if (
+    ctx.batchState.state.mmAggregatorOraclesProcessedBlocks.has(
+      blockHeader.height
+    )
+  )
+    return;
 
   const oracleContractState =
     await MmOracleManager.getInstance().getAggregatorMmOracleData({
@@ -66,11 +70,11 @@ export async function prefetchAllMmAggregatorOracleRecordsForBlocksRangeToEnsure
   ctx.batchState.state.mmAggregatorOracles = new Map(
     records.map((r) => [r.id, r])
   );
-  ctx.batchState.state.mmAggregatorOraclesBlocks = new Set(
+  ctx.batchState.state.mmAggregatorOraclesProcessedBlocks = new Set(
     records.map((r) => r.paraBlockHeight)
   );
   console.log(
     `MmAggregatorOracle :: Blocks range: ${orderedBlockNumbers[0]}/${orderedBlockNumbers[orderedBlockNumbers.length - 1]}. 
-    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.mmAggregatorOraclesBlocks.has(b)).length}/${orderedBlockNumbers.length}`
+    Number of missed blocks: ${orderedBlockNumbers.filter((b) => !ctx.batchState.state.mmAggregatorOraclesProcessedBlocks.has(b)).length}/${orderedBlockNumbers.length}`
   );
 }

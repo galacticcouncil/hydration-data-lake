@@ -17,16 +17,26 @@ export async function fetchEmaOracleEntriesHistoricalData({
     ...ctx.batchState.state.emaOracleEntriesHistoricalData.values(),
   ].filter((item) => item.paraBlockHeight === blockNumber);
 
-  const persistedHistData = await ctx.storeUtils.findWithLogs(EmaOracleEntryHistoricalData, {
-    where: {
-      paraBlockHeight: blockNumber,
-    },
-    relations: {
-      assetA: true,
-      assetB: true,
-      block: true,
-    },
-  }, { className: 'EmaOracleEntryHistoricalData' });
+  const persistedHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        EmaOracleEntryHistoricalData,
+        {
+          where: {
+            paraBlockHeight: blockNumber,
+          },
+          relations: {
+            assetA: true,
+            assetB: true,
+            block: true,
+          },
+        },
+        {
+          className: 'EmaOracleEntryHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   return new Map([
     ...persistedHistData.map(
@@ -44,7 +54,7 @@ export async function fetchEmaOracleEntriesHistoricalData({
   ]);
 }
 
-export async function fetchEmaOracleEntriesHistoricalDataForBlocksRange({
+export async function fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver({
   blockFromNumber,
   blockToNumber,
   ctx,
@@ -61,31 +71,26 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRange({
       item.paraBlockHeight < blockToNumber + 1
   );
 
-  const persistedHistData = await ctx.storeUtils.findWithLogs(EmaOracleEntryHistoricalData, {
-    where: {
-      paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-    },
-    relations: {
-      assetA: true,
-      assetB: true,
-      block: true,
-    },
-  }, { className: 'EmaOracleEntryHistoricalData' });
-
-  // const mergedDataMap = new Map([
-  //   ...persistedHistData.map(
-  //     (histData): [string, EmaOracleEntryHistoricalData] => [
-  //       histData.id,
-  //       histData,
-  //     ]
-  //   ),
-  //   ...cachedHistData.map(
-  //     (histData): [string, EmaOracleEntryHistoricalData] => [
-  //       histData.id,
-  //       histData,
-  //     ]
-  //   ),
-  // ]);
+  const persistedHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        EmaOracleEntryHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+          },
+          relations: {
+            assetA: true,
+            assetB: true,
+            block: true,
+          },
+        },
+        {
+          className: 'EmaOracleEntryHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const mergedDataMap = new Map<string, EmaOracleEntryHistoricalData>();
   for (const histData of persistedHistData) {

@@ -3,13 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
-import {
-  AccountAssetBalanceHistoricalData,
-  AccountMmPositionHistoricalData,
-  EmaOracle,
-  XykpoolAssetsData,
-} from '../../model';
-import { isEmaOracleDataUniqueRegardingPreviousRecord } from '../oracles/emaOracle/utils';
+import { AccountMmPositionHistoricalData } from '../../model';
 
 export async function getAccMmPosiotionHistDataWithUniqueData(
   src: Map<string, AccountMmPositionHistoricalData>,

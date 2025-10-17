@@ -1,12 +1,7 @@
 import { SqdProcessorContext } from '../../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  LbppoolHistoricalData,
-  Xykpool,
-  XykpoolHistoricalData,
-} from '../../../../../../model';
+import { Xykpool, XykpoolHistoricalData } from '../../../../../../model';
 import { In, Not } from 'typeorm';
-import { fetchLbpPoolsHistoricalDataForBlocksRange } from './fetchLbpPoolsHistoricalData';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function fetchXykPoolsHistoricalData({
@@ -16,27 +11,33 @@ export async function fetchXykPoolsHistoricalData({
   blockNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  // const allActivePoolsCached = [
-  //   ...ctx.batchState.state.xykAllBatchPools.values(),
-  // ].filter((item) => !item.isDestroyed);
-
   const allActivePoolsCached: Xykpool[] = [];
   for (const item of ctx.batchState.state.xykAllBatchPools.values()) {
     if (item.isDestroyed) continue;
     allActivePoolsCached.push(item);
   }
 
-  const allActivePoolsPersisted = await ctx.storeUtils.findWithLogs(Xykpool, {
-    where: {
-      isDestroyed: false,
-    },
-    relations: {
-      account: true,
-      assetA: true,
-      assetB: true,
-      shareToken: true,
-    },
-  }, { className: 'Xykpool' });
+  const allActivePoolsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        Xykpool,
+        {
+          where: {
+            isDestroyed: false,
+          },
+          relations: {
+            account: true,
+            assetA: true,
+            assetB: true,
+            shareToken: true,
+          },
+        },
+        {
+          className: 'Xykpool',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allActivePools: Map<string, Xykpool> = new Map([
     ...allActivePoolsCached.map((pool): [string, Xykpool] => [pool.id, pool]),
@@ -46,12 +47,6 @@ export async function fetchXykPoolsHistoricalData({
     ]),
   ]);
 
-  // const cachedHistData = [
-  //   ...ctx.batchState.state.xykPoolAllHistoricalData.values(),
-  // ].filter(
-  //   (item) =>
-  //     item.paraBlockHeight === blockNumber && allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
-  // );
   const cachedHistData: XykpoolHistoricalData[] = [];
   for (const item of ctx.batchState.state.xykPoolAllHistoricalData.values()) {
     if (item.paraBlockHeight !== blockNumber) continue;
@@ -59,23 +54,33 @@ export async function fetchXykPoolsHistoricalData({
     cachedHistData.push(item);
   }
 
-  const persistedHistData = await ctx.storeUtils.findWithLogs(XykpoolHistoricalData, {
-    where: {
-      // paraBlockHeight: LessThanOrEqual(blockNumber),
-      paraBlockHeight: blockNumber,
-      pool: {
-        id: In([...allActivePools.keys()]),
-      },
-      ...(cachedHistData.length > 0
-        ? { id: Not(In(cachedHistData.map((i) => i.id))) }
-        : {}),
-    },
-    relations: {
-      pool: { account: true, shareToken: true },
-      assetA: true,
-      assetB: true,
-    },
-  }, { className: 'XykpoolHistoricalData' });
+  const persistedHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        XykpoolHistoricalData,
+        {
+          where: {
+            // paraBlockHeight: LessThanOrEqual(blockNumber),
+            paraBlockHeight: blockNumber,
+            pool: {
+              id: In([...allActivePools.keys()]),
+            },
+            ...(cachedHistData.length > 0
+              ? { id: Not(In(cachedHistData.map((i) => i.id))) }
+              : {}),
+          },
+          relations: {
+            pool: { account: true, shareToken: true },
+            assetA: true,
+            assetB: true,
+          },
+        },
+        {
+          className: 'XykpoolHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   return new Map([
     ...persistedHistData.map((histData): [string, XykpoolHistoricalData] => [
@@ -89,7 +94,7 @@ export async function fetchXykPoolsHistoricalData({
   ]);
 }
 
-export async function fetchXykPoolsHistoricalDataForBlocksRange({
+export async function fetchXykPoolsHistoricalDataForBlocksRangeResolver({
   blockFromNumber,
   blockToNumber,
   ctx,
@@ -102,17 +107,27 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
     ...ctx.batchState.state.xykAllBatchPools.values(),
   ].filter((item) => !item.isDestroyed);
 
-  const allActivePoolsPersisted = await ctx.storeUtils.findWithLogs(Xykpool, {
-    where: {
-      isDestroyed: false,
-    },
-    relations: {
-      account: true,
-      assetA: true,
-      assetB: true,
-      shareToken: true,
-    },
-  }, { className: 'Xykpool' });
+  const allActivePoolsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        Xykpool,
+        {
+          where: {
+            isDestroyed: false,
+          },
+          relations: {
+            account: true,
+            assetA: true,
+            assetB: true,
+            shareToken: true,
+          },
+        },
+        {
+          className: 'Xykpool',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allActivePools = new Map<string, Xykpool>();
   for (const histData of allActivePoolsCached) {
@@ -130,23 +145,33 @@ export async function fetchXykPoolsHistoricalDataForBlocksRange({
       item.paraBlockHeight < blockToNumber + 1 &&
       allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
-  const persistedHistData = await ctx.storeUtils.findWithLogs(XykpoolHistoricalData, {
-    where: {
-      // paraBlockHeight: LessThanOrEqual(blockNumber),
-      paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-      pool: {
-        id: In([...allActivePools.keys()]),
-      },
-      ...(cachedHistData.length > 0
-        ? { id: Not(In(cachedHistData.map((i) => i.id))) }
-        : {}),
-    },
-    relations: {
-      pool: { account: true, shareToken: true },
-      assetA: true,
-      assetB: true,
-    },
-  }, { className: 'XykpoolHistoricalData' });
+  const persistedHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        XykpoolHistoricalData,
+        {
+          where: {
+            // paraBlockHeight: LessThanOrEqual(blockNumber),
+            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+            pool: {
+              id: In([...allActivePools.keys()]),
+            },
+            ...(cachedHistData.length > 0
+              ? { id: Not(In(cachedHistData.map((i) => i.id))) }
+              : {}),
+          },
+          relations: {
+            pool: { account: true, shareToken: true },
+            assetA: true,
+            assetB: true,
+          },
+        },
+        {
+          className: 'XykpoolHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const mergedDataMap = new Map<string, XykpoolHistoricalData>();
 

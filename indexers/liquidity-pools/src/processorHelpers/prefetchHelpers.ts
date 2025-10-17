@@ -68,206 +68,155 @@ export async function prefetchGenericPersistentData(
   };
 
   await fetchAndCachePersistentData(ctx.batchState.state.lbpAllBatchPools, () =>
-    ctx.storeUtils.findWithLogs(Lbppool, {
-      where: {},
-      relations: { account: true, assetA: true, assetB: true },
-    }, { className: 'Lbppool' })
+    ctx.storeUtils.findWithLogs(
+      Lbppool,
+      {
+        where: {},
+        relations: { account: true, assetA: true, assetB: true },
+      },
+      { className: 'Lbppool', originCallFn: 'prefetchGenericPersistentData' }
+    )
   );
   await fetchAndCachePersistentData(ctx.batchState.state.xykAllBatchPools, () =>
-    ctx.storeUtils.findWithLogs(Xykpool, {
-      where: {},
-      relations: { assetA: true, assetB: true, account: true },
-    }, { className: 'Xykpool' })
+    ctx.storeUtils.findWithLogs(
+      Xykpool,
+      {
+        where: {},
+        relations: { assetA: true, assetB: true, account: true },
+      },
+      { className: 'Xykpool', originCallFn: 'prefetchGenericPersistentData' }
+    )
   );
   await fetchAndCachePersistentData(ctx.batchState.state.omnipoolAssets, () =>
-    ctx.storeUtils.findWithLogs(OmnipoolAsset, {
-      where: {},
-      relations: { asset: true, pool: true, addedAtBlock: true },
-    }, { className: 'OmnipoolAsset' })
+    ctx.storeUtils.findWithLogs(
+      OmnipoolAsset,
+      {
+        where: {},
+        relations: { asset: true, pool: true, addedAtBlock: true },
+      },
+      {
+        className: 'OmnipoolAsset',
+        originCallFn: 'prefetchGenericPersistentData',
+      }
+    )
   );
 
   ctx.batchState.state.omnipoolEntity =
-    (await ctx.storeUtils.findOneWithLogs(Omnipool, {
-      where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
-      relations: { account: true },
-    }, { className: 'Omnipool' })) ?? null;
+    (await ctx.storeUtils.findOneWithLogs(
+      Omnipool,
+      {
+        where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
+        relations: { account: true },
+      },
+      { className: 'Omnipool', originCallFn: 'prefetchGenericPersistentData' }
+    )) ?? null;
 
   await fetchAndCachePersistentData(ctx.batchState.state.stableswapPools, () =>
-    ctx.storeUtils.findWithLogs(Stableswap, {
-      where: {},
-      relations: {
-        account: true,
-        shareToken: true,
-        createdAtBlock: true,
-        assets: { asset: true },
+    ctx.storeUtils.findWithLogs(
+      Stableswap,
+      {
+        where: {},
+        relations: {
+          account: true,
+          shareToken: true,
+          createdAtBlock: true,
+          assets: { asset: true },
+        },
       },
-    }, { className: 'Stableswap' })
+      { className: 'Stableswap', originCallFn: 'prefetchGenericPersistentData' }
+    )
   );
   await fetchAndCachePersistentData(ctx.batchState.state.stableswapAssets, () =>
-    ctx.storeUtils.findWithLogs(StableswapAsset, {
-      where: {},
-      relations: {
-        pool: true,
-        asset: true,
+    ctx.storeUtils.findWithLogs(
+      StableswapAsset,
+      {
+        where: {},
+        relations: {
+          pool: true,
+          asset: true,
+        },
       },
-    }, { className: 'StableswapAsset' })
+      {
+        className: 'StableswapAsset',
+        originCallFn: 'prefetchGenericPersistentData',
+      }
+    )
   );
   await fetchAndCachePersistentData(ctx.batchState.state.aavePools, () =>
-    ctx.storeUtils.findWithLogs(Aavepool, {
-      where: {},
-      relations: {
-        reserveAsset: true,
-        aToken: true,
+    ctx.storeUtils.findWithLogs(
+      Aavepool,
+      {
+        where: {},
+        relations: {
+          reserveAsset: true,
+          aToken: true,
+        },
       },
-    }, { className: 'Aavepool' })
+      { className: 'Aavepool', originCallFn: 'prefetchGenericPersistentData' }
+    )
   );
   await fetchAndCachePersistentData(
     ctx.batchState.state.moneyMarketReserves,
     () =>
-      ctx.storeUtils.findWithLogs(MoneyMarketReserve, {
-        where: {},
-        relations: {
-          aToken: true,
-          underlyingAsset: true,
-          variableDebtToken: true,
-          aavePool: true,
+      ctx.storeUtils.findWithLogs(
+        MoneyMarketReserve,
+        {
+          where: {},
+          relations: {
+            aToken: true,
+            underlyingAsset: true,
+            variableDebtToken: true,
+            aavePool: true,
+          },
         },
-      }, { className: 'MoneyMarketReserve' })
+        {
+          className: 'MoneyMarketReserve',
+          originCallFn: 'prefetchGenericPersistentData',
+        }
+      )
   );
   ctx.batchState.state.hsmpoolEntity =
-    (await ctx.storeUtils.findOneWithLogs(Hsmpool, {
-      where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
-      relations: {
-        account: true,
+    (await ctx.storeUtils.findOneWithLogs(
+      Hsmpool,
+      {
+        where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
+        relations: {
+          account: true,
+        },
       },
-    }, { className: 'Hsmpool' })) ?? null;
+      { className: 'Hsmpool', originCallFn: 'prefetchGenericPersistentData' }
+    )) ?? null;
 
   await fetchAndCachePersistentData(ctx.batchState.state.hsmCollaterals, () =>
-    ctx.storeUtils.findWithLogs(HsmCollateral, {
-      where: { isRemoved: false },
-      relations: {
-        pool: true,
-        asset: true,
-        stableswap: true,
+    ctx.storeUtils.findWithLogs(
+      HsmCollateral,
+      {
+        where: { isRemoved: false },
+        relations: {
+          pool: true,
+          asset: true,
+          stableswap: true,
+        },
       },
-    }, { className: 'HsmCollateral' })
+      {
+        className: 'HsmCollateral',
+        originCallFn: 'prefetchGenericPersistentData',
+      }
+    )
   );
 
   await fetchAndCachePersistentData(ctx.batchState.state.aaveFacilitators, () =>
-    ctx.storeUtils.findWithLogs(AaveFacilitator, {
-      where: { isRemoved: false },
-    }, { className: 'AaveFacilitator' })
+    ctx.storeUtils.findWithLogs(
+      AaveFacilitator,
+      {
+        where: { isRemoved: false },
+      },
+      {
+        className: 'AaveFacilitator',
+        originCallFn: 'prefetchGenericPersistentData',
+      }
+    )
   );
-
-  // ctx.batchState.state.lbpAllBatchPools = new Map(
-  //   (
-  //     await ctx.store.find(Lbppool, {
-  //       where: {},
-  //       relations: { account: true, assetA: true, assetB: true },
-  //     })
-  //   ).map((p) => [p.id, p])
-  // );
-
-  // ctx.batchState.state.xykAllBatchPools = new Map(
-  //   (
-  //     await ctx.store.find(Xykpool, {
-  //       where: {},
-  //       relations: { assetA: true, assetB: true, account: true },
-  //     })
-  //   ).map((p) => [p.id, p])
-  // );
-
-  // ctx.batchState.state.omnipoolAssets = new Map(
-  //   (
-  //     await ctx.store.find(OmnipoolAsset, {
-  //       where: {},
-  //       relations: { asset: true, pool: true, addedAtBlock: true },
-  //     })
-  //   ).map((p) => [p.id, p])
-  // );
-
-  // ctx.batchState.state.omnipoolEntity =
-  //   (await ctx.store.findOne(Omnipool, {
-  //     where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
-  //     relations: { account: true },
-  //   })) ?? null;
-
-  // ctx.batchState.state.stableswapPools = new Map(
-  //   (
-  //     await ctx.store.find(Stableswap, {
-  //       where: {},
-  //       relations: {
-  //         account: true,
-  //         shareToken: true,
-  //         createdAtBlock: true,
-  //         assets: { asset: true },
-  //       },
-  //     })
-  //   ).map((p) => [p.id, p])
-  // );
-  // ctx.batchState.state.stableswapAssets = new Map(
-  //   (
-  //     await ctx.store.find(StableswapAsset, {
-  //       where: {},
-  //       relations: {
-  //         pool: true,
-  //         asset: true,
-  //       },
-  //     })
-  //   ).map((p) => [p.id, p])
-  // );
-  // ctx.batchState.state.aavePools = new Map(
-  //   (
-  //     await ctx.store.find(Aavepool, {
-  //       where: {},
-  //       relations: {
-  //         reserveAsset: true,
-  //         aToken: true,
-  //       },
-  //     })
-  //   ).map((p) => [p.id, p])
-  // );
-  // ctx.batchState.state.moneyMarketReserves = new Map(
-  //   (
-  //     await ctx.store.find(MoneyMarketReserve, {
-  //       where: {},
-  //       relations: {
-  //         aToken: true,
-  //         underlyingAsset: true,
-  //         variableDebtToken: true,
-  //         aavePool: true,
-  //       },
-  //     })
-  //   ).map((p) => [p.id, p])
-  // );
-
-  // ctx.batchState.state.hsmpoolEntity =
-  //   (await ctx.store.findOne(Hsmpool, {
-  //     where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
-  //     relations: {
-  //       account: true,
-  //     },
-  //   })) ?? null;
-
-  // ctx.batchState.state.hsmCollaterals = new Map(
-  //   (
-  //     await ctx.store.find(HsmCollateral, {
-  //       where: { isRemoved: false },
-  //       relations: {
-  //         pool: true,
-  //         asset: true,
-  //         stableswap: true,
-  //       },
-  //     })
-  //   ).map((c) => [c.id, c])
-  // );
-  // ctx.batchState.state.aaveFacilitators = new Map(
-  //   (
-  //     await ctx.store.find(AaveFacilitator, {
-  //       where: { isRemoved: false },
-  //     })
-  //   ).map((c) => [c.id, c])
-  // );
 }
 
 export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationPhase(
@@ -277,36 +226,44 @@ export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationP
 
   ctx.batchState.state.batchBlocks = new Map(
     (
-      await ctx.storeUtils.findWithLogs(Block, {
-        where: {
-          height: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        Block,
+        {
+          where: {
+            height: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          order: {
+            height: 'ASC',
+          },
         },
-        order: {
-          height: 'ASC',
-        },
-      }, { className: 'Block' })
+        { className: 'Block' }
+      )
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.moneyMarketEvents = new Map(
     (
-      await ctx.storeUtils.findWithLogs(MoneyMarketEvent, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        MoneyMarketEvent,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            event: { block: true },
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          event: { block: true },
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'MoneyMarketEvent' })
+        { className: 'MoneyMarketEvent' }
+      )
     ).map((p) => [p.id, p])
   );
 }
@@ -316,45 +273,53 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
 ) {
   ctx.batchState.state.batchBlocks = new Map(
     (
-      await ctx.storeUtils.findWithLogs(Block, {
-        where: {
-          height: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        Block,
+        {
+          where: {
+            height: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          order: {
+            height: 'ASC',
+          },
         },
-        order: {
-          height: 'ASC',
-        },
-      }, { className: 'Block' })
+        { className: 'Block' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.routeTrades = new Map(
     (
-      await ctx.storeUtils.findWithLogs(RoutedTrade, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
-        },
-        relations: {
-          swaps: {
-            event: { block: true },
-            inputs: {
-              asset: true,
-            },
-            outputs: {
-              asset: true,
+      await ctx.storeUtils.findWithLogs(
+        RoutedTrade,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            swaps: {
+              event: { block: true },
+              inputs: {
+                asset: true,
+              },
+              outputs: {
+                asset: true,
+              },
             },
           },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'RoutedTrade' })
+        { className: 'RoutedTrade' }
+      )
     ).map((p) => [
       p.id,
       {
@@ -374,27 +339,31 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
 
   ctx.batchState.state.swaps = new Map(
     (
-      await ctx.storeUtils.findWithLogs(Swap, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
-        },
-        relations: {
-          event: { block: true },
-          inputs: {
-            asset: true,
+      await ctx.storeUtils.findWithLogs(
+        Swap,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
           },
-          outputs: {
-            asset: true,
+          relations: {
+            event: { block: true },
+            inputs: {
+              asset: true,
+            },
+            outputs: {
+              asset: true,
+            },
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
           },
         },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'Swap' })
+        { className: 'Swap' }
+      )
     ).map((s) => [
       s.id,
       {
@@ -411,334 +380,394 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
 
   ctx.batchState.state.xykPoolVolumes = new Map(
     (
-      await ctx.storeUtils.findWithLogs(XykpoolVolumeHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        XykpoolVolumeHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: true,
+            assetA: true,
+            assetB: true,
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          pool: true,
-          assetA: true,
-          assetB: true,
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'XykpoolVolumeHistoricalData' })
+        { className: 'XykpoolVolumeHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.omnipoolAssetVolumes = new Map(
     (
-      await ctx.storeUtils.findWithLogs(OmnipoolAssetVolumeHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        OmnipoolAssetVolumeHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            omnipoolAsset: { asset: true },
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          omnipoolAsset: { asset: true },
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'OmnipoolAssetVolumeHistoricalData' })
+        { className: 'OmnipoolAssetVolumeHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolVolumeCollections = new Map(
     (
-      await ctx.storeUtils.findWithLogs(StableswapVolumeHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        StableswapVolumeHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: { shareToken: true },
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          pool: { shareToken: true },
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'StableswapVolumeHistoricalData' })
+        { className: 'StableswapVolumeHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolAssetVolumes = new Map(
     (
-      await ctx.storeUtils.findWithLogs(StableswapAssetVolumeHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        StableswapAssetVolumeHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            volumesCollection: { pool: { shareToken: true } },
+            asset: true,
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          volumesCollection: { pool: { shareToken: true } },
-          asset: true,
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'StableswapAssetVolumeHistoricalData' })
+        { className: 'StableswapAssetVolumeHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.lbpPoolAllHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(LbppoolHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        LbppoolHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: { account: true },
+            assetA: true,
+            assetB: true,
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          pool: { account: true },
-          assetA: true,
-          assetB: true,
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'LbppoolHistoricalData' })
+        { className: 'LbppoolHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.xykPoolAllHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(XykpoolHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        XykpoolHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: { account: true },
+            assetA: true,
+            assetB: true,
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          pool: { account: true },
-          assetA: true,
-          assetB: true,
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'XykpoolHistoricalData' })
+        { className: 'XykpoolHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.omnipoolAllHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(OmnipoolHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        OmnipoolHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: { account: true },
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          pool: { account: true },
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'OmnipoolHistoricalData' })
+        { className: 'OmnipoolHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.omnipoolAssetAllHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(OmnipoolAssetHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        OmnipoolAssetHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            poolHistoricalData: { pool: true },
+            omnipoolAsset: { asset: true },
+            asset: true,
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          poolHistoricalData: { pool: true },
-          omnipoolAsset: { asset: true },
-          asset: true,
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'OmnipoolAssetHistoricalData' })
+        { className: 'OmnipoolAssetHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolAllHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(StableswapHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
-        },
-        relations: {
-          pool: { shareToken: true, account: true },
-          assetsHistoricalData: {
-            asset: true,
-            stableswapAsset: { asset: true },
+      await ctx.storeUtils.findWithLogs(
+        StableswapHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: { shareToken: true, account: true },
+            assetsHistoricalData: {
+              asset: true,
+              stableswapAsset: { asset: true },
+              block: true,
+            },
             block: true,
           },
-          block: true,
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'StableswapHistoricalData' })
+        { className: 'StableswapHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolAssetsAllHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(StableswapAssetHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        StableswapAssetHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            asset: true,
+            poolHistoricalData: true,
+            stableswapAsset: { asset: true, pool: { account: true } },
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          asset: true,
-          poolHistoricalData: true,
-          stableswapAsset: { asset: true, pool: { account: true } },
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'StableswapAssetHistoricalData' })
+        { className: 'StableswapAssetHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.aavePoolsHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(AavepoolHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        AavepoolHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: { aToken: true, reserveAsset: true },
+            reserveAsset: true,
+            aToken: true,
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          pool: { aToken: true, reserveAsset: true },
-          reserveAsset: true,
-          aToken: true,
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'AavepoolHistoricalData' })
+        { className: 'AavepoolHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.hsmpoolAssetHistData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(HsmpoolAssetHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        HsmpoolAssetHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            asset: true,
+            collateral: { asset: true },
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          asset: true,
-          collateral: { asset: true },
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'HsmpoolAssetHistoricalData' })
+        { className: 'HsmpoolAssetHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.moneyMarketEvents = new Map(
     (
-      await ctx.storeUtils.findWithLogs(MoneyMarketEvent, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        MoneyMarketEvent,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            event: { block: true },
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          event: { block: true },
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'MoneyMarketEvent' })
+        { className: 'MoneyMarketEvent' }
+      )
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.constantsHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(ConstantsHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        ConstantsHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        relations: {
-          block: true,
-        },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'ConstantsHistoricalData' })
+        { className: 'ConstantsHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.assetsHistoricalDataBatch = new Map(
     (
-      await ctx.storeUtils.findWithLogs(AssetHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
-        },
-        relations: {
-          asset: {
-            underlyingAsset: true,
-            aToken: true,
-            variableDebtToken: true,
-            bondUnderlyingAsset: true,
+      await ctx.storeUtils.findWithLogs(
+        AssetHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
           },
-          block: true,
+          relations: {
+            asset: {
+              underlyingAsset: true,
+              aToken: true,
+              variableDebtToken: true,
+              bondUnderlyingAsset: true,
+            },
+            block: true,
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+            id: 'ASC',
+          },
         },
-        order: {
-          paraBlockHeight: 'ASC',
-          id: 'ASC',
-        },
-      }, { className: 'AssetHistoricalData' })
+        { className: 'AssetHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 }

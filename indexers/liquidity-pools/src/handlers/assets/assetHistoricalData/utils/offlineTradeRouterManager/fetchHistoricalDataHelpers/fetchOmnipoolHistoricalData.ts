@@ -6,7 +6,7 @@ import {
   OmnipoolAssetHistoricalData,
   OmnipoolHistoricalData,
 } from '../../../../../../model';
-import { fetchLbpPoolsHistoricalDataForBlocksRange } from './fetchLbpPoolsHistoricalData';
+import { fetchLbpPoolsHistoricalDataForBlocksRangeResolver } from './fetchLbpPoolsHistoricalData';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function fetchOmnipoolHistoricalData({
@@ -20,14 +20,24 @@ export async function fetchOmnipoolHistoricalData({
     ...ctx.batchState.state.omnipoolAssets.values(),
   ].filter((oAsset) => !oAsset.isRemoved);
 
-  const allActiveOmnipoolAssetsPersisted = await ctx.storeUtils.findWithLogs(OmnipoolAsset, {
-    where: {
-      isRemoved: false,
-    },
-    relations: {
-      asset: true,
-    },
-  }, { className: 'OmnipoolAsset' });
+  const allActiveOmnipoolAssetsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        OmnipoolAsset,
+        {
+          where: {
+            isRemoved: false,
+          },
+          relations: {
+            asset: true,
+          },
+        },
+        {
+          className: 'OmnipoolAsset',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allActiveOmnipoolAssets: Map<string, OmnipoolAsset> = new Map([
     ...allActiveOmnipoolAssetsPersisted.map(
@@ -51,28 +61,31 @@ export async function fetchOmnipoolHistoricalData({
       allActiveOmnipoolAssets.has(histData.omnipoolAsset.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
-  const persistedOmnipoolHistData = await ctx.storeUtils.findOneWithLogs(
-    OmnipoolHistoricalData,
-    {
-      where: {
-        paraBlockHeight: blockNumber,
-      },
-      relations: {
-        pool: { account: true },
-        assetsHistoricalData: {
-          omnipoolAsset: true,
-          asset: true,
+  const persistedOmnipoolHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findOneWithLogs(
+        OmnipoolHistoricalData,
+        {
+          where: {
+            paraBlockHeight: blockNumber,
+          },
+          relations: {
+            pool: { account: true },
+            assetsHistoricalData: {
+              omnipoolAsset: true,
+              asset: true,
+            },
+          },
         },
-      },
-    },
-    { className: 'OmnipoolHistoricalData' }
-  );
+        { className: 'OmnipoolHistoricalData' }
+      )
+    : null;
 
-  if (!persistedOmnipoolHistData) return null;
+  // if (!persistedOmnipoolHistData) return null;
 
-  const persistedOmnipoolAssetsHistData = [
-    ...persistedOmnipoolHistData.assetsHistoricalData,
-  ];
+  const persistedOmnipoolAssetsHistData = !!persistedOmnipoolHistData
+    ? [...persistedOmnipoolHistData.assetsHistoricalData]
+    : [];
 
   const omnipoolHistData = cachedOmnipoolHistData ?? persistedOmnipoolHistData;
 
@@ -96,7 +109,7 @@ export async function fetchOmnipoolHistoricalData({
   return omnipoolHistData;
 }
 
-export async function fetchOmnipoolHistoricalDataForBlocksRange({
+export async function fetchOmnipoolHistoricalDataForBlocksRangeResolver({
   blockFromNumber,
   blockToNumber,
   ctx,
@@ -109,24 +122,24 @@ export async function fetchOmnipoolHistoricalDataForBlocksRange({
     ...ctx.batchState.state.omnipoolAssets.values(),
   ].filter((oAsset) => !oAsset.isRemoved);
 
-  const allActiveOmnipoolAssetsPersisted = await ctx.storeUtils.findWithLogs(OmnipoolAsset, {
-    where: {
-      isRemoved: false,
-    },
-    relations: {
-      asset: true,
-    },
-  }, { className: 'OmnipoolAsset' });
-
-  // const allActiveOmnipoolAssets: Map<string, OmnipoolAsset> = new Map([
-  //   ...allActiveOmnipoolAssetsPersisted.map(
-  //     (oAsset): [string, OmnipoolAsset] => [oAsset.asset.id, oAsset]
-  //   ),
-  //   ...allActiveOmnipoolAssetsCached.map((oAsset): [string, OmnipoolAsset] => [
-  //     oAsset.asset.id,
-  //     oAsset,
-  //   ]),
-  // ]);
+  const allActiveOmnipoolAssetsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        OmnipoolAsset,
+        {
+          where: {
+            isRemoved: false,
+          },
+          relations: {
+            asset: true,
+          },
+        },
+        {
+          className: 'OmnipoolAsset',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allActiveOmnipoolAssets = new Map<string, OmnipoolAsset>();
   for (const histData of allActiveOmnipoolAssetsPersisted) {
@@ -153,31 +166,28 @@ export async function fetchOmnipoolHistoricalDataForBlocksRange({
       allActiveOmnipoolAssets.has(item.omnipoolAsset.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
-  const persistedOmnipoolHistData = await ctx.storeUtils.findWithLogs(
-    OmnipoolHistoricalData,
-    {
-      where: {
-        paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-      },
-      relations: {
-        pool: { account: true },
-        assetsHistoricalData: {
-          omnipoolAsset: true,
-          asset: true,
+  const persistedOmnipoolHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        OmnipoolHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+          },
+          relations: {
+            pool: { account: true },
+            assetsHistoricalData: {
+              omnipoolAsset: true,
+              asset: true,
+            },
+          },
         },
-      },
-    },
-    { className: 'OmnipoolHistoricalData' }
-  );
-
-  // const mergedOmnipoolHistDataMap = new Map([
-  //   ...persistedOmnipoolHistData.map(
-  //     (histData): [string, OmnipoolHistoricalData] => [histData.id, histData]
-  //   ),
-  //   ...cachedOmnipoolHistData.map(
-  //     (histData): [string, OmnipoolHistoricalData] => [histData.id, histData]
-  //   ),
-  // ]);
+        {
+          className: 'OmnipoolHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const mergedOmnipoolHistDataMap = new Map<string, OmnipoolHistoricalData>();
   for (const histData of persistedOmnipoolHistData) {
@@ -190,21 +200,6 @@ export async function fetchOmnipoolHistoricalDataForBlocksRange({
   const persistedOmnipoolAssetsHistData = persistedOmnipoolHistData
     .map((poolHisData) => poolHisData.assetsHistoricalData)
     .flat();
-
-  // const mergedOmnipoolAssetHistDataMap = new Map([
-  //   ...persistedOmnipoolAssetsHistData.map(
-  //     (histData): [string, OmnipoolAssetHistoricalData] => [
-  //       histData.id,
-  //       histData,
-  //     ]
-  //   ),
-  //   ...cachedOmnipoolAssetsHistData.map(
-  //     (histData): [string, OmnipoolAssetHistoricalData] => [
-  //       histData.id,
-  //       histData,
-  //     ]
-  //   ),
-  // ]);
 
   const mergedOmnipoolAssetHistDataMap = new Map<
     string,

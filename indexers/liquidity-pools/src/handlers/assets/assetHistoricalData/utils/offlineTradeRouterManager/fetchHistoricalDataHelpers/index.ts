@@ -1,24 +1,24 @@
 export {
   fetchAssetsHistoricalData,
-  fetchAssetsHistoricalDataForBlocksRange,
+  fetchAssetsHistoricalDataForBlocksRangeResolver,
 } from './fetchAssetsHistoricalData';
 export {
   fetchLbpPoolsHistoricalData,
-  fetchLbpPoolsHistoricalDataForBlocksRange,
+  fetchLbpPoolsHistoricalDataForBlocksRangeResolver,
 } from './fetchLbpPoolsHistoricalData';
 export {
   fetchXykPoolsHistoricalData,
-  fetchXykPoolsHistoricalDataForBlocksRange,
+  fetchXykPoolsHistoricalDataForBlocksRangeResolver,
 } from './fetchXykPoolsHistoricalData';
 export {
   fetchStableswapHistoricalData,
-  fetchStableswapHistoricalDataForBlocksRange,
+  fetchStableswapHistoricalDataForBlocksRangeResolver,
 } from './fetchStableswapHistoricalData';
 export {
   fetchOmnipoolHistoricalData,
-  fetchOmnipoolHistoricalDataForBlocksRange,
+  fetchOmnipoolHistoricalDataForBlocksRangeResolver,
 } from './fetchOmnipoolHistoricalData';
 export {
   fetchConstantsHistoricalData,
-  fetchConstantsHistoricalDataForBlocksRange,
+  fetchConstantsHistoricalDataForBlocksRangeResolver,
 } from './fetchConstantsHistoricalData';

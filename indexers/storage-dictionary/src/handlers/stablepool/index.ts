@@ -15,8 +15,7 @@ import { blake2AsHex } from '@polkadot/util-crypto';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { AccountData } from '../../parsers/types/storage';
 import { MinifiedDataStructuresManager } from '../../utils/minifiedDataStructuresManager';
-import { getXykpoolHistDataWithUniqueData } from '../xykPool/utils';
-import { getStableswapHistDataWithUniqueData } from './utils';
+import pMap from 'p-map';
 import { handleMmAggregatorOracleHistoricalData } from '../oracles/mmAggregatorOracle/historicalData';
 
 export async function handleStablepoolStorage(
@@ -99,6 +98,8 @@ export async function handleStablepoolStorage(
     ).map((item) => [`${item.poolAddress}-${item.assetId}`, item])
   );
 
+  const allMmAggregatorOraclesToBeProcessed: Set<string> = new Set();
+
   for (const {
     poolId,
     poolAddress,
@@ -136,8 +137,12 @@ export async function handleStablepoolStorage(
             oraclePeriod = null,
             oracleAsset = null,
             valuePoints = null,
-          }) =>
-            new StableswapPegsSource({
+          }) => {
+            if (sourceKind === 'MMOracle' && oracleName) {
+              allMmAggregatorOraclesToBeProcessed.add(oracleName);
+            }
+
+            return new StableswapPegsSource({
               sourceKind,
               oracleName,
               oraclePeriod,
@@ -145,7 +150,8 @@ export async function handleStablepoolStorage(
               valuePoints: valuePoints
                 ? valuePoints.map((vp) => vp.toString())
                 : null,
-            })
+            });
+          }
         ),
       };
     };
@@ -192,6 +198,19 @@ export async function handleStablepoolStorage(
 
     stablepools.set(newPoolEntity.id, newPoolEntity);
   }
+
+  await pMap(
+    Array.from(allMmAggregatorOraclesToBeProcessed.values()),
+    async (address) =>
+      handleMmAggregatorOracleHistoricalData({
+        address,
+        blockHeader: currentBlockHeader,
+        ctx,
+      }),
+    {
+      concurrency: ctx.appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY,
+    }
+  );
 
   if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
     await ctx.store.save([...stablepools.values()]);

@@ -486,6 +486,17 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: number = 300;
 
+  /**
+   * Can be configured to "false" in case normal mono-processor run. In normal
+   * processing flow spot price calculation requires data which already must be
+   * existing in current batch cache. If processing is happening in multiple
+   * processors of multiple layers, this variable must be set to "true", to be
+   * sure that all required for spot price data are existing in cache.
+   *
+   */
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE: boolean = true;
+
   @Transform(({ value }: { value: string }) =>
     value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id))
   )

@@ -13,13 +13,20 @@ export async function fetchAavePoolsHistoricalData({
 }) {
   const allPoolsCached = [...ctx.batchState.state.aavePools.values()];
 
-  const allPoolsPersisted = await ctx.storeUtils.findWithLogs(Aavepool, {
-    where: {},
-    relations: {
-      reserveAsset: true,
-      aToken: true,
+  const allPoolsPersisted = await ctx.storeUtils.findWithLogs(
+    Aavepool,
+    {
+      where: {},
+      relations: {
+        reserveAsset: true,
+        aToken: true,
+      },
     },
-  }, { className: 'Aavepool' });
+    {
+      className: 'Aavepool',
+      originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+    }
+  );
 
   const allPools: Map<string, Aavepool> = new Map([
     ...allPoolsCached.map((pool): [string, Aavepool] => [pool.id, pool]),
@@ -31,21 +38,28 @@ export async function fetchAavePoolsHistoricalData({
   ].filter(
     (item) => item.paraBlockHeight === blockNumber && allPools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
-  const persistedHistData = await ctx.storeUtils.findWithLogs(AavepoolHistoricalData, {
-    where: {
-      // paraBlockHeight: LessThanOrEqual(blockNumber),
-      paraBlockHeight: blockNumber,
-      pool: {
-        id: In([...allPools.keys()]),
+  const persistedHistData = await ctx.storeUtils.findWithLogs(
+    AavepoolHistoricalData,
+    {
+      where: {
+        // paraBlockHeight: LessThanOrEqual(blockNumber),
+        paraBlockHeight: blockNumber,
+        pool: {
+          id: In([...allPools.keys()]),
+        },
+        ...(cachedHistData.length > 0
+          ? { id: Not(In(cachedHistData.map((i) => i.id))) }
+          : {}),
       },
-      ...(cachedHistData.length > 0
-        ? { id: Not(In(cachedHistData.map((i) => i.id))) }
-        : {}),
+      relations: {
+        pool: { reserveAsset: true, aToken: true },
+      },
     },
-    relations: {
-      pool: { reserveAsset: true, aToken: true },
-    },
-  }, { className: 'AavepoolHistoricalData' });
+    {
+      className: 'AavepoolHistoricalData',
+      originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+    }
+  );
 
   return new Map([
     ...persistedHistData.map((histData): [string, AavepoolHistoricalData] => [
@@ -59,7 +73,7 @@ export async function fetchAavePoolsHistoricalData({
   ]);
 }
 
-export async function fetchAavePoolsHistoricalDataForBlocksRange({
+export async function fetchAavePoolsHistoricalDataForBlocksRangeResolver({
   blockFromNumber,
   blockToNumber,
   ctx,
@@ -70,18 +84,23 @@ export async function fetchAavePoolsHistoricalDataForBlocksRange({
 }) {
   const allPoolsCached = [...ctx.batchState.state.aavePools.values()];
 
-  const allPoolsPersisted = await ctx.storeUtils.findWithLogs(Aavepool, {
-    where: {},
-    relations: {
-      reserveAsset: true,
-      aToken: true,
-    },
-  }, { className: 'Aavepool' });
-
-  // const allPools: Map<string, Aavepool> = new Map([
-  //   ...allPoolsCached.map((pool): [string, Aavepool] => [pool.id, pool]),
-  //   ...allPoolsPersisted.map((pool): [string, Aavepool] => [pool.id, pool]),
-  // ]);
+  const allPoolsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        Aavepool,
+        {
+          where: {},
+          relations: {
+            reserveAsset: true,
+            aToken: true,
+          },
+        },
+        {
+          className: 'Aavepool',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allPools = new Map<string, Aavepool>();
   for (const histData of allPoolsPersisted) {
@@ -99,31 +118,30 @@ export async function fetchAavePoolsHistoricalDataForBlocksRange({
       item.paraBlockHeight < blockToNumber + 1 &&
       allPools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
-  const persistedHistData = await ctx.storeUtils.findWithLogs(AavepoolHistoricalData, {
-    where: {
-      paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-      pool: {
-        id: In([...allPools.keys()]),
-      },
-      ...(cachedHistData.length > 0
-        ? { id: Not(In(cachedHistData.map((i) => i.id))) }
-        : {}),
-    },
-    relations: {
-      pool: { reserveAsset: true, aToken: true },
-    },
-  }, { className: 'AavepoolHistoricalData' });
-
-  // const mergedDataMap = new Map([
-  //   ...persistedHistData.map((histData): [string, AavepoolHistoricalData] => [
-  //     histData.id,
-  //     histData,
-  //   ]),
-  //   ...cachedHistData.map((histData): [string, AavepoolHistoricalData] => [
-  //     histData.id,
-  //     histData,
-  //   ]),
-  // ]);
+  const persistedHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        AavepoolHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+            pool: {
+              id: In([...allPools.keys()]),
+            },
+            ...(cachedHistData.length > 0
+              ? { id: Not(In(cachedHistData.map((i) => i.id))) }
+              : {}),
+          },
+          relations: {
+            pool: { reserveAsset: true, aToken: true },
+          },
+        },
+        {
+          className: 'AavepoolHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const mergedDataMap = new Map<string, AavepoolHistoricalData>();
   for (const histData of persistedHistData) {

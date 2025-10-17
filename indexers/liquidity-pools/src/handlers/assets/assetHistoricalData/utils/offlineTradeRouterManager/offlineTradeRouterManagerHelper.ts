@@ -18,12 +18,12 @@ import {
   fetchStableswapHistoricalData,
   fetchOmnipoolHistoricalData,
   fetchConstantsHistoricalData,
-  fetchConstantsHistoricalDataForBlocksRange,
-  fetchAssetsHistoricalDataForBlocksRange,
-  fetchLbpPoolsHistoricalDataForBlocksRange,
-  fetchXykPoolsHistoricalDataForBlocksRange,
-  fetchStableswapHistoricalDataForBlocksRange,
-  fetchOmnipoolHistoricalDataForBlocksRange,
+  fetchConstantsHistoricalDataForBlocksRangeResolver,
+  fetchAssetsHistoricalDataForBlocksRangeResolver,
+  fetchLbpPoolsHistoricalDataForBlocksRangeResolver,
+  fetchXykPoolsHistoricalDataForBlocksRangeResolver,
+  fetchStableswapHistoricalDataForBlocksRangeResolver,
+  fetchOmnipoolHistoricalDataForBlocksRangeResolver,
 } from './fetchHistoricalDataHelpers';
 
 import {
@@ -46,15 +46,16 @@ import {
 } from '../../../../../utils/helpers';
 import {
   fetchAavePoolsHistoricalData,
-  fetchAavePoolsHistoricalDataForBlocksRange,
+  fetchAavePoolsHistoricalDataForBlocksRangeResolver,
 } from './fetchHistoricalDataHelpers/fetchAavePoolsHistoricalData';
 import {
   fetchEmaOracleEntriesHistoricalData,
-  fetchEmaOracleEntriesHistoricalDataForBlocksRange,
+  fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver,
 } from './fetchHistoricalDataHelpers/fetchEmaOraclesHistoricalData';
 import pMap from 'p-map';
 import { MmOracleManager } from '../../../../../utils/evmTools/mmOracleEvmManager';
 import { StorageResolver } from '../../../../../parsers/storageResolver';
+import { getHydratedLogger } from '../../../../../utils/hydratedLogger';
 
 export class OfflineTradeRouterManagerHelper {
   protected SUPPORTED_ASSET_TYPES_SET = new Set([
@@ -125,77 +126,165 @@ export class OfflineTradeRouterManagerHelper {
     ctx: SqdProcessorContext<Store>;
   }) {
     const blockNumbersSorted = blockNumbers.sort((a, b) => a - b);
-
     const promises = [
-      this.fetchConstantsHistoricalDataForBlocksRange({
-        ctx,
-        blockFromNumber: blockNumbersSorted[0],
-        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      ctx.extLogger.measure({
+        fn: () =>
+          this.fetchConstantsHistoricalDataForBlocksRange({
+            ctx,
+            blockFromNumber: blockNumbersSorted[0],
+            blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+          }),
+        name: 'fetchConstantsHistoricalDataForBlocksRange',
+        actionType: 'other',
+        meta: {
+          originFnName: 'prefetchAllHistoricalData',
+        },
+        options: {
+          ignoreConsoleLogs: true,
+        },
       }),
-      this.fetchEmaOraclesHistoricalDataForBlocksRange({
-        ctx,
-        blockFromNumber: blockNumbersSorted[0],
-        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      ctx.extLogger.measure({
+        fn: () =>
+          this.fetchEmaOraclesHistoricalDataForBlocksRange({
+            ctx,
+            blockFromNumber: blockNumbersSorted[0],
+            blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+          }),
+        name: 'fetchEmaOraclesHistoricalDataForBlocksRange',
+        actionType: 'other',
+        meta: {
+          originFnName: 'prefetchAllHistoricalData',
+        },
+        options: {
+          ignoreConsoleLogs: true,
+        },
       }),
-      this.fetchAssetsHistoricalDataForBlocksRange({
-        ctx,
-        blockFromNumber: blockNumbersSorted[0],
-        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      ctx.extLogger.measure({
+        fn: () =>
+          this.fetchAssetsHistoricalDataForBlocksRange({
+            ctx,
+            blockFromNumber: blockNumbersSorted[0],
+            blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+          }),
+        name: 'fetchAssetsHistoricalDataForBlocksRange',
+        actionType: 'other',
+        meta: {
+          originFnName: 'prefetchAllHistoricalData',
+        },
+        options: {
+          ignoreConsoleLogs: true,
+        },
       }),
-      this.fetchLbpPoolsHistoricalDataForBlocksRange({
-        ctx,
-        blockFromNumber: blockNumbersSorted[0],
-        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      ctx.extLogger.measure({
+        fn: () =>
+          this.fetchLbpPoolsHistoricalDataForBlocksRange({
+            ctx,
+            blockFromNumber: blockNumbersSorted[0],
+            blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+          }),
+        name: 'fetchLbpPoolsHistoricalDataForBlocksRange',
+        actionType: 'other',
+        meta: {
+          originFnName: 'prefetchAllHistoricalData',
+        },
+        options: {
+          ignoreConsoleLogs: true,
+        },
       }),
-      this.fetchStableswapHistoricalDataForBlocksRange({
-        ctx,
-        blockFromNumber: blockNumbersSorted[0],
-        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      ctx.extLogger.measure({
+        fn: () =>
+          this.fetchStableswapHistoricalDataForBlocksRange({
+            ctx,
+            blockFromNumber: blockNumbersSorted[0],
+            blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+          }),
+        name: 'fetchStableswapHistoricalDataForBlocksRange',
+        actionType: 'other',
+        meta: {
+          originFnName: 'prefetchAllHistoricalData',
+        },
+        options: {
+          ignoreConsoleLogs: true,
+        },
       }),
-      this.fetchOmnipoolHistoricalDataForBlocksRange({
-        ctx,
-        blockFromNumber: blockNumbersSorted[0],
-        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      ctx.extLogger.measure({
+        fn: () =>
+          this.fetchOmnipoolHistoricalDataForBlocksRange({
+            ctx,
+            blockFromNumber: blockNumbersSorted[0],
+            blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+          }),
+        name: 'fetchOmnipoolHistoricalDataForBlocksRange',
+        actionType: 'other',
+        meta: {
+          originFnName: 'prefetchAllHistoricalData',
+        },
+        options: {
+          ignoreConsoleLogs: true,
+        },
       }),
-      this.fetchAavePoolsHistoricalDataForBlocksRange({
-        ctx,
-        blockFromNumber: blockNumbersSorted[0],
-        blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+      ctx.extLogger.measure({
+        fn: () =>
+          this.fetchAavePoolsHistoricalDataForBlocksRange({
+            ctx,
+            blockFromNumber: blockNumbersSorted[0],
+            blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+          }),
+        name: 'fetchAavePoolsHistoricalDataForBlocksRange',
+        actionType: 'other',
+        meta: {
+          originFnName: 'prefetchAllHistoricalData',
+        },
+        options: {
+          ignoreConsoleLogs: true,
+        },
       }),
     ];
 
     if (ctx.appConfig.USE_XYKPOOLS_DATA_IN_TRADE_ROUTER)
       promises.push(
-        this.fetchXykPoolsHistoricalDataForBlocksRange({
-          ctx,
-          blockFromNumber: blockNumbersSorted[0],
-          blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+        ctx.extLogger.measure({
+          fn: () =>
+            this.fetchXykPoolsHistoricalDataForBlocksRange({
+              ctx,
+              blockFromNumber: blockNumbersSorted[0],
+              blockToNumber: blockNumbersSorted[blockNumbersSorted.length - 1],
+            }),
+          name: 'fetchXykPoolsHistoricalDataForBlocksRange',
+          actionType: 'other',
+          meta: {
+            originFnName: 'prefetchAllHistoricalData',
+          },
+          options: {
+            ignoreConsoleLogs: true,
+          },
         })
       );
 
     await Promise.all(promises);
   }
 
-  protected async prefetchAllHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    this.ensureHistDataStorage([blockNumber]);
-
-    await Promise.all([
-      this.fetchConstantsHistoricalDataForBlock({ ctx, blockNumber }),
-      this.fetchEmaOraclesHistoricalDataForBlock({ ctx, blockNumber }),
-      this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber }),
-      this.fetchLbpPoolsHistoricalDataForBlock({ ctx, blockNumber }),
-      this.fetchXykPoolsHistoricalDataForBlock({ ctx, blockNumber }),
-      this.fetchStableswapHistoricalDataForBlock({ ctx, blockNumber }),
-      this.fetchOmnipoolHistoricalDataForBlock({ ctx, blockNumber }),
-      this.fetchAavePoolsHistoricalDataForBlock({ ctx, blockNumber }),
-    ]);
-  }
+  // TODO should be reviewed and removed
+  // protected async prefetchAllHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   this.ensureHistDataStorage([blockNumber]);
+  //
+  //   await Promise.all([
+  //     this.fetchConstantsHistoricalDataForBlock({ ctx, blockNumber }),
+  //     this.fetchEmaOraclesHistoricalDataForBlock({ ctx, blockNumber }),
+  //     this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber }),
+  //     this.fetchLbpPoolsHistoricalDataForBlock({ ctx, blockNumber }),
+  //     this.fetchXykPoolsHistoricalDataForBlock({ ctx, blockNumber }),
+  //     this.fetchStableswapHistoricalDataForBlock({ ctx, blockNumber }),
+  //     this.fetchOmnipoolHistoricalDataForBlock({ ctx, blockNumber }),
+  //     this.fetchAavePoolsHistoricalDataForBlock({ ctx, blockNumber }),
+  //   ]);
+  // }
 
   protected async fetchConstantsHistoricalDataForBlock({
     blockNumber,
@@ -315,7 +404,7 @@ export class OfflineTradeRouterManagerHelper {
     blockToNumber: number;
     ctx: SqdProcessorContext<Store>;
   }) {
-    const histData = await fetchConstantsHistoricalDataForBlocksRange({
+    const histData = await fetchConstantsHistoricalDataForBlocksRangeResolver({
       blockFromNumber,
       blockToNumber,
       ctx,
@@ -337,11 +426,13 @@ export class OfflineTradeRouterManagerHelper {
     blockToNumber: number;
     ctx: SqdProcessorContext<Store>;
   }) {
-    this.assetsHistData = await fetchAssetsHistoricalDataForBlocksRange({
-      blockFromNumber,
-      blockToNumber,
-      ctx,
-    });
+    this.assetsHistData = await fetchAssetsHistoricalDataForBlocksRangeResolver(
+      {
+        blockFromNumber,
+        blockToNumber,
+        ctx,
+      }
+    );
   }
 
   protected async fetchEmaOraclesHistoricalDataForBlocksRange({
@@ -354,7 +445,7 @@ export class OfflineTradeRouterManagerHelper {
     ctx: SqdProcessorContext<Store>;
   }) {
     this.emaOraclesHistData =
-      await fetchEmaOracleEntriesHistoricalDataForBlocksRange({
+      await fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver({
         blockFromNumber,
         blockToNumber,
         ctx,
@@ -370,11 +461,12 @@ export class OfflineTradeRouterManagerHelper {
     blockToNumber: number;
     ctx: SqdProcessorContext<Store>;
   }) {
-    this.lbppoolsHistData = await fetchLbpPoolsHistoricalDataForBlocksRange({
-      blockFromNumber,
-      blockToNumber,
-      ctx,
-    });
+    this.lbppoolsHistData =
+      await fetchLbpPoolsHistoricalDataForBlocksRangeResolver({
+        blockFromNumber,
+        blockToNumber,
+        ctx,
+      });
   }
 
   protected async fetchXykPoolsHistoricalDataForBlocksRange({
@@ -386,11 +478,12 @@ export class OfflineTradeRouterManagerHelper {
     blockToNumber: number;
     ctx: SqdProcessorContext<Store>;
   }) {
-    this.xykpoolsHistData = await fetchXykPoolsHistoricalDataForBlocksRange({
-      blockFromNumber,
-      blockToNumber,
-      ctx,
-    });
+    this.xykpoolsHistData =
+      await fetchXykPoolsHistoricalDataForBlocksRangeResolver({
+        blockFromNumber,
+        blockToNumber,
+        ctx,
+      });
   }
 
   protected async fetchAavePoolsHistoricalDataForBlocksRange({
@@ -402,11 +495,12 @@ export class OfflineTradeRouterManagerHelper {
     blockToNumber: number;
     ctx: SqdProcessorContext<Store>;
   }) {
-    this.aavepoolsHistData = await fetchAavePoolsHistoricalDataForBlocksRange({
-      blockFromNumber,
-      blockToNumber,
-      ctx,
-    });
+    this.aavepoolsHistData =
+      await fetchAavePoolsHistoricalDataForBlocksRangeResolver({
+        blockFromNumber,
+        blockToNumber,
+        ctx,
+      });
   }
 
   protected async fetchStableswapHistoricalDataForBlocksRange({
@@ -418,13 +512,12 @@ export class OfflineTradeRouterManagerHelper {
     blockToNumber: number;
     ctx: SqdProcessorContext<Store>;
   }) {
-    this.stableswapHistData = await fetchStableswapHistoricalDataForBlocksRange(
-      {
+    this.stableswapHistData =
+      await fetchStableswapHistoricalDataForBlocksRangeResolver({
         blockFromNumber,
         blockToNumber,
         ctx,
-      }
-    );
+      });
 
     const mmOracleContractCalls: { blockHeight: number; address: string }[] =
       [];
@@ -442,19 +535,26 @@ export class OfflineTradeRouterManagerHelper {
       }
     }
 
-    await pMap(mmOracleContractCalls, async ({ address, blockHeight }) => {
-      const oracleData =
-        StorageResolver.getInstance().storageDictionaryManager?.getMmAggregatorOracle(
-          { address, blockHeight }
-        ) ||
-        (await MmOracleManager.getInstance().getAggregatorMmOracleData({
-          address,
-          blockHeight,
-        }));
+    await pMap(
+      mmOracleContractCalls,
+      async ({ address, blockHeight }) => {
+        const oracleData =
+          StorageResolver.getInstance().storageDictionaryManager?.getMmAggregatorOracle(
+            { address, blockHeight }
+          ) ||
+          (await MmOracleManager.getInstance().getAggregatorMmOracleData({
+            address,
+            blockHeight,
+          }));
 
-      if (oracleData)
-        this.mmOraclesHistData.get(blockHeight)?.set(address, oracleData);
-    });
+        if (oracleData)
+          this.mmOraclesHistData.get(blockHeight)?.set(address, oracleData);
+      },
+      {
+        concurrency:
+          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+      }
+    );
   }
 
   protected async fetchOmnipoolHistoricalDataForBlocksRange({
@@ -466,11 +566,12 @@ export class OfflineTradeRouterManagerHelper {
     blockToNumber: number;
     ctx: SqdProcessorContext<Store>;
   }) {
-    const historicalData = await fetchOmnipoolHistoricalDataForBlocksRange({
-      blockFromNumber,
-      blockToNumber,
-      ctx,
-    });
+    const historicalData =
+      await fetchOmnipoolHistoricalDataForBlocksRangeResolver({
+        blockFromNumber,
+        blockToNumber,
+        ctx,
+      });
     if (!historicalData) return;
     this.omnipoolHistData = historicalData;
   }

@@ -1,12 +1,7 @@
 import { SqdProcessorContext } from '../../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  AssetHistoricalData,
-  Lbppool,
-  LbppoolHistoricalData,
-} from '../../../../../../model';
+import { Lbppool, LbppoolHistoricalData } from '../../../../../../model';
 import { In, Not } from 'typeorm';
-import { fetchAssetsHistoricalDataForBlocksRange } from './fetchAssetsHistoricalData';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function fetchLbpPoolsHistoricalData({
@@ -20,18 +15,28 @@ export async function fetchLbpPoolsHistoricalData({
     ...ctx.batchState.state.lbpAllBatchPools.values(),
   ].filter((item) => !item.isDestroyed);
 
-  const allActivePoolsPersisted = await ctx.storeUtils.findWithLogs(Lbppool, {
-    where: {
-      isDestroyed: false,
-    },
-    relations: {
-      account: true,
-      assetA: true,
-      assetB: true,
-      owner: true,
-      feeCollector: true,
-    },
-  }, { className: 'Lbppool' });
+  const allActivePoolsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        Lbppool,
+        {
+          where: {
+            isDestroyed: false,
+          },
+          relations: {
+            account: true,
+            assetA: true,
+            assetB: true,
+            owner: true,
+            feeCollector: true,
+          },
+        },
+        {
+          className: 'Lbppool',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allActivePools: Map<string, Lbppool> = new Map([
     ...allActivePoolsCached.map((pool): [string, Lbppool] => [pool.id, pool]),
@@ -48,25 +53,35 @@ export async function fetchLbpPoolsHistoricalData({
       item.paraBlockHeight === blockNumber && allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
-  const persistedHistData = await ctx.storeUtils.findWithLogs(LbppoolHistoricalData, {
-    where: {
-      // paraBlockHeight: LessThanOrEqual(blockNumber),
-      paraBlockHeight: blockNumber,
-      pool: {
-        id: In([...allActivePools.keys()]),
-      },
-      ...(cachedHistData.length > 0
-        ? { id: Not(In(cachedHistData.map((i) => i.id))) }
-        : {}),
-    },
-    relations: {
-      pool: { account: true },
-      assetA: true,
-      assetB: true,
-      owner: true,
-      feeCollector: true,
-    },
-  }, { className: 'LbppoolHistoricalData' });
+  const persistedHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        LbppoolHistoricalData,
+        {
+          where: {
+            // paraBlockHeight: LessThanOrEqual(blockNumber),
+            paraBlockHeight: blockNumber,
+            pool: {
+              id: In([...allActivePools.keys()]),
+            },
+            ...(cachedHistData.length > 0
+              ? { id: Not(In(cachedHistData.map((i) => i.id))) }
+              : {}),
+          },
+          relations: {
+            pool: { account: true },
+            assetA: true,
+            assetB: true,
+            owner: true,
+            feeCollector: true,
+          },
+        },
+        {
+          className: 'LbppoolHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   return new Map([
     ...persistedHistData.map((histData): [string, LbppoolHistoricalData] => [
@@ -80,7 +95,7 @@ export async function fetchLbpPoolsHistoricalData({
   ]);
 }
 
-export async function fetchLbpPoolsHistoricalDataForBlocksRange({
+export async function fetchLbpPoolsHistoricalDataForBlocksRangeResolver({
   blockFromNumber,
   blockToNumber,
   ctx,
@@ -93,18 +108,28 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
     ...ctx.batchState.state.lbpAllBatchPools.values(),
   ].filter((item) => !item.isDestroyed);
 
-  const allActivePoolsPersisted = await ctx.storeUtils.findWithLogs(Lbppool, {
-    where: {
-      isDestroyed: false,
-    },
-    relations: {
-      account: true,
-      assetA: true,
-      assetB: true,
-      owner: true,
-      feeCollector: true,
-    },
-  }, { className: 'Lbppool' });
+  const allActivePoolsPersisted = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        Lbppool,
+        {
+          where: {
+            isDestroyed: false,
+          },
+          relations: {
+            account: true,
+            assetA: true,
+            assetB: true,
+            owner: true,
+            feeCollector: true,
+          },
+        },
+        {
+          className: 'Lbppool',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const allActivePools = new Map<string, Lbppool>();
   for (const histData of allActivePoolsPersisted) {
@@ -123,24 +148,34 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRange({
       allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
-  const persistedHistData = await ctx.storeUtils.findWithLogs(LbppoolHistoricalData, {
-    where: {
-      paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-      pool: {
-        id: In([...allActivePools.keys()]),
-      },
-      ...(cachedHistData.length > 0
-        ? { id: Not(In(cachedHistData.map((i) => i.id))) }
-        : {}),
-    },
-    relations: {
-      pool: { account: true },
-      assetA: true,
-      assetB: true,
-      owner: true,
-      feeCollector: true,
-    },
-  }, { className: 'LbppoolHistoricalData' });
+  const persistedHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        LbppoolHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+            pool: {
+              id: In([...allActivePools.keys()]),
+            },
+            ...(cachedHistData.length > 0
+              ? { id: Not(In(cachedHistData.map((i) => i.id))) }
+              : {}),
+          },
+          relations: {
+            pool: { account: true },
+            assetA: true,
+            assetB: true,
+            owner: true,
+            feeCollector: true,
+          },
+        },
+        {
+          className: 'LbppoolHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
 
   const mergedDataMap = new Map<string, LbppoolHistoricalData>();
   for (const histData of persistedHistData) {
