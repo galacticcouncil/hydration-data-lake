@@ -34,13 +34,14 @@ jobs:
         id: echo
         shell: bash
         env:
-          INDEXER_PARAMS: ${{ steps.indexer-name-slot-extraction.outputs.indexer_params }}
-          INDEXER_PARAMS_NAME: ${{ steps.indexer-name-slot-extraction.outputs.indexer_params.indexerName }}
-          INDEXER_PARAMS_SLOT: ${{ steps.indexer-name-slot-extraction.outputs.indexer_params.indexerSlot }}
+          INDEXER_PARAMS: ${{ steps.indexer-name-slot-extraction.outputs.result }}
+          INDEXER_NAME: ${{ fromJSON(steps.indexer-name-slot-extraction.outputs.result).indexerName }}
+          INDEXER_SLOT: ${{ fromJSON(steps.indexer-name-slot-extraction.outputs.result).indexerSlot }}
         run: |
-          echo $INDEXER_PARAMS
-          echo $INDEXER_PARAMS_NAME
-          echo $INDEXER_PARAMS_SLOT
+          echo "Full params: $INDEXER_PARAMS"
+          echo "Name: $INDEXER_NAME"
+          echo "Slot: $INDEXER_SLOT"
+
 
 #
 #      - name: Set IMAGE_TAG based on branch
