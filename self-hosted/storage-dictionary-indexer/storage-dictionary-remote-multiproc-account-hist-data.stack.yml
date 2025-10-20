@@ -7,7 +7,7 @@ x-storage-dictionary-g-hist-db-creds: &storage-dictionary-g-hist-db-creds
   DB_NAME: ""
   DB_USER: ""
   DB_PASS: ""
-  DB_HOST: "pg.squid.subsquid.io"
+  DB_HOST: ""
 
 x-processor-unit-envs: &processor-unit-envs
   NODE_ENV: "self-hosted"
@@ -29,6 +29,7 @@ x-processor-unit-envs: &processor-unit-envs
   RUNTIME_API_CALLS_CONCURRENCY: 5
   ASSETS_TRACKER_PROCESSOR: "false"
   PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
+  INDEXING_IS_PAUSED: "false"
 
 x-common-db-setup: &common-db-setup
   image: postgres:15
@@ -39,7 +40,7 @@ x-common-db-setup: &common-db-setup
       condition: on-failure
 
 x-common-processor-setup: &common-processor-setup
-  image: ghcr.io/mckrava/storage-dictionary-indexer:e989d9bacbc5301bc06e5da959878f23d27d0680
+  image: ghcr.io/mckrava/storage-dictionary-indexer:353c76d931e6f05cfc05642c19d4bdcce7eeaadd
   networks:
     - default
   command:
@@ -63,6 +64,7 @@ x-g-hist-services-setup: &g-hist-services-setup
       PROCESS_ACCOUNTS: "true"
       STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_1"
       ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8"
+      INDEXING_IS_PAUSED: "true"
 
   g-hist-stor-dict-proc-2:
     <<: *common-processor-setup
@@ -73,6 +75,7 @@ x-g-hist-services-setup: &g-hist-services-setup
       PROCESS_ACCOUNTS: "true"
       STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_2"
       ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8"
+      INDEXING_IS_PAUSED: "true"
 
   g-hist-stor-dict-proc-3:
     <<: *common-processor-setup
@@ -83,6 +86,7 @@ x-g-hist-services-setup: &g-hist-services-setup
       PROCESS_ACCOUNTS: "true"
       STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_3"
       ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8"
+      INDEXING_IS_PAUSED: "true"
 
   g-hist-stor-dict-proc-4:
     <<: *common-processor-setup
@@ -93,6 +97,7 @@ x-g-hist-services-setup: &g-hist-services-setup
       PROCESS_ACCOUNTS: "true"
       STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_4"
       ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_4"
+      INDEXING_IS_PAUSED: "true"
 
   g-hist-stor-dict-proc-5:
     <<: *common-processor-setup
@@ -123,24 +128,126 @@ x-g-hist-services-setup: &g-hist-services-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
       PROCESS_FROM_BLOCK: 7500001
-      PROCESS_TO_BLOCK: 8000000
+      PROCESS_TO_BLOCK: 7750000
       PROCESS_ACCOUNTS: "true"
       STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_7"
       ASSETS_TRACKER_PROCESSOR: "false"
       ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8"
-      INDEXING_IS_PAUSED: "true"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-dir.kril.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-dir.kril.hydration.cloud"
+
+  g-hist-stor-dict-proc-7-2:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+      PROCESS_FROM_BLOCK: 7750001
+      PROCESS_TO_BLOCK: 7850000
+      PROCESS_ACCOUNTS: "true"
+      STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_7_2"
+      ASSETS_TRACKER_PROCESSOR: "false"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-subwhale-3.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-3.shellfish.hydration.cloud"
+
+  g-hist-stor-dict-proc-7-3:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+      PROCESS_FROM_BLOCK: 7850001
+      PROCESS_TO_BLOCK: 8000000
+      PROCESS_ACCOUNTS: "true"
+      STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_7_3"
+      ASSETS_TRACKER_PROCESSOR: "false"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-subwhale-4.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-4.shellfish.hydration.cloud"
 
   g-hist-stor-dict-proc-8:
     <<: *common-processor-setup
     environment:
       <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
       PROCESS_FROM_BLOCK: 8000001
-      PROCESS_TO_BLOCK: -1
+      PROCESS_TO_BLOCK: 8135000
       PROCESS_ACCOUNTS: "true"
       STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8"
       ASSETS_TRACKER_PROCESSOR: "true"
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8"
-      INDEXING_IS_PAUSED: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-subwhale-5.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-5.shellfish.hydration.cloud"
+
+  g-hist-stor-dict-proc-8-2:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+      PROCESS_FROM_BLOCK: 8135001
+      PROCESS_TO_BLOCK: 8300000
+      PROCESS_ACCOUNTS: "true"
+      STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_2"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-subwhale-6.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-6.shellfish.hydration.cloud"
+
+  g-hist-stor-dict-proc-8-3:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+      PROCESS_FROM_BLOCK: 8300001
+      PROCESS_TO_BLOCK: 8550000
+      PROCESS_ACCOUNTS: "true"
+      STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_3"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-subwhale-7.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-7.shellfish.hydration.cloud"
+
+  g-hist-stor-dict-proc-8-4:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+      PROCESS_FROM_BLOCK: 8550001
+      PROCESS_TO_BLOCK: 8750000
+      PROCESS_ACCOUNTS: "true"
+      STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_4"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-subwhale-8.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-8.shellfish.hydration.cloud"
+
+  g-hist-stor-dict-proc-8-5:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+      PROCESS_FROM_BLOCK: 8750001
+      PROCESS_TO_BLOCK: 8950000
+      PROCESS_ACCOUNTS: "true"
+      STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_5"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-subwhale-9.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-9.shellfish.hydration.cloud"
+
+  g-hist-stor-dict-proc-8-6:
+    <<: *common-processor-setup
+    environment:
+      <<: [*processor-unit-envs, *storage-dictionary-g-hist-db-creds]
+      PROCESS_FROM_BLOCK: 8950001
+      PROCESS_TO_BLOCK: -1
+      PROCESS_ACCOUNTS: "true"
+      STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      ASSETS_TRACKER_PROCESSOR: "true"
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: "acc_hist_data__batch_proc_8_6"
+      INDEXING_IS_PAUSED: "false"
+      RPC_URL: "wss://node-subwhale-10.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-10.shellfish.hydration.cloud"
 
 #  g-hist-stor-dict-proc-assets-tracker:
 #    <<: *common-processor-setup

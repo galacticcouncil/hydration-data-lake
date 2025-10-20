@@ -154,13 +154,15 @@ deploy:
     - name: batch-proc-8
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://node-dir.kril.hydration.cloud
+        RPC_URL: wss://node-subwhale.kril.hydration.cloud
+        RPC_URL_HTTPS: https://node-subwhale.kril.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
         PROCESS_OMNIPOOLS: false
         PROCESS_STABLEPOOLS: false
         PROCESS_GENERIC_HIST_DATA: true
+        PROCESS_ACCOUNTS: false
         INDEXING_IS_PAUSED: false
         PROCESS_ONLY_MISSED_BLOCKS: false
         GQL_PORT: 8080
@@ -233,7 +235,7 @@ scale:
   addons:
     postgres:
       profile: large
-      storage: 300G
+      storage: 500G
   processor:
     profile: large
   api:

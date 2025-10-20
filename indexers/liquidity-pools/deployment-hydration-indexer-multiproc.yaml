@@ -51,6 +51,8 @@ deploy:
         STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
         STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
         STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
+        STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql'
+
       cmd:
         - sqd
         - process:prod
@@ -97,46 +99,46 @@ deploy:
         - sqd
         - process:prod
 
-#    - name: spot-price-proc-2
-#      env:
-#        CHAIN: 'hydration'
-#        INDEXER_ID: 725
-#        RPC_URL: 'wss://3.rpc.hydration.cloud'
-#        RPC_URL_HTTPS: 'https://archive.rpc.hydration.cloud'
-#        NODE_OPTIONS: '--max-old-space-size=4048'
-#        GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
-#
-#        ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-#        MAX_JOB_BATCH_SIZE: 10
-#
-#        PROCESS_LBP_POOLS: true
-#        PROCESS_XYK_POOLS: true
-#        PROCESS_OMNIPOOLS: true
-#        PROCESS_STABLEPOOLS: true
-#        PROCESS_DCA: true
-#        PROCESS_OTC: true
-#        NODE_ENV: 'production'
-#        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-#        UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-#        INDEXING_IS_PAUSED: false
-#        ALL_IN_ONE_PROCESSOR_MODE: false
-#        IS_CORE_PROCESSOR: false
-#        IS_SPOT_PRICES_PROCESSOR: true
-#        STATE_SCHEMA_NAME: 'spot_price_processor_2'
-#        PROCESS_FROM_BLOCK: 7987000
-#        PROCESS_TO_BLOCK: -1
-#        SAVE_ASSET_RELATED_HISTORICAL_DATA_ON_CHANGE: true
-#        USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: false
-#
-#        USE_STORAGE_DICTIONARY: true
-#        STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
-#        STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
-#        STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
-#        STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
-#        STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
-#      cmd:
-#        - sqd
-#        - process:prod
+  #    - name: spot-price-proc-2
+  #      env:
+  #        CHAIN: 'hydration'
+  #        INDEXER_ID: 725
+  #        RPC_URL: 'wss://3.rpc.hydration.cloud'
+  #        RPC_URL_HTTPS: 'https://archive.rpc.hydration.cloud'
+  #        NODE_OPTIONS: '--max-old-space-size=4048'
+  #        GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
+  #
+  #        ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
+  #        MAX_JOB_BATCH_SIZE: 10
+  #
+  #        PROCESS_LBP_POOLS: true
+  #        PROCESS_XYK_POOLS: true
+  #        PROCESS_OMNIPOOLS: true
+  #        PROCESS_STABLEPOOLS: true
+  #        PROCESS_DCA: true
+  #        PROCESS_OTC: true
+  #        NODE_ENV: 'production'
+  #        OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+  #        UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
+  #        INDEXING_IS_PAUSED: false
+  #        ALL_IN_ONE_PROCESSOR_MODE: false
+  #        IS_CORE_PROCESSOR: false
+  #        IS_SPOT_PRICES_PROCESSOR: true
+  #        STATE_SCHEMA_NAME: 'spot_price_processor_2'
+  #        PROCESS_FROM_BLOCK: 7987000
+  #        PROCESS_TO_BLOCK: -1
+  #        SAVE_ASSET_RELATED_HISTORICAL_DATA_ON_CHANGE: true
+  #        USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: false
+  #
+  #        USE_STORAGE_DICTIONARY: true
+  #        STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
+  #        STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
+  #        STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
+  #        STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
+  #        STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
+  #      cmd:
+  #        - sqd
+  #        - process:prod
   #
   #    - name: spot-price-proc-3
   #      env:

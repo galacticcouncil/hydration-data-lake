@@ -1,14 +1,14 @@
 #version: "3.7"
 #
 #x-chain-name: &chain-name "hydration"
-#x-postgres-db: &postgres-db "17403_80qv54"
-#x-postgres-user: &postgres-user "17403_80qv54"
-#x-postgres-password: &postgres-password "piCCCWmcY-sV1-hoBXq9egwHS67-8K4C"
-#x-postgres-host: &postgres-host "pg.squid.subsquid.io"
+#x-postgres-db: &postgres-db ""
+#x-postgres-user: &postgres-user ""
+#x-postgres-password: &postgres-password ""
+#x-postgres-host: &postgres-host ""
 #
-#x-ts-redis-host: &ts-redis-host "138.199.136.142"
-#x-ts-redis-pass: &ts-redis-pass "Strange2!"
-#x-ts-redis-port: &ts-redis-port 6377
+#x-ts-redis-host: &ts-redis-host ""
+#x-ts-redis-pass: &ts-redis-pass ""
+#x-ts-redis-port: &ts-redis-port
 #
 #x-liquidity-pools-db-creds: &liquidity-pools-db-creds
 #  DB_PORT: 5432
@@ -18,7 +18,7 @@
 #  DB_HOST: *postgres-host
 #
 #x-proc-default-envs: &proc-default-envs
-#  INDEXER_ID: "801"
+#  INDEXER_ID: "802"
 #  NODE_OPTIONS: "--max-old-space-size=8072"
 #  NODE_ENV: "self-hosted"
 #  CHAIN: *chain-name
@@ -29,8 +29,8 @@
 #  GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
 #  OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
 #
-#  ORCHESTRATOR_QUEUE_REDIS_HOST: "138.199.136.142"
-#  ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
+#  ORCHESTRATOR_QUEUE_REDIS_HOST: ""
+#  ORCHESTRATOR_QUEUE_REDIS_PORT:
 #  ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
 #
 #  TS_REDIS_HOST: *ts-redis-host
@@ -39,13 +39,12 @@
 #  TS_REDIS_KEY_SPACE_ID: 6
 #
 #  MAX_JOB_BATCH_SIZE: 10
+#  RUNTIME_API_CALLS_CONCURRENCY: 5
+#  EVM_CONTRACT_CALL_CONCURRENCY: 5
+#  EVM_CONTRACT_CALL_RETRIES: 3
+
+#  HOLLAR_CONTRACT_ADDRESS: "0x531a654d1696ed52e7275a8cede955e82620f99a"
 #
-#  PROCESS_LBP_POOLS: "true"
-#  PROCESS_XYK_POOLS: "true"
-#  PROCESS_OMNIPOOLS: "true"
-#  PROCESS_STABLEPOOLS: "true"
-#  PROCESS_DCA: "true"
-#  PROCESS_OTC: "true"
 #  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "false"
 #  USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: "false"
 #  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
@@ -69,7 +68,7 @@
 #  STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql"
 #
 #x-proc-default-config: &proc-default-config
-#  image: ghcr.io/mckrava/liquidity-pools-indexer:995e4960ec980eb99a41722a9a3711dbcdb92131
+#  image: ghcr.io/mckrava/liquidity-pools-indexer:f4bde14febb151557e7d08f7e75facadb0819852
 #  networks:
 #    - default
 #  command:
@@ -96,8 +95,10 @@
 #      RPC_URL: "wss://node-dir.kril.hydration.cloud"
 #      RPC_URL_HTTPS: "https://node-dir.kril.hydration.cloud"
 #
-#      PROCESS_FROM_BLOCK: 1439857
-#      PROCESS_TO_BLOCK: 3500000
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 6000000
+#      PROCESS_TO_BLOCK: 6350000
 #
 #  proc-l-2:
 #    <<: *proc-default-config
@@ -110,8 +111,10 @@
 #      RPC_URL: "wss://node-dir.kril.hydration.cloud"
 #      RPC_URL_HTTPS: "https://node-dir.kril.hydration.cloud"
 #
-#      PROCESS_FROM_BLOCK: 3500001
-#      PROCESS_TO_BLOCK: 5500000
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 6350001
+#      PROCESS_TO_BLOCK: 6700000
 #
 #  proc-l-3:
 #    <<: *proc-default-config
@@ -124,8 +127,10 @@
 #      RPC_URL: "wss://node-dir.kril.hydration.cloud"
 #      RPC_URL_HTTPS: "https://node-dir.kril.hydration.cloud"
 #
-#      PROCESS_FROM_BLOCK: 5500001
-#      PROCESS_TO_BLOCK: 6000000
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 6700001
+#      PROCESS_TO_BLOCK: 7050000
 #
 #  proc-l-4:
 #    <<: *proc-default-config
@@ -135,8 +140,13 @@
 #      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
 #      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
 #
-#      PROCESS_FROM_BLOCK: 6000001
-#      PROCESS_TO_BLOCK: 6500000
+#      RPC_URL: "wss://node-subwhale.kril.hydration.cloud"
+#      RPC_URL_HTTPS: "https://node-subwhale.kril.hydration.cloud"
+#
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 7050001
+#      PROCESS_TO_BLOCK: 7400000
 #
 #  proc-l-5:
 #    <<: *proc-default-config
@@ -145,9 +155,13 @@
 #      STATE_SCHEMA_NAME: "hist_data_layer_processor_5"
 #      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
 #      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
+#      RPC_URL: "wss://node-subwhale.kril.hydration.cloud"
+#      RPC_URL_HTTPS: "https://node-subwhale.kril.hydration.cloud"
 #
-#      PROCESS_FROM_BLOCK: 6500001
-#      PROCESS_TO_BLOCK: 7000000
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 7400001
+#      PROCESS_TO_BLOCK: 7750000
 #
 #  proc-l-6:
 #    <<: *proc-default-config
@@ -156,9 +170,13 @@
 #      STATE_SCHEMA_NAME: "hist_data_layer_processor_6"
 #      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
 #      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
+#      RPC_URL: "wss://node-subwhale-3.shellfish.hydration.cloud"
+#      RPC_URL_HTTPS: "https://node-subwhale-3.shellfish.hydration.cloud"
 #
-#      PROCESS_FROM_BLOCK: 7000001
-#      PROCESS_TO_BLOCK: 7500000
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 7750001
+#      PROCESS_TO_BLOCK: 8100000
 #
 #  proc-l-7:
 #    <<: *proc-default-config
@@ -167,9 +185,13 @@
 #      STATE_SCHEMA_NAME: "hist_data_layer_processor_7"
 #      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
 #      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
+#      RPC_URL: "wss://node-subwhale-2.kril.hydration.cloud"
+#      RPC_URL_HTTPS: "https://node-subwhale-2.kril.hydration.cloud"
 #
-#      PROCESS_FROM_BLOCK: 7500001
-#      PROCESS_TO_BLOCK: 8000000
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 8100001
+#      PROCESS_TO_BLOCK: 8450000
 #
 #  proc-l-8:
 #    <<: *proc-default-config
@@ -178,9 +200,13 @@
 #      STATE_SCHEMA_NAME: "hist_data_layer_processor_8"
 #      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
 #      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
+#      RPC_URL: "wss://node-subwhale-2.kril.hydration.cloud"
+#      RPC_URL_HTTPS: "https://node-subwhale-2.kril.hydration.cloud"
 #
-#      PROCESS_FROM_BLOCK: 8000001
-#      PROCESS_TO_BLOCK: 8500000
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 8450001
+#      PROCESS_TO_BLOCK: 8800000
 #
 #  proc-l-9:
 #    <<: *proc-default-config
@@ -189,9 +215,13 @@
 #      STATE_SCHEMA_NAME: "hist_data_layer_processor_9"
 #      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
 #      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
+#      RPC_URL: "wss://node-subwhale-4.shellfish.hydration.cloud"
+#      RPC_URL_HTTPS: "https://node-subwhale-4.shellfish.hydration.cloud"
 #
-#      PROCESS_FROM_BLOCK: 8500000
-#      PROCESS_TO_BLOCK: 8951417
+#      INDEXING_IS_PAUSED: "false"
+#
+#      PROCESS_FROM_BLOCK: 8800000
+#      PROCESS_TO_BLOCK: 9178308
 
 version: "3.7"
 
@@ -199,11 +229,11 @@ x-chain-name: &chain-name "hydration"
 x-postgres-db: &postgres-db ""
 x-postgres-user: &postgres-user ""
 x-postgres-password: &postgres-password ""
-x-postgres-host: &postgres-host "pg.squid.subsquid.io"
+x-postgres-host: &postgres-host ""
 
-x-ts-redis-host: &ts-redis-host "138.199.136.142"
-x-ts-redis-pass: &ts-redis-pass "Strange2!"
-x-ts-redis-port: &ts-redis-port 6377
+x-ts-redis-host: &ts-redis-host ""
+x-ts-redis-pass: &ts-redis-pass ""
+x-ts-redis-port: &ts-redis-port
 
 x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_PORT: 5432
@@ -224,9 +254,9 @@ x-proc-default-envs: &proc-default-envs
   GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
   OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
 
-  ORCHESTRATOR_QUEUE_REDIS_HOST: "138.199.136.142"
-  ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-  ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
+  ORCHESTRATOR_QUEUE_REDIS_HOST: ""
+  ORCHESTRATOR_QUEUE_REDIS_PORT:
+  ORCHESTRATOR_QUEUE_REDIS_PASS: ""
 
   TS_REDIS_HOST: *ts-redis-host
   TS_REDIS_PASS: *ts-redis-pass
@@ -234,13 +264,12 @@ x-proc-default-envs: &proc-default-envs
   TS_REDIS_KEY_SPACE_ID: 6
 
   MAX_JOB_BATCH_SIZE: 10
+  RUNTIME_API_CALLS_CONCURRENCY: 5
+  EVM_CONTRACT_CALL_CONCURRENCY: 5
+  EVM_CONTRACT_CALL_RETRIES: 3
 
-  PROCESS_LBP_POOLS: "true"
-  PROCESS_XYK_POOLS: "true"
-  PROCESS_OMNIPOOLS: "true"
-  PROCESS_STABLEPOOLS: "true"
-  PROCESS_DCA: "true"
-  PROCESS_OTC: "true"
+  HOLLAR_CONTRACT_ADDRESS: "0x531a654d1696ed52e7275a8cede955e82620f99a"
+
   PERSIST_HIST_DATA_ONLY_ON_CHANGE: "false"
   USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: "false"
   UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
@@ -264,7 +293,7 @@ x-proc-default-envs: &proc-default-envs
   STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql"
 
 x-proc-default-config: &proc-default-config
-  image: ghcr.io/mckrava/liquidity-pools-indexer:995e4960ec980eb99a41722a9a3711dbcdb92131
+  image: ghcr.io/mckrava/liquidity-pools-indexer:c0c5d5eb0fde07967d312b4cecb530f69e8ef406
   networks:
     - default
   command:
@@ -284,106 +313,14 @@ services:
     <<: *proc-default-config
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_1"
+      STATE_SCHEMA_NAME: "spot_prices_layer_processor_1"
       ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
+      MULTI_FLOW_PROCESSING_PHASE: "SPOT_PRICES_CALCULATION"
 
-      RPC_URL: "wss://node-dir.kril.hydration.cloud"
-      RPC_URL_HTTPS: "https://node-dir.kril.hydration.cloud"
+      RPC_URL: "wss://node-subwhale-10.shellfish.hydration.cloud"
+      RPC_URL_HTTPS: "https://node-subwhale-10.shellfish.hydration.cloud"
+
+      INDEXING_IS_PAUSED: "false"
 
       PROCESS_FROM_BLOCK: 6000000
-      PROCESS_TO_BLOCK: 6350000
-
-  proc-l-2:
-    <<: *proc-default-config
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_2"
-      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
-
-      RPC_URL: "wss://node-dir.kril.hydration.cloud"
-      RPC_URL_HTTPS: "https://node-dir.kril.hydration.cloud"
-
-      PROCESS_FROM_BLOCK: 6350001
-      PROCESS_TO_BLOCK: 6700000
-
-  proc-l-3:
-    <<: *proc-default-config
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_3"
-      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
-
-      RPC_URL: "wss://node-dir.kril.hydration.cloud"
-      RPC_URL_HTTPS: "https://node-dir.kril.hydration.cloud"
-
-      PROCESS_FROM_BLOCK: 6700001
-      PROCESS_TO_BLOCK: 7050000
-
-  proc-l-4:
-    <<: *proc-default-config
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_4"
-      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
-
-      PROCESS_FROM_BLOCK: 7050001
-      PROCESS_TO_BLOCK: 7400000
-
-  proc-l-5:
-    <<: *proc-default-config
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_5"
-      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
-
-      PROCESS_FROM_BLOCK: 7400001
-      PROCESS_TO_BLOCK: 7750000
-
-  proc-l-6:
-    <<: *proc-default-config
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_6"
-      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
-
-      PROCESS_FROM_BLOCK: 7750001
-      PROCESS_TO_BLOCK: 8100000
-
-  proc-l-7:
-    <<: *proc-default-config
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_7"
-      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
-
-      PROCESS_FROM_BLOCK: 8100001
-      PROCESS_TO_BLOCK: 8450000
-
-  proc-l-8:
-    <<: *proc-default-config
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_8"
-      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
-
-      PROCESS_FROM_BLOCK: 8450001
-      PROCESS_TO_BLOCK: 8800000
-
-  proc-l-9:
-    <<: *proc-default-config
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "hist_data_layer_processor_9"
-      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
-      MULTI_FLOW_PROCESSING_PHASE: "HIST_DATA_AGGREGATION"
-
-      PROCESS_FROM_BLOCK: 8800000
-      PROCESS_TO_BLOCK: -1
+      PROCESS_TO_BLOCK: 9178308

@@ -55,6 +55,8 @@
 #      STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
 #      STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
 #      STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
+#      STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql'
+
 #    cmd:
 #      - sqd
 #      - process:prod
@@ -141,6 +143,7 @@
 #      STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
 #      STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
 #      STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
+#      STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql'
 #    cmd:
 #      - sqd
 #      - process:prod

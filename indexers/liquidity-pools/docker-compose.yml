@@ -14,13 +14,37 @@ services:
     command:
       - postgres
       - -c
+      - statement_timeout=120s
+      - -c
       - shared_preload_libraries=pg_stat_statements
       - -c
-      - pg_stat_statements.max=10000
+      - log_statement=all
       - -c
-      - pg_stat_statements.track=all
+      - log_min_duration_statement=1000
       - -c
-      - pg_stat_statements.save=on
+      - track_io_timing=on
+      - -c
+      - logging_collector=on
+      - -c
+      - log_directory=/var/log/postgresql
+      - -c
+      - log_filename=postgresql-%Y-%m-%d_%H%M%S.log
+      - -c
+      - log_rotation_age=1d
+      - -c
+      - log_rotation_size=100MB
+      - -c
+      - 'log_line_prefix=%t [%p]: [ %l-1 ] user=%u,db=%d,app=%a,client=%h'
+      - -c
+      - log_checkpoints=on
+      - -c
+      - log_connections=on
+      - -c
+      - log_disconnections=on
+      - -c
+      - log_lock_waits=on
+      - -c
+      - log_temp_files=0
 
       # command: ["postgres", "-c", "log_statement=all"]
 #    volumes:

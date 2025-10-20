@@ -1,107 +1,15 @@
-#version: "3.7"
-#
-#x-chain-name: &chain-name "hydration"
-#x-postgres-db: &postgres-db ""
-#x-postgres-user: &postgres-user ""
-#x-postgres-password: &postgres-password ""
-#x-postgres-host: &postgres-host "pg.squid.subsquid.io"
-#
-#x-liquidity-pools-db-creds: &liquidity-pools-db-creds
-#  DB_PORT: 5432
-#  DB_NAME: *postgres-db
-#  DB_USER: *postgres-user
-#  DB_PASS: *postgres-password
-#  DB_HOST: *postgres-host
-#
-#x-proc-default-envs: &proc-default-envs
-#  INDEXER_ID: "734"
-#  NODE_OPTIONS: "--max-old-space-size=8072"
-#  NODE_ENV: "self-hosted"
-#  CHAIN: *chain-name
-#  RPC_URL: "wss://node.kril.hydration.cloud"
-#  RPC_URL_HTTPS: "https://archive.rpc.hydration.cloud"
-#  # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
-#  IGNORE_ARCHIVE_DATA_SOURCE: "false"
-#  GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
-#  OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
-#
-#  ORCHESTRATOR_QUEUE_REDIS_HOST: "138.199.136.142"
-#  ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-#  ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
-#
-#  TS_REDIS_HOST: "138.199.136.142"
-#  TS_REDIS_PASS: "Strange1!"
-#  TS_REDIS_PORT: 6378
-#  TS_REDIS_KEY_SPACE_ID: 6
-#
-#  MAX_JOB_BATCH_SIZE: 20
-#
-#  PROCESS_FROM_BLOCK: 8350000
-#  PROCESS_TO_BLOCK: -1
-#
-#  PROCESS_LBP_POOLS: "true"
-#  PROCESS_XYK_POOLS: "true"
-#  PROCESS_OMNIPOOLS: "true"
-#  PROCESS_STABLEPOOLS: "true"
-#  PROCESS_DCA: "true"
-#  PROCESS_OTC: "true"
-#  SAVE_ASSET_RELATED_HISTORICAL_DATA_ON_CHANGE: "true"
-#  USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: "false"
-#  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-#  INDEXING_IS_PAUSED: "false"
-#  # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
-#  USE_STORAGE_DICTIONARY: "true"
-#  # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
-#  # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
-#  # For example, if the Storage Dictionary is running as a single processor indexer
-#  # within the same Swarm stack as the Liquidity Pools indexer,
-#  # the URL for all pools should be set uniformly, such as:
-#  #   http://storage-dictionary-api:8090/graphql
-#  STORAGE_DICTIONARY_LBPPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql"
-#  STORAGE_DICTIONARY_XYKPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql"
-#  STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql"
-#  STORAGE_DICTIONARY_STABLEPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql"
-#  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql"
-#
-#x-proc-default-config: &proc-default-config
-#  image: ghcr.io/mckrava/liquidity-pools-indexer:92f03b5be4c22e74516b032db108c062fe68e080
-#  networks:
-#    - default
-#  command:
-#    - sh
-#    - -c
-#    - "sqd migration:apply && node lib/main.js"
-#  deploy:
-#    restart_policy:
-#      condition: on-failure
-#
-#networks:
-#  default:
-#    driver: overlay
-#
-#services:
-#  core-processor:
-#    <<: *proc-default-config
-#    environment:
-#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-#      STATE_SCHEMA_NAME: "squid_processor"
-#
-#      ALL_IN_ONE_PROCESSOR_MODE: "true"
-#      IS_CORE_PROCESSOR: "false"
-#      IS_SPOT_PRICES_PROCESSOR: "false"
-#
 
 version: "3.7"
 
-x-chain-name: &chain-name "hydration_paseo_next"
+x-chain-name: &chain-name "hydration"
 x-postgres-db: &postgres-db ""
 x-postgres-user: &postgres-user ""
 x-postgres-password: &postgres-password ""
-x-postgres-host: &postgres-host "pg.squid.subsquid.io"
+x-postgres-host: &postgres-host ""
 
 x-ts-redis-host: &ts-redis-host ""
 x-ts-redis-pass: &ts-redis-pass ""
-x-ts-redis-port: &ts-redis-port 6377
+x-ts-redis-port: &ts-redis-port
 
 x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_PORT: 5432
@@ -111,43 +19,42 @@ x-liquidity-pools-db-creds: &liquidity-pools-db-creds
   DB_HOST: *postgres-host
 
 x-proc-default-envs: &proc-default-envs
-  INDEXER_ID: "100"
+  INDEXER_ID: "741"
   NODE_OPTIONS: "--max-old-space-size=8072"
   NODE_ENV: "self-hosted"
   CHAIN: *chain-name
-  RPC_URL: "wss://node.lark.hydration.cloud"
-  RPC_URL_HTTPS: "https://node.lark.hydration.cloud"
+  RPC_URL: "wss://node-subwhale-7.shellfish.hydration.cloud"
+  RPC_URL_HTTPS: "https://node-subwhale-7.shellfish.hydration.cloud"
   # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
-  IGNORE_ARCHIVE_DATA_SOURCE: "true"
+  IGNORE_ARCHIVE_DATA_SOURCE: "false"
   GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
   OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
 
   ORCHESTRATOR_QUEUE_REDIS_HOST: ""
   ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-  ORCHESTRATOR_QUEUE_REDIS_PASS: ""
+  ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
 
   TS_REDIS_HOST: *ts-redis-host
   TS_REDIS_PASS: *ts-redis-pass
   TS_REDIS_PORT: *ts-redis-port
-  TS_REDIS_KEY_SPACE_ID: 5
+  TS_REDIS_KEY_SPACE_ID: 6
 
-  MAX_JOB_BATCH_SIZE: 20
+  MAX_JOB_BATCH_SIZE: 10
+  RUNTIME_API_CALLS_CONCURRENCY: 5
+  EVM_CONTRACT_CALL_CONCURRENCY: 5
+  EVM_CONTRACT_CALL_RETRIES: 3
 
-  PROCESS_FROM_BLOCK: 1
-  PROCESS_TO_BLOCK: -1
+  HOLLAR_CONTRACT_ADDRESS: "0x531a654d1696ed52e7275a8cede955e82620f99a"
 
-  PROCESS_LBP_POOLS: "true"
-  PROCESS_XYK_POOLS: "true"
-  PROCESS_OMNIPOOLS: "true"
-  PROCESS_STABLEPOOLS: "true"
-  PROCESS_DCA: "true"
-  PROCESS_OTC: "true"
-  SAVE_ASSET_RELATED_HISTORICAL_DATA_ON_CHANGE: "true"
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "false"
   USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: "false"
-  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 1
+  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
   INDEXING_IS_PAUSED: "false"
+  ALL_IN_ONE_PROCESSOR_MODE: "true"
+  IS_SPOT_PRICES_PROCESSOR: "false"
+  IS_CORE_PROCESSOR: "false"
   # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
-  USE_STORAGE_DICTIONARY: "false"
+  USE_STORAGE_DICTIONARY: "true"
   # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
   # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
   # For example, if the Storage Dictionary is running as a single processor indexer
@@ -159,9 +66,10 @@ x-proc-default-envs: &proc-default-envs
   STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql"
   STORAGE_DICTIONARY_STABLEPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql"
   STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql"
+  STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql"
 
 x-proc-default-config: &proc-default-config
-  image: ghcr.io/mckrava/liquidity-pools-indexer:c9cadb8ccf21ad716353d16ee21624b9006788fe
+  image: ghcr.io/mckrava/liquidity-pools-indexer:d7b5b6c16591aab727b3484341058e2b3317304b
   networks:
     - default
   command:
@@ -177,7 +85,7 @@ networks:
     driver: overlay
 
 services:
-  core-processor:
+  proc-l-1:
     <<: *proc-default-config
     environment:
       <<: [*liquidity-pools-db-creds, *proc-default-envs]
@@ -186,3 +94,5 @@ services:
       ALL_IN_ONE_PROCESSOR_MODE: "true"
       IS_CORE_PROCESSOR: "false"
       IS_SPOT_PRICES_PROCESSOR: "false"
+      PROCESS_FROM_BLOCK: 9250000
+      PROCESS_TO_BLOCK: -1
