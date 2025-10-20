@@ -49,6 +49,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: extract-indexer-params-from-branch-name
     if: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerName != '' }}
+    env:
+      DEPLOYMENT_MANIFEST_FILE: deployment-hydration-indexer.yaml
     steps:
       - uses: actions/checkout@v4
 
@@ -76,11 +78,21 @@ jobs:
         if: steps.cache-node-modules-indexers.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: "Update deployment manifest with commit hash"
+        shell: bash
+        env:
+          COMMIT_HASH: ${{ github.sha }}
+          INDEXER_SLOT: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerSlot }}
+        run: |
+          sed -i "s/DEPLOYMENT_COMMIT_HASH: ''/DEPLOYMENT_COMMIT_HASH: '$COMMIT_HASH'/" indexers/liquidity-pools/$DEPLOYMENT_MANIFEST_FILE
+          sed -i "s/INDEXER_ID: [0-9]*/INDEXER_ID: $INDEXER_SLOT/g" indexers/liquidity-pools/$DEPLOYMENT_MANIFEST_FILE
+
       - name: "Deploy Aggregation indexer"
+        id: deploy-aggregation-indexer
         shell: bash
         env:
           INDEXER_NAME: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerName }}
           INDEXER_SLOT: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerSlot }}
         run: |
           cd indexers/liquidity-pools
-          sqd deploy . -m deployment-hydration-indexer.yaml --org galacticcouncil -s "$INDEXER_SLOT" -n "$INDEXER_NAME" --allow-update --allow-manifest-override --no-stream-logs
+          sqd deploy . -m $DEPLOYMENT_MANIFEST_FILE --org galacticcouncil -s "$INDEXER_SLOT" -n "$INDEXER_NAME" --allow-update --allow-manifest-override --no-stream-logs

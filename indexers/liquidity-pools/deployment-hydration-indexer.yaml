@@ -89,6 +89,7 @@ description: Hydration pools indexer
 build:
 deploy:
   env:
+    DEPLOYMENT_COMMIT_HASH: ''
     ORCHESTRATOR_QUEUE_REDIS_HOST: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_HOST }}
     ORCHESTRATOR_QUEUE_REDIS_PASS: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_PASS }}
     TS_REDIS_HOST: ${{ secrets.TS_REDIS_PROD_A_HOST }}
