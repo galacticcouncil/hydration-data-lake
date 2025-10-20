@@ -23,9 +23,8 @@ module.exports = async ({ github, context }) => {
   const [folderName = "", indexerName = "", indexerSlot = ""] =
     branchName.split("/");
 
-  console.log("folderName", folderName);
-  console.log("indexerName", indexerName);
-  console.log("indexerSlot", indexerSlot);
+  if (folderName !== VERSIONS_ROOT_FOLDER_NAME)
+    return { indexerName: "", indexerSlot: "" };
 
   return { indexerName, indexerSlot };
 };
