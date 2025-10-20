@@ -48,7 +48,7 @@ jobs:
     name: "Build and Deploy Aggregation indexer"
     runs-on: ubuntu-latest
     needs: extract-indexer-params-from-branch-name
-    if: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.indexer_params).indexerName != '' }}
+    if: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerName != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -79,8 +79,8 @@ jobs:
       - name: "Deploy Aggregation indexer"
         shell: bash
         env:
-          INDEXER_NAME: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.result).indexerName }}
-          INDEXER_SLOT: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.result).indexerSlot }}
+          INDEXER_NAME: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerName }}
+          INDEXER_SLOT: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerSlot }}
         run: |
           cd indexers/liquidity-pools
           sqd deploy . -m deployment-hydration-indexer.yaml --org galacticcouncil -s "$INDEXER_SLOT" -n "$INDEXER_NAME" --allow-update --allow-manifest-override --no-stream-logs
