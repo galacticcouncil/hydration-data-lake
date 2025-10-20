@@ -26,6 +26,6 @@ module.exports = async ({ github, context }) => {
   console.log("indexerName", indexerName);
   console.log("indexerSlot", indexerSlot);
 
-  if (!folderName || folderName !== VERSIONS_ROOT_FOLDER_NAME)
-    return JSON.stringify({ indexerName, indexerSlot });
+  // if (!folderName || folderName !== VERSIONS_ROOT_FOLDER_NAME)
+  return JSON.stringify({ indexerName, indexerSlot });
 };

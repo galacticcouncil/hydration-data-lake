@@ -1,4 +1,4 @@
-name: "Reusable :: Build and Deploy toSQD Hosting"
+name: "Reusable :: Build and Deploy to SQD Hosting"
 
 on:
   workflow_call:

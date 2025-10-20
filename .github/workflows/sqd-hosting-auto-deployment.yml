@@ -1,4 +1,4 @@
-name: "Docker images build and publish"
+name: "Deploy indexers to SQD hosting"
 
 on:
   push:
