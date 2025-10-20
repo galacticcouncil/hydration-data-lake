@@ -5,15 +5,27 @@
  * @returns {Promise<string|*>}
  */
 module.exports = async ({ github, context }) => {
-  const { GITHUB_EVENT_NAME, GITHUB_REF, GITHUB_BASE_REF } = process.env;
+  const {
+    GITHUB_EVENT_NAME,
+    GITHUB_REF,
+    GITHUB_BASE_REF,
+    VERSIONS_ROOT_FOLDER_NAME = "versions",
+  } = process.env;
 
-  console.log("GITHUB_EVENT_NAME", GITHUB_EVENT_NAME);
-  console.log("GITHUB_REF", GITHUB_REF);
-  console.log("GITHUB_BASE_REF", GITHUB_BASE_REF);
+  let branchName = (GITHUB_REF || "").replace("refs/heads/", "");
+  if (GITHUB_EVENT_NAME === "pull_request") {
+    branchName = GITHUB_BASE_REF;
+  }
+  if (!branchName || branchName.length === 0) {
+    throw new Error("Missing branch name");
+  }
 
-  console.dir(context.payload.repository, { depth: null });
-  console.log("------");
-  console.dir(context.payload.repository.event, { depth: null });
+  const [folderName, indexerName, indexerSlot] = branchName.split("/");
 
-  return JSON.stringify({ d: "test" });
+  console.log("folderName", folderName);
+  console.log("indexerName", indexerName);
+  console.log("indexerSlot", indexerSlot);
+
+  if (!folderName || folderName !== VERSIONS_ROOT_FOLDER_NAME)
+    return JSON.stringify({ indexerName, indexerSlot });
 };

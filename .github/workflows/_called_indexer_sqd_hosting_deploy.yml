@@ -10,31 +10,38 @@ jobs:
   extract-image-tag-from-branch-name:
     name: "Extract tag from branch name"
     runs-on: ubuntu-latest
-#    outputs:
-#      tag: ${{ steps.image-tag.outputs.tag }}
+    outputs:
+      indexer_params: ${{ steps.indexer-name-slot-extraction.outputs.result }}
     steps:
       - uses: actions/checkout@v4
 
       - name: "Get indexer Name and Slot from branch name"
-        id: storage-dictionary-ind-status
+        id: indexer-name-slot-extraction
         uses: actions/github-script@v7
         env:
           GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME
           GITHUB_REF: $GITHUB_REF
           GITHUB_BASE_REF: $GITHUB_BASE_REF
+          VERSION_ROOT_FOLDER_NAME: "versions"
         with:
           result-encoding: json
           script: |
             const script = require('./scripts/ci/github-script-src/get-sqd-indexer-name-slot-from-branch-name.js')
             return await script({github, context, core})
-#
-#      - name: "Sanitize branch name"
-#        id: branch-name-as-tag
-#        shell: bash
-#        run: |
-#          sudo chmod +x ./scripts/ci/gh-actions-get-branch-name.sh
-#          BRANCH_NAME=$(./scripts/ci/gh-actions-get-branch-name.sh "$GITHUB_EVENT_NAME" "$GITHUB_REF" "$GITHUB_BASE_REF")
-#          echo "name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+
+      #
+      - name: "Echo"
+        id: echo
+        shell: bash
+        env:
+          INDEXER_PARAMS: ${{ steps.indexer-name-slot-extraction.outputs.indexer_params }}
+          INDEXER_PARAMS_NAME: ${{ steps.indexer-name-slot-extraction.outputs.indexer_params.indexerName }}
+          INDEXER_PARAMS_SLOT: ${{ steps.indexer-name-slot-extraction.outputs.indexer_params.indexerSlot }}
+        run: |
+          echo $INDEXER_PARAMS
+          echo $INDEXER_PARAMS_NAME
+          echo $INDEXER_PARAMS_SLOT
+
 #
 #      - name: Set IMAGE_TAG based on branch
 #        id: image-tag
