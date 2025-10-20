@@ -1,0 +1,13 @@
+name: "Docker images build and publish"
+
+on:
+  push:
+    branches:
+      - "versions/**"
+
+jobs:
+  indexer-sqd-hosting-deployment:
+    name: "Build and deploy indexer to SQD hosting"
+    uses: ./.github/workflows/_called_indexer_sqd_hosting_deploy.yml
+    secrets:
+      GHCR_AUTH_TOKEN: ${{ secrets.GHCR_AUTH_TOKEN }}
