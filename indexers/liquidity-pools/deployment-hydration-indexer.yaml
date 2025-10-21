@@ -1,90 +1,6 @@
-#manifestVersion: subsquid.io/v0.1
-#name: hydration-pools
-#slot: 734
-#description: Hydration pools indexer
-#build:
-#deploy:
-#  env:
-#    ORCHESTRATOR_QUEUE_REDIS_HOST: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_HOST }}
-#    ORCHESTRATOR_QUEUE_REDIS_PASS: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_PASS }}
-#    TS_REDIS_HOST: ${{ secrets.TS_REDIS_STAGING_HOST }}
-#    TS_REDIS_PASS: ${{ secrets.TS_REDIS_STAGING_PASS }}
-#  addons:
-#    postgres:
-#      config:
-#        statement_timeout: 30060000
-#        log_min_duration_statement: 60000
-#  processor:
-#    env:
-#      REAGGREGATION_PROCESSING_MODE: false
-#
-#      CHAIN: 'hydration'
-#      INDEXER_ID: 734
-#      RPC_URL: 'wss://node-subwhale-5.shellfish.hydration.cloud'
-#      RPC_URL_HTTPS: 'https://node-subwhale-5.shellfish.hydration.cloud'
-#      GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
-#      ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-#      TS_REDIS_PORT: 6377
-#      TS_REDIS_KEY_SPACE_ID: 6
-#      MAX_JOB_BATCH_SIZE: 10
-#      HLOG_DB_FLUSH_ENABLED: false
-#
-#      NODE_ENV: 'production'
-#      HOLLAR_CONTRACT_ADDRESS: '0x531a654d1696ed52e7275a8cede955e82620f99a'
-#      UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-#      INDEXING_IS_PAUSED: false
-#      ALL_IN_ONE_PROCESSOR_MODE: true
-#      IS_CORE_PROCESSOR: false
-#      IS_SPOT_PRICES_PROCESSOR: false
-#      PERSIST_HIST_DATA_ONLY_ON_CHANGE: false
-#      USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: false
-#      HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
-#      EVM_CONTRACT_CALL_RETRIES: 2
-#
-#      PROCESS_FROM_BLOCK: 8350000
-#      PROCESS_TO_BLOCK: -1
-#
-#      USE_STORAGE_DICTIONARY: true
-#      STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
-#      STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
-#      STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
-#      STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
-#      STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
-#      STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql'
-#    cmd:
-#      - sqd
-#      - process:prod
-#  api:
-#    env:
-#      NODE_ENV: 'production'
-#      CHAIN: 'hydration'
-#      GQL_PORT: 8080
-#      INDEXER_ID: 734
-#      TS_REDIS_PORT: 6377
-#      TS_REDIS_KEY_SPACE_ID: 6
-#      SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
-#      SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app'
-#      SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
-#      RPC_URL: 'wss://3.rpc.hydration.cloud'
-#      RPC_URL_HTTPS: 'https://3.rpc.hydration.cloud'
-#
-#    cmd:
-#      - sqd
-#      - api:prod
-#scale:
-#  dedicated: true
-#  addons:
-#    postgres:
-#      profile: large
-#      storage: 1300G
-#  processor:
-#    profile: large
-#  api:
-#    profile: medium
-
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 742
+slot: 734
 description: Hydration pools indexer
 build:
 deploy:
@@ -92,9 +8,8 @@ deploy:
     DEPLOYMENT_COMMIT_HASH: ''
     ORCHESTRATOR_QUEUE_REDIS_HOST: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_HOST }}
     ORCHESTRATOR_QUEUE_REDIS_PASS: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_PASS }}
-    TS_REDIS_HOST: ${{ secrets.TS_REDIS_PROD_A_HOST }}
-    TS_REDIS_PASS: ${{ secrets.TS_REDIS_PROD_A_PASS }}
-    TS_REDIS_PORT: ${{ secrets.TS_REDIS_PROD_A_PORT }}
+    TS_REDIS_HOST: ${{ secrets.TS_REDIS_STAGING_HOST }}
+    TS_REDIS_PASS: ${{ secrets.TS_REDIS_STAGING_PASS }}
   addons:
     postgres:
       config:
@@ -105,27 +20,29 @@ deploy:
       REAGGREGATION_PROCESSING_MODE: false
 
       CHAIN: 'hydration'
-      INDEXER_ID: 742
-      RPC_URL: 'wss://node-subwhale-6.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-6.shellfish.hydration.cloud'
+      INDEXER_ID: 734
+      RPC_URL: 'wss://node-subwhale-5.shellfish.hydration.cloud'
+      RPC_URL_HTTPS: 'https://node-subwhale-5.shellfish.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
+      TS_REDIS_PORT: 6377
       TS_REDIS_KEY_SPACE_ID: 6
       MAX_JOB_BATCH_SIZE: 10
+      HLOG_DB_FLUSH_ENABLED: false
 
       NODE_ENV: 'production'
-      OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+      HOLLAR_CONTRACT_ADDRESS: '0x531a654d1696ed52e7275a8cede955e82620f99a'
       UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
       INDEXING_IS_PAUSED: false
       ALL_IN_ONE_PROCESSOR_MODE: true
       IS_CORE_PROCESSOR: false
       IS_SPOT_PRICES_PROCESSOR: false
-      PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
+      PERSIST_HIST_DATA_ONLY_ON_CHANGE: false
       USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: false
       HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
       EVM_CONTRACT_CALL_RETRIES: 2
 
-      PROCESS_FROM_BLOCK: 6000000
+      PROCESS_FROM_BLOCK: 8350000
       PROCESS_TO_BLOCK: -1
 
       USE_STORAGE_DICTIONARY: true
@@ -143,13 +60,14 @@ deploy:
       NODE_ENV: 'production'
       CHAIN: 'hydration'
       GQL_PORT: 8080
-      INDEXER_ID: 742
+      INDEXER_ID: 734
+      TS_REDIS_PORT: 6377
       TS_REDIS_KEY_SPACE_ID: 6
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app'
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
-      RPC_URL: 'wss://node-subwhale-5.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-5.shellfish.hydration.cloud'
+      RPC_URL: 'wss://3.rpc.hydration.cloud'
+      RPC_URL_HTTPS: 'https://3.rpc.hydration.cloud'
 
     cmd:
       - sqd
@@ -159,8 +77,8 @@ scale:
   addons:
     postgres:
       profile: large
-      storage: 500G
+      storage: 1300G
   processor:
     profile: large
   api:
-    profile: small
+    profile: medium
