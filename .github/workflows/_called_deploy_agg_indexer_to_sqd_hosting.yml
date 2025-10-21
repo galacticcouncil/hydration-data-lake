@@ -11,8 +11,6 @@ on:
 env:
   DEPLOYMENT_MANIFEST_FILE: deployment-hydration-indexer.yaml
   VERSION_ROOT_FOLDER_NAME: versions
-  AGGREGATION_INDEXER_TYPE_TAG: agg-ind
-  DICTIONARY_INDEXER_TYPE_TAG: std-ind
 
 jobs:
   extract-indexer-params-from-branch-name:
@@ -41,7 +39,7 @@ jobs:
     name: "Build and Deploy Aggregation indexer"
     runs-on: ubuntu-latest
     needs: extract-indexer-params-from-branch-name
-    if: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerType == env.AGGREGATION_INDEXER_TYPE_TAG }}
+    if: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerType == 'agg-ind' }}
     steps:
       - uses: actions/checkout@v4
 
