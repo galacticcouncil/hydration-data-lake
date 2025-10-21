@@ -36,7 +36,7 @@ deploy:
       ALL_IN_ONE_PROCESSOR_MODE: true
       IS_CORE_PROCESSOR: false
       IS_SPOT_PRICES_PROCESSOR: false
-      PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
+      PERSIST_HIST_DATA_ONLY_ON_CHANGE: false
       USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: false
       HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
       EVM_CONTRACT_CALL_RETRIES: 2
@@ -74,9 +74,9 @@ scale:
   dedicated: true
   addons:
     postgres:
-      profile: xlarge
+      profile: large
       storage: 500G
   processor:
-    profile: xlarge
+    profile: large
   api:
     profile: small
