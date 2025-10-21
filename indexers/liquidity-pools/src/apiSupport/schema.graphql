@@ -133551,6 +133551,30 @@ type AssetPairPricesAndVolumeByPeriodResponse {
   totalCount: Int!
 }
 
+input AccountTotalBalancesByPeriodFilter {
+  bucketSize: TimeSeriesBucketTimeRange = _5M_
+  startTimestamp: String
+  endTimestamp: String
+  accountId: String!
+}
+
+type AccountTotalBalanceBucket {
+  transferableNorm: String!
+  lockedNorm: String!
+  timestamp: String!
+}
+
+type AccountTotalBalanceSnapshot {
+  referenceAssetId: String!
+  accountId: String!
+  buckets: [AccountTotalBalanceBucket!]!
+}
+
+type AccountTotalBalancesByPeriodResponse {
+  nodes: [AccountTotalBalanceSnapshot]!
+  totalCount: Int!
+}
+
 """The root query type which gives access points into the data universe."""
 type Query {
   """
@@ -137229,6 +137253,7 @@ type Query {
   assetLatestSpotPrices(filter: AssetLatestSpotPricesFilter): AssetLatestSpotPricesResponse!
   assetPairPricesAndVolumesByPeriod(filter: AssetPairPricesAndVolumesByPeriodFilter): AssetPairPricesAndVolumeByPeriodResponse!
   accountTotalBalancesByPeriod(filter: AccountTotalBalancesByPeriodFilter): AccountTotalBalancesByPeriodResponse!
+  dustableAccounts: DustableAccountsResponse!
 }
 
 """
@@ -137257,26 +137282,12 @@ type Subscription {
   routedTrades(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
 }
 
-input AccountTotalBalancesByPeriodFilter {
-  bucketSize: TimeSeriesBucketTimeRange = _5M_
-  startTimestamp: String
-  endTimestamp: String
+type DustableAccount {
   accountId: String!
+  assetRegistryIds: [String!]!
 }
 
-type AccountTotalBalanceBucket {
-  transferableNorm: String!
-  lockedNorm: String!
-  timestamp: String!
-}
-
-type AccountTotalBalanceSnapshot {
-  referenceAssetId: String!
-  accountId: String!
-  buckets: [AccountTotalBalanceBucket!]!
-}
-
-type AccountTotalBalancesByPeriodResponse {
-  nodes: [AccountTotalBalanceSnapshot]!
+type DustableAccountsResponse {
+  nodes: [DustableAccount!]!
   totalCount: Int!
 }

@@ -1,0 +1,10 @@
+{
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "semi": true,
+  "newline-before-return": true,
+  "no-duplicate-variable": [true, "check-parameters"],
+  "no-var-keyword": true
+}
