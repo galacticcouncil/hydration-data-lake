@@ -7,8 +7,8 @@ on:
 
 jobs:
   indexer-sqd-hosting-deployment:
-    name: "Build and deploy indexer to SQD hosting"
-    uses: ./.github/workflows/_called_indexer_sqd_hosting_deploy.yml
+    name: "Build and deploy Aggregation indexers to SQD hosting"
+    uses: _called_deploy_agg_indexer_to_sqd_hosting.yml
     secrets:
       GHCR_AUTH_TOKEN: ${{ secrets.GHCR_AUTH_TOKEN }}
       SQD_AUTH_TOKEN: ${{ secrets.SQD_AUTH_TOKEN }}

@@ -20,11 +20,15 @@ module.exports = async ({ github, context }) => {
     throw new Error("Missing branch name");
   }
 
-  const [folderName = "", indexerName = "", indexerSlot = ""] =
-    branchName.split("/");
+  const [
+    folderName = "",
+    indexerType = "",
+    indexerName = "",
+    indexerSlot = "",
+  ] = branchName.split("/");
 
   if (folderName !== VERSIONS_ROOT_FOLDER_NAME)
-    return { indexerName: "", indexerSlot: "" };
+    return { indexerType: "", indexerName: "", indexerSlot: "" };
 
-  return { indexerName, indexerSlot };
+  return { indexerType, indexerName, indexerSlot };
 };
