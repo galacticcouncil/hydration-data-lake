@@ -24,6 +24,7 @@ import {
 } from '../../processorHelpers/getProcessingMode';
 import { MultiFlowProcessingPhase } from '../../utils/types';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
+import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLatest';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -314,6 +315,9 @@ export class HistoricalDataManager {
     const accountAssetBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountAssetBalanceHistoricalData.values()
     );
+    const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
+      balances: accountAssetBalanceHistoricalDataList,
+    });
     const accountTotalBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
     );
@@ -321,6 +325,9 @@ export class HistoricalDataManager {
     await ctx.storeUtils.upsertWithBatches(
       accountAssetBalanceHistoricalDataList
     );
+
+    await ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest);
+
     await ctx.storeUtils.upsertWithBatches(
       accountTotalBalanceHistoricalDataList
     );

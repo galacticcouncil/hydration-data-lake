@@ -96,7 +96,7 @@ export function initAssetVolume({
     totalVolumeOut,
     relayBlockHeight,
     paraBlockHeight,
-    // totalVolumeInNorm,
-    // totalVolumeOutNorm,
+    totalVolumeInNorm,
+    totalVolumeOutNorm,
   });
 }
