@@ -63,7 +63,7 @@ async function main() {
 
   console.log('Starting backfill of account_asset_balance_latest...\n');
 
-  for (let shard = 8; shard < 100; shard++) {
+  for (let shard = 0; shard < 100; shard++) {
     console.log(`🧩 Running shard ${shard}/99 ...`);
     const start = Date.now();
 
