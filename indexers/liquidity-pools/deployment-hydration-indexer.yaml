@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 741
+slot: 742
 description: Hydration pools indexer
 build:
 deploy:
@@ -21,9 +21,9 @@ deploy:
       REAGGREGATION_PROCESSING_MODE: false
 
       CHAIN: 'hydration'
-      INDEXER_ID: 741
-      RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
+      INDEXER_ID: 742
+      RPC_URL: 'wss://node-subwhale-5.shellfish.hydration.cloud'
+      RPC_URL_HTTPS: 'https://node-subwhale-5.shellfish.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
       TS_REDIS_KEY_SPACE_ID: 6
@@ -32,16 +32,16 @@ deploy:
       NODE_ENV: 'production'
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
       UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-      INDEXING_IS_PAUSED: false
+      INDEXING_IS_PAUSED: true
       ALL_IN_ONE_PROCESSOR_MODE: true
       IS_CORE_PROCESSOR: false
       IS_SPOT_PRICES_PROCESSOR: false
-      PERSIST_HIST_DATA_ONLY_ON_CHANGE: false
+      PERSIST_HIST_DATA_ONLY_ON_CHANGE: true
       USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: false
       HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
       EVM_CONTRACT_CALL_RETRIES: 2
 
-      PROCESS_FROM_BLOCK: 9250000
+      PROCESS_FROM_BLOCK: 6000000
       PROCESS_TO_BLOCK: -1
 
       USE_STORAGE_DICTIONARY: true
@@ -59,14 +59,14 @@ deploy:
       NODE_ENV: 'production'
       CHAIN: 'hydration'
       GQL_PORT: 8080
-      INDEXER_ID: 741
+      INDEXER_ID: 742
       TS_REDIS_KEY_SPACE_ID: 6
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app'
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
-      RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
-      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
+      RPC_URL: 'wss://node-subwhale-5.shellfish.hydration.cloud'
+      RPC_URL_HTTPS: 'https://node-subwhale-5.shellfish.hydration.cloud'
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: true
 
     cmd:
       - sqd
@@ -75,9 +75,9 @@ scale:
   dedicated: true
   addons:
     postgres:
-      profile: xlarge
+      profile: large
       storage: 500G
   processor:
-    profile: xlarge
+    profile: large
   api:
     profile: small
