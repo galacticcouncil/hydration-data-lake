@@ -25,85 +25,87 @@ export async function handleAssetVolumeUpdates(
   );
 
   // If not found find last volume in cache
-  const cachedVolumeIn = getLastAssetVolumeFromCache(
-    assetVolumesState,
-    swapDetails.assetIn.id
-  );
-  const cachedVolumeOut = getLastAssetVolumeFromCache(
-    assetVolumesState,
-    swapDetails.assetOut.id
-  );
+  const cachedVolumeIn = ctx.batchState.getPreviousHistDataEntity({
+    entitiesMap: ctx.batchState.state.assetVolumes,
+    entityId: swapDetails.assetIn.id,
+    currentBlockHeight: swapDetails.paraBlockHeight,
+    blockHeightValPosition: 1,
+  });
+  const cachedVolumeOut = ctx.batchState.getPreviousHistDataEntity({
+    entitiesMap: ctx.batchState.state.assetVolumes,
+    entityId: swapDetails.assetOut.id,
+    currentBlockHeight: swapDetails.paraBlockHeight,
+    blockHeightValPosition: 1,
+  });
 
   // Last known volume for total volume
   const oldAssetInVolume =
     currentAssetInVolume ||
     cachedVolumeIn ||
-    (await ctx.storeUtils.findOneWithLogs(AssetVolumeHistoricalData, {
-      where: {
-        asset: { id: swapDetails.assetIn.id },
+    (await ctx.storeUtils.findOneWithLogs(
+      AssetVolumeHistoricalData,
+      {
+        where: {
+          asset: { id: swapDetails.assetIn.id },
+        },
+        relations: { asset: true },
+        order: {
+          paraBlockHeight: 'DESC',
+        },
       },
-      relations: { asset: true },
-      order: {
-        paraBlockHeight: 'DESC',
-      },
-    }, { className: 'AssetVolumeHistoricalData' }));
+      { className: 'AssetVolumeHistoricalData' }
+    ));
 
   // Last known volume for total volume
   const oldAssetOutVolume =
     currentAssetOutVolume ||
     cachedVolumeOut ||
-    (await ctx.storeUtils.findOneWithLogs(AssetVolumeHistoricalData, {
-      where: {
-        asset: { id: swapDetails.assetOut.id },
+    (await ctx.storeUtils.findOneWithLogs(
+      AssetVolumeHistoricalData,
+      {
+        where: {
+          asset: { id: swapDetails.assetOut.id },
+        },
+        relations: { asset: true },
+        order: {
+          paraBlockHeight: 'DESC',
+        },
       },
-      relations: { asset: true },
-      order: {
-        paraBlockHeight: 'DESC',
-      },
-    }, { className: 'AssetVolumeHistoricalData' }));
+      { className: 'AssetVolumeHistoricalData' }
+    ));
 
   // Create new entry
-  const assetInVolume = initAssetVolume(
-    swapDetails.assetIn,
-    swapDetails.paraBlockHeight,
-    swapDetails.relayBlockHeight,
-    currentAssetInVolume?.volumeIn || BigInt(0),
-    BigInt(0),
-    oldAssetInVolume?.totalVolumeIn || BigInt(0),
-    BigInt(0)
-  );
+  const assetInVolume = initAssetVolume({
+    asset: swapDetails.assetIn,
+    paraBlockHeight: swapDetails.paraBlockHeight,
+    relayBlockHeight: swapDetails.relayBlockHeight,
+    volumeIn: currentAssetInVolume?.volumeIn || BigInt(0),
+    volumeOut: currentAssetInVolume?.volumeOut || BigInt(0),
+    totalVolumeIn: oldAssetInVolume?.totalVolumeIn || BigInt(0),
+    totalVolumeOut: oldAssetInVolume?.totalVolumeOut || BigInt(0),
+    totalVolumeInNorm: oldAssetInVolume?.totalVolumeInNorm ?? '0',
+    totalVolumeOutNorm: oldAssetInVolume?.totalVolumeOutNorm ?? '0',
+  });
 
-  const assetOutVolume = initAssetVolume(
-    swapDetails.assetOut,
-    swapDetails.paraBlockHeight,
-    swapDetails.relayBlockHeight,
-    BigInt(0),
-    currentAssetOutVolume?.volumeOut || BigInt(0),
-    BigInt(0),
-    oldAssetOutVolume?.totalVolumeOut || BigInt(0)
-  );
+  const assetOutVolume = initAssetVolume({
+    asset: swapDetails.assetOut,
+    paraBlockHeight: swapDetails.paraBlockHeight,
+    relayBlockHeight: swapDetails.relayBlockHeight,
+    volumeIn: currentAssetOutVolume?.volumeIn || BigInt(0),
+    volumeOut: currentAssetOutVolume?.volumeOut || BigInt(0),
+    totalVolumeIn: oldAssetOutVolume?.totalVolumeIn || BigInt(0),
+    totalVolumeOut: oldAssetOutVolume?.totalVolumeOut || BigInt(0),
+    totalVolumeInNorm: oldAssetOutVolume?.totalVolumeInNorm ?? '0',
+    totalVolumeOutNorm: oldAssetOutVolume?.totalVolumeOutNorm ?? '0',
+  });
 
   // Update new entry
   assetInVolume.volumeIn += swapDetails.assetInAmount;
   assetInVolume.totalVolumeIn += swapDetails.assetInAmount;
+
   assetOutVolume.volumeOut += swapDetails.assetOutAmount;
   assetOutVolume.totalVolumeOut += swapDetails.assetOutAmount;
 
-  assetVolumesState.set(assetInVolume.id, assetInVolume);
-  assetVolumesState.set(assetOutVolume.id, assetOutVolume);
-}
-
-export function getLastAssetVolumeFromCache(
-  volume: Map<string, AssetVolumeHistoricalData>,
-  assetId: string
-) {
-  return volume.get(
-    Array.from(volume.keys())
-      .filter((k) => {
-        return k.startsWith(assetId + '-');
-      })
-      .sort((a, b) => {
-        return parseInt(b.split('-')[1]) - parseInt(a.split('-')[1]);
-      })[0]
-  );
+  ctx.batchState.state.assetVolumes.set(assetInVolume.id, assetInVolume);
+  ctx.batchState.state.assetVolumes.set(assetOutVolume.id, assetOutVolume);
 }
