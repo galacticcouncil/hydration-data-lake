@@ -31,6 +31,12 @@ export class AssetVolumeHistoricalData {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   totalVolumeOut!: bigint
 
+  @Column_("text", {nullable: false})
+  totalVolumeInNorm!: string
+
+  @Column_("text", {nullable: false})
+  totalVolumeOutNorm!: string
+
   @Index_()
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number

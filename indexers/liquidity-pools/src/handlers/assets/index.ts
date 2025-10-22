@@ -31,13 +31,17 @@ export async function handleAssetRegistry(
 
   if (updatedAssetsList.length > 0) {
     const assetsAllBatch = ctx.batchState.state.assetsAll;
-    const existingAssets = await ctx.storeUtils.findWithLogs(Asset, {
-      where: {
-        id: In(
-          updatedAssetsList.map((asset) => asset.eventData.params.assetId)
-        ),
+    const existingAssets = await ctx.storeUtils.findWithLogs(
+      Asset,
+      {
+        where: {
+          id: In(
+            updatedAssetsList.map((asset) => asset.eventData.params.assetId)
+          ),
+        },
       },
-    }, { className: 'Asset' });
+      { className: 'Asset' }
+    );
 
     existingAssets.forEach((asset) => assetsAllBatch.set(asset.id, asset));
   }
@@ -62,15 +66,27 @@ export async function handleAssetRegistry(
   ctx.batchState.state.assetIdsToSave = new Set();
 }
 
-export function initAssetVolume(
-  asset: Asset,
-  paraBlockHeight: number,
-  relayBlockHeight: number,
-  volumeIn: bigint,
-  volumeOut: bigint,
-  totalVolumeIn: bigint,
-  totalVolumeOut: bigint
-) {
+export function initAssetVolume({
+  asset,
+  totalVolumeIn,
+  totalVolumeOut,
+  volumeOut,
+  volumeIn,
+  paraBlockHeight,
+  relayBlockHeight,
+  totalVolumeInNorm = '0',
+  totalVolumeOutNorm = '0',
+}: {
+  asset: Asset;
+  paraBlockHeight: number;
+  relayBlockHeight: number;
+  volumeIn: bigint;
+  volumeOut: bigint;
+  totalVolumeIn: bigint;
+  totalVolumeOut: bigint;
+  totalVolumeInNorm?: string;
+  totalVolumeOutNorm?: string;
+}) {
   return new AssetVolumeHistoricalData({
     id: asset.id + '-' + paraBlockHeight,
     asset,
@@ -80,5 +96,7 @@ export function initAssetVolume(
     totalVolumeOut,
     relayBlockHeight,
     paraBlockHeight,
+    // totalVolumeInNorm,
+    // totalVolumeOutNorm,
   });
 }

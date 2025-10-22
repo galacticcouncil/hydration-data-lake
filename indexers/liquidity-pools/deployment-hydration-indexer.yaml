@@ -5,7 +5,7 @@ description: Hydration pools indexer
 build:
 deploy:
   env:
-    DEPLOYMENT_COMMIT_HASH: ''
+    DEPLOYMENT_COMMIT_HASH: 'none'
     ORCHESTRATOR_QUEUE_REDIS_HOST: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_HOST }}
     ORCHESTRATOR_QUEUE_REDIS_PASS: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_PASS }}
     TS_REDIS_HOST: ${{ secrets.TS_REDIS_PROD_A_HOST }}
@@ -41,7 +41,7 @@ deploy:
       HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
       EVM_CONTRACT_CALL_RETRIES: 2
 
-      PROCESS_FROM_BLOCK: 6000000
+      PROCESS_FROM_BLOCK: 9250000
       PROCESS_TO_BLOCK: -1
 
       USE_STORAGE_DICTIONARY: true
@@ -67,6 +67,7 @@ deploy:
       RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
       RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
       COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
+
     cmd:
       - sqd
       - api:prod
