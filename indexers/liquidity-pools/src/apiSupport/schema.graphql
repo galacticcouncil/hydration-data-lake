@@ -137253,7 +137253,7 @@ type Query {
   assetLatestSpotPrices(filter: AssetLatestSpotPricesFilter): AssetLatestSpotPricesResponse!
   assetPairPricesAndVolumesByPeriod(filter: AssetPairPricesAndVolumesByPeriodFilter): AssetPairPricesAndVolumeByPeriodResponse!
   accountTotalBalancesByPeriod(filter: AccountTotalBalancesByPeriodFilter): AccountTotalBalancesByPeriodResponse!
-  dustableAccounts: DustableAccountsResponse!
+  dustableAccounts(filter: DustableAccountsFilter): DustableAccountsResponse!
 }
 
 """
@@ -137280,6 +137280,13 @@ type Subscription {
   stableswapVolumeHistoricalData(filter: StableswapVolumeHistoricalDataSubscriptionFilter): StableswapVolumeHistoricalDataSubscriptionPayload
   stableswapVolumeHistoricalDataByPeriod(filter: StableswapVolumeHistoricalDataByPeriodSubscriptionFilter): StableswapVolumeHistoricalDataByPeriodSubscriptionPayload
   routedTrades(filter: RoutedTradeSubscriptionFilter): RoutedTradeSubscriptionPayload
+}
+
+input DustableAccountsFilter {
+  includeZeroAccounts: Boolean
+  assetId: String
+  assetRegistryId: String
+  existentialDeposit: String
 }
 
 type DustableAccount {

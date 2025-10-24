@@ -5,6 +5,13 @@ export const DustableAccountsPlugin: Plugin = makeExtendSchemaPlugin(
   (build, options) => {
     return {
       typeDefs: gql`
+        input DustableAccountsFilter {
+          includeZeroAccounts: Boolean
+          assetId: String
+          assetRegistryId: String
+          existentialDeposit: String
+        }
+
         type DustableAccount {
           accountId: String!
           assetRegistryIds: [String!]!
@@ -16,7 +23,7 @@ export const DustableAccountsPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         extend type Query {
-          dustableAccounts: DustableAccountsResponse!
+          dustableAccounts(filter: DustableAccountsFilter): DustableAccountsResponse!
         }
       `,
       resolvers: {

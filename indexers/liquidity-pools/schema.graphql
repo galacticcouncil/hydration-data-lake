@@ -256,6 +256,24 @@ type AccountAssetBalanceHistoricalData @entity {
   block: Block!
 }
 
+type AccountAssetBalanceLatest @entity {
+  "<address>-<assetId>"
+  id: ID!
+  accountId: String! @index
+  assetId: String! @index
+
+  transferable: BigInt!
+  totalLocked: BigInt!
+
+  transferableInRefAssetNorm: String
+  totalLockedInRefAssetNorm: String
+
+  total: BigInt! @index
+
+  paraBlockHeight: Int!
+  blockId: String!
+}
+
 type AccountTotalBalanceHistoricalData @entity {
   "<address>-<paraBlockHeight>"
   id: ID!

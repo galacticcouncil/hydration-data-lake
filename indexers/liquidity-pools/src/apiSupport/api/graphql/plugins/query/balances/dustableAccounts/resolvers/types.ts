@@ -1,3 +1,10 @@
+export interface DustableAccountsFilter {
+  includeZeroAccounts?: boolean;
+  assetId?: string;
+  assetRegistryId?: string;
+  existentialDeposit?: string;
+}
+
 export interface DustableAccount {
   accountId: string;
   assetRegistryIds: string[];
