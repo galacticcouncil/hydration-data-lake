@@ -326,6 +326,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_ACTION_MAX_BATCH_SIZE: number = 2500;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_POOL_MAX_SIZE: number = 2;
+
   @IsNotEmpty()
   readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
 
