@@ -76,9 +76,9 @@ scale:
   dedicated: true
   addons:
     postgres:
-      profile: xlarge
-      storage: 500G
+      profile: large
+      storage: 700G
   processor:
-    profile: xlarge
+    profile: large
   api:
     profile: small
