@@ -6,6 +6,7 @@ on:
       - "fix/**"
       - "feat/**"
       - "main"
+      - "versions/**"
 
 jobs:
   docker-images-build-publish:
