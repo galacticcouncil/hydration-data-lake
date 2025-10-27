@@ -206,6 +206,8 @@ async function initializeServer() {
 
     // app.use('/admin/queues', getBullBoardExpressAdapter().getRouter());
 
+    app.use(cors());
+
     app.use(postgraphileInstance);
 
     app.use(express.json());
