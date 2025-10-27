@@ -67,6 +67,7 @@ deploy:
       RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
       RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
       COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
+      DB_POOL_MAX_SIZE: 1
 
     cmd:
       - sqd
