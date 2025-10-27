@@ -91,6 +91,7 @@ export async function assetRegistered(
     externalAssetMetadata =
       await AssetHubManager.getInstance().getExternalAssetDataFromAssetHub({
         assetMultilocation: assetMultiLocationFromStorage,
+        forceRefetch: true,
       });
   }
 
@@ -256,6 +257,7 @@ export async function assetLocationSet(
     externalAssetMetadata =
       await AssetHubManager.getInstance().getExternalAssetDataFromAssetHub({
         assetMultilocation: assetMultiLocationFromStorage,
+        forceRefetch: true,
       });
   }
 
