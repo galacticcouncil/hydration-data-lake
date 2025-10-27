@@ -158,9 +158,9 @@ export class TimeSeriesApiSupportManager {
         isResultEmpty = true;
         break;
       }
-      console.log(
-        `AssetPriceVol :: Pulling data to TS: ${fromBlockHeight}/${toBlockHeight}`
-      );
+      // console.log(
+      //   `AssetPriceVol :: Pushing data to TS: ${fromBlockHeight}/${toBlockHeight}`
+      // );
 
       processedBlockHeight =
         assetSpotPriceHistDataChunk.rows[
