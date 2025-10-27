@@ -32,7 +32,7 @@ deploy:
       NODE_ENV: 'production'
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
       UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-      INDEXING_IS_PAUSED: false
+      INDEXING_IS_PAUSED: true
       ALL_IN_ONE_PROCESSOR_MODE: true
       IS_CORE_PROCESSOR: false
       IS_SPOT_PRICES_PROCESSOR: false
@@ -66,7 +66,8 @@ deploy:
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
       RPC_URL: 'wss://node-subwhale-5.shellfish.hydration.cloud'
       RPC_URL_HTTPS: 'https://node-subwhale-5.shellfish.hydration.cloud'
-      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: true
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
+      DB_POOL_MAX_SIZE: 1
 
     cmd:
       - sqd
@@ -75,9 +76,9 @@ scale:
   dedicated: true
   addons:
     postgres:
-      profile: xlarge
+      profile: large
       storage: 500G
   processor:
-    profile: xlarge
+    profile: small
   api:
     profile: small
