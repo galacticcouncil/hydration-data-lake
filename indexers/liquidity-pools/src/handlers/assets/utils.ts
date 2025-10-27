@@ -28,19 +28,24 @@ import {
 } from '../../parsers/types/events';
 import { AssetHubRpcManager } from '../../utils/rpcCliens/assetHubRpcManager';
 import { AssetHubManager } from '../../utils/assetHubManager';
+import pMap from 'p-map';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAll = new Map(
     (
-      await ctx.storeUtils.findWithLogs(Asset, {
-        where: {},
-        relations: {
-          underlyingAsset: true,
-          aToken: true,
-          variableDebtToken: true,
-          bondUnderlyingAsset: true,
+      await ctx.storeUtils.findWithLogs(
+        Asset,
+        {
+          where: {},
+          relations: {
+            underlyingAsset: true,
+            aToken: true,
+            variableDebtToken: true,
+            bondUnderlyingAsset: true,
+          },
         },
-      }, { className: 'Asset' })
+        { className: 'Asset' }
+      )
     ).map((asset) => [asset.id, asset])
   );
 }
@@ -152,7 +157,9 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   let bondsStorageData: BondDetails[] = [];
 
   const allExistingAssets = new Map(
-    (await ctx.storeUtils.findWithLogs(Asset, {}, { className: 'Asset' })).map((asset) => [asset.id, asset])
+    (await ctx.storeUtils.findWithLogs(Asset, {}, { className: 'Asset' })).map(
+      (asset) => [asset.id, asset]
+    )
   );
 
   const assetsToSave: Asset[] = [];
@@ -184,125 +191,134 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
     await AssetHubManager.getInstance().prefetchAllAssetsMetadata();
 
-    for (const { assetId, data } of storageData) {
-      if (!data) continue;
+    // for (const { assetId, data } of storageData)
 
-      const erc20AssetContractAddress = await getAssetEvmAddressByType({
-        assetId,
-        assetType: data.assetType,
-        ctx,
-      });
+    await pMap(
+      storageData,
+      async ({ assetId, data }) => {
+        if (!data) return;
 
-      let erc20AssetContractDetails = null;
-
-      if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress) {
-        erc20AssetContractDetails =
-          await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
-            erc20AssetContractAddress
-          );
-      }
-
-      const assetCustomLocation = getNewCustomAssetMultiLocation({
-        assetRegistryId: assetId,
-        evmAddress: erc20AssetContractAddress,
-        assetType: data.assetType,
-      });
-
-      if (!assetCustomLocation) continue;
-
-      const assetMultiLocationFromStorage =
-        await getNewAssetMultiLocationFromStorageData({
-          blockHeader,
-          assetRegistryId: assetId,
-          storageMultilocation: allAssetsStorageMultiLocationsMap.get(assetId),
+        const erc20AssetContractAddress = await getAssetEvmAddressByType({
+          assetId,
+          assetType: data.assetType,
+          ctx,
         });
 
-      let externalAssetMetadata = null;
+        let erc20AssetContractDetails = null;
 
-      if (
-        assetMultiLocationFromStorage &&
-        data.assetType === AssetType.External
-      ) {
-        externalAssetMetadata =
-          await AssetHubManager.getInstance().getExternalAssetDataFromAssetHub({
-            assetMultilocation: assetMultiLocationFromStorage,
-          });
-      }
-
-      const assetEntityId =
-        getAssetIdFromCustomMultiLocation(assetCustomLocation);
-
-      if (!assetEntityId) continue;
-
-      let bondUnderlyingAsset = null;
-      let bondMaturity = null;
-
-      if (data.assetType === AssetType.Bond) {
-        const bondDetails = bondsStorageData.find(
-          (bond) => `${bond.bondId}` === `${assetId}`
-        );
-        if (bondDetails) {
-          bondUnderlyingAsset = await getOrCreateAsset({
-            assetRegistryId: bondDetails.underlyingAsset,
-            ctx,
-            ensure: true,
-            blockHeader,
-          });
-          bondMaturity = bondDetails.maturity;
+        if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress) {
+          erc20AssetContractDetails =
+            await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+              erc20AssetContractAddress
+            );
         }
-      }
 
-      const getDecimals = () => {
-        if (data.assetType === AssetType.External)
-          return externalAssetMetadata?.decimals ?? data.decimals ?? null;
-        if (data.assetType !== AssetType.Bond) return data.decimals ?? null;
-        if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
-        return null;
-      };
+        const assetCustomLocation = getNewCustomAssetMultiLocation({
+          assetRegistryId: assetId,
+          evmAddress: erc20AssetContractAddress,
+          assetType: data.assetType,
+        });
 
-      const getSymbol = () => {
-        if (data.assetType === AssetType.External)
-          return externalAssetMetadata?.symbol ?? data.symbol ?? null;
-        if (data.assetType !== AssetType.Bond) return data.symbol ?? null;
-        if (bondUnderlyingAsset)
-          return bondUnderlyingAsset.symbol
-            ? `${bondUnderlyingAsset.symbol}b`
-            : null;
-        return null;
-      };
+        if (!assetCustomLocation) return;
 
-      const getName = () => {
-        if (data.assetType === AssetType.External)
-          return externalAssetMetadata?.name ?? data.name ?? null;
-        return data.name ?? null;
-      };
+        const assetMultiLocationFromStorage =
+          await getNewAssetMultiLocationFromStorageData({
+            blockHeader,
+            assetRegistryId: assetId,
+            storageMultilocation:
+              allAssetsStorageMultiLocationsMap.get(assetId),
+          });
 
-      const newAsset = new Asset({
-        id: assetEntityId,
-        assetRegistryId: `${assetId}`,
-        evmAddress: erc20AssetContractAddress,
-        multiLocationsMetadata: [assetCustomLocation],
-        multiLocations: assetMultiLocationFromStorage
-          ? [assetMultiLocationFromStorage]
-          : [],
-        multiLocationIds: [assetEntityId],
+        let externalAssetMetadata = null;
 
-        name: getName(),
-        assetType: data.assetType,
-        resourceType:
-          erc20AssetContractDetails?.resourceType ?? ResourceType.Underlying,
-        existentialDeposit: data.existentialDeposit,
-        symbol: getSymbol(),
-        decimals: getDecimals(),
-        xcmRateLimit: data.xcmRateLimit ?? null,
-        isSufficient: data.isSufficient ?? true,
-        bondUnderlyingAsset,
-        bondMaturity,
-      });
+        if (
+          assetMultiLocationFromStorage &&
+          data.assetType === AssetType.External
+        ) {
+          externalAssetMetadata =
+            await AssetHubManager.getInstance().getExternalAssetDataFromAssetHub(
+              {
+                assetMultilocation: assetMultiLocationFromStorage,
+              }
+            );
+        }
 
-      assetsToSave.push(newAsset);
-      ctx.batchState.state.assetsAll.set(newAsset.id, newAsset);
-    }
+        const assetEntityId =
+          getAssetIdFromCustomMultiLocation(assetCustomLocation);
+
+        if (!assetEntityId) return;
+
+        let bondUnderlyingAsset = null;
+        let bondMaturity = null;
+
+        if (data.assetType === AssetType.Bond) {
+          const bondDetails = bondsStorageData.find(
+            (bond) => `${bond.bondId}` === `${assetId}`
+          );
+          if (bondDetails) {
+            bondUnderlyingAsset = await getOrCreateAsset({
+              assetRegistryId: bondDetails.underlyingAsset,
+              ctx,
+              ensure: true,
+              blockHeader,
+            });
+            bondMaturity = bondDetails.maturity;
+          }
+        }
+
+        const getDecimals = () => {
+          if (data.assetType === AssetType.External)
+            return externalAssetMetadata?.decimals ?? data.decimals ?? null;
+          if (data.assetType !== AssetType.Bond) return data.decimals ?? null;
+          if (bondUnderlyingAsset) return bondUnderlyingAsset.decimals ?? null;
+          return null;
+        };
+
+        const getSymbol = () => {
+          if (data.assetType === AssetType.External)
+            return externalAssetMetadata?.symbol ?? data.symbol ?? null;
+          if (data.assetType !== AssetType.Bond) return data.symbol ?? null;
+          if (bondUnderlyingAsset)
+            return bondUnderlyingAsset.symbol
+              ? `${bondUnderlyingAsset.symbol}b`
+              : null;
+          return null;
+        };
+
+        const getName = () => {
+          if (data.assetType === AssetType.External)
+            return externalAssetMetadata?.name ?? data.name ?? null;
+          return data.name ?? null;
+        };
+
+        const newAsset = new Asset({
+          id: assetEntityId,
+          assetRegistryId: `${assetId}`,
+          evmAddress: erc20AssetContractAddress,
+          multiLocationsMetadata: [assetCustomLocation],
+          multiLocations: assetMultiLocationFromStorage
+            ? [assetMultiLocationFromStorage]
+            : [],
+          multiLocationIds: [assetEntityId],
+
+          name: getName(),
+          assetType: data.assetType,
+          resourceType:
+            erc20AssetContractDetails?.resourceType ?? ResourceType.Underlying,
+          existentialDeposit: data.existentialDeposit,
+          symbol: getSymbol(),
+          decimals: getDecimals(),
+          xcmRateLimit: data.xcmRateLimit ?? null,
+          isSufficient: data.isSufficient ?? true,
+          bondUnderlyingAsset,
+          bondMaturity,
+        });
+
+        assetsToSave.push(newAsset);
+        ctx.batchState.state.assetsAll.set(newAsset.id, newAsset);
+      },
+      { concurrency: 200 }
+    );
 
     /**
      * Iterate all available MM resources and create Asset entities.
