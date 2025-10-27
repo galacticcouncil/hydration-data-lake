@@ -2,7 +2,10 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { handleRelayChainBlocks } from '../../../handlers/relayChain';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
+import {
+  BatchBlocksParsedDataManager,
+  getParsedEventsData,
+} from '../../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../../parsers/storageResolver';
 import {
   prefetchOrInitAllBatchAccounts,
@@ -68,39 +71,50 @@ import { handleTransactionPaymentHistoricalData } from '../../../handlers/transa
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
 ) {
-  await handleRelayChainBlocks(ctx);
+  let parsedData = null;
 
-  console.time('processExtrinsics');
-  await ChainActivityTraceManager.processExtrinsics(ctx);
-  console.timeEnd('processExtrinsics');
+  await Promise.all([
+    (async () => {
+      await handleRelayChainBlocks(ctx);
 
-  console.time('saveActivityTraceEntities');
-  await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
-  console.timeEnd('saveActivityTraceEntities');
+      console.time('processExtrinsics');
+      await ChainActivityTraceManager.processExtrinsics(ctx);
+      console.timeEnd('processExtrinsics');
 
-  console.time('getParsedEventsData');
-  /**
-   * getParsedEventsData must be executed ONLY after
-   * ChainActivityTraceManager.processExtrinsics method execution, because
-   * getParsedEventsData needs already compiled traceIds.
-   */
-  const parsedData = await getParsedEventsData(ctx);
-  console.timeEnd('getParsedEventsData');
+      console.time('saveActivityTraceEntities');
+      await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
+      console.timeEnd('saveActivityTraceEntities');
 
-  await StorageResolver.getInstance().init({
-    ctx: ctx,
-    blockNumberFrom: ctx.blocks[0].header.height,
-    blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
-  });
+      console.time('getParsedEventsData');
+      /**
+       * getParsedEventsData must be executed ONLY after
+       * ChainActivityTraceManager.processExtrinsics method execution, because
+       * getParsedEventsData needs already compiled traceIds.
+       */
+      parsedData = await getParsedEventsData(ctx);
+      console.timeEnd('getParsedEventsData');
 
-  await prefetchGenericPersistentDataWithLogs(ctx);
+      await StorageResolver.getInstance().init({
+        ctx: ctx,
+        blockNumberFrom: ctx.blocks[0].header.height,
+        blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
+      });
 
-  console.time('initContractInstances');
-  await MoneyMarketContractsManager.getInstance().initContractInstances({
-    ctx: ctx,
-    blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-  });
-  console.timeEnd('initContractInstances');
+      await prefetchOrInitAllBatchAccounts(ctx);
+    })(),
+    (async () => {
+      console.time('initContractInstances');
+      await MoneyMarketContractsManager.getInstance().initContractInstances({
+        ctx: ctx,
+        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+      });
+      console.timeEnd('initContractInstances');
+      return null;
+    })(),
+    prefetchGenericPersistentDataWithLogs(ctx, false),
+  ]);
+
+  if (!parsedData) throw new Error('parsedData is null');
 
   await ensureNativeToken(ctx);
 

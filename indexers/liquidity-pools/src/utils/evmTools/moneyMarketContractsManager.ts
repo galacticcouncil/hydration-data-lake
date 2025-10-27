@@ -144,16 +144,6 @@ export class MoneyMarketContractsManager {
     blockNumber?: number;
   }): Promise<MoneyMarketResourceDetails[] | null> {
     try {
-      // const reservesData = await retryAsync({
-      //   fn: async () =>
-      //     this.uiPoolDataProviderContractInstance.getReservesData(
-      //       appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
-      //       { blockTag: blockNumber }
-      //     ),
-      //   fallbackResponse: [],
-      //   tag: `getReservesData.at(${blockNumber})`,
-      // });
-
       const reservesData = await measureEvmContractCall({
         call: `uiPoolDataProviderContractInstance.getReservesData`,
         originFn: 'getReservesData',

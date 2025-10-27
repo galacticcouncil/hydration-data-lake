@@ -27,16 +27,18 @@ export class AssetHubManager {
     if (!allAssetsMetadataEntries) return;
 
     for (const assetMetadataEntry of allAssetsMetadataEntries) {
-      this.assetMetadataCache.set(assetMetadataEntry.id, assetMetadataEntry);
+      this.assetMetadataCache.set(+assetMetadataEntry.id, assetMetadataEntry);
     }
   }
 
   async getExternalAssetDataFromAssetHub({
     assetMultilocation,
     withCache = true,
+    forceRefetch = false,
   }: {
     assetMultilocation: AssetMultiLocation;
     withCache?: boolean;
+    forceRefetch?: boolean;
   }) {
     if (
       assetMultilocation.hierarchyLevel !== 'X3' ||
@@ -54,6 +56,19 @@ export class AssetHubManager {
 
     if (withCache && this.assetMetadataCache.has(+assetHubAssetId)) {
       return this.assetMetadataCache.get(+assetHubAssetId);
+    }
+
+    if (
+      withCache &&
+      !forceRefetch &&
+      !this.assetMetadataCache.has(+assetHubAssetId)
+    ) {
+      return {
+        id: +assetHubAssetId,
+        decimals: 0,
+        symbol: '',
+        name: '',
+      };
     }
 
     const assetHubAssetData =
