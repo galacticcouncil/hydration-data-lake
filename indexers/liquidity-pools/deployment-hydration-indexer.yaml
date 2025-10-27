@@ -68,6 +68,7 @@ deploy:
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
       RPC_URL: 'wss://3.rpc.hydration.cloud'
       RPC_URL_HTTPS: 'https://3.rpc.hydration.cloud'
+      DB_POOL_MAX_SIZE: 1
 
     cmd:
       - sqd
