@@ -52,15 +52,19 @@ export async function getOrCreateAsset({
     return asset;
   }
 
-  asset = await ctx.storeUtils.findOneWithLogs(Asset, {
-    // @ts-ignore
-    where: {
-      ...(id ? { id: `${id}` } : {}),
-      ...(evmAddress ? { evmAddress } : {}),
-      ...(assetRegistryId ? { assetRegistryId: `${assetRegistryId}` } : {}),
+  asset = await ctx.storeUtils.findOneWithLogs(
+    Asset,
+    {
+      // @ts-ignore
+      where: {
+        ...(id ? { id: `${id}` } : {}),
+        ...(evmAddress ? { evmAddress } : {}),
+        ...(assetRegistryId ? { assetRegistryId: `${assetRegistryId}` } : {}),
+      },
+      ...(relations ? { relations } : {}),
     },
-    ...(relations ? { relations } : {}),
-  }, { className: 'Asset' });
+    { className: 'Asset' }
+  );
 
   if (asset) {
     ctx.batchState.state.assetsAll.set(asset.id, asset);
@@ -113,6 +117,7 @@ export async function getOrCreateAsset({
     externalAssetMetadata =
       await AssetHubManager.getInstance().getExternalAssetDataFromAssetHub({
         assetMultilocation: assetMultiLocationFromStorage,
+        forceRefetch: true,
       });
   }
 
@@ -250,14 +255,18 @@ export async function getOrCreateMoneyMarketAsset({
 
   if (asset) return asset;
 
-  asset = await ctx.storeUtils.findOneWithLogs(Asset, {
-    // @ts-ignore
-    where: {
-      ...(id ? { id: `${id}` } : {}),
-      ...(evmAddress ? { evmAddress } : {}),
-      ...(assetRegistryId ? { assetRegistryId } : {}),
+  asset = await ctx.storeUtils.findOneWithLogs(
+    Asset,
+    {
+      // @ts-ignore
+      where: {
+        ...(id ? { id: `${id}` } : {}),
+        ...(evmAddress ? { evmAddress } : {}),
+        ...(assetRegistryId ? { assetRegistryId } : {}),
+      },
     },
-  }, { className: 'Asset' });
+    { className: 'Asset' }
+  );
 
   if (asset) {
     ctx.batchState.state.assetsAll.set(asset.id, asset);

@@ -36,13 +36,13 @@ import {
 } from '../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { Entity } from '@subsquid/typeorm-store/src/store';
-import { getHydratedLogger, HydratedLogger } from '../utils/hydratedLogger';
 
 export async function prefetchGenericPersistentDataWithLogs(
-  ctx: SqdProcessorContext<Store>
+  ctx: SqdProcessorContext<Store>,
+  processCollectedIdsToPrefetch: boolean = true
 ) {
   await ctx.extLogger.measure({
-    fn: () => prefetchGenericPersistentData(ctx),
+    fn: () => prefetchGenericPersistentData(ctx, processCollectedIdsToPrefetch),
     name: 'prefetchGenericPersistentData',
     actionType: 'other',
     meta: { paraBlockHeight: ctx.blocks[0].header.height },
@@ -50,9 +50,10 @@ export async function prefetchGenericPersistentDataWithLogs(
 }
 
 export async function prefetchGenericPersistentData(
-  ctx: SqdProcessorContext<Store>
+  ctx: SqdProcessorContext<Store>,
+  processCollectedIdsToPrefetch: boolean = true
 ) {
-  await prefetchOrInitAllBatchAccounts(ctx);
+  if (processCollectedIdsToPrefetch) await prefetchOrInitAllBatchAccounts(ctx);
 
   await prefetchAllAssets(ctx);
 
@@ -77,6 +78,7 @@ export async function prefetchGenericPersistentData(
       { className: 'Lbppool', originCallFn: 'prefetchGenericPersistentData' }
     )
   );
+
   await fetchAndCachePersistentData(ctx.batchState.state.xykAllBatchPools, () =>
     ctx.storeUtils.findWithLogs(
       Xykpool,
@@ -100,17 +102,6 @@ export async function prefetchGenericPersistentData(
       }
     )
   );
-
-  ctx.batchState.state.omnipoolEntity =
-    (await ctx.storeUtils.findOneWithLogs(
-      Omnipool,
-      {
-        where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
-        relations: { account: true },
-      },
-      { className: 'Omnipool', originCallFn: 'prefetchGenericPersistentData' }
-    )) ?? null;
-
   await fetchAndCachePersistentData(ctx.batchState.state.stableswapPools, () =>
     ctx.storeUtils.findWithLogs(
       Stableswap,
@@ -123,7 +114,10 @@ export async function prefetchGenericPersistentData(
           assets: { asset: true },
         },
       },
-      { className: 'Stableswap', originCallFn: 'prefetchGenericPersistentData' }
+      {
+        className: 'Stableswap',
+        originCallFn: 'prefetchGenericPersistentData',
+      }
     )
   );
   await fetchAndCachePersistentData(ctx.batchState.state.stableswapAssets, () =>
@@ -175,18 +169,6 @@ export async function prefetchGenericPersistentData(
         }
       )
   );
-  ctx.batchState.state.hsmpoolEntity =
-    (await ctx.storeUtils.findOneWithLogs(
-      Hsmpool,
-      {
-        where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
-        relations: {
-          account: true,
-        },
-      },
-      { className: 'Hsmpool', originCallFn: 'prefetchGenericPersistentData' }
-    )) ?? null;
-
   await fetchAndCachePersistentData(ctx.batchState.state.hsmCollaterals, () =>
     ctx.storeUtils.findWithLogs(
       HsmCollateral,
@@ -204,7 +186,6 @@ export async function prefetchGenericPersistentData(
       }
     )
   );
-
   await fetchAndCachePersistentData(ctx.batchState.state.aaveFacilitators, () =>
     ctx.storeUtils.findWithLogs(
       AaveFacilitator,
@@ -217,6 +198,32 @@ export async function prefetchGenericPersistentData(
       }
     )
   );
+  ctx.batchState.state.omnipoolEntity =
+    (await ctx.storeUtils.findOneWithLogs(
+      Omnipool,
+      {
+        where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
+        relations: { account: true },
+      },
+      {
+        className: 'Omnipool',
+        originCallFn: 'prefetchGenericPersistentData',
+      }
+    )) ?? null;
+  ctx.batchState.state.hsmpoolEntity =
+    (await ctx.storeUtils.findOneWithLogs(
+      Hsmpool,
+      {
+        where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
+        relations: {
+          account: true,
+        },
+      },
+      {
+        className: 'Hsmpool',
+        originCallFn: 'prefetchGenericPersistentData',
+      }
+    )) ?? null;
 }
 
 export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationPhase(
