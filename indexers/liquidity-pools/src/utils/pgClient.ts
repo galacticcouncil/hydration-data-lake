@@ -22,6 +22,7 @@ export class CommonPgClient {
       database: appConfig.DB_NAME,
       user: appConfig.DB_USER,
       password: appConfig.DB_PASS,
+      max: 3,
     });
   }
 
