@@ -81,7 +81,7 @@ import {
 } from './apiSupport/api/rest/proxyApiHandlers/resources/subscan';
 import { ProxyApiRoute } from './apiSupport/api/rest/proxyApiHandlers/types';
 import restRouter from './apiSupport/api/rest/routes/rest.routes';
-import { runMigrations } from './apiSupport/apiMigrations/runMigrations';
+import { runApiDbMigrations } from './apiSupport/apiMigrations/runApiDbMigrations';
 import { swaggerOptions } from './apiSupport/swagger';
 import {
   TimeSeriesApiSupportManager,
@@ -100,7 +100,7 @@ async function initializeServer() {
   try {
     const app = express();
 
-    await runMigrations();
+    await runApiDbMigrations();
 
     let postgraphileInstance = null;
 

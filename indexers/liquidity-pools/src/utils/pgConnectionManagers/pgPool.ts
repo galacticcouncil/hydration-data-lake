@@ -1,18 +1,18 @@
-import { AppConfig } from '../appConfig';
+import { AppConfig } from '../../appConfig';
 import { Pool, QueryResult, QueryResultRow } from 'pg';
 
 const appConfig = AppConfig.getInstance();
 
-export class CommonPgClient {
-  private static instance: CommonPgClient;
+export class CommonPgPool {
+  private static instance: CommonPgPool;
 
   public pool: Pool;
 
-  static getInstance(): CommonPgClient {
-    if (!CommonPgClient.instance) {
-      CommonPgClient.instance = new CommonPgClient();
+  static getInstance(): CommonPgPool {
+    if (!CommonPgPool.instance) {
+      CommonPgPool.instance = new CommonPgPool();
     }
-    return CommonPgClient.instance;
+    return CommonPgPool.instance;
   }
 
   constructor() {

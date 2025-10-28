@@ -17,6 +17,8 @@ import {
 } from './processorHelpers/getProcessingMode';
 import { TypeormDatabaseUtils } from './utils/typeormDatabaseUtils';
 import { getHydratedLogger, initHydratedLogger } from './utils/hydratedLogger';
+import { DbMigrationsManager } from './utils/pgConnectionManagers/dbMigrationsManager';
+import { runProcessorCustomDbMigrations } from './customDbMigrations/runProcessorCustomDbMigrations';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -40,70 +42,85 @@ if (process.env.INDEXING_IS_PAUSED === 'true') {
 
 const appConfig = AppConfig.getInstance();
 
-processor.run(
-  new TypeormDatabase({
-    supportHotBlocks: true,
-    stateSchema: appConfig.STATE_SCHEMA_NAME,
-    isolationLevel: 'READ COMMITTED',
-  }),
-  async (ctx) => {
-    printV8MemoryHeap();
+async function runProcessor() {
+  let customDbMigrationsExecuted = false;
 
-    console.time('TOTAL BATCH EXECUTION TIME');
-
-    const ctxWithBatchState = ctx as SqdProcessorContext<Store>;
-    const extLogger = await getHydratedLogger();
-
-    ctxWithBatchState.batchState = new BatchState(
-      ctxWithBatchState as SqdProcessorContext<Store>
-    );
-    ctxWithBatchState.appConfig = AppConfig.getInstance();
-    ctxWithBatchState.storeUtils = new TypeormDatabaseUtils(
-      ctxWithBatchState,
-      extLogger
-    );
-    ctxWithBatchState.extLogger = extLogger;
-
-    await RedisTimeSeriesManager.getInstance().initClient();
-
-    console.log(`Processing mode >>> ${getProcessingMode(ctxWithBatchState)}`);
-
-    switch (getProcessingMode(ctxWithBatchState)) {
-      case ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR:
-      case ProcessingMode.ALL_IN_ONE_SINGLE_FLOW_PROCESSOR:
+  processor.run(
+    new TypeormDatabase({
+      supportHotBlocks: true,
+      stateSchema: appConfig.STATE_SCHEMA_NAME,
+      isolationLevel: 'READ COMMITTED',
+    }),
+    async (ctx) => {
+      if (!customDbMigrationsExecuted) {
         /**
-         * ----- A L L  I N  O N E  S I N G L E  P R O C E S S O R ---------->>>
-         *                            A N D
-         * --- A L L  I N  O N E  M U L T I F L O W  P R O C E S S O R ------>>>
+         * This execution must be here because native indexer DB migrations must be executed first.
          */
-        await execAllInOneProcessorHandlers(ctxWithBatchState);
-        break;
-      case ProcessingMode.REAGGREGATION_SINGLE_PROCESSOR:
-        /**
-         * ------------------ R E A G G R E G A T I O N --------------------->>>
-         *
-         * This block executes when the processor runs in reaggregation mode.
-         * It performs data recalculation or reaggregation operations using
-         * existing database records, bypassing normal event processing.
-         */
-        await handleReaggregationProcessing(ctxWithBatchState);
-        break;
+        await runProcessorCustomDbMigrations();
+        customDbMigrationsExecuted = true;
+      }
+      printV8MemoryHeap();
 
-      case ProcessingMode.MULTI_PROCESSOR_CORE_PROCESSOR:
-        /**
-         * ----------- M U L T I  P R O C E S S O R :: C O R E -------------->>>
-         */
-        await execCoreProcessorHandlers(ctxWithBatchState);
-        break;
-      case ProcessingMode.MULTI_PROCESSOR_SPOT_PRICES_PROCESSOR:
-        /**
-         * ---------- M U L T I  P R O C E S S O R :: P R I C E S ----------->>>
-         */
-        await execSpotPricesProcessorHandlers(ctxWithBatchState);
-        break;
+      console.time('TOTAL BATCH EXECUTION TIME');
+
+      const ctxWithBatchState = ctx as SqdProcessorContext<Store>;
+      const extLogger = await getHydratedLogger();
+
+      ctxWithBatchState.batchState = new BatchState(
+        ctxWithBatchState as SqdProcessorContext<Store>
+      );
+      ctxWithBatchState.appConfig = AppConfig.getInstance();
+      ctxWithBatchState.storeUtils = new TypeormDatabaseUtils(
+        ctxWithBatchState,
+        extLogger
+      );
+      ctxWithBatchState.extLogger = extLogger;
+
+      await RedisTimeSeriesManager.getInstance().initClient();
+
+      console.log(
+        `Processing mode >>> ${getProcessingMode(ctxWithBatchState)}`
+      );
+
+      switch (getProcessingMode(ctxWithBatchState)) {
+        case ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR:
+        case ProcessingMode.ALL_IN_ONE_SINGLE_FLOW_PROCESSOR:
+          /**
+           * ----- A L L  I N  O N E  S I N G L E  P R O C E S S O R ---------->>>
+           *                            A N D
+           * --- A L L  I N  O N E  M U L T I F L O W  P R O C E S S O R ------>>>
+           */
+          await execAllInOneProcessorHandlers(ctxWithBatchState);
+          break;
+        case ProcessingMode.REAGGREGATION_SINGLE_PROCESSOR:
+          /**
+           * ------------------ R E A G G R E G A T I O N --------------------->>>
+           *
+           * This block executes when the processor runs in reaggregation mode.
+           * It performs data recalculation or reaggregation operations using
+           * existing database records, bypassing normal event processing.
+           */
+          await handleReaggregationProcessing(ctxWithBatchState);
+          break;
+
+        case ProcessingMode.MULTI_PROCESSOR_CORE_PROCESSOR:
+          /**
+           * ----------- M U L T I  P R O C E S S O R :: C O R E -------------->>>
+           */
+          await execCoreProcessorHandlers(ctxWithBatchState);
+          break;
+        case ProcessingMode.MULTI_PROCESSOR_SPOT_PRICES_PROCESSOR:
+          /**
+           * ---------- M U L T I  P R O C E S S O R :: P R I C E S ----------->>>
+           */
+          await execSpotPricesProcessorHandlers(ctxWithBatchState);
+          break;
+      }
+
+      ctxWithBatchState.batchState.wipeState();
+      console.timeEnd('TOTAL BATCH EXECUTION TIME');
     }
+  );
+}
 
-    ctxWithBatchState.batchState.wipeState();
-    console.timeEnd('TOTAL BATCH EXECUTION TIME');
-  }
-);
+runProcessor().catch(console.error);

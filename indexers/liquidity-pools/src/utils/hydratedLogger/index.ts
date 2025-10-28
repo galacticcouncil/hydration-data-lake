@@ -1,5 +1,5 @@
 import pino, { Logger as PinoLogger } from 'pino';
-import { CommonPgClient } from '../pgClient';
+import { CommonPgPool } from '../pgConnectionManagers/pgPool';
 import { AppConfig } from '../../appConfig';
 import BaseMigration from './db/baseMigration';
 import ViewsMigration from './db/viewsMigration';
@@ -61,7 +61,7 @@ export class HydratedLogger {
 
   private pino: PinoLogger;
   // private pool: Pool | null = null;
-  private pgClient: CommonPgClient | null = null;
+  private pgClient: CommonPgPool | null = null;
   private ensureSchemaOnce?: Promise<void>;
   private consoleLogsEnabled = true;
   private consoleLogsVerbose = true;
@@ -106,7 +106,7 @@ export class HydratedLogger {
     // DB transport (batched)
     this.dbEnabled = cfg.db?.enabled ?? false;
     if (this.dbEnabled) {
-      this.pgClient = new CommonPgClient();
+      this.pgClient = new CommonPgPool();
 
       this.maxBatchSize = cfg.db?.maxBatchSize ?? 100;
       this.flushIntervalMs = cfg.db?.flushIntervalMs ?? 1000;
