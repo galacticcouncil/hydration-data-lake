@@ -409,6 +409,9 @@ export class AppConfig {
   SUB_PROCESSOR_SCHEMAS: string[] = ['squid_processor'];
 
   @Transform(({ value }: { value: string }) => value === 'true')
+  readonly IS_CUSTOM_DB_MIGRATIONS_RUNNER: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
   readonly INDEXING_IS_PAUSED: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')

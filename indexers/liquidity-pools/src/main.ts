@@ -52,9 +52,19 @@ async function runProcessor() {
       isolationLevel: 'READ COMMITTED',
     }),
     async (ctx) => {
-      if (!customDbMigrationsExecuted) {
+      if (
+        !customDbMigrationsExecuted &&
+        appConfig.IS_CUSTOM_DB_MIGRATIONS_RUNNER
+      ) {
         /**
-         * This execution must be here because native indexer DB migrations must be executed first.
+         * This execution must be here because native indexer DB migrations
+         * must be executed first.
+         *
+         * Configuring of "IS_CUSTOM_DB_MIGRATIONS_RUNNER" can be useful to
+         * avoid parallel runs of the same bunch of migrations by multiple
+         * processors if the indexer launched in multiprocessor mode. But even
+         * though the migrations runner function will handle such collision with
+         * retries logic, however, it will take more time.
          */
         await runProcessorCustomDbMigrations();
         customDbMigrationsExecuted = true;
