@@ -26800,6 +26800,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_SUM_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_SUM_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_SUM_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_SUM_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_SUM_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_SUM_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_SUM_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_VOLUME_IN_ASC
@@ -26818,6 +26822,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_VOLUME_IN_ASC
@@ -26836,6 +26844,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_MIN_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_MIN_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_MIN_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_MIN_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_MIN_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_VOLUME_IN_ASC
@@ -26854,6 +26866,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_MAX_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_MAX_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_MAX_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_MAX_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_MAX_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_VOLUME_IN_ASC
@@ -26872,6 +26888,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_VOLUME_IN_ASC
@@ -26890,6 +26910,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_VOLUME_IN_ASC
@@ -26908,6 +26932,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_VOLUME_IN_ASC
@@ -26926,6 +26954,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_VOLUME_IN_ASC
@@ -26944,6 +26976,10 @@ enum AssetsOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_SWAP_FEE_HISTORICAL_DATA_COUNT_ASC
   ASSET_SWAP_FEE_HISTORICAL_DATA_COUNT_DESC
   ASSET_SWAP_FEE_HISTORICAL_DATA_SUM_ID_ASC
@@ -91081,6 +91117,8 @@ type AssetVolumeHistoricalDatum {
   relayBlockHeight: Int!
   assetId: String
   blockId: String
+  totalVolumeInNorm: String!
+  totalVolumeOutNorm: String!
 
   """
   Reads a single `Asset` that is related to this `AssetVolumeHistoricalDatum`.
@@ -91198,6 +91236,12 @@ type AssetVolumeHistoricalDatumDistinctCountAggregates {
 
   """Distinct count of blockId across the matching connection"""
   blockId: BigInt
+
+  """Distinct count of totalVolumeInNorm across the matching connection"""
+  totalVolumeInNorm: BigInt
+
+  """Distinct count of totalVolumeOutNorm across the matching connection"""
+  totalVolumeOutNorm: BigInt
 }
 
 type AssetVolumeHistoricalDatumMinAggregates {
@@ -91372,6 +91416,8 @@ enum AssetVolumeHistoricalDataGroupBy {
   RELAY_BLOCK_HEIGHT
   ASSET_ID
   BLOCK_ID
+  TOTAL_VOLUME_IN_NORM
+  TOTAL_VOLUME_OUT_NORM
 }
 
 """Conditions for `AssetVolumeHistoricalDatum` aggregates."""
@@ -91491,6 +91537,10 @@ enum AssetVolumeHistoricalDataOrderBy {
   ASSET_ID_DESC
   BLOCK_ID_ASC
   BLOCK_ID_DESC
+  TOTAL_VOLUME_IN_NORM_ASC
+  TOTAL_VOLUME_IN_NORM_DESC
+  TOTAL_VOLUME_OUT_NORM_ASC
+  TOTAL_VOLUME_OUT_NORM_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -91526,6 +91576,12 @@ input AssetVolumeHistoricalDatumCondition {
 
   """Checks for equality with the object’s `blockId` field."""
   blockId: String
+
+  """Checks for equality with the object’s `totalVolumeInNorm` field."""
+  totalVolumeInNorm: String
+
+  """Checks for equality with the object’s `totalVolumeOutNorm` field."""
+  totalVolumeOutNorm: String
 }
 
 """
@@ -91558,6 +91614,12 @@ input AssetVolumeHistoricalDatumFilter {
 
   """Filter by the object’s `blockId` field."""
   blockId: StringFilter
+
+  """Filter by the object’s `totalVolumeInNorm` field."""
+  totalVolumeInNorm: StringFilter
+
+  """Filter by the object’s `totalVolumeOutNorm` field."""
+  totalVolumeOutNorm: StringFilter
 
   """Checks for all expressions in this list."""
   and: [AssetVolumeHistoricalDatumFilter!]
@@ -119076,6 +119138,478 @@ input AaveFacilitatorFilter {
   not: AaveFacilitatorFilter
 }
 
+"""A connection to a list of `AccountAssetBalanceLatest` values."""
+type AccountAssetBalanceLatestsConnection {
+  """A list of `AccountAssetBalanceLatest` objects."""
+  nodes: [AccountAssetBalanceLatest]!
+
+  """
+  A list of edges which contains the `AccountAssetBalanceLatest` and cursor to aid in pagination.
+  """
+  edges: [AccountAssetBalanceLatestsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `AccountAssetBalanceLatest` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: AccountAssetBalanceLatestAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `AccountAssetBalanceLatest` for these aggregates.
+    """
+    groupBy: [AccountAssetBalanceLatestGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: AccountAssetBalanceLatestHavingInput
+  ): [AccountAssetBalanceLatestAggregates!]
+}
+
+type AccountAssetBalanceLatest {
+  id: String!
+  accountId: String!
+  assetId: String!
+  transferable: BigFloat!
+  totalLocked: BigFloat!
+  transferableInRefAssetNorm: String
+  totalLockedInRefAssetNorm: String
+  total: BigFloat!
+  paraBlockHeight: Int!
+  blockId: String!
+}
+
+"""A `AccountAssetBalanceLatest` edge in the connection."""
+type AccountAssetBalanceLatestsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `AccountAssetBalanceLatest` at the end of the edge."""
+  node: AccountAssetBalanceLatest
+}
+
+type AccountAssetBalanceLatestAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: AccountAssetBalanceLatestSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: AccountAssetBalanceLatestDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: AccountAssetBalanceLatestMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: AccountAssetBalanceLatestMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: AccountAssetBalanceLatestAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: AccountAssetBalanceLatestStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: AccountAssetBalanceLatestStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: AccountAssetBalanceLatestVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: AccountAssetBalanceLatestVariancePopulationAggregates
+}
+
+type AccountAssetBalanceLatestSumAggregates {
+  """Sum of transferable across the matching connection"""
+  transferable: BigFloat!
+
+  """Sum of totalLocked across the matching connection"""
+  totalLocked: BigFloat!
+
+  """Sum of total across the matching connection"""
+  total: BigFloat!
+
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type AccountAssetBalanceLatestDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of accountId across the matching connection"""
+  accountId: BigInt
+
+  """Distinct count of assetId across the matching connection"""
+  assetId: BigInt
+
+  """Distinct count of transferable across the matching connection"""
+  transferable: BigInt
+
+  """Distinct count of totalLocked across the matching connection"""
+  totalLocked: BigInt
+
+  """
+  Distinct count of transferableInRefAssetNorm across the matching connection
+  """
+  transferableInRefAssetNorm: BigInt
+
+  """
+  Distinct count of totalLockedInRefAssetNorm across the matching connection
+  """
+  totalLockedInRefAssetNorm: BigInt
+
+  """Distinct count of total across the matching connection"""
+  total: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+
+  """Distinct count of blockId across the matching connection"""
+  blockId: BigInt
+}
+
+type AccountAssetBalanceLatestMinAggregates {
+  """Minimum of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Minimum of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Minimum of total across the matching connection"""
+  total: BigFloat
+
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountAssetBalanceLatestMaxAggregates {
+  """Maximum of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Maximum of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Maximum of total across the matching connection"""
+  total: BigFloat
+
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountAssetBalanceLatestAverageAggregates {
+  """Mean average of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Mean average of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Mean average of total across the matching connection"""
+  total: BigFloat
+
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountAssetBalanceLatestStddevSampleAggregates {
+  """
+  Sample standard deviation of transferable across the matching connection
+  """
+  transferable: BigFloat
+
+  """
+  Sample standard deviation of totalLocked across the matching connection
+  """
+  totalLocked: BigFloat
+
+  """Sample standard deviation of total across the matching connection"""
+  total: BigFloat
+
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountAssetBalanceLatestStddevPopulationAggregates {
+  """
+  Population standard deviation of transferable across the matching connection
+  """
+  transferable: BigFloat
+
+  """
+  Population standard deviation of totalLocked across the matching connection
+  """
+  totalLocked: BigFloat
+
+  """Population standard deviation of total across the matching connection"""
+  total: BigFloat
+
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountAssetBalanceLatestVarianceSampleAggregates {
+  """Sample variance of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Sample variance of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Sample variance of total across the matching connection"""
+  total: BigFloat
+
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountAssetBalanceLatestVariancePopulationAggregates {
+  """Population variance of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Population variance of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Population variance of total across the matching connection"""
+  total: BigFloat
+
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `AccountAssetBalanceLatest` for usage during aggregation.
+"""
+enum AccountAssetBalanceLatestGroupBy {
+  ACCOUNT_ID
+  ASSET_ID
+  TRANSFERABLE
+  TOTAL_LOCKED
+  TRANSFERABLE_IN_REF_ASSET_NORM
+  TOTAL_LOCKED_IN_REF_ASSET_NORM
+  TOTAL
+  PARA_BLOCK_HEIGHT
+  BLOCK_ID
+}
+
+"""Conditions for `AccountAssetBalanceLatest` aggregates."""
+input AccountAssetBalanceLatestHavingInput {
+  AND: [AccountAssetBalanceLatestHavingInput!]
+  OR: [AccountAssetBalanceLatestHavingInput!]
+  sum: AccountAssetBalanceLatestHavingSumInput
+  distinctCount: AccountAssetBalanceLatestHavingDistinctCountInput
+  min: AccountAssetBalanceLatestHavingMinInput
+  max: AccountAssetBalanceLatestHavingMaxInput
+  average: AccountAssetBalanceLatestHavingAverageInput
+  stddevSample: AccountAssetBalanceLatestHavingStddevSampleInput
+  stddevPopulation: AccountAssetBalanceLatestHavingStddevPopulationInput
+  varianceSample: AccountAssetBalanceLatestHavingVarianceSampleInput
+  variancePopulation: AccountAssetBalanceLatestHavingVariancePopulationInput
+}
+
+input AccountAssetBalanceLatestHavingSumInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountAssetBalanceLatestHavingDistinctCountInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountAssetBalanceLatestHavingMinInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountAssetBalanceLatestHavingMaxInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountAssetBalanceLatestHavingAverageInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountAssetBalanceLatestHavingStddevSampleInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountAssetBalanceLatestHavingStddevPopulationInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountAssetBalanceLatestHavingVarianceSampleInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountAssetBalanceLatestHavingVariancePopulationInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  total: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `AccountAssetBalanceLatest`."""
+enum AccountAssetBalanceLatestsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ACCOUNT_ID_ASC
+  ACCOUNT_ID_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  TRANSFERABLE_ASC
+  TRANSFERABLE_DESC
+  TOTAL_LOCKED_ASC
+  TOTAL_LOCKED_DESC
+  TRANSFERABLE_IN_REF_ASSET_NORM_ASC
+  TRANSFERABLE_IN_REF_ASSET_NORM_DESC
+  TOTAL_LOCKED_IN_REF_ASSET_NORM_ASC
+  TOTAL_LOCKED_IN_REF_ASSET_NORM_DESC
+  TOTAL_ASC
+  TOTAL_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  BLOCK_ID_ASC
+  BLOCK_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `AccountAssetBalanceLatest` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input AccountAssetBalanceLatestCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `accountId` field."""
+  accountId: String
+
+  """Checks for equality with the object’s `assetId` field."""
+  assetId: String
+
+  """Checks for equality with the object’s `transferable` field."""
+  transferable: BigFloat
+
+  """Checks for equality with the object’s `totalLocked` field."""
+  totalLocked: BigFloat
+
+  """
+  Checks for equality with the object’s `transferableInRefAssetNorm` field.
+  """
+  transferableInRefAssetNorm: String
+
+  """
+  Checks for equality with the object’s `totalLockedInRefAssetNorm` field.
+  """
+  totalLockedInRefAssetNorm: String
+
+  """Checks for equality with the object’s `total` field."""
+  total: BigFloat
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+
+  """Checks for equality with the object’s `blockId` field."""
+  blockId: String
+}
+
+"""
+A filter to be used against `AccountAssetBalanceLatest` object types. All fields are combined with a logical ‘and.’
+"""
+input AccountAssetBalanceLatestFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `accountId` field."""
+  accountId: StringFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: StringFilter
+
+  """Filter by the object’s `transferable` field."""
+  transferable: BigFloatFilter
+
+  """Filter by the object’s `totalLocked` field."""
+  totalLocked: BigFloatFilter
+
+  """Filter by the object’s `transferableInRefAssetNorm` field."""
+  transferableInRefAssetNorm: StringFilter
+
+  """Filter by the object’s `totalLockedInRefAssetNorm` field."""
+  totalLockedInRefAssetNorm: StringFilter
+
+  """Filter by the object’s `total` field."""
+  total: BigFloatFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Filter by the object’s `blockId` field."""
+  blockId: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [AccountAssetBalanceLatestFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [AccountAssetBalanceLatestFilter!]
+
+  """Negates the expression."""
+  not: AccountAssetBalanceLatestFilter
+}
+
 """A connection to a list of `BatchHsmpoolAssetHistVolsList` values."""
 type BatchHsmpoolAssetHistVolsListsConnection {
   """A list of `BatchHsmpoolAssetHistVolsList` objects."""
@@ -126457,6 +126991,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_SUM_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_SUM_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_SUM_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_SUM_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_SUM_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_SUM_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_SUM_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_VOLUME_IN_ASC
@@ -126475,6 +127013,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_DISTINCT_COUNT_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_VOLUME_IN_ASC
@@ -126493,6 +127035,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_MIN_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_MIN_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_MIN_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_MIN_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_MIN_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_MIN_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_VOLUME_IN_ASC
@@ -126511,6 +127057,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_MAX_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_MAX_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_MAX_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_MAX_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_MAX_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_MAX_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_VOLUME_IN_ASC
@@ -126529,6 +127079,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_AVERAGE_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_VOLUME_IN_ASC
@@ -126547,6 +127101,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_SAMPLE_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_VOLUME_IN_ASC
@@ -126565,6 +127123,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_STDDEV_POPULATION_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_VOLUME_IN_ASC
@@ -126583,6 +127145,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_SAMPLE_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_VOLUME_IN_ASC
@@ -126601,6 +127167,10 @@ enum BlocksOrderBy {
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_ASSET_ID_DESC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_ASC
   ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_BLOCK_ID_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_VOLUME_IN_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_VOLUME_IN_NORM_DESC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_VOLUME_OUT_NORM_ASC
+  ASSET_VOLUME_HISTORICAL_DATA_VARIANCE_POPULATION_TOTAL_VOLUME_OUT_NORM_DESC
   ASSET_SWAP_FEE_HISTORICAL_DATA_COUNT_ASC
   ASSET_SWAP_FEE_HISTORICAL_DATA_COUNT_DESC
   ASSET_SWAP_FEE_HISTORICAL_DATA_SUM_ID_ASC
@@ -133794,6 +134364,42 @@ type Query {
   ): AccountAssetBalanceHistoricalDataConnection
 
   """
+  Reads and enables pagination through a set of `AccountAssetBalanceLatest`.
+  """
+  accountAssetBalanceLatests(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `AccountAssetBalanceLatest`."""
+    orderBy: [AccountAssetBalanceLatestsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountAssetBalanceLatestCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountAssetBalanceLatestFilter
+  ): AccountAssetBalanceLatestsConnection
+
+  """
   Reads and enables pagination through a set of `AccountAssetSwapFeeHistoricalDatum`.
   """
   accountAssetSwapFeeHistoricalData(
@@ -137142,6 +137748,7 @@ type Query {
   aavepoolHistoricalDatum(id: String!): AavepoolHistoricalDatum
   account(id: String!): Account
   accountAssetBalanceHistoricalDatum(id: String!): AccountAssetBalanceHistoricalDatum
+  accountAssetBalanceLatest(id: String!): AccountAssetBalanceLatest
   accountAssetSwapFeeHistoricalDatum(id: String!): AccountAssetSwapFeeHistoricalDatum
   accountChainActivityTrace(id: String!): AccountChainActivityTrace
   accountMmPositionHistoricalDatum(id: String!): AccountMmPositionHistoricalDatum
