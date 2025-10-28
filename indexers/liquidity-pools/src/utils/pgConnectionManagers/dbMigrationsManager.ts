@@ -27,9 +27,9 @@ export class DbMigrationsManager extends CommonPgClient {
     await this.connectWithRetry();
 
     const runWithRetries = async (
-      max = 10,
-      baseDelayMs = 10000,
-      maxDelayMs = 60000
+      max = appConfig.DB_CUSTOM_MIGRATIONS_MAX_RETRY,
+      baseDelayMs = appConfig.DB_CUSTOM_MIGRATIONS_BASE_DELAY_MS,
+      maxDelayMs = appConfig.DB_CUSTOM_MIGRATIONS_MAX_DELAY_MS
     ): Promise<void> => {
       let attempt = 0;
 
