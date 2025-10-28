@@ -5,7 +5,7 @@ description: Hydration pools indexer (One lark)
 build:
 deploy:
   env:
-    DEPLOYMENT_COMMIT_HASH: none
+    DEPLOYMENT_COMMIT_HASH: 'none'
     ORCHESTRATOR_QUEUE_REDIS_HOST: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_HOST }}
     ORCHESTRATOR_QUEUE_REDIS_PASS: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_PASS }}
     TS_REDIS_HOST: ${{ secrets.TS_REDIS_STAGING_HOST }}
@@ -22,7 +22,7 @@ deploy:
       CHAIN: 'hydration_paseo_next'
       INDEXER_ID: 1001
       RPC_URL: 'wss://nomax.lark.hydration.cloud'
-      RPC_URL_HTTPS: 'wss://nomax.lark.hydration.cloud'
+      RPC_URL_HTTPS: 'https://nomax.lark.hydration.cloud'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
       TS_REDIS_PORT: 6377
       TS_REDIS_KEY_SPACE_ID: 5
