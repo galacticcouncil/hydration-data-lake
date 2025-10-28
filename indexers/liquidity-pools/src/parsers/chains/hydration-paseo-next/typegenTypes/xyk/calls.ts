@@ -13,7 +13,7 @@ export const createPool =  {
      * 
      * Emits `PoolCreated` event when successful.
      */
-    v324: new CallType(
+    v347: new CallType(
         'XYK.create_pool',
         sts.struct({
             assetA: sts.number(),
@@ -36,7 +36,7 @@ export const sell =  {
      * Emits `SellExecuted` when successful. Deprecated.
      * Emits `pallet_broadcast::Swapped` when successful.
      */
-    v324: new CallType(
+    v347: new CallType(
         'XYK.sell',
         sts.struct({
             assetIn: sts.number(),
@@ -59,7 +59,7 @@ export const buy =  {
      * Emits `BuyExecuted` when successful. Deprecated.
      * Emits `pallet_broadcast::Swapped` when successful.
      */
-    v324: new CallType(
+    v347: new CallType(
         'XYK.buy',
         sts.struct({
             assetOut: sts.number(),

@@ -4,7 +4,7 @@ import { calls } from '../typegenTypes';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseCreatePoolArgs(call: SqdCall): LbpCreatePoolCallArgs {
-  if (calls.lbp.createPool.v324.is(call)) {
+  if (calls.lbp.createPool.v347.is(call)) {
     const {
       assetA,
       assetB,
@@ -16,7 +16,7 @@ function parseCreatePoolArgs(call: SqdCall): LbpCreatePoolCallArgs {
       finalWeight,
       repayTarget,
       poolOwner,
-    } = calls.lbp.createPool.v324.decode(call);
+    } = calls.lbp.createPool.v347.decode(call);
 
     return {
       assetA,

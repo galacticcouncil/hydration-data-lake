@@ -13,8 +13,8 @@ async function getSystemAccount(
   account: string,
   block: BlockHeader
 ): Promise<SystemAccountInfo | null> {
-  if (storage.system.account.v324.is(block)) {
-    const resp = await storage.system.account.v324.get(block, account);
+  if (storage.system.account.v347.is(block)) {
+    const resp = await storage.system.account.v347.get(block, account);
     if (!resp) return null;
 
     return {
@@ -48,11 +48,11 @@ async function getNativeTokenBalanceMany({
     blockHeight: block.height,
     args: { accountIds },
     fn: async () => {
-      if (block.specVersion < 324) return [];
+      if (block.specVersion < 347) return [];
 
-      if (storage.system.account.v324.is(block)) {
+      if (storage.system.account.v347.is(block)) {
         return tryExecOrReturnFallback(async () => {
-          const resp = await storage.system.account.v324.getMany(
+          const resp = await storage.system.account.v347.getMany(
             block,
             accountIds
           );

@@ -1,16 +1,16 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const poolCreated =  {
     name: 'LBP.PoolCreated',
     /**
      * Pool was created by the `CreatePool` origin.
      */
-    v324: new EventType(
+    v347: new EventType(
         'LBP.PoolCreated',
         sts.struct({
-            pool: v324.AccountId32,
-            data: v324.Pool,
+            pool: v347.AccountId32,
+            data: v347.Pool,
         })
     ),
 }
@@ -20,11 +20,11 @@ export const poolUpdated =  {
     /**
      * Pool data were updated.
      */
-    v324: new EventType(
+    v347: new EventType(
         'LBP.PoolUpdated',
         sts.struct({
-            pool: v324.AccountId32,
-            data: v324.Pool,
+            pool: v347.AccountId32,
+            data: v347.Pool,
         })
     ),
 }
@@ -35,10 +35,10 @@ export const sellExecuted =  {
      * Sale executed.
      * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v324: new EventType(
+    v347: new EventType(
         'LBP.SellExecuted',
         sts.struct({
-            who: v324.AccountId32,
+            who: v347.AccountId32,
             assetIn: sts.number(),
             assetOut: sts.number(),
             amount: sts.bigint(),
@@ -55,10 +55,10 @@ export const buyExecuted =  {
      * Purchase executed.
      * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v324: new EventType(
+    v347: new EventType(
         'LBP.BuyExecuted',
         sts.struct({
-            who: v324.AccountId32,
+            who: v347.AccountId32,
             assetOut: sts.number(),
             assetIn: sts.number(),
             amount: sts.bigint(),

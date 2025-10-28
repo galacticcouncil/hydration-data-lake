@@ -1,4 +1,4 @@
-import { Schedule } from './typegenTypes/v335';
+import { Schedule } from './typegenTypes/v347';
 import {
   DcaScheduleCallData,
   DcaScheduleOrderData,

@@ -8,10 +8,10 @@ import {
 async function getNextFeeMultiplier({
   block,
 }: GetDataAtBlockInput): Promise<TransactionPaymentNextFeeMultiplier | null> {
-  if (block.specVersion < 324) return null;
-  if (storage.transactionPayment.nextFeeMultiplier.v324.is(block)) {
+  if (block.specVersion < 347) return null;
+  if (storage.transactionPayment.nextFeeMultiplier.v347.is(block)) {
     const resp =
-      await storage.transactionPayment.nextFeeMultiplier.v324.get(block);
+      await storage.transactionPayment.nextFeeMultiplier.v347.get(block);
 
     return !resp
       ? null

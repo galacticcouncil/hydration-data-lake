@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const setValidationData =  {
     name: 'ParachainSystem.set_validation_data',
@@ -14,10 +14,10 @@ export const setValidationData =  {
      * As a side effect, this function upgrades the current validation function
      * if the appropriate time has come.
      */
-    v324: new CallType(
+    v347: new CallType(
         'ParachainSystem.set_validation_data',
         sts.struct({
-            data: v324.ParachainInherentData,
+            data: v347.ParachainInherentData,
         })
     ),
 }

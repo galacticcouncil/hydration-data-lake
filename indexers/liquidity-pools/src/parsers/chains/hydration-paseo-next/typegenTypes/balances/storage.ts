@@ -1,17 +1,17 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const totalIssuance =  {
     /**
      *  The total units issued in the system.
      */
-    v324: new StorageType('Balances.TotalIssuance', 'Default', [], sts.bigint()) as TotalIssuanceV324,
+    v347: new StorageType('Balances.TotalIssuance', 'Default', [], sts.bigint()) as TotalIssuanceV347,
 }
 
 /**
  *  The total units issued in the system.
  */
-export interface TotalIssuanceV324  {
+export interface TotalIssuanceV347  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): bigint
     get(block: Block): Promise<(bigint | undefined)>
@@ -21,13 +21,13 @@ export const inactiveIssuance =  {
     /**
      *  The total units of outstanding deactivated balance in the system.
      */
-    v324: new StorageType('Balances.InactiveIssuance', 'Default', [], sts.bigint()) as InactiveIssuanceV324,
+    v347: new StorageType('Balances.InactiveIssuance', 'Default', [], sts.bigint()) as InactiveIssuanceV347,
 }
 
 /**
  *  The total units of outstanding deactivated balance in the system.
  */
-export interface InactiveIssuanceV324  {
+export interface InactiveIssuanceV347  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): bigint
     get(block: Block): Promise<(bigint | undefined)>
@@ -60,7 +60,7 @@ export const account =  {
      *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
      *  NOTE: This is only used in the case that this pallet is used to store balances.
      */
-    v324: new StorageType('Balances.Account', 'Default', [v324.AccountId32], v324.AccountData) as AccountV324,
+    v347: new StorageType('Balances.Account', 'Default', [v347.AccountId32], v347.AccountData) as AccountV347,
 }
 
 /**
@@ -89,19 +89,19 @@ export const account =  {
  *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
  *  NOTE: This is only used in the case that this pallet is used to store balances.
  */
-export interface AccountV324  {
+export interface AccountV347  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v324.AccountData
-    get(block: Block, key: v324.AccountId32): Promise<(v324.AccountData | undefined)>
-    getMany(block: Block, keys: v324.AccountId32[]): Promise<(v324.AccountData | undefined)[]>
-    getKeys(block: Block): Promise<v324.AccountId32[]>
-    getKeys(block: Block, key: v324.AccountId32): Promise<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<v324.AccountId32[]>
-    getPairs(block: Block): Promise<[k: v324.AccountId32, v: (v324.AccountData | undefined)][]>
-    getPairs(block: Block, key: v324.AccountId32): Promise<[k: v324.AccountId32, v: (v324.AccountData | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v324.AccountId32, v: (v324.AccountData | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<[k: v324.AccountId32, v: (v324.AccountData | undefined)][]>
+    getDefault(block: Block): v347.AccountData
+    get(block: Block, key: v347.AccountId32): Promise<(v347.AccountData | undefined)>
+    getMany(block: Block, keys: v347.AccountId32[]): Promise<(v347.AccountData | undefined)[]>
+    getKeys(block: Block): Promise<v347.AccountId32[]>
+    getKeys(block: Block, key: v347.AccountId32): Promise<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<v347.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v347.AccountId32, v: (v347.AccountData | undefined)][]>
+    getPairs(block: Block, key: v347.AccountId32): Promise<[k: v347.AccountId32, v: (v347.AccountData | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v347.AccountId32, v: (v347.AccountData | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<[k: v347.AccountId32, v: (v347.AccountData | undefined)][]>
 }
 
 export const locks =  {
@@ -111,7 +111,7 @@ export const locks =  {
      * 
      *  Use of locks is deprecated in favour of freezes. See `https://github.com/paritytech/substrate/pull/12951/`
      */
-    v324: new StorageType('Balances.Locks', 'Default', [v324.AccountId32], sts.array(() => v324.BalanceLock)) as LocksV324,
+    v347: new StorageType('Balances.Locks', 'Default', [v347.AccountId32], sts.array(() => v347.BalanceLock)) as LocksV347,
 }
 
 /**
@@ -120,19 +120,19 @@ export const locks =  {
  * 
  *  Use of locks is deprecated in favour of freezes. See `https://github.com/paritytech/substrate/pull/12951/`
  */
-export interface LocksV324  {
+export interface LocksV347  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v324.BalanceLock[]
-    get(block: Block, key: v324.AccountId32): Promise<(v324.BalanceLock[] | undefined)>
-    getMany(block: Block, keys: v324.AccountId32[]): Promise<(v324.BalanceLock[] | undefined)[]>
-    getKeys(block: Block): Promise<v324.AccountId32[]>
-    getKeys(block: Block, key: v324.AccountId32): Promise<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<v324.AccountId32[]>
-    getPairs(block: Block): Promise<[k: v324.AccountId32, v: (v324.BalanceLock[] | undefined)][]>
-    getPairs(block: Block, key: v324.AccountId32): Promise<[k: v324.AccountId32, v: (v324.BalanceLock[] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v324.AccountId32, v: (v324.BalanceLock[] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<[k: v324.AccountId32, v: (v324.BalanceLock[] | undefined)][]>
+    getDefault(block: Block): v347.BalanceLock[]
+    get(block: Block, key: v347.AccountId32): Promise<(v347.BalanceLock[] | undefined)>
+    getMany(block: Block, keys: v347.AccountId32[]): Promise<(v347.BalanceLock[] | undefined)[]>
+    getKeys(block: Block): Promise<v347.AccountId32[]>
+    getKeys(block: Block, key: v347.AccountId32): Promise<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<v347.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v347.AccountId32, v: (v347.BalanceLock[] | undefined)][]>
+    getPairs(block: Block, key: v347.AccountId32): Promise<[k: v347.AccountId32, v: (v347.BalanceLock[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v347.AccountId32, v: (v347.BalanceLock[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<[k: v347.AccountId32, v: (v347.BalanceLock[] | undefined)][]>
 }
 
 export const reserves =  {
@@ -141,7 +141,7 @@ export const reserves =  {
      * 
      *  Use of reserves is deprecated in favour of holds. See `https://github.com/paritytech/substrate/pull/12951/`
      */
-    v324: new StorageType('Balances.Reserves', 'Default', [v324.AccountId32], sts.array(() => v324.ReserveData)) as ReservesV324,
+    v347: new StorageType('Balances.Reserves', 'Default', [v347.AccountId32], sts.array(() => v347.ReserveData)) as ReservesV347,
 }
 
 /**
@@ -149,67 +149,67 @@ export const reserves =  {
  * 
  *  Use of reserves is deprecated in favour of holds. See `https://github.com/paritytech/substrate/pull/12951/`
  */
-export interface ReservesV324  {
+export interface ReservesV347  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v324.ReserveData[]
-    get(block: Block, key: v324.AccountId32): Promise<(v324.ReserveData[] | undefined)>
-    getMany(block: Block, keys: v324.AccountId32[]): Promise<(v324.ReserveData[] | undefined)[]>
-    getKeys(block: Block): Promise<v324.AccountId32[]>
-    getKeys(block: Block, key: v324.AccountId32): Promise<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<v324.AccountId32[]>
-    getPairs(block: Block): Promise<[k: v324.AccountId32, v: (v324.ReserveData[] | undefined)][]>
-    getPairs(block: Block, key: v324.AccountId32): Promise<[k: v324.AccountId32, v: (v324.ReserveData[] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v324.AccountId32, v: (v324.ReserveData[] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<[k: v324.AccountId32, v: (v324.ReserveData[] | undefined)][]>
+    getDefault(block: Block): v347.ReserveData[]
+    get(block: Block, key: v347.AccountId32): Promise<(v347.ReserveData[] | undefined)>
+    getMany(block: Block, keys: v347.AccountId32[]): Promise<(v347.ReserveData[] | undefined)[]>
+    getKeys(block: Block): Promise<v347.AccountId32[]>
+    getKeys(block: Block, key: v347.AccountId32): Promise<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<v347.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v347.AccountId32, v: (v347.ReserveData[] | undefined)][]>
+    getPairs(block: Block, key: v347.AccountId32): Promise<[k: v347.AccountId32, v: (v347.ReserveData[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v347.AccountId32, v: (v347.ReserveData[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<[k: v347.AccountId32, v: (v347.ReserveData[] | undefined)][]>
 }
 
 export const holds =  {
     /**
      *  Holds on account balances.
      */
-    v324: new StorageType('Balances.Holds', 'Default', [v324.AccountId32], sts.array(() => v324.IdAmount)) as HoldsV324,
+    v347: new StorageType('Balances.Holds', 'Default', [v347.AccountId32], sts.array(() => v347.IdAmount)) as HoldsV347,
 }
 
 /**
  *  Holds on account balances.
  */
-export interface HoldsV324  {
+export interface HoldsV347  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v324.IdAmount[]
-    get(block: Block, key: v324.AccountId32): Promise<(v324.IdAmount[] | undefined)>
-    getMany(block: Block, keys: v324.AccountId32[]): Promise<(v324.IdAmount[] | undefined)[]>
-    getKeys(block: Block): Promise<v324.AccountId32[]>
-    getKeys(block: Block, key: v324.AccountId32): Promise<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<v324.AccountId32[]>
-    getPairs(block: Block): Promise<[k: v324.AccountId32, v: (v324.IdAmount[] | undefined)][]>
-    getPairs(block: Block, key: v324.AccountId32): Promise<[k: v324.AccountId32, v: (v324.IdAmount[] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v324.AccountId32, v: (v324.IdAmount[] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<[k: v324.AccountId32, v: (v324.IdAmount[] | undefined)][]>
+    getDefault(block: Block): v347.IdAmount[]
+    get(block: Block, key: v347.AccountId32): Promise<(v347.IdAmount[] | undefined)>
+    getMany(block: Block, keys: v347.AccountId32[]): Promise<(v347.IdAmount[] | undefined)[]>
+    getKeys(block: Block): Promise<v347.AccountId32[]>
+    getKeys(block: Block, key: v347.AccountId32): Promise<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<v347.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v347.AccountId32, v: (v347.IdAmount[] | undefined)][]>
+    getPairs(block: Block, key: v347.AccountId32): Promise<[k: v347.AccountId32, v: (v347.IdAmount[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v347.AccountId32, v: (v347.IdAmount[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<[k: v347.AccountId32, v: (v347.IdAmount[] | undefined)][]>
 }
 
 export const freezes =  {
     /**
      *  Freeze locks on account balances.
      */
-    v324: new StorageType('Balances.Freezes', 'Default', [v324.AccountId32], sts.array(() => v324.Type_521)) as FreezesV324,
+    v347: new StorageType('Balances.Freezes', 'Default', [v347.AccountId32], sts.array(() => v347.Type_513)) as FreezesV347,
 }
 
 /**
  *  Freeze locks on account balances.
  */
-export interface FreezesV324  {
+export interface FreezesV347  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v324.Type_521[]
-    get(block: Block, key: v324.AccountId32): Promise<(v324.Type_521[] | undefined)>
-    getMany(block: Block, keys: v324.AccountId32[]): Promise<(v324.Type_521[] | undefined)[]>
-    getKeys(block: Block): Promise<v324.AccountId32[]>
-    getKeys(block: Block, key: v324.AccountId32): Promise<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v324.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<v324.AccountId32[]>
-    getPairs(block: Block): Promise<[k: v324.AccountId32, v: (v324.Type_521[] | undefined)][]>
-    getPairs(block: Block, key: v324.AccountId32): Promise<[k: v324.AccountId32, v: (v324.Type_521[] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v324.AccountId32, v: (v324.Type_521[] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v324.AccountId32): AsyncIterable<[k: v324.AccountId32, v: (v324.Type_521[] | undefined)][]>
+    getDefault(block: Block): v347.Type_513[]
+    get(block: Block, key: v347.AccountId32): Promise<(v347.Type_513[] | undefined)>
+    getMany(block: Block, keys: v347.AccountId32[]): Promise<(v347.Type_513[] | undefined)[]>
+    getKeys(block: Block): Promise<v347.AccountId32[]>
+    getKeys(block: Block, key: v347.AccountId32): Promise<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v347.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<v347.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v347.AccountId32, v: (v347.Type_513[] | undefined)][]>
+    getPairs(block: Block, key: v347.AccountId32): Promise<[k: v347.AccountId32, v: (v347.Type_513[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v347.AccountId32, v: (v347.Type_513[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v347.AccountId32): AsyncIterable<[k: v347.AccountId32, v: (v347.Type_513[] | undefined)][]>
 }

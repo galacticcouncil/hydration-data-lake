@@ -6,9 +6,9 @@ import { UnknownVersionError } from '../../../../utils/errors';
 function parseSetValidationDataArgs(
   call: SqdCall
 ): RelaySystemSetValidationDataCallArgs {
-  if (calls.parachainSystem.setValidationData.v324.is(call)) {
+  if (calls.parachainSystem.setValidationData.v347.is(call)) {
     const decodedData =
-      calls.parachainSystem.setValidationData.v324.decode(call);
+      calls.parachainSystem.setValidationData.v347.decode(call);
 
     return {
       relayParentNumber: decodedData.data.validationData.relayParentNumber,

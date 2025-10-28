@@ -1,22 +1,6 @@
 import { AssetType, EmaOraclePeriod } from '../../model';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { DcaScheduleCallData } from './calls';
-import { OtcOrderPlacedEventParams } from './events';
-import { Bytes, sts } from '../chains/hydration/typegenTypes/support';
-import { AccountId32 } from '../chains/hydration/typegenTypes/v138';
-import {
-  assetFeeParameters,
-  protocolFeeParameters,
-} from '../chains/hydration/typegenTypes/dynamic-fees/constants';
-import {
-  FixedU128,
-  Liquidity,
-  Permill,
-  Ratio,
-  Volume,
-} from '../chains/hydration/typegenTypes/v170';
-import { OraclePeriod, PegSource } from '../chains/hydration/typegenTypes/v305';
-import { Perbill } from '../chains/hydration-paseo-next/typegenTypes/v324';
 
 export interface AccountData {
   free: bigint;

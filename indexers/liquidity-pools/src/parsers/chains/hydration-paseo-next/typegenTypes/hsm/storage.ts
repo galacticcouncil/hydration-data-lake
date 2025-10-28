@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const collaterals =  {
     /**
@@ -9,7 +9,7 @@ export const collaterals =  {
      *  Only assets in this map can be used to mint or redeem Hollar through HSM.
      *  Each collateral has specific parameters controlling its usage in the HSM mechanism.
      */
-    v324: new StorageType('HSM.Collaterals', 'Optional', [sts.number()], v324.CollateralInfo) as CollateralsV324,
+    v347: new StorageType('HSM.Collaterals', 'Optional', [sts.number()], v347.CollateralInfo) as CollateralsV347,
 }
 
 /**
@@ -19,18 +19,18 @@ export const collaterals =  {
  *  Only assets in this map can be used to mint or redeem Hollar through HSM.
  *  Each collateral has specific parameters controlling its usage in the HSM mechanism.
  */
-export interface CollateralsV324  {
+export interface CollateralsV347  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: number): Promise<(v324.CollateralInfo | undefined)>
-    getMany(block: Block, keys: number[]): Promise<(v324.CollateralInfo | undefined)[]>
+    get(block: Block, key: number): Promise<(v347.CollateralInfo | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v347.CollateralInfo | undefined)[]>
     getKeys(block: Block): Promise<number[]>
     getKeys(block: Block, key: number): Promise<number[]>
     getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
     getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
-    getPairs(block: Block): Promise<[k: number, v: (v324.CollateralInfo | undefined)][]>
-    getPairs(block: Block, key: number): Promise<[k: number, v: (v324.CollateralInfo | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v324.CollateralInfo | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v324.CollateralInfo | undefined)][]>
+    getPairs(block: Block): Promise<[k: number, v: (v347.CollateralInfo | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v347.CollateralInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v347.CollateralInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v347.CollateralInfo | undefined)][]>
 }
 
 export const hollarAmountReceived =  {
@@ -41,7 +41,7 @@ export const hollarAmountReceived =  {
      *  asset within the current block. This is used to enforce rate limiting on Hollar redemptions.
      *  Values are reset to zero at the end of each block in on_finalize.
      */
-    v324: new StorageType('HSM.HollarAmountReceived', 'Default', [sts.number()], sts.bigint()) as HollarAmountReceivedV324,
+    v347: new StorageType('HSM.HollarAmountReceived', 'Default', [sts.number()], sts.bigint()) as HollarAmountReceivedV347,
 }
 
 /**
@@ -51,7 +51,7 @@ export const hollarAmountReceived =  {
  *  asset within the current block. This is used to enforce rate limiting on Hollar redemptions.
  *  Values are reset to zero at the end of each block in on_finalize.
  */
-export interface HollarAmountReceivedV324  {
+export interface HollarAmountReceivedV347  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): bigint
     get(block: Block, key: number): Promise<(bigint | undefined)>
@@ -70,13 +70,13 @@ export const flashMinter =  {
     /**
      *  Address of the flash loan receiver.
      */
-    v324: new StorageType('HSM.FlashMinter', 'Optional', [], v324.H160) as FlashMinterV324,
+    v347: new StorageType('HSM.FlashMinter', 'Optional', [], v347.H160) as FlashMinterV347,
 }
 
 /**
  *  Address of the flash loan receiver.
  */
-export interface FlashMinterV324  {
+export interface FlashMinterV347  {
     is(block: RuntimeCtx): boolean
-    get(block: Block): Promise<(v324.H160 | undefined)>
+    get(block: Block): Promise<(v347.H160 | undefined)>
 }

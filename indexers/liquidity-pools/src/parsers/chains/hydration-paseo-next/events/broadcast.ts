@@ -20,7 +20,7 @@ function parseSwapped2Params(event: SqdEvent): BroadcastSwappedEventParams {
   return parseSwapped3Params(event);
 }
 function parseSwapped3Params(event: SqdEvent): BroadcastSwappedEventParams {
-  if (events.broadcast.swapped3.v324.is(event)) {
+  if (events.broadcast.swapped3.v347.is(event)) {
     const {
       swapper,
       filler,
@@ -30,7 +30,7 @@ function parseSwapped3Params(event: SqdEvent): BroadcastSwappedEventParams {
       fees,
       operation,
       operationStack: operationStackRaw,
-    } = events.broadcast.swapped3.v324.decode(event);
+    } = events.broadcast.swapped3.v347.decode(event);
 
     const fillerType = {
       kind: fillerTypeRaw.__kind as SwapFillerType,

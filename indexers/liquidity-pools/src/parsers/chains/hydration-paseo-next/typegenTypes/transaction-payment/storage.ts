@@ -1,22 +1,22 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const nextFeeMultiplier =  {
-    v324: new StorageType('TransactionPayment.NextFeeMultiplier', 'Default', [], v324.FixedU128) as NextFeeMultiplierV324,
+    v347: new StorageType('TransactionPayment.NextFeeMultiplier', 'Default', [], v347.FixedU128) as NextFeeMultiplierV347,
 }
 
-export interface NextFeeMultiplierV324  {
+export interface NextFeeMultiplierV347  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v324.FixedU128
-    get(block: Block): Promise<(v324.FixedU128 | undefined)>
+    getDefault(block: Block): v347.FixedU128
+    get(block: Block): Promise<(v347.FixedU128 | undefined)>
 }
 
 export const storageVersion =  {
-    v324: new StorageType('TransactionPayment.StorageVersion', 'Default', [], v324.Releases) as StorageVersionV324,
+    v347: new StorageType('TransactionPayment.StorageVersion', 'Default', [], v347.Releases) as StorageVersionV347,
 }
 
-export interface StorageVersionV324  {
+export interface StorageVersionV347  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v324.Releases
-    get(block: Block): Promise<(v324.Releases | undefined)>
+    getDefault(block: Block): v347.Releases
+    get(block: Block): Promise<(v347.Releases | undefined)>
 }

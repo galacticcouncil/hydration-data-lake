@@ -26,10 +26,10 @@ async function getAsset(
   assetId: string | number,
   block: BlockHeader
 ): Promise<AssetDetails | null> {
-  if (block.specVersion < 324) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.assetRegistry.assets.v324.is(block)) {
-    const resp = await storage.assetRegistry.assets.v324.get(block, +assetId);
+  if (storage.assetRegistry.assets.v347.is(block)) {
+    const resp = await storage.assetRegistry.assets.v347.get(block, +assetId);
 
     return !resp
       ? null
@@ -51,10 +51,10 @@ async function getAssetMany(
   assetIds: Array<string | number>,
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
-  if (block.specVersion < 324) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.assetRegistry.assets.v324.is(block)) {
-    const resp = await storage.assetRegistry.assets.v324.getMany(
+  if (storage.assetRegistry.assets.v347.is(block)) {
+    const resp = await storage.assetRegistry.assets.v347.getMany(
       block,
       assetIds.map((id) => +id)
     );
@@ -88,12 +88,12 @@ async function getAssetMany(
 async function getAssetAll(
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
-  if (block.specVersion < 324) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.assetRegistry.assets.v324.is(block)) {
+  if (storage.assetRegistry.assets.v347.is(block)) {
     const pairsPaged = [];
 
-    for await (const page of storage.assetRegistry.assets.v324.getPairsPaged(
+    for await (const page of storage.assetRegistry.assets.v347.getPairsPaged(
       100,
       block
     ))
@@ -123,10 +123,10 @@ async function getErc20AssetContractAddress(
   assetId: string | number,
   block: BlockHeader
 ): Promise<Erc20AssetContractDetails | null> {
-  if (block.specVersion < 324) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.assetRegistry.assetLocations.v324.is(block)) {
-    const resp = await storage.assetRegistry.assetLocations.v324.get(
+  if (storage.assetRegistry.assetLocations.v347.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v347.get(
       block,
       +assetId
     );
@@ -154,10 +154,10 @@ async function getAssetLocation({
   assetId,
   block,
 }: GetAssetLocationDataInput): Promise<AssetRegistryAssetLocation | null> {
-  if (block.specVersion < 324) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.assetRegistry.assetLocations.v324.is(block)) {
-    const resp = await storage.assetRegistry.assetLocations.v324.get(
+  if (storage.assetRegistry.assetLocations.v347.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v347.get(
       block,
       +assetId
     );
@@ -173,7 +173,7 @@ async function getAssetLocationsMany({
 }: GetAssetLocationsDataManyInput): Promise<
   AssetRegistryLocationWithAssetId[] | null
 > {
-  if (block.specVersion < 324) return null;
+  if (block.specVersion < 347) return null;
 
   const idsDecorated = assetIds.map((id) => +id);
 
@@ -191,9 +191,12 @@ async function getAssetLocationsMany({
     Array.from(responseMap.keys()),
     100
   )) {
-    if (storage.assetRegistry.assetLocations.v324.is(block)) {
+    if (
+      storage.assetRegistry.assetLocations.v347.is(block) ||
+      block.specVersion >= 347
+    ) {
       await tryExecOrReturnFallback(async () => {
-        const resp = await storage.assetRegistry.assetLocations.v324.getMany(
+        const resp = await storage.assetRegistry.assetLocations.v347.getMany(
           block,
           idsDecorated
         );
@@ -207,9 +210,9 @@ async function getAssetLocationsMany({
           }
         });
       }, null);
+    } else {
+      throw new UnknownVersionError('storage.assetRegistry.assetLocations');
     }
-
-    throw new UnknownVersionError('storage.assetRegistry.assetLocations');
   }
 
   return Array.from(responseMap.values());

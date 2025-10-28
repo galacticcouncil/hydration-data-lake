@@ -5,8 +5,8 @@ import { GetConstantsInput } from '../../../types/storage';
 async function getTotalIssuance({
   block,
 }: GetConstantsInput): Promise<bigint | null> {
-  if (storage.balances.totalIssuance.v324.is(block)) {
-    const resp = await storage.balances.totalIssuance.v324.get(block);
+  if (storage.balances.totalIssuance.v347.is(block)) {
+    const resp = await storage.balances.totalIssuance.v347.get(block);
     return resp ?? null;
   }
 

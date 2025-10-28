@@ -14,8 +14,8 @@ async function getAccountExtension({
   evmAddress,
   block,
 }: EvmAccountsGetAccountExtensionInput): Promise<EvmAccountsAccountExtension | null> {
-  if (storage.evmAccounts.accountExtension.v324.is(block)) {
-    const resp = await storage.evmAccounts.accountExtension.v324.get(
+  if (storage.evmAccounts.accountExtension.v347.is(block)) {
+    const resp = await storage.evmAccounts.accountExtension.v347.get(
       block,
       evmAddress
     );
@@ -33,16 +33,16 @@ async function getAllAccountsExtensions({
 }: GetDataAtBlockInput): Promise<
   EvmAccountsAccountExtensionWithEvmAddress[] | null
 > {
-  if (block.specVersion < 324) return null;
+  if (block.specVersion < 347) return null;
   if (
-    storage.evmAccounts.accountExtension.v324.is(block) ||
-    block.specVersion >= 324
+    storage.evmAccounts.accountExtension.v347.is(block) ||
+    block.specVersion >= 347
   ) {
     return tryExecOrReturnFallback(async () => {
       try {
         const pairsPaged: EvmAccountsAccountExtensionWithEvmAddress[] = [];
 
-        for await (const page of storage.evmAccounts.accountExtension.v324.getPairsPaged(
+        for await (const page of storage.evmAccounts.accountExtension.v347.getPairsPaged(
           500,
           block
         )) {
@@ -74,17 +74,17 @@ async function getAccountExtensionsMany({
 }: EvmAccountsGetAccountExtensionManyInput): Promise<
   EvmAccountsAccountExtensionWithEvmAddress[] | null
 > {
-  if (block.specVersion < 324) return null;
+  if (block.specVersion < 347) return null;
   if (
-    storage.evmAccounts.accountExtension.v324.is(block) ||
-    block.specVersion >= 324
+    storage.evmAccounts.accountExtension.v347.is(block) ||
+    block.specVersion >= 347
   ) {
     return tryExecOrReturnFallback(async () => {
       try {
         const pairsPaged: EvmAccountsAccountExtensionWithEvmAddress[] = (
           await pMap(evmAddresses, async (h160Address) => {
             const extension =
-              await storage.evmAccounts.accountExtension.v324.get(
+              await storage.evmAccounts.accountExtension.v347.get(
                 block,
                 h160Address
               );

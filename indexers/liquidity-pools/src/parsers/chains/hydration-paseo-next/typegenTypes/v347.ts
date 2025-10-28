@@ -1,5 +1,1288 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const PalletId = sts.bytes()
+
+export const RangeInclusive: sts.Type<RangeInclusive> = sts.struct(() => {
+    return  {
+        start: NonZeroU16,
+        end: NonZeroU16,
+    }
+})
+
+export interface RangeInclusive {
+    start: NonZeroU16
+    end: NonZeroU16
+}
+
+export type NonZeroU16 = number
+
+export const FeeParams: sts.Type<FeeParams> = sts.struct(() => {
+    return  {
+        minFee: Permill,
+        maxFee: Permill,
+        decay: FixedU128,
+        amplification: FixedU128,
+    }
+})
+
+export interface FeeParams {
+    minFee: Permill
+    maxFee: Permill
+    decay: FixedU128
+    amplification: FixedU128
+}
+
+export type Permill = number
+
+export type ExecutionType = ExecutionType_Batch | ExecutionType_DCA | ExecutionType_Omnipool | ExecutionType_Router | ExecutionType_Xcm | ExecutionType_XcmExchange
+
+export interface ExecutionType_Batch {
+    __kind: 'Batch'
+    value: number
+}
+
+export interface ExecutionType_DCA {
+    __kind: 'DCA'
+    value: [number, number]
+}
+
+export interface ExecutionType_Omnipool {
+    __kind: 'Omnipool'
+    value: number
+}
+
+export interface ExecutionType_Router {
+    __kind: 'Router'
+    value: number
+}
+
+export interface ExecutionType_Xcm {
+    __kind: 'Xcm'
+    value: [Bytes, number]
+}
+
+export interface ExecutionType_XcmExchange {
+    __kind: 'XcmExchange'
+    value: number
+}
+
+export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
+
+export interface OraclePeriod_Day {
+    __kind: 'Day'
+}
+
+export interface OraclePeriod_Hour {
+    __kind: 'Hour'
+}
+
+export interface OraclePeriod_LastBlock {
+    __kind: 'LastBlock'
+}
+
+export interface OraclePeriod_Short {
+    __kind: 'Short'
+}
+
+export interface OraclePeriod_TenMinutes {
+    __kind: 'TenMinutes'
+}
+
+export interface OraclePeriod_Week {
+    __kind: 'Week'
+}
+
+export const OraclePeriod: sts.Type<OraclePeriod> = sts.closedEnum(() => {
+    return  {
+        Day: sts.unit(),
+        Hour: sts.unit(),
+        LastBlock: sts.unit(),
+        Short: sts.unit(),
+        TenMinutes: sts.unit(),
+        Week: sts.unit(),
+    }
+})
+
+export interface OracleEntry {
+    price: Ratio
+    volume: Volume
+    liquidity: Liquidity
+    sharesIssuance?: (bigint | undefined)
+    updatedAt: number
+}
+
+export interface Liquidity {
+    a: bigint
+    b: bigint
+}
+
+export interface Volume {
+    aIn: bigint
+    bOut: bigint
+    aOut: bigint
+    bIn: bigint
+}
+
+export interface Ratio {
+    n: bigint
+    d: bigint
+}
+
+export const OracleEntry: sts.Type<OracleEntry> = sts.struct(() => {
+    return  {
+        price: Ratio,
+        volume: Volume,
+        liquidity: Liquidity,
+        sharesIssuance: sts.option(() => sts.bigint()),
+        updatedAt: sts.number(),
+    }
+})
+
+export const Liquidity: sts.Type<Liquidity> = sts.struct(() => {
+    return  {
+        a: sts.bigint(),
+        b: sts.bigint(),
+    }
+})
+
+export const Volume: sts.Type<Volume> = sts.struct(() => {
+    return  {
+        aIn: sts.bigint(),
+        bOut: sts.bigint(),
+        aOut: sts.bigint(),
+        bIn: sts.bigint(),
+    }
+})
+
+export const Ratio: sts.Type<Ratio> = sts.struct(() => {
+    return  {
+        n: sts.bigint(),
+        d: sts.bigint(),
+    }
+})
+
+export interface Schedule {
+    owner: AccountId32
+    period: number
+    totalAmount: bigint
+    maxRetries?: (number | undefined)
+    stabilityThreshold?: (Permill | undefined)
+    slippage?: (Permill | undefined)
+    order: Order
+}
+
+export type Order = Order_Buy | Order_Sell
+
+export interface Order_Buy {
+    __kind: 'Buy'
+    assetIn: number
+    assetOut: number
+    amountOut: bigint
+    maxAmountIn: bigint
+    route: Trade[]
+}
+
+export interface Order_Sell {
+    __kind: 'Sell'
+    assetIn: number
+    assetOut: number
+    amountIn: bigint
+    minAmountOut: bigint
+    route: Trade[]
+}
+
+export interface Trade {
+    pool: PoolType
+    assetIn: number
+    assetOut: number
+}
+
+export type PoolType = PoolType_Aave | PoolType_HSM | PoolType_LBP | PoolType_Omnipool | PoolType_Stableswap | PoolType_XYK
+
+export interface PoolType_Aave {
+    __kind: 'Aave'
+}
+
+export interface PoolType_HSM {
+    __kind: 'HSM'
+}
+
+export interface PoolType_LBP {
+    __kind: 'LBP'
+}
+
+export interface PoolType_Omnipool {
+    __kind: 'Omnipool'
+}
+
+export interface PoolType_Stableswap {
+    __kind: 'Stableswap'
+    value: number
+}
+
+export interface PoolType_XYK {
+    __kind: 'XYK'
+}
+
+export interface Type_722 {
+    shares: bigint
+    ammPoolId: AccountId32
+    yieldFarmEntries: Type_724[]
+}
+
+export interface Type_724 {
+    globalFarmId: number
+    yieldFarmId: number
+    valuedShares: bigint
+    accumulatedRpvs: FixedU128
+    accumulatedClaimedRewards: bigint
+    enteredAt: number
+    updatedAt: number
+    stoppedAtCreation: number
+}
+
+export const Type_722: sts.Type<Type_722> = sts.struct(() => {
+    return  {
+        shares: sts.bigint(),
+        ammPoolId: AccountId32,
+        yieldFarmEntries: sts.array(() => Type_724),
+    }
+})
+
+export const Type_724: sts.Type<Type_724> = sts.struct(() => {
+    return  {
+        globalFarmId: sts.number(),
+        yieldFarmId: sts.number(),
+        valuedShares: sts.bigint(),
+        accumulatedRpvs: FixedU128,
+        accumulatedClaimedRewards: sts.bigint(),
+        enteredAt: sts.number(),
+        updatedAt: sts.number(),
+        stoppedAtCreation: sts.number(),
+    }
+})
+
+export interface Type_721 {
+    id: number
+    updatedAt: number
+    totalShares: bigint
+    totalValuedShares: bigint
+    accumulatedRpvs: FixedU128
+    accumulatedRpz: FixedU128
+    loyaltyCurve?: (LoyaltyCurve | undefined)
+    multiplier: FixedU128
+    state: FarmState
+    entriesCount: bigint
+    leftToDistribute: bigint
+    totalStopped: number
+}
+
+export type FarmState = FarmState_Active | FarmState_Stopped | FarmState_Terminated
+
+export interface FarmState_Active {
+    __kind: 'Active'
+}
+
+export interface FarmState_Stopped {
+    __kind: 'Stopped'
+}
+
+export interface FarmState_Terminated {
+    __kind: 'Terminated'
+}
+
+export interface LoyaltyCurve {
+    initialRewardPercentage: FixedU128
+    scaleCoef: number
+}
+
+export const Type_721: sts.Type<Type_721> = sts.struct(() => {
+    return  {
+        id: sts.number(),
+        updatedAt: sts.number(),
+        totalShares: sts.bigint(),
+        totalValuedShares: sts.bigint(),
+        accumulatedRpvs: FixedU128,
+        accumulatedRpz: FixedU128,
+        loyaltyCurve: sts.option(() => LoyaltyCurve),
+        multiplier: FixedU128,
+        state: FarmState,
+        entriesCount: sts.bigint(),
+        leftToDistribute: sts.bigint(),
+        totalStopped: sts.number(),
+    }
+})
+
+export const FarmState: sts.Type<FarmState> = sts.closedEnum(() => {
+    return  {
+        Active: sts.unit(),
+        Stopped: sts.unit(),
+        Terminated: sts.unit(),
+    }
+})
+
+export interface Type_719 {
+    id: number
+    owner: AccountId32
+    updatedAt: number
+    totalSharesZ: bigint
+    accumulatedRpz: FixedU128
+    rewardCurrency: number
+    pendingRewards: bigint
+    accumulatedPaidRewards: bigint
+    yieldPerPeriod: Perquintill
+    plannedYieldingPeriods: number
+    blocksPerPeriod: number
+    incentivizedAsset: number
+    maxRewardPerPeriod: bigint
+    minDeposit: bigint
+    liveYieldFarmsCount: number
+    totalYieldFarmsCount: number
+    priceAdjustment: FixedU128
+    state: FarmState
+}
+
+export type Perquintill = bigint
+
+export const Type_719: sts.Type<Type_719> = sts.struct(() => {
+    return  {
+        id: sts.number(),
+        owner: AccountId32,
+        updatedAt: sts.number(),
+        totalSharesZ: sts.bigint(),
+        accumulatedRpz: FixedU128,
+        rewardCurrency: sts.number(),
+        pendingRewards: sts.bigint(),
+        accumulatedPaidRewards: sts.bigint(),
+        yieldPerPeriod: Perquintill,
+        plannedYieldingPeriods: sts.number(),
+        blocksPerPeriod: sts.number(),
+        incentivizedAsset: sts.number(),
+        maxRewardPerPeriod: sts.bigint(),
+        minDeposit: sts.bigint(),
+        liveYieldFarmsCount: sts.number(),
+        totalYieldFarmsCount: sts.number(),
+        priceAdjustment: FixedU128,
+        state: FarmState,
+    }
+})
+
+export type H256 = Bytes
+
+export interface CodeMetadata {
+    size: bigint
+    hash: H256
+}
+
+export const CodeMetadata: sts.Type<CodeMetadata> = sts.struct(() => {
+    return  {
+        size: sts.bigint(),
+        hash: H256,
+    }
+})
+
+export interface Type_690 {
+    free: bigint
+    reserved: bigint
+    frozen: bigint
+}
+
+export const Type_690: sts.Type<Type_690> = sts.struct(() => {
+    return  {
+        free: sts.bigint(),
+        reserved: sts.bigint(),
+        frozen: sts.bigint(),
+    }
+})
+
+export type H160 = Bytes
+
+export interface CollateralInfo {
+    poolId: number
+    purchaseFee: Permill
+    maxBuyPriceCoefficient: FixedU128
+    buybackRate: Perbill
+    buyBackFee: Permill
+    maxInHolding?: (bigint | undefined)
+}
+
+export type Perbill = number
+
+export const CollateralInfo: sts.Type<CollateralInfo> = sts.struct(() => {
+    return  {
+        poolId: sts.number(),
+        purchaseFee: Permill,
+        maxBuyPriceCoefficient: FixedU128,
+        buybackRate: Perbill,
+        buyBackFee: Permill,
+        maxInHolding: sts.option(() => sts.bigint()),
+    }
+})
+
+export interface Pool {
+    owner: AccountId32
+    start?: (number | undefined)
+    end?: (number | undefined)
+    assets: [number, number]
+    initialWeight: number
+    finalWeight: number
+    weightCurve: WeightCurveType
+    fee: [number, number]
+    feeCollector: AccountId32
+    repayTarget: bigint
+}
+
+export type WeightCurveType = WeightCurveType_Linear
+
+export interface WeightCurveType_Linear {
+    __kind: 'Linear'
+}
+
+export interface PoolSnapshot {
+    assets: number[]
+    reserves: AssetReserve[]
+    amplification: bigint
+    fee: Permill
+    pegs: [bigint, bigint][]
+    shareIssuance: bigint
+}
+
+export interface AssetReserve {
+    amount: bigint
+    decimals: number
+}
+
+export const PoolSnapshot: sts.Type<PoolSnapshot> = sts.struct(() => {
+    return  {
+        assets: sts.array(() => sts.number()),
+        reserves: sts.array(() => AssetReserve),
+        amplification: sts.bigint(),
+        fee: Permill,
+        pegs: sts.array(() => sts.tuple(() => [sts.bigint(), sts.bigint()])),
+        shareIssuance: sts.bigint(),
+    }
+})
+
+export const AssetReserve: sts.Type<AssetReserve> = sts.struct(() => {
+    return  {
+        amount: sts.bigint(),
+        decimals: sts.number(),
+    }
+})
+
+export interface Type_234 {
+    bits: number
+}
+
+export const Type_234: sts.Type<Type_234> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
+
+export interface PoolPegInfo {
+    source: PegSource[]
+    maxPegUpdate: Perbill
+    current: [bigint, bigint][]
+}
+
+export type PegSource = PegSource_MMOracle | PegSource_Oracle | PegSource_Value
+
+export interface PegSource_MMOracle {
+    __kind: 'MMOracle'
+    value: H160
+}
+
+export interface PegSource_Oracle {
+    __kind: 'Oracle'
+    value: [Bytes, OraclePeriod, number]
+}
+
+export interface PegSource_Value {
+    __kind: 'Value'
+    value: [bigint, bigint]
+}
+
+export interface PoolInfo {
+    assets: number[]
+    initialAmplification: NonZeroU16
+    finalAmplification: NonZeroU16
+    initialBlock: number
+    finalBlock: number
+    fee: Permill
+}
+
+export const PoolInfo: sts.Type<PoolInfo> = sts.struct(() => {
+    return  {
+        assets: sts.array(() => sts.number()),
+        initialAmplification: NonZeroU16,
+        finalAmplification: NonZeroU16,
+        initialBlock: sts.number(),
+        finalBlock: sts.number(),
+        fee: Permill,
+    }
+})
+
+export type AssetFeeConfig = AssetFeeConfig_Dynamic | AssetFeeConfig_Fixed
+
+export interface AssetFeeConfig_Dynamic {
+    __kind: 'Dynamic'
+    assetFeeParams: FeeParams
+    protocolFeeParams: FeeParams
+}
+
+export interface AssetFeeConfig_Fixed {
+    __kind: 'Fixed'
+    assetFee: Permill
+    protocolFee: Permill
+}
+
+export const AssetFeeConfig: sts.Type<AssetFeeConfig> = sts.closedEnum(() => {
+    return  {
+        Dynamic: sts.enumStruct({
+            assetFeeParams: FeeParams,
+            protocolFeeParams: FeeParams,
+        }),
+        Fixed: sts.enumStruct({
+            assetFee: Permill,
+            protocolFee: Permill,
+        }),
+    }
+})
+
+export interface FeeEntry {
+    assetFee: Permill
+    protocolFee: Permill
+    timestamp: number
+}
+
+export const FeeEntry: sts.Type<FeeEntry> = sts.struct(() => {
+    return  {
+        assetFee: Permill,
+        protocolFee: Permill,
+        timestamp: sts.number(),
+    }
+})
+
+export interface Type_649 {
+    owner: AccountId32
+    assetIn: number
+    assetOut: number
+    amountIn: bigint
+    amountOut: bigint
+    partiallyFillable: boolean
+}
+
+export const Type_649: sts.Type<Type_649> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+        amountIn: sts.bigint(),
+        amountOut: sts.bigint(),
+        partiallyFillable: sts.boolean(),
+    }
+})
+
+export interface DepositData {
+    shares: bigint
+    ammPoolId: number
+    yieldFarmEntries: YieldFarmEntry[]
+}
+
+export interface YieldFarmEntry {
+    globalFarmId: number
+    yieldFarmId: number
+    valuedShares: bigint
+    accumulatedRpvs: FixedU128
+    accumulatedClaimedRewards: bigint
+    enteredAt: number
+    updatedAt: number
+    stoppedAtCreation: number
+}
+
+export const DepositData: sts.Type<DepositData> = sts.struct(() => {
+    return  {
+        shares: sts.bigint(),
+        ammPoolId: sts.number(),
+        yieldFarmEntries: sts.array(() => YieldFarmEntry),
+    }
+})
+
+export const YieldFarmEntry: sts.Type<YieldFarmEntry> = sts.struct(() => {
+    return  {
+        globalFarmId: sts.number(),
+        yieldFarmId: sts.number(),
+        valuedShares: sts.bigint(),
+        accumulatedRpvs: FixedU128,
+        accumulatedClaimedRewards: sts.bigint(),
+        enteredAt: sts.number(),
+        updatedAt: sts.number(),
+        stoppedAtCreation: sts.number(),
+    }
+})
+
+export interface YieldFarmData {
+    id: number
+    updatedAt: number
+    totalShares: bigint
+    totalValuedShares: bigint
+    accumulatedRpvs: FixedU128
+    accumulatedRpz: FixedU128
+    loyaltyCurve?: (LoyaltyCurve | undefined)
+    multiplier: FixedU128
+    state: FarmState
+    entriesCount: bigint
+    leftToDistribute: bigint
+    totalStopped: number
+}
+
+export const YieldFarmData: sts.Type<YieldFarmData> = sts.struct(() => {
+    return  {
+        id: sts.number(),
+        updatedAt: sts.number(),
+        totalShares: sts.bigint(),
+        totalValuedShares: sts.bigint(),
+        accumulatedRpvs: FixedU128,
+        accumulatedRpz: FixedU128,
+        loyaltyCurve: sts.option(() => LoyaltyCurve),
+        multiplier: FixedU128,
+        state: FarmState,
+        entriesCount: sts.bigint(),
+        leftToDistribute: sts.bigint(),
+        totalStopped: sts.number(),
+    }
+})
+
+export interface GlobalFarmData {
+    id: number
+    owner: AccountId32
+    updatedAt: number
+    totalSharesZ: bigint
+    accumulatedRpz: FixedU128
+    rewardCurrency: number
+    pendingRewards: bigint
+    accumulatedPaidRewards: bigint
+    yieldPerPeriod: Perquintill
+    plannedYieldingPeriods: number
+    blocksPerPeriod: number
+    incentivizedAsset: number
+    maxRewardPerPeriod: bigint
+    minDeposit: bigint
+    liveYieldFarmsCount: number
+    totalYieldFarmsCount: number
+    priceAdjustment: FixedU128
+    state: FarmState
+}
+
+export const GlobalFarmData: sts.Type<GlobalFarmData> = sts.struct(() => {
+    return  {
+        id: sts.number(),
+        owner: AccountId32,
+        updatedAt: sts.number(),
+        totalSharesZ: sts.bigint(),
+        accumulatedRpz: FixedU128,
+        rewardCurrency: sts.number(),
+        pendingRewards: sts.bigint(),
+        accumulatedPaidRewards: sts.bigint(),
+        yieldPerPeriod: Perquintill,
+        plannedYieldingPeriods: sts.number(),
+        blocksPerPeriod: sts.number(),
+        incentivizedAsset: sts.number(),
+        maxRewardPerPeriod: sts.bigint(),
+        minDeposit: sts.bigint(),
+        liveYieldFarmsCount: sts.number(),
+        totalYieldFarmsCount: sts.number(),
+        priceAdjustment: FixedU128,
+        state: FarmState,
+    }
+})
+
+export interface Tradability {
+    bits: number
+}
+
+export interface AssetState {
+    hubReserve: bigint
+    shares: bigint
+    protocolShares: bigint
+    cap: bigint
+    tradable: Tradability
+}
+
+export const AssetState: sts.Type<AssetState> = sts.struct(() => {
+    return  {
+        hubReserve: sts.bigint(),
+        shares: sts.bigint(),
+        protocolShares: sts.bigint(),
+        cap: sts.bigint(),
+        tradable: Tradability,
+    }
+})
+
+export interface AssetLocation {
+    parents: number
+    interior: V3Junctions
+}
+
+export type V3Junctions = V3Junctions_Here | V3Junctions_X1 | V3Junctions_X2 | V3Junctions_X3 | V3Junctions_X4 | V3Junctions_X5 | V3Junctions_X6 | V3Junctions_X7 | V3Junctions_X8
+
+export interface V3Junctions_Here {
+    __kind: 'Here'
+}
+
+export interface V3Junctions_X1 {
+    __kind: 'X1'
+    value: V3Junction
+}
+
+export interface V3Junctions_X2 {
+    __kind: 'X2'
+    value: [V3Junction, V3Junction]
+}
+
+export interface V3Junctions_X3 {
+    __kind: 'X3'
+    value: [V3Junction, V3Junction, V3Junction]
+}
+
+export interface V3Junctions_X4 {
+    __kind: 'X4'
+    value: [V3Junction, V3Junction, V3Junction, V3Junction]
+}
+
+export interface V3Junctions_X5 {
+    __kind: 'X5'
+    value: [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]
+}
+
+export interface V3Junctions_X6 {
+    __kind: 'X6'
+    value: [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]
+}
+
+export interface V3Junctions_X7 {
+    __kind: 'X7'
+    value: [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]
+}
+
+export interface V3Junctions_X8 {
+    __kind: 'X8'
+    value: [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]
+}
+
+export type V3Junction = V3Junction_AccountId32 | V3Junction_AccountIndex64 | V3Junction_AccountKey20 | V3Junction_GeneralIndex | V3Junction_GeneralKey | V3Junction_GlobalConsensus | V3Junction_OnlyChild | V3Junction_PalletInstance | V3Junction_Parachain | V3Junction_Plurality
+
+export interface V3Junction_AccountId32 {
+    __kind: 'AccountId32'
+    network?: (V3NetworkId | undefined)
+    id: Bytes
+}
+
+export interface V3Junction_AccountIndex64 {
+    __kind: 'AccountIndex64'
+    network?: (V3NetworkId | undefined)
+    index: bigint
+}
+
+export interface V3Junction_AccountKey20 {
+    __kind: 'AccountKey20'
+    network?: (V3NetworkId | undefined)
+    key: Bytes
+}
+
+export interface V3Junction_GeneralIndex {
+    __kind: 'GeneralIndex'
+    value: bigint
+}
+
+export interface V3Junction_GeneralKey {
+    __kind: 'GeneralKey'
+    length: number
+    data: Bytes
+}
+
+export interface V3Junction_GlobalConsensus {
+    __kind: 'GlobalConsensus'
+    value: V3NetworkId
+}
+
+export interface V3Junction_OnlyChild {
+    __kind: 'OnlyChild'
+}
+
+export interface V3Junction_PalletInstance {
+    __kind: 'PalletInstance'
+    value: number
+}
+
+export interface V3Junction_Parachain {
+    __kind: 'Parachain'
+    value: number
+}
+
+export interface V3Junction_Plurality {
+    __kind: 'Plurality'
+    id: V3BodyId
+    part: V3BodyPart
+}
+
+export type V3BodyPart = V3BodyPart_AtLeastProportion | V3BodyPart_Fraction | V3BodyPart_Members | V3BodyPart_MoreThanProportion | V3BodyPart_Voice
+
+export interface V3BodyPart_AtLeastProportion {
+    __kind: 'AtLeastProportion'
+    nom: number
+    denom: number
+}
+
+export interface V3BodyPart_Fraction {
+    __kind: 'Fraction'
+    nom: number
+    denom: number
+}
+
+export interface V3BodyPart_Members {
+    __kind: 'Members'
+    count: number
+}
+
+export interface V3BodyPart_MoreThanProportion {
+    __kind: 'MoreThanProportion'
+    nom: number
+    denom: number
+}
+
+export interface V3BodyPart_Voice {
+    __kind: 'Voice'
+}
+
+export type V3BodyId = V3BodyId_Administration | V3BodyId_Defense | V3BodyId_Executive | V3BodyId_Index | V3BodyId_Judicial | V3BodyId_Legislative | V3BodyId_Moniker | V3BodyId_Technical | V3BodyId_Treasury | V3BodyId_Unit
+
+export interface V3BodyId_Administration {
+    __kind: 'Administration'
+}
+
+export interface V3BodyId_Defense {
+    __kind: 'Defense'
+}
+
+export interface V3BodyId_Executive {
+    __kind: 'Executive'
+}
+
+export interface V3BodyId_Index {
+    __kind: 'Index'
+    value: number
+}
+
+export interface V3BodyId_Judicial {
+    __kind: 'Judicial'
+}
+
+export interface V3BodyId_Legislative {
+    __kind: 'Legislative'
+}
+
+export interface V3BodyId_Moniker {
+    __kind: 'Moniker'
+    value: Bytes
+}
+
+export interface V3BodyId_Technical {
+    __kind: 'Technical'
+}
+
+export interface V3BodyId_Treasury {
+    __kind: 'Treasury'
+}
+
+export interface V3BodyId_Unit {
+    __kind: 'Unit'
+}
+
+export type V3NetworkId = V3NetworkId_BitcoinCash | V3NetworkId_BitcoinCore | V3NetworkId_ByFork | V3NetworkId_ByGenesis | V3NetworkId_Ethereum | V3NetworkId_Kusama | V3NetworkId_Polkadot | V3NetworkId_PolkadotBulletin | V3NetworkId_Rococo | V3NetworkId_Westend | V3NetworkId_Wococo
+
+export interface V3NetworkId_BitcoinCash {
+    __kind: 'BitcoinCash'
+}
+
+export interface V3NetworkId_BitcoinCore {
+    __kind: 'BitcoinCore'
+}
+
+export interface V3NetworkId_ByFork {
+    __kind: 'ByFork'
+    blockNumber: bigint
+    blockHash: Bytes
+}
+
+export interface V3NetworkId_ByGenesis {
+    __kind: 'ByGenesis'
+    value: Bytes
+}
+
+export interface V3NetworkId_Ethereum {
+    __kind: 'Ethereum'
+    chainId: bigint
+}
+
+export interface V3NetworkId_Kusama {
+    __kind: 'Kusama'
+}
+
+export interface V3NetworkId_Polkadot {
+    __kind: 'Polkadot'
+}
+
+export interface V3NetworkId_PolkadotBulletin {
+    __kind: 'PolkadotBulletin'
+}
+
+export interface V3NetworkId_Rococo {
+    __kind: 'Rococo'
+}
+
+export interface V3NetworkId_Westend {
+    __kind: 'Westend'
+}
+
+export interface V3NetworkId_Wococo {
+    __kind: 'Wococo'
+}
+
+export interface AssetDetails {
+    name?: (Bytes | undefined)
+    assetType: AssetType
+    existentialDeposit: bigint
+    symbol?: (Bytes | undefined)
+    decimals?: (number | undefined)
+    xcmRateLimit?: (bigint | undefined)
+    isSufficient: boolean
+}
+
+export type AssetType = AssetType_Bond | AssetType_Erc20 | AssetType_External | AssetType_StableSwap | AssetType_Token | AssetType_XYK
+
+export interface AssetType_Bond {
+    __kind: 'Bond'
+}
+
+export interface AssetType_Erc20 {
+    __kind: 'Erc20'
+}
+
+export interface AssetType_External {
+    __kind: 'External'
+}
+
+export interface AssetType_StableSwap {
+    __kind: 'StableSwap'
+}
+
+export interface AssetType_Token {
+    __kind: 'Token'
+}
+
+export interface AssetType_XYK {
+    __kind: 'XYK'
+}
+
+export const AssetDetails: sts.Type<AssetDetails> = sts.struct(() => {
+    return  {
+        name: sts.option(() => sts.bytes()),
+        assetType: AssetType,
+        existentialDeposit: sts.bigint(),
+        symbol: sts.option(() => sts.bytes()),
+        decimals: sts.option(() => sts.number()),
+        xcmRateLimit: sts.option(() => sts.bigint()),
+        isSufficient: sts.boolean(),
+    }
+})
+
+export type Releases = Releases_V1Ancient | Releases_V2
+
+export interface Releases_V1Ancient {
+    __kind: 'V1Ancient'
+}
+
+export interface Releases_V2 {
+    __kind: 'V2'
+}
+
+export const Releases: sts.Type<Releases> = sts.closedEnum(() => {
+    return  {
+        V1Ancient: sts.unit(),
+        V2: sts.unit(),
+    }
+})
+
+export type FixedU128 = bigint
+
+export interface Type_513 {
+    amount: bigint
+}
+
+export const Type_513: sts.Type<Type_513> = sts.struct(() => {
+    return  {
+        amount: sts.bigint(),
+    }
+})
+
+export interface IdAmount {
+    id: RuntimeHoldReason
+    amount: bigint
+}
+
+export type RuntimeHoldReason = RuntimeHoldReason_Preimage | RuntimeHoldReason_StateTrieMigration
+
+export interface RuntimeHoldReason_Preimage {
+    __kind: 'Preimage'
+    value: HoldReason
+}
+
+export interface RuntimeHoldReason_StateTrieMigration {
+    __kind: 'StateTrieMigration'
+    value: Type_510
+}
+
+export type Type_510 = Type_510_SlashForMigrate
+
+export interface Type_510_SlashForMigrate {
+    __kind: 'SlashForMigrate'
+}
+
+export type HoldReason = HoldReason_Preimage
+
+export interface HoldReason_Preimage {
+    __kind: 'Preimage'
+}
+
+export const IdAmount: sts.Type<IdAmount> = sts.struct(() => {
+    return  {
+        id: RuntimeHoldReason,
+        amount: sts.bigint(),
+    }
+})
+
+export const RuntimeHoldReason: sts.Type<RuntimeHoldReason> = sts.closedEnum(() => {
+    return  {
+        Preimage: HoldReason,
+        StateTrieMigration: Type_510,
+    }
+})
+
+export const Type_510: sts.Type<Type_510> = sts.closedEnum(() => {
+    return  {
+        SlashForMigrate: sts.unit(),
+    }
+})
+
+export const HoldReason: sts.Type<HoldReason> = sts.closedEnum(() => {
+    return  {
+        Preimage: sts.unit(),
+    }
+})
+
+export interface ReserveData {
+    id: Bytes
+    amount: bigint
+}
+
+export const ReserveData: sts.Type<ReserveData> = sts.struct(() => {
+    return  {
+        id: sts.bytes(),
+        amount: sts.bigint(),
+    }
+})
+
+export interface BalanceLock {
+    id: Bytes
+    amount: bigint
+    reasons: Reasons
+}
+
+export type Reasons = Reasons_All | Reasons_Fee | Reasons_Misc
+
+export interface Reasons_All {
+    __kind: 'All'
+}
+
+export interface Reasons_Fee {
+    __kind: 'Fee'
+}
+
+export interface Reasons_Misc {
+    __kind: 'Misc'
+}
+
+export const BalanceLock: sts.Type<BalanceLock> = sts.struct(() => {
+    return  {
+        id: sts.bytes(),
+        amount: sts.bigint(),
+        reasons: Reasons,
+    }
+})
+
+export const Reasons: sts.Type<Reasons> = sts.closedEnum(() => {
+    return  {
+        All: sts.unit(),
+        Fee: sts.unit(),
+        Misc: sts.unit(),
+    }
+})
+
+export interface AccountData {
+    free: bigint
+    reserved: bigint
+    frozen: bigint
+    flags: ExtraFlags
+}
+
+export type ExtraFlags = bigint
+
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
+    return  {
+        free: sts.bigint(),
+        reserved: sts.bigint(),
+        frozen: sts.bigint(),
+        flags: ExtraFlags,
+    }
+})
+
+export const ExtraFlags = sts.bigint()
+
+export type AccountId32 = Bytes
+
+export interface AccountInfo {
+    nonce: number
+    consumers: number
+    providers: number
+    sufficients: number
+    data: AccountData
+}
+
+export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
+    return  {
+        nonce: sts.number(),
+        consumers: sts.number(),
+        providers: sts.number(),
+        sufficients: sts.number(),
+        data: AccountData,
+    }
+})
+
+export const ParachainInherentData: sts.Type<ParachainInherentData> = sts.struct(() => {
+    return  {
+        validationData: V8PersistedValidationData,
+        relayChainState: StorageProof,
+        downwardMessages: sts.array(() => InboundDownwardMessage),
+        horizontalMessages: sts.array(() => sts.tuple(() => [Id, sts.array(() => InboundHrmpMessage)])),
+    }
+})
+
+export const InboundHrmpMessage: sts.Type<InboundHrmpMessage> = sts.struct(() => {
+    return  {
+        sentAt: sts.number(),
+        data: sts.bytes(),
+    }
+})
+
+export interface InboundHrmpMessage {
+    sentAt: number
+    data: Bytes
+}
+
+export const Id = sts.number()
+
+export const InboundDownwardMessage: sts.Type<InboundDownwardMessage> = sts.struct(() => {
+    return  {
+        sentAt: sts.number(),
+        msg: sts.bytes(),
+    }
+})
+
+export interface InboundDownwardMessage {
+    sentAt: number
+    msg: Bytes
+}
+
+export const StorageProof: sts.Type<StorageProof> = sts.struct(() => {
+    return  {
+        trieNodes: sts.array(() => sts.bytes()),
+    }
+})
+
+export interface StorageProof {
+    trieNodes: Bytes[]
+}
+
+export const V8PersistedValidationData: sts.Type<V8PersistedValidationData> = sts.struct(() => {
+    return  {
+        parentHead: HeadData,
+        relayParentNumber: sts.number(),
+        relayParentStorageRoot: H256,
+        maxPovSize: sts.number(),
+    }
+})
+
+export const HeadData = sts.bytes()
+
+export interface V8PersistedValidationData {
+    parentHead: HeadData
+    relayParentNumber: number
+    relayParentStorageRoot: H256
+    maxPovSize: number
+}
+
+export type HeadData = Bytes
+
+export interface ParachainInherentData {
+    validationData: V8PersistedValidationData
+    relayChainState: StorageProof
+    downwardMessages: InboundDownwardMessage[]
+    horizontalMessages: [Id, InboundHrmpMessage[]][]
+}
+
+export type Id = number
+
+export const Schedule: sts.Type<Schedule> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        period: sts.number(),
+        totalAmount: sts.bigint(),
+        maxRetries: sts.option(() => sts.number()),
+        stabilityThreshold: sts.option(() => Permill),
+        slippage: sts.option(() => Permill),
+        order: Order,
+    }
+})
+
+export const H256 = sts.bytes()
+
+export const WeightCurveType: sts.Type<WeightCurveType> = sts.closedEnum(() => {
+    return  {
+        Linear: sts.unit(),
+    }
+})
+
+export const Trade: sts.Type<Trade> = sts.struct(() => {
+    return  {
+        pool: PoolType,
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+    }
+})
+
+export const PoolType: sts.Type<PoolType> = sts.closedEnum(() => {
+    return  {
+        Aave: sts.unit(),
+        HSM: sts.unit(),
+        LBP: sts.unit(),
+        Omnipool: sts.unit(),
+        Stableswap: sts.number(),
+        XYK: sts.unit(),
+    }
+})
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -32,8 +1315,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
 
 export interface RawOrigin_None {
@@ -48,8 +1329,6 @@ export interface RawOrigin_Signed {
     __kind: 'Signed'
     value: AccountId32
 }
-
-export type AccountId32 = Bytes
 
 export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {
@@ -161,35 +1440,6 @@ export const V3BodyPart: sts.Type<V3BodyPart> = sts.closedEnum(() => {
     }
 })
 
-export type V3BodyPart = V3BodyPart_AtLeastProportion | V3BodyPart_Fraction | V3BodyPart_Members | V3BodyPart_MoreThanProportion | V3BodyPart_Voice
-
-export interface V3BodyPart_AtLeastProportion {
-    __kind: 'AtLeastProportion'
-    nom: number
-    denom: number
-}
-
-export interface V3BodyPart_Fraction {
-    __kind: 'Fraction'
-    nom: number
-    denom: number
-}
-
-export interface V3BodyPart_Members {
-    __kind: 'Members'
-    count: number
-}
-
-export interface V3BodyPart_MoreThanProportion {
-    __kind: 'MoreThanProportion'
-    nom: number
-    denom: number
-}
-
-export interface V3BodyPart_Voice {
-    __kind: 'Voice'
-}
-
 export const V3BodyId: sts.Type<V3BodyId> = sts.closedEnum(() => {
     return  {
         Administration: sts.unit(),
@@ -204,50 +1454,6 @@ export const V3BodyId: sts.Type<V3BodyId> = sts.closedEnum(() => {
         Unit: sts.unit(),
     }
 })
-
-export type V3BodyId = V3BodyId_Administration | V3BodyId_Defense | V3BodyId_Executive | V3BodyId_Index | V3BodyId_Judicial | V3BodyId_Legislative | V3BodyId_Moniker | V3BodyId_Technical | V3BodyId_Treasury | V3BodyId_Unit
-
-export interface V3BodyId_Administration {
-    __kind: 'Administration'
-}
-
-export interface V3BodyId_Defense {
-    __kind: 'Defense'
-}
-
-export interface V3BodyId_Executive {
-    __kind: 'Executive'
-}
-
-export interface V3BodyId_Index {
-    __kind: 'Index'
-    value: number
-}
-
-export interface V3BodyId_Judicial {
-    __kind: 'Judicial'
-}
-
-export interface V3BodyId_Legislative {
-    __kind: 'Legislative'
-}
-
-export interface V3BodyId_Moniker {
-    __kind: 'Moniker'
-    value: Bytes
-}
-
-export interface V3BodyId_Technical {
-    __kind: 'Technical'
-}
-
-export interface V3BodyId_Treasury {
-    __kind: 'Treasury'
-}
-
-export interface V3BodyId_Unit {
-    __kind: 'Unit'
-}
 
 export const V4NetworkId: sts.Type<V4NetworkId> = sts.closedEnum(() => {
     return  {
@@ -497,8 +1703,6 @@ export const Type_93: sts.Type<Type_93> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_93 = Type_93_EthereumTransaction
 
 export interface Type_93_EthereumTransaction {
@@ -506,16 +1710,12 @@ export interface Type_93_EthereumTransaction {
     value: H160
 }
 
-export type H160 = Bytes
-
 export const Type_110: sts.Type<Type_110> = sts.closedEnum(() => {
     return  {
         Relay: sts.unit(),
         SiblingParachain: Id,
     }
 })
-
-export const Id = sts.number()
 
 export type Type_110 = Type_110_Relay | Type_110_SiblingParachain
 
@@ -527,8 +1727,6 @@ export interface Type_110_SiblingParachain {
     __kind: 'SiblingParachain'
     value: Id
 }
-
-export type Id = number
 
 export type OriginCaller = OriginCaller_CumulusXcm | OriginCaller_Ethereum | OriginCaller_Origins | OriginCaller_PolkadotXcm | OriginCaller_TechnicalCommittee | OriginCaller_Void | OriginCaller_system
 
@@ -735,36 +1933,6 @@ export const XYKLiquidityMiningCall: sts.Type<XYKLiquidityMiningCall> = sts.clos
         }),
     }
 })
-
-export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
-    return  {
-        initialRewardPercentage: FixedU128,
-        scaleCoef: sts.number(),
-    }
-})
-
-export interface LoyaltyCurve {
-    initialRewardPercentage: FixedU128
-    scaleCoef: number
-}
-
-export type FixedU128 = bigint
-
-export const Type_279: sts.Type<Type_279> = sts.struct(() => {
-    return  {
-        assetIn: sts.number(),
-        assetOut: sts.number(),
-    }
-})
-
-export interface Type_279 {
-    assetIn: number
-    assetOut: number
-}
-
-export const FixedU128 = sts.bigint()
-
-export const Perquintill = sts.bigint()
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -1149,7 +2317,10 @@ export interface XYKLiquidityMiningCall_withdraw_shares {
     assetPair: Type_279
 }
 
-export type Perquintill = bigint
+export interface Type_279 {
+    assetIn: number
+    assetOut: number
+}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -1596,158 +2767,6 @@ export const V3NetworkId: sts.Type<V3NetworkId> = sts.closedEnum(() => {
         Wococo: sts.unit(),
     }
 })
-
-export type V3NetworkId = V3NetworkId_BitcoinCash | V3NetworkId_BitcoinCore | V3NetworkId_ByFork | V3NetworkId_ByGenesis | V3NetworkId_Ethereum | V3NetworkId_Kusama | V3NetworkId_Polkadot | V3NetworkId_PolkadotBulletin | V3NetworkId_Rococo | V3NetworkId_Westend | V3NetworkId_Wococo
-
-export interface V3NetworkId_BitcoinCash {
-    __kind: 'BitcoinCash'
-}
-
-export interface V3NetworkId_BitcoinCore {
-    __kind: 'BitcoinCore'
-}
-
-export interface V3NetworkId_ByFork {
-    __kind: 'ByFork'
-    blockNumber: bigint
-    blockHash: Bytes
-}
-
-export interface V3NetworkId_ByGenesis {
-    __kind: 'ByGenesis'
-    value: Bytes
-}
-
-export interface V3NetworkId_Ethereum {
-    __kind: 'Ethereum'
-    chainId: bigint
-}
-
-export interface V3NetworkId_Kusama {
-    __kind: 'Kusama'
-}
-
-export interface V3NetworkId_Polkadot {
-    __kind: 'Polkadot'
-}
-
-export interface V3NetworkId_PolkadotBulletin {
-    __kind: 'PolkadotBulletin'
-}
-
-export interface V3NetworkId_Rococo {
-    __kind: 'Rococo'
-}
-
-export interface V3NetworkId_Westend {
-    __kind: 'Westend'
-}
-
-export interface V3NetworkId_Wococo {
-    __kind: 'Wococo'
-}
-
-export type V3Junction = V3Junction_AccountId32 | V3Junction_AccountIndex64 | V3Junction_AccountKey20 | V3Junction_GeneralIndex | V3Junction_GeneralKey | V3Junction_GlobalConsensus | V3Junction_OnlyChild | V3Junction_PalletInstance | V3Junction_Parachain | V3Junction_Plurality
-
-export interface V3Junction_AccountId32 {
-    __kind: 'AccountId32'
-    network?: (V3NetworkId | undefined)
-    id: Bytes
-}
-
-export interface V3Junction_AccountIndex64 {
-    __kind: 'AccountIndex64'
-    network?: (V3NetworkId | undefined)
-    index: bigint
-}
-
-export interface V3Junction_AccountKey20 {
-    __kind: 'AccountKey20'
-    network?: (V3NetworkId | undefined)
-    key: Bytes
-}
-
-export interface V3Junction_GeneralIndex {
-    __kind: 'GeneralIndex'
-    value: bigint
-}
-
-export interface V3Junction_GeneralKey {
-    __kind: 'GeneralKey'
-    length: number
-    data: Bytes
-}
-
-export interface V3Junction_GlobalConsensus {
-    __kind: 'GlobalConsensus'
-    value: V3NetworkId
-}
-
-export interface V3Junction_OnlyChild {
-    __kind: 'OnlyChild'
-}
-
-export interface V3Junction_PalletInstance {
-    __kind: 'PalletInstance'
-    value: number
-}
-
-export interface V3Junction_Parachain {
-    __kind: 'Parachain'
-    value: number
-}
-
-export interface V3Junction_Plurality {
-    __kind: 'Plurality'
-    id: V3BodyId
-    part: V3BodyPart
-}
-
-export type V3Junctions = V3Junctions_Here | V3Junctions_X1 | V3Junctions_X2 | V3Junctions_X3 | V3Junctions_X4 | V3Junctions_X5 | V3Junctions_X6 | V3Junctions_X7 | V3Junctions_X8
-
-export interface V3Junctions_Here {
-    __kind: 'Here'
-}
-
-export interface V3Junctions_X1 {
-    __kind: 'X1'
-    value: V3Junction
-}
-
-export interface V3Junctions_X2 {
-    __kind: 'X2'
-    value: [V3Junction, V3Junction]
-}
-
-export interface V3Junctions_X3 {
-    __kind: 'X3'
-    value: [V3Junction, V3Junction, V3Junction]
-}
-
-export interface V3Junctions_X4 {
-    __kind: 'X4'
-    value: [V3Junction, V3Junction, V3Junction, V3Junction]
-}
-
-export interface V3Junctions_X5 {
-    __kind: 'X5'
-    value: [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]
-}
-
-export interface V3Junctions_X6 {
-    __kind: 'X6'
-    value: [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]
-}
-
-export interface V3Junctions_X7 {
-    __kind: 'X7'
-    value: [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]
-}
-
-export interface V3Junctions_X8 {
-    __kind: 'X8'
-    value: [V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction, V3Junction]
-}
 
 export interface V3MultiLocation {
     parents: number
@@ -2426,8 +3445,6 @@ export const WhitelistCall: sts.Type<WhitelistCall> = sts.closedEnum(() => {
     }
 })
 
-export const H256 = sts.bytes()
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -2454,8 +3471,6 @@ export interface WhitelistCall_whitelist_call {
     __kind: 'whitelist_call'
     callHash: H256
 }
-
-export type H256 = Bytes
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -4497,7 +5512,7 @@ export const StableswapCall: sts.Type<StableswapCall> = sts.closedEnum(() => {
             amplification: sts.number(),
             fee: Permill,
             pegSource: sts.array(() => PegSource),
-            maxPegUpdate: Permill,
+            maxPegUpdate: Perbill,
         }),
         remove_liquidity: sts.enumStruct({
             poolId: sts.number(),
@@ -4539,7 +5554,7 @@ export const StableswapCall: sts.Type<StableswapCall> = sts.closedEnum(() => {
         }),
         update_pool_max_peg_update: sts.enumStruct({
             poolId: sts.number(),
-            maxPegUpdate: Permill,
+            maxPegUpdate: Perbill,
         }),
         withdraw_asset_amount: sts.enumStruct({
             poolId: sts.number(),
@@ -4550,16 +5565,6 @@ export const StableswapCall: sts.Type<StableswapCall> = sts.closedEnum(() => {
     }
 })
 
-export const Type_234: sts.Type<Type_234> = sts.struct(() => {
-    return  {
-        bits: sts.number(),
-    }
-})
-
-export interface Type_234 {
-    bits: number
-}
-
 export const PegSource: sts.Type<PegSource> = sts.closedEnum(() => {
     return  {
         MMOracle: H160,
@@ -4567,74 +5572,6 @@ export const PegSource: sts.Type<PegSource> = sts.closedEnum(() => {
         Value: sts.tuple(() => [sts.bigint(), sts.bigint()]),
     }
 })
-
-export const OraclePeriod: sts.Type<OraclePeriod> = sts.closedEnum(() => {
-    return  {
-        Day: sts.unit(),
-        Hour: sts.unit(),
-        LastBlock: sts.unit(),
-        Short: sts.unit(),
-        TenMinutes: sts.unit(),
-        Week: sts.unit(),
-    }
-})
-
-export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
-
-export interface OraclePeriod_Day {
-    __kind: 'Day'
-}
-
-export interface OraclePeriod_Hour {
-    __kind: 'Hour'
-}
-
-export interface OraclePeriod_LastBlock {
-    __kind: 'LastBlock'
-}
-
-export interface OraclePeriod_Short {
-    __kind: 'Short'
-}
-
-export interface OraclePeriod_TenMinutes {
-    __kind: 'TenMinutes'
-}
-
-export interface OraclePeriod_Week {
-    __kind: 'Week'
-}
-
-export type PegSource = PegSource_MMOracle | PegSource_Oracle | PegSource_Value
-
-export interface PegSource_MMOracle {
-    __kind: 'MMOracle'
-    value: H160
-}
-
-export interface PegSource_Oracle {
-    __kind: 'Oracle'
-    value: [Bytes, OraclePeriod, number]
-}
-
-export interface PegSource_Value {
-    __kind: 'Value'
-    value: [bigint, bigint]
-}
-
-export const Permill = sts.number()
-
-export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
-    return  {
-        assetId: sts.number(),
-        amount: sts.bigint(),
-    }
-})
-
-export interface AssetAmount {
-    assetId: number
-    amount: bigint
-}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -4807,7 +5744,7 @@ export interface StableswapCall_create_pool_with_pegs {
     amplification: number
     fee: Permill
     pegSource: PegSource[]
-    maxPegUpdate: Permill
+    maxPegUpdate: Perbill
 }
 
 /**
@@ -5009,7 +5946,7 @@ export interface StableswapCall_update_pool_fee {
 export interface StableswapCall_update_pool_max_peg_update {
     __kind: 'update_pool_max_peg_update'
     poolId: number
-    maxPegUpdate: Permill
+    maxPegUpdate: Perbill
 }
 
 /**
@@ -5035,7 +5972,10 @@ export interface StableswapCall_withdraw_asset_amount {
     maxShareAmount: bigint
 }
 
-export type Permill = number
+export interface AssetAmount {
+    assetId: number
+    amount: bigint
+}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -5331,58 +6271,6 @@ export const AssetPair: sts.Type<AssetPair> = sts.struct(() => {
 })
 
 export interface AssetPair {
-    assetIn: number
-    assetOut: number
-}
-
-export const Trade: sts.Type<Trade> = sts.struct(() => {
-    return  {
-        pool: PoolType,
-        assetIn: sts.number(),
-        assetOut: sts.number(),
-    }
-})
-
-export const PoolType: sts.Type<PoolType> = sts.closedEnum(() => {
-    return  {
-        Aave: sts.unit(),
-        HSM: sts.unit(),
-        LBP: sts.unit(),
-        Omnipool: sts.unit(),
-        Stableswap: sts.number(),
-        XYK: sts.unit(),
-    }
-})
-
-export type PoolType = PoolType_Aave | PoolType_HSM | PoolType_LBP | PoolType_Omnipool | PoolType_Stableswap | PoolType_XYK
-
-export interface PoolType_Aave {
-    __kind: 'Aave'
-}
-
-export interface PoolType_HSM {
-    __kind: 'HSM'
-}
-
-export interface PoolType_LBP {
-    __kind: 'LBP'
-}
-
-export interface PoolType_Omnipool {
-    __kind: 'Omnipool'
-}
-
-export interface PoolType_Stableswap {
-    __kind: 'Stableswap'
-    value: number
-}
-
-export interface PoolType_XYK {
-    __kind: 'XYK'
-}
-
-export interface Trade {
-    pool: PoolType
     assetIn: number
     assetOut: number
 }
@@ -9856,76 +10744,6 @@ export const ParachainSystemCall: sts.Type<ParachainSystemCall> = sts.closedEnum
     }
 })
 
-export const ParachainInherentData: sts.Type<ParachainInherentData> = sts.struct(() => {
-    return  {
-        validationData: V8PersistedValidationData,
-        relayChainState: StorageProof,
-        downwardMessages: sts.array(() => InboundDownwardMessage),
-        horizontalMessages: sts.array(() => sts.tuple(() => [Id, sts.array(() => InboundHrmpMessage)])),
-    }
-})
-
-export const InboundHrmpMessage: sts.Type<InboundHrmpMessage> = sts.struct(() => {
-    return  {
-        sentAt: sts.number(),
-        data: sts.bytes(),
-    }
-})
-
-export interface InboundHrmpMessage {
-    sentAt: number
-    data: Bytes
-}
-
-export const InboundDownwardMessage: sts.Type<InboundDownwardMessage> = sts.struct(() => {
-    return  {
-        sentAt: sts.number(),
-        msg: sts.bytes(),
-    }
-})
-
-export interface InboundDownwardMessage {
-    sentAt: number
-    msg: Bytes
-}
-
-export const StorageProof: sts.Type<StorageProof> = sts.struct(() => {
-    return  {
-        trieNodes: sts.array(() => sts.bytes()),
-    }
-})
-
-export interface StorageProof {
-    trieNodes: Bytes[]
-}
-
-export const V8PersistedValidationData: sts.Type<V8PersistedValidationData> = sts.struct(() => {
-    return  {
-        parentHead: HeadData,
-        relayParentNumber: sts.number(),
-        relayParentStorageRoot: H256,
-        maxPovSize: sts.number(),
-    }
-})
-
-export const HeadData = sts.bytes()
-
-export interface V8PersistedValidationData {
-    parentHead: HeadData
-    relayParentNumber: number
-    relayParentStorageRoot: H256
-    maxPovSize: number
-}
-
-export type HeadData = Bytes
-
-export interface ParachainInherentData {
-    validationData: V8PersistedValidationData
-    relayChainState: StorageProof
-    downwardMessages: InboundDownwardMessage[]
-    horizontalMessages: [Id, InboundHrmpMessage[]][]
-}
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -10613,16 +11431,6 @@ export const OmnipoolCall: sts.Type<OmnipoolCall> = sts.closedEnum(() => {
         }),
     }
 })
-
-export const Tradability: sts.Type<Tradability> = sts.struct(() => {
-    return  {
-        bits: sts.number(),
-    }
-})
-
-export interface Tradability {
-    bits: number
-}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -11540,18 +12348,6 @@ export const LBPCall: sts.Type<LBPCall> = sts.closedEnum(() => {
         }),
     }
 })
-
-export const WeightCurveType: sts.Type<WeightCurveType> = sts.closedEnum(() => {
-    return  {
-        Linear: sts.unit(),
-    }
-})
-
-export type WeightCurveType = WeightCurveType_Linear
-
-export interface WeightCurveType_Linear {
-    __kind: 'Linear'
-}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -12519,8 +13315,6 @@ export const HSMCall: sts.Type<HSMCall> = sts.closedEnum(() => {
     }
 })
 
-export const Perbill = sts.number()
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -12724,8 +13518,6 @@ export interface HSMCall_update_collateral_asset {
     buybackRate?: (Perbill | undefined)
     maxInHolding: Option<(bigint | undefined)>
 }
-
-export type Perbill = number
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -13202,49 +13994,6 @@ export const DynamicFeesCall: sts.Type<DynamicFeesCall> = sts.closedEnum(() => {
     }
 })
 
-export const AssetFeeConfig: sts.Type<AssetFeeConfig> = sts.closedEnum(() => {
-    return  {
-        Dynamic: sts.enumStruct({
-            assetFeeParams: FeeParams,
-            protocolFeeParams: FeeParams,
-        }),
-        Fixed: sts.enumStruct({
-            assetFee: Permill,
-            protocolFee: Permill,
-        }),
-    }
-})
-
-export const FeeParams: sts.Type<FeeParams> = sts.struct(() => {
-    return  {
-        minFee: Permill,
-        maxFee: Permill,
-        decay: FixedU128,
-        amplification: FixedU128,
-    }
-})
-
-export interface FeeParams {
-    minFee: Permill
-    maxFee: Permill
-    decay: FixedU128
-    amplification: FixedU128
-}
-
-export type AssetFeeConfig = AssetFeeConfig_Dynamic | AssetFeeConfig_Fixed
-
-export interface AssetFeeConfig_Dynamic {
-    __kind: 'Dynamic'
-    assetFeeParams: FeeParams
-    protocolFeeParams: FeeParams
-}
-
-export interface AssetFeeConfig_Fixed {
-    __kind: 'Fixed'
-    assetFee: Permill
-    protocolFee: Permill
-}
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -13257,7 +14006,7 @@ export type DynamicFeesCall = DynamicFeesCall_remove_asset_fee | DynamicFeesCall
  * After removal, the asset will use the default dynamic fee parameters configured in the runtime.
  * 
  * # Arguments
- * * `origin` - Root origin required
+ * * `origin` - Authority origin required
  * * `asset_id` - The asset ID to remove configuration for
  */
 export interface DynamicFeesCall_remove_asset_fee {
@@ -13271,7 +14020,7 @@ export interface DynamicFeesCall_remove_asset_fee {
  * This function allows setting either fixed or dynamic fee configuration for a specific asset.
  * 
  * # Arguments
- * * `origin` - Root origin required
+ * * `origin` - Authority origin required
  * * `asset_id` - The asset ID to configure
  * * `config` - Fee configuration (Fixed or Dynamic)
  */
@@ -13346,6 +14095,9 @@ export const DispatcherCall: sts.Type<DispatcherCall> = sts.closedEnum(() => {
         dispatch_as_treasury: sts.enumStruct({
             call: Call,
         }),
+        dispatch_evm_call: sts.enumStruct({
+            call: Call,
+        }),
         dispatch_with_extra_gas: sts.enumStruct({
             call: Call,
             extraGas: sts.bigint(),
@@ -13359,7 +14111,7 @@ export const DispatcherCall: sts.Type<DispatcherCall> = sts.closedEnum(() => {
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
-export type DispatcherCall = DispatcherCall_dispatch_as_aave_manager | DispatcherCall_dispatch_as_treasury | DispatcherCall_dispatch_with_extra_gas | DispatcherCall_note_aave_manager
+export type DispatcherCall = DispatcherCall_dispatch_as_aave_manager | DispatcherCall_dispatch_as_treasury | DispatcherCall_dispatch_evm_call | DispatcherCall_dispatch_with_extra_gas | DispatcherCall_note_aave_manager
 
 export interface DispatcherCall_dispatch_as_aave_manager {
     __kind: 'dispatch_as_aave_manager'
@@ -13368,6 +14120,22 @@ export interface DispatcherCall_dispatch_as_aave_manager {
 
 export interface DispatcherCall_dispatch_as_treasury {
     __kind: 'dispatch_as_treasury'
+    call: Call
+}
+
+/**
+ * Execute a single EVM call.
+ * This extrinsic will fail if the EVM call returns any other ExitReason than `ExitSucceed(Returned)` or `ExitSucceed(Stopped)`.
+ * Look the [hydradx_runtime::evm::runner::WrapRunner] implementation for details.
+ * 
+ * Parameters:
+ * - `origin`: Signed origin.
+ * - `call`: presumably `pallet_evm::Call::call` as boxed `RuntimeCall`.
+ * 
+ * Emits `EvmCallFailed` event when failed.
+ */
+export interface DispatcherCall_dispatch_evm_call {
+    __kind: 'dispatch_evm_call'
     call: Call
 }
 
@@ -13963,67 +14731,6 @@ export const DCACall: sts.Type<DCACall> = sts.closedEnum(() => {
         }),
     }
 })
-
-export const Schedule: sts.Type<Schedule> = sts.struct(() => {
-    return  {
-        owner: AccountId32,
-        period: sts.number(),
-        totalAmount: sts.bigint(),
-        maxRetries: sts.option(() => sts.number()),
-        stabilityThreshold: sts.option(() => Permill),
-        slippage: sts.option(() => Permill),
-        order: Order,
-    }
-})
-
-export const Order: sts.Type<Order> = sts.closedEnum(() => {
-    return  {
-        Buy: sts.enumStruct({
-            assetIn: sts.number(),
-            assetOut: sts.number(),
-            amountOut: sts.bigint(),
-            maxAmountIn: sts.bigint(),
-            route: sts.array(() => Trade),
-        }),
-        Sell: sts.enumStruct({
-            assetIn: sts.number(),
-            assetOut: sts.number(),
-            amountIn: sts.bigint(),
-            minAmountOut: sts.bigint(),
-            route: sts.array(() => Trade),
-        }),
-    }
-})
-
-export type Order = Order_Buy | Order_Sell
-
-export interface Order_Buy {
-    __kind: 'Buy'
-    assetIn: number
-    assetOut: number
-    amountOut: bigint
-    maxAmountIn: bigint
-    route: Trade[]
-}
-
-export interface Order_Sell {
-    __kind: 'Sell'
-    assetIn: number
-    assetOut: number
-    amountIn: bigint
-    minAmountOut: bigint
-    route: Trade[]
-}
-
-export interface Schedule {
-    owner: AccountId32
-    period: number
-    totalAmount: bigint
-    maxRetries?: (number | undefined)
-    stabilityThreshold?: (Permill | undefined)
-    slippage?: (Permill | undefined)
-    order: Order
-}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -14934,23 +15641,6 @@ export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
     }
 })
 
-export const AdjustmentDirection: sts.Type<AdjustmentDirection> = sts.closedEnum(() => {
-    return  {
-        Decrease: sts.unit(),
-        Increase: sts.unit(),
-    }
-})
-
-export type AdjustmentDirection = AdjustmentDirection_Decrease | AdjustmentDirection_Increase
-
-export interface AdjustmentDirection_Decrease {
-    __kind: 'Decrease'
-}
-
-export interface AdjustmentDirection_Increase {
-    __kind: 'Increase'
-}
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -15084,6 +15774,16 @@ export interface BalancesCall_upgrade_accounts {
     who: AccountId32[]
 }
 
+export type AdjustmentDirection = AdjustmentDirection_Decrease | AdjustmentDirection_Increase
+
+export interface AdjustmentDirection_Decrease {
+    __kind: 'Decrease'
+}
+
+export interface AdjustmentDirection_Increase {
+    __kind: 'Increase'
+}
+
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -15122,55 +15822,6 @@ export const AssetRegistryCall: sts.Type<AssetRegistryCall> = sts.closedEnum(() 
         }),
     }
 })
-
-export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
-    return  {
-        parents: sts.number(),
-        interior: V3Junctions,
-    }
-})
-
-export interface AssetLocation {
-    parents: number
-    interior: V3Junctions
-}
-
-export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
-    return  {
-        Bond: sts.unit(),
-        Erc20: sts.unit(),
-        External: sts.unit(),
-        StableSwap: sts.unit(),
-        Token: sts.unit(),
-        XYK: sts.unit(),
-    }
-})
-
-export type AssetType = AssetType_Bond | AssetType_Erc20 | AssetType_External | AssetType_StableSwap | AssetType_Token | AssetType_XYK
-
-export interface AssetType_Bond {
-    __kind: 'Bond'
-}
-
-export interface AssetType_Erc20 {
-    __kind: 'Erc20'
-}
-
-export interface AssetType_External {
-    __kind: 'External'
-}
-
-export interface AssetType_StableSwap {
-    __kind: 'StableSwap'
-}
-
-export interface AssetType_Token {
-    __kind: 'Token'
-}
-
-export interface AssetType_XYK {
-    __kind: 'XYK'
-}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
@@ -15550,3 +16201,463 @@ export interface Call_XYKWarehouseLM {
     __kind: 'XYKWarehouseLM'
     value: XYKWarehouseLMCall
 }
+
+export const AdjustmentDirection: sts.Type<AdjustmentDirection> = sts.closedEnum(() => {
+    return  {
+        Decrease: sts.unit(),
+        Increase: sts.unit(),
+    }
+})
+
+export const ExecutionType: sts.Type<ExecutionType> = sts.closedEnum(() => {
+    return  {
+        Batch: sts.number(),
+        DCA: sts.tuple(() => [sts.number(), sts.number()]),
+        Omnipool: sts.number(),
+        Router: sts.number(),
+        Xcm: sts.tuple(() => [sts.bytes(), sts.number()]),
+        XcmExchange: sts.number(),
+    }
+})
+
+export const Fee: sts.Type<Fee> = sts.struct(() => {
+    return  {
+        asset: sts.number(),
+        amount: sts.bigint(),
+        destination: Destination,
+    }
+})
+
+export const Destination: sts.Type<Destination> = sts.closedEnum(() => {
+    return  {
+        Account: AccountId32,
+        Burned: sts.unit(),
+    }
+})
+
+export type Destination = Destination_Account | Destination_Burned
+
+export interface Destination_Account {
+    __kind: 'Account'
+    value: AccountId32
+}
+
+export interface Destination_Burned {
+    __kind: 'Burned'
+}
+
+export interface Fee {
+    asset: number
+    amount: bigint
+    destination: Destination
+}
+
+export const Asset: sts.Type<Asset> = sts.struct(() => {
+    return  {
+        asset: sts.number(),
+        amount: sts.bigint(),
+    }
+})
+
+export interface Asset {
+    asset: number
+    amount: bigint
+}
+
+export const TradeOperation: sts.Type<TradeOperation> = sts.closedEnum(() => {
+    return  {
+        ExactIn: sts.unit(),
+        ExactOut: sts.unit(),
+        Limit: sts.unit(),
+        LiquidityAdd: sts.unit(),
+        LiquidityRemove: sts.unit(),
+    }
+})
+
+export type TradeOperation = TradeOperation_ExactIn | TradeOperation_ExactOut | TradeOperation_Limit | TradeOperation_LiquidityAdd | TradeOperation_LiquidityRemove
+
+export interface TradeOperation_ExactIn {
+    __kind: 'ExactIn'
+}
+
+export interface TradeOperation_ExactOut {
+    __kind: 'ExactOut'
+}
+
+export interface TradeOperation_Limit {
+    __kind: 'Limit'
+}
+
+export interface TradeOperation_LiquidityAdd {
+    __kind: 'LiquidityAdd'
+}
+
+export interface TradeOperation_LiquidityRemove {
+    __kind: 'LiquidityRemove'
+}
+
+export const Filler: sts.Type<Filler> = sts.closedEnum(() => {
+    return  {
+        AAVE: sts.unit(),
+        HSM: sts.unit(),
+        LBP: sts.unit(),
+        OTC: sts.number(),
+        Omnipool: sts.unit(),
+        Stableswap: sts.number(),
+        XYK: sts.number(),
+    }
+})
+
+export type Filler = Filler_AAVE | Filler_HSM | Filler_LBP | Filler_OTC | Filler_Omnipool | Filler_Stableswap | Filler_XYK
+
+export interface Filler_AAVE {
+    __kind: 'AAVE'
+}
+
+export interface Filler_HSM {
+    __kind: 'HSM'
+}
+
+export interface Filler_LBP {
+    __kind: 'LBP'
+}
+
+export interface Filler_OTC {
+    __kind: 'OTC'
+    value: number
+}
+
+export interface Filler_Omnipool {
+    __kind: 'Omnipool'
+}
+
+export interface Filler_Stableswap {
+    __kind: 'Stableswap'
+    value: number
+}
+
+export interface Filler_XYK {
+    __kind: 'XYK'
+    value: number
+}
+
+export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
+    return  {
+        Arithmetic: ArithmeticError,
+        BadOrigin: sts.unit(),
+        CannotLookup: sts.unit(),
+        ConsumerRemaining: sts.unit(),
+        Corruption: sts.unit(),
+        Exhausted: sts.unit(),
+        Module: ModuleError,
+        NoProviders: sts.unit(),
+        Other: sts.unit(),
+        RootNotAllowed: sts.unit(),
+        Token: TokenError,
+        TooManyConsumers: sts.unit(),
+        Transactional: TransactionalError,
+        Unavailable: sts.unit(),
+    }
+})
+
+export const TransactionalError: sts.Type<TransactionalError> = sts.closedEnum(() => {
+    return  {
+        LimitReached: sts.unit(),
+        NoLayer: sts.unit(),
+    }
+})
+
+export type TransactionalError = TransactionalError_LimitReached | TransactionalError_NoLayer
+
+export interface TransactionalError_LimitReached {
+    __kind: 'LimitReached'
+}
+
+export interface TransactionalError_NoLayer {
+    __kind: 'NoLayer'
+}
+
+export const TokenError: sts.Type<TokenError> = sts.closedEnum(() => {
+    return  {
+        BelowMinimum: sts.unit(),
+        Blocked: sts.unit(),
+        CannotCreate: sts.unit(),
+        CannotCreateHold: sts.unit(),
+        Frozen: sts.unit(),
+        FundsUnavailable: sts.unit(),
+        NotExpendable: sts.unit(),
+        OnlyProvider: sts.unit(),
+        UnknownAsset: sts.unit(),
+        Unsupported: sts.unit(),
+    }
+})
+
+export type TokenError = TokenError_BelowMinimum | TokenError_Blocked | TokenError_CannotCreate | TokenError_CannotCreateHold | TokenError_Frozen | TokenError_FundsUnavailable | TokenError_NotExpendable | TokenError_OnlyProvider | TokenError_UnknownAsset | TokenError_Unsupported
+
+export interface TokenError_BelowMinimum {
+    __kind: 'BelowMinimum'
+}
+
+export interface TokenError_Blocked {
+    __kind: 'Blocked'
+}
+
+export interface TokenError_CannotCreate {
+    __kind: 'CannotCreate'
+}
+
+export interface TokenError_CannotCreateHold {
+    __kind: 'CannotCreateHold'
+}
+
+export interface TokenError_Frozen {
+    __kind: 'Frozen'
+}
+
+export interface TokenError_FundsUnavailable {
+    __kind: 'FundsUnavailable'
+}
+
+export interface TokenError_NotExpendable {
+    __kind: 'NotExpendable'
+}
+
+export interface TokenError_OnlyProvider {
+    __kind: 'OnlyProvider'
+}
+
+export interface TokenError_UnknownAsset {
+    __kind: 'UnknownAsset'
+}
+
+export interface TokenError_Unsupported {
+    __kind: 'Unsupported'
+}
+
+export const ModuleError: sts.Type<ModuleError> = sts.struct(() => {
+    return  {
+        index: sts.number(),
+        error: sts.bytes(),
+    }
+})
+
+export interface ModuleError {
+    index: number
+    error: Bytes
+}
+
+export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
+    return  {
+        DivisionByZero: sts.unit(),
+        Overflow: sts.unit(),
+        Underflow: sts.unit(),
+    }
+})
+
+export type ArithmeticError = ArithmeticError_DivisionByZero | ArithmeticError_Overflow | ArithmeticError_Underflow
+
+export interface ArithmeticError_DivisionByZero {
+    __kind: 'DivisionByZero'
+}
+
+export interface ArithmeticError_Overflow {
+    __kind: 'Overflow'
+}
+
+export interface ArithmeticError_Underflow {
+    __kind: 'Underflow'
+}
+
+export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Corruption | DispatchError_Exhausted | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_RootNotAllowed | DispatchError_Token | DispatchError_TooManyConsumers | DispatchError_Transactional | DispatchError_Unavailable
+
+export interface DispatchError_Arithmetic {
+    __kind: 'Arithmetic'
+    value: ArithmeticError
+}
+
+export interface DispatchError_BadOrigin {
+    __kind: 'BadOrigin'
+}
+
+export interface DispatchError_CannotLookup {
+    __kind: 'CannotLookup'
+}
+
+export interface DispatchError_ConsumerRemaining {
+    __kind: 'ConsumerRemaining'
+}
+
+export interface DispatchError_Corruption {
+    __kind: 'Corruption'
+}
+
+export interface DispatchError_Exhausted {
+    __kind: 'Exhausted'
+}
+
+export interface DispatchError_Module {
+    __kind: 'Module'
+    value: ModuleError
+}
+
+export interface DispatchError_NoProviders {
+    __kind: 'NoProviders'
+}
+
+export interface DispatchError_Other {
+    __kind: 'Other'
+}
+
+export interface DispatchError_RootNotAllowed {
+    __kind: 'RootNotAllowed'
+}
+
+export interface DispatchError_Token {
+    __kind: 'Token'
+    value: TokenError
+}
+
+export interface DispatchError_TooManyConsumers {
+    __kind: 'TooManyConsumers'
+}
+
+export interface DispatchError_Transactional {
+    __kind: 'Transactional'
+    value: TransactionalError
+}
+
+export interface DispatchError_Unavailable {
+    __kind: 'Unavailable'
+}
+
+export const Order: sts.Type<Order> = sts.closedEnum(() => {
+    return  {
+        Buy: sts.enumStruct({
+            assetIn: sts.number(),
+            assetOut: sts.number(),
+            amountOut: sts.bigint(),
+            maxAmountIn: sts.bigint(),
+            route: sts.array(() => Trade),
+        }),
+        Sell: sts.enumStruct({
+            assetIn: sts.number(),
+            assetOut: sts.number(),
+            amountIn: sts.bigint(),
+            minAmountOut: sts.bigint(),
+            route: sts.array(() => Trade),
+        }),
+    }
+})
+
+export const Type_279: sts.Type<Type_279> = sts.struct(() => {
+    return  {
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+    }
+})
+
+export const Log: sts.Type<Log> = sts.struct(() => {
+    return  {
+        address: H160,
+        topics: sts.array(() => H256),
+        data: sts.bytes(),
+    }
+})
+
+export interface Log {
+    address: H160
+    topics: H256[]
+    data: Bytes
+}
+
+export const H160 = sts.bytes()
+
+export const Perbill = sts.number()
+
+export const Pool: sts.Type<Pool> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        start: sts.option(() => sts.number()),
+        end: sts.option(() => sts.number()),
+        assets: sts.tuple(() => [sts.number(), sts.number()]),
+        initialWeight: sts.number(),
+        finalWeight: sts.number(),
+        weightCurve: WeightCurveType,
+        fee: sts.tuple(() => [sts.number(), sts.number()]),
+        feeCollector: AccountId32,
+        repayTarget: sts.bigint(),
+    }
+})
+
+export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
+    return  {
+        assetId: sts.number(),
+        amount: sts.bigint(),
+    }
+})
+
+export const PoolPegInfo: sts.Type<PoolPegInfo> = sts.struct(() => {
+    return  {
+        source: sts.array(() => PegSource),
+        maxPegUpdate: Perbill,
+        current: sts.array(() => sts.tuple(() => [sts.bigint(), sts.bigint()])),
+    }
+})
+
+export const NonZeroU16 = sts.number()
+
+export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
+    return  {
+        initialRewardPercentage: FixedU128,
+        scaleCoef: sts.number(),
+    }
+})
+
+export const Perquintill = sts.bigint()
+
+export const Permill = sts.number()
+
+export const Tradability: sts.Type<Tradability> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
+
+export const FixedU128 = sts.bigint()
+
+export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
+    return  {
+        parents: sts.number(),
+        interior: V3Junctions,
+    }
+})
+
+export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
+    return  {
+        Bond: sts.unit(),
+        Erc20: sts.unit(),
+        External: sts.unit(),
+        StableSwap: sts.unit(),
+        Token: sts.unit(),
+        XYK: sts.unit(),
+    }
+})
+
+export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
+    return  {
+        Free: sts.unit(),
+        Reserved: sts.unit(),
+    }
+})
+
+export type BalanceStatus = BalanceStatus_Free | BalanceStatus_Reserved
+
+export interface BalanceStatus_Free {
+    __kind: 'Free'
+}
+
+export interface BalanceStatus_Reserved {
+    __kind: 'Reserved'
+}
+
+export const AccountId32 = sts.bytes()

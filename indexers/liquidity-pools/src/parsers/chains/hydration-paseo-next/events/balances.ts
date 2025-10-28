@@ -4,8 +4,8 @@ import { BalancesTransferEventParams } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseTransferParams(event: SqdEvent): BalancesTransferEventParams {
-  if (events.balances.transfer.v324.is(event)) {
-    const { to, from, amount } = events.balances.transfer.v324.decode(event);
+  if (events.balances.transfer.v347.is(event)) {
+    const { to, from, amount } = events.balances.transfer.v347.decode(event);
     return {
       to,
       from,

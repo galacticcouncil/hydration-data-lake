@@ -6,9 +6,9 @@ import { UnknownVersionError } from '../../../../utils/errors';
 async function getLastRelayChainBlockNumber(
   block: BlockHeader
 ): Promise<ParachainSystemLastRelayChainBlockNumber | null> {
-  if (storage.parachainSystem.lastRelayChainBlockNumber.v324.is(block)) {
+  if (storage.parachainSystem.lastRelayChainBlockNumber.v347.is(block)) {
     return (
-      (await storage.parachainSystem.lastRelayChainBlockNumber.v324.get(
+      (await storage.parachainSystem.lastRelayChainBlockNumber.v347.get(
         block
       )) ?? null
     );

@@ -10,8 +10,8 @@ import { UnknownVersionError } from '../../../../utils/errors';
 function parseCollateralAddedParams(
   event: SqdEvent
 ): HsmCollateralAddedEventParams {
-  if (events.hsm.collateralAdded.v324.is(event)) {
-    return events.hsm.collateralAdded.v324.decode(event);
+  if (events.hsm.collateralAdded.v347.is(event)) {
+    return events.hsm.collateralAdded.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -20,11 +20,11 @@ function parseCollateralAddedParams(
 function parseCollateralRemovedParams(
   event: SqdEvent
 ): HsmCollateralRemovedEventParams {
-  if (events.hsm.collateralRemoved.v324.is(event)) {
-    return events.hsm.collateralRemoved.v324.decode(event);
+  if (events.hsm.collateralRemoved.v347.is(event)) {
+    return events.hsm.collateralRemoved.v347.decode(event);
   }
-  if (events.hsm.collateralRemoved.v337.is(event)) {
-    return events.hsm.collateralRemoved.v337.decode(event);
+  if (events.hsm.collateralRemoved.v347.is(event)) {
+    return events.hsm.collateralRemoved.v347.decode(event);
   }
   throw new UnknownVersionError(event.name);
 }
@@ -32,8 +32,8 @@ function parseCollateralRemovedParams(
 function parseCollateralUpdatedParams(
   event: SqdEvent
 ): HsmCollateralUpdatedEventParams {
-  if (events.hsm.collateralUpdated.v324.is(event)) {
-    return events.hsm.collateralUpdated.v324.decode(event);
+  if (events.hsm.collateralUpdated.v347.is(event)) {
+    return events.hsm.collateralUpdated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

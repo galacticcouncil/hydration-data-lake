@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
+import * as v355 from '../v355'
 
 export const addCollateralAsset =  {
     name: 'HSM.add_collateral_asset',
@@ -29,15 +30,15 @@ export const addCollateralAsset =  {
      * - `AssetNotInPool` if the collateral asset is not found in the specified pool
      * - Other errors from underlying calls
      */
-    v324: new CallType(
+    v347: new CallType(
         'HSM.add_collateral_asset',
         sts.struct({
             assetId: sts.number(),
             poolId: sts.number(),
-            purchaseFee: v324.Permill,
-            maxBuyPriceCoefficient: v324.FixedU128,
-            buyBackFee: v324.Permill,
-            buybackRate: v324.Perbill,
+            purchaseFee: v347.Permill,
+            maxBuyPriceCoefficient: v347.FixedU128,
+            buyBackFee: v347.Permill,
+            buybackRate: v347.Perbill,
             maxInHolding: sts.option(() => sts.bigint()),
         })
     ),
@@ -62,7 +63,7 @@ export const removeCollateralAsset =  {
      * - `AssetNotApproved` if the asset is not a registered collateral
      * - `CollateralNotEmpty` if the HSM account still holds some of this asset
      */
-    v324: new CallType(
+    v347: new CallType(
         'HSM.remove_collateral_asset',
         sts.struct({
             assetId: sts.number(),
@@ -93,14 +94,14 @@ export const updateCollateralAsset =  {
      * Errors:
      * - `AssetNotApproved` if the asset is not a registered collateral
      */
-    v324: new CallType(
+    v347: new CallType(
         'HSM.update_collateral_asset',
         sts.struct({
             assetId: sts.number(),
-            purchaseFee: sts.option(() => v324.Permill),
-            maxBuyPriceCoefficient: sts.option(() => v324.FixedU128),
-            buyBackFee: sts.option(() => v324.Permill),
-            buybackRate: sts.option(() => v324.Perbill),
+            purchaseFee: sts.option(() => v347.Permill),
+            maxBuyPriceCoefficient: sts.option(() => v347.FixedU128),
+            buyBackFee: sts.option(() => v347.Permill),
+            buybackRate: sts.option(() => v347.Perbill),
             maxInHolding: sts.enumOption(() => sts.option(() => sts.bigint())),
         })
     ),
@@ -137,7 +138,7 @@ export const sell =  {
      * - `InvalidEVMInteraction` if there's an error interacting with the Hollar ERC20 contract
      * - Other errors from underlying calls
      */
-    v324: new CallType(
+    v347: new CallType(
         'HSM.sell',
         sts.struct({
             assetIn: sts.number(),
@@ -177,7 +178,7 @@ export const buy =  {
      * - `InvalidEVMInteraction` if there's an error interacting with the Hollar ERC20 contract
      * - Other errors from underlying calls
      */
-    v324: new CallType(
+    v347: new CallType(
         'HSM.buy',
         sts.struct({
             assetIn: sts.number(),
@@ -216,53 +217,64 @@ export const executeArbitrage =  {
      * - `InvalidEVMInteraction` if there's an error interacting with the Hollar ERC20 contract
      * - Other errors from underlying calls
      */
-    v324: new CallType(
-        'HSM.execute_arbitrage',
-        sts.struct({
-            collateralAssetId: sts.number(),
-        })
-    ),
-    /**
-     * Execute arbitrage opportunity between HSM and collateral stable pool
-     * 
-     * This call is designed to be triggered automatically by offchain workers. It:
-     * 1. Detects price imbalances between HSM and a stable pool for a collateral
-     * 2. If an opportunity exists, mints Hollar, swaps it for collateral on HSM
-     * 3. Swaps that collateral for Hollar on the stable pool
-     * 4. Burns the Hollar received from the arbitrage
-     * 
-     * This helps maintain the peg of Hollar by profiting from and correcting price imbalances.
-     * The call is unsigned and should only be executed by offchain workers.
-     * 
-     * Parameters:
-     * - `origin`: Must be None (unsigned)
-     * - `collateral_asset_id`: The ID of the collateral asset to check for arbitrage
-     * 
-     * Emits:
-     * - `ArbitrageExecuted` when the arbitrage is successful
-     * 
-     * Errors:
-     * - `AssetNotApproved` if the asset is not a registered collateral
-     * - `NoArbitrageOpportunity` if there's no profitable arbitrage opportunity
-     * - `MaxBuyPriceExceeded` if the arbitrage would exceed the maximum buy price
-     * - `InvalidEVMInteraction` if there's an error interacting with the Hollar ERC20 contract
-     * - Other errors from underlying calls
-     */
-    v337: new CallType(
+    v347: new CallType(
         'HSM.execute_arbitrage',
         sts.struct({
             collateralAssetId: sts.number(),
             flashAmount: sts.option(() => sts.bigint()),
         })
     ),
+    /**
+     * Execute arbitrage opportunity between HSM and collateral stable pool using flash loans
+     * 
+     * This call is designed to be triggered automatically by offchain workers. It executes
+     * arbitrage by taking a flash loan from the GHO contract and performing trades to profit
+     * from price imbalances between HSM and the StableSwap pool.
+     * 
+     * The arbitrage execution flow:
+     * 1. Takes a flash loan of Hollar from the GHO contract
+     * 2. Executes trades between HSM and StableSwap pool based on arbitrage direction:
+     *    - For HollarIn (buy direction): Sell Hollar to HSM for collateral, then sell collateral back for Hollar in pool
+     *    - For HollarOut (sell direction): Sell Hollar for collateral in pool, then buy Hollar back from HSM
+     * 3. Repays the flash loan
+     * 4. Any remaining profit (in collateral) is transferred to the ArbitrageProfitReceiver
+     * 
+     * This helps maintain the peg of Hollar by profiting from and correcting price imbalances.
+     * The call is unsigned and should only be executed by offchain workers.
+     * 
+     * Parameters:
+     * - `origin`: Must be None (unsigned)
+     * - `collateral_asset_id`: The ID of the collateral asset to use for arbitrage
+     * - `arbitrage`: Optional arbitrage parameters (direction and amount). If None, the function
+     *   will automatically find and calculate the optimal arbitrage opportunity.
+     * 
+     * Emits:
+     * - `ArbitrageExecuted` when the arbitrage is successful
+     * 
+     * Errors:
+     * - `FlashMinterNotSet` if the flash minter contract address has not been configured
+     * - `AssetNotApproved` if the asset is not a registered collateral
+     * - `NoArbitrageOpportunity` if there's no profitable arbitrage opportunity
+     * - `MaxBuyPriceExceeded` if the arbitrage would exceed the maximum buy price
+     * - `MaxBuyBackExceeded` if the arbitrage would exceed the buyback limit
+     * - `InvalidEVMInteraction` if there's an error interacting with the Hollar ERC20 contract
+     * - Other errors from underlying calls
+     */
+    v355: new CallType(
+        'HSM.execute_arbitrage',
+        sts.struct({
+            collateralAssetId: sts.number(),
+            arbitrage: sts.option(() => v355.Arbitrage),
+        })
+    ),
 }
 
 export const setFlashMinter =  {
     name: 'HSM.set_flash_minter',
-    v324: new CallType(
+    v347: new CallType(
         'HSM.set_flash_minter',
         sts.struct({
-            flashMinterAddr: v324.H160,
+            flashMinterAddr: v347.H160,
         })
     ),
 }

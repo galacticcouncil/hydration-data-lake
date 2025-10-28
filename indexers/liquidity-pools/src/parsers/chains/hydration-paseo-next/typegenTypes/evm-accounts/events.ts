@@ -1,16 +1,16 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const bound =  {
     name: 'EVMAccounts.Bound',
     /**
      * Binding was created.
      */
-    v324: new EventType(
+    v347: new EventType(
         'EVMAccounts.Bound',
         sts.struct({
-            account: v324.AccountId32,
-            address: v324.H160,
+            account: v347.AccountId32,
+            address: v347.H160,
         })
     ),
 }

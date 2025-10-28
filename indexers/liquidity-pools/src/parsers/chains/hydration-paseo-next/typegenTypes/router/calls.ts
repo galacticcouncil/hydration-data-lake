@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const sell =  {
     name: 'Router.sell',
@@ -18,14 +18,14 @@ export const sell =  {
      * 
      * Emits `RouteExecuted` when successful.
      */
-    v324: new CallType(
+    v347: new CallType(
         'Router.sell',
         sts.struct({
             assetIn: sts.number(),
             assetOut: sts.number(),
             amountIn: sts.bigint(),
             minAmountOut: sts.bigint(),
-            route: sts.array(() => v324.Trade),
+            route: sts.array(() => v347.Trade),
         })
     ),
 }
@@ -47,14 +47,14 @@ export const buy =  {
      * 
      * Emits `RouteExecuted` when successful.
      */
-    v324: new CallType(
+    v347: new CallType(
         'Router.buy',
         sts.struct({
             assetIn: sts.number(),
             assetOut: sts.number(),
             amountOut: sts.bigint(),
             maxAmountIn: sts.bigint(),
-            route: sts.array(() => v324.Trade),
+            route: sts.array(() => v347.Trade),
         })
     ),
 }

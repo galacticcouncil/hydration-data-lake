@@ -14,8 +14,8 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseTokenAddedParams(event: SqdEvent): OmnipoolTokenAddedEventParams {
-  if (events.omnipool.tokenAdded.v324.is(event)) {
-    return events.omnipool.tokenAdded.v324.decode(event);
+  if (events.omnipool.tokenAdded.v347.is(event)) {
+    return events.omnipool.tokenAdded.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -24,8 +24,8 @@ function parseTokenAddedParams(event: SqdEvent): OmnipoolTokenAddedEventParams {
 function parseTokenRemovedParams(
   event: SqdEvent
 ): OmnipoolTokenRemovedEventParams {
-  if (events.omnipool.tokenRemoved.v324.is(event)) {
-    return events.omnipool.tokenRemoved.v324.decode(event);
+  if (events.omnipool.tokenRemoved.v347.is(event)) {
+    return events.omnipool.tokenRemoved.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -34,8 +34,8 @@ function parseTokenRemovedParams(
 function parseBuyExecutedParams(
   event: SqdEvent
 ): OmnipoolBuyExecutedEventParams {
-  if (events.omnipool.buyExecuted.v324.is(event)) {
-    return events.omnipool.buyExecuted.v324.decode(event);
+  if (events.omnipool.buyExecuted.v347.is(event)) {
+    return events.omnipool.buyExecuted.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -44,8 +44,8 @@ function parseBuyExecutedParams(
 function parseSellExecutedParams(
   event: SqdEvent
 ): OmnipoolSellExecutedEventParams {
-  if (events.omnipool.sellExecuted.v324.is(event)) {
-    return events.omnipool.sellExecuted.v324.decode(event);
+  if (events.omnipool.sellExecuted.v347.is(event)) {
+    return events.omnipool.sellExecuted.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -54,8 +54,8 @@ function parseSellExecutedParams(
 function parseLiquidityAddedParams(
   event: SqdEvent
 ): OmnipoolLiquidityAddedEventParams {
-  if (events.omnipool.liquidityAdded.v324.is(event)) {
-    return events.omnipool.liquidityAdded.v324.decode(event);
+  if (events.omnipool.liquidityAdded.v347.is(event)) {
+    return events.omnipool.liquidityAdded.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -64,8 +64,8 @@ function parseLiquidityAddedParams(
 function parseLiquidityRemovedParams(
   event: SqdEvent
 ): OmnipoolLiquidityRemovedEventParams {
-  if (events.omnipool.liquidityRemoved.v324.is(event)) {
-    return events.omnipool.liquidityRemoved.v324.decode(event);
+  if (events.omnipool.liquidityRemoved.v347.is(event)) {
+    return events.omnipool.liquidityRemoved.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -74,8 +74,8 @@ function parseLiquidityRemovedParams(
 function parsePositionCreatedParams(
   event: SqdEvent
 ): OmnipoolPositionCreatedEventParams {
-  if (events.omnipool.positionCreated.v324.is(event)) {
-    return events.omnipool.positionCreated.v324.decode(event);
+  if (events.omnipool.positionCreated.v347.is(event)) {
+    return events.omnipool.positionCreated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -84,8 +84,8 @@ function parsePositionCreatedParams(
 function parsePositionDestroyedParams(
   event: SqdEvent
 ): OmnipoolPositionDestroyedEventParams {
-  if (events.omnipool.positionDestroyed.v324.is(event)) {
-    return events.omnipool.positionDestroyed.v324.decode(event);
+  if (events.omnipool.positionDestroyed.v347.is(event)) {
+    return events.omnipool.positionDestroyed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -94,8 +94,8 @@ function parsePositionDestroyedParams(
 function parsePositionUpdatedParams(
   event: SqdEvent
 ): OmnipoolPositionUpdatedEventParams {
-  if (events.omnipool.positionUpdated.v324.is(event)) {
-    return events.omnipool.positionUpdated.v324.decode(event);
+  if (events.omnipool.positionUpdated.v347.is(event)) {
+    return events.omnipool.positionUpdated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

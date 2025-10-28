@@ -17,7 +17,7 @@ export const sell =  {
      * Emits `pallet_broadcast::Swapped` event when successful.
      * 
      */
-    v324: new CallType(
+    v347: new CallType(
         'Stableswap.sell',
         sts.struct({
             poolId: sts.number(),
@@ -46,7 +46,7 @@ export const buy =  {
      * Emits `pallet_broadcast::Swapped` event when successful.
      * 
      */
-    v324: new CallType(
+    v347: new CallType(
         'Stableswap.buy',
         sts.struct({
             poolId: sts.number(),

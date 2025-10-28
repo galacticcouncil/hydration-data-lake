@@ -7,8 +7,8 @@ async function getDcaSchedule({
   scheduleId,
   block,
 }: DcaGetScheduleInput): Promise<DcaScheduleData | null> {
-  if (storage.dca.schedules.v324.is(block)) {
-    const resp = await storage.dca.schedules.v324.get(block, scheduleId);
+  if (storage.dca.schedules.v347.is(block)) {
+    const resp = await storage.dca.schedules.v347.get(block, scheduleId);
 
     if (!resp) return null;
 

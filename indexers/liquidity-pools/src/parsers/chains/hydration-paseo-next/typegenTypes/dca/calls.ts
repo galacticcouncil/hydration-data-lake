@@ -1,6 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
-import * as v335 from '../v335'
+import * as v347 from '../v347'
 
 export const schedule =  {
     name: 'DCA.schedule',
@@ -31,10 +30,10 @@ export const schedule =  {
      * Emits `Scheduled` and `ExecutionPlanned` event when successful.
      * 
      */
-    v324: new CallType(
+    v347: new CallType(
         'DCA.schedule',
         sts.struct({
-            schedule: v324.Schedule,
+            schedule: v347.Schedule,
             startExecutionBlock: sts.option(() => sts.number()),
         })
     ),
@@ -55,7 +54,7 @@ export const terminate =  {
      * Emits `Terminated` event when successful.
      * 
      */
-    v324: new CallType(
+    v347: new CallType(
         'DCA.terminate',
         sts.struct({
             scheduleId: sts.number(),
@@ -81,10 +80,10 @@ export const unlockReserves =  {
      * Emits `ReserveUnlocked` event when successful.
      * 
      */
-    v335: new CallType(
+    v347: new CallType(
         'DCA.unlock_reserves',
         sts.struct({
-            who: v335.AccountId32,
+            who: v347.AccountId32,
             assetId: sts.number(),
         })
     ),

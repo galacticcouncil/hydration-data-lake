@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const transfer =  {
     name: 'Tokens.transfer',
@@ -18,10 +18,10 @@ export const transfer =  {
      * - `currency_id`: currency type.
      * - `amount`: free balance amount to tranfer.
      */
-    v324: new CallType(
+    v347: new CallType(
         'Tokens.transfer',
         sts.struct({
-            dest: v324.AccountId32,
+            dest: v347.AccountId32,
             currencyId: sts.number(),
             amount: sts.bigint(),
         })
@@ -51,10 +51,10 @@ export const transferAll =  {
      *   except at least the existential deposit, which will guarantee to
      *   keep the sender account alive (true).
      */
-    v324: new CallType(
+    v347: new CallType(
         'Tokens.transfer_all',
         sts.struct({
-            dest: v324.AccountId32,
+            dest: v347.AccountId32,
             currencyId: sts.number(),
             keepAlive: sts.boolean(),
         })
@@ -76,10 +76,10 @@ export const transferKeepAlive =  {
      * - `currency_id`: currency type.
      * - `amount`: free balance amount to tranfer.
      */
-    v324: new CallType(
+    v347: new CallType(
         'Tokens.transfer_keep_alive',
         sts.struct({
-            dest: v324.AccountId32,
+            dest: v347.AccountId32,
             currencyId: sts.number(),
             amount: sts.bigint(),
         })
@@ -99,11 +99,11 @@ export const forceTransfer =  {
      * - `currency_id`: currency type.
      * - `amount`: free balance amount to tranfer.
      */
-    v324: new CallType(
+    v347: new CallType(
         'Tokens.force_transfer',
         sts.struct({
-            source: v324.AccountId32,
-            dest: v324.AccountId32,
+            source: v347.AccountId32,
+            dest: v347.AccountId32,
             currencyId: sts.number(),
             amount: sts.bigint(),
         })
@@ -122,10 +122,10 @@ export const setBalance =  {
      * 
      * The dispatch origin for this call is `root`.
      */
-    v324: new CallType(
+    v347: new CallType(
         'Tokens.set_balance',
         sts.struct({
-            who: v324.AccountId32,
+            who: v347.AccountId32,
             currencyId: sts.number(),
             newFree: sts.bigint(),
             newReserved: sts.bigint(),

@@ -11,8 +11,8 @@ async function getCollateral({
   collateralId,
   block,
 }: GetHsmCollateralInput): Promise<HsmCollateralData | null> {
-  if (storage.hsm.collaterals.v324.is(block)) {
-    const resp = await storage.hsm.collaterals.v324.get(block, +collateralId);
+  if (storage.hsm.collaterals.v347.is(block)) {
+    const resp = await storage.hsm.collaterals.v347.get(block, +collateralId);
 
     return resp
       ? {
@@ -28,8 +28,8 @@ async function getCollateral({
 async function getAllCollaterals({
   block,
 }: GetDataAtBlockInput): Promise<HsmCollateralData[] | null> {
-  if (storage.hsm.collaterals.v324.is(block)) {
-    const resp = await storage.hsm.collaterals.v324.getPairs(block);
+  if (storage.hsm.collaterals.v347.is(block)) {
+    const resp = await storage.hsm.collaterals.v347.getPairs(block);
     const result: HsmCollateralData[] = [];
 
     for (const [collateralAssetId, collateralData] of resp) {

@@ -1,16 +1,15 @@
 manifestVersion: subsquid.io/v0.1
-name: hydration-pools
-slot: 741
-description: Hydration pools indexer
+name: hydration-pools-hollar-testnet
+slot: 100
+description: Hydration pools indexer (One lark)
 build:
 deploy:
   env:
-    DEPLOYMENT_COMMIT_HASH: 'none'
+    DEPLOYMENT_COMMIT_HASH: none
     ORCHESTRATOR_QUEUE_REDIS_HOST: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_HOST }}
     ORCHESTRATOR_QUEUE_REDIS_PASS: ${{ secrets.ORCHESTRATOR_QUEUE_REDIS_PASS }}
-    TS_REDIS_HOST: ${{ secrets.TS_REDIS_PROD_A_HOST }}
-    TS_REDIS_PASS: ${{ secrets.TS_REDIS_PROD_A_PASS }}
-    TS_REDIS_PORT: ${{ secrets.TS_REDIS_PROD_A_PORT }}
+    TS_REDIS_HOST: ${{ secrets.TS_REDIS_STAGING_HOST }}
+    TS_REDIS_PASS: ${{ secrets.TS_REDIS_STAGING_PASS }}
   addons:
     postgres:
       config:
@@ -20,64 +19,59 @@ deploy:
     env:
       REAGGREGATION_PROCESSING_MODE: false
 
-      CHAIN: 'hydration'
-      INDEXER_ID: 741
-      RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
-      GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
+      CHAIN: 'hydration_paseo_next'
+      INDEXER_ID: 1001
+      RPC_URL: 'wss://nomax.lark.hydration.cloud'
+      RPC_URL_HTTPS: 'wss://nomax.lark.hydration.cloud'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-      TS_REDIS_KEY_SPACE_ID: 6
+      TS_REDIS_PORT: 6377
+      TS_REDIS_KEY_SPACE_ID: 5
       MAX_JOB_BATCH_SIZE: 10
 
       NODE_ENV: 'production'
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-      UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
+      HOLLAR_CONTRACT_ADDRESS: '0xfdb15f9fe2252044b08230449d4278cfd4df52e1'
+      UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 1
       INDEXING_IS_PAUSED: false
       ALL_IN_ONE_PROCESSOR_MODE: true
       IS_CORE_PROCESSOR: false
       IS_SPOT_PRICES_PROCESSOR: false
       PERSIST_HIST_DATA_ONLY_ON_CHANGE: false
       USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: false
-      HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
-      EVM_CONTRACT_CALL_RETRIES: 2
+      HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 21
 
-      PROCESS_FROM_BLOCK: 9250000
+      PROCESS_FROM_BLOCK: 280000
       PROCESS_TO_BLOCK: -1
 
-      USE_STORAGE_DICTIONARY: true
-      STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
-      STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
-      STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
-      STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
-      STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
-      STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql'
+      IGNORE_ARCHIVE_DATA_SOURCE: true
+      USE_STORAGE_DICTIONARY: false
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
     cmd:
       - sqd
       - process:prod
   api:
     env:
       NODE_ENV: 'production'
-      CHAIN: 'hydration'
+      CHAIN: 'hydration_paseo_next'
       GQL_PORT: 8080
-      INDEXER_ID: 741
-      TS_REDIS_KEY_SPACE_ID: 6
+      INDEXER_ID: 1001
+      TS_REDIS_PORT: 6377
+      TS_REDIS_KEY_SPACE_ID: 5
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
-      SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app::-hydration.netlify.app'
+      SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app'
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
-      RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
       COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
 
     cmd:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
-      profile: xlarge
-      storage: 500G
+      profile: large
+      storage: 180G
   processor:
-    profile: xlarge
+    profile: large
   api:
     profile: small

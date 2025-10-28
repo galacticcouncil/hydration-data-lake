@@ -1,17 +1,17 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v324 from '../v324'
+import * as v347 from '../v347'
 
 export const tokenAdded =  {
     name: 'Omnipool.TokenAdded',
     /**
      * An asset was added to Omnipool
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.TokenAdded',
         sts.struct({
             assetId: sts.number(),
             initialAmount: sts.bigint(),
-            initialPrice: v324.FixedU128,
+            initialPrice: v347.FixedU128,
         })
     ),
 }
@@ -21,7 +21,7 @@ export const tokenRemoved =  {
     /**
      * An asset was removed from Omnipool
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.TokenRemoved',
         sts.struct({
             assetId: sts.number(),
@@ -36,10 +36,10 @@ export const liquidityAdded =  {
     /**
      * Liquidity of an asset was added to Omnipool.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.LiquidityAdded',
         sts.struct({
-            who: v324.AccountId32,
+            who: v347.AccountId32,
             assetId: sts.number(),
             amount: sts.bigint(),
             positionId: sts.bigint(),
@@ -52,14 +52,14 @@ export const liquidityRemoved =  {
     /**
      * Liquidity of an asset was removed from Omnipool.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.LiquidityRemoved',
         sts.struct({
-            who: v324.AccountId32,
+            who: v347.AccountId32,
             positionId: sts.bigint(),
             assetId: sts.number(),
             sharesRemoved: sts.bigint(),
-            fee: v324.FixedU128,
+            fee: v347.FixedU128,
         })
     ),
 }
@@ -69,10 +69,10 @@ export const protocolLiquidityRemoved =  {
     /**
      * PRotocol Liquidity was removed from Omnipool.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.ProtocolLiquidityRemoved',
         sts.struct({
-            who: v324.AccountId32,
+            who: v347.AccountId32,
             assetId: sts.number(),
             amount: sts.bigint(),
             hubAmount: sts.bigint(),
@@ -87,10 +87,10 @@ export const sellExecuted =  {
      * Sell trade executed.
      * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.SellExecuted',
         sts.struct({
-            who: v324.AccountId32,
+            who: v347.AccountId32,
             assetIn: sts.number(),
             assetOut: sts.number(),
             amountIn: sts.bigint(),
@@ -109,10 +109,10 @@ export const buyExecuted =  {
      * Buy trade executed.
      * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.BuyExecuted',
         sts.struct({
-            who: v324.AccountId32,
+            who: v347.AccountId32,
             assetIn: sts.number(),
             assetOut: sts.number(),
             amountIn: sts.bigint(),
@@ -130,15 +130,15 @@ export const positionCreated =  {
     /**
      * LP Position was created and NFT instance minted.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.PositionCreated',
         sts.struct({
             positionId: sts.bigint(),
-            owner: v324.AccountId32,
+            owner: v347.AccountId32,
             asset: sts.number(),
             amount: sts.bigint(),
             shares: sts.bigint(),
-            price: v324.FixedU128,
+            price: v347.FixedU128,
         })
     ),
 }
@@ -148,11 +148,11 @@ export const positionDestroyed =  {
     /**
      * LP Position was destroyed and NFT instance burned.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.PositionDestroyed',
         sts.struct({
             positionId: sts.bigint(),
-            owner: v324.AccountId32,
+            owner: v347.AccountId32,
         })
     ),
 }
@@ -162,15 +162,15 @@ export const positionUpdated =  {
     /**
      * LP Position was updated.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.PositionUpdated',
         sts.struct({
             positionId: sts.bigint(),
-            owner: v324.AccountId32,
+            owner: v347.AccountId32,
             asset: sts.number(),
             amount: sts.bigint(),
             shares: sts.bigint(),
-            price: v324.FixedU128,
+            price: v347.FixedU128,
         })
     ),
 }
@@ -180,11 +180,11 @@ export const tradableStateUpdated =  {
     /**
      * Asset's tradable state has been updated.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.TradableStateUpdated',
         sts.struct({
             assetId: sts.number(),
-            state: v324.Tradability,
+            state: v347.Tradability,
         })
     ),
 }
@@ -194,12 +194,12 @@ export const assetRefunded =  {
     /**
      * Amount has been refunded for asset which has not been accepted to add to omnipool.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.AssetRefunded',
         sts.struct({
             assetId: sts.number(),
             amount: sts.bigint(),
-            recipient: v324.AccountId32,
+            recipient: v347.AccountId32,
         })
     ),
 }
@@ -209,11 +209,11 @@ export const assetWeightCapUpdated =  {
     /**
      * Asset's weight cap has been updated.
      */
-    v324: new EventType(
+    v347: new EventType(
         'Omnipool.AssetWeightCapUpdated',
         sts.struct({
             assetId: sts.number(),
-            cap: v324.Permill,
+            cap: v347.Permill,
         })
     ),
 }

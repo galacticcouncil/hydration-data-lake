@@ -10,8 +10,8 @@ import { UnknownVersionError } from '../../../../utils/errors';
 function parseWarehouseLMGlobalFarmAccRPZUpdatedParams(
   event: SqdEvent
 ): OmnipoolWarehouseLMGlobalFarmAccRPZUpdatedEventParams {
-  if (events.omnipoolWarehouseLm.globalFarmAccRpzUpdated.v324.is(event)) {
-    return events.omnipoolWarehouseLm.globalFarmAccRpzUpdated.v324.decode(
+  if (events.omnipoolWarehouseLm.globalFarmAccRpzUpdated.v347.is(event)) {
+    return events.omnipoolWarehouseLm.globalFarmAccRpzUpdated.v347.decode(
       event
     );
   }
@@ -22,8 +22,8 @@ function parseWarehouseLMGlobalFarmAccRPZUpdatedParams(
 function parseYieldFarmAccRPVSUpdatedParams(
   event: SqdEvent
 ): OmnipoolWarehouseLMYieldFarmAccRPVSUpdatedEventParams {
-  if (events.omnipoolWarehouseLm.yieldFarmAccRpvsUpdated.v324.is(event)) {
-    return events.omnipoolWarehouseLm.yieldFarmAccRpvsUpdated.v324.decode(
+  if (events.omnipoolWarehouseLm.yieldFarmAccRpvsUpdated.v347.is(event)) {
+    return events.omnipoolWarehouseLm.yieldFarmAccRpvsUpdated.v347.decode(
       event
     );
   }
@@ -34,8 +34,8 @@ function parseYieldFarmAccRPVSUpdatedParams(
 function parseAllRewardsDistributedParams(
   event: SqdEvent
 ): OmnipoolWarehouseLMAllRewardsDistributedEventParams {
-  if (events.omnipoolWarehouseLm.allRewardsDistributed.v324.is(event)) {
-    return events.omnipoolWarehouseLm.allRewardsDistributed.v324.decode(event);
+  if (events.omnipoolWarehouseLm.allRewardsDistributed.v347.is(event)) {
+    return events.omnipoolWarehouseLm.allRewardsDistributed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
