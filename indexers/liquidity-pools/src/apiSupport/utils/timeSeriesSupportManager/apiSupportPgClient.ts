@@ -1,7 +1,7 @@
 import { AppConfig } from '../../../appConfig';
 import { Pool, QueryResult, QueryResultRow } from 'pg';
 import { getApiState, setApiState } from './sql/apiState.sql';
-import { CommonPgClient } from '../../../utils/pgClient';
+import { CommonPgPool } from '../../../utils/pgConnectionManagers/pgPool';
 
 export type ApiStateEntity = {
   id: string;
@@ -14,7 +14,7 @@ const appConfig = AppConfig.getInstance();
 export class SupportPgClient {
   private static instance: SupportPgClient;
 
-  private pgClient: CommonPgClient;
+  private pgClient: CommonPgPool;
 
   static getInstance(): SupportPgClient {
     if (!SupportPgClient.instance) {
@@ -24,7 +24,7 @@ export class SupportPgClient {
   }
 
   constructor() {
-    this.pgClient = CommonPgClient.getInstance();
+    this.pgClient = CommonPgPool.getInstance();
   }
 
   async query<T extends QueryResultRow = any>(

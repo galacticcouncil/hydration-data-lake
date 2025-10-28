@@ -1,5 +1,5 @@
 import { AppConfig } from '../../../../../appConfig';
-import { CommonPgClient } from '../../../../../utils/pgClient';
+import { CommonPgPool } from '../../../../../utils/pgConnectionManagers/pgPool';
 import { getLatestAavepoolHistData } from '../../../../sql/aavepool/aavepoolHistData';
 import { BigNumber } from '@galacticcouncil/sdk';
 
@@ -38,7 +38,7 @@ export async function getMmReserveStateResolver({
   underliningAssetId: string;
   aTokenId: string;
 }): Promise<MmReserveState | null> {
-  const pgClient = CommonPgClient.getInstance();
+  const pgClient = CommonPgPool.getInstance();
 
   try {
     const latestAavepoolState = (

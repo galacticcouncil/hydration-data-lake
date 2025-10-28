@@ -8,7 +8,7 @@ import { ProcessorStatusPlugin } from './apiSupport/api/graphql/plugins/query/pr
 import { AppConfig } from './appConfig';
 import { XykpoolsVolumePlugin } from './apiSupport/api/graphql/plugins/query/xykpool/xykPoolsVolume';
 import PgPubsub from '@graphile/pg-pubsub';
-import { runMigrations } from './apiSupport/apiMigrations/runMigrations';
+import { runApiDbMigrations } from './apiSupport/apiMigrations/runApiDbMigrations';
 import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/api/graphql/plugins/subscription/xykPoolVolumeSubscriptions';
 import { getEnvPath } from './utils/helpers';
 import { OmnipoolAssetVolumePlugin } from './apiSupport/api/graphql/plugins/query/omnipool/omnipoolVolume';
@@ -50,7 +50,7 @@ async function initializeServer() {
   try {
     const app = express();
 
-    await runMigrations();
+    await runApiDbMigrations();
 
     let postgraphileInstance = null;
 

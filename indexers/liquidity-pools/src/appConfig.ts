@@ -329,6 +329,15 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_POOL_MAX_SIZE: number = 2;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_CUSTOM_MIGRATIONS_MAX_RETRY: number = 10;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_CUSTOM_MIGRATIONS_BASE_DELAY_MS: number = 10000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_CUSTOM_MIGRATIONS_MAX_DELAY_MS: number = 60000;
+
   @IsNotEmpty()
   readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
 
