@@ -26,6 +26,7 @@ import { MultiFlowProcessingPhase } from '../../utils/types';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLatest';
 import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/historicalDataLatest';
+import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -128,6 +129,9 @@ export class HistoricalDataManager {
       Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
     );
 
+    /**
+     *  === OmnipoolAssetHistoricalData ===
+     */
     const omnipoolAssetAllHistoricalDataList = Array.from(
       ctx.batchState.state.omnipoolAssetAllHistoricalData.values()
     );
@@ -137,16 +141,34 @@ export class HistoricalDataManager {
       histDataList: omnipoolAssetAllHistoricalDataList,
     });
     await ctx.storeUtils.upsertWithBatches(omnipoolAssetsHistDataLatest);
+    /**
+     * ======
+     */
 
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
     );
 
-    await ctx.storeUtils.upsertWithBatches(
-      Array.from(
-        ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
-      )
+    /**
+     *  === StableswapAssetHistoricalData ===
+     */
+    const stableswapAssetAllHistoricalDataList = Array.from(
+      ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
     );
+
+    await ctx.storeUtils.upsertWithBatches(
+      stableswapAssetAllHistoricalDataList
+    );
+
+    const stableswapAssetsHistDataLatest = getStableswapAssetsHistDataLatest({
+      histDataList: stableswapAssetAllHistoricalDataList,
+    });
+
+    await ctx.storeUtils.upsertWithBatches(stableswapAssetsHistDataLatest);
+
+    /**
+     * ======
+     */
 
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())

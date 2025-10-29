@@ -53,6 +53,13 @@ export class DbMigrationsManager extends CommonPgClient {
           await this.pgClient.end();
           return;
         } catch (err: any) {
+          // Try to rollback any active transaction before proceeding
+          try {
+            await this.pgClient.query('ROLLBACK');
+          } catch (rollbackErr) {
+            // Ignore rollback errors - transaction may not be active
+          }
+
           if (attempt >= max) {
             console.error('Error executing migrations:', err);
 

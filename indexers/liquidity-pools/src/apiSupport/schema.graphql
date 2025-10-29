@@ -134209,6 +134209,437 @@ input ProcessorStatusFilter {
   not: ProcessorStatusFilter
 }
 
+"""
+A connection to a list of `StableswapAssetHistoricalDataLatest` values.
+"""
+type StableswapAssetHistoricalDataLatestsConnection {
+  """A list of `StableswapAssetHistoricalDataLatest` objects."""
+  nodes: [StableswapAssetHistoricalDataLatest]!
+
+  """
+  A list of edges which contains the `StableswapAssetHistoricalDataLatest` and cursor to aid in pagination.
+  """
+  edges: [StableswapAssetHistoricalDataLatestsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `StableswapAssetHistoricalDataLatest` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: StableswapAssetHistoricalDataLatestAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `StableswapAssetHistoricalDataLatest` for these aggregates.
+    """
+    groupBy: [StableswapAssetHistoricalDataLatestGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: StableswapAssetHistoricalDataLatestHavingInput
+  ): [StableswapAssetHistoricalDataLatestAggregates!]
+}
+
+type StableswapAssetHistoricalDataLatest {
+  id: String!
+  assetId: String!
+  poolId: String!
+  stableswapAssetId: String!
+  poolHistoricalDataId: String!
+  freeBalance: BigFloat!
+  tradable: Int
+  tvlInRefAssetNorm: String
+  paraBlockHeight: Int!
+  blockId: String!
+}
+
+"""A `StableswapAssetHistoricalDataLatest` edge in the connection."""
+type StableswapAssetHistoricalDataLatestsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `StableswapAssetHistoricalDataLatest` at the end of the edge."""
+  node: StableswapAssetHistoricalDataLatest
+}
+
+type StableswapAssetHistoricalDataLatestAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: StableswapAssetHistoricalDataLatestSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: StableswapAssetHistoricalDataLatestDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: StableswapAssetHistoricalDataLatestMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: StableswapAssetHistoricalDataLatestMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: StableswapAssetHistoricalDataLatestAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: StableswapAssetHistoricalDataLatestStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: StableswapAssetHistoricalDataLatestStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: StableswapAssetHistoricalDataLatestVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: StableswapAssetHistoricalDataLatestVariancePopulationAggregates
+}
+
+type StableswapAssetHistoricalDataLatestSumAggregates {
+  """Sum of freeBalance across the matching connection"""
+  freeBalance: BigFloat!
+
+  """Sum of tradable across the matching connection"""
+  tradable: BigInt!
+
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type StableswapAssetHistoricalDataLatestDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of assetId across the matching connection"""
+  assetId: BigInt
+
+  """Distinct count of poolId across the matching connection"""
+  poolId: BigInt
+
+  """Distinct count of stableswapAssetId across the matching connection"""
+  stableswapAssetId: BigInt
+
+  """Distinct count of poolHistoricalDataId across the matching connection"""
+  poolHistoricalDataId: BigInt
+
+  """Distinct count of freeBalance across the matching connection"""
+  freeBalance: BigInt
+
+  """Distinct count of tradable across the matching connection"""
+  tradable: BigInt
+
+  """Distinct count of tvlInRefAssetNorm across the matching connection"""
+  tvlInRefAssetNorm: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+
+  """Distinct count of blockId across the matching connection"""
+  blockId: BigInt
+}
+
+type StableswapAssetHistoricalDataLatestMinAggregates {
+  """Minimum of freeBalance across the matching connection"""
+  freeBalance: BigFloat
+
+  """Minimum of tradable across the matching connection"""
+  tradable: Int
+
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type StableswapAssetHistoricalDataLatestMaxAggregates {
+  """Maximum of freeBalance across the matching connection"""
+  freeBalance: BigFloat
+
+  """Maximum of tradable across the matching connection"""
+  tradable: Int
+
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type StableswapAssetHistoricalDataLatestAverageAggregates {
+  """Mean average of freeBalance across the matching connection"""
+  freeBalance: BigFloat
+
+  """Mean average of tradable across the matching connection"""
+  tradable: BigFloat
+
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type StableswapAssetHistoricalDataLatestStddevSampleAggregates {
+  """
+  Sample standard deviation of freeBalance across the matching connection
+  """
+  freeBalance: BigFloat
+
+  """Sample standard deviation of tradable across the matching connection"""
+  tradable: BigFloat
+
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type StableswapAssetHistoricalDataLatestStddevPopulationAggregates {
+  """
+  Population standard deviation of freeBalance across the matching connection
+  """
+  freeBalance: BigFloat
+
+  """
+  Population standard deviation of tradable across the matching connection
+  """
+  tradable: BigFloat
+
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type StableswapAssetHistoricalDataLatestVarianceSampleAggregates {
+  """Sample variance of freeBalance across the matching connection"""
+  freeBalance: BigFloat
+
+  """Sample variance of tradable across the matching connection"""
+  tradable: BigFloat
+
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type StableswapAssetHistoricalDataLatestVariancePopulationAggregates {
+  """Population variance of freeBalance across the matching connection"""
+  freeBalance: BigFloat
+
+  """Population variance of tradable across the matching connection"""
+  tradable: BigFloat
+
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `StableswapAssetHistoricalDataLatest` for usage during aggregation.
+"""
+enum StableswapAssetHistoricalDataLatestGroupBy {
+  ASSET_ID
+  POOL_ID
+  STABLESWAP_ASSET_ID
+  POOL_HISTORICAL_DATA_ID
+  FREE_BALANCE
+  TRADABLE
+  TVL_IN_REF_ASSET_NORM
+  PARA_BLOCK_HEIGHT
+  BLOCK_ID
+}
+
+"""Conditions for `StableswapAssetHistoricalDataLatest` aggregates."""
+input StableswapAssetHistoricalDataLatestHavingInput {
+  AND: [StableswapAssetHistoricalDataLatestHavingInput!]
+  OR: [StableswapAssetHistoricalDataLatestHavingInput!]
+  sum: StableswapAssetHistoricalDataLatestHavingSumInput
+  distinctCount: StableswapAssetHistoricalDataLatestHavingDistinctCountInput
+  min: StableswapAssetHistoricalDataLatestHavingMinInput
+  max: StableswapAssetHistoricalDataLatestHavingMaxInput
+  average: StableswapAssetHistoricalDataLatestHavingAverageInput
+  stddevSample: StableswapAssetHistoricalDataLatestHavingStddevSampleInput
+  stddevPopulation: StableswapAssetHistoricalDataLatestHavingStddevPopulationInput
+  varianceSample: StableswapAssetHistoricalDataLatestHavingVarianceSampleInput
+  variancePopulation: StableswapAssetHistoricalDataLatestHavingVariancePopulationInput
+}
+
+input StableswapAssetHistoricalDataLatestHavingSumInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input StableswapAssetHistoricalDataLatestHavingDistinctCountInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input StableswapAssetHistoricalDataLatestHavingMinInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input StableswapAssetHistoricalDataLatestHavingMaxInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input StableswapAssetHistoricalDataLatestHavingAverageInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input StableswapAssetHistoricalDataLatestHavingStddevSampleInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input StableswapAssetHistoricalDataLatestHavingStddevPopulationInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input StableswapAssetHistoricalDataLatestHavingVarianceSampleInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input StableswapAssetHistoricalDataLatestHavingVariancePopulationInput {
+  freeBalance: HavingBigfloatFilter
+  tradable: HavingIntFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `StableswapAssetHistoricalDataLatest`."""
+enum StableswapAssetHistoricalDataLatestsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  POOL_ID_ASC
+  POOL_ID_DESC
+  STABLESWAP_ASSET_ID_ASC
+  STABLESWAP_ASSET_ID_DESC
+  POOL_HISTORICAL_DATA_ID_ASC
+  POOL_HISTORICAL_DATA_ID_DESC
+  FREE_BALANCE_ASC
+  FREE_BALANCE_DESC
+  TRADABLE_ASC
+  TRADABLE_DESC
+  TVL_IN_REF_ASSET_NORM_ASC
+  TVL_IN_REF_ASSET_NORM_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  BLOCK_ID_ASC
+  BLOCK_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `StableswapAssetHistoricalDataLatest` object
+types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input StableswapAssetHistoricalDataLatestCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `assetId` field."""
+  assetId: String
+
+  """Checks for equality with the object’s `poolId` field."""
+  poolId: String
+
+  """Checks for equality with the object’s `stableswapAssetId` field."""
+  stableswapAssetId: String
+
+  """Checks for equality with the object’s `poolHistoricalDataId` field."""
+  poolHistoricalDataId: String
+
+  """Checks for equality with the object’s `freeBalance` field."""
+  freeBalance: BigFloat
+
+  """Checks for equality with the object’s `tradable` field."""
+  tradable: Int
+
+  """Checks for equality with the object’s `tvlInRefAssetNorm` field."""
+  tvlInRefAssetNorm: String
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+
+  """Checks for equality with the object’s `blockId` field."""
+  blockId: String
+}
+
+"""
+A filter to be used against `StableswapAssetHistoricalDataLatest` object types. All fields are combined with a logical ‘and.’
+"""
+input StableswapAssetHistoricalDataLatestFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: StringFilter
+
+  """Filter by the object’s `poolId` field."""
+  poolId: StringFilter
+
+  """Filter by the object’s `stableswapAssetId` field."""
+  stableswapAssetId: StringFilter
+
+  """Filter by the object’s `poolHistoricalDataId` field."""
+  poolHistoricalDataId: StringFilter
+
+  """Filter by the object’s `freeBalance` field."""
+  freeBalance: BigFloatFilter
+
+  """Filter by the object’s `tradable` field."""
+  tradable: IntFilter
+
+  """Filter by the object’s `tvlInRefAssetNorm` field."""
+  tvlInRefAssetNorm: StringFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Filter by the object’s `blockId` field."""
+  blockId: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [StableswapAssetHistoricalDataLatestFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [StableswapAssetHistoricalDataLatestFilter!]
+
+  """Negates the expression."""
+  not: StableswapAssetHistoricalDataLatestFilter
+}
+
 """The output of our `notify` mutation."""
 type NotifyPayload {
   """
@@ -137726,6 +138157,42 @@ type Query {
   ): StableswapAssetHistoricalDataConnection
 
   """
+  Reads and enables pagination through a set of `StableswapAssetHistoricalDataLatest`.
+  """
+  stableswapAssetHistoricalDataLatests(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `StableswapAssetHistoricalDataLatest`."""
+    orderBy: [StableswapAssetHistoricalDataLatestsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: StableswapAssetHistoricalDataLatestCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: StableswapAssetHistoricalDataLatestFilter
+  ): StableswapAssetHistoricalDataLatestsConnection
+
+  """
   Reads and enables pagination through a set of `StableswapAssetLiquidityAmount`.
   """
   stableswapAssetLiquidityAmounts(
@@ -138478,6 +138945,7 @@ type Query {
   stableswap(id: String!): Stableswap
   stableswapAsset(id: String!): StableswapAsset
   stableswapAssetHistoricalDatum(id: String!): StableswapAssetHistoricalDatum
+  stableswapAssetHistoricalDataLatest(id: String!): StableswapAssetHistoricalDataLatest
   stableswapAssetLiquidityAmount(id: String!): StableswapAssetLiquidityAmount
   stableswapAssetVolumeHistoricalDatum(id: String!): StableswapAssetVolumeHistoricalDatum
   stableswapHistoricalDatum(id: String!): StableswapHistoricalDatum

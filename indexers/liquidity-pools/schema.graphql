@@ -1274,6 +1274,22 @@ type StableswapAssetHistoricalData @entity {
   block: Block!
 }
 
+type StableswapAssetHistoricalDataLatest @entity {
+    "<stablepoolId>-<assetId>"
+    id: ID!
+
+    assetId: String!
+    poolId: String!
+    stableswapAssetId: String!
+    poolHistoricalDataId: String!
+    freeBalance: BigInt!
+    tradable: Int
+    tvlInRefAssetNorm: String
+
+    paraBlockHeight: Int!
+    blockId: String!
+}
+
 # ======================================================================================================================
 # *** HSM pool ***
 # ======================================================================================================================
