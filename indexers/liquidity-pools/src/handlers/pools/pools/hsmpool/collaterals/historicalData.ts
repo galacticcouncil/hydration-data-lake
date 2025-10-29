@@ -1,9 +1,15 @@
 import { Store } from '@subsquid/typeorm-store';
-import { HsmCollateralData } from '../../../../../parsers/types/storage';
-import { SqdBlock, SqdProcessorContext } from '../../../../../processor';
-import { getOrCreateHsmCollateral } from './hsmCollateral';
+
 import { HsmCollateralConfigHistoricalData } from '../../../../../model';
-import { HsmCollateralUpdatedEventParams } from '../../../../../parsers/types/events';
+import {
+  HsmCollateralUpdatedEventParams,
+} from '../../../../../parsers/types/events';
+import { HsmCollateralData } from '../../../../../parsers/types/storage';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../../../processor';
+import { getOrCreateHsmCollateral } from './hsmCollateral';
 import { getPreviousCollateralHistDataEntity } from './utils';
 
 export async function handleHsmCollateralConfigHistoricalDataEntity({
@@ -102,7 +108,6 @@ export async function handleHsmCollateralConfigHistoricalDataEntity({
     paraTimestamp: new Date(block.timestamp),
     relayBlockHeight: block.relayBlockHeight,
     paraBlockHeight: blockHeader.height,
-    block,
   });
 
   ctx.batchState.state.hsmCollateralsConfigHistData.set(

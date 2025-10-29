@@ -1,13 +1,13 @@
-import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
+import { OperationStackManager } from '../../chainActivityTracingManagers';
 import {
-  ResourceType,
   RoutedTrade,
   RoutedTradeAssetBalance,
   Swap,
   SwapAssetBalanceType,
 } from '../../model';
-import { OperationStackManager } from '../../chainActivityTracingManagers';
+import { SqdProcessorContext } from '../../processor';
 import { SwappedExecutionTypeKind } from '../../utils/types';
 
 export function getRouteTradeFromCache({
@@ -161,7 +161,6 @@ export function processRouteTradeHop({
     allInvolvedAssetRegistryIds: swap.allInvolvedAssetRegistryIds,
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
-    block: swap.event.block,
   });
 
   routeTradeEntity.inputs = swap.inputs.map((swapInput) => {

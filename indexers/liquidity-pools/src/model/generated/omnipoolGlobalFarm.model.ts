@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
@@ -9,90 +9,90 @@ import {Event} from "./event.model"
 
 @Entity_()
 export class OmnipoolGlobalFarm {
-  constructor(props?: Partial<OmnipoolGlobalFarm>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<OmnipoolGlobalFarm>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * omnipool global farm ID 
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * omnipool global farm ID 
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  owner!: Account
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    owner!: Account
 
-  @Column_("int4", {nullable: false})
-  updatedAtRelayBlock!: number
+    @IntColumn_({nullable: false})
+    updatedAtRelayBlock!: number
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalSharesZ!: bigint
+    @BigIntColumn_({nullable: false})
+    totalSharesZ!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  accumulatedRpz!: bigint
+    @BigIntColumn_({nullable: false})
+    accumulatedRpz!: bigint
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  rewardAsset!: Asset
+    @Index_()
+    @ManyToOne_(() => Asset, {nullable: true})
+    rewardAsset!: Asset
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  pendingRewards!: bigint
+    @BigIntColumn_({nullable: false})
+    pendingRewards!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  accumulatedPaidRewards!: bigint
+    @BigIntColumn_({nullable: false})
+    accumulatedPaidRewards!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  yieldPerPeriod!: bigint
+    @BigIntColumn_({nullable: false})
+    yieldPerPeriod!: bigint
 
-  @Column_("int4", {nullable: false})
-  plannedYieldingPeriods!: number
+    @IntColumn_({nullable: false})
+    plannedYieldingPeriods!: number
 
-  @Column_("int4", {nullable: false})
-  blocksPerPeriod!: number
+    @IntColumn_({nullable: false})
+    blocksPerPeriod!: number
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  incentivizedAsset!: Asset
+    @Index_()
+    @ManyToOne_(() => Asset, {nullable: true})
+    incentivizedAsset!: Asset
 
-  @Column_("int4", {nullable: false})
-  maxRewardPerPeriod!: number
+    @IntColumn_({nullable: false})
+    maxRewardPerPeriod!: number
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  minDeposit!: bigint
+    @BigIntColumn_({nullable: false})
+    minDeposit!: bigint
 
-  @Column_("int4", {nullable: false})
-  liveYieldFarmsCount!: number
+    @IntColumn_({nullable: false})
+    liveYieldFarmsCount!: number
 
-  @Column_("int4", {nullable: false})
-  totalYieldFarmsCount!: number
+    @IntColumn_({nullable: false})
+    totalYieldFarmsCount!: number
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  priceAdjustment!: bigint
+    @BigIntColumn_({nullable: false})
+    priceAdjustment!: bigint
 
-  @Column_("varchar", {length: 10, nullable: false})
-  state!: FarmState
+    @Column_("varchar", {length: 10, nullable: false})
+    state!: FarmState
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  lrnaPriceAdjustment!: bigint
+    @BigIntColumn_({nullable: false})
+    lrnaPriceAdjustment!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalRewards!: bigint
+    @BigIntColumn_({nullable: false})
+    totalRewards!: bigint
 
-  @OneToMany_(() => OmnipoolYieldFarm, e => e.globalFarm)
-  yieldFarms!: OmnipoolYieldFarm[]
+    @OneToMany_(() => OmnipoolYieldFarm, e => e.globalFarm)
+    yieldFarms!: OmnipoolYieldFarm[]
 
-  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new FarmLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
-  lifeStates!: (FarmLifeState)[]
+    @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new FarmLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
+    lifeStates!: (FarmLifeState)[]
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
+    @IntColumn_({nullable: false})
+    relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Event, {nullable: true})
-  event!: Event
+    @Index_()
+    @ManyToOne_(() => Event, {nullable: true})
+    event!: Event
 }

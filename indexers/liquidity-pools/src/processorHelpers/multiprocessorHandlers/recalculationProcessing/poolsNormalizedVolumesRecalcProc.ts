@@ -1,8 +1,10 @@
-import { SqdProcessorContext } from '../../../processor';
+import { Between } from 'typeorm/find-options/operator/Between';
+
 import { Store } from '@subsquid/typeorm-store';
-import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { prefetchGenericPersistentData } from '../../prefetchHelpers';
+
+import {
+  processPoolsNormalizedVolumes,
+} from '../../../handlers/pools/normalizedVolumesInBaseAsset';
 import {
   Asset,
   AssetSpotPriceHistoricalData,
@@ -10,10 +12,11 @@ import {
   OmnipoolAssetVolumeHistoricalData,
   StableswapAssetVolumeHistoricalData,
   StableswapVolumeHistoricalData,
-  Xykpool,
   XykpoolVolumeHistoricalData,
 } from '../../../model';
-import { Between } from 'typeorm/find-options/operator/Between';
+import { SqdProcessorContext } from '../../../processor';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { prefetchGenericPersistentData } from '../../prefetchHelpers';
 
 export async function recalculatePoolsNormalizedVolumes(
   ctx: SqdProcessorContext<Store>
@@ -66,7 +69,6 @@ export async function recalculatePoolsNormalizedVolumes(
           assetInHistData: true,
           assetIn: true,
           assetOut: true,
-          block: true,
         },
       }, { className: 'AssetSpotPriceHistoricalData' })
     ).map((p) => [p.id, p])
@@ -85,7 +87,6 @@ export async function recalculatePoolsNormalizedVolumes(
           pool: true,
           assetA: true,
           assetB: true,
-          block: true,
         },
       }, { className: 'XykpoolVolumeHistoricalData' })
     ).map((p) => [p.id, p])
@@ -117,7 +118,6 @@ export async function recalculatePoolsNormalizedVolumes(
         },
         relations: {
           pool: true,
-          block: true,
         },
       }, { className: 'StableswapVolumeHistoricalData' })
     ).map((p) => [p.id, p])
@@ -135,7 +135,6 @@ export async function recalculatePoolsNormalizedVolumes(
         relations: {
           volumesCollection: { pool: true },
           asset: true,
-          block: true,
         },
       }, { className: 'StableswapAssetVolumeHistoricalData' })
     ).map((p) => [p.id, p])

@@ -1,39 +1,39 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {Event} from "./event.model"
 
 @Entity_()
 export class MmReserveUsedAsCollateralDisabledEvent {
-  constructor(props?: Partial<MmReserveUsedAsCollateralDisabledEvent>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<MmReserveUsedAsCollateralDisabledEvent>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <event_id>
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <event_id>
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("text", {array: true, nullable: true})
-  traceIds!: (string)[] | undefined | null
+    @StringColumn_({array: true, nullable: true})
+    traceIds!: (string)[] | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  account!: Account
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    account!: Account
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  asset!: Asset
+    @Index_()
+    @ManyToOne_(() => Asset, {nullable: true})
+    asset!: Asset
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
+    @IntColumn_({nullable: false})
+    relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Event, {nullable: true})
-  event!: Event
+    @Index_()
+    @ManyToOne_(() => Event, {nullable: true})
+    event!: Event
 }

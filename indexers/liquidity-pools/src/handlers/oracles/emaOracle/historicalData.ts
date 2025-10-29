@@ -1,10 +1,12 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import parsers from '../../../parsers';
-import { splitIntoBatches } from '../../../utils/helpers';
-import { EmaOracleEntryHistoricalData } from '../../../model';
-import { getOrCreateAsset } from '../../assets/asset';
 import pMap from 'p-map';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import { EmaOracleEntryHistoricalData } from '../../../model';
+import parsers from '../../../parsers';
+import { SqdProcessorContext } from '../../../processor';
+import { splitIntoBatches } from '../../../utils/helpers';
+import { getOrCreateAsset } from '../../assets/asset';
 
 export async function handleEmaOracleHistoricalData(
   ctx: SqdProcessorContext<Store>
@@ -90,7 +92,6 @@ export async function handleEmaOracleHistoricalData(
                   ctx.batchState.state.relayChainInfo.get(blockHeader.height)
                     ?.relaychainBlockNumber ?? 0,
                 paraBlockHeight: blockHeader.height,
-                block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
               })
             );
           }

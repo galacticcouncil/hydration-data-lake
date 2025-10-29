@@ -1,17 +1,22 @@
+import pMap from 'p-map';
+import { LessThan } from 'typeorm';
+
 import { BlockHeader } from '@subsquid/substrate-processor';
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import parsers from '../../../parsers';
-import { getOrCreateAsset } from '../asset';
+
 import {
   AssetDynamicFee,
   AssetHistoricalData,
   AssetType,
 } from '../../../model';
-import { LessThan } from 'typeorm';
-import pMap from 'p-map';
-import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
-import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
+import parsers from '../../../parsers';
+import { SqdProcessorContext } from '../../../processor';
+import {
+  MoneyMarketContractsManager,
+} from '../../../utils/evmTools/moneyMarketContractsManager';
+import {
+  LatestProcessedDataCacheManager,
+} from '../../../utils/latestProcessedDataCacheManager';
 
 export async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -127,7 +132,6 @@ export async function processAssetsHistoricalDataAtBlock({
         relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           block.height
         ).height,
-        block: ctx.batchState.state.batchBlocks.get(block.id),
       });
 
       ctx.batchState.state.assetsHistoricalDataBatch.set(

@@ -1,5 +1,7 @@
-import { SqdProcessorContext } from '../../../processor';
+import { Between } from 'typeorm/find-options/operator/Between';
+
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   LbppoolHistoricalData,
   LbppoolVolumeHistoricalData,
@@ -15,7 +17,7 @@ import {
   XykpoolHistoricalData,
   XykpoolVolumeHistoricalData,
 } from '../../../model';
-import { Between } from 'typeorm/find-options/operator/Between';
+import { SqdProcessorContext } from '../../../processor';
 
 export async function prefetchAllAvailableRoutedTradesForBlocksRange({
   fromBlockNumber,
@@ -46,7 +48,6 @@ export async function prefetchAllAvailableRoutedTradesForBlocksRange({
           recipient: true,
         },
       },
-      block: true,
     },
   }, { className: 'RoutedTrade' });
 
@@ -81,7 +82,6 @@ export async function prefetchAllAvailableXykpoolVolumesForBlocksRange({
       assetA: true,
       assetB: true,
       pool: true,
-      block: true,
     },
   }, { className: 'XykpoolVolumeHistoricalData' });
 
@@ -105,7 +105,6 @@ export async function prefetchAllAvailableLbppoolVolumesForBlocksRange({
       assetA: true,
       assetB: true,
       pool: true,
-      block: true,
     },
   }, { className: 'LbppoolVolumeHistoricalData' });
 
@@ -129,7 +128,7 @@ export async function prefetchAllAvailableOmnipoolAssetVolumesForBlocksRange({
       omnipoolAsset: {
         asset: true,
       },
-      block: true,
+      
     },
   }, { className: 'OmnipoolAssetVolumeHistoricalData' });
 
@@ -155,10 +154,10 @@ export async function prefetchAllAvailableStableswapVolumesForBlocksRange({
       pool: true,
       assetVolumes: {
         asset: true,
-        block: true,
+        
         volumesCollection: true,
       },
-      block: true,
+      
     },
   }, { className: 'StableswapVolumeHistoricalData' });
 
@@ -193,7 +192,7 @@ export async function prefetchAllAvailableXykpoolHistDataForBlocksRange({
       assetA: true,
       assetB: true,
       pool: true,
-      block: true,
+      
     },
   }, { className: 'XykpoolHistoricalData' });
 
@@ -219,7 +218,6 @@ export async function prefetchAllAvailableLbppoolHistDataForBlocksRange({
       assetA: true,
       assetB: true,
       pool: true,
-      block: true,
     },
   }, { className: 'LbppoolHistoricalData' });
 
@@ -243,7 +241,7 @@ export async function prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
     },
     relations: {
       pool: true,
-      block: true,
+      
     },
   }, { className: 'OmnipoolHistoricalData' });
   const assetsData = await ctx.storeUtils.findWithLogs(OmnipoolAssetHistoricalData, {
@@ -254,7 +252,6 @@ export async function prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
       poolHistoricalData: true,
       omnipoolAsset: { asset: true },
       asset: true,
-      block: true,
     },
   }, { className: 'OmnipoolAssetHistoricalData' });
 
@@ -281,7 +278,7 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
     },
     relations: {
       pool: true,
-      block: true,
+      
     },
   }, { className: 'StableswapHistoricalData' });
   const poolAssetsData = await ctx.storeUtils.findWithLogs(StableswapAssetHistoricalData, {
@@ -292,7 +289,6 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
       asset: true,
       stableswapAsset: { asset: true },
       poolHistoricalData: true,
-      block: true,
     },
   }, { className: 'StableswapAssetHistoricalData' });
 

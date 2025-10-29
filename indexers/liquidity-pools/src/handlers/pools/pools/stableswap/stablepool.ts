@@ -1,5 +1,7 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../processor';
+import { StableMath } from '@galacticcouncil/sdk';
+import { blake2AsHex } from '@polkadot/util-crypto';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   AccountType,
   Stableswap,
@@ -8,15 +10,18 @@ import {
   StableswapDestroyedData,
   StableswapLifeState,
 } from '../../../../model';
-import { getOrCreateAccount } from '../../../accounts';
-import { StableswapPoolCreatedData } from '../../../../parsers/batchBlocksParser/types';
-
-import { StableMath } from '@galacticcouncil/sdk';
-import { blake2AsHex } from '@polkadot/util-crypto';
+import parsers from '../../../../parsers';
+import {
+  StableswapPoolCreatedData,
+} from '../../../../parsers/batchBlocksParser/types';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../../processor';
 import { isNotNullOrUndefined } from '../../../../utils/helpers';
+import { getOrCreateAccount } from '../../../accounts';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { getAssetFreeBalance } from '../../../assets/balances';
-import parsers from '../../../../parsers';
 
 export async function getNewStableswapWithAssets({
   poolId,
@@ -53,7 +58,6 @@ export async function getNewStableswapWithAssets({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
     isDestroyed: false,
     lifeStates: addStableswapCreatedLifeState({
       createdState: new StableswapCreatedData({
@@ -188,9 +192,6 @@ export async function stableswapCreated(
       ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height;
-    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
-      eventMetadata.blockHeader.id
-    )!;
     existingPool.lifeStates = addStableswapCreatedLifeState({
       createdState: new StableswapCreatedData({
         paraBlockHeight: eventMetadata.blockHeader.height,

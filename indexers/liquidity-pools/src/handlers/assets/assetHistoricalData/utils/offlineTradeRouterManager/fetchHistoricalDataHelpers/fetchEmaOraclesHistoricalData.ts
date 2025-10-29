@@ -1,10 +1,9 @@
-import { SqdProcessorContext } from '../../../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import {
-  AssetHistoricalData,
-  EmaOracleEntryHistoricalData,
-} from '../../../../../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import { EmaOracleEntryHistoricalData } from '../../../../../../model';
+import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchEmaOracleEntriesHistoricalData({
   blockNumber,
@@ -28,7 +27,6 @@ export async function fetchEmaOracleEntriesHistoricalData({
           relations: {
             assetA: true,
             assetB: true,
-            block: true,
           },
         },
         {
@@ -82,7 +80,6 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver(
           relations: {
             assetA: true,
             assetB: true,
-            block: true,
           },
         },
         {

@@ -1,18 +1,25 @@
-import { SqdProcessorContext } from '../../../processor';
+import { In } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
-import { EventName } from '../../../parsers/types/events';
+
+import { Xykpool } from '../../../model';
 import {
-  getOrderedListByBlockNumber,
-  isUnifiedEventsSupportSpecVersion,
-} from '../../../utils/helpers';
-import { xykBuyExecuted, xykSellExecuted } from './xykPoolOperation';
+  BatchBlocksParsedDataManager,
+} from '../../../parsers/batchBlocksParser';
 import {
   XykBuyExecutedData,
   XykSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { OmnipoolAsset, Xykpool } from '../../../model';
-import { In } from 'typeorm';
+import { EventName } from '../../../parsers/types/events';
+import { SqdProcessorContext } from '../../../processor';
+import {
+  getOrderedListByBlockNumber,
+  isUnifiedEventsSupportSpecVersion,
+} from '../../../utils/helpers';
+import {
+  xykBuyExecuted,
+  xykSellExecuted,
+} from './xykPoolOperation';
 
 export async function handleXykPoolOperations(
   ctx: SqdProcessorContext<Store>,
@@ -75,7 +82,6 @@ async function prefetchEntities(
       assetA: true,
       assetB: true,
       shareToken: true,
-      createdAtBlock: true,
     },
   }, { className: 'Xykpool' });
 

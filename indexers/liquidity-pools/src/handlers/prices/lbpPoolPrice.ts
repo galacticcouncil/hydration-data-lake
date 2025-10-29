@@ -1,6 +1,7 @@
+import { Store } from '@subsquid/typeorm-store';
+
 import { LbppoolPriceHistoricalData } from '../../model';
 import { SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import { isNotNullOrUndefined } from '../../utils/helpers';
 import { getAssetFreeBalance } from '../assets/balances';
 
@@ -39,7 +40,6 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
                   paraBlockHeight: block.header.height,
                   relayBlockHeight:
                     currentBlockRelayChainInfo.relaychainBlockNumber || 0,
-                  block: ctx.batchState.state.batchBlocks.get(block.header.id),
                 })
               );
             });

@@ -1,5 +1,7 @@
-import { SqdProcessorContext } from '../../../processor';
+import { Between } from 'typeorm/find-options/operator/Between';
+
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   AssetHistoricalData,
   ConstantsHistoricalData,
@@ -7,7 +9,7 @@ import {
   ProcessorStatus,
   XykpoolHistoricalData,
 } from '../../../model';
-import { Between } from 'typeorm/find-options/operator/Between';
+import { SqdProcessorContext } from '../../../processor';
 import {
   prefetchAllAvailableLbppoolHistDataForBlocksRange,
   prefetchAllAvailableLbppoolVolumesForBlocksRange,
@@ -32,9 +34,6 @@ export async function waitForSpotPricesRelatedHistoricalData(
       where: {
         paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
       },
-      relations: {
-        block: true,
-      },
     }, { className: 'ConstantsHistoricalData' });
 
     ctx.batchState.state.constantsHistoricalData = new Map(
@@ -57,7 +56,6 @@ export async function waitForSpotPricesRelatedHistoricalData(
       },
       relations: {
         asset: true,
-        block: true,
       },
     }, { className: 'AssetHistoricalData' });
 
@@ -82,7 +80,6 @@ export async function waitForSpotPricesRelatedHistoricalData(
       relations: {
         assetA: true,
         assetB: true,
-        block: true,
       },
     }, { className: 'EmaOracleEntryHistoricalData' });
 
@@ -108,7 +105,6 @@ export async function waitForSpotPricesRelatedHistoricalData(
         pool: { account: true, shareToken: true },
         assetA: true,
         assetB: true,
-        block: true,
       },
     }, { className: 'XykpoolHistoricalData' });
 

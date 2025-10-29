@@ -1,16 +1,21 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../processor';
+import { LessThan } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   AaveFacilitatorHistoricalData,
   Asset,
   HsmpoolAssetHistoricalData,
   Swap,
 } from '../../../../model';
-import { LessThan } from 'typeorm';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../../processor';
+import {
+  getOldAaveFacilitatorHistDataEntity,
+} from '../../../facilitator/historicalData';
 import { getOrCreateHsmCollateral } from './collaterals/hsmCollateral';
-import { calcPriceNormalized } from '../../../../utils/helpers';
-import { BigNumber } from '@galacticcouncil/sdk';
-import { getOldAaveFacilitatorHistDataEntity } from '../../../facilitator/historicalData';
 
 export async function handleHsmAssetHistoricalData({
   ctx,
@@ -142,7 +147,6 @@ export async function initHsmAssetHistoricalData({
     paraTimestamp: block?.timestamp,
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
-    block,
   });
 
   const assetVolIn =

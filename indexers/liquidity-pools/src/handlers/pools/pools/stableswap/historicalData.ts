@@ -1,25 +1,29 @@
-import { SqdProcessorContext } from '../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
-import parsers from '../../../../parsers';
-import { blake2AsHex } from '@polkadot/util-crypto';
+import pMap from 'p-map';
+
 import { StableMath } from '@galacticcouncil/sdk';
+import { blake2AsHex } from '@polkadot/util-crypto';
+import { BlockHeader } from '@subsquid/substrate-processor';
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   StableswapAssetHistoricalData,
   StableswapHistoricalData,
   StableswapPegsSource,
 } from '../../../../model';
-import { getOrCreateStableswap } from './stablepool';
-import { getOrCreateAsset } from '../../../assets/asset';
-import { BlockHeader } from '@subsquid/substrate-processor';
-import { splitIntoBatches } from '../../../../utils/helpers';
+import parsers from '../../../../parsers';
+import {
+  BatchBlocksParsedDataManager,
+} from '../../../../parsers/batchBlocksParser';
 import {
   StablepoolAllPoolsInfoWithPoolId,
   StablepoolInfo,
   StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolPoolPegsInfo,
 } from '../../../../parsers/types/storage';
-import pMap from 'p-map';
+import { SqdProcessorContext } from '../../../../processor';
+import { splitIntoBatches } from '../../../../utils/helpers';
+import { getOrCreateAsset } from '../../../assets/asset';
+import { getOrCreateStableswap } from './stablepool';
 
 async function getStableswapDataPromise({
   ctx,
@@ -150,7 +154,6 @@ async function getStableswapDataPromise({
       blockHeader.height
     ).height,
     paraBlockHeight: blockHeader.height,
-    block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
   const poolAssetHistoricalDataEntities = [];
@@ -181,7 +184,6 @@ async function getStableswapDataPromise({
           blockHeader.height
         ).height,
         paraBlockHeight: blockHeader.height,
-        block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
       })
     );
   }

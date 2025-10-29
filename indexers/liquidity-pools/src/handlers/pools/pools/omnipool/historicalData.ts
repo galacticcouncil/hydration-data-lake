@@ -1,18 +1,21 @@
-import { SqdProcessorContext } from '../../../../processor';
+import pMap from 'p-map';
+import { LessThan } from 'typeorm';
+
+import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
-import parsers from '../../../../parsers';
+
 import {
   OmnipoolAssetHistoricalData,
   OmnipoolHistoricalData,
-  XykpoolHistoricalData,
 } from '../../../../model';
+import parsers from '../../../../parsers';
+import {
+  BatchBlocksParsedDataManager,
+} from '../../../../parsers/batchBlocksParser';
+import { SqdProcessorContext } from '../../../../processor';
+import { splitIntoBatches } from '../../../../utils/helpers';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { getOrCreateOmnipoolAsset } from './omnipoolAssets';
-import { splitIntoBatches } from '../../../../utils/helpers';
-import { BlockHeader } from '@subsquid/substrate-processor';
-import pMap from 'p-map';
-import { LessThan } from 'typeorm';
 
 export async function handleOmnipoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -80,7 +83,6 @@ export async function handleOmnipoolHistoricalData(
                     blockHeader.height
                   ).height,
                 paraBlockHeight: blockHeader.height,
-                block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
               })
             );
           }
@@ -159,7 +161,6 @@ export async function handleOmnipoolHistoricalData(
               blockHeader.height
             ).height,
             paraBlockHeight: blockHeader.height,
-            block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
           });
 
           return newEntity;

@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import {AccountType} from "./_accountType"
 import {Event} from "./event.model"
 import {AccountAssetBalanceHistoricalData} from "./accountAssetBalanceHistoricalData.model"
@@ -18,79 +18,79 @@ import {OtcOrder} from "./otcOrder.model"
 
 @Entity_()
 export class Account {
-  constructor(props?: Partial<Account>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<Account>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <address>
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <address>
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("varchar", {length: 10, nullable: false})
-  accountType!: AccountType
+    @Column_("varchar", {length: 10, nullable: false})
+    accountType!: AccountType
 
-  @Column_("text", {nullable: true})
-  boundEvmAddress!: string | undefined | null
+    @StringColumn_({nullable: true})
+    boundEvmAddress!: string | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Event, {nullable: true})
-  evmAddressBoundEvent!: Event | undefined | null
+    @Index_()
+    @ManyToOne_(() => Event, {nullable: true})
+    evmAddressBoundEvent!: Event | undefined | null
 
-  @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
-  assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]
+    @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
+    assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]
 
-  @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
-  balanceHistoricalData!: AccountAssetBalanceHistoricalData[]
+    @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
+    balanceHistoricalData!: AccountAssetBalanceHistoricalData[]
 
-  @OneToMany_(() => AccountSwapFeeHistoricalData, e => e.account)
-  historicalAccountSwapFees!: AccountSwapFeeHistoricalData[]
+    @OneToMany_(() => AccountSwapFeeHistoricalData, e => e.account)
+    historicalAccountSwapFees!: AccountSwapFeeHistoricalData[]
 
-  @OneToMany_(() => AccountMmPositionHistoricalData, e => e.account)
-  mmPositionHistoricalData!: AccountMmPositionHistoricalData[]
+    @OneToMany_(() => AccountMmPositionHistoricalData, e => e.account)
+    mmPositionHistoricalData!: AccountMmPositionHistoricalData[]
 
-  @Index_()
-  @ManyToOne_(() => Lbppool, {nullable: true})
-  lbppool!: Lbppool | undefined | null
+    @Index_()
+    @ManyToOne_(() => Lbppool, {nullable: true})
+    lbppool!: Lbppool | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Xykpool, {nullable: true})
-  xykpool!: Xykpool | undefined | null
+    @Index_()
+    @ManyToOne_(() => Xykpool, {nullable: true})
+    xykpool!: Xykpool | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Omnipool, {nullable: true})
-  omnipool!: Omnipool | undefined | null
+    @Index_()
+    @ManyToOne_(() => Omnipool, {nullable: true})
+    omnipool!: Omnipool | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Stableswap, {nullable: true})
-  stableswap!: Stableswap | undefined | null
+    @Index_()
+    @ManyToOne_(() => Stableswap, {nullable: true})
+    stableswap!: Stableswap | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Hsmpool, {nullable: true})
-  hsmpool!: Hsmpool | undefined | null
+    @Index_()
+    @ManyToOne_(() => Hsmpool, {nullable: true})
+    hsmpool!: Hsmpool | undefined | null
 
-  @OneToMany_(() => ChainActivityTrace, e => e.originator)
-  initiatedActions!: ChainActivityTrace[]
+    @OneToMany_(() => ChainActivityTrace, e => e.originator)
+    initiatedActions!: ChainActivityTrace[]
 
-  @OneToMany_(() => AccountChainActivityTrace, e => e.account)
-  participatedActions!: AccountChainActivityTrace[]
+    @OneToMany_(() => AccountChainActivityTrace, e => e.account)
+    participatedActions!: AccountChainActivityTrace[]
 
-  @OneToMany_(() => Swap, e => e.swapper)
-  initiatedSwaps!: Swap[]
+    @OneToMany_(() => Swap, e => e.swapper)
+    initiatedSwaps!: Swap[]
 
-  @OneToMany_(() => Swap, e => e.filler)
-  filledSwaps!: Swap[]
+    @OneToMany_(() => Swap, e => e.filler)
+    filledSwaps!: Swap[]
 
-  @OneToMany_(() => Transfer, e => e.to)
-  transfersTo!: Transfer[]
+    @OneToMany_(() => Transfer, e => e.to)
+    transfersTo!: Transfer[]
 
-  @OneToMany_(() => Transfer, e => e.from)
-  transfersFrom!: Transfer[]
+    @OneToMany_(() => Transfer, e => e.from)
+    transfersFrom!: Transfer[]
 
-  @OneToMany_(() => DcaSchedule, e => e.owner)
-  dcaSchedules!: DcaSchedule[]
+    @OneToMany_(() => DcaSchedule, e => e.owner)
+    dcaSchedules!: DcaSchedule[]
 
-  @OneToMany_(() => OtcOrder, e => e.owner)
-  otcOrders!: OtcOrder[]
+    @OneToMany_(() => OtcOrder, e => e.owner)
+    otcOrders!: OtcOrder[]
 }

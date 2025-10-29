@@ -1,15 +1,19 @@
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   OmnipoolAsset,
   OmnipoolAssetVolumeHistoricalData,
   Swap,
 } from '../../../model';
-import { SqdBlock, SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../processor';
+import { getOrCreateOmnipoolAsset } from '../pools/omnipool/omnipoolAssets';
 import {
   getOldOmnipoolAssetVolume,
   getPoolAssetLastVolumeFromCache,
 } from './index';
-import { getOrCreateOmnipoolAsset } from '../pools/omnipool/omnipoolAssets';
 
 export function initOmnipoolAssetVolume({
   swap,
@@ -66,7 +70,6 @@ export function initOmnipoolAssetVolume({
 
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
-    block: swap.event.block,
   });
 
   const assetVolIn =

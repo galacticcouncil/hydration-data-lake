@@ -1,11 +1,14 @@
-import { MoneyMarketResourceDetails } from '../../../utils/evmTools/moneyMarketContractsManager';
-import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { getOrCreateMoneyMarketReserve } from './moneyMarketReserve';
+
+import { MmReserveConfigHistoricalData } from '../../../model';
 import {
-  MoneyMarketReserve,
-  MmReserveConfigHistoricalData,
-} from '../../../model';
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../processor';
+import {
+  MoneyMarketResourceDetails,
+} from '../../../utils/evmTools/moneyMarketContractsManager';
+import { getOrCreateMoneyMarketReserve } from './moneyMarketReserve';
 
 export async function handleMoneyMarketReserveConfigOnConfiguratorUpdate({
   reserveData,
@@ -79,7 +82,6 @@ export async function handleMoneyMarketReserveConfigOnConfiguratorUpdate({
 
     paraBlockHeight: blockHeader.height,
     relayBlockHeight: block.relayBlockHeight,
-    block,
   });
 
   ctx.batchState.state.moneyMarketReserveConfigHistData.set(

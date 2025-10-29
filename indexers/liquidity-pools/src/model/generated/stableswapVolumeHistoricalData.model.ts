@@ -1,53 +1,48 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_, StringColumn as StringColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Stableswap} from "./stableswap.model"
 import {StableswapAssetVolumeHistoricalData} from "./stableswapAssetVolumeHistoricalData.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class StableswapVolumeHistoricalData {
-  constructor(props?: Partial<StableswapVolumeHistoricalData>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<StableswapVolumeHistoricalData>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <stableswapId>-<paraBlockHeight>
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <stableswapId>-<paraBlockHeight>
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => Stableswap, {nullable: true})
-  pool!: Stableswap
+    @Index_()
+    @ManyToOne_(() => Stableswap, {nullable: true})
+    pool!: Stableswap
 
-  @OneToMany_(() => StableswapAssetVolumeHistoricalData, e => e.volumesCollection)
-  assetVolumes!: StableswapAssetVolumeHistoricalData[]
+    @OneToMany_(() => StableswapAssetVolumeHistoricalData, e => e.volumesCollection)
+    assetVolumes!: StableswapAssetVolumeHistoricalData[]
 
-  @Column_("text", {nullable: false})
-  poolVolInNorm!: string
+    @StringColumn_({nullable: false})
+    poolVolInNorm!: string
 
-  @Column_("text", {nullable: false})
-  poolVolOutNorm!: string
+    @StringColumn_({nullable: false})
+    poolVolOutNorm!: string
 
-  @Column_("text", {nullable: false})
-  poolFeesVolNorm!: string
+    @StringColumn_({nullable: false})
+    poolFeesVolNorm!: string
 
-  @Column_("text", {nullable: false})
-  poolTotalVolInNorm!: string
+    @StringColumn_({nullable: false})
+    poolTotalVolInNorm!: string
 
-  @Column_("text", {nullable: false})
-  poolTotalVolOutNorm!: string
+    @StringColumn_({nullable: false})
+    poolTotalVolOutNorm!: string
 
-  @Column_("text", {nullable: false})
-  poolTotalFeesVolNorm!: string
+    @StringColumn_({nullable: false})
+    poolTotalFeesVolNorm!: string
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
-
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+    @IntColumn_({nullable: false})
+    relayBlockHeight!: number
 }

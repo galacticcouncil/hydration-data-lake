@@ -1,5 +1,5 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   AccountType,
   Lbppool,
@@ -7,15 +7,19 @@ import {
   LbppoolDestroyedData,
   LbppoolLifeState,
 } from '../../../../model';
-import { getOrCreateAccount } from '../../../accounts';
+import parsers from '../../../../parsers';
 import {
   LbpPoolCreatedData,
   LbpPoolUpdatedData,
 } from '../../../../parsers/batchBlocksParser/types';
-import { getAssetFreeBalance } from '../../../assets/balances';
-import { getOrCreateAsset } from '../../../assets/asset';
-import parsers from '../../../../parsers';
 import { LbpPoolData } from '../../../../parsers/types/storage';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../../processor';
+import { getOrCreateAccount } from '../../../accounts';
+import { getOrCreateAsset } from '../../../assets/asset';
+import { getAssetFreeBalance } from '../../../assets/balances';
 
 export async function createLbppool({
   ctx,
@@ -124,7 +128,6 @@ export async function createLbppool({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
   return newPool;
@@ -284,9 +287,6 @@ export async function lpbpoolCreated(
       ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height;
-    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
-      eventMetadata.blockHeader.id
-    )!;
 
     ctx.batchState.state.lbpAllBatchPools.set(eventParams.pool, existingPool);
     ctx.batchState.state.lbpPoolIdsToSave.add(eventParams.pool);

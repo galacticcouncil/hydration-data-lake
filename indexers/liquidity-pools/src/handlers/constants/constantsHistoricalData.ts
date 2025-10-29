@@ -1,10 +1,11 @@
-import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import parsers from '../../parsers';
+
 import {
   ConstantsHistoricalData,
   DynamicFeesAssetFeeParameters,
 } from '../../model';
+import parsers from '../../parsers';
+import { SqdProcessorContext } from '../../processor';
 import { splitIntoBatches } from '../../utils/helpers';
 
 export async function handleConstantsHistoricalData(
@@ -95,7 +96,6 @@ export async function handleConstantsHistoricalData(
               ctx.batchState.state.relayChainInfo.get(blockHeader.height)
                 ?.relaychainBlockNumber ?? 0,
             paraBlockHeight: blockHeader.height,
-            block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
           });
 
           return poolHistoricalDataEntity;

@@ -1,5 +1,5 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   AccountType,
   Xykpool,
@@ -7,14 +7,18 @@ import {
   XykpoolDestroyedData,
   XykpoolLifeState,
 } from '../../../../model';
-import { getOrCreateAccount } from '../../../accounts';
+import parsers from '../../../../parsers';
 import {
   XykPoolCreatedData,
   XykPoolDestroyedData,
 } from '../../../../parsers/batchBlocksParser/types';
-import { getAssetFreeBalance } from '../../../assets/balances';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../../processor';
+import { getOrCreateAccount } from '../../../accounts';
 import { getOrCreateAsset } from '../../../assets/asset';
-import parsers from '../../../../parsers';
+import { getAssetFreeBalance } from '../../../assets/balances';
 
 export async function createXykPool({
   ctx,
@@ -129,7 +133,6 @@ export async function createXykPool({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
   });
 
   return newPool;
@@ -241,9 +244,6 @@ export async function xykPoolCreated(
       ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height;
-    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
-      eventMetadata.blockHeader.id
-    )!;
 
     ctx.batchState.state.xykAllBatchPools.set(existingPool.id, existingPool);
     ctx.batchState.state.xykPoolIdsToSave.add(existingPool.id);

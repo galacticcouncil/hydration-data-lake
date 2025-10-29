@@ -136,7 +136,6 @@ type AssetVolumeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type AssetSwapFeeHistoricalData @entity {
@@ -148,7 +147,6 @@ type AssetSwapFeeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type AssetSpotPriceHistoricalData @entity {
@@ -169,7 +167,6 @@ type AssetSpotPriceHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
-  block: Block!
 }
 
 type AssetDynamicFee {
@@ -196,7 +193,6 @@ type AssetHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
-  block: Block!
 }
 
 type AssetsPairVolumeHistoricalData @entity {
@@ -213,7 +209,6 @@ type AssetsPairVolumeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int! @index
-  block: Block!
 }
 
 type AssetAssetsPairVolume @entity {
@@ -253,7 +248,6 @@ type AccountAssetBalanceHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type AccountAssetBalanceLatest @entity {
@@ -286,7 +280,6 @@ type AccountTotalBalanceHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type AccountMmPositionHistoricalData @entity {
@@ -305,7 +298,6 @@ type AccountMmPositionHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type Account @entity {
@@ -362,7 +354,6 @@ type AccountAssetSwapFeeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type AccountSwapFeeHistoricalData @entity {
@@ -373,7 +364,6 @@ type AccountSwapFeeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================
@@ -659,7 +649,6 @@ type RoutedTrade @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================
@@ -686,7 +675,6 @@ type Lbppool @entity {
 
   createdAtParaBlockHeight: Int! @index
   createdAtRelayBlockHeight: Int!
-  createdAtBlock: Block!
   isDestroyed: Boolean
   lifeStates: [LbppoolLifeState!]!
 
@@ -725,7 +713,6 @@ type LbppoolPriceHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type LbppoolVolumeHistoricalData @entity {
@@ -768,7 +755,6 @@ type LbppoolVolumeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 #
@@ -811,7 +797,6 @@ type LbppoolHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================
@@ -832,7 +817,6 @@ type Xykpool @entity {
 
   createdAtParaBlockHeight: Int! @index
   createdAtRelayBlockHeight: Int!
-  createdAtBlock: Block!
   isDestroyed: Boolean
   lifeStates: [XykpoolLifeState!]!
 
@@ -870,7 +854,6 @@ type XykpoolPriceHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type XykpoolVolumeHistoricalData @entity {
@@ -914,7 +897,6 @@ type XykpoolVolumeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 #
@@ -947,7 +929,6 @@ type XykpoolHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================
@@ -960,7 +941,6 @@ type Omnipool @entity {
 
   isDestroyed: Boolean
   destroyedAtParaBlockHeight: Int
-  destroyedAtBlock: Block
 
   assets: [OmnipoolAsset!]! @derivedFrom(field: "pool")
 }
@@ -974,7 +954,6 @@ type OmnipoolAsset @entity {
 
   addedAtParaBlockHeight: Int! @index
   addedAtRelayBlockHeight: Int!
-  addedAtBlock: Block!
   isRemoved: Boolean
   lifeStates: [OmnipoolAssetLifeState!]
 
@@ -1024,7 +1003,6 @@ type OmnipoolAssetVolumeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 #
@@ -1055,7 +1033,6 @@ type OmnipoolHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type OmnipoolAssetHistoricalData @entity {
@@ -1075,7 +1052,6 @@ type OmnipoolAssetHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================
@@ -1090,7 +1066,6 @@ type Stableswap @entity {
 
   createdAtParaBlockHeight: Int! @index
   createdAtRelayBlockHeight: Int!
-  createdAtBlock: Block!
   isDestroyed: Boolean
   lifeStates: [StableswapLifeState!]!
 
@@ -1137,7 +1112,6 @@ type StableswapVolumeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type StableswapAssetVolumeHistoricalData @entity {
@@ -1162,7 +1136,6 @@ type StableswapAssetVolumeHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 #
@@ -1236,7 +1209,6 @@ type StableswapHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type StableswapAssetHistoricalData @entity {
@@ -1251,7 +1223,6 @@ type StableswapAssetHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================
@@ -1287,7 +1258,6 @@ type HsmpoolHistoricalData @entity {
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type HsmCollateralConfigHistoricalData @entity {
@@ -1304,7 +1274,6 @@ type HsmCollateralConfigHistoricalData @entity {
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type HsmpoolAssetHistoricalData @entity {
@@ -1339,7 +1308,6 @@ type HsmpoolAssetHistoricalData @entity {
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type AaveFacilitator @entity {
@@ -1360,7 +1328,6 @@ type AaveFacilitatorHistoricalData @entity {
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 #
@@ -1427,7 +1394,6 @@ type ConstantsHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================
@@ -1469,7 +1435,6 @@ type EmaOracleEntryHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================
@@ -1611,7 +1576,6 @@ type OtcOrder @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type OtcOrderEvent @entity {
@@ -1671,7 +1635,7 @@ type AavepoolHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
+
 }
 
 # ======================================================================================================================
@@ -1911,7 +1875,6 @@ type MmReserveConfigHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 type MmReserveIndexesHistoricalData @entity {
@@ -1926,7 +1889,6 @@ type MmReserveIndexesHistoricalData @entity {
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
-  block: Block!
 }
 
 # ======================================================================================================================

@@ -1,3 +1,7 @@
+import { In } from 'typeorm';
+
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   AssetAssetsPairVolume,
   AssetDynamicFee,
@@ -13,8 +17,6 @@ import {
   XykpoolVolumeHistoricalData,
 } from '../../model';
 import { SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { In } from 'typeorm';
 import { getOrCreateAsset } from '../assets/asset';
 
 export type PrefetchedCache = {
@@ -121,7 +123,6 @@ export async function handlePreprocDataBuckets({
       usdPriceNormalised: preprocData.usdPriceNormalised,
       paraBlockHeight: preprocData.paraBlockHeight,
       relayBlockHeight: preprocData.relayBlockHeight,
-      block,
     });
     resultCache.assetHistoricalData.set(newEntity.id, newEntity);
   }
@@ -175,7 +176,6 @@ export async function handlePreprocDataBuckets({
       priceRoute: preprocData.priceRoute,
       paraBlockHeight: preprocData.paraBlockHeight,
       relayBlockHeight: preprocData.relayBlockHeight,
-      block,
     });
     resultCache.assetSpotPriceHistoricalData.set(newEntity.id, newEntity);
   }
@@ -219,7 +219,6 @@ export async function handlePreprocDataBuckets({
       totalVolumeNormalised: preprocData.totalVolumeNormalised,
       paraBlockHeight: preprocData.paraBlockHeight,
       relayBlockHeight: preprocData.relayBlockHeight,
-      block,
     });
     resultCache.assetsPairVolumeHistoricalData.set(newEntity.id, newEntity);
   }
@@ -454,7 +453,7 @@ export async function getPrefetchedCache({
       XykpoolVolumeHistoricalData,
       {
         where: { id: In(xykpoolVolIdsToPrefetch) },
-        relations: { pool: true, block: true },
+        relations: { pool: true },
       },
       { className: 'XykpoolVolumeHistoricalData' }
     ),
@@ -462,7 +461,7 @@ export async function getPrefetchedCache({
       LbppoolVolumeHistoricalData,
       {
         where: { id: In(lbppoolVolIdsToPrefetch) },
-        relations: { pool: true, block: true },
+        relations: { pool: true },
       },
       { className: 'LbppoolVolumeHistoricalData' }
     ),
@@ -470,7 +469,7 @@ export async function getPrefetchedCache({
       OmnipoolAssetVolumeHistoricalData,
       {
         where: { id: In(omnipoolAssetVolIdsToPrefetch) },
-        relations: { omnipoolAsset: true, block: true },
+        relations: { omnipoolAsset: true },
       },
       { className: 'OmnipoolAssetVolumeHistoricalData' }
     ),
@@ -478,7 +477,7 @@ export async function getPrefetchedCache({
       StableswapVolumeHistoricalData,
       {
         where: { id: In(stableswapVolIdsToPrefetch) },
-        relations: { pool: true, block: true },
+        relations: { pool: true },
       },
       { className: 'StableswapVolumeHistoricalData' }
     ),

@@ -1,15 +1,16 @@
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   Asset,
   LiquidityActionEvent,
   Stableswap,
-  StableswapAssetVolumeHistoricalData,
   StableswapAssetLiquidityAmount,
-  StableswapVolumeHistoricalData,
+  StableswapAssetVolumeHistoricalData,
   StableswapLiquidityEvent,
+  StableswapVolumeHistoricalData,
   Swap,
 } from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import {
   getOldStablepoolAssetVolume,
   getOldStablepoolVolume,
@@ -80,7 +81,6 @@ export async function handleStablepoolVolumeUpdates({
 
       relayBlockHeight,
       paraBlockHeight,
-      block: ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight),
     });
     ctx.batchState.state.stablepoolVolumeCollections.set(
       currentVolumesCollection.id,
@@ -212,7 +212,6 @@ export function initStablepoolAssetVolume({
     relayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
     paraBlockHeight,
-    block,
   });
 
   let routedLiqAddedAmount = BigInt(0);

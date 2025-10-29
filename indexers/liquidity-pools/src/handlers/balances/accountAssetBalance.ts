@@ -1,15 +1,19 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import { FindOptionsRelations } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
+
+import { AppConfig } from '../../appConfig';
 import {
   Account,
   AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
   Asset,
-  DcaSchedule,
 } from '../../model';
-import { FindOptionsRelations } from 'typeorm';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
 import { getOrCreateAsset } from '../assets/asset';
-import { AppConfig } from '../../appConfig';
 
 const appConfig = AppConfig.getInstance();
 
@@ -79,7 +83,6 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
 
     relayBlockHeight: block.relayBlockHeight,
     paraBlockHeight: block.height,
-    block,
   });
 
   ctx.batchState.state.accountAssetBalanceHistoricalData.set(
@@ -154,7 +157,6 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    block: ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height),
   });
 
   ctx.batchState.state.accountTotalBalanceHistoricalData.set(

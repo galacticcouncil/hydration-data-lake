@@ -1,5 +1,5 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   OmnipoolAsset,
   OmnipoolAssetAddedData,
@@ -10,6 +10,10 @@ import {
   OmnipoolTokenAddedData,
   OmnipoolTokenRemovedData,
 } from '../../../../parsers/batchBlocksParser/types';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../../processor';
 import { getOrCreateAsset } from '../../../assets/asset';
 
 export async function getOrCreateOmnipoolAsset({
@@ -67,7 +71,6 @@ export async function getOrCreateOmnipoolAsset({
     addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    addedAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
     isRemoved: false,
     lifeStates: addOmnipoolAssetAddedLifeState({
       assetAddedState: new OmnipoolAssetAddedData({
@@ -122,9 +125,6 @@ export async function omnipoolTokenAdded(
       ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height;
-    omnipoolAssetEntity.addedAtBlock = ctx.batchState.state.batchBlocks.get(
-      eventMetadata.blockHeader.id
-    )!;
 
     ctx.batchState.state.omnipoolAssets.set(
       omnipoolAssetEntity.id,
@@ -153,9 +153,7 @@ export async function omnipoolTokenAdded(
     addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       eventMetadata.blockHeader.height
     ).height,
-    addedAtBlock: ctx.batchState.state.batchBlocks.get(
-      eventMetadata.blockHeader.id
-    ),
+
     isRemoved: false,
     lifeStates: addOmnipoolAssetAddedLifeState({
       assetAddedState: new OmnipoolAssetAddedData({

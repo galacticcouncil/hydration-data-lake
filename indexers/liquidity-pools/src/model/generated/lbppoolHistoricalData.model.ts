@@ -1,80 +1,74 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
 import {Lbppool} from "./lbppool.model"
 import {Asset} from "./asset.model"
 import {Account} from "./account.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class LbppoolHistoricalData {
-  constructor(props?: Partial<LbppoolHistoricalData>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<LbppoolHistoricalData>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * poolAddress-assetId-paraBlockHeight
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * poolAddress-assetId-paraBlockHeight
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => Lbppool, {nullable: true})
-  pool!: Lbppool
+    @Index_()
+    @ManyToOne_(() => Lbppool, {nullable: true})
+    pool!: Lbppool
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  assetA!: Asset
+    @Index_()
+    @ManyToOne_(() => Asset, {nullable: true})
+    assetA!: Asset
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  assetB!: Asset
+    @Index_()
+    @ManyToOne_(() => Asset, {nullable: true})
+    assetB!: Asset
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetABalance!: bigint
+    @BigIntColumn_({nullable: false})
+    assetABalance!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  assetBBalance!: bigint
+    @BigIntColumn_({nullable: false})
+    assetBBalance!: bigint
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  owner!: Account
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    owner!: Account
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  feeCollector!: Account | undefined | null
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    feeCollector!: Account | undefined | null
 
-  @Column_("int4", {nullable: true})
-  startBlockNumber!: number | undefined | null
+    @IntColumn_({nullable: true})
+    startBlockNumber!: number | undefined | null
 
-  @Column_("int4", {nullable: true})
-  endBlockNumber!: number | undefined | null
+    @IntColumn_({nullable: true})
+    endBlockNumber!: number | undefined | null
 
-  @Column_("int4", {nullable: false})
-  initialWeight!: number
+    @IntColumn_({nullable: false})
+    initialWeight!: number
 
-  @Column_("int4", {nullable: false})
-  finalWeight!: number
+    @IntColumn_({nullable: false})
+    finalWeight!: number
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  repayTarget!: bigint
+    @BigIntColumn_({nullable: false})
+    repayTarget!: bigint
 
-  @Column_("text", {nullable: false})
-  weightCurve!: string
+    @StringColumn_({nullable: false})
+    weightCurve!: string
 
-  @Column_("int4", {array: true, nullable: false})
-  fee!: (number)[]
+    @IntColumn_({array: true, nullable: false})
+    fee!: (number)[]
 
-  @Column_("text", {nullable: true})
-  tvlInRefAssetNorm!: string | undefined | null
+    @StringColumn_({nullable: true})
+    tvlInRefAssetNorm!: string | undefined | null
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
-
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+    @IntColumn_({nullable: false})
+    relayBlockHeight!: number
 }

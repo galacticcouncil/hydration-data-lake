@@ -1,19 +1,22 @@
-import { SqdProcessorContext } from '../../../../processor';
+import pMap from 'p-map';
+import { LessThan } from 'typeorm';
+
+import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
-import parsers from '../../../../parsers';
+
 import {
   Lbppool,
   LbppoolHistoricalData,
-  XykpoolHistoricalData,
 } from '../../../../model';
+import parsers from '../../../../parsers';
+import {
+  BatchBlocksParsedDataManager,
+} from '../../../../parsers/batchBlocksParser';
+import { SqdProcessorContext } from '../../../../processor';
+import { splitIntoBatches } from '../../../../utils/helpers';
+import { getOrCreateAccount } from '../../../accounts';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { getOrCreateLbppool } from './lbpPool';
-import { getOrCreateAccount } from '../../../accounts';
-import { splitIntoBatches } from '../../../../utils/helpers';
-import { BlockHeader } from '@subsquid/substrate-processor';
-import pMap from 'p-map';
-import { LessThan } from 'typeorm';
 
 export async function handleLbppoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -145,7 +148,6 @@ export async function handleLbppoolHistoricalData(
                 blockHeader.height
               ).height,
               paraBlockHeight: blockHeader.height,
-              block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
             });
 
             return poolHistoricalDataEntity;

@@ -1,14 +1,16 @@
-import { SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import {
   AccountAssetBalanceHistoricalData,
   AccountAssetBalanceLatest,
 } from '../../model';
+import { SqdProcessorContext } from '../../processor';
+import { Store } from '@subsquid/typeorm-store';
 
 export function getAccountAssetBalancesLatest({
   balances,
+  ctx,
 }: {
   balances: AccountAssetBalanceHistoricalData[];
+  ctx: SqdProcessorContext<Store>;
 }) {
   const indexedBalances: Map<string, AccountAssetBalanceHistoricalData> =
     new Map();
@@ -26,6 +28,12 @@ export function getAccountAssetBalancesLatest({
   const latestBalanceEntities = [];
 
   for (const [id, balance] of indexedBalances.entries()) {
+    const block = ctx.batchState.getParaBlockFromCacheByHeight(balance.paraBlockHeight);
+
+    if (!block) {
+      throw new Error(`Block not found in cache for height ${balance.paraBlockHeight}`);
+    }
+
     latestBalanceEntities.push(
       new AccountAssetBalanceLatest({
         id,
@@ -37,7 +45,7 @@ export function getAccountAssetBalancesLatest({
         totalLockedInRefAssetNorm: balance.totalLockedInRefAssetNorm,
         total: balance.transferable + balance.totalLocked,
         paraBlockHeight: balance.paraBlockHeight,
-        blockId: balance.block.id,
+        blockId: block.id,
       })
     );
   }

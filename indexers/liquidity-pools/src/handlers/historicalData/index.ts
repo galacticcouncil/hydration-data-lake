@@ -1,7 +1,6 @@
-import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
-  AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
   AssetsPairVolumeHistoricalData,
   AssetSpotPriceHistoricalData,
@@ -11,20 +10,29 @@ import {
   BatchStableswapHistVolsList,
   BatchXykpoolHistVolsList,
 } from '../../model';
-import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/assetHistoricalData';
-import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
-import {
-  RedisTimeSeriesManager,
-  RedisTimeSeriesName,
-} from '../../utils/redisTimeSeriesManager';
-import { ProcessorStatusManager } from '../../processorStatusManager';
+import { SqdProcessorContext } from '../../processor';
 import {
   getProcessingMode,
   ProcessingMode,
 } from '../../processorHelpers/getProcessingMode';
+import { ProcessorStatusManager } from '../../processorStatusManager';
+import {
+  LatestProcessedDataCacheManager,
+} from '../../utils/latestProcessedDataCacheManager';
+import {
+  RedisTimeSeriesManager,
+  RedisTimeSeriesName,
+} from '../../utils/redisTimeSeriesManager';
 import { MultiFlowProcessingPhase } from '../../utils/types';
-import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
-import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLatest';
+import {
+  getAssetHistDataWithUniqueData,
+} from '../assets/assetHistoricalData/assetHistoricalData';
+import {
+  getAssetSpotPriceHistDataWithUniqueData,
+} from '../assets/assetHistoricalData/assetSpotPrices';
+import {
+  getAccountAssetBalancesLatest,
+} from '../balances/accountAssetBalanceLatest';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -317,6 +325,7 @@ export class HistoricalDataManager {
     );
     const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
       balances: accountAssetBalanceHistoricalDataList,
+      ctx,
     });
     const accountTotalBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
@@ -363,14 +372,21 @@ export class HistoricalDataManager {
           (item) =>
             !!item.assetIn.assetRegistryId && !!item.assetOut.assetRegistryId
         )
-        .map((item) => ({
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.price,
-          assetAId: item.assetIn.assetRegistryId!,
-          assetBId: item.assetOut.assetRegistryId!,
-          timestamp: item.block.timestamp.getTime(),
-          value: +item.priceNormalised,
-        }))
+        .map((item) => {
+          const block = ctx.batchState.getParaBlockFromCacheByHeight(
+            item.paraBlockHeight
+          );
+          const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+
+          return {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.price,
+            assetAId: item.assetIn.assetRegistryId!,
+            assetBId: item.assetOut.assetRegistryId!,
+            timestamp,
+            value: +item.priceNormalised,
+          };
+        })
     );
   }
 
@@ -392,21 +408,28 @@ export class HistoricalDataManager {
           (item) =>
             !!item.assetA.assetRegistryId && !!item.assetB.assetRegistryId
         )
-        .map((item) => ({
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.volume,
-          assetAId:
-            +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
-              ? item.assetA.assetRegistryId!
-              : item.assetB.assetRegistryId!,
-          assetBId:
-            +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
-              ? item.assetB.assetRegistryId!
-              : item.assetA.assetRegistryId!,
+        .map((item) => {
+          const block = ctx.batchState.getParaBlockFromCacheByHeight(
+            item.paraBlockHeight
+          );
+          const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
 
-          timestamp: item.block.timestamp.getTime(),
-          value: +item.totalVolumeNormalised,
-        }))
+          return {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.volume,
+            assetAId:
+              +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
+                ? item.assetA.assetRegistryId!
+                : item.assetB.assetRegistryId!,
+            assetBId:
+              +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
+                ? item.assetB.assetRegistryId!
+                : item.assetA.assetRegistryId!,
+
+            timestamp,
+            value: +item.totalVolumeNormalised,
+          };
+        })
     );
   }
 
@@ -423,13 +446,20 @@ export class HistoricalDataManager {
 
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     await redisTimeSeriesManager.addMultipleAccountTotalBalances(
-      src.map((item) => ({
-        keyPrefix: ctx.appConfig.INDEXER_ID,
-        name: RedisTimeSeriesName.acc_bal_tot_tns,
-        accountId: item.account.id,
-        timestamp: item.block.timestamp.getTime(),
-        value: +item.totalTransferableNorm,
-      }))
+      src.map((item) => {
+        const block = ctx.batchState.getParaBlockFromCacheByHeight(
+          item.paraBlockHeight
+        );
+        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+
+        return {
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: RedisTimeSeriesName.acc_bal_tot_tns,
+          accountId: item.account.id,
+          timestamp,
+          value: +item.totalTransferableNorm,
+        };
+      })
     );
   }
 

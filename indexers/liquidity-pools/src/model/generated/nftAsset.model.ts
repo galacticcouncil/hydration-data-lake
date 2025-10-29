@@ -1,26 +1,25 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
 
 @Entity_()
 export class NftAsset {
-  constructor(props?: Partial<NftAsset>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<NftAsset>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * collection ID 
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * collection ID 
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  owner!: Account
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    owner!: Account
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  deposit!: bigint
+    @BigIntColumn_({nullable: false})
+    deposit!: bigint
 
-  @Column_("bool", {nullable: false})
-  isFrozen!: boolean
+    @BooleanColumn_({nullable: false})
+    isFrozen!: boolean
 }

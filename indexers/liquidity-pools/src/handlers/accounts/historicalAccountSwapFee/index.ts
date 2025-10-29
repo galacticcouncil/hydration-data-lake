@@ -1,12 +1,13 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   Account,
-  Asset,
-  Block,
   AccountAssetSwapFeeHistoricalData,
   AccountSwapFeeHistoricalData,
+  Asset,
+  Block,
 } from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
 
 export async function handleAccountAssetSwapFee({
   block,
@@ -44,7 +45,7 @@ export async function handleAccountAssetSwapFee({
         asset: { id: asset.id },
         account: { id: account.id },
       },
-      relations: { asset: true, account: true, collection: true, block: true },
+      relations: { asset: true, account: true, collection: true },
       order: {
         paraBlockHeight: 'DESC',
       },
@@ -65,7 +66,6 @@ export async function handleAccountAssetSwapFee({
     totalAmount: persistentAccAssetFeeAmount?.totalAmount || BigInt(0),
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
-    block,
   });
 
   accountAssetSwapFee.amount += feeAmount;
@@ -117,7 +117,6 @@ export function getAccountSwapFeesCollection({
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
     account,
-    block,
   });
 
   ctx.batchState.state.historicalAccountSwapFees.set(collection.id, collection);

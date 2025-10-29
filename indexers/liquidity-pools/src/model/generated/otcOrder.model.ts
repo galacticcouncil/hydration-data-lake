@@ -1,65 +1,59 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {OtcOrderStatus} from "./_otcOrderStatus"
 import {OtcOrderEvent} from "./otcOrderEvent.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class OtcOrder {
-  constructor(props?: Partial<OtcOrder>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<OtcOrder>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <orderId> as string
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <orderId> as string
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  owner!: Account
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    owner!: Account
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  assetIn!: Asset
+    @Index_()
+    @ManyToOne_(() => Asset, {nullable: true})
+    assetIn!: Asset
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  assetOut!: Asset
+    @Index_()
+    @ManyToOne_(() => Asset, {nullable: true})
+    assetOut!: Asset
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  amountOut!: bigint
+    @BigIntColumn_({nullable: false})
+    amountOut!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  amountIn!: bigint
+    @BigIntColumn_({nullable: false})
+    amountIn!: bigint
 
-  @Column_("bool", {nullable: true})
-  partiallyFillable!: boolean | undefined | null
+    @BooleanColumn_({nullable: true})
+    partiallyFillable!: boolean | undefined | null
 
-  @Index_()
-  @Column_("varchar", {length: 15, nullable: true})
-  status!: OtcOrderStatus | undefined | null
+    @Index_()
+    @Column_("varchar", {length: 15, nullable: true})
+    status!: OtcOrderStatus | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  totalFilledAmountIn!: bigint | undefined | null
+    @BigIntColumn_({nullable: true})
+    totalFilledAmountIn!: bigint | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  totalFilledAmountOut!: bigint | undefined | null
+    @BigIntColumn_({nullable: true})
+    totalFilledAmountOut!: bigint | undefined | null
 
-  @OneToMany_(() => OtcOrderEvent, e => e.order)
-  events!: OtcOrderEvent[]
+    @OneToMany_(() => OtcOrderEvent, e => e.order)
+    events!: OtcOrderEvent[]
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
-
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+    @IntColumn_({nullable: false})
+    relayBlockHeight!: number
 }

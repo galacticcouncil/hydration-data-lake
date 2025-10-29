@@ -1,8 +1,16 @@
-import { Lbppool, LbppoolVolumeHistoricalData, Swap } from '../../../model';
-import { calculateAveragePrice } from '../../prices/utils';
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { getLastVolumeFromCache, getOldLbpVolume } from './index';
+
+import {
+  Lbppool,
+  LbppoolVolumeHistoricalData,
+  Swap,
+} from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
+import { calculateAveragePrice } from '../../prices/utils';
+import {
+  getLastVolumeFromCache,
+  getOldLbpVolume,
+} from './index';
 
 export function initLbppoolVolume(
   swap: Swap,
@@ -95,7 +103,6 @@ export function initLbppoolVolume(
 
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
-    block: swap.event.block,
   });
 
   const assetAVolIn =

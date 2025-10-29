@@ -1,13 +1,22 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
+import {
+  AaveFacilitatorHistoricalData,
+  EvmEventName,
+} from '../../model';
 import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import { EvmLogDecoder } from '../../utils/evmTools/evmLogDecoder';
+import {
+  MoneyMarketContractsManager,
+} from '../../utils/evmTools/moneyMarketContractsManager';
 import {
   getOrCreateAaveFacilitator,
   getPreviousFacilitatorHistDataEntity,
 } from './index';
-import { EvmLogDecoder } from '../../utils/evmTools/evmLogDecoder';
-import { AaveFacilitatorHistoricalData, EvmEventName } from '../../model';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 
 export async function handleFacilitatorBucketCapacityUpdatedEvent({
   ctx,
@@ -132,7 +141,6 @@ export async function handleFacilitatorUpdatedEvent({
       paraTimestamp: new Date(blockHeader.timestamp || Date.now()),
       paraBlockHeight: block.height,
       relayBlockHeight: block.relayBlockHeight,
-      block,
     });
   }
 

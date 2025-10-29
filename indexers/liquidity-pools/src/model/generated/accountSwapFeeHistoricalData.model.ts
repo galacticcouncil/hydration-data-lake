@@ -1,35 +1,30 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
 import {AccountAssetSwapFeeHistoricalData} from "./accountAssetSwapFeeHistoricalData.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class AccountSwapFeeHistoricalData {
-  constructor(props?: Partial<AccountSwapFeeHistoricalData>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<AccountSwapFeeHistoricalData>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <address>-<paraBlockHeight>
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <address>-<paraBlockHeight>
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  account!: Account
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    account!: Account
 
-  @OneToMany_(() => AccountAssetSwapFeeHistoricalData, e => e.collection)
-  fees!: AccountAssetSwapFeeHistoricalData[]
+    @OneToMany_(() => AccountAssetSwapFeeHistoricalData, e => e.collection)
+    fees!: AccountAssetSwapFeeHistoricalData[]
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
-
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+    @IntColumn_({nullable: false})
+    relayBlockHeight!: number
 }

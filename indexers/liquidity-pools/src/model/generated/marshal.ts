@@ -14,7 +14,7 @@ export const string: Marshal<string, string> = {
     },
     toJSON(value) {
         return value
-    },
+    }
 }
 
 
@@ -28,7 +28,7 @@ export const int: Marshal<number, number> = {
     },
     toJSON(value) {
         return value
-    },
+    }
 }
 
 
@@ -39,7 +39,7 @@ export const float: Marshal<number, number> = {
     },
     toJSON(value) {
         return value
-    },
+    }
 }
 
 
@@ -50,7 +50,7 @@ export const boolean: Marshal<boolean, boolean> = {
     },
     toJSON(value: boolean): boolean {
         return value
-    },
+    }
 }
 
 
@@ -61,7 +61,18 @@ export const bigint: Marshal<bigint, string> = {
     },
     toJSON(value: bigint): string {
         return value.toString()
+    }
+}
+
+
+export const bigdecimal: Marshal<any, string> = {
+    fromJSON(value: unknown): bigint {
+        assert(typeof value === 'string', 'invalid BigDecimal')
+        return decimal.BigDecimal(value)
     },
+    toJSON(value: any): string {
+        return value.toString()
+    }
 }
 
 
@@ -83,7 +94,7 @@ export const datetime: Marshal<Date, string> = {
     },
     toJSON(value: Date): string {
         return value.toISOString()
-    },
+    }
 }
 
 
@@ -100,7 +111,7 @@ export const bytes: Marshal<Uint8Array, string> = {
         } else {
             return '0x' + Buffer.from(value.buffer, value.byteOffset, value.byteLength).toString('hex')
         }
-    },
+    }
 }
 
 
@@ -116,26 +127,6 @@ export function nonNull<T>(val: T | undefined | null): T {
 }
 
 
-export const bigintTransformer = {
-    to(x?: bigint) {
-        return x?.toString()
-    },
-    from(s?: string): bigint | undefined {
-        return s == null ? undefined : BigInt(s)
-    }
-}
-
-export const datetimeSqliteTransformer = {
-    to(value: Date): string {
-        return value.toISOString()
-    },
-    from(value: unknown): Date {
-        assert(typeof value === 'string', 'invalid DateTime')
-        assert(isIsoDateTimeString(value), 'invalid DateTime')
-        return new Date(value)
-    }
-}
-
 export function enumFromJson<E extends object>(json: unknown, enumObject: E): E[keyof E] {
     assert(typeof json == 'string', 'invalid enum value')
     let val = (enumObject as any)[json]
@@ -143,18 +134,16 @@ export function enumFromJson<E extends object>(json: unknown, enumObject: E): E[
     return val as any
 }
 
-export function stringToJson(source: unknown): unknown {
-    if (typeof source !== 'string') return source
-    try {
-        return JSON.parse(source)
-    } catch (e) {
-        assert.fail('invalid stringified json value')
+
+const decimal = {
+    get BigDecimal(): any {
+        throw new Error('Package `@subsquid/big-decimal` is not installed')
     }
 }
-export function jsonToString(source: unknown): unknown {
-    try {
-        return JSON.stringify(source)
-    } catch (e) {
-        assert.fail('invalid json value')
-    }
-}
+
+
+try {
+    Object.defineProperty(decimal, "BigDecimal", {
+        value: require('@subsquid/big-decimal').BigDecimal
+    })
+} catch (e) {}

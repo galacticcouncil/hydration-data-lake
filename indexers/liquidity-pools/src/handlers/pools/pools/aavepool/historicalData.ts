@@ -1,15 +1,23 @@
-import { SqdProcessorContext } from '../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
-import parsers from '../../../../parsers';
-import { Aavepool, AavepoolHistoricalData, Asset } from '../../../../model';
-import { getOrCreateAavepool } from './aavepool';
-import { splitIntoBatches } from '../../../../utils/helpers';
-import { BlockHeader } from '@subsquid/substrate-processor';
-import { AaveTradeExecutorPoolDataWithPoolId } from '../../../../parsers/runtimeApiResolver/types';
 import pMap from 'p-map';
-import { MoneyMarketContractsManager } from '../../../../utils/evmTools/moneyMarketContractsManager';
-import { getOrCreateAsset } from '../../../assets/asset';
+
+import { BlockHeader } from '@subsquid/substrate-processor';
+import { Store } from '@subsquid/typeorm-store';
+
+import {
+  Aavepool,
+  AavepoolHistoricalData,
+  Asset,
+} from '../../../../model';
+import parsers from '../../../../parsers';
+import {
+  BatchBlocksParsedDataManager,
+} from '../../../../parsers/batchBlocksParser';
+import {
+  AaveTradeExecutorPoolDataWithPoolId,
+} from '../../../../parsers/runtimeApiResolver/types';
+import { SqdProcessorContext } from '../../../../processor';
+import { splitIntoBatches } from '../../../../utils/helpers';
+import { getOrCreateAavepool } from './aavepool';
 
 export async function handleAavepoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -116,7 +124,6 @@ export async function handleAavepoolHistoricalData(
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,
           paraBlockHeight: blockHeader.height,
-          block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
         });
 
         predefinedEntities.push(poolHistoricalDataEntity);

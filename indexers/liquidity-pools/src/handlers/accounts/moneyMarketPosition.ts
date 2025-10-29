@@ -1,17 +1,29 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import { constants } from 'ethers';
+import pMap from 'p-map';
+
 import { Store } from '@subsquid/typeorm-store';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
-import { AccountMmPositionHistoricalData, EvmEventName } from '../../model';
+
+import {
+  AccountMmPositionHistoricalData,
+  EvmEventName,
+} from '../../model';
+import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
+import { StorageResolver } from '../../parsers/storageResolver';
+import { EventName } from '../../parsers/types/events';
+import {
+  EvmAccountsAccountExtensionWithEvmAddress,
+} from '../../parsers/types/storage';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import {
+  MoneyMarketContractsManager,
+} from '../../utils/evmTools/moneyMarketContractsManager';
 import {
   getOrCreateAccount,
   getOrCreateAccountByBoundEvmAddress,
 } from './index';
-import { constants, ethers } from 'ethers';
-import pMap from 'p-map';
-import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import { EventName } from '../../parsers/types/events';
-import { StorageResolver } from '../../parsers/storageResolver';
-import { EvmAccountsAccountExtensionWithEvmAddress } from '../../parsers/types/storage';
 
 const maxHealthFactor =
   '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
@@ -146,7 +158,6 @@ export async function handleAccountMmPositionDataOnMmEvent({
 
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
-    block,
   });
 
   ctx.batchState.state.accountMmPositionHistoricalData.set(

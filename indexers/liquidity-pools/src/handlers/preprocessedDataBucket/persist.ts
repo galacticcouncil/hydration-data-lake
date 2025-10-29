@@ -1,6 +1,6 @@
-import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { Entity } from '@subsquid/typeorm-store/src/store';
+
 import {
   AssetAssetsPairVolume,
   AssetHistoricalData,
@@ -13,6 +13,7 @@ import {
   StableswapVolumeHistoricalData,
   XykpoolVolumeHistoricalData,
 } from '../../model';
+import { SqdProcessorContext } from '../../processor';
 
 export async function savePreprocessedData({
   dataToSave,
@@ -102,7 +103,6 @@ function decorateAssetHistoricalData(src: AssetHistoricalData) {
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.asset = src.asset.id;
-  decorated.block = src.block.id;
 
   delete decorated.spotPrices;
   delete decorated.assetPairVolumes;
@@ -117,7 +117,6 @@ function decorateAssetsPairVolumeHistoricalData(
 
   decorated.assetA = src.assetA.id;
   decorated.assetB = src.assetB.id;
-  decorated.block = src.block.id;
 
   return decorated;
 }
@@ -130,7 +129,6 @@ function decorateAssetSpotPriceHistoricalData(
   decorated.assetInHistData = src.assetInHistData.id;
   decorated.assetIn = src.assetIn.id;
   decorated.assetOut = src.assetOut.id;
-  decorated.block = src.block.id;
 
   return decorated;
 }
@@ -151,7 +149,6 @@ function decorateXykpoolVolumeHistoricalData(src: XykpoolVolumeHistoricalData) {
   decorated.pool = src.pool.id;
   decorated.assetA = src.assetA.id;
   decorated.assetB = src.assetB.id;
-  decorated.block = src.block.id;
 
   return decorated;
 }
@@ -162,7 +159,6 @@ function decorateLbppoolVolumeHistoricalData(src: LbppoolVolumeHistoricalData) {
   decorated.pool = src.pool.id;
   decorated.assetA = src.assetA.id;
   decorated.assetB = src.assetB.id;
-  decorated.block = src.block.id;
 
   return decorated;
 }
@@ -173,7 +169,6 @@ function decorateOmnipoolAssetVolumeHistoricalData(
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.omnipoolAsset = src.omnipoolAsset.id;
-  decorated.block = src.block.id;
 
   return decorated;
 }
@@ -185,7 +180,6 @@ function decorateStableswapAssetVolumeHistoricalData(
 
   decorated.volumesCollection = src.volumesCollection.id;
   decorated.asset = src.asset.id;
-  decorated.block = src.block.id;
 
   return decorated;
 }
@@ -196,7 +190,6 @@ function decorateStableswapVolumeHistoricalData(
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.pool = src.pool.id;
-  decorated.block = src.block.id;
 
   delete decorated.assetVolumes;
 

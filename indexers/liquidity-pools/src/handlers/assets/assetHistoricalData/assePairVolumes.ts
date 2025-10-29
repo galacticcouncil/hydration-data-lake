@@ -1,13 +1,13 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   AssetAssetsPairVolume,
   AssetsPairVolumeHistoricalData,
   Swap,
   SwapAssetBalance,
 } from '../../../model';
-import { OfflineTradeRouterManager } from './utils';
+import { SqdProcessorContext } from '../../../processor';
 import {
   fromExponentialToDecimalNotation,
   isUnifiedEventsSupportSpecVersion,
@@ -214,7 +214,6 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
 
       paraBlockHeight: blockHeader.height,
       relayBlockHeight: currentBlockEntity?.relayBlockHeight,
-      block: currentBlockEntity,
     });
 
     ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.set(

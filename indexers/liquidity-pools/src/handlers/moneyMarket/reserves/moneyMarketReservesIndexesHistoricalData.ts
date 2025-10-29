@@ -1,13 +1,19 @@
-import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { PoolReserveDataUpdatedEventParams } from '../../../parsers/types/events';
+
 import {
   EvmEventName,
   MmReserveIndexesHistoricalData,
 } from '../../../model';
-import { getOrCreateMoneyMarketReserve } from './moneyMarketReserve';
-import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import {
+  PoolReserveDataUpdatedEventParams,
+} from '../../../parsers/types/events';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../processor';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
+import { getOrCreateMoneyMarketReserve } from './moneyMarketReserve';
 
 export async function processMmReserveIndexesHistoricalData({
   ctx,
@@ -77,7 +83,6 @@ export async function processMmReserveIndexesHistoricalDataEntity({
 
     paraBlockHeight: blockHeader.height,
     relayBlockHeight: block.relayBlockHeight,
-    block,
   });
 
   ctx.batchState.state.moneyMarketReserveIndexesHistData.set(
