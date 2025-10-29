@@ -1,6 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import {Account} from "./account.model"
-import {Block} from "./block.model"
 import {OmnipoolAsset} from "./omnipoolAsset.model"
 
 @Entity_()
@@ -22,9 +21,8 @@ export class Omnipool {
   @Column_("int4", {nullable: true})
   destroyedAtParaBlockHeight!: number | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  destroyedAtBlock!: Block | undefined | null
+  @Column_("text", {nullable: true})
+  destroyedAtBlockId!: string | undefined | null
 
   @OneToMany_(() => OmnipoolAsset, e => e.pool)
   assets!: OmnipoolAsset[]

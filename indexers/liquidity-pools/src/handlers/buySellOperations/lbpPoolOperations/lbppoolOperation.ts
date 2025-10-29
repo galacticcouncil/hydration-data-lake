@@ -82,6 +82,7 @@ export async function lpbBuyExecuted(
   });
 
   await handleAssetVolumeUpdates(ctx, {
+    blockId: swap.event.block.id,
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
     assetIn: swapInputs[0].asset,
@@ -159,6 +160,7 @@ export async function lpbSellExecuted(
   });
 
   await handleAssetVolumeUpdates(ctx, {
+    blockId: swap.event.block.id,
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
     assetIn: swapInputs[0].asset,

@@ -5,7 +5,6 @@ import {
   Omnipool,
   OmnipoolAsset,
   OmnipoolAssetAddedData,
-  OmnipoolAssetLifeState,
 } from '../../../../model';
 import { getOrCreateAccount } from '../../../accounts';
 import { getOrCreateAsset } from '../../../assets/asset';
@@ -52,7 +51,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
     addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       ctx.blocks[0].header.height
     ).height,
-    addedAtBlock: ctx.batchState.state.batchBlocks.get(ctx.blocks[0].header.id),
+    addedAtBlockId: ctx.blocks[0].header.id,
     isRemoved: false,
     lifeStates: addOmnipoolAssetAddedLifeState({
       assetAddedState: new OmnipoolAssetAddedData({

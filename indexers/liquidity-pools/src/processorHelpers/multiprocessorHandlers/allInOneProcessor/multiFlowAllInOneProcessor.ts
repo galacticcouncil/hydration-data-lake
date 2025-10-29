@@ -7,15 +7,11 @@ import {
   getParsedEventsData,
 } from '../../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../../parsers/storageResolver';
-import {
-  prefetchOrInitAllBatchAccounts,
-  saveAllBatchAccounts,
-} from '../../../handlers/accounts';
+import { saveAllBatchAccounts } from '../../../handlers/accounts';
 import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
 import {
   actualiseAssets,
   ensureNativeToken,
-  prefetchAllAssets,
 } from '../../../handlers/assets/utils';
 import { handleAssetRegistry } from '../../../handlers/assets';
 import { handleLbpPools } from '../../../handlers/pools/pools/lbpPool';
@@ -55,10 +51,7 @@ import {
   prefetchPersistentDataForMultiFlowProcPricesCalcPhase,
 } from '../../prefetchHelpers';
 import { handleAssetAccountBalances } from '../../../handlers/balances';
-import {
-  handleAccountMmPositionData,
-  handleAllAccountsMmPositionDataUpdate,
-} from '../../../handlers/accounts/moneyMarketPosition';
+import { handleAccountMmPositionData } from '../../../handlers/accounts/moneyMarketPosition';
 import { actualizeMoneyMarketReserves } from '../../../handlers/moneyMarket/reserves/moneyMarketReserve';
 import { handleMmReservesConfigsHistoricalData } from '../../../handlers/moneyMarket/reserves';
 import { ensureHsmpool } from '../../../handlers/pools/pools/hsmpool/hsmPool';

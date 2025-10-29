@@ -2,7 +2,6 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Lbppool} from "./lbppool.model"
 import {Asset} from "./asset.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class LbppoolVolumeHistoricalData {
@@ -110,7 +109,6 @@ export class LbppoolVolumeHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

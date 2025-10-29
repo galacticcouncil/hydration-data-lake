@@ -150,7 +150,7 @@ async function getStableswapDataPromise({
       blockHeader.height
     ).height,
     paraBlockHeight: blockHeader.height,
-    block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+    blockId: blockHeader.id,
   });
 
   const poolAssetHistoricalDataEntities = [];
@@ -181,7 +181,7 @@ async function getStableswapDataPromise({
           blockHeader.height
         ).height,
         paraBlockHeight: blockHeader.height,
-        block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+        blockId: blockHeader.id,
       })
     );
   }

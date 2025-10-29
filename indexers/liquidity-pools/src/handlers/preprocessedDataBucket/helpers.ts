@@ -105,7 +105,7 @@ export async function handlePreprocDataBuckets({
       (await ctx.storeUtils.findOneWithLogs(
         BlockEntity,
         {
-          where: { id: preprocData.block },
+        where: { id: preprocData.block },
         },
         { className: 'BlockEntity' }
       ));
@@ -121,7 +121,7 @@ export async function handlePreprocDataBuckets({
       usdPriceNormalised: preprocData.usdPriceNormalised,
       paraBlockHeight: preprocData.paraBlockHeight,
       relayBlockHeight: preprocData.relayBlockHeight,
-      block,
+      blockId: block?.id,
     });
     resultCache.assetHistoricalData.set(newEntity.id, newEntity);
   }
@@ -150,7 +150,7 @@ export async function handlePreprocDataBuckets({
       (await ctx.storeUtils.findOneWithLogs(
         BlockEntity,
         {
-          where: { id: preprocData.block },
+        where: { id: preprocData.block },
         },
         { className: 'BlockEntity' }
       ));
@@ -175,7 +175,7 @@ export async function handlePreprocDataBuckets({
       priceRoute: preprocData.priceRoute,
       paraBlockHeight: preprocData.paraBlockHeight,
       relayBlockHeight: preprocData.relayBlockHeight,
-      block,
+      blockId: block?.id,
     });
     resultCache.assetSpotPriceHistoricalData.set(newEntity.id, newEntity);
   }
@@ -190,7 +190,7 @@ export async function handlePreprocDataBuckets({
       (await ctx.storeUtils.findOneWithLogs(
         BlockEntity,
         {
-          where: { id: preprocData.block },
+        where: { id: preprocData.block },
         },
         { className: 'BlockEntity' }
       ));
@@ -219,7 +219,7 @@ export async function handlePreprocDataBuckets({
       totalVolumeNormalised: preprocData.totalVolumeNormalised,
       paraBlockHeight: preprocData.paraBlockHeight,
       relayBlockHeight: preprocData.relayBlockHeight,
-      block,
+      blockId: block?.id,
     });
     resultCache.assetsPairVolumeHistoricalData.set(newEntity.id, newEntity);
   }
@@ -446,47 +446,47 @@ export async function getPrefetchedCache({
     ctx.storeUtils.findWithLogs(
       BlockEntity,
       {
-        where: { id: In(bockIdsToPrefetch) },
+      where: { id: In(bockIdsToPrefetch) },
       },
       { className: 'BlockEntity' }
     ),
     ctx.storeUtils.findWithLogs(
       XykpoolVolumeHistoricalData,
       {
-        where: { id: In(xykpoolVolIdsToPrefetch) },
-        relations: { pool: true, block: true },
+      where: { id: In(xykpoolVolIdsToPrefetch) },
+      relations: { pool: true, block: true },
       },
       { className: 'XykpoolVolumeHistoricalData' }
     ),
     ctx.storeUtils.findWithLogs(
       LbppoolVolumeHistoricalData,
       {
-        where: { id: In(lbppoolVolIdsToPrefetch) },
-        relations: { pool: true, block: true },
+      where: { id: In(lbppoolVolIdsToPrefetch) },
+      relations: { pool: true, block: true },
       },
       { className: 'LbppoolVolumeHistoricalData' }
     ),
     ctx.storeUtils.findWithLogs(
       OmnipoolAssetVolumeHistoricalData,
       {
-        where: { id: In(omnipoolAssetVolIdsToPrefetch) },
-        relations: { omnipoolAsset: true, block: true },
+      where: { id: In(omnipoolAssetVolIdsToPrefetch) },
+      relations: { omnipoolAsset: true, block: true },
       },
       { className: 'OmnipoolAssetVolumeHistoricalData' }
     ),
     ctx.storeUtils.findWithLogs(
       StableswapVolumeHistoricalData,
       {
-        where: { id: In(stableswapVolIdsToPrefetch) },
-        relations: { pool: true, block: true },
+      where: { id: In(stableswapVolIdsToPrefetch) },
+      relations: { pool: true, block: true },
       },
       { className: 'StableswapVolumeHistoricalData' }
     ),
     ctx.storeUtils.findWithLogs(
       StableswapAssetVolumeHistoricalData,
       {
-        where: { id: In(stableswapAssetVolIdsToPrefetch) },
-        relations: { volumesCollection: true, asset: true },
+      where: { id: In(stableswapAssetVolIdsToPrefetch) },
+      relations: { volumesCollection: true, asset: true },
       },
       { className: 'StableswapAssetVolumeHistoricalData' }
     ),

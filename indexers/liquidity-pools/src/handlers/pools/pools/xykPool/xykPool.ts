@@ -129,7 +129,7 @@ export async function createXykPool({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+    createdAtBlockId: blockHeader.id,
   });
 
   return newPool;
@@ -241,9 +241,7 @@ export async function xykPoolCreated(
       ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height;
-    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
-      eventMetadata.blockHeader.id
-    )!;
+    existingPool.createdAtBlockId = eventMetadata.blockHeader.id;
 
     ctx.batchState.state.xykAllBatchPools.set(existingPool.id, existingPool);
     ctx.batchState.state.xykPoolIdsToSave.add(existingPool.id);

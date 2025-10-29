@@ -1,10 +1,6 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  Account,
-  AccountAssetBalanceHistoricalData,
-  AccountTotalBalanceHistoricalData,
-} from '../../model';
+import { Account } from '../../model';
 import { In } from 'typeorm';
 import parsers from '../../parsers';
 import { AccountData } from '../../parsers/types/storage';

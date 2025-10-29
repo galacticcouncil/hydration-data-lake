@@ -2,7 +2,6 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
-import {Block} from "./block.model"
 import {XykpoolLifeState} from "./_xykpoolLifeState"
 import {XykpoolPriceHistoricalData} from "./xykpoolPriceHistoricalData.model"
 import {XykpoolVolumeHistoricalData} from "./xykpoolVolumeHistoricalData.model"
@@ -52,9 +51,8 @@ export class Xykpool {
   @Column_("int4", {nullable: false})
   createdAtRelayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  createdAtBlock!: Block
+  @Column_("text", {nullable: false})
+  createdAtBlockId!: string
 
   @Column_("bool", {nullable: true})
   isDestroyed!: boolean | undefined | null

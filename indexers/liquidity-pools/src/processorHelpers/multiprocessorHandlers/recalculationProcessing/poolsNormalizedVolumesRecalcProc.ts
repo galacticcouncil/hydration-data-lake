@@ -66,7 +66,6 @@ export async function recalculatePoolsNormalizedVolumes(
           assetInHistData: true,
           assetIn: true,
           assetOut: true,
-          block: true,
         },
       }, { className: 'AssetSpotPriceHistoricalData' })
     ).map((p) => [p.id, p])
@@ -85,7 +84,6 @@ export async function recalculatePoolsNormalizedVolumes(
           pool: true,
           assetA: true,
           assetB: true,
-          block: true,
         },
       }, { className: 'XykpoolVolumeHistoricalData' })
     ).map((p) => [p.id, p])
@@ -117,7 +115,6 @@ export async function recalculatePoolsNormalizedVolumes(
         },
         relations: {
           pool: true,
-          block: true,
         },
       }, { className: 'StableswapVolumeHistoricalData' })
     ).map((p) => [p.id, p])
@@ -135,7 +132,6 @@ export async function recalculatePoolsNormalizedVolumes(
         relations: {
           volumesCollection: { pool: true },
           asset: true,
-          block: true,
         },
       }, { className: 'StableswapAssetVolumeHistoricalData' })
     ).map((p) => [p.id, p])

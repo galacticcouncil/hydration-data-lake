@@ -77,7 +77,7 @@ export async function processMmReserveIndexesHistoricalDataEntity({
 
     paraBlockHeight: blockHeader.height,
     relayBlockHeight: block.relayBlockHeight,
-    block,
+    blockId: block.id,
   });
 
   ctx.batchState.state.moneyMarketReserveIndexesHistData.set(

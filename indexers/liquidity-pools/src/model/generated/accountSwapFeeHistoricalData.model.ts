@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import {Account} from "./account.model"
 import {AccountAssetSwapFeeHistoricalData} from "./accountAssetSwapFeeHistoricalData.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class AccountSwapFeeHistoricalData {
@@ -29,7 +28,6 @@ export class AccountSwapFeeHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

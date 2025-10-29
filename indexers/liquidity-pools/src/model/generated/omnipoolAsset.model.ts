@@ -2,7 +2,6 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Omnipool} from "./omnipool.model"
 import {Asset} from "./asset.model"
-import {Block} from "./block.model"
 import {OmnipoolAssetLifeState} from "./_omnipoolAssetLifeState"
 import {OmnipoolAssetVolumeHistoricalData} from "./omnipoolAssetVolumeHistoricalData.model"
 import {OmnipoolAssetHistoricalData} from "./omnipoolAssetHistoricalData.model"
@@ -34,9 +33,8 @@ export class OmnipoolAsset {
   @Column_("int4", {nullable: false})
   addedAtRelayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  addedAtBlock!: Block
+  @Column_("text", {nullable: false})
+  addedAtBlockId!: string
 
   @Column_("bool", {nullable: true})
   isRemoved!: boolean | undefined | null

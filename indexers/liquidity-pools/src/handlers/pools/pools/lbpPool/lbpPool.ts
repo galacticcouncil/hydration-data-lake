@@ -124,7 +124,7 @@ export async function createLbppool({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+    createdAtBlockId: blockHeader.id,
   });
 
   return newPool;
@@ -284,9 +284,7 @@ export async function lpbpoolCreated(
       ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height;
-    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
-      eventMetadata.blockHeader.id
-    )!;
+    existingPool.createdAtBlockId = eventMetadata.blockHeader.id;
 
     ctx.batchState.state.lbpAllBatchPools.set(eventParams.pool, existingPool);
     ctx.batchState.state.lbpPoolIdsToSave.add(eventParams.pool);

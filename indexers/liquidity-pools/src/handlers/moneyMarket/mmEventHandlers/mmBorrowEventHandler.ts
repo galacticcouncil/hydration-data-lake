@@ -3,14 +3,10 @@ import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { EvmEventName, MmBorrow } from '../../../model';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmBorrowEvent(
   ctx: SqdProcessorContext<Store>,

@@ -83,7 +83,6 @@ async function prefetchEntities(
       owner: true,
       assetIn: true,
       assetOut: true,
-      block: true,
       events: {
         filler: true,
         order: true,

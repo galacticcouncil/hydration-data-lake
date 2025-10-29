@@ -2,11 +2,8 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { EvmEventName, MmBorrow, MmRepay } from '../../../model';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+import { EvmEventName, MmRepay } from '../../../model';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';

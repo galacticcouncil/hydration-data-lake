@@ -102,7 +102,7 @@ function decorateAssetHistoricalData(src: AssetHistoricalData) {
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.asset = src.asset.id;
-  decorated.block = src.block.id;
+  decorated.blockId = src.blockId;
 
   delete decorated.spotPrices;
   delete decorated.assetPairVolumes;
@@ -117,7 +117,7 @@ function decorateAssetsPairVolumeHistoricalData(
 
   decorated.assetA = src.assetA.id;
   decorated.assetB = src.assetB.id;
-  decorated.block = src.block.id;
+  decorated.blockId = src.blockId;
 
   return decorated;
 }
@@ -130,7 +130,7 @@ function decorateAssetSpotPriceHistoricalData(
   decorated.assetInHistData = src.assetInHistData.id;
   decorated.assetIn = src.assetIn.id;
   decorated.assetOut = src.assetOut.id;
-  decorated.block = src.block.id;
+  decorated.blockId = src.blockId;
 
   return decorated;
 }
@@ -151,7 +151,7 @@ function decorateXykpoolVolumeHistoricalData(src: XykpoolVolumeHistoricalData) {
   decorated.pool = src.pool.id;
   decorated.assetA = src.assetA.id;
   decorated.assetB = src.assetB.id;
-  decorated.block = src.block.id;
+  decorated.blockId = src.blockId;
 
   return decorated;
 }
@@ -162,7 +162,7 @@ function decorateLbppoolVolumeHistoricalData(src: LbppoolVolumeHistoricalData) {
   decorated.pool = src.pool.id;
   decorated.assetA = src.assetA.id;
   decorated.assetB = src.assetB.id;
-  decorated.block = src.block.id;
+  decorated.blockId = src.blockId;
 
   return decorated;
 }
@@ -173,7 +173,7 @@ function decorateOmnipoolAssetVolumeHistoricalData(
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.omnipoolAsset = src.omnipoolAsset.id;
-  decorated.block = src.block.id;
+  decorated.blockId = src.blockId;
 
   return decorated;
 }
@@ -185,7 +185,7 @@ function decorateStableswapAssetVolumeHistoricalData(
 
   decorated.volumesCollection = src.volumesCollection.id;
   decorated.asset = src.asset.id;
-  decorated.block = src.block.id;
+  decorated.blockId = src.blockId;
 
   return decorated;
 }
@@ -196,7 +196,7 @@ function decorateStableswapVolumeHistoricalData(
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.pool = src.pool.id;
-  decorated.block = src.block.id;
+  decorated.blockId = src.blockId;
 
   delete decorated.assetVolumes;
 

@@ -127,7 +127,7 @@ export async function processAssetsHistoricalDataAtBlock({
         relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           block.height
         ).height,
-        block: ctx.batchState.state.batchBlocks.get(block.id),
+        blockId: block.id,
       });
 
       ctx.batchState.state.assetsHistoricalDataBatch.set(

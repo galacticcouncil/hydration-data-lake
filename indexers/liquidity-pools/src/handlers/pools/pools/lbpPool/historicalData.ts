@@ -2,11 +2,7 @@ import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import parsers from '../../../../parsers';
-import {
-  Lbppool,
-  LbppoolHistoricalData,
-  XykpoolHistoricalData,
-} from '../../../../model';
+import { Lbppool, LbppoolHistoricalData } from '../../../../model';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { getOrCreateLbppool } from './lbpPool';
 import { getOrCreateAccount } from '../../../accounts';
@@ -145,7 +141,7 @@ export async function handleLbppoolHistoricalData(
                 blockHeader.height
               ).height,
               paraBlockHeight: blockHeader.height,
-              block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+              blockId: blockHeader.id,
             });
 
             return poolHistoricalDataEntity;

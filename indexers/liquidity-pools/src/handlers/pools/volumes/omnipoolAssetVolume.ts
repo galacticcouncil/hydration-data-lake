@@ -66,7 +66,7 @@ export function initOmnipoolAssetVolume({
 
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
-    block: swap.event.block,
+    blockId: swap.event.block.id,
   });
 
   const assetVolIn =

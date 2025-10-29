@@ -116,6 +116,7 @@ export async function broadcastSwappedEventPostHook({
       });
 
       await handleAssetVolumeUpdates(ctx, {
+        blockId: swap.event.block.id,
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
         assetIn: swap.inputs[0].asset,
@@ -148,6 +149,7 @@ export async function broadcastSwappedEventPostHook({
       });
 
       await handleAssetVolumeUpdates(ctx, {
+        blockId: swap.event.block.id,
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
         assetIn: swap.inputs[0].asset,
@@ -164,6 +166,7 @@ export async function broadcastSwappedEventPostHook({
         blockHeader: eventMetadata.blockHeader,
       });
       await handleAssetVolumeUpdates(ctx, {
+        blockId: swap.event.block.id,
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
         assetIn: swap.inputs[0].asset,
@@ -195,6 +198,7 @@ export async function broadcastSwappedEventPostHook({
       });
 
       await handleAssetVolumeUpdates(ctx, {
+        blockId: swap.event.block.id,
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
         assetIn: swap.inputs[0].asset,
@@ -213,6 +217,7 @@ export async function broadcastSwappedEventPostHook({
       });
 
       await handleAssetVolumeUpdates(ctx, {
+        blockId: swap.event.block.id,
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
         assetIn: swap.inputs[0].asset,

@@ -6,14 +6,10 @@ import {
   EvmEventName,
   MmReserveUsedAsCollateralEnabledEvent,
 } from '../../../model';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmReserveUsedAsCollateralEnabledEvent(
   ctx: SqdProcessorContext<Store>,

@@ -1,20 +1,12 @@
 import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BalancesTransferData } from '../../../parsers/batchBlocksParser/types';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { EvmEventName, MmSupply } from '../../../model';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import {
-  getNewMoneyMarketEventEntity,
-  processNewMoneyMarketEvent,
-} from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
+import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 
 export async function handleMmSupplyEvent(
   ctx: SqdProcessorContext<Store>,

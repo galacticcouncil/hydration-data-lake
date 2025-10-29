@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {MoneyMarketReserve} from "./moneyMarketReserve.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class MmReserveConfigHistoricalData {
@@ -104,7 +103,6 @@ export class MmReserveConfigHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

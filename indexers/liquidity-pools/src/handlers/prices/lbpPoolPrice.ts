@@ -39,7 +39,7 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
                   paraBlockHeight: block.header.height,
                   relayBlockHeight:
                     currentBlockRelayChainInfo.relaychainBlockNumber || 0,
-                  block: ctx.batchState.state.batchBlocks.get(block.header.id),
+                  blockId: block.header.id,
                 })
               );
             });

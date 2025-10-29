@@ -3,7 +3,6 @@ import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import { EventName } from '../../../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../../../utils/helpers';
-import { Xykpool } from '../../../../model';
 import { xykPoolCreated, xykPoolDestroyed } from './xykPool';
 
 export async function handleXykPools(

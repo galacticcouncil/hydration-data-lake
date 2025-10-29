@@ -161,7 +161,7 @@ export function processRouteTradeHop({
     allInvolvedAssetRegistryIds: swap.allInvolvedAssetRegistryIds,
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
-    block: swap.event.block,
+    blockId: swap.event.block.id,
   });
 
   routeTradeEntity.inputs = swap.inputs.map((swapInput) => {

@@ -1,9 +1,6 @@
 import { SqdProcessorContext } from '../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  AaveFacilitatorHistoricalData,
-  HsmCollateralConfigHistoricalData,
-} from '../../../../../model';
+import { HsmCollateralConfigHistoricalData } from '../../../../../model';
 import { LessThan } from 'typeorm';
 
 export async function getPreviousCollateralHistDataEntity({

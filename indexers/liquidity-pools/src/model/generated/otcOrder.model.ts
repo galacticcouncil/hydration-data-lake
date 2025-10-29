@@ -4,7 +4,6 @@ import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {OtcOrderStatus} from "./_otcOrderStatus"
 import {OtcOrderEvent} from "./otcOrderEvent.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class OtcOrder {
@@ -59,7 +58,6 @@ export class OtcOrder {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

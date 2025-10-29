@@ -2,7 +2,6 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, M
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
-import {Block} from "./block.model"
 import {StableswapLifeState} from "./_stableswapLifeState"
 import {StableswapAsset} from "./stableswapAsset.model"
 
@@ -33,9 +32,8 @@ export class Stableswap {
   @Column_("int4", {nullable: false})
   createdAtRelayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  createdAtBlock!: Block
+  @Column_("text", {nullable: false})
+  createdAtBlockId!: string
 
   @Column_("bool", {nullable: true})
   isDestroyed!: boolean | undefined | null

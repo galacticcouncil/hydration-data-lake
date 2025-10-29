@@ -4,7 +4,6 @@ import {Asset} from "./asset.model"
 import {AssetDynamicFee} from "./_assetDynamicFee"
 import {AssetSpotPriceHistoricalData} from "./assetSpotPriceHistoricalData.model"
 import {AssetAssetsPairVolume} from "./assetAssetsPairVolume.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class AssetHistoricalData {
@@ -51,7 +50,6 @@ export class AssetHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

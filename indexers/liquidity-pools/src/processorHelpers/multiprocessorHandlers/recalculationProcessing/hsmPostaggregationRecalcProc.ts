@@ -98,7 +98,6 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
           assetInHistData: true,
           assetIn: true,
           assetOut: true,
-          block: true,
         },
       }, { className: 'AssetSpotPriceHistoricalData' })
     ).map((p) => [p.id, p])
@@ -116,7 +115,6 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
         relations: {
           account: true,
           asset: true,
-          block: true,
         },
       }, { className: 'AccountAssetBalanceHistoricalData' })
     ).map((p) => [p.id, p])

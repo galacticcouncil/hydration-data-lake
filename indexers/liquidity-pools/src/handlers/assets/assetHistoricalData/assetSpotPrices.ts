@@ -180,7 +180,7 @@ async function processAssetSpotPrices({
 
             paraBlockHeight: blockHeader.height,
             relayBlockHeight: assetHistData.relayBlockHeight,
-            block: assetHistData.block,
+            blockId: assetHistData.blockId,
           })
         );
       } catch (e) {}
@@ -537,7 +537,7 @@ async function processXykInvolvedAssetSpotPrices({
 
           paraBlockHeight: blockHeader.height,
           relayBlockHeight: assetHistData.relayBlockHeight,
-          block: assetHistData.block,
+          blockId: assetHistData.blockId,
         })
       );
     }

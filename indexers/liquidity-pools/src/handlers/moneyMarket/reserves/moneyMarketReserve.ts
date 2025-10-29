@@ -3,10 +3,7 @@ import {
   MoneyMarketResourceDetails,
 } from '../../../utils/evmTools/moneyMarketContractsManager';
 import { SqdBlock, SqdProcessorContext } from '../../../processor';
-import {
-  processMmReserveIndexesHistoricalData,
-  processMmReserveIndexesHistoricalDataEntity,
-} from './moneyMarketReservesIndexesHistoricalData';
+import { processMmReserveIndexesHistoricalDataEntity } from './moneyMarketReservesIndexesHistoricalData';
 import { Store } from '@subsquid/typeorm-store';
 import {
   EvmContractName,

@@ -80,7 +80,8 @@ export async function handleStablepoolVolumeUpdates({
 
       relayBlockHeight,
       paraBlockHeight,
-      block: ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight),
+      blockId:
+        ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight)?.id ?? '',
     });
     ctx.batchState.state.stablepoolVolumeCollections.set(
       currentVolumesCollection.id,
@@ -212,7 +213,7 @@ export function initStablepoolAssetVolume({
     relayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
     paraBlockHeight,
-    block,
+    blockId: block?.id,
   });
 
   let routedLiqAddedAmount = BigInt(0);

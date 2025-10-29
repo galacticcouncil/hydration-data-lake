@@ -146,7 +146,7 @@ export async function handleAccountMmPositionDataOnMmEvent({
 
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
-    block,
+    blockId: block.id,
   });
 
   ctx.batchState.state.accountMmPositionHistoricalData.set(

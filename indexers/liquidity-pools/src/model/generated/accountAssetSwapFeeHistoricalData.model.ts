@@ -3,7 +3,6 @@ import * as marshal from "./marshal"
 import {AccountSwapFeeHistoricalData} from "./accountSwapFeeHistoricalData.model"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class AccountAssetSwapFeeHistoricalData {
@@ -42,7 +41,6 @@ export class AccountAssetSwapFeeHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

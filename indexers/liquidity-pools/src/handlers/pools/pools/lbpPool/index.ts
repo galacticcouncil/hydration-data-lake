@@ -4,7 +4,6 @@ import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksPar
 import { EventName } from '../../../../parsers/types/events';
 import { getOrderedListByBlockNumber } from '../../../../utils/helpers';
 import { lpbpoolCreated, lpbpoolUpdated } from './lbpPool';
-import { Lbppool } from '../../../../model';
 
 export async function handleLbpPools(
   ctx: SqdProcessorContext<Store>,

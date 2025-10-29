@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {OmnipoolAsset} from "./omnipoolAsset.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class OmnipoolAssetVolumeHistoricalData {
@@ -62,7 +61,6 @@ export class OmnipoolAssetVolumeHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

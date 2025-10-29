@@ -86,7 +86,7 @@ export async function handleXykPoolHistoricalData(
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,
           paraBlockHeight: blockHeader.height,
-          block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+          blockId: blockHeader.id,
         });
 
         predefinedEntities.push(poolHistoricalDataEntity);

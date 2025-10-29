@@ -1,9 +1,6 @@
 import { SqdProcessorContext } from '../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  HsmCollateralRemovedData,
-  StableswapPoolCreatedData,
-} from '../../../../../parsers/batchBlocksParser/types';
+import { HsmCollateralRemovedData } from '../../../../../parsers/batchBlocksParser/types';
 import { getOrCreateHsmCollateral } from './hsmCollateral';
 
 export async function handleCollateralRemovedEvent({

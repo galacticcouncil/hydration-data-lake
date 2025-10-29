@@ -368,7 +368,10 @@ export class HistoricalDataManager {
           name: RedisTimeSeriesName.price,
           assetAId: item.assetIn.assetRegistryId!,
           assetBId: item.assetOut.assetRegistryId!,
-          timestamp: item.block.timestamp.getTime(),
+          timestamp:
+            ctx.batchState
+              .getParaBlockFromCacheById(item.blockId)
+              ?.timestamp.getTime() ?? Date.now(),
           value: +item.priceNormalised,
         }))
     );
@@ -404,7 +407,10 @@ export class HistoricalDataManager {
               ? item.assetB.assetRegistryId!
               : item.assetA.assetRegistryId!,
 
-          timestamp: item.block.timestamp.getTime(),
+          timestamp:
+            ctx.batchState
+              .getParaBlockFromCacheById(item.blockId)
+              ?.timestamp.getTime() ?? Date.now(),
           value: +item.totalVolumeNormalised,
         }))
     );
@@ -427,7 +433,10 @@ export class HistoricalDataManager {
         keyPrefix: ctx.appConfig.INDEXER_ID,
         name: RedisTimeSeriesName.acc_bal_tot_tns,
         accountId: item.account.id,
-        timestamp: item.block.timestamp.getTime(),
+        timestamp:
+          ctx.batchState
+            .getParaBlockFromCacheById(item.blockId)
+            ?.timestamp.getTime() ?? Date.now(),
         value: +item.totalTransferableNorm,
       }))
     );

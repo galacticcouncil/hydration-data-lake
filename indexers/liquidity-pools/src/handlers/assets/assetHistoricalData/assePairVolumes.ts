@@ -214,7 +214,7 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
 
       paraBlockHeight: blockHeader.height,
       relayBlockHeight: currentBlockEntity?.relayBlockHeight,
-      block: currentBlockEntity,
+      blockId: currentBlockEntity?.id,
     });
 
     ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.set(

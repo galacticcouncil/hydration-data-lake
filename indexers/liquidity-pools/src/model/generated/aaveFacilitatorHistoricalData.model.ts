@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {AaveFacilitator} from "./aaveFacilitator.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class AaveFacilitatorHistoricalData {
@@ -36,7 +35,6 @@ export class AaveFacilitatorHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

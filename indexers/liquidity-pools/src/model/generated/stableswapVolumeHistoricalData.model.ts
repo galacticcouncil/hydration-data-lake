@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import {Stableswap} from "./stableswap.model"
 import {StableswapAssetVolumeHistoricalData} from "./stableswapAssetVolumeHistoricalData.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class StableswapVolumeHistoricalData {
@@ -47,7 +46,6 @@ export class StableswapVolumeHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

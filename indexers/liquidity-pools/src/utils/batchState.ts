@@ -539,6 +539,10 @@ export class BatchState {
     return blockData;
   }
 
+  getParaBlockFromCacheById(id: string): BlockEntity | undefined {
+    return this.state.batchBlocks.get(id);
+  }
+
   getBlockHeaderByBlockHeight(height: number): SqdBlock {
     if (!this.state.blockHeadersByHeight.has(height))
       throw new Error(`Block header cannot be found for height ${height}`);

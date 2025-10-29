@@ -53,7 +53,7 @@ export async function getNewStableswapWithAssets({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
-    createdAtBlock: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+    createdAtBlockId: blockHeader.id,
     isDestroyed: false,
     lifeStates: addStableswapCreatedLifeState({
       createdState: new StableswapCreatedData({
@@ -188,9 +188,7 @@ export async function stableswapCreated(
       ctx.batchState.getRelayChainBlockDataFromCache(
         eventMetadata.blockHeader.height
       ).height;
-    existingPool.createdAtBlock = ctx.batchState.state.batchBlocks.get(
-      eventMetadata.blockHeader.id
-    )!;
+    existingPool.createdAtBlockId = eventMetadata.blockHeader.id;
     existingPool.lifeStates = addStableswapCreatedLifeState({
       createdState: new StableswapCreatedData({
         paraBlockHeight: eventMetadata.blockHeader.height,

@@ -8,8 +8,6 @@ import {
 } from '../../../../model';
 import { LessThan } from 'typeorm';
 import { getOrCreateHsmCollateral } from './collaterals/hsmCollateral';
-import { calcPriceNormalized } from '../../../../utils/helpers';
-import { BigNumber } from '@galacticcouncil/sdk';
 import { getOldAaveFacilitatorHistDataEntity } from '../../../facilitator/historicalData';
 
 export async function handleHsmAssetHistoricalData({
@@ -142,7 +140,7 @@ export async function initHsmAssetHistoricalData({
     paraTimestamp: block?.timestamp,
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
-    block,
+    blockId: block.id,
   });
 
   const assetVolIn =

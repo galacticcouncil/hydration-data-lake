@@ -2,15 +2,11 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { EvmEventName, MmBorrow, MmLiquidationCall } from '../../../model';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+import { EvmEventName, MmLiquidationCall } from '../../../model';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmLiquidationCallEvent(
   ctx: SqdProcessorContext<Store>,
@@ -119,5 +115,4 @@ export async function handleMmLiquidationCallEvent(
     allInvolvedParticipants: [account.id, liquidatorAccount.id],
     liquidationCall: mmLiquidationCallEntity,
   });
-
 }

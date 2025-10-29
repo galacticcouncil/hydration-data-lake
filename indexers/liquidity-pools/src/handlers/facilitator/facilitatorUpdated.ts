@@ -132,7 +132,7 @@ export async function handleFacilitatorUpdatedEvent({
       paraTimestamp: new Date(blockHeader.timestamp || Date.now()),
       paraBlockHeight: block.height,
       relayBlockHeight: block.relayBlockHeight,
-      block,
+      blockId: block.id,
     });
   }
 

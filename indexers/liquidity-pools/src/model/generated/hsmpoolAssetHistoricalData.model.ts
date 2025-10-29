@@ -3,7 +3,6 @@ import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {HsmCollateral} from "./hsmCollateral.model"
 import {AaveFacilitatorHistoricalData} from "./aaveFacilitatorHistoricalData.model"
-import {Block} from "./block.model"
 
 @Entity_()
 export class HsmpoolAssetHistoricalData {
@@ -91,7 +90,6 @@ export class HsmpoolAssetHistoricalData {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Block, {nullable: true})
-  block!: Block
+  @Column_("text", {nullable: false})
+  blockId!: string
 }

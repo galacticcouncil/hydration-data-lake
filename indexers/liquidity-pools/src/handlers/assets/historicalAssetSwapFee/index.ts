@@ -33,7 +33,7 @@ export async function handleAssetSwapFee({
       where: {
         asset: { id: asset.id },
       },
-      relations: { asset: true, block: true },
+      relations: { asset: true },
       order: {
         paraBlockHeight: 'DESC',
       },
@@ -46,7 +46,7 @@ export async function handleAssetSwapFee({
     totalAmount: persistentAssetFeeAmount?.totalAmount || BigInt(0),
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
-    block,
+    blockId: block.id,
   });
 
   assetSwapFee.amount += feeAmount;

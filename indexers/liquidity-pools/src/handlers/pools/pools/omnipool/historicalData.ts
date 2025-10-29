@@ -5,7 +5,6 @@ import parsers from '../../../../parsers';
 import {
   OmnipoolAssetHistoricalData,
   OmnipoolHistoricalData,
-  XykpoolHistoricalData,
 } from '../../../../model';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { getOrCreateOmnipoolAsset } from './omnipoolAssets';
@@ -80,7 +79,7 @@ export async function handleOmnipoolHistoricalData(
                     blockHeader.height
                   ).height,
                 paraBlockHeight: blockHeader.height,
-                block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+                blockId: blockHeader.id,
               })
             );
           }
@@ -159,7 +158,7 @@ export async function handleOmnipoolHistoricalData(
               blockHeader.height
             ).height,
             paraBlockHeight: blockHeader.height,
-            block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+            blockId: blockHeader.id,
           });
 
           return newEntity;

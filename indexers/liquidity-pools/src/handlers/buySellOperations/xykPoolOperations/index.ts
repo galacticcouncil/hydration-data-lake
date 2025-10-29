@@ -75,7 +75,6 @@ async function prefetchEntities(
       assetA: true,
       assetB: true,
       shareToken: true,
-      createdAtBlock: true,
     },
   }, { className: 'Xykpool' });
 
