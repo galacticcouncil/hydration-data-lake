@@ -89,6 +89,7 @@ import {
   XykYieldFarmDeposit,
   XykYieldFarmEntry,
   XykYieldFarmDepositEvent,
+  OmnipoolAssetHistoricalDataLatest,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -190,6 +191,10 @@ export type BatchStatePayload = {
   >;
   omnipoolAllHistoricalData: Map<string, OmnipoolHistoricalData>;
   omnipoolAssetAllHistoricalData: Map<string, OmnipoolAssetHistoricalData>;
+  omnipoolAssetsHistoricalDataLatest: Map<
+    string,
+    OmnipoolAssetHistoricalDataLatest
+  >;
 
   stableswapIdsToSave: Set<string>;
   stableswapAssets: Map<string, StableswapAsset>;
@@ -342,6 +347,7 @@ export class BatchState {
     omnipoolAssetIdsForStoragePrefetch: new Map(),
     omnipoolAllHistoricalData: new Map(),
     omnipoolAssetAllHistoricalData: new Map(),
+    omnipoolAssetsHistoricalDataLatest: new Map(),
 
     stableswapIdsToSave: new Set(),
     stableswapPools: new Map(),
@@ -465,6 +471,7 @@ export class BatchState {
       omnipoolAssetIdsForStoragePrefetch: new Map(),
       omnipoolAllHistoricalData: new Map(),
       omnipoolAssetAllHistoricalData: new Map(),
+      omnipoolAssetsHistoricalDataLatest: new Map(),
 
       stableswapIdsToSave: new Set(),
       stableswapPools: new Map(),
