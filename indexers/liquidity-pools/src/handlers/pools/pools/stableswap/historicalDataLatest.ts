@@ -30,7 +30,7 @@ export function getStableswapAssetsHistDataLatest({
         id,
 
         assetId: data.asset.id,
-        poolId: data.stableswapAsset.pool.id,
+        poolId: data.poolHistoricalData.pool.id,
         stableswapAssetId: data.stableswapAsset.id,
         poolHistoricalDataId: data.poolHistoricalData.id,
         freeBalance: data.freeBalance,
