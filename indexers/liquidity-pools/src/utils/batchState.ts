@@ -90,6 +90,7 @@ import {
   XykYieldFarmEntry,
   XykYieldFarmDepositEvent,
   OmnipoolAssetHistoricalDataLatest,
+  StableswapAssetHistoricalDataLatest,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -210,6 +211,10 @@ export type BatchStatePayload = {
 
   stablepoolAllHistoricalData: Map<string, StableswapHistoricalData>;
   stablepoolAssetsAllHistoricalData: Map<string, StableswapAssetHistoricalData>;
+  stablepoolAssetsHistoricalDataLatest: Map<
+    string,
+    StableswapAssetHistoricalDataLatest
+  >;
   stableswapIdsForStoragePrefetch: Map<
     number,
     { blockHeader: BlockHeader; ids: Set<number> }
@@ -359,6 +364,7 @@ export class BatchState {
     stablepoolBatchLiquidityActions: new Map(),
     stablepoolAllHistoricalData: new Map(),
     stablepoolAssetsAllHistoricalData: new Map(),
+    stablepoolAssetsHistoricalDataLatest: new Map(),
     stableswapIdsForStoragePrefetch: new Map(),
 
     dcaSchedules: new Map(),
@@ -483,6 +489,7 @@ export class BatchState {
       stablepoolBatchLiquidityActions: new Map(),
       stablepoolAllHistoricalData: new Map(),
       stablepoolAssetsAllHistoricalData: new Map(),
+      stablepoolAssetsHistoricalDataLatest: new Map(),
       stableswapIdsForStoragePrefetch: new Map(),
 
       dcaSchedules: new Map(),
