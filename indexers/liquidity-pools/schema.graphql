@@ -1078,6 +1078,26 @@ type OmnipoolAssetHistoricalData @entity {
   block: Block!
 }
 
+type OmnipoolAssetHistoricalDataLatest @entity {
+  "<omnipoolAssetId>"
+  id: ID!
+
+  poolHistoricalDataId: String!
+  omnipoolAssetId: String!
+  assetId: String! @index
+
+  assetCap: BigInt!
+  assetShares: BigInt!
+  assetHubReserve: BigInt!
+  assetProtocolShares: BigInt!
+  freeBalance: BigInt!
+  tradable: Int!
+  tvlInRefAssetNorm: String
+
+  paraBlockHeight: Int!
+  blockId: String!
+}
+
 # ======================================================================================================================
 # *** Stableswap ***
 # ======================================================================================================================
