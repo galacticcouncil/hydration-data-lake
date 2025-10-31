@@ -37,7 +37,9 @@ export class AssetsPairVolumeHistoricalData {
     @IntColumn_({nullable: false})
     paraBlockHeight!: number
 
-    @Index_()
     @IntColumn_({nullable: false})
     relayBlockHeight!: number
+
+    @StringColumn_({nullable: true})
+    blockId!: string | undefined | null
 }

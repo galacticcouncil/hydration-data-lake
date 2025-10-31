@@ -148,6 +148,11 @@ export function processRouteTradeHop({
 
   const newRouteTradeEntityId = `${swap.paraBlockHeight}-${routeId ?? swap.id}`;
 
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(swap.paraBlockHeight);
+  if (!block) {
+    throw new Error(`Block not found in cache for height ${swap.paraBlockHeight}`);
+  }
+
   routeTradeEntity = new RoutedTrade({
     id: newRouteTradeEntityId,
     routeId,
@@ -161,6 +166,7 @@ export function processRouteTradeHop({
     allInvolvedAssetRegistryIds: swap.allInvolvedAssetRegistryIds,
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
+    blockId: block.id,
   });
 
   routeTradeEntity.inputs = swap.inputs.map((swapInput) => {

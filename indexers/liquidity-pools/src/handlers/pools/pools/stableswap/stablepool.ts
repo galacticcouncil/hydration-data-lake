@@ -45,6 +45,11 @@ export async function getNewStableswapWithAssets({
   if (!poolShareToken)
     throw Error(`Asset ${poolId} can not be found or created.`);
 
+  const createdAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  if (!createdAtBlock) {
+    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+  }
+
   const newPool = new Stableswap({
     id: `${poolId}`,
     account: await getOrCreateAccount({
@@ -58,6 +63,7 @@ export async function getNewStableswapWithAssets({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
+    createdAtBlockId: createdAtBlock.id,
     isDestroyed: false,
     lifeStates: addStableswapCreatedLifeState({
       createdState: new StableswapCreatedData({

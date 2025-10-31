@@ -68,6 +68,11 @@ export async function handleStablepoolVolumeUpdates({
         // currentBlockHeight: paraBlockHeight,
       }));
 
+    const block = ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight);
+    if (!block) {
+      throw new Error(`Block not found in cache for height ${paraBlockHeight}`);
+    }
+
     currentVolumesCollection = new StableswapVolumeHistoricalData({
       id: `${pool.id}-${paraBlockHeight}`,
       pool,
@@ -81,6 +86,7 @@ export async function handleStablepoolVolumeUpdates({
 
       relayBlockHeight,
       paraBlockHeight,
+      blockId: block.id,
     });
     ctx.batchState.state.stablepoolVolumeCollections.set(
       currentVolumesCollection.id,
@@ -212,6 +218,7 @@ export function initStablepoolAssetVolume({
     relayBlockHeight:
       ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
     paraBlockHeight,
+    blockId: block!.id,
   });
 
   let routedLiqAddedAmount = BigInt(0);

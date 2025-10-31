@@ -9,7 +9,7 @@
     "process": "node --require=dotenv/config lib/main.js",
     "build": "rm -rf lib && tsc",
     "node-pg-migrate": "node-pg-migrate",
-    "postbuild": "cpx 'src/**/*.sql' lib && cpx 'src/**/*.graphql' lib && cpx 'src/**/*.json5' lib",
+    "postbuild": "cpx 'src/**/*.sql' lib && cpx 'src/**/*.graphql' lib && cpx 'src/**/*.json5' lib && cpx 'db/dataMigrations/**/*.sql' lib/db/dataMigrations",
     "deploy": "sqd deploy --org galacticcouncil . -m deployment-hydration-indexer.yaml",
     "ingester-codegen:all": ". ./scripts/ingester-codegen.sh",
     "multi-typegen": ". ./scripts/typegen.sh",
@@ -18,7 +18,9 @@
     "explore-metadata-hollar": "npx squid-substrate-metadata-explorer --rpc wss://nomax.lark.hydration.cloud --out ./typegenAssets/one-lark-metadata.jsonl",
     "papi-typegen": "npx papi add -w wss://hydration-rpc.n.dwellir.com hydration",
     "postpapi-typegen": "rm .papi/descriptors/.gitignore",
-    "clinic:frame": "sqd build && sqd migration:apply && clinic flame -- node --require=dotenv/config lib/main.js"
+    "clinic:frame": "sqd build && sqd migration:apply && clinic flame -- node --require=dotenv/config lib/main.js",
+    "db:backfill": "npm run build && node --require=dotenv/config lib/db-backfill-runner.js",
+    "db:backfill:dry-run": "npm run build && node --require=dotenv/config lib/db-backfill-runner.js -- --dry-run"
   },
   "dependencies": {
     "@aave/contract-helpers": "1.28.0",

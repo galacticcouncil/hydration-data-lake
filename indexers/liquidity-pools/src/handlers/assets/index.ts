@@ -67,6 +67,7 @@ export async function handleAssetRegistry(
 }
 
 export function initAssetVolume({
+  ctx,
   asset,
   totalVolumeIn,
   totalVolumeOut,
@@ -77,6 +78,7 @@ export function initAssetVolume({
   totalVolumeInNorm = '0',
   totalVolumeOutNorm = '0',
 }: {
+  ctx: SqdProcessorContext<Store>;
   asset: Asset;
   paraBlockHeight: number;
   relayBlockHeight: number;
@@ -87,6 +89,11 @@ export function initAssetVolume({
   totalVolumeInNorm?: string;
   totalVolumeOutNorm?: string;
 }) {
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight);
+  if (!block) {
+    throw new Error(`Block not found in cache for height ${paraBlockHeight}`);
+  }
+
   return new AssetVolumeHistoricalData({
     id: asset.id + '-' + paraBlockHeight,
     asset,
@@ -98,5 +105,6 @@ export function initAssetVolume({
     paraBlockHeight,
     totalVolumeInNorm,
     totalVolumeOutNorm,
+    blockId: block.id,
   });
 }

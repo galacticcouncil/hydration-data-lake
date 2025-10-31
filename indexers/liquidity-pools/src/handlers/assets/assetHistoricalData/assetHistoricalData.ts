@@ -105,6 +105,11 @@ export async function processAssetsHistoricalDataAtBlock({
         return null;
       }
 
+      const blockData = ctx.batchState.getParaBlockFromCacheByHeight(block.height);
+      if (!blockData) {
+        throw new Error(`Block not found in cache for height ${block.height}`);
+      }
+
       const newAssetHistoricalData = new AssetHistoricalData({
         id: `${asset.id}-${block.height}`,
         asset,
@@ -132,6 +137,7 @@ export async function processAssetsHistoricalDataAtBlock({
         relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
           block.height
         ).height,
+        blockId: blockData.id,
       });
 
       ctx.batchState.state.assetsHistoricalDataBatch.set(

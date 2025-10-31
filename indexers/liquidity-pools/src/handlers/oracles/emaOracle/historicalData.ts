@@ -68,6 +68,11 @@ export async function handleEmaOracleHistoricalData(
               continue;
             }
 
+            const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+            if (!block) {
+              throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+            }
+
             newEntities.push(
               new EmaOracleEntryHistoricalData({
                 id: `${blockHeader.height}-${assetA.id}-${assetB.id}-${source}-${period}`,
@@ -92,6 +97,7 @@ export async function handleEmaOracleHistoricalData(
                   ctx.batchState.state.relayChainInfo.get(blockHeader.height)
                     ?.relaychainBlockNumber ?? 0,
                 paraBlockHeight: blockHeader.height,
+                blockId: block.id,
               })
             );
           }

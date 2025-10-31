@@ -51,6 +51,7 @@ export async function handleAssetSwapFee({
     totalAmount: persistentAssetFeeAmount?.totalAmount || BigInt(0),
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
+    blockId: block.id,
   });
 
   assetSwapFee.amount += feeAmount;

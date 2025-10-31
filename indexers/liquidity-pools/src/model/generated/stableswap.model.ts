@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_, StringColumn as StringColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
@@ -31,6 +31,9 @@ export class Stableswap {
 
     @IntColumn_({nullable: false})
     createdAtRelayBlockHeight!: number
+
+    @StringColumn_({nullable: true})
+    createdAtBlockId!: string | undefined | null
 
     @BooleanColumn_({nullable: true})
     isDestroyed!: boolean | undefined | null

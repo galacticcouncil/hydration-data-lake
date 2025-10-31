@@ -29,6 +29,12 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
               getAssetFreeBalance(block.header, +p.assetA.id, p.id), // TODO must be optimized
               getAssetFreeBalance(block.header, +p.assetB.id, p.id), // TODO must be optimized
             ]).then(([assetABalance, assetBBalance]) => {
+              const blockData = ctx.batchState.getParaBlockFromCacheByHeight(block.header.height);
+              if (!blockData) {
+                resolve(null);
+                return;
+              }
+
               resolve(
                 new LbppoolPriceHistoricalData({
                   id: p.id + '-' + block.header.height,
@@ -40,6 +46,7 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
                   paraBlockHeight: block.header.height,
                   relayBlockHeight:
                     currentBlockRelayChainInfo.relaychainBlockNumber || 0,
+                  blockId: blockData.id,
                 })
               );
             });

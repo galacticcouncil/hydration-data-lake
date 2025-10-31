@@ -138,6 +138,11 @@ async function getStableswapDataPromise({
     poolEntity.assets.map((sAsset) => [sAsset.asset.id, sAsset])
   );
 
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  if (!block) {
+    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+  }
+
   const poolHistoricalDataEntity = new StableswapHistoricalData({
     id: `${poolId}-${blockHeader.height}`,
     pool: poolEntity,
@@ -154,6 +159,7 @@ async function getStableswapDataPromise({
       blockHeader.height
     ).height,
     paraBlockHeight: blockHeader.height,
+    blockId: block.id,
   });
 
   const poolAssetHistoricalDataEntities = [];
@@ -184,6 +190,7 @@ async function getStableswapDataPromise({
           blockHeader.height
         ).height,
         paraBlockHeight: blockHeader.height,
+        blockId: block.id,
       })
     );
   }

@@ -62,6 +62,11 @@ export async function getOrCreateOmnipoolAsset({
 
   if (!blockHeader) return null;
 
+  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  if (!addedAtBlock) {
+    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+  }
+
   omnipoolAsset = new OmnipoolAsset({
     id: `${ctx.batchState.state.omnipoolEntity!.id}-${assetEntity.id}`,
     asset: assetEntity,
@@ -71,6 +76,7 @@ export async function getOrCreateOmnipoolAsset({
     addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
+    addedAtBlockId: addedAtBlock.id,
     isRemoved: false,
     lifeStates: addOmnipoolAssetAddedLifeState({
       assetAddedState: new OmnipoolAssetAddedData({
@@ -144,6 +150,11 @@ export async function omnipoolTokenAdded(
 
   if (!assetEntity) return;
 
+  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(eventMetadata.blockHeader.height);
+  if (!addedAtBlock) {
+    throw new Error(`Block not found in cache for height ${eventMetadata.blockHeader.height}`);
+  }
+
   omnipoolAssetEntity = new OmnipoolAsset({
     id: `${ctx.batchState.state.omnipoolEntity!.id}-${assetEntity.id}`,
     asset: assetEntity,
@@ -153,6 +164,7 @@ export async function omnipoolTokenAdded(
     addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       eventMetadata.blockHeader.height
     ).height,
+    addedAtBlockId: addedAtBlock.id,
 
     isRemoved: false,
     lifeStates: addOmnipoolAssetAddedLifeState({

@@ -128,6 +128,7 @@ export async function createLbppool({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
+    createdAtBlockId: ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height)!.id,
   });
 
   return newPool;

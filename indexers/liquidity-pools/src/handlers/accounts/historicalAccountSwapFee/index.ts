@@ -66,6 +66,7 @@ export async function handleAccountAssetSwapFee({
     totalAmount: persistentAccAssetFeeAmount?.totalAmount || BigInt(0),
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
+    blockId: block.id,
   });
 
   accountAssetSwapFee.amount += feeAmount;
@@ -117,6 +118,7 @@ export function getAccountSwapFeesCollection({
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
     account,
+    blockId: block.id,
   });
 
   ctx.batchState.state.historicalAccountSwapFees.set(collection.id, collection);

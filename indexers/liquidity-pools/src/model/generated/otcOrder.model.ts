@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
 import {Asset} from "./asset.model"
 import {OtcOrderStatus} from "./_otcOrderStatus"
@@ -56,4 +56,7 @@ export class OtcOrder {
 
     @IntColumn_({nullable: false})
     relayBlockHeight!: number
+
+    @StringColumn_({nullable: true})
+    blockId!: string | undefined | null
 }

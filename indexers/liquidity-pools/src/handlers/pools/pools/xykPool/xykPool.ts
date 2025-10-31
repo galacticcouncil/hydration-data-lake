@@ -104,6 +104,11 @@ export async function createXykPool({
 
   if (!sharedTokenEntity) return null;
 
+  const createdAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  if (!createdAtBlock) {
+    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+  }
+
   const newPool = new Xykpool({
     id: poolAddress,
     account: await getOrCreateAccount({
@@ -133,6 +138,7 @@ export async function createXykPool({
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
+    createdAtBlockId: createdAtBlock.id,
   });
 
   return newPool;

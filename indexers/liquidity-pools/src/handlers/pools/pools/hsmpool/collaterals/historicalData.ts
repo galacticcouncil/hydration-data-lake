@@ -108,6 +108,7 @@ export async function handleHsmCollateralConfigHistoricalDataEntity({
     paraTimestamp: new Date(block.timestamp),
     relayBlockHeight: block.relayBlockHeight,
     paraBlockHeight: blockHeader.height,
+    blockId: block.id,
   });
 
   ctx.batchState.state.hsmCollateralsConfigHistData.set(

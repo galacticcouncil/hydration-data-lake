@@ -71,6 +71,11 @@ export async function handleOmnipoolHistoricalData(
               `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`
             )
           ) {
+            const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+            if (!block) {
+              throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+            }
+
             ctx.batchState.state.omnipoolAllHistoricalData.set(
               `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`,
               new OmnipoolHistoricalData({
@@ -83,6 +88,7 @@ export async function handleOmnipoolHistoricalData(
                     blockHeader.height
                   ).height,
                 paraBlockHeight: blockHeader.height,
+                blockId: block.id,
               })
             );
           }
@@ -137,6 +143,11 @@ export async function handleOmnipoolHistoricalData(
 
           if (!omnipoolAsset) return null;
 
+          const assetBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+          if (!assetBlock) {
+            throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+          }
+
           const newEntity = new OmnipoolAssetHistoricalData({
             id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${asset.id}-${blockHeader.height}`,
             asset,
@@ -161,6 +172,7 @@ export async function handleOmnipoolHistoricalData(
               blockHeader.height
             ).height,
             paraBlockHeight: blockHeader.height,
+            blockId: assetBlock.id,
           });
 
           return newEntity;

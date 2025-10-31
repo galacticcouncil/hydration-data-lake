@@ -76,6 +76,7 @@ export async function handleAssetVolumeUpdates(
 
   // Create new entry
   const assetInVolume = initAssetVolume({
+    ctx,
     asset: swapDetails.assetIn,
     paraBlockHeight: swapDetails.paraBlockHeight,
     relayBlockHeight: swapDetails.relayBlockHeight,
@@ -88,6 +89,7 @@ export async function handleAssetVolumeUpdates(
   });
 
   const assetOutVolume = initAssetVolume({
+    ctx,
     asset: swapDetails.assetOut,
     paraBlockHeight: swapDetails.paraBlockHeight,
     relayBlockHeight: swapDetails.relayBlockHeight,

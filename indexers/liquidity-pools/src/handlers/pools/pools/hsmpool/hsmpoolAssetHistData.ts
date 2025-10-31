@@ -147,6 +147,7 @@ export async function initHsmAssetHistoricalData({
     paraTimestamp: block?.timestamp,
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
+    blockId: block.id,
   });
 
   const assetVolIn =

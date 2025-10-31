@@ -103,6 +103,11 @@ export async function handleAavepoolHistoricalData(
               );
         }
 
+        const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+        if (!block) {
+          throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+        }
+
         const poolHistoricalDataEntity = new AavepoolHistoricalData({
           id: `${pool.id}-${blockHeader.height}`,
           pool,
@@ -124,6 +129,7 @@ export async function handleAavepoolHistoricalData(
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,
           paraBlockHeight: blockHeader.height,
+          blockId: block.id,
         });
 
         predefinedEntities.push(poolHistoricalDataEntity);

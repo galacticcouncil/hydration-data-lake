@@ -103,6 +103,7 @@ export function initXykPoolVolume(
 
     relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
+    blockId: swap.event.block.id,
   });
 
   const assetAVolIn =

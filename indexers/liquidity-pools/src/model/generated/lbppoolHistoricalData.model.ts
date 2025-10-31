@@ -71,4 +71,7 @@ export class LbppoolHistoricalData {
 
     @IntColumn_({nullable: false})
     relayBlockHeight!: number
+
+    @StringColumn_({nullable: true})
+    blockId!: string | undefined | null
 }

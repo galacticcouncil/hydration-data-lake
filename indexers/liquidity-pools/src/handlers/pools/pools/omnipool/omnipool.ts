@@ -44,6 +44,11 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   });
   omnipoolEntity.isDestroyed = false;
 
+  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(ctx.blocks[0].header.height);
+  if (!addedAtBlock) {
+    throw new Error(`Block not found in cache for height ${ctx.blocks[0].header.height}`);
+  }
+
   const internalOmnipoolToken = new OmnipoolAsset({
     id: `${omnipoolEntity.id}-${ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID}`,
     asset: lrnaAssetEntity,
@@ -52,6 +57,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
     addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       ctx.blocks[0].header.height
     ).height,
+    addedAtBlockId: addedAtBlock.id,
     isRemoved: false,
     lifeStates: addOmnipoolAssetAddedLifeState({
       assetAddedState: new OmnipoolAssetAddedData({

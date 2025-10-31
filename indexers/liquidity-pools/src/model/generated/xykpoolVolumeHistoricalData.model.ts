@@ -107,4 +107,7 @@ export class XykpoolVolumeHistoricalData {
 
     @IntColumn_({nullable: false})
     relayBlockHeight!: number
+
+    @StringColumn_({nullable: true})
+    blockId!: string | undefined | null
 }

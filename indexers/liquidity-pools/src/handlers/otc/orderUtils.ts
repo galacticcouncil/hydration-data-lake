@@ -43,6 +43,11 @@ export async function createOtcOrder({
       `Asset ${!assetIn ? assetInId : assetOutId} has not been found and created.`
     );
 
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  if (!block) {
+    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+  }
+
   const newOrder = new OtcOrder({
     id: orderId.toString(),
     owner: await getOrCreateAccount({ ctx, id: ownerAddress }),
@@ -56,6 +61,7 @@ export async function createOtcOrder({
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
+    blockId: block.id,
   });
 
   return newOrder;

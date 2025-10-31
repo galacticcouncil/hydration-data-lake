@@ -51,6 +51,9 @@ export class Xykpool {
     @IntColumn_({nullable: false})
     createdAtRelayBlockHeight!: number
 
+    @StringColumn_({nullable: true})
+    createdAtBlockId!: string | undefined | null
+
     @BooleanColumn_({nullable: true})
     isDestroyed!: boolean | undefined | null
 

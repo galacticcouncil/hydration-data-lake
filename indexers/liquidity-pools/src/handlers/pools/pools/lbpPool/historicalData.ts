@@ -116,6 +116,11 @@ export async function handleLbppoolHistoricalData(
             )
               return null;
 
+            const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+            if (!block) {
+              throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+            }
+
             const poolHistoricalDataEntity = new LbppoolHistoricalData({
               id: `${pool.account.id}-${blockHeader.height}`,
               pool: pool,
@@ -148,6 +153,7 @@ export async function handleLbppoolHistoricalData(
                 blockHeader.height
               ).height,
               paraBlockHeight: blockHeader.height,
+              blockId: block.id,
             });
 
             return poolHistoricalDataEntity;

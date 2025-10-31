@@ -163,6 +163,11 @@ async function processAssetSpotPrices({
 
         const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
+        const blockData = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+        if (!blockData) {
+          throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+        }
+
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
           histDataItemId,
           new AssetSpotPriceHistoricalData({
@@ -184,6 +189,7 @@ async function processAssetSpotPrices({
 
             paraBlockHeight: blockHeader.height,
             relayBlockHeight: assetHistData.relayBlockHeight,
+            blockId: blockData.id,
           })
         );
       } catch (e) {}
@@ -507,6 +513,11 @@ async function processXykInvolvedAssetSpotPrices({
 
       const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
+      const blockData = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+      if (!blockData) {
+        throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+      }
+
       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
         histDataItemId,
         new AssetSpotPriceHistoricalData({
@@ -540,6 +551,7 @@ async function processXykInvolvedAssetSpotPrices({
 
           paraBlockHeight: blockHeader.height,
           relayBlockHeight: assetHistData.relayBlockHeight,
+          blockId: blockData.id,
         })
       );
     }

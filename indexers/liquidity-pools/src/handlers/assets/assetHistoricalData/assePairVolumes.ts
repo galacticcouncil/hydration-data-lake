@@ -200,6 +200,10 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
           : assetInData.amount) + existingPairVolEntity.assetBVolume;
     }
 
+    if (!currentBlockEntity) {
+      throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+    }
+
     const assetsPairVolumeEntity = new AssetsPairVolumeHistoricalData({
       id: assetsPairVolumeEntityId,
 
@@ -213,7 +217,8 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
         .toFixed(),
 
       paraBlockHeight: blockHeader.height,
-      relayBlockHeight: currentBlockEntity?.relayBlockHeight,
+      relayBlockHeight: currentBlockEntity.relayBlockHeight,
+      blockId: currentBlockEntity.id,
     });
 
     ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.set(

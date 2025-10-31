@@ -83,6 +83,7 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
 
     relayBlockHeight: block.relayBlockHeight,
     paraBlockHeight: block.height,
+    blockId: block.id,
   });
 
   ctx.batchState.state.accountAssetBalanceHistoricalData.set(
@@ -146,6 +147,11 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
 
   if (!refAsset) throw Error('Ref asset not found');
 
+  const totalBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  if (!totalBlock) {
+    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+  }
+
   dataEntity = new AccountTotalBalanceHistoricalData({
     id: `${account.id}-${blockHeader.height}`,
     account,
@@ -157,6 +163,7 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
     ).height,
+    blockId: totalBlock.id,
   });
 
   ctx.batchState.state.accountTotalBalanceHistoricalData.set(

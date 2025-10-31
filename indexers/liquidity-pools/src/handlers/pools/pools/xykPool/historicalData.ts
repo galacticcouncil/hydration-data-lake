@@ -77,6 +77,11 @@ export async function handleXykPoolHistoricalData(
             .map((assetData) => [`${assetData.assetId}`, assetData.data])
         );
 
+        const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+        if (!block) {
+          throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+        }
+
         const poolHistoricalDataEntity = new XykpoolHistoricalData({
           id: `${poolId}-${blockHeader.height}`,
           pool,
@@ -90,6 +95,7 @@ export async function handleXykPoolHistoricalData(
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,
           paraBlockHeight: blockHeader.height,
+          blockId: block.id,
         });
 
         predefinedEntities.push(poolHistoricalDataEntity);

@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
 import {Asset} from "./asset.model"
 
 @Entity_()
@@ -29,4 +29,7 @@ export class AssetSwapFeeHistoricalData {
 
     @IntColumn_({nullable: false})
     relayBlockHeight!: number
+
+    @StringColumn_({nullable: true})
+    blockId!: string | undefined | null
 }

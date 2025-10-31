@@ -86,6 +86,12 @@ export async function handleTransactionPaymentHistoricalData(
     await pMap(
       uniqueDataOrderedByBlock,
       async ({ blockHeader, data }) => {
+        const block = ctx.batchState.state.batchBlocks.get(blockHeader.id);
+        if (!block) {
+          console.log(`Block not found in cache for height ${blockHeader.height}`);
+          return;
+        }
+
         const historicalDataEntity = new TransactionPaymentHistoricalData({
           id: `${blockHeader.height}`,
 
@@ -95,7 +101,7 @@ export async function handleTransactionPaymentHistoricalData(
             ctx.batchState.state.relayChainInfo.get(blockHeader.height)
               ?.relaychainBlockNumber ?? 0,
           paraBlockHeight: blockHeader.height,
-          block: ctx.batchState.state.batchBlocks.get(blockHeader.id),
+          block,
         });
 
         ctx.batchState.state.transactionPaymentHistData.set(
