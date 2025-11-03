@@ -855,6 +855,23 @@ type OmnipoolAssetHistoricalData @entity {
   block: Block!
 }
 
+type OmnipoolAssetHistoricalDataLatest @entity {
+  "<omnipoolAssetId>"
+  id: ID!
+
+  omnipoolAssetId: String!
+  assetId: String! @index
+
+  assetCap: BigInt!
+  assetShares: BigInt!
+  assetHubReserve: BigInt!
+  assetProtocolShares: BigInt!
+  freeBalance: BigInt!
+
+  paraBlockHeight: Int! @index
+  blockId: String!
+}
+
 # ======================================================================================================================
 # *** Stableswap ***
 # ======================================================================================================================
@@ -1000,6 +1017,20 @@ type StableswapAssetHistoricalData @entity {
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
   block: Block!
+}
+
+type StableswapAssetHistoricalDataLatest @entity {
+  "<stablepoolId>-<assetId>"
+  id: ID!
+
+  assetId: String! @index
+  poolId: String!
+  stableswapAssetId: String!
+  poolHistoricalDataId: String!
+  freeBalance: BigInt!
+
+  paraBlockHeight: Int! @index
+  blockId: String!
 }
 
 # ======================================================================================================================

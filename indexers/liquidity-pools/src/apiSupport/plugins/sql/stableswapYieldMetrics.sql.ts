@@ -31,19 +31,13 @@ export const getStableswapAssetSwapFeesByPeriod = `
 `;
 
 export const getLatestStableswapAssetBalance = `
-    WITH latest_pool_hist_data AS (
-        SELECT DISTINCT ON (sa.pool_id) sa.id, sa.pool_id
-        FROM stableswap_historical_data sa
-        WHERE sa.pool_id = ANY ($1)
-        ORDER BY sa.pool_id, sa.para_block_height DESC
-    )
-    SELECT lp.pool_id as pool_id,
-           json_agg(jsonb_build_object(
-                   'asset_id', sa.asset_id,
-                   'free_balance', sa.free_balance,
-                   'para_block_height', sa.para_block_height
-                    )) AS asset_balances
-    FROM stableswap_asset_historical_data sa
-    JOIN latest_pool_hist_data lp ON lp.id = sa.pool_historical_data_id
-    GROUP BY pool_id;
+  SELECT sa.pool_id as pool_id,
+         json_agg(jsonb_build_object(
+           'asset_id', sa.asset_id,
+           'free_balance', sa.free_balance,
+           'para_block_height', sa.para_block_height
+                  )) AS asset_balances
+  FROM stableswap_asset_historical_data_latest sa
+  WHERE sa.pool_id = ANY ($1)
+  GROUP BY sa.pool_id;
 `;

@@ -10,14 +10,12 @@ export const getOmnipoolAssetSwapFeesByPeriod = `
 `;
 
 export const getLatestOmnipoolAssetBalance = `
-  SELECT 
-    DISTINCT ON (asthd.asset_id) 
-    asthd.id, 
-    asthd.asset_id, 
-    asthd.para_block_height, 
-    asthd.free_balance, 
-    asthd.asset_hub_reserve
-  FROM omnipool_asset_historical_data asthd
-  WHERE asthd.asset_id = ANY ($1)
-  ORDER BY asthd.asset_id, asthd.para_block_height DESC;
+  SELECT
+    id,
+    asset_id,
+    para_block_height,
+    free_balance,
+    asset_hub_reserve
+  FROM omnipool_asset_historical_data_latest
+  WHERE asset_id = ANY ($1);
 `;

@@ -5,6 +5,7 @@ import parsers from '../../../parsers';
 import { OmnipoolAssetHistoricalData } from '../../../model';
 import { getOrCreateAsset } from '../../assets/asset';
 import { getOrCreateOmnipoolAsset } from './omnipoolAssets';
+import { getOmnipoolAssetsHistDataLatest } from './historicalDataLatest';
 
 export async function handleOmnipoolAssetHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -92,5 +93,13 @@ export async function handleOmnipoolAssetHistoricalData(
     predefinedEntities.filter((item) => !!item).map((item) => [item.id, item])
   );
 
-  await ctx.store.save([...predefinedEntitiesWithoutDuplicates.values()]);
+  const listToSave = Array.from(predefinedEntitiesWithoutDuplicates.values());
+
+  await ctx.store.save(listToSave);
+
+  const latestAssetHistData = getOmnipoolAssetsHistDataLatest({
+    histDataList: listToSave,
+  });
+
+  await ctx.store.save(latestAssetHistData);
 }

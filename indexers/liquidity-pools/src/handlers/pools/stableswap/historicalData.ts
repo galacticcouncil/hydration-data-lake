@@ -11,6 +11,7 @@ import {
 import { getOrCreateStableswap } from './stablepool';
 import { getOrCreateAsset } from '../../assets/asset';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import { getStableswapAssetsHistDataLatest } from './historicalDataLatest';
 
 async function getStableswapDataPromise({
   ctx,
@@ -146,5 +147,15 @@ export async function handleStableswapHistoricalData(
   }
 
   await ctx.store.save([...stablepoolAllHistoricalData.values()]);
-  await ctx.store.save([...stablepoolAssetsAllHistoricalData.values()]);
+
+  const assetHistDataListToSave = Array.from(
+    stablepoolAssetsAllHistoricalData.values()
+  );
+  await ctx.store.save(assetHistDataListToSave);
+
+  const assetHistLatestData = getStableswapAssetsHistDataLatest({
+    histDataList: assetHistDataListToSave,
+  });
+
+  await ctx.store.save(assetHistLatestData);
 }

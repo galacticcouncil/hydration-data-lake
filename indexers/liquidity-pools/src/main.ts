@@ -49,6 +49,7 @@ console.log(
 
 processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   printV8MemoryHeap();
+  console.time('TOTAL BATCH EXECUTION TIME');
 
   const ctxWithBatchState: Omit<
     SqdProcessorContext<Store>,
@@ -297,4 +298,6 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async (ctx) => {
   ).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  console.timeEnd('TOTAL BATCH EXECUTION TIME');
 });
