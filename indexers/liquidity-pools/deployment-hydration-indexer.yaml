@@ -30,7 +30,7 @@ deploy:
       PROCESS_FROM_BLOCK: 1439857
       PROCESS_TO_BLOCK: -1
 
-      USE_STORAGE_DICTIONARY: false
+      USE_STORAGE_DICTIONARY: true
       STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql'
       STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql'
       STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql'
