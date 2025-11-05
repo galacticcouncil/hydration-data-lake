@@ -1,11 +1,9 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {XykGlobalFarm} from "./xykGlobalFarm.model"
-import {Xykpool} from "./xykpool.model"
 import {FarmState} from "./_farmState"
 import {YieldFarmLoyaltyCurve} from "./_yieldFarmLoyaltyCurve"
 import {FarmLifeState} from "./_farmLifeState"
-import {Event} from "./event.model"
 
 @Entity_()
 export class XykYieldFarm {
@@ -29,9 +27,8 @@ export class XykYieldFarm {
   @Column_("text", {array: true, nullable: false})
   allInvolvedAssetRegistryIds!: (string)[]
 
-  @Index_()
-  @ManyToOne_(() => Xykpool, {nullable: true})
-  pool!: Xykpool
+  @Column_("text", {nullable: false})
+  xykpoolId!: string
 
   @Column_("varchar", {length: 10, nullable: false})
   state!: FarmState
@@ -76,7 +73,6 @@ export class XykYieldFarm {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Event, {nullable: true})
-  event!: Event | undefined | null
+  @Column_("text", {nullable: true})
+  eventId!: string | undefined | null
 }

@@ -67,6 +67,7 @@ import { ensureAaveFacilitators } from '../../../handlers/facilitator';
 import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool/collaterals';
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
+import { handleOmnipoolLiquidityPositions } from '../../../handlers/pools/pools/omnipool/liquidityPositions';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -148,6 +149,10 @@ export async function singleFlowAllInOneProcessor(
   await ensureOmnipool(ctx);
   await handleOmnipoolAssets(ctx, parsedData);
   console.timeEnd('handleOmnipoolAssets');
+
+  console.time('handleOmnipoolLiquidityPositions');
+  await handleOmnipoolLiquidityPositions(ctx, parsedData);
+  console.timeEnd('handleOmnipoolLiquidityPositions');
 
   console.time('handleStablepools');
   await handleStablepools(ctx, parsedData);

@@ -263,19 +263,19 @@ export type BatchStatePayload = {
 
   transactionPaymentHistData: Map<string, TransactionPaymentHistoricalData>;
 
-  // omnipoolLiquidityPositions: Map<string, OmnipoolLiquidityPosition>;
-  // omnipoolLiquidityPositionEvents: Map<string, OmnipoolLiquidityPositionEvent>;
-  // omnipoolGlobalFarms: Map<string, OmnipoolGlobalFarm>;
-  // omnipoolYieldFarms: Map<string, OmnipoolYieldFarm>;
-  // omnipoolYieldFarmDeposits: Map<string, OmnipoolYieldFarmDeposit>;
-  // omnipoolYieldFarmEntries: Map<string, OmnipoolYieldFarmEntry>;
-  // omnipoolYieldFarmDepositEvents: Map<string, OmnipoolYieldFarmDepositEvent>;
-  //
-  // xykGlobalFarms: Map<string, XykGlobalFarm>;
-  // xykYieldFarms: Map<string, XykYieldFarm>;
-  // xykYieldFarmDeposits: Map<string, XykYieldFarmDeposit>;
-  // xykYieldFarmEntries: Map<string, XykYieldFarmEntry>;
-  // xykYieldFarmDepositEvents: Map<string, XykYieldFarmDepositEvent>;
+  omnipoolLiquidityPositions: Map<string, OmnipoolLiquidityPosition>;
+  omnipoolLiquidityPositionEvents: Map<string, OmnipoolLiquidityPositionEvent>;
+  omnipoolGlobalFarms: Map<string, OmnipoolGlobalFarm>;
+  omnipoolYieldFarms: Map<string, OmnipoolYieldFarm>;
+  omnipoolYieldFarmDeposits: Map<string, OmnipoolYieldFarmDeposit>;
+  omnipoolYieldFarmEntries: Map<string, OmnipoolYieldFarmEntry>;
+  omnipoolYieldFarmDepositEvents: Map<string, OmnipoolYieldFarmDepositEvent>;
+
+  xykGlobalFarms: Map<string, XykGlobalFarm>;
+  xykYieldFarms: Map<string, XykYieldFarm>;
+  xykYieldFarmDeposits: Map<string, XykYieldFarmDeposit>;
+  xykYieldFarmEntries: Map<string, XykYieldFarmEntry>;
+  xykYieldFarmDepositEvents: Map<string, XykYieldFarmDepositEvent>;
 };
 
 export class BatchState {
@@ -396,6 +396,20 @@ export class BatchState {
     emaOracleEntriesHistoricalData: new Map(),
 
     transactionPaymentHistData: new Map(),
+
+    omnipoolLiquidityPositions: new Map(),
+    omnipoolLiquidityPositionEvents: new Map(),
+    omnipoolGlobalFarms: new Map(),
+    omnipoolYieldFarms: new Map(),
+    omnipoolYieldFarmDeposits: new Map(),
+    omnipoolYieldFarmEntries: new Map(),
+    omnipoolYieldFarmDepositEvents: new Map(),
+
+    xykGlobalFarms: new Map(),
+    xykYieldFarms: new Map(),
+    xykYieldFarmDeposits: new Map(),
+    xykYieldFarmEntries: new Map(),
+    xykYieldFarmDepositEvents: new Map(),
   };
 
   constructor(ctx: SqdProcessorContext<Store>) {
@@ -521,6 +535,20 @@ export class BatchState {
       emaOracleEntriesHistoricalData: new Map(),
 
       transactionPaymentHistData: new Map(),
+
+      omnipoolLiquidityPositions: new Map(),
+      omnipoolLiquidityPositionEvents: new Map(),
+      omnipoolGlobalFarms: new Map(),
+      omnipoolYieldFarms: new Map(),
+      omnipoolYieldFarmDeposits: new Map(),
+      omnipoolYieldFarmEntries: new Map(),
+      omnipoolYieldFarmDepositEvents: new Map(),
+
+      xykGlobalFarms: new Map(),
+      xykYieldFarms: new Map(),
+      xykYieldFarmDeposits: new Map(),
+      xykYieldFarmEntries: new Map(),
+      xykYieldFarmDepositEvents: new Map(),
     };
   }
 

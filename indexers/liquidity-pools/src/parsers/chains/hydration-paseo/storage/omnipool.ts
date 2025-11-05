@@ -1,6 +1,7 @@
 import { storage, constants } from '../typegenTypes/';
 import {
   GetConstantsInput,
+  GetDataAtBlockInput,
   OmnipoolAssetData,
   OmnipoolAssetTradability,
   OmnipoolConstants,
@@ -8,9 +9,15 @@ import {
   OmnipoolGetAllAssetIdsInput,
   OmnipoolGetAssetDataInput,
   OmnipoolGetHubAssetTradabilityInput,
+  OmnipoolGetLiquidityPositionsInput,
   OmnipoolGetPoolDataInput,
+  OmnipoolLiquidityPositionDataWithId,
+  OmnipoolNftCollectionId,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
+import BigNumber from 'bignumber.js';
+import { getOmnipoolLiquidityPositionPriceDecorated } from '../../../../utils/helpers';
 
 function getConstants({ block }: GetConstantsInput): OmnipoolConstants {
   const burnProtocolFee = null;
@@ -63,6 +70,19 @@ function getConstants({ block }: GetConstantsInput): OmnipoolConstants {
   };
 }
 
+function getNftCollectionIdConstant({
+  block,
+}: GetDataAtBlockInput): OmnipoolNftCollectionId | null {
+  if (block.specVersion < 287) return null;
+  if (constants.omnipool.nftCollectionId.v287.is(block)) {
+    const resp = constants.omnipool.burnProtocolFee.v287.get(block);
+    return {
+      collectionId: resp.toString(),
+    };
+  }
+  throw new UnknownVersionError('constants.omnipool.nftCollectionId');
+}
+
 async function getOmnipoolAssetData({
   assetId,
   block,
@@ -111,10 +131,62 @@ async function getOmnipoolHubAssetTradability({
   throw new UnknownVersionError('storage.omnipool.hubAssetTradability');
 }
 
+async function getOmnipoolLiquidityPositions({
+  block,
+  positionIds,
+}: OmnipoolGetLiquidityPositionsInput): Promise<
+  OmnipoolLiquidityPositionDataWithId[] | null
+> {
+  return measureStorageFetch({
+    storageName: 'omnipool.positions',
+    originFn: 'getOmnipoolLiquidityPositions',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 287) return null;
+
+      if (storage.omnipool.positions.v287.is(block)) {
+        try {
+          const resp = await storage.omnipool.positions.v287.getMany(
+            block,
+            positionIds.map((id) => BigInt(id))
+          );
+
+          const decoratedResp: OmnipoolLiquidityPositionDataWithId[] = [];
+          positionIds.forEach((id, index) => {
+            if (!resp[index]) {
+              decoratedResp.push({ positionId: id, data: null });
+            } else {
+              decoratedResp.push({
+                positionId: id,
+                data: {
+                  assetId: resp[index].assetId,
+                  amount: resp[index].amount,
+                  shares: resp[index].shares,
+                  price: !Array.isArray(resp[index].price)
+                    ? resp[index].price
+                    : getOmnipoolLiquidityPositionPriceDecorated(
+                        resp[index].price
+                      ),
+                },
+              });
+            }
+          });
+          return decoratedResp;
+        } catch (e) {
+          return null;
+        }
+      }
+      throw new UnknownVersionError('storage.omnipool.positions');
+    },
+  });
+}
+
 export default {
   getOmnipoolAssetData,
   getOmnipoolAllAssetIds,
   getPoolData,
   getOmnipoolHubAssetTradability,
   getConstants,
+  getNftCollectionIdConstant,
+  getOmnipoolLiquidityPositions,
 };

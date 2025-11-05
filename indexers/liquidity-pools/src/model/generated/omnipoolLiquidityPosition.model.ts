@@ -1,12 +1,8 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
-import {Asset} from "./asset.model"
-import {OmnipoolAsset} from "./omnipoolAsset.model"
-import {NftAsset} from "./nftAsset.model"
 import {OmnipoolLiquidityPositionStatus} from "./_omnipoolLiquidityPositionStatus"
 import {OmnipoolLiquidityPositionEvent} from "./omnipoolLiquidityPositionEvent.model"
-import {Event} from "./event.model"
 
 @Entity_()
 export class OmnipoolLiquidityPosition {
@@ -15,7 +11,7 @@ export class OmnipoolLiquidityPosition {
   }
 
   /**
-   * position ID
+   * <position ID>
    */
   @PrimaryColumn_()
   id!: string
@@ -24,13 +20,11 @@ export class OmnipoolLiquidityPosition {
   @ManyToOne_(() => Account, {nullable: true})
   account!: Account
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  asset!: Asset
+  @Column_("text", {nullable: false})
+  assetId!: string
 
-  @Index_()
-  @ManyToOne_(() => OmnipoolAsset, {nullable: true})
-  omnipoolAsset!: OmnipoolAsset
+  @Column_("text", {nullable: false})
+  omnipoolAssetId!: string
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   initialAmount!: bigint
@@ -41,9 +35,11 @@ export class OmnipoolLiquidityPosition {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   sharesAmount!: bigint
 
-  @Index_()
-  @ManyToOne_(() => NftAsset, {nullable: true})
-  positionNft!: NftAsset
+  @Column_("text", {nullable: true})
+  positionNftId!: string | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  price!: bigint | undefined | null
 
   /**
    * should be either PositionCreated or PositionDestroyed
@@ -61,7 +57,6 @@ export class OmnipoolLiquidityPosition {
   @Column_("int4", {nullable: false})
   relayBlockHeight!: number
 
-  @Index_()
-  @ManyToOne_(() => Event, {nullable: true})
-  event!: Event
+  @Column_("text", {nullable: true})
+  eventId!: string | undefined | null
 }

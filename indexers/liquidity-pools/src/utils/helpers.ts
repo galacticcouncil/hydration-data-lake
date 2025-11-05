@@ -391,3 +391,10 @@ export function anyToStringAllKeys(maybeObj: any): any {
 
   return maybeObj;
 }
+
+export function getOmnipoolLiquidityPositionPriceDecorated(
+  priceParts: bigint[]
+) {
+  // return BigInt(BigNumber(priceParts[0]).div(priceParts[1]).toString());
+  return 0n;
+}

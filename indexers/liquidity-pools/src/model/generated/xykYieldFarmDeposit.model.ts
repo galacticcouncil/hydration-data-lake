@@ -1,10 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
-import {NftAsset} from "./nftAsset.model"
-import {XykGlobalFarm} from "./xykGlobalFarm.model"
-import {XykYieldFarm} from "./xykYieldFarm.model"
 import {Account} from "./account.model"
-import {Asset} from "./asset.model"
 import {YieldFarmDepositStatus} from "./_yieldFarmDepositStatus"
 import {XykYieldFarmEntry} from "./xykYieldFarmEntry.model"
 import {XykYieldFarmDepositEvent} from "./xykYieldFarmDepositEvent.model"
@@ -22,17 +18,14 @@ export class XykYieldFarmDeposit {
   @PrimaryColumn_()
   id!: string
 
-  @Index_()
-  @ManyToOne_(() => NftAsset, {nullable: true})
-  depositNft!: NftAsset
+  @Column_("text", {nullable: true})
+  depositNftId!: string | undefined | null
 
-  @Index_()
-  @ManyToOne_(() => XykGlobalFarm, {nullable: true})
-  globalFarm!: XykGlobalFarm
+  @Column_("text", {nullable: false})
+  globalFarmId!: string
 
-  @Index_()
-  @ManyToOne_(() => XykYieldFarm, {nullable: true})
-  yieldFarm!: XykYieldFarm
+  @Column_("text", {nullable: false})
+  yieldFarmId!: string
 
   @Column_("text", {array: true, nullable: false})
   allInvolvedAssetIds!: (string)[]
@@ -44,9 +37,8 @@ export class XykYieldFarmDeposit {
   @ManyToOne_(() => Account, {nullable: true})
   account!: Account
 
-  @Index_()
-  @ManyToOne_(() => Asset, {nullable: true})
-  lpAsset!: Asset
+  @Column_("text", {nullable: false})
+  lpAssetId!: string
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   sharesAmount!: bigint

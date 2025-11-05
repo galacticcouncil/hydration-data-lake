@@ -584,6 +584,22 @@ export const GlobalFarmData: sts.Type<GlobalFarmData> = sts.struct(() => {
     }
 })
 
+export interface Position {
+    assetId: number
+    amount: bigint
+    shares: bigint
+    price: [bigint, bigint]
+}
+
+export const Position: sts.Type<Position> = sts.struct(() => {
+    return  {
+        assetId: sts.number(),
+        amount: sts.bigint(),
+        shares: sts.bigint(),
+        price: sts.tuple(() => [sts.bigint(), sts.bigint()]),
+    }
+})
+
 export interface Tradability {
     bits: number
 }
@@ -884,6 +900,78 @@ export const AssetDetails: sts.Type<AssetDetails> = sts.struct(() => {
     }
 })
 
+export interface ItemMetadata {
+    deposit: bigint
+    data: Bytes
+    isFrozen: boolean
+}
+
+export const ItemMetadata: sts.Type<ItemMetadata> = sts.struct(() => {
+    return  {
+        deposit: sts.bigint(),
+        data: sts.bytes(),
+        isFrozen: sts.boolean(),
+    }
+})
+
+export interface CollectionMetadata {
+    deposit: bigint
+    data: Bytes
+    isFrozen: boolean
+}
+
+export const CollectionMetadata: sts.Type<CollectionMetadata> = sts.struct(() => {
+    return  {
+        deposit: sts.bigint(),
+        data: sts.bytes(),
+        isFrozen: sts.boolean(),
+    }
+})
+
+export interface ItemDetails {
+    owner: AccountId32
+    approved?: (AccountId32 | undefined)
+    isFrozen: boolean
+    deposit: bigint
+}
+
+export const ItemDetails: sts.Type<ItemDetails> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        approved: sts.option(() => AccountId32),
+        isFrozen: sts.boolean(),
+        deposit: sts.bigint(),
+    }
+})
+
+export interface CollectionDetails {
+    owner: AccountId32
+    issuer: AccountId32
+    admin: AccountId32
+    freezer: AccountId32
+    totalDeposit: bigint
+    freeHolding: boolean
+    items: number
+    itemMetadatas: number
+    attributes: number
+    isFrozen: boolean
+}
+
+export const CollectionDetails: sts.Type<CollectionDetails> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        issuer: AccountId32,
+        admin: AccountId32,
+        freezer: AccountId32,
+        totalDeposit: sts.bigint(),
+        freeHolding: sts.boolean(),
+        items: sts.number(),
+        itemMetadatas: sts.number(),
+        attributes: sts.number(),
+        isFrozen: sts.boolean(),
+    }
+})
+
 export type Releases = Releases_V1Ancient | Releases_V2
 
 export interface Releases_V1Ancient {
@@ -1166,6 +1254,20 @@ export const PoolType: sts.Type<PoolType> = sts.closedEnum(() => {
         XYK: sts.unit(),
     }
 })
+
+export const DestroyWitness: sts.Type<DestroyWitness> = sts.struct(() => {
+    return  {
+        items: sts.number(),
+        itemMetadatas: sts.number(),
+        attributes: sts.number(),
+    }
+})
+
+export interface DestroyWitness {
+    items: number
+    itemMetadatas: number
+    attributes: number
+}
 
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
@@ -3695,20 +3797,6 @@ export const UniquesCall: sts.Type<UniquesCall> = sts.closedEnum(() => {
         }),
     }
 })
-
-export const DestroyWitness: sts.Type<DestroyWitness> = sts.struct(() => {
-    return  {
-        items: sts.number(),
-        itemMetadatas: sts.number(),
-        attributes: sts.number(),
-    }
-})
-
-export interface DestroyWitness {
-    items: number
-    itemMetadatas: number
-    attributes: number
-}
 
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.

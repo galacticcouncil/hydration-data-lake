@@ -13,6 +13,7 @@ import balances from './balances';
 import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
 import emaOracle from './emaOracle';
+import uniques from './uniques';
 import transactionPayment from './transactionPayment';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
@@ -42,6 +43,7 @@ import {
   RuntimeApiName,
 } from '../../../runtimeApiResolver/types';
 import bonds from '../../hydration/storage/bonds';
+import omnipoolLiquidityMining from '../../hydration/storage/omnipoolLiquidityMining';
 
 export default {
   system,
@@ -138,6 +140,8 @@ export default {
   },
   omnipool: {
     getConstants: omnipool.getConstants,
+    getNftCollectionIdConstant: omnipool.getNftCollectionIdConstant,
+    getOmnipoolLiquidityPositions: omnipool.getOmnipoolLiquidityPositions,
     getOmnipoolAllAssetIds: omnipool.getOmnipoolAllAssetIds,
     getOmnipoolHubAssetTradability: omnipool.getOmnipoolHubAssetTradability,
     getPoolData: omnipool.getPoolData,
@@ -181,6 +185,10 @@ export default {
         ],
       }),
   },
+  omnipoolWarehouseLM: {
+    getOmnipoolLMGlobalFarms: omnipoolLiquidityMining.getOmnipoolLMGlobalFarms,
+  },
+
   xyk: {
     getConstants: xyk.getConstants,
     getShareToken: xyk.getShareToken,
@@ -309,4 +317,5 @@ export default {
     getOracles: emaOracle.getOracles,
   },
   hsm,
+  uniques,
 } as StorageParserMethods;
