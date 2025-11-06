@@ -96,11 +96,14 @@ async function processAssetSpotPrices({
     let assetIdToProcess = asset.assetRegistryId;
 
     if (asset.resourceType === ResourceType.Debt) {
-      const underliningAsset = asset.underlyingAsset;
-      assetIdToProcess = underliningAsset?.assetRegistryId;
+      const underlyingAsset = asset.underlyingAssetId ? await getOrCreateAsset({assetRegistryId: asset.underlyingAssetId , blockHeader, ensure: true, ctx}) : null;
+      assetIdToProcess = underlyingAsset?.assetRegistryId;
     }
 
-    if (assetIdToProcess === undefined || assetIdToProcess === null) return;
+    if (!assetIdToProcess) {
+      console.log(`Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetRegistryId.`);
+      return
+    };
 
     try {
       /**
@@ -110,7 +113,8 @@ async function processAssetSpotPrices({
         assetIdToProcess,
         ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       );
-
+      
+      console.log({usdPriceDetails})
       if (usdPriceDetails) {
         assetHistData.usdPriceNormalised = fromExponentialToDecimalNotation(
           usdPriceDetails.amount.toFixed(0, BigNumber.ROUND_HALF_UP),

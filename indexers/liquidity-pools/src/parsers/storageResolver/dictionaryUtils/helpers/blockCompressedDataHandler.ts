@@ -267,7 +267,7 @@ export function encodeBlockCompressedData<R>({
             (pool: any) =>
               ({
                 id: pool.id,
-                aTokenId: pool.aToken.id,
+                aTokenId: pool.aTokenId,
                 reserveAssetId: pool.reserveAsset.id,
                 poolId: pool.poolId,
                 liquidityIn: pool.liquidityIn,

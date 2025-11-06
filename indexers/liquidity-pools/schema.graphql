@@ -66,10 +66,10 @@ type Asset @entity {
   multiLocationsMetadata: [AssetMultiLocation]
   multiLocations: [AssetMultiLocation]
 
-  underlyingAsset: Asset
-  aToken: Asset
-  variableDebtToken: Asset
-  bondUnderlyingAsset: Asset
+  underlyingAssetId: String
+  aTokenId: String
+  variableDebtTokenId: String
+  bondUnderlyingAssetId: String
 
   assetType: AssetType!
   resourceType: ResourceType!
@@ -1642,8 +1642,8 @@ type Aavepool @entity {
   "<address> - address is derived from reserve_asset_id + aToken_id"
   id: ID!
 
-  reserveAsset: Asset!
-  aToken: Asset!
+  reserveAssetId: String!
+  aTokenId: String!
   moneyMarketReserve: MoneyMarketReserve
 
   historicalData: [AavepoolHistoricalData!]! @derivedFrom(field: "pool")

@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, ManyToOne as ManyToOne_, IntColumn as IntColumn_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, IntColumn as IntColumn_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
 import {AssetMultiLocation} from "./_assetMultiLocation"
 import {AssetType} from "./_assetType"
@@ -44,21 +44,17 @@ export class Asset {
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val == null ? undefined : val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => val == null ? undefined : new AssetMultiLocation(undefined, val))}, nullable: true})
     multiLocations!: (AssetMultiLocation | undefined | null)[] | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    underlyingAsset!: Asset | undefined | null
+    @StringColumn_({nullable: true})
+    underlyingAssetId!: string | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    aToken!: Asset | undefined | null
+    @StringColumn_({nullable: true})
+    aTokenId!: string | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    variableDebtToken!: Asset | undefined | null
+    @StringColumn_({nullable: true})
+    variableDebtTokenId!: string | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    bondUnderlyingAsset!: Asset | undefined | null
+    @StringColumn_({nullable: true})
+    bondUnderlyingAssetId!: string | undefined | null
 
     @Column_("varchar", {length: 10, nullable: false})
     assetType!: AssetType

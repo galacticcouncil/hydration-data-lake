@@ -1,16 +1,27 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import { FindOptionsRelations } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, AssetType, ResourceType } from '../../model';
+
+import {
+  Asset,
+  AssetType,
+  ResourceType,
+} from '../../model';
 import parsers from '../../parsers';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import { AssetHubManager } from '../../utils/assetHubManager';
+import {
+  MoneyMarketContractsManager,
+} from '../../utils/evmTools/moneyMarketContractsManager';
 import {
   getAssetEvmAddressByType,
   getAssetIdFromCustomMultiLocation,
   getNewAssetMultiLocationFromStorageData,
   getNewCustomAssetMultiLocation,
 } from './utils';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
-import { FindOptionsRelations } from 'typeorm';
-import { AssetHubManager } from '../../utils/assetHubManager';
 
 export async function getOrCreateAsset({
   id,
@@ -131,7 +142,7 @@ export async function getOrCreateAsset({
     });
     if (bondDetails) {
       bondUnderlyingAsset = await getOrCreateAsset({
-        assetRegistryId: bondDetails.underlyingAsset,
+      assetRegistryId: bondDetails.underlyingAsset,
         ctx,
         ensure: true,
         blockHeader,
@@ -206,7 +217,7 @@ export async function getOrCreateAsset({
     decimals: getDecimals(),
     xcmRateLimit: storageData.xcmRateLimit ?? null,
     isSufficient: storageData.isSufficient ?? true,
-    bondUnderlyingAsset,
+    bondUnderlyingAssetId: bondUnderlyingAsset?.id ?? null,
     bondMaturity,
   });
 
@@ -324,16 +335,16 @@ export async function getOrCreateMoneyMarketAsset({
     decimals: contractData.decimals ?? null,
     xcmRateLimit: null,
     isSufficient: true,
-    underlyingAsset,
+    underlyingAssetId: underlyingAsset?.id ?? null,
   });
 
   await ctx.store.save(newAsset);
 
   if (underlyingAsset) {
     if (contractData.resourceType === ResourceType.Collateral) {
-      underlyingAsset.aToken = newAsset;
+      underlyingAsset.aTokenId = newAsset.id;
     } else if (contractData.resourceType === ResourceType.Debt) {
-      underlyingAsset.variableDebtToken = newAsset;
+      underlyingAsset.variableDebtTokenId = newAsset.id;
     }
     assetsAllBatch.set(underlyingAsset.id, underlyingAsset);
     await ctx.store.upsert(underlyingAsset);

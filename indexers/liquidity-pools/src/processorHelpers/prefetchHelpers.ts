@@ -142,10 +142,7 @@ export async function prefetchGenericPersistentData(
       Aavepool,
       {
         where: {},
-        relations: {
-          reserveAsset: true,
-          aToken: true,
-        },
+        relations: {},
       },
       { className: 'Aavepool', originCallFn: 'prefetchGenericPersistentData' }
     )
@@ -659,7 +656,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            pool: { aToken: true, reserveAsset: true },
+            pool: true,
             reserveAsset: true,
             aToken: true,
             
@@ -755,13 +752,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            asset: {
-              underlyingAsset: true,
-              aToken: true,
-              variableDebtToken: true,
-              bondUnderlyingAsset: true,
-            },
-            
+            asset: {},
           },
           order: {
             paraBlockHeight: 'ASC',

@@ -33,12 +33,7 @@ export async function recalculatePoolsNormalizedVolumes(
     (
       await ctx.storeUtils.findWithLogs(Asset, {
         where: {},
-        relations: {
-          underlyingAsset: true,
-          aToken: true,
-          variableDebtToken: true,
-          bondUnderlyingAsset: true,
-        },
+        relations: {},
       }, { className: 'Asset' })
     ).map((p) => [p.id, p])
   );

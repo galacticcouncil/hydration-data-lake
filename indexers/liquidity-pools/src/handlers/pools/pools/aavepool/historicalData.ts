@@ -17,6 +17,7 @@ import {
 } from '../../../../parsers/runtimeApiResolver/types';
 import { SqdProcessorContext } from '../../../../processor';
 import { splitIntoBatches } from '../../../../utils/helpers';
+import { getOrCreateAsset } from '../../../assets/asset';
 import { getOrCreateAavepool } from './aavepool';
 
 export async function handleAavepoolHistoricalData(
@@ -27,7 +28,7 @@ export async function handleAavepoolHistoricalData(
     (
       await ctx.storeUtils.findWithLogs(Aavepool, {
         where: {},
-        relations: { reserveAsset: true, aToken: true },
+        relations: {},
       }, { className: 'Aavepool' })
     ).map((p) => [p.id, p])
   );
@@ -76,32 +77,53 @@ export async function handleAavepoolHistoricalData(
         });
 
         if (!pool) return;
+        const reserveAsset = await getOrCreateAsset({
+          assetRegistryId: pool.reserveAssetId,
+          ensure: true,
+          blockHeader,
+          ctx,
+        })
+
+        if (!reserveAsset) {
+          console.log(`handleAavepoolHistoricalData :: reserve asset not found for pool ${pool.id} at block ${blockHeader.height}`);
+          return;
+        }
 
         const aTokenHistData =
           ctx.batchState.state.assetsHistoricalDataBatch.get(
-            `${pool.aToken.id}-${blockHeader.height}`
+            `${pool.aTokenId}-${blockHeader.height}`
           );
 
         let variableDebtTokenHistData;
 
-        if (pool.reserveAsset.variableDebtToken) {
+        if (reserveAsset.variableDebtTokenId) {
           variableDebtTokenHistData =
             ctx.batchState.state.assetsHistoricalDataBatch.get(
-              `${pool.reserveAsset.variableDebtToken?.id}-${blockHeader.height}`
+              `${reserveAsset.variableDebtTokenId}-${blockHeader.height}`
             );
         } else {
-          const reserveAssetWithRelations = await ctx.storeUtils.findOneWithLogs(Asset, {
-            where: { id: pool.reserveAsset.id },
-            relations: {
-              variableDebtToken: true,
-            },
-          }, { className: 'Asset' });
-          if (reserveAssetWithRelations)
+ 
+          let debtAsset: Asset | undefined = undefined;
+          if(reserveAsset?.variableDebtTokenId) {
+            debtAsset = await ctx.storeUtils.findOneWithLogs(Asset, {
+              where: { id: reserveAsset?.variableDebtTokenId as string },
+              relations: {},
+            }, { className: 'Asset' });
+          }
+          console.log({debtAsset})
+          if (debtAsset)
             variableDebtTokenHistData =
               ctx.batchState.state.assetsHistoricalDataBatch.get(
-                `${reserveAssetWithRelations.variableDebtToken?.id}-${blockHeader.height}`
+                `${debtAsset?.id}-${blockHeader.height}`
               );
         }
+
+        const aToken = await getOrCreateAsset({
+          id: pool.aTokenId,
+          ensure: true,
+          blockHeader,
+          ctx,
+        })
 
         const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
         if (!block) {
@@ -111,10 +133,10 @@ export async function handleAavepoolHistoricalData(
         const poolHistoricalDataEntity = new AavepoolHistoricalData({
           id: `${pool.id}-${blockHeader.height}`,
           pool,
-          reserveAsset: pool.reserveAsset,
-          reserveAssetRegistryId: pool.reserveAsset.assetRegistryId,
-          aToken: pool.aToken,
-          aTokenRegistryId: pool.aToken.assetRegistryId,
+          reserveAsset: reserveAsset,
+          reserveAssetRegistryId: reserveAsset.assetRegistryId,
+          aToken: aToken,
+          aTokenRegistryId: aToken?.assetRegistryId,
 
           liquidityIn: poolData.data.liquidityIn,
           liquidityOut: poolData.data.liquidityOut,

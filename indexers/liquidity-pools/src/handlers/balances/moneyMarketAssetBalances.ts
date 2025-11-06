@@ -1,26 +1,34 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import { constants } from 'ethers';
+import pMap from 'p-map';
+
+import { BigNumber } from '@galacticcouncil/sdk';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   Account,
-  AccountAssetBalanceHistoricalData,
   Asset,
   AssetType,
   Block,
   ResourceType,
 } from '../../model';
-import { constants } from 'ethers';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { StorageResolver } from '../../parsers/storageResolver';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import {
+  MoneyMarketContractsManager,
+} from '../../utils/evmTools/moneyMarketContractsManager';
+import { calcPriceNormalized } from '../../utils/helpers';
+import { getOrCreateAccount } from '../accounts';
+import { getOrCreateAsset } from '../assets/asset';
+import {
+  getAssetsPairPrice,
+} from '../assets/assetHistoricalData/assetSpotPrices';
 import {
   getOrCreateAccountAssetBalanceHistoricalData,
   getOrCreateAccountTotalBalanceHistoricalData,
 } from './accountAssetBalance';
-import { getOrCreateAccount } from '../accounts';
-import { getOrCreateAsset } from '../assets/asset';
-import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
-import { calcPriceNormalized } from '../../utils/helpers';
-import { BigNumber } from '@galacticcouncil/sdk';
-import pMap from 'p-map';
-import { StorageResolver } from '../../parsers/storageResolver';
 
 export async function handleMmAssetAccountBalancesPerBlock(
   ctx: SqdProcessorContext<Store>
@@ -248,7 +256,8 @@ export async function handleMmAssetAccountBalancesPerBlock(
 
           if (assetBalance.asset.resourceType === ResourceType.Debt) {
             let assetFull: Asset | undefined = assetBalance.asset;
-            if (!assetFull.underlyingAsset) {
+            let underlyingAsset: Asset | undefined = undefined;
+            if (!assetFull.underlyingAssetId) {
               /**
                * We need this re-fetch to be sure that cached Asset contains data
                * about a related underlyingAsset
@@ -257,18 +266,28 @@ export async function handleMmAssetAccountBalancesPerBlock(
                 Asset,
                 {
                   where: { id: assetBalance.asset.id },
-                  relations: {
-                    underlyingAsset: true,
-                  },
+                  relations: {},
                 },
                 {
                   className: 'Asset',
                   originCallFn: 'handleMmAssetAccountBalancesPerBlock',
                 }
               );
+
+              underlyingAsset = assetFull ? await ctx.storeUtils.findOneWithLogs(
+                Asset,
+                {
+                  where: { assetRegistryId: assetFull.underlyingAssetId as string },
+                  relations: {},
+                },
+                {
+                  className: 'Asset',
+                  originCallFn: 'handleMmAssetAccountBalancesPerBlock',
+                }
+              ) : undefined;
             }
-            if (assetFull && assetFull.underlyingAsset)
-              assetInId = assetFull.underlyingAsset.id;
+            if (assetFull && underlyingAsset)
+              assetInId = underlyingAsset.id;
           }
 
           const assetSpotPrice = getAssetsPairPrice({

@@ -1,8 +1,16 @@
-import { SqdProcessorContext } from '../../../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { Aavepool, AavepoolHistoricalData } from '../../../../../../model';
-import { In, LessThanOrEqual, Not } from 'typeorm';
+import {
+  In,
+  Not,
+} from 'typeorm';
 import { Between } from 'typeorm/find-options/operator/Between';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import {
+  Aavepool,
+  AavepoolHistoricalData,
+} from '../../../../../../model';
+import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchAavePoolsHistoricalData({
   blockNumber,
@@ -17,10 +25,7 @@ export async function fetchAavePoolsHistoricalData({
     Aavepool,
     {
       where: {},
-      relations: {
-        reserveAsset: true,
-        aToken: true,
-      },
+      relations: {},
     },
     {
       className: 'Aavepool',
@@ -52,7 +57,7 @@ export async function fetchAavePoolsHistoricalData({
           : {}),
       },
       relations: {
-        pool: { reserveAsset: true, aToken: true },
+        pool: true,
       },
     },
     {
@@ -90,10 +95,7 @@ export async function fetchAavePoolsHistoricalDataForBlocksRangeResolver({
         Aavepool,
         {
           where: {},
-          relations: {
-            reserveAsset: true,
-            aToken: true,
-          },
+          relations: {},
         },
         {
           className: 'Aavepool',
@@ -133,7 +135,7 @@ export async function fetchAavePoolsHistoricalDataForBlocksRangeResolver({
               : {}),
           },
           relations: {
-            pool: { reserveAsset: true, aToken: true },
+            pool: true,
           },
         },
         {

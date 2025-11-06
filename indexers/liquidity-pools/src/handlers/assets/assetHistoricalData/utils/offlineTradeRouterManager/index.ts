@@ -1,12 +1,16 @@
-import { SqdProcessorContext } from '../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { OfflineTradeRouterManagerHelper } from './offlineTradeRouterManagerHelper';
+
+import { SqdProcessorContext } from '../../../../../processor';
 import {
-  TradeRouter,
-  OfflinePoolService,
   IPersistentDataInput,
+  OfflinePoolService,
   OfflinePoolUtils,
+  TradeRouter,
 } from '../offlineSdk/sdk/src';
+import {
+  OfflineTradeRouterManagerHelper,
+} from './offlineTradeRouterManagerHelper';
+
 // } from '@galacticcouncil/sdk';
 
 export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
@@ -43,7 +47,7 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
 
     await Promise.all(
       blockNumbers.map(async (blockNumber) => {
-        await this.initOfflineTradeRouterForBlock(blockNumber, ctx);
+        return this.initOfflineTradeRouterForBlock(blockNumber, ctx);
       })
     );
   }

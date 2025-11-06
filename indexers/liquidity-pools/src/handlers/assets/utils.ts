@@ -1,5 +1,7 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import pMap from 'p-map';
+
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   Asset,
   AssetMultiLocation,
@@ -9,26 +11,35 @@ import {
   ResourceType,
 } from '../../model';
 import parsers from '../../parsers';
-import { EvmUtils } from '../../utils/evm';
-import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from './asset';
-import { ProcessorStatusManager } from '../../processorStatusManager';
-import { AssetDetailsWithId, BondDetails } from '../../parsers/types/storage';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import {
-  anyToStringAllKeys,
-  bigintToStringAllKeys,
-  isU32,
-} from '../../utils/helpers';
-import { AssetRegistryLocationSetData } from '../../parsers/batchBlocksParser/types';
-import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
+  AssetRegistryLocationSetData,
+} from '../../parsers/batchBlocksParser/types';
+import {
+  getErc20AssetContractFromLocation,
+} from '../../parsers/chains/hydration/utils';
 import {
   AssetLocationJunction,
   AssetRegistryAssetLocation,
-  AssetRegistryLocationWithAssetId,
 } from '../../parsers/types/events';
-import { AssetHubRpcManager } from '../../utils/rpcCliens/assetHubRpcManager';
+import {
+  AssetDetailsWithId,
+  BondDetails,
+} from '../../parsers/types/storage';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetHubManager } from '../../utils/assetHubManager';
-import pMap from 'p-map';
+import { EvmUtils } from '../../utils/evm';
+import {
+  MoneyMarketContractsManager,
+} from '../../utils/evmTools/moneyMarketContractsManager';
+import { anyToStringAllKeys } from '../../utils/helpers';
+import {
+  getOrCreateAsset,
+  getOrCreateMoneyMarketAsset,
+} from './asset';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAll = new Map(
@@ -37,12 +48,7 @@ export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
         Asset,
         {
           where: {},
-          relations: {
-            underlyingAsset: true,
-            aToken: true,
-            variableDebtToken: true,
-            bondUnderlyingAsset: true,
-          },
+          relations: {},
         },
         { className: 'Asset' }
       )
@@ -310,7 +316,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           decimals: getDecimals(),
           xcmRateLimit: data.xcmRateLimit ?? null,
           isSufficient: data.isSufficient ?? true,
-          bondUnderlyingAsset,
+          bondUnderlyingAssetId: bondUnderlyingAsset?.id ?? null,
           bondMaturity,
         });
 
@@ -450,11 +456,11 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
       if (!underlyingAsset) continue;
 
-      erc20Asset.underlyingAsset = underlyingAsset;
+      erc20Asset.underlyingAssetId = underlyingAsset.id;
       if (erc20Asset.resourceType === ResourceType.Collateral) {
-        underlyingAsset.aToken = erc20Asset;
+        underlyingAsset.aTokenId = erc20Asset.id;
       } else if (erc20Asset.resourceType === ResourceType.Debt) {
-        underlyingAsset.variableDebtToken = erc20Asset;
+        underlyingAsset.variableDebtTokenId = erc20Asset.id;
       }
       erc20AssetToSave.set(erc20Asset.id, erc20Asset);
       erc20AssetToSave.set(underlyingAsset.id, underlyingAsset);

@@ -1,22 +1,31 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
-import { prefetchAllAssets } from '../../../handlers/assets/utils';
+
+import {
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
 import {
   handleAssetHistoricalData,
   handleAssetSpotPricesHistoricalData,
 } from '../../../handlers/assets/assetHistoricalData';
-import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { ProcessingPoolManager } from '../../../utils/processingPoolManager';
+import { prefetchAllAssets } from '../../../handlers/assets/utils';
+import {
+  processPoolsTvlNormalized,
+} from '../../../handlers/pools/normalizedTvlBaseAsset';
+import {
+  processPoolsNormalizedVolumes,
+} from '../../../handlers/pools/normalizedVolumesInBaseAsset';
+import {
+  savePreprocessedData,
+} from '../../../handlers/preprocessedDataBucket/persist';
+import { handleRelayChainBlocks } from '../../../handlers/relayChain';
 import { StorageResolver } from '../../../parsers/storageResolver';
+import { SqdProcessorContext } from '../../../processor';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { ProcessingPoolManager } from '../../../utils/processingPoolManager';
 import {
   checkAndWaitForCoreProcStatus,
   waitForSpotPricesRelatedHistoricalData,
 } from './statusWaitingHelpers';
-import { savePreprocessedData } from '../../../handlers/preprocessedDataBucket/persist';
-import { processPoolsTvlNormalized } from '../../../handlers/pools/normalizedTvlBaseAsset';
 
 export async function execSpotPricesProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -108,7 +117,7 @@ async function processLockedBlocksBatch(
   console.timeEnd('processPoolsNormalizedVolumes');
 
   console.time('processPoolsTvlNormalized');
-  processPoolsTvlNormalized({ ctx });
+  await processPoolsTvlNormalized({ ctx });
   console.timeEnd('processPoolsTvlNormalized');
 
   console.time('savePreprocessedDataBuckets');

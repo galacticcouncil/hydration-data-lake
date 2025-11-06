@@ -1,5 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
-import {Asset} from "./asset.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import {MoneyMarketReserve} from "./moneyMarketReserve.model"
 import {AavepoolHistoricalData} from "./aavepoolHistoricalData.model"
 
@@ -15,13 +14,11 @@ export class Aavepool {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    reserveAsset!: Asset
+    @StringColumn_({nullable: false})
+    reserveAssetId!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    aToken!: Asset
+    @StringColumn_({nullable: false})
+    aTokenId!: string
 
     @Index_()
     @ManyToOne_(() => MoneyMarketReserve, {nullable: true})

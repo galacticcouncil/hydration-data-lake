@@ -1,24 +1,33 @@
-import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
+import {
+  Asset,
+  AssetType,
+  ResourceType,
+} from '../../model';
+import parsers from '../../parsers';
+import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import {
   AssetRegistryLocationSetData,
   AssetRegistryRegisteredData,
   AssetRegistryUpdatedData,
 } from '../../parsers/batchBlocksParser/types';
 import {
+  getErc20AssetContractFromLocation,
+} from '../../parsers/chains/hydration/utils';
+import { EventName } from '../../parsers/types/events';
+import { SqdProcessorContext } from '../../processor';
+import { AssetHubManager } from '../../utils/assetHubManager';
+import {
+  MoneyMarketContractsManager,
+} from '../../utils/evmTools/moneyMarketContractsManager';
+import { getOrCreateAsset } from './asset';
+import {
   getAssetEvmAddressByType,
   getAssetIdFromCustomMultiLocation,
   getNewAssetMultiLocationFromStorageData,
   getNewCustomAssetMultiLocation,
 } from './utils';
-import { Asset, AssetType, ResourceType } from '../../model';
-import { getOrCreateAsset } from './asset';
-import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
-import { EventName } from '../../parsers/types/events';
-import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
-import parsers from '../../parsers';
-import { AssetHubManager } from '../../utils/assetHubManager';
 
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
@@ -172,7 +181,7 @@ export async function assetRegistered(
     decimals: getDecimals(),
     xcmRateLimit,
     isSufficient,
-    bondUnderlyingAsset,
+    bondUnderlyingAssetId: bondUnderlyingAsset?.id ?? null,
     bondMaturity,
   });
 

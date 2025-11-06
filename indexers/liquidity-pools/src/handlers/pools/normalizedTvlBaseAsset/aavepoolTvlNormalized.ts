@@ -1,9 +1,11 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
 
-export function processAavepoolsNormalizedTvl({
+import { SqdProcessorContext } from '../../../processor';
+import { calcPriceNormalized } from '../../../utils/helpers';
+import { getOrCreateAsset } from '../../assets/asset';
+
+export async function processAavepoolsNormalizedTvl({
   blockNumbersToProcess,
   ctx,
 }: {
@@ -25,7 +27,14 @@ export function processAavepoolsNormalizedTvl({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const poolHistData of aaveoolHistDataByBatchList) {
-    const reserveAsset = poolHistData.pool.reserveAsset;
+    const reserveAsset = poolHistData.pool.reserveAssetId ? await getOrCreateAsset({
+      assetRegistryId: poolHistData.pool.reserveAssetId, blockHeader: undefined, ctx, ensure: true
+    }) : null;
+
+    if (!reserveAsset){ 
+      console.log(`Reserve asset not found for Aavepool ${poolHistData.pool.id}`);
+      continue;
+    }
 
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
       `${reserveAsset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${poolHistData.paraBlockHeight}`
@@ -34,10 +43,15 @@ export function processAavepoolsNormalizedTvl({
     if (reserveAsset.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
       assetSpotPriceNorm = '1';
 
-    if (!assetSpotPriceNorm || !reserveAsset.decimals) {
+    if (!assetSpotPriceNorm) {
       console.log(
         `Spot price for asset ${reserveAsset.id} not found. Skipping.`
       );
+      continue;
+    }
+
+    if(!reserveAsset.decimals) {
+      console.log(`Reserve asset decimals not found for asset ${reserveAsset.id}. Skipping.`);
       continue;
     }
 

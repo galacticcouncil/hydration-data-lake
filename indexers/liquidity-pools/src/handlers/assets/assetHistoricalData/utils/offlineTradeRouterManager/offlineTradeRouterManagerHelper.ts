@@ -1,3 +1,7 @@
+import pMap from 'p-map';
+
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   AavepoolHistoricalData,
   AssetHistoricalData,
@@ -9,41 +13,43 @@ import {
   SwapFillerType,
   XykpoolHistoricalData,
 } from '../../../../../model';
+import { StorageResolver } from '../../../../../parsers/storageResolver';
 import { SqdProcessorContext } from '../../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import {
-  fetchAssetsHistoricalData,
-  fetchLbpPoolsHistoricalData,
-  fetchXykPoolsHistoricalData,
-  fetchStableswapHistoricalData,
-  fetchOmnipoolHistoricalData,
-  fetchConstantsHistoricalData,
-  fetchConstantsHistoricalDataForBlocksRangeResolver,
-  fetchAssetsHistoricalDataForBlocksRangeResolver,
-  fetchLbpPoolsHistoricalDataForBlocksRangeResolver,
-  fetchXykPoolsHistoricalDataForBlocksRangeResolver,
-  fetchStableswapHistoricalDataForBlocksRangeResolver,
-  fetchOmnipoolHistoricalDataForBlocksRangeResolver,
-} from './fetchHistoricalDataHelpers';
-
-import {
-  IPersistentPoolBase,
-  IPersistentPoolToken,
-  IPersistentLbpPoolBase,
-  PersistentAsset,
-  IPersistentStableSwapBase,
-  IPersistentOmniPoolBase,
-  IPersistentOmniPoolToken,
-  IPersistentEmaOracleEntry,
-  PoolType,
-  IPersistentConstants,
-  IPersistentMmOracleEntry,
-} from '../offlineSdk/sdk/src';
+  MmOracleManager,
+} from '../../../../../utils/evmTools/mmOracleEvmManager';
 // } from '@galacticcouncil/sdk';
 import {
   bigintToNumberSafe,
   publicKeyToSs58,
 } from '../../../../../utils/helpers';
+import {
+  IPersistentConstants,
+  IPersistentEmaOracleEntry,
+  IPersistentLbpPoolBase,
+  IPersistentMmOracleEntry,
+  IPersistentOmniPoolBase,
+  IPersistentOmniPoolToken,
+  IPersistentPoolBase,
+  IPersistentPoolToken,
+  IPersistentStableSwapBase,
+  PersistentAsset,
+  PoolType,
+} from '../offlineSdk/sdk/src';
+import {
+  fetchAssetsHistoricalData,
+  fetchAssetsHistoricalDataForBlocksRangeResolver,
+  fetchConstantsHistoricalData,
+  fetchConstantsHistoricalDataForBlocksRangeResolver,
+  fetchLbpPoolsHistoricalData,
+  fetchLbpPoolsHistoricalDataForBlocksRangeResolver,
+  fetchOmnipoolHistoricalData,
+  fetchOmnipoolHistoricalDataForBlocksRangeResolver,
+  fetchStableswapHistoricalData,
+  fetchStableswapHistoricalDataForBlocksRangeResolver,
+  fetchXykPoolsHistoricalData,
+  fetchXykPoolsHistoricalDataForBlocksRangeResolver,
+} from './fetchHistoricalDataHelpers';
 import {
   fetchAavePoolsHistoricalData,
   fetchAavePoolsHistoricalDataForBlocksRangeResolver,
@@ -52,10 +58,6 @@ import {
   fetchEmaOracleEntriesHistoricalData,
   fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver,
 } from './fetchHistoricalDataHelpers/fetchEmaOraclesHistoricalData';
-import pMap from 'p-map';
-import { MmOracleManager } from '../../../../../utils/evmTools/mmOracleEvmManager';
-import { StorageResolver } from '../../../../../parsers/storageResolver';
-import { getHydratedLogger } from '../../../../../utils/hydratedLogger';
 
 export class OfflineTradeRouterManagerHelper {
   protected SUPPORTED_ASSET_TYPES_SET = new Set([
@@ -940,15 +942,19 @@ export class OfflineTradeRouterManagerHelper {
     // for (const [poolId, poolHistData] of [
     //   ...(this.aavepoolsHistData.get(blockNumber) || new Map()).entries(),
     // ] as [string, AavepoolHistoricalData][]) {
+
     for (const [poolId, poolHistData] of (this.aavepoolsHistData.get(
       blockNumber
     ) || new Map()) as Map<string, AavepoolHistoricalData>) {
       const reserveAssetHistData = this.assetsHistData
         .get(blockNumber)
-        ?.get(poolHistData.pool.reserveAsset.id);
+        ?.get(poolHistData.pool.reserveAssetId);
       const aTokenHistData = this.assetsHistData
         .get(blockNumber)
-        ?.get(poolHistData.pool.aToken.id);
+        ?.get(poolHistData.pool.aTokenId);
+
+      console.log({aTokenId: poolHistData.pool.aTokenId,aTokenHistData})
+      console.log({reserveId: poolHistData.pool.reserveAssetId,reserveAssetHistData})
 
       if (!reserveAssetHistData || !aTokenHistData) {
         console.error(`>> missing asset data for pool ${poolId}`);
@@ -961,23 +967,23 @@ export class OfflineTradeRouterManagerHelper {
         type: PoolType.Aave,
         tokens: [
           {
-            id: poolHistData.pool.reserveAsset.assetRegistryId,
-            decimals: poolHistData.pool.reserveAsset.decimals,
-            symbol: poolHistData.pool.reserveAsset.symbol,
+            id: reserveAssetHistData.assetRegistryId,
+            decimals: reserveAssetHistData.asset.decimals,
+            symbol: reserveAssetHistData.asset.symbol,
             balance: poolHistData.liquidityIn.toString(),
             existentialDeposit:
               reserveAssetHistData.existentialDeposit.toString(),
             isSufficient: true, // TODO fix data
-            type: poolHistData.pool.reserveAsset.assetType,
+            type: reserveAssetHistData.asset.assetType,
           },
           {
-            id: poolHistData.pool.aToken.assetRegistryId,
-            decimals: poolHistData.pool.aToken.decimals,
-            symbol: poolHistData.pool.aToken.symbol,
+            id: aTokenHistData.assetRegistryId,
+            decimals: aTokenHistData.asset.decimals,
+            symbol: aTokenHistData.asset.symbol,
             balance: poolHistData.liquidityOut.toString(),
             existentialDeposit: aTokenHistData.existentialDeposit.toString(),
             isSufficient: true, // TODO fix data
-            type: poolHistData.pool.aToken.assetType,
+            type: aTokenHistData.asset.assetType,
           },
         ] as IPersistentPoolToken[],
         maxInRatio: 0,

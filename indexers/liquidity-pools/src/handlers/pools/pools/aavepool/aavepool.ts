@@ -1,10 +1,13 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { Aavepool } from '../../../../model';
-import { getOrCreateAsset } from '../../../assets/asset';
-import { getAavePoolAddress } from '../../../../utils/helpers';
 import { FindOptionsRelations } from 'typeorm';
-import { Entity } from '@subsquid/typeorm-store/src/store';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import { Aavepool } from '../../../../model';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../../processor';
+import { getAavePoolAddress } from '../../../../utils/helpers';
 
 export async function getOrCreateAavepool({
   reserveAssetId,
@@ -12,7 +15,7 @@ export async function getOrCreateAavepool({
   ensure = false,
   blockHeader,
   ctx,
-  relations = { reserveAsset: true, aToken: true },
+  relations = {},
 }: {
   reserveAssetId: string;
   aTokenId: string;
@@ -49,26 +52,12 @@ export async function getOrCreateAavepool({
     return null;
   }
 
-  const reserveAsset = await getOrCreateAsset({
-    assetRegistryId: reserveAssetId,
-    ensure: true,
-    blockHeader,
-    ctx,
-  });
-
-  const aToken = await getOrCreateAsset({
-    assetRegistryId: aTokenId,
-    ensure: true,
-    blockHeader,
-    ctx,
-  });
-
-  if (!reserveAsset || !aToken) throw new Error('No asset found for Aavepool');
+  if (!reserveAssetId || !aTokenId) throw new Error('No asset found for Aavepool');
 
   const newPool = new Aavepool({
     id: poolId,
-    reserveAsset: reserveAsset,
-    aToken: aToken,
+    reserveAssetId,
+    aTokenId,
   });
 
   await ctx.store.upsert(newPool);

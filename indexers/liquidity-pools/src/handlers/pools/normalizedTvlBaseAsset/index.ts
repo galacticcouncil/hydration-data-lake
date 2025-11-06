@@ -1,12 +1,13 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { processXykPoolsNormalizedTvl } from './xykPoolTvlNormalized';
-import { processLbppoolsNormalizedTvl } from './lbpPoolTvlNormalized';
-import { processStableswapNormalizedTvl } from './stableswapAssetTvlNormalized';
-import { processOmnipoolNormalizedTvl } from './omnipoolAssetTvlNormalized';
-import { processAavepoolsNormalizedTvl } from './aavepoolTvlNormalized';
 
-export function processPoolsTvlNormalized({
+import { SqdProcessorContext } from '../../../processor';
+import { processAavepoolsNormalizedTvl } from './aavepoolTvlNormalized';
+import { processLbppoolsNormalizedTvl } from './lbpPoolTvlNormalized';
+import { processOmnipoolNormalizedTvl } from './omnipoolAssetTvlNormalized';
+import { processStableswapNormalizedTvl } from './stableswapAssetTvlNormalized';
+import { processXykPoolsNormalizedTvl } from './xykPoolTvlNormalized';
+
+export async function processPoolsTvlNormalized({
   blockNumbersToProcess,
   ctx,
 }: {
@@ -17,5 +18,5 @@ export function processPoolsTvlNormalized({
   processLbppoolsNormalizedTvl({ ctx, blockNumbersToProcess });
   processStableswapNormalizedTvl({ ctx, blockNumbersToProcess });
   processOmnipoolNormalizedTvl({ ctx, blockNumbersToProcess });
-  processAavepoolsNormalizedTvl({ ctx, blockNumbersToProcess });
+  await processAavepoolsNormalizedTvl({ ctx, blockNumbersToProcess });
 }
