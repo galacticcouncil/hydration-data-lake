@@ -133,9 +133,9 @@ export async function handleAavepoolHistoricalData(
         const poolHistoricalDataEntity = new AavepoolHistoricalData({
           id: `${pool.id}-${blockHeader.height}`,
           pool,
-          reserveAsset: reserveAsset,
+          reserveAssetId: reserveAsset.id,
           reserveAssetRegistryId: reserveAsset.assetRegistryId,
-          aToken: aToken,
+          aTokenId: aToken?.id,
           aTokenRegistryId: aToken?.assetRegistryId,
 
           liquidityIn: poolData.data.liquidityIn,

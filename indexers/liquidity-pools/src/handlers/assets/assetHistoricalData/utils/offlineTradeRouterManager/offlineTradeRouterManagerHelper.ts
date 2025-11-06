@@ -954,7 +954,7 @@ export class OfflineTradeRouterManagerHelper {
         ?.get(poolHistData.pool.aTokenId);
 
       console.log({aTokenId: poolHistData.pool.aTokenId,aTokenHistData})
-      console.log({reserveId: poolHistData.pool.reserveAssetId,reserveAssetHistData})
+      // console.log({reserveId: poolHistData.pool.reserveAssetId,reserveAssetHistData})
 
       if (!reserveAssetHistData || !aTokenHistData) {
         console.error(`>> missing asset data for pool ${poolId}`);

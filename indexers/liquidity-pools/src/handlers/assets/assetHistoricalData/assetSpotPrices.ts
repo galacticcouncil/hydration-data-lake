@@ -113,8 +113,8 @@ async function processAssetSpotPrices({
         assetIdToProcess,
         ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       );
-      
-      console.log({usdPriceDetails})
+
+      // console.log({usdPriceDetails})
       if (usdPriceDetails) {
         assetHistData.usdPriceNormalised = fromExponentialToDecimalNotation(
           usdPriceDetails.amount.toFixed(0, BigNumber.ROUND_HALF_UP),

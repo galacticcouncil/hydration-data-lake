@@ -1654,9 +1654,9 @@ type AavepoolHistoricalData @entity {
   id: ID!
   pool: Aavepool!
 
-  reserveAsset: Asset
+  reserveAssetId: String
   reserveAssetRegistryId: String
-  aToken: Asset
+  aTokenId: String
   aTokenRegistryId: String
 
   liquidityIn: BigInt!

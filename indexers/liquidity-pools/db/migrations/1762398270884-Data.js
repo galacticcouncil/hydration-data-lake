@@ -1,5 +1,5 @@
-module.exports = class Data1762347528926 {
-    name = 'Data1762347528926'
+module.exports = class Data1762398270884 {
+    name = 'Data1762398270884'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, "stableswap_hist_data_latest_block" integer, "omnipool_hist_data_latest_block" integer, "xykpool_hist_data_latest_block" integer, "aavepool_hist_data_latest_block" integer, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -303,9 +303,8 @@ module.exports = class Data1762347528926 {
         await db.query(`CREATE INDEX "IDX_cab25445a4be005816c84f6a94" ON "money_market_reserve" ("underlying_asset_id") `)
         await db.query(`CREATE INDEX "IDX_1a7c44de187a45c57aa6b13210" ON "money_market_reserve" ("variable_debt_token_id") `)
         await db.query(`CREATE INDEX "IDX_349b9def6844db4407e2abbba5" ON "money_market_reserve" ("aave_pool_id") `)
-        await db.query(`CREATE TABLE "aavepool_historical_data" ("id" character varying NOT NULL, "reserve_asset_registry_id" text, "a_token_registry_id" text, "liquidity_in" numeric NOT NULL, "liquidity_out" numeric NOT NULL, "tvl_in_ref_asset_norm" text, "a_token_total_supply" numeric, "variable_debt_token_total_supply" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "pool_id" character varying, "reserve_asset_id" character varying, "a_token_id" character varying, CONSTRAINT "PK_5f3ed369ac4ab9081b1bc54bce1" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "aavepool_historical_data" ("id" character varying NOT NULL, "reserve_asset_id" text, "reserve_asset_registry_id" text, "a_token_registry_id" text, "liquidity_in" numeric NOT NULL, "liquidity_out" numeric NOT NULL, "tvl_in_ref_asset_norm" text, "a_token_total_supply" numeric, "variable_debt_token_total_supply" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "pool_id" character varying, "a_token_id" character varying, CONSTRAINT "PK_5f3ed369ac4ab9081b1bc54bce1" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_093b7c9bca5cbcadf7641a4b58" ON "aavepool_historical_data" ("pool_id") `)
-        await db.query(`CREATE INDEX "IDX_d044a1d141d519d186fb7f48ba" ON "aavepool_historical_data" ("reserve_asset_id") `)
         await db.query(`CREATE INDEX "IDX_7097dab4c6322068521cb628f6" ON "aavepool_historical_data" ("a_token_id") `)
         await db.query(`CREATE INDEX "IDX_b036adf6e514ff7219dd300a73" ON "aavepool_historical_data" ("para_block_height") `)
         await db.query(`CREATE TABLE "aavepool" ("id" character varying NOT NULL, "reserve_asset_id" text NOT NULL, "a_token_id" text NOT NULL, "money_market_reserve_id" character varying, CONSTRAINT "PK_1626daca149540fd0c3590fa65a" PRIMARY KEY ("id"))`)
@@ -601,7 +600,6 @@ module.exports = class Data1762347528926 {
         await db.query(`ALTER TABLE "money_market_reserve" ADD CONSTRAINT "FK_1a7c44de187a45c57aa6b132104" FOREIGN KEY ("variable_debt_token_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "money_market_reserve" ADD CONSTRAINT "FK_349b9def6844db4407e2abbba5f" FOREIGN KEY ("aave_pool_id") REFERENCES "aavepool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "aavepool_historical_data" ADD CONSTRAINT "FK_093b7c9bca5cbcadf7641a4b581" FOREIGN KEY ("pool_id") REFERENCES "aavepool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
-        await db.query(`ALTER TABLE "aavepool_historical_data" ADD CONSTRAINT "FK_d044a1d141d519d186fb7f48baa" FOREIGN KEY ("reserve_asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "aavepool_historical_data" ADD CONSTRAINT "FK_7097dab4c6322068521cb628f6c" FOREIGN KEY ("a_token_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "aavepool" ADD CONSTRAINT "FK_50218a357bb16db3279d205f405" FOREIGN KEY ("money_market_reserve_id") REFERENCES "money_market_reserve"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "mm_supply" ADD CONSTRAINT "FK_eaa03bf143f075eae431d24682f" FOREIGN KEY ("asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -1010,7 +1008,6 @@ module.exports = class Data1762347528926 {
         await db.query(`DROP INDEX "public"."IDX_349b9def6844db4407e2abbba5"`)
         await db.query(`DROP TABLE "aavepool_historical_data"`)
         await db.query(`DROP INDEX "public"."IDX_093b7c9bca5cbcadf7641a4b58"`)
-        await db.query(`DROP INDEX "public"."IDX_d044a1d141d519d186fb7f48ba"`)
         await db.query(`DROP INDEX "public"."IDX_7097dab4c6322068521cb628f6"`)
         await db.query(`DROP INDEX "public"."IDX_b036adf6e514ff7219dd300a73"`)
         await db.query(`DROP TABLE "aavepool"`)
@@ -1306,7 +1303,6 @@ module.exports = class Data1762347528926 {
         await db.query(`ALTER TABLE "money_market_reserve" DROP CONSTRAINT "FK_1a7c44de187a45c57aa6b132104"`)
         await db.query(`ALTER TABLE "money_market_reserve" DROP CONSTRAINT "FK_349b9def6844db4407e2abbba5f"`)
         await db.query(`ALTER TABLE "aavepool_historical_data" DROP CONSTRAINT "FK_093b7c9bca5cbcadf7641a4b581"`)
-        await db.query(`ALTER TABLE "aavepool_historical_data" DROP CONSTRAINT "FK_d044a1d141d519d186fb7f48baa"`)
         await db.query(`ALTER TABLE "aavepool_historical_data" DROP CONSTRAINT "FK_7097dab4c6322068521cb628f6c"`)
         await db.query(`ALTER TABLE "aavepool" DROP CONSTRAINT "FK_50218a357bb16db3279d205f405"`)
         await db.query(`ALTER TABLE "mm_supply" DROP CONSTRAINT "FK_eaa03bf143f075eae431d24682f"`)
