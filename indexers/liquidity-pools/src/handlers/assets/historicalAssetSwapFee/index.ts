@@ -36,9 +36,9 @@ export async function handleAssetSwapFee({
     lastCachedAssetFeeAmount ||
     (await ctx.storeUtils.findOneWithLogs(AssetSwapFeeHistoricalData, {
       where: {
-        asset: { id: asset.id },
+        assetId: asset.id,
       },
-      relations: { asset: true },
+      relations: {},
       order: {
         paraBlockHeight: 'DESC',
       },
@@ -46,7 +46,7 @@ export async function handleAssetSwapFee({
 
   const assetSwapFee = new AssetSwapFeeHistoricalData({
     id: `${asset.id}-${block.height}`,
-    asset,
+    assetId: asset.id,
     amount: currentBlockAssetFeeAmount?.amount || BigInt(0),
     totalAmount: persistentAssetFeeAmount?.totalAmount || BigInt(0),
     paraBlockHeight: block.height,

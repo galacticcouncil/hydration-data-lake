@@ -62,8 +62,6 @@ export async function recalculatePoolsNormalizedVolumes(
         },
         relations: {
           assetInHistData: true,
-          assetIn: true,
-          assetOut: true,
         },
       }, { className: 'AssetSpotPriceHistoricalData' })
     ).map((p) => [p.id, p])

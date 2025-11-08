@@ -1,5 +1,5 @@
 import pMap from 'p-map';
-import { LessThan } from 'typeorm';
+import { LessThan, Like } from 'typeorm';
 
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
@@ -8,6 +8,7 @@ import {
   AssetDynamicFee,
   AssetHistoricalData,
   AssetType,
+  EmbeddedAsset,
 } from '../../../model';
 import parsers from '../../../parsers';
 import { SqdProcessorContext } from '../../../processor';
@@ -112,13 +113,19 @@ export async function processAssetsHistoricalDataAtBlock({
 
       const newAssetHistoricalData = new AssetHistoricalData({
         id: `${asset.id}-${block.height}`,
-        asset,
+        asset: new EmbeddedAsset({
+        id: asset.id,
+        assetRegistryId: asset.assetRegistryId,
+        name: asset.name,
+        symbol: asset.symbol,
+        assetType: asset.assetType,
+        decimals: asset.decimals,
+        isSufficient: asset.isSufficient,
+        existentialDeposit: existentialDepositPerAssetMap.get(asset.assetRegistryId ?? '')?.existentialDeposit ?? 0n,
+      }),
 
-        assetRegistryId: asset.assetRegistryId ?? null,
         totalIssuance: totalIssuancePerAssetMapByAssetId.get(asset.id) ?? 0n,
-        existentialDeposit:
-          existentialDepositPerAssetMap.get(asset.assetRegistryId ?? '')
-            ?.existentialDeposit ?? 0n,
+
         dynamicFee: dynamicFeePerAssetMap.has(asset.assetRegistryId ?? '')
           ? new AssetDynamicFee({
               assetFee: dynamicFeePerAssetMap.get(asset.assetRegistryId ?? '')!
@@ -239,18 +246,16 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
+    // Since AssetHistoricalData.id is "<assetId>-<paraBlockHeight>",
+    // we can't query by embedded asset.id directly. Instead, use Like to match the asset ID prefix
     previousItem = await ctx.storeUtils.findOneWithLogs(
       AssetHistoricalData,
       {
         where: {
-          asset: {
-            id: currentRecord.asset.id,
-          },
+          id: Like(`${currentRecord.asset.id}-%`),
           paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
         },
-        relations: {
-          asset: true,
-        },
+        // asset is an embedded type, not a relation - automatically included
         order: {
           paraBlockHeight: 'DESC',
         },
@@ -277,7 +282,7 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
 
   if (
     previousItem.totalIssuance !== currentRecord.totalIssuance ||
-    previousItem.existentialDeposit !== currentRecord.existentialDeposit ||
+    previousItem.asset.existentialDeposit !== currentRecord.asset.existentialDeposit ||
     previousItem.usdPriceNormalised !== currentRecord.usdPriceNormalised ||
     !!previousItem.dynamicFee !== !!currentRecord.dynamicFee ||
     (!!previousItem.dynamicFee &&

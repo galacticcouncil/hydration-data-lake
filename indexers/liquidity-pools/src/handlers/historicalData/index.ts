@@ -370,7 +370,7 @@ export class HistoricalDataManager {
       src
         .filter(
           (item) =>
-            !!item.assetIn.assetRegistryId && !!item.assetOut.assetRegistryId
+            !!item.assetInAssetRegistryId && !!item.assetOutAssetRegistryId
         )
         .map((item) => {
           const block = ctx.batchState.getParaBlockFromCacheByHeight(
@@ -381,8 +381,8 @@ export class HistoricalDataManager {
           return {
             keyPrefix: ctx.appConfig.INDEXER_ID,
             name: RedisTimeSeriesName.price,
-            assetAId: item.assetIn.assetRegistryId!,
-            assetBId: item.assetOut.assetRegistryId!,
+            assetAId: item.assetInAssetRegistryId!,
+            assetBId: item.assetOutAssetRegistryId!,
             timestamp,
             value: +item.priceNormalised,
           };
@@ -406,7 +406,7 @@ export class HistoricalDataManager {
       src
         .filter(
           (item) =>
-            !!item.assetA.assetRegistryId && !!item.assetB.assetRegistryId
+            !!item.assetRegistryAId && !!item.assetRegistryBId
         )
         .map((item) => {
           const block = ctx.batchState.getParaBlockFromCacheByHeight(
@@ -418,13 +418,13 @@ export class HistoricalDataManager {
             keyPrefix: ctx.appConfig.INDEXER_ID,
             name: RedisTimeSeriesName.volume,
             assetAId:
-              +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
-                ? item.assetA.assetRegistryId!
-                : item.assetB.assetRegistryId!,
+              +item.assetRegistryAId! < +item.assetRegistryBId!
+                ? item.assetRegistryAId!
+                : item.assetRegistryBId!,
             assetBId:
-              +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
-                ? item.assetB.assetRegistryId!
-                : item.assetA.assetRegistryId!,
+              +item.assetRegistryAId! < +item.assetRegistryBId!
+                ? item.assetRegistryBId!
+                : item.assetRegistryAId!,
 
             timestamp,
             value: +item.totalVolumeNormalised,

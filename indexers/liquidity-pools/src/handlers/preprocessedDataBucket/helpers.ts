@@ -9,6 +9,7 @@ import {
   AssetsPairVolumeHistoricalData,
   AssetSpotPriceHistoricalData,
   Block as BlockEntity,
+  EmbeddedAsset,
   LbppoolVolumeHistoricalData,
   OmnipoolAssetVolumeHistoricalData,
   PreprocessedDataBucket,
@@ -114,9 +115,17 @@ export async function handlePreprocDataBuckets({
 
     const newEntity = new AssetHistoricalData({
       id: preprocData.id,
-      asset,
+      asset: new EmbeddedAsset({
+        id: asset.id,
+        assetRegistryId: asset.assetRegistryId,
+        name: asset.name,
+        symbol: asset.symbol,
+        assetType: asset.assetType,
+        decimals: asset.decimals,
+        isSufficient: asset.isSufficient,
+        existentialDeposit: asset.existentialDeposit,
+      }),
       totalIssuance: BigInt(preprocData.totalIssuance),
-      existentialDeposit: BigInt(preprocData.existentialDeposit),
       dynamicFee: preprocData.dynamicFee
         ? new AssetDynamicFee(preprocData.dynamicFee)
         : null,
@@ -165,8 +174,8 @@ export async function handlePreprocDataBuckets({
 
     const newEntity = new AssetSpotPriceHistoricalData({
       id: preprocData.id,
-      assetIn,
-      assetOut,
+      assetInId: assetIn.id,
+      assetOutId: assetOut.id,
       assetInAssetRegistryId: assetIn.assetRegistryId,
       assetOutAssetRegistryId: assetOut.assetRegistryId,
       assetInHistData,
@@ -212,8 +221,10 @@ export async function handlePreprocDataBuckets({
 
     const newEntity = new AssetsPairVolumeHistoricalData({
       id: preprocData.id,
-      assetA,
-      assetB,
+      assetAId: assetA.id,
+      assetRegistryAId: assetA.assetRegistryId?.toString(),
+      assetBId: assetB.id,
+      assetRegistryBId: assetB.assetRegistryId?.toString(),
       assetAVolume: BigInt(preprocData.assetAVolume),
       assetBVolume: BigInt(preprocData.assetBVolume),
       totalVolumeNormalised: preprocData.totalVolumeNormalised,

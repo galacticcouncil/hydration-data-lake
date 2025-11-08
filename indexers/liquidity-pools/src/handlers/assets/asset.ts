@@ -90,8 +90,11 @@ export async function getOrCreateAsset({
    * pre-created before indexing start point.
    */
 
-  if (!blockHeader || assetRegistryId === undefined) return null; //TODO fix this
-
+  if (!blockHeader || !assetRegistryId) return null; //TODO fix this
+  if(+assetRegistryId > Number.MAX_SAFE_INTEGER) {
+    console.log(`getOrCreateAsset :: assetRegistryId ${assetRegistryId} is too large to process. Skipping...`); 
+    return null;
+  }
   const storageData = await parsers.storage.assetRegistry.getAsset(
     +assetRegistryId,
     blockHeader

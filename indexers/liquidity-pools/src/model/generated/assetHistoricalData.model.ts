@@ -1,6 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, BigIntColumn as BigIntColumn_, StringColumn as StringColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
-import {Asset} from "./asset.model"
+import {EmbeddedAsset} from "./_embeddedAsset"
 import {AssetDynamicFee} from "./_assetDynamicFee"
 import {AssetSpotPriceHistoricalData} from "./assetSpotPriceHistoricalData.model"
 import {AssetAssetsPairVolume} from "./assetAssetsPairVolume.model"
@@ -17,18 +17,11 @@ export class AssetHistoricalData {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
-
-    @StringColumn_({nullable: true})
-    assetRegistryId!: string | undefined | null
+    @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => obj == null ? undefined : new EmbeddedAsset(undefined, obj)}, nullable: false})
+    asset!: EmbeddedAsset
 
     @BigIntColumn_({nullable: false})
     totalIssuance!: bigint
-
-    @BigIntColumn_({nullable: false})
-    existentialDeposit!: bigint
 
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new AssetDynamicFee(undefined, obj)}, nullable: true})
     dynamicFee!: AssetDynamicFee | undefined | null

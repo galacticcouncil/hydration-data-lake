@@ -1,5 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
-import {Asset} from "./asset.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
 
 @Entity_()
 export class AssetsPairVolumeHistoricalData {
@@ -13,13 +12,17 @@ export class AssetsPairVolumeHistoricalData {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetA!: Asset
+    @StringColumn_({nullable: false})
+    assetAId!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetB!: Asset
+    @StringColumn_({nullable: false})
+    assetRegistryAId!: string
+
+    @StringColumn_({nullable: false})
+    assetBId!: string
+
+    @StringColumn_({nullable: false})
+    assetRegistryBId!: string
 
     @BigIntColumn_({nullable: false})
     assetAVolume!: bigint

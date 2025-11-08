@@ -1,10 +1,15 @@
-import { SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { Asset, AssetVolumeHistoricalData } from '../../model';
-import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import { getOrderedListByBlockNumber } from '../../utils/helpers';
-import { EventName } from '../../parsers/types/events';
 import { In } from 'typeorm';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import {
+  Asset,
+  AssetVolumeHistoricalData,
+} from '../../model';
+import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
+import { EventName } from '../../parsers/types/events';
+import { SqdProcessorContext } from '../../processor';
+import { getOrderedListByBlockNumber } from '../../utils/helpers';
 import {
   assetLocationSet,
   assetRegistered,
@@ -96,7 +101,7 @@ export function initAssetVolume({
 
   return new AssetVolumeHistoricalData({
     id: asset.id + '-' + paraBlockHeight,
-    asset,
+    assetId: asset.id,
     volumeIn,
     volumeOut,
     totalVolumeIn,

@@ -106,7 +106,7 @@ export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
 ) {
   let parsedData = null;
-
+  console.log("singleFlowAllInOneProcessor");
   await Promise.all([
     (async () => {
       await handleRelayChainBlocks(ctx);

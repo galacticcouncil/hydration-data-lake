@@ -1,6 +1,10 @@
-import { Asset, AssetVolumeHistoricalData } from '../../model';
-import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
+import {
+  Asset,
+  AssetVolumeHistoricalData,
+} from '../../model';
+import { SqdProcessorContext } from '../../processor';
 import { initAssetVolume } from './index';
 
 export async function handleAssetVolumeUpdates(
@@ -46,9 +50,9 @@ export async function handleAssetVolumeUpdates(
       AssetVolumeHistoricalData,
       {
         where: {
-          asset: { id: swapDetails.assetIn.id },
+          assetId: swapDetails.assetIn.id ,
         },
-        relations: { asset: true },
+        relations: {},
         order: {
           paraBlockHeight: 'DESC',
         },
@@ -64,9 +68,9 @@ export async function handleAssetVolumeUpdates(
       AssetVolumeHistoricalData,
       {
         where: {
-          asset: { id: swapDetails.assetOut.id },
+          assetId: swapDetails.assetOut.id ,
         },
-        relations: { asset: true },
+        relations: {},
         order: {
           paraBlockHeight: 'DESC',
         },

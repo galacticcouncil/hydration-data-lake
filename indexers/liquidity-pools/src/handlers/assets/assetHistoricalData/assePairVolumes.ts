@@ -183,19 +183,19 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
 
     if (existingPairVolEntity) {
       assetA =
-        existingPairVolEntity.assetA.id === assetInData.asset.id
+        existingPairVolEntity.assetAId === assetInData.asset.id
           ? assetInData.asset
           : assetOutData.asset;
       assetB =
-        existingPairVolEntity.assetB.id === assetOutData.asset.id
+        existingPairVolEntity.assetBId === assetOutData.asset.id
           ? assetOutData.asset
           : assetInData.asset;
       assetAVolume =
-        (existingPairVolEntity.assetA.id === assetInData.asset.id
+        (existingPairVolEntity.assetAId === assetInData.asset.id
           ? assetInData.amount
           : assetOutData.amount) + existingPairVolEntity.assetAVolume;
       assetBVolume =
-        (existingPairVolEntity.assetB.id === assetOutData.asset.id
+        (existingPairVolEntity.assetBId === assetOutData.asset.id
           ? assetOutData.amount
           : assetInData.amount) + existingPairVolEntity.assetBVolume;
     }
@@ -207,8 +207,11 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
     const assetsPairVolumeEntity = new AssetsPairVolumeHistoricalData({
       id: assetsPairVolumeEntityId,
 
-      assetA,
-      assetB,
+      assetAId: assetA.id,
+      assetRegistryAId: assetA.assetRegistryId?.toString(),
+      
+      assetBId: assetB.id,
+      assetRegistryBId: assetB.assetRegistryId?.toString(),
 
       assetAVolume,
       assetBVolume,

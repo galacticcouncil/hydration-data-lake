@@ -25,9 +25,7 @@ export async function fetchAssetsHistoricalData({
       where: {
         paraBlockHeight: blockNumber,
       },
-      relations: {
-        asset: true,
-      },
+      // asset is an embedded type, not a relation - automatically included
     },
     {
       className: 'AssetHistoricalData',
@@ -77,9 +75,7 @@ export async function fetchAssetsHistoricalDataForBlocksRangeResolver({
           where: {
             paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
           },
-          relations: {
-            asset: true,
-          },
+          // asset is an embedded type, not a relation - automatically included
         },
         {
           className: 'AssetHistoricalData',

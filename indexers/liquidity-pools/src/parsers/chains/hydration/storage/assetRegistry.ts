@@ -1,5 +1,17 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
-import { storage } from '../typegenTypes/';
+
+import { AssetType } from '../../../../model';
+import { UnknownVersionError } from '../../../../utils/errors';
+import {
+  hexToStrWithNullCharCheck,
+  splitIntoBatches,
+  tryExecOrReturnFallback,
+} from '../../../../utils/helpers';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
+import {
+  AssetRegistryAssetLocation,
+  AssetRegistryLocationWithAssetId,
+} from '../../../types/events';
 import {
   AssetDetails,
   AssetDetailsWithId,
@@ -9,20 +21,8 @@ import {
   GetAssetLocationsDataManyInput,
   GetDataAtBlockInput,
 } from '../../../types/storage';
-import {
-  hexToStrWithNullCharCheck,
-  splitIntoBatches,
-  tryExecOrReturnFallback,
-} from '../../../../utils/helpers';
-import { AssetType } from '../../../../model';
-import { UnknownVersionError } from '../../../../utils/errors';
+import { storage } from '../typegenTypes/';
 import { getErc20AssetContractFromLocation } from '../utils';
-import {
-  AssetRegistryAssetLocation,
-  AssetRegistryLocationWithAssetId,
-} from '../../../types/events';
-import { getHydratedLogger } from '../../../../utils/hydratedLogger';
-import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 
 async function getAsset(
   assetId: string | number,

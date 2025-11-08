@@ -115,8 +115,11 @@ function decorateAssetsPairVolumeHistoricalData(
 ) {
   const decorated: Record<string, any> = getAllEntityProps(src);
 
-  decorated.assetA = src.assetA.id;
-  decorated.assetB = src.assetB.id;
+  decorated.assetA = src.assetAId;
+  decorated.assetB = src.assetBId;
+
+  decorated.assetRegistryAId = src.assetRegistryAId;
+  decorated.assetRegistryBId = src.assetRegistryBId;
 
   return decorated;
 }
@@ -127,8 +130,8 @@ function decorateAssetSpotPriceHistoricalData(
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.assetInHistData = src.assetInHistData.id;
-  decorated.assetIn = src.assetIn.id;
-  decorated.assetOut = src.assetOut.id;
+  decorated.assetIn = src.assetInId;
+  decorated.assetOut = src.assetOutId;
 
   return decorated;
 }

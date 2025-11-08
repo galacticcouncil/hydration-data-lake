@@ -1,9 +1,13 @@
-import { AssetHistoricalData, AssetSpotPriceHistoricalData } from '../model';
-import { SqdProcessorContext } from '../processor';
-import parsers from '../parsers';
 import { LessThan } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
-import pMap from 'p-map';
+
+import {
+  AssetHistoricalData,
+  AssetSpotPriceHistoricalData,
+} from '../model';
+import parsers from '../parsers';
+import { SqdProcessorContext } from '../processor';
 
 export class LatestProcessedDataCacheManager {
   private static instance: LatestProcessedDataCacheManager;
@@ -139,15 +143,13 @@ export class LatestProcessedDataCacheManager {
         AssetSpotPriceHistoricalData,
         {
           where: {
-            assetIn: { assetRegistryId: assetData.assetId.toString() },
+            assetInAssetRegistryId: assetData.assetId.toString(),
             paraBlockHeight: LessThan(currentBlockHeader.height),
           },
           order: {
             paraBlockHeight: 'DESC',
           },
           relations: {
-            assetIn: true,
-            assetOut: true,
             assetInHistData: true,
           },
         },
@@ -178,10 +180,10 @@ export class LatestProcessedDataCacheManager {
     >();
 
     for (const i of items) {
-      if (!assetSpotPriceHistoryIndexByAssetIn.has(i.assetIn.id)) {
-        assetSpotPriceHistoryIndexByAssetIn.set(i.assetIn.id, []);
+      if (!assetSpotPriceHistoryIndexByAssetIn.has(i.assetInId)) {
+        assetSpotPriceHistoryIndexByAssetIn.set(i.assetInId, []);
       }
-      assetSpotPriceHistoryIndexByAssetIn.get(i.assetIn.id)!.push(i);
+      assetSpotPriceHistoryIndexByAssetIn.get(i.assetInId)!.push(i);
     }
 
     for (const [

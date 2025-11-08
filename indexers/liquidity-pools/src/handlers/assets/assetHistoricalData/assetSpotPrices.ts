@@ -54,7 +54,7 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
 
   for (const histDataItem of otherAssetsHistData) {
     await processAssetSpotPrices({
-      asset: histDataItem.asset,
+      assetId: histDataItem.asset.id,
       assetHistData: histDataItem,
       blockHeader,
       ctx,
@@ -63,7 +63,7 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
 
   for (const histDataItem of xykOnlyAssetsHistData) {
     await processXykInvolvedAssetSpotPrices({
-      asset: histDataItem.asset,
+      assetId: histDataItem.asset.id,
       assetHistData: histDataItem,
       xykPoolsIndexedByInterimAssetPair: getXykPoolsIndexedByInterimAssetPair({
         ctx,
@@ -76,12 +76,12 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
 }
 
 async function processAssetSpotPrices({
-  asset,
+  assetId,
   assetHistData,
   blockHeader,
   ctx,
 }: {
-  asset: Asset;
+  assetId: string;
   assetHistData: AssetHistoricalData;
   ctx: SqdProcessorContext<Store>;
   blockHeader: BlockHeader;
@@ -91,6 +91,18 @@ async function processAssetSpotPrices({
   );
 
   if (!router) return;
+  if (!assetId) return;
+
+  const asset = await getOrCreateAsset({
+    id: assetId,
+    ctx,
+    blockHeader,
+    ensure: true,
+  });
+  if (!asset) {
+    console.log(`Asset spot price calculation skipped for assetRegistryId ${assetId} at block ${blockHeader.height} due to missing asset.`)  
+    return
+  };
 
   const calcAssetUsdPriceNormalised = async () => {
     let assetIdToProcess = asset.assetRegistryId;
@@ -176,8 +188,8 @@ async function processAssetSpotPrices({
           histDataItemId,
           new AssetSpotPriceHistoricalData({
             id: histDataItemId,
-            assetIn: asset,
-            assetOut,
+            assetInId: asset.id,
+            assetOutId: assetOut.id,
             assetInAssetRegistryId: asset.assetRegistryId,
             assetOutAssetRegistryId: assetOut.assetRegistryId,
             assetInHistData: assetHistData,
@@ -217,10 +229,10 @@ export async function getAssetSpotPriceHistDataWithUniqueData(
   for (const i of (
     src || ctx.batchState.state.assetsSpotPriceHistoricalDataBatch
   ).values()) {
-    if (!assetSportPriceHistoryIndexByAsset.has(i.assetIn.id)) {
-      assetSportPriceHistoryIndexByAsset.set(i.assetIn.id, []);
+    if (!assetSportPriceHistoryIndexByAsset.has(i.assetInId)) {
+      assetSportPriceHistoryIndexByAsset.set(i.assetInId, []);
     }
-    assetSportPriceHistoryIndexByAsset.get(i.assetIn.id)!.push(i);
+    assetSportPriceHistoryIndexByAsset.get(i.assetInId)!.push(i);
   }
 
   for (const [assetId, list] of assetSportPriceHistoryIndexByAsset.entries()) {
@@ -282,7 +294,7 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
   //   .find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   let previousItem = (
-    cachedIndexedRecords.get(currentRecord.assetIn.id) || []
+    cachedIndexedRecords.get(currentRecord.assetInId) || []
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
@@ -290,17 +302,11 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
       AssetSpotPriceHistoricalData,
       {
         where: {
-          assetIn: {
-            id: currentRecord.assetIn.id,
-          },
-          assetOut: {
-            id: currentRecord.assetOut.id,
-          },
+          assetInId: currentRecord.assetInId,
+          assetOutId: currentRecord.assetOutId,
           paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
         },
         relations: {
-          assetIn: true,
-          assetOut: true,
           assetInHistData: true,
         },
         order: {
@@ -408,21 +414,29 @@ function getXykPoolsIndexedByInterimAssetPair({
 }
 
 async function processXykInvolvedAssetSpotPrices({
-  asset,
+  assetId,
   // interimAsset,
   assetHistData,
   xykPoolsIndexedByInterimAssetPair,
   blockHeader,
   ctx,
 }: {
-  asset: Asset;
+  assetId: string;
   // interimAsset: Asset;
   assetHistData: AssetHistoricalData;
   xykPoolsIndexedByInterimAssetPair: Map<string, Xykpool>;
   ctx: SqdProcessorContext<Store>;
   blockHeader: BlockHeader;
 }) {
-  const assetXykPool = xykPoolsIndexedByInterimAssetPair.get(asset.id);
+  const asset = await getOrCreateAsset({
+    assetRegistryId: assetId,
+    ctx,
+    blockHeader,
+    ensure: true,
+  });
+  if (!asset) return;
+
+  const assetXykPool = xykPoolsIndexedByInterimAssetPair.get(assetId);
 
   if (!assetXykPool || !assetXykPool.account) return;
 
@@ -451,7 +465,7 @@ async function processXykInvolvedAssetSpotPrices({
   );
 
   const priceInInterimAssetNormalised =
-    assetXykPool.assetA.id === asset.id
+    assetXykPool.assetA.id === assetId
       ? assetBBalanceNormalised.div(assetABalanceNormalised)
       : assetABalanceNormalised.div(assetBBalanceNormalised);
 
@@ -526,8 +540,8 @@ async function processXykInvolvedAssetSpotPrices({
         histDataItemId,
         new AssetSpotPriceHistoricalData({
           id: histDataItemId,
-          assetIn: asset,
-          assetOut,
+          assetInId: asset.id,
+          assetOutId: assetOut.id,
           assetInAssetRegistryId: asset.assetRegistryId,
           assetOutAssetRegistryId: assetOut.assetRegistryId,
           assetInHistData: assetHistData,

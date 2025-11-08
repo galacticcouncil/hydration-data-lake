@@ -126,7 +126,7 @@ type AssetMultiLocation {
 type AssetVolumeHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
   id: ID!
-  asset: Asset!
+  assetId: String!
   volumeIn: BigInt!
   volumeOut: BigInt!
   totalVolumeIn: BigInt!
@@ -142,7 +142,7 @@ type AssetVolumeHistoricalData @entity {
 type AssetSwapFeeHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
   id: ID!
-  asset: Asset!
+  assetId: String!
   amount: BigInt!
   totalAmount: BigInt!
 
@@ -155,8 +155,8 @@ type AssetSpotPriceHistoricalData @entity {
   "<assetInId>-<assetOutId>-<paraBlockHeight>"
   id: ID!
   assetInHistData: AssetHistoricalData!
-  assetIn: Asset!
-  assetOut: Asset!
+  assetInId: String!
+  assetOutId: String!
   assetInAssetRegistryId: String
   assetOutAssetRegistryId: String
 
@@ -178,17 +178,26 @@ type AssetDynamicFee {
   timestamp: Int!
 }
 
+type EmbeddedAsset {
+  id: String!
+  assetRegistryId: String
+  existentialDeposit: BigInt!
+  decimals: Int
+  name: String
+  symbol: String
+  isSufficient: Boolean
+  assetType: AssetType
+}
+
 type AssetHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
   id: ID!
-  asset: Asset!
-  assetRegistryId: String
+  asset: EmbeddedAsset!
+
   totalIssuance: BigInt!
-  existentialDeposit: BigInt!
   dynamicFee: AssetDynamicFee
 
   usdPriceNormalised: String!
-
   spotPrices: [AssetSpotPriceHistoricalData]!
     @derivedFrom(field: "assetInHistData")
   assetPairVolumes: [AssetAssetsPairVolume]!
@@ -203,8 +212,11 @@ type AssetsPairVolumeHistoricalData @entity {
   "<assetAId>-<assetBId>-<paraBlockHeight>"
   id: ID!
 
-  assetA: Asset!
-  assetB: Asset!
+  assetAId: String!
+  assetRegistryAId: String!
+
+  assetBId: String!
+  assetRegistryBId: String!
 
   assetAVolume: BigInt!
   assetBVolume: BigInt!
