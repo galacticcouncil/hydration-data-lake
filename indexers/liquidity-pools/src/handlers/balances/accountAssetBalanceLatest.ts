@@ -1,9 +1,10 @@
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   AccountAssetBalanceHistoricalData,
   AccountAssetBalanceLatest,
 } from '../../model';
 import { SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
 
 export function getAccountAssetBalancesLatest({
   balances,
@@ -16,7 +17,7 @@ export function getAccountAssetBalancesLatest({
     new Map();
 
   for (const balance of balances) {
-    const itemId = `${balance.account.id}-${balance.asset.id}`;
+    const itemId = `${balance.account.id}-${balance.assetId}`;
     const indexedValue = indexedBalances.get(itemId);
 
     if (indexedValue && indexedValue.paraBlockHeight >= balance.paraBlockHeight)
@@ -38,7 +39,7 @@ export function getAccountAssetBalancesLatest({
       new AccountAssetBalanceLatest({
         id,
         accountId: balance.account.id,
-        assetId: balance.asset.id,
+        assetId: balance.assetId,
         transferable: balance.transferable,
         totalLocked: balance.totalLocked,
         transferableInRefAssetNorm: balance.transferableInRefAssetNorm,

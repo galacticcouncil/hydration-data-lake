@@ -242,7 +242,7 @@ export async function handleMmAssetAccountBalancesPerBlock(
           const historicalDataEntity =
             await getOrCreateAccountAssetBalanceHistoricalData({
               ctx,
-              asset: assetBalance.asset,
+              assetId: assetBalance.asset.id,
               account: accountAssetsMap.account,
               blockHeader: blockSlotData.blockHeader,
               fetchFromDb: false,

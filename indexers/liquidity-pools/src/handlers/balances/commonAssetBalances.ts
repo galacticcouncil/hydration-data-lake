@@ -1,18 +1,21 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import {
-  Account,
-  AccountAssetBalanceHistoricalData,
-  AccountTotalBalanceHistoricalData,
-} from '../../model';
 import { In } from 'typeorm';
+
+import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
+
+import { Account } from '../../model';
 import parsers from '../../parsers';
 import { AccountData } from '../../parsers/types/storage';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import { calcPriceNormalized } from '../../utils/helpers';
 import { getOrCreateAccount } from '../accounts';
 import { getOrCreateAsset } from '../assets/asset';
-import { BigNumber } from '@galacticcouncil/sdk';
-import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
-import { calcPriceNormalized } from '../../utils/helpers';
+import {
+  getAssetsPairPrice,
+} from '../assets/assetHistoricalData/assetSpotPrices';
 import {
   getOrCreateAccountAssetBalanceHistoricalData,
   getOrCreateAccountTotalBalanceHistoricalData,
@@ -169,7 +172,7 @@ export async function handleCommonAssetAccountBalances({
         const assetBalanceHistData =
           await getOrCreateAccountAssetBalanceHistoricalData({
             ctx,
-            asset,
+            assetId: asset.id,
             account,
             blockHeader: blockData.blockHeader,
             fetchFromDb: false,

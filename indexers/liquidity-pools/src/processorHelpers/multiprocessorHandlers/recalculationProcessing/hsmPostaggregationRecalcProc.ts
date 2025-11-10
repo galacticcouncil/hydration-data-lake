@@ -121,7 +121,6 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
         },
         relations: {
           account: true,
-          asset: true,
         },
       }, { className: 'AccountAssetBalanceHistoricalData' })
     ).map((p) => [p.id, p])

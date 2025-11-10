@@ -1,13 +1,19 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { initTransfer } from '../../transfers/utils';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
-import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
+
+import {
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
 import { EvmEventName } from '../../../model';
+import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import { SqdProcessorContext } from '../../../processor';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
+import {
+  getOrCreateAsset,
+  getOrCreateMoneyMarketAsset,
+} from '../../assets/asset';
+import { initTransfer } from '../../transfers/utils';
+import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 
 export async function handleMmTransferEvent(
   ctx: SqdProcessorContext<Store>,
@@ -37,8 +43,19 @@ export async function handleMmTransferEvent(
   );
 
   if (!!existingTransfer) {
-    const assetEntity = existingTransfer.asset;
-    if (!assetEntity) return;
+    const assetEntity = existingTransfer.assetId ? await getOrCreateAsset({
+      ctx,
+      id: existingTransfer.assetId,
+      ensure: true,
+      blockHeader: eventMetadata.blockHeader,
+    }) : null;
+
+    if (!assetEntity) {
+      console.log(
+        `Asset with id ${existingTransfer.assetId} cannot be found.`
+      );
+      return
+    };
 
     await processNewMoneyMarketEvent({
       ctx,

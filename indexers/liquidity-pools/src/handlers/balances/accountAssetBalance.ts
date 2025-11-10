@@ -7,7 +7,6 @@ import {
   Account,
   AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
-  Asset,
 } from '../../model';
 import {
   SqdBlock,
@@ -19,17 +18,16 @@ const appConfig = AppConfig.getInstance();
 
 export async function getOrCreateAccountAssetBalanceHistoricalData({
   account,
-  asset,
+  assetId,
   ctx,
   blockHeader,
   fetchFromDb = false,
   relations = {
     account: true,
-    asset: true,
   },
 }: {
   account: Account;
-  asset: Asset;
+  assetId: string;
   ctx: SqdProcessorContext<Store>;
   blockHeader: SqdBlock;
   fetchFromDb?: boolean;
@@ -37,7 +35,7 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
 }) {
   const batchState = ctx.batchState.state;
 
-  const entityId = `${account.id}-${asset.id}-${blockHeader.height}`;
+  const entityId = `${account.id}-${assetId}-${blockHeader.height}`;
 
   let dataEntity = batchState.accountAssetBalanceHistoricalData.get(entityId);
   if (dataEntity) return dataEntity;
@@ -71,9 +69,9 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
   if (!block) throw Error('Block not found');
 
   dataEntity = new AccountAssetBalanceHistoricalData({
-    id: `${account.id}-${asset.id}-${blockHeader.height}`,
+    id: `${account.id}-${assetId}-${blockHeader.height}`,
     account,
-    asset,
+    assetId,
 
     transferable: 0n,
     totalLocked: 0n,
@@ -101,7 +99,6 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
   fetchFromDb = false,
   relations = {
     account: true,
-    refAsset: true,
   },
 }: {
   account: Account;
@@ -155,7 +152,7 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
   dataEntity = new AccountTotalBalanceHistoricalData({
     id: `${account.id}-${blockHeader.height}`,
     account,
-    refAsset,
+    refAssetId: refAsset.id,
     totalTransferableNorm: '0',
     totalLockedNorm: '0',
     totalDebtNorm: '0',

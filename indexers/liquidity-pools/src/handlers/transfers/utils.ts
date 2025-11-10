@@ -1,7 +1,11 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { TransferEvent } from '../../utils/types';
+
 import { Transfer } from '../../model';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import { TransferEvent } from '../../utils/types';
 import { getOrCreateAccount } from '../accounts';
 import { getOrCreateAsset } from '../assets/asset';
 
@@ -43,7 +47,7 @@ export async function initTransfer({
     from: await getOrCreateAccount({ ctx, id: from }),
     to: await getOrCreateAccount({ ctx, id: to }),
     txFee: fee,
-    asset: assetEntity,
+    assetId: assetEntity.id,
     assetType: assetEntity.assetType,
     paraBlockHeight: blockNumber,
     paraTimestamp: timestamp ?? new Date(),

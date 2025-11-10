@@ -253,7 +253,7 @@ type AccountAssetBalanceHistoricalData @entity {
   "<address>-<assetId>-<paraBlockHeight>"
   id: ID!
   account: Account!
-  asset: Asset!
+  assetId: String!
 
   "free property in storage"
   transferable: BigInt!
@@ -290,7 +290,7 @@ type AccountTotalBalanceHistoricalData @entity {
   "<address>-<paraBlockHeight>"
   id: ID!
   account: Account!
-  refAsset: Asset!
+  refAssetId: String!
 
   totalTransferableNorm: String!
   totalLockedNorm: String!
@@ -367,7 +367,7 @@ type AccountAssetSwapFeeHistoricalData @entity {
   id: ID!
   collection: AccountSwapFeeHistoricalData!
   account: Account!
-  asset: Asset!
+  assetId: String!
 
   amount: BigInt!
   totalAmount: BigInt!
@@ -546,7 +546,7 @@ type Transfer @entity {
   id: ID!
   traceIds: [String!]
 
-  asset: Asset!
+  assetId: String!
   assetType: AssetType!
 
   from: Account!
