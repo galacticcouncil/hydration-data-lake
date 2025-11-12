@@ -68,6 +68,7 @@ import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
 import { handleOmnipoolLiquidityPositions } from '../../../handlers/pools/pools/omnipool/liquidityPositions';
+import { initAllXykPools } from '../../../handlers/pools/pools/xykPool/xykPool';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -122,6 +123,13 @@ export async function singleFlowAllInOneProcessor(
   console.time('actualiseAssets');
   await actualiseAssets(ctx);
   console.timeEnd('actualiseAssets');
+
+  console.time('initAllXykPools');
+  await initAllXykPools({
+    ctx,
+    blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+  });
+  console.timeEnd('initAllXykPools');
 
   console.time('handleAssetRegistry');
   await handleAssetRegistry(ctx, parsedData);

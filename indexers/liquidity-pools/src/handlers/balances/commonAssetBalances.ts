@@ -2,10 +2,10 @@ import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   Account,
-  AccountAssetBalanceHistoricalData,
-  AccountTotalBalanceHistoricalData,
+  OmnipoolLiquidityPosition,
+  OmnipoolLiquidityPositionStatus,
 } from '../../model';
-import { In } from 'typeorm';
+import { In, LessThan, LessThanOrEqual } from 'typeorm';
 import parsers from '../../parsers';
 import { AccountData } from '../../parsers/types/storage';
 import { getOrCreateAccount } from '../accounts';
@@ -17,34 +17,54 @@ import {
   getOrCreateAccountAssetBalanceHistoricalData,
   getOrCreateAccountTotalBalanceHistoricalData,
 } from './accountAssetBalance';
+import { Between } from 'typeorm/find-options/operator/Between';
 
+type BlockHeight = number;
 type AccountId = string;
 type AssetRegistryId = string;
+type AssetId = string;
+type AccountBalancesPerBlock = Map<
+  BlockHeight,
+  {
+    blockHeader: SqdBlock;
+    data: Map<AccountId, Map<AssetRegistryId, AccountData>>;
+  }
+>;
+
+type AccountPositionBalancesPerBlockPerAsset = Map<
+  BlockHeight,
+  {
+    blockHeader: SqdBlock;
+    data: Map<AccountId, Map<AssetId, BigNumber>>;
+  }
+>;
 
 export async function handleCommonAssetAccountBalances({
-  accountIdsToProcess = new Set(),
+  accountIdsToProcess = new Map(),
   ctx,
 }: {
-  accountIdsToProcess?: Set<string>;
+  accountIdsToProcess?: Map<number, Set<string>>;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const allInvolvedAccountsInBatchSet: Set<string> = accountIdsToProcess;
+  const allInvolvedAccountsInBatchSet: Set<string> = new Set(
+    Array.from(accountIdsToProcess.values())
+      .map((blockSlot) => Array.from(blockSlot.values()))
+      .flat()
+  );
+
   const palletNamesSet = new Set([
     'Currencies',
     'Tokens',
     'Balances',
     'Duster',
+    'Omnipool',
   ]);
-  const accountBalancesPerBlock: Map<
-    number,
-    {
-      blockHeader: SqdBlock;
-      data: Map<AccountId, Map<AssetRegistryId, AccountData>>;
-    }
-  > = new Map();
+  const accountBalancesPerBlock: AccountBalancesPerBlock = new Map();
 
   blocksLoop: for (const block of ctx.blocks) {
-    const allInvolvedAccountsInBlockSet: Set<string> = new Set();
+    const allInvolvedAccountsInBlockSet: Set<string> =
+      accountIdsToProcess.get(block.header.height) ?? new Set();
+
     if (!accountBalancesPerBlock.has(block.header.height))
       accountBalancesPerBlock.set(block.header.height, {
         blockHeader: block.header,
@@ -72,14 +92,18 @@ export async function handleCommonAssetAccountBalances({
 
     if (allInvolvedAccountsInBlockSet.size === 0) continue blocksLoop;
 
+    const allInvolvedAccountsInBlockList = Array.from(
+      allInvolvedAccountsInBlockSet.keys()
+    );
+
     const [nativeTokenBalances, otherTokenBalances] = await Promise.all([
       parsers.storage.system.getNativeTokenBalanceMany({
         block: block.header,
-        accountIds: Array.from(allInvolvedAccountsInBlockSet.keys()),
+        accountIds: allInvolvedAccountsInBlockList,
       }),
       parsers.storage.tokens.getTokenBalancesMany({
         block: block.header,
-        accountIds: Array.from(allInvolvedAccountsInBlockSet.keys()),
+        accountIds: allInvolvedAccountsInBlockList,
       }),
     ]);
 
@@ -121,9 +145,15 @@ export async function handleCommonAssetAccountBalances({
   const persistedAccounts = await ctx.storeUtils.findWithLogs(
     Account,
     {
-      where: { id: In(Array.from(allInvolvedAccountsInBatchSet.keys())) },
+      where: {
+        id: In(
+          Array.from(allInvolvedAccountsInBatchSet.keys()).filter(
+            (acc) => !ctx.batchState.state.accounts.has(acc)
+          )
+        ),
+      },
     },
-    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' },
+    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' }
   );
 
   for (const acc of persistedAccounts) {
@@ -140,7 +170,7 @@ export async function handleCommonAssetAccountBalances({
   if (!refAsset) throw Error('Ref asset not found');
 
   for (const blockData of accountBalancesPerBlock.values()) {
-    for (const [accountId, accountData] of blockData.data.entries()) {
+    for (const [accountId, accountAssetData] of blockData.data.entries()) {
       const account = await getOrCreateAccount({ ctx, id: accountId });
 
       const accountTotalBalance =
@@ -151,7 +181,7 @@ export async function handleCommonAssetAccountBalances({
           ctx,
         });
 
-      for (const [assetRegistryId, balances] of accountData.entries()) {
+      for (const [assetRegistryId, balances] of accountAssetData.entries()) {
         const asset = await getOrCreateAsset({
           assetRegistryId,
           ctx,
@@ -175,6 +205,9 @@ export async function handleCommonAssetAccountBalances({
             fetchFromDb: false,
           });
 
+        /**
+         * Account Asset balance calculation
+         */
         assetBalanceHistData.transferable = balances.free;
         assetBalanceHistData.totalLocked = balances.reserved;
         assetBalanceHistData.transferableInRefAssetNorm =
@@ -194,6 +227,9 @@ export async function handleCommonAssetAccountBalances({
               })
             : '0';
 
+        /**
+         * Account total balance calculation
+         */
         accountTotalBalance.totalTransferableNorm = BigNumber(
           accountTotalBalance.totalTransferableNorm
         )
@@ -218,4 +254,182 @@ export async function handleCommonAssetAccountBalances({
       );
     }
   }
+
+  const omnipoolLiquidityPositionsMap =
+    await getOmnipoolLiquidityPositionsForAccounts({
+      ctx,
+      involvedAccountsPerBlock: accountBalancesPerBlock,
+      involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
+    });
+
+  /**
+   * Add Omnipool liquidity positions to the total transferable balance.
+   */
+  for (const blockData of omnipoolLiquidityPositionsMap.values()) {
+    for (const [accountId, accountAssetData] of blockData.data.entries()) {
+      const account = await getOrCreateAccount({ ctx, id: accountId });
+
+      const accountTotalBalance =
+        await getOrCreateAccountTotalBalanceHistoricalData({
+          account,
+          refAssetId: refAsset.id,
+          blockHeader: blockData.blockHeader,
+          ctx,
+        });
+
+      for (const [assetId, balanceBn] of accountAssetData.entries()) {
+        const asset = await getOrCreateAsset({
+          id: assetId,
+          ctx,
+          ensure: true,
+          blockHeader: blockData.blockHeader,
+        });
+        if (!asset) continue;
+
+        const assetSpotPrice = getAssetsPairPrice({
+          ctx,
+          assetInId: asset.id,
+          blockHeight: blockData.blockHeader.height,
+        });
+
+        /**
+         * Account total balance calculation
+         */
+        accountTotalBalance.totalTransferableNorm = BigNumber(
+          accountTotalBalance.totalTransferableNorm
+        )
+          .plus(
+            assetSpotPrice && asset.decimals
+              ? calcPriceNormalized({
+                  amount: BigInt(
+                    omnipoolLiquidityPositionsMap
+                      .get(blockData.blockHeader.height)
+                      ?.data.get(account.id)
+                      ?.get(asset.id)
+                      ?.toFixed() ?? '0'
+                  ),
+                  assetDecimals: asset.decimals,
+                  spotPrice: assetSpotPrice,
+                })
+              : '0'
+          )
+          .toFixed();
+      }
+
+      ctx.batchState.state.accountTotalBalanceHistoricalData.set(
+        accountTotalBalance.id,
+        accountTotalBalance
+      );
+    }
+  }
+}
+
+async function getOmnipoolLiquidityPositionsForAccounts({
+  involvedAccountsInBatch,
+  involvedAccountsPerBlock,
+  ctx,
+}: {
+  involvedAccountsInBatch: Set<string>;
+  involvedAccountsPerBlock: AccountBalancesPerBlock;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const allCachedPositions = Array.from(
+    ctx.batchState.state.omnipoolLiquidityPositions.values()
+  ).filter(
+    (pos) =>
+      pos.status === OmnipoolLiquidityPositionStatus.PositionCreated &&
+      pos.paraBlockHeight <= ctx.blocks[ctx.blocks.length - 1].header.height &&
+      involvedAccountsInBatch.has(pos.account.id)
+  );
+
+  const allPersistentPositions = await ctx.storeUtils.findWithLogs(
+    OmnipoolLiquidityPosition,
+    {
+      where: {
+        status: OmnipoolLiquidityPositionStatus.PositionCreated,
+        account: { id: In(Array.from(involvedAccountsInBatch.values())) },
+        paraBlockHeight: LessThanOrEqual(
+          ctx.blocks[ctx.blocks.length - 1].header.height
+        ),
+      },
+      relations: {
+        account: true,
+      },
+    }
+  );
+
+  const allPositionsDeduped = new Map([
+    ...allCachedPositions.map((pos): [string, OmnipoolLiquidityPosition] => [
+      pos.id,
+      pos,
+    ]),
+    ...allPersistentPositions.map(
+      (pos): [string, OmnipoolLiquidityPosition] => [pos.id, pos]
+    ),
+  ]);
+
+  const allPositionsIndexedByAccountId = new Map<
+    string,
+    OmnipoolLiquidityPosition[]
+  >();
+
+  for (const position of allPositionsDeduped.values()) {
+    if (!allPositionsIndexedByAccountId.has(position.account.id)) {
+      allPositionsIndexedByAccountId.set(position.account.id, [position]);
+      continue;
+    }
+    allPositionsIndexedByAccountId.get(position.account.id)?.push(position);
+  }
+
+  const accountPositionBalancesPerBlockPerAsset: AccountPositionBalancesPerBlockPerAsset =
+    new Map();
+
+  for (const [blockHeight, { data }] of involvedAccountsPerBlock.entries()) {
+    if (!accountPositionBalancesPerBlockPerAsset.has(blockHeight))
+      accountPositionBalancesPerBlockPerAsset.set(blockHeight, {
+        blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
+        data: new Map(),
+      });
+
+    for (const accountId of data.keys()) {
+      const accountPositionsAtBlock =
+        allPositionsIndexedByAccountId
+          .get(accountId)
+          ?.filter((pos) => pos.paraBlockHeight <= blockHeight) || [];
+
+      for (const position of accountPositionsAtBlock) {
+        if (
+          !accountPositionBalancesPerBlockPerAsset
+            .get(blockHeight)!
+            .data.has(accountId)
+        )
+          accountPositionBalancesPerBlockPerAsset
+            .get(blockHeight)!
+            .data.set(accountId, new Map());
+
+        if (
+          !accountPositionBalancesPerBlockPerAsset
+            .get(blockHeight)!
+            .data.get(accountId)!
+            .has(position.assetId)
+        )
+          accountPositionBalancesPerBlockPerAsset
+            .get(blockHeight)!
+            .data.get(accountId)!
+            .set(position.assetId, BigNumber(0));
+
+        const currentBalance = accountPositionBalancesPerBlockPerAsset
+          .get(blockHeight)!
+          .data.get(accountId)!
+          .get(position.assetId)!;
+
+        accountPositionBalancesPerBlockPerAsset
+          .get(blockHeight)!
+          .data.get(accountId)!
+          .set(position.assetId, currentBalance.plus(position.amount));
+      }
+    }
+  }
+
+  return accountPositionBalancesPerBlockPerAsset;
 }

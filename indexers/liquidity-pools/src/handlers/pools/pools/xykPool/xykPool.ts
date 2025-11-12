@@ -2,6 +2,7 @@ import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   AccountType,
+  AssetType,
   Xykpool,
   XykpoolCreatedData,
   XykpoolDestroyedData,
@@ -15,6 +16,8 @@ import {
 import { getAssetFreeBalance } from '../../../assets/balances';
 import { getOrCreateAsset } from '../../../assets/asset';
 import parsers from '../../../../parsers';
+import { getXykpoolShareTokenDecimals } from '../../../../utils/helpers';
+import pMap from 'p-map';
 
 export async function createXykPool({
   ctx,
@@ -100,6 +103,18 @@ export async function createXykPool({
 
   if (!sharedTokenEntity) return null;
 
+  if (assetAEntity.decimals && assetBEntity.decimals) {
+    const sharedTokenDecimals =
+      Number(assetAEntity.id) > Number(assetBEntity.id)
+        ? assetBEntity.decimals
+        : assetAEntity.decimals;
+
+    sharedTokenEntity.decimals = sharedTokenDecimals;
+
+    await ctx.storeUtils.upsertWithBatches([sharedTokenEntity]);
+    ctx.batchState.state.assetsAll.set(sharedTokenEntity.id, sharedTokenEntity);
+  }
+
   const newPool = new Xykpool({
     id: poolAddress,
     account: await getOrCreateAccount({
@@ -153,10 +168,19 @@ export async function getOrCreateXykPool({
   let pool = batchState.xykAllBatchPools.get(id);
   if (pool) return pool;
 
-  pool = await ctx.storeUtils.findOneWithLogs(Xykpool, {
-    where: { id },
-    relations: { assetA: true, assetB: true, account: true, shareToken: true },
-  }, { className: 'Xykpool' });
+  pool = await ctx.storeUtils.findOneWithLogs(
+    Xykpool,
+    {
+      where: { id },
+      relations: {
+        assetA: true,
+        assetB: true,
+        account: true,
+        shareToken: true,
+      },
+    },
+    { className: 'Xykpool' }
+  );
 
   if (pool) {
     ctx.batchState.state.xykAllBatchPools.set(pool.id, pool);
@@ -284,14 +308,18 @@ export async function xykPoolDestroyed(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  const pool = await ctx.storeUtils.findOneWithLogs(Xykpool, {
-    where: { id: eventParams.pool },
-    relations: {
-      assetA: true,
-      assetB: true,
-      account: true,
+  const pool = await ctx.storeUtils.findOneWithLogs(
+    Xykpool,
+    {
+      where: { id: eventParams.pool },
+      relations: {
+        assetA: true,
+        assetB: true,
+        account: true,
+      },
     },
-  }, { className: 'Xykpool' });
+    { className: 'Xykpool' }
+  );
 
   if (!pool) return;
 
@@ -356,4 +384,92 @@ export function addXykpoolDestroyedLifeState({
       destroyed: destroyedState,
     }),
   ];
+}
+
+export async function initAllXykPools({
+  ctx,
+  blockHeader,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  blockHeader: SqdBlock;
+}) {
+  let existingXykPoolsCount = ctx.batchState.state.xykAllBatchPools.size;
+
+  if (existingXykPoolsCount > 0) return;
+
+  existingXykPoolsCount = (await ctx.storeUtils.findOneWithLogs(Xykpool, {
+    where: {},
+  }))
+    ? 1
+    : 0;
+
+  if (existingXykPoolsCount) return;
+
+  const poolShareTokenPairs =
+    await parsers.storage.xyk.getPoolShareTokenPairsMany({
+      block: blockHeader,
+    });
+
+  const xykpoolsWithInvolvedShareAssets: Xykpool[] = [];
+  const otherXykpools: Xykpool[] = [];
+
+  await pMap(
+    poolShareTokenPairs,
+    async ({ poolId, shareTokenId }) => {
+      const pool = await getOrCreateXykPool({
+        ctx,
+        id: poolId,
+        ensure: true,
+        blockHeader,
+      });
+
+      if (!pool) return;
+
+      if (
+        pool.assetA.assetType === AssetType.XYK ||
+        pool.assetB.assetType === AssetType.XYK
+      ) {
+        xykpoolsWithInvolvedShareAssets.push(pool);
+      } else {
+        otherXykpools.push(pool);
+      }
+    },
+    { concurrency: 200 }
+  );
+
+  for (const pool of otherXykpools) {
+    if (!pool.assetA.decimals || !pool.assetB.decimals) continue;
+
+    try {
+      const shareAssetDecimals = getXykpoolShareTokenDecimals({
+        poolAssets: [pool.assetA, pool.assetB],
+      });
+
+      pool.shareToken.decimals = shareAssetDecimals;
+
+      await ctx.storeUtils.upsertWithBatches([pool.shareToken]);
+      ctx.batchState.state.assetsAll.set(pool.shareToken.id, pool.shareToken);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  for (const pool of xykpoolsWithInvolvedShareAssets) {
+    const assetA = ctx.batchState.state.assetsAll.get(pool.assetA.id);
+    const assetB = ctx.batchState.state.assetsAll.get(pool.assetB.id);
+    if (!assetA?.decimals || !assetB?.decimals) continue;
+
+    try {
+      const shareAssetDecimals = getXykpoolShareTokenDecimals({
+        poolAssets: [pool.assetA, pool.assetB],
+      });
+
+      pool.shareToken.decimals = shareAssetDecimals;
+
+      await ctx.storeUtils.upsertWithBatches([pool.shareToken]);
+      ctx.batchState.state.assetsAll.set(pool.shareToken.id, pool.shareToken);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }

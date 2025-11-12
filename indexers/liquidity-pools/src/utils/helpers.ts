@@ -15,6 +15,7 @@ import blockHash from 'object-hash';
 import { Entity } from '@subsquid/typeorm-store/src/store';
 import { SqdProcessorContext } from '../processor';
 import { Store } from '@subsquid/typeorm-store';
+import { Asset } from '../model';
 const hdl = monitorEventLoopDelay();
 hdl.enable();
 
@@ -397,4 +398,18 @@ export function getOmnipoolLiquidityPositionPriceDecorated(
 ) {
   // return BigInt(BigNumber(priceParts[0]).div(priceParts[1]).toString());
   return 0n;
+}
+
+export function getXykpoolShareTokenDecimals({
+  poolAssets,
+}: {
+  poolAssets: Asset[];
+}) {
+  const [assetA, assetB] = poolAssets;
+  if (!assetA.decimals || !assetB.decimals)
+    throw new Error('Pool assets must have decimals');
+
+  return Number(assetA.id) > Number(assetB.id)
+    ? assetB.decimals!
+    : assetA.decimals!;
 }

@@ -49,6 +49,7 @@ export function processXykPoolsNormalizedTvl({
     )
       continue;
 
+    // TODO can be simplified - oneAssetTvl.multiplyBy(2) because XYK pool is always balanced
     poolHistData.tvlInRefAssetNorm = BigNumber(
       calcPriceNormalized({
         amount: poolHistData.assetABalance,

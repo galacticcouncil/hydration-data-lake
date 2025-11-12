@@ -261,7 +261,7 @@ export async function getNewOmnipoolLiquidityPositionEvent({
     price: price ?? null,
     paraBlockHeight,
     relayBlockHeight:
-      ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight)?.height,
+      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight)?.height,
     eventId,
   });
 }

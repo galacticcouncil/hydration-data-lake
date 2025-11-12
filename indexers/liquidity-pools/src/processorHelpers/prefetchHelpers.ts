@@ -84,7 +84,12 @@ export async function prefetchGenericPersistentData(
       Xykpool,
       {
         where: {},
-        relations: { assetA: true, assetB: true, account: true },
+        relations: {
+          assetA: true,
+          assetB: true,
+          account: true,
+          shareToken: true,
+        },
       },
       { className: 'Xykpool', originCallFn: 'prefetchGenericPersistentData' }
     )

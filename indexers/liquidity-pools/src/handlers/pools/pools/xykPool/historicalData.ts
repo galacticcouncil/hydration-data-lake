@@ -2,7 +2,7 @@ import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import parsers from '../../../../parsers';
-import { XykpoolHistoricalData } from '../../../../model';
+import { Xykpool, XykpoolHistoricalData } from '../../../../model';
 import { getOrCreateXykPool } from './xykPool';
 import { splitIntoBatches } from '../../../../utils/helpers';
 import { BlockHeader } from '@subsquid/substrate-processor';
@@ -178,15 +178,19 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.storeUtils.findOneWithLogs(XykpoolHistoricalData, {
-      where: {
-        pool: { id: currentRecord.pool.id },
-        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+    previousItem = await ctx.storeUtils.findOneWithLogs(
+      XykpoolHistoricalData,
+      {
+        where: {
+          pool: { id: currentRecord.pool.id },
+          paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+        },
+        order: {
+          paraBlockHeight: 'DESC',
+        },
       },
-      order: {
-        paraBlockHeight: 'DESC',
-      },
-    }, { className: 'XykpoolHistoricalData' });
+      { className: 'XykpoolHistoricalData' }
+    );
   }
 
   if (!previousItem) {

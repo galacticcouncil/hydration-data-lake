@@ -37,7 +37,10 @@ export async function handleMmAssetAccountBalancesPerBlock(
     }
   > = new Map();
 
-  const accountIdsWithCommonAssetBalanceChanges = new Set<string>();
+  const accountIdsWithCommonAssetBalanceChanges = new Map<
+    number,
+    Set<string>
+  >();
 
   const getBlockHeaderByBlockHeight = (
     blockHeight: number
@@ -142,8 +145,16 @@ export async function handleMmAssetAccountBalancesPerBlock(
         assets,
         account,
       });
-      if (isCommonAssetInvolved)
-        accountIdsWithCommonAssetBalanceChanges.add(accountId);
+      if (isCommonAssetInvolved) {
+        if (!accountIdsWithCommonAssetBalanceChanges.has(blockHeader.height))
+          accountIdsWithCommonAssetBalanceChanges.set(
+            blockHeader.height,
+            new Set()
+          );
+        accountIdsWithCommonAssetBalanceChanges
+          .get(blockHeader.height)
+          ?.add(accountId);
+      }
     }
   }
 
