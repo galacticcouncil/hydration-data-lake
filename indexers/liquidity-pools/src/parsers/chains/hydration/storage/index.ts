@@ -1,6 +1,7 @@
 import system from './system';
 import tokens from './tokens';
 import omnipool from './omnipool';
+import omnipoolLiquidityMining from './omnipoolLiquidityMining';
 import assetRegistry from './assetRegistry';
 import parachainSystem from './parachainSystem';
 import stableswap from './stableswap';
@@ -15,6 +16,7 @@ import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
 import bonds from './bonds';
 import transactionPayment from './transactionPayment';
+import uniques from './uniques';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -67,7 +69,6 @@ import {
   RuntimeApiMethodName,
   RuntimeApiName,
 } from '../../../runtimeApiResolver/types';
-import { BlockHeader } from '@subsquid/substrate-processor';
 
 export default {
   system: {
@@ -271,6 +272,8 @@ export default {
   },
   omnipool: {
     getConstants: omnipool.getConstants,
+    getNftCollectionIdConstant: omnipool.getNftCollectionIdConstant,
+    getOmnipoolLiquidityPositions: omnipool.getOmnipoolLiquidityPositions,
     getOmnipoolAllAssetIds: (
       args: OmnipoolGetAllAssetIdsInput
     ): Promise<number[] | null> =>
@@ -335,6 +338,9 @@ export default {
           getAccountBalances,
         ],
       }),
+  },
+  omnipoolWarehouseLM: {
+    getOmnipoolLMGlobalFarms: omnipoolLiquidityMining.getOmnipoolLMGlobalFarms,
   },
   xyk: {
     getConstants: xyk.getConstants,
@@ -506,4 +512,5 @@ export default {
       }),
   },
   hsm,
+  uniques,
 } as StorageParserMethods;

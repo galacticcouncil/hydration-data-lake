@@ -142,6 +142,11 @@ import {
   TransactionPaymentNextFeeMultiplier,
   GetAssetLocationDataInput,
   GetAssetLocationsDataManyInput,
+  OmnipoolLMGetGlobalFarmsInput,
+  OmnipoolLMGlobalFarmDataWithId,
+  OmnipoolGetLiquidityPositionsInput,
+  OmnipoolLiquidityPositionDataWithId,
+  OmnipoolNftCollectionId,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -162,6 +167,10 @@ import {
   XykLMYieldFarmTerminatedEventParams,
   XykLMYieldFarmUpdatedEventParams,
 } from './events/xykLiquidityMining';
+import {
+  UniquesAssetDataWithId,
+  UniquesGetAssetsDataInput,
+} from './storage/uniques';
 
 export interface PoolData {
   owner: string;
@@ -503,6 +512,9 @@ export type StorageParserMethods = {
   };
   omnipool: {
     getConstants: (args: GetConstantsInput) => OmnipoolConstants;
+    getNftCollectionIdConstant: (
+      args: GetDataAtBlockInput
+    ) => OmnipoolNftCollectionId;
     getOmnipoolHubAssetTradability: (
       args: OmnipoolGetHubAssetTradabilityInput
     ) => Promise<OmnipoolAssetTradability | null>;
@@ -518,6 +530,14 @@ export type StorageParserMethods = {
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;
+    getOmnipoolLiquidityPositions: (
+      args: OmnipoolGetLiquidityPositionsInput
+    ) => Promise<OmnipoolLiquidityPositionDataWithId[] | null>;
+  };
+  omnipoolWarehouseLM: {
+    getOmnipoolLMGlobalFarms: (
+      args: OmnipoolLMGetGlobalFarmsInput
+    ) => Promise<OmnipoolLMGlobalFarmDataWithId[] | null>;
   };
   xyk: {
     getConstants: (args: GetConstantsInput) => XykConstants;
@@ -577,6 +597,11 @@ export type StorageParserMethods = {
     getCollateral: (
       args: GetHsmCollateralInput
     ) => Promise<HsmCollateralData | null>;
+  };
+  uniques: {
+    getAssetsData: (
+      args: UniquesGetAssetsDataInput
+    ) => Promise<UniquesAssetDataWithId[] | null>;
   };
 };
 

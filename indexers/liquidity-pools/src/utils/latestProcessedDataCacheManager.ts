@@ -46,34 +46,33 @@ export class LatestProcessedDataCacheManager {
       await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
     ).filter((res) => !!res.data);
 
-    const latestEntities = await pMap(
-      storageDataAllAssets,
-      (assetData): AssetHistoricalData | undefined => {
-        // @ts-ignore
-        return ctx.storeUtils.findOneWithLogs(
-          AssetHistoricalData,
-          {
-            where: {
-              asset: { assetRegistryId: assetData.assetId.toString() },
-              paraBlockHeight: LessThan(currentBlockHeader.height),
-            },
-            order: {
-              paraBlockHeight: 'DESC',
-            },
-            relations: {
-              asset: true,
-            },
+    const latestEntities = [];
+
+    /**
+     * Don't use concurrent calls here to avoid DB I/O overload
+     */
+    for (const assetData of storageDataAllAssets) {
+      const entity = await ctx.storeUtils.findOneWithLogs(
+        AssetHistoricalData,
+        {
+          where: {
+            asset: { assetRegistryId: assetData.assetId.toString() },
+            paraBlockHeight: LessThan(currentBlockHeader.height),
           },
-          {
-            className: 'AssetHistoricalData',
-            originCallFn: 'prefetchLastAssetHistDataItem',
-          }
-        );
-      },
-      {
-        concurrency: 8,
-      }
-    );
+          order: {
+            paraBlockHeight: 'DESC',
+          },
+          relations: {
+            asset: true,
+          },
+        },
+        {
+          className: 'AssetHistoricalData',
+          originCallFn: 'prefetchLastAssetHistDataItem',
+        }
+      );
+      if (entity) latestEntities.push(entity);
+    }
 
     this.setLastAssetHistoricalDataItem(latestEntities.filter((i) => !!i));
   }
@@ -130,36 +129,36 @@ export class LatestProcessedDataCacheManager {
       await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
     ).filter((res) => !!res.data);
 
-    const latestEntities = await pMap(
-      storageDataAllAssets,
-      (assetData): AssetSpotPriceHistoricalData | undefined => {
-        // @ts-ignore
-        return ctx.storeUtils.findOneWithLogs(
-          AssetSpotPriceHistoricalData,
-          {
-            where: {
-              assetIn: { assetRegistryId: assetData.assetId.toString() },
-              paraBlockHeight: LessThan(currentBlockHeader.height),
-            },
-            order: {
-              paraBlockHeight: 'DESC',
-            },
-            relations: {
-              assetIn: true,
-              assetOut: true,
-              assetInHistData: true,
-            },
+    const latestEntities = [];
+
+    /**
+     * Don't use concurrent calls here to avoid DB I/O overload
+     */
+    for (const assetData of storageDataAllAssets) {
+      const entity = await ctx.storeUtils.findOneWithLogs(
+        AssetSpotPriceHistoricalData,
+        {
+          where: {
+            assetIn: { assetRegistryId: assetData.assetId.toString() },
+            paraBlockHeight: LessThan(currentBlockHeader.height),
           },
-          {
-            className: 'AssetSpotPriceHistoricalData',
-            originCallFn: 'prefetchLastAssetSpotPriceHistDataItem',
-          }
-        );
-      },
-      {
-        concurrency: 8,
-      }
-    );
+          order: {
+            paraBlockHeight: 'DESC',
+          },
+          relations: {
+            assetIn: true,
+            assetOut: true,
+            assetInHistData: true,
+          },
+        },
+        {
+          className: 'AssetSpotPriceHistoricalData',
+          originCallFn: 'prefetchLastAssetSpotPriceHistDataItem',
+        }
+      );
+
+      if (entity) latestEntities.push(entity);
+    }
 
     this.setLastAssetSpotPriceHistoricalDataItem(
       latestEntities.filter((i) => !!i)

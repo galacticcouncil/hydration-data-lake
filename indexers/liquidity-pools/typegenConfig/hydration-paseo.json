@@ -57,7 +57,7 @@
     "Omnipool": {
       "events": true,
       "calls": ["sell", "buy"],
-      "storage": ["Assets", "HubAssetTradability"],
+      "storage": true,
       "constants": true
     },
     "Stableswap": {
@@ -141,6 +141,11 @@
       "storage": true
     },
     "Duster": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "Uniques": {
       "events": true,
       "calls": true,
       "storage": true

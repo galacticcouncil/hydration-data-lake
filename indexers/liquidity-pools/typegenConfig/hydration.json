@@ -144,6 +144,11 @@
       "events": true,
       "calls": true,
       "storage": true
+    },
+    "Uniques": {
+      "events": true,
+      "calls": true,
+      "storage": true
     }
   }
 }

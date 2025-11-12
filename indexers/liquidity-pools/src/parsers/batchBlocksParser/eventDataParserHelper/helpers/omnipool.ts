@@ -59,7 +59,7 @@ export class OmnipoolEventParserHelper extends BaseEventDataParserHelper {
   parseOmnipoolLiquidityRemovedData() {
     const { event } = this.rootHelpersFrame;
     const eventParams =
-      parsers.events.omnipool.parseLiquidityAddedParams(event);
+      parsers.events.omnipool.parseLiquidityRemovedParams(event);
 
     return this.compileGenericParsedData(eventParams);
   }

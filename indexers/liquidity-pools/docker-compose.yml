@@ -1,3 +1,80 @@
+#version: "3"
+#
+#services:
+#  db:
+#    image: postgres:15
+#    environment:
+#      POSTGRES_DB: ${DB_NAME}
+#      POSTGRES_PASSWORD: postgres
+#    shm_size: 1gb
+#    ports:
+#      - "${DB_PORT}:5432"
+#    volumes:
+#      - ./db/init-scripts:/docker-entrypoint-initdb.d
+#    command:
+#      - postgres
+#      - -c
+#      - statement_timeout=120s
+#      - -c
+#      - shared_preload_libraries=pg_stat_statements
+#      - -c
+#      - log_statement=all
+#      - -c
+#      - log_min_duration_statement=1000
+#      - -c
+#      - track_io_timing=on
+#      - -c
+#      - logging_collector=on
+#      - -c
+#      - log_directory=/var/log/postgresql
+#      - -c
+#      - log_filename=postgresql-%Y-%m-%d_%H%M%S.log
+#      - -c
+#      - log_rotation_age=1d
+#      - -c
+#      - log_rotation_size=100MB
+#      - -c
+#      - 'log_line_prefix=%t [%p]: [ %l-1 ] user=%u,db=%d,app=%a,client=%h'
+#      - -c
+#      - log_checkpoints=on
+#      - -c
+#      - log_connections=on
+#      - -c
+#      - log_disconnections=on
+#      - -c
+#      - log_lock_waits=on
+#      - -c
+#      - log_temp_files=0
+#
+#      # command: ["postgres", "-c", "log_statement=all"]
+##    volumes:
+##      - ./data/db:/var/lib/postgresql/data
+#
+#  redis:
+#    image: redis/redis-stack:latest
+#    environment:
+#      REDIS_ARGS: '--requirepass password'
+#    ports:
+#      - "6379:6379"
+##    networks:
+##      - epic_data_hub_dev
+#
+##  pgwatch2:
+##    image: cybertec/pgwatch2-postgres:latest
+##    container_name: pgwatch2
+##    environment:
+##      # auto-monitor your local DB (replace ${DB_NAME} if needed)
+##      PW2_ADHOC_CONN_STR: postgres://postgres:postgres@db:5432/${DB_NAME:-app}?sslmode=disable
+##      # optional preset (try "exhaustive" if you grant pg_monitor, else "unprivileged")
+##      PW2_ADHOC_CONFIG: exhaustive
+##    depends_on:
+##      - db
+##    ports:
+##      - "3022:3000"  # Grafana UI
+##      - "8022:8080"  # Admin web UI (manage monitored DBs/metrics)
+
+
+
 version: "3"
 
 services:
@@ -46,29 +123,59 @@ services:
       - -c
       - log_temp_files=0
 
-      # command: ["postgres", "-c", "log_statement=all"]
-#    volumes:
-#      - ./data/db:/var/lib/postgresql/data
-
   redis:
     image: redis/redis-stack:latest
     environment:
       REDIS_ARGS: '--requirepass password'
     ports:
       - "6379:6379"
-#    networks:
-#      - epic_data_hub_dev
 
-#  pgwatch2:
-#    image: cybertec/pgwatch2-postgres:latest
-#    container_name: pgwatch2
-#    environment:
-#      # auto-monitor your local DB (replace ${DB_NAME} if needed)
-#      PW2_ADHOC_CONN_STR: postgres://postgres:postgres@db:5432/${DB_NAME:-app}?sslmode=disable
-#      # optional preset (try "exhaustive" if you grant pg_monitor, else "unprivileged")
-#      PW2_ADHOC_CONFIG: exhaustive
-#    depends_on:
-#      - db
-#    ports:
-#      - "3022:3000"  # Grafana UI
-#      - "8022:8080"  # Admin web UI (manage monitored DBs/metrics)
+  grafana-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: grafana
+      POSTGRES_USER: grafana
+      POSTGRES_PASSWORD: grafana
+#    volumes:
+#      - grafana-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grafana -d grafana"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    depends_on:
+      grafana-db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+
+      # Store Grafana state in Postgres
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: grafana-db:5432
+      GF_DATABASE_NAME: grafana
+      GF_DATABASE_USER: grafana
+      GF_DATABASE_PASSWORD: grafana
+
+      # Install JSON API plugin (for GraphQL over HTTP)
+      GF_INSTALL_PLUGINS: marcusolsson-json-datasource
+
+      # Optional: pass your GraphQL URL via env (used below in provisioning)
+      GRAPHQL_URL: http://host.docker.internal:8080/graphql
+      GRAPHQL_REMOTE_URL: https://galacticcouncil.squids.live/hydration-pools:whale-prod-pool-02/api/graphql
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+#      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    # Make host.docker.internal work on Linux too
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  grafana-db-data:
+  grafana-storage:
