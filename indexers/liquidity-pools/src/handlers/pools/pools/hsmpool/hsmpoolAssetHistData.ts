@@ -4,7 +4,6 @@ import { Store } from '@subsquid/typeorm-store';
 
 import {
   AaveFacilitatorHistoricalData,
-  Asset,
   HsmpoolAssetHistoricalData,
   Swap,
 } from '../../../../model';
@@ -26,13 +25,35 @@ export async function handleHsmAssetHistoricalData({
   swap: Swap;
   blockHeader: SqdBlock;
 }) {
-  const involvedAssets = new Map<string, Asset>([
-    ...swap.inputs.map((i): [string, Asset] => [i.asset.id, i.asset]),
-    ...swap.outputs.map((i): [string, Asset] => [i.asset.id, i.asset]),
-    ...swap.fees.map((i): [string, Asset] => [i.asset.id, i.asset]),
-  ]);
+const entries: Array<
+  [string, { id: string; evmAddress?: string | null | undefined }]
+> = [
+  ...swap.inputs.map(
+    (i) =>
+      [i.assetInfo.id, { id: i.assetInfo.id, evmAddress: i.assetInfo.evmAddress }] as [
+        string,
+        { id: string; evmAddress?: string | null | undefined }
+      ]
+  ),
+  ...swap.outputs.map(
+    (i) =>
+      [i.assetInfo.id, { id: i.assetInfo.id, evmAddress: i.assetInfo.evmAddress }] as [
+        string,
+        { id: string; evmAddress?: string | null | undefined }
+      ]
+  ),
+  ...swap.fees.map(
+    (i) =>
+      [i.assetId, { id: i.assetId, evmAddress: i.assetEvmAddress }] as [
+        string,
+        { id: string; evmAddress?: string | null | undefined }
+      ]
+  ),
+];
 
-  for (const processingAsset of involvedAssets.values()) {
+const involvedAssetIds = Array.from(new Map(entries).values());
+
+  for (const processingAsset of involvedAssetIds) {
     const currentHistData = ctx.batchState.state.hsmpoolAssetHistData.get(
       `${processingAsset.id}-${swap.paraBlockHeight}`
     );
@@ -76,7 +97,7 @@ export async function initHsmAssetHistoricalData({
   blockHeader,
 }: {
   swap: Swap;
-  processingAsset: Asset;
+  processingAsset: { id: string; evmAddress?: string | null | undefined };
   currentHistData?: HsmpoolAssetHistoricalData | undefined;
   oldHistData?: HsmpoolAssetHistoricalData | undefined;
   ctx: SqdProcessorContext<Store>;
@@ -93,11 +114,11 @@ export async function initHsmAssetHistoricalData({
 
   const newHistDataEntity = new HsmpoolAssetHistoricalData({
     id: processingAsset.id + '-' + swap.paraBlockHeight,
-    asset: processingAsset,
+    assetId: processingAsset.id,
     collateral:
       processingAsset.evmAddress !== ctx.appConfig.evm.HOLLAR_CONTRACT_ADDRESS
         ? await getOrCreateHsmCollateral({
-            assetRegistryId: processingAsset.assetRegistryId ?? '',
+            assetRegistryId: processingAsset.id,
             ctx,
             blockHeader,
           })
@@ -151,15 +172,15 @@ export async function initHsmAssetHistoricalData({
   });
 
   const assetVolIn =
-    swap.inputs.find((input) => input.asset.id === processingAsset.id)
+    swap.inputs.find((input) => input.assetInfo.id === processingAsset.id)
       ?.amount || BigInt(0);
 
   const assetVolOut =
-    swap.outputs.find((output) => output.asset.id === processingAsset.id)
+    swap.outputs.find((output) => output.assetInfo.id === processingAsset.id)
       ?.amount || BigInt(0);
 
   const assetFeeVol = swap.fees.reduce((acc, feeData) => {
-    if (feeData.asset.id !== processingAsset.id || !feeData.recipient)
+    if (feeData.assetId !== processingAsset.id || !feeData.recipient)
       return acc;
     return acc + feeData.amount;
   }, 0n);
@@ -188,13 +209,12 @@ export async function getOldHsmAssetHistDataEntity({
 }) {
   return await ctx.storeUtils.findOneWithLogs(HsmpoolAssetHistoricalData, {
     where: {
-      asset: { id: assetId },
+      assetId:  assetId,
       ...(currentBlockHeight
         ? { paraBlockHeight: LessThan(currentBlockHeight) }
         : {}),
     },
     relations: {
-      asset: true,
       collateral: true,
     },
     order: {
@@ -222,22 +242,23 @@ export async function processHsmpoolAssetBalanceHistoricalData({
   }
 
   for (const currentAssetHistData of hsmpoolAssetHistDataByBatchList) {
-    const asset = currentAssetHistData.asset;
+    const assetId = currentAssetHistData.assetId;
+    const assetEvmAddress = currentAssetHistData.assetEvmAddress;
 
     const previousAssetHistData =
       (ctx.batchState.getPreviousHistDataEntity({
         entitiesMap: ctx.batchState.state.hsmpoolAssetHistData,
-        entityId: asset.id,
+        entityId: assetId,
         currentBlockHeight: currentAssetHistData.paraBlockHeight,
         blockHeightValPosition: 1,
       }) as HsmpoolAssetHistoricalData | undefined) ||
       (await getOldHsmAssetHistDataEntity({
         ctx,
-        assetId: asset.id,
+        assetId: assetId,
         currentBlockHeight: currentAssetHistData.paraBlockHeight,
       }));
 
-    if (asset.evmAddress === ctx.appConfig.evm.HOLLAR_CONTRACT_ADDRESS) {
+    if (assetEvmAddress === ctx.appConfig.evm.HOLLAR_CONTRACT_ADDRESS) {
       const latestFacilitatorHistData =
         ctx.batchState.state.aaveFacilitatorsHistData.get(
           `${ctx.appConfig.evm.HSMPOOL_FICILITATOR_ADDRESS}-${currentAssetHistData.paraBlockHeight}`
@@ -259,7 +280,7 @@ export async function processHsmpoolAssetBalanceHistoricalData({
     } else {
       const latestAssetBalance =
         ctx.batchState.state.accountAssetBalanceHistoricalData.get(
-          `${ctx.appConfig.HSMPOOL_ADDRESS}-${asset.id}-${currentAssetHistData.paraBlockHeight}`
+          `${ctx.appConfig.HSMPOOL_ADDRESS}-${assetId}-${currentAssetHistData.paraBlockHeight}`
         );
 
       currentAssetHistData.freeBalance = latestAssetBalance?.transferable ?? 0n;

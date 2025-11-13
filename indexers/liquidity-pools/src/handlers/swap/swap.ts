@@ -1,36 +1,44 @@
-import { SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { BlockHeader } from '@subsquid/substrate-processor';
 import {
-  Swap,
-  SwapFee,
-  SwapFillerType,
-  SwapAssetBalance,
-  TradeOperationType,
-  SwapAssetBalanceType,
-  SwapFeeDestinationType,
-  RoutedTrade,
-} from '../../model';
-import { getOrCreateAccount } from '../accounts';
-import { getOrCreateAsset } from '../assets/asset';
-import { GetNewSwapResponse } from '../../utils/types';
+  FindOptionsRelations,
+  In,
+} from 'typeorm';
+
+import { BlockHeader } from '@subsquid/substrate-processor';
+import { Store } from '@subsquid/typeorm-store';
+
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import {
+  OperationStackManager,
+} from '../../chainActivityTracingManagers/operationStackManager';
+import {
+  MinimalAssetInfo,
+  RoutedTrade,
+  Swap,
+  SwapAssetBalance,
+  SwapAssetBalanceType,
+  SwapFee,
+  SwapFeeDestinationType,
+  SwapFillerType,
+  TradeOperationType,
+} from '../../model';
 import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
-import { OperationStackManager } from '../../chainActivityTracingManagers/operationStackManager';
-import { FindOptionsRelations, In } from 'typeorm';
 import {
   BroadcastSwappedAssetAmount,
   BroadcastSwappedFee,
   EventName,
 } from '../../parsers/types/events';
+import { SqdProcessorContext } from '../../processor';
+import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
+import { GetNewSwapResponse } from '../../utils/types';
+import { getOrCreateAccount } from '../accounts';
+import { getOrCreateAsset } from '../assets/asset';
 import {
-  getFillerContextData,
-  handleSwapFeeHistoricalData,
   broadcastSwappedEventPostHook,
   broadcastSwappedEventPreHook,
+  getFillerContextData,
+  handleSwapFeeHistoricalData,
 } from './helpers';
 import { processRouteTradeHop } from './routedTrade';
-import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
 
 export async function getSwap({
   ctx,
@@ -163,7 +171,7 @@ export async function getNewSwap({
         amount: fee.amount,
         destinationType: fee.destinationType,
         swap,
-        asset,
+        assetId: asset.id,
         recipient,
       })
     );
@@ -186,7 +194,14 @@ export async function getNewSwap({
         assetBalanceType: SwapAssetBalanceType.Input,
         amount: input.amount,
         swap,
-        asset,
+        assetInfo: new MinimalAssetInfo({
+          id: asset.id,
+          assetRegistryId: asset.assetRegistryId?.toString(),
+          decimals: asset.decimals ?? 0,
+          symbol: asset.symbol,
+          name: asset.name,
+          resourceType: asset.resourceType,
+        }),
       })
     );
     swap.allInvolvedAssetIds.push(asset.id);
@@ -208,7 +223,14 @@ export async function getNewSwap({
         assetBalanceType: SwapAssetBalanceType.Output,
         amount: output.amount,
         swap,
-        asset,
+        assetInfo: new MinimalAssetInfo({
+          id: asset.id,
+          assetRegistryId: asset.assetRegistryId?.toString(),
+          decimals: asset.decimals ?? 0,
+          symbol: asset.symbol,
+          name: asset.name,
+          resourceType: asset.resourceType,
+        }),
       })
     );
     swap.allInvolvedAssetIds.push(asset.id);
@@ -318,7 +340,7 @@ export async function handleSwap({
     await handleSwapFeeHistoricalData({
       ctx,
       feeAmount: fee.amount,
-      asset: fee.asset,
+      assetId: fee.assetId,
       account: fee.recipient!,
       block: swap.event.block,
     });

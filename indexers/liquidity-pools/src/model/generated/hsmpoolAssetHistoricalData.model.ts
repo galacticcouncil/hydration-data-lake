@@ -1,5 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, StringColumn as StringColumn_, DateTimeColumn as DateTimeColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
-import {Asset} from "./asset.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, DateTimeColumn as DateTimeColumn_} from "@subsquid/typeorm-store"
 import {HsmCollateral} from "./hsmCollateral.model"
 import {AaveFacilitatorHistoricalData} from "./aaveFacilitatorHistoricalData.model"
 
@@ -15,9 +14,14 @@ export class HsmpoolAssetHistoricalData {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+    @StringColumn_({nullable: false})
+    assetId!: string
+
+    @StringColumn_({nullable: true})
+    assetEvmAddress!: string | undefined | null
+
+    @IntColumn_({nullable: false})
+    assetDecimals!: number
 
     /**
      * Can be null if snapshot is for Hollar

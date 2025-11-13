@@ -310,12 +310,8 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           relations: {
             swaps: {
               event: { block: true },
-              inputs: {
-                asset: true,
-              },
-              outputs: {
-                asset: true,
-              },
+              inputs: {},
+              outputs: {},
             },
           },
           order: {
@@ -355,12 +351,8 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             event: { block: true },
-            inputs: {
-              asset: true,
-            },
-            outputs: {
-              asset: true,
-            },
+            inputs: {},
+            outputs: {},
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -680,7 +672,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            asset: true,
             collateral: { asset: true },
             
           },

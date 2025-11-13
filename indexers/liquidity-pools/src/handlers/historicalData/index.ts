@@ -500,7 +500,7 @@ export class HistoricalDataManager {
     const hsmpoolAssetHistoricalVolumeEntries = [
       ...new Set(
         [...ctx.batchState.state.hsmpoolAssetHistData.values()].map(
-          (item) => item.asset.id
+          (item) => item.assetId
         )
       ).values(),
     ];

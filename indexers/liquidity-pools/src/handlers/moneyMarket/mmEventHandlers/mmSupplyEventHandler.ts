@@ -1,20 +1,18 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BalancesTransferData } from '../../../parsers/batchBlocksParser/types';
+
+import {
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
+import {
+  EvmEventName,
+  MmSupply,
+} from '../../../model';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import { SqdProcessorContext } from '../../../processor';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { EvmEventName, MmSupply } from '../../../model';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import {
-  getNewMoneyMarketEventEntity,
-  processNewMoneyMarketEvent,
-} from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
+import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 
 export async function handleMmSupplyEvent(
   ctx: SqdProcessorContext<Store>,
@@ -77,7 +75,7 @@ export async function handleMmSupplyEvent(
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
     ],
-    asset: assetEntity,
+    assetId: assetEntity.id,
     account,
     accountOnBehalfOf,
     amount: parsedEvmEventData.amount,

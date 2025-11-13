@@ -227,15 +227,15 @@ export function initStablepoolAssetVolume({
 
   if (swap) {
     const assetVolIn =
-      swap.inputs.find((input) => input.asset.id === newVolume.asset.id)
+      swap.inputs.find((input) => input.assetInfo.id === newVolume.asset.id)
         ?.amount || BigInt(0);
 
     const assetVolOut =
-      swap.outputs.find((output) => output.asset.id === newVolume.asset.id)
+      swap.outputs.find((output) => output.assetInfo.id === newVolume.asset.id)
         ?.amount || BigInt(0);
 
     const assetFeeVol = swap.fees.reduce((acc, feeData) => {
-      if (feeData.asset.id !== newVolume.asset.id || !feeData.recipient)
+      if (feeData.assetId !== newVolume.asset.id || !feeData.recipient)
         return acc;
       return acc + feeData.amount;
     }, 0n);
@@ -300,7 +300,7 @@ export function isRoutedStablepoolLiquidityAction({
 }) {
   return !![...ctx.batchState.state.swaps.values()].find((swap) => {
     const swapOutputsMap = new Map(
-      swap.outputs.map((output) => [output.asset.id, output])
+      swap.outputs.map((output) => [output.assetInfo.id, output])
     );
 
     return (

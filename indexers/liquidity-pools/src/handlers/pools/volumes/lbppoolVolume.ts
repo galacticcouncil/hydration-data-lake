@@ -107,29 +107,29 @@ export function initLbppoolVolume(
   });
 
   const assetAVolIn =
-    swap.inputs.find((input) => input.asset.id === newVolume.assetA.id)
+    swap.inputs.find((input) => input.assetInfo.id === newVolume.assetA.id)
       ?.amount || BigInt(0);
 
   const assetAVolOut =
-    swap.outputs.find((output) => output.asset.id === newVolume.assetA.id)
+    swap.outputs.find((output) => output.assetInfo.id === newVolume.assetA.id)
       ?.amount || BigInt(0);
 
   const assetAFeeVol = swap.fees.reduce((acc, feeData) => {
-    if (feeData.asset.id !== newVolume.assetA.id || !feeData.recipient)
+    if (feeData.assetId !== newVolume.assetA.id || !feeData.recipient)
       return acc;
     return acc + feeData.amount;
   }, 0n);
 
   const assetBVolIn =
-    swap.inputs.find((input) => input.asset.id === newVolume.assetB.id)
+    swap.inputs.find((input) => input.assetInfo.id === newVolume.assetB.id)
       ?.amount || BigInt(0);
 
   const assetBVolOut =
-    swap.outputs.find((output) => output.asset.id === newVolume.assetB.id)
+    swap.outputs.find((output) => output.assetInfo.id === newVolume.assetB.id)
       ?.amount || BigInt(0);
 
   const assetBFeeVol = swap.fees.reduce((acc, feeData) => {
-    if (feeData.asset.id !== newVolume.assetB.id || !feeData.recipient)
+    if (feeData.assetId !== newVolume.assetB.id || !feeData.recipient)
       return acc;
     return acc + feeData.amount;
   }, 0n);

@@ -1,9 +1,12 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
+
 import { HsmpoolAssetHistoricalData } from '../../../model';
-import { getOldHsmAssetHistDataEntity } from '../pools/hsmpool/hsmpoolAssetHistData';
+import { SqdProcessorContext } from '../../../processor';
+import { calcPriceNormalized } from '../../../utils/helpers';
+import {
+  getOldHsmAssetHistDataEntity,
+} from '../pools/hsmpool/hsmpoolAssetHistData';
 
 export async function processHsmpoolAssetNormalizedVolumes({
   blockNumbersToProcess,
@@ -27,34 +30,35 @@ export async function processHsmpoolAssetNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const currentAssetHistData of hsmpoolAssetHistDataByBatchList) {
-    const asset = currentAssetHistData.asset;
+    const assetId = currentAssetHistData.assetId;
+    const decimals = currentAssetHistData.assetDecimals;
 
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
-      `${asset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetHistData.paraBlockHeight}`
+      `${assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetHistData.paraBlockHeight}`
     )?.priceNormalised;
 
-    if (asset.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
+    if (assetId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
       assetSpotPriceNorm = '1';
 
-    if (!assetSpotPriceNorm || !asset.decimals) continue;
+    if (!assetSpotPriceNorm || !decimals) continue;
 
     const previousAssetHistData =
       (ctx.batchState.getPreviousHistDataEntity({
         entitiesMap: ctx.batchState.state.hsmpoolAssetHistData,
-        entityId: asset.id,
+        entityId: assetId,
         currentBlockHeight: currentAssetHistData.paraBlockHeight,
         blockHeightValPosition: 1,
       }) as HsmpoolAssetHistoricalData | undefined) ||
       (await getOldHsmAssetHistDataEntity({
         ctx,
-        assetId: asset.id,
+        assetId: assetId,
         currentBlockHeight: currentAssetHistData.paraBlockHeight,
       }));
 
     currentAssetHistData.assetFeeVolNorm = calcPriceNormalized({
       amount: currentAssetHistData.assetFeeVol,
       spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
+      assetDecimals: decimals,
     });
 
     currentAssetHistData.assetTotalFeesVolNorm = BigNumber(
@@ -66,12 +70,12 @@ export async function processHsmpoolAssetNormalizedVolumes({
     currentAssetHistData.assetVolInNorm = calcPriceNormalized({
       amount: currentAssetHistData.assetVolIn,
       spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
+      assetDecimals: decimals,
     });
     currentAssetHistData.assetVolOutNorm = calcPriceNormalized({
       amount: currentAssetHistData.assetVolOut,
       spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
+      assetDecimals: decimals,
     });
 
     currentAssetHistData.assetTotalVolInNorm = BigNumber(

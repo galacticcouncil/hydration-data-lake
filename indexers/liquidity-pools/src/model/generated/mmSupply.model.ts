@@ -1,5 +1,4 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
-import {Asset} from "./asset.model"
 import {Account} from "./account.model"
 import {RoutedTrade} from "./routedTrade.model"
 import {Event} from "./event.model"
@@ -19,9 +18,8 @@ export class MmSupply {
     @StringColumn_({array: true, nullable: true})
     traceIds!: (string)[] | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+    @StringColumn_({nullable: false})
+    assetId!: string
 
     @Index_()
     @ManyToOne_(() => Account, {nullable: true})

@@ -1,7 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
 import {RoutedTrade} from "./routedTrade.model"
 import {SwapAssetBalanceType} from "./_swapAssetBalanceType"
-import {Asset} from "./asset.model"
 
 @Entity_()
 export class RoutedTradeAssetBalance {
@@ -22,9 +21,8 @@ export class RoutedTradeAssetBalance {
     @Column_("varchar", {length: 6, nullable: false})
     assetBalanceType!: SwapAssetBalanceType
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+    @StringColumn_({nullable: false})
+    assetId!: string
 
     @BigIntColumn_({nullable: false})
     amount!: bigint

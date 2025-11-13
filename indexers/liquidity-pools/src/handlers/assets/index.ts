@@ -73,7 +73,7 @@ export async function handleAssetRegistry(
 
 export function initAssetVolume({
   ctx,
-  asset,
+  assetId,
   totalVolumeIn,
   totalVolumeOut,
   volumeOut,
@@ -84,7 +84,7 @@ export function initAssetVolume({
   totalVolumeOutNorm = '0',
 }: {
   ctx: SqdProcessorContext<Store>;
-  asset: Asset;
+  assetId: string;
   paraBlockHeight: number;
   relayBlockHeight: number;
   volumeIn: bigint;
@@ -100,8 +100,8 @@ export function initAssetVolume({
   }
 
   return new AssetVolumeHistoricalData({
-    id: asset.id + '-' + paraBlockHeight,
-    assetId: asset.id,
+    id: assetId + '-' + paraBlockHeight,
+    assetId: assetId,
     volumeIn,
     volumeOut,
     totalVolumeIn,

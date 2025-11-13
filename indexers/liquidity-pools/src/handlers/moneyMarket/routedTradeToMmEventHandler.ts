@@ -1,5 +1,6 @@
+import { Store } from '@subsquid/typeorm-store';
+
 import {
-  Asset,
   EvmEventName,
   MmSupply,
   MmWithdraw,
@@ -8,11 +9,13 @@ import {
   Swap,
   SwapAssetBalance,
 } from '../../model';
-import { SqdBlock, SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { processNewMoneyMarketEvent } from './moneyMarketEvent';
 import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
 import { EvmLogEventParams } from '../../parsers/types/events';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import { processNewMoneyMarketEvent } from './moneyMarketEvent';
 
 export async function createMoneyMarketEventsFromRoutedTrades(
   ctx: SqdProcessorContext<Store>,
@@ -23,12 +26,12 @@ export async function createMoneyMarketEventsFromRoutedTrades(
       (a, b) => a.event.indexInBlock - b.event.indexInBlock
     );
     const collateralAssetInputToTrade = orderedSwaps[0].inputs.filter(
-      (sab) => sab.asset.resourceType === ResourceType.Collateral
+      (sab) => sab.assetInfo.resourceType === ResourceType.Collateral
     );
     const collateralAssetsOutputFromTrade = orderedSwaps[
       orderedSwaps.length - 1
     ].outputs.filter(
-      (sab) => sab.asset.resourceType === ResourceType.Collateral
+      (sab) => sab.assetInfo.resourceType === ResourceType.Collateral
     );
 
     if (collateralAssetInputToTrade.length > 0) {
@@ -66,7 +69,7 @@ async function createSyntheticMmWithdrawalEvent({
   trade: RoutedTrade;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const assetEntity = assetBalance.asset;
+  const assetEntity = assetBalance.assetInfo;
 
   const accountFrom = swap.swapper;
   const accountTo = swap.swapper;
@@ -74,7 +77,7 @@ async function createSyntheticMmWithdrawalEvent({
   const mmWithdrawEntity = new MmWithdraw({
     id: swap.id,
     traceIds: swap.traceIds,
-    asset: assetEntity,
+    assetId: assetEntity.id,
     accountFrom,
     accountTo,
     amount: assetBalance.amount,
@@ -128,7 +131,7 @@ async function createSyntheticMmSupplyEvent({
   trade: RoutedTrade;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const assetEntity = assetBalance.asset;
+  const assetEntity = assetBalance.assetInfo;
 
   const account = swap.swapper;
 
@@ -137,7 +140,7 @@ async function createSyntheticMmSupplyEvent({
   const mmSupplyEntity = new MmSupply({
     id: swap.id,
     traceIds: swap.traceIds,
-    asset: assetEntity,
+    assetId: assetEntity.id,
     account,
     accountOnBehalfOf,
     amount: assetBalance.amount,

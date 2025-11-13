@@ -37,14 +37,9 @@ export async function prefetchAllAvailableRoutedTradesForBlocksRange({
         swapper: true,
         filler: true,
         event: true,
-        inputs: {
-          asset: true,
-        },
-        outputs: {
-          asset: true,
-        },
+        inputs: {},
+        outputs: {},
         fees: {
-          asset: true,
           recipient: true,
         },
       },

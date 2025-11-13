@@ -119,10 +119,10 @@ export function processRouteTradeHop({
 
     for (const swapOutput of swap.outputs) {
       const tradeOutput = new RoutedTradeAssetBalance({
-        id: `${routeTradeEntity.id}-${swapOutput.asset.id}-${SwapAssetBalanceType.Output}`,
+        id: `${routeTradeEntity.id}-${swapOutput.assetInfo.id}-${SwapAssetBalanceType.Output}`,
         routedTrade: routeTradeEntity,
         assetBalanceType: SwapAssetBalanceType.Output,
-        asset: swapOutput.asset,
+        assetId: swapOutput.assetInfo.id,
         amount: swapOutput.amount,
       });
       ctx.batchState.state.routeTradesOutputs.set(tradeOutput.id, tradeOutput);
@@ -171,10 +171,10 @@ export function processRouteTradeHop({
 
   routeTradeEntity.inputs = swap.inputs.map((swapInput) => {
     const tradeInput = new RoutedTradeAssetBalance({
-      id: `${newRouteTradeEntityId}-${swapInput.asset.id}-${SwapAssetBalanceType.Input}`,
+      id: `${newRouteTradeEntityId}-${swapInput.assetInfo.id}-${SwapAssetBalanceType.Input}`,
       routedTrade: routeTradeEntity,
       assetBalanceType: SwapAssetBalanceType.Input,
-      asset: swapInput.asset,
+      assetId: swapInput.assetInfo.id,
       amount: swapInput.amount,
     });
     ctx.batchState.state.routeTradesInputs.set(tradeInput.id, tradeInput);
@@ -183,10 +183,10 @@ export function processRouteTradeHop({
 
   routeTradeEntity.outputs = swap.outputs.map((swapOutput) => {
     const tradeOutput = new RoutedTradeAssetBalance({
-      id: `${newRouteTradeEntityId}-${swapOutput.asset.id}-${SwapAssetBalanceType.Output}`,
+      id: `${newRouteTradeEntityId}-${swapOutput.assetInfo.id}-${SwapAssetBalanceType.Output}`,
       routedTrade: routeTradeEntity,
       assetBalanceType: SwapAssetBalanceType.Output,
-      asset: swapOutput.asset,
+      assetId: swapOutput.assetInfo.id,
       amount: swapOutput.amount,
     });
     ctx.batchState.state.routeTradesOutputs.set(tradeOutput.id, tradeOutput);
@@ -236,14 +236,14 @@ export function getRouterTradeInputOutputPoints(
     (a, b) => a.event.indexInBlock - b.event.indexInBlock
   );
   for (const inputAsset of orderedSwaps[0].inputs) {
-    res.inputAssetIds.push(inputAsset.asset.id);
-    if (inputAsset.asset.assetRegistryId)
-      res.inputAssetRegistryIds.push(inputAsset.asset.assetRegistryId);
+    res.inputAssetIds.push(inputAsset.assetInfo.id);
+    if (inputAsset.assetInfo.assetRegistryId)
+      res.inputAssetRegistryIds.push(inputAsset.assetInfo.assetRegistryId);
   }
   for (const outputAsset of orderedSwaps[orderedSwaps.length - 1].outputs) {
-    res.outputAssetIds.push(outputAsset.asset.id);
-    if (outputAsset.asset.assetRegistryId)
-      res.outputAssetRegistryIds.push(outputAsset.asset.assetRegistryId);
+    res.outputAssetIds.push(outputAsset.assetInfo.id);
+    if (outputAsset.assetInfo.assetRegistryId)
+      res.outputAssetRegistryIds.push(outputAsset.assetInfo.assetRegistryId);
   }
 
   return res;

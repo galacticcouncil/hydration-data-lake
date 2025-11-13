@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 import {
   Lbppool,
   LbppoolVolumeHistoricalData,
@@ -5,7 +7,6 @@ import {
   Xykpool,
   XykpoolVolumeHistoricalData,
 } from '../../model';
-import BigNumber from 'bignumber.js';
 
 export function calculateAveragePrice({
   swap,
@@ -33,7 +34,7 @@ export function calculateAveragePrice({
     .toNumber();
 
   const price =
-    swap.inputs[0].asset.id === pool.assetA.id ? swapPrice : 1 / swapPrice;
+    swap.inputs[0].assetInfo.id === pool.assetA.id ? swapPrice : 1 / swapPrice;
 
   const oldPrice = currentVolume?.averagePrice || oldVolume?.averagePrice || 0;
 

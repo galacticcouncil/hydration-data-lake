@@ -1,18 +1,19 @@
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   SwapFeeDestinationType,
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import {
   LbpBuyExecutedData,
   LbpSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { handleLbppoolVolumeUpdates } from '../../pools/volumes';
+import { SqdProcessorContext } from '../../../processor';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
-import { handleSwap } from '../../swap/swap';
 import { getOrCreateLbppool } from '../../pools/pools/lbpPool/lbpPool';
+import { handleLbppoolVolumeUpdates } from '../../pools/volumes';
+import { handleSwap } from '../../swap/swap';
 
 export async function lpbBuyExecuted(
   ctx: SqdProcessorContext<Store>,
@@ -84,9 +85,9 @@ export async function lpbBuyExecuted(
   await handleAssetVolumeUpdates(ctx, {
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
-    assetIn: swapInputs[0].asset,
+    assetInId: swapInputs[0].assetInfo.id,
     assetInAmount: swapInputs[0].amount,
-    assetOut: swapOutputs[0].asset,
+    assetOutId: swapOutputs[0].assetInfo.id,
     assetOutAmount: swapOutputs[0].amount,
   });
 }
@@ -161,9 +162,9 @@ export async function lpbSellExecuted(
   await handleAssetVolumeUpdates(ctx, {
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
-    assetIn: swapInputs[0].asset,
+    assetInId: swapInputs[0].assetInfo.id,
     assetInAmount: swapInputs[0].amount,
-    assetOut: swapOutputs[0].asset,
+    assetOutId: swapOutputs[0].assetInfo.id,
     assetOutAmount: swapOutputs[0].amount,
   });
 }

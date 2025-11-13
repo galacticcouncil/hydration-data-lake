@@ -178,13 +178,21 @@ type AssetDynamicFee {
   timestamp: Int!
 }
 
-type EmbeddedAsset {
+interface BaseEmbeddedAsset {
   id: String!
   assetRegistryId: String
-  existentialDeposit: BigInt!
   decimals: Int
   name: String
   symbol: String
+}
+
+type EmbeddedAsset implements BaseEmbeddedAsset {
+  id: String!
+  assetRegistryId: String
+  decimals: Int
+  name: String
+  symbol: String
+  existentialDeposit: BigInt
   isSufficient: Boolean
   assetType: AssetType
 }
@@ -596,10 +604,21 @@ type SwapFee @entity {
   "<swapId>-<assetId>-<recipientId || destinationType> e.g. 0006516718-9965d-000107-0"
   id: ID!
   swap: Swap!
-  asset: Asset!
+  assetId: String!
+  assetEvmAddress: String
   amount: BigInt!
   destinationType: SwapFeeDestinationType!
   recipient: Account
+}
+
+type MinimalAssetInfo implements BaseEmbeddedAsset {
+  id: String!
+  assetRegistryId: String!
+  name: String
+  symbol: String
+  decimals: Int!
+  resourceType: ResourceType!
+  evmAddress: String
 }
 
 type SwapAssetBalance @entity {
@@ -607,7 +626,7 @@ type SwapAssetBalance @entity {
   id: ID!
   swap: Swap!
   assetBalanceType: SwapAssetBalanceType!
-  asset: Asset!
+  assetInfo: MinimalAssetInfo!
   amount: BigInt!
 }
 
@@ -646,7 +665,7 @@ type RoutedTradeAssetBalance @entity {
   id: ID!
   routedTrade: RoutedTrade!
   assetBalanceType: SwapAssetBalanceType!
-  asset: Asset!
+  assetId: String!
   amount: BigInt!
 }
 
@@ -1321,7 +1340,9 @@ type HsmCollateralConfigHistoricalData @entity {
 type HsmpoolAssetHistoricalData @entity {
   "<asset_id>-<block_height>"
   id: ID!
-  asset: Asset!
+  assetId: String!
+  assetEvmAddress: String
+  assetDecimals: Int!
   "Can be null if snapshot is for Hollar"
   collateral: HsmCollateral
   "Actual only for Hollar asset as Hsm pool doesn't have any balance of Hollar"
@@ -1694,7 +1715,7 @@ type MmSupply @entity {
   id: ID!
   traceIds: [String!]
 
-  asset: Asset!
+  assetId: String!
   account: Account!
   accountOnBehalfOf: Account!
   amount: BigInt
@@ -1712,7 +1733,7 @@ type MmWithdraw @entity {
   id: ID!
   traceIds: [String!]
 
-  asset: Asset!
+  assetId: String!
   accountFrom: Account!
   accountTo: Account!
   amount: BigInt

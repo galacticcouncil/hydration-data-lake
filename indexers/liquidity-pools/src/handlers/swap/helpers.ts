@@ -1,28 +1,34 @@
-import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
+
 import {
   Account,
-  Asset,
   Block,
   ChainActivityTrace,
   Swap,
   SwapFillerType,
 } from '../../model';
-import { getOrCreateStableswap } from '../pools/pools/stableswap/stablepool';
+import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
+import { SqdProcessorContext } from '../../processor';
+import { SwapFillerContextDetails } from '../../utils/types';
+import {
+  handleAccountAssetSwapFee,
+} from '../accounts/historicalAccountSwapFee';
+import { handleAssetSwapFee } from '../assets/historicalAssetSwapFee';
+import { handleAssetVolumeUpdates } from '../assets/volume';
+import {
+  handleHsmAssetHistoricalData,
+} from '../pools/pools/hsmpool/hsmpoolAssetHistData';
 import { getOrCreateLbppool } from '../pools/pools/lbpPool/lbpPool';
+import { getOrCreateStableswap } from '../pools/pools/stableswap/stablepool';
+import { getOrCreateXykPool } from '../pools/pools/xykPool/xykPool';
 import {
   handleLbppoolVolumeUpdates,
   handleOmnipoolAssetVolumeUpdates,
   handleXykPoolVolumeUpdates,
 } from '../pools/volumes';
-import { handleAssetVolumeUpdates } from '../assets/volume';
-import { getOrCreateXykPool } from '../pools/pools/xykPool/xykPool';
-import { handleStablepoolVolumeUpdates } from '../pools/volumes/stablepoolVolume';
-import { SwapFillerContextDetails } from '../../utils/types';
-import { handleAccountAssetSwapFee } from '../accounts/historicalAccountSwapFee';
-import { handleAssetSwapFee } from '../assets/historicalAssetSwapFee';
-import { handleHsmAssetHistoricalData } from '../pools/pools/hsmpool/hsmpoolAssetHistData';
+import {
+  handleStablepoolVolumeUpdates,
+} from '../pools/volumes/stablepoolVolume';
 
 export async function getFillerContextData(
   ctx: SqdProcessorContext<Store>,
@@ -118,9 +124,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetIn: swap.inputs[0].asset,
+        assetInId: swap.inputs[0].assetInfo.id,
         assetInAmount: swap.inputs[0].amount,
-        assetOut: swap.outputs[0].asset,
+        assetOutId: swap.outputs[0].assetInfo.id,
         assetOutAmount: swap.outputs[0].amount,
       });
       break;
@@ -150,9 +156,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetIn: swap.inputs[0].asset,
+        assetInId: swap.inputs[0].assetInfo.id,
         assetInAmount: swap.inputs[0].amount,
-        assetOut: swap.outputs[0].asset,
+        assetOutId: swap.outputs[0].assetInfo.id,
         assetOutAmount: swap.outputs[0].amount,
       });
       break;
@@ -166,9 +172,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetIn: swap.inputs[0].asset,
+        assetInId: swap.inputs[0].assetInfo.id,
         assetInAmount: swap.inputs[0].amount,
-        assetOut: swap.outputs[0].asset,
+        assetOutId: swap.outputs[0].assetInfo.id,
         assetOutAmount: swap.outputs[0].amount,
       });
       break;
@@ -197,9 +203,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetIn: swap.inputs[0].asset,
+        assetInId: swap.inputs[0].assetInfo.id,
         assetInAmount: swap.inputs[0].amount,
-        assetOut: swap.outputs[0].asset,
+        assetOutId: swap.outputs[0].assetInfo.id,
         assetOutAmount: swap.outputs[0].amount,
       });
 
@@ -215,9 +221,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetIn: swap.inputs[0].asset,
+        assetInId: swap.inputs[0].assetInfo.id,
         assetInAmount: swap.inputs[0].amount,
-        assetOut: swap.outputs[0].asset,
+        assetOutId: swap.outputs[0].assetInfo.id,
         assetOutAmount: swap.outputs[0].amount,
       });
 
@@ -228,20 +234,20 @@ export async function broadcastSwappedEventPostHook({
 export async function handleSwapFeeHistoricalData({
   ctx,
   feeAmount,
-  asset,
+  assetId,
   account,
   block,
 }: {
   ctx: SqdProcessorContext<Store>;
   block: Block;
   account: Account;
-  asset: Asset;
+  assetId: string;
   feeAmount: bigint;
 }) {
   await handleAccountAssetSwapFee({
     ctx,
     feeAmount,
-    asset,
+    assetId,
     account,
     block,
   });
@@ -249,7 +255,7 @@ export async function handleSwapFeeHistoricalData({
   await handleAssetSwapFee({
     ctx,
     feeAmount,
-    asset,
+  assetId,
     block,
   });
 }

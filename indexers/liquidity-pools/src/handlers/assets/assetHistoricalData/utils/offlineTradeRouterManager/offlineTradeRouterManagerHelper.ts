@@ -654,7 +654,7 @@ export class OfflineTradeRouterManagerHelper {
         decimals: assetHistData.asset.decimals,
         name: assetHistData.asset.name,
         symbol: assetHistData.asset.symbol,
-        existentialDeposit: assetHistData.asset.existentialDeposit.toString(),
+        existentialDeposit: assetHistData.asset.existentialDeposit?.toString(),
         isSufficient: assetHistData.asset.isSufficient,
         type: assetHistData.asset.assetType,
         dynamicFee: assetHistData.dynamicFee,
@@ -702,7 +702,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: poolHistData.assetA.decimals,
             symbol: poolHistData.assetA.symbol,
             balance: poolHistData.assetABalance.toString(),
-            existentialDeposit: assetAHistData.asset.existentialDeposit.toString(),
+            existentialDeposit: assetAHistData.asset.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: poolHistData.assetA.assetType,
           },
@@ -711,7 +711,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: poolHistData.assetB.decimals,
             symbol: poolHistData.assetB.symbol,
             balance: poolHistData.assetBBalance.toString(),
-            existentialDeposit: assetBHistData.asset.existentialDeposit.toString(),
+            existentialDeposit: assetBHistData.asset.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: poolHistData.assetB.assetType,
           },
@@ -764,7 +764,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: poolHistData.assetA.decimals,
             symbol: poolHistData.assetA.symbol,
             balance: poolHistData.assetABalance.toString(),
-            existentialDeposit: assetAHistData.asset.existentialDeposit.toString(),
+            existentialDeposit: assetAHistData.asset.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: poolHistData.assetA.assetType,
           },
@@ -773,7 +773,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: poolHistData.assetB.decimals,
             symbol: poolHistData.assetB.symbol,
             balance: poolHistData.assetBBalance.toString(),
-            existentialDeposit: assetBHistData.asset.existentialDeposit.toString(),
+            existentialDeposit: assetBHistData.asset.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: poolHistData.assetB.assetType,
           },
@@ -842,7 +842,7 @@ export class OfflineTradeRouterManagerHelper {
               existentialDeposit: this.assetsHistData
                 .get(blockNumber)!
                 .get(assetHistData.asset.id)!
-                .asset.existentialDeposit.toString(),
+                .asset.existentialDeposit?.toString(),
               isSufficient: this.assetsHistData
                 .get(blockNumber)!
                 .get(assetHistData.asset.id)!.asset.isSufficient, // TODO fix data
@@ -909,7 +909,7 @@ export class OfflineTradeRouterManagerHelper {
             symbol: assetHistData.asset.symbol,
             type: assetHistData.asset.assetType,
             existentialDeposit:
-              assetHistoricalData.asset.existentialDeposit.toString(),
+              assetHistoricalData.asset.existentialDeposit?.toString(),
             isSufficient: assetHistoricalData.asset.isSufficient, // TODO fix data
             balance: assetHistData.freeBalance.toString(),
             tradable: assetHistData.tradable,
@@ -972,7 +972,7 @@ export class OfflineTradeRouterManagerHelper {
             symbol: reserveAssetHistData.asset.symbol,
             balance: poolHistData.liquidityIn.toString(),
             existentialDeposit:
-              reserveAssetHistData.asset.existentialDeposit.toString(),
+              reserveAssetHistData.asset.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: reserveAssetHistData.asset.assetType,
           },
@@ -981,7 +981,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: aTokenHistData.asset.decimals,
             symbol: aTokenHistData.asset.symbol,
             balance: poolHistData.liquidityOut.toString(),
-            existentialDeposit: aTokenHistData.asset.existentialDeposit.toString(),
+            existentialDeposit: aTokenHistData.asset.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: aTokenHistData.asset.assetType,
           },

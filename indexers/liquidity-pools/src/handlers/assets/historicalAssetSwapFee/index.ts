@@ -1,7 +1,6 @@
 import { Store } from '@subsquid/typeorm-store';
 
 import {
-  Asset,
   AssetSwapFeeHistoricalData,
   Block,
 } from '../../../model';
@@ -9,25 +8,25 @@ import { SqdProcessorContext } from '../../../processor';
 
 export async function handleAssetSwapFee({
   block,
-  asset,
+  assetId,
   feeAmount,
   ctx,
 }: {
   ctx: SqdProcessorContext<Store>;
   block: Block;
-  asset: Asset;
+  assetId: string;
   feeAmount: bigint;
 }) {
   const state = ctx.batchState.state;
 
   const currentBlockAssetFeeAmount = state.historicalAssetSwapFees.get(
-    `${asset.id}-${block.height}`
+    `${assetId}-${block.height}`
   );
 
   // If not found, find last volume in cache
   const lastCachedAssetFeeAmount = getLastAssetSwapFeeAmountFromCache(
     state.historicalAssetSwapFees,
-    asset.id
+    assetId
   );
 
   // Last known volume for total volume
@@ -36,7 +35,7 @@ export async function handleAssetSwapFee({
     lastCachedAssetFeeAmount ||
     (await ctx.storeUtils.findOneWithLogs(AssetSwapFeeHistoricalData, {
       where: {
-        assetId: asset.id,
+        assetId: assetId,
       },
       relations: {},
       order: {
@@ -45,8 +44,8 @@ export async function handleAssetSwapFee({
     }, { className: 'AssetSwapFeeHistoricalData' }));
 
   const assetSwapFee = new AssetSwapFeeHistoricalData({
-    id: `${asset.id}-${block.height}`,
-    assetId: asset.id,
+    id: `${assetId}-${block.height}`,
+    assetId: assetId,
     amount: currentBlockAssetFeeAmount?.amount || BigInt(0),
     totalAmount: persistentAssetFeeAmount?.totalAmount || BigInt(0),
     paraBlockHeight: block.height,

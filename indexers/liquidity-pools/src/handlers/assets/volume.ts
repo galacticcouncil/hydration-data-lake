@@ -1,9 +1,6 @@
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Asset,
-  AssetVolumeHistoricalData,
-} from '../../model';
+import { AssetVolumeHistoricalData } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { initAssetVolume } from './index';
 
@@ -12,8 +9,8 @@ export async function handleAssetVolumeUpdates(
   swapDetails: {
     paraBlockHeight: number;
     relayBlockHeight: number;
-    assetIn: Asset;
-    assetOut: Asset;
+    assetInId: string;
+    assetOutId: string;
     assetInAmount: bigint;
     assetOutAmount: bigint;
   }
@@ -22,22 +19,22 @@ export async function handleAssetVolumeUpdates(
 
   // Find current block volume
   const currentAssetInVolume = assetVolumesState.get(
-    swapDetails.assetIn.id + '-' + swapDetails.paraBlockHeight
+    swapDetails.assetInId + '-' + swapDetails.paraBlockHeight
   );
   const currentAssetOutVolume = assetVolumesState.get(
-    swapDetails.assetOut.id + '-' + swapDetails.paraBlockHeight
+    swapDetails.assetOutId + '-' + swapDetails.paraBlockHeight
   );
 
   // If not found find last volume in cache
   const cachedVolumeIn = ctx.batchState.getPreviousHistDataEntity({
     entitiesMap: ctx.batchState.state.assetVolumes,
-    entityId: swapDetails.assetIn.id,
+    entityId: swapDetails.assetInId,
     currentBlockHeight: swapDetails.paraBlockHeight,
     blockHeightValPosition: 1,
   });
   const cachedVolumeOut = ctx.batchState.getPreviousHistDataEntity({
     entitiesMap: ctx.batchState.state.assetVolumes,
-    entityId: swapDetails.assetOut.id,
+    entityId: swapDetails.assetOutId,
     currentBlockHeight: swapDetails.paraBlockHeight,
     blockHeightValPosition: 1,
   });
@@ -50,7 +47,7 @@ export async function handleAssetVolumeUpdates(
       AssetVolumeHistoricalData,
       {
         where: {
-          assetId: swapDetails.assetIn.id ,
+          assetId: swapDetails.assetInId ,
         },
         relations: {},
         order: {
@@ -68,7 +65,7 @@ export async function handleAssetVolumeUpdates(
       AssetVolumeHistoricalData,
       {
         where: {
-          assetId: swapDetails.assetOut.id ,
+          assetId: swapDetails.assetOutId ,
         },
         relations: {},
         order: {
@@ -81,7 +78,7 @@ export async function handleAssetVolumeUpdates(
   // Create new entry
   const assetInVolume = initAssetVolume({
     ctx,
-    asset: swapDetails.assetIn,
+    assetId: swapDetails.assetInId,
     paraBlockHeight: swapDetails.paraBlockHeight,
     relayBlockHeight: swapDetails.relayBlockHeight,
     volumeIn: currentAssetInVolume?.volumeIn || BigInt(0),
@@ -94,7 +91,7 @@ export async function handleAssetVolumeUpdates(
 
   const assetOutVolume = initAssetVolume({
     ctx,
-    asset: swapDetails.assetOut,
+    assetId: swapDetails.assetOutId,
     paraBlockHeight: swapDetails.paraBlockHeight,
     relayBlockHeight: swapDetails.relayBlockHeight,
     volumeIn: currentAssetOutVolume?.volumeIn || BigInt(0),

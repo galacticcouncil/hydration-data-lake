@@ -1,18 +1,19 @@
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   SwapFeeDestinationType,
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import {
   XykBuyExecutedData,
   XykSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
-import { handleXykPoolVolumeUpdates } from '../../pools/volumes';
+import { SqdProcessorContext } from '../../../processor';
 import { handleAssetVolumeUpdates } from '../../assets/volume';
-import { handleSwap } from '../../swap/swap';
 import { getOrCreateXykPool } from '../../pools/pools/xykPool/xykPool';
+import { handleXykPoolVolumeUpdates } from '../../pools/volumes';
+import { handleSwap } from '../../swap/swap';
 
 export async function xykBuyExecuted(
   ctx: SqdProcessorContext<Store>,
@@ -74,9 +75,9 @@ export async function xykBuyExecuted(
   await handleAssetVolumeUpdates(ctx, {
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
-    assetIn: swapInputs[0].asset,
+    assetInId: swapInputs[0].assetInfo.id,
     assetInAmount: swapInputs[0].amount,
-    assetOut: swapOutputs[0].asset,
+    assetOutId: swapOutputs[0].assetInfo.id,
     assetOutAmount: swapOutputs[0].amount,
   });
 }
@@ -143,9 +144,9 @@ export async function xykSellExecuted(
   await handleAssetVolumeUpdates(ctx, {
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
-    assetIn: swapInputs[0].asset,
+    assetInId: swapInputs[0].assetInfo.id,
     assetInAmount: swapInputs[0].amount,
-    assetOut: swapOutputs[0].asset,
+    assetOutId: swapOutputs[0].assetInfo.id,
     assetOutAmount: swapOutputs[0].amount,
   });
 }

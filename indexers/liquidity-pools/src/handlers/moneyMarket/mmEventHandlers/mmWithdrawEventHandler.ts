@@ -1,21 +1,18 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
+
+import {
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
 import {
   EvmEventName,
   MmWithdraw,
-  ResourceType,
-  RoutedTrade,
 } from '../../../model';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import { SqdProcessorContext } from '../../../processor';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmWithdrawEvent(
   ctx: SqdProcessorContext<Store>,
@@ -65,7 +62,7 @@ export async function handleMmWithdrawEvent(
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
     ],
-    asset: assetEntity,
+    assetId: assetEntity.id,
     accountFrom,
     accountTo,
     amount: parsedEvmEventData.amount,

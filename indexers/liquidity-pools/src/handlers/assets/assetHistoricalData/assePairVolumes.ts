@@ -115,12 +115,12 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
     out: assetOutData,
   } of assetBalancePairs.flat()) {
     if (
-      assetInData.asset.assetRegistryId === undefined ||
-      assetInData.asset.assetRegistryId === null ||
-      !assetInData.asset.decimals ||
-      assetOutData.asset.assetRegistryId === undefined ||
-      assetOutData.asset.assetRegistryId === null ||
-      !assetOutData.asset.decimals
+      assetInData.assetInfo.assetRegistryId === undefined ||
+      assetInData.assetInfo.assetRegistryId === null ||
+      !assetInData.assetInfo.decimals ||
+      assetOutData.assetInfo.assetRegistryId === undefined ||
+      assetOutData.assetInfo.assetRegistryId === null ||
+      !assetOutData.assetInfo.decimals
     )
       continue assetsPairLoop;
 
@@ -137,13 +137,13 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
     // }
 
     const assetInSpotPrice = getAssetSpotPriceFromHistoricalData({
-      assetId: assetInData.asset.id,
+      assetId: assetInData.assetInfo.id,
       blockHeader,
       ctx,
     });
 
     const assetOutSpotPrice = getAssetSpotPriceFromHistoricalData({
-      assetId: assetOutData.asset.id,
+      assetId: assetOutData.assetInfo.id,
       blockHeader,
       ctx,
     });
@@ -155,47 +155,59 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
     ].find(
       (item) =>
         item.id ===
-          `${assetInData.asset.id}-${assetOutData.asset.id}-${blockHeader.height}` ||
+          `${assetInData.assetInfo.id}-${assetOutData.assetInfo.id}-${blockHeader.height}` ||
         item.id ===
-          `${assetOutData.asset.id}-${assetInData.asset.id}-${blockHeader.height}`
+          `${assetOutData.assetInfo.id}-${assetInData.assetInfo.id}-${blockHeader.height}`
     );
 
     const assetsPairVolumeEntityId =
       existingPairVolEntity?.id ??
-      `${assetInData.asset.id}-${assetOutData.asset.id}-${blockHeader.height}`;
+      `${assetInData.assetInfo.id}-${assetOutData.assetInfo.id}-${blockHeader.height}`;
 
     const currentTotalVolumeNormalised = fromExponentialToDecimalNotation(
       assetInData.amount.toString(),
-      assetInData.asset.decimals
+      assetInData.assetInfo.decimals
     )
       .multipliedBy(assetInSpotPrice)
       .plus(
         fromExponentialToDecimalNotation(
           assetOutData.amount.toString(),
-          assetOutData.asset.decimals
+          assetOutData.assetInfo.decimals
         ).multipliedBy(assetOutSpotPrice)
       );
 
-    let assetA = assetInData.asset;
-    let assetB = assetOutData.asset;
+    let assetAId = assetInData.assetInfo.id;
+    let assetARegistryId = assetInData.assetInfo.assetRegistryId;
+    let assetBId = assetOutData.assetInfo.id;
+    let assetBRegistryId = assetOutData.assetInfo.assetRegistryId;
     let assetAVolume = assetInData.amount;
     let assetBVolume = assetOutData.amount;
 
     if (existingPairVolEntity) {
-      assetA =
-        existingPairVolEntity.assetAId === assetInData.asset.id
-          ? assetInData.asset
-          : assetOutData.asset;
-      assetB =
-        existingPairVolEntity.assetBId === assetOutData.asset.id
-          ? assetOutData.asset
-          : assetInData.asset;
+      assetAId =
+        existingPairVolEntity.assetAId === assetInData.assetInfo.id
+          ? assetInData.assetInfo.id
+          : assetOutData.assetInfo.id;
+      assetARegistryId =
+        existingPairVolEntity.assetAId === assetInData.assetInfo.id
+          ? assetInData.assetInfo.assetRegistryId
+          : assetOutData.assetInfo.assetRegistryId;
+      
+      assetBId =
+        existingPairVolEntity.assetBId === assetOutData.assetInfo.id
+          ? assetOutData.assetInfo.id
+          : assetInData.assetInfo.id;
+      assetBRegistryId =
+        existingPairVolEntity.assetBId === assetOutData.assetInfo.id
+          ? assetOutData.assetInfo.assetRegistryId
+          : assetInData.assetInfo.assetRegistryId;
+
       assetAVolume =
-        (existingPairVolEntity.assetAId === assetInData.asset.id
+        (existingPairVolEntity.assetAId === assetInData.assetInfo.id
           ? assetInData.amount
           : assetOutData.amount) + existingPairVolEntity.assetAVolume;
       assetBVolume =
-        (existingPairVolEntity.assetBId === assetOutData.asset.id
+        (existingPairVolEntity.assetBId === assetOutData.assetInfo.id
           ? assetOutData.amount
           : assetInData.amount) + existingPairVolEntity.assetBVolume;
     }
@@ -207,11 +219,11 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
     const assetsPairVolumeEntity = new AssetsPairVolumeHistoricalData({
       id: assetsPairVolumeEntityId,
 
-      assetAId: assetA.id,
-      assetRegistryAId: assetA.assetRegistryId?.toString(),
+      assetAId: assetAId,
+      assetRegistryAId: assetARegistryId?.toString(),
       
-      assetBId: assetB.id,
-      assetRegistryBId: assetB.assetRegistryId?.toString(),
+      assetBId: assetBId,
+      assetRegistryBId: assetARegistryId?.toString(),
 
       assetAVolume,
       assetBVolume,
@@ -234,8 +246,8 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
     ].filter(
       (item) =>
         item.paraBlockHeight === blockHeader.height &&
-        (item.asset.assetRegistryId === assetInData.asset.assetRegistryId ||
-          item.asset.assetRegistryId === assetOutData.asset.assetRegistryId)
+        (item.asset.assetRegistryId === assetInData.assetInfo.assetRegistryId ||
+          item.asset.assetRegistryId === assetOutData.assetInfo.assetRegistryId)
     );
 
     for (const assetHisData of assetsHistoricalDataEntities) {

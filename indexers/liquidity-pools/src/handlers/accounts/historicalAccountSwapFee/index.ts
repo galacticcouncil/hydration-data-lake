@@ -4,7 +4,6 @@ import {
   Account,
   AccountAssetSwapFeeHistoricalData,
   AccountSwapFeeHistoricalData,
-  Asset,
   Block,
 } from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
@@ -12,28 +11,28 @@ import { SqdProcessorContext } from '../../../processor';
 export async function handleAccountAssetSwapFee({
   block,
   account,
-  asset,
+  assetId,
   feeAmount,
   ctx,
 }: {
   ctx: SqdProcessorContext<Store>;
   block: Block;
   account: Account;
-  asset: Asset;
+  assetId: string;
   feeAmount: bigint;
 }) {
   const state = ctx.batchState.state;
 
   const currentBlockAccAssetFeeAmount =
     state.historicalAccountAssetSwapFees.get(
-      `${account.id}-${asset.id}-${block.height}`
+      `${account.id}-${assetId}-${block.height}`
     );
 
   // If not found find last volume in cache
   const lastCachedAccAssetFeeAmount = getLastAccAssetSwapFeeAmountFromCache(
     state.historicalAccountAssetSwapFees,
     account.id,
-    asset.id
+    assetId
   );
 
   // Last known volume for total volume
@@ -42,7 +41,7 @@ export async function handleAccountAssetSwapFee({
     lastCachedAccAssetFeeAmount ||
     (await ctx.storeUtils.findOneWithLogs(AccountAssetSwapFeeHistoricalData, {
       where: {
-        assetId:  asset.id,
+        assetId:  assetId,
         account: { id: account.id },
       },
       relations: { account: true, collection: true },
@@ -58,9 +57,9 @@ export async function handleAccountAssetSwapFee({
   });
 
   const accountAssetSwapFee = new AccountAssetSwapFeeHistoricalData({
-    id: `${account.id}-${asset.id}-${block.height}`,
+    id: `${account.id}-${assetId}-${block.height}`,
     account,
-    assetId: asset.id,
+    assetId: assetId,
     collection: accountSwapFeesCollection,
     amount: currentBlockAccAssetFeeAmount?.amount || BigInt(0),
     totalAmount: persistentAccAssetFeeAmount?.totalAmount || BigInt(0),
