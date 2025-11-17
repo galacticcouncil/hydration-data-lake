@@ -102,7 +102,7 @@ function getAllEntityProps(entity: Entity) {
 function decorateAssetHistoricalData(src: AssetHistoricalData) {
   const decorated: Record<string, any> = getAllEntityProps(src);
 
-  decorated.asset = src.asset.id;
+  decorated.assetId = src.assetId;
 
   delete decorated.spotPrices;
   delete decorated.assetPairVolumes;

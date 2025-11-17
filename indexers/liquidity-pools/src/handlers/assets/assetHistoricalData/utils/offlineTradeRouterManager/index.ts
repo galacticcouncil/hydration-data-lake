@@ -77,24 +77,30 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
       ),
       assets: this.getDecoratedAssetsHistDataAsPersistentDataInput({
         blockNumber,
+        ctx,
       }),
       pools: {
         lbp: this.getDecoratedLbppoolHistDataAsPersistentDataInput({
           blockNumber,
+          ctx,
         }),
         xyk: ctx.appConfig.USE_XYKPOOLS_DATA_IN_TRADE_ROUTER
           ? this.getDecoratedXykpoolHistDataAsPersistentDataInput({
               blockNumber,
+              ctx,
             })
           : [],
         stableswap: this.getDecoratedStableswapHistDataAsPersistentDataInput({
           blockNumber,
+          ctx,
         }),
         omnipool: this.getDecoratedOmnipoolHistDataAsPersistentDataInput({
           blockNumber,
+          ctx,
         }),
         aave: this.getDecoratedAavepoolHistDataAsPersistentDataInput({
           blockNumber,
+          ctx,
         }),
       },
     };

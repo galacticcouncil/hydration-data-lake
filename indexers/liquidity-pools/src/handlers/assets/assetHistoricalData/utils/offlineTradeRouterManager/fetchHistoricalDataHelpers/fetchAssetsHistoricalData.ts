@@ -35,11 +35,11 @@ export async function fetchAssetsHistoricalData({
 
   return new Map([
     ...persistedHistData.map((ahd): [string, AssetHistoricalData] => [
-      ahd.asset.id,
+      ahd.assetId,
       ahd,
     ]),
     ...cachedHistData.map((ahd): [string, AssetHistoricalData] => [
-      ahd.asset.id,
+      ahd.assetId,
       ahd,
     ]),
   ]);
@@ -103,7 +103,7 @@ export async function fetchAssetsHistoricalDataForBlocksRangeResolver({
 
     histDataPerBlock
       .get(histDataItem.paraBlockHeight)!
-      .set(histDataItem.asset.id, histDataItem);
+      .set(histDataItem.assetId, histDataItem);
   }
 
   return histDataPerBlock;

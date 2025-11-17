@@ -12,7 +12,7 @@ import {
 } from '../../processor';
 import { calcPriceNormalized } from '../../utils/helpers';
 import { getOrCreateAccount } from '../accounts';
-import { getOrCreateAsset } from '../assets/asset';
+import { getOrCreateAsset, batchGetOrCreateAssets } from '../assets/asset';
 import {
   getAssetsPairPrice,
 } from '../assets/assetHistoricalData/assetSpotPrices';
@@ -75,48 +75,41 @@ export async function handleCommonAssetAccountBalances({
 
     if (allInvolvedAccountsInBlockSet.size === 0) continue blocksLoop;
 
+    // Convert Set to Array once for reuse
+    const accountIdsArray = Array.from(allInvolvedAccountsInBlockSet);
+
     const [nativeTokenBalances, otherTokenBalances] = await Promise.all([
       parsers.storage.system.getNativeTokenBalanceMany({
         block: block.header,
-        accountIds: Array.from(allInvolvedAccountsInBlockSet.keys()),
+        accountIds: accountIdsArray,
       }),
       parsers.storage.tokens.getTokenBalancesMany({
         block: block.header,
-        accountIds: Array.from(allInvolvedAccountsInBlockSet.keys()),
+        accountIds: accountIdsArray,
       }),
     ]);
 
-    for (const nativeTokenBalance of nativeTokenBalances) {
-      if (
-        !accountBalancesPerBlock
-          .get(block.header.height)!
-          .data.has(nativeTokenBalance.accountId)
-      )
-        accountBalancesPerBlock
-          .get(block.header.height)!
-          .data.set(nativeTokenBalance.accountId, new Map());
+    // Cache block data reference to avoid repeated Map lookups
+    const currentBlockData = accountBalancesPerBlock.get(block.header.height)!;
 
-      accountBalancesPerBlock
-        .get(block.header.height)!
-        .data.get(nativeTokenBalance.accountId)!
+    for (const nativeTokenBalance of nativeTokenBalances) {
+      if (!currentBlockData.data.has(nativeTokenBalance.accountId)) {
+        currentBlockData.data.set(nativeTokenBalance.accountId, new Map());
+      }
+
+      currentBlockData.data
+        .get(nativeTokenBalance.accountId)!
         .set('0', nativeTokenBalance.data);
     }
 
     for (const otherTokenBalance of otherTokenBalances) {
-      if (
-        !accountBalancesPerBlock
-          .get(block.header.height)!
-          .data.has(otherTokenBalance.accountId)
-      )
-        accountBalancesPerBlock
-          .get(block.header.height)!
-          .data.set(otherTokenBalance.accountId, new Map());
+      if (!currentBlockData.data.has(otherTokenBalance.accountId)) {
+        currentBlockData.data.set(otherTokenBalance.accountId, new Map());
+      }
 
+      const accountData = currentBlockData.data.get(otherTokenBalance.accountId)!;
       for (const balance of otherTokenBalance.assetBalances) {
-        accountBalancesPerBlock
-          .get(block.header.height)!
-          .data.get(otherTokenBalance.accountId)!
-          .set(balance.assetId, balance.data);
+        accountData.set(balance.assetId, balance.data);
       }
     }
   }
@@ -143,8 +136,35 @@ export async function handleCommonAssetAccountBalances({
   if (!refAsset) throw Error('Ref asset not found');
 
   for (const blockData of accountBalancesPerBlock.values()) {
+    // Collect all unique asset registry IDs for this block
+    const allAssetRegistryIds = new Set<string>();
+    for (const accountData of blockData.data.values()) {
+      for (const assetRegistryId of accountData.keys()) {
+        allAssetRegistryIds.add(assetRegistryId);
+      }
+    }
+
+    // Collect all unique account IDs for this block
+    const allAccountIds = Array.from(blockData.data.keys());
+
+    // Batch fetch all assets for this block in a single DB query
+    const assetsCache = await batchGetOrCreateAssets({
+      assetRegistryIds: Array.from(allAssetRegistryIds),
+      ctx,
+      ensure: true,
+      blockHeader: blockData.blockHeader,
+    });
+
+    // Batch fetch all accounts for this block in parallel
+    const accountsArray = await Promise.all(
+      allAccountIds.map((accountId) => getOrCreateAccount({ ctx, id: accountId }))
+    );
+    const accountsMap = new Map(
+      accountsArray.map((account) => [account.id, account])
+    );
+
     for (const [accountId, accountData] of blockData.data.entries()) {
-      const account = await getOrCreateAccount({ ctx, id: accountId });
+      const account = accountsMap.get(accountId)!;
 
       const accountTotalBalance =
         await getOrCreateAccountTotalBalanceHistoricalData({
@@ -155,12 +175,8 @@ export async function handleCommonAssetAccountBalances({
         });
 
       for (const [assetRegistryId, balances] of accountData.entries()) {
-        const asset = await getOrCreateAsset({
-          assetRegistryId,
-          ctx,
-          ensure: true,
-          blockHeader: blockData.blockHeader,
-        });
+        // Use cached asset instead of sequential DB query
+        const asset = assetsCache.get(assetRegistryId);
         if (!asset) continue;
 
         const assetSpotPrice = getAssetsPairPrice({

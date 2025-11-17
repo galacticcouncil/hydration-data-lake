@@ -75,9 +75,9 @@ export async function xykBuyExecuted(
   await handleAssetVolumeUpdates(ctx, {
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
-    assetInId: swapInputs[0].assetInfo.id,
+    assetInId: swapInputs[0].assetId,
     assetInAmount: swapInputs[0].amount,
-    assetOutId: swapOutputs[0].assetInfo.id,
+    assetOutId: swapOutputs[0].assetId,
     assetOutAmount: swapOutputs[0].amount,
   });
 }
@@ -144,9 +144,9 @@ export async function xykSellExecuted(
   await handleAssetVolumeUpdates(ctx, {
     paraBlockHeight: swap.paraBlockHeight,
     relayBlockHeight: swap.relayBlockHeight,
-    assetInId: swapInputs[0].assetInfo.id,
+    assetInId: swapInputs[0].assetId,
     assetInAmount: swapInputs[0].amount,
-    assetOutId: swapOutputs[0].assetInfo.id,
+    assetOutId: swapOutputs[0].assetId,
     assetOutAmount: swapOutputs[0].amount,
   });
 }

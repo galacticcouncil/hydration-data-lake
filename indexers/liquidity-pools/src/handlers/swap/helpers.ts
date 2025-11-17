@@ -124,9 +124,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetInId: swap.inputs[0].assetInfo.id,
+        assetInId: swap.inputs[0].assetId,
         assetInAmount: swap.inputs[0].amount,
-        assetOutId: swap.outputs[0].assetInfo.id,
+        assetOutId: swap.outputs[0].assetId,
         assetOutAmount: swap.outputs[0].amount,
       });
       break;
@@ -156,9 +156,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetInId: swap.inputs[0].assetInfo.id,
+        assetInId: swap.inputs[0].assetId,
         assetInAmount: swap.inputs[0].amount,
-        assetOutId: swap.outputs[0].assetInfo.id,
+        assetOutId: swap.outputs[0].assetId,
         assetOutAmount: swap.outputs[0].amount,
       });
       break;
@@ -172,9 +172,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetInId: swap.inputs[0].assetInfo.id,
+        assetInId: swap.inputs[0].assetId,
         assetInAmount: swap.inputs[0].amount,
-        assetOutId: swap.outputs[0].assetInfo.id,
+        assetOutId: swap.outputs[0].assetId,
         assetOutAmount: swap.outputs[0].amount,
       });
       break;
@@ -203,9 +203,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetInId: swap.inputs[0].assetInfo.id,
+        assetInId: swap.inputs[0].assetId,
         assetInAmount: swap.inputs[0].amount,
-        assetOutId: swap.outputs[0].assetInfo.id,
+        assetOutId: swap.outputs[0].assetId,
         assetOutAmount: swap.outputs[0].amount,
       });
 
@@ -221,9 +221,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetInId: swap.inputs[0].assetInfo.id,
+        assetInId: swap.inputs[0].assetId,
         assetInAmount: swap.inputs[0].amount,
-        assetOutId: swap.outputs[0].assetInfo.id,
+        assetOutId: swap.outputs[0].assetId,
         assetOutAmount: swap.outputs[0].amount,
       });
 

@@ -94,6 +94,10 @@ export class MoneyMarketContractsManager {
     MoneyMarketResourceDetails
   > = new Map();
 
+  // Cache for facilitators to avoid repeated EVM calls
+  private facilitatorsCache: Array<AaveFacilitatorContractData> | null = null;
+  private facilitatorsCacheBlockNumber: number | null = null;
+
   private constructor() {
     this.provider = new ethers.providers.JsonRpcProvider(
       appConfig.RPC_URL_HTTPS || 'https://archive.rpc.hydration.cloud'
@@ -528,6 +532,16 @@ export class MoneyMarketContractsManager {
    * IMPORTANT: Method cannot provide data at a specific block.
    */
   async getAllAaveFacilitators({ blockNumber }: { blockNumber?: number }) {
+    // Return cached facilitators if available and within 100 blocks
+    if (
+      this.facilitatorsCache &&
+      this.facilitatorsCacheBlockNumber &&
+      blockNumber &&
+      Math.abs(blockNumber - this.facilitatorsCacheBlockNumber) < 100
+    ) {
+      return this.facilitatorsCache;
+    }
+
     const facilitatorsList: string[] = await measureEvmContractCall({
       call: `hollarContractInstance.getFacilitatorsList`,
       originFn: 'getAllAaveFacilitators',
@@ -544,9 +558,9 @@ export class MoneyMarketContractsManager {
         }),
     });
 
-    if (!facilitatorsList) {
-      console.log(`No facilitators found`);
-      return null;
+    if (!facilitatorsList || facilitatorsList.length === 0) {
+      console.log(`No facilitators found - returning cached data if available`);
+      return this.facilitatorsCache || null;
     }
 
     const facilitatorsData: Array<AaveFacilitatorContractData | null> = [];
@@ -564,7 +578,13 @@ export class MoneyMarketContractsManager {
       { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
     );
 
-    return facilitatorsData.filter((facilitator) => !!facilitator);
+    const filteredData = facilitatorsData.filter((facilitator) => !!facilitator);
+
+    // Cache the result
+    this.facilitatorsCache = filteredData;
+    this.facilitatorsCacheBlockNumber = blockNumber ?? null;
+
+    return filteredData;
   }
 
   /**

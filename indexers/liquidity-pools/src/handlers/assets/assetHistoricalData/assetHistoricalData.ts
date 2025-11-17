@@ -8,7 +8,6 @@ import {
   AssetDynamicFee,
   AssetHistoricalData,
   AssetType,
-  EmbeddedAsset,
 } from '../../../model';
 import parsers from '../../../parsers';
 import { SqdProcessorContext } from '../../../processor';
@@ -113,16 +112,7 @@ export async function processAssetsHistoricalDataAtBlock({
 
       const newAssetHistoricalData = new AssetHistoricalData({
         id: `${asset.id}-${block.height}`,
-        asset: new EmbeddedAsset({
-        id: asset.id,
-        assetRegistryId: asset.assetRegistryId,
-        name: asset.name,
-        symbol: asset.symbol,
-        assetType: asset.assetType,
-        decimals: asset.decimals,
-        isSufficient: asset.isSufficient,
-        existentialDeposit: existentialDepositPerAssetMap.get(asset.assetRegistryId ?? '')?.existentialDeposit ?? 0n,
-      }),
+        assetId: asset.id,
 
         totalIssuance: totalIssuancePerAssetMapByAssetId.get(asset.id) ?? 0n,
 
@@ -166,10 +156,10 @@ export async function getAssetHistDataWithUniqueData(
   for (const i of (
     src || ctx.batchState.state.assetsHistoricalDataBatch
   ).values()) {
-    if (!assetHistoryIndexByAsset.has(i.asset.id)) {
-      assetHistoryIndexByAsset.set(i.asset.id, []);
+    if (!assetHistoryIndexByAsset.has(i.assetId)) {
+      assetHistoryIndexByAsset.set(i.assetId, []);
     }
-    assetHistoryIndexByAsset.get(i.asset.id)!.push(i);
+    assetHistoryIndexByAsset.get(i.assetId)!.push(i);
   }
 
   console.time(
@@ -242,20 +232,19 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
   ctx: SqdProcessorContext<Store>;
 }) {
   let previousItem = (
-    cachedIndexedRecords.get(currentRecord.asset.id) || []
+    cachedIndexedRecords.get(currentRecord.assetId) || []
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
     // Since AssetHistoricalData.id is "<assetId>-<paraBlockHeight>",
-    // we can't query by embedded asset.id directly. Instead, use Like to match the asset ID prefix
+    // use Like to match the asset ID prefix
     previousItem = await ctx.storeUtils.findOneWithLogs(
       AssetHistoricalData,
       {
         where: {
-          id: Like(`${currentRecord.asset.id}-%`),
+          id: Like(`${currentRecord.assetId}-%`),
           paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
         },
-        // asset is an embedded type, not a relation - automatically included
         order: {
           paraBlockHeight: 'DESC',
         },
@@ -282,7 +271,6 @@ export async function isAssetHistoricalDataUniqueRegardingPreviousRecord({
 
   if (
     previousItem.totalIssuance !== currentRecord.totalIssuance ||
-    previousItem.asset.existentialDeposit !== currentRecord.asset.existentialDeposit ||
     previousItem.usdPriceNormalised !== currentRecord.usdPriceNormalised ||
     !!previousItem.dynamicFee !== !!currentRecord.dynamicFee ||
     (!!previousItem.dynamicFee &&

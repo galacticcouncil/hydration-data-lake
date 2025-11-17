@@ -739,9 +739,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
               ctx.blocks[ctx.blocks.length - 1].header.height
             ),
           },
-          relations: {
-            asset: {},
-          },
           order: {
             paraBlockHeight: 'ASC',
             id: 'ASC',

@@ -638,25 +638,27 @@ export class OfflineTradeRouterManagerHelper {
 
   getDecoratedAssetsHistDataAsPersistentDataInput({
     blockNumber,
+    ctx,
   }: {
     blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
   }): PersistentAsset[] {
     const assetsMap: Map<string, PersistentAsset> = new Map();
 
-    // for (const [assetRegistryId, assetHistData] of [
-    //   ...(this.assetsHistData.get(blockNumber) || new Map()).entries(),
-    // ] as [string, AssetHistoricalData][]) {
     for (const [assetRegistryId, assetHistData] of (this.assetsHistData.get(
       blockNumber
     ) || new Map()) as Map<string, AssetHistoricalData>) {
+      const asset = ctx.batchState.state.assetsAll.get(assetHistData.assetId);
+      if (!asset) continue;
+
       assetsMap.set(assetRegistryId, {
-        id: assetHistData.asset.assetRegistryId,
-        decimals: assetHistData.asset.decimals,
-        name: assetHistData.asset.name,
-        symbol: assetHistData.asset.symbol,
-        existentialDeposit: assetHistData.asset.existentialDeposit?.toString(),
-        isSufficient: assetHistData.asset.isSufficient,
-        type: assetHistData.asset.assetType,
+        id: asset.assetRegistryId,
+        decimals: asset.decimals,
+        name: asset.name,
+        symbol: asset.symbol,
+        existentialDeposit: asset.existentialDeposit?.toString(),
+        isSufficient: asset.isSufficient,
+        type: asset.assetType,
         dynamicFee: assetHistData.dynamicFee,
       } as PersistentAsset);
     }
@@ -666,14 +668,12 @@ export class OfflineTradeRouterManagerHelper {
 
   getDecoratedXykpoolHistDataAsPersistentDataInput({
     blockNumber,
+    ctx,
   }: {
     blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
   }): IPersistentPoolBase[] {
     const poolsMap: Map<string, IPersistentPoolBase> = new Map();
-
-    // for (const [poolId, poolHistData] of [
-    //   ...(this.xykpoolsHistData.get(blockNumber) || new Map()).entries(),
-    // ] as [string, XykpoolHistoricalData][]) {
 
     for (const [poolId, poolHistData] of (this.xykpoolsHistData.get(
       blockNumber
@@ -690,6 +690,14 @@ export class OfflineTradeRouterManagerHelper {
         continue;
       }
 
+      const assetA = ctx.batchState.state.assetsAll.get(assetAHistData.assetId);
+      const assetB = ctx.batchState.state.assetsAll.get(assetBHistData.assetId);
+
+      if (!assetA || !assetB) {
+        console.error(`>> missing asset in cache for pool ${poolId}`);
+        continue;
+      }
+
       const blockConstants = this.constantsHistData.get(blockNumber)!;
 
       poolsMap.set(poolId, {
@@ -702,7 +710,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: poolHistData.assetA.decimals,
             symbol: poolHistData.assetA.symbol,
             balance: poolHistData.assetABalance.toString(),
-            existentialDeposit: assetAHistData.asset.existentialDeposit?.toString(),
+            existentialDeposit: assetA.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: poolHistData.assetA.assetType,
           },
@@ -711,7 +719,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: poolHistData.assetB.decimals,
             symbol: poolHistData.assetB.symbol,
             balance: poolHistData.assetBBalance.toString(),
-            existentialDeposit: assetBHistData.asset.existentialDeposit?.toString(),
+            existentialDeposit: assetB.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: poolHistData.assetB.assetType,
           },
@@ -727,8 +735,10 @@ export class OfflineTradeRouterManagerHelper {
 
   getDecoratedLbppoolHistDataAsPersistentDataInput({
     blockNumber,
+    ctx,
   }: {
     blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
   }): IPersistentLbpPoolBase[] {
     const poolsMap: Map<string, IPersistentLbpPoolBase> = new Map();
 
@@ -744,6 +754,14 @@ export class OfflineTradeRouterManagerHelper {
 
       if (!assetAHistData || !assetBHistData) {
         console.error(`>> missing asset data for pool ${poolId}`);
+        continue;
+      }
+
+      const assetA = ctx.batchState.state.assetsAll.get(assetAHistData.assetId);
+      const assetB = ctx.batchState.state.assetsAll.get(assetBHistData.assetId);
+
+      if (!assetA || !assetB) {
+        console.error(`>> missing asset in cache for pool ${poolId}`);
         continue;
       }
 
@@ -764,7 +782,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: poolHistData.assetA.decimals,
             symbol: poolHistData.assetA.symbol,
             balance: poolHistData.assetABalance.toString(),
-            existentialDeposit: assetAHistData.asset.existentialDeposit?.toString(),
+            existentialDeposit: assetA.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: poolHistData.assetA.assetType,
           },
@@ -773,7 +791,7 @@ export class OfflineTradeRouterManagerHelper {
             decimals: poolHistData.assetB.decimals,
             symbol: poolHistData.assetB.symbol,
             balance: poolHistData.assetBBalance.toString(),
-            existentialDeposit: assetBHistData.asset.existentialDeposit?.toString(),
+            existentialDeposit: assetB.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
             type: poolHistData.assetB.assetType,
           },
@@ -798,13 +816,13 @@ export class OfflineTradeRouterManagerHelper {
 
   getDecoratedStableswapHistDataAsPersistentDataInput({
     blockNumber,
+    ctx,
   }: {
     blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
   }): IPersistentStableSwapBase[] {
     const poolsMap: Map<string, IPersistentStableSwapBase> = new Map();
-    // for (const [poolId, poolHistData] of [
-    //   ...(this.stableswapHistData.get(blockNumber) || new Map()).entries(),
-    // ] as [string, StableswapHistoricalData][]) {
+
     for (const [poolId, poolHistData] of (this.stableswapHistData.get(
       blockNumber
     ) || new Map()) as Map<string, StableswapHistoricalData>) {
@@ -834,22 +852,26 @@ export class OfflineTradeRouterManagerHelper {
 
         tokens: [
           ...(poolHistData.assetsHistoricalData.map((assetHistData) => {
+            const assetHistoricalData = this.assetsHistData
+              .get(blockNumber)!
+              .get(assetHistData.asset.id);
+
+            if (!assetHistoricalData) return null;
+
+            const asset = ctx.batchState.state.assetsAll.get(assetHistoricalData.assetId);
+            if (!asset) return null;
+
             return {
               id: assetHistData.asset.assetRegistryId,
               decimals: assetHistData.asset.decimals,
               symbol: assetHistData.asset.symbol,
               balance: assetHistData.freeBalance.toString(),
-              existentialDeposit: this.assetsHistData
-                .get(blockNumber)!
-                .get(assetHistData.asset.id)!
-                .asset.existentialDeposit?.toString(),
-              isSufficient: this.assetsHistData
-                .get(blockNumber)!
-                .get(assetHistData.asset.id)!.asset.isSufficient, // TODO fix data
+              existentialDeposit: asset.existentialDeposit?.toString(),
+              isSufficient: asset.isSufficient, // TODO fix data
               type: assetHistData.asset.assetType,
               tradable: assetHistData.tradable,
             };
-          }) as IPersistentPoolToken[]),
+          }).filter(t => !!t) as IPersistentPoolToken[]),
         ],
 
         maxInRatio: 0,
@@ -883,8 +905,10 @@ export class OfflineTradeRouterManagerHelper {
 
   getDecoratedOmnipoolHistDataAsPersistentDataInput({
     blockNumber,
+    ctx,
   }: {
     blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
   }): IPersistentOmniPoolBase[] {
     const poolHistData = this.omnipoolHistData.get(blockNumber);
     if (!poolHistData) return [];
@@ -903,14 +927,16 @@ export class OfflineTradeRouterManagerHelper {
 
           if (!assetHistoricalData) return null;
 
+          const asset = ctx.batchState.state.assetsAll.get(assetHistoricalData.assetId);
+          if (!asset) return null;
+
           return {
             id: assetHistData.asset.assetRegistryId,
             decimals: assetHistData.asset.decimals,
             symbol: assetHistData.asset.symbol,
             type: assetHistData.asset.assetType,
-            existentialDeposit:
-              assetHistoricalData.asset.existentialDeposit?.toString(),
-            isSufficient: assetHistoricalData.asset.isSufficient, // TODO fix data
+            existentialDeposit: asset.existentialDeposit?.toString(),
+            isSufficient: asset.isSufficient, // TODO fix data
             balance: assetHistData.freeBalance.toString(),
             tradable: assetHistData.tradable,
             hubReserves: assetHistData.assetHubReserve.toString(),
@@ -934,14 +960,12 @@ export class OfflineTradeRouterManagerHelper {
 
   getDecoratedAavepoolHistDataAsPersistentDataInput({
     blockNumber,
+    ctx,
   }: {
     blockNumber: number;
+    ctx: SqdProcessorContext<Store>;
   }): IPersistentPoolBase[] {
     const poolsMap: Map<string, IPersistentPoolBase> = new Map();
-
-    // for (const [poolId, poolHistData] of [
-    //   ...(this.aavepoolsHistData.get(blockNumber) || new Map()).entries(),
-    // ] as [string, AavepoolHistoricalData][]) {
 
     for (const [poolId, poolHistData] of (this.aavepoolsHistData.get(
       blockNumber
@@ -961,29 +985,36 @@ export class OfflineTradeRouterManagerHelper {
         continue;
       }
 
+      const reserveAsset = ctx.batchState.state.assetsAll.get(reserveAssetHistData.assetId);
+      const aToken = ctx.batchState.state.assetsAll.get(aTokenHistData.assetId);
+
+      if (!reserveAsset || !aToken) {
+        console.error(`>> missing asset in cache for pool ${poolId}`);
+        continue;
+      }
+
       poolsMap.set(poolId, {
         address: publicKeyToSs58(poolHistData.pool.id),
         id: publicKeyToSs58(poolHistData.pool.id),
         type: PoolType.Aave,
         tokens: [
           {
-            id: reserveAssetHistData.asset.assetRegistryId,
-            decimals: reserveAssetHistData.asset.decimals,
-            symbol: reserveAssetHistData.asset.symbol,
+            id: reserveAsset.assetRegistryId,
+            decimals: reserveAsset.decimals,
+            symbol: reserveAsset.symbol,
             balance: poolHistData.liquidityIn.toString(),
-            existentialDeposit:
-              reserveAssetHistData.asset.existentialDeposit?.toString(),
+            existentialDeposit: reserveAsset.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
-            type: reserveAssetHistData.asset.assetType,
+            type: reserveAsset.assetType,
           },
           {
-            id: aTokenHistData.asset.assetRegistryId,
-            decimals: aTokenHistData.asset.decimals,
-            symbol: aTokenHistData.asset.symbol,
+            id: aToken.assetRegistryId,
+            decimals: aToken.decimals,
+            symbol: aToken.symbol,
             balance: poolHistData.liquidityOut.toString(),
-            existentialDeposit: aTokenHistData.asset.existentialDeposit?.toString(),
+            existentialDeposit: aToken.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
-            type: aTokenHistData.asset.assetType,
+            type: aToken.assetType,
           },
         ] as IPersistentPoolToken[],
         maxInRatio: 0,

@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, BigIntColumn as BigIntColumn_, StringColumn as StringColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
-import {EmbeddedAsset} from "./_embeddedAsset"
 import {AssetDynamicFee} from "./_assetDynamicFee"
 import {AssetSpotPriceHistoricalData} from "./assetSpotPriceHistoricalData.model"
 import {AssetAssetsPairVolume} from "./assetAssetsPairVolume.model"
@@ -17,8 +16,8 @@ export class AssetHistoricalData {
     @PrimaryColumn_()
     id!: string
 
-    @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => obj == null ? undefined : new EmbeddedAsset(undefined, obj)}, nullable: false})
-    asset!: EmbeddedAsset
+    @StringColumn_({nullable: false})
+    assetId!: string
 
     @BigIntColumn_({nullable: false})
     totalIssuance!: bigint

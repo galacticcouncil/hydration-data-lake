@@ -22,9 +22,6 @@ export class SwapFee {
     @StringColumn_({nullable: false})
     assetId!: string
 
-    @StringColumn_({nullable: true})
-    assetEvmAddress!: string | undefined | null
-
     @BigIntColumn_({nullable: false})
     amount!: bigint
 

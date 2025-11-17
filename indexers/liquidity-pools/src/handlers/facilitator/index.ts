@@ -86,7 +86,10 @@ export async function ensureAaveFacilitators(ctx: SqdProcessorContext<Store>) {
       blockNumber: processingBlockHeader.height,
     });
 
-  if (!allFacilitators) return;
+  if (!allFacilitators || allFacilitators.length === 0) {
+    console.warn(`[ensureAaveFacilitators] No facilitators returned - skipping initialization`);
+    return;
+  }
 
   for (const facilitatorData of allFacilitators) {
     if (!facilitatorData) continue;

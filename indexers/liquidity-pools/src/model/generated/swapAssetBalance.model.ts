@@ -1,8 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
 import {Swap} from "./swap.model"
 import {SwapAssetBalanceType} from "./_swapAssetBalanceType"
-import {MinimalAssetInfo} from "./_minimalAssetInfo"
 
 @Entity_()
 export class SwapAssetBalance {
@@ -23,8 +21,8 @@ export class SwapAssetBalance {
     @Column_("varchar", {length: 6, nullable: false})
     assetBalanceType!: SwapAssetBalanceType
 
-    @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => obj == null ? undefined : new MinimalAssetInfo(undefined, obj)}, nullable: false})
-    assetInfo!: MinimalAssetInfo
+    @StringColumn_({nullable: false})
+    assetId!: string
 
     @BigIntColumn_({nullable: false})
     amount!: bigint

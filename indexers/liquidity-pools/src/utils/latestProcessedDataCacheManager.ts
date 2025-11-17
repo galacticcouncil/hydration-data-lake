@@ -56,18 +56,18 @@ export class LatestProcessedDataCacheManager {
      * Don't use concurrent calls here to avoid DB I/O overload
      */
     for (const assetData of storageDataAllAssets) {
+      const asset = ctx.batchState.state.assetsAll.get(assetData.assetId.toString());
+      if (!asset) continue;
+
       const entity = await ctx.storeUtils.findOneWithLogs(
         AssetHistoricalData,
         {
           where: {
-            asset: { assetRegistryId: assetData.assetId.toString() },
+            assetId: asset.id,
             paraBlockHeight: LessThan(currentBlockHeader.height),
           },
           order: {
             paraBlockHeight: 'DESC',
-          },
-          relations: {
-            asset: true,
           },
         },
         {
@@ -87,10 +87,10 @@ export class LatestProcessedDataCacheManager {
     const assetHistoryIndexByAsset = new Map<string, AssetHistoricalData[]>();
 
     for (const i of items) {
-      if (!assetHistoryIndexByAsset.has(i.asset.id)) {
-        assetHistoryIndexByAsset.set(i.asset.id, []);
+      if (!assetHistoryIndexByAsset.has(i.assetId)) {
+        assetHistoryIndexByAsset.set(i.assetId, []);
       }
-      assetHistoryIndexByAsset.get(i.asset.id)!.push(i);
+      assetHistoryIndexByAsset.get(i.assetId)!.push(i);
     }
 
     for (const [assetId, list] of assetHistoryIndexByAsset.entries()) {

@@ -45,7 +45,7 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
   const otherAssetsHistData = [];
 
   for (const histDataItem of blockContextAssetsHistoricalData) {
-    if (xykPoolAssets.has(histDataItem.asset.id)) {
+    if (xykPoolAssets.has(histDataItem.assetId)) {
       xykOnlyAssetsHistData.push(histDataItem);
     } else {
       otherAssetsHistData.push(histDataItem);
@@ -54,7 +54,7 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
 
   for (const histDataItem of otherAssetsHistData) {
     await processAssetSpotPrices({
-      assetId: histDataItem.asset.id,
+      assetId: histDataItem.assetId,
       assetHistData: histDataItem,
       blockHeader,
       ctx,
@@ -63,7 +63,7 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
 
   for (const histDataItem of xykOnlyAssetsHistData) {
     await processXykInvolvedAssetSpotPrices({
-      assetId: histDataItem.asset.id,
+      assetId: histDataItem.assetId,
       assetHistData: histDataItem,
       xykPoolsIndexedByInterimAssetPair: getXykPoolsIndexedByInterimAssetPair({
         ctx,

@@ -9,7 +9,6 @@ import {
   AssetsPairVolumeHistoricalData,
   AssetSpotPriceHistoricalData,
   Block as BlockEntity,
-  EmbeddedAsset,
   LbppoolVolumeHistoricalData,
   OmnipoolAssetVolumeHistoricalData,
   PreprocessedDataBucket,
@@ -115,16 +114,7 @@ export async function handlePreprocDataBuckets({
 
     const newEntity = new AssetHistoricalData({
       id: preprocData.id,
-      asset: new EmbeddedAsset({
-        id: asset.id,
-        assetRegistryId: asset.assetRegistryId,
-        name: asset.name,
-        symbol: asset.symbol,
-        assetType: asset.assetType,
-        decimals: asset.decimals,
-        isSufficient: asset.isSufficient,
-        existentialDeposit: asset.existentialDeposit,
-      }),
+      assetId: asset.id,
       totalIssuance: BigInt(preprocData.totalIssuance),
       dynamicFee: preprocData.dynamicFee
         ? new AssetDynamicFee(preprocData.dynamicFee)
@@ -132,6 +122,7 @@ export async function handlePreprocDataBuckets({
       usdPriceNormalised: preprocData.usdPriceNormalised,
       paraBlockHeight: preprocData.paraBlockHeight,
       relayBlockHeight: preprocData.relayBlockHeight,
+      blockId: block?.id ?? '',
     });
     resultCache.assetHistoricalData.set(newEntity.id, newEntity);
   }

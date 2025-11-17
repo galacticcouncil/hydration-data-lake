@@ -4,6 +4,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { HsmpoolAssetHistoricalData } from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
 import { calcPriceNormalized } from '../../../utils/helpers';
+import { getOrCreateAsset } from '../../assets/asset';
 import {
   getOldHsmAssetHistDataEntity,
 } from '../pools/hsmpool/hsmpoolAssetHistData';
@@ -31,7 +32,12 @@ export async function processHsmpoolAssetNormalizedVolumes({
 
   for (const currentAssetHistData of hsmpoolAssetHistDataByBatchList) {
     const assetId = currentAssetHistData.assetId;
-    const decimals = currentAssetHistData.assetDecimals;
+    const asset = assetId ? await getOrCreateAsset({ ctx, id: assetId }) : null;
+    if (!asset) {
+      console.log(`processHsmpoolAssetNormalizedVolumes :: Asset with id ${assetId} cannot be found.`);
+      continue
+    };
+    const decimals = asset.decimals;
 
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
       `${assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetHistData.paraBlockHeight}`

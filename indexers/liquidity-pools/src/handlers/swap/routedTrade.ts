@@ -119,10 +119,10 @@ export function processRouteTradeHop({
 
     for (const swapOutput of swap.outputs) {
       const tradeOutput = new RoutedTradeAssetBalance({
-        id: `${routeTradeEntity.id}-${swapOutput.assetInfo.id}-${SwapAssetBalanceType.Output}`,
+        id: `${routeTradeEntity.id}-${swapOutput.assetId}-${SwapAssetBalanceType.Output}`,
         routedTrade: routeTradeEntity,
         assetBalanceType: SwapAssetBalanceType.Output,
-        assetId: swapOutput.assetInfo.id,
+        assetId: swapOutput.assetId,
         amount: swapOutput.amount,
       });
       ctx.batchState.state.routeTradesOutputs.set(tradeOutput.id, tradeOutput);
@@ -134,7 +134,7 @@ export function processRouteTradeHop({
       inputAssetRegistryIds,
       outputAssetIds,
       outputAssetRegistryIds,
-    } = getRouterTradeInputOutputPoints(routeTradeEntity);
+    } = getRouterTradeInputOutputPoints(routeTradeEntity, ctx);
 
     routeTradeEntity.inputAssetIds = inputAssetIds;
     routeTradeEntity.inputAssetRegistryIds = inputAssetRegistryIds;
@@ -171,10 +171,10 @@ export function processRouteTradeHop({
 
   routeTradeEntity.inputs = swap.inputs.map((swapInput) => {
     const tradeInput = new RoutedTradeAssetBalance({
-      id: `${newRouteTradeEntityId}-${swapInput.assetInfo.id}-${SwapAssetBalanceType.Input}`,
+      id: `${newRouteTradeEntityId}-${swapInput.assetId}-${SwapAssetBalanceType.Input}`,
       routedTrade: routeTradeEntity,
       assetBalanceType: SwapAssetBalanceType.Input,
-      assetId: swapInput.assetInfo.id,
+      assetId: swapInput.assetId,
       amount: swapInput.amount,
     });
     ctx.batchState.state.routeTradesInputs.set(tradeInput.id, tradeInput);
@@ -183,10 +183,10 @@ export function processRouteTradeHop({
 
   routeTradeEntity.outputs = swap.outputs.map((swapOutput) => {
     const tradeOutput = new RoutedTradeAssetBalance({
-      id: `${newRouteTradeEntityId}-${swapOutput.assetInfo.id}-${SwapAssetBalanceType.Output}`,
+      id: `${newRouteTradeEntityId}-${swapOutput.assetId}-${SwapAssetBalanceType.Output}`,
       routedTrade: routeTradeEntity,
       assetBalanceType: SwapAssetBalanceType.Output,
-      assetId: swapOutput.assetInfo.id,
+      assetId: swapOutput.assetId,
       amount: swapOutput.amount,
     });
     ctx.batchState.state.routeTradesOutputs.set(tradeOutput.id, tradeOutput);
@@ -198,7 +198,7 @@ export function processRouteTradeHop({
     inputAssetRegistryIds,
     outputAssetIds,
     outputAssetRegistryIds,
-  } = getRouterTradeInputOutputPoints(routeTradeEntity);
+  } = getRouterTradeInputOutputPoints(routeTradeEntity, ctx);
 
   routeTradeEntity.inputAssetIds = inputAssetIds;
   routeTradeEntity.inputAssetRegistryIds = inputAssetRegistryIds;
@@ -211,7 +211,8 @@ export function processRouteTradeHop({
 }
 
 export function getRouterTradeInputOutputPoints(
-  routedTrade: RoutedTrade
+  routedTrade: RoutedTrade,
+  ctx: SqdProcessorContext<Store>
 ): Pick<
   RoutedTrade,
   | 'inputAssetIds'
@@ -232,18 +233,29 @@ export function getRouterTradeInputOutputPoints(
     outputAssetRegistryIds: [],
   };
 
+  // Use global assetsAll cache (already prefetched at batch start)
+  const assetsAll = ctx.batchState.state.assetsAll;
+
   const orderedSwaps = routedTrade.swaps.sort(
     (a, b) => a.event.indexInBlock - b.event.indexInBlock
   );
+
+  // Process inputs from first swap
   for (const inputAsset of orderedSwaps[0].inputs) {
-    res.inputAssetIds.push(inputAsset.assetInfo.id);
-    if (inputAsset.assetInfo.assetRegistryId)
-      res.inputAssetRegistryIds.push(inputAsset.assetInfo.assetRegistryId);
+    const asset = assetsAll.get(inputAsset.assetId);
+    res.inputAssetIds.push(inputAsset.assetId);
+    if (asset?.assetRegistryId) {
+      res.inputAssetRegistryIds.push(asset.assetRegistryId);
+    }
   }
+
+  // Process outputs from last swap
   for (const outputAsset of orderedSwaps[orderedSwaps.length - 1].outputs) {
-    res.outputAssetIds.push(outputAsset.assetInfo.id);
-    if (outputAsset.assetInfo.assetRegistryId)
-      res.outputAssetRegistryIds.push(outputAsset.assetInfo.assetRegistryId);
+    const asset = assetsAll.get(outputAsset.assetId);
+    res.outputAssetIds.push(outputAsset.assetId);  // Fixed: was assetInfo.id
+    if (asset?.assetRegistryId) {
+      res.outputAssetRegistryIds.push(asset.assetRegistryId);
+    }
   }
 
   return res;

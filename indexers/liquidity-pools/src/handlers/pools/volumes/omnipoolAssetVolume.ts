@@ -75,12 +75,12 @@ export function initOmnipoolAssetVolume({
 
   const assetVolIn =
     swap.inputs.find(
-      (input) => input.assetInfo.id === newVolume.omnipoolAsset.asset.id
+      (input) => input.assetId === newVolume.omnipoolAsset.asset.id
     )?.amount || BigInt(0);
 
   const assetVolOut =
     swap.outputs.find(
-      (output) => output.assetInfo.id === newVolume.omnipoolAsset.asset.id
+      (output) => output.assetId === newVolume.omnipoolAsset.asset.id
     )?.amount || BigInt(0);
 
   const assetFeeVol = swap.fees.reduce((acc, feeData) => {
@@ -118,21 +118,21 @@ export async function handleOmnipoolAssetVolumeUpdates({
 
   const omnipoolAssetInEntity = await getOrCreateOmnipoolAsset({
     ctx,
-    assetId: swap.inputs[0].assetInfo.id,
+    assetId: swap.inputs[0].assetId,
     ensure: true,
     blockHeader,
   });
 
   const omnipoolAssetOutEntity = await getOrCreateOmnipoolAsset({
     ctx,
-    assetId: swap.outputs[0].assetInfo.id,
+    assetId: swap.outputs[0].assetId,
     ensure: true,
     blockHeader,
   });
 
   if (!omnipoolAssetInEntity || !omnipoolAssetOutEntity) {
     console.log(
-      `Omnipool asset with assetId: ${!omnipoolAssetInEntity ? swap.inputs[0].assetInfo.id : swap.outputs[0].assetInfo.id} has not been found`
+      `Omnipool asset with assetId: ${!omnipoolAssetInEntity ? swap.inputs[0].assetId : swap.outputs[0].assetId} has not been found`
     );
     return;
   }

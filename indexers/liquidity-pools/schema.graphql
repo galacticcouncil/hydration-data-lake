@@ -178,29 +178,11 @@ type AssetDynamicFee {
   timestamp: Int!
 }
 
-interface BaseEmbeddedAsset {
-  id: String!
-  assetRegistryId: String
-  decimals: Int
-  name: String
-  symbol: String
-}
-
-type EmbeddedAsset implements BaseEmbeddedAsset {
-  id: String!
-  assetRegistryId: String
-  decimals: Int
-  name: String
-  symbol: String
-  existentialDeposit: BigInt
-  isSufficient: Boolean
-  assetType: AssetType
-}
 
 type AssetHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
   id: ID!
-  asset: EmbeddedAsset!
+  assetId: String!
 
   totalIssuance: BigInt!
   dynamicFee: AssetDynamicFee
@@ -605,28 +587,18 @@ type SwapFee @entity {
   id: ID!
   swap: Swap!
   assetId: String!
-  assetEvmAddress: String
   amount: BigInt!
   destinationType: SwapFeeDestinationType!
   recipient: Account
 }
 
-type MinimalAssetInfo implements BaseEmbeddedAsset {
-  id: String!
-  assetRegistryId: String!
-  name: String
-  symbol: String
-  decimals: Int!
-  resourceType: ResourceType!
-  evmAddress: String
-}
 
 type SwapAssetBalance @entity {
   "<swapId>-<assetId>-<SwapAssetBalanceType> e.g. 0006516718-9965d-000107-0-INPUT"
   id: ID!
   swap: Swap!
   assetBalanceType: SwapAssetBalanceType!
-  assetInfo: MinimalAssetInfo!
+  assetId: String!
   amount: BigInt!
 }
 
@@ -1341,8 +1313,6 @@ type HsmpoolAssetHistoricalData @entity {
   "<asset_id>-<block_height>"
   id: ID!
   assetId: String!
-  assetEvmAddress: String
-  assetDecimals: Int!
   "Can be null if snapshot is for Hollar"
   collateral: HsmCollateral
   "Actual only for Hollar asset as Hsm pool doesn't have any balance of Hollar"

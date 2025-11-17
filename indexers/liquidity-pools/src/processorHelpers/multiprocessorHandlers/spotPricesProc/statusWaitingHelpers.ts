@@ -54,9 +54,6 @@ export async function waitForSpotPricesRelatedHistoricalData(
       where: {
         paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
       },
-      relations: {
-        asset: true,
-      },
     }, { className: 'AssetHistoricalData' });
 
     ctx.batchState.state.assetsHistoricalDataBatch = new Map(

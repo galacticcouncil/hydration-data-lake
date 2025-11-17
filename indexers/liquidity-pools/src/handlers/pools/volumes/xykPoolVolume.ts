@@ -107,11 +107,11 @@ export function initXykPoolVolume(
   });
 
   const assetAVolIn =
-    swap.inputs.find((input) => input.assetInfo.id === newVolume.assetA.id)
+    swap.inputs.find((input) => input.assetId === newVolume.assetA.id)
       ?.amount || BigInt(0);
 
   const assetAVolOut =
-    swap.outputs.find((output) => output.assetInfo.id === newVolume.assetA.id)
+    swap.outputs.find((output) => output.assetId === newVolume.assetA.id)
       ?.amount || BigInt(0);
 
   const assetAFeeVol = swap.fees.reduce((acc, feeData) => {
@@ -121,11 +121,11 @@ export function initXykPoolVolume(
   }, 0n);
 
   const assetBVolIn =
-    swap.inputs.find((input) => input.assetInfo.id === newVolume.assetB.id)
+    swap.inputs.find((input) => input.assetId === newVolume.assetB.id)
       ?.amount || BigInt(0);
 
   const assetBVolOut =
-    swap.outputs.find((output) => output.assetInfo.id === newVolume.assetB.id)
+    swap.outputs.find((output) => output.assetId === newVolume.assetB.id)
       ?.amount || BigInt(0);
 
   const assetBFeeVol = swap.fees.reduce((acc, feeData) => {
