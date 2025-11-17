@@ -1,7 +1,8 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
+
+import { SqdProcessorContext } from '../../../processor';
+import { calcPriceNormalized } from '../../../utils/helpers';
 
 export async function processLbpPoolsNormalizedVolumes({
   blockNumbersToProcess,
@@ -25,27 +26,36 @@ export async function processLbpPoolsNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const poolVolsHistData of lbpPoolHistVolsByBatchList) {
-    const assetA = poolVolsHistData.assetA;
-    const assetB = poolVolsHistData.assetB;
+    const assetAId = poolVolsHistData.assetAId;
+    const assetBId = poolVolsHistData.assetBId;
+
+    // Fetch assets from cache
+    const assetA = ctx.batchState.state.assetsAll.get(assetAId);
+    const assetB = ctx.batchState.state.assetsAll.get(assetBId);
+
+    if(!assetA || !assetB) {
+      console.warn(`Asset data not found for assets ${assetAId} or ${assetBId} while processing LBP pool volumes normalization at para block height ${poolVolsHistData.paraBlockHeight}`);
+      continue
+    };
 
     let assetASpotPriceNorm = historicalSpotPricesMap.get(
-      `${assetA.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${poolVolsHistData.paraBlockHeight}`
+      `${assetAId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${poolVolsHistData.paraBlockHeight}`
     )?.priceNormalised;
     let assetBSpotPriceNorm = historicalSpotPricesMap.get(
-      `${assetB.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${poolVolsHistData.paraBlockHeight}`
+      `${assetBId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${poolVolsHistData.paraBlockHeight}`
     )?.priceNormalised;
 
-    if (assetA.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
+    if (assetAId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
       assetASpotPriceNorm = '1';
 
-    if (assetB.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
+    if (assetBId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
       assetBSpotPriceNorm = '1';
 
     if (
       !assetASpotPriceNorm ||
       !assetBSpotPriceNorm ||
-      !assetA.decimals ||
-      !assetB.decimals
+      !assetA?.decimals ||
+      !assetB?.decimals
     )
       continue;
 

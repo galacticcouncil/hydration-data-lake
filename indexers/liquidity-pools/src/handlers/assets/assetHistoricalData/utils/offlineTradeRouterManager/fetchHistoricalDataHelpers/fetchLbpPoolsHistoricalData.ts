@@ -1,8 +1,16 @@
-import { SqdProcessorContext } from '../../../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { Lbppool, LbppoolHistoricalData } from '../../../../../../model';
-import { In, Not } from 'typeorm';
+import {
+  In,
+  Not,
+} from 'typeorm';
 import { Between } from 'typeorm/find-options/operator/Between';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import {
+  Lbppool,
+  LbppoolHistoricalData,
+} from '../../../../../../model';
+import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchLbpPoolsHistoricalData({
   blockNumber,
@@ -25,8 +33,6 @@ export async function fetchLbpPoolsHistoricalData({
           },
           relations: {
             account: true,
-            assetA: true,
-            assetB: true,
             owner: true,
             feeCollector: true,
           },
@@ -118,8 +124,6 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRangeResolver({
           },
           relations: {
             account: true,
-            assetA: true,
-            assetB: true,
             owner: true,
             feeCollector: true,
           },

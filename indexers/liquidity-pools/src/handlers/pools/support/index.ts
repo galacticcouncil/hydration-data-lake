@@ -1,6 +1,5 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
+
 import {
   AssetType,
   Lbppool,
@@ -9,8 +8,12 @@ import {
   StableswapDestroyedData,
 } from '../../../model';
 import parsers from '../../../parsers';
-import { addStableswapDestroyedLifeState } from '../pools/stableswap/stablepool';
+import { SqdProcessorContext } from '../../../processor';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
 import { addLbppoolDestroyedLifeState } from '../pools/lbpPool/lbpPool';
+import {
+  addStableswapDestroyedLifeState,
+} from '../pools/stableswap/stablepool';
 
 export async function ensurePoolsDestroyedStatus(
   ctx: SqdProcessorContext<Store>
@@ -40,8 +43,6 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
     },
     relations: {
       account: true,
-      assetA: true,
-      assetB: true,
     },
   }, { className: 'Lbppool' });
 
@@ -50,10 +51,22 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
   const poolSharedTokenBalances = await Promise.all(
     lbpPoolsToProcess
       .map((pool) => {
-        const shareToken = [pool.assetA, pool.assetB].find(
-          (token) => token.assetType !== AssetType.Token
+        // Fetch assets from cache
+        const assetA = ctx.batchState.state.assetsAll.get(pool.assetAId);
+        const assetB = ctx.batchState.state.assetsAll.get(pool.assetBId);
+
+        if (!assetA || !assetB) {
+          console.warn(`Asset data not found for assets ${pool.assetAId} or ${pool.assetBId} while processing LBP pool destroyed status at para block height ${ctx.blocks[0].header.height}`);
+          return null
+        };
+
+        const shareToken = [assetA, assetB].find(
+          (token) => token?.assetType !== AssetType.Token
         );
-        if (!shareToken) return null;
+        if (!shareToken) {
+          console.warn(`Share token not found for LBP pool ${pool.id} while processing destroyed status at para block height ${ctx.blocks[0].header.height}`);
+          return null
+        };
 
         return {
           poolAddress: pool.account.id,

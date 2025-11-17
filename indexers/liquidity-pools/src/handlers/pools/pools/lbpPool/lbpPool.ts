@@ -102,8 +102,8 @@ export async function createLbppool({
       accountType: AccountType.Lbppool,
       ensureAccountType: true,
     }),
-    assetA: assetAEntity,
-    assetB: assetBEntity,
+    assetAId: assetAEntity.id,
+    assetBId: assetBEntity.id,
     owner: await getOrCreateAccount({ ctx, id: ownerAddress }),
     assetABalance: newPoolsAssetBalances.assetABalance,
     assetBBalance: newPoolsAssetBalances.assetBBalance,
@@ -149,19 +149,17 @@ export async function getOrCreateLbppool({
 }): Promise<Lbppool | null> {
   let pool = [...ctx.batchState.state.lbpAllBatchPools.values()].find(
     (p) =>
-      (p.assetA.id === `${assetIds[0]}` && p.assetB.id === `${assetIds[1]}`) ||
-      (p.assetB.id === `${assetIds[0]}` && p.assetA.id === `${assetIds[1]}`)
+      (p.assetAId === `${assetIds[0]}` && p.assetBId === `${assetIds[1]}`) ||
+      (p.assetBId === `${assetIds[0]}` && p.assetAId === `${assetIds[1]}`)
   );
   if (pool) return pool;
 
   pool = await ctx.storeUtils.findOneWithLogs(Lbppool, {
     where: [
-      { assetA: { id: `${assetIds[0]}` }, assetB: { id: `${assetIds[1]}` } },
-      { assetB: { id: `${assetIds[0]}` }, assetA: { id: `${assetIds[1]}` } },
+      { assetAId: `${assetIds[0]}`, assetBId: `${assetIds[1]}` },
+      { assetBId: `${assetIds[0]}`, assetAId: `${assetIds[1]}`  },
     ],
     relations: {
-      assetA: true,
-      assetB: true,
       account: true,
     },
   }, { className: 'Lbppool' });

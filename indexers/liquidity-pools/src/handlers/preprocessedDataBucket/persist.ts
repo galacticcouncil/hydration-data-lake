@@ -160,8 +160,8 @@ function decorateLbppoolVolumeHistoricalData(src: LbppoolVolumeHistoricalData) {
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.pool = src.pool.id;
-  decorated.assetA = src.assetA.id;
-  decorated.assetB = src.assetB.id;
+  decorated.assetAId = src.assetAId;
+  decorated.assetBId = src.assetBId;
 
   return decorated;
 }

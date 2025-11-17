@@ -97,8 +97,6 @@ export async function prefetchAllAvailableLbppoolVolumesForBlocksRange({
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
     relations: {
-      assetA: true,
-      assetB: true,
       pool: true,
     },
   }, { className: 'LbppoolVolumeHistoricalData' });

@@ -80,7 +80,7 @@ export async function handleLbppoolHistoricalData(
             const assetsData = new Map(
               (
                 await Promise.all(
-                  [pool.assetA.id, pool.assetB.id].map(async (assetId) => ({
+                  [pool.assetAId, pool.assetBId].map(async (assetId) => ({
                     assetId,
                     data: await parsers.storage.lbp.getPoolAssetInfo({
                       assetId: +assetId!,
@@ -97,13 +97,13 @@ export async function handleLbppoolHistoricalData(
             // TODO refactor redundant assets re-fetch
             const assetAEntity = await getOrCreateAsset({
               ctx,
-              id: pool.assetA.id,
+              id: pool.assetAId,
               ensure: true,
               blockHeader,
             });
             const assetBEntity = await getOrCreateAsset({
               ctx,
-              id: pool.assetB.id,
+              id: pool.assetBId,
               ensure: true,
               blockHeader,
             });

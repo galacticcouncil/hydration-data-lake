@@ -75,7 +75,7 @@ export async function prefetchGenericPersistentData(
       Lbppool,
       {
         where: {},
-        relations: { account: true, assetA: true, assetB: true },
+        relations: { account: true },
       },
       { className: 'Lbppool', originCallFn: 'prefetchGenericPersistentData' }
     )

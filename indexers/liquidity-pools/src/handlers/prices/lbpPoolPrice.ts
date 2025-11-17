@@ -26,8 +26,8 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
             }
 
             Promise.all([
-              getAssetFreeBalance(block.header, +p.assetA.id, p.id), // TODO must be optimized
-              getAssetFreeBalance(block.header, +p.assetB.id, p.id), // TODO must be optimized
+              getAssetFreeBalance(block.header, +p.assetAId, p.id), // TODO must be optimized
+              getAssetFreeBalance(block.header, +p.assetBId, p.id), // TODO must be optimized
             ]).then(([assetABalance, assetBBalance]) => {
               const blockData = ctx.batchState.getParaBlockFromCacheByHeight(block.header.height);
               if (!blockData) {
@@ -38,8 +38,8 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
               resolve(
                 new LbppoolPriceHistoricalData({
                   id: p.id + '-' + block.header.height,
-                  assetA: p.assetA,
-                  assetB: p.assetB,
+                  assetAId: p.assetAId,
+                  assetBId: p.assetBId,
                   assetABalance: assetABalance,
                   assetBBalance: assetBBalance,
                   pool: p,
