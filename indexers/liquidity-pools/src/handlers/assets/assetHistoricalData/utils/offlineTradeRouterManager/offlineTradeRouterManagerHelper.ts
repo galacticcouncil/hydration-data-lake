@@ -747,10 +747,10 @@ export class OfflineTradeRouterManagerHelper {
     ) || new Map()) as Map<string, LbppoolHistoricalData>) {
       const assetAHistData = this.assetsHistData
         .get(blockNumber)
-        ?.get(poolHistData.assetA.id);
+        ?.get(poolHistData.assetAId);
       const assetBHistData = this.assetsHistData
         .get(blockNumber)
-        ?.get(poolHistData.assetB.id);
+        ?.get(poolHistData.assetBId);
 
       if (!assetAHistData || !assetBHistData) {
         console.error(`>> missing asset data for pool ${poolId}`);
@@ -778,22 +778,22 @@ export class OfflineTradeRouterManagerHelper {
         type: PoolType.LBP,
         tokens: [
           {
-            id: poolHistData.assetA.assetRegistryId,
-            decimals: poolHistData.assetA.decimals,
-            symbol: poolHistData.assetA.symbol,
+            id: assetA.assetRegistryId,
+            decimals: assetA.decimals,
+            symbol: assetA.symbol,
             balance: poolHistData.assetABalance.toString(),
             existentialDeposit: assetA.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
-            type: poolHistData.assetA.assetType,
+            type: assetA.assetType,
           },
           {
-            id: poolHistData.assetB.assetRegistryId,
-            decimals: poolHistData.assetB.decimals,
-            symbol: poolHistData.assetB.symbol,
+            id: assetB.assetRegistryId,
+            decimals: assetB.decimals,
+            symbol: assetB.symbol,
             balance: poolHistData.assetBBalance.toString(),
             existentialDeposit: assetB.existentialDeposit?.toString(),
             isSufficient: true, // TODO fix data
-            type: poolHistData.assetB.assetType,
+            type: assetB.assetType,
           },
         ] as IPersistentPoolToken[],
         maxInRatio: bigintToNumberSafe(blockConstants.lbpMaxInRatio!), //TODO fix type

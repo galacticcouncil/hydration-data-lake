@@ -76,8 +76,6 @@ export async function fetchLbpPoolsHistoricalData({
           },
           relations: {
             pool: { account: true },
-            assetA: true,
-            assetB: true,
             owner: true,
             feeCollector: true,
           },
@@ -168,8 +166,6 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRangeResolver({
           },
           relations: {
             pool: { account: true },
-            assetA: true,
-            assetB: true,
             owner: true,
             feeCollector: true,
           },

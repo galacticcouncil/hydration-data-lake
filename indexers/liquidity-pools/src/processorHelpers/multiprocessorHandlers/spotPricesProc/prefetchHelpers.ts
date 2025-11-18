@@ -208,8 +208,6 @@ export async function prefetchAllAvailableLbppoolHistDataForBlocksRange({
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
     relations: {
-      assetA: true,
-      assetB: true,
       pool: true,
     },
   }, { className: 'LbppoolHistoricalData' });

@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Lbppool} from "./lbppool.model"
-import {Asset} from "./asset.model"
 import {Account} from "./account.model"
 
 @Entity_()
@@ -19,13 +18,11 @@ export class LbppoolHistoricalData {
     @ManyToOne_(() => Lbppool, {nullable: true})
     pool!: Lbppool
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetA!: Asset
+    @StringColumn_({nullable: false})
+    assetAId!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetB!: Asset
+    @StringColumn_({nullable: false})
+    assetBId!: string
 
     @BigIntColumn_({nullable: false})
     assetABalance!: bigint

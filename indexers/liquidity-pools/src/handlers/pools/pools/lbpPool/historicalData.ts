@@ -94,19 +94,21 @@ export async function handleLbppoolHistoricalData(
                 .map((assetData) => [assetData.assetId, assetData.data])
             );
 
-            // TODO refactor redundant assets re-fetch
-            const assetAEntity = await getOrCreateAsset({
-              ctx,
-              id: pool.assetAId,
-              ensure: true,
-              blockHeader,
-            });
-            const assetBEntity = await getOrCreateAsset({
-              ctx,
-              id: pool.assetBId,
-              ensure: true,
-              blockHeader,
-            });
+            // Parallel asset fetching
+            const [assetAEntity, assetBEntity] = await Promise.all([
+              getOrCreateAsset({
+                ctx,
+                id: pool.assetAId,
+                ensure: true,
+                blockHeader,
+              }),
+              getOrCreateAsset({
+                ctx,
+                id: pool.assetBId,
+                ensure: true,
+                blockHeader,
+              }),
+            ]);
 
             if (
               !assetAEntity ||
@@ -121,32 +123,38 @@ export async function handleLbppoolHistoricalData(
               throw new Error(`Block not found in cache for height ${blockHeader.height}`);
             }
 
+            // Parallel account fetching
+            const [owner, feeCollector] = await Promise.all([
+              getOrCreateAccount({
+                ctx,
+                id: poolStorageData.owner,
+              }),
+              poolStorageData.feeCollector
+                ? getOrCreateAccount({
+                    ctx,
+                    id: poolStorageData.feeCollector,
+                  })
+                : Promise.resolve(null),
+            ]);
+
             const poolHistoricalDataEntity = new LbppoolHistoricalData({
               id: `${pool.account.id}-${blockHeader.height}`,
               pool: pool,
-              assetA: assetAEntity,
-              assetB: assetBEntity,
+              assetAId: assetAEntity.id,
+              assetBId: assetBEntity.id,
               assetABalance:
                 assetsData.get(assetAEntity.assetRegistryId)?.free ?? BigInt(0),
               assetBBalance:
                 assetsData.get(assetBEntity.assetRegistryId)?.free ?? BigInt(0),
               tvlInRefAssetNorm: '0',
-              owner: await getOrCreateAccount({
-                ctx,
-                id: poolStorageData.owner,
-              }),
+              owner,
               startBlockNumber: poolStorageData.start,
               endBlockNumber: poolStorageData.end,
               initialWeight: poolStorageData.initialWeight,
               finalWeight: poolStorageData.finalWeight,
               weightCurve: poolStorageData.weightCurve.__kind,
               fee: poolStorageData.fee,
-              feeCollector: poolStorageData.feeCollector
-                ? await getOrCreateAccount({
-                    ctx,
-                    id: poolStorageData.feeCollector,
-                  })
-                : null,
+              feeCollector,
               repayTarget: poolStorageData.repayTarget,
 
               relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(

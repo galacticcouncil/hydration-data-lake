@@ -796,8 +796,8 @@ type LbppoolHistoricalData @entity {
   id: ID!
   pool: Lbppool!
 
-  assetA: Asset!
-  assetB: Asset!
+  assetAId: String!
+  assetBId: String!
   assetABalance: BigInt!
   assetBBalance: BigInt!
   owner: Account!
