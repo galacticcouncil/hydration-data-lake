@@ -1,8 +1,16 @@
-import { SqdProcessorContext } from '../../../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { Xykpool, XykpoolHistoricalData } from '../../../../../../model';
-import { In, Not } from 'typeorm';
+import {
+  In,
+  Not,
+} from 'typeorm';
 import { Between } from 'typeorm/find-options/operator/Between';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import {
+  Xykpool,
+  XykpoolHistoricalData,
+} from '../../../../../../model';
+import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchXykPoolsHistoricalData({
   blockNumber,
@@ -27,8 +35,6 @@ export async function fetchXykPoolsHistoricalData({
           },
           relations: {
             account: true,
-            assetA: true,
-            assetB: true,
             shareToken: true,
           },
         },
@@ -71,8 +77,6 @@ export async function fetchXykPoolsHistoricalData({
           },
           relations: {
             pool: { account: true, shareToken: true },
-            assetA: true,
-            assetB: true,
           },
         },
         {
@@ -117,8 +121,6 @@ export async function fetchXykPoolsHistoricalDataForBlocksRangeResolver({
           },
           relations: {
             account: true,
-            assetA: true,
-            assetB: true,
             shareToken: true,
           },
         },
@@ -162,8 +164,6 @@ export async function fetchXykPoolsHistoricalDataForBlocksRangeResolver({
           },
           relations: {
             pool: { account: true, shareToken: true },
-            assetA: true,
-            assetB: true,
           },
         },
         {

@@ -52,27 +52,31 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
     }
   }
 
-  for (const histDataItem of otherAssetsHistData) {
-    await processAssetSpotPrices({
-      assetId: histDataItem.assetId,
-      assetHistData: histDataItem,
-      blockHeader,
-      ctx,
-    });
-  }
+  // Process XYK pools indexed map once (shared across all XYK assets)
+  const xykPoolsIndexedByInterimAssetPair = xykOnlyAssetsHistData.length > 0
+    ? getXykPoolsIndexedByInterimAssetPair({ ctx, xykPoolAssets })
+    : null;
 
-  for (const histDataItem of xykOnlyAssetsHistData) {
-    await processXykInvolvedAssetSpotPrices({
-      assetId: histDataItem.assetId,
-      assetHistData: histDataItem,
-      xykPoolsIndexedByInterimAssetPair: getXykPoolsIndexedByInterimAssetPair({
+  // Parallel processing of all spot prices
+  await Promise.all([
+    ...otherAssetsHistData.map((histDataItem) =>
+      processAssetSpotPrices({
+        assetId: histDataItem.assetId,
+        assetHistData: histDataItem,
+        blockHeader,
         ctx,
-        xykPoolAssets,
-      }),
-      blockHeader,
-      ctx,
-    });
-  }
+      })
+    ),
+    ...xykOnlyAssetsHistData.map((histDataItem) =>
+      processXykInvolvedAssetSpotPrices({
+        assetId: histDataItem.assetId,
+        assetHistData: histDataItem,
+        xykPoolsIndexedByInterimAssetPair: xykPoolsIndexedByInterimAssetPair!,
+        blockHeader,
+        ctx,
+      })
+    ),
+  ]);
 }
 
 async function processAssetSpotPrices({
@@ -344,8 +348,13 @@ function getXykOnlyAssets(ctx: SqdProcessorContext<Store>) {
   const xykInvolvedAssetsList = Array.from(
     ctx.batchState.state.xykAllBatchPools.values()
   )
-    .map((pool): [Asset, Asset] => [pool.assetA, pool.assetB])
-    .flat();
+    .map((pool): [Asset | undefined, Asset | undefined] => {
+      const assetA = ctx.batchState.state.assetsAll.get(pool.assetAId);
+      const assetB = ctx.batchState.state.assetsAll.get(pool.assetBId);
+      return [assetA, assetB];
+    })
+    .flat()
+    .filter((asset): asset is Asset => !!asset);
 
   const omnipoolInvolvedAssets = new Map<string, Asset>(
     Array.from(ctx.batchState.state.omnipoolAssets.values()).map(
@@ -392,21 +401,21 @@ function getXykPoolsIndexedByInterimAssetPair({
     ctx.batchState.state.xykAllBatchPools.values()
   )) {
     if (
-      (pool.assetA.id === interimAssetId &&
-        xykPoolAssets.has(pool.assetB.id)) ||
-      (pool.assetB.id === interimAssetId && xykPoolAssets.has(pool.assetA.id))
+      (pool.assetAId === interimAssetId &&
+        xykPoolAssets.has(pool.assetBId)) ||
+      (pool.assetBId === interimAssetId && xykPoolAssets.has(pool.assetAId))
     ) {
-      if (pool.assetA.id === interimAssetId) pools.set(pool.assetB.id, pool);
-      pools.set(pool.assetA.id, pool);
+      if (pool.assetAId === interimAssetId) pools.set(pool.assetBId, pool);
+      pools.set(pool.assetAId, pool);
     } else if (
-      (pool.assetA.id === interimFallbackAssetId &&
-        xykPoolAssets.has(pool.assetB.id)) ||
-      (pool.assetB.id === interimFallbackAssetId &&
-        xykPoolAssets.has(pool.assetA.id))
+      (pool.assetAId === interimFallbackAssetId &&
+        xykPoolAssets.has(pool.assetBId)) ||
+      (pool.assetBId === interimFallbackAssetId &&
+        xykPoolAssets.has(pool.assetAId))
     ) {
-      if (pool.assetA.id === interimFallbackAssetId)
-        pools.set(pool.assetB.id, pool);
-      pools.set(pool.assetA.id, pool);
+      if (pool.assetAId === interimFallbackAssetId)
+        pools.set(pool.assetBId, pool);
+      pools.set(pool.assetAId, pool);
     }
   }
 
@@ -440,32 +449,33 @@ async function processXykInvolvedAssetSpotPrices({
 
   if (!assetXykPool || !assetXykPool.account) return;
 
-  const interimAsset =
-    assetXykPool.assetA.id === asset.id
-      ? assetXykPool.assetB
-      : assetXykPool.assetA;
+  const interimAssetId =
+    assetXykPool.assetAId === asset.id
+      ? assetXykPool.assetBId
+      : assetXykPool.assetAId;
 
   const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
     `${assetXykPool.account.id}-${blockHeader.height}`
   );
-  if (
-    !xykPoolHistData ||
-    !xykPoolHistData.assetA.decimals ||
-    !xykPoolHistData.assetB.decimals
-  )
-    return;
+  if (!xykPoolHistData) return;
+
+  // Fetch assets from cache
+  const assetA = ctx.batchState.state.assetsAll.get(xykPoolHistData.assetAId);
+  const assetB = ctx.batchState.state.assetsAll.get(xykPoolHistData.assetBId);
+
+  if (!assetA?.decimals || !assetB?.decimals) return;
 
   const assetABalanceNormalised = fromExponentialToDecimalNotation(
     xykPoolHistData.assetABalance.toString(),
-    xykPoolHistData.assetA.decimals
+    assetA.decimals
   );
   const assetBBalanceNormalised = fromExponentialToDecimalNotation(
     xykPoolHistData.assetBBalance.toString(),
-    xykPoolHistData.assetB.decimals
+    assetB.decimals
   );
 
   const priceInInterimAssetNormalised =
-    assetXykPool.assetA.id === assetId
+    assetXykPool.assetAId === assetId
       ? assetBBalanceNormalised.div(assetABalanceNormalised)
       : assetABalanceNormalised.div(assetBBalanceNormalised);
 
@@ -478,7 +488,7 @@ async function processXykInvolvedAssetSpotPrices({
 
     const interimAssetSpotPrice =
       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-        `${interimAsset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
+        `${interimAssetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
       );
     if (!interimAssetSpotPrice) return;
 
@@ -509,7 +519,7 @@ async function processXykInvolvedAssetSpotPrices({
 
       const interimAssetSpotPrice =
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-          `${interimAsset.id}-${assetOutId}-${blockHeader.height}`
+          `${interimAssetId}-${assetOutId}-${blockHeader.height}`
         );
 
       if (!interimAssetSpotPrice) continue;

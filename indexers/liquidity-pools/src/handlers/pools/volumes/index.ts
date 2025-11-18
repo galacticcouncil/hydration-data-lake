@@ -61,8 +61,6 @@ export async function getOldXykVolume({
     },
     relations: {
       pool: true,
-      assetA: true,
-      assetB: true,
     },
     order: {
       paraBlockHeight: 'DESC',

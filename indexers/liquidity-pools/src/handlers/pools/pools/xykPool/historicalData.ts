@@ -58,12 +58,12 @@ export async function handleXykPoolHistoricalData(
           blockHeader,
         });
 
-        if (!pool || !pool.assetA || !pool.assetB) return;
+        if (!pool || !pool.assetAId || !pool.assetBId) return;
 
         const assetsData = new Map(
           (
             await Promise.all(
-              [+pool.assetA.id, +pool.assetB.id].map(async (assetId) => ({
+              [+pool.assetAId, +pool.assetBId].map(async (assetId) => ({
                 assetId,
                 data: await parsers.storage.xyk.getPoolAssetInfo({
                   assetId: assetId!,
@@ -85,10 +85,10 @@ export async function handleXykPoolHistoricalData(
         const poolHistoricalDataEntity = new XykpoolHistoricalData({
           id: `${poolId}-${blockHeader.height}`,
           pool,
-          assetA: pool.assetA,
-          assetB: pool.assetB,
-          assetABalance: assetsData.get(pool.assetA.id)?.free ?? BigInt(0),
-          assetBBalance: assetsData.get(pool.assetB.id)?.free ?? BigInt(0),
+          assetAId: pool.assetAId,
+          assetBId: pool.assetBId,
+          assetABalance: assetsData.get(pool.assetAId)?.free ?? BigInt(0),
+          assetBBalance: assetsData.get(pool.assetBId)?.free ?? BigInt(0),
           tvlInRefAssetNorm: '0',
 
           relayBlockHeight:

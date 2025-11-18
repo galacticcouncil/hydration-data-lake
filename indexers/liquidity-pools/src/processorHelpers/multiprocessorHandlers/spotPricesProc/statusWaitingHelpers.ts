@@ -100,8 +100,6 @@ export async function waitForSpotPricesRelatedHistoricalData(
       },
       relations: {
         pool: { account: true, shareToken: true },
-        assetA: true,
-        assetB: true,
       },
     }, { className: 'XykpoolHistoricalData' });
 

@@ -78,8 +78,6 @@ export async function recalculatePoolsNormalizedVolumes(
         },
         relations: {
           pool: true,
-          assetA: true,
-          assetB: true,
         },
       }, { className: 'XykpoolVolumeHistoricalData' })
     ).map((p) => [p.id, p])

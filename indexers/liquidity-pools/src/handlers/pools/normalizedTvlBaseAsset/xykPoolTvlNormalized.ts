@@ -1,7 +1,8 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
+
+import { SqdProcessorContext } from '../../../processor';
+import { calcPriceNormalized } from '../../../utils/helpers';
 
 export function processXykPoolsNormalizedTvl({
   blockNumbersToProcess,
@@ -25,8 +26,13 @@ export function processXykPoolsNormalizedTvl({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const poolHistData of xykPoolHistDataByBatchList) {
-    const assetA = poolHistData.assetA;
-    const assetB = poolHistData.assetB;
+    const assetA = ctx.batchState.state.assetsAll.get(poolHistData.assetAId);
+    const assetB = ctx.batchState.state.assetsAll.get(poolHistData.assetBId);
+
+    if(!assetA || !assetB) {
+      console.warn(`Asset data not found for assets ${poolHistData.assetAId} or ${poolHistData.assetBId} while processing XYK pool TVL normalization at para block height ${poolHistData.paraBlockHeight}`);
+      continue;
+    }
 
     let assetASpotPriceNorm = historicalSpotPricesMap.get(
       `${assetA.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${poolHistData.paraBlockHeight}`

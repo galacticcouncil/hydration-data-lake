@@ -117,8 +117,8 @@ export async function createXykPool({
       accountType: AccountType.Xykpool,
       ensureAccountType: true,
     }),
-    assetA: assetAEntity,
-    assetB: assetBEntity,
+    assetAId: assetAEntity.id,
+    assetBId: assetBEntity.id,
     shareToken: sharedTokenEntity,
     assetABalance: newPoolsAssetBalances.assetABalance,
     assetBBalance: newPoolsAssetBalances.assetBBalance,
@@ -164,7 +164,7 @@ export async function getOrCreateXykPool({
 
   pool = await ctx.storeUtils.findOneWithLogs(Xykpool, {
     where: { id },
-    relations: { assetA: true, assetB: true, account: true, shareToken: true },
+    relations: { account: true, shareToken: true },
   }, { className: 'Xykpool' });
 
   if (pool) {
@@ -293,8 +293,6 @@ export async function xykPoolDestroyed(
   const pool = await ctx.storeUtils.findOneWithLogs(Xykpool, {
     where: { id: eventParams.pool },
     relations: {
-      assetA: true,
-      assetB: true,
       account: true,
     },
   }, { className: 'Xykpool' });

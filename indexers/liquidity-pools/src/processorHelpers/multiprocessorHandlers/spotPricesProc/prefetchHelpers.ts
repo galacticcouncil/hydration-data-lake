@@ -74,8 +74,6 @@ export async function prefetchAllAvailableXykpoolVolumesForBlocksRange({
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
     relations: {
-      assetA: true,
-      assetB: true,
       pool: true,
     },
   }, { className: 'XykpoolVolumeHistoricalData' });
@@ -182,10 +180,7 @@ export async function prefetchAllAvailableXykpoolHistDataForBlocksRange({
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
     relations: {
-      assetA: true,
-      assetB: true,
       pool: true,
-      
     },
   }, { className: 'XykpoolHistoricalData' });
 

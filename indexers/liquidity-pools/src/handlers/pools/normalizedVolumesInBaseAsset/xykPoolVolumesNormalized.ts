@@ -1,17 +1,13 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
+
+import { XykpoolVolumeHistoricalData } from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
+import { calcPriceNormalized } from '../../../utils/helpers';
 import {
-  getOldOmnipoolAssetVolume,
   getOldXykVolume,
-  getPoolAssetPreviousVolumeFromCache,
   getPreviousVolumeFromCache,
 } from '../volumes';
-import {
-  StableswapAssetVolumeHistoricalData,
-  XykpoolVolumeHistoricalData,
-} from '../../../model';
 
 export async function processXykPoolsNormalizedVolumes({
   blockNumbersToProcess,
@@ -35,8 +31,13 @@ export async function processXykPoolsNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const currentPoolVolsHistData of xykPoolHistVolsByBatchList) {
-    const assetA = currentPoolVolsHistData.assetA;
-    const assetB = currentPoolVolsHistData.assetB;
+    const assetA = ctx.batchState.state.assetsAll.get(currentPoolVolsHistData.assetAId);
+    const assetB = ctx.batchState.state.assetsAll.get(currentPoolVolsHistData.assetBId);
+
+    if(!assetA || !assetB) {
+      console.warn(`Asset data not found for assets ${currentPoolVolsHistData.assetAId} or ${currentPoolVolsHistData.assetBId} while processing XYK pool TVL normalization at para block height ${currentPoolVolsHistData.paraBlockHeight}`);
+      continue;
+    }
 
     let assetASpotPriceNorm = historicalSpotPricesMap.get(
       `${assetA.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentPoolVolsHistData.paraBlockHeight}`

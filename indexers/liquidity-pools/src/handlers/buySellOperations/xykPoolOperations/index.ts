@@ -79,8 +79,6 @@ async function prefetchEntities(
     where: { id: In(poolsToPrefetch) },
     relations: {
       account: true,
-      assetA: true,
-      assetB: true,
       shareToken: true,
     },
   }, { className: 'Xykpool' });

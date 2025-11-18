@@ -86,7 +86,7 @@ export async function prefetchGenericPersistentData(
       Xykpool,
       {
         where: {},
-        relations: { assetA: true, assetB: true, account: true },
+        relations: { account: true },
       },
       { className: 'Xykpool', originCallFn: 'prefetchGenericPersistentData' }
     )
@@ -388,8 +388,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             pool: true,
-            assetA: true,
-            assetB: true,
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -512,9 +510,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             pool: { account: true },
-            assetA: true,
-            assetB: true,
-            
           },
           order: {
             paraBlockHeight: 'ASC',

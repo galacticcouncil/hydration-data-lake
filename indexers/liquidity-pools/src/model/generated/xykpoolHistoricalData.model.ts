@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Xykpool} from "./xykpool.model"
-import {Asset} from "./asset.model"
 
 @Entity_()
 export class XykpoolHistoricalData {
@@ -18,13 +17,11 @@ export class XykpoolHistoricalData {
     @ManyToOne_(() => Xykpool, {nullable: true})
     pool!: Xykpool
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetA!: Asset
+    @StringColumn_({nullable: false})
+    assetAId!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetB!: Asset
+    @StringColumn_({nullable: false})
+    assetBId!: string
 
     @BigIntColumn_({nullable: false})
     assetABalance!: bigint

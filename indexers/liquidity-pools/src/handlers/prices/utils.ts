@@ -33,10 +33,8 @@ export function calculateAveragePrice({
     .div(swap.outputs[0].amount.toString())
     .toNumber();
 
-  // Handle both Xykpool (with assetA relation) and Lbppool (with assetAId field)
-  const poolAssetAId = 'assetA' in pool ? pool.assetA.id : pool.assetAId;
   const price =
-    swap.inputs[0].assetId === poolAssetAId ? swapPrice : 1 / swapPrice;
+    swap.inputs[0].assetId === pool.assetAId ? swapPrice : 1 / swapPrice;
 
   const oldPrice = currentVolume?.averagePrice || oldVolume?.averagePrice || 0;
 
