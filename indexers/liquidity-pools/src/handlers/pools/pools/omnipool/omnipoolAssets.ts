@@ -49,8 +49,8 @@ export async function getOrCreateOmnipoolAsset({
   if (omnipoolAsset) return omnipoolAsset;
 
   omnipoolAsset = await ctx.storeUtils.findOneWithLogs(OmnipoolAsset, {
-    where: { asset: { id: `${assetEntity.id}` } },
-    relations: { asset: true, pool: true },
+    where: { assetId:  `${assetEntity.id}` },
+    relations: { pool: true },
   }, { className: 'OmnipoolAsset' });
 
   if (omnipoolAsset) {
@@ -69,7 +69,7 @@ export async function getOrCreateOmnipoolAsset({
 
   omnipoolAsset = new OmnipoolAsset({
     id: `${ctx.batchState.state.omnipoolEntity!.id}-${assetEntity.id}`,
-    asset: assetEntity,
+    assetId: assetEntity.id,
     pool: ctx.batchState.state.omnipoolEntity!,
 
     addedAtParaBlockHeight: blockHeader.height,
@@ -157,7 +157,7 @@ export async function omnipoolTokenAdded(
 
   omnipoolAssetEntity = new OmnipoolAsset({
     id: `${ctx.batchState.state.omnipoolEntity!.id}-${assetEntity.id}`,
-    asset: assetEntity,
+    assetId: assetEntity.id,
     pool: ctx.batchState.state.omnipoolEntity!,
 
     addedAtParaBlockHeight: eventMetadata.blockHeader.height,

@@ -923,18 +923,21 @@ export class OfflineTradeRouterManagerHelper {
         .map((assetHistData) => {
           const assetHistoricalData = this.assetsHistData
             .get(blockNumber)!
-            .get(assetHistData.asset.id);
+            .get(assetHistData.assetId);
 
           if (!assetHistoricalData) return null;
 
           const asset = ctx.batchState.state.assetsAll.get(assetHistoricalData.assetId);
-          if (!asset) return null;
+          if (!asset) {
+            console.error(`>> missing asset in cache for omnipool asset ${assetHistData.assetId}`);
+            return null
+          };
 
           return {
-            id: assetHistData.asset.assetRegistryId,
-            decimals: assetHistData.asset.decimals,
-            symbol: assetHistData.asset.symbol,
-            type: assetHistData.asset.assetType,
+            id: asset.assetRegistryId,
+            decimals: asset.decimals,
+            symbol: asset.symbol,
+            type: asset.assetType,
             existentialDeposit: asset.existentialDeposit?.toString(),
             isSufficient: asset.isSufficient, // TODO fix data
             balance: assetHistData.freeBalance.toString(),

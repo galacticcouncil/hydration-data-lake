@@ -92,7 +92,7 @@ export async function recalculatePoolsNormalizedVolumes(
           ),
         },
         relations: {
-          omnipoolAsset: { asset: true },
+          omnipoolAsset: true,
         },
       }, { className: 'OmnipoolAssetVolumeHistoricalData' })
     ).map((p) => [p.id, p])

@@ -357,10 +357,13 @@ function getXykOnlyAssets(ctx: SqdProcessorContext<Store>) {
     .filter((asset): asset is Asset => !!asset);
 
   const omnipoolInvolvedAssets = new Map<string, Asset>(
-    Array.from(ctx.batchState.state.omnipoolAssets.values()).map(
-      (pool): [string, Asset] => [pool.asset.id, pool.asset]
-    )
+    Array.from(ctx.batchState.state.omnipoolAssets.values())
+      .map((pool) =>
+        [pool.assetId, ctx.batchState.state.assetsAll.get(pool.assetId)] as [string, Asset | undefined]
+      )
+      .filter(([, asset]) => asset !== undefined) as [string, Asset][]
   );
+  
   const stableswapInvolvedAssets = new Map<string, Asset>(
     Array.from(ctx.batchState.state.stableswapAssets.values()).map(
       (pool): [string, Asset] => [pool.asset.id, pool.asset]

@@ -1,24 +1,28 @@
-import { SqdProcessorContext } from '../../../processor';
+import { In } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
-import { EventName } from '../../../parsers/types/events';
-import {
-  getOrderedListByBlockNumber,
-  isUnifiedEventsSupportSpecVersion,
-} from '../../../utils/helpers';
-import {
-  OmnipoolBuyExecutedData,
-  OmnipoolSellExecutedData,
-} from '../../../parsers/batchBlocksParser/types';
+
 import {
   OmnipoolAsset,
   SwapFeeDestinationType,
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
+import {
+  BatchBlocksParsedDataManager,
+} from '../../../parsers/batchBlocksParser';
+import {
+  OmnipoolBuyExecutedData,
+  OmnipoolSellExecutedData,
+} from '../../../parsers/batchBlocksParser/types';
+import { EventName } from '../../../parsers/types/events';
+import { SqdProcessorContext } from '../../../processor';
+import {
+  getOrderedListByBlockNumber,
+  isUnifiedEventsSupportSpecVersion,
+} from '../../../utils/helpers';
 import { handleOmnipoolAssetVolumeUpdates } from '../../pools/volumes';
 import { handleSwap } from '../../swap/swap';
-import { In } from 'typeorm';
 
 // TODO improve performance of the function
 export async function handleOmnioolOperations(
@@ -192,7 +196,7 @@ async function prefetchEntities(
 
   const prefetchedOmnipoolAssets = await ctx.storeUtils.findWithLogs(OmnipoolAsset, {
     where: { id: In(omnipoolAssetsToPrefetch) },
-    relations: { asset: true, pool: true },
+    relations: { pool: true },
   }, { className: 'OmnipoolAsset' });
 
   if (omnipoolAssetsToPrefetch.length > 0)

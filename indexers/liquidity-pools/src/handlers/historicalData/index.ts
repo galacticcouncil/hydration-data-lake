@@ -485,7 +485,7 @@ export class HistoricalDataManager {
     const omnipoolAssetHistoricalVolumeEntries = new Map(
       [...ctx.batchState.state.omnipoolAssetVolumes.values()].map((item) => [
         item.omnipoolAsset.id,
-        item.omnipoolAsset.asset.id,
+        item.omnipoolAsset.assetId,
       ])
     );
 

@@ -1,12 +1,13 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
+
+import { OmnipoolAssetVolumeHistoricalData } from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
+import { calcPriceNormalized } from '../../../utils/helpers';
 import {
   getOldOmnipoolAssetVolume,
   getPoolAssetPreviousVolumeFromCache,
 } from '../volumes';
-import { OmnipoolAssetVolumeHistoricalData } from '../../../model';
 
 export async function processOmnipoolAssetNormalizedVolumes({
   blockNumbersToProcess,
@@ -30,8 +31,11 @@ export async function processOmnipoolAssetNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const currentAssetVolsHistData of omnipoolAssetHistVolsByBatchList) {
-    const asset = currentAssetVolsHistData.omnipoolAsset.asset;
-
+    const asset = ctx.batchState.state.assetsAll.get(currentAssetVolsHistData.omnipoolAsset.assetId);
+    if (!asset) {
+      console.warn(`Asset data not found for asset ${currentAssetVolsHistData.omnipoolAsset.assetId} while processing Omnipool asset Volume normalization at para block height ${currentAssetVolsHistData.paraBlockHeight}`);
+      continue;
+    }
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
       `${asset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetVolsHistData.paraBlockHeight}`
     )?.priceNormalised;

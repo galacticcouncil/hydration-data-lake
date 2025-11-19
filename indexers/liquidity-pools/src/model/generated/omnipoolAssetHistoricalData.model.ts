@@ -1,7 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {OmnipoolHistoricalData} from "./omnipoolHistoricalData.model"
 import {OmnipoolAsset} from "./omnipoolAsset.model"
-import {Asset} from "./asset.model"
 
 @Entity_()
 export class OmnipoolAssetHistoricalData {
@@ -23,9 +22,8 @@ export class OmnipoolAssetHistoricalData {
     @ManyToOne_(() => OmnipoolAsset, {nullable: true})
     omnipoolAsset!: OmnipoolAsset
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+    @StringColumn_({nullable: false})
+    assetId!: string
 
     @BigIntColumn_({nullable: false})
     assetCap!: bigint

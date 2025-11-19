@@ -1,13 +1,13 @@
-import { SqdProcessorContext } from '../../../../../../processor';
+import { Between } from 'typeorm/find-options/operator/Between';
+
 import { Store } from '@subsquid/typeorm-store';
+
 import {
-  LbppoolHistoricalData,
   OmnipoolAsset,
   OmnipoolAssetHistoricalData,
   OmnipoolHistoricalData,
 } from '../../../../../../model';
-import { fetchLbpPoolsHistoricalDataForBlocksRangeResolver } from './fetchLbpPoolsHistoricalData';
-import { Between } from 'typeorm/find-options/operator/Between';
+import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchOmnipoolHistoricalData({
   blockNumber,
@@ -28,9 +28,6 @@ export async function fetchOmnipoolHistoricalData({
           where: {
             isRemoved: false,
           },
-          relations: {
-            asset: true,
-          },
         },
         {
           className: 'OmnipoolAsset',
@@ -41,10 +38,10 @@ export async function fetchOmnipoolHistoricalData({
 
   const allActiveOmnipoolAssets: Map<string, OmnipoolAsset> = new Map([
     ...allActiveOmnipoolAssetsPersisted.map(
-      (oAsset): [string, OmnipoolAsset] => [oAsset.asset.id, oAsset]
+      (oAsset): [string, OmnipoolAsset] => [oAsset.assetId, oAsset]
     ),
     ...allActiveOmnipoolAssetsCached.map((oAsset): [string, OmnipoolAsset] => [
-      oAsset.asset.id,
+      oAsset.assetId,
       oAsset,
     ]),
   ]);
@@ -73,7 +70,6 @@ export async function fetchOmnipoolHistoricalData({
             pool: { account: true },
             assetsHistoricalData: {
               omnipoolAsset: true,
-              asset: true,
             },
           },
         },
@@ -130,9 +126,6 @@ export async function fetchOmnipoolHistoricalDataForBlocksRangeResolver({
           where: {
             isRemoved: false,
           },
-          relations: {
-            asset: true,
-          },
         },
         {
           className: 'OmnipoolAsset',
@@ -143,10 +136,10 @@ export async function fetchOmnipoolHistoricalDataForBlocksRangeResolver({
 
   const allActiveOmnipoolAssets = new Map<string, OmnipoolAsset>();
   for (const histData of allActiveOmnipoolAssetsPersisted) {
-    allActiveOmnipoolAssets.set(histData.asset.id, histData);
+    allActiveOmnipoolAssets.set(histData.assetId, histData);
   }
   for (const histData of allActiveOmnipoolAssetsCached) {
-    allActiveOmnipoolAssets.set(histData.asset.id, histData);
+    allActiveOmnipoolAssets.set(histData.assetId, histData);
   }
 
   const cachedOmnipoolHistData = [
@@ -178,7 +171,6 @@ export async function fetchOmnipoolHistoricalDataForBlocksRangeResolver({
             pool: { account: true },
             assetsHistoricalData: {
               omnipoolAsset: true,
-              asset: true,
             },
           },
         },

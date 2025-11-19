@@ -96,7 +96,7 @@ export async function prefetchGenericPersistentData(
       OmnipoolAsset,
       {
         where: {},
-        relations: { asset: true, pool: true },
+        relations: { pool: true },
       },
       {
         className: 'OmnipoolAsset',
@@ -410,7 +410,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            omnipoolAsset: { asset: true },
+            omnipoolAsset: true,
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -559,9 +559,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             poolHistoricalData: { pool: true },
-            omnipoolAsset: { asset: true },
-            asset: true,
-          
+            omnipoolAsset: true,          
           },
           order: {
             paraBlockHeight: 'ASC',

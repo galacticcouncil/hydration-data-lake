@@ -17,7 +17,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   let omnipoolEntity =
     (await ctx.storeUtils.findOneWithLogs(Omnipool, {
       where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
-      relations: { assets: { asset: true }, account: true },
+      relations: { assets: true, account: true },
     }, { className: 'Omnipool' })) ?? null;
 
   if (!!omnipoolEntity) {
@@ -51,7 +51,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
 
   const internalOmnipoolToken = new OmnipoolAsset({
     id: `${omnipoolEntity.id}-${ctx.appConfig.OMNIPOOL_PROTOCOL_ASSET_ID}`,
-    asset: lrnaAssetEntity,
+    assetId: lrnaAssetEntity.id,
     pool: omnipoolEntity,
     addedAtParaBlockHeight: ctx.blocks[0].header.height,
     addedAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(

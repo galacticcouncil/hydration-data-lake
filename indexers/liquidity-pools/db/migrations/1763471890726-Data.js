@@ -1,5 +1,5 @@
-module.exports = class Data1763464355133 {
-    name = 'Data1763464355133'
+module.exports = class Data1763471890726 {
+    name = 'Data1763471890726'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, "stableswap_hist_data_latest_block" integer, "omnipool_hist_data_latest_block" integer, "xykpool_hist_data_latest_block" integer, "aavepool_hist_data_latest_block" integer, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -94,14 +94,12 @@ module.exports = class Data1763464355133 {
         await db.query(`CREATE TABLE "omnipool_historical_data" ("id" character varying NOT NULL, "tvl_total_in_ref_asset_norm" text, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "pool_id" character varying, CONSTRAINT "PK_7756f403ce61b63e6b9b896d2d6" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_e82e08fa51052f4b9917e35ff8" ON "omnipool_historical_data" ("pool_id") `)
         await db.query(`CREATE INDEX "IDX_240b99e438ec14ebdc7201dd10" ON "omnipool_historical_data" ("para_block_height") `)
-        await db.query(`CREATE TABLE "omnipool_asset_historical_data" ("id" character varying NOT NULL, "asset_cap" numeric NOT NULL, "asset_shares" numeric NOT NULL, "asset_hub_reserve" numeric NOT NULL, "asset_protocol_shares" numeric NOT NULL, "free_balance" numeric NOT NULL, "tradable" integer NOT NULL, "tvl_in_ref_asset_norm" text, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "pool_historical_data_id" character varying, "omnipool_asset_id" character varying, "asset_id" character varying, CONSTRAINT "PK_49ede7b5602a9b88c1c07ca0cd9" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "omnipool_asset_historical_data" ("id" character varying NOT NULL, "asset_id" text NOT NULL, "asset_cap" numeric NOT NULL, "asset_shares" numeric NOT NULL, "asset_hub_reserve" numeric NOT NULL, "asset_protocol_shares" numeric NOT NULL, "free_balance" numeric NOT NULL, "tradable" integer NOT NULL, "tvl_in_ref_asset_norm" text, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "pool_historical_data_id" character varying, "omnipool_asset_id" character varying, CONSTRAINT "PK_49ede7b5602a9b88c1c07ca0cd9" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_3ac9fc37331b184364dc356628" ON "omnipool_asset_historical_data" ("pool_historical_data_id") `)
         await db.query(`CREATE INDEX "IDX_c70f037aafc69337fea749efa6" ON "omnipool_asset_historical_data" ("omnipool_asset_id") `)
-        await db.query(`CREATE INDEX "IDX_f8c9eddb6bfddb6f94cc0b1636" ON "omnipool_asset_historical_data" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_757ac8e86648b630d25f55e801" ON "omnipool_asset_historical_data" ("para_block_height") `)
-        await db.query(`CREATE TABLE "omnipool_asset" ("id" character varying NOT NULL, "added_at_para_block_height" integer NOT NULL, "added_at_relay_block_height" integer NOT NULL, "is_removed" boolean, "added_at_block_id" text, "life_states" jsonb, "pool_id" character varying, "asset_id" character varying, CONSTRAINT "PK_6e3b9f3836fa6616f083b5ea75b" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "omnipool_asset" ("id" character varying NOT NULL, "asset_id" text NOT NULL, "added_at_para_block_height" integer NOT NULL, "added_at_relay_block_height" integer NOT NULL, "is_removed" boolean, "added_at_block_id" text, "life_states" jsonb, "pool_id" character varying, CONSTRAINT "PK_6e3b9f3836fa6616f083b5ea75b" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_530f27607e7d82575c5c337d65" ON "omnipool_asset" ("pool_id") `)
-        await db.query(`CREATE INDEX "IDX_eee49a5571d9d7e3fbe7757f13" ON "omnipool_asset" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_b6d480d6e9678a34b122cf3f5d" ON "omnipool_asset" ("added_at_para_block_height") `)
         await db.query(`CREATE TABLE "omnipool" ("id" character varying NOT NULL, "is_destroyed" boolean, "destroyed_at_para_block_height" integer, "account_id" character varying, CONSTRAINT "PK_a8cb656c84202ef41ea88bfb28a" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_5002156ed9c2252be6917d6211" ON "omnipool" ("account_id") `)
@@ -457,9 +455,7 @@ module.exports = class Data1763464355133 {
         await db.query(`ALTER TABLE "omnipool_historical_data" ADD CONSTRAINT "FK_e82e08fa51052f4b9917e35ff8c" FOREIGN KEY ("pool_id") REFERENCES "omnipool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "omnipool_asset_historical_data" ADD CONSTRAINT "FK_3ac9fc37331b184364dc356628c" FOREIGN KEY ("pool_historical_data_id") REFERENCES "omnipool_historical_data"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "omnipool_asset_historical_data" ADD CONSTRAINT "FK_c70f037aafc69337fea749efa67" FOREIGN KEY ("omnipool_asset_id") REFERENCES "omnipool_asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
-        await db.query(`ALTER TABLE "omnipool_asset_historical_data" ADD CONSTRAINT "FK_f8c9eddb6bfddb6f94cc0b1636a" FOREIGN KEY ("asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "omnipool_asset" ADD CONSTRAINT "FK_530f27607e7d82575c5c337d65c" FOREIGN KEY ("pool_id") REFERENCES "omnipool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
-        await db.query(`ALTER TABLE "omnipool_asset" ADD CONSTRAINT "FK_eee49a5571d9d7e3fbe7757f135" FOREIGN KEY ("asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "omnipool" ADD CONSTRAINT "FK_5002156ed9c2252be6917d62118" FOREIGN KEY ("account_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "stableswap_asset" ADD CONSTRAINT "FK_8205ac8ad2bef6985fa6a44caa7" FOREIGN KEY ("pool_id") REFERENCES "stableswap"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "stableswap_asset" ADD CONSTRAINT "FK_8fd361c2888872d129803042038" FOREIGN KEY ("asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -732,11 +728,9 @@ module.exports = class Data1763464355133 {
         await db.query(`DROP TABLE "omnipool_asset_historical_data"`)
         await db.query(`DROP INDEX "public"."IDX_3ac9fc37331b184364dc356628"`)
         await db.query(`DROP INDEX "public"."IDX_c70f037aafc69337fea749efa6"`)
-        await db.query(`DROP INDEX "public"."IDX_f8c9eddb6bfddb6f94cc0b1636"`)
         await db.query(`DROP INDEX "public"."IDX_757ac8e86648b630d25f55e801"`)
         await db.query(`DROP TABLE "omnipool_asset"`)
         await db.query(`DROP INDEX "public"."IDX_530f27607e7d82575c5c337d65"`)
-        await db.query(`DROP INDEX "public"."IDX_eee49a5571d9d7e3fbe7757f13"`)
         await db.query(`DROP INDEX "public"."IDX_b6d480d6e9678a34b122cf3f5d"`)
         await db.query(`DROP TABLE "omnipool"`)
         await db.query(`DROP INDEX "public"."IDX_5002156ed9c2252be6917d6211"`)
@@ -1092,9 +1086,7 @@ module.exports = class Data1763464355133 {
         await db.query(`ALTER TABLE "omnipool_historical_data" DROP CONSTRAINT "FK_e82e08fa51052f4b9917e35ff8c"`)
         await db.query(`ALTER TABLE "omnipool_asset_historical_data" DROP CONSTRAINT "FK_3ac9fc37331b184364dc356628c"`)
         await db.query(`ALTER TABLE "omnipool_asset_historical_data" DROP CONSTRAINT "FK_c70f037aafc69337fea749efa67"`)
-        await db.query(`ALTER TABLE "omnipool_asset_historical_data" DROP CONSTRAINT "FK_f8c9eddb6bfddb6f94cc0b1636a"`)
         await db.query(`ALTER TABLE "omnipool_asset" DROP CONSTRAINT "FK_530f27607e7d82575c5c337d65c"`)
-        await db.query(`ALTER TABLE "omnipool_asset" DROP CONSTRAINT "FK_eee49a5571d9d7e3fbe7757f135"`)
         await db.query(`ALTER TABLE "omnipool" DROP CONSTRAINT "FK_5002156ed9c2252be6917d62118"`)
         await db.query(`ALTER TABLE "stableswap_asset" DROP CONSTRAINT "FK_8205ac8ad2bef6985fa6a44caa7"`)
         await db.query(`ALTER TABLE "stableswap_asset" DROP CONSTRAINT "FK_8fd361c2888872d129803042038"`)

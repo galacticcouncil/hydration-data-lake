@@ -116,9 +116,7 @@ export async function prefetchAllAvailableOmnipoolAssetVolumesForBlocksRange({
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
     relations: {
-      omnipoolAsset: {
-        asset: true,
-      },
+      omnipoolAsset: true,
       
     },
   }, { className: 'OmnipoolAssetVolumeHistoricalData' });
@@ -236,8 +234,7 @@ export async function prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
     },
     relations: {
       poolHistoricalData: true,
-      omnipoolAsset: { asset: true },
-      asset: true,
+      omnipoolAsset: true,
     },
   }, { className: 'OmnipoolAssetHistoricalData' });
 

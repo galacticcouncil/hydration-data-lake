@@ -75,17 +75,17 @@ export function initOmnipoolAssetVolume({
 
   const assetVolIn =
     swap.inputs.find(
-      (input) => input.assetId === newVolume.omnipoolAsset.asset.id
+      (input) => input.assetId === newVolume.omnipoolAsset.assetId
     )?.amount || BigInt(0);
 
   const assetVolOut =
     swap.outputs.find(
-      (output) => output.assetId === newVolume.omnipoolAsset.asset.id
+      (output) => output.assetId === newVolume.omnipoolAsset.assetId
     )?.amount || BigInt(0);
 
   const assetFeeVol = swap.fees.reduce((acc, feeData) => {
     if (
-      feeData.assetId !== newVolume.omnipoolAsset.asset.id ||
+      feeData.assetId !== newVolume.omnipoolAsset.assetId ||
       !feeData.recipient
     )
       return acc;

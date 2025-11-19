@@ -150,7 +150,7 @@ export async function handleOmnipoolHistoricalData(
 
           const newEntity = new OmnipoolAssetHistoricalData({
             id: `${ctx.appConfig.OMNIPOOL_ADDRESS}-${asset.id}-${blockHeader.height}`,
-            asset,
+            assetId: asset.id,
             omnipoolAsset,
             poolHistoricalData:
               ctx.batchState.state.omnipoolAllHistoricalData.get(
@@ -238,11 +238,11 @@ export async function getOmnipoolHistDataWithUniqueData({
   for (const i of (
     poolAssetsData || ctx.batchState.state.omnipoolAssetAllHistoricalData
   ).values()) {
-    if (!poolAssetsHistoryIndex.has(i.asset.id)) {
-      poolAssetsHistoryIndex.set(i.asset.id, []);
+    if (!poolAssetsHistoryIndex.has(i.assetId)) {
+      poolAssetsHistoryIndex.set(i.assetId, []);
     }
 
-    poolAssetsHistoryIndex.get(i.asset.id)!.push(i);
+    poolAssetsHistoryIndex.get(i.assetId)!.push(i);
   }
 
   for (const [assetId, list] of poolAssetsHistoryIndex.entries()) {
@@ -301,7 +301,7 @@ export async function getOmnipoolHistDataWithUniqueData({
          * changed data to keep data in API consistent
          */
         innerLoop: for (const assetId of poolAssetsHistoryIndex.keys()) {
-          if (assetId === item.asset.id) continue innerLoop;
+          if (assetId === item.assetId) continue innerLoop;
 
           const pairAssetRecordId = `${item.omnipoolAsset.pool.id}-${assetId}-${item.paraBlockHeight}`;
           poolAssetsResult.set(
@@ -374,13 +374,13 @@ export async function isOmnipoolAssetHistoricalDataUniqueRegardingPreviousRecord
   ctx: SqdProcessorContext<Store>;
 }) {
   let previousItem = (
-    cachedIndexedRecords.get(currentRecord.asset.id)! || []
+    cachedIndexedRecords.get(currentRecord.assetId)! || []
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
     previousItem = await ctx.storeUtils.findOneWithLogs(OmnipoolAssetHistoricalData, {
       where: {
-        asset: { id: currentRecord.asset.id },
+        assetId: currentRecord.assetId,
         paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
       },
       order: {

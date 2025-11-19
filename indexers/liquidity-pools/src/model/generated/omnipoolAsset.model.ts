@@ -1,7 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_, BooleanColumn as BooleanColumn_, StringColumn as StringColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, IntColumn as IntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
 import {Omnipool} from "./omnipool.model"
-import {Asset} from "./asset.model"
 import {OmnipoolAssetLifeState} from "./_omnipoolAssetLifeState"
 import {OmnipoolAssetVolumeHistoricalData} from "./omnipoolAssetVolumeHistoricalData.model"
 import {OmnipoolAssetHistoricalData} from "./omnipoolAssetHistoricalData.model"
@@ -22,9 +21,8 @@ export class OmnipoolAsset {
     @ManyToOne_(() => Omnipool, {nullable: true})
     pool!: Omnipool
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+    @StringColumn_({nullable: false})
+    assetId!: string
 
     @Index_()
     @IntColumn_({nullable: false})

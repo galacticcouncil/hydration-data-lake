@@ -85,7 +85,7 @@ export async function getOldOmnipoolAssetVolume({
         : {}),
     },
     relations: {
-      omnipoolAsset: { asset: true },
+      omnipoolAsset: true,
     },
     order: {
       paraBlockHeight: 'DESC',
