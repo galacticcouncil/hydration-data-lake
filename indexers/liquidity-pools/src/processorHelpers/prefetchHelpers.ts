@@ -111,8 +111,7 @@ export async function prefetchGenericPersistentData(
         where: {},
         relations: {
           account: true,
-          shareToken: true,
-          assets: { asset: true },
+          assets: true,
         },
       },
       {
@@ -128,7 +127,6 @@ export async function prefetchGenericPersistentData(
         where: {},
         relations: {
           pool: true,
-          asset: true,
         },
       },
       {
@@ -434,7 +432,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            pool: { shareToken: true },
+            pool: true,
             
           },
           order: {
@@ -459,8 +457,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            volumesCollection: { pool: { shareToken: true } },
-            asset: true,
+            volumesCollection: { pool: true },
             
           },
           order: {
@@ -583,10 +580,9 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            pool: { shareToken: true, account: true },
+            pool: { account: true },
             assetsHistoricalData: {
-              asset: true,
-              stableswapAsset: { asset: true },
+              stableswapAsset: true,
             },
           },
           order: {
@@ -611,9 +607,8 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            asset: true,
             poolHistoricalData: true,
-            stableswapAsset: { asset: true, pool: { account: true } },
+            stableswapAsset: { pool: { account: true } },
             
           },
           order: {

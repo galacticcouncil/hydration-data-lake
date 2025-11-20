@@ -1,7 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_, StringColumn as StringColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, IntColumn as IntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
-import {Asset} from "./asset.model"
 import {StableswapLifeState} from "./_stableswapLifeState"
 import {StableswapAsset} from "./stableswapAsset.model"
 
@@ -21,9 +20,8 @@ export class Stableswap {
     @ManyToOne_(() => Account, {nullable: true})
     account!: Account
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    shareToken!: Asset
+    @StringColumn_({nullable: false})
+    shareTokenId!: string
 
     @Index_()
     @IntColumn_({nullable: false})

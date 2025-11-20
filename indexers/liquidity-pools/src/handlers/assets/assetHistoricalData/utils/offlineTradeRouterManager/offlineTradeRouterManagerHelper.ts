@@ -838,7 +838,7 @@ export class OfflineTradeRouterManagerHelper {
 
       const poolShareTokenHistData = this.assetsHistData
         .get(blockNumber)!
-        .get(poolHistData.pool.shareToken.id);
+        .get(poolHistData.pool.shareTokenId);
 
       if (!poolShareTokenHistData) {
         console.error(`>> missing share assets data for pool ${poolId}`);
@@ -854,7 +854,7 @@ export class OfflineTradeRouterManagerHelper {
           ...(poolHistData.assetsHistoricalData.map((assetHistData) => {
             const assetHistoricalData = this.assetsHistData
               .get(blockNumber)!
-              .get(assetHistData.asset.id);
+              .get(assetHistData.assetId);
 
             if (!assetHistoricalData) return null;
 
@@ -862,13 +862,13 @@ export class OfflineTradeRouterManagerHelper {
             if (!asset) return null;
 
             return {
-              id: assetHistData.asset.assetRegistryId,
-              decimals: assetHistData.asset.decimals,
-              symbol: assetHistData.asset.symbol,
+              id: asset.assetRegistryId,
+              decimals: asset.decimals,
+              symbol: asset.symbol,
               balance: assetHistData.freeBalance.toString(),
               existentialDeposit: asset.existentialDeposit?.toString(),
               isSufficient: asset.isSufficient, // TODO fix data
-              type: assetHistData.asset.assetType,
+              type: asset.assetType,
               tradable: assetHistData.tradable,
             };
           }).filter(t => !!t) as IPersistentPoolToken[]),

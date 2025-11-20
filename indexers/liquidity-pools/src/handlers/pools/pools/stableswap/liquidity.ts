@@ -137,7 +137,7 @@ export async function stablepoolLiquidityAddedRemoved(
         id: amountEntityId,
         liquidityAction: newAction,
         amount: assetAmount.amount,
-        asset,
+        assetId: asset.id,
       })
     );
   }

@@ -125,7 +125,6 @@ export async function recalculatePoolsNormalizedVolumes(
         },
         relations: {
           volumesCollection: { pool: true },
-          asset: true,
         },
       }, { className: 'StableswapAssetVolumeHistoricalData' })
     ).map((p) => [p.id, p])

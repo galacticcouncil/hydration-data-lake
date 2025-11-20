@@ -1,7 +1,8 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { calcPriceNormalized } from '../../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
+
+import { SqdProcessorContext } from '../../../processor';
+import { calcPriceNormalized } from '../../../utils/helpers';
 
 export function processStableswapNormalizedTvl({
   blockNumbersToProcess,
@@ -32,7 +33,12 @@ export function processStableswapNormalizedTvl({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const assetHistData of assetsHistDataByBatchList) {
-    const asset = assetHistData.asset;
+    const asset = assetHistData.assetId ? ctx.batchState.state.assetsAll.get(assetHistData.assetId) : null;
+
+    if(!asset) {
+      console.warn(`Asset data not found for asset ${assetHistData.assetId} while processing Stableswap pool TVL normalization at para block height ${assetHistData.paraBlockHeight}`);
+      continue;
+    }
 
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
       `${asset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${assetHistData.paraBlockHeight}`

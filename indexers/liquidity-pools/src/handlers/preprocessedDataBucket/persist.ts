@@ -182,7 +182,7 @@ function decorateStableswapAssetVolumeHistoricalData(
   const decorated: Record<string, any> = getAllEntityProps(src);
 
   decorated.volumesCollection = src.volumesCollection.id;
-  decorated.asset = src.asset.id;
+  decorated.assetId = src.assetId;
 
   return decorated;
 }

@@ -40,10 +40,10 @@ export async function handleStablepoolVolumeUpdates({
     ? swap.relayBlockHeight
     : liquidityAction!.relayBlockHeight;
 
-  // let allAssetsToProcess: Asset[] = await getAssetsByStablepool(ctx, pool.id);
-  const allAssetsToProcess: Asset[] = pool.assets.map(
-    (stableswapAsset) => stableswapAsset.asset
-  );
+  // Fetch Asset entities from cache using assetId
+  const allAssetsToProcess: Asset[] = pool.assets
+    .map((stableswapAsset) => ctx.batchState.state.assetsAll.get(stableswapAsset.assetId))
+    .filter((asset): asset is Asset => !!asset);
 
   const stablepoolAssetVolumes = ctx.batchState.state.stablepoolAssetVolumes;
   const stablepoolAssetVolumeIdsToSave =
@@ -118,7 +118,7 @@ export async function handleStablepoolVolumeUpdates({
             liquidityActionData: {
               actionData: liquidityAction,
               assetData: liquidityAction.assetAmounts.find(
-                (a) => a.asset.id === asset.id
+                (a) => a.assetId === asset.id
               )!, // TODO fix types
             },
           }
@@ -174,7 +174,7 @@ export function initStablepoolAssetVolume({
 
   const newVolume = new StableswapAssetVolumeHistoricalData({
     id: `${poolId}-${asset.id}-${paraBlockHeight}`,
-    asset,
+    assetId: asset.id,
     volumesCollection,
     assetFeeVol: currentVolume?.assetFeeVol || BigInt(0),
     assetTotalFeesVol:
@@ -227,15 +227,15 @@ export function initStablepoolAssetVolume({
 
   if (swap) {
     const assetVolIn =
-      swap.inputs.find((input) => input.assetId === newVolume.asset.id)
+      swap.inputs.find((input) => input.assetId === newVolume.assetId)
         ?.amount || BigInt(0);
 
     const assetVolOut =
-      swap.outputs.find((output) => output.assetId === newVolume.asset.id)
+      swap.outputs.find((output) => output.assetId === newVolume.assetId)
         ?.amount || BigInt(0);
 
     const assetFeeVol = swap.fees.reduce((acc, feeData) => {
-      if (feeData.assetId !== newVolume.asset.id || !feeData.recipient)
+      if (feeData.assetId !== newVolume.assetId || !feeData.recipient)
         return acc;
       return acc + feeData.amount;
     }, 0n);

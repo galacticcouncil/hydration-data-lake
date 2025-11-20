@@ -1,18 +1,18 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import { BigNumber } from '@galacticcouncil/sdk';
-import { calcPriceNormalized } from '../../../utils/helpers';
-import {
-  getOldStablepoolAssetVolume,
-  getOldStablepoolVolume,
-  getPoolAssetLastVolumeFromCache,
-  getPoolAssetPreviousVolumeFromCache,
-  getPoolPreviousVolumeFromCache,
-} from '../volumes';
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   StableswapAssetVolumeHistoricalData,
   StableswapVolumeHistoricalData,
 } from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
+import { calcPriceNormalized } from '../../../utils/helpers';
+import {
+  getOldStablepoolAssetVolume,
+  getOldStablepoolVolume,
+  getPoolAssetPreviousVolumeFromCache,
+  getPoolPreviousVolumeFromCache,
+} from '../volumes';
 
 export async function processStableswapAssetNormalizedVolumes({
   blockNumbersToProcess,
@@ -37,8 +37,13 @@ export async function processStableswapAssetNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const currentAssetVolsHistData of stableswapAssetHistVolsByBatchList) {
-    const asset = currentAssetVolsHistData.asset;
+    const asset = currentAssetVolsHistData.assetId ? ctx.batchState.state.assetsAll.get(currentAssetVolsHistData.assetId) : null;
     const pool = currentAssetVolsHistData.volumesCollection.pool;
+
+    if(!asset || !pool) {
+      console.warn(`Asset or Pool data not found for asset ${currentAssetVolsHistData.assetId} or pool ${currentAssetVolsHistData.volumesCollection.pool.id} while processing Stableswap pool volume normalization at para block height ${currentAssetVolsHistData.paraBlockHeight}`);
+      continue;
+    }
 
     const previousAssetHistVolume =
       (getPoolAssetPreviousVolumeFromCache(

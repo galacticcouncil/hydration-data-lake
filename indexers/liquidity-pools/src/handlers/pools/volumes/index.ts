@@ -106,14 +106,13 @@ export async function getOldStablepoolAssetVolume({
 }) {
   return await ctx.storeUtils.findOneWithLogs(StableswapAssetVolumeHistoricalData, {
     where: {
-      asset: { id: `${assetId}` },
+      assetId: `${assetId}` ,
       volumesCollection: { pool: { id: poolId } },
       ...(currentBlockHeight
         ? { paraBlockHeight: LessThan(currentBlockHeight) }
         : {}),
     },
     relations: {
-      asset: true,
       volumesCollection: true,
     },
     order: {

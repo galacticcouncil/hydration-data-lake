@@ -1,14 +1,18 @@
-import { SqdProcessorContext } from '../../../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import {
-  AssetHistoricalData,
+  In,
+  Not,
+} from 'typeorm';
+import { Between } from 'typeorm/find-options/operator/Between';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import {
   Stableswap,
   StableswapAsset,
   StableswapAssetHistoricalData,
   StableswapHistoricalData,
 } from '../../../../../../model';
-import { In, Not } from 'typeorm';
-import { Between } from 'typeorm/find-options/operator/Between';
+import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchStableswapHistoricalData({
   blockNumber,
@@ -37,9 +41,7 @@ export async function fetchStableswapHistoricalData({
           },
           relations: {
             account: true,
-            shareToken: true,
             assets: {
-              asset: true,
               pool: true,
             },
           },
@@ -119,9 +121,8 @@ export async function fetchStableswapHistoricalData({
               : {}),
           },
           relations: {
-            pool: { account: true, shareToken: true },
+            pool: { account: true },
             assetsHistoricalData: {
-              asset: true,
               stableswapAsset: true,
             },
           },
@@ -207,9 +208,7 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
           },
           relations: {
             account: true,
-            shareToken: true,
             assets: {
-              asset: true,
               pool: true,
             },
           },
@@ -306,9 +305,8 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
               : {}),
           },
           relations: {
-            pool: { account: true, shareToken: true },
+            pool: { account: true },
             assetsHistoricalData: {
-              asset: true,
               stableswapAsset: true,
             },
           },

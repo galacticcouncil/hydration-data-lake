@@ -1088,7 +1088,7 @@ type Stableswap @entity {
   "poolId - share token ID (e.g. 102)"
   id: ID!
   account: Account!
-  shareToken: Asset!
+  shareTokenId: String!
 
   createdAtParaBlockHeight: Int! @index
   createdAtRelayBlockHeight: Int!
@@ -1119,7 +1119,7 @@ type StableswapAsset @entity {
   "<stableswapId>-<assetId> (e.g. 101-19)"
   id: ID!
   pool: Stableswap!
-  asset: Asset!
+  assetId: String!
   amount: BigInt!
 }
 
@@ -1146,7 +1146,7 @@ type StableswapAssetVolumeHistoricalData @entity {
   "<stableswapId>-<assetId>-<paraBlockHeight> (e.g. 100-10-101332)"
   id: ID!
   volumesCollection: StableswapVolumeHistoricalData!
-  asset: Asset!
+  assetId: String!
 
   assetFeeVol: BigInt!
   assetTotalFeesVol: BigInt!
@@ -1207,7 +1207,7 @@ type StableswapAssetLiquidityAmount @entity {
   "<stableswapId>-<eventId>-<assetId>"
   id: ID!
   liquidityAction: StableswapLiquidityEvent!
-  asset: Asset!
+  assetId: String!
   amount: BigInt!
 }
 
@@ -1244,7 +1244,7 @@ type StableswapHistoricalData @entity {
 type StableswapAssetHistoricalData @entity {
   "<stablepoolId>-<assetId>-<paraBlockHeight>"
   id: ID!
-  asset: Asset!
+  assetId: String!
   stableswapAsset: StableswapAsset!
   poolHistoricalData: StableswapHistoricalData!
   freeBalance: BigInt!

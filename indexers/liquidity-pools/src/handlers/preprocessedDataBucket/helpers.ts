@@ -487,7 +487,7 @@ export async function getPrefetchedCache({
       StableswapAssetVolumeHistoricalData,
       {
         where: { id: In(stableswapAssetVolIdsToPrefetch) },
-        relations: { volumesCollection: true, asset: true },
+        relations: { volumesCollection: true },
       },
       { className: 'StableswapAssetVolumeHistoricalData' }
     ),

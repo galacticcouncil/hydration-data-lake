@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {StableswapVolumeHistoricalData} from "./stableswapVolumeHistoricalData.model"
-import {Asset} from "./asset.model"
 
 @Entity_()
 export class StableswapAssetVolumeHistoricalData {
@@ -18,9 +17,8 @@ export class StableswapAssetVolumeHistoricalData {
     @ManyToOne_(() => StableswapVolumeHistoricalData, {nullable: true})
     volumesCollection!: StableswapVolumeHistoricalData
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+    @StringColumn_({nullable: false})
+    assetId!: string
 
     @BigIntColumn_({nullable: false})
     assetFeeVol!: bigint

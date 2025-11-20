@@ -135,7 +135,7 @@ async function getStableswapDataPromise({
   if (!poolEntity) return null;
 
   const stableswapAssetsMap = new Map(
-    poolEntity.assets.map((sAsset) => [sAsset.asset.id, sAsset])
+    poolEntity.assets.map((sAsset) => [sAsset.assetId, sAsset])
   );
 
   const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
@@ -179,7 +179,7 @@ async function getStableswapDataPromise({
     poolAssetHistoricalDataEntities.push(
       new StableswapAssetHistoricalData({
         id: `${poolId}-${asset.id}-${blockHeader.height}`,
-        asset,
+        assetId: asset.id,
         stableswapAsset: stableswapAssetsMap.get(asset.id),
         poolHistoricalData: poolHistoricalDataEntity,
         freeBalance: data!.free,

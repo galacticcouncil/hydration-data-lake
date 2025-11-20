@@ -142,8 +142,6 @@ export async function prefetchAllAvailableStableswapVolumesForBlocksRange({
     relations: {
       pool: true,
       assetVolumes: {
-        asset: true,
-        
         volumesCollection: true,
       },
       
@@ -269,8 +267,7 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
     },
     relations: {
-      asset: true,
-      stableswapAsset: { asset: true },
+      stableswapAsset: true,
       poolHistoricalData: true,
     },
   }, { className: 'StableswapAssetHistoricalData' });

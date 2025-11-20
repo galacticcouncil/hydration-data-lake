@@ -58,7 +58,7 @@ export async function getNewStableswapWithAssets({
       accountType: AccountType.Stableswap,
       ensureAccountType: true,
     }),
-    shareToken: poolShareToken,
+    shareTokenId: poolShareToken.id,
     createdAtParaBlockHeight: blockHeader.height,
     createdAtRelayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       blockHeader.height
@@ -105,7 +105,7 @@ export async function getNewStableswapWithAssets({
         arAssetId,
         newPool.account.id
       ),
-      asset: assetEntity!, // TODO fix types
+      assetId: assetEntity!.id,
     });
   });
 
@@ -137,7 +137,7 @@ export async function getOrCreateStableswap({
 
   pool = await ctx.storeUtils.findOneWithLogs(Stableswap, {
     where: { id: `${poolId}` },
-    relations: { assets: { asset: true }, account: true, shareToken: true },
+    relations: { assets: true, account: true },
   }, { className: 'Stableswap' });
 
   if (pool || (!pool && !ensure)) return pool ?? null;
