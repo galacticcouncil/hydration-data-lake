@@ -830,7 +830,7 @@ type Xykpool @entity {
   assetBId: String!
   assetABalance: BigInt!
   assetBBalance: BigInt!
-  shareToken: Asset!
+  shareTokenId: String!
   tvlInRefAssetNorm: String
 
   createdAtParaBlockHeight: Int! @index

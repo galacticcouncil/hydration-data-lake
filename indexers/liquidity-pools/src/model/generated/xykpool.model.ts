@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
 import {Account} from "./account.model"
-import {Asset} from "./asset.model"
 import {XykpoolLifeState} from "./_xykpoolLifeState"
 import {XykpoolPriceHistoricalData} from "./xykpoolPriceHistoricalData.model"
 import {XykpoolVolumeHistoricalData} from "./xykpoolVolumeHistoricalData.model"
@@ -35,9 +34,8 @@ export class Xykpool {
     @BigIntColumn_({nullable: false})
     assetBBalance!: bigint
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    shareToken!: Asset
+    @StringColumn_({nullable: false})
+    shareTokenId!: string
 
     @StringColumn_({nullable: true})
     tvlInRefAssetNorm!: string | undefined | null

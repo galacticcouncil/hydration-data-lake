@@ -35,7 +35,6 @@ export async function fetchXykPoolsHistoricalData({
           },
           relations: {
             account: true,
-            shareToken: true,
           },
         },
         {
@@ -76,7 +75,7 @@ export async function fetchXykPoolsHistoricalData({
               : {}),
           },
           relations: {
-            pool: { account: true, shareToken: true },
+            pool: { account: true },
           },
         },
         {
@@ -121,7 +120,6 @@ export async function fetchXykPoolsHistoricalDataForBlocksRangeResolver({
           },
           relations: {
             account: true,
-            shareToken: true,
           },
         },
         {
@@ -163,7 +161,7 @@ export async function fetchXykPoolsHistoricalDataForBlocksRangeResolver({
               : {}),
           },
           relations: {
-            pool: { account: true, shareToken: true },
+            pool: { account: true },
           },
         },
         {
