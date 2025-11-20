@@ -1,6 +1,10 @@
-import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AccountType, Hsmpool } from '../../../../model';
+
+import {
+  AccountType,
+  Hsmpool,
+} from '../../../../model';
+import { SqdProcessorContext } from '../../../../processor';
 import { getOrCreateAccount } from '../../../accounts';
 
 export async function ensureHsmpool(ctx: SqdProcessorContext<Store>) {
@@ -10,7 +14,7 @@ export async function ensureHsmpool(ctx: SqdProcessorContext<Store>) {
     (await ctx.storeUtils.findOneWithLogs(Hsmpool, {
       where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
       relations: {
-        collaterals: { asset: true, stableswap: true },
+        collaterals: { stableswap: true },
         account: true,
       },
     }, { className: 'Hsmpool' })) ?? null;

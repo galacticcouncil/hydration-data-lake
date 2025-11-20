@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BooleanColumn as BooleanColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BooleanColumn as BooleanColumn_} from "@subsquid/typeorm-store"
 import {Hsmpool} from "./hsmpool.model"
-import {Asset} from "./asset.model"
 import {Stableswap} from "./stableswap.model"
 
 @Entity_()
@@ -19,9 +18,8 @@ export class HsmCollateral {
     @ManyToOne_(() => Hsmpool, {nullable: true})
     pool!: Hsmpool
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+    @StringColumn_({nullable: false})
+    assetId!: string
 
     @Index_()
     @ManyToOne_(() => Stableswap, {nullable: true})

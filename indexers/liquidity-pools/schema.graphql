@@ -1273,7 +1273,7 @@ type HsmCollateral @entity {
   "<hsmpool_address>-<colateral_id>"
   id: ID!
   pool: Hsmpool!
-  asset: Asset!
+  assetId: String!
   stableswap: Stableswap!
   isRemoved: Boolean!
 }

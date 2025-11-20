@@ -172,7 +172,6 @@ export async function prefetchGenericPersistentData(
         where: { isRemoved: false },
         relations: {
           pool: true,
-          asset: true,
           stableswap: true,
         },
       },
@@ -657,7 +656,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            collateral: { asset: true },
+            collateral: true,
             
           },
           order: {

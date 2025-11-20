@@ -2,7 +2,7 @@ import { SqdBlock, SqdProcessorContext } from '../../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import parsers from '../../../../../parsers';
 import { HsmCollateralData } from '../../../../../parsers/types/storage';
-import { HsmCollateral } from '../../../../../model';
+import { Asset, HsmCollateral } from '../../../../../model';
 import { getOrCreateAsset } from '../../../../assets/asset';
 import { getOrCreateStableswap } from '../../stableswap/stablepool';
 import { handleHsmCollateralConfigHistoricalDataEntity } from './historicalData';
@@ -26,24 +26,57 @@ export async function getOrCreateHsmCollateral({
   if (id) {
     collateral = ctx.batchState.state.hsmCollaterals.get(id);
   } else if (!id && assetRegistryId) {
+    // Use assetId field for cache lookup
     collateral = Array.from(ctx.batchState.state.hsmCollaterals.values()).find(
-      (c) => c.asset.assetRegistryId === assetRegistryId
+      (c) => {
+        // Fetch asset from cache to check assetRegistryId
+        const asset = ctx.batchState.state.assetsAll.get(c.assetId);
+        return asset?.assetRegistryId === assetRegistryId;
+      }
     );
   }
 
   if (collateral) return collateral;
 
+  // DB fallback
   collateral = await ctx.storeUtils.findOneWithLogs(HsmCollateral, {
     where: {
       ...(id ? { id } : {}),
-      ...(assetRegistryId ? { asset: { assetRegistryId } } : {}),
     },
     relations: {
-      asset: true,
       pool: true,
       stableswap: true,
     },
   }, { className: 'HsmCollateral' });
+
+  // If we didn't find by id and need to search by assetRegistryId
+  if (!collateral && !id && assetRegistryId) {
+    // Fetch asset from cache or DB
+    let asset = [...ctx.batchState.state.assetsAll.values()].find(
+      (a) => a.assetRegistryId === assetRegistryId
+    );
+
+    if (!asset) {
+      asset = await ctx.storeUtils.findOneWithLogs(Asset, {
+        where: { assetRegistryId },
+      }, { className: 'Asset' });
+
+      if (asset) {
+        ctx.batchState.state.assetsAll.set(asset.id, asset);
+      }
+    }
+
+    if (asset) {
+      // Now query HsmCollateral by assetId
+      collateral = await ctx.storeUtils.findOneWithLogs(HsmCollateral, {
+        where: { assetId: asset.id },
+        relations: {
+          pool: true,
+          stableswap: true,
+        },
+      }, { className: 'HsmCollateral' });
+    }
+  }
 
   if (collateral) {
     ctx.batchState.state.hsmCollaterals.set(collateral.id, collateral);
@@ -99,7 +132,7 @@ export async function getOrCreateHsmCollateral({
   collateral = new HsmCollateral({
     id: id ?? `${ctx.appConfig.HSMPOOL_ADDRESS}-${asset.id}`,
     pool: hsmPool,
-    asset,
+    assetId: asset.id,
     stableswap,
     isRemoved: false,
   });
@@ -138,7 +171,7 @@ export async function ensureHsmCollaterals(ctx: SqdProcessorContext<Store>) {
 
   // const existingCollateralsIndexedByAssetRegistryIdsMap = new Map(
   //   Array.from(ctx.batchState.state.hsmCollaterals.values()).map((c) => [
-  //     c.asset.assetRegistryId,
+  //     ctx.batchState.state.assetsAll.get(c.assetId)?.assetRegistryId,
   //     c,
   //   ])
   // );

@@ -1,5 +1,5 @@
-module.exports = class Data1763617855325 {
-    name = 'Data1763617855325'
+module.exports = class Data1763631783646 {
+    name = 'Data1763631783646'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, "stableswap_hist_data_latest_block" integer, "omnipool_hist_data_latest_block" integer, "xykpool_hist_data_latest_block" integer, "aavepool_hist_data_latest_block" integer, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -108,9 +108,8 @@ module.exports = class Data1763617855325 {
         await db.query(`CREATE INDEX "IDX_8a70b1d5b66e58d284f61e3773" ON "stableswap" ("account_id") `)
         await db.query(`CREATE INDEX "IDX_a2064ceedb89bb55def0910011" ON "stableswap" ("created_at_para_block_height") `)
         await db.query(`CREATE TABLE "aave_facilitator" ("id" character varying NOT NULL, "label" text NOT NULL, "is_removed" boolean NOT NULL, CONSTRAINT "PK_0cbd7c4da13ecf255f81e05edd7" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE TABLE "hsm_collateral" ("id" character varying NOT NULL, "is_removed" boolean NOT NULL, "pool_id" character varying, "asset_id" character varying, "stableswap_id" character varying, CONSTRAINT "PK_cc9b986b387028617139eaab41b" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "hsm_collateral" ("id" character varying NOT NULL, "asset_id" text NOT NULL, "is_removed" boolean NOT NULL, "pool_id" character varying, "stableswap_id" character varying, CONSTRAINT "PK_cc9b986b387028617139eaab41b" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_7ee060b56a10784157c9352b46" ON "hsm_collateral" ("pool_id") `)
-        await db.query(`CREATE INDEX "IDX_dbce719a573bd1141f36193e60" ON "hsm_collateral" ("asset_id") `)
         await db.query(`CREATE INDEX "IDX_908443676e328c440eb6dd10bf" ON "hsm_collateral" ("stableswap_id") `)
         await db.query(`CREATE TABLE "hsmpool" ("id" character varying NOT NULL, "account_id" character varying, "facilitator_id" character varying, CONSTRAINT "PK_8c9e99712cd8f9b2f9d216a467d" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_4b1645690c39bbbec58bda7062" ON "hsmpool" ("account_id") `)
@@ -453,7 +452,6 @@ module.exports = class Data1763617855325 {
         await db.query(`ALTER TABLE "stableswap_asset" ADD CONSTRAINT "FK_8205ac8ad2bef6985fa6a44caa7" FOREIGN KEY ("pool_id") REFERENCES "stableswap"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "stableswap" ADD CONSTRAINT "FK_8a70b1d5b66e58d284f61e37734" FOREIGN KEY ("account_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "hsm_collateral" ADD CONSTRAINT "FK_7ee060b56a10784157c9352b463" FOREIGN KEY ("pool_id") REFERENCES "hsmpool"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
-        await db.query(`ALTER TABLE "hsm_collateral" ADD CONSTRAINT "FK_dbce719a573bd1141f36193e60c" FOREIGN KEY ("asset_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "hsm_collateral" ADD CONSTRAINT "FK_908443676e328c440eb6dd10bfa" FOREIGN KEY ("stableswap_id") REFERENCES "stableswap"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "hsmpool" ADD CONSTRAINT "FK_4b1645690c39bbbec58bda7062b" FOREIGN KEY ("account_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "hsmpool" ADD CONSTRAINT "FK_16c6e7c489d652c684dfc33afbf" FOREIGN KEY ("facilitator_id") REFERENCES "aave_facilitator"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -729,7 +727,6 @@ module.exports = class Data1763617855325 {
         await db.query(`DROP TABLE "aave_facilitator"`)
         await db.query(`DROP TABLE "hsm_collateral"`)
         await db.query(`DROP INDEX "public"."IDX_7ee060b56a10784157c9352b46"`)
-        await db.query(`DROP INDEX "public"."IDX_dbce719a573bd1141f36193e60"`)
         await db.query(`DROP INDEX "public"."IDX_908443676e328c440eb6dd10bf"`)
         await db.query(`DROP TABLE "hsmpool"`)
         await db.query(`DROP INDEX "public"."IDX_4b1645690c39bbbec58bda7062"`)
@@ -1072,7 +1069,6 @@ module.exports = class Data1763617855325 {
         await db.query(`ALTER TABLE "stableswap_asset" DROP CONSTRAINT "FK_8205ac8ad2bef6985fa6a44caa7"`)
         await db.query(`ALTER TABLE "stableswap" DROP CONSTRAINT "FK_8a70b1d5b66e58d284f61e37734"`)
         await db.query(`ALTER TABLE "hsm_collateral" DROP CONSTRAINT "FK_7ee060b56a10784157c9352b463"`)
-        await db.query(`ALTER TABLE "hsm_collateral" DROP CONSTRAINT "FK_dbce719a573bd1141f36193e60c"`)
         await db.query(`ALTER TABLE "hsm_collateral" DROP CONSTRAINT "FK_908443676e328c440eb6dd10bfa"`)
         await db.query(`ALTER TABLE "hsmpool" DROP CONSTRAINT "FK_4b1645690c39bbbec58bda7062b"`)
         await db.query(`ALTER TABLE "hsmpool" DROP CONSTRAINT "FK_16c6e7c489d652c684dfc33afbf"`)
