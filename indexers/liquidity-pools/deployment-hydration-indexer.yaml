@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 615
+slot: 616
 description: Hydration pools indexer
 build:
 deploy:
@@ -13,9 +13,9 @@ deploy:
         log_min_duration_statement: 60000
   processor:
     env:
-      INDEXER_ID: 615
+      INDEXER_ID: 616
       CHAIN: 'hydration'
-      RPC_URL: 'wss://node-subwhale-6.shellfish.hydration.cloud'
+      RPC_URL: 'wss://node-subwhale-5.shellfish.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
       PROCESS_XYK_POOLS: true
@@ -40,7 +40,7 @@ deploy:
       - process:prod
   api:
     env:
-      INDEXER_ID: 615
+      INDEXER_ID: 616
       NODE_ENV: 'production'
       CHAIN: 'hydration'
       GQL_PORT: 8080
@@ -52,12 +52,12 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
-      profile: medium
+      profile: large
       storage: 250G
   processor:
-    profile: medium
+    profile: large
   api:
     profile: small
