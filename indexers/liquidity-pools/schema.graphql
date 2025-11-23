@@ -1599,8 +1599,8 @@ type OtcOrder @entity {
   id: ID!
 
   owner: Account!
-  assetIn: Asset!
-  assetOut: Asset!
+  assetInId: String!
+  assetOutId: String!
   amountOut: BigInt!
   amountIn: BigInt!
   partiallyFillable: Boolean

@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
-import {Asset} from "./asset.model"
 import {OtcOrderStatus} from "./_otcOrderStatus"
 import {OtcOrderEvent} from "./otcOrderEvent.model"
 
@@ -20,13 +19,11 @@ export class OtcOrder {
     @ManyToOne_(() => Account, {nullable: true})
     owner!: Account
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetIn!: Asset
+    @StringColumn_({nullable: false})
+    assetInId!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetOut!: Asset
+    @StringColumn_({nullable: false})
+    assetOutId!: string
 
     @BigIntColumn_({nullable: false})
     amountOut!: bigint

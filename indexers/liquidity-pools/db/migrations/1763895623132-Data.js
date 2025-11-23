@@ -1,5 +1,5 @@
-module.exports = class Data1763894239327 {
-    name = 'Data1763894239327'
+module.exports = class Data1763895623132 {
+    name = 'Data1763895623132'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, "stableswap_hist_data_latest_block" integer, "omnipool_hist_data_latest_block" integer, "xykpool_hist_data_latest_block" integer, "aavepool_hist_data_latest_block" integer, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -139,10 +139,8 @@ module.exports = class Data1763894239327 {
         await db.query(`CREATE INDEX "IDX_c4198e06f94525f8a607d950e8" ON "dca_schedule_execution_event" ("event_name") `)
         await db.query(`CREATE INDEX "IDX_e18bcb72567eb07bce5906ab49" ON "dca_schedule_execution_event" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_aa60a061c19ce212292886dc69" ON "dca_schedule_execution_event" ("event_id") `)
-        await db.query(`CREATE TABLE "otc_order" ("id" character varying NOT NULL, "amount_out" numeric NOT NULL, "amount_in" numeric NOT NULL, "partially_fillable" boolean, "status" character varying(15), "total_filled_amount_in" numeric, "total_filled_amount_out" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "owner_id" character varying, "asset_in_id" character varying, "asset_out_id" character varying, CONSTRAINT "PK_62f22d282db637808ecfae04b64" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "otc_order" ("id" character varying NOT NULL, "asset_in_id" text NOT NULL, "asset_out_id" text NOT NULL, "amount_out" numeric NOT NULL, "amount_in" numeric NOT NULL, "partially_fillable" boolean, "status" character varying(15), "total_filled_amount_in" numeric, "total_filled_amount_out" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "owner_id" character varying, CONSTRAINT "PK_62f22d282db637808ecfae04b64" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_361786e76b68398680313ff32c" ON "otc_order" ("owner_id") `)
-        await db.query(`CREATE INDEX "IDX_944b7b08b3499484f282f1072b" ON "otc_order" ("asset_in_id") `)
-        await db.query(`CREATE INDEX "IDX_870e593710669cdd8062a11824" ON "otc_order" ("asset_out_id") `)
         await db.query(`CREATE INDEX "IDX_7329c1f404d46516062d62a6ea" ON "otc_order" ("status") `)
         await db.query(`CREATE INDEX "IDX_a43414db0dc3af4e401ab32aa5" ON "otc_order" ("para_block_height") `)
         await db.query(`CREATE TABLE "otc_order_event" ("id" character varying NOT NULL, "operation_id" text, "trace_ids" text array, "event_name" character varying(15), "amount_in" numeric, "amount_out" numeric, "fee" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "order_id" character varying, "filler_id" character varying, "swap_id" character varying, "event_id" character varying, CONSTRAINT "PK_2d73db3b0c38a924be9e0320ed3" PRIMARY KEY ("id"))`)
@@ -461,8 +459,6 @@ module.exports = class Data1763894239327 {
         await db.query(`ALTER TABLE "dca_schedule_execution_event" ADD CONSTRAINT "FK_565ba0bf810f7fcc7ff9bb5ac10" FOREIGN KEY ("schedule_execution_id") REFERENCES "dca_schedule_execution"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "dca_schedule_execution_event" ADD CONSTRAINT "FK_aa60a061c19ce212292886dc695" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "otc_order" ADD CONSTRAINT "FK_361786e76b68398680313ff32c5" FOREIGN KEY ("owner_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
-        await db.query(`ALTER TABLE "otc_order" ADD CONSTRAINT "FK_944b7b08b3499484f282f1072b5" FOREIGN KEY ("asset_in_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
-        await db.query(`ALTER TABLE "otc_order" ADD CONSTRAINT "FK_870e593710669cdd8062a118245" FOREIGN KEY ("asset_out_id") REFERENCES "asset"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "otc_order_event" ADD CONSTRAINT "FK_09c0199552c2cecc73771aee4a1" FOREIGN KEY ("order_id") REFERENCES "otc_order"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "otc_order_event" ADD CONSTRAINT "FK_ffec4e15150b2964829e36d76d2" FOREIGN KEY ("filler_id") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "otc_order_event" ADD CONSTRAINT "FK_dfb176806ea22e9ea78d5e02db0" FOREIGN KEY ("swap_id") REFERENCES "swap"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -746,8 +742,6 @@ module.exports = class Data1763894239327 {
         await db.query(`DROP INDEX "public"."IDX_aa60a061c19ce212292886dc69"`)
         await db.query(`DROP TABLE "otc_order"`)
         await db.query(`DROP INDEX "public"."IDX_361786e76b68398680313ff32c"`)
-        await db.query(`DROP INDEX "public"."IDX_944b7b08b3499484f282f1072b"`)
-        await db.query(`DROP INDEX "public"."IDX_870e593710669cdd8062a11824"`)
         await db.query(`DROP INDEX "public"."IDX_7329c1f404d46516062d62a6ea"`)
         await db.query(`DROP INDEX "public"."IDX_a43414db0dc3af4e401ab32aa5"`)
         await db.query(`DROP TABLE "otc_order_event"`)
@@ -1066,8 +1060,6 @@ module.exports = class Data1763894239327 {
         await db.query(`ALTER TABLE "dca_schedule_execution_event" DROP CONSTRAINT "FK_565ba0bf810f7fcc7ff9bb5ac10"`)
         await db.query(`ALTER TABLE "dca_schedule_execution_event" DROP CONSTRAINT "FK_aa60a061c19ce212292886dc695"`)
         await db.query(`ALTER TABLE "otc_order" DROP CONSTRAINT "FK_361786e76b68398680313ff32c5"`)
-        await db.query(`ALTER TABLE "otc_order" DROP CONSTRAINT "FK_944b7b08b3499484f282f1072b5"`)
-        await db.query(`ALTER TABLE "otc_order" DROP CONSTRAINT "FK_870e593710669cdd8062a118245"`)
         await db.query(`ALTER TABLE "otc_order_event" DROP CONSTRAINT "FK_09c0199552c2cecc73771aee4a1"`)
         await db.query(`ALTER TABLE "otc_order_event" DROP CONSTRAINT "FK_ffec4e15150b2964829e36d76d2"`)
         await db.query(`ALTER TABLE "otc_order_event" DROP CONSTRAINT "FK_dfb176806ea22e9ea78d5e02db0"`)

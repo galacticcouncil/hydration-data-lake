@@ -86,8 +86,6 @@ async function prefetchEntities(
     where: { id: In(orderIds) },
     relations: {
       owner: true,
-      assetIn: true,
-      assetOut: true,
       events: {
         filler: true,
         order: true,

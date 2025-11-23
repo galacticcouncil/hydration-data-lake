@@ -1,10 +1,18 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { getOrCreateAsset } from '../assets/asset';
-import { OtcOrder, OtcOrderStatus } from '../../model';
-import { getOrCreateAccount } from '../accounts';
-import { OtcOrderPlacedEventParams } from '../../parsers/types/events';
 import { FindOptionsRelations } from 'typeorm';
+
+import { Store } from '@subsquid/typeorm-store';
+
+import {
+  OtcOrder,
+  OtcOrderStatus,
+} from '../../model';
+import { OtcOrderPlacedEventParams } from '../../parsers/types/events';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import { getOrCreateAccount } from '../accounts';
+import { getOrCreateAsset } from '../assets/asset';
 
 export async function createOtcOrder({
   ctx,
@@ -51,8 +59,8 @@ export async function createOtcOrder({
   const newOrder = new OtcOrder({
     id: orderId.toString(),
     owner: await getOrCreateAccount({ ctx, id: ownerAddress }),
-    assetIn,
-    assetOut,
+    assetInId: assetIn.id,
+    assetOutId: assetOut.id,
     amountIn: amountIn,
     amountOut: amountOut,
     partiallyFillable,
@@ -72,8 +80,6 @@ export async function getOtcOrder({
   id,
   relations = {
     owner: true,
-    assetIn: true,
-    assetOut: true,
     events: true,
   },
   fetchFromDb = true,
