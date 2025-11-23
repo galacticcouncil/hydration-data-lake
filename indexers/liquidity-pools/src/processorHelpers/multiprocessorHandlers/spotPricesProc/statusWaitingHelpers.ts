@@ -75,8 +75,6 @@ export async function waitForSpotPricesRelatedHistoricalData(
         paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
       },
       relations: {
-        assetA: true,
-        assetB: true,
       },
     }, { className: 'EmaOracleEntryHistoricalData' });
 

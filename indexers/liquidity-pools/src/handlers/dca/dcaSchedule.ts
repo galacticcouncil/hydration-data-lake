@@ -1,23 +1,28 @@
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import { FindOptionsRelations } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
-import { getOrCreateAsset } from '../assets/asset';
+
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import {
   DcaSchedule,
-  DcaScheduleStatus,
   DcaScheduleOrderRouteHop,
+  DcaScheduleStatus,
   DispatchError,
 } from '../../model';
-import { getOrCreateAccount } from '../accounts';
+import parsers from '../../parsers';
 import {
   DcaCompletedData,
   DcaScheduledData,
   DcaTerminatedData,
 } from '../../parsers/batchBlocksParser/types';
-import { DcaScheduledEventParams } from '../../parsers/types/events';
 import { DcaScheduleCallArgs } from '../../parsers/types/calls';
-import { FindOptionsRelations } from 'typeorm';
-import parsers from '../../parsers';
-import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { DcaScheduledEventParams } from '../../parsers/types/events';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
+import { getOrCreateAccount } from '../accounts';
+import { getOrCreateAsset } from '../assets/asset';
 import { processDcaScheduleEvent } from './dcaScheduleEvents';
 
 export async function createDcaSchedule({
@@ -69,8 +74,8 @@ export async function createDcaSchedule({
     slippage: slippage ?? null,
     maxRetries: maxRetries ?? null,
     stabilityThreshold: stabilityThreshold ?? null,
-    assetIn,
-    assetOut,
+    assetInId: assetIn.id,
+    assetOutId: assetOut.id,
     amountIn: order.amountIn ?? null,
     amountOut: order.amountOut ?? null,
     maxAmountIn: order.maxAmountIn ?? null,
@@ -110,8 +115,8 @@ export async function createDcaSchedule({
         id: `${newSchedule.id}-${routeAssetIn.id}-${routeAssetOut.id}`,
         schedule: newSchedule,
         poolKind: orderRoute.poolKind,
-        assetIn: routeAssetIn,
-        assetOut: routeAssetOut,
+        assetInId: routeAssetIn.id,
+        assetOutId: routeAssetOut.id,
       })
     );
   }

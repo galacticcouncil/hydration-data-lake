@@ -25,8 +25,6 @@ export async function fetchEmaOracleEntriesHistoricalData({
             paraBlockHeight: blockNumber,
           },
           relations: {
-            assetA: true,
-            assetB: true,
           },
         },
         {
@@ -78,8 +76,6 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver(
             paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
           },
           relations: {
-            assetA: true,
-            assetB: true,
           },
         },
         {

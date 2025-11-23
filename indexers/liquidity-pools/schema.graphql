@@ -1449,8 +1449,8 @@ type EmaOracleEntryHistoricalData @entity {
   "<paraBlockHeight>-<assetAId>-<assetBId>-<source>-<period>"
   id: ID!
 
-  assetA: Asset!
-  assetB: Asset!
+  assetAId: String!
+  assetBId: String!
 
   assetAAssetRegistryId: String!
   assetBAssetRegistryId: String!
@@ -1519,10 +1519,10 @@ type DcaSchedule @entity {
   totalExecutedAmountIn: BigInt
   totalExecutedAmountOut: BigInt
 
-  assetIn: Asset
+  assetInId: String
   amountIn: BigInt
   maxAmountIn: BigInt
-  assetOut: Asset
+  assetOutId: String
   amountOut: BigInt
   minAmountOut: BigInt
   orderType: DcaScheduleOrderType!
@@ -1540,8 +1540,8 @@ type DcaScheduleOrderRouteHop @entity {
   id: ID!
   schedule: DcaSchedule!
   poolKind: SwapFillerType
-  assetIn: Asset
-  assetOut: Asset
+  assetInId: String
+  assetOutId: String
 }
 
 type DcaScheduleEvent @entity {

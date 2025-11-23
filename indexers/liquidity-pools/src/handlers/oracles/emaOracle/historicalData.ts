@@ -77,8 +77,8 @@ export async function handleEmaOracleHistoricalData(
               new EmaOracleEntryHistoricalData({
                 id: `${blockHeader.height}-${assetA.id}-${assetB.id}-${source}-${period}`,
 
-                assetA,
-                assetB,
+                assetAId: assetA.id,
+                assetBId: assetB.id,
                 assetAAssetRegistryId: assetA.assetRegistryId,
                 assetBAssetRegistryId: assetB.assetRegistryId,
                 source,

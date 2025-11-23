@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, ManyToOne as ManyToOne_, IntColumn as IntColumn_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import {DcaScheduleStatus} from "./_dcaScheduleStatus"
 import {Account} from "./account.model"
-import {Asset} from "./asset.model"
 import {DcaScheduleOrderType} from "./_dcaScheduleOrderType"
 import {DcaScheduleOrderRouteHop} from "./dcaScheduleOrderRouteHop.model"
 import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
@@ -58,9 +57,8 @@ export class DcaSchedule {
     @BigIntColumn_({nullable: true})
     totalExecutedAmountOut!: bigint | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetIn!: Asset | undefined | null
+    @StringColumn_({nullable: true})
+    assetInId!: string | undefined | null
 
     @BigIntColumn_({nullable: true})
     amountIn!: bigint | undefined | null
@@ -68,9 +66,8 @@ export class DcaSchedule {
     @BigIntColumn_({nullable: true})
     maxAmountIn!: bigint | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    assetOut!: Asset | undefined | null
+    @StringColumn_({nullable: true})
+    assetOutId!: string | undefined | null
 
     @BigIntColumn_({nullable: true})
     amountOut!: bigint | undefined | null
