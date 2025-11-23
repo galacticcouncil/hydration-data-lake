@@ -1,16 +1,18 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { EvmEventName, MmBorrow, MmLiquidationCall } from '../../../model';
+
 import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
+import {
+  EvmEventName,
+  MmLiquidationCall,
+} from '../../../model';
+import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import { SqdProcessorContext } from '../../../processor';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmLiquidationCallEvent(
   ctx: SqdProcessorContext<Store>,
@@ -73,8 +75,8 @@ export async function handleMmLiquidationCallEvent(
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
     ],
-    collateralAsset: collateralAssetEntity,
-    debtAsset: debtAssetEntity,
+    collateralAssetId: collateralAssetEntity.id,
+    debtAssetId: debtAssetEntity.id,
     account,
     liquidatorAccount,
     liquidatedCollateralAmount: parsedEvmEventData.liquidatedCollateralAmount,

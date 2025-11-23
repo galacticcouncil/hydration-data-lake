@@ -153,9 +153,6 @@ export async function prefetchGenericPersistentData(
         {
           where: {},
           relations: {
-            aToken: true,
-            underlyingAsset: true,
-            variableDebtToken: true,
             aavePool: true,
           },
         },

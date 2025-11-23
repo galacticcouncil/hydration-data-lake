@@ -1,5 +1,4 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
-import {Asset} from "./asset.model"
 import {Account} from "./account.model"
 import {Event} from "./event.model"
 
@@ -18,13 +17,11 @@ export class MmLiquidationCall {
     @StringColumn_({array: true, nullable: true})
     traceIds!: (string)[] | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    collateralAsset!: Asset
+    @StringColumn_({nullable: false})
+    collateralAssetId!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    debtAsset!: Asset
+    @StringColumn_({nullable: false})
+    debtAssetId!: string
 
     @Index_()
     @ManyToOne_(() => Account, {nullable: true})

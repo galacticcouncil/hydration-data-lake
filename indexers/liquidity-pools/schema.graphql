@@ -1751,7 +1751,7 @@ type MmRepay @entity {
   id: ID!
   traceIds: [String!]
 
-  asset: Asset!
+  assetId: String!
   account: Account!
   repayerAccount: Account!
   amount: BigInt
@@ -1767,8 +1767,8 @@ type MmLiquidationCall @entity {
   id: ID!
   traceIds: [String!]
 
-  collateralAsset: Asset!
-  debtAsset: Asset!
+  collateralAssetId: String!
+  debtAssetId: String!
   account: Account!
   debtToCoverAmount: BigInt
   liquidatedCollateralAmount: BigInt
@@ -1786,7 +1786,7 @@ type MmReserveUsedAsCollateralEnabledEvent @entity {
   traceIds: [String!]
 
   account: Account!
-  asset: Asset!
+  assetId: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1799,7 +1799,7 @@ type MmReserveUsedAsCollateralDisabledEvent @entity {
   traceIds: [String!]
 
   account: Account!
-  asset: Asset!
+  assetId: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1862,9 +1862,9 @@ type MoneyMarketEvent @entity {
 type MoneyMarketReserve @entity {
   "<underlying_asset_address>"
   id: ID!
-  aToken: Asset!
-  underlyingAsset: Asset!
-  variableDebtToken: Asset!
+  aTokenId: String!
+  underlyingAssetId: String!
+  variableDebtTokenId: String!
   aavePool: Aavepool
 
   name: String!

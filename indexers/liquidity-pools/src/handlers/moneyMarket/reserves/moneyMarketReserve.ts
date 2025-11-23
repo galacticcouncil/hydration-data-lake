@@ -1,24 +1,29 @@
-import {
-  MoneyMarketContractsManager,
-  MoneyMarketResourceDetails,
-} from '../../../utils/evmTools/moneyMarketContractsManager';
-import { SqdBlock, SqdProcessorContext } from '../../../processor';
-import {
-  processMmReserveIndexesHistoricalData,
-  processMmReserveIndexesHistoricalDataEntity,
-} from './moneyMarketReservesIndexesHistoricalData';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   EvmContractName,
   EvmEventName,
   MoneyMarketReserve,
 } from '../../../model';
 import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../processor';
+import {
+  MoneyMarketContractsManager,
+  MoneyMarketResourceDetails,
+} from '../../../utils/evmTools/moneyMarketContractsManager';
+import {
   getOrCreateAsset,
   getOrCreateMoneyMarketAsset,
 } from '../../assets/asset';
 import { getOrCreateAavepool } from '../../pools/pools/aavepool';
-import { handleMoneyMarketReserveConfigOnConfiguratorUpdate } from './moneyMarketReservesConfigHistoricalData';
+import {
+  handleMoneyMarketReserveConfigOnConfiguratorUpdate,
+} from './moneyMarketReservesConfigHistoricalData';
+import {
+  processMmReserveIndexesHistoricalDataEntity,
+} from './moneyMarketReservesIndexesHistoricalData';
 
 export async function getOrCreateMoneyMarketReserve({
   id,
@@ -38,9 +43,6 @@ export async function getOrCreateMoneyMarketReserve({
   reserveEntity = await ctx.storeUtils.findOneWithLogs(MoneyMarketReserve, {
     where: { id },
     relations: {
-      aToken: true,
-      underlyingAsset: true,
-      variableDebtToken: true,
       aavePool: true,
     },
   }, { className: 'MoneyMarketReserve' });
@@ -136,9 +138,9 @@ export async function getOrCreateMoneyMarketReserve({
 
   reserveEntity = new MoneyMarketReserve({
     id: reserveDataToProcess.underlyingAssetAddress.toLowerCase(),
-    aToken: aTokenEntity,
-    underlyingAsset: underliningAssetEntity,
-    variableDebtToken: variableDebtTokenEntity,
+    aTokenId: aTokenEntity.id,
+    underlyingAssetId: underliningAssetEntity.id,
+    variableDebtTokenId: variableDebtTokenEntity.id,
     aavePool: aavepoolEntity ?? null,
 
     name: reserveDataToProcess.name,
@@ -179,9 +181,6 @@ export async function actualizeMoneyMarketReserves({
         await ctx.storeUtils.findWithLogs(MoneyMarketReserve, {
           where: {},
           relations: {
-            aToken: true,
-            underlyingAsset: true,
-            variableDebtToken: true,
             aavePool: true,
           },
         }, { className: 'MoneyMarketReserve' })

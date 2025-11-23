@@ -1,20 +1,18 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
+
+import {
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
 import {
   EvmEventName,
   MmReserveUsedAsCollateralDisabledEvent,
-  MmReserveUsedAsCollateralEnabledEvent,
 } from '../../../model';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import { SqdProcessorContext } from '../../../processor';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmReserveUsedAsCollateralDisabledEvent(
   ctx: SqdProcessorContext<Store>,
@@ -59,7 +57,7 @@ export async function handleMmReserveUsedAsCollateralDisabledEvent(
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
     ],
-    asset: assetEntity,
+    assetId: assetEntity.id,
     account,
 
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
