@@ -1,4 +1,7 @@
-import { FindOptionsRelations, In } from 'typeorm';
+import {
+  FindOptionsRelations,
+  In,
+} from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
@@ -282,7 +285,10 @@ export async function getOrCreateAsset({
     blockHeader
   );
 
-  if (!storageData) return null;
+  if (!storageData){
+    console.log(`getOrCreateAsset :: No storage data found for assetRegistryId ${assetRegistryId} at block ${blockHeader.height}`);
+    return null;
+  };
 
   const erc20AssetContractAddress = await getAssetEvmAddressByType({
     assetId: +assetRegistryId,

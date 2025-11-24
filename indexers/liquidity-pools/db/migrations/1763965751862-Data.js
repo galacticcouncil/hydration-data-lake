@@ -1,5 +1,5 @@
-module.exports = class Data1763896651673 {
-    name = 'Data1763896651673'
+module.exports = class Data1763965751862 {
+    name = 'Data1763965751862'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, "stableswap_hist_data_latest_block" integer, "omnipool_hist_data_latest_block" integer, "xykpool_hist_data_latest_block" integer, "aavepool_hist_data_latest_block" integer, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -252,7 +252,7 @@ module.exports = class Data1763896651673 {
         await db.query(`CREATE INDEX "IDX_937e18718ecccaef8cdbea1616" ON "mm_reserve_config_historical_data" ("para_block_height") `)
         await db.query(`CREATE TABLE "money_market_reserve" ("id" character varying NOT NULL, "a_token_id" text NOT NULL, "underlying_asset_id" text NOT NULL, "variable_debt_token_id" text NOT NULL, "name" text NOT NULL, "symbol" text NOT NULL, "decimals" integer NOT NULL, "aave_pool_id" character varying, CONSTRAINT "PK_d562d71cb7574568b15bb07d3ce" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_349b9def6844db4407e2abbba5" ON "money_market_reserve" ("aave_pool_id") `)
-        await db.query(`CREATE TABLE "aavepool_historical_data" ("id" character varying NOT NULL, "reserve_asset_id" text, "reserve_asset_registry_id" text, "a_token_id" text, "a_token_registry_id" text, "liquidity_in" numeric NOT NULL, "liquidity_out" numeric NOT NULL, "tvl_in_ref_asset_norm" text, "a_token_total_supply" numeric, "variable_debt_token_total_supply" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "pool_id" character varying, CONSTRAINT "PK_5f3ed369ac4ab9081b1bc54bce1" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "aavepool_historical_data" ("id" character varying NOT NULL, "reserve_asset_id" text, "reserve_asset_registry_id" text, "a_token_id" text NOT NULL, "a_token_registry_id" text NOT NULL, "liquidity_in" numeric NOT NULL, "liquidity_out" numeric NOT NULL, "tvl_in_ref_asset_norm" text, "a_token_total_supply" numeric, "variable_debt_token_total_supply" numeric, "para_block_height" integer NOT NULL, "relay_block_height" integer NOT NULL, "block_id" text, "pool_id" character varying, CONSTRAINT "PK_5f3ed369ac4ab9081b1bc54bce1" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_093b7c9bca5cbcadf7641a4b58" ON "aavepool_historical_data" ("pool_id") `)
         await db.query(`CREATE INDEX "IDX_b036adf6e514ff7219dd300a73" ON "aavepool_historical_data" ("para_block_height") `)
         await db.query(`CREATE TABLE "aavepool" ("id" character varying NOT NULL, "reserve_asset_id" text NOT NULL, "a_token_id" text NOT NULL, "money_market_reserve_id" character varying, CONSTRAINT "PK_1626daca149540fd0c3590fa65a" PRIMARY KEY ("id"))`)

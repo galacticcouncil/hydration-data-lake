@@ -120,10 +120,16 @@ export async function handleAavepoolHistoricalData(
 
         const aToken = await getOrCreateAsset({
           id: pool.aTokenId,
+          assetRegistryId: pool.aTokenId,
           ensure: true,
           blockHeader,
           ctx,
         })
+
+        if (!aToken) {
+          console.log(`handleAavepoolHistoricalData :: aToken asset not found for pool ${pool.id} at block ${blockHeader.height}`);
+          return;
+        }
 
         const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
         if (!block) {
@@ -136,7 +142,7 @@ export async function handleAavepoolHistoricalData(
           reserveAssetId: reserveAsset.id,
           reserveAssetRegistryId: reserveAsset.assetRegistryId,
           aTokenId: aToken?.id,
-          aTokenRegistryId: aToken?.assetRegistryId,
+          aTokenRegistryId: aToken?.assetRegistryId?.toString() || '',
 
           liquidityIn: poolData.data.liquidityIn,
           liquidityOut: poolData.data.liquidityOut,

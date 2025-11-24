@@ -23,11 +23,11 @@ export class AavepoolHistoricalData {
     @StringColumn_({nullable: true})
     reserveAssetRegistryId!: string | undefined | null
 
-    @StringColumn_({nullable: true})
-    aTokenId!: string | undefined | null
+    @StringColumn_({nullable: false})
+    aTokenId!: string
 
-    @StringColumn_({nullable: true})
-    aTokenRegistryId!: string | undefined | null
+    @StringColumn_({nullable: false})
+    aTokenRegistryId!: string
 
     @BigIntColumn_({nullable: false})
     liquidityIn!: bigint
