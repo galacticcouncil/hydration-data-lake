@@ -8,6 +8,7 @@ import {
   SqdProcessorContext,
 } from '../../../../processor';
 import { getAavePoolAddress } from '../../../../utils/helpers';
+import { batchGetOrCreateAssets } from '../../../assets/asset';
 
 export async function getOrCreateAavepool({
   reserveAssetId,
@@ -52,7 +53,16 @@ export async function getOrCreateAavepool({
     return null;
   }
 
-  if (!reserveAssetId || !aTokenId) throw new Error('No asset found for Aavepool');
+  console.log({reserveAssetId, aTokenId, poolId})
+  const assetsMap = await batchGetOrCreateAssets({
+    ids: [reserveAssetId, aTokenId],
+    ensure: true,
+    blockHeader,
+    ctx,
+  });
+
+
+  if (!assetsMap.get(reserveAssetId) || !assetsMap.get(aTokenId)) throw new Error('No asset found for Aavepool');
 
   const newPool = new Aavepool({
     id: poolId,

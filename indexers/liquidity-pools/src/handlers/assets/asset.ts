@@ -275,7 +275,10 @@ export async function getOrCreateAsset({
    * pre-created before indexing start point.
    */
 
-  if (!blockHeader || !assetRegistryId) return null; //TODO fix this
+  if (!blockHeader || !assetRegistryId){ 
+    console.log(`getOrCreateAsset :: Missing blockHeader or assetRegistryId for asset creation.`);
+    return null
+  }; //TODO fix this
   if(+assetRegistryId > Number.MAX_SAFE_INTEGER) {
     console.log(`getOrCreateAsset :: assetRegistryId ${assetRegistryId} is too large to process. Skipping...`); 
     return null;

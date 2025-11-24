@@ -150,7 +150,9 @@ export async function singleFlowAllInOneProcessor(
 
   if (!parsedData) throw new Error('parsedData is null');
 
+  console.time('ensureNativeToken');
   await ensureNativeToken(ctx);
+  console.timeEnd('ensureNativeToken');
 
   console.time('actualiseAssets');
   await actualiseAssets(ctx);
