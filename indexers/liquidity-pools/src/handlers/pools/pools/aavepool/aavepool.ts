@@ -2,7 +2,7 @@ import { FindOptionsRelations } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import { Aavepool } from '../../../../model';
+import { Aavepool, Asset } from '../../../../model';
 import {
   SqdBlock,
   SqdProcessorContext,
@@ -53,21 +53,43 @@ export async function getOrCreateAavepool({
     return null;
   }
 
-  console.log({reserveAssetId, aTokenId, poolId})
   const assetsMap = await batchGetOrCreateAssets({
-    ids: [reserveAssetId, aTokenId],
+    assetRegistryIds: [reserveAssetId, aTokenId],
     ensure: true,
     blockHeader,
     ctx,
   });
 
+  // Build secondary Map indexed by assetRegistryId for lookup
+  // (assetsMap is keyed by Asset.id which may differ from assetRegistryId for ERC20 tokens)
+  const assetsByRegistryId = new Map<string, Asset>();
+  for (const asset of assetsMap.values()) {
+    if (asset.assetRegistryId) {
+      assetsByRegistryId.set(asset.assetRegistryId, asset);
+    }
+  }
 
-  if (!assetsMap.get(reserveAssetId) || !assetsMap.get(aTokenId)) throw new Error('No asset found for Aavepool');
+  // Validate both assets were found
+  if (assetsByRegistryId.size < 2) {
+    throw new Error(
+      `Missing assets for Aavepool: Expected 2 (reserve: ${reserveAssetId}, aToken: ${aTokenId}), found ${assetsByRegistryId.size}`
+    );
+  }
+
+  // Extract assets using assetRegistryId lookup
+  const reserveAsset = assetsByRegistryId.get(reserveAssetId);
+  const aTokenAsset = assetsByRegistryId.get(aTokenId);
+
+  if (!reserveAsset || !aTokenAsset) {
+    throw new Error(
+      `Failed to retrieve assets for Aavepool: reserve=${!!reserveAsset}, aToken=${!!aTokenAsset}`
+    );
+  }
 
   const newPool = new Aavepool({
     id: poolId,
-    reserveAssetId,
-    aTokenId,
+    reserveAssetId: reserveAsset.id,  // Use Asset.id, not assetRegistryId
+    aTokenId: aTokenAsset.id,          // Use Asset.id, not assetRegistryId
   });
 
   await ctx.store.upsert(newPool);

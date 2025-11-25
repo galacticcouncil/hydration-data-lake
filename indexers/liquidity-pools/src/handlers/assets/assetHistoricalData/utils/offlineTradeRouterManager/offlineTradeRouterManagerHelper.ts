@@ -980,7 +980,7 @@ export class OfflineTradeRouterManagerHelper {
         .get(blockNumber)
         ?.get(poolHistData.pool.aTokenId);
 
-      console.log({aTokenId: poolHistData.pool.aTokenId,aTokenHistData})
+      // console.log({aTokenId: poolHistData.pool.aTokenId,aTokenHistData})
       // console.log({reserveId: poolHistData.pool.reserveAssetId,reserveAssetHistData})
 
       if (!reserveAssetHistData || !aTokenHistData) {
