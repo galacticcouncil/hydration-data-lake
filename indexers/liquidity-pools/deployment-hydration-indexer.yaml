@@ -21,8 +21,8 @@ deploy:
 
       CHAIN: 'hydration'
       INDEXER_ID: 734
-      RPC_URL: 'wss://node-subwhale-5.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-5.shellfish.hydration.cloud'
+      RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
+      RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
       TS_REDIS_PORT: 6377
