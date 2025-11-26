@@ -10,12 +10,17 @@ import {
   OmnipoolAssetVolumeHistoricalData,
   StableswapAssetVolumeHistoricalData,
   StableswapVolumeHistoricalData,
+  Swap,
   Xykpool,
   XykpoolVolumeHistoricalData,
 } from '../../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
+import {
+  handleAssetVolumeUpdates,
+  processAssetNormalizedVolumes,
+} from '../../../handlers/assets/volume';
 
-export async function recalculatePoolsNormalizedVolumes(
+export async function assetVolumeHistDataRecalcProc(
   ctx: SqdProcessorContext<Store>
 ) {
   if (!ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE) return;
@@ -84,10 +89,10 @@ export async function recalculatePoolsNormalizedVolumes(
     ).map((p) => [p.id, p])
   );
 
-  ctx.batchState.state.xykPoolVolumes = new Map(
+  ctx.batchState.state.swaps = new Map(
     (
       await ctx.storeUtils.findWithLogs(
-        XykpoolVolumeHistoricalData,
+        Swap,
         {
           where: {
             paraBlockHeight: Between(
@@ -96,96 +101,45 @@ export async function recalculatePoolsNormalizedVolumes(
             ),
           },
           relations: {
-            pool: true,
-            assetA: true,
-            assetB: true,
-            block: true,
+            inputs: {
+              asset: true,
+            },
+            outputs: {
+              asset: true,
+            },
           },
         },
-        { className: 'XykpoolVolumeHistoricalData' }
-      )
-    ).map((p) => [p.id, p])
-  );
-  ctx.batchState.state.omnipoolAssetVolumes = new Map(
-    (
-      await ctx.storeUtils.findWithLogs(
-        OmnipoolAssetVolumeHistoricalData,
-        {
-          where: {
-            paraBlockHeight: Between(
-              ctx.blocks[0].header.height,
-              ctx.blocks[ctx.blocks.length - 1].header.height
-            ),
-          },
-          relations: {
-            omnipoolAsset: { asset: true },
-          },
-        },
-        { className: 'OmnipoolAssetVolumeHistoricalData' }
+        { className: 'AssetSpotPriceHistoricalData' }
       )
     ).map((p) => [p.id, p])
   );
 
-  ctx.batchState.state.stablepoolVolumeCollections = new Map(
-    (
-      await ctx.storeUtils.findWithLogs(
-        StableswapVolumeHistoricalData,
-        {
-          where: {
-            paraBlockHeight: Between(
-              ctx.blocks[0].header.height,
-              ctx.blocks[ctx.blocks.length - 1].header.height
-            ),
-          },
-          relations: {
-            pool: true,
-            block: true,
-          },
-        },
-        { className: 'StableswapVolumeHistoricalData' }
-      )
-    ).map((p) => [p.id, p])
+  console.time(
+    `handleAssetVolumeUpdates for ${ctx.batchState.state.swaps.size} swaps`
+  );
+  for (const swap of ctx.batchState.state.swaps.values()) {
+    try {
+      await handleAssetVolumeUpdates(ctx, {
+        paraBlockHeight: swap.paraBlockHeight,
+        relayBlockHeight: swap.relayBlockHeight,
+        assetIn: swap.inputs[0].asset,
+        assetOut: swap.outputs[0].asset,
+        assetInAmount: swap.inputs[0].amount,
+        assetOutAmount: swap.outputs[0].amount,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  console.timeEnd(
+    `handleAssetVolumeUpdates for ${ctx.batchState.state.swaps.size} swaps`
   );
 
-  ctx.batchState.state.stablepoolAssetVolumes = new Map(
-    (
-      await ctx.storeUtils.findWithLogs(
-        StableswapAssetVolumeHistoricalData,
-        {
-          where: {
-            paraBlockHeight: Between(
-              ctx.blocks[0].header.height,
-              ctx.blocks[ctx.blocks.length - 1].header.height
-            ),
-          },
-          relations: {
-            volumesCollection: { pool: true },
-            asset: true,
-            block: true,
-          },
-        },
-        { className: 'StableswapAssetVolumeHistoricalData' }
-      )
-    ).map((p) => [p.id, p])
-  );
+  console.time(`processAssetNormalizedVolumes`);
+  await processAssetNormalizedVolumes({ ctx });
+  console.timeEnd(`processAssetNormalizedVolumes`);
 
-  console.time('processPoolsNormalizedVolumes');
-  await processPoolsNormalizedVolumes({ ctx });
-  console.timeEnd('processPoolsNormalizedVolumes');
-
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.xykPoolVolumes.values())
-  );
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.omnipoolAssetVolumes.values())
-  );
-
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.stablepoolVolumeCollections.values())
-  );
-  await ctx.store.save(
-    Array.from(ctx.batchState.state.stablepoolAssetVolumes.values())
-  );
+  await ctx.store.save(Array.from(ctx.batchState.state.assetVolumes.values()));
 
   console.time('updateInitialIndexingFinishedAtTime');
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);

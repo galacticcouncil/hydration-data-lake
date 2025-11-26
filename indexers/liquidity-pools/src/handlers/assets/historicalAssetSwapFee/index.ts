@@ -29,15 +29,19 @@ export async function handleAssetSwapFee({
   const persistentAssetFeeAmount =
     currentBlockAssetFeeAmount ||
     lastCachedAssetFeeAmount ||
-    (await ctx.storeUtils.findOneWithLogs(AssetSwapFeeHistoricalData, {
-      where: {
-        asset: { id: asset.id },
+    (await ctx.storeUtils.findOneWithLogs(
+      AssetSwapFeeHistoricalData,
+      {
+        where: {
+          asset: { id: asset.id },
+        },
+        relations: { asset: true, block: true },
+        order: {
+          paraBlockHeight: 'DESC',
+        },
       },
-      relations: { asset: true, block: true },
-      order: {
-        paraBlockHeight: 'DESC',
-      },
-    }, { className: 'AssetSwapFeeHistoricalData' }));
+      { className: 'AssetSwapFeeHistoricalData' }
+    ));
 
   const assetSwapFee = new AssetSwapFeeHistoricalData({
     id: `${asset.id}-${block.height}`,

@@ -32,6 +32,12 @@ export class AssetVolumeHistoricalData {
   totalVolumeOut!: bigint
 
   @Column_("text", {nullable: false})
+  volumeInNorm!: string
+
+  @Column_("text", {nullable: false})
+  volumeOutNorm!: string
+
+  @Column_("text", {nullable: false})
   totalVolumeInNorm!: string
 
   @Column_("text", {nullable: false})

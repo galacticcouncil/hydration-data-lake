@@ -70,6 +70,7 @@ import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pool
 import { MultiFlowProcessingPhase } from '../../../utils/types';
 import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
 import { initAllXykPools } from '../../../handlers/pools/pools/xykPool/xykPool';
+import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
 
 export async function multiFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -443,6 +444,10 @@ async function handleSpotPricesCalculationPhase(
   console.time('handleAssetPairVolumesHistoricalData');
   await handleAssetPairVolumesHistoricalData({ ctx });
   console.timeEnd('handleAssetPairVolumesHistoricalData');
+
+  console.time('processAssetNormalizedVolumes');
+  await processAssetNormalizedVolumes({ ctx });
+  console.timeEnd('processAssetNormalizedVolumes');
 
   console.time('processPoolsNormalizedVolumes');
   await processPoolsNormalizedVolumes({ ctx });
