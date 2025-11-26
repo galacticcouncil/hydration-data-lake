@@ -131,6 +131,10 @@ type AssetVolumeHistoricalData @entity {
   volumeOut: BigInt!
   totalVolumeIn: BigInt!
   totalVolumeOut: BigInt!
+  volumeInNorm: String!
+  volumeOutNorm: String!
+  totalVolumeInNorm: String!
+  totalVolumeOutNorm: String!
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
@@ -1255,19 +1259,19 @@ type StableswapAssetHistoricalData @entity {
 }
 
 type StableswapAssetHistoricalDataLatest @entity {
-    "<stablepoolId>-<assetId>"
-    id: ID!
+  "<stablepoolId>-<assetId>"
+  id: ID!
 
-    assetId: String!
-    poolId: String!
-    stableswapAssetId: String!
-    poolHistoricalDataId: String!
-    freeBalance: BigInt!
-    tradable: Int
-    tvlInRefAssetNorm: String
+  assetId: String!
+  poolId: String!
+  stableswapAssetId: String!
+  poolHistoricalDataId: String!
+  freeBalance: BigInt!
+  tradable: Int
+  tvlInRefAssetNorm: String
 
-    paraBlockHeight: Int!
-    blockId: String!
+  paraBlockHeight: Int!
+  blockId: String!
 }
 
 # ======================================================================================================================

@@ -17,6 +17,7 @@ import {
 } from './statusWaitingHelpers';
 import { savePreprocessedData } from '../../../handlers/preprocessedDataBucket/persist';
 import { processPoolsTvlNormalized } from '../../../handlers/pools/normalizedTvlBaseAsset';
+import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
 
 export async function execSpotPricesProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -102,6 +103,10 @@ async function processLockedBlocksBatch(
     blockNumbersToProcess,
   });
   console.timeEnd('handleAssetSpotPricesHistoricalDataAtBlock');
+
+  console.time('processAssetNormalizedVolumes');
+  await processAssetNormalizedVolumes({ ctx });
+  console.timeEnd('processAssetNormalizedVolumes');
 
   console.time('processPoolsNormalizedVolumes');
   processPoolsNormalizedVolumes({ ctx });
