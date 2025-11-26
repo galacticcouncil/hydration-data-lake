@@ -131,10 +131,10 @@ type AssetVolumeHistoricalData @entity {
   volumeOut: BigInt!
   totalVolumeIn: BigInt!
   totalVolumeOut: BigInt!
-  volumeInNorm: String!
-  volumeOutNorm: String!
-  totalVolumeInNorm: String!
-  totalVolumeOutNorm: String!
+  volumeInNorm: String
+  volumeOutNorm: String
+  totalVolumeInNorm: String
+  totalVolumeOutNorm: String
 
   paraBlockHeight: Int! @index
   relayBlockHeight: Int!
