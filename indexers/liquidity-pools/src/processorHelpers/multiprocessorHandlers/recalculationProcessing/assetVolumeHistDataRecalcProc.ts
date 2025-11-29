@@ -11,6 +11,7 @@ import {
   StableswapAssetVolumeHistoricalData,
   StableswapVolumeHistoricalData,
   Swap,
+  SwapAssetBalanceType,
   Xykpool,
   XykpoolVolumeHistoricalData,
 } from '../../../model';
@@ -108,6 +109,9 @@ export async function assetVolumeHistDataRecalcProc(
               asset: true,
             },
           },
+          order: {
+            paraBlockHeight: 'ASC',
+          },
         },
         { className: 'AssetSpotPriceHistoricalData' }
       )
@@ -118,12 +122,18 @@ export async function assetVolumeHistDataRecalcProc(
     `handleAssetVolumeUpdates for ${ctx.batchState.state.swaps.size} swaps`
   );
   for (const swap of ctx.batchState.state.swaps.values()) {
+    const inputs = swap.inputs.filter(
+      (i) => i.assetBalanceType === SwapAssetBalanceType.Input
+    );
+    const outputs = swap.outputs.filter(
+      (i) => i.assetBalanceType === SwapAssetBalanceType.Output
+    );
     try {
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetIn: swap.inputs[0].asset,
-        assetOut: swap.outputs[0].asset,
+        assetIn: inputs[0].asset,
+        assetOut: outputs[0].asset,
         assetInAmount: swap.inputs[0].amount,
         assetOutAmount: swap.outputs[0].amount,
       });
