@@ -25,7 +25,14 @@ export async function handleCommonAssetAccountBalances({
   accountIdsToProcess?: Set<string>;
   ctx: ProcessorContext<Store>;
 }) {
-  const palletNamesSet = new Set(['Currencies', 'Tokens', 'Balances']);
+  const palletNamesSet = new Set([
+    'Currencies',
+    'Tokens',
+    'Balances',
+    'Duster',
+    'Omnipool',
+    'Broadcast',
+  ]);
   const accountBalancesMap: Map<
     AccountId,
     Map<AssetRegistryId, AccountData>
@@ -46,6 +53,12 @@ export async function handleCommonAssetAccountBalances({
     }
     if (event.args.who) {
       allInvolvedAccountsInBlockSet.add(event.args.who);
+    }
+    if (event.args.swapper) {
+      allInvolvedAccountsInBlockSet.add(event.args.swapper);
+    }
+    if (event.args.filler) {
+      allInvolvedAccountsInBlockSet.add(event.args.filler);
     }
   }
 

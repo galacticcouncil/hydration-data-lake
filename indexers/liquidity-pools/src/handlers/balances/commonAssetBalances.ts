@@ -34,6 +34,8 @@ export async function handleCommonAssetAccountBalances({
     'Tokens',
     'Balances',
     'Duster',
+    'Omnipool',
+    'Broadcast',
   ]);
   const accountBalancesPerBlock: Map<
     number,
@@ -67,6 +69,14 @@ export async function handleCommonAssetAccountBalances({
       if (event.args.who) {
         allInvolvedAccountsInBlockSet.add(event.args.who);
         allInvolvedAccountsInBatchSet.add(event.args.who);
+      }
+      if (event.args.filler) {
+        allInvolvedAccountsInBlockSet.add(event.args.filler);
+        allInvolvedAccountsInBatchSet.add(event.args.filler);
+      }
+      if (event.args.swapper) {
+        allInvolvedAccountsInBlockSet.add(event.args.swapper);
+        allInvolvedAccountsInBatchSet.add(event.args.swapper);
       }
     }
 
@@ -123,7 +133,7 @@ export async function handleCommonAssetAccountBalances({
     {
       where: { id: In(Array.from(allInvolvedAccountsInBatchSet.keys())) },
     },
-    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' },
+    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' }
   );
 
   for (const acc of persistedAccounts) {

@@ -96,6 +96,11 @@
     "DynamicFees": {
       "storage": true,
       "constants": true
+    },
+    "Duster": {
+      "events": true,
+      "calls": true,
+      "storage": true
     }
   }
 }
