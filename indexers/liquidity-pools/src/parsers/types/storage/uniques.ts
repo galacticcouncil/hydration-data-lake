@@ -11,6 +11,10 @@ export type UniquesGetAssetsDataInput = {
   assetIds: string[];
   block: BlockHeader;
 };
+export type UniquesGetAllAssetsDataInput = {
+  collectionId: string;
+  block: BlockHeader;
+};
 
 /**
  * =============================================================================

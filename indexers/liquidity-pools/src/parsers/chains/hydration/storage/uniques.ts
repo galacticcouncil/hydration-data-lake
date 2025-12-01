@@ -2,10 +2,12 @@ import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 import { UnknownVersionError } from '../../../../utils/errors';
 import {
   UniquesAssetDataWithId,
+  UniquesGetAllAssetsDataInput,
   UniquesGetAssetsDataInput,
 } from '../../../types/storage/uniques';
-import { OmnipoolLiquidityPositionDataWithId } from '../../../types/storage';
 import { constants, storage } from '../typegenTypes/';
+import { hexToStrWithNullCharCheck } from '../../../../utils/helpers';
+import { AssetType } from '../../../../model';
 
 async function getAssetsData({
   collectionId,
@@ -55,6 +57,51 @@ async function getAssetsData({
   });
 }
 
+async function getAllAssetsData({
+  collectionId,
+  block,
+}: UniquesGetAllAssetsDataInput): Promise<UniquesAssetDataWithId[] | null> {
+  return measureStorageFetch({
+    storageName: 'uniques.asset',
+    originFn: 'getAllUniques',
+    blockHeight: block.height,
+    args: { collectionId },
+    fn: async () => {
+      if (block.specVersion < 115) return null;
+
+      if (storage.uniques.asset.v115.is(block)) {
+        try {
+          const pairsPaged = [];
+
+          for await (const page of storage.uniques.asset.v115.getPairsPaged(
+            500,
+            block
+          ))
+            pairsPaged.push(
+              ...page
+                .filter((p) => !!p && !!p[1])
+                .map(([[collId, assetId], assetData]) => ({
+                  assetId: assetId.toString(),
+                  collectionId: collId.toString(),
+                  data: {
+                    owner: assetData!.owner,
+                    approved: assetData!.approved ?? null,
+                    isFrozen: assetData!.isFrozen,
+                    deposit: assetData!.deposit,
+                  },
+                }))
+            );
+          return pairsPaged;
+        } catch (e) {
+          return null;
+        }
+      }
+      throw new UnknownVersionError('storage.uniques.asset');
+    },
+  });
+}
+
 export default {
   getAssetsData,
+  getAllAssetsData,
 };

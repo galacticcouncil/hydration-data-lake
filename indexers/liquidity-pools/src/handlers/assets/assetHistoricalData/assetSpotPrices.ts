@@ -424,6 +424,8 @@ function getXykPoolsIndexedByShareAsset({
   for (const pool of Array.from(
     ctx.batchState.state.xykAllBatchPools.values()
   )) {
+    if (!pool?.shareToken?.id) continue;
+
     pools.set(pool.shareToken.id, pool);
   }
 
@@ -649,9 +651,9 @@ async function processXykShareAssetSpotPrices({
     !xykPoolHistData.assetA.decimals ||
     !xykPoolHistData.assetB.decimals
   ) {
-    console.log(
-      `processXykShareAssetSpotPrices :: historical data of origin pool for share asset ${asset.id} not found`
-    );
+    // console.log(
+    //   `processXykShareAssetSpotPrices :: historical data of origin pool for share asset ${asset.id} not found`
+    // );
     return;
   }
 

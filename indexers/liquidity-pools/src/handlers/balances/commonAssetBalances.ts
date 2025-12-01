@@ -339,7 +339,7 @@ async function getOmnipoolLiquidityPositionsForAccounts({
     (pos) =>
       pos.status === OmnipoolLiquidityPositionStatus.PositionCreated &&
       pos.paraBlockHeight <= ctx.blocks[ctx.blocks.length - 1].header.height &&
-      involvedAccountsInBatch.has(pos.account.id)
+      involvedAccountsInBatch.has(pos?.account?.id)
   );
 
   const allPersistentPositions = await ctx.storeUtils.findWithLogs(

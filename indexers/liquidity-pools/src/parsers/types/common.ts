@@ -169,6 +169,7 @@ import {
 } from './events/xykLiquidityMining';
 import {
   UniquesAssetDataWithId,
+  UniquesGetAllAssetsDataInput,
   UniquesGetAssetsDataInput,
 } from './storage/uniques';
 
@@ -601,6 +602,9 @@ export type StorageParserMethods = {
   uniques: {
     getAssetsData: (
       args: UniquesGetAssetsDataInput
+    ) => Promise<UniquesAssetDataWithId[] | null>;
+    getAllAssetsData: (
+      args: UniquesGetAllAssetsDataInput
     ) => Promise<UniquesAssetDataWithId[] | null>;
   };
 };
