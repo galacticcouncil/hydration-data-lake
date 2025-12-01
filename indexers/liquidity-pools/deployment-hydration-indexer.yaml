@@ -22,8 +22,8 @@ deploy:
 
       CHAIN: 'hydration'
       INDEXER_ID: 741
-      RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
+      RPC_URL: 'wss://node-subwhale-8.shellfish.hydration.cloud'
+      RPC_URL_HTTPS: 'https://node-subwhale-8.shellfish.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
       TS_REDIS_KEY_SPACE_ID: 6
@@ -32,7 +32,7 @@ deploy:
       NODE_ENV: 'production'
       OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
       UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-      INDEXING_IS_PAUSED: true
+      INDEXING_IS_PAUSED: false
       ALL_IN_ONE_PROCESSOR_MODE: true
       IS_CORE_PROCESSOR: false
       IS_SPOT_PRICES_PROCESSOR: false
@@ -64,8 +64,8 @@ deploy:
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app::-hydration.netlify.app'
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
-      RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
+      RPC_URL: 'wss://node-subwhale-8.shellfish.hydration.cloud'
+      RPC_URL_HTTPS: 'https://node-subwhale-8.shellfish.hydration.cloud'
       COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
       DB_POOL_MAX_SIZE: 1
 
@@ -77,7 +77,7 @@ scale:
   addons:
     postgres:
       profile: large
-      storage: 800G
+      storage: 1200G
   processor:
     profile: large
   api:
