@@ -58,6 +58,7 @@ export async function handleCommonAssetAccountBalances({
     'Balances',
     'Duster',
     'Omnipool',
+    'Broadcast',
   ]);
   const accountBalancesPerBlock: AccountBalancesPerBlock = new Map();
 
@@ -87,6 +88,14 @@ export async function handleCommonAssetAccountBalances({
       if (event.args.who) {
         allInvolvedAccountsInBlockSet.add(event.args.who);
         allInvolvedAccountsInBatchSet.add(event.args.who);
+      }
+      if (event.args.swapper) {
+        allInvolvedAccountsInBlockSet.add(event.args.swapper);
+        allInvolvedAccountsInBatchSet.add(event.args.swapper);
+      }
+      if (event.args.filler) {
+        allInvolvedAccountsInBlockSet.add(event.args.filler);
+        allInvolvedAccountsInBatchSet.add(event.args.filler);
       }
     }
 
