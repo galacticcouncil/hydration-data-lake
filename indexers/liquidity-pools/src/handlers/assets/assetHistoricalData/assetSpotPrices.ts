@@ -597,6 +597,12 @@ export function getAssetsPairPrice({
   usePersistentData?: boolean;
   ctx: SqdProcessorContext<Store>;
 }) {
+  if (
+    assetInId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID &&
+    assetOutId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+  )
+    return '1';
+
   if (assetOutId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) {
     const price = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
       `${assetInId}-${assetOutId}-${blockHeight}`

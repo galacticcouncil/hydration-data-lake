@@ -5,7 +5,7 @@ import {
   OmnipoolLiquidityPosition,
   OmnipoolLiquidityPositionStatus,
 } from '../../model';
-import { In, LessThan, LessThanOrEqual } from 'typeorm';
+import { In, LessThanOrEqual } from 'typeorm';
 import parsers from '../../parsers';
 import { AccountData } from '../../parsers/types/storage';
 import { getOrCreateAccount } from '../accounts';
@@ -17,7 +17,6 @@ import {
   getOrCreateAccountAssetBalanceHistoricalData,
   getOrCreateAccountTotalBalanceHistoricalData,
 } from './accountAssetBalance';
-import { Between } from 'typeorm/find-options/operator/Between';
 
 type BlockHeight = number;
 type AccountId = string;
