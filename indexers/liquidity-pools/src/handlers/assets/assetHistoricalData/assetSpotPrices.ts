@@ -111,12 +111,14 @@ async function processAssetSpotPrices({
   const calcAssetUsdPriceNormalised = async () => {
     let assetIdToProcess = asset.assetRegistryId;
 
-    if (asset.resourceType === ResourceType.Debt) {
-      const underlyingAsset = asset.underlyingAssetId ? await getOrCreateAsset({assetRegistryId: asset.underlyingAssetId , blockHeader, ensure: true, ctx}) : null;
+    if ([ResourceType.Debt,ResourceType.Collateral].includes(asset.resourceType)) {
+      const underlyingAsset = asset.underlyingAssetId ? await getOrCreateAsset({id: asset.underlyingAssetId , blockHeader, ensure: true, ctx}) : null;
       assetIdToProcess = underlyingAsset?.assetRegistryId;
     }
 
+
     if (!assetIdToProcess) {
+      console.log({asset})
       console.log(`Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetRegistryId.`);
       return
     };
@@ -151,6 +153,10 @@ async function processAssetSpotPrices({
        * Skips price calculation when source and target assets are identical.
        */
       if (assetOutId === asset.assetRegistryId) continue;
+      if([ResourceType.Debt,ResourceType.Collateral].includes(asset.resourceType)){
+        console.log(`Asset spot price calculation skipped for debt or collateral asset ${asset.id} at block ${blockHeader.height}.`)
+        continue;
+      }
 
       const assetOut = await getOrCreateAsset({
         assetRegistryId: assetOutId,
@@ -162,8 +168,10 @@ async function processAssetSpotPrices({
         !assetOut ||
         asset.assetRegistryId === undefined ||
         asset.assetRegistryId === null
-      )
+      ){
+        console.log(`Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetOut or assetRegistryId.`)
         continue;
+      }
 
       try {
         // const [price, route] = await Promise.all([
@@ -443,7 +451,7 @@ async function processXykInvolvedAssetSpotPrices({
   blockHeader: BlockHeader;
 }) {
   const asset = await getOrCreateAsset({
-    assetRegistryId: assetId,
+    id: assetId,
     ctx,
     blockHeader,
     ensure: true,
