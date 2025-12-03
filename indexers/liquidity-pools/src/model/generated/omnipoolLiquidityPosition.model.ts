@@ -52,10 +52,11 @@ export class OmnipoolLiquidityPosition {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+  createdAtParaBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: true})
+  destroyedAtParaBlockHeight!: number | undefined | null
 
   @Column_("text", {nullable: true})
   eventId!: string | undefined | null

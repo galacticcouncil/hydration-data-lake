@@ -559,6 +559,16 @@ export class AppConfig {
   @IsBoolean()
   readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
 
+  @Transform(({ value }: { value: string }) => new Set(value.split(',')))
+  readonly ACCOUNT_BALANCE_AGGREGATION_TRIGGERS: Set<string> = new Set([
+    'Currencies',
+    'Tokens',
+    'Balances',
+    'Duster',
+    'Omnipool',
+    'Broadcast',
+  ]);
+
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
 
   readonly redis: RedisConfig = new RedisConfig();

@@ -1,24 +1,13 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  Account,
-  AccountAssetBalanceHistoricalData,
-  Asset,
-  AssetType,
-  Block,
-  ResourceType,
-} from '../../model';
+import { Account, Asset, AssetType, Block, ResourceType } from '../../model';
 import { constants } from 'ethers';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
-import {
-  getOrCreateAccountAssetBalanceHistoricalData,
-  getOrCreateAccountTotalBalanceHistoricalData,
-} from './accountAssetBalance';
+import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
 import { getOrCreateAccount } from '../accounts';
 import { getOrCreateAsset } from '../assets/asset';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';
-import { BigNumber } from '@galacticcouncil/sdk';
 import pMap from 'p-map';
 import { StorageResolver } from '../../parsers/storageResolver';
 
@@ -104,24 +93,6 @@ export async function handleMmAssetAccountBalancesPerBlock(
 
   const batchState = ctx.batchState.state;
 
-  // batchState.transfers.forEach((transfer) => {
-  //   const blockHeader = getBlockHeaderByBlockHeight(transfer.paraBlockHeight);
-  //   if (blockHeader) {
-  //     pushAccountsAssetsToBlockSlot({
-  //       blockHeader,
-  //       block: transfer.event.block,
-  //       assets: [transfer.asset],
-  //       account: transfer.from,
-  //     });
-  //     pushAccountsAssetsToBlockSlot({
-  //       blockHeader,
-  //       block: transfer.event.block,
-  //       assets: [transfer.asset],
-  //       account: transfer.to,
-  //     });
-  //   }
-  // });
-
   for (const mmEvent of [...batchState.moneyMarketEvents.values()]) {
     const assets: Asset[] = [];
     const blockHeader = getBlockHeaderByBlockHeight(mmEvent.paraBlockHeight);
@@ -167,13 +138,6 @@ export async function handleMmAssetAccountBalancesPerBlock(
           accountAssetsMap.account.boundEvmAddress === constants.AddressZero
         )
           return;
-
-        const accountTotalBalanceHistData =
-          await getOrCreateAccountTotalBalanceHistoricalData({
-            account: accountAssetsMap.account,
-            blockHeader: blockSlotData.blockHeader,
-            ctx,
-          });
 
         const accountStorageDictionaryBalancesPerAsset =
           (StorageResolver.getInstance().storageDictionaryManager?.getTokenBalancesMany(
@@ -297,36 +261,11 @@ export async function handleMmAssetAccountBalancesPerBlock(
                 })
               : '0';
 
-          if (assetBalance.asset.resourceType === ResourceType.Debt) {
-            accountTotalBalanceHistData.totalTransferableNorm = BigNumber(
-              accountTotalBalanceHistData.totalTransferableNorm
-            )
-              .minus(historicalDataEntity.transferableInRefAssetNorm || '0')
-              .toFixed();
-
-            accountTotalBalanceHistData.totalDebtNorm = BigNumber(
-              accountTotalBalanceHistData.totalDebtNorm || '0'
-            )
-              .plus(historicalDataEntity.transferableInRefAssetNorm || '0')
-              .toFixed();
-          } else {
-            accountTotalBalanceHistData.totalTransferableNorm = BigNumber(
-              accountTotalBalanceHistData.totalTransferableNorm
-            )
-              .plus(historicalDataEntity.transferableInRefAssetNorm || '0')
-              .toFixed();
-          }
-
           ctx.batchState.state.accountAssetBalanceHistoricalData.set(
             historicalDataEntity.id,
             historicalDataEntity
           );
         }
-
-        ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-          accountTotalBalanceHistData.id,
-          accountTotalBalanceHistData
-        );
       },
       { concurrency: 30 }
     );

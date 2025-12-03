@@ -80,9 +80,6 @@ export class XykGlobalFarm {
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
-
   @Column_("text", {nullable: true})
   eventId!: string | undefined | null
 }

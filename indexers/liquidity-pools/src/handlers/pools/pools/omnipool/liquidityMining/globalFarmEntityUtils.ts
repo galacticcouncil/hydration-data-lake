@@ -106,9 +106,6 @@ export async function getOrCreateOmnipoolLMGlobalFarm({
       }),
     ],
     paraBlockHeight: blockHeader.height,
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      blockHeader.height
-    ).height,
   });
 
   ctx.batchState.state.omnipoolGlobalFarms.set(farmEntity.id, farmEntity);

@@ -152,10 +152,7 @@ export async function getNewOmnipoolLiquidityPosition({
 
       status: OmnipoolLiquidityPositionStatus.PositionCreated,
 
-      paraBlockHeight: blockHeader.height,
-      relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-        blockHeader.height
-      ).height,
+      createdAtParaBlockHeight: blockHeader.height,
       eventId,
     });
 
@@ -260,8 +257,6 @@ export async function getNewOmnipoolLiquidityPositionEvent({
     sharesAmount: sharesAmount ?? null,
     price: price ?? null,
     paraBlockHeight,
-    relayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight)?.height,
     eventId,
   });
 }

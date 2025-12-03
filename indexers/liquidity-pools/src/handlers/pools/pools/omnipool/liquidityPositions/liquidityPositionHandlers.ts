@@ -151,6 +151,7 @@ export async function handleOmnipoolLiquidityPositionDestroyed(
   });
 
   position.status = OmnipoolLiquidityPositionStatus.PositionDestroyed;
+  position.destroyedAtParaBlockHeight = eventMetadata.blockHeader.height;
 
   ctx.batchState.state.omnipoolLiquidityPositionEvents.set(
     eventEntity.id,

@@ -1,4 +1,4 @@
-import { SupportPgClient } from './apiSupportPgClient';
+import { ApiSupportPgClient } from './apiSupportPgClient';
 import {
   getAssetSpotPricesByBlocksRange,
   getFirstAvailableAssetSpotPriceEntity,
@@ -66,7 +66,7 @@ export class TimeSeriesApiSupportManager {
     console.log('initHistDataScraper');
 
     const bullQueueClient = BullQueueClient.getInstance();
-    const pgClient = SupportPgClient.getInstance();
+    const pgClient = ApiSupportPgClient.getInstance();
     const apiState = await pgClient.getApiState();
 
     await bullQueueClient.cleanUpScrapperNextTickJobs(
@@ -120,14 +120,14 @@ export class TimeSeriesApiSupportManager {
   ) {
     const processingBlocksRange =
       appConfig.ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE;
-    const pgClient = SupportPgClient.getInstance();
+    const apiStatePgClient = ApiSupportPgClient.getInstance();
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     const bullQueueClient = BullQueueClient.getInstance();
-    const apiState = await pgClient.getApiState();
+    const apiState = await apiStatePgClient.getApiState();
     let latestProcessedBlockHeight = apiState.assetPriceLatestProcessedBlock;
 
     if (latestProcessedBlockHeight === 0) {
-      const firstAvailableAssetSpotPrice = await pgClient.query(
+      const firstAvailableAssetSpotPrice = await apiStatePgClient.query(
         getFirstAvailableAssetSpotPriceEntity,
         []
       );
@@ -149,7 +149,7 @@ export class TimeSeriesApiSupportManager {
 
     while (!isResultEmpty) {
       const assetSpotPriceHistDataChunk =
-        await pgClient.query<AssetSpotPriceHistDataResponse>(
+        await apiStatePgClient.query<AssetSpotPriceHistDataResponse>(
           getAssetSpotPricesByBlocksRange,
           [fromBlockHeight, toBlockHeight]
         );
@@ -168,7 +168,7 @@ export class TimeSeriesApiSupportManager {
         ].para_block_height;
 
       const assetPairVolumesChunk =
-        await pgClient.query<AssetPairVolumeResponse>(
+        await apiStatePgClient.query<AssetPairVolumeResponse>(
           getAssetPairVolumesByBlocksRange,
           [fromBlockHeight, toBlockHeight]
         );
@@ -204,7 +204,7 @@ export class TimeSeriesApiSupportManager {
           }))
         );
 
-      await pgClient.upsertApiState({
+      await apiStatePgClient.upsertApiState({
         assetPriceLatestProcessedBlock: processedBlockHeight,
       });
 
@@ -225,7 +225,7 @@ export class TimeSeriesApiSupportManager {
   ) {
     const processingBlocksRange =
       appConfig.ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE;
-    const pgClient = SupportPgClient.getInstance();
+    const pgClient = ApiSupportPgClient.getInstance();
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     const bullQueueClient = BullQueueClient.getInstance();
     const apiState = await pgClient.getApiState();

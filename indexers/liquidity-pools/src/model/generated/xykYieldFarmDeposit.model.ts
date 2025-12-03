@@ -59,9 +59,6 @@ export class XykYieldFarmDeposit {
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
-
   @Index_()
   @ManyToOne_(() => Event, {nullable: true})
   event!: Event

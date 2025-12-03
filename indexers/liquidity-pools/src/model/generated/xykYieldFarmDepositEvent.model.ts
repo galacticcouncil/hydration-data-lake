@@ -47,9 +47,6 @@ export class XykYieldFarmDepositEvent {
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
-
   @Column_("text", {nullable: false})
   eventId!: string
 }
