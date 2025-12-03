@@ -68,8 +68,8 @@ export const getOmnipoolAssetsTvl = `
   FROM
     omnipool_asset_historical_data ahd
   WHERE
-      ahd.para_block_height = (SELECT omnipool_hist_data_latest_block FROM processor_status)
-      AND ahd.asset_id = ANY($1);
+      ahd.para_block_height = (SELECT omnipool_hist_data_latest_block FROM processor_status WHERE id = $1 LIMIT 1)
+      AND ahd.asset_id = ANY($2);
 `;
 
 export const getOmnipoolTotalTvl = `
@@ -80,5 +80,5 @@ export const getOmnipoolTotalTvl = `
   FROM
     omnipool_historical_data ohd
   WHERE
-    ohd.para_block_height = (SELECT omnipool_hist_data_latest_block FROM processor_status);
+    ohd.para_block_height = (SELECT omnipool_hist_data_latest_block FROM processor_status WHERE id = $1 LIMIT 1);
 `;

@@ -49,7 +49,10 @@ export async function handleOmnipoolAssetsLatestTvlAggregation({
     asset_id: string;
     tvl_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getOmnipoolAssetsTvl, [[...omnipoolAssetsDataMap.keys()]]);
+  }>(getOmnipoolAssetsTvl, [
+    appConfig.STATE_SCHEMA_NAME,
+    [...omnipoolAssetsDataMap.keys()],
+  ]);
 
   return aggregatedTvls.rows.map(
     (row) =>
