@@ -242,7 +242,7 @@ enum AccountType {
 type AccountAssetBalanceHistoricalData @entity {
   "<address>-<assetId>-<paraBlockHeight>"
   id: ID!
-  account: Account!
+  accountId: String!
   assetId: String!
 
   "free property in storage"
@@ -279,7 +279,7 @@ type AccountAssetBalanceLatest @entity {
 type AccountTotalBalanceHistoricalData @entity {
   "<address>-<paraBlockHeight>"
   id: ID!
-  account: Account!
+  accountId: String!
   refAssetId: String!
 
   totalTransferableNorm: String!
@@ -294,7 +294,7 @@ type AccountTotalBalanceHistoricalData @entity {
 type AccountMmPositionHistoricalData @entity {
   "<address>-<paraBlockHeight>"
   id: ID!
-  account: Account!
+  accountId: String!
   accountBoundEvmAddress: String
 
   totalCollateralBase: String!
@@ -317,18 +317,6 @@ type Account @entity {
 
   boundEvmAddress: String
   evmAddressBoundEvent: Event
-
-  assetBalanceHistoricalData: [AccountAssetBalanceHistoricalData]
-    @derivedFrom(field: "account")
-
-  balanceHistoricalData: [AccountAssetBalanceHistoricalData]
-    @derivedFrom(field: "account")
-
-  historicalAccountSwapFees: [AccountSwapFeeHistoricalData]
-    @derivedFrom(field: "account")
-
-  mmPositionHistoricalData: [AccountMmPositionHistoricalData]
-    @derivedFrom(field: "account")
 
   lbppool: Lbppool
   xykpool: Xykpool
@@ -356,7 +344,7 @@ type AccountAssetSwapFeeHistoricalData @entity {
   "<historicalAccountSwapFeeId>-<paraBlockHeight>"
   id: ID!
   collection: AccountSwapFeeHistoricalData!
-  account: Account!
+  accountId: String!
   assetId: String!
 
   amount: BigInt!
@@ -370,7 +358,7 @@ type AccountAssetSwapFeeHistoricalData @entity {
 type AccountSwapFeeHistoricalData @entity {
   "<address>-<paraBlockHeight>"
   id: ID!
-  account: Account!
+  accountId: String!
   fees: [AccountAssetSwapFeeHistoricalData!]! @derivedFrom(field: "collection")
 
   paraBlockHeight: Int! @index

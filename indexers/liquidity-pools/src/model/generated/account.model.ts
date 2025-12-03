@@ -1,9 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import {AccountType} from "./_accountType"
 import {Event} from "./event.model"
-import {AccountAssetBalanceHistoricalData} from "./accountAssetBalanceHistoricalData.model"
-import {AccountSwapFeeHistoricalData} from "./accountSwapFeeHistoricalData.model"
-import {AccountMmPositionHistoricalData} from "./accountMmPositionHistoricalData.model"
 import {Lbppool} from "./lbppool.model"
 import {Xykpool} from "./xykpool.model"
 import {Omnipool} from "./omnipool.model"
@@ -37,18 +34,6 @@ export class Account {
     @Index_()
     @ManyToOne_(() => Event, {nullable: true})
     evmAddressBoundEvent!: Event | undefined | null
-
-    @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
-    assetBalanceHistoricalData!: AccountAssetBalanceHistoricalData[]
-
-    @OneToMany_(() => AccountAssetBalanceHistoricalData, e => e.account)
-    balanceHistoricalData!: AccountAssetBalanceHistoricalData[]
-
-    @OneToMany_(() => AccountSwapFeeHistoricalData, e => e.account)
-    historicalAccountSwapFees!: AccountSwapFeeHistoricalData[]
-
-    @OneToMany_(() => AccountMmPositionHistoricalData, e => e.account)
-    mmPositionHistoricalData!: AccountMmPositionHistoricalData[]
 
     @Index_()
     @ManyToOne_(() => Lbppool, {nullable: true})

@@ -22,9 +22,7 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
   ctx,
   blockHeader,
   fetchFromDb = false,
-  relations = {
-    account: true,
-  },
+  relations = {},
 }: {
   account: Account;
   assetId: string;
@@ -70,7 +68,7 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
 
   dataEntity = new AccountAssetBalanceHistoricalData({
     id: `${account.id}-${assetId}-${blockHeader.height}`,
-    account,
+    accountId: account.id,
     assetId,
 
     transferable: 0n,
@@ -97,9 +95,7 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
   ctx,
   blockHeader,
   fetchFromDb = false,
-  relations = {
-    account: true,
-  },
+  relations = {},
 }: {
   account: Account;
   refAssetId?: string;
@@ -151,7 +147,7 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
 
   dataEntity = new AccountTotalBalanceHistoricalData({
     id: `${account.id}-${blockHeader.height}`,
-    account,
+    accountId: account.id,
     refAssetId: refAsset.id,
     totalTransferableNorm: '0',
     totalLockedNorm: '0',

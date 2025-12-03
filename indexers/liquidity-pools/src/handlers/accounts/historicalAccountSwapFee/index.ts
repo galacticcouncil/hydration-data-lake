@@ -42,9 +42,9 @@ export async function handleAccountAssetSwapFee({
     (await ctx.storeUtils.findOneWithLogs(AccountAssetSwapFeeHistoricalData, {
       where: {
         assetId:  assetId,
-        account: { id: account.id },
+        accountId: account.id,
       },
-      relations: { account: true, collection: true },
+      relations: { collection: true },
       order: {
         paraBlockHeight: 'DESC',
       },
@@ -58,7 +58,7 @@ export async function handleAccountAssetSwapFee({
 
   const accountAssetSwapFee = new AccountAssetSwapFeeHistoricalData({
     id: `${account.id}-${assetId}-${block.height}`,
-    account,
+    accountId: account.id,
     assetId: assetId,
     collection: accountSwapFeesCollection,
     amount: currentBlockAccAssetFeeAmount?.amount || BigInt(0),
@@ -116,7 +116,7 @@ export function getAccountSwapFeesCollection({
     id: `${account.id}-${block.height}`,
     paraBlockHeight: block.height,
     relayBlockHeight: block.relayBlockHeight,
-    account,
+    accountId: account.id,
     blockId: block.id,
   });
 

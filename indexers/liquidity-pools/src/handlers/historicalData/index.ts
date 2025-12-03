@@ -455,7 +455,7 @@ export class HistoricalDataManager {
         return {
           keyPrefix: ctx.appConfig.INDEXER_ID,
           name: RedisTimeSeriesName.acc_bal_tot_tns,
-          accountId: item.account.id,
+          accountId: item.accountId,
           timestamp,
           value: +item.totalTransferableNorm,
         };

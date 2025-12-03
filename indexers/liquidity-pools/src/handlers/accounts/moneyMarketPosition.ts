@@ -144,7 +144,7 @@ export async function handleAccountMmPositionDataOnMmEvent({
 
   const newPositionHistData = new AccountMmPositionHistoricalData({
     id: `${account.id}-${blockHeader.height}`,
-    account,
+    accountId: account.id,
     accountBoundEvmAddress: account.boundEvmAddress,
 
     totalCollateralBase,

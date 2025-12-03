@@ -17,7 +17,7 @@ export function getAccountAssetBalancesLatest({
     new Map();
 
   for (const balance of balances) {
-    const itemId = `${balance.account.id}-${balance.assetId}`;
+    const itemId = `${balance.accountId}-${balance.assetId}`;
     const indexedValue = indexedBalances.get(itemId);
 
     if (indexedValue && indexedValue.paraBlockHeight >= balance.paraBlockHeight)
@@ -38,7 +38,7 @@ export function getAccountAssetBalancesLatest({
     latestBalanceEntities.push(
       new AccountAssetBalanceLatest({
         id,
-        accountId: balance.account.id,
+        accountId: balance.accountId,
         assetId: balance.assetId,
         transferable: balance.transferable,
         totalLocked: balance.totalLocked,

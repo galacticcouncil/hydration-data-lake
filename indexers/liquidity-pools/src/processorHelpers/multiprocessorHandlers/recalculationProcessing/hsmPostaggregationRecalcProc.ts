@@ -119,9 +119,7 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
             ctx.blocks[ctx.blocks.length - 1].header.height
           ),
         },
-        relations: {
-          account: true,
-        },
+        relations: {},
       }, { className: 'AccountAssetBalanceHistoricalData' })
     ).map((p) => [p.id, p])
   );

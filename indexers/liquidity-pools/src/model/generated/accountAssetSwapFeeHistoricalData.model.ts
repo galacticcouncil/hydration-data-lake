@@ -1,6 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {AccountSwapFeeHistoricalData} from "./accountSwapFeeHistoricalData.model"
-import {Account} from "./account.model"
 
 @Entity_()
 export class AccountAssetSwapFeeHistoricalData {
@@ -18,9 +17,8 @@ export class AccountAssetSwapFeeHistoricalData {
     @ManyToOne_(() => AccountSwapFeeHistoricalData, {nullable: true})
     collection!: AccountSwapFeeHistoricalData
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    account!: Account
+    @StringColumn_({nullable: false})
+    accountId!: string
 
     @StringColumn_({nullable: false})
     assetId!: string
