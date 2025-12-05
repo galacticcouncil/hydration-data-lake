@@ -44,6 +44,8 @@ deploy:
       PROCESS_FROM_BLOCK: 9250000
       PROCESS_TO_BLOCK: -1
 
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: true
+
       USE_STORAGE_DICTIONARY: true
       STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
       STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
@@ -66,7 +68,7 @@ deploy:
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
       RPC_URL: 'wss://node-subwhale-8.shellfish.hydration.cloud'
       RPC_URL_HTTPS: 'https://node-subwhale-8.shellfish.hydration.cloud'
-      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: true
       DB_POOL_MAX_SIZE: 1
 
     cmd:
