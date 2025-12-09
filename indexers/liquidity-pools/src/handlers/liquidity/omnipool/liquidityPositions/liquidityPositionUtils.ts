@@ -1,0 +1,453 @@
+import { SqdBlock, SqdProcessorContext } from '../../../../processor';
+import { Store } from '@subsquid/typeorm-store';
+import {
+  OmnipoolLiquidityPosition,
+  OmnipoolLiquidityPositionEvent,
+  OmnipoolLiquidityPositionStatus,
+} from '../../../../model';
+import parsers from '../../../../parsers';
+import { getOrCreateAsset } from '../../../assets/asset';
+import { getOrCreateAccount } from '../../../accounts';
+import { getOrCreateOmnipoolAsset } from '../../../pools/pools/omnipool/omnipoolAssets';
+import {
+  AccountBalancesPerBlock,
+  AccountPositionBalancesPerBlockPerAsset,
+} from '../../../balances/accountTotalBalance';
+import { In, IsNull, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
+import { BigNumber } from '@galacticcouncil/sdk';
+
+export async function getNewOmnipoolLiquidityPosition({
+  positionId,
+  assetId,
+  ownerAccountId,
+  amount,
+  sharesAmount,
+  initialAmount,
+  price,
+  ctx,
+  blockHeader,
+  eventId = null,
+  noPanic = false,
+}: {
+  positionId: string;
+  assetId?: string;
+  initialAmount?: bigint;
+  amount?: bigint;
+  sharesAmount?: bigint;
+  price?: bigint;
+  ownerAccountId?: string;
+  blockHeader: SqdBlock;
+  ctx: SqdProcessorContext<Store>;
+  eventId?: string | null;
+  noPanic?: boolean;
+}) {
+  try {
+    if (!blockHeader)
+      throw Error(
+        `getNewOmnipoolLiquidityPosition :: blockHeader has not been provided`
+      );
+
+    const positionData = {
+      assetId,
+      ownerAccountId,
+      amount,
+      initialAmount,
+      sharesAmount,
+      price,
+    };
+
+    if (!assetId || !amount || !sharesAmount || !price) {
+      const positionStorageData =
+        await parsers.storage.omnipool.getOmnipoolLiquidityPositions({
+          positionIds: [positionId],
+          block: blockHeader,
+        });
+
+      if (
+        !positionStorageData ||
+        !positionStorageData[0] ||
+        !positionStorageData[0].data
+      )
+        throw Error(`Storage data for position ${positionId} cannot be found;`);
+
+      const data = positionStorageData[0].data!;
+
+      const asset = await getOrCreateAsset({
+        assetRegistryId: data.assetId,
+        ctx,
+        blockHeader,
+        ensure: true,
+      });
+
+      if (!asset) {
+        throw Error(
+          `getNewOmnipoolLiquidityPosition :: asset with id ${data.assetId} cannot be found;`
+        );
+      }
+
+      positionData.price = data.price;
+      positionData.amount = data.amount;
+      positionData.assetId = asset.id;
+      positionData.sharesAmount = data.shares;
+    }
+
+    if (!ownerAccountId) {
+      const nftCollectionId =
+        parsers.storage.omnipool.getNftCollectionIdConstant({
+          block: blockHeader,
+        });
+
+      const positionNftDetails = await parsers.storage.uniques.getAssetsData({
+        collectionId: `${nftCollectionId.collectionId}`,
+        assetIds: [positionId],
+        block: blockHeader,
+      });
+
+      if (
+        !positionNftDetails ||
+        !positionNftDetails[0] ||
+        !positionNftDetails[0].data
+      ) {
+        throw Error(`Details for position NFT ${positionId} cannot be found;`);
+      }
+
+      const account = await getOrCreateAccount({
+        id: positionNftDetails[0].data?.owner,
+        ctx,
+      });
+
+      if (!account) {
+        throw Error(
+          `Account with id ${positionNftDetails[0].data?.owner} cannot be found;`
+        );
+      }
+      positionData.ownerAccountId = account.id;
+    }
+
+    const omnipoolAsset = await getOrCreateOmnipoolAsset({
+      ctx,
+      blockHeader,
+      ensure: true,
+      assetId: positionData.assetId,
+    });
+
+    if (!omnipoolAsset) {
+      throw Error(
+        `Omnipool Asset with Asset id ${positionData.assetId} cannot be found;`
+      );
+    }
+
+    const positionEntity = new OmnipoolLiquidityPosition({
+      id: positionId,
+
+      account: await getOrCreateAccount({
+        id: positionData.ownerAccountId!,
+        ctx,
+      }),
+      assetId: positionData.assetId,
+      omnipoolAssetId: omnipoolAsset.id,
+
+      initialAmount: positionData.initialAmount ?? positionData.amount,
+      amount: positionData.amount,
+      sharesAmount: positionData.sharesAmount,
+      positionNftId: positionId,
+      price: positionData.price ?? null,
+
+      status: OmnipoolLiquidityPositionStatus.PositionCreated,
+
+      createdAtParaBlockHeight: blockHeader.height,
+      eventId,
+    });
+
+    return positionEntity;
+  } catch (e) {
+    if (noPanic) return null;
+    throw e;
+  }
+}
+
+export async function getOrCreateOmnipoolLiquidityPosition({
+  positionId,
+  ensure = false,
+  blockHeader,
+  ctx,
+  noPanic = false,
+}: {
+  positionId: string;
+  ensure?: boolean;
+  blockHeader?: SqdBlock;
+  ctx: SqdProcessorContext<Store>;
+  noPanic?: boolean;
+}) {
+  if (!positionId) return null;
+
+  let positionEntity: OmnipoolLiquidityPosition | null | undefined =
+    ctx.batchState.state.omnipoolLiquidityPositions.get(positionId);
+
+  if (positionEntity) return positionEntity;
+
+  positionEntity = await ctx.store.findOne(OmnipoolLiquidityPosition, {
+    where: { id: positionId },
+  });
+
+  if (positionEntity) {
+    ctx.batchState.state.omnipoolLiquidityPositions.set(
+      positionId,
+      positionEntity
+    );
+    return positionEntity;
+  }
+  if (!ensure) return null;
+
+  if (!blockHeader) {
+    throw Error(
+      `getOrCreateOmnipoolLiquidityPosition :: blockHeader has not been provided`
+    );
+  }
+
+  try {
+    positionEntity = await getNewOmnipoolLiquidityPosition({
+      positionId,
+      ctx,
+      blockHeader,
+    });
+
+    if (!positionEntity) return null;
+
+    ctx.batchState.state.omnipoolLiquidityPositions.set(
+      positionEntity.id,
+      positionEntity
+    );
+    await ctx.store.upsert(positionEntity);
+  } catch (e) {
+    if (noPanic) return null;
+    throw e;
+  }
+
+  return positionEntity;
+}
+
+export async function getNewOmnipoolLiquidityPositionEvent({
+  eventName,
+  position,
+  assetId,
+  ownerAccountId,
+  amount,
+  sharesAmount,
+  price,
+  ctx,
+  eventId,
+  paraBlockHeight,
+}: {
+  eventName: OmnipoolLiquidityPositionStatus;
+  position: OmnipoolLiquidityPosition;
+  assetId: string;
+  amount?: bigint;
+  sharesAmount?: bigint;
+  price?: bigint;
+  ownerAccountId: string;
+  eventId: string;
+  paraBlockHeight: number;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  return new OmnipoolLiquidityPositionEvent({
+    id: `${position.id}-${eventId}`,
+    position,
+    eventName,
+    accountId: ownerAccountId,
+    assetId,
+    amount: amount ?? null,
+    sharesAmount: sharesAmount ?? null,
+    price: price ?? null,
+    paraBlockHeight,
+    eventId,
+  });
+}
+
+export async function getOmnipoolLiquidityPositionsForAccounts({
+  involvedAccountsInBatch,
+  involvedAccountsPerBlock,
+  ctx,
+}: {
+  involvedAccountsInBatch: Set<string>;
+  involvedAccountsPerBlock: AccountBalancesPerBlock;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const allCachedPositions = Array.from(
+    ctx.batchState.state.omnipoolLiquidityPositions.values()
+  ).filter(
+    (pos) =>
+      pos.createdAtParaBlockHeight <=
+        ctx.blocks[ctx.blocks.length - 1].header.height &&
+      (pos.destroyedAtParaBlockHeight === null ||
+        (!!pos.destroyedAtParaBlockHeight &&
+          pos.destroyedAtParaBlockHeight >= ctx.blocks[0].header.height)) &&
+      involvedAccountsInBatch.has(pos?.account?.id)
+  );
+
+  const allPersistentPositions = await ctx.storeUtils.findWithLogs(
+    OmnipoolLiquidityPosition,
+    {
+      where: {
+        account: { id: In(Array.from(involvedAccountsInBatch.values())) },
+        createdAtParaBlockHeight: LessThanOrEqual(
+          ctx.blocks[ctx.blocks.length - 1].header.height
+        ),
+        destroyedAtParaBlockHeight: Or(
+          IsNull(),
+          MoreThanOrEqual(ctx.blocks[0].header.height)
+        ),
+      },
+      relations: {
+        account: true,
+      },
+    }
+  );
+
+  const allPositionsDeduped = new Map([
+    ...allCachedPositions.map((pos): [string, OmnipoolLiquidityPosition] => [
+      pos.id,
+      pos,
+    ]),
+    ...allPersistentPositions.map(
+      (pos): [string, OmnipoolLiquidityPosition] => [pos.id, pos]
+    ),
+  ]);
+
+  const cachedPositionEvents = Array.from(
+    ctx.batchState.state.omnipoolLiquidityPositionEvents.values()
+  ).filter((e) => allPositionsDeduped.has(e.position.id));
+
+  const persistentPositionEvents = await ctx.storeUtils.findWithLogs(
+    OmnipoolLiquidityPositionEvent,
+    {
+      where: {
+        position: { id: In(Array.from(allPositionsDeduped.keys())) },
+      },
+      relations: {
+        position: true,
+      },
+    }
+  );
+
+  const allPositionEventsDeduped = new Map([
+    ...cachedPositionEvents.map(
+      (e): [string, OmnipoolLiquidityPositionEvent] => [e.id, e]
+    ),
+    ...persistentPositionEvents.map(
+      (e): [string, OmnipoolLiquidityPositionEvent] => [e.id, e]
+    ),
+  ]);
+
+  const eventsIndexedByPositionId = new Map<
+    string,
+    OmnipoolLiquidityPositionEvent[]
+  >();
+
+  for (const event of allPositionEventsDeduped.values()) {
+    if (!eventsIndexedByPositionId.has(event.position.id)) {
+      eventsIndexedByPositionId.set(event.position.id, [event]);
+      continue;
+    }
+    eventsIndexedByPositionId.get(event.position.id)?.push(event);
+  }
+
+  /**
+   * Sort events in DESC order to have the latest event in the first position
+   * of the list.
+   */
+  for (const [posId, events] of eventsIndexedByPositionId.entries()) {
+    eventsIndexedByPositionId.set(
+      posId,
+      events.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+    );
+  }
+
+  const allPositionsIndexedByAccountId = new Map<
+    string,
+    OmnipoolLiquidityPosition[]
+  >();
+
+  for (const position of allPositionsDeduped.values()) {
+    if (!allPositionsIndexedByAccountId.has(position.account.id)) {
+      allPositionsIndexedByAccountId.set(position.account.id, [position]);
+      continue;
+    }
+    allPositionsIndexedByAccountId.get(position.account.id)?.push(position);
+  }
+
+  const accountPositionBalancesPerBlockPerAsset: AccountPositionBalancesPerBlockPerAsset =
+    new Map();
+
+  for (const [blockHeight, { data }] of involvedAccountsPerBlock.entries()) {
+    if (!accountPositionBalancesPerBlockPerAsset.has(blockHeight))
+      accountPositionBalancesPerBlockPerAsset.set(blockHeight, {
+        blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
+        data: new Map(),
+      });
+
+    for (const accountId of data.keys()) {
+      const accountActivePositionsAtBlock =
+        allPositionsIndexedByAccountId
+          .get(accountId)
+          ?.filter(
+            (pos) =>
+              pos.createdAtParaBlockHeight <= blockHeight &&
+              (!pos.destroyedAtParaBlockHeight ||
+                (!!pos.destroyedAtParaBlockHeight &&
+                  pos.destroyedAtParaBlockHeight > blockHeight))
+          ) || [];
+
+      for (const position of accountActivePositionsAtBlock) {
+        if (
+          !accountPositionBalancesPerBlockPerAsset
+            .get(blockHeight)!
+            .data.has(accountId)
+        )
+          accountPositionBalancesPerBlockPerAsset
+            .get(blockHeight)!
+            .data.set(accountId, new Map());
+
+        if (
+          !accountPositionBalancesPerBlockPerAsset
+            .get(blockHeight)!
+            .data.get(accountId)!
+            .has(position.assetId)
+        )
+          accountPositionBalancesPerBlockPerAsset
+            .get(blockHeight)!
+            .data.get(accountId)!
+            .set(position.assetId, BigNumber(0));
+
+        const currentBalance = accountPositionBalancesPerBlockPerAsset
+          .get(blockHeight)!
+          .data.get(accountId)!
+          .get(position.assetId)!;
+
+        /**
+         * Retrieves the position amount from the closest event at or before the target block.
+         *
+         * This is necessary because during batch processing, the position entity may already
+         * reflect updates from later blocks (e.g., amount changes or position destruction).
+         * To ensure historical accuracy, we must use the amount recorded in the event that
+         * was closest to the block being processed, rather than the current position state.
+         */
+        const actualPositionAmountAtBlock: string =
+          eventsIndexedByPositionId
+            .get(position.id)!
+            .find((e) => e.paraBlockHeight <= blockHeight)
+            ?.amount?.toString() ?? '0';
+
+        accountPositionBalancesPerBlockPerAsset
+          .get(blockHeight)!
+          .data.get(accountId)!
+          .set(
+            position.assetId,
+            currentBalance.plus(actualPositionAmountAtBlock)
+          );
+      }
+    }
+  }
+
+  return accountPositionBalancesPerBlockPerAsset;
+}

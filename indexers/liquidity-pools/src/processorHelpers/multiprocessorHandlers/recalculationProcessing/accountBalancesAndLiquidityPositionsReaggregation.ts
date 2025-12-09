@@ -8,6 +8,7 @@ import {
   AssetSpotPriceHistoricalData,
   Block,
   MoneyMarketEvent,
+  OmnipoolAsset,
 } from '../../../model';
 import { handleRelayChainBlocks } from '../../../handlers/relayChain';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
@@ -18,10 +19,13 @@ import {
   saveAllBatchAccounts,
 } from '../../../handlers/accounts';
 import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
-import { handleOmnipoolLiquidityPositions } from '../../../handlers/pools/pools/omnipool/liquidityPositions';
+import { handleOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions';
 import { HistoricalDataManager } from '../../../handlers/historicalData';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { handleAccountTotalBalance } from '../../../handlers/balances/accountTotalBalance';
+import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
+import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
+import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
 
 export async function accountBalancesAndLiquidityPositionsReaggregation(
   ctx: SqdProcessorContext<Store>
@@ -182,9 +186,21 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
     ).map((p) => [p.id, p])
   );
 
+  console.time('initAllXykLiquidityMiningDeposits');
+  await initAllXykLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllXykLiquidityMiningDeposits');
+
+  console.time('initAllOmnipoolLiquidityPositions');
+  await initAllOmnipoolLiquidityPositions(ctx);
+  console.timeEnd('initAllOmnipoolLiquidityPositions');
+
   console.time('handleOmnipoolLiquidityPositions');
   await handleOmnipoolLiquidityPositions(ctx, parsedData);
   console.timeEnd('handleOmnipoolLiquidityPositions');
+
+  console.time('handleXykPoolLiquidityMiningEvents');
+  await handleXykPoolLiquidityMiningEvents(ctx, parsedData);
+  console.timeEnd('handleXykPoolLiquidityMiningEvents');
 
   console.time('handleAccountTotalBalance');
   await handleAccountTotalBalance({ ctx });

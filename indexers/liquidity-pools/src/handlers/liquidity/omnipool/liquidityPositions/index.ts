@@ -1,8 +1,8 @@
-import { SqdProcessorContext } from '../../../../../processor';
+import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../../../parsers/batchBlocksParser';
-import { getOrderedListByBlockNumber } from '../../../../../utils/helpers';
-import { EventName } from '../../../../../parsers/types/events';
+import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
+import { getOrderedListByBlockNumber } from '../../../../utils/helpers';
+import { EventName } from '../../../../parsers/types/events';
 import {
   handleOmnipoolLiquidityPositionCreated,
   handleOmnipoolLiquidityPositionDestroyed,

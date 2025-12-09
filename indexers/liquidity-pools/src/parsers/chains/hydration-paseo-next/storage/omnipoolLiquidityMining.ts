@@ -1,66 +1,64 @@
 import { constants, storage } from '../typegenTypes/';
-import {
-  AssetDetailsWithId,
-  OmnipoolLMGetGlobalFarmsInput,
-  OmnipoolLMGlobalFarmData,
-  OmnipoolLMGlobalFarmDataWithId,
-} from '../../../types/storage';
+import { GetDataAtBlockInput } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
+import {
+  OmnipoolLiquidityMiningGetOmniPositionIdInput,
+  OmnipoolLiquidityMiningOmniPositionId,
+  OmnipoolLiquidyMiningNftCollectionId,
+} from '../../../types/storage/omnipoolLiquidityMining';
 import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
+import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
-async function getOmnipoolLMGlobalFarms({
+function getNftCollectionIdConstant({
   block,
-  farmIds,
-}: OmnipoolLMGetGlobalFarmsInput): Promise<
-  OmnipoolLMGlobalFarmDataWithId[] | null
-> {
+}: GetDataAtBlockInput): OmnipoolLiquidyMiningNftCollectionId | null {
+  if (block.specVersion < 324) return null;
+  if (constants.omnipoolLiquidityMining.nftCollectionId.v324.is(block)) {
+    const resp =
+      constants.omnipoolLiquidityMining.nftCollectionId.v324.get(block);
+    return {
+      collectionId: resp.toString(),
+    };
+  }
+  throw new UnknownVersionError(
+    'constants.omnipoolLiquidityMining.nftCollectionId'
+  );
+}
+
+async function getOmniPositionId({
+  depositId,
+  block,
+}: OmnipoolLiquidityMiningGetOmniPositionIdInput): Promise<OmnipoolLiquidityMiningOmniPositionId | null> {
   return measureStorageFetch({
-    storageName: 'omnipoolWarehouseLm.globalFarm',
-    originFn: 'getOmnipoolLMGlobalFarms',
+    storageName: 'otc.orders',
+    originFn: 'getOtcOrder',
     blockHeight: block.height,
+    args: { depositId },
     fn: async () => {
       if (block.specVersion < 324) return null;
-
       if (
-        storage.omnipoolWarehouseLm.globalFarm.v324.is(block) ||
-        block.specVersion >= 138
+        storage.omnipoolLiquidityMining.omniPositionId.v324.is(block) ||
+        block.specVersion >= 324
       ) {
-        try {
+        return tryExecOrReturnFallback(async () => {
           const resp =
-            await storage.omnipoolWarehouseLm.globalFarm.v324.getMany(
+            await storage.omnipoolLiquidityMining.omniPositionId.v324.get(
               block,
-              farmIds.map((id) => +id).filter((id) => !Number.isNaN(id))
+              BigInt(depositId)
             );
-
-          const respMap = new Map(
-            resp.filter((r) => !!r).map((r) => [r.id, r])
-          );
-
-          const decoratedResp: OmnipoolLMGlobalFarmDataWithId[] = [];
-
-          farmIds.forEach((farmId) => {
-            if (!respMap.has(+farmId)) {
-              decoratedResp.push({ farmId: +farmId, data: null });
-            } else {
-              decoratedResp.push({
-                farmId: +farmId,
-                data: respMap.get(
-                  +farmId
-                )! as unknown as OmnipoolLMGlobalFarmData,
-              });
-            }
-          });
-
-          return decoratedResp;
-        } catch (e) {
-          return null;
-        }
+          if (!resp) return null;
+          return { positionId: resp.toString() };
+        }, null);
       }
-      throw new UnknownVersionError('storage.omnipoolWarehouseLm.globalFarm');
+
+      throw new UnknownVersionError(
+        'storage.omnipoolLiquidityMining.omniPositionId'
+      );
     },
   });
 }
 
 export default {
-  getOmnipoolLMGlobalFarms,
+  getNftCollectionIdConstant,
+  getOmniPositionId,
 };

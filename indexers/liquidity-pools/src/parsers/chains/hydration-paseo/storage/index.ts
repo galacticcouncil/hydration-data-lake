@@ -1,10 +1,15 @@
 import system from './system';
 import tokens from './tokens';
 import omnipool from './omnipool';
+import omnipoolWarehouseLM from './omnipoolWarehouseLM';
+import omnipoolLiquidityMining from './omnipoolLiquidityMining';
 import assetRegistry from './assetRegistry';
 import parachainSystem from './parachainSystem';
 import stableswap from './stableswap';
 import xyk from './xyk';
+import bonds from './bonds';
+import xykWarehouseLM from './xykWarehouseLM';
+import xykLiquidityMining from './xykLiquidityMining';
 import lbp from './lbp';
 import dca from './dca';
 import otc from './otc';
@@ -42,8 +47,6 @@ import {
   RuntimeApiMethodName,
   RuntimeApiName,
 } from '../../../runtimeApiResolver/types';
-import bonds from '../../hydration/storage/bonds';
-import omnipoolLiquidityMining from '../../hydration/storage/omnipoolLiquidityMining';
 
 export default {
   system,
@@ -144,6 +147,7 @@ export default {
     getOmnipoolLiquidityPositions: omnipool.getOmnipoolLiquidityPositions,
     getOmnipoolAllAssetIds: omnipool.getOmnipoolAllAssetIds,
     getOmnipoolHubAssetTradability: omnipool.getOmnipoolHubAssetTradability,
+    getAllOmnipoolLiquidityPositions: omnipool.getAllOmnipoolLiquidityPositions,
     getPoolData: omnipool.getPoolData,
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
@@ -186,7 +190,13 @@ export default {
       }),
   },
   omnipoolWarehouseLM: {
-    getOmnipoolLMGlobalFarms: omnipoolLiquidityMining.getOmnipoolLMGlobalFarms,
+    getOmnipoolLMGlobalFarms: omnipoolWarehouseLM.getOmnipoolLMGlobalFarms,
+    getAllDepositsData: omnipoolWarehouseLM.getAllDepositsData,
+  },
+  omnipoolLiquidityMining: {
+    getNftCollectionIdConstant:
+      omnipoolLiquidityMining.getNftCollectionIdConstant,
+    getOmniPositionId: omnipoolLiquidityMining.getOmniPositionId,
   },
   xyk: {
     getConstants: xyk.getConstants,
@@ -239,6 +249,13 @@ export default {
           getAccountBalances,
         ],
       }),
+  },
+  xykLiquidityMining: {
+    getNftCollectionIdConstant: xykLiquidityMining.getNftCollectionIdConstant,
+  },
+  xykWarehouseLM: {
+    getXykpoolLMDeposits: xykWarehouseLM.getXykpoolLMDeposits,
+    getAllDepositsData: xykWarehouseLM.getAllDepositsData,
   },
   lbp: {
     getConstants: lbp.getConstants,

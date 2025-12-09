@@ -1608,7 +1608,7 @@ type DcaScheduleExecutionEvent @entity {
   id: ID!
   operationIds: [String]
   traceIds: [String!]
-  scheduleExecutionId: DcaScheduleExecution!
+  scheduleExecution: DcaScheduleExecution!
 
   swaps: [Swap] @derivedFrom(field: "dcaScheduleExecutionEvent")
   eventName: DcaScheduleExecutionStatus @index
@@ -2072,7 +2072,6 @@ type OmnipoolLiquidityPosition @entity {
   positionEvents: [OmnipoolLiquidityPositionEvent]!
     @derivedFrom(field: "position")
 
-  #  Point of time of position creation for better sorting
   createdAtParaBlockHeight: Int! @index
   destroyedAtParaBlockHeight: Int @index
   eventId: String
@@ -2177,31 +2176,29 @@ type OmnipoolYieldFarmDeposit @entity {
   depositNftId: String!
   globalFarmId: String!
   yieldFarmId: String!
-  position: OmnipoolLiquidityPosition!
-  account: Account!
+  positionId: String!
+  accountId: String!
   assetId: String!
 
   "should be either SharesDeposited or DepositDestroyed"
   status: YieldFarmDepositStatus!
   sharesAmount: BigInt!
-  entries: [OmnipoolYieldFarmEntry!]! @derivedFrom(field: "deposit")
-  depositEvents: [OmnipoolYieldFarmDepositEvent]! @derivedFrom(field: "deposit")
+  entries: [OmnipoolYieldFarmEntry!]!
 
-  #  Point of time of position creation for better sorting
-  paraBlockHeight: Int! @index
-  event: String!
+  createdAtParaBlockHeight: Int! @index
+  destroyedAtParaBlockHeight: Int @index
 }
 
 type OmnipoolYieldFarmDepositEvent @entity {
   "event_id"
   id: ID!
-  deposit: OmnipoolYieldFarmDeposit!
+  depositId: String!
   positionId: String!
   eventName: YieldFarmDepositStatus!
 
   # required for SharesDeposited, SharesRedeposited, RewardClaimed events
-  globalFarmId: String!
-  yieldFarmId: String!
+  globalFarmId: String
+  yieldFarmId: String
 
   assetId: String
   accountId: String
@@ -2210,19 +2207,20 @@ type OmnipoolYieldFarmDepositEvent @entity {
   rewardAssetId: String
 
   paraBlockHeight: Int! @index
-  eventId: String!
+  eventId: String
 }
 
-type OmnipoolYieldFarmEntry @entity {
+type OmnipoolYieldFarmEntry {
   "<deposit_id>-<omnipool_global_farm_id>-<omnipool_yield_farm_id>"
   id: ID!
-  deposit: OmnipoolYieldFarmDeposit!
-  valuedShares: BigInt!
-  accumulatedRpvs: BigInt!
-  accumulatedClaimedRewards: BigInt!
-  enteredAtRelayBlock: Int!
-  updatedAtRelayBlock: Int!
-  stoppedAtCreation: Int!
+  globalFarmId: String!
+  yieldFarmId: String!
+  valuedShares: String!
+  accumulatedRpvs: String!
+  accumulatedClaimedRewards: String!
+  enteredAtRelayBlock: String!
+  updatedAtRelayBlock: String!
+  stoppedAtCreation: String!
 }
 
 #   --------------------------------------------------------------------------------------------------------------------
@@ -2292,45 +2290,43 @@ type XykYieldFarmDeposit @entity {
   "deposit ID"
   id: ID!
   depositNftId: String
-  globalFarmId: String!
-  yieldFarmId: String!
-  allInvolvedAssetIds: [String!]! # assets of used pool
-  allInvolvedAssetRegistryIds: [String!]! # assets of used pool
-  account: Account!
+  xykpoolId: String!
+  accountId: String!
   lpAssetId: String!
-  sharesAmount: BigInt!
+  initialAmount: BigInt!
+  amount: BigInt!
 
   "should be either SharesDeposited or DepositDestroyed"
   status: YieldFarmDepositStatus!
-  entries: [XykYieldFarmEntry!]! @derivedFrom(field: "deposit")
-  depositEvents: [XykYieldFarmDepositEvent]! @derivedFrom(field: "deposit")
+  entries: [XykYieldFarmEntry!]!
 
-  #  Point of time of position creation for better sorting
-  paraBlockHeight: Int! @index
-  event: Event!
+  createdAtParaBlockHeight: Int! @index
+  destroyedAtParaBlockHeight: Int @index
 }
 
-type XykYieldFarmEntry @entity {
+type XykYieldFarmEntry {
   "<deposit_id>-<xyk_global_farm_id>-<xyk_yield_farm_id>"
-  id: ID!
-  deposit: XykYieldFarmDeposit!
-  valuedShares: BigInt!
-  accumulatedRpvs: BigInt!
-  accumulatedClaimedRewards: BigInt!
-  enteredAtRelayBlock: Int!
-  updatedAtRelayBlock: Int!
-  stoppedAtCreation: Int!
+  id: String!
+  depositId: String!
+  globalFarmId: String!
+  yieldFarmId: String!
+  valuedShares: String!
+  accumulatedRpvs: String!
+  accumulatedClaimedRewards: String!
+  enteredAtRelayBlock: String!
+  updatedAtRelayBlock: String!
+  stoppedAtCreation: String!
 }
 
 type XykYieldFarmDepositEvent @entity {
   "event_id"
   id: ID!
-  deposit: XykYieldFarmDeposit!
+  depositId: String!
   eventName: YieldFarmDepositStatus!
 
   # required for SharesDeposited, SharesRedeposited, RewardClaimed events
-  globalFarmId: String!
-  yieldFarmId: String!
+  globalFarmId: String
+  yieldFarmId: String
 
   lpAssetId: String
   accountId: String
@@ -2339,7 +2335,7 @@ type XykYieldFarmDepositEvent @entity {
   rewardAssetId: String
 
   paraBlockHeight: Int! @index
-  eventId: String!
+  eventId: String
 }
 
 # ======================================================================================================================

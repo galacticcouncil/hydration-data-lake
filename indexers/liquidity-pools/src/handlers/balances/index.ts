@@ -9,6 +9,15 @@ import { handleAllAccountsMmPositionDataUpdate } from '../accounts/moneyMarketPo
 import parsers from '../../parsers';
 import { handleAccountTotalBalance } from './accountTotalBalance';
 
+/**
+ * This function requires the following data, so it should be executed only after
+ * execution appropriate aggregations:
+ * - asset spot prices
+ * - omnipool liquidity positions
+ * - xyk liquidity mining deposits
+ * @param ctx
+ * @param parsedEvents
+ */
 export async function handleAssetAccountBalances(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager

@@ -1,10 +1,7 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {Account} from "./account.model"
 import {YieldFarmDepositStatus} from "./_yieldFarmDepositStatus"
-import {XykYieldFarmEntry} from "./xykYieldFarmEntry.model"
-import {XykYieldFarmDepositEvent} from "./xykYieldFarmDepositEvent.model"
-import {Event} from "./event.model"
+import {XykYieldFarmEntry} from "./_xykYieldFarmEntry"
 
 @Entity_()
 export class XykYieldFarmDeposit {
@@ -22,26 +19,19 @@ export class XykYieldFarmDeposit {
   depositNftId!: string | undefined | null
 
   @Column_("text", {nullable: false})
-  globalFarmId!: string
+  xykpoolId!: string
 
   @Column_("text", {nullable: false})
-  yieldFarmId!: string
-
-  @Column_("text", {array: true, nullable: false})
-  allInvolvedAssetIds!: (string)[]
-
-  @Column_("text", {array: true, nullable: false})
-  allInvolvedAssetRegistryIds!: (string)[]
-
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  account!: Account
+  accountId!: string
 
   @Column_("text", {nullable: false})
   lpAssetId!: string
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  sharesAmount!: bigint
+  initialAmount!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  amount!: bigint
 
   /**
    * should be either SharesDeposited or DepositDestroyed
@@ -49,17 +39,14 @@ export class XykYieldFarmDeposit {
   @Column_("varchar", {length: 17, nullable: false})
   status!: YieldFarmDepositStatus
 
-  @OneToMany_(() => XykYieldFarmEntry, e => e.deposit)
-  entries!: XykYieldFarmEntry[]
-
-  @OneToMany_(() => XykYieldFarmDepositEvent, e => e.deposit)
-  depositEvents!: XykYieldFarmDepositEvent[]
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new XykYieldFarmEntry(undefined, marshal.nonNull(val)))}, nullable: false})
+  entries!: (XykYieldFarmEntry)[]
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+  createdAtParaBlockHeight!: number
 
   @Index_()
-  @ManyToOne_(() => Event, {nullable: true})
-  event!: Event
+  @Column_("int4", {nullable: true})
+  destroyedAtParaBlockHeight!: number | undefined | null
 }

@@ -1,10 +1,7 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {OmnipoolLiquidityPosition} from "./omnipoolLiquidityPosition.model"
-import {Account} from "./account.model"
 import {YieldFarmDepositStatus} from "./_yieldFarmDepositStatus"
-import {OmnipoolYieldFarmEntry} from "./omnipoolYieldFarmEntry.model"
-import {OmnipoolYieldFarmDepositEvent} from "./omnipoolYieldFarmDepositEvent.model"
+import {OmnipoolYieldFarmEntry} from "./_omnipoolYieldFarmEntry"
 
 @Entity_()
 export class OmnipoolYieldFarmDeposit {
@@ -27,13 +24,11 @@ export class OmnipoolYieldFarmDeposit {
   @Column_("text", {nullable: false})
   yieldFarmId!: string
 
-  @Index_()
-  @ManyToOne_(() => OmnipoolLiquidityPosition, {nullable: true})
-  position!: OmnipoolLiquidityPosition
+  @Column_("text", {nullable: false})
+  positionId!: string
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  account!: Account
+  @Column_("text", {nullable: false})
+  accountId!: string
 
   @Column_("text", {nullable: false})
   assetId!: string
@@ -47,16 +42,14 @@ export class OmnipoolYieldFarmDeposit {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   sharesAmount!: bigint
 
-  @OneToMany_(() => OmnipoolYieldFarmEntry, e => e.deposit)
-  entries!: OmnipoolYieldFarmEntry[]
-
-  @OneToMany_(() => OmnipoolYieldFarmDepositEvent, e => e.deposit)
-  depositEvents!: OmnipoolYieldFarmDepositEvent[]
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new OmnipoolYieldFarmEntry(undefined, marshal.nonNull(val)))}, nullable: false})
+  entries!: (OmnipoolYieldFarmEntry)[]
 
   @Index_()
   @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+  createdAtParaBlockHeight!: number
 
-  @Column_("text", {nullable: false})
-  event!: string
+  @Index_()
+  @Column_("int4", {nullable: true})
+  destroyedAtParaBlockHeight!: number | undefined | null
 }

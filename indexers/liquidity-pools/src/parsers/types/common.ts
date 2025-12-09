@@ -147,6 +147,7 @@ import {
   OmnipoolGetLiquidityPositionsInput,
   OmnipoolLiquidityPositionDataWithId,
   OmnipoolNftCollectionId,
+  OmnipoolYieldFarmDepositDataWithId,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -172,6 +173,16 @@ import {
   UniquesGetAllAssetsDataInput,
   UniquesGetAssetsDataInput,
 } from './storage/uniques';
+import {
+  XykpoolLMDepositDataWithId,
+  XykpoolLMGetDepositsInput,
+  XykpoolNftCollectionId,
+} from './storage/xykpoolLiquidityMining';
+import {
+  OmnipoolLiquidityMiningGetOmniPositionIdInput,
+  OmnipoolLiquidityMiningOmniPositionId,
+  OmnipoolLiquidyMiningNftCollectionId,
+} from './storage/omnipoolLiquidityMining';
 
 export interface PoolData {
   owner: string;
@@ -534,11 +545,25 @@ export type StorageParserMethods = {
     getOmnipoolLiquidityPositions: (
       args: OmnipoolGetLiquidityPositionsInput
     ) => Promise<OmnipoolLiquidityPositionDataWithId[] | null>;
+    getAllOmnipoolLiquidityPositions: (
+      args: GetDataAtBlockInput
+    ) => Promise<OmnipoolLiquidityPositionDataWithId[] | null>;
   };
   omnipoolWarehouseLM: {
     getOmnipoolLMGlobalFarms: (
       args: OmnipoolLMGetGlobalFarmsInput
     ) => Promise<OmnipoolLMGlobalFarmDataWithId[] | null>;
+    getAllDepositsData: (
+      args: GetDataAtBlockInput
+    ) => Promise<OmnipoolYieldFarmDepositDataWithId[] | null>;
+  };
+  omnipoolLiquidityMining: {
+    getNftCollectionIdConstant: (
+      args: GetDataAtBlockInput
+    ) => OmnipoolLiquidyMiningNftCollectionId;
+    getOmniPositionId: (
+      args: OmnipoolLiquidityMiningGetOmniPositionIdInput
+    ) => Promise<OmnipoolLiquidityMiningOmniPositionId | null>;
   };
   xyk: {
     getConstants: (args: GetConstantsInput) => XykConstants;
@@ -551,6 +576,19 @@ export type StorageParserMethods = {
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;
+  };
+  xykLiquidityMining: {
+    getNftCollectionIdConstant: (
+      args: GetDataAtBlockInput
+    ) => XykpoolNftCollectionId;
+  };
+  xykWarehouseLM: {
+    getXykpoolLMDeposits: (
+      args: XykpoolLMGetDepositsInput
+    ) => Promise<XykpoolLMDepositDataWithId[] | null>;
+    getAllDepositsData: (
+      args: GetDataAtBlockInput
+    ) => Promise<XykpoolLMDepositDataWithId[] | null>;
   };
   lbp: {
     getConstants: (args: GetConstantsInput) => LbpConstants | null;

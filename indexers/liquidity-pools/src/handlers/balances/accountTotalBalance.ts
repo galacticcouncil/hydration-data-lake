@@ -8,12 +8,11 @@ import { getOrCreateAccount } from '../accounts';
 import { AccountData } from '../../parsers/types/storage';
 import { SqdBlock } from '../../processor';
 import {
-  OmnipoolLiquidityPosition,
-  OmnipoolLiquidityPositionEvent,
   ResourceType,
 } from '../../model';
 import { BigNumber } from '@galacticcouncil/sdk';
-import { In, IsNull, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
+import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
+import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
 
 type BlockHeight = number;
 type AccountId = string;
@@ -134,17 +133,49 @@ export async function handleAccountTotalBalance({
       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     });
 
+  const xykpoolLiquidityDepositsMap =
+    await getXykLiquidityMiningDepositsForAccounts({
+      ctx,
+      involvedAccountsPerBlock: accountBalancesPerBlock,
+      involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
+    });
+
   /**
    * Add Omnipool liquidity positions to the total transferable balance.
    */
-  for (const blockData of omnipoolLiquidityPositionsMap.values()) {
+  await addLiquidityMiningWorthToTotalBalance({
+    lmWorthData: xykpoolLiquidityDepositsMap,
+    refAssetId: refAsset.id,
+    ctx,
+  });
+
+  /**
+   * Add XYK Liquidity Mining deposits to the total transferable balance.
+   */
+  await addLiquidityMiningWorthToTotalBalance({
+    lmWorthData: omnipoolLiquidityPositionsMap,
+    refAssetId: refAsset.id,
+    ctx,
+  });
+}
+
+async function addLiquidityMiningWorthToTotalBalance({
+  lmWorthData,
+  refAssetId,
+  ctx,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  refAssetId: string;
+  lmWorthData: AccountPositionBalancesPerBlockPerAsset;
+}) {
+  for (const blockData of lmWorthData.values()) {
     for (const [accountId, accountAssetData] of blockData.data.entries()) {
       const account = await getOrCreateAccount({ ctx, id: accountId });
 
       const accountTotalBalance =
         await getOrCreateAccountTotalBalanceHistoricalData({
           account,
-          refAssetId: refAsset.id,
+          refAssetId,
           blockHeader: blockData.blockHeader,
           ctx,
         });
@@ -188,192 +219,4 @@ export async function handleAccountTotalBalance({
       );
     }
   }
-}
-
-export async function getOmnipoolLiquidityPositionsForAccounts({
-  involvedAccountsInBatch,
-  involvedAccountsPerBlock,
-  ctx,
-}: {
-  involvedAccountsInBatch: Set<string>;
-  involvedAccountsPerBlock: AccountBalancesPerBlock;
-  ctx: SqdProcessorContext<Store>;
-}) {
-  const allCachedPositions = Array.from(
-    ctx.batchState.state.omnipoolLiquidityPositions.values()
-  ).filter(
-    (pos) =>
-      pos.createdAtParaBlockHeight <=
-        ctx.blocks[ctx.blocks.length - 1].header.height &&
-      (pos.destroyedAtParaBlockHeight === null ||
-        (!!pos.destroyedAtParaBlockHeight &&
-          pos.destroyedAtParaBlockHeight >= ctx.blocks[0].header.height)) &&
-      involvedAccountsInBatch.has(pos?.account?.id)
-  );
-
-  const allPersistentPositions = await ctx.storeUtils.findWithLogs(
-    OmnipoolLiquidityPosition,
-    {
-      where: {
-        account: { id: In(Array.from(involvedAccountsInBatch.values())) },
-        createdAtParaBlockHeight: LessThanOrEqual(
-          ctx.blocks[ctx.blocks.length - 1].header.height
-        ),
-        destroyedAtParaBlockHeight: Or(
-          IsNull(),
-          MoreThanOrEqual(ctx.blocks[0].header.height)
-        ),
-      },
-      relations: {
-        account: true,
-      },
-    }
-  );
-
-  const allPositionsDeduped = new Map([
-    ...allCachedPositions.map((pos): [string, OmnipoolLiquidityPosition] => [
-      pos.id,
-      pos,
-    ]),
-    ...allPersistentPositions.map(
-      (pos): [string, OmnipoolLiquidityPosition] => [pos.id, pos]
-    ),
-  ]);
-
-  const cachedPositionEvents = Array.from(
-    ctx.batchState.state.omnipoolLiquidityPositionEvents.values()
-  ).filter((e) => allPositionsDeduped.has(e.position.id));
-
-  const persistentPositionEvents = await ctx.storeUtils.findWithLogs(
-    OmnipoolLiquidityPositionEvent,
-    {
-      where: {
-        position: { id: In(Array.from(allPositionsDeduped.keys())) },
-      },
-      relations: {
-        position: true,
-      },
-    }
-  );
-
-  const allPositionEventsDeduped = new Map([
-    ...cachedPositionEvents.map(
-      (e): [string, OmnipoolLiquidityPositionEvent] => [e.id, e]
-    ),
-    ...persistentPositionEvents.map(
-      (e): [string, OmnipoolLiquidityPositionEvent] => [e.id, e]
-    ),
-  ]);
-
-  const eventsIndexedByPositionId = new Map<
-    string,
-    OmnipoolLiquidityPositionEvent[]
-  >();
-
-  for (const event of allPositionEventsDeduped.values()) {
-    if (!eventsIndexedByPositionId.has(event.position.id)) {
-      eventsIndexedByPositionId.set(event.position.id, [event]);
-      continue;
-    }
-    eventsIndexedByPositionId.get(event.position.id)?.push(event);
-  }
-
-  /**
-   * Sort events in DESC order to have the latest event in the first position
-   * of the list.
-   */
-  for (const [posId, events] of eventsIndexedByPositionId.entries()) {
-    eventsIndexedByPositionId.set(
-      posId,
-      events.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
-    );
-  }
-
-  const allPositionsIndexedByAccountId = new Map<
-    string,
-    OmnipoolLiquidityPosition[]
-  >();
-
-  for (const position of allPositionsDeduped.values()) {
-    if (!allPositionsIndexedByAccountId.has(position.account.id)) {
-      allPositionsIndexedByAccountId.set(position.account.id, [position]);
-      continue;
-    }
-    allPositionsIndexedByAccountId.get(position.account.id)?.push(position);
-  }
-
-  const accountPositionBalancesPerBlockPerAsset: AccountPositionBalancesPerBlockPerAsset =
-    new Map();
-
-  for (const [blockHeight, { data }] of involvedAccountsPerBlock.entries()) {
-    if (!accountPositionBalancesPerBlockPerAsset.has(blockHeight))
-      accountPositionBalancesPerBlockPerAsset.set(blockHeight, {
-        blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
-        data: new Map(),
-      });
-
-    for (const accountId of data.keys()) {
-      const accountActivePositionsAtBlock =
-        allPositionsIndexedByAccountId
-          .get(accountId)
-          ?.filter(
-            (pos) =>
-              pos.createdAtParaBlockHeight <= blockHeight &&
-              (!pos.destroyedAtParaBlockHeight ||
-                (!!pos.destroyedAtParaBlockHeight &&
-                  pos.destroyedAtParaBlockHeight > blockHeight))
-          ) || [];
-
-      for (const position of accountActivePositionsAtBlock) {
-        if (
-          !accountPositionBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.has(accountId)
-        )
-          accountPositionBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.set(accountId, new Map());
-
-        if (
-          !accountPositionBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.get(accountId)!
-            .has(position.assetId)
-        )
-          accountPositionBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.get(accountId)!
-            .set(position.assetId, BigNumber(0));
-
-        const currentBalance = accountPositionBalancesPerBlockPerAsset
-          .get(blockHeight)!
-          .data.get(accountId)!
-          .get(position.assetId)!;
-
-        /**
-         * Retrieves the position amount from the closest event at or before the target block.
-         *
-         * This is necessary because during batch processing, the position entity may already
-         * reflect updates from later blocks (e.g., amount changes or position destruction).
-         * To ensure historical accuracy, we must use the amount recorded in the event that
-         * was closest to the block being processed, rather than the current position state.
-         */
-        const actualPositionAmountAtBlock: string =
-          eventsIndexedByPositionId
-            .get(position.id)!
-            .find((e) => e.paraBlockHeight <= blockHeight)
-            ?.amount?.toString() ?? '0';
-
-        accountPositionBalancesPerBlockPerAsset
-          .get(blockHeight)!
-          .data.get(accountId)!
-          .set(
-            position.assetId,
-            currentBalance.plus(actualPositionAmountAtBlock)
-          );
-      }
-    }
-  }
-
-  return accountPositionBalancesPerBlockPerAsset;
 }

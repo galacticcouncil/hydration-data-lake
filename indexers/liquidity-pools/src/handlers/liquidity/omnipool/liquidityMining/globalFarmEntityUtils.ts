@@ -1,12 +1,12 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   FarmLifeState,
   FarmLifeStateEventName,
   OmnipoolGlobalFarm,
-} from '../../../../../model';
-import parsers from '../../../../../parsers';
-import { getOrCreateAsset } from '../../../../assets/asset';
+} from '../../../../model';
+import parsers from '../../../../parsers';
+import { getOrCreateAsset } from '../../../assets/asset';
 
 export async function getOrCreateOmnipoolLMGlobalFarm({
   farmId,

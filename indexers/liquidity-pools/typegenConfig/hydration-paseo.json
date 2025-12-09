@@ -112,7 +112,8 @@
     "OmnipoolLiquidityMining": {
       "events": true,
       "calls": true,
-      "storage": true
+      "storage": true,
+      "constants": true
     },
     "OmnipoolWarehouseLM": {
       "events": true,

@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
 import * as v323 from '../v323'
+import * as v359 from '../v359'
 
 export const addCollateralAsset =  {
     name: 'HSM.add_collateral_asset',
@@ -253,6 +254,49 @@ export const executeArbitrage =  {
         sts.struct({
             collateralAssetId: sts.number(),
             flashAmount: sts.option(() => sts.bigint()),
+        })
+    ),
+    /**
+     * Execute arbitrage opportunity between HSM and collateral stable pool using flash loans
+     * 
+     * This call is designed to be triggered automatically by offchain workers. It executes
+     * arbitrage by taking a flash loan from the GHO contract and performing trades to profit
+     * from price imbalances between HSM and the StableSwap pool.
+     * 
+     * The arbitrage execution flow:
+     * 1. Takes a flash loan of Hollar from the GHO contract
+     * 2. Executes trades between HSM and StableSwap pool based on arbitrage direction:
+     *    - For HollarIn (buy direction): Sell Hollar to HSM for collateral, then sell collateral back for Hollar in pool
+     *    - For HollarOut (sell direction): Sell Hollar for collateral in pool, then buy Hollar back from HSM
+     * 3. Repays the flash loan
+     * 4. Any remaining profit (in collateral) is transferred to the ArbitrageProfitReceiver
+     * 
+     * This helps maintain the peg of Hollar by profiting from and correcting price imbalances.
+     * The call is unsigned and should only be executed by offchain workers.
+     * 
+     * Parameters:
+     * - `origin`: Must be None (unsigned)
+     * - `collateral_asset_id`: The ID of the collateral asset to use for arbitrage
+     * - `arbitrage`: Optional arbitrage parameters (direction and amount). If None, the function
+     *   will automatically find and calculate the optimal arbitrage opportunity.
+     * 
+     * Emits:
+     * - `ArbitrageExecuted` when the arbitrage is successful
+     * 
+     * Errors:
+     * - `FlashMinterNotSet` if the flash minter contract address has not been configured
+     * - `AssetNotApproved` if the asset is not a registered collateral
+     * - `NoArbitrageOpportunity` if there's no profitable arbitrage opportunity
+     * - `MaxBuyPriceExceeded` if the arbitrage would exceed the maximum buy price
+     * - `MaxBuyBackExceeded` if the arbitrage would exceed the buyback limit
+     * - `InvalidEVMInteraction` if there's an error interacting with the Hollar ERC20 contract
+     * - Other errors from underlying calls
+     */
+    v359: new CallType(
+        'HSM.execute_arbitrage',
+        sts.struct({
+            collateralAssetId: sts.number(),
+            arbitrage: sts.option(() => v359.Arbitrage),
         })
     ),
 }

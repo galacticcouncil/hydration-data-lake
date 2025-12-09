@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
-import {OmnipoolYieldFarmDeposit} from "./omnipoolYieldFarmDeposit.model"
 import {YieldFarmDepositStatus} from "./_yieldFarmDepositStatus"
 
 @Entity_()
@@ -15,9 +14,8 @@ export class OmnipoolYieldFarmDepositEvent {
   @PrimaryColumn_()
   id!: string
 
-  @Index_()
-  @ManyToOne_(() => OmnipoolYieldFarmDeposit, {nullable: true})
-  deposit!: OmnipoolYieldFarmDeposit
+  @Column_("text", {nullable: false})
+  depositId!: string
 
   @Column_("text", {nullable: false})
   positionId!: string
@@ -25,11 +23,11 @@ export class OmnipoolYieldFarmDepositEvent {
   @Column_("varchar", {length: 17, nullable: false})
   eventName!: YieldFarmDepositStatus
 
-  @Column_("text", {nullable: false})
-  globalFarmId!: string
+  @Column_("text", {nullable: true})
+  globalFarmId!: string | undefined | null
 
-  @Column_("text", {nullable: false})
-  yieldFarmId!: string
+  @Column_("text", {nullable: true})
+  yieldFarmId!: string | undefined | null
 
   @Column_("text", {nullable: true})
   assetId!: string | undefined | null
@@ -50,6 +48,6 @@ export class OmnipoolYieldFarmDepositEvent {
   @Column_("int4", {nullable: false})
   paraBlockHeight!: number
 
-  @Column_("text", {nullable: false})
-  eventId!: string
+  @Column_("text", {nullable: true})
+  eventId!: string | undefined | null
 }

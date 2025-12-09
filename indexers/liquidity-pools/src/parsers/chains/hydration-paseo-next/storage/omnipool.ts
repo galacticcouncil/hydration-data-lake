@@ -181,6 +181,54 @@ async function getOmnipoolLiquidityPositions({
   });
 }
 
+async function getAllOmnipoolLiquidityPositions({
+  block,
+}: GetDataAtBlockInput): Promise<OmnipoolLiquidityPositionDataWithId[] | null> {
+  return measureStorageFetch({
+    storageName: 'storage.omnipool.positions',
+    originFn: 'getAllPositionsData',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 324) return null;
+
+      if (storage.omnipool.positions.v324.is(block)) {
+        try {
+          const pairsPaged: OmnipoolLiquidityPositionDataWithId[] = [];
+
+          for await (const page of storage.omnipool.positions.v324.getPairsPaged(
+            500,
+            block
+          ))
+            pairsPaged.push(
+              ...page
+                .filter((p) => !!p && !!p[1])
+                .map(([positionId, positionData]) => ({
+                  positionId: positionId.toString(),
+                  data: !positionData
+                    ? null
+                    : {
+                        assetId: positionData.assetId,
+                        amount: positionData.amount,
+                        shares: positionData.shares,
+                        price: !Array.isArray(positionData.price)
+                          ? positionData.price
+                          : getOmnipoolLiquidityPositionPriceDecorated(
+                              positionData.price
+                            ),
+                      },
+                }))
+            );
+          return pairsPaged;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      throw new UnknownVersionError('storage.omnipoolWarehouseLm.deposit');
+    },
+  });
+}
+
 export default {
   getOmnipoolAssetData,
   getOmnipoolAllAssetIds,
@@ -189,4 +237,5 @@ export default {
   getConstants,
   getNftCollectionIdConstant,
   getOmnipoolLiquidityPositions,
+  getAllOmnipoolLiquidityPositions,
 };

@@ -42,3 +42,25 @@ export interface OmnipoolLMGlobalFarmDataWithId {
   farmId: number;
   data: OmnipoolLMGlobalFarmData | null;
 }
+
+export interface OmnipoolYieldFarmDepositEntryData {
+  globalFarmId: number;
+  yieldFarmId: number;
+  valuedShares: bigint;
+  accumulatedRpvs: bigint;
+  accumulatedClaimedRewards: bigint;
+  enteredAt: number;
+  updatedAt: number;
+  stoppedAtCreation: number;
+}
+
+export interface OmnipoolYieldFarmDepositData {
+  shares: bigint;
+  ammPoolId: string;
+  yieldFarmEntries: OmnipoolYieldFarmDepositEntryData[];
+}
+
+export interface OmnipoolYieldFarmDepositDataWithId {
+  depositId: string;
+  data: OmnipoolYieldFarmDepositData | null;
+}

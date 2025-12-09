@@ -155,13 +155,11 @@ export async function getOrCreateXykPool({
   id,
   ensure = false,
   blockHeader,
-  parent,
 }: {
   ctx: SqdProcessorContext<Store>;
   id: string;
   ensure?: boolean;
   blockHeader?: SqdBlock;
-  parent?: string;
 }): Promise<Xykpool | null> {
   const batchState = ctx.batchState.state;
 

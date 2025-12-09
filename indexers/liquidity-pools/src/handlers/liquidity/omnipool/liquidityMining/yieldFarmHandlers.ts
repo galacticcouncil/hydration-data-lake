@@ -1,4 +1,4 @@
-import { SqdProcessorContext } from '../../../../../processor';
+import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   OmnipoolLMYieldFarmCreatedData,
@@ -6,7 +6,7 @@ import {
   OmnipoolLMYieldFarmTerminatedData,
   OmnipoolLMYieldFarmStoppedData,
   OmnipoolLMYieldFarmResumedData,
-} from '../../../../../parsers/batchBlocksParser/types';
+} from '../../../../parsers/batchBlocksParser/types';
 
 export async function handleOmnipoolYieldFarmCreated(
   ctx: SqdProcessorContext<Store>,
