@@ -41,9 +41,7 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
     where: {
       isDestroyed: false,
     },
-    relations: {
-      account: true,
-    },
+    relations: {},
   }, { className: 'Lbppool' });
 
   if (lbpPoolsToProcess.length === 0) return;
@@ -69,7 +67,7 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
         };
 
         return {
-          poolAddress: pool.account.id,
+          poolAddress: pool.accountId,
           assetId: shareToken.id,
         };
       })

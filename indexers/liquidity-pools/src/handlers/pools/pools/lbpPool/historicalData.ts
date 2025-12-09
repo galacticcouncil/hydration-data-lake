@@ -38,11 +38,11 @@ export async function handleLbppoolHistoricalData(
         const poolsStorageData = await parsers.storage.lbp.getAllPoolsData({
           block: blockHeader,
         });
-        const poolEntities = [];
+        const poolEntitiesPromises = [];
 
         for (const poolStorageData of poolsStorageData) {
-          poolEntities.push(
-            await getOrCreateLbppool({
+          poolEntitiesPromises.push(
+             getOrCreateLbppool({
               ctx,
               assetIds: [poolStorageData.assetAId, poolStorageData.assetBId],
               ensure: true,
@@ -51,7 +51,7 @@ export async function handleLbppoolHistoricalData(
             })
           );
         }
-
+        const poolEntities = await Promise.all(poolEntitiesPromises);
         return {
           blockHeader,
           pools: poolEntities.filter((item) => !!item) as Lbppool[],
@@ -72,7 +72,7 @@ export async function handleLbppoolHistoricalData(
           .map(async ({ pool, blockHeader }) => {
             const poolStorageData = await parsers.storage.lbp.getPoolData({
               block: blockHeader,
-              poolAddress: pool.account.id,
+              poolAddress: pool.accountId,
             });
 
             if (!poolStorageData) return null;
@@ -85,7 +85,7 @@ export async function handleLbppoolHistoricalData(
                     data: await parsers.storage.lbp.getPoolAssetInfo({
                       assetId: +assetId!,
                       block: blockHeader,
-                      poolAddress: pool.account.id,
+                      poolAddress: pool.accountId,
                     }),
                   }))
                 )
@@ -138,7 +138,7 @@ export async function handleLbppoolHistoricalData(
             ]);
 
             const poolHistoricalDataEntity = new LbppoolHistoricalData({
-              id: `${pool.account.id}-${blockHeader.height}`,
+              id: `${pool.accountId}-${blockHeader.height}`,
               pool: pool,
               assetAId: assetAEntity.id,
               assetBId: assetBEntity.id,
@@ -147,14 +147,14 @@ export async function handleLbppoolHistoricalData(
               assetBBalance:
                 assetsData.get(assetBEntity.assetRegistryId)?.free ?? BigInt(0),
               tvlInRefAssetNorm: '0',
-              owner,
+              ownerId: owner.id,
               startBlockNumber: poolStorageData.start,
               endBlockNumber: poolStorageData.end,
               initialWeight: poolStorageData.initialWeight,
               finalWeight: poolStorageData.finalWeight,
               weightCurve: poolStorageData.weightCurve.__kind,
               fee: poolStorageData.fee,
-              feeCollector,
+              feeCollectorId: feeCollector ? feeCollector.id : null,
               repayTarget: poolStorageData.repayTarget,
 
               relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
@@ -269,8 +269,8 @@ export async function isLbppoolHistoricalDataUniqueRegardingPreviousRecord({
   if (
     previousItem.assetABalance !== currentRecord.assetABalance ||
     previousItem.assetBBalance !== currentRecord.assetBBalance ||
-    previousItem.owner !== currentRecord.owner ||
-    previousItem.feeCollector !== currentRecord.feeCollector ||
+    previousItem.ownerId !== currentRecord.ownerId ||
+    previousItem.feeCollectorId !== currentRecord.feeCollectorId ||
     previousItem.startBlockNumber !== currentRecord.startBlockNumber ||
     previousItem.endBlockNumber !== currentRecord.endBlockNumber ||
     previousItem.initialWeight !== currentRecord.initialWeight ||

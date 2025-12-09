@@ -774,7 +774,7 @@ export class OfflineTradeRouterManagerHelper {
 
       poolsMap.set(poolId, {
         id: publicKeyToSs58(poolHistData.pool.id),
-        address: publicKeyToSs58(poolHistData.pool.account.id),
+        address: publicKeyToSs58(poolHistData.pool.accountId),
         type: PoolType.LBP,
         tokens: [
           {
@@ -801,7 +801,7 @@ export class OfflineTradeRouterManagerHelper {
         minTradingLimit: bigintToNumberSafe(blockConstants.lbpMinTradingLimit!), //TODO fix type
         fee: poolHistData.fee,
         repayTarget: poolHistData.repayTarget.toString(),
-        feeCollector: poolHistData.feeCollector?.id,
+        feeCollector: poolHistData.feeCollectorId,
         repayFeeApply: false, // TODO fix implementation in this.isRepayFeeApplied
         start: poolHistData.startBlockNumber,
         end: poolHistData.endBlockNumber,

@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
-import {Account} from "./account.model"
 import {LbppoolLifeState} from "./_lbppoolLifeState"
 import {LbppoolPriceHistoricalData} from "./lbppoolPriceHistoricalData.model"
 import {LbppoolVolumeHistoricalData} from "./lbppoolVolumeHistoricalData.model"
@@ -18,9 +17,8 @@ export class Lbppool {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    account!: Account
+    @StringColumn_({nullable: false})
+    accountId!: string
 
     @StringColumn_({nullable: false})
     assetAId!: string
@@ -34,13 +32,11 @@ export class Lbppool {
     @BigIntColumn_({nullable: false})
     assetBBalance!: bigint
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    owner!: Account | undefined | null
+    @StringColumn_({nullable: true})
+    ownerId!: string | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    feeCollector!: Account | undefined | null
+    @StringColumn_({nullable: true})
+    feeCollectorId!: string | undefined | null
 
     @IntColumn_({nullable: true})
     startBlockNumber!: number | undefined | null

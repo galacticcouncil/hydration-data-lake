@@ -1,6 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Lbppool} from "./lbppool.model"
-import {Account} from "./account.model"
 
 @Entity_()
 export class LbppoolHistoricalData {
@@ -30,13 +29,11 @@ export class LbppoolHistoricalData {
     @BigIntColumn_({nullable: false})
     assetBBalance!: bigint
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    owner!: Account
+    @StringColumn_({nullable: false})
+    ownerId!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    feeCollector!: Account | undefined | null
+    @StringColumn_({nullable: true})
+    feeCollectorId!: string | undefined | null
 
     @IntColumn_({nullable: true})
     startBlockNumber!: number | undefined | null

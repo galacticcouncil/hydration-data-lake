@@ -32,9 +32,6 @@ export async function fetchLbpPoolsHistoricalData({
             isDestroyed: false,
           },
           relations: {
-            account: true,
-            owner: true,
-            feeCollector: true,
           },
         },
         {
@@ -75,9 +72,7 @@ export async function fetchLbpPoolsHistoricalData({
               : {}),
           },
           relations: {
-            pool: { account: true },
-            owner: true,
-            feeCollector: true,
+            pool: true,
           },
         },
         {
@@ -121,9 +116,6 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRangeResolver({
             isDestroyed: false,
           },
           relations: {
-            account: true,
-            owner: true,
-            feeCollector: true,
           },
         },
         {
@@ -165,9 +157,7 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRangeResolver({
               : {}),
           },
           relations: {
-            pool: { account: true },
-            owner: true,
-            feeCollector: true,
+            pool: true,
           },
         },
         {

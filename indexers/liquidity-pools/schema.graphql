@@ -655,13 +655,13 @@ type Lbppool @entity {
   "<poolAccountAddress>"
   id: ID!
 
-  account: Account!
+  accountId: String!
   assetAId: String!
   assetBId: String!
   assetABalance: BigInt!
   assetBBalance: BigInt!
-  owner: Account
-  feeCollector: Account
+  ownerId: String
+  feeCollectorId: String
   startBlockNumber: Int
   endBlockNumber: Int
   initialWeight: Int
@@ -782,8 +782,8 @@ type LbppoolHistoricalData @entity {
   assetBId: String!
   assetABalance: BigInt!
   assetBBalance: BigInt!
-  owner: Account!
-  feeCollector: Account
+  ownerId: String!
+  feeCollectorId: String
   startBlockNumber: Int
   endBlockNumber: Int
   initialWeight: Int!

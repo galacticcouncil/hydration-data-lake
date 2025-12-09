@@ -75,7 +75,7 @@ export async function prefetchGenericPersistentData(
       Lbppool,
       {
         where: {},
-        relations: { account: true },
+        relations: {},
       },
       { className: 'Lbppool', originCallFn: 'prefetchGenericPersistentData' }
     )
@@ -478,7 +478,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            pool: { account: true },
+            pool: {},
           },
           order: {
             paraBlockHeight: 'ASC',

@@ -1,7 +1,6 @@
 import { Store } from '@subsquid/typeorm-store';
 
 import {
-  AccountType,
   Lbppool,
   LbppoolCreatedData,
   LbppoolDestroyedData,
@@ -96,20 +95,15 @@ export async function createLbppool({
 
   const newPool = new Lbppool({
     id: poolAddress,
-    account: await getOrCreateAccount({
-      ctx,
-      id: poolAddress,
-      accountType: AccountType.Lbppool,
-      ensureAccountType: true,
-    }),
+    accountId: poolAddress,
     assetAId: assetAEntity.id,
     assetBId: assetBEntity.id,
-    owner: await getOrCreateAccount({ ctx, id: ownerAddress }),
+    ownerId: ownerAddress,
     assetABalance: newPoolsAssetBalances.assetABalance,
     assetBBalance: newPoolsAssetBalances.assetBBalance,
     startBlockNumber: startBlockNumber ?? null,
     endBlockNumber: endBlockNumber ?? null,
-    feeCollector: await getOrCreateAccount({ ctx, id: feeCollectorAddress }),
+    feeCollectorId: feeCollectorAddress,
     fee: fee,
     initialWeight: initialWeight,
     finalWeight: finalWeight,
@@ -159,9 +153,7 @@ export async function getOrCreateLbppool({
       { assetAId: `${assetIds[0]}`, assetBId: `${assetIds[1]}` },
       { assetBId: `${assetIds[0]}`, assetAId: `${assetIds[1]}`  },
     ],
-    relations: {
-      account: true,
-    },
+    relations: {},
   }, { className: 'Lbppool' });
 
   if (pool) {
@@ -230,13 +222,15 @@ export async function getOrCreateLbppool({
   if (!newPool) return null;
 
   await ctx.store.upsert(newPool);
-  newPool.account.lbppool = newPool;
-  await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(newPool.account));
-  // await ctx.store.upsert(newPool.account);
+
+  // Get the account and set the bidirectional relation
+  const poolAccount = await getOrCreateAccount({ ctx, id: newPool.accountId });
+  poolAccount.lbppool = newPool;
+  await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(poolAccount));
 
   const state = ctx.batchState.state;
   state.lbpAllBatchPools.set(newPool.id, newPool);
-  state.accounts.set(newPool.account.id, newPool.account);
+  state.accounts.set(poolAccount.id, poolAccount);
 
   return newPool;
 }
@@ -313,13 +307,15 @@ export async function lpbpoolCreated(
 
   if (!newPool) return null;
 
-  newPool.account.lbppool = newPool;
+  // Get the account and set the bidirectional relation
+  const poolAccount = await getOrCreateAccount({ ctx, id: newPool.accountId });
+  poolAccount.lbppool = newPool;
 
   const state = ctx.batchState.state;
 
   state.lbpPoolIdsToSave.add(newPool.id);
   state.lbpAllBatchPools.set(newPool.id, newPool);
-  state.accounts.set(newPool.account.id, newPool.account);
+  state.accounts.set(poolAccount.id, poolAccount);
 }
 
 export async function lpbpoolUpdated(
@@ -336,14 +332,12 @@ export async function lpbpoolUpdated(
 
   if (!existingPoolData) return;
 
-  existingPoolData.owner = await getOrCreateAccount({
-    ctx,
-    id: eventParams.data.owner,
-  });
-  existingPoolData.feeCollector = await getOrCreateAccount({
-    ctx,
-    id: eventParams.data.feeCollector,
-  });
+  // Ensure owner and feeCollector accounts exist, then store IDs
+  await getOrCreateAccount({ ctx, id: eventParams.data.owner });
+  await getOrCreateAccount({ ctx, id: eventParams.data.feeCollector });
+
+  existingPoolData.ownerId = eventParams.data.owner;
+  existingPoolData.feeCollectorId = eventParams.data.feeCollector;
   existingPoolData.initialWeight = eventParams.data.initialWeight;
   existingPoolData.finalWeight = eventParams.data.finalWeight;
   existingPoolData.repayTarget = eventParams.data.repayTarget;
