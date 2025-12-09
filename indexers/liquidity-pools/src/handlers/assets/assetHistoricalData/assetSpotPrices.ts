@@ -153,10 +153,6 @@ async function processAssetSpotPrices({
        * Skips price calculation when source and target assets are identical.
        */
       if (assetOutId === asset.assetRegistryId) continue;
-      if([ResourceType.Debt,ResourceType.Collateral].includes(asset.resourceType)){
-        console.log(`Asset spot price calculation skipped for debt or collateral asset ${asset.id} at block ${blockHeader.height}.`)
-        continue;
-      }
 
       const assetOut = await getOrCreateAsset({
         assetRegistryId: assetOutId,
