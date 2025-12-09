@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
 import {Swap} from "./swap.model"
 import {SwapFeeDestinationType} from "./_swapFeeDestinationType"
-import {Account} from "./account.model"
 
 @Entity_()
 export class SwapFee {
@@ -28,7 +27,6 @@ export class SwapFee {
     @Column_("varchar", {length: 7, nullable: false})
     destinationType!: SwapFeeDestinationType
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    recipient!: Account | undefined | null
+    @StringColumn_({nullable: true})
+    recipientId!: string | undefined | null
 }

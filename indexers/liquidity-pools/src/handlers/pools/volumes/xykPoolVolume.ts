@@ -19,7 +19,7 @@ export function initXykPoolVolume(
   oldVolume: XykpoolVolumeHistoricalData | undefined
 ) {
   const newVolume = new XykpoolVolumeHistoricalData({
-    id: swap.filler.id + '-' + swap.paraBlockHeight,
+    id: swap.fillerId + '-' + swap.paraBlockHeight,
     pool: pool,
     assetAId: pool.assetAId,
     assetBId: pool.assetBId,
@@ -115,7 +115,7 @@ export function initXykPoolVolume(
       ?.amount || BigInt(0);
 
   const assetAFeeVol = swap.fees.reduce((acc, feeData) => {
-    if (feeData.assetId !== newVolume.assetAId || !feeData.recipient)
+    if (feeData.assetId !== newVolume.assetAId || !feeData.recipientId)
       return acc;
     return acc + feeData.amount;
   }, 0n);
@@ -129,7 +129,7 @@ export function initXykPoolVolume(
       ?.amount || BigInt(0);
 
   const assetBFeeVol = swap.fees.reduce((acc, feeData) => {
-    if (feeData.assetId !== newVolume.assetBId || !feeData.recipient)
+    if (feeData.assetId !== newVolume.assetBId || !feeData.recipientId)
       return acc;
     return acc + feeData.amount;
   }, 0n);
@@ -174,18 +174,18 @@ export async function handleXykPoolVolumeUpdates({
 }) {
   const xykPoolVolumes = ctx.batchState.state.xykPoolVolumes;
   const currentVolume = xykPoolVolumes.get(
-    swap.filler.id + '-' + swap.paraBlockHeight
+    swap.fillerId + '-' + swap.paraBlockHeight
   );
 
   const oldVolume =
     currentVolume ||
     (getLastVolumeFromCache(
       ctx.batchState.state.xykPoolVolumes,
-      swap.filler.id
+      swap.fillerId
     ) as XykpoolVolumeHistoricalData | undefined) ||
     (await getOldXykVolume({
       ctx,
-      poolId: swap.filler.id,
+      poolId: swap.fillerId,
     }));
 
   const newVolume = initXykPoolVolume(swap, pool, currentVolume, oldVolume);

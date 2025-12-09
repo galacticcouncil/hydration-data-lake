@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, DateTimeColumn as DateTimeColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, DateTimeColumn as DateTimeColumn_, Index as Index_, IntColumn as IntColumn_, ManyToOne as ManyToOne_} from "@subsquid/typeorm-store"
 import {AssetType} from "./_assetType"
-import {Account} from "./account.model"
 import {Event} from "./event.model"
 
 @Entity_()
@@ -24,13 +23,11 @@ export class Transfer {
     @Column_("varchar", {length: 10, nullable: false})
     assetType!: AssetType
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    from!: Account
+    @StringColumn_({nullable: false})
+    fromId!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    to!: Account
+    @StringColumn_({nullable: false})
+    toId!: string
 
     @BigIntColumn_({nullable: false})
     amount!: bigint

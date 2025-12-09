@@ -12,7 +12,7 @@ import {
   SqdBlock,
   SqdProcessorContext,
 } from '../../../../processor';
-import { batchGetOrCreateAssets, getOrCreateAsset } from '../../../assets/asset';
+import { batchGetOrCreateAssets } from '../../../assets/asset';
 import {
   getOldAaveFacilitatorHistDataEntity,
 } from '../../../facilitator/historicalData';
@@ -255,7 +255,7 @@ export async function initHsmAssetHistoricalData({
       ?.amount || BigInt(0);
 
   const assetFeeVol = swap.fees.reduce((acc, feeData) => {
-    if (feeData.assetId !== processingAsset.id || !feeData.recipient)
+    if (feeData.assetId !== processingAsset.id || !feeData.recipientId)
       return acc;
     return acc + feeData.amount;
   }, 0n);

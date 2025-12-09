@@ -34,14 +34,10 @@ export async function prefetchAllAvailableRoutedTradesForBlocksRange({
     },
     relations: {
       swaps: {
-        swapper: true,
-        filler: true,
         event: true,
         inputs: {},
         outputs: {},
-        fees: {
-          recipient: true,
-        },
+        fees: {},
       },
     },
   }, { className: 'RoutedTrade' });

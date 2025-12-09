@@ -7,6 +7,7 @@ import { getOrCreateAsset } from '../assets/asset';
 import { CurrenciesTransferredData } from '../../parsers/batchBlocksParser/types/currencies';
 import { processNewMoneyMarketEvent } from '../moneyMarket/moneyMarketEvent';
 import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
+import { getOrCreateAccount } from '../accounts';
 
 export async function handleCurrenciesTransfer(
   ctx: SqdProcessorContext<Store>,
@@ -33,8 +34,8 @@ export async function handleCurrenciesTransfer(
 
   const existingTransfer = [...ctx.batchState.state.transfers.values()].find(
     (transfer) =>
-      transfer.to.id === eventParams.to &&
-      transfer.from.id === eventParams.from &&
+      transfer.toId === eventParams.to &&
+      transfer.fromId === eventParams.from &&
       transfer.amount === eventParams.amount
   );
 
@@ -61,8 +62,14 @@ export async function handleCurrenciesTransfer(
 
   ctx.batchState.state.transfers.set(transferEntity.id, transferEntity);
 
+  // Get Account objects for activity trace
+  const [toAccount, fromAccount] = await Promise.all([
+    getOrCreateAccount({ ctx, id: eventParams.to }),
+    getOrCreateAccount({ ctx, id: eventParams.from }),
+  ]);
+
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [transferEntity.to, transferEntity.from],
+    participants: [toAccount, fromAccount],
     traceIds: transferEntity.traceIds,
     ctx,
   });
@@ -73,7 +80,7 @@ export async function handleCurrenciesTransfer(
     allInvolvedAssetIds: [assetEntity.id],
     allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
-    allInvolvedParticipants: [transferEntity.from.id, transferEntity.to.id],
+    allInvolvedParticipants: [transferEntity.fromId, transferEntity.toId],
     transfer: transferEntity,
   });
 }

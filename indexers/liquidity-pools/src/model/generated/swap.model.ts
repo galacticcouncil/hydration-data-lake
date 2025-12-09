@@ -1,5 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_, DateTimeColumn as DateTimeColumn_} from "@subsquid/typeorm-store"
-import {Account} from "./account.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_, DateTimeColumn as DateTimeColumn_} from "@subsquid/typeorm-store"
 import {SwapFillerType} from "./_swapFillerType"
 import {TradeOperationType} from "./_tradeOperationType"
 import {SwapAssetBalance} from "./swapAssetBalance.model"
@@ -30,13 +29,11 @@ export class Swap {
     @IntColumn_({nullable: true})
     swapIndex!: number | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    swapper!: Account
+    @StringColumn_({nullable: false})
+    swapperId!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    filler!: Account
+    @StringColumn_({nullable: false})
+    fillerId!: string
 
     @Column_("varchar", {length: 10, nullable: false})
     fillerType!: SwapFillerType

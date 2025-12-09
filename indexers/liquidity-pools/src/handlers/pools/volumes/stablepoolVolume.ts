@@ -235,7 +235,7 @@ export function initStablepoolAssetVolume({
         ?.amount || BigInt(0);
 
     const assetFeeVol = swap.fees.reduce((acc, feeData) => {
-      if (feeData.assetId !== newVolume.assetId || !feeData.recipient)
+      if (feeData.assetId !== newVolume.assetId || !feeData.recipientId)
         return acc;
       return acc + feeData.amount;
     }, 0n);

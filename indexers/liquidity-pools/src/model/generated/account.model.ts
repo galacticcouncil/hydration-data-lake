@@ -8,8 +8,6 @@ import {Stableswap} from "./stableswap.model"
 import {Hsmpool} from "./hsmpool.model"
 import {ChainActivityTrace} from "./chainActivityTrace.model"
 import {AccountChainActivityTrace} from "./accountChainActivityTrace.model"
-import {Swap} from "./swap.model"
-import {Transfer} from "./transfer.model"
 import {DcaSchedule} from "./dcaSchedule.model"
 import {OtcOrder} from "./otcOrder.model"
 
@@ -60,18 +58,6 @@ export class Account {
 
     @OneToMany_(() => AccountChainActivityTrace, e => e.account)
     participatedActions!: AccountChainActivityTrace[]
-
-    @OneToMany_(() => Swap, e => e.swapper)
-    initiatedSwaps!: Swap[]
-
-    @OneToMany_(() => Swap, e => e.filler)
-    filledSwaps!: Swap[]
-
-    @OneToMany_(() => Transfer, e => e.to)
-    transfersTo!: Transfer[]
-
-    @OneToMany_(() => Transfer, e => e.from)
-    transfersFrom!: Transfer[]
 
     @OneToMany_(() => DcaSchedule, e => e.owner)
     dcaSchedules!: DcaSchedule[]

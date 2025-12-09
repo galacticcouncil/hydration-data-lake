@@ -328,12 +328,6 @@ type Account @entity {
   participatedActions: [AccountChainActivityTrace!]
     @derivedFrom(field: "account")
 
-  initiatedSwaps: [Swap!]! @derivedFrom(field: "swapper")
-  filledSwaps: [Swap!]! @derivedFrom(field: "filler")
-
-  transfersTo: [Transfer!] @derivedFrom(field: "to")
-  transfersFrom: [Transfer!] @derivedFrom(field: "from")
-
   dcaSchedules: [DcaSchedule!] @derivedFrom(field: "owner")
   otcOrders: [OtcOrder!] @derivedFrom(field: "owner")
 
@@ -527,8 +521,8 @@ type Transfer @entity {
   assetId: String!
   assetType: AssetType!
 
-  from: Account!
-  to: Account!
+  fromId: String! # from Account
+  toId: String! # to Account
   amount: BigInt!
   txFee: BigInt!
 
@@ -577,7 +571,7 @@ type SwapFee @entity {
   assetId: String!
   amount: BigInt!
   destinationType: SwapFeeDestinationType!
-  recipient: Account
+  recipientId: String
 }
 
 
@@ -597,8 +591,8 @@ type Swap @entity {
   traceIds: [String!]
   swapIndex: Int
 
-  swapper: Account!
-  filler: Account!
+  swapperId: String! # Account Id!
+  fillerId: String! # Account Id!
   fillerType: SwapFillerType!
   operationType: TradeOperationType!
 

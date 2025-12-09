@@ -16,7 +16,11 @@ import {
   SqdBlock,
   SqdProcessorContext,
 } from '../../processor';
-import { batchGetOrCreateAssets, getOrCreateAsset } from '../assets/asset';
+import { getOrCreateAccount } from '../accounts';
+import {
+  batchGetOrCreateAssets,
+  getOrCreateAsset,
+} from '../assets/asset';
 import { processNewMoneyMarketEvent } from './moneyMarketEvent';
 
 // Helper function to create synthetic EVM log data for money market events
@@ -188,8 +192,14 @@ async function createSyntheticMmWithdrawalEvent({
     return;
   }
 
-  const accountFrom = swap.swapper;
-  const accountTo = swap.swapper;
+  const accountFrom = swap.swapperId ? await getOrCreateAccount({
+    ctx,
+    id: swap.swapperId,
+  }) : undefined;
+  const accountTo = swap.swapperId ? await getOrCreateAccount({
+    ctx,
+    id: swap.swapperId,
+  }) : undefined;
 
   const mmWithdrawEntity = new MmWithdraw({
     id: swap.id,
@@ -212,7 +222,7 @@ async function createSyntheticMmWithdrawalEvent({
     allInvolvedAssetIds: [assetEntity.id],
     allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
-    allInvolvedParticipants: [accountFrom.id, accountTo.id],
+    allInvolvedParticipants: [accountFrom?.id ?? "", accountTo?.id ?? ""],
     withdraw: mmWithdrawEntity,
   });
 }
@@ -246,9 +256,15 @@ async function createSyntheticMmSupplyEvent({
     );
     return;
   }
-  const account = swap.swapper;
+  const account = swap.swapperId ? await getOrCreateAccount({
+    ctx,
+    id: swap.swapperId,
+  }) : undefined;
 
-  const accountOnBehalfOf = swap.swapper;
+  const accountOnBehalfOf = swap.swapperId ? await getOrCreateAccount({
+    ctx,
+    id: swap.swapperId,
+  }) : undefined;
 
   const mmSupplyEntity = new MmSupply({
     id: swap.id,
@@ -271,7 +287,7 @@ async function createSyntheticMmSupplyEvent({
     allInvolvedAssetIds: [assetEntity.id],
     allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
     allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
-    allInvolvedParticipants: [account.id, accountOnBehalfOf.id],
+    allInvolvedParticipants: [account?.id ?? "", accountOnBehalfOf?.id ?? ""],
     supply: mmSupplyEntity,
   });
 }

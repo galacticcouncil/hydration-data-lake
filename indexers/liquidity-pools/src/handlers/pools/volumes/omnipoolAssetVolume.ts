@@ -86,7 +86,7 @@ export function initOmnipoolAssetVolume({
   const assetFeeVol = swap.fees.reduce((acc, feeData) => {
     if (
       feeData.assetId !== newVolume.omnipoolAsset.assetId ||
-      !feeData.recipient
+      !feeData.recipientId
     )
       return acc;
     return acc + feeData.amount;

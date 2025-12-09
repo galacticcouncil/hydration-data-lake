@@ -43,9 +43,13 @@ export async function initTransfer({
 
   if (!assetEntity) throw Error(`Asset ${assetId} cannot be found`);
 
+  // Ensure accounts exist
+  await getOrCreateAccount({ ctx, id: from });
+  await getOrCreateAccount({ ctx, id: to });
+
   return new Transfer({
-    from: await getOrCreateAccount({ ctx, id: from }),
-    to: await getOrCreateAccount({ ctx, id: to }),
+    fromId: from,
+    toId: to,
     txFee: fee,
     assetId: assetEntity.id,
     assetType: assetEntity.assetType,

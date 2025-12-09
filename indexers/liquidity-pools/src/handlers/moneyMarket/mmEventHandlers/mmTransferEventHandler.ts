@@ -37,8 +37,8 @@ export async function handleMmTransferEvent(
     ctx.batchState.state.transfers.values()
   ).find(
     (transfer) =>
-      transfer.to.id === parsedEvmEventData.toAddress &&
-      transfer.from.id === parsedEvmEventData.fromAddress &&
+      transfer.toId === parsedEvmEventData.toAddress &&
+      transfer.fromId === parsedEvmEventData.fromAddress &&
       transfer.amount === parsedEvmEventData.amount
   );
 
@@ -64,8 +64,8 @@ export async function handleMmTransferEvent(
       allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
       allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
       allInvolvedParticipants: [
-        existingTransfer.from.id,
-        existingTransfer.to.id,
+        existingTransfer.fromId,
+        existingTransfer.toId,
       ],
       transfer: existingTransfer,
     });
@@ -131,7 +131,7 @@ export async function handleMmTransferEvent(
   ctx.batchState.state.transfers.set(transferEntity.id, transferEntity);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [transferEntity.to, transferEntity.from],
+    participants: [accountTo, accountFrom],
     traceIds: transferEntity.traceIds,
     ctx,
   });

@@ -30,7 +30,7 @@ import { SqdProcessorContext } from '../../processor';
 import { isUnifiedEventsSupportSpecVersion } from '../../utils/helpers';
 import { GetNewSwapResponse } from '../../utils/types';
 import { getOrCreateAccount } from '../accounts';
-import { batchGetOrCreateAssets, getOrCreateAsset } from '../assets/asset';
+import { batchGetOrCreateAssets } from '../assets/asset';
 import {
   broadcastSwappedEventPostHook,
   broadcastSwappedEventPreHook,
@@ -44,8 +44,6 @@ export async function getSwap({
   id,
   eventTraceId,
   relations = {
-    swapper: true,
-    filler: true,
     fees: true,
     inputs: true,
     outputs: true,
@@ -126,8 +124,8 @@ export async function getNewSwap({
     traceIds,
     operationId,
     swapIndex,
-    swapper: await getOrCreateAccount({ ctx, id: swapperId }),
-    filler: await getOrCreateAccount({ ctx, id: fillerId }),
+    swapperId: swapperId,
+    fillerId: fillerId,
     allInvolvedAssetIds: [],
     allInvolvedAssetRegistryIds: [],
     // allInvolvedAssetIds: [
@@ -188,7 +186,7 @@ export async function getNewSwap({
         destinationType: fee.destinationType,
         swap,
         assetId: asset.id,
-        recipient,
+        recipientId: recipient ? recipient.id : null,
       })
     );
     swap.allInvolvedAssetIds.push(asset.id);
@@ -332,14 +330,25 @@ export async function handleSwap({
   swap.swapIndex =
     swapIndex ?? (routedTrade ? routedTrade.swaps.length - 1 : 0);
 
-  for (const fee of swapFees.filter((fee) => !!fee.recipient))
+  // Get Account objects for fee recipients
+  const feeRecipientAccounts = await Promise.all(
+    swapFees
+      .filter((fee) => !!fee.recipientId)
+      .map(async (fee) => ({
+        fee,
+        account: await getOrCreateAccount({ ctx, id: fee.recipientId! }),
+      }))
+  );
+
+  for (const { fee, account } of feeRecipientAccounts) {
     await handleSwapFeeHistoricalData({
       ctx,
       feeAmount: fee.amount,
       assetId: fee.assetId,
-      account: fee.recipient!,
+      account,
       block: swap.event.block,
     });
+  }
 
   const state = ctx.batchState.state;
 
@@ -350,11 +359,17 @@ export async function handleSwap({
   for (const swapOutput of swapOutputs)
     state.swapOutputs.set(swapOutput.id, swapOutput);
 
+  // Get Account objects for activity trace
+  const [swapperAccount, fillerAccount] = await Promise.all([
+    getOrCreateAccount({ ctx, id: swap.swapperId }),
+    getOrCreateAccount({ ctx, id: swap.fillerId }),
+  ]);
+
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     participants: [
-      swap.swapper,
-      swap.filler,
-      ...swapFees.map((fee) => fee.recipient ?? null).filter((i) => !!i),
+      swapperAccount,
+      fillerAccount,
+      ...feeRecipientAccounts.map(({ account }) => account),
     ],
     traceIds,
     ctx,

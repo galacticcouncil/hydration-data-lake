@@ -115,7 +115,7 @@ export function initLbppoolVolume(
       ?.amount || BigInt(0);
 
   const assetAFeeVol = swap.fees.reduce((acc, feeData) => {
-    if (feeData.assetId !== newVolume.assetAId || !feeData.recipient)
+    if (feeData.assetId !== newVolume.assetAId || !feeData.recipientId)
       return acc;
     return acc + feeData.amount;
   }, 0n);
@@ -129,7 +129,7 @@ export function initLbppoolVolume(
       ?.amount || BigInt(0);
 
   const assetBFeeVol = swap.fees.reduce((acc, feeData) => {
-    if (feeData.assetId !== newVolume.assetBId || !feeData.recipient)
+    if (feeData.assetId !== newVolume.assetBId || !feeData.recipientId)
       return acc;
     return acc + feeData.amount;
   }, 0n);
@@ -172,18 +172,18 @@ export async function handleLbppoolVolumeUpdates({
 }) {
   const lbpPoolVolumes = ctx.batchState.state.lbpPoolVolumes;
   const currentVolume = lbpPoolVolumes.get(
-    swap.filler.id + '-' + swap.paraBlockHeight
+    swap.fillerId + '-' + swap.paraBlockHeight
   );
 
   const oldVolume =
     currentVolume ||
     (getLastVolumeFromCache(
       ctx.batchState.state.lbpPoolVolumes,
-      swap.filler.id
+      swap.fillerId
     ) as LbppoolVolumeHistoricalData | undefined) ||
     (await getOldLbpVolume({
       ctx,
-      poolId: swap.filler.id,
+      poolId: swap.fillerId,
     }));
 
   const newVolume = initLbppoolVolume(swap, pool, currentVolume, oldVolume);

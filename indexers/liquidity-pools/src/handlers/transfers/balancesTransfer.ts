@@ -4,6 +4,7 @@ import { BalancesTransferData } from '../../parsers/batchBlocksParser/types';
 import { initTransfer } from './utils';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { AssetType } from '../../model';
+import { getOrCreateAccount } from '../accounts';
 
 export async function handleBalancesTransfer(
   ctx: SqdProcessorContext<Store>,
@@ -35,8 +36,14 @@ export async function handleBalancesTransfer(
 
   ctx.batchState.state.transfers.set(transferEntity.id, transferEntity);
 
+  // Get Account objects for activity trace
+  const [toAccount, fromAccount] = await Promise.all([
+    getOrCreateAccount({ ctx, id: eventParams.to }),
+    getOrCreateAccount({ ctx, id: eventParams.from }),
+  ]);
+
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [transferEntity.to, transferEntity.from],
+    participants: [toAccount, fromAccount],
     traceIds: transferEntity.traceIds,
     ctx,
   });

@@ -93,20 +93,20 @@ export function processRouteTradeHop({
     routeTradeEntity.participantFillers = [
       ...new Set([
         ...(routeTradeEntity.participantFillers || []),
-        swap.filler.id,
+        swap.fillerId,
       ]).values(),
     ];
     routeTradeEntity.participantSwappers = [
       ...new Set([
         ...(routeTradeEntity.participantSwappers || []),
-        swap.swapper.id,
+        swap.swapperId,
       ]).values(),
     ];
     routeTradeEntity.feeRecipients = [
       ...new Set([
         ...(routeTradeEntity.feeRecipients || []),
         ...swap.fees
-          .map((swapFee) => swapFee.recipient?.id)
+          .map((swapFee) => swapFee.recipientId)
           .filter((recipientId) => !!recipientId),
       ]).values(),
     ] as string[];
@@ -157,10 +157,10 @@ export function processRouteTradeHop({
     id: newRouteTradeEntityId,
     routeId,
     swaps: [swap],
-    participantSwappers: [swap.swapper.id],
-    participantFillers: [swap.filler.id],
+    participantSwappers: [swap.swapperId],
+    participantFillers: [swap.fillerId],
     feeRecipients: swap.fees
-      .map((swapFee) => swapFee.recipient?.id)
+      .map((swapFee) => swapFee.recipientId)
       .filter((recipientId) => !!recipientId) as string[],
     allInvolvedAssetIds: swap.allInvolvedAssetIds,
     allInvolvedAssetRegistryIds: swap.allInvolvedAssetRegistryIds,
