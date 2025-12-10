@@ -110,7 +110,6 @@ export async function prefetchGenericPersistentData(
       {
         where: {},
         relations: {
-          account: true,
           assets: true,
         },
       },
@@ -195,7 +194,7 @@ export async function prefetchGenericPersistentData(
       Omnipool,
       {
         where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
-        relations: { account: true },
+        relations: {},
       },
       {
         className: 'Omnipool',
@@ -207,9 +206,7 @@ export async function prefetchGenericPersistentData(
       Hsmpool,
       {
         where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
-        relations: {
-          account: true,
-        },
+        relations: {},
       },
       {
         className: 'Hsmpool',
@@ -526,7 +523,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            pool: { account: true },
+            pool: true,
             
           },
           order: {
@@ -576,7 +573,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            pool: { account: true },
+            pool: true,
             assetsHistoricalData: {
               stableswapAsset: true,
             },
@@ -604,7 +601,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             poolHistoricalData: true,
-            stableswapAsset: { pool: { account: true } },
+            stableswapAsset: { pool: true },
             
           },
           order: {

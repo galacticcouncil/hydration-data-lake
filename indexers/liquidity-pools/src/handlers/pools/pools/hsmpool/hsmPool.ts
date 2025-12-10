@@ -15,7 +15,6 @@ export async function ensureHsmpool(ctx: SqdProcessorContext<Store>) {
       where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
       relations: {
         collaterals: { stableswap: true },
-        account: true,
       },
     }, { className: 'Hsmpool' })) ?? null;
 
@@ -26,24 +25,26 @@ export async function ensureHsmpool(ctx: SqdProcessorContext<Store>) {
 
   hsmpoolEntity = new Hsmpool();
   hsmpoolEntity.id = ctx.appConfig.HSMPOOL_ADDRESS;
-  hsmpoolEntity.account = await getOrCreateAccount({
+  hsmpoolEntity.accountId = ctx.appConfig.HSMPOOL_ADDRESS;
+
+  const hsmAccount = await getOrCreateAccount({
     ctx,
-    id: ctx.appConfig.HSMPOOL_ADDRESS,
+    id: hsmpoolEntity.accountId,
     accountType: AccountType.Hsmpool,
     ensureAccountType: true,
   });
 
   await ctx.store.save(hsmpoolEntity);
 
-  hsmpoolEntity.account.hsmpool = hsmpoolEntity;
+  hsmAccount.hsmpool = hsmpoolEntity;
   // await ctx.store.save(hsmpoolEntity.account);
   await ctx.storeUtils.runWithRetry(() =>
-    ctx.store.save(hsmpoolEntity.account)
+    ctx.store.save(hsmAccount)
   );
 
   ctx.batchState.state.hsmpoolEntity = hsmpoolEntity;
   ctx.batchState.state.accounts.set(
-    hsmpoolEntity.account.id,
-    hsmpoolEntity.account
+    hsmAccount.id,
+    hsmAccount
   );
 }

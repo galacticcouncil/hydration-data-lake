@@ -121,9 +121,7 @@ async function handleStableoolsDestroyedStatus(
     where: {
       isDestroyed: false,
     },
-    relations: {
-      account: true,
-    },
+    relations: {},
   }, { className: 'Stableswap' });
 
   if (stableswapsToProcess.length === 0) return;
@@ -136,7 +134,7 @@ async function handleStableoolsDestroyedStatus(
         (p) =>
           p.createdAtParaBlockHeight > ctx.blocks[0].header.height + 10_000
       )
-      .map(async ({ id, account }) => {
+      .map(async ({ id }) => {
         return {
           totalIssuance: await parsers.storage.tokens.getTokenTotalIssuance({
             tokenId: +id,

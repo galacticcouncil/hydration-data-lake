@@ -1,5 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
-import {Account} from "./account.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import {AaveFacilitator} from "./aaveFacilitator.model"
 import {HsmCollateral} from "./hsmCollateral.model"
 
@@ -15,9 +14,8 @@ export class Hsmpool {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    account!: Account
+    @StringColumn_({nullable: false})
+    accountId!: string
 
     @Index_()
     @ManyToOne_(() => AaveFacilitator, {nullable: true})

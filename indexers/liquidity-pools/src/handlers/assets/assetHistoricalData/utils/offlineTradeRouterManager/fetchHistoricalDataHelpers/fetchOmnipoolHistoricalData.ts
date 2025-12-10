@@ -67,7 +67,7 @@ export async function fetchOmnipoolHistoricalData({
             paraBlockHeight: blockNumber,
           },
           relations: {
-            pool: { account: true },
+            pool: true,
             assetsHistoricalData: {
               omnipoolAsset: true,
             },
@@ -168,7 +168,7 @@ export async function fetchOmnipoolHistoricalDataForBlocksRangeResolver({
             paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
           },
           relations: {
-            pool: { account: true },
+            pool: true,
             assetsHistoricalData: {
               omnipoolAsset: true,
             },

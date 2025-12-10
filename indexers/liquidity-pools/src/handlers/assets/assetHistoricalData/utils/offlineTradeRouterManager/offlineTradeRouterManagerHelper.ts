@@ -847,7 +847,7 @@ export class OfflineTradeRouterManagerHelper {
 
       poolsMap.set(poolId, {
         id: poolHistData.pool.id,
-        address: publicKeyToSs58(poolHistData.pool.account.id),
+        address: publicKeyToSs58(poolHistData.pool.accountId),
         type: PoolType.Stable,
 
         tokens: [
@@ -916,7 +916,7 @@ export class OfflineTradeRouterManagerHelper {
     const blockConstants = this.constantsHistData.get(blockNumber)!;
 
     const poolData: IPersistentOmniPoolBase = {
-      address: publicKeyToSs58(poolHistData.pool.account.id),
+      address: publicKeyToSs58(poolHistData.pool.accountId),
       type: PoolType.Omni,
 
       tokens: poolHistData.assetsHistoricalData

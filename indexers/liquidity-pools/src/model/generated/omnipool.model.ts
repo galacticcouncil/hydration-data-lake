@@ -1,5 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BooleanColumn as BooleanColumn_, IntColumn as IntColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
-import {Account} from "./account.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BooleanColumn as BooleanColumn_, IntColumn as IntColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import {OmnipoolAsset} from "./omnipoolAsset.model"
 
 @Entity_()
@@ -11,9 +10,8 @@ export class Omnipool {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    account!: Account
+    @StringColumn_({nullable: false})
+    accountId!: string
 
     @BooleanColumn_({nullable: true})
     isDestroyed!: boolean | undefined | null

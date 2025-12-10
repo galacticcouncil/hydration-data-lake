@@ -1,25 +1,32 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
-import { EventName } from '../../../parsers/types/events';
+
 import {
-  getOrderedListByBlockNumber,
-  isUnifiedEventsSupportSpecVersion,
-} from '../../../utils/helpers';
+  SwapFeeDestinationType,
+  SwapFillerType,
+  TradeOperationType,
+} from '../../../model';
+import {
+  BatchBlocksParsedDataManager,
+} from '../../../parsers/batchBlocksParser';
 import {
   StableswapBuyExecutedData,
   StableswapLiquidityAddedData,
   StableswapLiquidityRemovedData,
   StableswapSellExecutedData,
 } from '../../../parsers/batchBlocksParser/types';
+import { EventName } from '../../../parsers/types/events';
+import { SqdProcessorContext } from '../../../processor';
 import {
-  SwapFeeDestinationType,
-  SwapFillerType,
-  TradeOperationType,
-} from '../../../model';
-import { handleStablepoolVolumeUpdates } from '../../pools/volumes/stablepoolVolume';
+  getOrderedListByBlockNumber,
+  isUnifiedEventsSupportSpecVersion,
+} from '../../../utils/helpers';
+import {
+  stablepoolLiquidityAddedRemoved,
+} from '../../pools/pools/stableswap/liquidity';
 import { getOrCreateStableswap } from '../../pools/pools/stableswap/stablepool';
-import { stablepoolLiquidityAddedRemoved } from '../../pools/pools/stableswap/liquidity';
+import {
+  handleStablepoolVolumeUpdates,
+} from '../../pools/volumes/stablepoolVolume';
 import { handleSwap } from '../../swap/swap';
 
 export async function handleStablepoolOperations(
@@ -127,7 +134,7 @@ export async function stablepoolBuySellExecuted(
       ],
       eventId: eventMetadata.id,
       swapperAccountId: eventParams.who,
-      fillerAccountId: pool.account.id,
+      fillerAccountId: pool.accountId,
       fillerType: SwapFillerType.Stableswap,
       inputs: [
         {
@@ -146,7 +153,7 @@ export async function stablepoolBuySellExecuted(
           amount: eventParams.fee,
           assetId: eventParams.assetOut,
           destinationType: SwapFeeDestinationType.Account,
-          recipientId: pool.account.id,
+          recipientId: pool.accountId,
         },
       ],
       operationType:

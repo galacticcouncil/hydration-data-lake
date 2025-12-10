@@ -941,7 +941,7 @@ type XykpoolHistoricalData @entity {
 
 type Omnipool @entity {
   id: ID!
-  account: Account!
+  accountId: String!
 
   isDestroyed: Boolean
   destroyedAtParaBlockHeight: Int
@@ -1069,7 +1069,7 @@ type OmnipoolAssetHistoricalData @entity {
 type Stableswap @entity {
   "poolId - share token ID (e.g. 102)"
   id: ID!
-  account: Account!
+  accountId: String!
   shareTokenId: String!
 
   createdAtParaBlockHeight: Int! @index
@@ -1245,7 +1245,7 @@ type StableswapAssetHistoricalData @entity {
 type Hsmpool @entity {
   "poolId"
   id: ID!
-  account: Account!
+  accountId: String!
   facilitator: AaveFacilitator!
 
   collaterals: [HsmCollateral!]! @derivedFrom(field: "pool")

@@ -40,7 +40,6 @@ export async function fetchStableswapHistoricalData({
             isDestroyed: false,
           },
           relations: {
-            account: true,
             assets: {
               pool: true,
             },
@@ -121,7 +120,7 @@ export async function fetchStableswapHistoricalData({
               : {}),
           },
           relations: {
-            pool: { account: true },
+            pool: true,
             assetsHistoricalData: {
               stableswapAsset: true,
             },
@@ -207,7 +206,6 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
             isDestroyed: false,
           },
           relations: {
-            account: true,
             assets: {
               pool: true,
             },
@@ -305,7 +303,7 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
               : {}),
           },
           relations: {
-            pool: { account: true },
+            pool: true,
             assetsHistoricalData: {
               stableswapAsset: true,
             },

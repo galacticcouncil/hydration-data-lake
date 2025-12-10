@@ -17,7 +17,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   let omnipoolEntity =
     (await ctx.storeUtils.findOneWithLogs(Omnipool, {
       where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
-      relations: { assets: true, account: true },
+      relations: { assets: true },
     }, { className: 'Omnipool' })) ?? null;
 
   if (!!omnipoolEntity) {
@@ -36,7 +36,9 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
 
   omnipoolEntity = new Omnipool();
   omnipoolEntity.id = ctx.appConfig.OMNIPOOL_ADDRESS;
-  omnipoolEntity.account = await getOrCreateAccount({
+  omnipoolEntity.accountId = ctx.appConfig.OMNIPOOL_ADDRESS;
+  
+  const omniAccount = await getOrCreateAccount({
     ctx,
     id: ctx.appConfig.OMNIPOOL_ADDRESS,
     accountType: AccountType.Omnipool,
@@ -74,15 +76,15 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   await ctx.store.save(omnipoolEntity);
   await ctx.store.save(internalOmnipoolToken);
 
-  omnipoolEntity.account.omnipool = omnipoolEntity;
+  omniAccount.omnipool = omnipoolEntity;
   // await ctx.store.save(omnipoolEntity.account);
   await ctx.storeUtils.runWithRetry(() =>
-    ctx.store.save(omnipoolEntity.account)
+    ctx.store.save(omniAccount)
   );
 
   ctx.batchState.state.omnipoolEntity = omnipoolEntity;
   ctx.batchState.state.accounts.set(
-    omnipoolEntity.account.id,
-    omnipoolEntity.account
+    omniAccount.id,
+    omniAccount
   );
 }
