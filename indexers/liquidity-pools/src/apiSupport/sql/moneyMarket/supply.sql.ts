@@ -7,5 +7,5 @@ export const getLatestTotalPlatformSupplyAmount = `
   FROM
     aavepool_historical_data ahd
   WHERE
-    ahd.para_block_height = (SELECT aavepool_hist_data_latest_block FROM processor_status);
+    ahd.para_block_height = (SELECT aavepool_hist_data_latest_block FROM processor_status WHERE id = $1 LIMIT 1);
 `;

@@ -50,6 +50,96 @@ export const AssetState: sts.Type<AssetState> = sts.struct(() => {
     }
 })
 
+export interface ItemMetadata {
+    deposit: bigint
+    data: BoundedVec
+    isFrozen: boolean
+}
+
+export type BoundedVec = Bytes
+
+export const ItemMetadata: sts.Type<ItemMetadata> = sts.struct(() => {
+    return  {
+        deposit: sts.bigint(),
+        data: BoundedVec,
+        isFrozen: sts.boolean(),
+    }
+})
+
+export interface CollectionMetadata {
+    deposit: bigint
+    data: BoundedVec
+    isFrozen: boolean
+}
+
+export const CollectionMetadata: sts.Type<CollectionMetadata> = sts.struct(() => {
+    return  {
+        deposit: sts.bigint(),
+        data: BoundedVec,
+        isFrozen: sts.boolean(),
+    }
+})
+
+export interface ItemDetails {
+    owner: AccountId32
+    approved?: (AccountId32 | undefined)
+    isFrozen: boolean
+    deposit: bigint
+}
+
+export const ItemDetails: sts.Type<ItemDetails> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        approved: sts.option(() => AccountId32),
+        isFrozen: sts.boolean(),
+        deposit: sts.bigint(),
+    }
+})
+
+export type AccountId32 = Bytes
+
+export interface CollectionDetails {
+    owner: AccountId32
+    issuer: AccountId32
+    admin: AccountId32
+    freezer: AccountId32
+    totalDeposit: bigint
+    freeHolding: boolean
+    items: number
+    itemMetadatas: number
+    attributes: number
+    isFrozen: boolean
+}
+
+export const CollectionDetails: sts.Type<CollectionDetails> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        issuer: AccountId32,
+        admin: AccountId32,
+        freezer: AccountId32,
+        totalDeposit: sts.bigint(),
+        freeHolding: sts.boolean(),
+        items: sts.number(),
+        itemMetadatas: sts.number(),
+        attributes: sts.number(),
+        isFrozen: sts.boolean(),
+    }
+})
+
+export const DestroyWitness: sts.Type<DestroyWitness> = sts.struct(() => {
+    return  {
+        items: sts.number(),
+        itemMetadatas: sts.number(),
+        attributes: sts.number(),
+    }
+})
+
+export interface DestroyWitness {
+    items: number
+    itemMetadatas: number
+    attributes: number
+}
+
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
         Council: Type_172,
@@ -83,8 +173,6 @@ export interface RawOrigin_Signed {
     __kind: 'Signed'
     value: AccountId32
 }
-
-export type AccountId32 = Bytes
 
 export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {
@@ -1472,22 +1560,6 @@ export const UniquesCall: sts.Type<UniquesCall> = sts.closedEnum(() => {
     }
 })
 
-export const BoundedVec = sts.bytes()
-
-export const DestroyWitness: sts.Type<DestroyWitness> = sts.struct(() => {
-    return  {
-        items: sts.number(),
-        itemMetadatas: sts.number(),
-        attributes: sts.number(),
-    }
-})
-
-export interface DestroyWitness {
-    items: number
-    itemMetadatas: number
-    attributes: number
-}
-
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -2061,8 +2133,6 @@ export interface UniquesCall_transfer_ownership {
     collection: bigint
     owner: AccountId32
 }
-
-export type BoundedVec = Bytes
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
@@ -8880,6 +8950,8 @@ export const Tradability: sts.Type<Tradability> = sts.struct(() => {
 })
 
 export const FixedU128 = sts.bigint()
+
+export const BoundedVec = sts.bytes()
 
 export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
     return  {

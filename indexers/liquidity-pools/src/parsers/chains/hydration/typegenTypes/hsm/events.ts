@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v323 from '../v323'
+import * as v359 from '../v359'
 
 export const collateralAdded =  {
     name: 'HSM.CollateralAdded',
@@ -77,6 +78,28 @@ export const collateralUpdated =  {
             maxBuyPriceCoefficient: sts.option(() => v323.FixedU128),
             buyBackFee: sts.option(() => v323.Permill),
             buybackRate: sts.option(() => v323.Perbill),
+        })
+    ),
+    /**
+     * A collateral asset was updated
+     * 
+     * Parameters:
+     * - `asset_id`: The ID of the updated collateral asset
+     * - `purchase_fee`: New purchase fee if updated (None if not changed)
+     * - `max_buy_price_coefficient`: New max buy price coefficient if updated (None if not changed)
+     * - `buy_back_fee`: New buy back fee if updated (None if not changed)
+     * - `buyback_rate`: New buyback rate if updated (None if not changed)
+     * - `max_in_holding`: New max collateral holding if updated (None if not changed)
+     */
+    v359: new EventType(
+        'HSM.CollateralUpdated',
+        sts.struct({
+            assetId: sts.number(),
+            purchaseFee: sts.option(() => v359.Permill),
+            maxBuyPriceCoefficient: sts.option(() => v359.FixedU128),
+            buyBackFee: sts.option(() => v359.Permill),
+            buybackRate: sts.option(() => v359.Perbill),
+            maxInHolding: sts.enumOption(() => sts.option(() => sts.bigint())),
         })
     ),
 }

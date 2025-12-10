@@ -28,116 +28,144 @@ export async function recalculatePoolsNormalizedVolumes(
 
   ctx.batchState.state.assetsAll = new Map(
     (
-      await ctx.storeUtils.findWithLogs(Asset, {
-        where: {},
-        relations: {
-          underlyingAsset: true,
-          aToken: true,
-          variableDebtToken: true,
-          bondUnderlyingAsset: true,
+      await ctx.storeUtils.findWithLogs(
+        Asset,
+        {
+          where: {},
+          relations: {
+            underlyingAsset: true,
+            aToken: true,
+            variableDebtToken: true,
+            bondUnderlyingAsset: true,
+          },
         },
-      }, { className: 'Asset' })
+        { className: 'Asset' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.batchBlocks = new Map(
     (
-      await ctx.storeUtils.findWithLogs(Block, {
-        where: {
-          height: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        Block,
+        {
+          where: {
+            height: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
         },
-      }, { className: 'Block' })
+        { className: 'Block' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.assetsSpotPriceHistoricalDataBatch = new Map(
     (
-      await ctx.storeUtils.findWithLogs(AssetSpotPriceHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        AssetSpotPriceHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            assetInHistData: true,
+            assetIn: true,
+            assetOut: true,
+            block: true,
+          },
         },
-        relations: {
-          assetInHistData: true,
-          assetIn: true,
-          assetOut: true,
-          block: true,
-        },
-      }, { className: 'AssetSpotPriceHistoricalData' })
+        { className: 'AssetSpotPriceHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.xykPoolVolumes = new Map(
     (
-      await ctx.storeUtils.findWithLogs(XykpoolVolumeHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        XykpoolVolumeHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: true,
+            assetA: true,
+            assetB: true,
+            block: true,
+          },
         },
-        relations: {
-          pool: true,
-          assetA: true,
-          assetB: true,
-          block: true,
-        },
-      }, { className: 'XykpoolVolumeHistoricalData' })
+        { className: 'XykpoolVolumeHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.omnipoolAssetVolumes = new Map(
     (
-      await ctx.storeUtils.findWithLogs(OmnipoolAssetVolumeHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        OmnipoolAssetVolumeHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            omnipoolAsset: { asset: true },
+          },
         },
-        relations: {
-          omnipoolAsset: { asset: true },
-        },
-      }, { className: 'OmnipoolAssetVolumeHistoricalData' })
+        { className: 'OmnipoolAssetVolumeHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolVolumeCollections = new Map(
     (
-      await ctx.storeUtils.findWithLogs(StableswapVolumeHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        StableswapVolumeHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            pool: true,
+            block: true,
+          },
         },
-        relations: {
-          pool: true,
-          block: true,
-        },
-      }, { className: 'StableswapVolumeHistoricalData' })
+        { className: 'StableswapVolumeHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.stablepoolAssetVolumes = new Map(
     (
-      await ctx.storeUtils.findWithLogs(StableswapAssetVolumeHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        StableswapAssetVolumeHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {
+            volumesCollection: { pool: true },
+            asset: true,
+            block: true,
+          },
         },
-        relations: {
-          volumesCollection: { pool: true },
-          asset: true,
-          block: true,
-        },
-      }, { className: 'StableswapAssetVolumeHistoricalData' })
+        { className: 'StableswapAssetVolumeHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 

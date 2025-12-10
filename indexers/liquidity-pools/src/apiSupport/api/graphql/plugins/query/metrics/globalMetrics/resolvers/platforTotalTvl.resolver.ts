@@ -9,12 +9,12 @@ import {
   getOmnipoolTotalTvl,
 } from '../../../../../../../sql/omnipool/omnipoolTvl.sql';
 import { getStableswapsTotalTvl } from '../../../../../../../sql/stableswap/stableswapTvl.sql';
-import {
-  getAllXykpoolsTvl,
-  getXykpoolsTvl,
-} from '../../../../../../../sql/xykpool/xykpoolsTvl.sql';
+import { getAllXykpoolsTvl } from '../../../../../../../sql/xykpool/xykpoolsTvl.sql';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getLatestTotalPlatformSupplyAmount } from '../../../../../../../sql/moneyMarket/supply.sql';
+import { AppConfig } from '../../../../../../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function platformTotalTvlResolver(
   parentObject: any,
@@ -41,31 +41,31 @@ export async function platformTotalTvlResolver(
   const omnipoolTvl = await pgClient.query<{
     tvl_total_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getOmnipoolTotalTvl);
+  }>(getOmnipoolTotalTvl, [appConfig.STATE_SCHEMA_NAME]);
 
   const omnipoolH2oTvl = await pgClient.query<{
     asset_id: string;
     tvl_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getOmnipoolAssetsTvl, [['1']]);
+  }>(getOmnipoolAssetsTvl, [appConfig.STATE_SCHEMA_NAME, ['1']]);
 
   const stableswapsTvl = await pgClient.query<{
     pool_id: string;
     tvl_total_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getStableswapsTotalTvl);
+  }>(getStableswapsTotalTvl, [appConfig.STATE_SCHEMA_NAME]);
 
   const xykpoolsTvl = await pgClient.query<{
     pool_id: string;
     tvl_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getAllXykpoolsTvl);
+  }>(getAllXykpoolsTvl, [appConfig.STATE_SCHEMA_NAME]);
 
   const totalMmSupply = await pgClient.query<{
     pool_id: string;
     tvl_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getLatestTotalPlatformSupplyAmount);
+  }>(getLatestTotalPlatformSupplyAmount, [appConfig.STATE_SCHEMA_NAME]);
 
   const omnipoolTvlTotal = BigNumber(
     omnipoolTvl.rows[0]?.tvl_total_in_ref_asset_norm || '0'

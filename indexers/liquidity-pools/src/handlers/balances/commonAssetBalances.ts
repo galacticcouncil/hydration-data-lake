@@ -2,10 +2,10 @@ import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   Account,
-  AccountAssetBalanceHistoricalData,
-  AccountTotalBalanceHistoricalData,
+  OmnipoolLiquidityPosition,
+  OmnipoolLiquidityPositionEvent,
 } from '../../model';
-import { In } from 'typeorm';
+import { In, LessThanOrEqual } from 'typeorm';
 import parsers from '../../parsers';
 import { AccountData } from '../../parsers/types/storage';
 import { getOrCreateAccount } from '../accounts';
@@ -13,38 +13,49 @@ import { getOrCreateAsset } from '../assets/asset';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';
-import {
-  getOrCreateAccountAssetBalanceHistoricalData,
-  getOrCreateAccountTotalBalanceHistoricalData,
-} from './accountAssetBalance';
+import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
+import { Between } from 'typeorm/find-options/operator/Between';
 
+type BlockHeight = number;
 type AccountId = string;
 type AssetRegistryId = string;
+type AssetId = string;
+type AccountBalancesPerBlock = Map<
+  BlockHeight,
+  {
+    blockHeader: SqdBlock;
+    data: Map<AccountId, Map<AssetRegistryId, AccountData>>;
+  }
+>;
+
+type AccountPositionBalancesPerBlockPerAsset = Map<
+  BlockHeight,
+  {
+    blockHeader: SqdBlock;
+    data: Map<AccountId, Map<AssetId, BigNumber>>;
+  }
+>;
 
 export async function handleCommonAssetAccountBalances({
-  accountIdsToProcess = new Set(),
+  accountIdsToProcess = new Map(),
   ctx,
 }: {
-  accountIdsToProcess?: Set<string>;
+  accountIdsToProcess?: Map<number, Set<string>>;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const allInvolvedAccountsInBatchSet: Set<string> = accountIdsToProcess;
-  const palletNamesSet = new Set([
-    'Currencies',
-    'Tokens',
-    'Balances',
-    'Duster',
-  ]);
-  const accountBalancesPerBlock: Map<
-    number,
-    {
-      blockHeader: SqdBlock;
-      data: Map<AccountId, Map<AssetRegistryId, AccountData>>;
-    }
-  > = new Map();
+  const allInvolvedAccountsInBatchSet: Set<string> = new Set(
+    Array.from(accountIdsToProcess.values())
+      .map((blockSlot) => Array.from(blockSlot.values()))
+      .flat()
+  );
+
+  const palletNamesSet = ctx.appConfig.ACCOUNT_BALANCE_AGGREGATION_TRIGGERS;
+  const accountBalancesPerBlock: AccountBalancesPerBlock = new Map();
 
   blocksLoop: for (const block of ctx.blocks) {
-    const allInvolvedAccountsInBlockSet: Set<string> = new Set();
+    const allInvolvedAccountsInBlockSet: Set<string> =
+      accountIdsToProcess.get(block.header.height) ?? new Set();
+
     if (!accountBalancesPerBlock.has(block.header.height))
       accountBalancesPerBlock.set(block.header.height, {
         blockHeader: block.header,
@@ -68,18 +79,30 @@ export async function handleCommonAssetAccountBalances({
         allInvolvedAccountsInBlockSet.add(event.args.who);
         allInvolvedAccountsInBatchSet.add(event.args.who);
       }
+      if (event.args.swapper) {
+        allInvolvedAccountsInBlockSet.add(event.args.swapper);
+        allInvolvedAccountsInBatchSet.add(event.args.swapper);
+      }
+      if (event.args.filler) {
+        allInvolvedAccountsInBlockSet.add(event.args.filler);
+        allInvolvedAccountsInBatchSet.add(event.args.filler);
+      }
     }
 
     if (allInvolvedAccountsInBlockSet.size === 0) continue blocksLoop;
 
+    const allInvolvedAccountsInBlockList = Array.from(
+      allInvolvedAccountsInBlockSet.keys()
+    );
+
     const [nativeTokenBalances, otherTokenBalances] = await Promise.all([
       parsers.storage.system.getNativeTokenBalanceMany({
         block: block.header,
-        accountIds: Array.from(allInvolvedAccountsInBlockSet.keys()),
+        accountIds: allInvolvedAccountsInBlockList,
       }),
       parsers.storage.tokens.getTokenBalancesMany({
         block: block.header,
-        accountIds: Array.from(allInvolvedAccountsInBlockSet.keys()),
+        accountIds: allInvolvedAccountsInBlockList,
       }),
     ]);
 
@@ -121,9 +144,15 @@ export async function handleCommonAssetAccountBalances({
   const persistedAccounts = await ctx.storeUtils.findWithLogs(
     Account,
     {
-      where: { id: In(Array.from(allInvolvedAccountsInBatchSet.keys())) },
+      where: {
+        id: In(
+          Array.from(allInvolvedAccountsInBatchSet.keys()).filter(
+            (acc) => !ctx.batchState.state.accounts.has(acc)
+          )
+        ),
+      },
     },
-    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' },
+    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' }
   );
 
   for (const acc of persistedAccounts) {
@@ -140,18 +169,10 @@ export async function handleCommonAssetAccountBalances({
   if (!refAsset) throw Error('Ref asset not found');
 
   for (const blockData of accountBalancesPerBlock.values()) {
-    for (const [accountId, accountData] of blockData.data.entries()) {
+    for (const [accountId, accountAssetData] of blockData.data.entries()) {
       const account = await getOrCreateAccount({ ctx, id: accountId });
 
-      const accountTotalBalance =
-        await getOrCreateAccountTotalBalanceHistoricalData({
-          account,
-          refAssetId: refAsset.id,
-          blockHeader: blockData.blockHeader,
-          ctx,
-        });
-
-      for (const [assetRegistryId, balances] of accountData.entries()) {
+      for (const [assetRegistryId, balances] of accountAssetData.entries()) {
         const asset = await getOrCreateAsset({
           assetRegistryId,
           ctx,
@@ -175,6 +196,9 @@ export async function handleCommonAssetAccountBalances({
             fetchFromDb: false,
           });
 
+        /**
+         * Account Asset balance calculation
+         */
         assetBalanceHistData.transferable = balances.free;
         assetBalanceHistData.totalLocked = balances.reserved;
         assetBalanceHistData.transferableInRefAssetNorm =
@@ -194,28 +218,12 @@ export async function handleCommonAssetAccountBalances({
               })
             : '0';
 
-        accountTotalBalance.totalTransferableNorm = BigNumber(
-          accountTotalBalance.totalTransferableNorm
-        )
-          .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-          .toFixed();
-
-        accountTotalBalance.totalLockedNorm = BigNumber(
-          accountTotalBalance.totalLockedNorm
-        )
-          .plus(assetBalanceHistData.totalLockedInRefAssetNorm || '0')
-          .toFixed();
-
         ctx.batchState.state.accountAssetBalanceHistoricalData.set(
           assetBalanceHistData.id,
           assetBalanceHistData
         );
       }
-
-      ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-        accountTotalBalance.id,
-        accountTotalBalance
-      );
     }
   }
 }
+

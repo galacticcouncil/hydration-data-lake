@@ -40,3 +40,43 @@ export interface HubAssetTradabilityV324  {
     getDefault(block: Block): v324.Tradability
     get(block: Block): Promise<(v324.Tradability | undefined)>
 }
+
+export const positions =  {
+    /**
+     *  LP positions. Maps NFT instance id to corresponding position
+     */
+    v324: new StorageType('Omnipool.Positions', 'Optional', [sts.bigint()], v324.Position) as PositionsV324,
+}
+
+/**
+ *  LP positions. Maps NFT instance id to corresponding position
+ */
+export interface PositionsV324  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: bigint): Promise<(v324.Position | undefined)>
+    getMany(block: Block, keys: bigint[]): Promise<(v324.Position | undefined)[]>
+    getKeys(block: Block): Promise<bigint[]>
+    getKeys(block: Block, key: bigint): Promise<bigint[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<bigint[]>
+    getKeysPaged(pageSize: number, block: Block, key: bigint): AsyncIterable<bigint[]>
+    getPairs(block: Block): Promise<[k: bigint, v: (v324.Position | undefined)][]>
+    getPairs(block: Block, key: bigint): Promise<[k: bigint, v: (v324.Position | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: bigint, v: (v324.Position | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: bigint): AsyncIterable<[k: bigint, v: (v324.Position | undefined)][]>
+}
+
+export const nextPositionId =  {
+    /**
+     *  Position ids sequencer
+     */
+    v324: new StorageType('Omnipool.NextPositionId', 'Default', [], sts.bigint()) as NextPositionIdV324,
+}
+
+/**
+ *  Position ids sequencer
+ */
+export interface NextPositionIdV324  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): bigint
+    get(block: Block): Promise<(bigint | undefined)>
+}

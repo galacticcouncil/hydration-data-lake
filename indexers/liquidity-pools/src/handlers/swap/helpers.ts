@@ -223,6 +223,18 @@ export async function broadcastSwappedEventPostHook({
 
       break;
     }
+    case SwapFillerType.AAVE: {
+      await handleAssetVolumeUpdates(ctx, {
+        paraBlockHeight: swap.paraBlockHeight,
+        relayBlockHeight: swap.relayBlockHeight,
+        assetIn: swap.inputs[0].asset,
+        assetInAmount: swap.inputs[0].amount,
+        assetOut: swap.outputs[0].asset,
+        assetOutAmount: swap.outputs[0].amount,
+      });
+
+      break;
+    }
   }
 }
 export async function handleSwapFeeHistoricalData({
