@@ -807,7 +807,7 @@ type Xykpool @entity {
   "<address>"
   id: ID!
 
-  account: Account!
+  accountId: String!
   assetAId: String!
   assetBId: String!
   assetABalance: BigInt!

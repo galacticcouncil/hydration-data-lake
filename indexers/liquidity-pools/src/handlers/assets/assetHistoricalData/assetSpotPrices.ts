@@ -456,7 +456,7 @@ async function processXykInvolvedAssetSpotPrices({
 
   const assetXykPool = xykPoolsIndexedByInterimAssetPair.get(assetId);
 
-  if (!assetXykPool || !assetXykPool.account) return;
+  if (!assetXykPool || !assetXykPool.accountId) return;
 
   const interimAssetId =
     assetXykPool.assetAId === asset.id
@@ -464,7 +464,7 @@ async function processXykInvolvedAssetSpotPrices({
       : assetXykPool.assetAId;
 
   const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
-    `${assetXykPool.account.id}-${blockHeader.height}`
+    `${assetXykPool.accountId}-${blockHeader.height}`
   );
   if (!xykPoolHistData) return;
 
@@ -580,7 +580,7 @@ async function processXykInvolvedAssetSpotPrices({
           priceRoute: getPriceRouteDecorated([
             {
               pool: PoolType.XYK,
-              poolAddress: assetXykPool.account.id,
+              poolAddress: assetXykPool.accountId,
               assetIn: asset.assetRegistryId,
               assetOut: assetOut.assetRegistryId!,
             },

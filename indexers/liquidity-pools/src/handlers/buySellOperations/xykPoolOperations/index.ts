@@ -77,9 +77,7 @@ async function prefetchEntities(
 
   const prefetchedPools = await ctx.storeUtils.findWithLogs(Xykpool, {
     where: { id: In(poolsToPrefetch) },
-    relations: {
-      account: true,
-    },
+    relations: {},
   }, { className: 'Xykpool' });
 
   if (prefetchedPools.length > 0)

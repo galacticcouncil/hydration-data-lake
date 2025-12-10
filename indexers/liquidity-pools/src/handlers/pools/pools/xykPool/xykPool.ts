@@ -1,7 +1,6 @@
 import { Store } from '@subsquid/typeorm-store';
 
 import {
-  AccountType,
   Xykpool,
   XykpoolCreatedData,
   XykpoolDestroyedData,
@@ -111,12 +110,7 @@ export async function createXykPool({
 
   const newPool = new Xykpool({
     id: poolAddress,
-    account: await getOrCreateAccount({
-      ctx,
-      id: poolAddress,
-      accountType: AccountType.Xykpool,
-      ensureAccountType: true,
-    }),
+    accountId: poolAddress,
     assetAId: assetAEntity.id,
     assetBId: assetBEntity.id,
     shareTokenId: sharedTokenEntity.id,
@@ -164,7 +158,7 @@ export async function getOrCreateXykPool({
 
   pool = await ctx.storeUtils.findOneWithLogs(Xykpool, {
     where: { id },
-    relations: { account: true },
+    relations: {},
   }, { className: 'Xykpool' });
 
   if (pool) {
@@ -202,13 +196,13 @@ export async function getOrCreateXykPool({
   if (!newPool) return null;
 
   await ctx.store.upsert(newPool);
-  newPool.account.xykpool = newPool;
-  // await ctx.store.upsert(newPool.account);
-  await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(newPool.account));
+  const poolAccount = await getOrCreateAccount({ ctx, id: newPool.accountId });
+  poolAccount.xykpool = newPool;
+  await ctx.storeUtils.runWithRetry(() => ctx.store.upsert(poolAccount));
 
   const state = ctx.batchState.state;
   state.xykAllBatchPools.set(newPool.id, newPool);
-  state.accounts.set(newPool.account.id, newPool.account);
+  state.accounts.set(poolAccount.id, poolAccount);
 
   return newPool;
 }
@@ -273,13 +267,14 @@ export async function xykPoolCreated(
 
   if (!newPool) return;
 
-  newPool.account.xykpool = newPool;
+  const poolAccount = await getOrCreateAccount({ ctx, id: newPool.accountId });
+  poolAccount.xykpool = newPool;
 
   const state = ctx.batchState.state;
 
   state.xykPoolIdsToSave.add(newPool.id);
   state.xykAllBatchPools.set(newPool.id, newPool);
-  state.accounts.set(newPool.account.id, newPool.account);
+  state.accounts.set(poolAccount.id, poolAccount);
 }
 
 export async function xykPoolDestroyed(
@@ -292,9 +287,7 @@ export async function xykPoolDestroyed(
 
   const pool = await ctx.storeUtils.findOneWithLogs(Xykpool, {
     where: { id: eventParams.pool },
-    relations: {
-      account: true,
-    },
+    relations: {},
   }, { className: 'Xykpool' });
 
   if (!pool) return;

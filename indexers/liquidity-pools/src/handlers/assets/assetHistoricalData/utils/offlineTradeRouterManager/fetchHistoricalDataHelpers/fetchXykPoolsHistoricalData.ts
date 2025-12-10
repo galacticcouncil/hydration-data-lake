@@ -33,9 +33,7 @@ export async function fetchXykPoolsHistoricalData({
           where: {
             isDestroyed: false,
           },
-          relations: {
-            account: true,
-          },
+          relations: {},
         },
         {
           className: 'Xykpool',
@@ -75,7 +73,7 @@ export async function fetchXykPoolsHistoricalData({
               : {}),
           },
           relations: {
-            pool: { account: true },
+            pool: true,
           },
         },
         {
@@ -118,9 +116,7 @@ export async function fetchXykPoolsHistoricalDataForBlocksRangeResolver({
           where: {
             isDestroyed: false,
           },
-          relations: {
-            account: true,
-          },
+          relations: {},
         },
         {
           className: 'Xykpool',
@@ -161,7 +157,7 @@ export async function fetchXykPoolsHistoricalDataForBlocksRangeResolver({
               : {}),
           },
           relations: {
-            pool: { account: true },
+            pool: true,
           },
         },
         {

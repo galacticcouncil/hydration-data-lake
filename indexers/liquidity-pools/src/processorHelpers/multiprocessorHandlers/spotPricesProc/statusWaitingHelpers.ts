@@ -97,7 +97,7 @@ export async function waitForSpotPricesRelatedHistoricalData(
         paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
       },
       relations: {
-        pool: { account: true },
+        pool: true,
       },
     }, { className: 'XykpoolHistoricalData' });
 

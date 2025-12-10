@@ -701,7 +701,7 @@ export class OfflineTradeRouterManagerHelper {
       const blockConstants = this.constantsHistData.get(blockNumber)!;
 
       poolsMap.set(poolId, {
-        address: publicKeyToSs58(poolHistData.pool.account.id),
+        address: publicKeyToSs58(poolHistData.pool.accountId),
         id: publicKeyToSs58(poolHistData.pool.id),
         type: PoolType.XYK,
         tokens: [
