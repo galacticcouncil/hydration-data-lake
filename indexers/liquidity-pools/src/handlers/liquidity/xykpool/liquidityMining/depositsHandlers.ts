@@ -32,10 +32,14 @@ export async function handleXylpoolLMSharesDeposited(
     initialAmount: eventParams.amount,
     lpTokenId: `${eventParams.lpToken}`,
     blockHeader: eventMetadata.blockHeader,
+    noPanic: true,
     ctx,
   });
 
-  if (!depositEntity) throw Error(`Deposit ${eventParams.depositId} not found`);
+  if (!depositEntity) {
+    console.log(`Deposit ${eventParams.depositId} not found`);
+    return;
+  }
 
   const depositEvent = getNewXykLiquidityMiningDepositEvent({
     eventName: YieldFarmDepositStatus.SharesDeposited,
