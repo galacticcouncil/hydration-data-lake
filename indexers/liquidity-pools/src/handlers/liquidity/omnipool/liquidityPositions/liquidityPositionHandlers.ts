@@ -202,7 +202,12 @@ export async function initAllOmnipoolLiquidityPositions(
 ) {
   const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
     OmnipoolLiquidityPosition,
-    { where: {} },
+    {
+      where: {},
+      order: {
+        createdAtParaBlockHeight: 'DESC',
+      },
+    },
     { className: 'OmnipoolLiquidityPosition' }
   );
 

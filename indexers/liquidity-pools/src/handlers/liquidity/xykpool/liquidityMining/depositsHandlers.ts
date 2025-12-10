@@ -115,7 +115,12 @@ export async function initAllXykLiquidityMiningDeposits(
 ) {
   const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
     XykYieldFarmDeposit,
-    { where: {} },
+    {
+      where: {},
+      order: {
+        createdAtParaBlockHeight: 'DESC',
+      },
+    },
     { className: 'XykYieldFarmDeposit' }
   );
 
