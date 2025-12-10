@@ -1,12 +1,17 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
+import {
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
+import {
+  EvmEventName,
+  MmUserEModeSet,
+} from '../../../model';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import { SqdProcessorContext } from '../../../processor';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { EvmEventName, MmUserEModeSet } from '../../../model';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmUserEModeSetEvent(
   ctx: SqdProcessorContext<Store>,
@@ -38,7 +43,7 @@ export async function handleMmUserEModeSetEvent(
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
     ],
-    account,
+    accountId: account.id,
     categoryId: parsedEvmEventData.categoryId,
 
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
@@ -54,7 +59,7 @@ export async function handleMmUserEModeSetEvent(
   );
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [mmUserEModeSetEventEntity.account],
+    participants: [account],
     traceIds: mmUserEModeSetEventEntity.traceIds,
     ctx,
   });

@@ -76,8 +76,8 @@ export async function handleMmSupplyEvent(
       eventMetadata.traceId,
     ],
     assetId: assetEntity.id,
-    account,
-    accountOnBehalfOf,
+    accountId: account.id,
+    accountOnBehalfOfId: accountOnBehalfOf.id,
     amount: parsedEvmEventData.amount,
     referralCode: parsedEvmEventData.referralCode,
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
@@ -90,7 +90,7 @@ export async function handleMmSupplyEvent(
   ctx.batchState.state.mmSupplies.set(mmSupplyEntity.id, mmSupplyEntity);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [mmSupplyEntity.account, mmSupplyEntity.accountOnBehalfOf],
+    participants: [account, accountOnBehalfOf],
     traceIds: mmSupplyEntity.traceIds,
     ctx,
   });

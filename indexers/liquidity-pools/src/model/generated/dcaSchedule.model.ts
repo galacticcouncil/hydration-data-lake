@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, ManyToOne as ManyToOne_, IntColumn as IntColumn_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, IntColumn as IntColumn_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_} from "@subsquid/typeorm-store"
 import {DcaScheduleStatus} from "./_dcaScheduleStatus"
-import {Account} from "./account.model"
 import {DcaScheduleOrderType} from "./_dcaScheduleOrderType"
 import {DcaScheduleOrderRouteHop} from "./dcaScheduleOrderRouteHop.model"
 import {DcaScheduleExecution} from "./dcaScheduleExecution.model"
@@ -29,9 +28,8 @@ export class DcaSchedule {
     @Column_("varchar", {length: 10, nullable: true})
     status!: DcaScheduleStatus | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    owner!: Account
+    @StringColumn_({nullable: false})
+    ownerId!: string
 
     @IntColumn_({nullable: true})
     startExecutionBlock!: number | undefined | null

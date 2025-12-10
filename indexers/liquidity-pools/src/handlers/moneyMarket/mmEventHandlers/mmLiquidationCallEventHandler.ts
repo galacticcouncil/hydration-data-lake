@@ -77,8 +77,8 @@ export async function handleMmLiquidationCallEvent(
     ],
     collateralAssetId: collateralAssetEntity.id,
     debtAssetId: debtAssetEntity.id,
-    account,
-    liquidatorAccount,
+    accountId: account.id,
+    liquidatorAccountId: liquidatorAccount.id,
     liquidatedCollateralAmount: parsedEvmEventData.liquidatedCollateralAmount,
     debtToCoverAmount: parsedEvmEventData.debtToCoverAmount,
     receiveAToken: parsedEvmEventData.receiveAToken,
@@ -97,8 +97,8 @@ export async function handleMmLiquidationCallEvent(
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     participants: [
-      mmLiquidationCallEntity.account,
-      mmLiquidationCallEntity.liquidatorAccount,
+      account,
+      liquidatorAccount,
     ],
     traceIds: mmLiquidationCallEntity.traceIds,
     ctx,

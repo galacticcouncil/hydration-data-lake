@@ -58,7 +58,7 @@ export async function handleMmReserveUsedAsCollateralDisabledEvent(
       eventMetadata.traceId,
     ],
     assetId: assetEntity.id,
-    account,
+    accountId: account.id,
 
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       eventMetadata.blockHeader.height
@@ -73,7 +73,7 @@ export async function handleMmReserveUsedAsCollateralDisabledEvent(
   );
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [mmNewEntity.account],
+    participants: [account],
     traceIds: mmNewEntity.traceIds,
     ctx,
   });

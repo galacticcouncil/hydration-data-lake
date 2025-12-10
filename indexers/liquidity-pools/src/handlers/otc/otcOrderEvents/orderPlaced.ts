@@ -1,11 +1,15 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { OtcOrderPlacedData } from '../../../parsers/batchBlocksParser/types';
-import parsers from '../../../parsers';
+
+import {
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
 import { OtcOrderStatus } from '../../../model';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { createOtcOrder } from '../orderUtils';
+import parsers from '../../../parsers';
+import { OtcOrderPlacedData } from '../../../parsers/batchBlocksParser/types';
+import { SqdProcessorContext } from '../../../processor';
+import { getOrCreateAccount } from '../../accounts';
 import { getNewOrderEvent } from '../eventUtils';
+import { createOtcOrder } from '../orderUtils';
 
 export async function handleOtcOrderPlaced(
   ctx: SqdProcessorContext<Store>,
@@ -47,17 +51,18 @@ export async function handleOtcOrderPlaced(
 
   newOrder.events = [...(newOrder.events || []), newOrderEvent];
 
-  newOrder.owner.otcOrders = [...(newOrder.owner.otcOrders || []), newOrder];
+
+  const ownerAccount = await getOrCreateAccount({ ctx, id: newOrder.ownerId });
 
   const state = ctx.batchState.state;
 
-  state.accounts.set(newOrder.owner.id, newOrder.owner);
+  state.accounts.set(ownerAccount.id, ownerAccount);
   state.otcOrders.set(newOrder.id, newOrder);
   state.otcOrderEvents.set(newOrderEvent.id, newOrderEvent);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newOrderEvent.traceIds,
-    participants: [newOrder.owner],
+    participants: [ownerAccount],
     ctx,
   });
 }

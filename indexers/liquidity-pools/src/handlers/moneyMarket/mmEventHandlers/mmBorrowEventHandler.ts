@@ -1,16 +1,18 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { EvmEventName, MmBorrow } from '../../../model';
+
 import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from '../../assets/asset';
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
+import {
+  EvmEventName,
+  MmBorrow,
+} from '../../../model';
+import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
+import { SqdProcessorContext } from '../../../processor';
+import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
-import { handleAccountMmPositionDataOnMmEvent } from '../../accounts/moneyMarketPosition';
 
 export async function handleMmBorrowEvent(
   ctx: SqdProcessorContext<Store>,
@@ -74,8 +76,8 @@ export async function handleMmBorrowEvent(
       eventMetadata.traceId,
     ],
     asset: assetEntity,
-    account,
-    accountOnBehalfOf,
+    accountId: account.id,
+    accountOnBehalfOfId: accountOnBehalfOf.id,
     amount: parsedEvmEventData.amount,
     interestRateMode: parsedEvmEventData.interestRateMode,
     borrowRate: parsedEvmEventData.borrowRate,
@@ -91,7 +93,7 @@ export async function handleMmBorrowEvent(
   ctx.batchState.state.mmBorrows.set(mmBorrowEntity.id, mmBorrowEntity);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [mmBorrowEntity.account, mmBorrowEntity.accountOnBehalfOf],
+    participants: [account, accountOnBehalfOf],
     traceIds: mmBorrowEntity.traceIds,
     ctx,
   });

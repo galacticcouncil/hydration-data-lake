@@ -1,8 +1,14 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { OtcOrderCancelledData } from '../../../parsers/batchBlocksParser/types';
+
+import {
+  ChainActivityTraceManager,
+} from '../../../chainActivityTracingManagers';
 import { OtcOrderStatus } from '../../../model';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import {
+  OtcOrderCancelledData,
+} from '../../../parsers/batchBlocksParser/types';
+import { SqdProcessorContext } from '../../../processor';
+import { getOrCreateAccount } from '../../accounts';
 import {
   getNewOrderEvent,
   processChainActivityTracesRelationshipsOnOtcOrderEvent,
@@ -50,9 +56,11 @@ export async function handleOtcOrderCancelled(
     ctx,
   });
 
+  const ownerAccount = await getOrCreateAccount({ ctx, id: orderEntity.ownerId });
+
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newOrderEvent.traceIds,
-    participants: [orderEntity.owner],
+    participants: [ownerAccount],
     ctx,
   });
 }

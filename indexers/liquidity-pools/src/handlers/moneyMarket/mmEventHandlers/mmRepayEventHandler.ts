@@ -76,8 +76,8 @@ export async function handleMmRepayEvent(
       eventMetadata.traceId,
     ],
     assetId: assetEntity.id,
-    account,
-    repayerAccount,
+    accountId: account.id,
+    repayerAccountId: repayerAccount.id,
     amount: parsedEvmEventData.amount,
     useATokens: parsedEvmEventData.useATokens,
 
@@ -91,7 +91,7 @@ export async function handleMmRepayEvent(
   ctx.batchState.state.mmRepays.set(mmRepayEntity.id, mmRepayEntity);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [mmRepayEntity.account, mmRepayEntity.repayerAccount],
+    participants: [account, repayerAccount],
     traceIds: mmRepayEntity.traceIds,
     ctx,
   });

@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, ManyToOne as ManyToOne_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {OtcOrder} from "./otcOrder.model"
 import {OtcOrderStatus} from "./_otcOrderStatus"
-import {Account} from "./account.model"
 import {Swap} from "./swap.model"
 import {Event} from "./event.model"
 
@@ -41,9 +40,8 @@ export class OtcOrderEvent {
     @BigIntColumn_({nullable: true})
     fee!: bigint | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    filler!: Account | undefined | null
+    @StringColumn_({nullable: true})
+    fillerId!: string | undefined | null
 
     @Index_()
     @ManyToOne_(() => Swap, {nullable: true})

@@ -328,9 +328,6 @@ type Account @entity {
   participatedActions: [AccountChainActivityTrace!]
     @derivedFrom(field: "account")
 
-  dcaSchedules: [DcaSchedule!] @derivedFrom(field: "owner")
-  otcOrders: [OtcOrder!] @derivedFrom(field: "owner")
-
   # TODO: add proxy and multisig tracking
 }
 
@@ -1490,7 +1487,7 @@ type DcaSchedule @entity {
   traceIds: [String!]
 
   status: DcaScheduleStatus @index
-  owner: Account!
+  ownerId: String!
   startExecutionBlock: Int
   period: Int
   totalAmount: BigInt
@@ -1580,7 +1577,7 @@ type OtcOrder @entity {
   "<orderId> as string"
   id: ID!
 
-  owner: Account!
+  ownerId: String!
   assetInId: String!
   assetOutId: String!
   amountOut: BigInt!
@@ -1610,7 +1607,7 @@ type OtcOrderEvent @entity {
   amountOut: BigInt
   fee: BigInt
 
-  filler: Account
+  fillerId: String
   swap: Swap
 
   paraBlockHeight: Int! @index
@@ -1668,8 +1665,8 @@ type MmSupply @entity {
   traceIds: [String!]
 
   assetId: String!
-  account: Account!
-  accountOnBehalfOf: Account!
+  accountId: String!
+  accountOnBehalfOfId: String!
   amount: BigInt
   referralCode: BigInt
 
@@ -1686,8 +1683,8 @@ type MmWithdraw @entity {
   traceIds: [String!]
 
   assetId: String!
-  accountFrom: Account!
-  accountTo: Account!
+  accountFromId: String!
+  accountToId: String!
   amount: BigInt
 
   initiatedByTrade: RoutedTrade
@@ -1703,8 +1700,8 @@ type MmBorrow @entity {
   traceIds: [String!]
 
   asset: Asset!
-  account: Account!
-  accountOnBehalfOf: Account!
+  accountId: String!
+  accountOnBehalfOfId: String!
   amount: BigInt
   interestRateMode: Int
   borrowRate: BigInt
@@ -1720,7 +1717,7 @@ type MmUserEModeSet @entity {
   id: ID!
   traceIds: [String!]
 
-  account: Account!
+  accountId: String!
   categoryId: Int
 
   paraBlockHeight: Int! @index
@@ -1734,8 +1731,8 @@ type MmRepay @entity {
   traceIds: [String!]
 
   assetId: String!
-  account: Account!
-  repayerAccount: Account!
+  accountId: String!
+  repayerAccountId: String!
   amount: BigInt
   useATokens: Boolean
 
@@ -1751,10 +1748,10 @@ type MmLiquidationCall @entity {
 
   collateralAssetId: String!
   debtAssetId: String!
-  account: Account!
+  accountId: String!
   debtToCoverAmount: BigInt
   liquidatedCollateralAmount: BigInt
-  liquidatorAccount: Account!
+  liquidatorAccountId: String!
   receiveAToken: Boolean!
 
   paraBlockHeight: Int! @index
@@ -1767,7 +1764,7 @@ type MmReserveUsedAsCollateralEnabledEvent @entity {
   id: ID!
   traceIds: [String!]
 
-  account: Account!
+  accountId: String!
   assetId: String!
 
   paraBlockHeight: Int! @index
@@ -1780,7 +1777,7 @@ type MmReserveUsedAsCollateralDisabledEvent @entity {
   id: ID!
   traceIds: [String!]
 
-  account: Account!
+  accountId: String!
   assetId: String!
 
   paraBlockHeight: Int! @index

@@ -1,6 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Asset} from "./asset.model"
-import {Account} from "./account.model"
 import {Event} from "./event.model"
 
 @Entity_()
@@ -22,13 +21,11 @@ export class MmBorrow {
     @ManyToOne_(() => Asset, {nullable: true})
     asset!: Asset
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    account!: Account
+    @StringColumn_({nullable: false})
+    accountId!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    accountOnBehalfOf!: Account
+    @StringColumn_({nullable: false})
+    accountOnBehalfOfId!: string
 
     @BigIntColumn_({nullable: true})
     amount!: bigint | undefined | null

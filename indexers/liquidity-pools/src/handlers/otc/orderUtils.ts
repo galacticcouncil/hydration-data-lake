@@ -11,7 +11,6 @@ import {
   SqdBlock,
   SqdProcessorContext,
 } from '../../processor';
-import { getOrCreateAccount } from '../accounts';
 import { getOrCreateAsset } from '../assets/asset';
 
 export async function createOtcOrder({
@@ -58,7 +57,7 @@ export async function createOtcOrder({
 
   const newOrder = new OtcOrder({
     id: orderId.toString(),
-    owner: await getOrCreateAccount({ ctx, id: ownerAddress }),
+    ownerId: ownerAddress,
     assetInId: assetIn.id,
     assetOutId: assetOut.id,
     amountIn: amountIn,
@@ -79,7 +78,6 @@ export async function getOtcOrder({
   ctx,
   id,
   relations = {
-    owner: true,
     events: true,
   },
   fetchFromDb = true,

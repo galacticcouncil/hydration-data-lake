@@ -1,18 +1,21 @@
-import { SqdProcessorContext } from '../../processor';
+import { FindOptionsRelations } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
-import {
-  DcaExecutionPlannedData,
-  DcaTradeExecutedData,
-  DcaTradeFailedData,
-} from '../../parsers/batchBlocksParser/types';
+
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import {
   DcaScheduleExecution,
   DcaScheduleExecutionStatus,
   DispatchError,
 } from '../../model';
+import {
+  DcaExecutionPlannedData,
+  DcaTradeExecutedData,
+  DcaTradeFailedData,
+} from '../../parsers/batchBlocksParser/types';
+import { SqdProcessorContext } from '../../processor';
+import { getOrCreateAccount } from '../accounts';
 import { getDcaSchedule } from './dcaSchedule';
-import { FindOptionsRelations } from 'typeorm';
-import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { processDcaScheduleExecutionEvent } from './dcaScheduleExecutionEvents';
 
 export async function getDcaScheduleExecution({
@@ -57,7 +60,6 @@ export async function handleDcaScheduleExecutionPlanned(
     ctx,
     id: eventParams.id.toString(),
     relations: {
-      owner: true,
       executions: true,
     },
   });
@@ -125,9 +127,7 @@ export async function handleDcaTradeExecuted(
     ctx,
     id: `${eventParams.id}-${eventMetadata.blockHeader.height}`,
     relations: {
-      schedule: {
-        owner: true,
-      },
+      schedule: true,
       events: true,
     },
   });
@@ -164,8 +164,10 @@ export async function handleDcaTradeExecuted(
     scheduleExecutionEntity
   );
 
+  const ownerAccount = await getOrCreateAccount({ ctx, id: scheduleExecutionEntity.schedule.ownerId });
+
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [scheduleExecutionEntity.schedule.owner],
+    participants: [ownerAccount],
     traceIds,
     ctx,
   });
@@ -189,7 +191,7 @@ export async function handleDcaTradeFailed(
     ctx,
     id: `${eventParams.id}-${eventMetadata.blockHeader.height}`,
     relations: {
-      schedule: { owner: true },
+      schedule: true,
     },
   });
 
@@ -230,8 +232,10 @@ export async function handleDcaTradeFailed(
     scheduleExecutionEntity
   );
 
+  const ownerAccount = await getOrCreateAccount({ ctx, id: scheduleExecutionEntity.schedule.ownerId });
+
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [scheduleExecutionEntity.schedule.owner],
+    participants: [ownerAccount],
     traceIds,
     ctx,
   });

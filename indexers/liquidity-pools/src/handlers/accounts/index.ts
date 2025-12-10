@@ -1,8 +1,19 @@
-import { Account, AccountType } from '../../model';
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import {
+  FindOptionsRelations,
+  In,
+  Like,
+} from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
-import { FindOptionsRelations, In, Like } from 'typeorm';
-import parsers from '../../parsers';
+
+import {
+  Account,
+  AccountType,
+} from '../../model';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
 import { EvmUtils } from '../../utils/evm';
 
 export async function getOrCreateAccount({
@@ -12,9 +23,7 @@ export async function getOrCreateAccount({
   ensureAccountType = false,
   boundEvmAddress,
   ensureBoundEvmAddress = false,
-  relations = {
-    dcaSchedules: true,
-  },
+  relations = {},
 }: {
   ctx: SqdProcessorContext<Store>;
   id: string;
@@ -85,9 +94,7 @@ export async function getOrCreateAccount({
 export async function getAccountByBoundEvmAddress({
   ctx,
   evmAddress,
-  relations = {
-    dcaSchedules: true,
-  },
+  relations = {},
 }: {
   ctx: SqdProcessorContext<Store>;
   evmAddress: string;
@@ -115,9 +122,7 @@ export async function getAccountByBoundEvmAddress({
 export async function getAccountByAddressPart({
   ctx,
   substring,
-  relations = {
-    dcaSchedules: true,
-  },
+  relations = {},
 }: {
   ctx: SqdProcessorContext<Store>;
   substring: string;

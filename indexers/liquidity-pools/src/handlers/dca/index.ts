@@ -1,7 +1,14 @@
-import { SqdProcessorContext } from '../../processor';
+import { In } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
+
+import {
+  DcaSchedule,
+  DcaScheduleExecution,
+} from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
+import { SqdProcessorContext } from '../../processor';
 import { getOrderedListByBlockNumber } from '../../utils/helpers';
 import {
   handleDcaScheduleCompleted,
@@ -13,8 +20,6 @@ import {
   handleDcaTradeExecuted,
   handleDcaTradeFailed,
 } from './dcaScheduleExecution';
-import { DcaSchedule, DcaScheduleExecution } from '../../model';
-import { In } from 'typeorm';
 
 export async function handleDcaSchedules(
   ctx: SqdProcessorContext<Store>,
@@ -165,16 +170,13 @@ async function prefetchEntities(
       ctx.storeUtils.findWithLogs(DcaSchedule, {
         where: { id: In(scheduleIds) },
         relations: {
-          owner: true,
           executions: true,
         },
       }, { className: 'DcaSchedule' }),
       ctx.storeUtils.findWithLogs(DcaScheduleExecution, {
         where: { id: In(scheduleExecutions) },
         relations: {
-          schedule: {
-            owner: true,
-          },
+          schedule: true,
           events: {
             scheduleExecution: true,
             swaps: true,

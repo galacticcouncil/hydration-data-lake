@@ -63,8 +63,8 @@ export async function handleMmWithdrawEvent(
       eventMetadata.traceId,
     ],
     assetId: assetEntity.id,
-    accountFrom,
-    accountTo,
+    accountFromId: accountFrom.id,
+    accountToId: accountTo.id,
     amount: parsedEvmEventData.amount,
     relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
       eventMetadata.blockHeader.height
@@ -76,7 +76,7 @@ export async function handleMmWithdrawEvent(
   ctx.batchState.state.mmWithdrawals.set(mmWithdrawEntity.id, mmWithdrawEntity);
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
-    participants: [mmWithdrawEntity.accountFrom, mmWithdrawEntity.accountTo],
+    participants: [accountFrom, accountTo],
     traceIds: mmWithdrawEntity.traceIds,
     ctx,
   });

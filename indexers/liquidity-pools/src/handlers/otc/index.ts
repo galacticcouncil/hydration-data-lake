@@ -85,9 +85,7 @@ async function prefetchEntities(
   const prefetchedOrders = await ctx.storeUtils.findWithLogs(OtcOrder, {
     where: { id: In(orderIds) },
     relations: {
-      owner: true,
       events: {
-        filler: true,
         order: true,
         swap: true,
         event: true,

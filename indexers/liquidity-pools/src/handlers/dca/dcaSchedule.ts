@@ -68,7 +68,7 @@ export async function createDcaSchedule({
   const newSchedule = new DcaSchedule({
     id: id.toString(),
     startExecutionBlock: startExecutionBlock ?? null,
-    owner: await getOrCreateAccount({ ctx, id: owner }),
+    ownerId: owner.toString(),
     period: period ?? null,
     totalAmount: totalAmount ?? null,
     slippage: slippage ?? null,
@@ -122,9 +122,11 @@ export async function createDcaSchedule({
   }
   newSchedule.orderRouteHops = orderRouteHops;
 
+  const ownerAccount = await getOrCreateAccount({ ctx, id: newSchedule.ownerId });
+
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newSchedule.traceIds,
-    participants: [newSchedule.owner],
+    participants: [ownerAccount],
     ctx,
   });
 
@@ -134,9 +136,7 @@ export async function createDcaSchedule({
 export async function getDcaSchedule({
   ctx,
   id,
-  relations = {
-    owner: true,
-  },
+  relations = {},
   fetchFromDb = false,
 }: {
   ctx: SqdProcessorContext<Store>;
@@ -199,16 +199,13 @@ export async function handleDcaScheduleCreated(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  newSchedule.owner.dcaSchedules = [
-    ...(newSchedule.owner.dcaSchedules || []),
-    newSchedule,
-  ];
+  const ownerAccount = await getOrCreateAccount({ ctx, id: newSchedule.ownerId });
 
   newSchedule.events = [...(newSchedule.events || []), scheduleEvent];
 
   const state = ctx.batchState.state;
 
-  state.accounts.set(newSchedule.owner.id, newSchedule.owner);
+  state.accounts.set(ownerAccount.id, ownerAccount);
   state.dcaSchedules.set(newSchedule.id, newSchedule);
 
   for (const orderRoute of newSchedule.orderRouteHops)

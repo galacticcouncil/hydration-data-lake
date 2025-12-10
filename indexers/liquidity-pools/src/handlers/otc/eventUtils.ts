@@ -1,16 +1,18 @@
-import { SqdProcessorContext } from '../../processor';
+import { FindOptionsRelations } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
+
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import {
   Account,
   ChainActivityTraceRelation,
+  Event,
   OtcOrder,
   OtcOrderEvent,
   OtcOrderStatus,
   Swap,
-  Event,
 } from '../../model';
-import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import { FindOptionsRelations } from 'typeorm';
+import { SqdProcessorContext } from '../../processor';
 
 export function getNewOrderEvent({
   operationId = null,
@@ -48,7 +50,7 @@ export function getNewOrderEvent({
     paraBlockHeight,
     swap,
     fee,
-    filler,
+    fillerId: filler ? filler.id : null,
     amountIn,
     amountOut,
     order,
@@ -129,7 +131,6 @@ export async function processChainActivityTracesRelationshipsOnOtcOrderEvent({
       fetchFromDb: true,
       ctx,
       relations: {
-        filler: true,
         order: true,
         swap: true,
         event: true,
