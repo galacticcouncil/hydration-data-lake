@@ -66,9 +66,6 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
         initialAmount: '0',
         initialPrice: '0',
         paraBlockHeight: ctx.blocks[0].header.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          ctx.blocks[0].header.height
-        ).height,
       }),
     }),
   });

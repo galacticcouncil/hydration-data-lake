@@ -1,13 +1,18 @@
-import { SqdProcessorContext } from '../../processor';
+import {
+  FindOptionsRelations,
+  FindOptionsWhere,
+} from 'typeorm';
+
+import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   DcaSchedule,
   DcaScheduleEvent,
   DcaScheduleStatus,
   DispatchError,
 } from '../../model';
-import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
-import { BlockHeader } from '@subsquid/substrate-processor';
+import { SqdProcessorContext } from '../../processor';
 
 export async function getDcaScheduleEvent({
   ctx,
@@ -98,9 +103,6 @@ export async function processDcaScheduleEvent({
     schedule,
     eventName,
     errorState: errorState ?? null,
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      blockHeader.height
-    ).height,
     paraBlockHeight: blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventId),
   });

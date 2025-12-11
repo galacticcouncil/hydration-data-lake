@@ -1,26 +1,36 @@
-import { SqdCall, SqdProcessorContext } from '../processor';
-import { Store } from '@subsquid/typeorm-store';
 import {
-  Extrinsic as ExtrinsicEntity,
-  Call,
-  Event,
-  Block,
-  ChainActivityTrace,
-  Account,
-  AccountChainActivityTrace,
-  TraceEntityType,
-  EventGroup,
-} from '../model';
-import { getCallOriginParts, jsonToString } from '../utils/helpers';
+  FindOptionsRelations,
+  In,
+} from 'typeorm';
+
+import { Store } from '@subsquid/typeorm-store';
+
 import { getOrCreateAccount } from '../handlers/accounts';
 import {
+  Account,
+  AccountChainActivityTrace,
+  Block,
+  Call,
+  ChainActivityTrace,
+  Event,
+  EventGroup,
+  Extrinsic as ExtrinsicEntity,
+  TraceEntityType,
+} from '../model';
+import { EventName } from '../parsers/types/events';
+import {
+  SqdCall,
+  SqdProcessorContext,
+} from '../processor';
+import {
+  getCallOriginParts,
+  jsonToString,
+} from '../utils/helpers';
+import {
   EventPhase,
-  TraceIdEventGroup,
   TraceIdContext,
-  ChainName,
+  TraceIdEventGroup,
 } from '../utils/types';
-import { FindOptionsRelations, In } from 'typeorm';
-import { EventName, RelayChainInfo } from '../parsers/types/events';
 
 export class ChainActivityTraceManager {
   static _traceIdPrefix = 'trace-id:';
@@ -45,7 +55,6 @@ export class ChainActivityTraceManager {
           participants: [],
           participantAccounts: [],
           paraBlockHeight: block.height,
-          relayBlockHeight: block.relayBlockHeight,
           block,
         });
         state.chainActivityTraces.set(
@@ -88,7 +97,6 @@ export class ChainActivityTraceManager {
             hash: extrinsic.hash,
             indexInBlock: extrinsic.index,
             paraBlockHeight: blockEntity.height,
-            relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
             block: blockEntity,
           });
           state.batchExtrinsics.set(extrinsicEntity.id, extrinsicEntity);
@@ -142,7 +150,6 @@ export class ChainActivityTraceManager {
                 originValue: callEntityOriginData.value,
                 extrinsic: extrinsicEntity,
                 paraBlockHeight: subcall.block.height,
-                relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
                 block: blockEntity,
               });
 
@@ -177,7 +184,6 @@ export class ChainActivityTraceManager {
               originValue: callParentEntityOriginData.value,
               extrinsic: extrinsicEntity,
               paraBlockHeight: subcallRawData.parent.block.height,
-              relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
               block: blockEntity,
             });
           }
@@ -292,7 +298,6 @@ export class ChainActivityTraceManager {
             entityTypes: this.getEntityTypesByEventName(event.name),
             call: eventCall,
             paraBlockHeight: block.header.height,
-            relayBlockHeight: relayChainInfo?.relaychainBlockNumber ?? 0,
             block: blockEntity,
           });
           state.batchEvents.set(eventEntity.id, eventEntity);

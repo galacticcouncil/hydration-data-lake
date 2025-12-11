@@ -152,12 +152,7 @@ export async function handleAavepoolHistoricalData(
             variableDebtTokenHistData?.totalIssuance ?? 0n,
 
           tvlInRefAssetNorm: '0',
-
-          relayBlockHeight:
-            ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-              ?.relaychainBlockNumber ?? 0,
           paraBlockHeight: blockHeader.height,
-          blockId: block.id,
         });
 
         predefinedEntities.push(poolHistoricalDataEntity);

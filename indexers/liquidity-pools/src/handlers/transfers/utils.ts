@@ -55,8 +55,6 @@ export async function initTransfer({
     assetType: assetEntity.assetType,
     paraBlockHeight: blockNumber,
     paraTimestamp: timestamp ?? new Date(),
-    relayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(blockNumber).height,
     event: ctx.batchState.state.batchEvents.get(id),
     id,
     traceIds,

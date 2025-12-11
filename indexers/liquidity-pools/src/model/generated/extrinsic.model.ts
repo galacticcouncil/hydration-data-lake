@@ -27,9 +27,6 @@ export class Extrinsic {
     @IntColumn_({nullable: false})
     paraBlockHeight!: number
 
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
-
     @Index_()
     @ManyToOne_(() => Block, {nullable: true})
     block!: Block

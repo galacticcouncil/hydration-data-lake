@@ -1,5 +1,8 @@
-import { SqdProcessorContext } from '../../processor';
+import { FindOptionsRelations } from 'typeorm';
+
 import { Store } from '@subsquid/typeorm-store';
+
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import {
   ChainActivityTraceRelation,
   DcaSchedule,
@@ -9,10 +12,9 @@ import {
   DispatchError,
   Swap,
 } from '../../model';
-import { FindOptionsRelations } from 'typeorm';
-import { getDcaSchedule } from './dcaSchedule';
-import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { SqdProcessorContext } from '../../processor';
 import { SwappedExecutionTypeKind } from '../../utils/types';
+import { getDcaSchedule } from './dcaSchedule';
 
 export async function getDcaScheduleExecutionEvent({
   ctx,
@@ -106,7 +108,6 @@ export async function processDcaScheduleExecutionEvent({
     eventName,
     operationIds: operationIds ?? null,
     errorState: errorState ?? null,
-    relayBlockHeight,
     paraBlockHeight,
     event: ctx.batchState.state.batchEvents.get(eventId),
   });
@@ -227,7 +228,6 @@ async function processChainActivityTracesOnDcaExecutionEvent({
     childTrace: swapChainActivityTrace,
     parentTrace: rootChainActivityTrace,
     paraBlockHeight: swap.paraBlockHeight,
-    relayBlockHeight: swap.relayBlockHeight,
     block: swap.event.block,
   });
 

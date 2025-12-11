@@ -46,7 +46,6 @@ export function getNewOrderEvent({
     operationId,
     traceIds,
     eventName,
-    relayBlockHeight,
     paraBlockHeight,
     swap,
     fee,
@@ -158,9 +157,6 @@ export async function processChainActivityTracesRelationshipsOnOtcOrderEvent({
     childTrace: eventTraceActivityEntity,
     parentTrace: rootChainActivityTrace,
     paraBlockHeight: otcOrderEvent.paraBlockHeight,
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      otcOrderEvent.paraBlockHeight
-    ).height,
     block: otcOrderEvent.event.block,
   });
 

@@ -1,5 +1,8 @@
 import pMap from 'p-map';
-import { LessThan, Like } from 'typeorm';
+import {
+  LessThan,
+  Like,
+} from 'typeorm';
 
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
@@ -131,10 +134,6 @@ export async function processAssetsHistoricalDataAtBlock({
         assetPairVolumes: [],
         spotPrices: [], // Spot prices will be calculated and injected in further processing steps.
         paraBlockHeight: block.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          block.height
-        ).height,
-        blockId: blockData.id,
       });
 
       ctx.batchState.state.assetsHistoricalDataBatch.set(

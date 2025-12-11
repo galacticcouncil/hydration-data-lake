@@ -137,8 +137,6 @@ type AssetVolumeHistoricalData @entity {
   totalVolumeOutNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AssetSwapFeeHistoricalData @entity {
@@ -149,8 +147,6 @@ type AssetSwapFeeHistoricalData @entity {
   totalAmount: BigInt!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AssetSpotPriceHistoricalData @entity {
@@ -170,8 +166,6 @@ type AssetSpotPriceHistoricalData @entity {
   priceRoute: [[String!]!]!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AssetDynamicFee {
@@ -196,8 +190,6 @@ type AssetHistoricalData @entity {
     @derivedFrom(field: "assetHistoricalData")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AssetsPairVolumeHistoricalData @entity {
@@ -216,8 +208,6 @@ type AssetsPairVolumeHistoricalData @entity {
   totalVolumeNormalised: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AssetAssetsPairVolume @entity {
@@ -256,8 +246,6 @@ type AccountAssetBalanceHistoricalData @entity {
   totalLockedInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AccountAssetBalanceLatest @entity {
@@ -275,7 +263,6 @@ type AccountAssetBalanceLatest @entity {
   total: BigInt! @index
 
   paraBlockHeight: Int!
-  blockId: String!
 }
 
 type AccountTotalBalanceHistoricalData @entity {
@@ -289,8 +276,6 @@ type AccountTotalBalanceHistoricalData @entity {
   totalDebtNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AccountMmPositionHistoricalData @entity {
@@ -308,8 +293,6 @@ type AccountMmPositionHistoricalData @entity {
   poolAddress: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type Account @entity {
@@ -344,8 +327,6 @@ type AccountAssetSwapFeeHistoricalData @entity {
   totalAmount: BigInt!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AccountSwapFeeHistoricalData @entity {
@@ -355,8 +336,6 @@ type AccountSwapFeeHistoricalData @entity {
   fees: [AccountAssetSwapFeeHistoricalData!]! @derivedFrom(field: "collection")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 # ======================================================================================================================
@@ -395,7 +374,6 @@ type Extrinsic @entity {
   calls: [Call] @derivedFrom(field: "extrinsic")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -422,7 +400,6 @@ type Call @entity {
   events: [Event] @derivedFrom(field: "call")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   block: Block!
   extrinsic: Extrinsic!
   parent: Call
@@ -449,7 +426,6 @@ type Event @entity {
   entityTypes: [TraceEntityType]
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   block: Block!
   call: Call
 }
@@ -485,7 +461,6 @@ type ChainActivityTrace @entity {
   parentTraces: [ChainActivityTraceRelation] @derivedFrom(field: "childTrace")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -504,7 +479,6 @@ type ChainActivityTraceRelation @entity {
   childTrace: ChainActivityTrace!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   block: Block!
 }
 
@@ -527,7 +501,6 @@ type Transfer @entity {
 
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -609,7 +582,6 @@ type Swap @entity {
 
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -642,8 +614,6 @@ type RoutedTrade @entity {
   swaps: [Swap!]! @derivedFrom(field: "routedTrade")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 # ======================================================================================================================
@@ -685,12 +655,10 @@ type LbppoolCreatedData {
   assetBBalance: String!
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 type LbppoolDestroyedData {
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 type LbppoolLifeState {
@@ -708,8 +676,6 @@ type LbppoolPriceHistoricalData @entity {
   assetBBalance: BigInt!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type LbppoolVolumeHistoricalData @entity {
@@ -751,8 +717,6 @@ type LbppoolVolumeHistoricalData @entity {
   assetBFeesTotalVolNorm: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 #
@@ -794,8 +758,6 @@ type LbppoolHistoricalData @entity {
   tvlInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 # ======================================================================================================================
@@ -830,12 +792,10 @@ type XykpoolCreatedData {
   initialSharesAmount: String!
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 type XykpoolDestroyedData {
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 type XykpoolLifeState {
@@ -853,8 +813,6 @@ type XykpoolPriceHistoricalData @entity {
   assetBBalance: BigInt!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type XykpoolVolumeHistoricalData @entity {
@@ -897,8 +855,6 @@ type XykpoolVolumeHistoricalData @entity {
   assetBFeesTotalVolNorm: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 #
@@ -930,8 +886,6 @@ type XykpoolHistoricalData @entity {
   tvlInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 # ======================================================================================================================
@@ -972,14 +926,12 @@ type OmnipoolAssetAddedData {
   initialPrice: String
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 type OmnipoolAssetRemovedData {
   removedAmount: String
   hubWithdrawn: String
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 type OmnipoolAssetLifeState {
@@ -1006,8 +958,6 @@ type OmnipoolAssetVolumeHistoricalData @entity {
   assetTotalFeesVolNorm: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 #
@@ -1037,8 +987,6 @@ type OmnipoolHistoricalData @entity {
   tvlTotalInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type OmnipoolAssetHistoricalData @entity {
@@ -1057,8 +1005,6 @@ type OmnipoolAssetHistoricalData @entity {
   tvlInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type OmnipoolAssetHistoricalDataLatest @entity {
@@ -1078,7 +1024,6 @@ type OmnipoolAssetHistoricalDataLatest @entity {
   tvlInRefAssetNorm: String
 
   paraBlockHeight: Int!
-  blockId: String!
 }
 
 # ======================================================================================================================
@@ -1103,12 +1048,10 @@ type Stableswap @entity {
 type StableswapCreatedData {
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 type StableswapDestroyedData {
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 type StableswapLifeState {
@@ -1139,8 +1082,6 @@ type StableswapVolumeHistoricalData @entity {
   poolTotalFeesVolNorm: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type StableswapAssetVolumeHistoricalData @entity {
@@ -1164,8 +1105,6 @@ type StableswapAssetVolumeHistoricalData @entity {
   assetTotalFeesVolNorm: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 #
@@ -1200,7 +1139,6 @@ type StableswapLiquidityEvent @entity {
 
   indexInBlock: Int! @index
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1238,8 +1176,6 @@ type StableswapHistoricalData @entity {
   tvlTotalInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type StableswapAssetHistoricalData @entity {
@@ -1253,8 +1189,6 @@ type StableswapAssetHistoricalData @entity {
   tvlInRefAssetNorm: String
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type StableswapAssetHistoricalDataLatest @entity {
@@ -1270,7 +1204,6 @@ type StableswapAssetHistoricalDataLatest @entity {
   tvlInRefAssetNorm: String
 
   paraBlockHeight: Int!
-  blockId: String!
 }
 
 # ======================================================================================================================
@@ -1305,8 +1238,6 @@ type HsmpoolHistoricalData @entity {
 
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type HsmCollateralConfigHistoricalData @entity {
@@ -1322,8 +1253,6 @@ type HsmCollateralConfigHistoricalData @entity {
 
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type HsmpoolAssetHistoricalData @entity {
@@ -1357,8 +1286,6 @@ type HsmpoolAssetHistoricalData @entity {
 
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type AaveFacilitator @entity {
@@ -1378,8 +1305,6 @@ type AaveFacilitatorHistoricalData @entity {
 
   paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 #
@@ -1445,8 +1370,6 @@ type ConstantsHistoricalData @entity {
   dynamicFeesProtocolFeeParameters: DynamicFeesAssetFeeParameters
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 # ======================================================================================================================
@@ -1487,8 +1410,6 @@ type EmaOracleEntryHistoricalData @entity {
   updatedAtParaBlockHeight: Int!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 # ======================================================================================================================
@@ -1548,7 +1469,6 @@ type DcaSchedule @entity {
   events: [DcaScheduleEvent!]! @derivedFrom(field: "schedule")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1570,7 +1490,6 @@ type DcaScheduleEvent @entity {
   errorState: DispatchError
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1596,7 +1515,6 @@ type DcaScheduleExecutionEvent @entity {
   errorState: DispatchError
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1629,8 +1547,6 @@ type OtcOrder @entity {
   events: [OtcOrderEvent] @derivedFrom(field: "order")
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type OtcOrderEvent @entity {
@@ -1649,7 +1565,6 @@ type OtcOrderEvent @entity {
   swap: Swap
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1689,8 +1604,6 @@ type AavepoolHistoricalData @entity {
   variableDebtTokenTotalSupply: BigInt
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 # ======================================================================================================================
@@ -1711,7 +1624,6 @@ type MmSupply @entity {
   initiatedByTrade: RoutedTrade
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1728,7 +1640,6 @@ type MmWithdraw @entity {
   initiatedByTrade: RoutedTrade
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1746,7 +1657,6 @@ type MmBorrow @entity {
   referralCode: BigInt
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1759,7 +1669,6 @@ type MmUserEModeSet @entity {
   categoryId: Int
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1775,7 +1684,6 @@ type MmRepay @entity {
   useATokens: Boolean
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1793,7 +1701,6 @@ type MmLiquidationCall @entity {
   receiveAToken: Boolean!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1806,7 +1713,6 @@ type MmReserveUsedAsCollateralEnabledEvent @entity {
   assetId: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1819,7 +1725,6 @@ type MmReserveUsedAsCollateralDisabledEvent @entity {
   assetId: String!
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1872,7 +1777,6 @@ type MoneyMarketEvent @entity {
   reserveUsedAsCollateralDisabled: MmReserveUsedAsCollateralDisabledEvent
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
   event: Event!
 }
 
@@ -1929,8 +1833,6 @@ type MmReserveConfigHistoricalData @entity {
   lastUpdateTimestamp: DateTime
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 type MmReserveIndexesHistoricalData @entity {
@@ -1944,8 +1846,6 @@ type MmReserveIndexesHistoricalData @entity {
   variableBorrowIndex: BigInt
 
   paraBlockHeight: Int! @index
-  relayBlockHeight: Int!
-  blockId: String
 }
 
 # ======================================================================================================================
@@ -2001,7 +1901,6 @@ type FarmLifeState {
   eventName: FarmLifeStateEventName!
   eventId: String
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 enum YieldFarmDepositStatus {

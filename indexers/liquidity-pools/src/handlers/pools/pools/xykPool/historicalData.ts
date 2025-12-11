@@ -1,13 +1,17 @@
-import { SqdProcessorContext } from '../../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
-import parsers from '../../../../parsers';
-import { XykpoolHistoricalData } from '../../../../model';
-import { getOrCreateXykPool } from './xykPool';
-import { splitIntoBatches } from '../../../../utils/helpers';
-import { BlockHeader } from '@subsquid/substrate-processor';
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
+
+import { BlockHeader } from '@subsquid/substrate-processor';
+import { Store } from '@subsquid/typeorm-store';
+
+import { XykpoolHistoricalData } from '../../../../model';
+import parsers from '../../../../parsers';
+import {
+  BatchBlocksParsedDataManager,
+} from '../../../../parsers/batchBlocksParser';
+import { SqdProcessorContext } from '../../../../processor';
+import { splitIntoBatches } from '../../../../utils/helpers';
+import { getOrCreateXykPool } from './xykPool';
 
 export async function handleXykPoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -89,11 +93,7 @@ export async function handleXykPoolHistoricalData(
           assetBBalance: assetsData.get(pool.assetBId)?.free ?? BigInt(0),
           tvlInRefAssetNorm: '0',
 
-          relayBlockHeight:
-            ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-              ?.relaychainBlockNumber ?? 0,
           paraBlockHeight: blockHeader.height,
-          blockId: block.id,
         });
 
         predefinedEntities.push(poolHistoricalDataEntity);

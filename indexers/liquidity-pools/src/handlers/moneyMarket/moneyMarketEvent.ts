@@ -1,6 +1,5 @@
-import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
+
 import {
   MmBorrow,
   MmLiquidationCall,
@@ -13,6 +12,8 @@ import {
   MoneyMarketEvent,
   Transfer,
 } from '../../model';
+import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
+import { SqdProcessorContext } from '../../processor';
 
 export function getNewMoneyMarketEventEntity({
   ctx,
@@ -47,9 +48,6 @@ export function getNewMoneyMarketEventEntity({
     allInvolvedAssetRegistryIds,
     allInvolvedAssetDetails,
     allInvolvedParticipants,
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      eventMetadata.blockHeader.height
-    ).height,
     paraBlockHeight: eventMetadata.blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });

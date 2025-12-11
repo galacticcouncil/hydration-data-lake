@@ -66,9 +66,6 @@ export async function handleMmWithdrawEvent(
     accountFromId: accountFrom.id,
     accountToId: accountTo.id,
     amount: parsedEvmEventData.amount,
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      eventMetadata.blockHeader.height
-    ).height,
     paraBlockHeight: eventMetadata.blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });

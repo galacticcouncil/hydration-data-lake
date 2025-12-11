@@ -83,9 +83,6 @@ export async function getOrCreateOmnipoolAsset({
         initialAmount: '0', // TODO fix values
         initialPrice: '0',
         paraBlockHeight: blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          blockHeader.height
-        ).height,
       }),
     }),
   });
@@ -120,9 +117,6 @@ export async function omnipoolTokenAdded(
         initialAmount: '0', // TODO fix values
         initialPrice: '0',
         paraBlockHeight: eventMetadata.blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          eventMetadata.blockHeader.height
-        ).height,
       }),
     });
     omnipoolAssetEntity.addedAtParaBlockHeight =
@@ -172,9 +166,6 @@ export async function omnipoolTokenAdded(
         initialAmount: eventParams.initialAmount.toString(),
         initialPrice: eventParams.initialPrice.toString(),
         paraBlockHeight: eventMetadata.blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          eventMetadata.blockHeader.height
-        ).height,
       }),
     }),
   });
@@ -209,9 +200,6 @@ export async function omnipoolTokenRemoved(
       removedAmount: eventParams.amount.toString(),
       hubWithdrawn: eventParams.hubWithdrawn.toString(),
       paraBlockHeight: eventMetadata.blockHeader.height,
-      relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-        eventMetadata.blockHeader.height
-      ).height,
     }),
   });
 

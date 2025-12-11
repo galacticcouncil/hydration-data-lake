@@ -81,8 +81,6 @@ export async function handleMoneyMarketReserveConfigOnConfiguratorUpdate({
     ),
 
     paraBlockHeight: blockHeader.height,
-    relayBlockHeight: block.relayBlockHeight,
-    blockId: block.id,
   });
 
   ctx.batchState.state.moneyMarketReserveConfigHistData.set(

@@ -106,10 +106,8 @@ export function initAssetVolume({
     volumeOut,
     totalVolumeIn,
     totalVolumeOut,
-    relayBlockHeight,
     paraBlockHeight,
     totalVolumeInNorm,
     totalVolumeOutNorm,
-    blockId: block.id,
   });
 }

@@ -83,12 +83,7 @@ export async function handleOmnipoolHistoricalData(
                 pool: ctx.batchState.state.omnipoolEntity!,
                 tvlTotalInRefAssetNorm: '0',
 
-                relayBlockHeight:
-                  ctx.batchState.getRelayChainBlockDataFromCache(
-                    blockHeader.height
-                  ).height,
                 paraBlockHeight: blockHeader.height,
-                blockId: block.id,
               })
             );
           }
@@ -168,11 +163,7 @@ export async function handleOmnipoolHistoricalData(
             freeBalance: assetsBalances.free,
             tvlInRefAssetNorm: '0',
 
-            relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-              blockHeader.height
-            ).height,
             paraBlockHeight: blockHeader.height,
-            blockId: assetBlock.id,
           });
 
           return newEntity;

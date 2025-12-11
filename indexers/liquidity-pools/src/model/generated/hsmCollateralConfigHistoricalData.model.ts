@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, DateTimeColumn as DateTimeColumn_, IntColumn as IntColumn_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, DateTimeColumn as DateTimeColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {HsmCollateral} from "./hsmCollateral.model"
 
 @Entity_()
@@ -39,10 +39,4 @@ export class HsmCollateralConfigHistoricalData {
     @Index_()
     @IntColumn_({nullable: false})
     paraBlockHeight!: number
-
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
-
-    @StringColumn_({nullable: true})
-    blockId!: string | undefined | null
 }

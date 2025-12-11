@@ -807,7 +807,6 @@ export class OfflineTradeRouterManagerHelper {
         end: poolHistData.endBlockNumber,
         initialWeight: poolHistData.initialWeight,
         finalWeight: poolHistData.finalWeight,
-        relayBlockNumber: poolHistData.relayBlockHeight,
       } as IPersistentLbpPoolBase);
     }
 

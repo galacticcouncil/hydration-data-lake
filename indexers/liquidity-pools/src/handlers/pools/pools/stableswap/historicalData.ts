@@ -155,11 +155,7 @@ async function getStableswapDataPromise({
     tvlTotalInRefAssetNorm: '0',
     ...getPoolPegsDetails(),
 
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      blockHeader.height
-    ).height,
     paraBlockHeight: blockHeader.height,
-    blockId: block.id,
   });
 
   const poolAssetHistoricalDataEntities = [];
@@ -186,11 +182,7 @@ async function getStableswapDataPromise({
         tradable: storageData?.tradable.bits ?? 15,
         tvlInRefAssetNorm: '0',
 
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          blockHeader.height
-        ).height,
         paraBlockHeight: blockHeader.height,
-        blockId: block.id,
       })
     );
   }

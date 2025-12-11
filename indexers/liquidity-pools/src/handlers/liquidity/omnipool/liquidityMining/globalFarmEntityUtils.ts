@@ -1,11 +1,15 @@
-import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
+
 import {
   FarmLifeState,
   FarmLifeStateEventName,
   OmnipoolGlobalFarm,
 } from '../../../../model';
 import parsers from '../../../../parsers';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../../../processor';
 import { getOrCreateAsset } from '../../../assets/asset';
 
 export async function getOrCreateOmnipoolLMGlobalFarm({
@@ -100,9 +104,6 @@ export async function getOrCreateOmnipoolLMGlobalFarm({
         eventName: FarmLifeStateEventName.GlobalFarmCreated,
         eventId: null,
         paraBlockHeight: blockHeader.height,
-        relayBlockHeight: ctx.batchState.getParaBlockFromCacheByHeight(
-          blockHeader.height
-        )?.height,
       }),
     ],
     paraBlockHeight: blockHeader.height,

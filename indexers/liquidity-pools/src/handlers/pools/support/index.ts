@@ -97,9 +97,6 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
       existingStates: pool.lifeStates,
       destroyedState: new LbppoolDestroyedData({
         paraBlockHeight: ctx.blocks[0].header.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          ctx.blocks[0].header.height
-        ).height,
       }),
     });
 
@@ -159,9 +156,6 @@ async function handleStableoolsDestroyedStatus(
       existingStates: pool.lifeStates,
       destroyedState: new StableswapDestroyedData({
         paraBlockHeight: ctx.blocks[0].header.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          ctx.blocks[0].header.height
-        ).height,
       }),
     });
 

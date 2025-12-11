@@ -66,9 +66,6 @@ export async function getNewStableswapWithAssets({
     lifeStates: addStableswapCreatedLifeState({
       createdState: new StableswapCreatedData({
         paraBlockHeight: blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          blockHeader.height
-        ).height,
       }),
     }),
   });
@@ -204,9 +201,6 @@ export async function stableswapCreated(
     existingPool.lifeStates = addStableswapCreatedLifeState({
       createdState: new StableswapCreatedData({
         paraBlockHeight: eventMetadata.blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          eventMetadata.blockHeader.height
-        ).height,
       }),
     });
 

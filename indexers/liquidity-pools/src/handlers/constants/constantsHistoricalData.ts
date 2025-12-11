@@ -97,11 +97,7 @@ export async function handleConstantsHistoricalData(
                   })
                 : null,
 
-            relayBlockHeight:
-              ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-                ?.relaychainBlockNumber ?? 0,
             paraBlockHeight: blockHeader.height,
-            blockId: block.id,
           });
 
           return poolHistoricalDataEntity;

@@ -68,9 +68,7 @@ export function initOmnipoolAssetVolume({
     // assetTotalVolOutNorm: '0',
     // assetTotalFeesVolNorm: '0',
 
-    relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
-    blockId: swap.event.block.id,
   });
 
   const assetVolIn =

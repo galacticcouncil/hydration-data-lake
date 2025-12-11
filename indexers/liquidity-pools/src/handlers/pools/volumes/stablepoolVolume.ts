@@ -36,9 +36,6 @@ export async function handleStablepoolVolumeUpdates({
     ? swap.paraBlockHeight
     : liquidityAction!.paraBlockHeight;
 
-  const relayBlockHeight = swap
-    ? swap.relayBlockHeight
-    : liquidityAction!.relayBlockHeight;
 
   // Fetch Asset entities from cache using assetId
   const allAssetsToProcess: Asset[] = pool.assets
@@ -83,10 +80,7 @@ export async function handleStablepoolVolumeUpdates({
       poolTotalVolInNorm: oldVolumesCollection?.poolTotalVolInNorm || '0',
       poolTotalVolOutNorm: oldVolumesCollection?.poolTotalVolOutNorm || '0',
       poolTotalFeesVolNorm: oldVolumesCollection?.poolTotalFeesVolNorm || '0',
-
-      relayBlockHeight,
       paraBlockHeight,
-      blockId: block.id,
     });
     ctx.batchState.state.stablepoolVolumeCollections.set(
       currentVolumesCollection.id,
@@ -215,10 +209,7 @@ export function initStablepoolAssetVolume({
     // assetTotalVolOutNorm: '0',
     // assetTotalFeesVolNorm: '0',
 
-    relayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
     paraBlockHeight,
-    blockId: block!.id,
   });
 
   let routedLiqAddedAmount = BigInt(0);

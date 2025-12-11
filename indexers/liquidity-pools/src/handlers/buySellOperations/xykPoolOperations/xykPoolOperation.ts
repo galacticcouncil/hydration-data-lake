@@ -74,7 +74,6 @@ export async function xykBuyExecuted(
 
   await handleAssetVolumeUpdates(ctx, {
     paraBlockHeight: swap.paraBlockHeight,
-    relayBlockHeight: swap.relayBlockHeight,
     assetInId: swapInputs[0].assetId,
     assetInAmount: swapInputs[0].amount,
     assetOutId: swapOutputs[0].assetId,
@@ -143,7 +142,6 @@ export async function xykSellExecuted(
 
   await handleAssetVolumeUpdates(ctx, {
     paraBlockHeight: swap.paraBlockHeight,
-    relayBlockHeight: swap.relayBlockHeight,
     assetInId: swapInputs[0].assetId,
     assetInAmount: swapInputs[0].amount,
     assetOutId: swapOutputs[0].assetId,

@@ -35,7 +35,4 @@ export class StableswapAssetHistoricalDataLatest {
 
     @IntColumn_({nullable: false})
     paraBlockHeight!: number
-
-    @StringColumn_({nullable: false})
-    blockId!: string
 }

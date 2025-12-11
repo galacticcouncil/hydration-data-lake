@@ -83,9 +83,6 @@ export async function createDcaSchedule({
     orderType: order.kind,
     status: DcaScheduleStatus.Created,
     paraBlockHeight: blockHeader.height,
-    relayBlockHeight:
-      ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-        ?.relaychainBlockNumber ?? 0,
     event: ctx.batchState.state.batchEvents.get(eventId),
     traceIds: traceIds ?? [],
   });

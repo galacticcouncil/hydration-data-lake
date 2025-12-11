@@ -139,8 +139,6 @@ export async function getNewSwap({
     operationType,
     paraBlockHeight,
     paraTimestamp,
-    relayBlockHeight:
-      ctx.batchState.getRelayChainBlockDataFromCache(paraBlockHeight).height,
     event: ctx.batchState.state.batchEvents.get(eventId),
   });
 

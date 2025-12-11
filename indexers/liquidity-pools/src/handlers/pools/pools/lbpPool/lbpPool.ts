@@ -113,9 +113,6 @@ export async function createLbppool({
         assetABalance: newPoolsAssetBalances.assetABalance?.toString() ?? '0',
         assetBBalance: newPoolsAssetBalances.assetBBalance?.toString() ?? '0',
         paraBlockHeight: blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          blockHeader.height
-        ).height,
       }),
     }),
     createdAtParaBlockHeight: blockHeader.height,
@@ -270,9 +267,6 @@ export async function lpbpoolCreated(
         assetABalance: assetABalance?.toString() ?? '0',
         assetBBalance: assetBBalance?.toString() ?? '0',
         paraBlockHeight: eventMetadata.blockHeader.height,
-        relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-          eventMetadata.blockHeader.height
-        ).height,
       }),
     });
     existingPool.createdAtParaBlockHeight = eventMetadata.blockHeader.height;

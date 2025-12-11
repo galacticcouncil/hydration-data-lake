@@ -65,10 +65,6 @@ export async function createOtcOrder({
     partiallyFillable,
     status: OtcOrderStatus.Created,
     paraBlockHeight: blockHeader.height,
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      blockHeader.height
-    ).height,
-    blockId: block.id,
   });
 
   return newOrder;

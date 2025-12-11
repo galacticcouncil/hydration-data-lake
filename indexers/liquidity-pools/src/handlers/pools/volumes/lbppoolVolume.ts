@@ -101,9 +101,7 @@ export function initLbppoolVolume(
     assetAFeesTotalVolNorm: '0',
     assetBFeesTotalVolNorm: '0',
 
-    relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
-    blockId: swap.event.block.id,
   });
 
   const assetAVolIn =

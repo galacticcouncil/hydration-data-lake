@@ -116,7 +116,6 @@ export async function assetVolumeHistDataRecalcProc(
     try {
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
-        relayBlockHeight: swap.relayBlockHeight,
         assetInId: inputs[0].assetId,
         assetOutId: outputs[0].assetId,
         assetInAmount: swap.inputs[0].amount,

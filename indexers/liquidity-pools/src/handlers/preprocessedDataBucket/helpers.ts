@@ -121,8 +121,6 @@ export async function handlePreprocDataBuckets({
         : null,
       usdPriceNormalised: preprocData.usdPriceNormalised,
       paraBlockHeight: preprocData.paraBlockHeight,
-      relayBlockHeight: preprocData.relayBlockHeight,
-      blockId: block?.id ?? '',
     });
     resultCache.assetHistoricalData.set(newEntity.id, newEntity);
   }
@@ -175,7 +173,6 @@ export async function handlePreprocDataBuckets({
       priceNormalised: preprocData.priceNormalised,
       priceRoute: preprocData.priceRoute,
       paraBlockHeight: preprocData.paraBlockHeight,
-      relayBlockHeight: preprocData.relayBlockHeight,
     });
     resultCache.assetSpotPriceHistoricalData.set(newEntity.id, newEntity);
   }
@@ -220,7 +217,6 @@ export async function handlePreprocDataBuckets({
       assetBVolume: BigInt(preprocData.assetBVolume),
       totalVolumeNormalised: preprocData.totalVolumeNormalised,
       paraBlockHeight: preprocData.paraBlockHeight,
-      relayBlockHeight: preprocData.relayBlockHeight,
     });
     resultCache.assetsPairVolumeHistoricalData.set(newEntity.id, newEntity);
   }

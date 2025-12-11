@@ -79,9 +79,6 @@ export class Swap {
     @IntColumn_({nullable: false})
     paraBlockHeight!: number
 
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
-
     @Index_()
     @ManyToOne_(() => Event, {nullable: true})
     event!: Event

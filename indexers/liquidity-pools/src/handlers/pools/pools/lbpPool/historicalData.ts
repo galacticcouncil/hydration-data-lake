@@ -157,11 +157,7 @@ export async function handleLbppoolHistoricalData(
               feeCollectorId: feeCollector ? feeCollector.id : null,
               repayTarget: poolStorageData.repayTarget,
 
-              relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-                blockHeader.height
-              ).height,
               paraBlockHeight: blockHeader.height,
-              blockId: block.id,
             });
 
             return poolHistoricalDataEntity;

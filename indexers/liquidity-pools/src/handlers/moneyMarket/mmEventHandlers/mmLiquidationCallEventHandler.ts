@@ -83,9 +83,6 @@ export async function handleMmLiquidationCallEvent(
     debtToCoverAmount: parsedEvmEventData.debtToCoverAmount,
     receiveAToken: parsedEvmEventData.receiveAToken,
 
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      eventMetadata.blockHeader.height
-    ).height,
     paraBlockHeight: eventMetadata.blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });

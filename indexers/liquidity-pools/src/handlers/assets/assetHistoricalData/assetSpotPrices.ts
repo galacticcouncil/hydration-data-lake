@@ -1,6 +1,11 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
+import pMap from 'p-map';
+import { LessThan } from 'typeorm';
+
+import { BigNumber } from '@galacticcouncil/sdk';
 import { BlockHeader } from '@subsquid/substrate-processor';
+import { Store } from '@subsquid/typeorm-store';
+
+import { AppConfig } from '../../../appConfig';
 import {
   Asset,
   AssetHistoricalData,
@@ -9,20 +14,19 @@ import {
   ResourceType,
   Xykpool,
 } from '../../../model';
-import { OfflineTradeRouterManager } from './utils';
-import { getOrCreateAsset } from '../asset';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { SqdProcessorContext } from '../../../processor';
 import {
   fromDecimalToExponentialNotation,
   fromExponentialToDecimalNotation,
   getPriceRouteDecorated,
   getXykpoolShareTokenDecimals,
 } from '../../../utils/helpers';
-import { LessThan } from 'typeorm';
-import pMap from 'p-map';
+import {
+  LatestProcessedDataCacheManager,
+} from '../../../utils/latestProcessedDataCacheManager';
+import { getOrCreateAsset } from '../asset';
+import { OfflineTradeRouterManager } from './utils';
 import { PoolType } from './utils/offlineSdk/sdk/src';
-import { AppConfig } from '../../../appConfig';
-import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 
 const appConfig = AppConfig.getInstance();
 
@@ -267,8 +271,6 @@ async function processAssetSpotPrices({
             priceRoute: getPriceRouteDecorated(route),
 
             paraBlockHeight: blockHeader.height,
-            relayBlockHeight: assetHistData.relayBlockHeight,
-            blockId: blockData.id,
           })
         );
       } catch (e) {}
@@ -671,8 +673,6 @@ async function processXykInvolvedAssetSpotPrices({
           ]),
 
           paraBlockHeight: blockHeader.height,
-          relayBlockHeight: assetHistData.relayBlockHeight,
-          blockId: blockData.id,
         })
       );
     }
@@ -895,8 +895,6 @@ async function processXykShareAssetSpotPrices({
           priceRoute: [],
 
           paraBlockHeight: blockHeader.height,
-          relayBlockHeight: assetHistData.relayBlockHeight,
-          blockId: assetHistData.blockId,
         })
       );
     }

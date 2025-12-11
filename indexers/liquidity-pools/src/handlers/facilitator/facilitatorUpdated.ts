@@ -140,8 +140,6 @@ export async function handleFacilitatorUpdatedEvent({
       bucketLevel,
       paraTimestamp: new Date(blockHeader.timestamp || Date.now()),
       paraBlockHeight: block.height,
-      relayBlockHeight: block.relayBlockHeight,
-      blockId: block.id,
     });
   }
 

@@ -1,6 +1,10 @@
-import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { Asset, Block, AssetSwapFeeHistoricalData } from '../../../model';
+
+import {
+  AssetSwapFeeHistoricalData,
+  Block,
+} from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
 
 export async function handleAssetSwapFee({
   block,
@@ -45,8 +49,6 @@ export async function handleAssetSwapFee({
     amount: currentBlockAssetFeeAmount?.amount || BigInt(0),
     totalAmount: persistentAssetFeeAmount?.totalAmount || BigInt(0),
     paraBlockHeight: block.height,
-    relayBlockHeight: block.relayBlockHeight,
-    blockId: block.id,
   });
 
   assetSwapFee.amount += feeAmount;

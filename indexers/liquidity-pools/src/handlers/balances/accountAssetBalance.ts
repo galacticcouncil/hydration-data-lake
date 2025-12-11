@@ -8,7 +8,10 @@ import {
   AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
 } from '../../model';
-import { SqdBlock, SqdProcessorContext } from '../../processor';
+import {
+  SqdBlock,
+  SqdProcessorContext,
+} from '../../processor';
 import { getOrCreateAsset } from '../assets/asset';
 
 const appConfig = AppConfig.getInstance();
@@ -74,9 +77,7 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
     transferableInRefAssetNorm: '0',
     totalLockedInRefAssetNorm: '0',
 
-    relayBlockHeight: block.relayBlockHeight,
     paraBlockHeight: block.height,
-    blockId: block.id,
   });
 
   ctx.batchState.state.accountAssetBalanceHistoricalData.set(
@@ -154,10 +155,6 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
     totalLockedNorm: '0',
     totalDebtNorm: '0',
     paraBlockHeight: blockHeader.height,
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      blockHeader.height
-    ).height,
-    blockId: totalBlock.id,
   });
 
   ctx.batchState.state.accountTotalBalanceHistoricalData.set(

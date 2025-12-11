@@ -1,23 +1,26 @@
-import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  StableswapLiquidityAddedData,
-  StableswapLiquidityRemovedData,
-} from '../../../../parsers/batchBlocksParser/types';
+
 import {
   LiquidityActionEvent,
   StableswapAssetLiquidityAmount,
   StableswapLiquidityEvent,
 } from '../../../../model';
-import { getOrCreateStableswap } from './stablepool';
+import {
+  BatchBlocksParsedDataManager,
+} from '../../../../parsers/batchBlocksParser';
+import {
+  StableswapLiquidityAddedData,
+  StableswapLiquidityRemovedData,
+} from '../../../../parsers/batchBlocksParser/types';
 import { EventName } from '../../../../parsers/types/events';
-import { getOrCreateAsset } from '../../../assets/asset';
-import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
+import { SqdProcessorContext } from '../../../../processor';
 import {
   getOrderedListByBlockNumber,
   isUnifiedEventsSupportSpecVersion,
 } from '../../../../utils/helpers';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
+import { getOrCreateAsset } from '../../../assets/asset';
+import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
+import { getOrCreateStableswap } from './stablepool';
 
 export async function handleStablepoolLiquidityEvents(
   ctx: SqdProcessorContext<Store>,
@@ -110,7 +113,6 @@ export async function stablepoolLiquidityAddedRemoved(
     sharesAmount: eventParams.shares,
     feeAmount: fee,
     indexInBlock: eventMetadata.indexInBlock,
-    relayBlockHeight: relayChainInfo.relaychainBlockNumber,
     paraBlockHeight: relayChainInfo.parachainBlockNumber,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });

@@ -82,10 +82,6 @@ export async function handleMmBorrowEvent(
     interestRateMode: parsedEvmEventData.interestRateMode,
     borrowRate: parsedEvmEventData.borrowRate,
     referralCode: parsedEvmEventData.referralCode,
-
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      eventMetadata.blockHeader.height
-    ).height,
     paraBlockHeight: eventMetadata.blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });

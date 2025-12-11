@@ -36,7 +36,6 @@ export function getStableswapAssetsHistDataLatest({
         tvlInRefAssetNorm: data.tvlInRefAssetNorm,
 
         paraBlockHeight: data.paraBlockHeight,
-        blockId: data.blockId?.toString(),
       })
     );
   }

@@ -44,9 +44,6 @@ export async function handleLbpPoolPrices(ctx: SqdProcessorContext<Store>) {
                   assetBBalance: assetBBalance,
                   pool: p,
                   paraBlockHeight: block.header.height,
-                  relayBlockHeight:
-                    currentBlockRelayChainInfo.relaychainBlockNumber || 0,
-                  blockId: blockData.id,
                 })
               );
             });

@@ -240,9 +240,7 @@ export async function initHsmAssetHistoricalData({
       '0',
 
     paraTimestamp: block?.timestamp,
-    relayBlockHeight: swap.relayBlockHeight,
     paraBlockHeight: swap.paraBlockHeight,
-    blockId: block.id,
   });
 
   // Use assetId instead of assetInfo (which doesn't exist)

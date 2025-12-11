@@ -60,9 +60,6 @@ export async function handleMmReserveUsedAsCollateralEnabledEvent(
     assetId: assetEntity.id,
     accountId: account.id,
 
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      eventMetadata.blockHeader.height
-    ).height,
     paraBlockHeight: eventMetadata.blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });

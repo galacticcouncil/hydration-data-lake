@@ -46,7 +46,6 @@ export function getAccountAssetBalancesLatest({
         totalLockedInRefAssetNorm: balance.totalLockedInRefAssetNorm,
         total: balance.transferable + balance.totalLocked,
         paraBlockHeight: balance.paraBlockHeight,
-        blockId: block.id,
       })
     );
   }

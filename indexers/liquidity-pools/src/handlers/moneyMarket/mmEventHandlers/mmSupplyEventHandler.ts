@@ -80,9 +80,6 @@ export async function handleMmSupplyEvent(
     accountOnBehalfOfId: accountOnBehalfOf.id,
     amount: parsedEvmEventData.amount,
     referralCode: parsedEvmEventData.referralCode,
-    relayBlockHeight: ctx.batchState.getRelayChainBlockDataFromCache(
-      eventMetadata.blockHeader.height
-    ).height,
     paraBlockHeight: eventMetadata.blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
   });

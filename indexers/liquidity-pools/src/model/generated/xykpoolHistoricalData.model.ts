@@ -35,10 +35,4 @@ export class XykpoolHistoricalData {
     @Index_()
     @IntColumn_({nullable: false})
     paraBlockHeight!: number
-
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
-
-    @StringColumn_({nullable: true})
-    blockId!: string | undefined | null
 }

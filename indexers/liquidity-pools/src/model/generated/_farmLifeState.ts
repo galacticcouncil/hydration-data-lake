@@ -6,7 +6,6 @@ export class FarmLifeState {
     private _eventName!: FarmLifeStateEventName
     private _eventId!: string | undefined | null
     private _paraBlockHeight!: number
-    private _relayBlockHeight!: number
 
     constructor(props?: Partial<Omit<FarmLifeState, 'toJSON'>>, json?: any) {
         Object.assign(this, props)
@@ -14,7 +13,6 @@ export class FarmLifeState {
             this._eventName = marshal.enumFromJson(json.eventName, FarmLifeStateEventName)
             this._eventId = json.eventId == null ? undefined : marshal.string.fromJSON(json.eventId)
             this._paraBlockHeight = marshal.int.fromJSON(json.paraBlockHeight)
-            this._relayBlockHeight = marshal.int.fromJSON(json.relayBlockHeight)
         }
     }
 
@@ -44,21 +42,11 @@ export class FarmLifeState {
         this._paraBlockHeight = value
     }
 
-    get relayBlockHeight(): number {
-        assert(this._relayBlockHeight != null, 'uninitialized access')
-        return this._relayBlockHeight
-    }
-
-    set relayBlockHeight(value: number) {
-        this._relayBlockHeight = value
-    }
-
     toJSON(): object {
         return {
             eventName: this.eventName,
             eventId: this.eventId,
             paraBlockHeight: this.paraBlockHeight,
-            relayBlockHeight: this.relayBlockHeight,
         }
     }
 }

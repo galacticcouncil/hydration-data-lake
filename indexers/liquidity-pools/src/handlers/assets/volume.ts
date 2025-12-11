@@ -1,16 +1,16 @@
-import { Asset, AssetVolumeHistoricalData } from '../../model';
-import { SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { initAssetVolume } from './index';
 import { LessThan } from 'typeorm';
-import { calcPriceNormalized } from '../../utils/helpers';
+
 import { BigNumber } from '@galacticcouncil/sdk';
+import { Store } from '@subsquid/typeorm-store';
+
+import { AssetVolumeHistoricalData } from '../../model';
+import { SqdProcessorContext } from '../../processor';
+import { calcPriceNormalized } from '../../utils/helpers';
 
 export async function handleAssetVolumeUpdates(
   ctx: SqdProcessorContext<Store>,
   swapDetails: {
     paraBlockHeight: number;
-    relayBlockHeight: number;
     assetInId: string;
     assetOutId: string;
     assetInAmount: bigint;
@@ -84,9 +84,7 @@ export async function handleAssetVolumeUpdates(
       volumeOutNorm: '0',
       totalVolumeInNorm: '0',
       totalVolumeOutNorm: '0',
-      relayBlockHeight: swapDetails.relayBlockHeight,
       paraBlockHeight: swapDetails.paraBlockHeight,
-      blockId: blockEntity.id,
     });
 
   const assetOutVolume =
@@ -102,9 +100,7 @@ export async function handleAssetVolumeUpdates(
       totalVolumeOutNorm: '0',
       totalVolumeIn: oldAssetOutVolume?.totalVolumeIn || BigInt(0),
       totalVolumeOut: oldAssetOutVolume?.totalVolumeOut || BigInt(0),
-      relayBlockHeight: swapDetails.relayBlockHeight,
       paraBlockHeight: swapDetails.paraBlockHeight,
-      blockId: blockEntity.id,
     });
 
   // Update new entry
