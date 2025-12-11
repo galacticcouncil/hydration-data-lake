@@ -1,110 +1,111 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, FloatColumn as FloatColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 import {Lbppool} from "./lbppool.model"
 
 @Entity_()
 export class LbppoolVolumeHistoricalData {
-    constructor(props?: Partial<LbppoolVolumeHistoricalData>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<LbppoolVolumeHistoricalData>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * PoolId-paraBlockHeight
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * PoolId-paraBlockHeight
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @Index_()
-    @ManyToOne_(() => Lbppool, {nullable: true})
-    pool!: Lbppool
+  @Index_()
+  @ManyToOne_(() => Lbppool, {nullable: true})
+  pool!: Lbppool
 
-    @StringColumn_({nullable: false})
-    assetAId!: string
+  @Column_("text", {nullable: false})
+  assetAId!: string
 
-    @StringColumn_({nullable: false})
-    assetBId!: string
+  @Column_("text", {nullable: false})
+  assetBId!: string
 
-    @FloatColumn_({nullable: false})
-    averagePrice!: number
+  @Column_("numeric", {nullable: false})
+  averagePrice!: number
 
-    @BigIntColumn_({nullable: false})
-    assetAVolIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetAVolIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetAVolOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetAVolOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetATotalVolIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetATotalVolIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetATotalVolOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetATotalVolOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetAFeeVol!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetAFeeVol!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBFeeVol!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBFeeVol!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetAFeesTotalVol!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetAFeesTotalVol!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBFeesTotalVol!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBFeesTotalVol!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBVolIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBVolIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBVolOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBVolOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBTotalVolIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBTotalVolIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    assetBTotalVolOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  assetBTotalVolOut!: bigint
 
-    @StringColumn_({nullable: false})
-    assetAVolInNorm!: string
+  @Column_("text", {nullable: false})
+  assetAVolInNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetAVolOutNorm!: string
+  @Column_("text", {nullable: false})
+  assetAVolOutNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetBVolInNorm!: string
+  @Column_("text", {nullable: false})
+  assetBVolInNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetBVolOutNorm!: string
+  @Column_("text", {nullable: false})
+  assetBVolOutNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetAFeeVolNorm!: string
+  @Column_("text", {nullable: false})
+  assetAFeeVolNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetBFeeVolNorm!: string
+  @Column_("text", {nullable: false})
+  assetBFeeVolNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetATotalVolInNorm!: string
+  @Column_("text", {nullable: false})
+  assetATotalVolInNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetATotalVolOutNorm!: string
+  @Column_("text", {nullable: false})
+  assetATotalVolOutNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetBTotalVolInNorm!: string
+  @Column_("text", {nullable: false})
+  assetBTotalVolInNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetBTotalVolOutNorm!: string
+  @Column_("text", {nullable: false})
+  assetBTotalVolOutNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetAFeesTotalVolNorm!: string
+  @Column_("text", {nullable: false})
+  assetAFeesTotalVolNorm!: string
 
-    @StringColumn_({nullable: false})
-    assetBFeesTotalVolNorm!: string
+  @Column_("text", {nullable: false})
+  assetBFeesTotalVolNorm!: string
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
 
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
+  @Column_("int4", {nullable: false})
+  relayBlockHeight!: number
 
-    @StringColumn_({nullable: true})
-    blockId!: string | undefined | null
+  @Column_("text", {nullable: true})
+  blockId!: string | undefined | null
 }

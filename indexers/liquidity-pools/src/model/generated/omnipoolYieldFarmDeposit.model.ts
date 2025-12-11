@@ -1,74 +1,55 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
-import {NftAsset} from "./nftAsset.model"
-import {OmnipoolGlobalFarm} from "./omnipoolGlobalFarm.model"
-import {OmnipoolYieldFarm} from "./omnipoolYieldFarm.model"
-import {OmnipoolLiquidityPosition} from "./omnipoolLiquidityPosition.model"
-import {Account} from "./account.model"
-import {Asset} from "./asset.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 import {YieldFarmDepositStatus} from "./_yieldFarmDepositStatus"
-import {OmnipoolYieldFarmEntry} from "./omnipoolYieldFarmEntry.model"
-import {OmnipoolYieldFarmDepositEvent} from "./omnipoolYieldFarmDepositEvent.model"
-import {Event} from "./event.model"
+import {OmnipoolYieldFarmEntry} from "./_omnipoolYieldFarmEntry"
 
 @Entity_()
 export class OmnipoolYieldFarmDeposit {
-    constructor(props?: Partial<OmnipoolYieldFarmDeposit>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<OmnipoolYieldFarmDeposit>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * deposit ID
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * deposit ID
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @Index_()
-    @ManyToOne_(() => NftAsset, {nullable: true})
-    depositNft!: NftAsset
+  @Column_("text", {nullable: false})
+  depositNftId!: string
 
-    @Index_()
-    @ManyToOne_(() => OmnipoolGlobalFarm, {nullable: true})
-    globalFarm!: OmnipoolGlobalFarm
+  @Column_("text", {nullable: false})
+  globalFarmId!: string
 
-    @Index_()
-    @ManyToOne_(() => OmnipoolYieldFarm, {nullable: true})
-    yieldFarm!: OmnipoolYieldFarm
+  @Column_("text", {nullable: false})
+  yieldFarmId!: string
 
-    @Index_()
-    @ManyToOne_(() => OmnipoolLiquidityPosition, {nullable: true})
-    position!: OmnipoolLiquidityPosition
+  @Column_("text", {nullable: false})
+  positionId!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    account!: Account
+  @Column_("text", {nullable: false})
+  accountId!: string
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+  @Column_("text", {nullable: false})
+  assetId!: string
 
-    /**
-     * should be either SharesDeposited or DepositDestroyed
-     */
-    @Column_("varchar", {length: 17, nullable: false})
-    status!: YieldFarmDepositStatus
+  /**
+   * should be either SharesDeposited or DepositDestroyed
+   */
+  @Column_("varchar", {length: 17, nullable: false})
+  status!: YieldFarmDepositStatus
 
-    @BigIntColumn_({nullable: false})
-    sharesAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  sharesAmount!: bigint
 
-    @OneToMany_(() => OmnipoolYieldFarmEntry, e => e.deposit)
-    entries!: OmnipoolYieldFarmEntry[]
+  @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new OmnipoolYieldFarmEntry(undefined, marshal.nonNull(val)))}, nullable: false})
+  entries!: (OmnipoolYieldFarmEntry)[]
 
-    @OneToMany_(() => OmnipoolYieldFarmDepositEvent, e => e.deposit)
-    depositEvents!: OmnipoolYieldFarmDepositEvent[]
+  @Index_()
+  @Column_("int4", {nullable: false})
+  createdAtParaBlockHeight!: number
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
-
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
-
-    @Index_()
-    @ManyToOne_(() => Event, {nullable: true})
-    event!: Event
+  @Index_()
+  @Column_("int4", {nullable: true})
+  destroyedAtParaBlockHeight!: number | undefined | null
 }

@@ -2,7 +2,7 @@ import { Asset, AssetVolumeHistoricalData } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { initAssetVolume } from './index';
-import { LessThan } from 'typeorm'
+import { LessThan } from 'typeorm';
 import { calcPriceNormalized } from '../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
 
@@ -63,9 +63,12 @@ export async function handleAssetVolumeUpdates(
     })) ||
     currentAssetOutVolume;
 
-  const blockEntity = cctx.batchState.getParaBlockFromCacheByHeight(swapDetails.paraBlockHeight)
+  const blockEntity = ctx.batchState.getParaBlockFromCacheByHeight(
+    swapDetails.paraBlockHeight
+  );
 
-  if (!blockEntity) throw Error(`No block found with height ${swapDetails.paraBlockHeight}`)
+  if (!blockEntity)
+    throw Error(`No block found with height ${swapDetails.paraBlockHeight}`);
 
   // Create new entry
   const assetInVolume =
@@ -137,9 +140,14 @@ export async function processAssetNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const currentAssetVolHistData of assetVolsByBatchList) {
-    const asset = ctx.batchState.state.assetsAll.get(currentAssetVolHistData.assetId);
+    const asset = ctx.batchState.state.assetsAll.get(
+      currentAssetVolHistData.assetId
+    );
 
-    if (!asset) throw Error(`Asset with ID ${currentAssetVolHistData.assetId} cannot be found.`)
+    if (!asset)
+      throw Error(
+        `Asset with ID ${currentAssetVolHistData.assetId} cannot be found.`
+      );
 
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
       `${asset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetVolHistData.paraBlockHeight}`
@@ -231,7 +239,6 @@ export async function getOldAssetVolume({
           ? { paraBlockHeight: LessThan(currentBlockHeight) }
           : {}),
       },
-      relations: { asset: true },
       order: {
         paraBlockHeight: 'DESC',
       },

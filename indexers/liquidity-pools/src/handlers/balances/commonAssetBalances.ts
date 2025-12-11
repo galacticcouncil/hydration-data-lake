@@ -9,7 +9,7 @@ import { In } from 'typeorm';
 import parsers from '../../parsers';
 import { AccountData } from '../../parsers/types/storage';
 import { getOrCreateAccount } from '../accounts';
-import { getOrCreateAsset } from '../assets/asset';
+import { batchGetOrCreateAssets, getOrCreateAsset } from '../assets/asset';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';
@@ -126,7 +126,9 @@ export async function handleCommonAssetAccountBalances({
         currentBlockData.data.set(otherTokenBalance.accountId, new Map());
       }
 
-      const accountData = currentBlockData.data.get(otherTokenBalance.accountId)!;
+      const accountData = currentBlockData.data.get(
+        otherTokenBalance.accountId
+      )!;
       for (const balance of otherTokenBalance.assetBalances) {
         accountData.set(balance.assetId, balance.data);
       }
@@ -182,7 +184,9 @@ export async function handleCommonAssetAccountBalances({
 
     // Batch fetch all accounts for this block in parallel
     const accountsArray = await Promise.all(
-      allAccountIds.map((accountId) => getOrCreateAccount({ ctx, id: accountId }))
+      allAccountIds.map((accountId) =>
+        getOrCreateAccount({ ctx, id: accountId })
+      )
     );
     const accountsMap = new Map(
       accountsArray.map((account) => [account.id, account])
@@ -190,7 +194,6 @@ export async function handleCommonAssetAccountBalances({
 
     for (const [accountId, accountData] of blockData.data.entries()) {
       const account = accountsMap.get(accountId)!;
-
 
       for (const [assetRegistryId, balances] of accountData.entries()) {
         // Use cached asset instead of sequential DB query
@@ -234,28 +237,11 @@ export async function handleCommonAssetAccountBalances({
               })
             : '0';
 
-        accountTotalBalance.totalTransferableNorm = BigNumber(
-          accountTotalBalance.totalTransferableNorm
-        )
-          .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-          .toFixed();
-
-        accountTotalBalance.totalLockedNorm = BigNumber(
-          accountTotalBalance.totalLockedNorm
-        )
-          .plus(assetBalanceHistData.totalLockedInRefAssetNorm || '0')
-          .toFixed();
-
         ctx.batchState.state.accountAssetBalanceHistoricalData.set(
           assetBalanceHistData.id,
           assetBalanceHistData
         );
       }
-
-      ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-        accountTotalBalance.id,
-        accountTotalBalance
-      );
     }
   }
 }

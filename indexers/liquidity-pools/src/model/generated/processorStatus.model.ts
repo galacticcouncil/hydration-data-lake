@@ -1,41 +1,42 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, IntColumn as IntColumn_, DateTimeColumn as DateTimeColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
+import * as marshal from "./marshal"
 
 @Entity_()
 export class ProcessorStatus {
-    constructor(props?: Partial<ProcessorStatus>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<ProcessorStatus>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * processor state schema name
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * processor state schema name
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @IntColumn_({nullable: false})
-    assetsLastUpdatedAtBlock!: number
+  @Column_("int4", {nullable: false})
+  assetsLastUpdatedAtBlock!: number
 
-    @IntColumn_({nullable: true})
-    poolsDestroyedUpdatedAtBlock!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  poolsDestroyedUpdatedAtBlock!: number | undefined | null
 
-    @DateTimeColumn_({nullable: false})
-    initialIndexingStartedAt!: Date
+  @Column_("timestamp with time zone", {nullable: false})
+  initialIndexingStartedAt!: Date
 
-    @DateTimeColumn_({nullable: true})
-    initialIndexingFinishedAt!: Date | undefined | null
+  @Column_("timestamp with time zone", {nullable: true})
+  initialIndexingFinishedAt!: Date | undefined | null
 
-    @IntColumn_({nullable: false})
-    latestProcessedBlock!: number
+  @Column_("int4", {nullable: false})
+  latestProcessedBlock!: number
 
-    @IntColumn_({nullable: true})
-    stableswapHistDataLatestBlock!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  stableswapHistDataLatestBlock!: number | undefined | null
 
-    @IntColumn_({nullable: true})
-    omnipoolHistDataLatestBlock!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  omnipoolHistDataLatestBlock!: number | undefined | null
 
-    @IntColumn_({nullable: true})
-    xykpoolHistDataLatestBlock!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  xykpoolHistDataLatestBlock!: number | undefined | null
 
-    @IntColumn_({nullable: true})
-    aavepoolHistDataLatestBlock!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  aavepoolHistDataLatestBlock!: number | undefined | null
 }

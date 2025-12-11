@@ -1,66 +1,63 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import * as marshal from "./marshal"
 import {Account} from "./account.model"
-import {Asset} from "./asset.model"
-import {OmnipoolAsset} from "./omnipoolAsset.model"
-import {NftAsset} from "./nftAsset.model"
 import {OmnipoolLiquidityPositionStatus} from "./_omnipoolLiquidityPositionStatus"
 import {OmnipoolLiquidityPositionEvent} from "./omnipoolLiquidityPositionEvent.model"
-import {Event} from "./event.model"
 
 @Entity_()
 export class OmnipoolLiquidityPosition {
-    constructor(props?: Partial<OmnipoolLiquidityPosition>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<OmnipoolLiquidityPosition>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * position ID
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <position ID>
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    account!: Account
+  @Index_()
+  @ManyToOne_(() => Account, {nullable: true})
+  account!: Account
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+  @Column_("text", {nullable: false})
+  assetId!: string
 
-    @Index_()
-    @ManyToOne_(() => OmnipoolAsset, {nullable: true})
-    omnipoolAsset!: OmnipoolAsset
+  @Column_("text", {nullable: false})
+  omnipoolAssetId!: string
 
-    @BigIntColumn_({nullable: false})
-    initialAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  initialAmount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    amount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  amount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    sharesAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  sharesAmount!: bigint
 
-    @Index_()
-    @ManyToOne_(() => NftAsset, {nullable: true})
-    positionNft!: NftAsset
+  @Column_("text", {nullable: true})
+  positionNftId!: string | undefined | null
 
-    /**
-     * should be either PositionCreated or PositionDestroyed
-     */
-    @Column_("varchar", {length: 24, nullable: false})
-    status!: OmnipoolLiquidityPositionStatus
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  price!: bigint | undefined | null
 
-    @OneToMany_(() => OmnipoolLiquidityPositionEvent, e => e.position)
-    positionEvents!: OmnipoolLiquidityPositionEvent[]
+  /**
+   * should be either PositionCreated or PositionDestroyed
+   */
+  @Column_("varchar", {length: 24, nullable: false})
+  status!: OmnipoolLiquidityPositionStatus
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @OneToMany_(() => OmnipoolLiquidityPositionEvent, e => e.position)
+  positionEvents!: OmnipoolLiquidityPositionEvent[]
 
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  createdAtParaBlockHeight!: number
 
-    @Index_()
-    @ManyToOne_(() => Event, {nullable: true})
-    event!: Event
+  @Index_()
+  @Column_("int4", {nullable: true})
+  destroyedAtParaBlockHeight!: number | undefined | null
+
+  @Column_("text", {nullable: true})
+  eventId!: string | undefined | null
 }

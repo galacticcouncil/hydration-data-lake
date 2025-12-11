@@ -7,9 +7,7 @@ import { getOrCreateAccountTotalBalanceHistoricalData } from './accountAssetBala
 import { getOrCreateAccount } from '../accounts';
 import { AccountData } from '../../parsers/types/storage';
 import { SqdBlock } from '../../processor';
-import {
-  ResourceType,
-} from '../../model';
+import { ResourceType } from '../../model';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
@@ -53,6 +51,15 @@ export async function handleAccountTotalBalance({
   if (!refAsset) throw Error('Ref asset not found');
 
   for (const assetBalance of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
+    const asset = await getOrCreateAsset({
+      id: assetBalance.assetId,
+      ctx,
+      ensure: true,
+      blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+    });
+
+    if (!asset) throw Error(`Asset ${assetBalance.assetId} not found`);
+
     if (!accountBalancesPerBlock.has(assetBalance.paraBlockHeight))
       accountBalancesPerBlock.set(assetBalance.paraBlockHeight, {
         blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(
@@ -63,13 +70,13 @@ export async function handleAccountTotalBalance({
 
     accountBalancesPerBlock
       .get(assetBalance.paraBlockHeight)!
-      .data.set(assetBalance.account.id, new Map());
+      .data.set(assetBalance.accountId, new Map());
 
-    allInvolvedAccountsInBatchSet.add(assetBalance.account.id);
+    allInvolvedAccountsInBatchSet.add(assetBalance.accountId);
 
     const accountTotalBalance =
       await getOrCreateAccountTotalBalanceHistoricalData({
-        account: assetBalance.account,
+        accountId: assetBalance.accountId,
         refAssetId: refAsset.id,
         blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(
           assetBalance.paraBlockHeight
@@ -77,10 +84,10 @@ export async function handleAccountTotalBalance({
         ctx,
       });
 
-    if (assetBalance.asset.id === refAsset.id) {
+    if (assetBalance.assetId === refAsset.id) {
       assetBalance.transferableInRefAssetNorm = calcPriceNormalized({
         amount: BigInt(assetBalance.transferable.toString() ?? '0'),
-        assetDecimals: assetBalance.asset.decimals!,
+        assetDecimals: asset.decimals!,
         spotPrice: '1',
       });
     }
@@ -89,7 +96,7 @@ export async function handleAccountTotalBalance({
      * When we process DEbd token, we need to subtract the debt from the total
      * transferable balance.
      */
-    if (assetBalance.asset.resourceType === ResourceType.Debt) {
+    if (asset.resourceType === ResourceType.Debt) {
       accountTotalBalance.totalTransferableNorm = BigNumber(
         accountTotalBalance.totalTransferableNorm
       )
@@ -170,11 +177,9 @@ async function addLiquidityMiningWorthToTotalBalance({
 }) {
   for (const blockData of lmWorthData.values()) {
     for (const [accountId, accountAssetData] of blockData.data.entries()) {
-      const account = await getOrCreateAccount({ ctx, id: accountId });
-
       const accountTotalBalance =
         await getOrCreateAccountTotalBalanceHistoricalData({
-          account,
+          accountId,
           refAssetId,
           blockHeader: blockData.blockHeader,
           ctx,

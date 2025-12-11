@@ -1,33 +1,34 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 
 @Entity_()
 export class AssetSwapFeeHistoricalData {
-    constructor(props?: Partial<AssetSwapFeeHistoricalData>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<AssetSwapFeeHistoricalData>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * <assetId>-<paraBlockHeight>
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <assetId>-<paraBlockHeight>
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @StringColumn_({nullable: false})
-    assetId!: string
+  @Column_("text", {nullable: false})
+  assetId!: string
 
-    @BigIntColumn_({nullable: false})
-    amount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  amount!: bigint
 
-    @BigIntColumn_({nullable: false})
-    totalAmount!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  totalAmount!: bigint
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
 
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
+  @Column_("int4", {nullable: false})
+  relayBlockHeight!: number
 
-    @StringColumn_({nullable: true})
-    blockId!: string | undefined | null
+  @Column_("text", {nullable: true})
+  blockId!: string | undefined | null
 }

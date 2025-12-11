@@ -29,7 +29,6 @@ import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/histori
 import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
 import { ApiSupportPgClient } from '../../apiSupport/utils/timeSeriesSupportManager/apiSupportPgClient';
 
-
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
     if (
@@ -349,6 +348,7 @@ export class HistoricalDataManager {
     );
     const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
       balances: accountAssetBalanceHistoricalDataList,
+      ctx,
     });
     const accountTotalBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
@@ -442,10 +442,7 @@ export class HistoricalDataManager {
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     await redisTimeSeriesManager.addMultiplePrices(
       src
-        .filter(
-          (item) =>
-            !!item.assetRegistryAId && !!item.assetRegistryBId
-        )
+        .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
         .map((item) => {
           if (item.paraBlockHeight > totalBalanceLatestBlock)
             totalBalanceLatestBlock = item.paraBlockHeight;

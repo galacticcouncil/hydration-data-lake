@@ -8,10 +8,7 @@ import {
   AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
 } from '../../model';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { getOrCreateAsset } from '../assets/asset';
 
 const appConfig = AppConfig.getInstance();
@@ -90,14 +87,14 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
 }
 
 export async function getOrCreateAccountTotalBalanceHistoricalData({
-  account,
+  accountId,
   refAssetId = appConfig.ASSET_PRICE_BASE_ASSET_ID,
   ctx,
   blockHeader,
   fetchFromDb = false,
   relations = {},
 }: {
-  account: Account;
+  accountId: string;
   refAssetId?: string;
   ctx: SqdProcessorContext<Store>;
   blockHeader: SqdBlock;
@@ -106,7 +103,7 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
 }) {
   const batchState = ctx.batchState.state;
 
-  const entityId = `${account.id}-${blockHeader.height}`;
+  const entityId = `${accountId}-${blockHeader.height}`;
 
   let dataEntity = batchState.accountTotalBalanceHistoricalData.get(entityId);
 
@@ -140,14 +137,18 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
 
   if (!refAsset) throw Error('Ref asset not found');
 
-  const totalBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  const totalBlock = ctx.batchState.getParaBlockFromCacheByHeight(
+    blockHeader.height
+  );
   if (!totalBlock) {
-    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+    throw new Error(
+      `Block not found in cache for height ${blockHeader.height}`
+    );
   }
 
   dataEntity = new AccountTotalBalanceHistoricalData({
-    id: `${account.id}-${blockHeader.height}`,
-    accountId: account.id,
+    id: `${accountId}-${blockHeader.height}`,
+    accountId: accountId,
     refAssetId: refAsset.id,
     totalTransferableNorm: '0',
     totalLockedNorm: '0',

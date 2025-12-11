@@ -1,45 +1,52 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 
 @Entity_()
 export class AssetVolumeHistoricalData {
-    constructor(props?: Partial<AssetVolumeHistoricalData>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<AssetVolumeHistoricalData>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * <assetId>-<paraBlockHeight>
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <assetId>-<paraBlockHeight>
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @StringColumn_({nullable: false})
-    assetId!: string
+  @Column_("text", {nullable: false})
+  assetId!: string
 
-    @BigIntColumn_({nullable: false})
-    volumeIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  volumeIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    volumeOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  volumeOut!: bigint
 
-    @BigIntColumn_({nullable: false})
-    totalVolumeIn!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  totalVolumeIn!: bigint
 
-    @BigIntColumn_({nullable: false})
-    totalVolumeOut!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  totalVolumeOut!: bigint
 
-    @StringColumn_({nullable: false})
-    totalVolumeInNorm!: string
+  @Column_("text", {nullable: true})
+  volumeInNorm!: string | undefined | null
 
-    @StringColumn_({nullable: false})
-    totalVolumeOutNorm!: string
+  @Column_("text", {nullable: true})
+  volumeOutNorm!: string | undefined | null
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Column_("text", {nullable: true})
+  totalVolumeInNorm!: string | undefined | null
 
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
+  @Column_("text", {nullable: true})
+  totalVolumeOutNorm!: string | undefined | null
 
-    @StringColumn_({nullable: true})
-    blockId!: string | undefined | null
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
+
+  @Column_("int4", {nullable: false})
+  relayBlockHeight!: number
+
+  @Column_("text", {nullable: true})
+  blockId!: string | undefined | null
 }

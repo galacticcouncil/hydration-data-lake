@@ -16,6 +16,7 @@ import {
   fromDecimalToExponentialNotation,
   fromExponentialToDecimalNotation,
   getPriceRouteDecorated,
+  getXykpoolShareTokenDecimals,
 } from '../../../utils/helpers';
 import { LessThan } from 'typeorm';
 import pMap from 'p-map';
@@ -72,7 +73,7 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
     if (!histDataItemAsset) continue;
 
     await processAssetSpotPrices({
-      asset: histDataItemAsset,
+      assetId: histDataItemAsset.id,
       assetHistData: histDataItem,
       blockHeader,
       ctx,
@@ -80,14 +81,15 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
   }
 
   // Process XYK pools indexed map once (shared across all XYK assets)
-  const xykPoolsIndexedByInterimAssetPair = xykOnlyAssetsHistData.length > 0
-    ? getXykPoolsIndexedByInterimAssetPair({ ctx, xykPoolAssets })
-    : null;
+  const xykPoolsIndexedByInterimAssetPair =
+    xykOnlyAssetsHistData.length > 0
+      ? getXykPoolsIndexedByInterimAssetPair({ ctx, xykPoolAssets })
+      : null;
 
   if (!!xykPoolsIndexedByInterimAssetPair) {
     for (const histDataItem of xykOnlyAssetsHistData) {
       await processXykInvolvedAssetSpotPrices({
-        asset: histDataItem.asset,
+        assetId: histDataItem.assetId,
         assetHistData: histDataItem,
         xykPoolsIndexedByInterimAssetPair,
         blockHeader,
@@ -142,24 +144,34 @@ async function processAssetSpotPrices({
     ensure: true,
   });
   if (!asset) {
-    console.log(`Asset spot price calculation skipped for assetRegistryId ${assetId} at block ${blockHeader.height} due to missing asset.`)
-    return
-  };
+    console.log(
+      `Asset spot price calculation skipped for assetRegistryId ${assetId} at block ${blockHeader.height} due to missing asset.`
+    );
+    return;
+  }
 
   const calcAssetUsdPriceNormalised = async () => {
     let assetIdToProcess = asset.assetRegistryId;
 
     if (asset.resourceType === ResourceType.Debt) {
-      const underlyingAsset = asset.underlyingAssetId ? await getOrCreateAsset({id: asset.underlyingAssetId , blockHeader, ensure: true, ctx}) : null;
+      const underlyingAsset = asset.underlyingAssetId
+        ? await getOrCreateAsset({
+            id: asset.underlyingAssetId,
+            blockHeader,
+            ensure: true,
+            ctx,
+          })
+        : null;
       assetIdToProcess = underlyingAsset?.assetRegistryId;
     }
 
-
     if (!assetIdToProcess) {
-      console.log({asset})
-      console.log(`Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetRegistryId.`);
-      return
-    };
+      console.log({ asset });
+      console.log(
+        `Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetRegistryId.`
+      );
+      return;
+    }
 
     try {
       /**
@@ -201,8 +213,10 @@ async function processAssetSpotPrices({
         !assetOut ||
         asset.assetRegistryId === undefined ||
         asset.assetRegistryId === null
-      ){
-        console.log(`Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetOut or assetRegistryId.`)
+      ) {
+        console.log(
+          `Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetOut or assetRegistryId.`
+        );
         continue;
       }
 
@@ -224,9 +238,13 @@ async function processAssetSpotPrices({
 
         const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
-        const blockData = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+        const blockData = ctx.batchState.getParaBlockFromCacheByHeight(
+          blockHeader.height
+        );
         if (!blockData) {
-          throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+          throw new Error(
+            `Block not found in cache for height ${blockHeader.height}`
+          );
         }
 
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
@@ -399,16 +417,24 @@ function getXykOnlyAssets(ctx: SqdProcessorContext<Store>) {
 
   const omnipoolInvolvedAssets = new Map<string, Asset>(
     Array.from(ctx.batchState.state.omnipoolAssets.values())
-      .map((poolAsset) =>
-        [poolAsset.assetId, ctx.batchState.state.assetsAll.get(poolAsset.assetId)] as [string, Asset | undefined]
+      .map(
+        (poolAsset) =>
+          [
+            poolAsset.assetId,
+            ctx.batchState.state.assetsAll.get(poolAsset.assetId),
+          ] as [string, Asset | undefined]
       )
       .filter(([, asset]) => asset !== undefined) as [string, Asset][]
   );
 
   const stableswapInvolvedAssets = new Map<string, Asset>(
     Array.from(ctx.batchState.state.stableswapAssets.values())
-          .map((poolAsset) =>
-        [poolAsset.assetId, ctx.batchState.state.assetsAll.get(poolAsset.assetId)] as [string, Asset | undefined]
+      .map(
+        (poolAsset) =>
+          [
+            poolAsset.assetId,
+            ctx.batchState.state.assetsAll.get(poolAsset.assetId),
+          ] as [string, Asset | undefined]
       )
       .filter(([, asset]) => asset !== undefined) as [string, Asset][]
   );
@@ -447,8 +473,7 @@ function getXykPoolsIndexedByInterimAssetPair({
     ctx.batchState.state.xykAllBatchPools.values()
   )) {
     if (
-      (pool.assetAId === interimAssetId &&
-        xykPoolAssets.has(pool.assetBId)) ||
+      (pool.assetAId === interimAssetId && xykPoolAssets.has(pool.assetBId)) ||
       (pool.assetBId === interimAssetId && xykPoolAssets.has(pool.assetAId))
     ) {
       if (pool.assetAId === interimAssetId) pools.set(pool.assetBId, pool);
@@ -605,9 +630,13 @@ async function processXykInvolvedAssetSpotPrices({
 
       const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
-      const blockData = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+      const blockData = ctx.batchState.getParaBlockFromCacheByHeight(
+        blockHeader.height
+      );
       if (!blockData) {
-        throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+        throw new Error(
+          `Block not found in cache for height ${blockHeader.height}`
+        );
       }
 
       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
@@ -718,13 +747,30 @@ async function processXykShareAssetSpotPrices({
   }
 
   const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
-    `${originXykpool.account.id}-${blockHeader.height}`
+    `${originXykpool.accountId}-${blockHeader.height}`
   );
-  if (
-    !xykPoolHistData ||
-    !xykPoolHistData.assetA.decimals ||
-    !xykPoolHistData.assetB.decimals
-  ) {
+
+  if (!xykPoolHistData) return;
+
+  const assetA = await getOrCreateAsset({
+    id: xykPoolHistData.assetAId,
+    ensure: true,
+    ctx,
+    blockHeader,
+  });
+  if (!assetA)
+    throw new Error(`Asset ${xykPoolHistData.assetAId} not found in DB!`);
+
+  const assetB = await getOrCreateAsset({
+    id: xykPoolHistData.assetBId,
+    ensure: true,
+    ctx,
+    blockHeader,
+  });
+  if (!assetB)
+    throw new Error(`Asset ${xykPoolHistData.assetBId} not found in DB!`);
+
+  if (!assetA.decimals || !assetB.decimals) {
     // console.log(
     //   `processXykShareAssetSpotPrices :: historical data of origin pool for share asset ${asset.id} not found`
     // );
@@ -741,14 +787,14 @@ async function processXykShareAssetSpotPrices({
     if (!assetPriceBaseAsst) return;
     const poolAssetASpotPrice =
       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-        `${originXykpool.assetA.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
+        `${originXykpool.assetAId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
       )?.priceNormalised;
 
     if (!poolAssetASpotPrice) return;
 
     const originPoolTvlInRefAssetNormalised = fromExponentialToDecimalNotation(
       xykPoolHistData.assetABalance.toString(),
-      originXykpool.assetA.decimals!
+      assetA.decimals!
     )
       .multipliedBy(poolAssetASpotPrice)
       .multipliedBy(2);
@@ -757,7 +803,7 @@ async function processXykShareAssetSpotPrices({
 
     try {
       shareAssetDecimals = getXykpoolShareTokenDecimals({
-        poolAssets: [originXykpool.assetA, originXykpool.assetB],
+        poolAssets: [assetA, assetB],
       });
     } catch (e) {
       console.log(e);
@@ -792,7 +838,7 @@ async function processXykShareAssetSpotPrices({
 
       const poolAssetASpotPrice =
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-          `${originXykpool.assetA.id}-${assetOutId}-${blockHeader.height}`
+          `${originXykpool.assetAId}-${assetOutId}-${blockHeader.height}`
         )?.priceNormalised;
 
       if (!poolAssetASpotPrice) continue;
@@ -800,7 +846,7 @@ async function processXykShareAssetSpotPrices({
       const originPoolTvlInRefAssetNormalised =
         fromExponentialToDecimalNotation(
           xykPoolHistData.assetABalance.toString(),
-          originXykpool.assetA.decimals!
+          assetA.decimals!
         )
           .multipliedBy(poolAssetASpotPrice)
           .multipliedBy(2);
@@ -808,7 +854,7 @@ async function processXykShareAssetSpotPrices({
       let shareAssetDecimals = 0;
       try {
         shareAssetDecimals = getXykpoolShareTokenDecimals({
-          poolAssets: [originXykpool.assetA, originXykpool.assetB],
+          poolAssets: [assetA, assetB],
         });
       } catch (e) {
         console.log(e);
@@ -828,8 +874,8 @@ async function processXykShareAssetSpotPrices({
         histDataItemId,
         new AssetSpotPriceHistoricalData({
           id: histDataItemId,
-          assetIn: asset,
-          assetOut,
+          assetInId: asset.id,
+          assetOutId: assetOut.id,
           assetInAssetRegistryId: asset.assetRegistryId,
           assetOutAssetRegistryId: assetOut.assetRegistryId,
           assetInHistData: assetHistData,
@@ -850,7 +896,7 @@ async function processXykShareAssetSpotPrices({
 
           paraBlockHeight: blockHeader.height,
           relayBlockHeight: assetHistData.relayBlockHeight,
-          block: assetHistData.block,
+          blockId: assetHistData.blockId,
         })
       );
     }

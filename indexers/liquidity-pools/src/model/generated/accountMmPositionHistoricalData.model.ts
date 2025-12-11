@@ -1,51 +1,51 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
 
 @Entity_()
 export class AccountMmPositionHistoricalData {
-    constructor(props?: Partial<AccountMmPositionHistoricalData>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<AccountMmPositionHistoricalData>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * <address>-<paraBlockHeight>
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <address>-<paraBlockHeight>
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @StringColumn_({nullable: false})
-    accountId!: string
+  @Column_("text", {nullable: false})
+  accountId!: string
 
-    @StringColumn_({nullable: true})
-    accountBoundEvmAddress!: string | undefined | null
+  @Column_("text", {nullable: true})
+  accountBoundEvmAddress!: string | undefined | null
 
-    @StringColumn_({nullable: false})
-    totalCollateralBase!: string
+  @Column_("text", {nullable: false})
+  totalCollateralBase!: string
 
-    @StringColumn_({nullable: false})
-    totalDebtBase!: string
+  @Column_("text", {nullable: false})
+  totalDebtBase!: string
 
-    @StringColumn_({nullable: false})
-    availableBorrowsBase!: string
+  @Column_("text", {nullable: false})
+  availableBorrowsBase!: string
 
-    @StringColumn_({nullable: false})
-    currentLiquidationThreshold!: string
+  @Column_("text", {nullable: false})
+  currentLiquidationThreshold!: string
 
-    @StringColumn_({nullable: false})
-    ltv!: string
+  @Column_("text", {nullable: false})
+  ltv!: string
 
-    @StringColumn_({nullable: true})
-    healthFactor!: string | undefined | null
+  @Column_("text", {nullable: true})
+  healthFactor!: string | undefined | null
 
-    @StringColumn_({nullable: false})
-    poolAddress!: string
+  @Column_("text", {nullable: false})
+  poolAddress!: string
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
 
-    @IntColumn_({nullable: false})
-    relayBlockHeight!: number
+  @Column_("int4", {nullable: false})
+  relayBlockHeight!: number
 
-    @StringColumn_({nullable: true})
-    blockId!: string | undefined | null
+  @Column_("text", {nullable: true})
+  blockId!: string | undefined | null
 }
