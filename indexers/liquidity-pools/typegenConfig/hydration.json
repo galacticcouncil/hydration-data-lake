@@ -112,7 +112,8 @@
     "OmnipoolLiquidityMining": {
       "events": true,
       "calls": true,
-      "storage": true
+      "storage": true,
+      "constants": true
     },
     "OmnipoolWarehouseLM": {
       "events": true,
@@ -141,6 +142,11 @@
       "storage": true
     },
     "Duster": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "Uniques": {
       "events": true,
       "calls": true,
       "storage": true

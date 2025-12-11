@@ -1,34 +1,26 @@
-import { constants } from 'ethers';
-import pMap from 'p-map';
-
-import { BigNumber } from '@galacticcouncil/sdk';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-
 import {
   Account,
+  AccountAssetBalanceHistoricalData,
   Asset,
   AssetType,
   Block,
   ResourceType,
 } from '../../model';
-import { StorageResolver } from '../../parsers/storageResolver';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
-import {
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
-import { calcPriceNormalized } from '../../utils/helpers';
-import { getOrCreateAccount } from '../accounts';
-import { getOrCreateAsset } from '../assets/asset';
-import {
-  getAssetsPairPrice,
-} from '../assets/assetHistoricalData/assetSpotPrices';
+import { constants } from 'ethers';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import {
   getOrCreateAccountAssetBalanceHistoricalData,
   getOrCreateAccountTotalBalanceHistoricalData,
 } from './accountAssetBalance';
+import { getOrCreateAccount } from '../accounts';
+import { getOrCreateAsset } from '../assets/asset';
+import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
+import { calcPriceNormalized } from '../../utils/helpers';
+import { BigNumber } from '@galacticcouncil/sdk';
+import pMap from 'p-map';
+import { StorageResolver } from '../../parsers/storageResolver';
 
 export async function handleMmAssetAccountBalancesPerBlock(
   ctx: SqdProcessorContext<Store>
@@ -45,7 +37,10 @@ export async function handleMmAssetAccountBalancesPerBlock(
     }
   > = new Map();
 
-  const accountIdsWithCommonAssetBalanceChanges = new Set<string>();
+  const accountIdsWithCommonAssetBalanceChanges = new Map<
+    number,
+    Set<string>
+  >();
 
   const getBlockHeaderByBlockHeight = (
     blockHeight: number
@@ -109,24 +104,6 @@ export async function handleMmAssetAccountBalancesPerBlock(
 
   const batchState = ctx.batchState.state;
 
-  // batchState.transfers.forEach((transfer) => {
-  //   const blockHeader = getBlockHeaderByBlockHeight(transfer.paraBlockHeight);
-  //   if (blockHeader) {
-  //     pushAccountsAssetsToBlockSlot({
-  //       blockHeader,
-  //       block: transfer.event.block,
-  //       assets: [transfer.asset],
-  //       account: transfer.from,
-  //     });
-  //     pushAccountsAssetsToBlockSlot({
-  //       blockHeader,
-  //       block: transfer.event.block,
-  //       assets: [transfer.asset],
-  //       account: transfer.to,
-  //     });
-  //   }
-  // });
-
   for (const mmEvent of [...batchState.moneyMarketEvents.values()]) {
     const assets: Asset[] = [];
     const blockHeader = getBlockHeaderByBlockHeight(mmEvent.paraBlockHeight);
@@ -150,8 +127,16 @@ export async function handleMmAssetAccountBalancesPerBlock(
         assets,
         account,
       });
-      if (isCommonAssetInvolved)
-        accountIdsWithCommonAssetBalanceChanges.add(accountId);
+      if (isCommonAssetInvolved) {
+        if (!accountIdsWithCommonAssetBalanceChanges.has(blockHeader.height))
+          accountIdsWithCommonAssetBalanceChanges.set(
+            blockHeader.height,
+            new Set()
+          );
+        accountIdsWithCommonAssetBalanceChanges
+          .get(blockHeader.height)
+          ?.add(accountId);
+      }
     }
   }
 
@@ -164,13 +149,6 @@ export async function handleMmAssetAccountBalancesPerBlock(
           accountAssetsMap.account.boundEvmAddress === constants.AddressZero
         )
           return;
-
-        const accountTotalBalanceHistData =
-          await getOrCreateAccountTotalBalanceHistoricalData({
-            account: accountAssetsMap.account,
-            blockHeader: blockSlotData.blockHeader,
-            ctx,
-          });
 
         const accountStorageDictionaryBalancesPerAsset =
           (StorageResolver.getInstance().storageDictionaryManager?.getTokenBalancesMany(
@@ -254,27 +232,28 @@ export async function handleMmAssetAccountBalancesPerBlock(
 
           let assetInId = assetBalance.asset.id;
 
-          if (assetBalance.asset.resourceType === ResourceType.Debt) {
+          if (assetBalance.asset.resourceType === ResourceType.Debt && !!assetBalance.asset.underlyingAssetId) {
             let assetFull: Asset | undefined = assetBalance.asset;
-            let underlyingAsset: Asset | undefined = undefined;
-            if (!assetFull.underlyingAssetId) {
+            let underlyingAsset: Asset | undefined = ctx.batchState.state.assetsAll.get(assetBalance.asset.underlyingAssetId)
+            if (!underlyingAsset) {
               /**
                * We need this re-fetch to be sure that cached Asset contains data
                * about a related underlyingAsset
                */
-              assetFull = await ctx.storeUtils.findOneWithLogs(
-                Asset,
-                {
-                  where: { id: assetBalance.asset.id },
-                  relations: {},
-                },
-                {
-                  className: 'Asset',
-                  originCallFn: 'handleMmAssetAccountBalancesPerBlock',
-                }
-              );
-
-              underlyingAsset = assetFull ? await ctx.storeUtils.findOneWithLogs(
+              // assetFull = await ctx.storeUtils.findOneWithLogs(
+              //   Asset,
+              //   {
+              //     where: { id: assetBalance.asset.id },
+              //     relations: {
+              //       underlyingAsset: true,
+              //     },
+              //   },
+              //   {
+              //     className: 'Asset',
+              //     originCallFn: 'handleMmAssetAccountBalancesPerBlock',
+              //   }
+              // );
+              underlyingAsset = await ctx.storeUtils.findOneWithLogs(
                 Asset,
                 {
                   where: { assetRegistryId: assetFull.underlyingAssetId as string },
@@ -284,9 +263,9 @@ export async function handleMmAssetAccountBalancesPerBlock(
                   className: 'Asset',
                   originCallFn: 'handleMmAssetAccountBalancesPerBlock',
                 }
-              ) : undefined;
+              ) ?? undefined;
             }
-            if (assetFull && underlyingAsset)
+            if (underlyingAsset)
               assetInId = underlyingAsset.id;
           }
 
@@ -305,36 +284,11 @@ export async function handleMmAssetAccountBalancesPerBlock(
                 })
               : '0';
 
-          if (assetBalance.asset.resourceType === ResourceType.Debt) {
-            accountTotalBalanceHistData.totalTransferableNorm = BigNumber(
-              accountTotalBalanceHistData.totalTransferableNorm
-            )
-              .minus(historicalDataEntity.transferableInRefAssetNorm || '0')
-              .toFixed();
-
-            accountTotalBalanceHistData.totalDebtNorm = BigNumber(
-              accountTotalBalanceHistData.totalDebtNorm || '0'
-            )
-              .plus(historicalDataEntity.transferableInRefAssetNorm || '0')
-              .toFixed();
-          } else {
-            accountTotalBalanceHistData.totalTransferableNorm = BigNumber(
-              accountTotalBalanceHistData.totalTransferableNorm
-            )
-              .plus(historicalDataEntity.transferableInRefAssetNorm || '0')
-              .toFixed();
-          }
-
           ctx.batchState.state.accountAssetBalanceHistoricalData.set(
             historicalDataEntity.id,
             historicalDataEntity
           );
         }
-
-        ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-          accountTotalBalanceHistData.id,
-          accountTotalBalanceHistData
-        );
       },
       { concurrency: 30 }
     );

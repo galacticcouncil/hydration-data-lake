@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v138 from '../v138'
+import * as v359 from '../v359'
 
 export const accountBlacklist =  {
     /**
@@ -53,4 +54,28 @@ export const dustAccount =  {
 export interface DustAccountV138  {
     is(block: RuntimeCtx): boolean
     get(block: Block): Promise<(v138.AccountId32 | undefined)>
+}
+
+export const accountWhitelist =  {
+    /**
+     *  Accounts excluded from dusting.
+     */
+    v359: new StorageType('Duster.AccountWhitelist', 'Optional', [v359.AccountId32], sts.unit()) as AccountWhitelistV359,
+}
+
+/**
+ *  Accounts excluded from dusting.
+ */
+export interface AccountWhitelistV359  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v359.AccountId32): Promise<(null | undefined)>
+    getMany(block: Block, keys: v359.AccountId32[]): Promise<(null | undefined)[]>
+    getKeys(block: Block): Promise<v359.AccountId32[]>
+    getKeys(block: Block, key: v359.AccountId32): Promise<v359.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v359.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v359.AccountId32): AsyncIterable<v359.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v359.AccountId32, v: (null | undefined)][]>
+    getPairs(block: Block, key: v359.AccountId32): Promise<[k: v359.AccountId32, v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v359.AccountId32, v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v359.AccountId32): AsyncIterable<[k: v359.AccountId32, v: (null | undefined)][]>
 }

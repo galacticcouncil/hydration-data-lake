@@ -1,112 +1,78 @@
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-
+import { handleRelayChainBlocks } from '../../../handlers/relayChain';
+import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import {
-  ChainActivityTraceManager,
-} from '../../../chainActivityTracingManagers';
+  BatchBlocksParsedDataManager,
+  getParsedEventsData,
+} from '../../../parsers/batchBlocksParser';
+import { StorageResolver } from '../../../parsers/storageResolver';
 import {
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../../../handlers/accounts';
+import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
 import {
-  handleAccountMmPositionData,
-} from '../../../handlers/accounts/moneyMarketPosition';
+  actualiseAssets,
+  ensureNativeToken,
+  prefetchAllAssets,
+} from '../../../handlers/assets/utils';
 import { handleAssetRegistry } from '../../../handlers/assets';
+import { handleLbpPools } from '../../../handlers/pools/pools/lbpPool';
+import { handleXykPools } from '../../../handlers/pools/pools/xykPool';
+import { ensureOmnipool } from '../../../handlers/pools/pools/omnipool/omnipool';
+import { handleOmnipoolAssets } from '../../../handlers/pools/pools/omnipool';
+import { handleStablepools } from '../../../handlers/pools/pools/stableswap';
+import { handleBroadcastSwappedEvents } from '../../../handlers/swap';
+import { handleBuySellOperations } from '../../../handlers/buySellOperations';
+import { handleStablepoolLiquidityEvents } from '../../../handlers/pools/pools/stableswap/liquidity';
+import { handleDcaSchedules, saveDcaEntities } from '../../../handlers/dca';
+import { handleOtcOrders } from '../../../handlers/otc';
+import { createMoneyMarketEventsFromRoutedTrades } from '../../../handlers/moneyMarket/routedTradeToMmEventHandler';
+import { saveAllMoneyMarketEvents } from '../../../handlers/moneyMarket';
+import { handleTransfers } from '../../../handlers/transfers';
+import { handleConstantsHistoricalData } from '../../../handlers/constants/constantsHistoricalData';
+import { handleStableswapHistoricalData } from '../../../handlers/pools/pools/stableswap/historicalData';
+import { handleOmnipoolHistoricalData } from '../../../handlers/pools/pools/omnipool/historicalData';
+import { handleXykPoolHistoricalData } from '../../../handlers/pools/pools/xykPool/historicalData';
+import { handleLbppoolHistoricalData } from '../../../handlers/pools/pools/lbpPool/historicalData';
+import { handleAavepoolHistoricalData } from '../../../handlers/pools/pools/aavepool/historicalData';
+import { ensurePoolsDestroyedStatus } from '../../../handlers/pools/support';
+import { handleEvmAccounts } from '../../../handlers/evmAccounts';
+import { handleOracles } from '../../../handlers/oracles/emaOracle';
 import {
   handleAssetHistoricalData,
   handleAssetPairVolumesHistoricalData,
   handleAssetSpotPricesHistoricalData,
 } from '../../../handlers/assets/assetHistoricalData';
+import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
+import { HistoricalDataManager } from '../../../handlers/historicalData';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { processPoolsTvlNormalized } from '../../../handlers/pools/normalizedTvlBaseAsset';
 import {
-  actualiseAssets,
-  ensureNativeToken,
-} from '../../../handlers/assets/utils';
+  prefetchGenericPersistentData,
+  prefetchGenericPersistentDataWithLogs,
+} from '../../prefetchHelpers';
 import { handleAssetAccountBalances } from '../../../handlers/balances';
-import { handleBuySellOperations } from '../../../handlers/buySellOperations';
 import {
-  handleConstantsHistoricalData,
-} from '../../../handlers/constants/constantsHistoricalData';
-import {
-  handleDcaSchedules,
-  saveDcaEntities,
-} from '../../../handlers/dca';
-import { handleEvmAccounts } from '../../../handlers/evmAccounts';
+  handleAccountMmPositionData,
+  handleAllAccountsMmPositionDataUpdate,
+} from '../../../handlers/accounts/moneyMarketPosition';
+import { actualizeMoneyMarketReserves } from '../../../handlers/moneyMarket/reserves/moneyMarketReserve';
+import { handleMmReservesConfigsHistoricalData } from '../../../handlers/moneyMarket/reserves';
+import { ensureHsmpool } from '../../../handlers/pools/pools/hsmpool/hsmPool';
+import { ensureHsmCollaterals } from '../../../handlers/pools/pools/hsmpool/collaterals/hsmCollateral';
 import { handleEvm } from '../../../handlers/evmLog';
 import { ensureAaveFacilitators } from '../../../handlers/facilitator';
-import { HistoricalDataManager } from '../../../handlers/historicalData';
-import { saveAllMoneyMarketEvents } from '../../../handlers/moneyMarket';
-import {
-  handleMmReservesConfigsHistoricalData,
-} from '../../../handlers/moneyMarket/reserves';
-import {
-  actualizeMoneyMarketReserves,
-} from '../../../handlers/moneyMarket/reserves/moneyMarketReserve';
-import {
-  createMoneyMarketEventsFromRoutedTrades,
-} from '../../../handlers/moneyMarket/routedTradeToMmEventHandler';
-import { handleOracles } from '../../../handlers/oracles/emaOracle';
-import { handleOtcOrders } from '../../../handlers/otc';
-import {
-  processPoolsTvlNormalized,
-} from '../../../handlers/pools/normalizedTvlBaseAsset';
-import {
-  processPoolsNormalizedVolumes,
-} from '../../../handlers/pools/normalizedVolumesInBaseAsset';
-import {
-  handleAavepoolHistoricalData,
-} from '../../../handlers/pools/pools/aavepool/historicalData';
-import {
-  handleHsmCollateralEvents,
-} from '../../../handlers/pools/pools/hsmpool/collaterals';
-import {
-  ensureHsmCollaterals,
-} from '../../../handlers/pools/pools/hsmpool/collaterals/hsmCollateral';
-import { ensureHsmpool } from '../../../handlers/pools/pools/hsmpool/hsmPool';
-import {
-  processHsmpoolAssetBalanceHistoricalData,
-} from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
-import { handleLbpPools } from '../../../handlers/pools/pools/lbpPool';
-import {
-  handleLbppoolHistoricalData,
-} from '../../../handlers/pools/pools/lbpPool/historicalData';
-import { handleOmnipoolAssets } from '../../../handlers/pools/pools/omnipool';
-import {
-  handleOmnipoolHistoricalData,
-} from '../../../handlers/pools/pools/omnipool/historicalData';
-import {
-  ensureOmnipool,
-} from '../../../handlers/pools/pools/omnipool/omnipool';
-import { handleStablepools } from '../../../handlers/pools/pools/stableswap';
-import {
-  handleStableswapHistoricalData,
-} from '../../../handlers/pools/pools/stableswap/historicalData';
-import {
-  handleStablepoolLiquidityEvents,
-} from '../../../handlers/pools/pools/stableswap/liquidity';
-import { handleXykPools } from '../../../handlers/pools/pools/xykPool';
-import {
-  handleXykPoolHistoricalData,
-} from '../../../handlers/pools/pools/xykPool/historicalData';
-import { ensurePoolsDestroyedStatus } from '../../../handlers/pools/support';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
-import { handleBroadcastSwappedEvents } from '../../../handlers/swap';
-import {
-  handleTransactionPaymentHistoricalData,
-} from '../../../handlers/transactionPayment/historicalData';
-import { handleTransfers } from '../../../handlers/transfers';
-import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
-import { StorageResolver } from '../../../parsers/storageResolver';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import {
-  MoneyMarketContractsManager,
-} from '../../../utils/evmTools/moneyMarketContractsManager';
-import { prefetchGenericPersistentDataWithLogs } from '../../prefetchHelpers';
+import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool/collaterals';
+import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
+import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
 ) {
   let parsedData = null;
-  console.log("singleFlowAllInOneProcessor");
+
   await Promise.all([
     (async () => {
       await handleRelayChainBlocks(ctx);
@@ -158,6 +124,17 @@ export async function singleFlowAllInOneProcessor(
   await actualiseAssets(ctx);
   console.timeEnd('actualiseAssets');
 
+  console.time('initAllXykPools');
+  await initAllXykPools({
+    ctx,
+    blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+  });
+  console.timeEnd('initAllXykPools');
+
+  console.time('initAllXykLiquidityMiningDeposits');
+  await initAllXykLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllXykLiquidityMiningDeposits');
+
   console.time('handleAssetRegistry');
   await handleAssetRegistry(ctx, parsedData);
   console.timeEnd('handleAssetRegistry');
@@ -184,6 +161,18 @@ export async function singleFlowAllInOneProcessor(
   await ensureOmnipool(ctx);
   await handleOmnipoolAssets(ctx, parsedData);
   console.timeEnd('handleOmnipoolAssets');
+
+  console.time('initAllOmnipoolLiquidityPositions');
+  await initAllOmnipoolLiquidityPositions(ctx);
+  console.timeEnd('initAllOmnipoolLiquidityPositions');
+
+  console.time('handleOmnipoolLiquidityPositions');
+  await handleOmnipoolLiquidityPositions(ctx, parsedData);
+  console.timeEnd('handleOmnipoolLiquidityPositions');
+
+  console.time('handleXykPoolLiquidityMiningEvents');
+  await handleXykPoolLiquidityMiningEvents(ctx, parsedData);
+  console.timeEnd('handleXykPoolLiquidityMiningEvents');
 
   console.time('handleStablepools');
   await handleStablepools(ctx, parsedData);
@@ -306,6 +295,10 @@ export async function singleFlowAllInOneProcessor(
   console.time('handleAssetAccountBalances');
   await handleAssetAccountBalances(ctx, parsedData);
   console.timeEnd('handleAssetAccountBalances');
+
+  console.time('processAssetNormalizedVolumes');
+  await processAssetNormalizedVolumes({ ctx });
+  console.timeEnd('processAssetNormalizedVolumes');
 
   console.time('processPoolsNormalizedVolumes');
   await processPoolsNormalizedVolumes({ ctx });

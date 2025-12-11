@@ -1,6 +1,7 @@
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-
 import {
+  AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
   AssetsPairVolumeHistoricalData,
   AssetSpotPriceHistoricalData,
@@ -10,29 +11,24 @@ import {
   BatchStableswapHistVolsList,
   BatchXykpoolHistVolsList,
 } from '../../model';
-import { SqdProcessorContext } from '../../processor';
-import {
-  getProcessingMode,
-  ProcessingMode,
-} from '../../processorHelpers/getProcessingMode';
-import { ProcessorStatusManager } from '../../processorStatusManager';
-import {
-  LatestProcessedDataCacheManager,
-} from '../../utils/latestProcessedDataCacheManager';
+import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/assetHistoricalData';
+import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
 import {
   RedisTimeSeriesManager,
   RedisTimeSeriesName,
 } from '../../utils/redisTimeSeriesManager';
+import { ProcessorStatusManager } from '../../processorStatusManager';
+import {
+  getProcessingMode,
+  ProcessingMode,
+} from '../../processorHelpers/getProcessingMode';
 import { MultiFlowProcessingPhase } from '../../utils/types';
-import {
-  getAssetHistDataWithUniqueData,
-} from '../assets/assetHistoricalData/assetHistoricalData';
-import {
-  getAssetSpotPriceHistDataWithUniqueData,
-} from '../assets/assetHistoricalData/assetSpotPrices';
-import {
-  getAccountAssetBalancesLatest,
-} from '../balances/accountAssetBalanceLatest';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
+import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLatest';
+import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/historicalDataLatest';
+import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
+import { ApiSupportPgClient } from '../../apiSupport/utils/timeSeriesSupportManager/apiSupportPgClient';
+
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -134,19 +130,47 @@ export class HistoricalDataManager {
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
     );
-    await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values())
+
+    /**
+     *  === OmnipoolAssetHistoricalData ===
+     */
+    const omnipoolAssetAllHistoricalDataList = Array.from(
+      ctx.batchState.state.omnipoolAssetAllHistoricalData.values()
     );
+    await ctx.storeUtils.upsertWithBatches(omnipoolAssetAllHistoricalDataList);
+
+    const omnipoolAssetsHistDataLatest = getOmnipoolAssetsHistDataLatest({
+      histDataList: omnipoolAssetAllHistoricalDataList,
+    });
+    await ctx.storeUtils.upsertWithBatches(omnipoolAssetsHistDataLatest);
+    /**
+     * ======
+     */
 
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
     );
 
-    await ctx.storeUtils.upsertWithBatches(
-      Array.from(
-        ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
-      )
+    /**
+     *  === StableswapAssetHistoricalData ===
+     */
+    const stableswapAssetAllHistoricalDataList = Array.from(
+      ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
     );
+
+    await ctx.storeUtils.upsertWithBatches(
+      stableswapAssetAllHistoricalDataList
+    );
+
+    const stableswapAssetsHistDataLatest = getStableswapAssetsHistDataLatest({
+      histDataList: stableswapAssetAllHistoricalDataList,
+    });
+
+    await ctx.storeUtils.upsertWithBatches(stableswapAssetsHistDataLatest);
+
+    /**
+     * ======
+     */
 
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
@@ -325,7 +349,6 @@ export class HistoricalDataManager {
     );
     const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
       balances: accountAssetBalanceHistoricalDataList,
-      ctx,
     });
     const accountTotalBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
@@ -365,6 +388,7 @@ export class HistoricalDataManager {
     )
       return;
 
+    let totalBalanceLatestBlock = 0;
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     await redisTimeSeriesManager.addMultiplePrices(
       src
@@ -373,6 +397,9 @@ export class HistoricalDataManager {
             !!item.assetInAssetRegistryId && !!item.assetOutAssetRegistryId
         )
         .map((item) => {
+          if (item.paraBlockHeight > totalBalanceLatestBlock)
+            totalBalanceLatestBlock = item.paraBlockHeight;
+
           const block = ctx.batchState.getParaBlockFromCacheByHeight(
             item.paraBlockHeight
           );
@@ -388,6 +415,15 @@ export class HistoricalDataManager {
           };
         })
     );
+
+    if (totalBalanceLatestBlock > 0)
+      try {
+        await ApiSupportPgClient.getInstance().upsertApiState({
+          assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
+        });
+      } catch (e) {
+        console.log(e);
+      }
   }
 
   static async commitAssetsPairVolumeToRedisTimeSeries(
@@ -401,6 +437,8 @@ export class HistoricalDataManager {
     )
       return;
 
+    let totalBalanceLatestBlock = 0;
+
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     await redisTimeSeriesManager.addMultiplePrices(
       src
@@ -409,6 +447,9 @@ export class HistoricalDataManager {
             !!item.assetRegistryAId && !!item.assetRegistryBId
         )
         .map((item) => {
+          if (item.paraBlockHeight > totalBalanceLatestBlock)
+            totalBalanceLatestBlock = item.paraBlockHeight;
+
           const block = ctx.batchState.getParaBlockFromCacheByHeight(
             item.paraBlockHeight
           );
@@ -431,6 +472,14 @@ export class HistoricalDataManager {
           };
         })
     );
+    if (totalBalanceLatestBlock > 0)
+      try {
+        await ApiSupportPgClient.getInstance().upsertApiState({
+          assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
+        });
+      } catch (e) {
+        console.log(e);
+      }
   }
 
   static async commitAccountTotalBalancesToRedisTimeSeries(
@@ -444,9 +493,12 @@ export class HistoricalDataManager {
     )
       return;
 
-    const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
-    await redisTimeSeriesManager.addMultipleAccountTotalBalances(
+    let totalBalanceLatestBlock = 0;
+    await RedisTimeSeriesManager.getInstance().addMultipleAccountTotalBalances(
       src.map((item) => {
+        if (item.paraBlockHeight > totalBalanceLatestBlock)
+          totalBalanceLatestBlock = item.paraBlockHeight;
+
         const block = ctx.batchState.getParaBlockFromCacheByHeight(
           item.paraBlockHeight
         );
@@ -461,6 +513,15 @@ export class HistoricalDataManager {
         };
       })
     );
+
+    if (totalBalanceLatestBlock > 0)
+      try {
+        await ApiSupportPgClient.getInstance().upsertApiState({
+          accTotalBalanceLatestProcBlock: totalBalanceLatestBlock,
+        });
+      } catch (e) {
+        console.log(e);
+      }
   }
 
   static async handleHistoricalVolumesBatchEntriesLists(

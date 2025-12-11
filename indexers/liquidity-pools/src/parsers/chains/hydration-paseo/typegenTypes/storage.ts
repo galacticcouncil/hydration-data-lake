@@ -1,6 +1,7 @@
 export * as system from './system/storage'
 export * as balances from './balances/storage'
 export * as transactionPayment from './transaction-payment/storage'
+export * as uniques from './uniques/storage'
 export * as assetRegistry from './asset-registry/storage'
 export * as omnipool from './omnipool/storage'
 export * as duster from './duster/storage'

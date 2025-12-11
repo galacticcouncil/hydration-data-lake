@@ -1,10 +1,8 @@
-import { Between } from 'typeorm/find-options/operator/Between';
-
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-
-import {
-  processPoolsNormalizedVolumes,
-} from '../../../handlers/pools/normalizedVolumesInBaseAsset';
+import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { prefetchGenericPersistentData } from '../../prefetchHelpers';
 import {
   Asset,
   AssetSpotPriceHistoricalData,
@@ -12,11 +10,10 @@ import {
   OmnipoolAssetVolumeHistoricalData,
   StableswapAssetVolumeHistoricalData,
   StableswapVolumeHistoricalData,
+  Xykpool,
   XykpoolVolumeHistoricalData,
 } from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { prefetchGenericPersistentData } from '../../prefetchHelpers';
+import { Between } from 'typeorm/find-options/operator/Between';
 
 export async function recalculatePoolsNormalizedVolumes(
   ctx: SqdProcessorContext<Store>

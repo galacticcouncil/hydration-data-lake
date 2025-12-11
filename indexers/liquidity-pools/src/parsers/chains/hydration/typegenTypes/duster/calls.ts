@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
 import * as v138 from '../v138'
+import * as v359 from '../v359'
 
 export const dustAccount =  {
     name: 'Duster.dust_account',
@@ -43,6 +44,40 @@ export const removeNondustableAccount =  {
         'Duster.remove_nondustable_account',
         sts.struct({
             account: v138.AccountId32,
+        })
+    ),
+}
+
+export const whitelistAccount =  {
+    name: 'Duster.whitelist_account',
+    /**
+     * Add account to list of whitelist accounts. Account which are excluded from dusting.
+     * If such account should be dusted - `AccountWhitelisted` error is returned.
+     * Only root can perform this action.
+     * 
+     * Emits `Added` event when successful.
+     * 
+     */
+    v359: new CallType(
+        'Duster.whitelist_account',
+        sts.struct({
+            account: v359.AccountId32,
+        })
+    ),
+}
+
+export const removeFromWhitelist =  {
+    name: 'Duster.remove_from_whitelist',
+    /**
+     * Remove account from list of whitelist accounts. That means account can be dusted again.
+     * 
+     * Emits `Removed` event when successful.
+     * 
+     */
+    v359: new CallType(
+        'Duster.remove_from_whitelist',
+        sts.struct({
+            account: v359.AccountId32,
         })
     ),
 }

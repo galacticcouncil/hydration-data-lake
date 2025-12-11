@@ -1,10 +1,6 @@
-import { Store } from '@subsquid/typeorm-store';
-
-import {
-  AssetSwapFeeHistoricalData,
-  Block,
-} from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
+import { Store } from '@subsquid/typeorm-store';
+import { Asset, Block, AssetSwapFeeHistoricalData } from '../../../model';
 
 export async function handleAssetSwapFee({
   block,
@@ -35,7 +31,7 @@ export async function handleAssetSwapFee({
     lastCachedAssetFeeAmount ||
     (await ctx.storeUtils.findOneWithLogs(AssetSwapFeeHistoricalData, {
       where: {
-        assetId: assetId,
+        assetId,
       },
       relations: {},
       order: {
@@ -45,7 +41,7 @@ export async function handleAssetSwapFee({
 
   const assetSwapFee = new AssetSwapFeeHistoricalData({
     id: `${assetId}-${block.height}`,
-    assetId: assetId,
+    assetId,
     amount: currentBlockAssetFeeAmount?.amount || BigInt(0),
     totalAmount: persistentAssetFeeAmount?.totalAmount || BigInt(0),
     paraBlockHeight: block.height,

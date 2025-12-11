@@ -1,31 +1,22 @@
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-
-import {
-  ChainActivityTraceManager,
-} from '../../../chainActivityTracingManagers';
+import { handleRelayChainBlocks } from '../../../handlers/relayChain';
+import { prefetchAllAssets } from '../../../handlers/assets/utils';
 import {
   handleAssetHistoricalData,
   handleAssetSpotPricesHistoricalData,
 } from '../../../handlers/assets/assetHistoricalData';
-import { prefetchAllAssets } from '../../../handlers/assets/utils';
-import {
-  processPoolsTvlNormalized,
-} from '../../../handlers/pools/normalizedTvlBaseAsset';
-import {
-  processPoolsNormalizedVolumes,
-} from '../../../handlers/pools/normalizedVolumesInBaseAsset';
-import {
-  savePreprocessedData,
-} from '../../../handlers/preprocessedDataBucket/persist';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
-import { StorageResolver } from '../../../parsers/storageResolver';
-import { SqdProcessorContext } from '../../../processor';
+import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { ProcessingPoolManager } from '../../../utils/processingPoolManager';
+import { StorageResolver } from '../../../parsers/storageResolver';
 import {
   checkAndWaitForCoreProcStatus,
   waitForSpotPricesRelatedHistoricalData,
 } from './statusWaitingHelpers';
+import { savePreprocessedData } from '../../../handlers/preprocessedDataBucket/persist';
+import { processPoolsTvlNormalized } from '../../../handlers/pools/normalizedTvlBaseAsset';
 
 export async function execSpotPricesProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -111,6 +102,10 @@ async function processLockedBlocksBatch(
     blockNumbersToProcess,
   });
   console.timeEnd('handleAssetSpotPricesHistoricalDataAtBlock');
+
+  console.time('processAssetNormalizedVolumes');
+  await processAssetNormalizedVolumes({ ctx });
+  console.timeEnd('processAssetNormalizedVolumes');
 
   console.time('processPoolsNormalizedVolumes');
   processPoolsNormalizedVolumes({ ctx });

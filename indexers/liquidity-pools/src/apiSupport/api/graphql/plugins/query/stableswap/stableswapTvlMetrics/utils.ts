@@ -1,11 +1,5 @@
 import type * as pg from 'pg';
 import {
-  getOmnipoolAssetsAll,
-  getOmnipoolAssetsByAssetIds,
-} from '../../../../../../sql/omnipool/omnipoolAssets.sql';
-import { AppConfig } from '../../../../../../../appConfig';
-import { getOmnipoolAssetsTvl } from '../../../../../../sql/omnipool/omnipoolTvl.sql';
-import {
   StableswapLatestTvl,
   StableswapsLatestTvlResponseRaw,
 } from './resolvers';
@@ -14,6 +8,9 @@ import {
   getAssetsByStableswapIds,
 } from '../../../../../../sql/stableswap/stableswap.sql';
 import { getStableswapsTvl } from '../../../../../../sql/stableswap/stableswapTvl.sql';
+import { AppConfig } from '../../../../../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function handleStableswapsLatestTvlAggregation({
   poolIds = [],
@@ -52,7 +49,7 @@ export async function handleStableswapsLatestTvlAggregation({
 
   const aggregatedTvls = await pgClient.query<StableswapsLatestTvlResponseRaw>(
     getStableswapsTvl,
-    [[...assetsDataByPoolMap.keys()]]
+    [appConfig.STATE_SCHEMA_NAME, [...assetsDataByPoolMap.keys()]]
   );
 
   const responseDecorated = aggregatedTvls.rows.map(

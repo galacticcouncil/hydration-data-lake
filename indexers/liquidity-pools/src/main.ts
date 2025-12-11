@@ -86,7 +86,7 @@ async function runProcessor() {
       );
       ctxWithBatchState.extLogger = extLogger;
 
-      await RedisTimeSeriesManager.getInstance().initClient();
+      await RedisTimeSeriesManager.getInstance().initClientAndRunMigrations();
 
       console.log(
         `Processing mode >>> ${getProcessingMode(ctxWithBatchState)}`

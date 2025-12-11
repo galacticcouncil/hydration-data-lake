@@ -1,7 +1,3 @@
-import { LessThan } from 'typeorm';
-
-import { Store } from '@subsquid/typeorm-store';
-
 import {
   LbppoolVolumeHistoricalData,
   OmnipoolAssetVolumeHistoricalData,
@@ -10,7 +6,8 @@ import {
   XykpoolVolumeHistoricalData,
 } from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
-
+import { Store } from '@subsquid/typeorm-store';
+import { LessThan } from 'typeorm';
 export { handleXykPoolVolumeUpdates, initXykPoolVolume } from './xykPoolVolume';
 export { handleLbppoolVolumeUpdates, initLbppoolVolume } from './lbppoolVolume';
 export {

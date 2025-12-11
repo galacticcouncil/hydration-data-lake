@@ -97,9 +97,6 @@ export async function handleTransactionPaymentHistoricalData(
 
           nextFeeMultiplier: data.nextFeeMultiplier,
 
-          relayBlockHeight:
-            ctx.batchState.state.relayChainInfo.get(blockHeader.height)
-              ?.relaychainBlockNumber ?? 0,
           paraBlockHeight: blockHeader.height,
           block,
         });
@@ -124,10 +121,14 @@ async function getPreviousPersistedTransactionPaymentHistDataEntity({
   ctx: SqdProcessorContext<Store>;
   currentBlockHeight: number;
 }) {
-  return await ctx.storeUtils.findOneWithLogs(TransactionPaymentHistoricalData, {
-    where: { paraBlockHeight: LessThan(currentBlockHeight) },
-    order: {
-      paraBlockHeight: 'DESC',
+  return await ctx.storeUtils.findOneWithLogs(
+    TransactionPaymentHistoricalData,
+    {
+      where: { paraBlockHeight: LessThan(currentBlockHeight) },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
     },
-  }, { className: 'TransactionPaymentHistoricalData' });
+    { className: 'TransactionPaymentHistoricalData' }
+  );
 }

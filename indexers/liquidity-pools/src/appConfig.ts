@@ -559,6 +559,16 @@ export class AppConfig {
   @IsBoolean()
   readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
 
+  @Transform(({ value }: { value: string }) => new Set(value.split(',')))
+  readonly ACCOUNT_BALANCE_AGGREGATION_TRIGGERS: Set<string> = new Set([
+    'Currencies',
+    'Tokens',
+    'Balances',
+    'Duster',
+    'Omnipool',
+    'Broadcast',
+  ]);
+
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
 
   readonly redis: RedisConfig = new RedisConfig();
@@ -661,6 +671,46 @@ export class AppConfig {
       events.balances.withdraw.name,
 
       events.duster.dusted.name,
+
+      events.xyk.liquidityAdded.name,
+      events.xyk.liquidityRemoved.name,
+      events.xykLiquidityMining.globalFarmCreated.name,
+      events.xykLiquidityMining.globalFarmUpdated.name,
+      events.xykLiquidityMining.globalFarmTerminated.name,
+      events.xykLiquidityMining.yieldFarmCreated.name,
+      events.xykLiquidityMining.yieldFarmStopped.name,
+      events.xykLiquidityMining.yieldFarmTerminated.name,
+      events.xykLiquidityMining.yieldFarmResumed.name,
+      events.xykLiquidityMining.yieldFarmUpdated.name,
+      events.xykLiquidityMining.sharesDeposited.name,
+      events.xykLiquidityMining.sharesRedeposited.name,
+      events.xykLiquidityMining.sharesWithdrawn.name,
+      events.xykLiquidityMining.depositDestroyed.name,
+      events.xykLiquidityMining.rewardClaimed.name,
+
+      events.omnipool.liquidityAdded.name,
+      events.omnipool.liquidityRemoved.name,
+      events.omnipool.positionCreated.name,
+      events.omnipool.positionUpdated.name,
+      events.omnipool.positionDestroyed.name,
+
+      events.omnipoolLiquidityMining.globalFarmCreated.name,
+      events.omnipoolLiquidityMining.globalFarmUpdated.name,
+      events.omnipoolLiquidityMining.globalFarmTerminated.name,
+      events.omnipoolLiquidityMining.yieldFarmCreated.name,
+      events.omnipoolLiquidityMining.yieldFarmStopped.name,
+      events.omnipoolLiquidityMining.yieldFarmResumed.name,
+      events.omnipoolLiquidityMining.yieldFarmUpdated.name,
+      events.omnipoolLiquidityMining.yieldFarmTerminated.name,
+      events.omnipoolLiquidityMining.sharesDeposited.name,
+      events.omnipoolLiquidityMining.sharesRedeposited.name,
+      events.omnipoolLiquidityMining.sharesWithdrawn.name,
+      events.omnipoolLiquidityMining.rewardClaimed.name,
+      events.omnipoolLiquidityMining.depositDestroyed.name,
+
+      events.omnipoolWarehouseLm.globalFarmAccRpzUpdated.name,
+      events.omnipoolWarehouseLm.yieldFarmAccRpvsUpdated.name,
+      events.omnipoolWarehouseLm.allRewardsDistributed.name,
     ];
 
     if (

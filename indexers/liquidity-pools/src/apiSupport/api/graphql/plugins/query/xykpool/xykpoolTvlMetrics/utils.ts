@@ -2,6 +2,9 @@ import type * as pg from 'pg';
 import { XykpoolLatestTvl } from './resolvers';
 import { getAllXykpoolIds } from '../../../../../../sql/xykpool/xykpool.sql';
 import { getXykpoolsTvl } from '../../../../../../sql/xykpool/xykpoolsTvl.sql';
+import { AppConfig } from '../../../../../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function handleXykpoolsLatestTvlAggregation({
   poolIds = [],
@@ -25,7 +28,7 @@ export async function handleXykpoolsLatestTvlAggregation({
     pool_id: string;
     tvl_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getXykpoolsTvl, [poolIdsToProcess]);
+  }>(getXykpoolsTvl, [appConfig.STATE_SCHEMA_NAME, poolIdsToProcess]);
 
   return aggregatedTvls.rows.map(
     (row) =>

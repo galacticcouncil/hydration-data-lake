@@ -69,6 +69,8 @@ import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { MultiFlowProcessingPhase } from '../../../utils/types';
 import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
+import { initAllXykPools } from '../../../handlers/pools/pools/xykPool/xykPool';
+import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
 
 export async function multiFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -139,6 +141,13 @@ async function handleInitialPhase(
   console.time('actualiseAssets');
   await actualiseAssets(ctx);
   console.timeEnd('actualiseAssets');
+
+  console.time('initAllXykPools');
+  await initAllXykPools({
+    ctx,
+    blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+  });
+  console.timeEnd('initAllXykPools');
 
   console.time('handleAssetRegistry');
   await handleAssetRegistry(ctx, parsedData);
@@ -435,6 +444,10 @@ async function handleSpotPricesCalculationPhase(
   console.time('handleAssetPairVolumesHistoricalData');
   await handleAssetPairVolumesHistoricalData({ ctx });
   console.timeEnd('handleAssetPairVolumesHistoricalData');
+
+  console.time('processAssetNormalizedVolumes');
+  await processAssetNormalizedVolumes({ ctx });
+  console.timeEnd('processAssetNormalizedVolumes');
 
   console.time('processPoolsNormalizedVolumes');
   await processPoolsNormalizedVolumes({ ctx });

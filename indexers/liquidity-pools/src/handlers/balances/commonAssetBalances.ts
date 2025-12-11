@@ -1,53 +1,63 @@
-import { In } from 'typeorm';
-
-import { BigNumber } from '@galacticcouncil/sdk';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-
-import { Account } from '../../model';
+import {
+  Account,
+  AccountAssetBalanceHistoricalData,
+  AccountTotalBalanceHistoricalData,
+} from '../../model';
+import { In } from 'typeorm';
 import parsers from '../../parsers';
 import { AccountData } from '../../parsers/types/storage';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
-import { calcPriceNormalized } from '../../utils/helpers';
 import { getOrCreateAccount } from '../accounts';
-import { getOrCreateAsset, batchGetOrCreateAssets } from '../assets/asset';
-import {
-  getAssetsPairPrice,
-} from '../assets/assetHistoricalData/assetSpotPrices';
+import { getOrCreateAsset } from '../assets/asset';
+import { BigNumber } from '@galacticcouncil/sdk';
+import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
+import { calcPriceNormalized } from '../../utils/helpers';
 import {
   getOrCreateAccountAssetBalanceHistoricalData,
   getOrCreateAccountTotalBalanceHistoricalData,
 } from './accountAssetBalance';
 
+type BlockHeight = number;
 type AccountId = string;
 type AssetRegistryId = string;
+type AssetId = string;
+type AccountBalancesPerBlock = Map<
+  BlockHeight,
+  {
+    blockHeader: SqdBlock;
+    data: Map<AccountId, Map<AssetRegistryId, AccountData>>;
+  }
+>;
+
+type AccountPositionBalancesPerBlockPerAsset = Map<
+  BlockHeight,
+  {
+    blockHeader: SqdBlock;
+    data: Map<AccountId, Map<AssetId, BigNumber>>;
+  }
+>;
 
 export async function handleCommonAssetAccountBalances({
-  accountIdsToProcess = new Set(),
+  accountIdsToProcess = new Map(),
   ctx,
 }: {
-  accountIdsToProcess?: Set<string>;
+  accountIdsToProcess?: Map<number, Set<string>>;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const allInvolvedAccountsInBatchSet: Set<string> = accountIdsToProcess;
-  const palletNamesSet = new Set([
-    'Currencies',
-    'Tokens',
-    'Balances',
-    'Duster',
-  ]);
-  const accountBalancesPerBlock: Map<
-    number,
-    {
-      blockHeader: SqdBlock;
-      data: Map<AccountId, Map<AssetRegistryId, AccountData>>;
-    }
-  > = new Map();
+  const allInvolvedAccountsInBatchSet: Set<string> = new Set(
+    Array.from(accountIdsToProcess.values())
+      .map((blockSlot) => Array.from(blockSlot.values()))
+      .flat()
+  );
+
+  const palletNamesSet = ctx.appConfig.ACCOUNT_BALANCE_AGGREGATION_TRIGGERS;
+  const accountBalancesPerBlock: AccountBalancesPerBlock = new Map();
 
   blocksLoop: for (const block of ctx.blocks) {
-    const allInvolvedAccountsInBlockSet: Set<string> = new Set();
+    const allInvolvedAccountsInBlockSet: Set<string> =
+      accountIdsToProcess.get(block.header.height) ?? new Set();
+
     if (!accountBalancesPerBlock.has(block.header.height))
       accountBalancesPerBlock.set(block.header.height, {
         blockHeader: block.header,
@@ -71,21 +81,30 @@ export async function handleCommonAssetAccountBalances({
         allInvolvedAccountsInBlockSet.add(event.args.who);
         allInvolvedAccountsInBatchSet.add(event.args.who);
       }
+      if (event.args.swapper) {
+        allInvolvedAccountsInBlockSet.add(event.args.swapper);
+        allInvolvedAccountsInBatchSet.add(event.args.swapper);
+      }
+      if (event.args.filler) {
+        allInvolvedAccountsInBlockSet.add(event.args.filler);
+        allInvolvedAccountsInBatchSet.add(event.args.filler);
+      }
     }
 
     if (allInvolvedAccountsInBlockSet.size === 0) continue blocksLoop;
 
-    // Convert Set to Array once for reuse
-    const accountIdsArray = Array.from(allInvolvedAccountsInBlockSet);
+    const allInvolvedAccountsInBlockList = Array.from(
+      allInvolvedAccountsInBlockSet.keys()
+    );
 
     const [nativeTokenBalances, otherTokenBalances] = await Promise.all([
       parsers.storage.system.getNativeTokenBalanceMany({
         block: block.header,
-        accountIds: accountIdsArray,
+        accountIds: allInvolvedAccountsInBlockList,
       }),
       parsers.storage.tokens.getTokenBalancesMany({
         block: block.header,
-        accountIds: accountIdsArray,
+        accountIds: allInvolvedAccountsInBlockList,
       }),
     ]);
 
@@ -117,9 +136,15 @@ export async function handleCommonAssetAccountBalances({
   const persistedAccounts = await ctx.storeUtils.findWithLogs(
     Account,
     {
-      where: { id: In(Array.from(allInvolvedAccountsInBatchSet.keys())) },
+      where: {
+        id: In(
+          Array.from(allInvolvedAccountsInBatchSet.keys()).filter(
+            (acc) => !ctx.batchState.state.accounts.has(acc)
+          )
+        ),
+      },
     },
-    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' },
+    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' }
   );
 
   for (const acc of persistedAccounts) {
@@ -166,13 +191,6 @@ export async function handleCommonAssetAccountBalances({
     for (const [accountId, accountData] of blockData.data.entries()) {
       const account = accountsMap.get(accountId)!;
 
-      const accountTotalBalance =
-        await getOrCreateAccountTotalBalanceHistoricalData({
-          account,
-          refAssetId: refAsset.id,
-          blockHeader: blockData.blockHeader,
-          ctx,
-        });
 
       for (const [assetRegistryId, balances] of accountData.entries()) {
         // Use cached asset instead of sequential DB query
@@ -194,6 +212,9 @@ export async function handleCommonAssetAccountBalances({
             fetchFromDb: false,
           });
 
+        /**
+         * Account Asset balance calculation
+         */
         assetBalanceHistData.transferable = balances.free;
         assetBalanceHistData.totalLocked = balances.reserved;
         assetBalanceHistData.transferableInRefAssetNorm =

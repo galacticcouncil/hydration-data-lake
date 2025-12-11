@@ -323,7 +323,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
         assetsToSave.push(newAsset);
         ctx.batchState.state.assetsAll.set(newAsset.id, newAsset);
       },
-      { concurrency: 200 }
+      { concurrency: 500 }
     );
 
     /**
