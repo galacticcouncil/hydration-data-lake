@@ -6,6 +6,7 @@ import {
   handleAssetHistoricalData,
   handleAssetSpotPricesHistoricalData,
 } from '../../../handlers/assets/assetHistoricalData';
+import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
 import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';

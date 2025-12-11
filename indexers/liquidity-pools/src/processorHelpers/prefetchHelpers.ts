@@ -497,10 +497,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            pool: { account: true },
-            assetA: true,
-            assetB: true,
-            block: true,
+            pool: true,
           },
           order: {
             paraBlockHeight: 'ASC',

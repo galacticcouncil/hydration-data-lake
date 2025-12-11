@@ -233,9 +233,9 @@ export async function broadcastSwappedEventPostHook({
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetIn: swap.inputs[0].asset,
+        assetInId: swap.inputs[0].assetId,
         assetInAmount: swap.inputs[0].amount,
-        assetOut: swap.outputs[0].asset,
+        assetOutId: swap.outputs[0].assetId,
         assetOutAmount: swap.outputs[0].amount,
       });
 

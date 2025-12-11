@@ -20,9 +20,14 @@ import {
 import { handleAssetRegistry } from '../../../handlers/assets';
 import { handleLbpPools } from '../../../handlers/pools/pools/lbpPool';
 import { handleXykPools } from '../../../handlers/pools/pools/xykPool';
+import { initAllXykPools } from '../../../handlers/pools/pools/xykPool/xykPool';
 import { ensureOmnipool } from '../../../handlers/pools/pools/omnipool/omnipool';
 import { handleOmnipoolAssets } from '../../../handlers/pools/pools/omnipool';
 import { handleStablepools } from '../../../handlers/pools/pools/stableswap';
+import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
+import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
+import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
+import { handleOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions';
 import { handleBroadcastSwappedEvents } from '../../../handlers/swap';
 import { handleBuySellOperations } from '../../../handlers/buySellOperations';
 import { handleStablepoolLiquidityEvents } from '../../../handlers/pools/pools/stableswap/liquidity';
@@ -45,6 +50,7 @@ import {
   handleAssetPairVolumesHistoricalData,
   handleAssetSpotPricesHistoricalData,
 } from '../../../handlers/assets/assetHistoricalData';
+import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
 import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
 import { HistoricalDataManager } from '../../../handlers/historicalData';
 import { ProcessorStatusManager } from '../../../processorStatusManager';

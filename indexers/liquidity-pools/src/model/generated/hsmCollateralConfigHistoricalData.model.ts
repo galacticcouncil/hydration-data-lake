@@ -1,49 +1,48 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, DateTimeColumn as DateTimeColumn_, IntColumn as IntColumn_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
 import {HsmCollateral} from "./hsmCollateral.model"
 
 @Entity_()
 export class HsmCollateralConfigHistoricalData {
-  constructor(props?: Partial<HsmCollateralConfigHistoricalData>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<HsmCollateralConfigHistoricalData>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <hsm_collateral_id>-<block_height>
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <hsm_collateral_id>-<block_height>
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => HsmCollateral, {nullable: true})
-  collateral!: HsmCollateral
+    @Index_()
+    @ManyToOne_(() => HsmCollateral, {nullable: true})
+    collateral!: HsmCollateral
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  purchaseFee!: bigint
+    @BigIntColumn_({nullable: false})
+    purchaseFee!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  maxBuyPriceCoefficient!: bigint
+    @BigIntColumn_({nullable: false})
+    maxBuyPriceCoefficient!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  buybackRate!: bigint
+    @BigIntColumn_({nullable: false})
+    buybackRate!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  buyBackFee!: bigint
+    @BigIntColumn_({nullable: false})
+    buyBackFee!: bigint
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  maxInHolding!: bigint
+    @BigIntColumn_({nullable: false})
+    maxInHolding!: bigint
 
-  @Index_()
-  @Column_("timestamp with time zone", {nullable: false})
-  paraTimestamp!: Date
+    @Index_()
+    @DateTimeColumn_({nullable: false})
+    paraTimestamp!: Date
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
+    @IntColumn_({nullable: false})
+    relayBlockHeight!: number
 
-  @Column_("text", {nullable: true})
-  blockId!: string | undefined | null
+    @StringColumn_({nullable: true})
+    blockId!: string | undefined | null
 }

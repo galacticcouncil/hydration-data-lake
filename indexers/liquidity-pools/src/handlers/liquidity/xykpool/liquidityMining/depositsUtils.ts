@@ -118,14 +118,12 @@ export async function getOrCreateXykLiquidityMiningDeposit({
     if (!xykpool)
       throw Error(`Xykpool with id ${depositData.ammPoolId} cannot be found;`);
 
-    const lpAsset = !lpTokenId
-      ? xykpool.shareToken
-      : await getOrCreateAsset({
-          assetRegistryId: lpTokenId,
-          ensure: true,
-          ctx,
-          blockHeader,
-        });
+    const lpAsset = await getOrCreateAsset({
+      assetRegistryId: lpTokenId ?? xykpool.shareTokenId,
+      ensure: true,
+      ctx,
+      blockHeader,
+    });
 
     if (!lpAsset)
       throw Error(`LP Asset of Deposit ${depositId} cannot be found;`);

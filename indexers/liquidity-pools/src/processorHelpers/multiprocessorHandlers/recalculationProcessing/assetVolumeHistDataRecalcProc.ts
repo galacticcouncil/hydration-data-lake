@@ -1,25 +1,21 @@
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { prefetchGenericPersistentData } from '../../prefetchHelpers';
-import {
-  Asset,
-  AssetSpotPriceHistoricalData,
-  Block,
-  OmnipoolAssetVolumeHistoricalData,
-  StableswapAssetVolumeHistoricalData,
-  StableswapVolumeHistoricalData,
-  Swap,
-  SwapAssetBalanceType,
-  Xykpool,
-  XykpoolVolumeHistoricalData,
-} from '../../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
+
+import { Store } from '@subsquid/typeorm-store';
+
 import {
   handleAssetVolumeUpdates,
   processAssetNormalizedVolumes,
 } from '../../../handlers/assets/volume';
+import {
+  Asset,
+  AssetSpotPriceHistoricalData,
+  Block,
+  Swap,
+  SwapAssetBalanceType,
+} from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { prefetchGenericPersistentData } from '../../prefetchHelpers';
 
 export async function assetVolumeHistDataRecalcProc(
   ctx: SqdProcessorContext<Store>
@@ -39,10 +35,6 @@ export async function assetVolumeHistDataRecalcProc(
         {
           where: {},
           relations: {
-            underlyingAsset: true,
-            aToken: true,
-            variableDebtToken: true,
-            bondUnderlyingAsset: true,
           },
         },
         { className: 'Asset' }
@@ -80,9 +72,6 @@ export async function assetVolumeHistDataRecalcProc(
           },
           relations: {
             assetInHistData: true,
-            assetIn: true,
-            assetOut: true,
-            block: true,
           },
         },
         { className: 'AssetSpotPriceHistoricalData' }
@@ -102,12 +91,8 @@ export async function assetVolumeHistDataRecalcProc(
             ),
           },
           relations: {
-            inputs: {
-              asset: true,
-            },
-            outputs: {
-              asset: true,
-            },
+            inputs: true,
+            outputs: true,
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -132,8 +117,8 @@ export async function assetVolumeHistDataRecalcProc(
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
         relayBlockHeight: swap.relayBlockHeight,
-        assetIn: inputs[0].asset,
-        assetOut: outputs[0].asset,
+        assetInId: inputs[0].assetId,
+        assetOutId: outputs[0].assetId,
         assetInAmount: swap.inputs[0].amount,
         assetOutAmount: swap.outputs[0].amount,
       });

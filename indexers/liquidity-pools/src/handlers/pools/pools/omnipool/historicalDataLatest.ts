@@ -29,7 +29,7 @@ export function getOmnipoolAssetsHistDataLatest({
 
         poolHistoricalDataId: data.poolHistoricalData.id,
         omnipoolAssetId: data.omnipoolAsset.id,
-        assetId: data.asset.id,
+        assetId: data.assetId,
 
         assetCap: data.assetCap,
         assetShares: data.assetShares,
@@ -40,7 +40,7 @@ export function getOmnipoolAssetsHistDataLatest({
         tvlInRefAssetNorm: data.tvlInRefAssetNorm,
 
         paraBlockHeight: data.paraBlockHeight,
-        blockId: data.block.id,
+        blockId: data.blockId?.toString(),
       })
     );
   }

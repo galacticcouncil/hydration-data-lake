@@ -1,6 +1,4 @@
 import {
-  OmnipoolAssetHistoricalData,
-  OmnipoolAssetHistoricalDataLatest,
   StableswapAssetHistoricalData,
   StableswapAssetHistoricalDataLatest,
 } from '../../../../model';
@@ -29,7 +27,7 @@ export function getStableswapAssetsHistDataLatest({
       new StableswapAssetHistoricalDataLatest({
         id,
 
-        assetId: data.asset.id,
+        assetId: data.assetId,
         poolId: data.poolHistoricalData.pool.id,
         stableswapAssetId: data.stableswapAsset.id,
         poolHistoricalDataId: data.poolHistoricalData.id,
@@ -38,7 +36,7 @@ export function getStableswapAssetsHistDataLatest({
         tvlInRefAssetNorm: data.tvlInRefAssetNorm,
 
         paraBlockHeight: data.paraBlockHeight,
-        blockId: data.block.id,
+        blockId: data.blockId?.toString(),
       })
     );
   }

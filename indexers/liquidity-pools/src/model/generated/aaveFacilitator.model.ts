@@ -1,20 +1,20 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BooleanColumn as BooleanColumn_} from "@subsquid/typeorm-store"
 
 @Entity_()
 export class AaveFacilitator {
-  constructor(props?: Partial<AaveFacilitator>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<AaveFacilitator>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <facilitator_h160_address>
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <facilitator_h160_address>
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("text", {nullable: false})
-  label!: string
+    @StringColumn_({nullable: false})
+    label!: string
 
-  @Column_("bool", {nullable: false})
-  isRemoved!: boolean
+    @BooleanColumn_({nullable: false})
+    isRemoved!: boolean
 }

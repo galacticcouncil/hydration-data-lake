@@ -1,36 +1,36 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_, StringColumn as StringColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 import {Omnipool} from "./omnipool.model"
 import {OmnipoolAssetHistoricalData} from "./omnipoolAssetHistoricalData.model"
 
 @Entity_()
 export class OmnipoolHistoricalData {
-  constructor(props?: Partial<OmnipoolHistoricalData>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<OmnipoolHistoricalData>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <omnipoolId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-101312)
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <omnipoolId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-101312)
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => Omnipool, {nullable: true})
-  pool!: Omnipool
+    @Index_()
+    @ManyToOne_(() => Omnipool, {nullable: true})
+    pool!: Omnipool
 
-  @OneToMany_(() => OmnipoolAssetHistoricalData, e => e.poolHistoricalData)
-  assetsHistoricalData!: OmnipoolAssetHistoricalData[]
+    @OneToMany_(() => OmnipoolAssetHistoricalData, e => e.poolHistoricalData)
+    assetsHistoricalData!: OmnipoolAssetHistoricalData[]
 
-  @Column_("text", {nullable: true})
-  tvlTotalInRefAssetNorm!: string | undefined | null
+    @StringColumn_({nullable: true})
+    tvlTotalInRefAssetNorm!: string | undefined | null
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 
-  @Column_("int4", {nullable: false})
-  relayBlockHeight!: number
+    @IntColumn_({nullable: false})
+    relayBlockHeight!: number
 
-  @Column_("text", {nullable: true})
-  blockId!: string | undefined | null
+    @StringColumn_({nullable: true})
+    blockId!: string | undefined | null
 }
