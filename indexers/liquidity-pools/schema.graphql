@@ -596,12 +596,9 @@ type RoutedTrade @entity {
   outputs: [RoutedTradeAssetBalance] @derivedFrom(field: "routedTrade")
 
   inputAssetIds: [String!]!
-  inputAssetRegistryIds: [String!]!
   outputAssetIds: [String!]!
-  outputAssetRegistryIds: [String!]!
 
   allInvolvedAssetIds: [String!]!
-  allInvolvedAssetRegistryIds: [String!]!
   participantSwappers: [String!]!
   participantFillers: [String!]!
   feeRecipients: [String!]!

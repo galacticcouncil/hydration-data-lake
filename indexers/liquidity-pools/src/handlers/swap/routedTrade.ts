@@ -84,12 +84,6 @@ export function processRouteTradeHop({
         ...swap.allInvolvedAssetIds,
       ]).values(),
     ];
-    routeTradeEntity.allInvolvedAssetRegistryIds = [
-      ...new Set([
-        ...(routeTradeEntity.allInvolvedAssetRegistryIds || []),
-        ...swap.allInvolvedAssetRegistryIds,
-      ]).values(),
-    ];
     routeTradeEntity.participantFillers = [
       ...new Set([
         ...(routeTradeEntity.participantFillers || []),
@@ -131,15 +125,11 @@ export function processRouteTradeHop({
 
     const {
       inputAssetIds,
-      inputAssetRegistryIds,
       outputAssetIds,
-      outputAssetRegistryIds,
     } = getRouterTradeInputOutputPoints(routeTradeEntity, ctx);
 
     routeTradeEntity.inputAssetIds = inputAssetIds;
-    routeTradeEntity.inputAssetRegistryIds = inputAssetRegistryIds;
     routeTradeEntity.outputAssetIds = outputAssetIds;
-    routeTradeEntity.outputAssetRegistryIds = outputAssetRegistryIds;
 
     ctx.batchState.state.routeTrades.set(routeTradeEntity.id, routeTradeEntity);
 
@@ -163,7 +153,6 @@ export function processRouteTradeHop({
       .map((swapFee) => swapFee.recipientId)
       .filter((recipientId) => !!recipientId) as string[],
     allInvolvedAssetIds: swap.allInvolvedAssetIds,
-    allInvolvedAssetRegistryIds: swap.allInvolvedAssetRegistryIds,
     paraBlockHeight: swap.paraBlockHeight,
   });
 
@@ -193,15 +182,11 @@ export function processRouteTradeHop({
 
   const {
     inputAssetIds,
-    inputAssetRegistryIds,
     outputAssetIds,
-    outputAssetRegistryIds,
   } = getRouterTradeInputOutputPoints(routeTradeEntity, ctx);
 
   routeTradeEntity.inputAssetIds = inputAssetIds;
-  routeTradeEntity.inputAssetRegistryIds = inputAssetRegistryIds;
   routeTradeEntity.outputAssetIds = outputAssetIds;
-  routeTradeEntity.outputAssetRegistryIds = outputAssetRegistryIds;
 
   ctx.batchState.state.routeTrades.set(routeTradeEntity.id, routeTradeEntity);
 
@@ -214,21 +199,15 @@ export function getRouterTradeInputOutputPoints(
 ): Pick<
   RoutedTrade,
   | 'inputAssetIds'
-  | 'inputAssetRegistryIds'
   | 'outputAssetIds'
-  | 'outputAssetRegistryIds'
 > {
   const res: Pick<
     RoutedTrade,
     | 'inputAssetIds'
-    | 'inputAssetRegistryIds'
     | 'outputAssetIds'
-    | 'outputAssetRegistryIds'
   > = {
     inputAssetIds: [],
-    inputAssetRegistryIds: [],
     outputAssetIds: [],
-    outputAssetRegistryIds: [],
   };
 
   // Use global assetsAll cache (already prefetched at batch start)
@@ -242,18 +221,12 @@ export function getRouterTradeInputOutputPoints(
   for (const inputAsset of orderedSwaps[0].inputs) {
     const asset = assetsAll.get(inputAsset.assetId);
     res.inputAssetIds.push(inputAsset.assetId);
-    if (asset?.assetRegistryId) {
-      res.inputAssetRegistryIds.push(asset.assetRegistryId);
-    }
   }
 
   // Process outputs from last swap
   for (const outputAsset of orderedSwaps[orderedSwaps.length - 1].outputs) {
     const asset = assetsAll.get(outputAsset.assetId);
     res.outputAssetIds.push(outputAsset.assetId);  // Fixed: was assetInfo.id
-    if (asset?.assetRegistryId) {
-      res.outputAssetRegistryIds.push(asset.assetRegistryId);
-    }
   }
 
   return res;

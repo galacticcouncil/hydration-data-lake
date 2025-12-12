@@ -27,19 +27,10 @@ export class RoutedTrade {
     inputAssetIds!: (string)[]
 
     @StringColumn_({array: true, nullable: false})
-    inputAssetRegistryIds!: (string)[]
-
-    @StringColumn_({array: true, nullable: false})
     outputAssetIds!: (string)[]
 
     @StringColumn_({array: true, nullable: false})
-    outputAssetRegistryIds!: (string)[]
-
-    @StringColumn_({array: true, nullable: false})
     allInvolvedAssetIds!: (string)[]
-
-    @StringColumn_({array: true, nullable: false})
-    allInvolvedAssetRegistryIds!: (string)[]
 
     @StringColumn_({array: true, nullable: false})
     participantSwappers!: (string)[]
