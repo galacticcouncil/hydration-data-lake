@@ -15,6 +15,7 @@ export * from './xykLiquidityMining';
 export * from './otc';
 export * from './broadcast';
 export * from './hsm';
+export * from './uniques';
 export * from './support/eventData';
 export * from './support/batchBlocksParsedDataScope';
 

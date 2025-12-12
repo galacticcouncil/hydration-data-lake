@@ -15,6 +15,7 @@ import evm from './evm';
 import evmAccounts from './evmAccounts';
 import currencies from './currencies';
 import hsm from './hsm';
+import uniques from './uniques';
 
 import { EventParserMethods } from '../../../types/common';
 
@@ -36,4 +37,5 @@ export default {
   evmAccounts,
   currencies,
   hsm,
+  uniques,
 } as EventParserMethods;

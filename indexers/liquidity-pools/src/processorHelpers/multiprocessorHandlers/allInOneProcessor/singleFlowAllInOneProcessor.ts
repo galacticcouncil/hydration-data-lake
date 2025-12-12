@@ -2,10 +2,7 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { handleRelayChainBlocks } from '../../../handlers/relayChain';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import {
-  BatchBlocksParsedDataManager,
-  getParsedEventsData,
-} from '../../../parsers/batchBlocksParser';
+import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../../parsers/storageResolver';
 import {
   prefetchOrInitAllBatchAccounts,
@@ -15,7 +12,6 @@ import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarket
 import {
   actualiseAssets,
   ensureNativeToken,
-  prefetchAllAssets,
 } from '../../../handlers/assets/utils';
 import { handleAssetRegistry } from '../../../handlers/assets';
 import { handleLbpPools } from '../../../handlers/pools/pools/lbpPool';
@@ -73,6 +69,9 @@ import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
 import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
 import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
 import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
+import { handleUniquesEvents } from '../../../handlers/uniques';
+import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
+import { initAllOmnipoolLiquidityMiningDeposits } from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -174,9 +173,21 @@ export async function singleFlowAllInOneProcessor(
   await handleOmnipoolLiquidityPositions(ctx, parsedData);
   console.timeEnd('handleOmnipoolLiquidityPositions');
 
+  console.time('initAllOmnipoolLiquidityMiningDeposits');
+  await initAllOmnipoolLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllOmnipoolLiquidityMiningDeposits');
+
+  console.time('handleOmnipoolLiquidityMiningEvents');
+  await handleOmnipoolLiquidityMiningEvents(ctx, parsedData);
+  console.timeEnd('handleOmnipoolLiquidityMiningEvents');
+
   console.time('handleXykPoolLiquidityMiningEvents');
   await handleXykPoolLiquidityMiningEvents(ctx, parsedData);
   console.timeEnd('handleXykPoolLiquidityMiningEvents');
+
+  console.time('handleUniquesEvents');
+  await handleUniquesEvents(ctx, parsedData);
+  console.timeEnd('handleUniquesEvents');
 
   console.time('handleStablepools');
   await handleStablepools(ctx, parsedData);

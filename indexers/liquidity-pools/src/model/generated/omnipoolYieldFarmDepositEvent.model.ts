@@ -17,9 +17,6 @@ export class OmnipoolYieldFarmDepositEvent {
   @Column_("text", {nullable: false})
   depositId!: string
 
-  @Column_("text", {nullable: false})
-  positionId!: string
-
   @Column_("varchar", {length: 17, nullable: false})
   eventName!: YieldFarmDepositStatus
 

@@ -1,13 +1,10 @@
 import { DispatchError, PoolData } from '../common';
 import {
-  AssetType,
   SwapFeeDestinationType,
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
 import { SwappedExecutionTypeKind } from '../../../utils/types';
-import { sts } from '../../chains/hydration/typegenTypes/support';
-import { FixedU128 } from '../../chains/hydration/typegenTypes/v227';
 
 export * from './xyk';
 export * from './evm';
@@ -112,6 +109,8 @@ export enum EventName {
   'HSM_CollateralAdded' = 'HSM.CollateralAdded',
   'HSM_CollateralRemoved' = 'HSM.CollateralRemoved',
   'HSM_CollateralUpdated' = 'HSM.CollateralUpdated',
+
+  'Uniques_Transferred' = 'Uniques.Transferred',
 }
 
 export type RelayChainInfo = {

@@ -16,7 +16,7 @@ export class XykYieldFarmDeposit {
   id!: string
 
   @Column_("text", {nullable: true})
-  depositNftId!: string | undefined | null
+  nftId!: string | undefined | null
 
   @Column_("text", {nullable: false})
   xykpoolId!: string
