@@ -152,13 +152,9 @@ type AssetSwapFeeHistoricalData @entity {
 type AssetSpotPriceHistoricalData @entity {
   "<assetInId>-<assetOutId>-<paraBlockHeight>"
   id: ID!
-  assetInHistData: AssetHistoricalData!
   assetInId: String!
   assetOutId: String!
-  assetInAssetRegistryId: String
-  assetOutAssetRegistryId: String
 
-  assetOutDecimals: Int!
   price: BigInt!
   priceNormalised: String!
   #  priceRoute is a list of tupes with following values: pool address, pool type, assetIn, assetOut in appropriate order of swap
@@ -184,8 +180,6 @@ type AssetHistoricalData @entity {
   dynamicFee: AssetDynamicFee
 
   usdPriceNormalised: String!
-  spotPrices: [AssetSpotPriceHistoricalData]!
-    @derivedFrom(field: "assetInHistData")
   assetPairVolumes: [AssetAssetsPairVolume]!
     @derivedFrom(field: "assetHistoricalData")
 

@@ -129,7 +129,6 @@ function decorateAssetSpotPriceHistoricalData(
 ) {
   const decorated: Record<string, any> = getAllEntityProps(src);
 
-  decorated.assetInHistData = src.assetInHistData.id;
   decorated.assetIn = src.assetInId;
   decorated.assetOut = src.assetOutId;
 

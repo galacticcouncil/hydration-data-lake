@@ -132,7 +132,6 @@ export async function processAssetsHistoricalDataAtBlock({
           : null,
         usdPriceNormalised: '0',
         assetPairVolumes: [],
-        spotPrices: [], // Spot prices will be calculated and injected in further processing steps.
         paraBlockHeight: block.height,
       });
 

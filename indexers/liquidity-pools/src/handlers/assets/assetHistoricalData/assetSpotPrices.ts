@@ -157,7 +157,7 @@ async function processAssetSpotPrices({
   const calcAssetUsdPriceNormalised = async () => {
     let assetIdToProcess = asset.assetRegistryId;
 
-    if (asset.resourceType === ResourceType.Debt) {
+    if ([ResourceType.Debt, ResourceType.Collateral].includes(asset.resourceType)) {
       const underlyingAsset = asset.underlyingAssetId
         ? await getOrCreateAsset({
             id: asset.underlyingAssetId,
@@ -257,11 +257,7 @@ async function processAssetSpotPrices({
             id: histDataItemId,
             assetInId: asset.id,
             assetOutId: assetOut.id,
-            assetInAssetRegistryId: asset.assetRegistryId,
-            assetOutAssetRegistryId: assetOut.assetRegistryId,
-            assetInHistData: assetHistData,
 
-            assetOutDecimals: price.decimals,
             price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
 
             priceNormalised: fromExponentialToDecimalNotation(
@@ -371,9 +367,7 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
           assetOutId: currentRecord.assetOutId,
           paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
         },
-        relations: {
-          assetInHistData: true,
-        },
+        relations: {},
         order: {
           paraBlockHeight: 'DESC',
         },
@@ -647,11 +641,6 @@ async function processXykInvolvedAssetSpotPrices({
           id: histDataItemId,
           assetInId: asset.id,
           assetOutId: assetOut.id,
-          assetInAssetRegistryId: asset.assetRegistryId,
-          assetOutAssetRegistryId: assetOut.assetRegistryId,
-          assetInHistData: assetHistData,
-
-          assetOutDecimals: assetOut.decimals!,
           price: BigInt(
             fromDecimalToExponentialNotation(
               xykAssetSpotPrice,
@@ -876,11 +865,6 @@ async function processXykShareAssetSpotPrices({
           id: histDataItemId,
           assetInId: asset.id,
           assetOutId: assetOut.id,
-          assetInAssetRegistryId: asset.assetRegistryId,
-          assetOutAssetRegistryId: assetOut.assetRegistryId,
-          assetInHistData: assetHistData,
-
-          assetOutDecimals: assetOut.decimals,
           price: BigInt(
             fromDecimalToExponentialNotation(
               shareAssetPriceNormalised,

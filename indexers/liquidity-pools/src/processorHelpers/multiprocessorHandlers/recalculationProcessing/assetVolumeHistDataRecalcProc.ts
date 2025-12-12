@@ -70,9 +70,7 @@ export async function assetVolumeHistDataRecalcProc(
               ctx.blocks[ctx.blocks.length - 1].header.height
             ),
           },
-          relations: {
-            assetInHistData: true,
-          },
+          relations: {},
         },
         { className: 'AssetSpotPriceHistoricalData' }
       )

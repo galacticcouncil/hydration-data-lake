@@ -1,13 +1,33 @@
-import { LessThan } from 'typeorm';
-
 import { Store } from '@subsquid/typeorm-store';
 
 import {
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
 } from '../model';
+import { AssetDynamicFee } from '../model/generated/_assetDynamicFee';
 import parsers from '../parsers';
 import { SqdProcessorContext } from '../processor';
+import { CommonPgPool } from './pgConnectionManagers/pgPool';
+
+// Type definitions for raw PostgreSQL query results
+interface RawAssetHistoricalDataRow {
+  id: string;
+  asset_id: string;
+  total_issuance: string; // numeric comes as string from pg
+  dynamic_fee: any | null;
+  usd_price_normalised: string;
+  para_block_height: number;
+}
+
+interface RawAssetSpotPriceHistoricalDataRow {
+  id: string;
+  asset_in_id: string;
+  asset_out_id: string;
+  price: string; // numeric comes as string from pg
+  price_normalised: string;
+  price_route: string[][]; // jsonb
+  para_block_height: number;
+}
 
 export class LatestProcessedDataCacheManager {
   private static instance: LatestProcessedDataCacheManager;
@@ -26,6 +46,198 @@ export class LatestProcessedDataCacheManager {
         new LatestProcessedDataCacheManager();
     }
     return LatestProcessedDataCacheManager.instance;
+  }
+
+  /**
+   * Batch fetch latest asset historical data using raw SQL with DISTINCT ON
+   * Replaces N sequential queries with 1 batch query
+   */
+  private async fetchLatestAssetHistDataBatch(
+    assetIds: string[],
+    maxBlockHeight: number,
+    ctx: SqdProcessorContext<Store>
+  ): Promise<AssetHistoricalData[]> {
+    const startTime = performance.now();
+
+    try {
+      // Validate inputs
+      if (!assetIds || assetIds.length === 0) {
+        console.warn(
+          '[WARN] fetchLatestAssetHistDataBatch called with empty assetIds'
+        );
+        return [];
+      }
+
+      if (!maxBlockHeight || maxBlockHeight < 0) {
+        throw new Error(`Invalid maxBlockHeight: ${maxBlockHeight}`);
+      }
+
+      const pgPool = CommonPgPool.getInstance();
+
+      const sql = `
+        SELECT DISTINCT ON (asset_id)
+          id,
+          asset_id,
+          total_issuance,
+          dynamic_fee,
+          usd_price_normalised,
+          para_block_height
+        FROM asset_historical_data
+        WHERE asset_id = ANY($1::text[])
+          AND para_block_height < $2
+        ORDER BY asset_id, para_block_height DESC
+      `;
+
+      const result = await pgPool.query<RawAssetHistoricalDataRow>(sql, [
+        assetIds,
+        maxBlockHeight,
+      ]);
+
+      // Map raw rows to entities
+      const entities = result.rows.map((row, index) => {
+        try {
+          return new AssetHistoricalData({
+            id: row.id,
+            assetId: row.asset_id,
+            totalIssuance: BigInt(row.total_issuance),
+            dynamicFee: row.dynamic_fee
+              ? new AssetDynamicFee(undefined, row.dynamic_fee)
+              : null,
+            usdPriceNormalised: row.usd_price_normalised,
+            paraBlockHeight: row.para_block_height,
+          });
+        } catch (mappingError: any) {
+          console.error(
+            `[ERROR] Failed to map row ${index} for asset ${row.asset_id}:`,
+            mappingError,
+            row
+          );
+          throw new Error(
+            `Entity mapping failed for asset ${row.asset_id}: ${mappingError.message}`
+          );
+        }
+      });
+
+      const duration = performance.now() - startTime;
+      console.log(
+        `[PERF] fetchLatestAssetHistDataBatch: ` +
+          `${assetIds.length} assets, ${result.rows.length} results, ${duration.toFixed(2)}ms`
+      );
+
+      return entities;
+    } catch (error: any) {
+      const duration = performance.now() - startTime;
+      console.error(
+        `[ERROR] fetchLatestAssetHistDataBatch failed after ${duration.toFixed(2)}ms:`,
+        {
+          assetIdsCount: assetIds?.length,
+          maxBlockHeight,
+          error: error.message,
+          stack: error.stack,
+        }
+      );
+
+      // Re-throw with context
+      throw new Error(
+        `Batch fetch failed for ${assetIds?.length} assets at block ${maxBlockHeight}: ${error.message}`
+      );
+    }
+  }
+
+  /**
+   * Batch fetch latest asset spot price historical data using raw SQL with DISTINCT ON
+   * Replaces N sequential queries with 1 batch query
+   */
+  private async fetchLatestAssetSpotPriceHistDataBatch(
+    assetInIds: string[],
+    maxBlockHeight: number,
+    ctx: SqdProcessorContext<Store>
+  ): Promise<AssetSpotPriceHistoricalData[]> {
+    const startTime = performance.now();
+
+    try {
+      // Validate inputs
+      if (!assetInIds || assetInIds.length === 0) {
+        console.warn(
+          '[WARN] fetchLatestAssetSpotPriceHistDataBatch called with empty assetInIds'
+        );
+        return [];
+      }
+
+      if (!maxBlockHeight || maxBlockHeight < 0) {
+        throw new Error(`Invalid maxBlockHeight: ${maxBlockHeight}`);
+      }
+
+      const pgPool = CommonPgPool.getInstance();
+
+      const sql = `
+        SELECT DISTINCT ON (asset_in_id)
+          id,
+          asset_in_id,
+          asset_out_id,
+          price,
+          price_normalised,
+          price_route,
+          para_block_height
+        FROM asset_spot_price_historical_data
+        WHERE asset_in_id = ANY($1::text[])
+          AND para_block_height < $2
+        ORDER BY asset_in_id, para_block_height DESC
+      `;
+
+      const result = await pgPool.query<RawAssetSpotPriceHistoricalDataRow>(
+        sql,
+        [assetInIds, maxBlockHeight]
+      );
+
+      // Map raw rows to entities
+      const entities = result.rows.map((row, index) => {
+        try {
+          return new AssetSpotPriceHistoricalData({
+            id: row.id,
+            assetInId: row.asset_in_id,
+            assetOutId: row.asset_out_id,
+            price: BigInt(row.price),
+            priceNormalised: row.price_normalised,
+            priceRoute: row.price_route,
+            paraBlockHeight: row.para_block_height,
+          });
+        } catch (mappingError: any) {
+          console.error(
+            `[ERROR] Failed to map row ${index} for asset ${row.asset_in_id}:`,
+            mappingError,
+            row
+          );
+          throw new Error(
+            `Entity mapping failed for asset ${row.asset_in_id}: ${mappingError.message}`
+          );
+        }
+      });
+
+      const duration = performance.now() - startTime;
+      console.log(
+        `[PERF] fetchLatestAssetSpotPriceHistDataBatch: ` +
+          `${assetInIds.length} assets, ${result.rows.length} results, ${duration.toFixed(2)}ms`
+      );
+
+      return entities;
+    } catch (error: any) {
+      const duration = performance.now() - startTime;
+      console.error(
+        `[ERROR] fetchLatestAssetSpotPriceHistDataBatch failed after ${duration.toFixed(2)}ms:`,
+        {
+          assetInIdsCount: assetInIds?.length,
+          maxBlockHeight,
+          error: error.message,
+          stack: error.stack,
+        }
+      );
+
+      // Re-throw with context
+      throw new Error(
+        `Batch fetch failed for ${assetInIds?.length} assets at block ${maxBlockHeight}: ${error.message}`
+      );
+    }
   }
 
   /**
@@ -50,35 +262,30 @@ export class LatestProcessedDataCacheManager {
       await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
     ).filter((res) => !!res.data);
 
-    const latestEntities = [];
-
-    /**
-     * Don't use concurrent calls here to avoid DB I/O overload
-     */
+    // Collect asset IDs from storage and cache
+    const assetIds: string[] = [];
     for (const assetData of storageDataAllAssets) {
-      const asset = ctx.batchState.state.assetsAll.get(assetData.assetId.toString());
-      if (!asset) continue;
-
-      const entity = await ctx.storeUtils.findOneWithLogs(
-        AssetHistoricalData,
-        {
-          where: {
-            assetId: asset.id,
-            paraBlockHeight: LessThan(currentBlockHeader.height),
-          },
-          order: {
-            paraBlockHeight: 'DESC',
-          },
-        },
-        {
-          className: 'AssetHistoricalData',
-          originCallFn: 'prefetchLastAssetHistDataItem',
-        }
+      const asset = ctx.batchState.state.assetsAll.get(
+        assetData.assetId.toString()
       );
-      if (entity) latestEntities.push(entity);
+      if (asset) {
+        assetIds.push(asset.id);
+      }
     }
 
-    this.setLastAssetHistoricalDataItem(latestEntities.filter((i) => !!i));
+    if (assetIds.length === 0) {
+      console.log('No assets to prefetch for AssetHistoricalData');
+      return;
+    }
+
+    // OPTIMIZED: Single batch query instead of N sequential queries
+    const latestEntities = await this.fetchLatestAssetHistDataBatch(
+      assetIds,
+      currentBlockHeader.height,
+      ctx
+    );
+
+    this.setLastAssetHistoricalDataItem(latestEntities);
   }
 
   setLastAssetHistoricalDataItem(items: AssetHistoricalData[]) {
@@ -133,38 +340,24 @@ export class LatestProcessedDataCacheManager {
       await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
     ).filter((res) => !!res.data);
 
-    const latestEntities = [];
+    // Collect asset IDs (as assetInId for spot prices)
+    const assetInIds = storageDataAllAssets.map((assetData) =>
+      assetData.assetId.toString()
+    );
 
-    /**
-     * Don't use concurrent calls here to avoid DB I/O overload
-     */
-    for (const assetData of storageDataAllAssets) {
-      const entity = await ctx.storeUtils.findOneWithLogs(
-        AssetSpotPriceHistoricalData,
-        {
-          where: {
-            assetInAssetRegistryId: assetData.assetId.toString(),
-            paraBlockHeight: LessThan(currentBlockHeader.height),
-          },
-          order: {
-            paraBlockHeight: 'DESC',
-          },
-          relations: {
-            assetInHistData: true,
-          },
-        },
-        {
-          className: 'AssetSpotPriceHistoricalData',
-          originCallFn: 'prefetchLastAssetSpotPriceHistDataItem',
-        }
-      );
-
-      if (entity) latestEntities.push(entity);
+    if (assetInIds.length === 0) {
+      console.log('No assets to prefetch for AssetSpotPriceHistoricalData');
+      return;
     }
 
-    this.setLastAssetSpotPriceHistoricalDataItem(
-      latestEntities.filter((i) => !!i)
+    // OPTIMIZED: Single batch query instead of N sequential queries
+    const latestEntities = await this.fetchLatestAssetSpotPriceHistDataBatch(
+      assetInIds,
+      currentBlockHeader.height,
+      ctx
     );
+
+    this.setLastAssetSpotPriceHistoricalDataItem(latestEntities);
   }
 
   // TODO add support multiple assetOut options

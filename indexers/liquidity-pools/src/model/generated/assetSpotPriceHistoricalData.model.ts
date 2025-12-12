@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, IntColumn as IntColumn_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
-import {AssetHistoricalData} from "./assetHistoricalData.model"
 
 @Entity_()
 export class AssetSpotPriceHistoricalData {
@@ -14,24 +13,11 @@ export class AssetSpotPriceHistoricalData {
     @PrimaryColumn_()
     id!: string
 
-    @Index_()
-    @ManyToOne_(() => AssetHistoricalData, {nullable: true})
-    assetInHistData!: AssetHistoricalData
-
     @StringColumn_({nullable: false})
     assetInId!: string
 
     @StringColumn_({nullable: false})
     assetOutId!: string
-
-    @StringColumn_({nullable: true})
-    assetInAssetRegistryId!: string | undefined | null
-
-    @StringColumn_({nullable: true})
-    assetOutAssetRegistryId!: string | undefined | null
-
-    @IntColumn_({nullable: false})
-    assetOutDecimals!: number
 
     @BigIntColumn_({nullable: false})
     price!: bigint

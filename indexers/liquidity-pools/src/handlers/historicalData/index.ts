@@ -308,12 +308,13 @@ export class HistoricalDataManager {
       ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
     );
 
-    for (const priceHistData of assetSpotPriceHistDataToSaveList) {
-      assetHistDataToSaveMap.set(
-        priceHistData.assetInHistData.id,
-        priceHistData.assetInHistData
-      );
-    }
+    // AssetHistoricalData is managed separately - assetInHistData relation was removed
+    // for (const priceHistData of assetSpotPriceHistDataToSaveList) {
+    //   assetHistDataToSaveMap.set(
+    //     priceHistData.assetInHistData.id,
+    //     priceHistData.assetInHistData
+    //   );
+    // }
     for (const junctionRecord of ctx.batchState.state.assetAssetsPairVolumesBatch.values()) {
       assetHistDataToSaveMap.set(
         junctionRecord.assetHistoricalData.id,
@@ -392,10 +393,12 @@ export class HistoricalDataManager {
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     await redisTimeSeriesManager.addMultiplePrices(
       src
-        .filter(
-          (item) =>
-            !!item.assetInAssetRegistryId && !!item.assetOutAssetRegistryId
-        )
+        .filter((item) => {
+          // Get assets to check if they have registry IDs
+          const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
+          const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
+          return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
+        })
         .map((item) => {
           if (item.paraBlockHeight > totalBalanceLatestBlock)
             totalBalanceLatestBlock = item.paraBlockHeight;
@@ -405,11 +408,15 @@ export class HistoricalDataManager {
           );
           const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
 
+          // Get asset registry IDs from the Asset entities
+          const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
+          const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
+
           return {
             keyPrefix: ctx.appConfig.INDEXER_ID,
             name: RedisTimeSeriesName.price,
-            assetAId: item.assetInAssetRegistryId!,
-            assetBId: item.assetOutAssetRegistryId!,
+            assetAId: assetIn.assetRegistryId!,
+            assetBId: assetOut.assetRegistryId!,
             timestamp,
             value: +item.priceNormalised,
           };

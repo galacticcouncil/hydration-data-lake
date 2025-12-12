@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, OneToMany as OneToMany_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
 import {AssetDynamicFee} from "./_assetDynamicFee"
-import {AssetSpotPriceHistoricalData} from "./assetSpotPriceHistoricalData.model"
 import {AssetAssetsPairVolume} from "./assetAssetsPairVolume.model"
 
 @Entity_()
@@ -27,9 +26,6 @@ export class AssetHistoricalData {
 
     @StringColumn_({nullable: false})
     usdPriceNormalised!: string
-
-    @OneToMany_(() => AssetSpotPriceHistoricalData, e => e.assetInHistData)
-    spotPrices!: AssetSpotPriceHistoricalData[]
 
     @OneToMany_(() => AssetAssetsPairVolume, e => e.assetHistoricalData)
     assetPairVolumes!: AssetAssetsPairVolume[]
