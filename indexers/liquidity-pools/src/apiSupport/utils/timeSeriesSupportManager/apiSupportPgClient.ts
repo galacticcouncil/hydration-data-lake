@@ -11,16 +11,16 @@ export type ApiStateEntity = {
 
 const appConfig = AppConfig.getInstance();
 
-export class SupportPgClient {
-  private static instance: SupportPgClient;
+export class ApiSupportPgClient {
+  private static instance: ApiSupportPgClient;
 
   private pgClient: CommonPgPool;
 
-  static getInstance(): SupportPgClient {
-    if (!SupportPgClient.instance) {
-      SupportPgClient.instance = new SupportPgClient();
+  static getInstance(): ApiSupportPgClient {
+    if (!ApiSupportPgClient.instance) {
+      ApiSupportPgClient.instance = new ApiSupportPgClient();
     }
-    return SupportPgClient.instance;
+    return ApiSupportPgClient.instance;
   }
 
   constructor() {

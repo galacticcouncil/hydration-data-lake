@@ -1,6 +1,7 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
   AssetsPairVolumeHistoricalData,
   AssetSpotPriceHistoricalData,
@@ -23,8 +24,10 @@ import {
 } from '../../processorHelpers/getProcessingMode';
 import { MultiFlowProcessingPhase } from '../../utils/types';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
+import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLatest';
 import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/historicalDataLatest';
 import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
+import { ApiSupportPgClient } from '../../apiSupport/utils/timeSeriesSupportManager/apiSupportPgClient';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -343,6 +346,9 @@ export class HistoricalDataManager {
     const accountAssetBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountAssetBalanceHistoricalData.values()
     );
+    const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
+      balances: accountAssetBalanceHistoricalDataList,
+    });
     const accountTotalBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
     );
@@ -350,6 +356,8 @@ export class HistoricalDataManager {
     await ctx.storeUtils.upsertWithBatches(
       accountAssetBalanceHistoricalDataList
     );
+
+    await ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest);
 
     await ctx.storeUtils.upsertWithBatches(
       accountTotalBalanceHistoricalDataList
@@ -379,6 +387,7 @@ export class HistoricalDataManager {
     )
       return;
 
+    let totalBalanceLatestBlock = 0;
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     await redisTimeSeriesManager.addMultiplePrices(
       src
@@ -386,15 +395,28 @@ export class HistoricalDataManager {
           (item) =>
             !!item.assetIn.assetRegistryId && !!item.assetOut.assetRegistryId
         )
-        .map((item) => ({
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.price,
-          assetAId: item.assetIn.assetRegistryId!,
-          assetBId: item.assetOut.assetRegistryId!,
-          timestamp: item.block.timestamp.getTime(),
-          value: +item.priceNormalised,
-        }))
+        .map((item) => {
+          if (item.paraBlockHeight > totalBalanceLatestBlock)
+            totalBalanceLatestBlock = item.paraBlockHeight;
+          return {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.price,
+            assetAId: item.assetIn.assetRegistryId!,
+            assetBId: item.assetOut.assetRegistryId!,
+            timestamp: item.block.timestamp.getTime(),
+            value: +item.priceNormalised,
+          };
+        })
     );
+
+    if (totalBalanceLatestBlock > 0)
+      try {
+        await ApiSupportPgClient.getInstance().upsertApiState({
+          assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
+        });
+      } catch (e) {
+        console.log(e);
+      }
   }
 
   static async commitAssetsPairVolumeToRedisTimeSeries(
@@ -408,6 +430,8 @@ export class HistoricalDataManager {
     )
       return;
 
+    let totalBalanceLatestBlock = 0;
+
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
     await redisTimeSeriesManager.addMultiplePrices(
       src
@@ -415,22 +439,34 @@ export class HistoricalDataManager {
           (item) =>
             !!item.assetA.assetRegistryId && !!item.assetB.assetRegistryId
         )
-        .map((item) => ({
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.volume,
-          assetAId:
-            +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
-              ? item.assetA.assetRegistryId!
-              : item.assetB.assetRegistryId!,
-          assetBId:
-            +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
-              ? item.assetB.assetRegistryId!
-              : item.assetA.assetRegistryId!,
+        .map((item) => {
+          if (item.paraBlockHeight > totalBalanceLatestBlock)
+            totalBalanceLatestBlock = item.paraBlockHeight;
+          return {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.volume,
+            assetAId:
+              +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
+                ? item.assetA.assetRegistryId!
+                : item.assetB.assetRegistryId!,
+            assetBId:
+              +item.assetA.assetRegistryId! < +item.assetB.assetRegistryId!
+                ? item.assetB.assetRegistryId!
+                : item.assetA.assetRegistryId!,
 
-          timestamp: item.block.timestamp.getTime(),
-          value: +item.totalVolumeNormalised,
-        }))
+            timestamp: item.block.timestamp.getTime(),
+            value: +item.totalVolumeNormalised,
+          };
+        })
     );
+    if (totalBalanceLatestBlock > 0)
+      try {
+        await ApiSupportPgClient.getInstance().upsertApiState({
+          assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
+        });
+      } catch (e) {
+        console.log(e);
+      }
   }
 
   static async commitAccountTotalBalancesToRedisTimeSeries(
@@ -444,16 +480,30 @@ export class HistoricalDataManager {
     )
       return;
 
-    const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
-    await redisTimeSeriesManager.addMultipleAccountTotalBalances(
-      src.map((item) => ({
-        keyPrefix: ctx.appConfig.INDEXER_ID,
-        name: RedisTimeSeriesName.acc_bal_tot_tns,
-        accountId: item.account.id,
-        timestamp: item.block.timestamp.getTime(),
-        value: +item.totalTransferableNorm,
-      }))
+    let totalBalanceLatestBlock = 0;
+
+    await RedisTimeSeriesManager.getInstance().addMultipleAccountTotalBalances(
+      src.map((item) => {
+        if (item.paraBlockHeight > totalBalanceLatestBlock)
+          totalBalanceLatestBlock = item.paraBlockHeight;
+        return {
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: RedisTimeSeriesName.acc_bal_tot_tns,
+          accountId: item.account.id,
+          timestamp: item.block.timestamp.getTime(),
+          value: +item.totalTransferableNorm,
+        };
+      })
     );
+
+    if (totalBalanceLatestBlock > 0)
+      try {
+        await ApiSupportPgClient.getInstance().upsertApiState({
+          accTotalBalanceLatestProcBlock: totalBalanceLatestBlock,
+        });
+      } catch (e) {
+        console.log(e);
+      }
   }
 
   static async handleHistoricalVolumesBatchEntriesLists(

@@ -73,7 +73,7 @@ jobs:
           COMMIT_HASH: ${{ github.sha }}
           INDEXER_SLOT: ${{ fromJSON(needs.extract-indexer-params-from-branch-name.outputs.indexer_params).indexerSlot }}
         run: |
-          sed -i "s/DEPLOYMENT_COMMIT_HASH: ''/DEPLOYMENT_COMMIT_HASH: '$COMMIT_HASH'/" indexers/liquidity-pools/$DEPLOYMENT_MANIFEST_FILE
+          sed -i "s/DEPLOYMENT_COMMIT_HASH: 'none'/DEPLOYMENT_COMMIT_HASH: '$COMMIT_HASH'/" indexers/liquidity-pools/$DEPLOYMENT_MANIFEST_FILE
           sed -i "s/INDEXER_ID: [0-9]*/INDEXER_ID: $INDEXER_SLOT/g" indexers/liquidity-pools/$DEPLOYMENT_MANIFEST_FILE
 
       - name: "Deploy Aggregation indexer"

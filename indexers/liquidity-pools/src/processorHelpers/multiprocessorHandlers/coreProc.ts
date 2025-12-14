@@ -44,6 +44,7 @@ import { ProcessorStatusManager } from '../../processorStatusManager';
 import { ProcessingPoolManager } from '../../utils/processingPoolManager';
 import { processPreprocessedDataBuckets } from '../../handlers/preprocessedDataBucket';
 import { handleEvm } from '../../handlers/evmLog';
+import { initAllXykPools } from '../../handlers/pools/pools/xykPool/xykPool';
 
 export async function execCoreProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -109,6 +110,13 @@ export async function execCoreProcessorHandlers(
   console.time('actualiseAssets');
   await actualiseAssets(ctx);
   console.timeEnd('actualiseAssets');
+
+  console.time('initAllXykPools');
+  await initAllXykPools({
+    ctx,
+    blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+  });
+  console.timeEnd('initAllXykPools');
 
   console.time('handleAssetRegistry');
   await handleAssetRegistry(ctx, parsedData);

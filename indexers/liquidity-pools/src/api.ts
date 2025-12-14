@@ -1,44 +1,94 @@
-import AggregatesPluggin from '@graphile/pg-aggregates';
-import SimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
-import express from 'express';
-import { NodePlugin } from 'graphile-build';
-import { postgraphile, makePluginHook } from 'postgraphile';
-import FilterPlugin from 'postgraphile-plugin-connection-filter';
-import { ProcessorStatusPlugin } from './apiSupport/api/graphql/plugins/query/processorStatus.plugin';
-import { AppConfig } from './appConfig';
-import { XykpoolsVolumePlugin } from './apiSupport/api/graphql/plugins/query/xykpool/xykPoolsVolume';
-import PgPubsub from '@graphile/pg-pubsub';
-import { runApiDbMigrations } from './apiSupport/apiMigrations/runApiDbMigrations';
-import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/api/graphql/plugins/subscription/xykPoolVolumeSubscriptions';
-import { getEnvPath } from './utils/helpers';
-import { OmnipoolAssetVolumePlugin } from './apiSupport/api/graphql/plugins/query/omnipool/omnipoolVolume';
-import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/api/graphql/plugins/subscription/omnipoolAssetVolumeSubscriptions';
-import { StableswapVolumePlugin } from './apiSupport/api/graphql/plugins/query/stableswap/stableswapVolume';
-import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/api/graphql/plugins/subscription/stableswapVolumeSubscriptions';
-import { NodeEnv } from './utils/types';
-import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
-import { RoutedTradesSubscriptionsPlugin } from './apiSupport/api/graphql/plugins/subscription/routedTradesSubscriptions';
-import { CommonApiTypesDefinitionPlugin } from './apiSupport/api/graphql/plugins/query/commonApiTypesDefinition.plugin';
-import { handleProxyReqSubscan } from './apiSupport/api/rest/proxyApiHandlers/resources/subscan';
-import { ProxyApiRoute } from './apiSupport/api/rest/proxyApiHandlers/types';
 import cors from 'cors';
-import { SwapPlugin } from './apiSupport/api/graphql/plugins/query/swap';
-import { StableswapYieldMetricsPlugin } from './apiSupport/api/graphql/plugins/query/stableswap/stableswapYieldMetrics';
-import { Request, Response, NextFunction } from 'express';
-import { OmnipoolYieldMetricsPlugin } from './apiSupport/api/graphql/plugins/query/omnipool/omnipoolYieldMetrics';
-import { getBullBoardExpressAdapter } from './utils/processingPoolManager/bullBoard';
-import { AssetHistoricalDataPlugin } from './apiSupport/api/graphql/plugins/query/asset/assetHistoricalData';
-import { TimeSeriesApiSupportManager } from './apiSupport/utils/timeSeriesSupportManager';
-import { GlobalMetricsPlugin } from './apiSupport/api/graphql/plugins/query/metrics/globalMetrics';
-import { OmnipoolTvlMetricsPlugin } from './apiSupport/api/graphql/plugins/query/omnipool/omnipoolTvlMetrics';
-import { StableswapTvlMetricsPlugin } from './apiSupport/api/graphql/plugins/query/stableswap/stableswapTvlMetrics';
-import { XykpoolTvlMetricsPlugin } from './apiSupport/api/graphql/plugins/query/xykpool/xykpoolTvlMetrics';
-import { AccountBalancesHistoricalDataPlugin } from './apiSupport/api/graphql/plugins/query/balances/accountBalancesHistoricalData';
-import { handleProxyReqDefillama } from './apiSupport/api/rest/proxyApiHandlers/resources/defillama';
-import restRouter from './apiSupport/api/rest/routes/rest.routes';
+import express, {
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
+import { NodePlugin } from 'graphile-build';
+import {
+  makePluginHook,
+  postgraphile,
+} from 'postgraphile';
+import FilterPlugin from 'postgraphile-plugin-connection-filter';
+import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+
+import SimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
+import AggregatesPluggin from '@graphile/pg-aggregates';
+import PgPubsub from '@graphile/pg-pubsub';
+
+import {
+  AssetHistoricalDataPlugin,
+} from './apiSupport/api/graphql/plugins/query/asset/assetHistoricalData';
+import {
+  AccountBalancesHistoricalDataPlugin,
+} from './apiSupport/api/graphql/plugins/query/balances/accountBalancesHistoricalData';
+import {
+  DustableAccountsPlugin,
+} from './apiSupport/api/graphql/plugins/query/balances/dustableAccounts';
+import {
+  CommonApiTypesDefinitionPlugin,
+} from './apiSupport/api/graphql/plugins/query/commonApiTypesDefinition.plugin';
+import {
+  GlobalMetricsPlugin,
+} from './apiSupport/api/graphql/plugins/query/metrics/globalMetrics';
+import {
+  OmnipoolTvlMetricsPlugin,
+} from './apiSupport/api/graphql/plugins/query/omnipool/omnipoolTvlMetrics';
+import {
+  OmnipoolAssetVolumePlugin,
+} from './apiSupport/api/graphql/plugins/query/omnipool/omnipoolVolume';
+import {
+  OmnipoolYieldMetricsPlugin,
+} from './apiSupport/api/graphql/plugins/query/omnipool/omnipoolYieldMetrics';
+import {
+  ProcessorStatusPlugin,
+} from './apiSupport/api/graphql/plugins/query/processorStatus.plugin';
+import {
+  StableswapTvlMetricsPlugin,
+} from './apiSupport/api/graphql/plugins/query/stableswap/stableswapTvlMetrics';
+import {
+  StableswapVolumePlugin,
+} from './apiSupport/api/graphql/plugins/query/stableswap/stableswapVolume';
+import {
+  StableswapYieldMetricsPlugin,
+} from './apiSupport/api/graphql/plugins/query/stableswap/stableswapYieldMetrics';
+import { SwapPlugin } from './apiSupport/api/graphql/plugins/query/swap';
+import {
+  XykpoolsVolumePlugin,
+} from './apiSupport/api/graphql/plugins/query/xykpool/xykPoolsVolume';
+import {
+  XykpoolTvlMetricsPlugin,
+} from './apiSupport/api/graphql/plugins/query/xykpool/xykpoolTvlMetrics';
+import {
+  OmnipoolAssetVolumeSubscriptionsPlugin,
+} from './apiSupport/api/graphql/plugins/subscription/omnipoolAssetVolumeSubscriptions';
+import {
+  RoutedTradesSubscriptionsPlugin,
+} from './apiSupport/api/graphql/plugins/subscription/routedTradesSubscriptions';
+import {
+  StableswapVolumeSubscriptionsPlugin,
+} from './apiSupport/api/graphql/plugins/subscription/stableswapVolumeSubscriptions';
+import {
+  XykpoolsVolumeSubscriptionsPlugin,
+} from './apiSupport/api/graphql/plugins/subscription/xykPoolVolumeSubscriptions';
+import {
+  handleProxyReqDefillama,
+} from './apiSupport/api/rest/proxyApiHandlers/resources/defillama';
+import {
+  handleProxyReqSubscan,
+} from './apiSupport/api/rest/proxyApiHandlers/resources/subscan';
+import { ProxyApiRoute } from './apiSupport/api/rest/proxyApiHandlers/types';
+import restRouter from './apiSupport/api/rest/routes/rest.routes';
+import { runApiDbMigrations } from './apiSupport/apiMigrations/runApiDbMigrations';
 import { swaggerOptions } from './apiSupport/swagger';
+import {
+  TimeSeriesApiSupportManager,
+} from './apiSupport/utils/timeSeriesSupportManager';
+import { AppConfig } from './appConfig';
+import { getEnvPath } from './utils/helpers';
+import { NodeEnv } from './utils/types';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -106,6 +156,7 @@ async function initializeServer() {
                 GlobalMetricsPlugin,
                 AssetHistoricalDataPlugin,
                 AccountBalancesHistoricalDataPlugin,
+                DustableAccountsPlugin,
                 makePgSmartTagsFromFilePlugin(
                   getEnvPath('apiSupport/postgraphile.tags.json5')
                 ),
@@ -212,10 +263,10 @@ async function initializeServer() {
 
     app.use(express.json());
 
-    app.use('/rest', restRouter);
+    app.use('/rest', cors(corsOptions), restRouter);
 
-    const swaggerDocsPath = process.env.BASE_PATH
-      ? `${process.env.BASE_PATH}/api/rest/docs`
+    const swaggerDocsPath = appConfig.BASE_PATH
+      ? `${appConfig.BASE_PATH}/api/rest/docs`
       : '/api/rest/docs';
     console.log('swaggerDocsPath - ', swaggerDocsPath);
     // Swagger Setup
@@ -224,8 +275,8 @@ async function initializeServer() {
       swaggerDocsPath,
       swaggerUi.serve,
       swaggerUi.setup(swaggerSpec, {
-        customCssUrl: `${process.env.BASE_PATH || ''}/api/rest/docs/swagger-ui.css`,
-        customJs: `${process.env.BASE_PATH || ''}/api/rest/docs/swagger-ui-bundle.js`,
+        customCssUrl: `${appConfig.BASE_PATH || ''}/api/rest/docs/swagger-ui.css`,
+        customJs: `${appConfig.BASE_PATH || ''}/api/rest/docs/swagger-ui-bundle.js`,
       })
     );
 
@@ -245,7 +296,7 @@ async function initializeServer() {
 
     app.listen(appConfig.GQL_PORT, () => {
       console.log(`Squid API listening on port ${appConfig.GQL_PORT}`);
-      console.log('process.env.BASE_PATH - ', process.env.BASE_PATH);
+      console.log('BASE_PATH - ', appConfig.BASE_PATH);
     });
 
     TimeSeriesApiSupportManager.getInstance().initHistDataScraper().then();

@@ -1,10 +1,14 @@
 import system from './system';
 import tokens from './tokens';
 import omnipool from './omnipool';
+import omnipoolLiquidityMining from './omnipoolLiquidityMining';
+import omnipoolWarehouseLM from './omnipoolWarehouseLM';
 import assetRegistry from './assetRegistry';
 import parachainSystem from './parachainSystem';
 import stableswap from './stableswap';
 import xyk from './xyk';
+import xykWarehouseLM from './xykWarehouseLM';
+import xykLiquidityMining from './xykLiquidityMining';
 import lbp from './lbp';
 import dca from './dca';
 import otc from './otc';
@@ -15,6 +19,7 @@ import evmAccounts from './evmAccounts';
 import dynamicFees from './dynamicFees';
 import bonds from './bonds';
 import transactionPayment from './transactionPayment';
+import uniques from './uniques';
 import { StorageResolver } from '../../../storageResolver';
 import { ProcessingTopic } from '../../../storageResolver/dictionaryUtils/types';
 import {
@@ -67,7 +72,6 @@ import {
   RuntimeApiMethodName,
   RuntimeApiName,
 } from '../../../runtimeApiResolver/types';
-import { BlockHeader } from '@subsquid/substrate-processor';
 
 export default {
   system: {
@@ -271,6 +275,9 @@ export default {
   },
   omnipool: {
     getConstants: omnipool.getConstants,
+    getNftCollectionIdConstant: omnipool.getNftCollectionIdConstant,
+    getOmnipoolLiquidityPositions: omnipool.getOmnipoolLiquidityPositions,
+    getAllOmnipoolLiquidityPositions: omnipool.getAllOmnipoolLiquidityPositions,
     getOmnipoolAllAssetIds: (
       args: OmnipoolGetAllAssetIdsInput
     ): Promise<number[] | null> =>
@@ -335,6 +342,16 @@ export default {
           getAccountBalances,
         ],
       }),
+  },
+  omnipoolWarehouseLM: {
+    getOmnipoolLMGlobalFarms: omnipoolWarehouseLM.getOmnipoolLMGlobalFarms,
+    getAllDepositsData: omnipoolWarehouseLM.getAllDepositsData,
+    getLMDepositsData: omnipoolWarehouseLM.getLMDepositsData,
+  },
+  omnipoolLiquidityMining: {
+    getNftCollectionIdConstant:
+      omnipoolLiquidityMining.getNftCollectionIdConstant,
+    getOmniPositionId: omnipoolLiquidityMining.getOmniPositionId,
   },
   xyk: {
     getConstants: xyk.getConstants,
@@ -407,6 +424,13 @@ export default {
           getAccountBalances,
         ],
       }),
+  },
+  xykLiquidityMining: {
+    getNftCollectionIdConstant: xykLiquidityMining.getNftCollectionIdConstant,
+  },
+  xykWarehouseLM: {
+    getXykpoolLMDeposits: xykWarehouseLM.getXykpoolLMDeposits,
+    getAllDepositsData: xykWarehouseLM.getAllDepositsData,
   },
   lbp: {
     getConstants: lbp.getConstants,
@@ -506,4 +530,5 @@ export default {
       }),
   },
   hsm,
+  uniques,
 } as StorageParserMethods;

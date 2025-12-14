@@ -1,6 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
 import * as marshal from "./marshal"
-import {Account} from "./account.model"
 
 @Entity_()
 export class NftAsset {
@@ -9,14 +8,16 @@ export class NftAsset {
   }
 
   /**
-   * collection ID 
+   * <collection_id>-<item_id>
    */
   @PrimaryColumn_()
   id!: string
 
-  @Index_()
-  @ManyToOne_(() => Account, {nullable: true})
-  owner!: Account
+  @Column_("text", {nullable: false})
+  collectionId!: string
+
+  @Column_("text", {nullable: false})
+  ownerId!: string
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   deposit!: bigint

@@ -1,5 +1,6 @@
 export * as balances from './balances/calls'
 export * as utility from './utility/calls'
+export * as uniques from './uniques/calls'
 export * as omnipool from './omnipool/calls'
 export * as duster from './duster/calls'
 export * as omnipoolLiquidityMining from './omnipool-liquidity-mining/calls'

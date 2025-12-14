@@ -7,7 +7,17 @@ import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EvmEventName } from '../../model';
 import { handleAllAccountsMmPositionDataUpdate } from '../accounts/moneyMarketPosition';
 import parsers from '../../parsers';
+import { handleAccountTotalBalance } from './accountTotalBalance';
 
+/**
+ * This function requires the following data, so it should be executed only after
+ * execution appropriate aggregations:
+ * - asset spot prices
+ * - omnipool liquidity positions
+ * - xyk liquidity mining deposits
+ * @param ctx
+ * @param parsedEvents
+ */
 export async function handleAssetAccountBalances(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
@@ -15,6 +25,8 @@ export async function handleAssetAccountBalances(
   const accountIdsToProcess = await handleMmAssetAccountBalancesPerBlock(ctx);
 
   await handleCommonAssetAccountBalances({ accountIdsToProcess, ctx });
+
+  await handleAccountTotalBalance({ ctx });
 
   const blocksWithOracleUpdate: Map<number, SqdBlock> = new Map();
 

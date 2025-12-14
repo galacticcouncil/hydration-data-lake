@@ -1,4 +1,5 @@
 export * as balances from './balances/events'
+export * as uniques from './uniques/events'
 export * as assetRegistry from './asset-registry/events'
 export * as omnipool from './omnipool/events'
 export * as duster from './duster/events'

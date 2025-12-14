@@ -16,6 +16,8 @@ import {
 } from '@redis/time-series';
 import { TimeSeriesBucketTimestamp } from '@redis/time-series/dist/commands';
 import pMap from 'p-map';
+import { RedisTimeSeriesMigrationsManager } from './migrationsManager';
+import timeSeriesMigrations from './migrations';
 
 export type RedisInstance = RedisClientType<
   RedisDefaultModules,
@@ -46,7 +48,7 @@ export type RedisTimeSeriesKey = string;
 
 const appConfig = AppConfig.getInstance();
 
-export class RedisTimeSeriesManager {
+export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
   private static instance: RedisTimeSeriesManager;
   private openClient: RedisInstance | null = null;
 
@@ -92,6 +94,15 @@ export class RedisTimeSeriesManager {
 
   async initClient() {
     await this.getOpenClient();
+  }
+
+  /**
+   * Initialize client and run pending migrations
+   * Call this method on application bootstrap
+   */
+  async initClientAndRunMigrations() {
+    await this.getOpenClient();
+    await this.runTimeSeriesMigrations(timeSeriesMigrations);
   }
 
   private fillNaNWithPrevious(
@@ -534,6 +545,45 @@ export class RedisTimeSeriesManager {
     } catch (e) {
       console.log(e);
       return defaultResponse;
+    }
+  }
+
+  async clearTimeSeriesByKeyPrefix(
+    keyPrefix: string | number,
+    batchSize: number = 1000
+  ): Promise<{ deletedCount: number }> {
+    try {
+      const openClient = await this.getOpenClient();
+      const pattern = `ts:${keyPrefix}:*`;
+      let cursor = 0;
+      let deletedCount = 0;
+
+      console.log(`Starting deletion of time series with pattern: ${pattern}`);
+
+      do {
+        const result = await openClient.scan(cursor, {
+          MATCH: pattern,
+          COUNT: batchSize,
+        });
+
+        cursor = result.cursor;
+        const keys = result.keys;
+
+        if (keys.length > 0) {
+          await openClient.del(keys);
+          deletedCount += keys.length;
+          console.log(`Deleted ${keys.length} keys (total: ${deletedCount})`);
+        }
+      } while (cursor !== 0);
+
+      console.log(
+        `Completed deletion: ${deletedCount} keys removed for prefix ${keyPrefix}`
+      );
+
+      return { deletedCount };
+    } catch (e) {
+      console.log(`Error clearing time series by prefix ${keyPrefix}:`, e);
+      throw e;
     }
   }
 }

@@ -142,6 +142,13 @@ import {
   TransactionPaymentNextFeeMultiplier,
   GetAssetLocationDataInput,
   GetAssetLocationsDataManyInput,
+  OmnipoolLMGetGlobalFarmsInput,
+  OmnipoolLMGlobalFarmDataWithId,
+  OmnipoolGetLiquidityPositionsInput,
+  OmnipoolLiquidityPositionDataWithId,
+  OmnipoolNftCollectionId,
+  OmnipoolYieldFarmDepositDataWithId,
+  OmnipoolLMGetDepositsInput,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -162,6 +169,22 @@ import {
   XykLMYieldFarmTerminatedEventParams,
   XykLMYieldFarmUpdatedEventParams,
 } from './events/xykLiquidityMining';
+import {
+  UniquesAssetDataWithId,
+  UniquesGetAllAssetsDataInput,
+  UniquesGetAssetsDataInput,
+} from './storage/uniques';
+import {
+  XykpoolLMDepositDataWithId,
+  XykpoolLMGetDepositsInput,
+  XykpoolNftCollectionId,
+} from './storage/xykpoolLiquidityMining';
+import {
+  OmnipoolLiquidityMiningGetOmniPositionIdInput,
+  OmnipoolLiquidityMiningOmniPositionId,
+  OmnipoolLiquidyMiningNftCollectionId,
+} from './storage/omnipoolLiquidityMining';
+import { UniquesTransferredEventParams } from './events/uniques';
 
 export interface PoolData {
   owner: string;
@@ -411,6 +434,11 @@ export type EventParserMethods = {
       event: SqdEvent
     ) => HsmCollateralUpdatedEventParams;
   };
+  uniques: {
+    parseUniqueTransferredParams: (
+      event: SqdEvent
+    ) => UniquesTransferredEventParams;
+  };
 };
 export type StorageParserMethods = {
   system: {
@@ -503,6 +531,9 @@ export type StorageParserMethods = {
   };
   omnipool: {
     getConstants: (args: GetConstantsInput) => OmnipoolConstants;
+    getNftCollectionIdConstant: (
+      args: GetDataAtBlockInput
+    ) => OmnipoolNftCollectionId;
     getOmnipoolHubAssetTradability: (
       args: OmnipoolGetHubAssetTradabilityInput
     ) => Promise<OmnipoolAssetTradability | null>;
@@ -518,6 +549,31 @@ export type StorageParserMethods = {
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;
+    getOmnipoolLiquidityPositions: (
+      args: OmnipoolGetLiquidityPositionsInput
+    ) => Promise<OmnipoolLiquidityPositionDataWithId[] | null>;
+    getAllOmnipoolLiquidityPositions: (
+      args: GetDataAtBlockInput
+    ) => Promise<OmnipoolLiquidityPositionDataWithId[] | null>;
+  };
+  omnipoolWarehouseLM: {
+    getOmnipoolLMGlobalFarms: (
+      args: OmnipoolLMGetGlobalFarmsInput
+    ) => Promise<OmnipoolLMGlobalFarmDataWithId[] | null>;
+    getAllDepositsData: (
+      args: GetDataAtBlockInput
+    ) => Promise<OmnipoolYieldFarmDepositDataWithId[] | null>;
+    getLMDepositsData: (
+      args: OmnipoolLMGetDepositsInput
+    ) => Promise<OmnipoolYieldFarmDepositDataWithId[] | null>;
+  };
+  omnipoolLiquidityMining: {
+    getNftCollectionIdConstant: (
+      args: GetDataAtBlockInput
+    ) => OmnipoolLiquidyMiningNftCollectionId;
+    getOmniPositionId: (
+      args: OmnipoolLiquidityMiningGetOmniPositionIdInput
+    ) => Promise<OmnipoolLiquidityMiningOmniPositionId | null>;
   };
   xyk: {
     getConstants: (args: GetConstantsInput) => XykConstants;
@@ -530,6 +586,19 @@ export type StorageParserMethods = {
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;
+  };
+  xykLiquidityMining: {
+    getNftCollectionIdConstant: (
+      args: GetDataAtBlockInput
+    ) => XykpoolNftCollectionId;
+  };
+  xykWarehouseLM: {
+    getXykpoolLMDeposits: (
+      args: XykpoolLMGetDepositsInput
+    ) => Promise<XykpoolLMDepositDataWithId[] | null>;
+    getAllDepositsData: (
+      args: GetDataAtBlockInput
+    ) => Promise<XykpoolLMDepositDataWithId[] | null>;
   };
   lbp: {
     getConstants: (args: GetConstantsInput) => LbpConstants | null;
@@ -577,6 +646,14 @@ export type StorageParserMethods = {
     getCollateral: (
       args: GetHsmCollateralInput
     ) => Promise<HsmCollateralData | null>;
+  };
+  uniques: {
+    getAssetsData: (
+      args: UniquesGetAssetsDataInput
+    ) => Promise<UniquesAssetDataWithId[] | null>;
+    getAllAssetsData: (
+      args: UniquesGetAllAssetsDataInput
+    ) => Promise<UniquesAssetDataWithId[] | null>;
   };
 };
 

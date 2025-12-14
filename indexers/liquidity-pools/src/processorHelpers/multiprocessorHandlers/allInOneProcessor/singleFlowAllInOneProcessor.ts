@@ -67,7 +67,15 @@ import { ensureAaveFacilitators } from '../../../handlers/facilitator';
 import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool/collaterals';
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
+import { handleOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions';
+import { initAllXykPools } from '../../../handlers/pools/pools/xykPool/xykPool';
 import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
+import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
+import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
+import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
+import { handleUniquesEvents } from '../../../handlers/uniques';
+import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
+import { initAllOmnipoolLiquidityMiningDeposits } from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -123,6 +131,17 @@ export async function singleFlowAllInOneProcessor(
   await actualiseAssets(ctx);
   console.timeEnd('actualiseAssets');
 
+  console.time('initAllXykPools');
+  await initAllXykPools({
+    ctx,
+    blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+  });
+  console.timeEnd('initAllXykPools');
+
+  console.time('initAllXykLiquidityMiningDeposits');
+  await initAllXykLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllXykLiquidityMiningDeposits');
+
   console.time('handleAssetRegistry');
   await handleAssetRegistry(ctx, parsedData);
   console.timeEnd('handleAssetRegistry');
@@ -149,6 +168,30 @@ export async function singleFlowAllInOneProcessor(
   await ensureOmnipool(ctx);
   await handleOmnipoolAssets(ctx, parsedData);
   console.timeEnd('handleOmnipoolAssets');
+
+  console.time('initAllOmnipoolLiquidityPositions');
+  await initAllOmnipoolLiquidityPositions(ctx);
+  console.timeEnd('initAllOmnipoolLiquidityPositions');
+
+  console.time('handleOmnipoolLiquidityPositions');
+  await handleOmnipoolLiquidityPositions(ctx, parsedData);
+  console.timeEnd('handleOmnipoolLiquidityPositions');
+
+  console.time('initAllOmnipoolLiquidityMiningDeposits');
+  await initAllOmnipoolLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllOmnipoolLiquidityMiningDeposits');
+
+  console.time('handleOmnipoolLiquidityMiningEvents');
+  await handleOmnipoolLiquidityMiningEvents(ctx, parsedData);
+  console.timeEnd('handleOmnipoolLiquidityMiningEvents');
+
+  console.time('handleXykPoolLiquidityMiningEvents');
+  await handleXykPoolLiquidityMiningEvents(ctx, parsedData);
+  console.timeEnd('handleXykPoolLiquidityMiningEvents');
+
+  console.time('handleUniquesEvents');
+  await handleUniquesEvents(ctx, parsedData);
+  console.timeEnd('handleUniquesEvents');
 
   console.time('handleStablepools');
   await handleStablepools(ctx, parsedData);

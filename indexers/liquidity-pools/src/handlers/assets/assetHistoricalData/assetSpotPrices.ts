@@ -5,6 +5,7 @@ import {
   Asset,
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
+  AssetType,
   ResourceType,
   Xykpool,
 } from '../../../model';
@@ -15,6 +16,7 @@ import {
   fromDecimalToExponentialNotation,
   fromExponentialToDecimalNotation,
   getPriceRouteDecorated,
+  getXykpoolShareTokenDecimals,
 } from '../../../utils/helpers';
 import { LessThan } from 'typeorm';
 import pMap from 'p-map';
@@ -39,8 +41,14 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
 
   const xykOnlyAssetsHistData = [];
   const otherAssetsHistData = [];
+  const xykShareAssetsHistData = [];
 
   for (const histDataItem of blockContextAssetsHistoricalData) {
+    if (histDataItem.asset.assetType === AssetType.XYK) {
+      xykShareAssetsHistData.push(histDataItem);
+      continue;
+    }
+
     if (xykPoolAssets.has(histDataItem.asset.id)) {
       xykOnlyAssetsHistData.push(histDataItem);
     } else {
@@ -65,6 +73,18 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
         ctx,
         xykPoolAssets,
       }),
+      blockHeader,
+      ctx,
+    });
+  }
+
+  const xykPoolsIndexedByShareAsset = getXykPoolsIndexedByShareAsset({ ctx });
+
+  for (const histDataItem of xykShareAssetsHistData) {
+    await processXykShareAssetSpotPrices({
+      asset: histDataItem.asset,
+      assetHistData: histDataItem,
+      originXykpool: xykPoolsIndexedByShareAsset.get(histDataItem.asset.id),
       blockHeader,
       ctx,
     });
@@ -394,6 +414,24 @@ function getXykPoolsIndexedByInterimAssetPair({
   return pools;
 }
 
+function getXykPoolsIndexedByShareAsset({
+  ctx,
+}: {
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const pools = new Map<string, Xykpool>();
+
+  for (const pool of Array.from(
+    ctx.batchState.state.xykAllBatchPools.values()
+  )) {
+    if (!pool?.shareToken?.id) continue;
+
+    pools.set(pool.shareToken.id, pool);
+  }
+
+  return pools;
+}
+
 async function processXykInvolvedAssetSpotPrices({
   asset,
   // interimAsset,
@@ -589,4 +627,166 @@ export function getAssetsPairPrice({
   if (!assetInRefPrice || !assetOutRefPrice) return null;
 
   return BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
+}
+
+async function processXykShareAssetSpotPrices({
+  asset,
+  assetHistData,
+  originXykpool,
+  blockHeader,
+  ctx,
+}: {
+  asset: Asset;
+  assetHistData: AssetHistoricalData;
+  originXykpool?: Xykpool;
+  ctx: SqdProcessorContext<Store>;
+  blockHeader: BlockHeader;
+}) {
+  if (!originXykpool) {
+    // console.log(
+    //   `processXykShareAssetSpotPrices :: origin pool for share asset ${asset.id} is not provided`
+    // );
+    return;
+  }
+
+  const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
+    `${originXykpool.account.id}-${blockHeader.height}`
+  );
+  if (
+    !xykPoolHistData ||
+    !xykPoolHistData.assetA.decimals ||
+    !xykPoolHistData.assetB.decimals
+  ) {
+    // console.log(
+    //   `processXykShareAssetSpotPrices :: historical data of origin pool for share asset ${asset.id} not found`
+    // );
+    return;
+  }
+
+  const calcAssetUsdPriceNormalised = async () => {
+    const assetPriceBaseAsst = await getOrCreateAsset({
+      assetRegistryId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+      ctx,
+      blockHeader,
+      ensure: true,
+    });
+    if (!assetPriceBaseAsst) return;
+    const poolAssetASpotPrice =
+      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+        `${originXykpool.assetA.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
+      )?.priceNormalised;
+
+    if (!poolAssetASpotPrice) return;
+
+    const originPoolTvlInRefAssetNormalised = fromExponentialToDecimalNotation(
+      xykPoolHistData.assetABalance.toString(),
+      originXykpool.assetA.decimals!
+    )
+      .multipliedBy(poolAssetASpotPrice)
+      .multipliedBy(2);
+
+    let shareAssetDecimals = 0;
+
+    try {
+      shareAssetDecimals = getXykpoolShareTokenDecimals({
+        poolAssets: [originXykpool.assetA, originXykpool.assetB],
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
+    if (!shareAssetDecimals) return;
+
+    const shareAssetPriceNormalised = originPoolTvlInRefAssetNormalised.div(
+      fromExponentialToDecimalNotation(
+        assetHistData.totalIssuance.toString(),
+        shareAssetDecimals
+      )
+    );
+
+    assetHistData.usdPriceNormalised = shareAssetPriceNormalised.toFixed();
+
+    ctx.batchState.state.assetsHistoricalDataBatch.set(
+      assetHistData.id,
+      assetHistData
+    );
+  };
+
+  const calcAssetSpotPrices = async () => {
+    for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
+      const assetOut = await getOrCreateAsset({
+        assetRegistryId: assetOutId,
+        ctx,
+        blockHeader,
+        ensure: true,
+      });
+      if (!assetOut || !assetOut.decimals) continue;
+
+      const poolAssetASpotPrice =
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+          `${originXykpool.assetA.id}-${assetOutId}-${blockHeader.height}`
+        )?.priceNormalised;
+
+      if (!poolAssetASpotPrice) continue;
+
+      const originPoolTvlInRefAssetNormalised =
+        fromExponentialToDecimalNotation(
+          xykPoolHistData.assetABalance.toString(),
+          originXykpool.assetA.decimals!
+        )
+          .multipliedBy(poolAssetASpotPrice)
+          .multipliedBy(2);
+
+      let shareAssetDecimals = 0;
+      try {
+        shareAssetDecimals = getXykpoolShareTokenDecimals({
+          poolAssets: [originXykpool.assetA, originXykpool.assetB],
+        });
+      } catch (e) {
+        console.log(e);
+      }
+
+      if (!shareAssetDecimals) return;
+
+      const shareAssetPriceNormalised = originPoolTvlInRefAssetNormalised.div(
+        fromExponentialToDecimalNotation(
+          assetHistData.totalIssuance.toString(),
+          shareAssetDecimals
+        )
+      );
+      const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
+
+      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
+        histDataItemId,
+        new AssetSpotPriceHistoricalData({
+          id: histDataItemId,
+          assetIn: asset,
+          assetOut,
+          assetInAssetRegistryId: asset.assetRegistryId,
+          assetOutAssetRegistryId: assetOut.assetRegistryId,
+          assetInHistData: assetHistData,
+
+          assetOutDecimals: assetOut.decimals,
+          price: BigInt(
+            fromDecimalToExponentialNotation(
+              shareAssetPriceNormalised,
+              assetOut.decimals
+            ).toFixed(0, BigNumber.ROUND_HALF_UP)
+          ),
+
+          priceNormalised: shareAssetPriceNormalised.toFixed(
+            18,
+            BigNumber.ROUND_HALF_UP
+          ),
+          priceRoute: [],
+
+          paraBlockHeight: blockHeader.height,
+          relayBlockHeight: assetHistData.relayBlockHeight,
+          block: assetHistData.block,
+        })
+      );
+    }
+  };
+
+  await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
 }

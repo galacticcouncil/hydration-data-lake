@@ -102,6 +102,7 @@ import {
   OmnipoolWarehouseLMGlobalFarmAccRPZUpdatedData,
   OmnipoolWarehouseLMYieldFarmAccRPVSUpdatedData,
 } from '../omnipoolWarehouseLM';
+import { UniquesTransferredData } from '../uniques';
 
 type LbpEventMap = {
   [EventName.LBP_PoolCreated]: LbpPoolCreatedData;
@@ -232,6 +233,10 @@ type EvmAccountsEventMap = {
   [EventName.EVMAccounts_Bound]: EvmAccountsBoundData;
 };
 
+type UniquesEventMap = {
+  [EventName.Uniques_Transferred]: UniquesTransferredData;
+};
+
 export type EventDataMap = LbpEventMap &
   XykEventMap &
   OmnipoolEventMap &
@@ -248,6 +253,7 @@ export type EventDataMap = LbpEventMap &
   EvmAccountsEventMap &
   XykLiquidityMiningMap &
   OmnipoolLiquidityMiningEventMap &
-  OmnipoolWarehouseLMEventMap;
+  OmnipoolWarehouseLMEventMap &
+  UniquesEventMap;
 
 export type EventDataType<T extends keyof EventDataMap> = EventDataMap[T];

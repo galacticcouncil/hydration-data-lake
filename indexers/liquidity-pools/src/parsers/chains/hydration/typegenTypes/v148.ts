@@ -1,5 +1,42 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export const OraclePeriod: sts.Type<OraclePeriod> = sts.closedEnum(() => {
+    return  {
+        Day: sts.unit(),
+        Hour: sts.unit(),
+        LastBlock: sts.unit(),
+        Short: sts.unit(),
+        TenMinutes: sts.unit(),
+        Week: sts.unit(),
+    }
+})
+
+export type OraclePeriod = OraclePeriod_Day | OraclePeriod_Hour | OraclePeriod_LastBlock | OraclePeriod_Short | OraclePeriod_TenMinutes | OraclePeriod_Week
+
+export interface OraclePeriod_Day {
+    __kind: 'Day'
+}
+
+export interface OraclePeriod_Hour {
+    __kind: 'Hour'
+}
+
+export interface OraclePeriod_LastBlock {
+    __kind: 'LastBlock'
+}
+
+export interface OraclePeriod_Short {
+    __kind: 'Short'
+}
+
+export interface OraclePeriod_TenMinutes {
+    __kind: 'TenMinutes'
+}
+
+export interface OraclePeriod_Week {
+    __kind: 'Week'
+}
+
 export const Permill = sts.number()
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {

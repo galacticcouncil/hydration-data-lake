@@ -7,11 +7,15 @@ export * from './tokens';
 export * from './balances';
 export * from './dca';
 export * from './omnipool';
+export * from './omnipoolLiquidityMining';
+export * from './omnipoolWarehouseLM';
 export * from './stableswap';
 export * from './xyk';
+export * from './xykLiquidityMining';
 export * from './otc';
 export * from './broadcast';
 export * from './hsm';
+export * from './uniques';
 export * from './support/eventData';
 export * from './support/batchBlocksParsedDataScope';
 
