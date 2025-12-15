@@ -5,6 +5,7 @@ import variableDebtTokenHydration from './abi/aave/variableDebtTokenHydration.js
 import uiPoolDataProviderV3 from './abi/aave/uiPoolDataProviderV3.json';
 import { Contract, ContractInterface, ethers } from 'ethers';
 import { ResourceType } from '../../model';
+import { AppConfig } from '../../appConfig';
 
 export type MoneyMarketResourceDetails = {
   underlyingAssetAddress: string;
@@ -22,6 +23,8 @@ export type MoneyMarketTokenDetails = {
   decimals?: number;
 };
 
+const appConfig = AppConfig.getInstance();
+
 export class MoneyMarketContractsManager {
   private static instance: MoneyMarketContractsManager;
 
@@ -37,10 +40,10 @@ export class MoneyMarketContractsManager {
   private constructor() {
     console.log(
       'MoneyMarketContractsManager : RPC_URL_HTTPS - ',
-      process.env.RPC_URL_HTTPS
+      appConfig.RPC_URL_HTTPS
     );
     this.provider = new ethers.providers.JsonRpcProvider(
-      process.env.RPC_URL_HTTPS || 'https://archive.rpc.hydration.cloud'
+      appConfig.RPC_URL_HTTPS || 'https://archive.rpc.hydration.cloud'
     );
 
     this.erc20TokenContractInstance = new Contract(
