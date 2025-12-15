@@ -148,6 +148,7 @@ import {
   OmnipoolLiquidityPositionDataWithId,
   OmnipoolNftCollectionId,
   OmnipoolYieldFarmDepositDataWithId,
+  OmnipoolLMGetDepositsInput,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -183,6 +184,7 @@ import {
   OmnipoolLiquidityMiningOmniPositionId,
   OmnipoolLiquidyMiningNftCollectionId,
 } from './storage/omnipoolLiquidityMining';
+import { UniquesTransferredEventParams } from './events/uniques';
 
 export interface PoolData {
   owner: string;
@@ -432,6 +434,11 @@ export type EventParserMethods = {
       event: SqdEvent
     ) => HsmCollateralUpdatedEventParams;
   };
+  uniques: {
+    parseUniqueTransferredParams: (
+      event: SqdEvent
+    ) => UniquesTransferredEventParams;
+  };
 };
 export type StorageParserMethods = {
   system: {
@@ -555,6 +562,9 @@ export type StorageParserMethods = {
     ) => Promise<OmnipoolLMGlobalFarmDataWithId[] | null>;
     getAllDepositsData: (
       args: GetDataAtBlockInput
+    ) => Promise<OmnipoolYieldFarmDepositDataWithId[] | null>;
+    getLMDepositsData: (
+      args: OmnipoolLMGetDepositsInput
     ) => Promise<OmnipoolYieldFarmDepositDataWithId[] | null>;
   };
   omnipoolLiquidityMining: {

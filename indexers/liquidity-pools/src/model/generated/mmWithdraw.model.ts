@@ -1,43 +1,44 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 import {RoutedTrade} from "./routedTrade.model"
 import {Event} from "./event.model"
 
 @Entity_()
 export class MmWithdraw {
-    constructor(props?: Partial<MmWithdraw>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<MmWithdraw>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * <event_id>
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <event_id>
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @StringColumn_({array: true, nullable: true})
-    traceIds!: (string)[] | undefined | null
+  @Column_("text", {array: true, nullable: true})
+  traceIds!: (string)[] | undefined | null
 
-    @StringColumn_({nullable: false})
-    assetId!: string
+  @Column_("text", {nullable: false})
+  assetId!: string
 
-    @StringColumn_({nullable: false})
-    accountFromId!: string
+  @Column_("text", {nullable: false})
+  accountFromId!: string
 
-    @StringColumn_({nullable: false})
-    accountToId!: string
+  @Column_("text", {nullable: false})
+  accountToId!: string
 
-    @BigIntColumn_({nullable: true})
-    amount!: bigint | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  amount!: bigint | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => RoutedTrade, {nullable: true})
-    initiatedByTrade!: RoutedTrade | undefined | null
+  @Index_()
+  @ManyToOne_(() => RoutedTrade, {nullable: true})
+  initiatedByTrade!: RoutedTrade | undefined | null
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
 
-    @Index_()
-    @ManyToOne_(() => Event, {nullable: true})
-    event!: Event
+  @Index_()
+  @ManyToOne_(() => Event, {nullable: true})
+  event!: Event
 }

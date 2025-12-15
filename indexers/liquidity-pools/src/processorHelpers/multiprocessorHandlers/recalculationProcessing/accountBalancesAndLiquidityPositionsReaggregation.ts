@@ -1,31 +1,7 @@
-import { Between } from 'typeorm/find-options/operator/Between';
-
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-
-import {
-  ChainActivityTraceManager,
-} from '../../../chainActivityTracingManagers';
-import {
-  prefetchOrInitAllBatchAccounts,
-  saveAllBatchAccounts,
-} from '../../../handlers/accounts';
-import {
-  handleAccountTotalBalance,
-} from '../../../handlers/balances/accountTotalBalance';
-import { HistoricalDataManager } from '../../../handlers/historicalData';
-import {
-  handleOmnipoolLiquidityPositions,
-} from '../../../handlers/liquidity/omnipool/liquidityPositions';
-import {
-  initAllOmnipoolLiquidityPositions,
-} from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
-import {
-  handleXykPoolLiquidityMiningEvents,
-} from '../../../handlers/liquidity/xykpool/liquidityMining';
-import {
-  initAllXykLiquidityMiningDeposits,
-} from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { prefetchGenericPersistentDataWithLogs } from '../../prefetchHelpers';
 import {
   AccountAssetBalanceHistoricalData,
   Asset,
@@ -33,14 +9,25 @@ import {
   Block,
   MoneyMarketEvent,
 } from '../../../model';
+import { handleRelayChainBlocks } from '../../../handlers/relayChain';
+import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../../parsers/storageResolver';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
 import {
-  MoneyMarketContractsManager,
-} from '../../../utils/evmTools/moneyMarketContractsManager';
-import { prefetchGenericPersistentDataWithLogs } from '../../prefetchHelpers';
+  prefetchOrInitAllBatchAccounts,
+  saveAllBatchAccounts,
+} from '../../../handlers/accounts';
+import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
+import { handleOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions';
+import { HistoricalDataManager } from '../../../handlers/historicalData';
+import { Between } from 'typeorm/find-options/operator/Between';
+import { handleAccountTotalBalance } from '../../../handlers/balances/accountTotalBalance';
+import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
+import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
+import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
+import { initAllOmnipoolLiquidityMiningDeposits } from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
+import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
+import { handleUniquesEvents } from '../../../handlers/uniques';
 
 export async function accountBalancesAndLiquidityPositionsReaggregation(
   ctx: SqdProcessorContext<Store>
@@ -100,8 +87,6 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
         Asset,
         {
           where: {},
-          relations: {
-          },
         },
         { className: 'Asset' }
       )
@@ -136,7 +121,6 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
               ctx.blocks[ctx.blocks.length - 1].header.height
             ),
           },
-          relations: {},
         },
         { className: 'AssetSpotPriceHistoricalData' }
       )
@@ -178,8 +162,6 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
               ctx.blocks[ctx.blocks.length - 1].header.height
             ),
           },
-          relations: {
-          },
           order: {
             paraBlockHeight: 'ASC',
           },
@@ -197,13 +179,25 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
   await initAllOmnipoolLiquidityPositions(ctx);
   console.timeEnd('initAllOmnipoolLiquidityPositions');
 
+  console.time('initAllOmnipoolLiquidityMiningDeposits');
+  await initAllOmnipoolLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllOmnipoolLiquidityMiningDeposits');
+
   console.time('handleOmnipoolLiquidityPositions');
   await handleOmnipoolLiquidityPositions(ctx, parsedData);
   console.timeEnd('handleOmnipoolLiquidityPositions');
 
+  console.time('handleOmnipoolLiquidityMiningEvents');
+  await handleOmnipoolLiquidityMiningEvents(ctx, parsedData);
+  console.timeEnd('handleOmnipoolLiquidityMiningEvents');
+
   console.time('handleXykPoolLiquidityMiningEvents');
   await handleXykPoolLiquidityMiningEvents(ctx, parsedData);
   console.timeEnd('handleXykPoolLiquidityMiningEvents');
+
+  console.time('handleUniquesEvents');
+  await handleUniquesEvents(ctx, parsedData);
+  console.timeEnd('handleUniquesEvents');
 
   console.time('handleAccountTotalBalance');
   await handleAccountTotalBalance({ ctx });

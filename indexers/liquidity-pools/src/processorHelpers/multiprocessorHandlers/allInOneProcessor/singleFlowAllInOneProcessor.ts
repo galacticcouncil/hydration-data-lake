@@ -20,14 +20,9 @@ import {
 import { handleAssetRegistry } from '../../../handlers/assets';
 import { handleLbpPools } from '../../../handlers/pools/pools/lbpPool';
 import { handleXykPools } from '../../../handlers/pools/pools/xykPool';
-import { initAllXykPools } from '../../../handlers/pools/pools/xykPool/xykPool';
 import { ensureOmnipool } from '../../../handlers/pools/pools/omnipool/omnipool';
 import { handleOmnipoolAssets } from '../../../handlers/pools/pools/omnipool';
 import { handleStablepools } from '../../../handlers/pools/pools/stableswap';
-import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
-import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
-import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
-import { handleOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions';
 import { handleBroadcastSwappedEvents } from '../../../handlers/swap';
 import { handleBuySellOperations } from '../../../handlers/buySellOperations';
 import { handleStablepoolLiquidityEvents } from '../../../handlers/pools/pools/stableswap/liquidity';
@@ -50,7 +45,6 @@ import {
   handleAssetPairVolumesHistoricalData,
   handleAssetSpotPricesHistoricalData,
 } from '../../../handlers/assets/assetHistoricalData';
-import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
 import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
 import { HistoricalDataManager } from '../../../handlers/historicalData';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
@@ -73,6 +67,17 @@ import { ensureAaveFacilitators } from '../../../handlers/facilitator';
 import { handleHsmCollateralEvents } from '../../../handlers/pools/pools/hsmpool/collaterals';
 import { processHsmpoolAssetBalanceHistoricalData } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { handleTransactionPaymentHistoricalData } from '../../../handlers/transactionPayment/historicalData';
+import { handleOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions';
+import { initAllXykPools } from '../../../handlers/pools/pools/xykPool/xykPool';
+import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
+import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
+import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
+import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
+import {
+  initAllOmnipoolLiquidityMiningDeposits
+} from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
+import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
+import { handleUniquesEvents } from '../../../handlers/uniques';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -122,9 +127,7 @@ export async function singleFlowAllInOneProcessor(
 
   if (!parsedData) throw new Error('parsedData is null');
 
-  console.time('ensureNativeToken');
   await ensureNativeToken(ctx);
-  console.timeEnd('ensureNativeToken');
 
   console.time('actualiseAssets');
   await actualiseAssets(ctx);
@@ -176,9 +179,21 @@ export async function singleFlowAllInOneProcessor(
   await handleOmnipoolLiquidityPositions(ctx, parsedData);
   console.timeEnd('handleOmnipoolLiquidityPositions');
 
+  console.time('initAllOmnipoolLiquidityMiningDeposits');
+  await initAllOmnipoolLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllOmnipoolLiquidityMiningDeposits');
+
+  console.time('handleOmnipoolLiquidityMiningEvents');
+  await handleOmnipoolLiquidityMiningEvents(ctx, parsedData);
+  console.timeEnd('handleOmnipoolLiquidityMiningEvents');
+
   console.time('handleXykPoolLiquidityMiningEvents');
   await handleXykPoolLiquidityMiningEvents(ctx, parsedData);
   console.timeEnd('handleXykPoolLiquidityMiningEvents');
+
+  console.time('handleUniquesEvents');
+  await handleUniquesEvents(ctx, parsedData);
+  console.timeEnd('handleUniquesEvents');
 
   console.time('handleStablepools');
   await handleStablepools(ctx, parsedData);
@@ -315,7 +330,7 @@ export async function singleFlowAllInOneProcessor(
   console.timeEnd('processHsmpoolAssetBalanceHistoricalData');
 
   console.time('processPoolsTvlNormalized');
-  await processPoolsTvlNormalized({ ctx });
+  processPoolsTvlNormalized({ ctx });
   console.timeEnd('processPoolsTvlNormalized');
 
   console.time('saveAllBatchAccounts');

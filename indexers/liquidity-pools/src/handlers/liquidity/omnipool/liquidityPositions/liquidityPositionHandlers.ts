@@ -6,6 +6,7 @@ import {
   OmnipoolPositionCreatedData,
   OmnipoolPositionDestroyedData,
   OmnipoolPositionUpdatedData,
+  UniquesTransferredData,
 } from '../../../../parsers/batchBlocksParser/types';
 import {
   getNewOmnipoolLiquidityPosition,
@@ -27,6 +28,7 @@ import {
   getOrCreateXykLiquidityMiningDeposit,
 } from '../../xykpool/liquidityMining/depositsUtils';
 import pMap from 'p-map';
+import { getOrCreateAccount } from '../../../accounts';
 
 export async function handleOmnipoolLiquidityPositionCreated(
   ctx: SqdProcessorContext<Store>,
@@ -214,156 +216,6 @@ export async function initAllOmnipoolLiquidityPositions(
   if (hasAnyRecord) return;
 
   const blockToProcess = ctx.blocks[0];
-  //
-  // const omnipoolLMNftCollectionId =
-  //   parsers.storage.omnipool.getNftCollectionIdConstant({
-  //     block: blockToProcess.header,
-  //   });
-  // const omnipoolLMDepositsNftCollectionId =
-  //   parsers.storage.omnipoolLiquidityMining.getNftCollectionIdConstant({
-  //     block: blockToProcess.header,
-  //   });
-  //
-  // if (!omnipoolLMNftCollectionId) {
-  //   console.log(`Omnipool LM NFT collection ID can not be foud`);
-  // }
-  //
-  // console.log(
-  //   'omnipoolLMNftCollectionId.collectionId - ',
-  //   omnipoolLMNftCollectionId.collectionId
-  // );
-  // console.log(
-  //   'omnipoolLMDepositsNftCollectionId.collectionId - ',
-  //   omnipoolLMDepositsNftCollectionId.collectionId
-  // );
-  //
-  // const [
-  //   allPositionNftsWithOwners,
-  //   allDepositsNftsWithOwners,
-  //   allExistingDeposits,
-  // ] = await Promise.all([
-  //   parsers.storage.uniques.getAllAssetsData({
-  //     collectionId: omnipoolLMNftCollectionId.collectionId,
-  //     block: blockToProcess.header,
-  //   }),
-  //   parsers.storage.uniques.getAllAssetsData({
-  //     collectionId: omnipoolLMDepositsNftCollectionId.collectionId,
-  //     block: blockToProcess.header,
-  //   }),
-  //   parsers.storage.omnipoolWarehouseLM.getAllDepositsData({
-  //     block: blockToProcess.header,
-  //   }),
-  // ]);
-  //
-  // if (!allPositionNftsWithOwners) {
-  //   console.log(`All Omnipool Positions Uniques can not be found`);
-  //   return;
-  // }
-  // if (!allDepositsNftsWithOwners) {
-  //   console.log(`All Omnipool Deposits Uniques can not be found`);
-  //   return;
-  // }
-  //
-  // if (!allExistingDeposits) {
-  //   console.log(`All Omnipool Deposits can not be found`);
-  //   return;
-  // }
-  //
-  // console.log('allPositionNftsWithOwners - ', allPositionNftsWithOwners.length);
-  // console.log('allDepositsNftsWithOwners - ', allDepositsNftsWithOwners.length);
-  //
-  // const depositPositionIdsMapping: Map<string, string> = new Map();
-  //
-  // await pMap(
-  //   allDepositsNftsWithOwners,
-  //   async ({ assetId, data }) => {
-  //     const omniPositionId =
-  //       await parsers.storage.omnipoolLiquidityMining.getOmniPositionId({
-  //         block: blockToProcess.header,
-  //         depositId: assetId,
-  //       });
-  //
-  //     console.log(
-  //       `Deposite ${assetId} >>> positions ${!!omniPositionId ? omniPositionId.positionId.toString() : 'not found'}`
-  //     );
-  //
-  //     if (omniPositionId)
-  //       depositPositionIdsMapping.set(
-  //         assetId.toString(),
-  //         omniPositionId.positionId.toString()
-  //       );
-  //   },
-  //   { concurrency: 300 }
-  // );
-  //
-  // const allExistingDepositsIndexedByDepositId: Map<
-  //   string,
-  //   XykpoolLMDepositData
-  // > = new Map();
-  //
-  // for (const { depositId, data } of allExistingDeposits) {
-  //   if (!data) continue;
-  //   allExistingDepositsIndexedByDepositId.set(depositId, data);
-  // }
-  //
-  // const allPositionNftsWithOwnersIndexedById: Map<string, UniquesAssetData> =
-  //   new Map();
-  //
-  // for (const { assetId, data } of allPositionNftsWithOwners) {
-  //   if (!data) continue;
-  //   allPositionNftsWithOwnersIndexedById.set(assetId, data);
-  // }
-  //
-  // const allDepositNftsWithOwnersIndexedById: Map<string, UniquesAssetData> =
-  //   new Map();
-  // for (const { assetId, data } of allDepositsNftsWithOwners) {
-  //   if (!data) continue;
-  //   allDepositNftsWithOwnersIndexedById.set(assetId, data);
-  // }
-  //
-  // const positionsFullyInDeposit: string[] = [];
-  // const positionsFullyInDepositMapping: Map<string, string> = new Map();
-  // const positionDepositMapping: Map<string, string> = new Map();
-  //
-  // for (const [
-  //   depositId,
-  //   positionIdWithDeposit,
-  // ] of depositPositionIdsMapping.entries()) {
-  //   positionDepositMapping.set(positionIdWithDeposit, depositId);
-  //
-  //   if (!allPositionNftsWithOwnersIndexedById.has(positionIdWithDeposit)) {
-  //     positionsFullyInDeposit.push(positionIdWithDeposit);
-  //     positionsFullyInDepositMapping.set(depositId, positionIdWithDeposit);
-  //   }
-  // }
-  //
-  // console.log('positionsFullyInDeposit - ');
-  // console.dir(positionsFullyInDeposit, { depth: null });
-
-  // await pMap(
-  //   Array.from(allPositionNftsWithOwnersIndexedById.entries()),
-  //   async ([positionId, data]) => {
-  //     const positionEntity = await getOrCreateOmnipoolLiquidityPosition({
-  //       positionId: positionId,
-  //       ensure: true,
-  //       blockHeader: blockToProcess.header,
-  //       ctx,
-  //       noPanic: true,
-  //     });
-  //
-  //     if (positionEntity) {
-  //       ctx.batchState.state.omnipoolLiquidityPositions.set(
-  //         positionEntity.id,
-  //         positionEntity
-  //       );
-  //     } else {
-  //       console.log(
-  //         `No position found with ID ${positionId}. Appropriate deposit ${positionDepositMapping.get(positionId) ?? 'not found'} [${blockToProcess.header.hash}]`
-  //       );
-  //     }
-  //   },
-  //   { concurrency: 150 }
-  // );
 
   const allPositions =
     await parsers.storage.omnipool.getAllOmnipoolLiquidityPositions({
@@ -378,7 +230,7 @@ export async function initAllOmnipoolLiquidityPositions(
         ensure: true,
         blockHeader: blockToProcess.header,
         ctx,
-        noPanic: false,
+        noPanic: true,
       });
 
       if (!positionEntity) {
@@ -418,43 +270,34 @@ export async function initAllOmnipoolLiquidityPositions(
   await ctx.storeUtils.upsertWithBatches(
     Array.from(ctx.batchState.state.omnipoolLiquidityPositionEvents.values())
   );
+}
 
-  // for (const depositStorageData of allExistingDeposits) {
-  //   const deposit = await getOrCreateXykLiquidityMiningDeposit({
-  //     depositId: depositStorageData.depositId,
-  //     ownerAccountId:
-  //       allNftsWithOwnersIndexedById.get(depositStorageData.depositId)?.owner ??
-  //       undefined,
-  //     createdAtParaBlockHeight: blockToProcess.header.height,
-  //     ensure: true,
-  //     blockHeader: blockToProcess.header,
-  //     ctx,
-  //     noPanic: true,
-  //     storageData: depositStorageData,
-  //   });
-  //
-  //   if (!deposit) continue;
-  //
-  //   const depositEvent = getNewXykLiquidityMiningDepositEvent({
-  //     eventName: YieldFarmDepositStatus.SharesDeposited,
-  //     depositId: deposit.id,
-  //     globalFarmId:
-  //       depositStorageData.data?.yieldFarmEntries[0].globalFarmId.toString(),
-  //     yieldFarmId:
-  //       depositStorageData.data?.yieldFarmEntries[0].yieldFarmId.toString(),
-  //     lpAssetId: deposit.lpAssetId,
-  //     accountId: deposit.accountId,
-  //     amount: deposit.amount,
-  //     paraBlockHeight: blockToProcess.header.height,
-  //   });
-  //
-  //   ctx.batchState.state.xykYieldFarmDepositEvents.set(
-  //     depositEvent.id,
-  //     depositEvent
-  //   );
-  // }
-  //
-  // await ctx.storeUtils.upsertWithBatches(
-  //   Array.from(ctx.batchState.state.xykYieldFarmDepositEvents.values())
-  // );
+export async function handleOmnipoolLiquidityPositionTransferred(
+  ctx: SqdProcessorContext<Store>,
+  eventCallData: UniquesTransferredData
+) {
+  const {
+    eventData: { params: eventParams, metadata: eventMetadata },
+  } = eventCallData;
+
+  const { item, from, to } = eventParams;
+
+  const positionEntity = await getOrCreateOmnipoolLiquidityPosition({
+    positionId: item,
+    ctx,
+    ensure: true,
+    blockHeader: eventMetadata.blockHeader,
+    noPanic: true,
+  });
+
+  if (!positionEntity) return;
+
+  positionEntity.account = await getOrCreateAccount({ id: to, ctx });
+
+  ctx.batchState.state.omnipoolLiquidityPositions.set(
+    positionEntity.id,
+    positionEntity
+  );
+
+  await ctx.storeUtils.upsertWithBatches([positionEntity]);
 }

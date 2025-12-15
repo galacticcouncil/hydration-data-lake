@@ -346,6 +346,7 @@ export default {
   omnipoolWarehouseLM: {
     getOmnipoolLMGlobalFarms: omnipoolWarehouseLM.getOmnipoolLMGlobalFarms,
     getAllDepositsData: omnipoolWarehouseLM.getAllDepositsData,
+    getLMDepositsData: omnipoolWarehouseLM.getLMDepositsData,
   },
   omnipoolLiquidityMining: {
     getNftCollectionIdConstant:

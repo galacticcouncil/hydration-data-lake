@@ -85,12 +85,12 @@ export async function getOrCreateXykLiquidityMiningDeposit({
 
     let depositOwnerAccountId = ownerAccountId;
 
-    if (!depositOwnerAccountId) {
-      const nftCollectionId =
-        parsers.storage.xykLiquidityMining.getNftCollectionIdConstant({
-          block: blockHeader,
-        });
+    const nftCollectionId =
+      parsers.storage.xykLiquidityMining.getNftCollectionIdConstant({
+        block: blockHeader,
+      });
 
+    if (!depositOwnerAccountId) {
       const depositNftData = await parsers.storage.uniques.getAssetsData({
         collectionId: nftCollectionId.collectionId,
         assetIds: [depositId],
@@ -143,7 +143,7 @@ export async function getOrCreateXykLiquidityMiningDeposit({
      */
     depositEntity = new XykYieldFarmDeposit({
       id: depositId,
-      depositNftId: depositId,
+      nftId: `${nftCollectionId.collectionId}-${depositId}`,
       xykpoolId: xykpool.id,
       accountId: depositOwnerAccountId,
       lpAssetId: lpAsset.id,

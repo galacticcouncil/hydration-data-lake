@@ -1,55 +1,51 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
-import {Account} from "./account.model"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
+import * as marshal from "./marshal"
 
 @Entity_()
 export class NftCollection {
-    constructor(props?: Partial<NftCollection>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<NftCollection>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * collection ID 
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * collection ID 
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @StringColumn_({nullable: false})
-    collectionType!: string
+  @Column_("text", {nullable: false})
+  collectionType!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    owner!: Account
+  @Column_("text", {nullable: false})
+  ownerId!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    issuer!: Account
+  @Column_("text", {nullable: false})
+  issuerId!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    admin!: Account
+  @Column_("text", {nullable: false})
+  adminId!: string
 
-    @Index_()
-    @ManyToOne_(() => Account, {nullable: true})
-    freezer!: Account
+  @Column_("text", {nullable: false})
+  freezerId!: string
 
-    @BigIntColumn_({nullable: false})
-    totalDeposit!: bigint
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  totalDeposit!: bigint
 
-    @BooleanColumn_({nullable: false})
-    freeHolding!: boolean
+  @Column_("bool", {nullable: false})
+  freeHolding!: boolean
 
-    @BooleanColumn_({nullable: false})
-    isFrozen!: boolean
+  @Column_("bool", {nullable: false})
+  isFrozen!: boolean
 
-    @IntColumn_({nullable: false})
-    items!: number
+  @Column_("int4", {nullable: false})
+  items!: number
 
-    @IntColumn_({nullable: false})
-    itemMetadatas!: number
+  @Column_("int4", {nullable: false})
+  itemMetadatas!: number
 
-    @IntColumn_({nullable: false})
-    attributes!: number
+  @Column_("int4", {nullable: false})
+  attributes!: number
 
-    @BigIntColumn_({nullable: true})
-    maxSupply!: bigint | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  maxSupply!: bigint | undefined | null
 }

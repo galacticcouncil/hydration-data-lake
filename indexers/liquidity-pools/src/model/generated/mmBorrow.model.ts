@@ -1,49 +1,50 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, ManyToOne as ManyToOne_, Index as Index_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
 import {Asset} from "./asset.model"
 import {Event} from "./event.model"
 
 @Entity_()
 export class MmBorrow {
-    constructor(props?: Partial<MmBorrow>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<MmBorrow>) {
+    Object.assign(this, props)
+  }
 
-    /**
-     * <event_id>
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <event_id>
+   */
+  @PrimaryColumn_()
+  id!: string
 
-    @StringColumn_({array: true, nullable: true})
-    traceIds!: (string)[] | undefined | null
+  @Column_("text", {array: true, nullable: true})
+  traceIds!: (string)[] | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => Asset, {nullable: true})
-    asset!: Asset
+  @Index_()
+  @ManyToOne_(() => Asset, {nullable: true})
+  asset!: Asset
 
-    @StringColumn_({nullable: false})
-    accountId!: string
+  @Column_("text", {nullable: false})
+  accountId!: string
 
-    @StringColumn_({nullable: false})
-    accountOnBehalfOfId!: string
+  @Column_("text", {nullable: false})
+  accountOnBehalfOfId!: string
 
-    @BigIntColumn_({nullable: true})
-    amount!: bigint | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  amount!: bigint | undefined | null
 
-    @IntColumn_({nullable: true})
-    interestRateMode!: number | undefined | null
+  @Column_("int4", {nullable: true})
+  interestRateMode!: number | undefined | null
 
-    @BigIntColumn_({nullable: true})
-    borrowRate!: bigint | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  borrowRate!: bigint | undefined | null
 
-    @BigIntColumn_({nullable: true})
-    referralCode!: bigint | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  referralCode!: bigint | undefined | null
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Index_()
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
 
-    @Index_()
-    @ManyToOne_(() => Event, {nullable: true})
-    event!: Event
+  @Index_()
+  @ManyToOne_(() => Event, {nullable: true})
+  event!: Event
 }

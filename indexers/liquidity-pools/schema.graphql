@@ -1847,10 +1847,10 @@ type NftCollection @entity {
   "collection ID "
   id: ID!
   collectionType: String! # must be reviewed
-  owner: Account!
-  issuer: Account!
-  admin: Account!
-  freezer: Account!
+  ownerId: String!
+  issuerId: String!
+  adminId: String!
+  freezerId: String!
   totalDeposit: BigInt!
   freeHolding: Boolean!
   isFrozen: Boolean!
@@ -1861,10 +1861,10 @@ type NftCollection @entity {
 }
 
 type NftAsset @entity {
-  "asset ID "
+  "<collection_id>-<item_id>"
   id: ID!
-  collection: NftCollection!
-  owner: Account!
+  collectionId: String!
+  ownerId: String!
   deposit: BigInt!
   isFrozen: Boolean!
 }
@@ -1934,7 +1934,7 @@ type OmnipoolLiquidityPosition @entity {
   initialAmount: BigInt!
   amount: BigInt!
   sharesAmount: BigInt!
-  positionNftId: String
+  nftId: String
   price: BigInt
 
   "should be either PositionCreated or PositionDestroyed"
@@ -2044,9 +2044,7 @@ type OmnipoolYieldFarm @entity {
 type OmnipoolYieldFarmDeposit @entity {
   "deposit ID"
   id: ID!
-  depositNftId: String!
-  globalFarmId: String!
-  yieldFarmId: String!
+  nftId: String
   positionId: String!
   accountId: String!
   assetId: String!
@@ -2054,6 +2052,7 @@ type OmnipoolYieldFarmDeposit @entity {
   "should be either SharesDeposited or DepositDestroyed"
   status: YieldFarmDepositStatus!
   sharesAmount: BigInt!
+  initialSharesAmount: BigInt!
   entries: [OmnipoolYieldFarmEntry!]!
 
   createdAtParaBlockHeight: Int! @index
@@ -2064,7 +2063,6 @@ type OmnipoolYieldFarmDepositEvent @entity {
   "event_id"
   id: ID!
   depositId: String!
-  positionId: String!
   eventName: YieldFarmDepositStatus!
 
   # required for SharesDeposited, SharesRedeposited, RewardClaimed events
@@ -2160,7 +2158,7 @@ type XykYieldFarm @entity {
 type XykYieldFarmDeposit @entity {
   "deposit ID"
   id: ID!
-  depositNftId: String
+  nftId: String
   xykpoolId: String!
   accountId: String!
   lpAssetId: String!
