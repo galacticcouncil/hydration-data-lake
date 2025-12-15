@@ -403,6 +403,7 @@ function getXykOnlyAssets(ctx: SqdProcessorContext<Store>) {
   const xykInvolvedAssetsList = Array.from(
     ctx.batchState.state.xykAllBatchPools.values()
   )
+    .filter((pool) => !pool.isDestroyed)
     .map((pool): [Asset | undefined, Asset | undefined] => {
       const assetA = ctx.batchState.state.assetsAll.get(pool.assetAId);
       const assetB = ctx.batchState.state.assetsAll.get(pool.assetBId);
