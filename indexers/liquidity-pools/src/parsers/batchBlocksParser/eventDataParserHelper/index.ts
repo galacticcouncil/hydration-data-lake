@@ -11,7 +11,8 @@ import { XykEventParserHelper } from './helpers/xyk';
 import { LbpEventParserHelper } from './helpers/lbp';
 import { OmnipoolLiquidityMiningEventParserHelper } from './helpers/omnipoolLiquidityMining';
 import { OmnipoolWarehouseLMEventParserHelper } from './helpers/omnipoolWarehouseLM';
-import { XykLiquidityMiningEventParserHelper } from './helpers/xykLiquidityMining'; // TODO fix for different CHAIN env value
+import { XykLiquidityMiningEventParserHelper } from './helpers/xykLiquidityMining';
+import { UniquesEventParserHelper } from './helpers/uniques'; // TODO fix for different CHAIN env value
 
 export class EventDataParserHelper {
   readonly relayChainInfo: RelayChainInfo;
@@ -28,6 +29,7 @@ export class EventDataParserHelper {
     omnipool: OmnipoolEventParserHelper;
     omnipoolLM: OmnipoolLiquidityMiningEventParserHelper;
     omnipoolWarehouseLM: OmnipoolWarehouseLMEventParserHelper;
+    uniques: UniquesEventParserHelper;
   };
 
   constructor({
@@ -52,6 +54,10 @@ export class EventDataParserHelper {
     this.event = event;
     this.batchState = batchState;
 
+    /**
+     * TODO - other parsing methods in this class (e.g. parseStableswapPoolCreatedData)
+     * must be moved to separate sub-classes like XykEventParserHelper, UniquesEventParserHelper, etc.
+     */
     this.parsers = {
       xyk: new XykEventParserHelper(this),
       xykLM: new XykLiquidityMiningEventParserHelper(this),
@@ -60,6 +66,7 @@ export class EventDataParserHelper {
       omnipool: new OmnipoolEventParserHelper(this),
       omnipoolLM: new OmnipoolLiquidityMiningEventParserHelper(this),
       omnipoolWarehouseLM: new OmnipoolWarehouseLMEventParserHelper(this),
+      uniques: new UniquesEventParserHelper(this),
     };
   }
 

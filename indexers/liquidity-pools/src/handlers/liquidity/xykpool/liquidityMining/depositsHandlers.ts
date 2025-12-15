@@ -1,6 +1,7 @@
 import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  UniquesTransferredData,
   XykLMDepositDestroyedData,
   XykLMSharesDepositedData,
 } from '../../../../parsers/batchBlocksParser/types';
@@ -8,11 +9,7 @@ import {
   getNewXykLiquidityMiningDepositEvent,
   getOrCreateXykLiquidityMiningDeposit,
 } from './depositsUtils';
-import {
-  AssetSpotPriceHistoricalData,
-  XykYieldFarmDeposit,
-  YieldFarmDepositStatus,
-} from '../../../../model';
+import { XykYieldFarmDeposit, YieldFarmDepositStatus } from '../../../../model';
 import parsers from '../../../../parsers';
 import { XykpoolLMDepositData } from '../../../../parsers/types/storage/xykpoolLiquidityMining';
 import { UniquesAssetData } from '../../../../parsers/types/storage/uniques';
@@ -25,17 +22,20 @@ export async function handleXylpoolLMSharesDeposited(
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
 
-  console.log('handleXylpoolLMSharesDeposited');
   const depositEntity = await getOrCreateXykLiquidityMiningDeposit({
     depositId: eventParams.depositId.toString(),
     ownerAccountId: eventParams.who,
     initialAmount: eventParams.amount,
     lpTokenId: `${eventParams.lpToken}`,
     blockHeader: eventMetadata.blockHeader,
+    noPanic: true,
     ctx,
   });
 
-  if (!depositEntity) throw Error(`Deposit ${eventParams.depositId} not found`);
+  if (!depositEntity) {
+    console.log(`Deposit ${eventParams.depositId} not found`);
+    return;
+  }
 
   const depositEvent = getNewXykLiquidityMiningDepositEvent({
     eventName: YieldFarmDepositStatus.SharesDeposited,
@@ -69,8 +69,6 @@ export async function handleXylpoolLMDepositDestroyed(
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
-
-  console.log('handleXylpoolLMDepositDestroyed');
 
   const depositEntity = await getOrCreateXykLiquidityMiningDeposit({
     depositId: eventParams.depositId.toString(),
@@ -212,4 +210,33 @@ export async function initAllXykLiquidityMiningDeposits(
   await ctx.storeUtils.upsertWithBatches(
     Array.from(ctx.batchState.state.xykYieldFarmDepositEvents.values())
   );
+}
+
+export async function handleXykLMDepositTransferred(
+  ctx: SqdProcessorContext<Store>,
+  eventCallData: UniquesTransferredData
+) {
+  const {
+    eventData: { params: eventParams, metadata: eventMetadata },
+  } = eventCallData;
+
+  const { item, from, to } = eventParams;
+
+  const depositEntity = await getOrCreateXykLiquidityMiningDeposit({
+    depositId: item,
+    ownerAccountId: from,
+    blockHeader: eventMetadata.blockHeader,
+    ctx,
+    noPanic: true,
+  });
+
+  if (!depositEntity) return;
+
+  depositEntity.accountId = to;
+
+  ctx.batchState.state.xykYieldFarmDeposits.set(
+    depositEntity.id,
+    depositEntity
+  );
+  await ctx.storeUtils.upsertWithBatches([depositEntity]);
 }

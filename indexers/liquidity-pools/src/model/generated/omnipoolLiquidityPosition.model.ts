@@ -36,7 +36,7 @@ export class OmnipoolLiquidityPosition {
   sharesAmount!: bigint
 
   @Column_("text", {nullable: true})
-  positionNftId!: string | undefined | null
+  nftId!: string | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   price!: bigint | undefined | null

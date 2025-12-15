@@ -7,12 +7,11 @@ import { getOrCreateAccountTotalBalanceHistoricalData } from './accountAssetBala
 import { getOrCreateAccount } from '../accounts';
 import { AccountData } from '../../parsers/types/storage';
 import { SqdBlock } from '../../processor';
-import {
-  ResourceType,
-} from '../../model';
+import { ResourceType } from '../../model';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
+import { getOmnipoolLiquidityMiningDepositsForAccounts } from '../liquidity/omnipool/liquidityMining/depositUtils';
 
 type BlockHeight = number;
 type AccountId = string;
@@ -133,6 +132,13 @@ export async function handleAccountTotalBalance({
       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     });
 
+  const omnipoolLiquidityMiningDepositsMap =
+    await getOmnipoolLiquidityMiningDepositsForAccounts({
+      ctx,
+      involvedAccountsPerBlock: accountBalancesPerBlock,
+      involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
+    });
+
   const xykpoolLiquidityDepositsMap =
     await getXykLiquidityMiningDepositsForAccounts({
       ctx,
@@ -145,6 +151,15 @@ export async function handleAccountTotalBalance({
    */
   await addLiquidityMiningWorthToTotalBalance({
     lmWorthData: xykpoolLiquidityDepositsMap,
+    refAssetId: refAsset.id,
+    ctx,
+  });
+
+  /**
+   * Add Omnipool Liquidity Mining deposits to the total transferable balance.
+   */
+  await addLiquidityMiningWorthToTotalBalance({
+    lmWorthData: omnipoolLiquidityMiningDepositsMap,
     refAssetId: refAsset.id,
     ctx,
   });

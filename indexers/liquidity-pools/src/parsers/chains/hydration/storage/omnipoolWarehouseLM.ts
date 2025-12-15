@@ -1,6 +1,7 @@
 import { constants, storage } from '../typegenTypes/';
 import {
   GetDataAtBlockInput,
+  OmnipoolLMGetDepositsInput,
   OmnipoolLMGetGlobalFarmsInput,
   OmnipoolLMGlobalFarmData,
   OmnipoolLMGlobalFarmDataWithId,
@@ -9,7 +10,10 @@ import {
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
-import { XykpoolLMDepositDataWithId } from '../../../types/storage/xykpoolLiquidityMining';
+import {
+  XykpoolLMDepositDataWithId,
+  XykpoolLMGetDepositsInput,
+} from '../../../types/storage/xykpoolLiquidityMining';
 
 async function getOmnipoolLMGlobalFarms({
   block,
@@ -106,7 +110,57 @@ async function getAllDepositsData({
   });
 }
 
+async function getLMDepositsData({
+  block,
+  depositIds,
+}: OmnipoolLMGetDepositsInput): Promise<
+  OmnipoolYieldFarmDepositDataWithId[] | null
+> {
+  return measureStorageFetch({
+    storageName: 'omnipoolWarehouseLm.deposit',
+    originFn: 'getLMDepositsData',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 138) return null;
+
+      if (
+        storage.omnipoolWarehouseLm.deposit.v138.is(block) ||
+        block.specVersion >= 138
+      ) {
+        try {
+          const resp = await storage.omnipoolWarehouseLm.deposit.v138.getMany(
+            block,
+            depositIds.map((id) => BigInt(id))
+          );
+
+          const decoratedResp: OmnipoolYieldFarmDepositDataWithId[] = [];
+
+          depositIds.forEach((depositId, index) => {
+            const respItem = resp[index];
+            decoratedResp.push({
+              depositId,
+              data: !respItem
+                ? null
+                : {
+                    shares: respItem.shares,
+                    ammPoolId: respItem.ammPoolId.toString(),
+                    yieldFarmEntries: respItem.yieldFarmEntries,
+                  },
+            });
+          });
+
+          return decoratedResp;
+        } catch (e) {
+          return null;
+        }
+      }
+      throw new UnknownVersionError('storage.omnipoolWarehouseLm.deposit');
+    },
+  });
+}
+
 export default {
   getOmnipoolLMGlobalFarms,
   getAllDepositsData,
+  getLMDepositsData,
 };

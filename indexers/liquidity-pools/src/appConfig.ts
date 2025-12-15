@@ -54,6 +54,47 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
+class UniquesConfig {
+  private static instance: UniquesConfig;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly XYK_LIQUIDITY_MINING_NFT_COLLECTION: string = '5389';
+
+  @IsString()
+  @IsNotEmpty()
+  readonly OMNIPOOL_LP_NFT_COLLECTION: string = '1337';
+
+  @IsString()
+  @IsNotEmpty()
+  readonly OMNIPOOL_LIQUIDITY_MINING_NFT_COLLECTION: string = '2584';
+
+  static getInstance(): UniquesConfig {
+    if (UniquesConfig.instance) return UniquesConfig.instance;
+
+    try {
+      UniquesConfig.instance = transformAndValidateSync(
+        UniquesConfig,
+        process.env,
+        {
+          validator: { stopAtFirstError: true },
+        }
+      );
+      return UniquesConfig.instance;
+    } catch (errors) {
+      if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
+        errors.forEach((error: ValidationError) => {
+          // @ts-ignore
+          Object.values(error.constraints).forEach((msg) => console.error(msg));
+        });
+      } else {
+        console.error('Unexpected error during the environment validation');
+      }
+      throw new Error('Failed to validate environment variables');
+    }
+  }
+}
+
 class LogConfig {
   private static instance: LogConfig;
 
@@ -567,6 +608,7 @@ export class AppConfig {
     'Duster',
     'Omnipool',
     'Broadcast',
+    'Uniques',
   ]);
 
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
@@ -576,6 +618,8 @@ export class AppConfig {
   readonly evm: EvmConfig = new EvmConfig();
 
   readonly log: LogConfig = LogConfig.getInstance();
+
+  readonly uniques: UniquesConfig = UniquesConfig.getInstance();
 
   readonly processingMode: ProcessingModeConfig =
     ProcessingModeConfig.getInstance();
@@ -711,6 +755,8 @@ export class AppConfig {
       events.omnipoolWarehouseLm.globalFarmAccRpzUpdated.name,
       events.omnipoolWarehouseLm.yieldFarmAccRpvsUpdated.name,
       events.omnipoolWarehouseLm.allRewardsDistributed.name,
+
+      events.uniques.transferred.name,
     ];
 
     if (

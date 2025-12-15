@@ -12,7 +12,7 @@ async function getXykpoolLMDeposits({
   depositIds,
 }: XykpoolLMGetDepositsInput): Promise<XykpoolLMDepositDataWithId[] | null> {
   return measureStorageFetch({
-    storageName: 'omnipoolWarehouseLm.globalFarm',
+    storageName: 'storage.xykWarehouseLm.deposit',
     originFn: 'getXykpoolLMDeposits',
     blockHeight: block.height,
     fn: async () => {

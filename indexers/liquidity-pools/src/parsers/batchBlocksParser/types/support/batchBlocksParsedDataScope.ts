@@ -66,7 +66,7 @@ import {
   HsmCollateralRemovedData,
   HsmCollateralUpdatedData,
 } from '../hsm';
-import { EventId } from '../index';
+import { EventId, UniquesTransferredData } from '../index';
 import {
   OmnipoolLMDepositDestroyedData,
   OmnipoolLMGlobalFarmCreatedData,
@@ -212,7 +212,10 @@ type TokensEventData = TokensTransferData;
 type EvmEventData = EvmLogData;
 
 type EvmAccountsEventData = EvmAccountsBoundData;
+
 type CurrenciesEventData = CurrenciesTransferredData;
+
+type UniquesEventData = UniquesTransferredData;
 
 export type ParsedEventsCallsData =
   | LbpEventData
@@ -231,4 +234,5 @@ export type ParsedEventsCallsData =
   | TokensEventData
   | EvmEventData
   | EvmAccountsEventData
-  | CurrenciesEventData;
+  | CurrenciesEventData
+  | UniquesEventData;

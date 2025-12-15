@@ -12,6 +12,11 @@ export type OmnipoolLMGetGlobalFarmsInput = {
   farmIds: Array<string | number>;
 };
 
+export type OmnipoolLMGetDepositsInput = {
+  depositIds: string[];
+  block: BlockHeader;
+};
+
 /**
  * =============================================================================
  * ============================= D A T A    T Y P E S ==========================

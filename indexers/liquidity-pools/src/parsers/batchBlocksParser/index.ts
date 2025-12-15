@@ -1510,6 +1510,18 @@ export async function getParsedEventsData(
           break;
         }
 
+        /**
+         * =========================== U N I Q U E S ===========================
+         */
+
+        case events.uniques.transferred.name: {
+          const preparedData =
+            parserHelper.parsers.uniques.parseUniquesItemTransferredData();
+          parsedDataManager.set(EventName.Uniques_Transferred, preparedData);
+
+          break;
+        }
+
         default:
           totalEventsNumber--;
       }

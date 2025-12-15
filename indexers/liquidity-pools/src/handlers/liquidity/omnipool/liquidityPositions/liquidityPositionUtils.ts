@@ -91,12 +91,13 @@ export async function getNewOmnipoolLiquidityPosition({
       positionData.sharesAmount = data.shares;
     }
 
-    if (!ownerAccountId) {
-      const nftCollectionId =
-        parsers.storage.omnipool.getNftCollectionIdConstant({
-          block: blockHeader,
-        });
+    const nftCollectionId = parsers.storage.omnipool.getNftCollectionIdConstant(
+      {
+        block: blockHeader,
+      }
+    );
 
+    if (!ownerAccountId) {
       const positionNftDetails = await parsers.storage.uniques.getAssetsData({
         collectionId: `${nftCollectionId.collectionId}`,
         assetIds: [positionId],
@@ -150,7 +151,7 @@ export async function getNewOmnipoolLiquidityPosition({
       initialAmount: positionData.initialAmount ?? positionData.amount,
       amount: positionData.amount,
       sharesAmount: positionData.sharesAmount,
-      positionNftId: positionId,
+      nftId: `${nftCollectionId.collectionId}-${positionId}`,
       price: positionData.price ?? null,
 
       status: OmnipoolLiquidityPositionStatus.PositionCreated,

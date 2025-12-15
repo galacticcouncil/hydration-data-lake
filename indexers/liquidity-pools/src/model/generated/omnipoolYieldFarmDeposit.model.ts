@@ -15,14 +15,8 @@ export class OmnipoolYieldFarmDeposit {
   @PrimaryColumn_()
   id!: string
 
-  @Column_("text", {nullable: false})
-  depositNftId!: string
-
-  @Column_("text", {nullable: false})
-  globalFarmId!: string
-
-  @Column_("text", {nullable: false})
-  yieldFarmId!: string
+  @Column_("text", {nullable: true})
+  nftId!: string | undefined | null
 
   @Column_("text", {nullable: false})
   positionId!: string
@@ -41,6 +35,9 @@ export class OmnipoolYieldFarmDeposit {
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   sharesAmount!: bigint
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  initialSharesAmount!: bigint
 
   @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new OmnipoolYieldFarmEntry(undefined, marshal.nonNull(val)))}, nullable: false})
   entries!: (OmnipoolYieldFarmEntry)[]
