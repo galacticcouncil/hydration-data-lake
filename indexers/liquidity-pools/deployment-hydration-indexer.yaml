@@ -45,6 +45,8 @@ deploy:
       PROCESS_FROM_BLOCK: 8350000
       PROCESS_TO_BLOCK: -1
 
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: true
+
       USE_STORAGE_DICTIONARY: true
       STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
       STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
@@ -69,6 +71,7 @@ deploy:
       RPC_URL: 'wss://3.rpc.hydration.cloud'
       RPC_URL_HTTPS: 'https://3.rpc.hydration.cloud'
       DB_POOL_MAX_SIZE: 1
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: true
 
     cmd:
       - sqd
@@ -77,9 +80,9 @@ scale:
   dedicated: true
   addons:
     postgres:
-      profile: large
+      profile: xlarge
       storage: 1950G
   processor:
-    profile: large
+    profile: xlarge
   api:
     profile: small

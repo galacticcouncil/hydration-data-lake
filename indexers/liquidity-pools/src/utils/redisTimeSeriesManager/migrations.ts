@@ -16,16 +16,16 @@ const timeSeriesMigrations: TimeSeriesMigration[] = [
   // Add your migrations here
   // Example migration to clear time series by indexer ID:
   // {
-  //   id: '1765254250175',
+  //   id: '1765685530097',
   //   action: 'CLEAR_BY_INDEXER_ID',
-  //   keyPrefix: '741:acc_bal_tot_tns',
+  //   keyPrefix: '734:acc_bal_tot_tns',
   //   description:
   //     'Clear time series data from old indexer version (acc_bal_tot_tns)',
   // },
   // {
-  //   id: '1765254250176',
+  //   id: '1765685530098',
   //   action: 'CLEAR_BY_INDEXER_ID',
-  //   keyPrefix: '741:acc_bal_tot_loc',
+  //   keyPrefix: '734:acc_bal_tot_loc',
   //   description:
   //     'Clear time series data from old indexer version (acc_bal_tot_tns)',
   // },
