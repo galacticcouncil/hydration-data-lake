@@ -1,30 +1,29 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
 import {RoutedTrade} from "./routedTrade.model"
 import {SwapAssetBalanceType} from "./_swapAssetBalanceType"
 
 @Entity_()
 export class RoutedTradeAssetBalance {
-  constructor(props?: Partial<RoutedTradeAssetBalance>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<RoutedTradeAssetBalance>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <routeTradeId>-<assetId>-<SwapAssetBalanceType> e.g. 6516718-3094-0-INPUT
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <routeTradeId>-<assetId>-<SwapAssetBalanceType> e.g. 6516718-3094-0-INPUT
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => RoutedTrade, {nullable: true})
-  routedTrade!: RoutedTrade
+    @Index_()
+    @ManyToOne_(() => RoutedTrade, {nullable: true})
+    routedTrade!: RoutedTrade
 
-  @Column_("varchar", {length: 6, nullable: false})
-  assetBalanceType!: SwapAssetBalanceType
+    @Column_("varchar", {length: 6, nullable: false})
+    assetBalanceType!: SwapAssetBalanceType
 
-  @Column_("text", {nullable: false})
-  assetId!: string
+    @StringColumn_({nullable: false})
+    assetId!: string
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  amount!: bigint
+    @BigIntColumn_({nullable: false})
+    amount!: bigint
 }

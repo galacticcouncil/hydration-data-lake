@@ -1,33 +1,33 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
 
 @Entity_()
 export class AccountTotalBalanceHistoricalData {
-  constructor(props?: Partial<AccountTotalBalanceHistoricalData>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<AccountTotalBalanceHistoricalData>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <address>-<paraBlockHeight>
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <address>-<paraBlockHeight>
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("text", {nullable: false})
-  accountId!: string
+    @StringColumn_({nullable: false})
+    accountId!: string
 
-  @Column_("text", {nullable: false})
-  refAssetId!: string
+    @StringColumn_({nullable: false})
+    refAssetId!: string
 
-  @Column_("text", {nullable: false})
-  totalTransferableNorm!: string
+    @StringColumn_({nullable: false})
+    totalTransferableNorm!: string
 
-  @Column_("text", {nullable: false})
-  totalLockedNorm!: string
+    @StringColumn_({nullable: false})
+    totalLockedNorm!: string
 
-  @Column_("text", {nullable: true})
-  totalDebtNorm!: string | undefined | null
+    @StringColumn_({nullable: true})
+    totalDebtNorm!: string | undefined | null
 
-  @Index_()
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @Index_()
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 }

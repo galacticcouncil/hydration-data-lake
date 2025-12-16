@@ -177,7 +177,6 @@ async function getStableswapDataPromise({
         id: `${poolId}-${asset.id}-${blockHeader.height}`,
         assetId: asset.id,
         stableswapAsset: stableswapAssetsMap.get(asset.id),
-        poolHistoricalData: poolHistoricalDataEntity,
         freeBalance: data!.free,
         tradable: storageData?.tradable.bits ?? 15,
         tvlInRefAssetNorm: '0',

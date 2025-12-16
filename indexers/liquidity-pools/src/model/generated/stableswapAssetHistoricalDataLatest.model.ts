@@ -1,39 +1,38 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
 
 @Entity_()
 export class StableswapAssetHistoricalDataLatest {
-  constructor(props?: Partial<StableswapAssetHistoricalDataLatest>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<StableswapAssetHistoricalDataLatest>) {
+        Object.assign(this, props)
+    }
 
-  /**
-   * <stablepoolId>-<assetId>
-   */
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * <stablepoolId>-<assetId>
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("text", {nullable: false})
-  assetId!: string
+    @StringColumn_({nullable: false})
+    assetId!: string
 
-  @Column_("text", {nullable: false})
-  poolId!: string
+    @StringColumn_({nullable: false})
+    poolId!: string
 
-  @Column_("text", {nullable: false})
-  stableswapAssetId!: string
+    @StringColumn_({nullable: false})
+    stableswapAssetId!: string
 
-  @Column_("text", {nullable: false})
-  poolHistoricalDataId!: string
+    @StringColumn_({nullable: false})
+    poolHistoricalDataId!: string
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  freeBalance!: bigint
+    @BigIntColumn_({nullable: false})
+    freeBalance!: bigint
 
-  @Column_("int4", {nullable: true})
-  tradable!: number | undefined | null
+    @IntColumn_({nullable: true})
+    tradable!: number | undefined | null
 
-  @Column_("text", {nullable: true})
-  tvlInRefAssetNorm!: string | undefined | null
+    @StringColumn_({nullable: true})
+    tvlInRefAssetNorm!: string | undefined | null
 
-  @Column_("int4", {nullable: false})
-  paraBlockHeight!: number
+    @IntColumn_({nullable: false})
+    paraBlockHeight!: number
 }

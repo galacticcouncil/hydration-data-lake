@@ -1,5 +1,8 @@
-import { SqdProcessorContext } from '../processor';
+import { Between } from 'typeorm/find-options/operator/Between';
+
 import { Store } from '@subsquid/typeorm-store';
+import { Entity } from '@subsquid/typeorm-store/src/store';
+
 import { prefetchOrInitAllBatchAccounts } from '../handlers/accounts';
 import { prefetchAllAssets } from '../handlers/assets/utils';
 import {
@@ -34,8 +37,7 @@ import {
   XykpoolHistoricalData,
   XykpoolVolumeHistoricalData,
 } from '../model';
-import { Between } from 'typeorm/find-options/operator/Between';
-import { Entity } from '@subsquid/typeorm-store/src/store';
+import { SqdProcessorContext } from '../processor';
 
 export async function prefetchGenericPersistentDataWithLogs(
   ctx: SqdProcessorContext<Store>,
@@ -572,9 +574,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             pool: true,
-            assetsHistoricalData: {
-              stableswapAsset: true,
-            },
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -598,7 +597,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            poolHistoricalData: true,
             stableswapAsset: { pool: true },
             
           },

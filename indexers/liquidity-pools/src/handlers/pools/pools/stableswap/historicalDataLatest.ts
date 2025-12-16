@@ -23,14 +23,19 @@ export function getStableswapAssetsHistDataLatest({
   const latestHistDataEntities = [];
 
   for (const [id, data] of indexedData.entries()) {
+    // Extract poolId from the ID format: <poolId>-<assetId>-<blockHeight>
+    const poolId = id.split('-')[0];
+    // Construct pool historical data ID: <poolId>-<blockHeight>
+    const poolHistoricalDataId = `${poolId}-${data.paraBlockHeight}`;
+
     latestHistDataEntities.push(
       new StableswapAssetHistoricalDataLatest({
         id,
 
         assetId: data.assetId,
-        poolId: data.poolHistoricalData.pool.id,
+        poolId,
         stableswapAssetId: data.stableswapAsset.id,
-        poolHistoricalDataId: data.poolHistoricalData.id,
+        poolHistoricalDataId,
         freeBalance: data.freeBalance,
         tradable: data.tradable,
         tvlInRefAssetNorm: data.tvlInRefAssetNorm,

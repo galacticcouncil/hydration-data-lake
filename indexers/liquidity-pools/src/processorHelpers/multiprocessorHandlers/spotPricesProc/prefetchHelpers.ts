@@ -264,7 +264,6 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
     },
     relations: {
       stableswapAsset: true,
-      poolHistoricalData: true,
     },
   }, { className: 'StableswapAssetHistoricalData' });
 

@@ -568,13 +568,11 @@ type Swap @entity {
 
   "List of all asset IDs involved in the swap, including those used for fees."
   allInvolvedAssetIds: [String!]!
-  allInvolvedAssetRegistryIds: [String!]!
 
   dcaScheduleExecutionEvent: DcaScheduleExecutionEvent
   otcOrderFulfillment: OtcOrderEvent
   routedTrade: RoutedTrade
 
-  paraTimestamp: DateTime! @index
   paraBlockHeight: Int! @index
   event: Event!
 }
@@ -1153,9 +1151,6 @@ type StableswapHistoricalData @entity {
   "<stableswapId>-<paraBlockHeight>"
   id: ID!
   pool: Stableswap!
-  assetsHistoricalData: [StableswapAssetHistoricalData!]!
-    @derivedFrom(field: "poolHistoricalData")
-
   initialAmplification: Int!
   finalAmplification: Int!
   initialAmplificationChangeAtBlockHeight: Int!
@@ -1174,7 +1169,6 @@ type StableswapAssetHistoricalData @entity {
   id: ID!
   assetId: String!
   stableswapAsset: StableswapAsset!
-  poolHistoricalData: StableswapHistoricalData!
   freeBalance: BigInt!
   tradable: Int
   tvlInRefAssetNorm: String

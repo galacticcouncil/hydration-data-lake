@@ -825,10 +825,16 @@ export class OfflineTradeRouterManagerHelper {
     for (const [poolId, poolHistData] of (this.stableswapHistData.get(
       blockNumber
     ) || new Map()) as Map<string, StableswapHistoricalData>) {
-      if (
-        !poolHistData.assetsHistoricalData ||
-        poolHistData.assetsHistoricalData.length === 0
-      ) {
+      // Get asset historical data from batch state cache
+      const poolAssetsHistData = Array.from(
+        ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
+      ).filter(
+        (assetHistData) =>
+          assetHistData.paraBlockHeight === blockNumber &&
+          assetHistData.id.startsWith(`${poolId}-`)
+      );
+
+      if (!poolAssetsHistData || poolAssetsHistData.length === 0) {
         console.error(`>> missing assets data for pool ${poolId}`);
         continue;
       }
@@ -850,7 +856,7 @@ export class OfflineTradeRouterManagerHelper {
         type: PoolType.Stable,
 
         tokens: [
-          ...(poolHistData.assetsHistoricalData.map((assetHistData) => {
+          ...(poolAssetsHistData.map((assetHistData) => {
             const assetHistoricalData = this.assetsHistData
               .get(blockNumber)!
               .get(assetHistData.assetId);

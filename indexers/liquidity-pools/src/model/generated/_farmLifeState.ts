@@ -3,50 +3,50 @@ import * as marshal from "./marshal"
 import {FarmLifeStateEventName} from "./_farmLifeStateEventName"
 
 export class FarmLifeState {
-  private _eventName!: FarmLifeStateEventName
-  private _eventId!: string | undefined | null
-  private _paraBlockHeight!: number
+    private _eventName!: FarmLifeStateEventName
+    private _eventId!: string | undefined | null
+    private _paraBlockHeight!: number
 
-  constructor(props?: Partial<Omit<FarmLifeState, 'toJSON'>>, json?: any) {
-    Object.assign(this, props)
-    if (json != null) {
-      this._eventName = marshal.enumFromJson(json.eventName, FarmLifeStateEventName)
-      this._eventId = json.eventId == null ? undefined : marshal.string.fromJSON(json.eventId)
-      this._paraBlockHeight = marshal.int.fromJSON(json.paraBlockHeight)
+    constructor(props?: Partial<Omit<FarmLifeState, 'toJSON'>>, json?: any) {
+        Object.assign(this, props)
+        if (json != null) {
+            this._eventName = marshal.enumFromJson(json.eventName, FarmLifeStateEventName)
+            this._eventId = json.eventId == null ? undefined : marshal.string.fromJSON(json.eventId)
+            this._paraBlockHeight = marshal.int.fromJSON(json.paraBlockHeight)
+        }
     }
-  }
 
-  get eventName(): FarmLifeStateEventName {
-    assert(this._eventName != null, 'uninitialized access')
-    return this._eventName
-  }
-
-  set eventName(value: FarmLifeStateEventName) {
-    this._eventName = value
-  }
-
-  get eventId(): string | undefined | null {
-    return this._eventId
-  }
-
-  set eventId(value: string | undefined | null) {
-    this._eventId = value
-  }
-
-  get paraBlockHeight(): number {
-    assert(this._paraBlockHeight != null, 'uninitialized access')
-    return this._paraBlockHeight
-  }
-
-  set paraBlockHeight(value: number) {
-    this._paraBlockHeight = value
-  }
-
-  toJSON(): object {
-    return {
-      eventName: this.eventName,
-      eventId: this.eventId,
-      paraBlockHeight: this.paraBlockHeight,
+    get eventName(): FarmLifeStateEventName {
+        assert(this._eventName != null, 'uninitialized access')
+        return this._eventName
     }
-  }
+
+    set eventName(value: FarmLifeStateEventName) {
+        this._eventName = value
+    }
+
+    get eventId(): string | undefined | null {
+        return this._eventId
+    }
+
+    set eventId(value: string | undefined | null) {
+        this._eventId = value
+    }
+
+    get paraBlockHeight(): number {
+        assert(this._paraBlockHeight != null, 'uninitialized access')
+        return this._paraBlockHeight
+    }
+
+    set paraBlockHeight(value: number) {
+        this._paraBlockHeight = value
+    }
+
+    toJSON(): object {
+        return {
+            eventName: this.eventName,
+            eventId: this.eventId,
+            paraBlockHeight: this.paraBlockHeight,
+        }
+    }
 }

@@ -127,7 +127,6 @@ export async function getNewSwap({
     swapperId: swapperId,
     fillerId: fillerId,
     allInvolvedAssetIds: [],
-    allInvolvedAssetRegistryIds: [],
     // allInvolvedAssetIds: [
     //   ...new Set([
     //     ...inputs.map((input) => input.assetId),
@@ -138,7 +137,6 @@ export async function getNewSwap({
     fillerType,
     operationType,
     paraBlockHeight,
-    paraTimestamp,
     event: ctx.batchState.state.batchEvents.get(eventId),
   });
 
@@ -188,8 +186,6 @@ export async function getNewSwap({
       })
     );
     swap.allInvolvedAssetIds.push(asset.id);
-    if (asset.assetRegistryId)
-      swap.allInvolvedAssetRegistryIds.push(asset.assetRegistryId);
   }
 
   // Process inputs using cached assets
@@ -207,8 +203,6 @@ export async function getNewSwap({
       })
     );
     swap.allInvolvedAssetIds.push(asset.id);
-    if (asset.assetRegistryId)
-      swap.allInvolvedAssetRegistryIds.push(asset.assetRegistryId);
   }
 
   // Process outputs using cached assets
@@ -226,17 +220,12 @@ export async function getNewSwap({
       })
     );
     swap.allInvolvedAssetIds.push(asset.id);
-    if (asset.assetRegistryId)
-      swap.allInvolvedAssetRegistryIds.push(asset.assetRegistryId);
   }
 
   swap.fees = feeEntities;
   swap.outputs = outputEntities;
   swap.inputs = inputsEntities;
   swap.allInvolvedAssetIds = [...new Set(swap.allInvolvedAssetIds)];
-  swap.allInvolvedAssetRegistryIds = [
-    ...new Set(swap.allInvolvedAssetRegistryIds),
-  ];
 
   return {
     swap,

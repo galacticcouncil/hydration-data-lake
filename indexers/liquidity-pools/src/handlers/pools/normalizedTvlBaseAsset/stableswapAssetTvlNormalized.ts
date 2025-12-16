@@ -15,11 +15,11 @@ export function processStableswapNormalizedTvl({
     ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
   );
 
+  // Build a map of pool historical data from the batch state
   const poolsHistDataMap = new Map(
-    assetsHistDataByBatchList.map((histDate) => [
-      histDate.poolHistoricalData.id,
-      histDate.poolHistoricalData,
-    ])
+    Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values()).map(
+      (poolHistData) => [poolHistData.id, poolHistData]
+    )
   );
 
   if (blockNumbersToProcess) {
@@ -62,9 +62,10 @@ export function processStableswapNormalizedTvl({
       })
     ).toFixed();
 
-    const poolHistData = poolsHistDataMap.get(
-      assetHistData.poolHistoricalData.id
-    );
+    // Extract poolId from asset historical data ID format: <poolId>-<assetId>-<blockHeight>
+    const poolId = assetHistData.id.split('-')[0];
+    const poolHistDataId = `${poolId}-${assetHistData.paraBlockHeight}`;
+    const poolHistData = poolsHistDataMap.get(poolHistDataId);
 
     if (poolHistData) {
       poolHistData.tvlTotalInRefAssetNorm =

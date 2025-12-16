@@ -121,9 +121,6 @@ export async function fetchStableswapHistoricalData({
           },
           relations: {
             pool: true,
-            assetsHistoricalData: {
-              stableswapAsset: true,
-            },
           },
         },
         {
@@ -133,15 +130,46 @@ export async function fetchStableswapHistoricalData({
       )
     : [];
 
+  // Query StableswapAssetHistoricalData separately since the relation was removed
+  const persistedStableswapAssetsHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        StableswapAssetHistoricalData,
+        {
+          where: {
+            paraBlockHeight: blockNumber,
+            stableswapAsset: {
+              pool: {
+                id: In([...allActiveStablewaps.keys()]),
+              },
+            },
+          },
+          relations: {
+            stableswapAsset: {
+              pool: true,
+            },
+          },
+        },
+        {
+          className: 'StableswapAssetHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
+
   const persistedStableswapAssetsHistDataMap = new Map<
     string,
     StableswapAssetHistoricalData[]
-  >(
-    persistedStableswapHistData.map((poolHisData) => [
-      poolHisData.pool.id,
-      poolHisData.assetsHistoricalData,
-    ])
-  );
+  >();
+
+  // Group asset historical data by pool ID
+  for (const assetHistData of persistedStableswapAssetsHistData) {
+    const poolId = assetHistData.stableswapAsset.pool.id;
+    if (!persistedStableswapAssetsHistDataMap.has(poolId)) {
+      persistedStableswapAssetsHistDataMap.set(poolId, []);
+    }
+    persistedStableswapAssetsHistDataMap.get(poolId)!.push(assetHistData);
+  }
 
   const allStableswapHistDataMap = new Map<string, StableswapHistoricalData>([
     ...persistedStableswapHistData.map(
@@ -156,24 +184,8 @@ export async function fetchStableswapHistoricalData({
     ),
   ]);
 
-  allStableswapHistDataMap.forEach((poolData, poolId) => {
-    poolData.assetsHistoricalData = [
-      ...new Map([
-        ...(persistedStableswapAssetsHistDataMap.get(poolId) || []).map(
-          (sAssetHistData): [string, StableswapAssetHistoricalData] => [
-            sAssetHistData.id,
-            sAssetHistData,
-          ]
-        ),
-        ...(cachedStableswapAssetsHistDataByPoolMap.get(poolId) || []).map(
-          (sAssetHistData): [string, StableswapAssetHistoricalData] => [
-            sAssetHistData.id,
-            sAssetHistData,
-          ]
-        ),
-      ]).values(),
-    ];
-  });
+  // Note: assetsHistoricalData relation was removed from StableswapHistoricalData
+  // Asset historical data is now accessed separately via StableswapAssetHistoricalData queries
 
   return allStableswapHistDataMap;
 }
@@ -304,13 +316,37 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
           },
           relations: {
             pool: true,
-            assetsHistoricalData: {
-              stableswapAsset: true,
-            },
           },
         },
         {
           className: 'StableswapHistoricalData',
+          originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+        }
+      )
+    : [];
+
+  // Query StableswapAssetHistoricalData separately since the relation was removed
+  const persistedStableswapAssetsHistData = ctx.appConfig
+    .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+    ? await ctx.storeUtils.findWithLogs(
+        StableswapAssetHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+            stableswapAsset: {
+              pool: {
+                id: In([...allActiveStablewaps.keys()]),
+              },
+            },
+          },
+          relations: {
+            stableswapAsset: {
+              pool: true,
+            },
+          },
+        },
+        {
+          className: 'StableswapAssetHistoricalData',
           originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
         }
       )
@@ -321,21 +357,29 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
     Map<string, StableswapAssetHistoricalData[]>
   >();
 
-  for (const stableswapHistData of persistedStableswapHistData) {
-    if (
-      !persistedStableswapAssetsHistDataMap.has(
-        stableswapHistData.paraBlockHeight
-      )
-    ) {
+  for (const assetHistData of persistedStableswapAssetsHistData) {
+    const poolId = assetHistData.stableswapAsset.pool.id;
+    if (!persistedStableswapAssetsHistDataMap.has(assetHistData.paraBlockHeight)) {
       persistedStableswapAssetsHistDataMap.set(
-        stableswapHistData.paraBlockHeight,
+        assetHistData.paraBlockHeight,
         new Map()
       );
     }
 
+    if (
+      !persistedStableswapAssetsHistDataMap
+        .get(assetHistData.paraBlockHeight)!
+        .has(poolId)
+    ) {
+      persistedStableswapAssetsHistDataMap
+        .get(assetHistData.paraBlockHeight)!
+        .set(poolId, []);
+    }
+
     persistedStableswapAssetsHistDataMap
-      .get(stableswapHistData.paraBlockHeight)!
-      .set(stableswapHistData.pool.id, stableswapHistData.assetsHistoricalData);
+      .get(assetHistData.paraBlockHeight)!
+      .get(poolId)!
+      .push(assetHistData);
   }
 
   const allStableswapHistDataMap = new Map<string, StableswapHistoricalData>();
@@ -346,31 +390,8 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
     allStableswapHistDataMap.set(histData.id, histData);
   }
 
-  allStableswapHistDataMap.forEach((poolData, poolId) => {
-    poolData.assetsHistoricalData = [
-      ...new Map([
-        ...(
-          ((persistedStableswapAssetsHistDataMap.get(
-            poolData.paraBlockHeight
-          ) || new Map<string, StableswapHistoricalData>())!.get(
-            poolData.pool.id
-          ) || []) as StableswapAssetHistoricalData[]
-        ).map((sAssetHistData): [string, StableswapAssetHistoricalData] => [
-          sAssetHistData.id,
-          sAssetHistData,
-        ]),
-        ...(
-          ((cachedStableswapAssetsHistDataByPoolMap.get(
-            poolData.paraBlockHeight
-          ) || new Map())!.get(poolData.pool.id) ||
-            []) as StableswapAssetHistoricalData[]
-        ).map((sAssetHistData): [string, StableswapAssetHistoricalData] => [
-          sAssetHistData.id,
-          sAssetHistData,
-        ]),
-      ]).values(),
-    ];
-  });
+  // Note: assetsHistoricalData relation was removed from StableswapHistoricalData
+  // Asset historical data is now accessed separately via StableswapAssetHistoricalData queries
 
   const histDataPerBlock = new Map<
     number,
