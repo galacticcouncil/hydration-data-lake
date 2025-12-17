@@ -50,12 +50,15 @@ export async function initAllOmnipoolLiquidityPosiotions(
 
   await handleCommonAssetAccountBalances({
     ctx,
-    accountIdsToProcess: new Map([
-      [
-        processingBlockHeader.height,
-        new Set(positionsToSave.map((p) => p.account.id)),
-      ],
-    ]),
+    accountIdsToProcess: {
+      accountIdsWithCommonAssetBalanceChanges: new Map([
+        [
+          processingBlockHeader.height,
+          new Set(positionsToSave.map((p) => p.account.id)),
+        ],
+      ]),
+      allProcessedAccountsPerBlock: new Map(),
+    },
   });
 
   await ctx.storeUtils.upsertWithBatches(

@@ -37,14 +37,34 @@ type AccountPositionBalancesPerBlockPerAsset = Map<
 >;
 
 export async function handleCommonAssetAccountBalances({
-  accountIdsToProcess = new Map(),
+  accountIdsToProcess = {
+    accountIdsWithCommonAssetBalanceChanges: new Map(),
+    allProcessedAccountsPerBlock: new Map(),
+  },
   ctx,
 }: {
-  accountIdsToProcess?: Map<number, Set<string>>;
+  accountIdsToProcess?: {
+    accountIdsWithCommonAssetBalanceChanges: Map<number, Set<string>>;
+    allProcessedAccountsPerBlock: Map<number, Set<string>>;
+  };
   ctx: SqdProcessorContext<Store>;
-}) {
+}): Promise<Map<number, Set<string>>> {
+  const {
+    accountIdsWithCommonAssetBalanceChanges,
+    allProcessedAccountsPerBlock,
+  } = accountIdsToProcess;
+
+  const addAccountToProcessedAccountsPerBlock = (
+    blockHeight: number,
+    accountId: string
+  ) => {
+    if (!allProcessedAccountsPerBlock.has(blockHeight))
+      allProcessedAccountsPerBlock.set(blockHeight, new Set());
+    allProcessedAccountsPerBlock.get(blockHeight)?.add(accountId);
+  };
+
   const allInvolvedAccountsInBatchSet: Set<string> = new Set(
-    Array.from(accountIdsToProcess.values())
+    Array.from(accountIdsWithCommonAssetBalanceChanges.values())
       .map((blockSlot) => Array.from(blockSlot.values()))
       .flat()
   );
@@ -54,7 +74,8 @@ export async function handleCommonAssetAccountBalances({
 
   blocksLoop: for (const block of ctx.blocks) {
     const allInvolvedAccountsInBlockSet: Set<string> =
-      accountIdsToProcess.get(block.header.height) ?? new Set();
+      accountIdsWithCommonAssetBalanceChanges.get(block.header.height) ??
+      new Set();
 
     if (!accountBalancesPerBlock.has(block.header.height))
       accountBalancesPerBlock.set(block.header.height, {
@@ -70,22 +91,42 @@ export async function handleCommonAssetAccountBalances({
       if (event.args.from) {
         allInvolvedAccountsInBlockSet.add(event.args.from);
         allInvolvedAccountsInBatchSet.add(event.args.from);
+        addAccountToProcessedAccountsPerBlock(
+          block.header.height,
+          event.args.from
+        );
       }
       if (event.args.to) {
         allInvolvedAccountsInBlockSet.add(event.args.to);
         allInvolvedAccountsInBatchSet.add(event.args.to);
+        addAccountToProcessedAccountsPerBlock(
+          block.header.height,
+          event.args.to
+        );
       }
       if (event.args.who) {
         allInvolvedAccountsInBlockSet.add(event.args.who);
         allInvolvedAccountsInBatchSet.add(event.args.who);
+        addAccountToProcessedAccountsPerBlock(
+          block.header.height,
+          event.args.who
+        );
       }
       if (event.args.swapper) {
         allInvolvedAccountsInBlockSet.add(event.args.swapper);
         allInvolvedAccountsInBatchSet.add(event.args.swapper);
+        addAccountToProcessedAccountsPerBlock(
+          block.header.height,
+          event.args.swapper
+        );
       }
       if (event.args.filler) {
         allInvolvedAccountsInBlockSet.add(event.args.filler);
         allInvolvedAccountsInBatchSet.add(event.args.filler);
+        addAccountToProcessedAccountsPerBlock(
+          block.header.height,
+          event.args.filler
+        );
       }
     }
 
@@ -225,5 +266,5 @@ export async function handleCommonAssetAccountBalances({
       }
     }
   }
+  return allProcessedAccountsPerBlock;
 }
-
