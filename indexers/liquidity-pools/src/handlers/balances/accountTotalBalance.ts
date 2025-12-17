@@ -89,17 +89,15 @@ export async function handleAccountTotalBalance({
      * transferable balance.
      */
     if (assetBalance.asset.resourceType === ResourceType.Debt) {
-      accountTotalBalance.totalTransferableNorm = BigNumber(
+      const totalBalanceWithoutDebt = BigNumber(
         accountTotalBalance.totalTransferableNorm
-      )
-        .minus(assetBalance.transferableInRefAssetNorm || '0')
-        .toFixed();
+      ).minus(assetBalance.transferableInRefAssetNorm || '0');
 
-      accountTotalBalance.totalDebtNorm = BigNumber(
-        accountTotalBalance.totalDebtNorm || '0'
-      )
-        .plus(assetBalance.transferableInRefAssetNorm || '0')
-        .toFixed();
+      accountTotalBalance.totalTransferableNorm = (
+        totalBalanceWithoutDebt.isLessThan(0)
+          ? BigNumber(0)
+          : totalBalanceWithoutDebt
+      ).toFixed();
     } else {
       accountTotalBalance.totalTransferableNorm = BigNumber(
         accountTotalBalance.totalTransferableNorm
