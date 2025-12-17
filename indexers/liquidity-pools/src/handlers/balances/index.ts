@@ -1,7 +1,10 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { handleCommonAssetAccountBalances } from './commonAssetBalances';
-import { handleMmAssetAccountBalancesPerBlock } from './moneyMarketAssetBalances';
+import {
+  handleDebtAssetBalancesForAccounts,
+  handleMmAssetAccountBalancesPerBlock,
+} from './moneyMarketAssetBalances';
 import { EventName } from '../../parsers/types/events';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EvmEventName } from '../../model';
@@ -24,7 +27,15 @@ export async function handleAssetAccountBalances(
 ) {
   const accountIdsToProcess = await handleMmAssetAccountBalancesPerBlock(ctx);
 
-  await handleCommonAssetAccountBalances({ accountIdsToProcess, ctx });
+  const allProcessedAccountsPerBlock = await handleCommonAssetAccountBalances({
+    accountIdsToProcess,
+    ctx,
+  });
+
+  await handleDebtAssetBalancesForAccounts({
+    allProcessedAccountsPerBlock,
+    ctx,
+  });
 
   await handleAccountTotalBalance({ ctx });
 

@@ -11,6 +11,7 @@ import {
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import { FindOptionsRelations } from 'typeorm';
 import { AssetHubManager } from '../../utils/assetHubManager';
+import { boolean } from '../../model/generated/marshal';
 
 export async function getOrCreateAsset({
   id,
@@ -342,4 +343,15 @@ export async function getOrCreateMoneyMarketAsset({
   ctx.batchState.state.assetsAll.set(newAsset.id, newAsset);
 
   return newAsset;
+}
+
+export async function getAllDebtAssets(
+  ctx: SqdProcessorContext<Store>,
+  ensureFromDb: boolean = false
+) {
+  const assetsAllBatch = ctx.batchState.state.assetsAll;
+  const debtAssets = [...assetsAllBatch.values()].filter(
+    (a) => a.resourceType === ResourceType.Debt
+  );
+  return debtAssets;
 }

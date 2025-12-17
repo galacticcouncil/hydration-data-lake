@@ -28,9 +28,8 @@ import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/o
 import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
 import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
 import { handleUniquesEvents } from '../../../handlers/uniques';
-import {
-  initAllOmnipoolLiquidityMiningDeposits
-} from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
+import { initAllOmnipoolLiquidityMiningDeposits } from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
+import { handleDebtAssetBalancesForAccounts } from '../../../handlers/balances/moneyMarketAssetBalances';
 
 export async function accountBalancesAndLiquidityPositionsReaggregation(
   ctx: SqdProcessorContext<Store>
@@ -186,6 +185,31 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
       )
     ).map((p) => [p.id, p])
   );
+
+  const allProcessedAccountsPerBlock = new Map<number, Set<string>>();
+
+  for (const balanceHistData of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
+    if (!allProcessedAccountsPerBlock.has(balanceHistData.paraBlockHeight))
+      allProcessedAccountsPerBlock.set(
+        balanceHistData.paraBlockHeight,
+        new Set()
+      );
+
+    allProcessedAccountsPerBlock
+      .get(balanceHistData.paraBlockHeight)
+      ?.add(balanceHistData.account.id);
+  }
+
+  console.time('handleDebtAssetBalancesForAccounts');
+  await handleDebtAssetBalancesForAccounts({
+    allProcessedAccountsPerBlock,
+    ctx,
+  });
+  console.timeEnd('handleDebtAssetBalancesForAccounts');
+
+  console.time('initAllXykLiquidityMiningDeposits');
+  await initAllXykLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllXykLiquidityMiningDeposits');
 
   console.time('initAllXykLiquidityMiningDeposits');
   await initAllXykLiquidityMiningDeposits(ctx);
