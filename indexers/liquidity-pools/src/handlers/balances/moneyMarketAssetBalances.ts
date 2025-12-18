@@ -251,9 +251,15 @@ export async function handleMmAssetAccountBalancesPerBlock(
 
           let assetInId = assetBalance.asset.id;
 
-          if (assetBalance.asset.resourceType === ResourceType.Debt && !!assetBalance.asset.underlyingAssetId) {
-            let assetFull: Asset | undefined = assetBalance.asset;
-            let underlyingAsset: Asset | undefined = ctx.batchState.state.assetsAll.get(assetBalance.asset.underlyingAssetId)
+          if (
+            assetBalance.asset.resourceType === ResourceType.Debt &&
+            !!assetBalance.asset.underlyingAssetId
+          ) {
+            const assetFull: Asset | undefined = assetBalance.asset;
+            let underlyingAsset: Asset | undefined =
+              ctx.batchState.state.assetsAll.get(
+                assetBalance.asset.underlyingAssetId
+              );
             if (!underlyingAsset) {
               /**
                * We need this re-fetch to be sure that cached Asset contains data
@@ -272,20 +278,22 @@ export async function handleMmAssetAccountBalancesPerBlock(
               //     originCallFn: 'handleMmAssetAccountBalancesPerBlock',
               //   }
               // );
-              underlyingAsset = await ctx.storeUtils.findOneWithLogs(
-                Asset,
-                {
-                  where: { assetRegistryId: assetFull.underlyingAssetId as string },
-                  relations: {},
-                },
-                {
-                  className: 'Asset',
-                  originCallFn: 'handleMmAssetAccountBalancesPerBlock',
-                }
-              ) ?? undefined;
+              underlyingAsset =
+                (await ctx.storeUtils.findOneWithLogs(
+                  Asset,
+                  {
+                    where: {
+                      assetRegistryId: assetFull.underlyingAssetId as string,
+                    },
+                    relations: {},
+                  },
+                  {
+                    className: 'Asset',
+                    originCallFn: 'handleMmAssetAccountBalancesPerBlock',
+                  }
+                )) ?? undefined;
             }
-            if (underlyingAsset)
-              assetInId = underlyingAsset.id;
+            if (underlyingAsset) assetInId = underlyingAsset.id;
           }
 
           const assetSpotPrice = getAssetsPairPrice({
@@ -336,7 +344,15 @@ export async function handleDebtAssetBalancesForAccounts({
       const assetSpotPricesAtBlock: Map<string, string | null> = new Map();
 
       for (const asset of allExistingDebtAssets) {
-        const debtTokenUnderliningAsset = asset.underlyingAsset;
+        if (!asset.underlyingAssetId) continue;
+
+        const debtTokenUnderliningAsset = await getOrCreateAsset({
+          id: asset.underlyingAssetId,
+          ctx,
+          ensure: true,
+          blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
+        });
+
         if (!debtTokenUnderliningAsset) continue;
 
         assetSpotPricesAtBlock.set(
@@ -388,7 +404,7 @@ export async function handleDebtAssetBalancesForAccounts({
             const assetBalanceHistData =
               await getOrCreateAccountAssetBalanceHistoricalData({
                 ctx,
-                asset,
+                assetId: asset.id,
                 account,
                 blockHeader:
                   ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
