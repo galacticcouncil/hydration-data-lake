@@ -8,6 +8,7 @@ import {
   AssetSpotPriceHistoricalData,
   Block,
   MoneyMarketEvent,
+  OmnipoolAsset,
 } from '../../../model';
 import { handleRelayChainBlocks } from '../../../handlers/relayChain';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
@@ -25,9 +26,12 @@ import { handleAccountTotalBalance } from '../../../handlers/balances/accountTot
 import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
 import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
 import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
-import { initAllOmnipoolLiquidityMiningDeposits } from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
 import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
 import { handleUniquesEvents } from '../../../handlers/uniques';
+import {
+  initAllOmnipoolLiquidityMiningDeposits
+} from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
+import { handleDebtAssetBalancesForAccounts } from '../../../handlers/balances/moneyMarketAssetBalances';
 
 export async function accountBalancesAndLiquidityPositionsReaggregation(
   ctx: SqdProcessorContext<Store>
@@ -45,10 +49,6 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
       console.time('processExtrinsics');
       await ChainActivityTraceManager.processExtrinsics(ctx);
       console.timeEnd('processExtrinsics');
-
-      // console.time('saveActivityTraceEntities');
-      // await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
-      // console.timeEnd('saveActivityTraceEntities');
 
       console.time('getParsedEventsData');
       /**
@@ -170,6 +170,31 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
       )
     ).map((p) => [p.id, p])
   );
+
+  const allProcessedAccountsPerBlock = new Map<number, Set<string>>();
+
+  for (const balanceHistData of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
+    if (!allProcessedAccountsPerBlock.has(balanceHistData.paraBlockHeight))
+      allProcessedAccountsPerBlock.set(
+        balanceHistData.paraBlockHeight,
+        new Set()
+      );
+
+    allProcessedAccountsPerBlock
+      .get(balanceHistData.paraBlockHeight)
+      ?.add(balanceHistData.accountId);
+  }
+
+  console.time('handleDebtAssetBalancesForAccounts');
+  await handleDebtAssetBalancesForAccounts({
+    allProcessedAccountsPerBlock,
+    ctx,
+  });
+  console.timeEnd('handleDebtAssetBalancesForAccounts');
+
+  console.time('initAllXykLiquidityMiningDeposits');
+  await initAllXykLiquidityMiningDeposits(ctx);
+  console.timeEnd('initAllXykLiquidityMiningDeposits');
 
   console.time('initAllXykLiquidityMiningDeposits');
   await initAllXykLiquidityMiningDeposits(ctx);

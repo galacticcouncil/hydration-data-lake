@@ -15,7 +15,7 @@ import {
   getOrCreateAccountTotalBalanceHistoricalData,
 } from './accountAssetBalance';
 import { getOrCreateAccount } from '../accounts';
-import { getOrCreateAsset } from '../assets/asset';
+import { getAllDebtAssets, getOrCreateAsset } from '../assets/asset';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
@@ -41,6 +41,26 @@ export async function handleMmAssetAccountBalancesPerBlock(
     number,
     Set<string>
   >();
+
+  const allProcessedAccountsPerBlock = new Map<number, Set<string>>();
+
+  const addAccountToAccountIdsWithCommonAssetBalanceChanges = (
+    blockHeight: number,
+    accountId: string
+  ) => {
+    if (!accountIdsWithCommonAssetBalanceChanges.has(blockHeight))
+      accountIdsWithCommonAssetBalanceChanges.set(blockHeight, new Set());
+    accountIdsWithCommonAssetBalanceChanges.get(blockHeight)?.add(accountId);
+  };
+
+  const addAccountToProcessedAccountsPerBlock = (
+    blockHeight: number,
+    accountId: string
+  ) => {
+    if (!allProcessedAccountsPerBlock.has(blockHeight))
+      allProcessedAccountsPerBlock.set(blockHeight, new Set());
+    allProcessedAccountsPerBlock.get(blockHeight)?.add(accountId);
+  };
 
   const getBlockHeaderByBlockHeight = (
     blockHeight: number
@@ -127,15 +147,14 @@ export async function handleMmAssetAccountBalancesPerBlock(
         assets,
         account,
       });
+
+      addAccountToProcessedAccountsPerBlock(blockHeader.height, accountId);
+
       if (isCommonAssetInvolved) {
-        if (!accountIdsWithCommonAssetBalanceChanges.has(blockHeader.height))
-          accountIdsWithCommonAssetBalanceChanges.set(
-            blockHeader.height,
-            new Set()
-          );
-        accountIdsWithCommonAssetBalanceChanges
-          .get(blockHeader.height)
-          ?.add(accountId);
+        addAccountToAccountIdsWithCommonAssetBalanceChanges(
+          blockHeader.height,
+          accountId
+        );
       }
     }
   }
@@ -294,5 +313,108 @@ export async function handleMmAssetAccountBalancesPerBlock(
     );
   }
 
-  return accountIdsWithCommonAssetBalanceChanges;
+  return {
+    accountIdsWithCommonAssetBalanceChanges,
+    allProcessedAccountsPerBlock,
+  };
+}
+
+export async function handleDebtAssetBalancesForAccounts({
+  allProcessedAccountsPerBlock = new Map(),
+  ctx,
+}: {
+  allProcessedAccountsPerBlock: Map<number, Set<string>>;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  if (allProcessedAccountsPerBlock.size === 0) return;
+
+  const allExistingDebtAssets = await getAllDebtAssets(ctx);
+
+  await pMap(
+    Array.from(allProcessedAccountsPerBlock.entries()),
+    async ([blockHeight, accountIds]) => {
+      const assetSpotPricesAtBlock: Map<string, string | null> = new Map();
+
+      for (const asset of allExistingDebtAssets) {
+        const debtTokenUnderliningAsset = asset.underlyingAsset;
+        if (!debtTokenUnderliningAsset) continue;
+
+        assetSpotPricesAtBlock.set(
+          asset.id,
+          getAssetsPairPrice({
+            assetInId: debtTokenUnderliningAsset.id,
+            blockHeight,
+            ctx,
+          })
+        );
+      }
+
+      await pMap(
+        Array.from(accountIds.values()),
+        async (accountId) => {
+          const account = await getOrCreateAccount({ ctx, id: accountId });
+          if (!account.boundEvmAddress) {
+            return;
+          }
+
+          for (const asset of allExistingDebtAssets) {
+            if (
+              ctx.batchState.state.accountAssetBalanceHistoricalData.has(
+                `${accountId}-${asset.id}-${blockHeight}`
+              )
+            ) {
+              // To prevent duplicated balance check in case this asset/account
+              // pair already processed in previous steps
+              continue;
+            }
+
+            const balance =
+              await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+                {
+                  contractAddress: asset.evmAddress!,
+                  accountAddress: account.boundEvmAddress!,
+                  blockNumber: blockHeight,
+                }
+              );
+
+            if (
+              !balance ||
+              !assetSpotPricesAtBlock.has(asset.id) ||
+              !assetSpotPricesAtBlock.get(asset.id)
+            ) {
+              continue;
+            }
+
+            const assetBalanceHistData =
+              await getOrCreateAccountAssetBalanceHistoricalData({
+                ctx,
+                asset,
+                account,
+                blockHeader:
+                  ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
+                fetchFromDb: false,
+              });
+
+            assetBalanceHistData.transferable = balance;
+            assetBalanceHistData.transferableInRefAssetNorm = asset.decimals
+              ? calcPriceNormalized({
+                  amount: balance,
+                  assetDecimals: asset.decimals,
+                  spotPrice: assetSpotPricesAtBlock.get(asset.id)!,
+                })
+              : '0';
+
+            ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+              assetBalanceHistData.id,
+              assetBalanceHistData
+            );
+          }
+        },
+        {
+          concurrency: 5,
+        }
+      );
+    },
+    { concurrency: ctx.appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
+  );
 }

@@ -1,26 +1,26 @@
+import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-
+import {
+  StableswapLiquidityAddedData,
+  StableswapLiquidityRemovedData,
+} from '../../../../parsers/batchBlocksParser/types';
 import {
   LiquidityActionEvent,
   StableswapAssetLiquidityAmount,
   StableswapLiquidityEvent,
 } from '../../../../model';
+import { getOrCreateStableswap } from './stablepool';
 import {
-  BatchBlocksParsedDataManager,
-} from '../../../../parsers/batchBlocksParser';
-import {
-  StableswapLiquidityAddedData,
-  StableswapLiquidityRemovedData,
-} from '../../../../parsers/batchBlocksParser/types';
-import { EventName } from '../../../../parsers/types/events';
-import { SqdProcessorContext } from '../../../../processor';
+  EventName,
+  StableswapLiquidityRemovedEventParams,
+} from '../../../../parsers/types/events';
+import { getOrCreateAsset } from '../../../assets/asset';
+import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
 import {
   getOrderedListByBlockNumber,
   isUnifiedEventsSupportSpecVersion,
 } from '../../../../utils/helpers';
-import { getOrCreateAsset } from '../../../assets/asset';
-import { handleStablepoolVolumeUpdates } from '../../volumes/stablepoolVolume';
-import { getOrCreateStableswap } from './stablepool';
+import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 
 export async function handleStablepoolLiquidityEvents(
   ctx: SqdProcessorContext<Store>,
@@ -49,12 +49,8 @@ export async function handleStablepoolLiquidityEvents(
     );
   }
 
-  await ctx.store.save([
-    ...ctx.batchState.state.stableswapPools.values(),
-  ]);
-  await ctx.store.save([
-    ...ctx.batchState.state.stableswapAssets.values(),
-  ]);
+  await ctx.store.save([...ctx.batchState.state.stableswapPools.values()]);
+  await ctx.store.save([...ctx.batchState.state.stableswapAssets.values()]);
 
   await ctx.store.save([
     ...ctx.batchState.state.stablepoolBatchLiquidityActions.values(),
@@ -86,7 +82,12 @@ export async function stablepoolLiquidityAddedRemoved(
 
   if (!pool) return;
 
-  const fee = BigInt(0);
+  const fee =
+    eventCallData.eventData.metadata.name ===
+    EventName.Stableswap_LiquidityRemoved
+      ? (eventParams as StableswapLiquidityRemovedEventParams).fee
+      : BigInt(0);
+
   let assetAmounts = [];
 
   const actionType =

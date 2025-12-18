@@ -275,12 +275,12 @@ export async function getOrCreateAsset({
    * pre-created before indexing start point.
    */
 
-  if (!blockHeader || !assetRegistryId){ 
+  if (!blockHeader || !assetRegistryId){
     console.log(`getOrCreateAsset :: Missing blockHeader or assetRegistryId for asset creation.`);
     return null
   }; //TODO fix this
   if(+assetRegistryId > Number.MAX_SAFE_INTEGER) {
-    console.log(`getOrCreateAsset :: assetRegistryId ${assetRegistryId} is too large to process. Skipping...`); 
+    console.log(`getOrCreateAsset :: assetRegistryId ${assetRegistryId} is too large to process. Skipping...`);
     return null;
   }
   const storageData = await parsers.storage.assetRegistry.getAsset(
@@ -336,7 +336,7 @@ export async function getOrCreateAsset({
     });
     if (bondDetails) {
       bondUnderlyingAsset = await getOrCreateAsset({
-      assetRegistryId: bondDetails.underlyingAsset,
+        assetRegistryId: bondDetails.underlyingAsset,
         ctx,
         ensure: true,
         blockHeader,
@@ -547,4 +547,15 @@ export async function getOrCreateMoneyMarketAsset({
   ctx.batchState.state.assetsAll.set(newAsset.id, newAsset);
 
   return newAsset;
+}
+
+export async function getAllDebtAssets(
+  ctx: SqdProcessorContext<Store>,
+  ensureFromDb: boolean = false
+) {
+  const assetsAllBatch = ctx.batchState.state.assetsAll;
+  const debtAssets = [...assetsAllBatch.values()].filter(
+    (a) => a.resourceType === ResourceType.Debt
+  );
+  return debtAssets;
 }
