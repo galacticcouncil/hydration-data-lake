@@ -771,8 +771,6 @@ type Xykpool @entity {
   isDestroyed: Boolean
   lifeStates: [XykpoolLifeState!]!
 
-  historicalBlockPrices: [XykpoolPriceHistoricalData!]!
-    @derivedFrom(field: "pool")
   historicalVolume: [XykpoolVolumeHistoricalData!]! @derivedFrom(field: "pool")
   historicalData: [XykpoolHistoricalData!]! @derivedFrom(field: "pool")
 }
@@ -790,18 +788,6 @@ type XykpoolDestroyedData {
 type XykpoolLifeState {
   created: XykpoolCreatedData!
   destroyed: XykpoolDestroyedData
-}
-
-type XykpoolPriceHistoricalData @entity {
-  "PoolId-paraBlockHeight"
-  id: ID!
-  pool: Xykpool!
-  assetAId: String!
-  assetBId: String!
-  assetABalance: BigInt!
-  assetBBalance: BigInt!
-
-  paraBlockHeight: Int! @index
 }
 
 type XykpoolVolumeHistoricalData @entity {
