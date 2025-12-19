@@ -284,7 +284,7 @@ export class LatestProcessedDataCacheManager {
       const pgPool = CommonPgPool.getInstance();
 
       const sql = `
-        SELECT DISTINCT ON (asset_in_id)
+        SELECT DISTINCT ON (pool_id)
           id,
           pool_id,
           asset_a_id,

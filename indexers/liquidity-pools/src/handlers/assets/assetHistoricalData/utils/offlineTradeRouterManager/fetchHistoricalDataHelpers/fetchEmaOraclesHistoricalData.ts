@@ -24,8 +24,7 @@ export async function fetchEmaOracleEntriesHistoricalData({
           where: {
             paraBlockHeight: blockNumber,
           },
-          relations: {
-          },
+          relations: {},
         },
         {
           className: 'EmaOracleEntryHistoricalData',
@@ -74,8 +73,6 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver(
         {
           where: {
             paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-          },
-          relations: {
           },
         },
         {
