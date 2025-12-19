@@ -1,7 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_, BooleanColumn as BooleanColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import * as marshal from "./marshal"
 import {XykpoolLifeState} from "./_xykpoolLifeState"
-import {XykpoolPriceHistoricalData} from "./xykpoolPriceHistoricalData.model"
 import {XykpoolVolumeHistoricalData} from "./xykpoolVolumeHistoricalData.model"
 import {XykpoolHistoricalData} from "./xykpoolHistoricalData.model"
 
@@ -53,9 +52,6 @@ export class Xykpool {
 
     @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new XykpoolLifeState(undefined, marshal.nonNull(val)))}, nullable: false})
     lifeStates!: (XykpoolLifeState)[]
-
-    @OneToMany_(() => XykpoolPriceHistoricalData, e => e.pool)
-    historicalBlockPrices!: XykpoolPriceHistoricalData[]
 
     @OneToMany_(() => XykpoolVolumeHistoricalData, e => e.pool)
     historicalVolume!: XykpoolVolumeHistoricalData[]
