@@ -17,16 +17,8 @@ import { getOrCreateAsset } from '../../../assets/asset';
 import {
   OmnipoolLiquidityPosition,
   OmnipoolLiquidityPositionStatus,
-  XykYieldFarmDeposit,
-  YieldFarmDepositStatus,
 } from '../../../../model';
 import parsers from '../../../../parsers';
-import { XykpoolLMDepositData } from '../../../../parsers/types/storage/xykpoolLiquidityMining';
-import { UniquesAssetData } from '../../../../parsers/types/storage/uniques';
-import {
-  getNewXykLiquidityMiningDepositEvent,
-  getOrCreateXykLiquidityMiningDeposit,
-} from '../../xykpool/liquidityMining/depositsUtils';
 import pMap from 'p-map';
 import { getOrCreateAccount } from '../../../accounts';
 

@@ -21,9 +21,7 @@ import {
   getPriceRouteDecorated,
   getXykpoolShareTokenDecimals,
 } from '../../../utils/helpers';
-import {
-  LatestProcessedDataCacheManager,
-} from '../../../utils/latestProcessedDataCacheManager';
+import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
 import { PoolType } from './utils/offlineSdk/sdk/src';
@@ -157,7 +155,9 @@ async function processAssetSpotPrices({
   const calcAssetUsdPriceNormalised = async () => {
     let assetIdToProcess = asset.assetRegistryId;
 
-    if ([ResourceType.Debt, ResourceType.Collateral].includes(asset.resourceType)) {
+    if (
+      [ResourceType.Debt, ResourceType.Collateral].includes(asset.resourceType)
+    ) {
       const underlyingAsset = asset.underlyingAssetId
         ? await getOrCreateAsset({
             id: asset.underlyingAssetId,
@@ -170,10 +170,10 @@ async function processAssetSpotPrices({
     }
 
     if (!assetIdToProcess) {
-      console.log({ asset });
-      console.log(
-        `Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetRegistryId.`
-      );
+      // console.log({ asset });
+      // console.log(
+      //   `Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetRegistryId.`
+      // );
       return;
     }
 
@@ -218,9 +218,9 @@ async function processAssetSpotPrices({
         asset.assetRegistryId === undefined ||
         asset.assetRegistryId === null
       ) {
-        console.log(
-          `Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetOut or assetRegistryId.`
-        );
+        // console.log(
+        //   `Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetOut or assetRegistryId.`
+        // );
         continue;
       }
 
@@ -341,19 +341,6 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
   cachedIndexedRecords: Map<string, AssetSpotPriceHistoricalData[]>;
   ctx: SqdProcessorContext<Store>;
 }) {
-  // let previousItem = Array.from(
-  //   (
-  //     cachedRecords || ctx.batchState.state.assetsSpotPriceHistoricalDataBatch
-  //   ).values()
-  // )
-  //   .filter(
-  //     (i) =>
-  //       i.assetIn.id === currentRecord.assetIn.id &&
-  //       i.assetOut.id === currentRecord.assetOut.id
-  //   )
-  //   .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
-  //   .find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
-
   let previousItem = (
     cachedIndexedRecords.get(currentRecord.assetInId) || []
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);

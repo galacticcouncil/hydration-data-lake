@@ -28,6 +28,7 @@ import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLa
 import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/historicalDataLatest';
 import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
 import { ApiSupportPgClient } from '../../apiSupport/utils/timeSeriesSupportManager/apiSupportPgClient';
+import { getXykpoolHistDataWithUniqueData } from '../pools/pools/xykPool/historicalData';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -171,9 +172,37 @@ export class HistoricalDataManager {
      * ======
      */
 
-    await ctx.storeUtils.upsertWithBatches(
-      Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
-    );
+    /**
+     *  === XykpoolHistoricalData ===
+     */
+    if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+      await ctx.storeUtils.upsertWithBatches(
+        Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
+      );
+    } else {
+      await LatestProcessedDataCacheManager.getInstance().prefetchLastXykpoolHistDataItem(
+        ctx
+      );
+
+      const xykpoolHistDataToSaveList = Array.from(
+        (
+          await getXykpoolHistDataWithUniqueData(
+            ctx.batchState.state.xykPoolAllHistoricalData,
+            ctx
+          )
+        )?.values() || []
+      );
+
+      await ctx.storeUtils.upsertWithBatches(xykpoolHistDataToSaveList);
+
+      LatestProcessedDataCacheManager.getInstance().setLastXykpoolHistoricalDataItem(
+        xykpoolHistDataToSaveList
+      );
+    }
+
+    /**
+     * ======
+     */
 
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.lbpPoolAllHistoricalData.values())
@@ -331,6 +360,7 @@ export class HistoricalDataManager {
     );
 
     await ctx.storeUtils.upsertWithBatches(assetSpotPriceHistDataToSaveList);
+
     LatestProcessedDataCacheManager.getInstance().setLastAssetSpotPriceHistoricalDataItem(
       assetSpotPriceHistDataToSaveList
     );

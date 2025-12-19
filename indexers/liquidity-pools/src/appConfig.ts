@@ -148,7 +148,7 @@ class ConcurrencyConfig {
   readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 250;
+  readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 100;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly EVM_CONTRACT_CALL_RETRIES: number = 2;

@@ -3,11 +3,14 @@ import { Store } from '@subsquid/typeorm-store';
 import {
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
+  Xykpool,
+  XykpoolHistoricalData,
 } from '../model';
 import { AssetDynamicFee } from '../model/generated/_assetDynamicFee';
 import parsers from '../parsers';
 import { SqdProcessorContext } from '../processor';
 import { CommonPgPool } from './pgConnectionManagers/pgPool';
+import { getOrCreateXykPool } from '../handlers/pools/pools/xykPool/xykPool';
 
 // Type definitions for raw PostgreSQL query results
 interface RawAssetHistoricalDataRow {
@@ -29,6 +32,17 @@ interface RawAssetSpotPriceHistoricalDataRow {
   para_block_height: number;
 }
 
+interface RawXykpoolHistoricalDataRow {
+  id: string;
+  pool_id: string;
+  asset_a_id: string;
+  asset_b_id: string;
+  asset_a_balance: string;
+  asset_b_balance: string;
+  tvl_in_ref_asset_norm: string;
+  para_block_height: number;
+}
+
 export class LatestProcessedDataCacheManager {
   private static instance: LatestProcessedDataCacheManager;
 
@@ -39,6 +53,9 @@ export class LatestProcessedDataCacheManager {
     string,
     AssetSpotPriceHistoricalData
   > = new Map();
+
+  private xykpoolHistoricalDataItemsCache: Map<string, XykpoolHistoricalData> =
+    new Map();
 
   static getInstance(): LatestProcessedDataCacheManager {
     if (!LatestProcessedDataCacheManager.instance) {
@@ -241,6 +258,118 @@ export class LatestProcessedDataCacheManager {
   }
 
   /**
+   * Batch fetch latest asset spot price historical data using raw SQL with DISTINCT ON
+   * Replaces N sequential queries with 1 batch query
+   */
+  private async fetchLatestXykpoolHistDataBatch(
+    poolIds: string[],
+    maxBlockHeight: number,
+    ctx: SqdProcessorContext<Store>
+  ): Promise<XykpoolHistoricalData[]> {
+    const startTime = performance.now();
+
+    try {
+      // Validate inputs
+      if (!poolIds || poolIds.length === 0) {
+        console.warn(
+          '[WARN] fetchLatestAssetSpotPriceHistDataBatch called with empty poolIds'
+        );
+        return [];
+      }
+
+      if (!maxBlockHeight || maxBlockHeight < 0) {
+        throw new Error(`Invalid maxBlockHeight: ${maxBlockHeight}`);
+      }
+
+      const pgPool = CommonPgPool.getInstance();
+
+      const sql = `
+        SELECT DISTINCT ON (asset_in_id)
+          id,
+          pool_id,
+          asset_a_id,
+          asset_b_id,
+          asset_a_balance,
+          asset_b_balance,
+          tvl_in_ref_asset_norm,
+          para_block_height
+        FROM xykpool_historical_data
+        WHERE pool_id = ANY($1::text[])
+          AND para_block_height < $2
+        ORDER BY pool_id, para_block_height DESC
+      `;
+
+      const result = await pgPool.query<RawXykpoolHistoricalDataRow>(sql, [
+        poolIds,
+        maxBlockHeight,
+      ]);
+
+      const poolsMap = new Map<string, Xykpool>();
+
+      for (const row of result.rows) {
+        const poolEntity = await getOrCreateXykPool({
+          ctx,
+          id: row.pool_id,
+          ensure: false,
+        });
+        if (!poolEntity) continue;
+        poolsMap.set(row.pool_id, poolEntity);
+      }
+
+      // Map raw rows to entities
+      const entities = result.rows
+        .filter((row) => poolsMap.has(row.pool_id))
+        .map((row, index) => {
+          try {
+            return new XykpoolHistoricalData({
+              id: row.id,
+              pool: poolsMap.get(row.pool_id),
+              assetAId: row.asset_a_id,
+              assetBId: row.asset_b_id,
+              assetABalance: BigInt(row.asset_a_balance),
+              assetBBalance: BigInt(row.asset_b_balance),
+              tvlInRefAssetNorm: row.tvl_in_ref_asset_norm,
+              paraBlockHeight: row.para_block_height,
+            });
+          } catch (mappingError: any) {
+            console.error(
+              `[ERROR] Failed to map row ${index} for pool ${row.pool_id}:`,
+              mappingError,
+              row
+            );
+            throw new Error(
+              `Entity mapping failed for pool ${row.pool_id}: ${mappingError.message}`
+            );
+          }
+        });
+
+      const duration = performance.now() - startTime;
+      console.log(
+        `[PERF] fetchLatestAssetSpotPriceHistDataBatch: ` +
+          `${poolIds.length} assets, ${result.rows.length} results, ${duration.toFixed(2)}ms`
+      );
+
+      return entities;
+    } catch (error: any) {
+      const duration = performance.now() - startTime;
+      console.error(
+        `[ERROR] fetchLatestAssetSpotPriceHistDataBatch failed after ${duration.toFixed(2)}ms:`,
+        {
+          assetInIdsCount: poolIds?.length,
+          maxBlockHeight,
+          error: error.message,
+          stack: error.stack,
+        }
+      );
+
+      // Re-throw with context
+      throw new Error(
+        `Batch fetch failed for ${poolIds?.length} assets at block ${maxBlockHeight}: ${error.message}`
+      );
+    }
+  }
+
+  /**
    * ======================  Asset Historical Data =============================
    */
   async prefetchLastAssetHistDataItem(ctx: SqdProcessorContext<Store>) {
@@ -397,6 +526,77 @@ export class LatestProcessedDataCacheManager {
     assetInId: string
   ): AssetSpotPriceHistoricalData | undefined {
     return this.assetSpotPriceHistoricalDataItemsCache.get(assetInId);
+  }
+
+  /**
+   * ======================  XYK Pool Historical Data =============================
+   */
+  async prefetchLastXykpoolHistDataItem(ctx: SqdProcessorContext<Store>) {
+    if (this.xykpoolHistoricalDataItemsCache.size !== 0) return;
+    const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
+
+    const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
+      XykpoolHistoricalData,
+      { where: {} },
+      { className: 'XykpoolHistoricalData' }
+    );
+
+    if (!hasAnyRecord) {
+      console.log('XykpoolHistoricalData table is empty, skipping prefetch');
+      return;
+    }
+
+    const storageDataAllPools = (
+      await parsers.storage.xyk.getPoolShareTokenPairsMany({
+        block: currentBlockHeader,
+      })
+    ).filter((res) => !!res);
+
+    // Collect asset IDs (as assetInId for spot prices)
+    const poolIds = storageDataAllPools.map((pool) => pool.poolId);
+
+    if (poolIds.length === 0) {
+      console.log('No pools to prefetch for XykpoolHistoricalData');
+      return;
+    }
+
+    // OPTIMIZED: Single batch query instead of N sequential queries
+    const latestEntities = await this.fetchLatestXykpoolHistDataBatch(
+      poolIds,
+      currentBlockHeader.height,
+      ctx
+    );
+
+    this.setLastXykpoolHistoricalDataItem(latestEntities);
+  }
+
+  setLastXykpoolHistoricalDataItem(items: XykpoolHistoricalData[]) {
+    if (!items) return;
+
+    const xykpoolHistoryIndexByPoolId = new Map<
+      string,
+      XykpoolHistoricalData[]
+    >();
+
+    for (const i of items) {
+      if (!xykpoolHistoryIndexByPoolId.has(i.pool.id)) {
+        xykpoolHistoryIndexByPoolId.set(i.pool.id, []);
+      }
+      xykpoolHistoryIndexByPoolId.get(i.pool.id)!.push(i);
+    }
+
+    for (const [poolId, list] of xykpoolHistoryIndexByPoolId.entries()) {
+      const orderedList = list.sort(
+        (a, b) => b.paraBlockHeight - a.paraBlockHeight
+      );
+      this.xykpoolHistoricalDataItemsCache.set(poolId, orderedList[0]);
+    }
+  }
+
+  getLastXykpoolHistoricalDataItem(
+    poolId: string
+  ): XykpoolHistoricalData | undefined {
+    return this.xykpoolHistoricalDataItemsCache.get(poolId);
   }
 
   /**

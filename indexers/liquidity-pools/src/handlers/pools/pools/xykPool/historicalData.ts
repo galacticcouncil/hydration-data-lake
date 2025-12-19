@@ -6,12 +6,11 @@ import { Store } from '@subsquid/typeorm-store';
 
 import { XykpoolHistoricalData } from '../../../../model';
 import parsers from '../../../../parsers';
-import {
-  BatchBlocksParsedDataManager,
-} from '../../../../parsers/batchBlocksParser';
+import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import { SqdProcessorContext } from '../../../../processor';
 import { splitIntoBatches } from '../../../../utils/helpers';
 import { getOrCreateXykPool } from './xykPool';
+import { LatestProcessedDataCacheManager } from '../../../../utils/latestProcessedDataCacheManager';
 
 export async function handleXykPoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -79,9 +78,13 @@ export async function handleXykPoolHistoricalData(
             .map((assetData) => [`${assetData.assetId}`, assetData.data])
         );
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+        const block = ctx.batchState.getParaBlockFromCacheByHeight(
+          blockHeader.height
+        );
         if (!block) {
-          throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+          throw new Error(
+            `Block not found in cache for height ${blockHeader.height}`
+          );
         }
 
         const poolHistoricalDataEntity = new XykpoolHistoricalData({
@@ -109,20 +112,7 @@ export async function handleXykPoolHistoricalData(
     predefinedEntities.map((item) => [item.id, item])
   );
 
-  await ctx.storeUtils.upsertWithBatches(predefinedEntities);
-
-  // if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
-  //   await ctx.store.save(
-  //     Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
-  //   );
-  //   return;
-  // }
-  //
-  // const entitiesToSave = await getXykpoolHistDataWithUniqueData(
-  //   ctx.batchState.state.xykPoolAllHistoricalData,
-  //   ctx
-  // );
-  // await ctx.store.save(Array.from(entitiesToSave.values()));
+  // await ctx.storeUtils.upsertWithBatches(predefinedEntities);
 }
 
 export async function getXykpoolHistDataWithUniqueData(
@@ -131,22 +121,32 @@ export async function getXykpoolHistDataWithUniqueData(
 ) {
   const poolsResult: Map<string, XykpoolHistoricalData> = new Map();
 
-  const poolsHistoryIndex = new Map<string, XykpoolHistoricalData[]>();
+  const poolsHistoricalDataIndexedByPoolId = new Map<
+    string,
+    XykpoolHistoricalData[]
+  >();
 
   for (const i of (
     poolsData || ctx.batchState.state.xykPoolAllHistoricalData
   ).values()) {
-    if (!poolsHistoryIndex.has(i.pool.id)) {
-      poolsHistoryIndex.set(i.pool.id, []);
+    if (!poolsHistoricalDataIndexedByPoolId.has(i.pool.id)) {
+      poolsHistoricalDataIndexedByPoolId.set(i.pool.id, []);
     }
-    poolsHistoryIndex.get(i.pool.id)!.push(i);
+    poolsHistoricalDataIndexedByPoolId.get(i.pool.id)!.push(i);
   }
 
-  for (const [poolId, list] of poolsHistoryIndex.entries()) {
-    poolsHistoryIndex.set(
-      poolId,
-      list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
+  for (const [poolId, list] of poolsHistoricalDataIndexedByPoolId.entries()) {
+    const listToSort = list;
+    const latestCachedItem =
+      LatestProcessedDataCacheManager.getInstance().getLastXykpoolHistoricalDataItem(
+        poolId
+      );
+    if (latestCachedItem) listToSort.push(latestCachedItem);
+
+    const orderedList = listToSort.sort(
+      (a, b) => b.paraBlockHeight - a.paraBlockHeight
     );
+    poolsHistoricalDataIndexedByPoolId.set(poolId, orderedList);
   }
 
   await pMap(
@@ -155,7 +155,7 @@ export async function getXykpoolHistDataWithUniqueData(
       if (
         await isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
           currentRecord: item,
-          cachedIndexedRecords: poolsHistoryIndex,
+          cachedIndexedRecords: poolsHistoricalDataIndexedByPoolId,
           ctx,
         })
       ) {
@@ -185,15 +185,24 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.storeUtils.findOneWithLogs(XykpoolHistoricalData, {
-      where: {
-        pool: { id: currentRecord.pool.id },
-        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+    previousItem = await ctx.storeUtils.findOneWithLogs(
+      XykpoolHistoricalData,
+      {
+        where: {
+          pool: { id: currentRecord.pool.id },
+          paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+        },
+        order: {
+          paraBlockHeight: 'DESC',
+        },
       },
-      order: {
-        paraBlockHeight: 'DESC',
-      },
-    }, { className: 'XykpoolHistoricalData' });
+      { className: 'XykpoolHistoricalData' }
+    );
+
+    if (previousItem)
+      LatestProcessedDataCacheManager.getInstance().setLastXykpoolHistoricalDataItem(
+        [previousItem]
+      );
   }
 
   if (!previousItem) {
