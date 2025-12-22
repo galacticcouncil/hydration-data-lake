@@ -193,9 +193,9 @@ async function processAssetSpotPrices({
             price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
 
             priceNormalised: fromExponentialToDecimalNotation(
-              price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
+              price.amount.toFixed(18, BigNumber.ROUND_HALF_UP),
               price.decimals
-            ).toFixed(),
+            ).toFixed(18, BigNumber.ROUND_HALF_UP),
             priceRoute: getPriceRouteDecorated(route),
 
             paraBlockHeight: blockHeader.height,
@@ -557,12 +557,13 @@ async function processXykInvolvedAssetSpotPrices({
           price: BigInt(
             fromDecimalToExponentialNotation(
               xykAssetSpotPrice,
-              assetOut.decimals!
+              // assetOut.decimals!
+              18
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
           priceNormalised: xykAssetSpotPrice.toFixed(
-            6,
+            18,
             BigNumber.ROUND_HALF_UP
           ),
           priceRoute: getPriceRouteDecorated([
@@ -771,7 +772,8 @@ async function processXykShareAssetSpotPrices({
           price: BigInt(
             fromDecimalToExponentialNotation(
               shareAssetPriceNormalised,
-              assetOut.decimals
+              // assetOut.decimals
+              18
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
