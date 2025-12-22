@@ -75,7 +75,6 @@ export async function prefetchGenericPersistentData(
       Lbppool,
       {
         where: {},
-        relations: {},
       },
       { className: 'Lbppool', originCallFn: 'prefetchGenericPersistentData' }
     )
@@ -86,7 +85,6 @@ export async function prefetchGenericPersistentData(
       Xykpool,
       {
         where: {},
-        relations: {},
       },
       { className: 'Xykpool', originCallFn: 'prefetchGenericPersistentData' }
     )
@@ -139,7 +137,6 @@ export async function prefetchGenericPersistentData(
       Aavepool,
       {
         where: {},
-        relations: {},
       },
       { className: 'Aavepool', originCallFn: 'prefetchGenericPersistentData' }
     )
@@ -206,7 +203,6 @@ export async function prefetchGenericPersistentData(
       Hsmpool,
       {
         where: { id: ctx.appConfig.HSMPOOL_ADDRESS },
-        relations: {},
       },
       {
         className: 'Hsmpool',
@@ -426,7 +422,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             pool: true,
-            
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -451,7 +446,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             volumesCollection: { pool: true },
-            
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -524,7 +518,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             pool: true,
-            
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -549,7 +542,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             poolHistoricalData: { pool: true },
-            omnipoolAsset: true,          
+            omnipoolAsset: true,
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -598,7 +591,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             stableswapAsset: { pool: true },
-            
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -622,7 +614,7 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             ),
           },
           relations: {
-            pool: true
+            pool: true,
           },
           order: {
             paraBlockHeight: 'ASC',
@@ -647,7 +639,6 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
           },
           relations: {
             collateral: true,
-            
           },
           order: {
             paraBlockHeight: 'ASC',

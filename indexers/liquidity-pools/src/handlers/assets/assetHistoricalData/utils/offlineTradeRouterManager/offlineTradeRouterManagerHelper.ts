@@ -15,9 +15,7 @@ import {
 } from '../../../../../model';
 import { StorageResolver } from '../../../../../parsers/storageResolver';
 import { SqdProcessorContext } from '../../../../../processor';
-import {
-  MmOracleManager,
-} from '../../../../../utils/evmTools/mmOracleEvmManager';
+import { MmOracleManager } from '../../../../../utils/evmTools/mmOracleEvmManager';
 // } from '@galacticcouncil/sdk';
 import {
   bigintToNumberSafe,
@@ -288,114 +286,114 @@ export class OfflineTradeRouterManagerHelper {
   //   ]);
   // }
 
-  protected async fetchConstantsHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    const histData = await fetchConstantsHistoricalData({ ctx, blockNumber });
-
-    if (!histData)
-      throw new Error(
-        `Missing constants historical data at block ${blockNumber}`
-      );
-
-    this.constantsHistData.set(blockNumber, histData);
-  }
-  protected async fetchAssetsHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    this.assetsHistData.set(
-      blockNumber,
-      await fetchAssetsHistoricalData({ ctx, blockNumber })
-    );
-  }
-
-  protected async fetchEmaOraclesHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    this.emaOraclesHistData.set(
-      blockNumber,
-      await fetchEmaOracleEntriesHistoricalData({ ctx, blockNumber })
-    );
-  }
-
-  protected async fetchLbpPoolsHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    this.lbppoolsHistData.set(
-      blockNumber,
-      await fetchLbpPoolsHistoricalData({ blockNumber, ctx })
-    );
-  }
-
-  protected async fetchXykPoolsHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    this.xykpoolsHistData.set(
-      blockNumber,
-      await fetchXykPoolsHistoricalData({ blockNumber, ctx })
-    );
-  }
-
-  protected async fetchAavePoolsHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    this.aavepoolsHistData.set(
-      blockNumber,
-      await fetchAavePoolsHistoricalData({ blockNumber, ctx })
-    );
-  }
-
-  protected async fetchStableswapHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    this.stableswapHistData.set(
-      blockNumber,
-      await fetchStableswapHistoricalData({ blockNumber, ctx })
-    );
-  }
-
-  protected async fetchOmnipoolHistoricalDataForBlock({
-    blockNumber,
-    ctx,
-  }: {
-    blockNumber: number;
-    ctx: SqdProcessorContext<Store>;
-  }) {
-    const historicalData = await fetchOmnipoolHistoricalData({
-      blockNumber,
-      ctx,
-    });
-    if (!historicalData) return;
-    this.omnipoolHistData.set(blockNumber, historicalData);
-  }
+  // protected async fetchConstantsHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   const histData = await fetchConstantsHistoricalData({ ctx, blockNumber });
+  //
+  //   if (!histData)
+  //     throw new Error(
+  //       `Missing constants historical data at block ${blockNumber}`
+  //     );
+  //
+  //   this.constantsHistData.set(blockNumber, histData);
+  // }
+  // protected async fetchAssetsHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   this.assetsHistData.set(
+  //     blockNumber,
+  //     await fetchAssetsHistoricalData({ ctx, blockNumber })
+  //   );
+  // }
+  //
+  // protected async fetchEmaOraclesHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   this.emaOraclesHistData.set(
+  //     blockNumber,
+  //     await fetchEmaOracleEntriesHistoricalData({ ctx, blockNumber })
+  //   );
+  // }
+  //
+  // protected async fetchLbpPoolsHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   this.lbppoolsHistData.set(
+  //     blockNumber,
+  //     await fetchLbpPoolsHistoricalData({ blockNumber, ctx })
+  //   );
+  // }
+  //
+  // protected async fetchXykPoolsHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   this.xykpoolsHistData.set(
+  //     blockNumber,
+  //     await fetchXykPoolsHistoricalData({ blockNumber, ctx })
+  //   );
+  // }
+  //
+  // protected async fetchAavePoolsHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   this.aavepoolsHistData.set(
+  //     blockNumber,
+  //     await fetchAavePoolsHistoricalData({ blockNumber, ctx })
+  //   );
+  // }
+  //
+  // protected async fetchStableswapHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   this.stableswapHistData.set(
+  //     blockNumber,
+  //     await fetchStableswapHistoricalData({ blockNumber, ctx })
+  //   );
+  // }
+  //
+  // protected async fetchOmnipoolHistoricalDataForBlock({
+  //   blockNumber,
+  //   ctx,
+  // }: {
+  //   blockNumber: number;
+  //   ctx: SqdProcessorContext<Store>;
+  // }) {
+  //   const historicalData = await fetchOmnipoolHistoricalData({
+  //     blockNumber,
+  //     ctx,
+  //   });
+  //   if (!historicalData) return;
+  //   this.omnipoolHistData.set(blockNumber, historicalData);
+  // }
 
   protected async fetchConstantsHistoricalDataForBlocksRange({
     blockFromNumber,
@@ -856,27 +854,31 @@ export class OfflineTradeRouterManagerHelper {
         type: PoolType.Stable,
 
         tokens: [
-          ...(poolAssetsHistData.map((assetHistData) => {
-            const assetHistoricalData = this.assetsHistData
-              .get(blockNumber)!
-              .get(assetHistData.assetId);
+          ...(poolAssetsHistData
+            .map((assetHistData) => {
+              const assetHistoricalData = this.assetsHistData
+                .get(blockNumber)!
+                .get(assetHistData.assetId);
 
-            if (!assetHistoricalData) return null;
+              if (!assetHistoricalData) return null;
 
-            const asset = ctx.batchState.state.assetsAll.get(assetHistoricalData.assetId);
-            if (!asset) return null;
+              const asset = ctx.batchState.state.assetsAll.get(
+                assetHistoricalData.assetId
+              );
+              if (!asset) return null;
 
-            return {
-              id: asset.assetRegistryId,
-              decimals: asset.decimals,
-              symbol: asset.symbol,
-              balance: assetHistData.freeBalance.toString(),
-              existentialDeposit: asset.existentialDeposit?.toString(),
-              isSufficient: asset.isSufficient, // TODO fix data
-              type: asset.assetType,
-              tradable: assetHistData.tradable,
-            };
-          }).filter(t => !!t) as IPersistentPoolToken[]),
+              return {
+                id: asset.assetRegistryId,
+                decimals: asset.decimals,
+                symbol: asset.symbol,
+                balance: assetHistData.freeBalance.toString(),
+                existentialDeposit: asset.existentialDeposit?.toString(),
+                isSufficient: asset.isSufficient, // TODO fix data
+                type: asset.assetType,
+                tradable: assetHistData.tradable,
+              };
+            })
+            .filter((t) => !!t) as IPersistentPoolToken[]),
         ],
 
         maxInRatio: 0,
@@ -932,11 +934,15 @@ export class OfflineTradeRouterManagerHelper {
 
           if (!assetHistoricalData) return null;
 
-          const asset = ctx.batchState.state.assetsAll.get(assetHistoricalData.assetId);
+          const asset = ctx.batchState.state.assetsAll.get(
+            assetHistoricalData.assetId
+          );
           if (!asset) {
-            console.error(`>> missing asset in cache for omnipool asset ${assetHistData.assetId}`);
-            return null
-          };
+            console.error(
+              `>> missing asset in cache for omnipool asset ${assetHistData.assetId}`
+            );
+            return null;
+          }
 
           return {
             id: asset.assetRegistryId,
@@ -985,15 +991,14 @@ export class OfflineTradeRouterManagerHelper {
         .get(blockNumber)
         ?.get(poolHistData.pool.aTokenId);
 
-      // console.log({aTokenId: poolHistData.pool.aTokenId,aTokenHistData})
-      // console.log({reserveId: poolHistData.pool.reserveAssetId,reserveAssetHistData})
-
       if (!reserveAssetHistData || !aTokenHistData) {
         console.error(`>> missing asset data for pool ${poolId}`);
         continue;
       }
 
-      const reserveAsset = ctx.batchState.state.assetsAll.get(reserveAssetHistData.assetId);
+      const reserveAsset = ctx.batchState.state.assetsAll.get(
+        reserveAssetHistData.assetId
+      );
       const aToken = ctx.batchState.state.assetsAll.get(aTokenHistData.assetId);
 
       if (!reserveAsset || !aToken) {

@@ -15,10 +15,14 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   if (ctx.batchState.state.omnipoolEntity) return;
 
   let omnipoolEntity =
-    (await ctx.storeUtils.findOneWithLogs(Omnipool, {
-      where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
-      relations: { assets: true },
-    }, { className: 'Omnipool' })) ?? null;
+    (await ctx.storeUtils.findOneWithLogs(
+      Omnipool,
+      {
+        where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
+        relations: { assets: true },
+      },
+      { className: 'Omnipool' }
+    )) ?? null;
 
   if (!!omnipoolEntity) {
     ctx.batchState.state.omnipoolEntity = omnipoolEntity;
@@ -37,7 +41,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   omnipoolEntity = new Omnipool();
   omnipoolEntity.id = ctx.appConfig.OMNIPOOL_ADDRESS;
   omnipoolEntity.accountId = ctx.appConfig.OMNIPOOL_ADDRESS;
-  
+
   const omniAccount = await getOrCreateAccount({
     ctx,
     id: ctx.appConfig.OMNIPOOL_ADDRESS,
@@ -46,9 +50,13 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
   });
   omnipoolEntity.isDestroyed = false;
 
-  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(ctx.blocks[0].header.height);
+  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(
+    ctx.blocks[0].header.height
+  );
   if (!addedAtBlock) {
-    throw new Error(`Block not found in cache for height ${ctx.blocks[0].header.height}`);
+    throw new Error(
+      `Block not found in cache for height ${ctx.blocks[0].header.height}`
+    );
   }
 
   const internalOmnipoolToken = new OmnipoolAsset({
@@ -75,13 +83,8 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
 
   omniAccount.omnipool = omnipoolEntity;
   // await ctx.store.save(omnipoolEntity.account);
-  await ctx.storeUtils.runWithRetry(() =>
-    ctx.store.save(omniAccount)
-  );
+  await ctx.storeUtils.runWithRetry(() => ctx.store.save(omniAccount));
 
   ctx.batchState.state.omnipoolEntity = omnipoolEntity;
-  ctx.batchState.state.accounts.set(
-    omniAccount.id,
-    omniAccount
-  );
+  ctx.batchState.state.accounts.set(omniAccount.id, omniAccount);
 }

@@ -29,6 +29,7 @@ import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/histori
 import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
 import { ApiSupportPgClient } from '../../apiSupport/utils/timeSeriesSupportManager/apiSupportPgClient';
 import { getXykpoolHistDataWithUniqueData } from '../pools/pools/xykPool/historicalData';
+import { BigNumber } from '@galacticcouncil/sdk';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -448,7 +449,7 @@ export class HistoricalDataManager {
             assetAId: assetIn.assetRegistryId!,
             assetBId: assetOut.assetRegistryId!,
             timestamp,
-            value: +item.priceNormalised,
+            value: BigNumber(item.priceNormalised).toNumber(),
           };
         })
     );
@@ -502,7 +503,7 @@ export class HistoricalDataManager {
                 : item.assetRegistryAId!,
 
             timestamp,
-            value: +item.totalVolumeNormalised,
+            value: BigNumber(item.totalVolumeNormalised).toNumber(),
           };
         })
     );

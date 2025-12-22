@@ -1,15 +1,9 @@
-import {
-  In,
-  Not,
-} from 'typeorm';
+import { In, Not } from 'typeorm';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Lbppool,
-  LbppoolHistoricalData,
-} from '../../../../../../model';
+import { Lbppool, LbppoolHistoricalData } from '../../../../../../model';
 import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchLbpPoolsHistoricalData({
@@ -31,8 +25,7 @@ export async function fetchLbpPoolsHistoricalData({
           where: {
             isDestroyed: false,
           },
-          relations: {
-          },
+          relations: {},
         },
         {
           className: 'Lbppool',
@@ -115,8 +108,6 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRangeResolver({
           where: {
             isDestroyed: false,
           },
-          relations: {
-          },
         },
         {
           className: 'Lbppool',
@@ -137,8 +128,8 @@ export async function fetchLbpPoolsHistoricalDataForBlocksRangeResolver({
     ...ctx.batchState.state.lbpPoolAllHistoricalData.values(),
   ].filter(
     (item) =>
-      item.paraBlockHeight > blockFromNumber - 1 &&
-      item.paraBlockHeight < blockToNumber + 1 &&
+      item.paraBlockHeight >= blockFromNumber &&
+      item.paraBlockHeight <= blockToNumber &&
       allActivePools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 

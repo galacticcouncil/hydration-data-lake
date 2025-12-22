@@ -72,7 +72,9 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
       ensure: true,
       blockHeader,
     });
-    if (!histDataItemAsset) continue;
+    if (!histDataItemAsset) {
+      continue;
+    }
 
     await processAssetSpotPrices({
       assetId: histDataItemAsset.id,
@@ -136,8 +138,16 @@ async function processAssetSpotPrices({
     blockHeader.height
   );
 
-  if (!router) return;
-  if (!assetId) return;
+  if (!router) {
+    console.log(`No router found for block ${blockHeader.height}.`);
+    return;
+  }
+  if (!assetId) {
+    console.log(
+      `processAssetSpotPrices :: No assetId found for assetHistData ${assetHistData.id}.`
+    );
+    return;
+  }
 
   const asset = await getOrCreateAsset({
     id: assetId,
@@ -155,9 +165,10 @@ async function processAssetSpotPrices({
   const calcAssetUsdPriceNormalised = async () => {
     let assetIdToProcess = asset.assetRegistryId;
 
-    if (
-      [ResourceType.Debt, ResourceType.Collateral].includes(asset.resourceType)
-    ) {
+    // if (
+    //   [ResourceType.Debt, ResourceType.Collateral].includes(asset.resourceType)
+    // ) {
+    if (asset.resourceType === ResourceType.Debt) {
       const underlyingAsset = asset.underlyingAssetId
         ? await getOrCreateAsset({
             id: asset.underlyingAssetId,
@@ -172,7 +183,7 @@ async function processAssetSpotPrices({
     if (!assetIdToProcess) {
       // console.log({ asset });
       // console.log(
-      //   `Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetRegistryId.`
+      //   `Asset spot price calculation skipped for asset ${asset.id}/${asset.symbol} at block ${blockHeader.height} due to missing assetRegistryId.`
       // );
       return;
     }
@@ -236,7 +247,12 @@ async function processAssetSpotPrices({
         );
 
         // if (!price) continue;
-        if (!priceWithRoute) continue;
+        if (!priceWithRoute) {
+          // console.log(
+          //   `priceWithRoute is not found for asset ${asset.assetRegistryId}`
+          // );
+          continue;
+        }
 
         const { price, route } = priceWithRoute;
 
@@ -261,9 +277,9 @@ async function processAssetSpotPrices({
             price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
 
             priceNormalised: fromExponentialToDecimalNotation(
-              price.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
+              price.amount.toFixed(18, BigNumber.ROUND_HALF_UP),
               price.decimals
-            ).toFixed(),
+            ).toFixed(18, BigNumber.ROUND_HALF_UP),
             priceRoute: getPriceRouteDecorated(route),
 
             paraBlockHeight: blockHeader.height,
@@ -273,7 +289,8 @@ async function processAssetSpotPrices({
     }
   };
 
-  await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
+  // await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
+  await calcAssetSpotPrices();
 }
 
 export async function getAssetSpotPriceHistDataWithUniqueData(
@@ -632,12 +649,13 @@ async function processXykInvolvedAssetSpotPrices({
           price: BigInt(
             fromDecimalToExponentialNotation(
               xykAssetSpotPrice,
-              assetOut.decimals!
+              18
+              // assetOut.decimals!
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
           priceNormalised: xykAssetSpotPrice.toFixed(
-            6,
+            18,
             BigNumber.ROUND_HALF_UP
           ),
           priceRoute: getPriceRouteDecorated([
@@ -655,7 +673,8 @@ async function processXykInvolvedAssetSpotPrices({
     }
   };
 
-  await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
+  // await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
+  await calcAssetSpotPrices();
 }
 
 export function getAssetsPairPrice({
@@ -856,7 +875,8 @@ async function processXykShareAssetSpotPrices({
           price: BigInt(
             fromDecimalToExponentialNotation(
               shareAssetPriceNormalised,
-              assetOut.decimals
+              // assetOut.decimals
+              18
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
@@ -872,5 +892,6 @@ async function processXykShareAssetSpotPrices({
     }
   };
 
-  await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
+  // await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
+  await calcAssetSpotPrices();
 }

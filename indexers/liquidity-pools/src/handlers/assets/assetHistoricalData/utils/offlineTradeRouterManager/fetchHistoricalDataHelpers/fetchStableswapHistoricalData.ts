@@ -1,7 +1,4 @@
-import {
-  In,
-  Not,
-} from 'typeorm';
+import { In, Not } from 'typeorm';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 import { Store } from '@subsquid/typeorm-store';
@@ -359,7 +356,9 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
 
   for (const assetHistData of persistedStableswapAssetsHistData) {
     const poolId = assetHistData.stableswapAsset.pool.id;
-    if (!persistedStableswapAssetsHistDataMap.has(assetHistData.paraBlockHeight)) {
+    if (
+      !persistedStableswapAssetsHistDataMap.has(assetHistData.paraBlockHeight)
+    ) {
       persistedStableswapAssetsHistDataMap.set(
         assetHistData.paraBlockHeight,
         new Map()

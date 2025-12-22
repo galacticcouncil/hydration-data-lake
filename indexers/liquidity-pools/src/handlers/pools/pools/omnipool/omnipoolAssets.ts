@@ -10,10 +10,7 @@ import {
   OmnipoolTokenAddedData,
   OmnipoolTokenRemovedData,
 } from '../../../../parsers/batchBlocksParser/types';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { getOrCreateAsset } from '../../../assets/asset';
 
 export async function getOrCreateOmnipoolAsset({
@@ -48,10 +45,14 @@ export async function getOrCreateOmnipoolAsset({
   );
   if (omnipoolAsset) return omnipoolAsset;
 
-  omnipoolAsset = await ctx.storeUtils.findOneWithLogs(OmnipoolAsset, {
-    where: { assetId:  `${assetEntity.id}` },
-    relations: { pool: true },
-  }, { className: 'OmnipoolAsset' });
+  omnipoolAsset = await ctx.storeUtils.findOneWithLogs(
+    OmnipoolAsset,
+    {
+      where: { assetId: `${assetEntity.id}` },
+      relations: { pool: true },
+    },
+    { className: 'OmnipoolAsset' }
+  );
 
   if (omnipoolAsset) {
     batchState.omnipoolAssets.set(omnipoolAsset.id, omnipoolAsset);
@@ -62,9 +63,13 @@ export async function getOrCreateOmnipoolAsset({
 
   if (!blockHeader) return null;
 
-  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(
+    blockHeader.height
+  );
   if (!addedAtBlock) {
-    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+    throw new Error(
+      `Block not found in cache for height ${blockHeader.height}`
+    );
   }
 
   omnipoolAsset = new OmnipoolAsset({
@@ -144,9 +149,13 @@ export async function omnipoolTokenAdded(
 
   if (!assetEntity) return;
 
-  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(eventMetadata.blockHeader.height);
+  const addedAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(
+    eventMetadata.blockHeader.height
+  );
   if (!addedAtBlock) {
-    throw new Error(`Block not found in cache for height ${eventMetadata.blockHeader.height}`);
+    throw new Error(
+      `Block not found in cache for height ${eventMetadata.blockHeader.height}`
+    );
   }
 
   omnipoolAssetEntity = new OmnipoolAsset({

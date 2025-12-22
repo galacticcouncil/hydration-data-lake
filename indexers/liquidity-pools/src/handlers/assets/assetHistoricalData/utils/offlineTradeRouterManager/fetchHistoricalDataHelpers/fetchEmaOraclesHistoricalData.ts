@@ -58,13 +58,15 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver(
   blockToNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const cachedHistData = [
-    ...ctx.batchState.state.emaOracleEntriesHistoricalData.values(),
-  ].filter(
-    (item) =>
-      item.paraBlockHeight > blockFromNumber - 1 &&
-      item.paraBlockHeight < blockToNumber + 1
-  );
+  const cachedHistData: EmaOracleEntryHistoricalData[] = [];
+  for (const item of ctx.batchState.state.emaOracleEntriesHistoricalData.values()) {
+    if (
+      item.paraBlockHeight >= blockFromNumber &&
+      item.paraBlockHeight <= blockToNumber
+    ) {
+      cachedHistData.push(item);
+    }
+  }
 
   const persistedHistData = ctx.appConfig
     .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
@@ -72,7 +74,7 @@ export async function fetchEmaOracleEntriesHistoricalDataForBlocksRangeResolver(
         EmaOracleEntryHistoricalData,
         {
           where: {
-            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+            paraBlockHeight: Between(blockFromNumber, blockToNumber),
           },
         },
         {

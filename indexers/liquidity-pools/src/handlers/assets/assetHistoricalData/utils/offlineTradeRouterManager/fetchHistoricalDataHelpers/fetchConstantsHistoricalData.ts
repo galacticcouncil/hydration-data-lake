@@ -44,29 +44,34 @@ export async function fetchConstantsHistoricalDataForBlocksRangeResolver({
   blockToNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const cachedHistData = [
-    ...ctx.batchState.state.constantsHistoricalData.values(),
-  ].filter(
-    (item) =>
-      item.paraBlockHeight > blockFromNumber - 1 &&
-      item.paraBlockHeight < blockToNumber + 1
-  );
+  const cachedHistData: ConstantsHistoricalData[] = [];
+  for (const item of ctx.batchState.state.constantsHistoricalData.values()) {
+    if (
+      item.paraBlockHeight >= blockFromNumber &&
+      item.paraBlockHeight <= blockToNumber
+    ) {
+      cachedHistData.push(item);
+    }
+  }
 
   let persistedHistData: ConstantsHistoricalData[] = [];
 
   if (!cachedHistData || cachedHistData.length === 0)
-    persistedHistData = await ctx.storeUtils.findWithLogs(
-      ConstantsHistoricalData,
-      {
-        where: {
-          paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
-        },
-      },
-      {
-        className: 'ConstantsHistoricalData',
-        originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
-      }
-    );
+    persistedHistData = ctx.appConfig
+      .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
+      ? await ctx.storeUtils.findWithLogs(
+          ConstantsHistoricalData,
+          {
+            where: {
+              paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+            },
+          },
+          {
+            className: 'ConstantsHistoricalData',
+            originCallFn: 'offline_trade_router_spot_price_calc_prefetch',
+          }
+        )
+      : [];
 
   const histDataPerBlock = new Map<number, ConstantsHistoricalData>();
 

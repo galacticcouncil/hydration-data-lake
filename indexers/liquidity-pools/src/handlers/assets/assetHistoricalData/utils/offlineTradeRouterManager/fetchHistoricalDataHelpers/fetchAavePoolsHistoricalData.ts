@@ -1,15 +1,9 @@
-import {
-  In,
-  Not,
-} from 'typeorm';
+import { In, Not } from 'typeorm';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Aavepool,
-  AavepoolHistoricalData,
-} from '../../../../../../model';
+import { Aavepool, AavepoolHistoricalData } from '../../../../../../model';
 import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchAavePoolsHistoricalData({
@@ -87,7 +81,7 @@ export async function fetchAavePoolsHistoricalDataForBlocksRangeResolver({
   blockToNumber: number;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const allPoolsCached = [...ctx.batchState.state.aavePools.values()];
+  const allPoolsCached = Array.from(ctx.batchState.state.aavePools.values());
 
   const allPoolsPersisted = ctx.appConfig
     .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
@@ -95,7 +89,6 @@ export async function fetchAavePoolsHistoricalDataForBlocksRangeResolver({
         Aavepool,
         {
           where: {},
-          relations: {},
         },
         {
           className: 'Aavepool',
@@ -118,7 +111,7 @@ export async function fetchAavePoolsHistoricalDataForBlocksRangeResolver({
     (item) =>
       item.paraBlockHeight > blockFromNumber - 1 &&
       item.paraBlockHeight < blockToNumber + 1 &&
-      allPools.has(item.id) // TODO check this condition item.paraBlockHeight === blockNumber
+      allPools.has(item.pool.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
   const persistedHistData = ctx.appConfig
     .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE

@@ -146,17 +146,17 @@ export async function fetchOmnipoolHistoricalDataForBlocksRangeResolver({
     ...ctx.batchState.state.omnipoolAllHistoricalData.values(),
   ].filter(
     (item) =>
-      item.paraBlockHeight > blockFromNumber - 1 &&
-      item.paraBlockHeight < blockToNumber + 1
+      item.paraBlockHeight >= blockFromNumber &&
+      item.paraBlockHeight <= blockToNumber
   );
 
   const cachedOmnipoolAssetsHistData = [
     ...ctx.batchState.state.omnipoolAssetAllHistoricalData.values(),
   ].filter(
     (item) =>
-      item.paraBlockHeight > blockFromNumber - 1 &&
-      item.paraBlockHeight < blockToNumber + 1 &&
-      allActiveOmnipoolAssets.has(item.omnipoolAsset.id) // TODO check this condition item.paraBlockHeight === blockNumber
+      item.paraBlockHeight >= blockFromNumber &&
+      item.paraBlockHeight <= blockToNumber &&
+      allActiveOmnipoolAssets.has(item.omnipoolAsset.assetId) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
   const persistedOmnipoolHistData = ctx.appConfig

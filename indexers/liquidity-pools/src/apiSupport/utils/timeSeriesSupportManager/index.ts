@@ -20,6 +20,7 @@ import {
   getAccTotalBalancesByBlocksRange,
   getFirstAvailableAccTotalBalanceEntity,
 } from './sql/accTotalBalanceHistData.sql';
+import { BigNumber } from '@galacticcouncil/sdk';
 
 export interface AssetSpotPriceHistDataResponse {
   id: string;
@@ -181,7 +182,7 @@ export class TimeSeriesApiSupportManager {
             assetAId: row.asset_in_asset_registry_id,
             assetBId: row.asset_out_asset_registry_id,
             timestamp: row.block_timestamp,
-            value: +row.price_normalised,
+            value: BigNumber(row.price_normalised).toNumber(),
           }))
         );
 
@@ -200,7 +201,7 @@ export class TimeSeriesApiSupportManager {
                 : row.asset_a_registry_id,
 
             timestamp: row.block_timestamp,
-            value: +row.total_volume_normalised,
+            value: BigNumber(row.total_volume_normalised).toNumber(),
           }))
         );
 

@@ -59,13 +59,15 @@ export async function fetchAssetsHistoricalDataForBlocksRangeResolver({
    * Direct database queries are skipped as cache contains complete asset data.
    */
 
-  const cachedHistData = [
-    ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
-  ].filter(
-    (item) =>
-      item.paraBlockHeight > blockFromNumber - 1 &&
-      item.paraBlockHeight < blockToNumber + 1
-  );
+  const cachedHistData: AssetHistoricalData[] = [];
+  for (const item of ctx.batchState.state.assetsHistoricalDataBatch.values()) {
+    if (
+      item.paraBlockHeight >= blockFromNumber &&
+      item.paraBlockHeight <= blockToNumber
+    ) {
+      cachedHistData.push(item);
+    }
+  }
 
   const persistedHistData = ctx.appConfig
     .ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE
@@ -73,7 +75,7 @@ export async function fetchAssetsHistoricalDataForBlocksRangeResolver({
         AssetHistoricalData,
         {
           where: {
-            paraBlockHeight: Between(blockFromNumber - 1, blockToNumber + 1),
+            paraBlockHeight: Between(blockFromNumber, blockToNumber),
           },
           // asset is an embedded type, not a relation - automatically included
         },

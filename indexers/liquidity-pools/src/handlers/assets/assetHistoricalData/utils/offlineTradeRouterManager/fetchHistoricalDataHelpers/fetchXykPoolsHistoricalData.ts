@@ -1,15 +1,9 @@
-import {
-  In,
-  Not,
-} from 'typeorm';
+import { In, Not } from 'typeorm';
 import { Between } from 'typeorm/find-options/operator/Between';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Xykpool,
-  XykpoolHistoricalData,
-} from '../../../../../../model';
+import { Xykpool, XykpoolHistoricalData } from '../../../../../../model';
 import { SqdProcessorContext } from '../../../../../../processor';
 
 export async function fetchXykPoolsHistoricalData({
