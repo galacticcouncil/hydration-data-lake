@@ -8,7 +8,10 @@ import poolImplementation from './abi/aave/aavePoolImplementation.json';
 import { Contract, ContractInterface, ethers } from 'ethers';
 import { ResourceType } from '../../model';
 import { AppConfig } from '../../appConfig';
-import { AccountMmPositionDataContractData } from './types';
+import {
+  AccountMmPositionDataContractData,
+  UserReserveDataContractData,
+} from './types';
 import { BigNumber } from '@galacticcouncil/sdk';
 import pMap from 'p-map';
 import { retryAsync } from '../helpers';
@@ -83,7 +86,7 @@ export type AaveFacilitatorContractData = {
 export class MoneyMarketContractsManager {
   private static instance: MoneyMarketContractsManager;
 
-  private readonly provider: ethers.providers.JsonRpcProvider;
+  readonly provider: ethers.providers.JsonRpcProvider;
   private hollarContractInstance: Contract;
   private erc20TokenContractInstance: Contract;
   private uiPoolDataProviderContractInstance: Contract;
@@ -270,7 +273,7 @@ export class MoneyMarketContractsManager {
     }
   }
 
-  async getResourceDetails(
+  async getReserveDetails(
     address: string
   ): Promise<MoneyMarketTokenDetails | null> {
     const addressNormalized = ethers.utils.getAddress(address);
@@ -326,7 +329,7 @@ export class MoneyMarketContractsManager {
       args: {
         address,
       },
-      fn: () => this.getResourceDetails(address),
+      fn: () => this.getReserveDetails(address),
     });
   }
 
@@ -528,9 +531,61 @@ export class MoneyMarketContractsManager {
     });
   }
 
-  /**
-   * IMPORTANT: Method cannot provide data at a specific block.
-   */
+  async getUserReservesData({
+    accountAddress,
+    blockNumber,
+  }: {
+    accountAddress: string;
+    blockNumber?: number;
+  }): Promise<UserReserveDataContractData[] | null> {
+    const accountAddressNormalized = ethers.utils.getAddress(accountAddress);
+
+    try {
+      const data = await retryAsync<any>({
+        // passThrough: true,
+        fn: () =>
+          this.uiPoolDataProviderContractInstance.getUserReservesData(
+            ethers.utils.getAddress(
+              appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS
+            ),
+            accountAddressNormalized,
+            blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+          ),
+        fallbackResponse: null,
+      });
+
+      if (!data) return null;
+
+      return data[0].map((reserveData: any) => ({
+        underlyingAsset: ethers.utils.getAddress(reserveData.underlyingAsset),
+        scaledATokenBalance: reserveData.scaledATokenBalance.toString(),
+        usageAsCollateralEnabledOnUser:
+          reserveData.usageAsCollateralEnabledOnUser,
+        scaledVariableDebt: reserveData.scaledVariableDebt.toString(),
+        stableBorrowRate: reserveData.stableBorrowRate.toString(),
+        principalStableDebt: reserveData.principalStableDebt.toString(),
+        stableBorrowLastUpdateTimestamp:
+          reserveData.stableBorrowLastUpdateTimestamp.toString(),
+      }));
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+
+  async getUserReservesDataWithLogs(args: {
+    accountAddress: string;
+    blockNumber?: number;
+  }): Promise<UserReserveDataContractData[] | null> {
+    return measureEvmContractCall({
+      call: `uiPoolDataProviderContractInstance.getUserReservesData`,
+      originFn: 'getUserReservesDataWithLogs',
+      blockHeight: args?.blockNumber ?? 0,
+      args: args,
+      fn: () => this.getUserReservesData(args),
+    });
+  }
+
   async getAllAaveFacilitators({ blockNumber }: { blockNumber?: number }) {
     // Return cached facilitators if available and within 100 blocks
     if (
@@ -578,7 +633,9 @@ export class MoneyMarketContractsManager {
       { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
     );
 
-    const filteredData = facilitatorsData.filter((facilitator) => !!facilitator);
+    const filteredData = facilitatorsData.filter(
+      (facilitator) => !!facilitator
+    );
 
     // Cache the result
     this.facilitatorsCache = filteredData;

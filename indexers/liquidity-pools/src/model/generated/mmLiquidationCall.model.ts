@@ -1,60 +1,48 @@
-import {
-  Entity as Entity_,
-  Column as Column_,
-  PrimaryColumn as PrimaryColumn_,
-  Index as Index_,
-  ManyToOne as ManyToOne_,
-} from 'typeorm';
-import * as marshal from './marshal';
-import { Event } from './event.model';
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import * as marshal from "./marshal"
+import {Event} from "./event.model"
 
 @Entity_()
 export class MmLiquidationCall {
   constructor(props?: Partial<MmLiquidationCall>) {
-    Object.assign(this, props);
+    Object.assign(this, props)
   }
 
   /**
    * <event_id>
    */
   @PrimaryColumn_()
-  id!: string;
+  id!: string
 
-  @Column_('text', { array: true, nullable: true })
-  traceIds!: string[] | undefined | null;
+  @Column_("text", {array: true, nullable: true})
+  traceIds!: (string)[] | undefined | null
 
-  @Column_('text', { nullable: false })
-  collateralAssetId!: string;
+  @Column_("text", {nullable: false})
+  collateralAssetId!: string
 
-  @Column_('text', { nullable: false })
-  debtAssetId!: string;
+  @Column_("text", {nullable: false})
+  debtAssetId!: string
 
-  @Column_('text', { nullable: false })
-  accountId!: string;
+  @Column_("text", {nullable: false})
+  accountId!: string
 
-  @Column_('numeric', {
-    transformer: marshal.bigintTransformer,
-    nullable: true,
-  })
-  debtToCoverAmount!: bigint | undefined | null;
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  debtToCoverAmount!: bigint | undefined | null
 
-  @Column_('numeric', {
-    transformer: marshal.bigintTransformer,
-    nullable: true,
-  })
-  liquidatedCollateralAmount!: bigint | undefined | null;
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  liquidatedCollateralAmount!: bigint | undefined | null
 
-  @Column_('text', { nullable: false })
-  liquidatorAccountId!: string;
+  @Column_("text", {nullable: false})
+  liquidatorAccountId!: string
 
-  @Column_('bool', { nullable: false })
-  receiveAToken!: boolean;
+  @Column_("bool", {nullable: false})
+  receiveAToken!: boolean
 
   @Index_()
-  @Column_('int4', { nullable: false })
-  paraBlockHeight!: number;
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
 
   @Index_()
-  @ManyToOne_(() => Event, { nullable: true })
-  event!: Event;
+  @ManyToOne_(() => Event, {nullable: true})
+  event!: Event
 }

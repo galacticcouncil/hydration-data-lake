@@ -195,6 +195,9 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
         order: {
           paraBlockHeight: 'DESC',
         },
+        relations: {
+          pool: true,
+        },
       },
       { className: 'XykpoolHistoricalData' }
     );

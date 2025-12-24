@@ -1,48 +1,36 @@
-import {
-  Entity as Entity_,
-  Column as Column_,
-  PrimaryColumn as PrimaryColumn_,
-  ManyToOne as ManyToOne_,
-  Index as Index_,
-} from 'typeorm';
-import * as marshal from './marshal';
-import { AccountSwapFeeHistoricalData } from './accountSwapFeeHistoricalData.model';
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
+import {AccountSwapFeeHistoricalData} from "./accountSwapFeeHistoricalData.model"
 
 @Entity_()
 export class AccountAssetSwapFeeHistoricalData {
   constructor(props?: Partial<AccountAssetSwapFeeHistoricalData>) {
-    Object.assign(this, props);
+    Object.assign(this, props)
   }
 
   /**
    * <historicalAccountSwapFeeId>-<paraBlockHeight>
    */
   @PrimaryColumn_()
-  id!: string;
+  id!: string
 
   @Index_()
-  @ManyToOne_(() => AccountSwapFeeHistoricalData, { nullable: true })
-  collection!: AccountSwapFeeHistoricalData;
+  @ManyToOne_(() => AccountSwapFeeHistoricalData, {nullable: true})
+  collection!: AccountSwapFeeHistoricalData
 
-  @Column_('text', { nullable: false })
-  accountId!: string;
+  @Column_("text", {nullable: false})
+  accountId!: string
 
-  @Column_('text', { nullable: false })
-  assetId!: string;
+  @Column_("text", {nullable: false})
+  assetId!: string
 
-  @Column_('numeric', {
-    transformer: marshal.bigintTransformer,
-    nullable: false,
-  })
-  amount!: bigint;
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  amount!: bigint
 
-  @Column_('numeric', {
-    transformer: marshal.bigintTransformer,
-    nullable: false,
-  })
-  totalAmount!: bigint;
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  totalAmount!: bigint
 
   @Index_()
-  @Column_('int4', { nullable: false })
-  paraBlockHeight!: number;
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
 }

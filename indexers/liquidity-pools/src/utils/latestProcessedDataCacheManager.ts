@@ -12,6 +12,9 @@ import { AssetDynamicFee } from '../model/generated/_assetDynamicFee';
 import parsers from '../parsers';
 import { SqdProcessorContext } from '../processor';
 import { CommonPgPool } from './pgConnectionManagers/pgPool';
+import { getLatestXykpoolHistoricalData } from './pgConnectionManagers/queries/getLatestXykpoolHistoricalData.sql';
+import { getLatestAssetSpotPriceHistoricalData } from './pgConnectionManagers/queries/getLatestAssetSpotPriceHistoricalData.sql';
+import { getLatestAssetHistoricalData } from './pgConnectionManagers/queries/getLatestAssetHistoricalData.sql';
 
 // Type definitions for raw PostgreSQL query results
 interface RawAssetHistoricalDataRow {
@@ -92,24 +95,10 @@ export class LatestProcessedDataCacheManager {
 
       const pgPool = CommonPgPool.getInstance();
 
-      const sql = `
-        SELECT DISTINCT ON (asset_id)
-          id,
-          asset_id,
-          total_issuance,
-          dynamic_fee,
-          usd_price_normalised,
-          para_block_height
-        FROM asset_historical_data
-        WHERE asset_id = ANY($1::text[])
-          AND para_block_height < $2
-        ORDER BY asset_id, para_block_height DESC
-      `;
-
-      const result = await pgPool.query<RawAssetHistoricalDataRow>(sql, [
-        assetIds,
-        maxBlockHeight,
-      ]);
+      const result = await pgPool.query<RawAssetHistoricalDataRow>(
+        getLatestAssetHistoricalData,
+        [assetIds, maxBlockHeight]
+      );
 
       // Map raw rows to entities
       const entities = result.rows.map((row, index) => {
@@ -188,23 +177,8 @@ export class LatestProcessedDataCacheManager {
 
       const pgPool = CommonPgPool.getInstance();
 
-      const sql = `
-        SELECT DISTINCT ON (asset_in_id)
-          id,
-          asset_in_id,
-          asset_out_id,
-          price,
-          price_normalised,
-          price_route_id,
-          para_block_height
-        FROM asset_spot_price_historical_data
-        WHERE asset_in_id = ANY($1::text[])
-          AND para_block_height < $2
-        ORDER BY asset_in_id, para_block_height DESC
-      `;
-
       const result = await pgPool.query<RawAssetSpotPriceHistoricalDataRow>(
-        sql,
+        getLatestAssetSpotPriceHistoricalData,
         [assetInIds, maxBlockHeight]
       );
 
@@ -284,26 +258,10 @@ export class LatestProcessedDataCacheManager {
 
       const pgPool = CommonPgPool.getInstance();
 
-      const sql = `
-        SELECT DISTINCT ON (pool_id)
-          id,
-          pool_id,
-          asset_a_id,
-          asset_b_id,
-          asset_a_balance,
-          asset_b_balance,
-          tvl_in_ref_asset_norm,
-          para_block_height
-        FROM xykpool_historical_data
-        WHERE pool_id = ANY($1::text[])
-          AND para_block_height < $2
-        ORDER BY pool_id, para_block_height DESC
-      `;
-
-      const result = await pgPool.query<RawXykpoolHistoricalDataRow>(sql, [
-        poolIds,
-        maxBlockHeight,
-      ]);
+      const result = await pgPool.query<RawXykpoolHistoricalDataRow>(
+        getLatestXykpoolHistoricalData,
+        [poolIds, maxBlockHeight]
+      );
 
       const poolsMap = new Map<string, Xykpool>();
 
@@ -538,7 +496,12 @@ export class LatestProcessedDataCacheManager {
 
     const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
       XykpoolHistoricalData,
-      { where: {} },
+      {
+        where: {},
+        relations: {
+          pool: true,
+        },
+      },
       { className: 'XykpoolHistoricalData' }
     );
 

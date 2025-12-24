@@ -1,9 +1,9 @@
 export enum SwapFillerType {
-  Omnipool = 'Omnipool',
-  Stableswap = 'Stableswap',
-  XYK = 'XYK',
-  LBP = 'LBP',
-  OTC = 'OTC',
-  AAVE = 'AAVE',
-  HSM = 'HSM',
+  Omnipool = "Omnipool",
+  Stableswap = "Stableswap",
+  XYK = "XYK",
+  LBP = "LBP",
+  OTC = "OTC",
+  AAVE = "AAVE",
+  HSM = "HSM",
 }

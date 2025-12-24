@@ -182,7 +182,6 @@ type AssetDynamicFee {
   timestamp: Int!
 }
 
-
 type AssetHistoricalData @entity {
   "<assetId>-<paraBlockHeight>"
   id: ID!
@@ -305,6 +304,7 @@ type Account @entity {
   "<address>"
   id: ID!
   accountType: AccountType!
+  mmReserveBalancesInitialized: Boolean
 
   boundEvmAddress: String
   evmAddressBoundEvent: Event
@@ -551,7 +551,6 @@ type SwapFee @entity {
   destinationType: SwapFeeDestinationType!
   recipientId: String
 }
-
 
 type SwapAssetBalance @entity {
   "<swapId>-<assetId>-<SwapAssetBalanceType> e.g. 0006516718-9965d-000107-0-INPUT"

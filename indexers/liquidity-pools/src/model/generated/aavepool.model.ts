@@ -1,36 +1,29 @@
-import {
-  Entity as Entity_,
-  Column as Column_,
-  PrimaryColumn as PrimaryColumn_,
-  ManyToOne as ManyToOne_,
-  Index as Index_,
-  OneToMany as OneToMany_,
-} from 'typeorm';
-import { MoneyMarketReserve } from './moneyMarketReserve.model';
-import { AavepoolHistoricalData } from './aavepoolHistoricalData.model';
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {MoneyMarketReserve} from "./moneyMarketReserve.model"
+import {AavepoolHistoricalData} from "./aavepoolHistoricalData.model"
 
 @Entity_()
 export class Aavepool {
   constructor(props?: Partial<Aavepool>) {
-    Object.assign(this, props);
+    Object.assign(this, props)
   }
 
   /**
    * <address> - address is derived from reserve_asset_id + aToken_id
    */
   @PrimaryColumn_()
-  id!: string;
+  id!: string
 
-  @Column_('text', { nullable: false })
-  reserveAssetId!: string;
+  @Column_("text", {nullable: false})
+  reserveAssetId!: string
 
-  @Column_('text', { nullable: false })
-  aTokenId!: string;
+  @Column_("text", {nullable: false})
+  aTokenId!: string
 
   @Index_()
-  @ManyToOne_(() => MoneyMarketReserve, { nullable: true })
-  moneyMarketReserve!: MoneyMarketReserve | undefined | null;
+  @ManyToOne_(() => MoneyMarketReserve, {nullable: true})
+  moneyMarketReserve!: MoneyMarketReserve | undefined | null
 
-  @OneToMany_(() => AavepoolHistoricalData, (e) => e.pool)
-  historicalData!: AavepoolHistoricalData[];
+  @OneToMany_(() => AavepoolHistoricalData, e => e.pool)
+  historicalData!: AavepoolHistoricalData[]
 }

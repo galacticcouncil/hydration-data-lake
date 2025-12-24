@@ -1,30 +1,25 @@
-import {
-  Entity as Entity_,
-  Column as Column_,
-  PrimaryColumn as PrimaryColumn_,
-  Index as Index_,
-} from 'typeorm';
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
 
 @Entity_()
 export class BatchHsmpoolAssetHistVolsList {
   constructor(props?: Partial<BatchHsmpoolAssetHistVolsList>) {
-    Object.assign(this, props);
+    Object.assign(this, props)
   }
 
   /**
    * <batchStartParaBlockHeight> (e.g. 101312)
    */
   @PrimaryColumn_()
-  id!: string;
+  id!: string
 
-  @Column_('text', { array: true, nullable: true })
-  assetIds!: string[] | undefined | null;
-
-  @Index_()
-  @Column_('int4', { nullable: false })
-  batchStartParaBlockHeight!: number;
+  @Column_("text", {array: true, nullable: true})
+  assetIds!: (string)[] | undefined | null
 
   @Index_()
-  @Column_('int4', { nullable: false })
-  batchEndParaBlockHeight!: number;
+  @Column_("int4", {nullable: false})
+  batchStartParaBlockHeight!: number
+
+  @Index_()
+  @Column_("int4", {nullable: false})
+  batchEndParaBlockHeight!: number
 }

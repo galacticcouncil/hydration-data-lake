@@ -1,38 +1,32 @@
-import {
-  Entity as Entity_,
-  Column as Column_,
-  PrimaryColumn as PrimaryColumn_,
-  Index as Index_,
-  ManyToOne as ManyToOne_,
-} from 'typeorm';
-import { Event } from './event.model';
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import {Event} from "./event.model"
 
 @Entity_()
 export class MmReserveUsedAsCollateralDisabledEvent {
   constructor(props?: Partial<MmReserveUsedAsCollateralDisabledEvent>) {
-    Object.assign(this, props);
+    Object.assign(this, props)
   }
 
   /**
    * <event_id>
    */
   @PrimaryColumn_()
-  id!: string;
+  id!: string
 
-  @Column_('text', { array: true, nullable: true })
-  traceIds!: string[] | undefined | null;
+  @Column_("text", {array: true, nullable: true})
+  traceIds!: (string)[] | undefined | null
 
-  @Column_('text', { nullable: false })
-  accountId!: string;
+  @Column_("text", {nullable: false})
+  accountId!: string
 
-  @Column_('text', { nullable: false })
-  assetId!: string;
-
-  @Index_()
-  @Column_('int4', { nullable: false })
-  paraBlockHeight!: number;
+  @Column_("text", {nullable: false})
+  assetId!: string
 
   @Index_()
-  @ManyToOne_(() => Event, { nullable: true })
-  event!: Event;
+  @Column_("int4", {nullable: false})
+  paraBlockHeight!: number
+
+  @Index_()
+  @ManyToOne_(() => Event, {nullable: true})
+  event!: Event
 }

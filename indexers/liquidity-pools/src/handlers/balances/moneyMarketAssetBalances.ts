@@ -21,6 +21,8 @@ import { calcPriceNormalized } from '../../utils/helpers';
 import { BigNumber } from '@galacticcouncil/sdk';
 import pMap from 'p-map';
 import { StorageResolver } from '../../parsers/storageResolver';
+import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
+import { getAllAccountPositiveAssetBalances } from '../../utils/pgConnectionManagers/queries/getAllAccountPositiveAssetBalances.sql';
 
 export async function handleMmAssetAccountBalancesPerBlock(
   ctx: SqdProcessorContext<Store>
@@ -338,9 +340,14 @@ export async function handleDebtAssetBalancesForAccounts({
 
   const allExistingDebtAssets = await getAllDebtAssets(ctx);
 
+  const accountDebtAssetsPerBlock = await getAccountDebtAssetsPerBlock({
+    ctx,
+    allProcessedAccountsPerBlock,
+  });
+
   await pMap(
-    Array.from(allProcessedAccountsPerBlock.entries()),
-    async ([blockHeight, accountIds]) => {
+    Array.from(accountDebtAssetsPerBlock.entries()),
+    async ([blockHeight, accountAssetIds]) => {
       const assetSpotPricesAtBlock: Map<string, string | null> = new Map();
 
       for (const asset of allExistingDebtAssets) {
@@ -366,17 +373,17 @@ export async function handleDebtAssetBalancesForAccounts({
       }
 
       await pMap(
-        Array.from(accountIds.values()),
-        async (accountId) => {
+        Array.from(accountAssetIds.entries()),
+        async ([accountId, debtAssetsSet]) => {
           const account = await getOrCreateAccount({ ctx, id: accountId });
           if (!account.boundEvmAddress) {
             return;
           }
 
-          for (const asset of allExistingDebtAssets) {
+          for (const debtAssetId of debtAssetsSet) {
             if (
               ctx.batchState.state.accountAssetBalanceHistoricalData.has(
-                `${accountId}-${asset.id}-${blockHeight}`
+                `${accountId}-${debtAssetId}-${blockHeight}`
               )
             ) {
               // To prevent duplicated balance check in case this asset/account
@@ -384,10 +391,18 @@ export async function handleDebtAssetBalancesForAccounts({
               continue;
             }
 
+            const debtAsset = await getOrCreateAsset({
+              ctx,
+              id: debtAssetId,
+              ensure: false,
+            });
+
+            if (!debtAsset) continue;
+
             const balance =
               await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
                 {
-                  contractAddress: asset.evmAddress!,
+                  contractAddress: debtAsset.evmAddress!,
                   accountAddress: account.boundEvmAddress!,
                   blockNumber: blockHeight,
                 }
@@ -395,8 +410,8 @@ export async function handleDebtAssetBalancesForAccounts({
 
             if (
               !balance ||
-              !assetSpotPricesAtBlock.has(asset.id) ||
-              !assetSpotPricesAtBlock.get(asset.id)
+              !assetSpotPricesAtBlock.has(debtAssetId) ||
+              !assetSpotPricesAtBlock.get(debtAssetId)
             ) {
               continue;
             }
@@ -404,7 +419,7 @@ export async function handleDebtAssetBalancesForAccounts({
             const assetBalanceHistData =
               await getOrCreateAccountAssetBalanceHistoricalData({
                 ctx,
-                assetId: asset.id,
+                assetId: debtAssetId,
                 account,
                 blockHeader:
                   ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
@@ -412,11 +427,11 @@ export async function handleDebtAssetBalancesForAccounts({
               });
 
             assetBalanceHistData.transferable = balance;
-            assetBalanceHistData.transferableInRefAssetNorm = asset.decimals
+            assetBalanceHistData.transferableInRefAssetNorm = debtAsset.decimals
               ? calcPriceNormalized({
                   amount: balance,
-                  assetDecimals: asset.decimals,
-                  spotPrice: assetSpotPricesAtBlock.get(asset.id)!,
+                  assetDecimals: debtAsset.decimals,
+                  spotPrice: assetSpotPricesAtBlock.get(debtAsset.id)!,
                 })
               : '0';
 
@@ -433,4 +448,178 @@ export async function handleDebtAssetBalancesForAccounts({
     },
     { concurrency: ctx.appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
   );
+}
+
+interface RawAccountDebtAssetBalances {
+  account_id: string;
+  assets: {
+    asset_id: string;
+    transferable_in_ref_asset_norm: string;
+    total_locked_in_ref_asset_norm: string;
+  }[];
+}
+
+async function getAccountDebtAssetsPerBlock({
+  allProcessedAccountsPerBlock,
+  ctx,
+}: {
+  allProcessedAccountsPerBlock: Map<number, Set<string>>;
+  ctx: SqdProcessorContext<Store>;
+}): Promise<Map<number, Map<string, Set<string>>>> {
+  const allExistingDebtAssets = await getAllDebtAssets(ctx);
+  const assetIdsList = allExistingDebtAssets.map((a) => a.id);
+  const assetIdsSet = new Set(assetIdsList);
+  const accountsDebtAssetsPerBlock: Map<
+    number,
+    Map<string, Set<string>>
+  > = new Map();
+
+  const lowestBlockNumberToProcess = Array.from(
+    allProcessedAccountsPerBlock.keys()
+  ).sort()[0];
+
+  const allAccountsForMmReserveBalancesInit = new Set<Account>();
+
+  const pgPool = CommonPgPool.getInstance();
+
+  const addAssetIdToAccountsDebtAssetsPerBlock = (
+    blockNumber: number,
+    accountId: string,
+    assetId: string
+  ) => {
+    if (!accountsDebtAssetsPerBlock.has(blockNumber))
+      accountsDebtAssetsPerBlock.set(blockNumber, new Map());
+
+    if (!accountsDebtAssetsPerBlock.get(blockNumber)!.has(accountId))
+      accountsDebtAssetsPerBlock.get(blockNumber)!.set(accountId, new Set());
+
+    accountsDebtAssetsPerBlock.get(blockNumber)!.get(accountId)!.add(assetId);
+  };
+
+  for (const [
+    blockNumber,
+    accountsSet,
+  ] of allProcessedAccountsPerBlock.entries()) {
+    for (const accountId of accountsSet) {
+      const account = await getOrCreateAccount({ ctx, id: accountId });
+      if (
+        !account.mmReserveBalancesInitialized &&
+        account.boundEvmAddress &&
+        account.boundEvmAddress !== constants.AddressZero
+      )
+        allAccountsForMmReserveBalancesInit.add(account);
+    }
+
+    /**
+     * Check persistent data from DB
+     */
+    try {
+      const result = await pgPool.query<RawAccountDebtAssetBalances>(
+        getAllAccountPositiveAssetBalances,
+        [Array.from(accountsSet.values()), assetIdsList, blockNumber]
+      );
+
+      if (!accountsDebtAssetsPerBlock.has(blockNumber))
+        accountsDebtAssetsPerBlock.set(blockNumber, new Map());
+
+      resultsLoop: for (const resultItem of result.rows) {
+        if (resultItem.assets.length === 0) continue resultsLoop;
+
+        accountsDebtAssetsPerBlock
+          .get(blockNumber)!
+          .set(
+            resultItem.account_id,
+            new Set(resultItem.assets.map((a) => a.asset_id))
+          );
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    /**
+     * Check cached data from local state
+     */
+
+    for (const item of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
+      if (
+        item.paraBlockHeight >= blockNumber ||
+        !assetIdsSet.has(item.assetId) ||
+        !accountsSet.has(item.accountId) ||
+        (item.paraBlockHeight <= blockNumber &&
+          accountsSet.has(item.accountId) &&
+          assetIdsSet.has(item.assetId) &&
+          !item.transferable)
+      )
+        continue;
+
+      addAssetIdToAccountsDebtAssetsPerBlock(
+        blockNumber,
+        item.accountId,
+        item.assetId
+      );
+    }
+  }
+
+  await pMap(
+    Array.from(allAccountsForMmReserveBalancesInit.values()),
+    async (account) => {
+      const accountReserves =
+        await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
+          {
+            accountAddress: account.boundEvmAddress!,
+            blockNumber: lowestBlockNumberToProcess,
+          }
+        );
+
+      if (!accountReserves || accountReserves.length === 0) {
+        console.log(`No reserves found for account ${account.id}`);
+        return;
+      }
+
+      // TODO this account mutation block should be moved to better place where
+      //  "balances init" status will be ensured (aka after saving balances of
+      //  debt tokens).
+      /**
+       * We need to mark accounts to avoid duplicated debt token balances check
+       * in further processing looks.
+       */
+      account.mmReserveBalancesInitialized = true;
+      ctx.batchState.state.accounts.set(account.id, account);
+      await ctx.storeUtils.upsertWithBatches([account]);
+
+      for (const reserve of accountReserves) {
+        if (
+          reserve.scaledVariableDebt === '0' ||
+          !reserve.underlyingAsset ||
+          reserve.underlyingAsset === ''
+        ) {
+          continue;
+        }
+
+        const debtUnderliningAsset = await getOrCreateAsset({
+          ctx,
+          evmAddress: reserve.underlyingAsset.toLowerCase(),
+          ensure: false,
+        });
+        if (
+          !debtUnderliningAsset ||
+          !debtUnderliningAsset.variableDebtTokenId
+        ) {
+          console.log(
+            `No debt asset found for reserve ${reserve.underlyingAsset} (account ${account.id})`
+          );
+          continue;
+        }
+
+        addAssetIdToAccountsDebtAssetsPerBlock(
+          lowestBlockNumberToProcess,
+          account.id,
+          debtUnderliningAsset.variableDebtTokenId
+        );
+      }
+    },
+    { concurrency: ctx.appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
+  );
+
+  return accountsDebtAssetsPerBlock;
 }

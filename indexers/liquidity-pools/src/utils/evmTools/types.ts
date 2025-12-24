@@ -59,3 +59,13 @@ export type AccountMmPositionDataContractData = {
   healthFactor: string;
   pool: string;
 };
+
+export type UserReserveDataContractData = {
+  underlyingAsset: string;
+  scaledATokenBalance: string;
+  usageAsCollateralEnabledOnUser: boolean;
+  stableBorrowRate: string;
+  scaledVariableDebt: string;
+  principalStableDebt: string;
+  stableBorrowLastUpdateTimestamp: string;
+};

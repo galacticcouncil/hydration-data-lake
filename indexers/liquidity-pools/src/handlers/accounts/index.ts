@@ -1,19 +1,9 @@
-import {
-  FindOptionsRelations,
-  In,
-  Like,
-} from 'typeorm';
+import { FindOptionsRelations, In, Like } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Account,
-  AccountType,
-} from '../../model';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
+import { Account, AccountType } from '../../model';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { EvmUtils } from '../../utils/evm';
 
 export async function getOrCreateAccount({
@@ -53,7 +43,11 @@ export async function getOrCreateAccount({
 
   if (acc) return acc;
 
-  acc = await ctx.storeUtils.findOneWithLogs(Account, { where: { id }, relations }, { className: 'Account' });
+  acc = await ctx.storeUtils.findOneWithLogs(
+    Account,
+    { where: { id }, relations },
+    { className: 'Account' }
+  );
 
   if (
     acc &&
@@ -83,6 +77,7 @@ export async function getOrCreateAccount({
     acc.id = id;
     acc.accountType = accountType;
     acc.boundEvmAddress = boundEvmAddressToSave;
+    acc.mmReserveBalancesInitialized = false;
     // await ctx.store.save(acc);
     await ctx.storeUtils.runWithRetry(() => ctx.store.save(acc!));
   }
@@ -107,10 +102,14 @@ export async function getAccountByBoundEvmAddress({
   );
   if (accout) return accout;
 
-  accout = await ctx.storeUtils.findOneWithLogs(Account, {
-    where: { boundEvmAddress: evmAddress },
-    relations,
-  }, { className: 'Account' });
+  accout = await ctx.storeUtils.findOneWithLogs(
+    Account,
+    {
+      where: { boundEvmAddress: evmAddress },
+      relations,
+    },
+    { className: 'Account' }
+  );
 
   if (!accout) return null;
 
@@ -135,10 +134,14 @@ export async function getAccountByAddressPart({
   );
   if (account) return account;
 
-  account = await ctx.storeUtils.findOneWithLogs(Account, {
-    where: { id: Like(substring) },
-    relations,
-  }, { className: 'Account' });
+  account = await ctx.storeUtils.findOneWithLogs(
+    Account,
+    {
+      where: { id: Like(substring) },
+      relations,
+    },
+    { className: 'Account' }
+  );
 
   if (!account) return null;
 

@@ -1,35 +1,26 @@
-import {
-  Entity as Entity_,
-  Column as Column_,
-  PrimaryColumn as PrimaryColumn_,
-  ManyToOne as ManyToOne_,
-  Index as Index_,
-} from 'typeorm';
-import * as marshal from './marshal';
-import { StableswapLiquidityEvent } from './stableswapLiquidityEvent.model';
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "./marshal"
+import {StableswapLiquidityEvent} from "./stableswapLiquidityEvent.model"
 
 @Entity_()
 export class StableswapAssetLiquidityAmount {
   constructor(props?: Partial<StableswapAssetLiquidityAmount>) {
-    Object.assign(this, props);
+    Object.assign(this, props)
   }
 
   /**
    * <stableswapId>-<eventId>-<assetId>
    */
   @PrimaryColumn_()
-  id!: string;
+  id!: string
 
   @Index_()
-  @ManyToOne_(() => StableswapLiquidityEvent, { nullable: true })
-  liquidityAction!: StableswapLiquidityEvent;
+  @ManyToOne_(() => StableswapLiquidityEvent, {nullable: true})
+  liquidityAction!: StableswapLiquidityEvent
 
-  @Column_('text', { nullable: false })
-  assetId!: string;
+  @Column_("text", {nullable: false})
+  assetId!: string
 
-  @Column_('numeric', {
-    transformer: marshal.bigintTransformer,
-    nullable: false,
-  })
-  amount!: bigint;
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  amount!: bigint
 }

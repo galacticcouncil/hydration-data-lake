@@ -1,46 +1,42 @@
-import {
-  Entity as Entity_,
-  Column as Column_,
-  PrimaryColumn as PrimaryColumn_,
-} from 'typeorm';
-import * as marshal from './marshal';
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
+import * as marshal from "./marshal"
 
 @Entity_()
 export class ProcessorStatus {
   constructor(props?: Partial<ProcessorStatus>) {
-    Object.assign(this, props);
+    Object.assign(this, props)
   }
 
   /**
    * processor state schema name
    */
   @PrimaryColumn_()
-  id!: string;
+  id!: string
 
-  @Column_('int4', { nullable: false })
-  assetsLastUpdatedAtBlock!: number;
+  @Column_("int4", {nullable: false})
+  assetsLastUpdatedAtBlock!: number
 
-  @Column_('int4', { nullable: true })
-  poolsDestroyedUpdatedAtBlock!: number | undefined | null;
+  @Column_("int4", {nullable: true})
+  poolsDestroyedUpdatedAtBlock!: number | undefined | null
 
-  @Column_('timestamp with time zone', { nullable: false })
-  initialIndexingStartedAt!: Date;
+  @Column_("timestamp with time zone", {nullable: false})
+  initialIndexingStartedAt!: Date
 
-  @Column_('timestamp with time zone', { nullable: true })
-  initialIndexingFinishedAt!: Date | undefined | null;
+  @Column_("timestamp with time zone", {nullable: true})
+  initialIndexingFinishedAt!: Date | undefined | null
 
-  @Column_('int4', { nullable: false })
-  latestProcessedBlock!: number;
+  @Column_("int4", {nullable: false})
+  latestProcessedBlock!: number
 
-  @Column_('int4', { nullable: true })
-  stableswapHistDataLatestBlock!: number | undefined | null;
+  @Column_("int4", {nullable: true})
+  stableswapHistDataLatestBlock!: number | undefined | null
 
-  @Column_('int4', { nullable: true })
-  omnipoolHistDataLatestBlock!: number | undefined | null;
+  @Column_("int4", {nullable: true})
+  omnipoolHistDataLatestBlock!: number | undefined | null
 
-  @Column_('int4', { nullable: true })
-  xykpoolHistDataLatestBlock!: number | undefined | null;
+  @Column_("int4", {nullable: true})
+  xykpoolHistDataLatestBlock!: number | undefined | null
 
-  @Column_('int4', { nullable: true })
-  aavepoolHistDataLatestBlock!: number | undefined | null;
+  @Column_("int4", {nullable: true})
+  aavepoolHistDataLatestBlock!: number | undefined | null
 }

@@ -1,5 +1,5 @@
 export enum FarmState {
-  Active = 'Active',
-  Stopped = 'Stopped',
-  Terminated = 'Terminated',
+  Active = "Active",
+  Stopped = "Stopped",
+  Terminated = "Terminated",
 }

@@ -2,10 +2,7 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { handleRelayChainBlocks } from '../../../handlers/relayChain';
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import {
-  BatchBlocksParsedDataManager,
-  getParsedEventsData,
-} from '../../../parsers/batchBlocksParser';
+import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../../parsers/storageResolver';
 import {
   prefetchOrInitAllBatchAccounts,
@@ -15,7 +12,6 @@ import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarket
 import {
   actualiseAssets,
   ensureNativeToken,
-  prefetchAllAssets,
 } from '../../../handlers/assets/utils';
 import { handleAssetRegistry } from '../../../handlers/assets';
 import { handleLbpPools } from '../../../handlers/pools/pools/lbpPool';
@@ -49,15 +45,9 @@ import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalize
 import { HistoricalDataManager } from '../../../handlers/historicalData';
 import { ProcessorStatusManager } from '../../../processorStatusManager';
 import { processPoolsTvlNormalized } from '../../../handlers/pools/normalizedTvlBaseAsset';
-import {
-  prefetchGenericPersistentData,
-  prefetchGenericPersistentDataWithLogs,
-} from '../../prefetchHelpers';
+import { prefetchGenericPersistentDataWithLogs } from '../../prefetchHelpers';
 import { handleAssetAccountBalances } from '../../../handlers/balances';
-import {
-  handleAccountMmPositionData,
-  handleAllAccountsMmPositionDataUpdate,
-} from '../../../handlers/accounts/moneyMarketPosition';
+import { handleAccountMmPositionData } from '../../../handlers/accounts/moneyMarketPosition';
 import { actualizeMoneyMarketReserves } from '../../../handlers/moneyMarket/reserves/moneyMarketReserve';
 import { handleMmReservesConfigsHistoricalData } from '../../../handlers/moneyMarket/reserves';
 import { ensureHsmpool } from '../../../handlers/pools/pools/hsmpool/hsmPool';
@@ -73,9 +63,7 @@ import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
 import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
 import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
 import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
-import {
-  initAllOmnipoolLiquidityMiningDeposits
-} from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
+import { initAllOmnipoolLiquidityMiningDeposits } from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
 import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
 import { handleUniquesEvents } from '../../../handlers/uniques';
 
