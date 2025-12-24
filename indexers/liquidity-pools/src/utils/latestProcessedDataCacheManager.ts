@@ -1,8 +1,10 @@
 import { Store } from '@subsquid/typeorm-store';
 
+import { getOrCreateXykPool } from '../handlers/pools/pools/xykPool/xykPool';
 import {
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
+  PriceRoute,
   Xykpool,
   XykpoolHistoricalData,
 } from '../model';
@@ -10,7 +12,6 @@ import { AssetDynamicFee } from '../model/generated/_assetDynamicFee';
 import parsers from '../parsers';
 import { SqdProcessorContext } from '../processor';
 import { CommonPgPool } from './pgConnectionManagers/pgPool';
-import { getOrCreateXykPool } from '../handlers/pools/pools/xykPool/xykPool';
 
 // Type definitions for raw PostgreSQL query results
 interface RawAssetHistoricalDataRow {
@@ -28,7 +29,7 @@ interface RawAssetSpotPriceHistoricalDataRow {
   asset_out_id: string;
   price: string; // numeric comes as string from pg
   price_normalised: string;
-  price_route: string[][]; // jsonb
+  price_route_id: string; // foreign key to price_route table
   para_block_height: number;
 }
 
@@ -194,7 +195,7 @@ export class LatestProcessedDataCacheManager {
           asset_out_id,
           price,
           price_normalised,
-          price_route,
+          price_route_id,
           para_block_height
         FROM asset_spot_price_historical_data
         WHERE asset_in_id = ANY($1::text[])
@@ -216,7 +217,7 @@ export class LatestProcessedDataCacheManager {
             assetOutId: row.asset_out_id,
             price: BigInt(row.price),
             priceNormalised: row.price_normalised,
-            priceRoute: row.price_route,
+            priceRoute: new PriceRoute({ id: row.price_route_id }),
             paraBlockHeight: row.para_block_height,
           });
         } catch (mappingError: any) {

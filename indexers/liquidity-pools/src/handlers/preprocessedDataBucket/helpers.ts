@@ -18,6 +18,7 @@ import {
 } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { getOrCreateAsset } from '../assets/asset';
+import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
 
 export type PrefetchedCache = {
   blocks: Map<string, BlockEntity>;
@@ -161,13 +162,15 @@ export async function handlePreprocDataBuckets({
     );
     if (!assetInHistData) continue;
 
+    const priceRoute = getOrCreatePriceRoute(preprocData.priceRoute, ctx);
+
     const newEntity = new AssetSpotPriceHistoricalData({
       id: preprocData.id,
       assetInId: assetIn.id,
       assetOutId: assetOut.id,
       price: BigInt(preprocData.price),
       priceNormalised: preprocData.priceNormalised,
-      priceRoute: preprocData.priceRoute,
+      priceRoute,
       paraBlockHeight: preprocData.paraBlockHeight,
     });
     resultCache.assetSpotPriceHistoricalData.set(newEntity.id, newEntity);

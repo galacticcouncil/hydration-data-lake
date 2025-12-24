@@ -21,7 +21,10 @@ import {
   getPriceRouteDecorated,
   getXykpoolShareTokenDecimals,
 } from '../../../utils/helpers';
-import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
+import {
+  LatestProcessedDataCacheManager,
+} from '../../../utils/latestProcessedDataCacheManager';
+import { getOrCreatePriceRoute } from '../../priceRoute/priceRoute';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
 import { PoolType } from './utils/offlineSdk/sdk/src';
@@ -267,6 +270,9 @@ async function processAssetSpotPrices({
           );
         }
 
+        const decoratedRoute = getPriceRouteDecorated(route);
+        const priceRoute = getOrCreatePriceRoute(decoratedRoute, ctx);
+
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
           histDataItemId,
           new AssetSpotPriceHistoricalData({
@@ -280,8 +286,7 @@ async function processAssetSpotPrices({
               price.amount.toFixed(18, BigNumber.ROUND_HALF_UP),
               price.decimals
             ).toFixed(18, BigNumber.ROUND_HALF_UP),
-            priceRoute: getPriceRouteDecorated(route),
-
+            priceRoute,
             paraBlockHeight: blockHeader.height,
           })
         );
@@ -640,6 +645,16 @@ async function processXykInvolvedAssetSpotPrices({
         );
       }
 
+      const decoratedRoute = getPriceRouteDecorated([
+        {
+          pool: PoolType.XYK,
+          poolAddress: assetXykPool.accountId,
+          assetIn: asset.assetRegistryId,
+          assetOut: assetOut.assetRegistryId!,
+        },
+      ]);
+      const priceRoute = getOrCreatePriceRoute(decoratedRoute, ctx);
+
       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
         histDataItemId,
         new AssetSpotPriceHistoricalData({
@@ -658,14 +673,7 @@ async function processXykInvolvedAssetSpotPrices({
             18,
             BigNumber.ROUND_HALF_UP
           ),
-          priceRoute: getPriceRouteDecorated([
-            {
-              pool: PoolType.XYK,
-              poolAddress: assetXykPool.accountId,
-              assetIn: asset.assetRegistryId,
-              assetOut: assetOut.assetRegistryId!,
-            },
-          ]),
+          priceRoute,
 
           paraBlockHeight: blockHeader.height,
         })
@@ -866,6 +874,9 @@ async function processXykShareAssetSpotPrices({
       );
       const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
+      // Empty route for XYK share assets
+      const priceRoute = getOrCreatePriceRoute([], ctx);
+
       ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
         histDataItemId,
         new AssetSpotPriceHistoricalData({
@@ -884,7 +895,7 @@ async function processXykShareAssetSpotPrices({
             18,
             BigNumber.ROUND_HALF_UP
           ),
-          priceRoute: [],
+          priceRoute,
 
           paraBlockHeight: blockHeader.height,
         })

@@ -149,6 +149,20 @@ type AssetSwapFeeHistoricalData @entity {
   paraBlockHeight: Int! @index
 }
 
+type PriceRoute @entity {
+  "SHA256 hash of the route array"
+  id: ID!
+
+  #  priceRoute is a list of tuples with following values: pool address, pool type, assetIn, assetOut in appropriate order of swap
+  #  [ [<pool_address>, <pool_type>, <asset_in_id>, <asset_out_id>] ]
+  route: [[String!]!]!
+
+  # Denormalized fields for efficient querying
+  poolAddresses: [String!]!
+  assetPath: [String!]!
+  hopCount: Int!
+}
+
 type AssetSpotPriceHistoricalData @entity {
   "<assetInId>-<assetOutId>-<paraBlockHeight>"
   id: ID!
@@ -157,9 +171,7 @@ type AssetSpotPriceHistoricalData @entity {
 
   price: BigInt!
   priceNormalised: String!
-  #  priceRoute is a list of tupes with following values: pool address, pool type, assetIn, assetOut in appropriate order of swap
-  #  [ [<pool_address>, <pool_type>, <asset_in_id>, <asset_out_id>] ]
-  priceRoute: [[String!]!]!
+  priceRoute: PriceRoute!
 
   paraBlockHeight: Int! @index
 }

@@ -1,5 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, ManyToOne as ManyToOne_, Index as Index_, IntColumn as IntColumn_} from "@subsquid/typeorm-store"
+import {PriceRoute} from "./priceRoute.model"
 
 @Entity_()
 export class AssetSpotPriceHistoricalData {
@@ -25,8 +25,9 @@ export class AssetSpotPriceHistoricalData {
     @StringColumn_({nullable: false})
     priceNormalised!: string
 
-    @Column_("jsonb", {transformer: {to: obj => obj, from: obj => obj == null ? undefined : marshal.fromList(obj, val => marshal.fromList(val, val => marshal.string.fromJSON(val)))}, nullable: false})
-    priceRoute!: ((string)[])[]
+    @Index_()
+    @ManyToOne_(() => PriceRoute, {nullable: true})
+    priceRoute!: PriceRoute
 
     @Index_()
     @IntColumn_({nullable: false})

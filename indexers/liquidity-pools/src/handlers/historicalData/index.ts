@@ -278,6 +278,10 @@ export class HistoricalDataManager {
       await ctx.storeUtils.upsertWithBatches(
         Array.from(ctx.batchState.state.assetsHistoricalDataBatch.values())
       );
+      // Save PriceRoutes first (before AssetSpotPriceHistoricalData due to foreign key)
+      await ctx.storeUtils.upsertWithBatches(
+        Array.from(ctx.batchState.state.priceRoutes.values())
+      );
       await ctx.storeUtils.upsertWithBatches(assetsSpotPricesListToSave);
       await ctx.storeUtils.upsertWithBatches(assetsPairVolumesListToSave);
       await ctx.storeUtils.upsertWithBatches(
@@ -360,6 +364,10 @@ export class HistoricalDataManager {
       assetHistDataToSaveList
     );
 
+    // Save PriceRoutes first (before AssetSpotPriceHistoricalData due to foreign key)
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.priceRoutes.values())
+    );
     await ctx.storeUtils.upsertWithBatches(assetSpotPriceHistDataToSaveList);
 
     LatestProcessedDataCacheManager.getInstance().setLastAssetSpotPriceHistoricalDataItem(
