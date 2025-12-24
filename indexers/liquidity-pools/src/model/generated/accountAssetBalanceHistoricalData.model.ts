@@ -1,42 +1,54 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
+import {
+  Entity as Entity_,
+  Column as Column_,
+  PrimaryColumn as PrimaryColumn_,
+  Index as Index_,
+} from 'typeorm';
+import * as marshal from './marshal';
 
 @Entity_()
 export class AccountAssetBalanceHistoricalData {
-    constructor(props?: Partial<AccountAssetBalanceHistoricalData>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<AccountAssetBalanceHistoricalData>) {
+    Object.assign(this, props);
+  }
 
-    /**
-     * <address>-<assetId>-<paraBlockHeight>
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <address>-<assetId>-<paraBlockHeight>
+   */
+  @PrimaryColumn_()
+  id!: string;
 
-    @StringColumn_({nullable: false})
-    accountId!: string
+  @Column_('text', { nullable: false })
+  accountId!: string;
 
-    @StringColumn_({nullable: false})
-    assetId!: string
+  @Column_('text', { nullable: false })
+  assetId!: string;
 
-    /**
-     * free property in storage
-     */
-    @BigIntColumn_({nullable: false})
-    transferable!: bigint
+  /**
+   * free property in storage
+   */
+  @Column_('numeric', {
+    transformer: marshal.bigintTransformer,
+    nullable: false,
+  })
+  transferable!: bigint;
 
-    /**
-     * reserved property in storage
-     */
-    @BigIntColumn_({nullable: false})
-    totalLocked!: bigint
+  /**
+   * reserved property in storage
+   */
+  @Column_('numeric', {
+    transformer: marshal.bigintTransformer,
+    nullable: false,
+  })
+  totalLocked!: bigint;
 
-    @StringColumn_({nullable: true})
-    transferableInRefAssetNorm!: string | undefined | null
+  @Column_('text', { nullable: true })
+  transferableInRefAssetNorm!: string | undefined | null;
 
-    @StringColumn_({nullable: true})
-    totalLockedInRefAssetNorm!: string | undefined | null
+  @Column_('text', { nullable: true })
+  totalLockedInRefAssetNorm!: string | undefined | null;
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Index_()
+  @Column_('int4', { nullable: false })
+  paraBlockHeight!: number;
 }

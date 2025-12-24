@@ -1,49 +1,61 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, IntColumn as IntColumn_, Index as Index_} from "@subsquid/typeorm-store"
-import {YieldFarmDepositStatus} from "./_yieldFarmDepositStatus"
+import {
+  Entity as Entity_,
+  Column as Column_,
+  PrimaryColumn as PrimaryColumn_,
+  Index as Index_,
+} from 'typeorm';
+import * as marshal from './marshal';
+import { YieldFarmDepositStatus } from './_yieldFarmDepositStatus';
 
 @Entity_()
 export class XykYieldFarmDepositEvent {
-    constructor(props?: Partial<XykYieldFarmDepositEvent>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<XykYieldFarmDepositEvent>) {
+    Object.assign(this, props);
+  }
 
-    /**
-     * event_id
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * event_id
+   */
+  @PrimaryColumn_()
+  id!: string;
 
-    @StringColumn_({nullable: false})
-    depositId!: string
+  @Column_('text', { nullable: false })
+  depositId!: string;
 
-    @Column_("varchar", {length: 17, nullable: false})
-    eventName!: YieldFarmDepositStatus
+  @Column_('varchar', { length: 17, nullable: false })
+  eventName!: YieldFarmDepositStatus;
 
-    @StringColumn_({nullable: true})
-    globalFarmId!: string | undefined | null
+  @Column_('text', { nullable: true })
+  globalFarmId!: string | undefined | null;
 
-    @StringColumn_({nullable: true})
-    yieldFarmId!: string | undefined | null
+  @Column_('text', { nullable: true })
+  yieldFarmId!: string | undefined | null;
 
-    @StringColumn_({nullable: true})
-    lpAssetId!: string | undefined | null
+  @Column_('text', { nullable: true })
+  lpAssetId!: string | undefined | null;
 
-    @StringColumn_({nullable: true})
-    accountId!: string | undefined | null
+  @Column_('text', { nullable: true })
+  accountId!: string | undefined | null;
 
-    @BigIntColumn_({nullable: true})
-    amount!: bigint | undefined | null
+  @Column_('numeric', {
+    transformer: marshal.bigintTransformer,
+    nullable: true,
+  })
+  amount!: bigint | undefined | null;
 
-    @BigIntColumn_({nullable: true})
-    claimedAmount!: bigint | undefined | null
+  @Column_('numeric', {
+    transformer: marshal.bigintTransformer,
+    nullable: true,
+  })
+  claimedAmount!: bigint | undefined | null;
 
-    @StringColumn_({nullable: true})
-    rewardAssetId!: string | undefined | null
+  @Column_('text', { nullable: true })
+  rewardAssetId!: string | undefined | null;
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Index_()
+  @Column_('int4', { nullable: false })
+  paraBlockHeight!: number;
 
-    @StringColumn_({nullable: true})
-    eventId!: string | undefined | null
+  @Column_('text', { nullable: true })
+  eventId!: string | undefined | null;
 }

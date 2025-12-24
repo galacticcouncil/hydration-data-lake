@@ -1,4 +1,4 @@
 export enum DcaScheduleOrderType {
-    Buy = "Buy",
-    Sell = "Sell",
+  Buy = 'Buy',
+  Sell = 'Sell',
 }

@@ -24,7 +24,7 @@ import {
 import {
   LatestProcessedDataCacheManager,
 } from '../../../utils/latestProcessedDataCacheManager';
-import { getOrCreatePriceRoute } from '../../priceRoute/priceRoute';
+import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
 import { PoolType } from './utils/offlineSdk/sdk/src';

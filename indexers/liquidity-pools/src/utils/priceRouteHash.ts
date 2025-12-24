@@ -16,18 +16,18 @@ export function hashPriceRoute(route: string[][]): string {
 /**
  * Extracts metadata from a price route for denormalized storage and efficient querying.
  *
- * @param route - 2D array where each inner array is [poolAddress, poolType, assetIn, assetOut]
- * @returns Metadata object with poolAddresses, assetPath, and hopCount
+ * @param route - 2D array where each inner array is [fillerAddress, poolType, assetIn, assetOut]
+ * @returns Metadata object with fillerAddresses, assetPath, and hopCount
  */
 export function extractRouteMetadata(route: string[][]) {
-  const poolAddresses: string[] = [];
+  const fillerAddresses: string[] = [];
   const assetPath: string[] = [];
 
   for (let i = 0; i < route.length; i++) {
-    const [poolAddress, _poolType, assetIn, assetOut] = route[i];
-    poolAddresses.push(poolAddress);
+    const [fillerAddress, _poolType, assetIn, assetOut] = route[i];
+    fillerAddresses.push(fillerAddress);
 
-    // First hop: add starting asset
+    // First hop: add a starting asset
     if (i === 0) {
       assetPath.push(assetIn);
     }
@@ -36,7 +36,7 @@ export function extractRouteMetadata(route: string[][]) {
   }
 
   return {
-    poolAddresses,
+    fillerAddresses,
     assetPath,
     hopCount: route.length,
   };

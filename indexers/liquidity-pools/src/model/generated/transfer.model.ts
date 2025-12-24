@@ -1,49 +1,62 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, BigIntColumn as BigIntColumn_, DateTimeColumn as DateTimeColumn_, Index as Index_, IntColumn as IntColumn_, ManyToOne as ManyToOne_} from "@subsquid/typeorm-store"
-import {AssetType} from "./_assetType"
-import {Event} from "./event.model"
+import {
+  Entity as Entity_,
+  Column as Column_,
+  PrimaryColumn as PrimaryColumn_,
+  Index as Index_,
+  ManyToOne as ManyToOne_,
+} from 'typeorm';
+import * as marshal from './marshal';
+import { AssetType } from './_assetType';
+import { Event } from './event.model';
 
 @Entity_()
 export class Transfer {
-    constructor(props?: Partial<Transfer>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<Transfer>) {
+    Object.assign(this, props);
+  }
 
-    /**
-     * <eventId> (e.g. 0000059948-e5832-000007)
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <eventId> (e.g. 0000059948-e5832-000007)
+   */
+  @PrimaryColumn_()
+  id!: string;
 
-    @StringColumn_({array: true, nullable: true})
-    traceIds!: (string)[] | undefined | null
+  @Column_('text', { array: true, nullable: true })
+  traceIds!: string[] | undefined | null;
 
-    @StringColumn_({nullable: false})
-    assetId!: string
+  @Column_('text', { nullable: false })
+  assetId!: string;
 
-    @Column_("varchar", {length: 10, nullable: false})
-    assetType!: AssetType
+  @Column_('varchar', { length: 10, nullable: false })
+  assetType!: AssetType;
 
-    @StringColumn_({nullable: false})
-    fromId!: string
+  @Column_('text', { nullable: false })
+  fromId!: string;
 
-    @StringColumn_({nullable: false})
-    toId!: string
+  @Column_('text', { nullable: false })
+  toId!: string;
 
-    @BigIntColumn_({nullable: false})
-    amount!: bigint
+  @Column_('numeric', {
+    transformer: marshal.bigintTransformer,
+    nullable: false,
+  })
+  amount!: bigint;
 
-    @BigIntColumn_({nullable: false})
-    txFee!: bigint
+  @Column_('numeric', {
+    transformer: marshal.bigintTransformer,
+    nullable: false,
+  })
+  txFee!: bigint;
 
-    @Index_()
-    @DateTimeColumn_({nullable: false})
-    paraTimestamp!: Date
+  @Index_()
+  @Column_('timestamp with time zone', { nullable: false })
+  paraTimestamp!: Date;
 
-    @Index_()
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Index_()
+  @Column_('int4', { nullable: false })
+  paraBlockHeight!: number;
 
-    @Index_()
-    @ManyToOne_(() => Event, {nullable: true})
-    event!: Event
+  @Index_()
+  @ManyToOne_(() => Event, { nullable: true })
+  event!: Event;
 }

@@ -69,7 +69,7 @@ import {
   OmnipoolYieldFarmEntry,
   OtcOrder,
   OtcOrderEvent,
-  PriceRoute,
+  AssetSpotPriceRoute,
   RoutedTrade,
   RoutedTradeAssetBalance,
   Stableswap,
@@ -132,7 +132,7 @@ export type BatchStatePayload = {
   assetsAll: Map<string, Asset>;
   assetsHistoricalDataBatch: Map<string, AssetHistoricalData>;
   assetsSpotPriceHistoricalDataBatch: Map<string, AssetSpotPriceHistoricalData>;
-  priceRoutes: Map<string, PriceRoute>;
+  priceRoutes: Map<string, AssetSpotPriceRoute>;
   assetsPairVolumeHistoricalDataBatch: Map<
     string,
     AssetsPairVolumeHistoricalData

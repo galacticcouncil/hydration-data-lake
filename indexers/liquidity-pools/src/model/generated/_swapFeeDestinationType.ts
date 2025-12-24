@@ -1,4 +1,4 @@
 export enum SwapFeeDestinationType {
-    Account = "Account",
-    Burned = "Burned",
+  Account = 'Account',
+  Burned = 'Burned',
 }

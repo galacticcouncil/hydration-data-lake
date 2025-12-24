@@ -18,7 +18,7 @@ import {
 } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { getOrCreateAsset } from '../assets/asset';
-import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
+import { getOrCreatePriceRoute } from '../assets/priceRoute/priceRoute';
 
 export type PrefetchedCache = {
   blocks: Map<string, BlockEntity>;

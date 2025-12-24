@@ -4,7 +4,7 @@ import { getOrCreateXykPool } from '../handlers/pools/pools/xykPool/xykPool';
 import {
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
-  PriceRoute,
+  AssetSpotPriceRoute,
   Xykpool,
   XykpoolHistoricalData,
 } from '../model';
@@ -217,7 +217,7 @@ export class LatestProcessedDataCacheManager {
             assetOutId: row.asset_out_id,
             price: BigInt(row.price),
             priceNormalised: row.price_normalised,
-            priceRoute: new PriceRoute({ id: row.price_route_id }),
+            priceRoute: new AssetSpotPriceRoute({ id: row.price_route_id }),
             paraBlockHeight: row.para_block_height,
           });
         } catch (mappingError: any) {

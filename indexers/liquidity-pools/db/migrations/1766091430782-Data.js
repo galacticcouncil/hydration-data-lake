@@ -1,5 +1,5 @@
-module.exports = class Data1766587241232 {
-    name = 'Data1766587241232'
+module.exports = class Data1766091430782 {
+    name = 'Data1766091430782'
 
     async up(db) {
         await db.query(`CREATE TABLE "processor_status" ("id" character varying NOT NULL, "assets_last_updated_at_block" integer NOT NULL, "pools_destroyed_updated_at_block" integer, "initial_indexing_started_at" TIMESTAMP WITH TIME ZONE NOT NULL, "initial_indexing_finished_at" TIMESTAMP WITH TIME ZONE, "latest_processed_block" integer NOT NULL, "stableswap_hist_data_latest_block" integer, "omnipool_hist_data_latest_block" integer, "xykpool_hist_data_latest_block" integer, "aavepool_hist_data_latest_block" integer, CONSTRAINT "PK_78e3a98adaf20813cd150d44f25" PRIMARY KEY ("id"))`)
@@ -10,9 +10,7 @@ module.exports = class Data1766587241232 {
         await db.query(`CREATE INDEX "IDX_21f7e4003ecc26871f370f34bb" ON "asset_volume_historical_data" ("para_block_height") `)
         await db.query(`CREATE TABLE "asset_swap_fee_historical_data" ("id" character varying NOT NULL, "asset_id" text NOT NULL, "amount" numeric NOT NULL, "total_amount" numeric NOT NULL, "para_block_height" integer NOT NULL, CONSTRAINT "PK_700d55bbd28ec496a8bfa680a38" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_37f92b940599ef379fa2f69214" ON "asset_swap_fee_historical_data" ("para_block_height") `)
-        await db.query(`CREATE TABLE "price_route" ("id" character varying NOT NULL, "route" jsonb NOT NULL, "pool_addresses" text array NOT NULL, "asset_path" text array NOT NULL, "hop_count" integer NOT NULL, CONSTRAINT "PK_f461c2155f17e1df083a16a1ddc" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE TABLE "asset_spot_price_historical_data" ("id" character varying NOT NULL, "asset_in_id" text NOT NULL, "asset_out_id" text NOT NULL, "price" numeric NOT NULL, "price_normalised" text NOT NULL, "para_block_height" integer NOT NULL, "price_route_id" character varying, CONSTRAINT "PK_316b267068f4d3da67f77e0fe5f" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE INDEX "IDX_6e40260a566cef4fc7c897fb09" ON "asset_spot_price_historical_data" ("price_route_id") `)
+        await db.query(`CREATE TABLE "asset_spot_price_historical_data" ("id" character varying NOT NULL, "asset_in_id" text NOT NULL, "asset_out_id" text NOT NULL, "price" numeric NOT NULL, "price_normalised" text NOT NULL, "price_route" jsonb NOT NULL, "para_block_height" integer NOT NULL, CONSTRAINT "PK_316b267068f4d3da67f77e0fe5f" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_fe6f4476339989cd96972393a6" ON "asset_spot_price_historical_data" ("para_block_height") `)
         await db.query(`CREATE TABLE "assets_pair_volume_historical_data" ("id" character varying NOT NULL, "asset_a_id" text NOT NULL, "asset_registry_a_id" text NOT NULL, "asset_b_id" text NOT NULL, "asset_registry_b_id" text NOT NULL, "asset_a_volume" numeric NOT NULL, "asset_b_volume" numeric NOT NULL, "total_volume_normalised" text NOT NULL, "para_block_height" integer NOT NULL, CONSTRAINT "PK_14475cc0fb1bcf290062485692e" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_6380866c063db49e8d15fd51cd" ON "assets_pair_volume_historical_data" ("para_block_height") `)
@@ -308,7 +306,6 @@ module.exports = class Data1766587241232 {
         await db.query(`CREATE TABLE "transaction_payment_historical_data" ("id" character varying NOT NULL, "next_fee_multiplier" numeric, "para_block_height" integer NOT NULL, "block_id" character varying, CONSTRAINT "PK_1c7b89eeb3a40c62b3a7e86bbec" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_b35e2fa4ededc451604d02b553" ON "transaction_payment_historical_data" ("para_block_height") `)
         await db.query(`CREATE INDEX "IDX_b58fe2c6def98ee2fe9ca75a0a" ON "transaction_payment_historical_data" ("block_id") `)
-        await db.query(`ALTER TABLE "asset_spot_price_historical_data" ADD CONSTRAINT "FK_6e40260a566cef4fc7c897fb092" FOREIGN KEY ("price_route_id") REFERENCES "price_route"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "asset_assets_pair_volume" ADD CONSTRAINT "FK_ec24e4590bf4611dd60b110aee1" FOREIGN KEY ("asset_historical_data_id") REFERENCES "asset_historical_data"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "asset_assets_pair_volume" ADD CONSTRAINT "FK_d6417f7ebbef692e559983906d7" FOREIGN KEY ("assets_pair_volume_historical_data_id") REFERENCES "assets_pair_volume_historical_data"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "call" ADD CONSTRAINT "FK_bd3f11fd4110d60ac8b96cd62f3" FOREIGN KEY ("block_id") REFERENCES "block"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -417,9 +414,7 @@ module.exports = class Data1766587241232 {
         await db.query(`DROP INDEX "public"."IDX_21f7e4003ecc26871f370f34bb"`)
         await db.query(`DROP TABLE "asset_swap_fee_historical_data"`)
         await db.query(`DROP INDEX "public"."IDX_37f92b940599ef379fa2f69214"`)
-        await db.query(`DROP TABLE "price_route"`)
         await db.query(`DROP TABLE "asset_spot_price_historical_data"`)
-        await db.query(`DROP INDEX "public"."IDX_6e40260a566cef4fc7c897fb09"`)
         await db.query(`DROP INDEX "public"."IDX_fe6f4476339989cd96972393a6"`)
         await db.query(`DROP TABLE "assets_pair_volume_historical_data"`)
         await db.query(`DROP INDEX "public"."IDX_6380866c063db49e8d15fd51cd"`)
@@ -715,7 +710,6 @@ module.exports = class Data1766587241232 {
         await db.query(`DROP TABLE "transaction_payment_historical_data"`)
         await db.query(`DROP INDEX "public"."IDX_b35e2fa4ededc451604d02b553"`)
         await db.query(`DROP INDEX "public"."IDX_b58fe2c6def98ee2fe9ca75a0a"`)
-        await db.query(`ALTER TABLE "asset_spot_price_historical_data" DROP CONSTRAINT "FK_6e40260a566cef4fc7c897fb092"`)
         await db.query(`ALTER TABLE "asset_assets_pair_volume" DROP CONSTRAINT "FK_ec24e4590bf4611dd60b110aee1"`)
         await db.query(`ALTER TABLE "asset_assets_pair_volume" DROP CONSTRAINT "FK_d6417f7ebbef692e559983906d7"`)
         await db.query(`ALTER TABLE "call" DROP CONSTRAINT "FK_bd3f11fd4110d60ac8b96cd62f3"`)

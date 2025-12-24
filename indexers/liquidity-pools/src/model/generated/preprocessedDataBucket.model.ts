@@ -1,26 +1,30 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, IntColumn as IntColumn_, JSONColumn as JSONColumn_} from "@subsquid/typeorm-store"
+import {
+  Entity as Entity_,
+  Column as Column_,
+  PrimaryColumn as PrimaryColumn_,
+} from 'typeorm';
 
 @Entity_()
 export class PreprocessedDataBucket {
-    constructor(props?: Partial<PreprocessedDataBucket>) {
-        Object.assign(this, props)
-    }
+  constructor(props?: Partial<PreprocessedDataBucket>) {
+    Object.assign(this, props);
+  }
 
-    /**
-     * <uuid>
-     */
-    @PrimaryColumn_()
-    id!: string
+  /**
+   * <uuid>
+   */
+  @PrimaryColumn_()
+  id!: string;
 
-    @StringColumn_({nullable: false})
-    processorId!: string
+  @Column_('text', { nullable: false })
+  processorId!: string;
 
-    @IntColumn_({nullable: false})
-    paraBlockHeight!: number
+  @Column_('int4', { nullable: false })
+  paraBlockHeight!: number;
 
-    @StringColumn_({nullable: false})
-    entityName!: string
+  @Column_('text', { nullable: false })
+  entityName!: string;
 
-    @JSONColumn_({nullable: false})
-    data!: unknown
+  @Column_('jsonb', { nullable: false })
+  data!: unknown;
 }
