@@ -54,7 +54,7 @@ export async function initAllOmnipoolLiquidityPosiotions(
       accountIdsWithCommonAssetBalanceChanges: new Map([
         [
           processingBlockHeader.height,
-          new Set(positionsToSave.map((p) => p.account.id)),
+          new Set(positionsToSave.map((p) => p.accountId)),
         ],
       ]),
       allProcessedAccountsPerBlock: new Map(),

@@ -94,16 +94,11 @@ import {
   XykYieldFarmDeposit,
   XykYieldFarmDepositEvent,
   XykYieldFarmEntry,
+  XykpoolHistoricalDataLatest,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../processor';
-import {
-  BalanceImpactedEventData,
-  SwapFillerContextDetails,
-} from './types';
+import { SqdBlock, SqdProcessorContext } from '../processor';
+import { BalanceImpactedEventData, SwapFillerContextDetails } from './types';
 
 type ParachainBlockNumber = number;
 
@@ -177,6 +172,7 @@ export type BatchStatePayload = {
     { blockHeader: BlockHeader; ids: Set<string> }
   >;
   xykPoolAllHistoricalData: Map<string, XykpoolHistoricalData>;
+  xykPoolHistoricalDataLatest: Map<string, XykpoolHistoricalDataLatest>;
 
   aavePools: Map<string, Aavepool>;
   aavePoolsHistoricalData: Map<string, AavepoolHistoricalData>;
@@ -340,6 +336,7 @@ export class BatchState {
     xykPoolVolumes: new Map(),
     xykPoolIdsForStoragePrefetch: new Map(),
     xykPoolAllHistoricalData: new Map(),
+    xykPoolHistoricalDataLatest: new Map(),
 
     aavePools: new Map(),
     aavePoolsHistoricalData: new Map(),
@@ -479,6 +476,7 @@ export class BatchState {
       xykPoolVolumes: new Map(),
       xykPoolIdsForStoragePrefetch: new Map(),
       xykPoolAllHistoricalData: new Map(),
+      xykPoolHistoricalDataLatest: new Map(),
 
       aavePools: new Map(),
       aavePoolsHistoricalData: new Map(),

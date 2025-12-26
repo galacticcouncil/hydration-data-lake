@@ -1,0 +1,79 @@
+//https://postgraphile.org/postgraphile/next/smart-tags
+//https://postgraphile.org/postgraphile/next/smart-tags-file
+
+{
+  version: 1,
+  config: {
+    class: {
+      mm_supply: {
+        tags: {
+          foreignKey: [
+            '(asset_id) references asset (id)|@fieldName asset',
+            '(account_id) references account (id)|@fieldName account',
+            '(account_on_behalf_of_id) references account (id)|@fieldName accountOnBehalfOf',
+          ],
+        },
+      },
+      mm_withdraw: {
+        tags: {
+          foreignKey: [
+            '(asset_id) references asset (id)|@fieldName asset',
+            '(account_from_id) references account (id)|@fieldName accountFrom',
+            '(account_to_id) references account (id)|@fieldName accountTo',
+          ],
+        },
+      },
+      mm_borrow: {
+        tags: {
+          foreignKey: [
+            '(asset_id) references asset (id)|@fieldName asset',
+            '(account_id) references account (id)|@fieldName account',
+            '(account_on_behalf_of_id) references account (id)|@fieldName accountOnBehalfOf',
+          ],
+        },
+      },
+      mm_repay: {
+        tags: {
+          foreignKey: [
+            '(asset_id) references asset (id)|@fieldName asset',
+            '(account_id) references account (id)|@fieldName account',
+            '(repayer_account_id) references account (id)|@fieldName repayerAccount',
+          ],
+        },
+      },
+      mm_liquidation_call: {
+        tags: {
+          foreignKey: [
+            '(collateral_asset_id) references asset (id)|@fieldName collateralAsset',
+            '(debt_asset_id) references asset (id)|@fieldName debtAsset',
+            '(account_id) references account (id)|@fieldName account',
+            '(liquidator_account_id) references account (id)|@fieldName liquidatorAccount',
+          ],
+        },
+      },
+      mm_user_e_mode_set: {
+        tags: {
+          foreignKey: [
+            '(account_id) references account (id)|@fieldName account',
+          ],
+        },
+      },
+      mm_reserve_used_as_collateral_disabled_event: {
+        tags: {
+          foreignKey: [
+            '(asset_id) references asset (id)|@fieldName asset',
+            '(account_id) references account (id)|@fieldName account',
+          ],
+        },
+      },
+      mm_reserve_used_as_collateral_enabled_event: {
+        tags: {
+          foreignKey: [
+            '(asset_id) references asset (id)|@fieldName asset',
+            '(account_id) references account (id)|@fieldName account',
+          ],
+        },
+      },
+    },
+  },
+}

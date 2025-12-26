@@ -30,6 +30,7 @@ import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/his
 import { ApiSupportPgClient } from '../../apiSupport/utils/timeSeriesSupportManager/apiSupportPgClient';
 import { getXykpoolHistDataWithUniqueData } from '../pools/pools/xykPool/historicalData';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { getXykpoolsHistDataLatest } from '../pools/pools/xykPool/historicalDataLatest';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -176,16 +177,20 @@ export class HistoricalDataManager {
     /**
      *  === XykpoolHistoricalData ===
      */
-    if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
-      await ctx.storeUtils.upsertWithBatches(
-        Array.from(ctx.batchState.state.xykPoolAllHistoricalData.values())
-      );
-    } else {
-      await LatestProcessedDataCacheManager.getInstance().prefetchLastXykpoolHistDataItem(
+
+    let xykpoolHistDataToSaveList = Array.from(
+      ctx.batchState.state.xykPoolAllHistoricalData.values()
+    );
+
+    if (ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
+      const latestProcessedDataCacheManagerInstance =
+        LatestProcessedDataCacheManager.getInstance();
+
+      await latestProcessedDataCacheManagerInstance.prefetchLastXykpoolHistDataItem(
         ctx
       );
 
-      const xykpoolHistDataToSaveList = Array.from(
+      xykpoolHistDataToSaveList = Array.from(
         (
           await getXykpoolHistDataWithUniqueData(
             ctx.batchState.state.xykPoolAllHistoricalData,
@@ -194,12 +199,17 @@ export class HistoricalDataManager {
         )?.values() || []
       );
 
-      await ctx.storeUtils.upsertWithBatches(xykpoolHistDataToSaveList);
-
-      LatestProcessedDataCacheManager.getInstance().setLastXykpoolHistoricalDataItem(
+      latestProcessedDataCacheManagerInstance.setLastXykpoolHistoricalDataItem(
         xykpoolHistDataToSaveList
       );
     }
+
+    await ctx.storeUtils.upsertWithBatches(xykpoolHistDataToSaveList);
+
+    const xykpoolHistDataLatest = getXykpoolsHistDataLatest({
+      histDataList: xykpoolHistDataToSaveList,
+    });
+    await ctx.storeUtils.upsertWithBatches(xykpoolHistDataLatest);
 
     /**
      * ======

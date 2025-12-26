@@ -28,7 +28,7 @@ export async function handleXykpoolsLatestTvlAggregation({
     pool_id: string;
     tvl_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getXykpoolsTvl, [appConfig.STATE_SCHEMA_NAME, poolIdsToProcess]);
+  }>(getXykpoolsTvl, [poolIdsToProcess]);
 
   return aggregatedTvls.rows.map(
     (row) =>

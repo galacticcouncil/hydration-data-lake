@@ -235,7 +235,7 @@ export async function initAllOmnipoolLiquidityPositions(
         eventName: OmnipoolLiquidityPositionStatus.PositionCreated,
         position: positionEntity,
         assetId: positionEntity.assetId,
-        ownerAccountId: positionEntity.account.id,
+        ownerAccountId: positionEntity.accountId,
         amount: positionEntity.initialAmount,
         sharesAmount: positionEntity.sharesAmount,
         price: positionEntity.price ?? BigInt(0),
@@ -284,7 +284,12 @@ export async function handleOmnipoolLiquidityPositionTransferred(
 
   if (!positionEntity) return;
 
-  positionEntity.account = await getOrCreateAccount({ id: to, ctx });
+  const recipientAccount = await getOrCreateAccount({ id: to, ctx });
+
+  if (!recipientAccount)
+    throw Error(`Recipient of position ${item} Account ${to} not found`);
+
+  positionEntity.accountId = recipientAccount.id;
 
   ctx.batchState.state.omnipoolLiquidityPositions.set(
     positionEntity.id,

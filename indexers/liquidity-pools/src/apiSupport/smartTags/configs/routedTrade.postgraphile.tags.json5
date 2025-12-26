@@ -1,0 +1,34 @@
+//https://postgraphile.org/postgraphile/next/smart-tags
+//https://postgraphile.org/postgraphile/next/smart-tags-file
+
+{
+  version: 1,
+  config: {
+    class: {
+      routed_trade_asset_balance: {
+        tags: {
+          name: 'route_trade_input_output_asset_balance',
+          fieldName: 'route_trade_input_output_asset_balance',
+        },
+      },
+      routed_trade_inputs: {
+        tags: {
+          foreignKey: [
+            '(routed_trade_id) references routed_trade (id)|@fieldName routed_trade|@foreignFieldName routeTradeInputs',
+            '(asset_id) references asset (id)|@fieldName asset|@foreignFieldName routeTradeInputs',
+          ],
+          omit: ['all'],
+        },
+      },
+      routed_trade_outputs: {
+        tags: {
+          foreignKey: [
+            '(routed_trade_id) references routed_trade (id)|@fieldName routed_trade|@foreignFieldName routeTradeOutputs',
+            '(asset_id) references asset (id)|@fieldName asset|@foreignFieldName routeTradeOutputs',
+          ],
+          omit: ['all'],
+        },
+      },
+    },
+  },
+}

@@ -8,7 +8,7 @@ export class OmnipoolAssetHistoricalDataLatest {
   }
 
   /**
-   * <omnipoolAssetId>
+   * <omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)
    */
   @PrimaryColumn_()
   id!: string

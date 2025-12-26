@@ -1,0 +1,18 @@
+//https://postgraphile.org/postgraphile/next/smart-tags
+//https://postgraphile.org/postgraphile/next/smart-tags-file
+
+{
+  version: 1,
+  config: {
+    class: {
+      dca_schedule: {
+        tags: {
+          foreignKey: [
+            '(asset_in_id) references asset (id)|@fieldName assetIn',
+            '(asset_out_id) references asset (id)|@fieldName assetOut',
+          ],
+        },
+      },
+    },
+  },
+}

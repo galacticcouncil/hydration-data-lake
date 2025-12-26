@@ -874,6 +874,20 @@ type XykpoolHistoricalData @entity {
   paraBlockHeight: Int! @index
 }
 
+type XykpoolHistoricalDataLatest @entity {
+  "poolAddress-assetId-paraBlockHeight"
+  id: ID!
+  pool: Xykpool!
+
+  assetAId: String!
+  assetBId: String!
+  assetABalance: BigInt!
+  assetBBalance: BigInt!
+  tvlInRefAssetNorm: String
+
+  paraBlockHeight: Int! @index
+}
+
 # ======================================================================================================================
 # *** Omnipool ***
 # ======================================================================================================================
@@ -994,7 +1008,7 @@ type OmnipoolAssetHistoricalData @entity {
 }
 
 type OmnipoolAssetHistoricalDataLatest @entity {
-  "<omnipoolAssetId>"
+  "<omnipoolAssetId>-<paraBlockHeight> (e.g. 0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000-0-101312)"
   id: ID!
 
   poolHistoricalDataId: String!
@@ -1630,7 +1644,7 @@ type MmBorrow @entity {
   id: ID!
   traceIds: [String!]
 
-  asset: Asset!
+  assetId: String!
   accountId: String!
   accountOnBehalfOfId: String!
   amount: BigInt
@@ -1919,7 +1933,7 @@ enum OmnipoolLiquidityPositionStatus {
 type OmnipoolLiquidityPosition @entity {
   "<position ID>"
   id: ID!
-  account: Account!
+  accountId: String!
   assetId: String!
   omnipoolAssetId: String!
   initialAmount: BigInt!

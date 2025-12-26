@@ -59,7 +59,7 @@ export async function platformTotalTvlResolver(
     pool_id: string;
     tvl_in_ref_asset_norm: string;
     para_block_height: number;
-  }>(getAllXykpoolsTvl, [appConfig.STATE_SCHEMA_NAME]);
+  }>(getAllXykpoolsTvl);
 
   const totalMmSupply = await pgClient.query<{
     pool_id: string;

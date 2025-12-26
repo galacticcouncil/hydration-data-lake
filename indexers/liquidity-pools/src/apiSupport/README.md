@@ -10,7 +10,7 @@ The API incorporates subscriptions and custom views defined through SQL scripts.
 
 ### Decorators and Views
 
-To ensure a consistent and coherent field set, the API employs decorators based on [PostGraphile Smart Tags](https://postgraphile.org/postgraphile/next/smart-tags). Smart tags configurations are specified in the [postgraphile.tags.json5](./postgraphile.tags.json5) file. Additionally, the API introduces the following database views:
+To ensure a consistent and coherent field set, the API employs decorators based on [PostGraphile Smart Tags](https://postgraphile.org/postgraphile/next/smart-tags). Smart tags configurations are specified in the [postgraphile.tags.json5](smartTags/configs/misc.postgraphile.tags.json5) file. Additionally, the API introduces the following database views:
 
 - `swap_inputs`
 - `swap_outputs`

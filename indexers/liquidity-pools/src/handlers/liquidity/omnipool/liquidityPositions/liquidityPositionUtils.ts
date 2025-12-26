@@ -138,13 +138,21 @@ export async function getNewOmnipoolLiquidityPosition({
       );
     }
 
+    const ownerAccount = await getOrCreateAccount({
+      id: positionData.ownerAccountId!,
+      ctx,
+    });
+
+    if (!ownerAccount) {
+      throw Error(
+        `Owner Account ${positionData.ownerAccountId} cannot be found.`
+      );
+    }
+
     const positionEntity = new OmnipoolLiquidityPosition({
       id: positionId,
 
-      account: await getOrCreateAccount({
-        id: positionData.ownerAccountId!,
-        ctx,
-      }),
+      accountId: ownerAccount.id,
       assetId: positionData.assetId,
       omnipoolAssetId: omnipoolAsset.id,
 
@@ -283,14 +291,14 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
       (pos.destroyedAtParaBlockHeight === null ||
         (!!pos.destroyedAtParaBlockHeight &&
           pos.destroyedAtParaBlockHeight >= ctx.blocks[0].header.height)) &&
-      involvedAccountsInBatch.has(pos?.account?.id)
+      involvedAccountsInBatch.has(pos?.accountId)
   );
 
   const allPersistentPositions = await ctx.storeUtils.findWithLogs(
     OmnipoolLiquidityPosition,
     {
       where: {
-        account: { id: In(Array.from(involvedAccountsInBatch.values())) },
+        accountId: In(Array.from(involvedAccountsInBatch.values())),
         createdAtParaBlockHeight: LessThanOrEqual(
           ctx.blocks[ctx.blocks.length - 1].header.height
         ),
@@ -298,9 +306,6 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
           IsNull(),
           MoreThanOrEqual(ctx.blocks[0].header.height)
         ),
-      },
-      relations: {
-        account: true,
       },
     }
   );
@@ -370,11 +375,11 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
   >();
 
   for (const position of allPositionsDeduped.values()) {
-    if (!allPositionsIndexedByAccountId.has(position.account.id)) {
-      allPositionsIndexedByAccountId.set(position.account.id, [position]);
+    if (!allPositionsIndexedByAccountId.has(position.accountId)) {
+      allPositionsIndexedByAccountId.set(position.accountId, [position]);
       continue;
     }
-    allPositionsIndexedByAccountId.get(position.account.id)?.push(position);
+    allPositionsIndexedByAccountId.get(position.accountId)?.push(position);
   }
 
   const accountPositionBalancesPerBlockPerAsset: AccountPositionBalancesPerBlockPerAsset =

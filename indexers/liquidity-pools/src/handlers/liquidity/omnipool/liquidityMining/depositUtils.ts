@@ -2,8 +2,6 @@ import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { XykpoolLMDepositDataWithId } from '../../../../parsers/types/storage/xykpoolLiquidityMining';
 import {
-  OmnipoolLiquidityPosition,
-  OmnipoolLiquidityPositionEvent,
   OmnipoolYieldFarmDeposit,
   OmnipoolYieldFarmDepositEvent,
   OmnipoolYieldFarmEntry,

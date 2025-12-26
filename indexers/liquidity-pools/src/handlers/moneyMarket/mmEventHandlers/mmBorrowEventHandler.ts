@@ -1,12 +1,7 @@
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  ChainActivityTraceManager,
-} from '../../../chainActivityTracingManagers';
-import {
-  EvmEventName,
-  MmBorrow,
-} from '../../../model';
+import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { EvmEventName, MmBorrow } from '../../../model';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { SqdProcessorContext } from '../../../processor';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
@@ -75,7 +70,7 @@ export async function handleMmBorrowEvent(
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
     ],
-    asset: assetEntity,
+    assetId: assetEntity.id,
     accountId: account.id,
     accountOnBehalfOfId: accountOnBehalfOf.id,
     amount: parsedEvmEventData.amount,
