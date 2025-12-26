@@ -77841,7 +77841,6 @@ type XykpoolHistoricalVolumeEntity {
   assetBTotalFees: BigInt!
   averagePrice: BigInt!
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 input XykpoolsLatestTvlFilter {
@@ -77901,7 +77900,6 @@ type OmnipoolAssetHistoricalVolumeEntity {
   assetFee: BigInt!
   assetTotalFees: BigInt!
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 input StableswapVolumeHistoricalDataByPeriodFilter {
@@ -77947,7 +77945,6 @@ type StableswapAssetHistoricalVolumeEntity {
   swapTotalVolumeIn: BigInt!
   swapTotalVolumeOut: BigInt!
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 type StableswapHistoricalVolumeEntity {
@@ -77955,7 +77952,6 @@ type StableswapHistoricalVolumeEntity {
   poolId: String!
   assetVolumes: [StableswapAssetHistoricalVolumeEntity]!
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
 }
 
 input RoutedTradeSubscriptionFilter {
@@ -77988,7 +77984,6 @@ type RoutedTradeEntity {
   inputs: [RoutedTradeAssetBalanceResponse!]!
   outputs: [RoutedTradeAssetBalanceResponse!]!
   paraBlockHeight: Int!
-  relayBlockHeight: Int!
   blockId: String!
 }
 

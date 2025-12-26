@@ -10,7 +10,6 @@ export type AavepoolHistoricalData = {
   liquidity_in: string;
   liquidity_out: string;
   para_block_height: number;
-  relay_block_height: number;
   pool_id: string;
   block_id: string;
   tvl_in_ref_asset_norm: string;

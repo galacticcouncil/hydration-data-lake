@@ -17,10 +17,6 @@ export function stableswapHistoricalVolumeSelectGraphQLResult({
   sqlBuilder.select(sql.fragment`${tableAlias}.id`, 'id');
   sqlBuilder.select(sql.fragment`${tableAlias}.pool_id`, 'pool_id');
   sqlBuilder.select(
-    sql.fragment`${tableAlias}.relay_block_height`,
-    'relay_block_height'
-  );
-  sqlBuilder.select(
     sql.fragment`${tableAlias}.para_block_height`,
     'para_block_height'
   );
@@ -70,10 +66,6 @@ export function stableswapAssetHistoricalVolumeSelectGraphQLResult({
   sqlBuilder.select(
     sql.fragment`${tableAlias}.para_block_height`,
     'para_block_height'
-  );
-  sqlBuilder.select(
-    sql.fragment`${tableAlias}.relay_block_height`,
-    'relay_block_height'
   );
 }
 

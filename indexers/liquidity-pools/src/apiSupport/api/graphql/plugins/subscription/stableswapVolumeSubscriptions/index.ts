@@ -47,7 +47,6 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
             swapTotalVolumeIn: BigInt!
             swapTotalVolumeOut: BigInt!
             paraBlockHeight: Int!
-            relayBlockHeight: Int!
         }
 
         type StableswapHistoricalVolumeEntity {
@@ -55,7 +54,6 @@ export const StableswapVolumeSubscriptionsPlugin: Plugin =
           poolId: String!
           assetVolumes: [StableswapAssetHistoricalVolumeEntity]!
           paraBlockHeight: Int!
-          relayBlockHeight: Int!
         }
 
         extend type Subscription {

@@ -36,7 +36,6 @@ export type XykpoolHistoricalVolumeRaw = {
   asset_b_fees_total_vol_norm: string;
 
   average_price: number;
-  relay_block_height: number;
   para_block_height: number;
 };
 export type XykpoolHistoricalVolumeGqlResponse = {
@@ -59,7 +58,6 @@ export type XykpoolHistoricalVolumeGqlResponse = {
   assetATotalFees: bigint;
   assetBTotalFees: bigint;
   averagePrice: bigint;
-  relayBlockHeight: number;
   paraBlockHeight: number;
 };
 
@@ -79,7 +77,6 @@ export type OmnipoolAssetHistoricalVolumeRaw = {
   asset_total_vol_in_norm: string;
   asset_total_vol_out_norm: string;
   asset_total_fees_vol_norm: string;
-  relay_block_height: number;
   para_block_height: number;
 };
 export type OmnipoolAssetHistoricalVolumeGqlResponse = {
@@ -91,21 +88,18 @@ export type OmnipoolAssetHistoricalVolumeGqlResponse = {
   assetTotalVolumeOut: number;
   assetFee: number;
   assetTotalFees: number;
-  relayBlockHeight: number;
   paraBlockHeight: number;
 };
 
 export type StableswapHistoricalVolumeRaw = {
   id: string;
   pool_id: string;
-  relay_block_height: number;
   para_block_height: number;
 };
 export type StableswapHistoricalVolumeGqlResponse = {
   id: string;
   poolId: string;
   assetVolumes: StableswapAssetHistoricalVolumeGqlResponse[];
-  relayBlockHeight: number;
   paraBlockHeight: number;
 };
 
@@ -130,7 +124,6 @@ export type StableswapAssetHistoricalVolumeRaw = {
   asset_total_vol_out_norm: string;
 
   para_block_height: number;
-  relay_block_height: number;
 };
 export type StableswapAssetHistoricalVolumeGqlResponse = {
   id: string;
@@ -143,7 +136,6 @@ export type StableswapAssetHistoricalVolumeGqlResponse = {
   swapTotalVolumeIn: number;
   swapTotalVolumeOut: number;
   paraBlockHeight: number;
-  relayBlockHeight: number;
 };
 
 export interface QueryResolverContext {
@@ -179,7 +171,6 @@ export type RoutedTradeRaw = {
   inputs: RoutedTradeAssetBalanceRaw[];
   outputs: RoutedTradeAssetBalanceRaw[];
   para_block_height: number;
-  relay_block_height: number;
   block_id: string;
 };
 
@@ -198,7 +189,6 @@ export type RoutedTradeGqlResponse = {
   inputs: RoutedTradeAssetBalanceGqlResponse[];
   outputs: RoutedTradeAssetBalanceGqlResponse[];
   paraBlockHeight: number;
-  relayBlockHeight: number;
   blockId: string;
 };
 

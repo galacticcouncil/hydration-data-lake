@@ -60,7 +60,6 @@ export async function stableswapHistoricalVolumeSubscriptionResolver(
           assetVol || {}
         )
       ),
-      relayBlockHeight: decoratedStablepoolHistVolRow.relayBlockHeight,
       paraBlockHeight: decoratedStablepoolHistVolRow.paraBlockHeight,
     } as StableswapHistoricalVolumeGqlResponse,
     event: event.__node__.event_name,

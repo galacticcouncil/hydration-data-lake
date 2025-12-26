@@ -48,7 +48,6 @@ export async function xykpoolHistoricalVolumeSubscriptionResolver(
       assetATotalFees: BigInt(decoratedRow.assetATotalFees),
       assetBTotalFees: BigInt(decoratedRow.assetBTotalFees),
       averagePrice: decoratedRow.averagePrice,
-      relayBlockHeight: decoratedRow.relayBlockHeight,
       paraBlockHeight: decoratedRow.paraBlockHeight,
     } as XykpoolHistoricalVolumeGqlResponse,
     event: event.__node__.event_name,

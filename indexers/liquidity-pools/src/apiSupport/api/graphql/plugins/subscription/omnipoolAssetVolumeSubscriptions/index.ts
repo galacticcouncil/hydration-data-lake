@@ -46,7 +46,6 @@ export const OmnipoolAssetVolumeSubscriptionsPlugin: Plugin =
           assetFee: BigInt!
           assetTotalFees: BigInt!
           paraBlockHeight: Int!
-          relayBlockHeight: Int!
         }
 
         extend type Subscription {

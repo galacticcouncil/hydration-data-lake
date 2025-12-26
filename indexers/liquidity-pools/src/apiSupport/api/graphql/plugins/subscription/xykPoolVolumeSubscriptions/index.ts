@@ -55,7 +55,6 @@ export const XykpoolsVolumeSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
           assetBTotalFees: BigInt!
           averagePrice: BigInt!
           paraBlockHeight: Int!
-          relayBlockHeight: Int!
         }
 
         extend type Subscription {

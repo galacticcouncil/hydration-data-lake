@@ -1,7 +1,6 @@
 export const aggregateStablepoolVolumesByBlocksRange = `
     WITH stableswap_volume_start_block AS (SELECT id,
                                                   pool_id,
-                                                  relay_block_height,
                                                   para_block_height,
                                                   ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY para_block_height ASC) AS rank
                                            FROM stableswap_volume_historical_data
@@ -10,7 +9,6 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                              AND para_block_height <= $3),
          stableswap_volume_end_block AS (SELECT id,
                                                 pool_id,
-                                                relay_block_height,
                                                 para_block_height,
                                                 ROW_NUMBER() OVER (PARTITION BY pool_id ORDER BY para_block_height DESC) AS rank
                                          FROM stableswap_volume_historical_data
@@ -38,8 +36,7 @@ export const aggregateStablepoolVolumesByBlocksRange = `
                                                   'asset_total_vol_in_norm', sahv.asset_total_vol_in_norm,
                                                   'asset_total_vol_out_norm', sahv.asset_total_vol_out_norm,
                                             
-                                                  'para_block_height', sahv.para_block_height,
-                                                  'relay_block_height', sahv.relay_block_height
+                                                  'para_block_height', sahv.para_block_height
                                           )
                                   ) AS asset_volumes
                            FROM stableswap_asset_volume_historical_data sahv

@@ -22,7 +22,6 @@ export type SwapAssetFeeRaw = {
   amount: number;
   total_amount: number;
   para_block_height: number;
-  relay_block_height: number;
   asset_id: string;
   asset_registry_id?: string;
   block_id: string;

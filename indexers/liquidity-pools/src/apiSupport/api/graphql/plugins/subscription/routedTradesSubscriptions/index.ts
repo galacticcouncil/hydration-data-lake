@@ -43,7 +43,6 @@ export const RoutedTradesSubscriptionsPlugin: Plugin = makeExtendSchemaPlugin(
           outputs: [RoutedTradeAssetBalanceResponse!]!
           
           paraBlockHeight: Int!
-          relayBlockHeight: Int!
           blockId: String!
         }
 

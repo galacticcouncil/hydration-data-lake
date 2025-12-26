@@ -36,10 +36,6 @@ export function routedTradeSelectGraphQLResult({
     sql.fragment`${tableAlias}.para_block_height`,
     'para_block_height'
   );
-  sqlBuilder.select(
-    sql.fragment`${tableAlias}.relay_block_height`,
-    'relay_block_height'
-  );
   sqlBuilder.select(sql.fragment`${tableAlias}.block_id`, 'block_id');
 }
 

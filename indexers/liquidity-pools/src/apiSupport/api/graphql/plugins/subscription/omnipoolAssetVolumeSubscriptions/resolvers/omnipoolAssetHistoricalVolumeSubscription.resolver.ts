@@ -41,7 +41,6 @@ export async function omnipoolAssetHistoricalVolumeSubscriptionResolver(
       assetTotalVolumeOut: decoratedRow.assetTotalVolumeOut,
       assetFee: decoratedRow.assetFee,
       assetTotalFees: decoratedRow.assetTotalFees,
-      relayBlockHeight: decoratedRow.relayBlockHeight,
       paraBlockHeight: decoratedRow.paraBlockHeight,
     } as OmnipoolAssetHistoricalVolumeGqlResponse,
     event: event.__node__.event_name,

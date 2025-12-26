@@ -71,7 +71,6 @@ export async function routedTradeSubscriptionResolver(
       participantFillers: routedTradeDecoratedRow.participantFillers,
       feeRecipients: routedTradeDecoratedRow.feeRecipients,
       paraBlockHeight: routedTradeDecoratedRow.paraBlockHeight,
-      relayBlockHeight: routedTradeDecoratedRow.relayBlockHeight,
       blockId: routedTradeDecoratedRow.blockId,
       swapIds: routedTradeSwapsRows.map((swap: RoutedTradeSwapRaw) => swap.id),
       inputs: routedTradeAssetBalancesRows
