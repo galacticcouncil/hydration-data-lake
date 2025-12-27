@@ -424,8 +424,7 @@ export class AppConfig {
    */
   readonly RPC_REQUEST_TIMEOUT: number = 30_000;
 
-  readonly ASSET_HUB_RPC_URL: string =
-    'wss://polkadot-asset-hub-rpc.polkadot.io';
+  readonly ASSET_HUB_RPC_URL: string = 'wss://statemint-rpc-tn.dwellir.com';
 
   @Transform(({ value }: { value: string }) => +value)
   readonly ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE: number = 1000;
