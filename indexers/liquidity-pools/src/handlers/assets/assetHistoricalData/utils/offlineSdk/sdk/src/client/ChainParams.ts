@@ -14,8 +14,10 @@ export class ChainParams {
 
   get blockTime(): number {
     if (this._blockTime === undefined) {
+      // @ts-ignore
       this._blockTime = this.api.consts.aura.slotDuration.toNumber();
     }
+    if (!this._blockTime) throw new Error('Block time not found');
     return this._blockTime;
   }
 

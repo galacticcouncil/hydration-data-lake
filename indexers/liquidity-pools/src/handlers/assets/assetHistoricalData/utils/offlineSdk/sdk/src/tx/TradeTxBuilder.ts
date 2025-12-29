@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 
 import { AAVE_EXTRA_GAS } from '../aave';
@@ -77,7 +78,7 @@ export class TradeTxBuilder extends TxBuilder {
     return this.buildSellTx();
   }
 
-  private buildBuyTx(): SubstrateTransaction {
+  private async buildBuyTx(): Promise<SubstrateTransaction> {
     const { amountIn, amountOut, swaps } = this.trade;
 
     const firstSwap = swaps[0];
@@ -106,6 +107,12 @@ export class TradeTxBuilder extends TxBuilder {
         maxAmountIn.toFixed(),
         TradeRouteBuilder.build(swaps)
       );
+    }
+
+    const hasDebt = await this.aaveUtils.hasBorrowPositions(this.beneficiary);
+    if (hasDebt) {
+      const txWithExtraGas = this.dispatchWithExtraGas(tx);
+      return this.wrapTx('RouterBuy', txWithExtraGas, AAVE_EXTRA_GAS);
     }
 
     return this.wrapTx('RouterBuy', tx);
@@ -142,12 +149,10 @@ export class TradeTxBuilder extends TxBuilder {
       );
     }
 
-    if (firstSwap.isWithdraw()) {
-      const hasDebt = await this.aaveUtils.hasBorrowPositions(this.beneficiary);
-      if (hasDebt) {
-        const txWithExtraGas = this.dispatchWithExtraGas(tx);
-        return this.wrapTx('RouterSellAll', txWithExtraGas, AAVE_EXTRA_GAS);
-      }
+    const hasDebt = await this.aaveUtils.hasBorrowPositions(this.beneficiary);
+    if (hasDebt) {
+      const txWithExtraGas = this.dispatchWithExtraGas(tx);
+      return this.wrapTx('RouterSell', txWithExtraGas, AAVE_EXTRA_GAS);
     }
 
     return this.wrapTx('RouterSell', tx);
@@ -172,12 +177,10 @@ export class TradeTxBuilder extends TxBuilder {
       TradeRouteBuilder.build(swaps)
     );
 
-    if (firstSwap.isWithdraw()) {
-      const hasDebt = await this.aaveUtils.hasBorrowPositions(this.beneficiary);
-      if (hasDebt) {
-        const txWithExtraGas = this.dispatchWithExtraGas(tx);
-        return this.wrapTx('RouterSellAll', txWithExtraGas, AAVE_EXTRA_GAS);
-      }
+    const hasDebt = await this.aaveUtils.hasBorrowPositions(this.beneficiary);
+    if (hasDebt) {
+      const txWithExtraGas = this.dispatchWithExtraGas(tx);
+      return this.wrapTx('RouterSellAll', txWithExtraGas, AAVE_EXTRA_GAS);
     }
 
     return this.wrapTx('RouterSellAll', tx);

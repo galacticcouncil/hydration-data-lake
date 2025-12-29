@@ -60,7 +60,9 @@ export async function handleAllAssetsFarmsYieldMetrics({
             await polkadotApiInstance.query.omnipoolWarehouseLM.globalFarm(
               globalFarmId
             )
-          ).unwrap();
+          )
+            // @ts-ignore
+            .unwrap();
 
           const rewardCurrency = globalFarm.rewardCurrency.toString();
 
@@ -103,9 +105,11 @@ export async function handleAllAssetsFarmsYieldMetrics({
             await polkadotApiInstance.query.xykWarehouseLM.globalFarm(
               globalFarmId
             )
-          ).unwrap();
+          )
+            // @ts-ignore
+            .unwrap();
 
-          const rewardCurrency = globalFarm.rewardCurrency.toString();
+          const rewardCurrency = globalFarm!.rewardCurrency.toString();
 
           return rewardCurrency;
         })

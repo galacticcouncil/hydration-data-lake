@@ -800,9 +800,7 @@ export class OfflineTradeRouterManagerHelper {
     blockNumber: number;
   }): IPersistentStableSwapBase[] {
     const poolsMap: Map<string, IPersistentStableSwapBase> = new Map();
-    // for (const [poolId, poolHistData] of [
-    //   ...(this.stableswapHistData.get(blockNumber) || new Map()).entries(),
-    // ] as [string, StableswapHistoricalData][]) {
+
     for (const [poolId, poolHistData] of (this.stableswapHistData.get(
       blockNumber
     ) || new Map()) as Map<string, StableswapHistoricalData>) {
