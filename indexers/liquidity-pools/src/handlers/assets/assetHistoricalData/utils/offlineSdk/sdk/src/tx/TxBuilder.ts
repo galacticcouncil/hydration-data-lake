@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ApiPromise } from '@polkadot/api';
 import { type SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { type CallDryRunEffects } from '@polkadot/types/interfaces';
