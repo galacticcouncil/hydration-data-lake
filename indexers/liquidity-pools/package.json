@@ -34,7 +34,7 @@
     "@galacticcouncil/math-omnipool": "^1.3.0",
     "@galacticcouncil/math-stableswap": "^2.2.0",
     "@galacticcouncil/math-xyk": "^1.1.0",
-    "@galacticcouncil/sdk": "^9.5.3",
+    "@galacticcouncil/sdk": "^10.4.0",
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "@graphile/pg-aggregates": "^0.1.1",
     "@graphile/pg-pubsub": "^4.13.0",

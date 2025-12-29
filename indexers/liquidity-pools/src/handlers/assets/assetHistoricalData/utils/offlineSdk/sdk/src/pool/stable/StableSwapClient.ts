@@ -30,110 +30,33 @@ import { PoolClient } from '../PoolClient';
 import { StableMath } from './StableMath';
 import { StableSwapBase, StableSwapFees } from './StableSwap';
 
+type Peg = {
+  pair: string[];
+  updatedAt: string;
+  source?: string;
+};
+
 export class StableSwapClient extends PoolClient {
-  private stablePools: Map<string, PalletStableswapPoolInfo> = new Map([]);
-
-  isSupported(): boolean {
-    return this.api.query.stableswap !== undefined;
-  }
-
-  isPegSupported(): boolean {
-    return this.api.query.stableswap.poolPegs !== undefined;
-  }
-
-  async loadPools(): Promise<PoolBase[]> {
-    const [pools, parachainBlock] = await Promise.all([
-      this.api.query.stableswap.pools.entries(),
-      this.api.query.system.number(),
-    ]);
-
-    const blockNumber = parachainBlock.toNumber();
-    const stablePools = pools.map(
-      async ([
-        {
-          args: [id],
-        },
-        state,
-      ]) => {
-        try {
-        const pool: PalletStableswapPoolInfo = state.unwrap();
-        const poolId = id.toString();
-        const poolAddress = this.getPoolAddress(poolId);
-
-        const [poolDelta, poolTokens, poolPegs] = await Promise.all([
-          this.getPoolDelta(poolId, pool, blockNumber.toString()),
-          this.getPoolTokens(poolAddress, poolId, pool),
-          this.getPoolPegs(poolId, pool, blockNumber.toString()),
-        ]);
-
-          // add virtual share (routing)
-          poolTokens.push({
-            id: poolId,
-            tradeable: TRADEABLE_DEFAULT,
-            balance: poolDelta.totalIssuance,
-          } as PoolToken);
-
-        this.stablePools.set(poolAddress, pool);
-        return {
-          address: poolAddress,
-          id: poolId,
-          type: PoolType.Stable,
-          fee: FeeUtils.fromPermill(pool.fee.toNumber()),
-          tokens: poolTokens,
-          ...poolDelta,
-          ...poolPegs,
-          ...this.getPoolLimits(),
-        } as PoolBase;
-        } catch (e) {
-          console.warn(`Skipping pool ${id.toString()}\n`, String(e));
-          return null;
-        }
-      }
-    );
-    const results = await Promise.all(stablePools);
-    return results.filter((pool): pool is PoolBase => pool !== null);
-  }
-
-  async getPoolFees(
-    _block: number,
-    _poolPair: PoolPair,
-    poolAddress: string
-  ): Promise<PoolFees> {
-    const pool = this.pools.find(
-      (pool) => pool.address === poolAddress
-    ) as StableSwapBase;
-    return {
-      fee: pool.pegsFee as PoolFee,
-    } as StableSwapFees;
-  }
+  private poolsData: Map<string, PalletStableswapPoolInfo> = new Map([]);
 
   getPoolType(): PoolType {
     return PoolType.Stable;
   }
 
-  async subscribePoolChange(pool: PoolBase): UnsubscribePromise {
-    return this.api.query.system.number(async (parachainBlock) => {
-      const blockNumber = parachainBlock.toString();
-      const stablePool = this.stablePools.get(pool.address);
-      if (stablePool) {
-        const [poolDelta, poolPegs] = await Promise.all([
-          this.getPoolDelta(pool.id!, stablePool, blockNumber),
-          this.getPoolPegs(pool.id!, stablePool, blockNumber),
-        ]);
+  private getPoolAddress(poolId: string) {
+    const pool = Number(poolId);
+    const name = StableMath.getPoolAddress(pool);
+    return encodeAddress(blake2AsHex(name), HYDRADX_SS58_PREFIX);
+  }
 
-        const tokens = pool.tokens.map((t) => {
-          if (t.id === pool.id) {
-            return {
-              ...t,
-              balance: poolDelta.totalIssuance,
-            };
-          }
-          return t;
-        });
-
-        Object.assign(pool, { tokens: tokens }, poolDelta, poolPegs);
-      }
-    });
+  private getPoolLimits(): PoolLimits {
+    const minTradingLimit =
+      this.api.consts.stableswap.minTradingLimit.toNumber();
+    return {
+      maxInRatio: 0,
+      maxOutRatio: 0,
+      minTradingLimit: minTradingLimit,
+    } as PoolLimits;
   }
 
   private async getPoolDelta(
@@ -186,13 +109,74 @@ export class StableSwapClient extends PoolClient {
     return Promise.all(poolTokens);
   }
 
-  private getPoolDefaultPegs(poolInfo: PalletStableswapPoolInfo) {
-    const defaultFee = poolInfo.fee;
-    const defaultPegs = StableMath.defaultPegs(poolInfo.assets.length);
+  isSupported(): boolean {
+    return this.api.query.stableswap !== undefined;
+  }
+
+  async loadPools(): Promise<PoolBase[]> {
+    const [pools, parachainBlock] = await Promise.all([
+      this.api.query.stableswap.pools.entries(),
+      this.api.query.system.number(),
+    ]);
+
+    const blockNumber = parachainBlock.toNumber();
+    const stablePools = pools.map(
+      async ([
+        {
+          args: [id],
+        },
+        state,
+      ]) => {
+        try {
+        const pool: PalletStableswapPoolInfo = state.unwrap();
+        const poolId = id.toString();
+        const poolAddress = this.getPoolAddress(poolId);
+
+        const [poolDelta, poolTokens, poolPegs] = await Promise.all([
+          this.getPoolDelta(poolId, pool, blockNumber.toString()),
+          this.getPoolTokens(poolAddress, poolId, pool),
+          this.getPoolPegs(poolId, pool, blockNumber.toString()),
+        ]);
+
+          // add virtual share (routing)
+          poolTokens.push({
+            id: poolId,
+            tradeable: TRADEABLE_DEFAULT,
+            balance: poolDelta.totalIssuance,
+          } as PoolToken);
+
+          this.poolsData.set(poolAddress, pool);
+        return {
+          address: poolAddress,
+          id: poolId,
+          type: PoolType.Stable,
+          fee: FeeUtils.fromPermill(pool.fee.toNumber()),
+          tokens: poolTokens,
+          ...poolDelta,
+          ...poolPegs,
+          ...this.getPoolLimits(),
+        } as PoolBase;
+        } catch (e) {
+          console.warn(`Skipping pool ${id.toString()}\n`, String(e));
+          return null;
+        }
+      }
+    );
+    const results = await Promise.all(stablePools);
+    return results.filter((pool): pool is PoolBase => pool !== null);
+  }
+
+  async getPoolFees(
+    _block: number,
+    _poolPair: PoolPair,
+    poolAddress: string
+  ): Promise<PoolFees> {
+    const pool = this.pools.find(
+      (pool) => pool.address === poolAddress
+    ) as StableSwapBase;
     return {
-      pegsFee: FeeUtils.fromPermill(defaultFee.toNumber()),
-      pegs: defaultPegs,
-    };
+      fee: pool.pegsFee as PoolFee,
+    } as StableSwapFees;
   }
 
   private async getPoolPegs(
@@ -200,24 +184,32 @@ export class StableSwapClient extends PoolClient {
     poolInfo: PalletStableswapPoolInfo,
     blockNumber: string
   ): Promise<Partial<StableSwapBase>> {
-    if (!this.isPegSupported()) {
-      return this.getPoolDefaultPegs(poolInfo);
-    }
-
     const poolPegs = await this.api.query.stableswap.poolPegs(poolId);
     if (poolPegs.isNone) {
-      return this.getPoolDefaultPegs(poolInfo);
+      return this.getDefaultPegs(poolInfo);
     }
 
     const pegs = poolPegs.unwrap();
 
-    const latestPegs = await this.getLatestPegs(poolInfo, pegs, blockNumber);
+    const latest = await this.getLatestPegs(poolInfo, pegs, blockNumber);
+    const latestPegs = latest.map(({ pair, updatedAt }) => [pair, updatedAt]);
     const recentPegs = this.getRecentPegs(pegs);
-    const maxPegUpdate = FeeUtils.fromPermill(pegs.maxPegUpdate.toNumber());
     const fee = FeeUtils.fromPermill(poolInfo.fee.toNumber());
+    const maxPegUpdate = FeeUtils.fromPerbill(pegs.maxPegUpdate.toNumber());
+
+    const targetPeg = latest.find((p) => p.source);
+
+    const currentPegsUpdatedAt = pegs.updatedAt
+      ? pegs.updatedAt.toString()
+      : targetPeg?.updatedAt;
+
+    if (!currentPegsUpdatedAt) {
+      throw Error(poolId + ' current peg unknown');
+    }
 
     const [updatedFee, updatedPegs] = StableMath.recalculatePegs(
       JSON.stringify(recentPegs),
+      currentPegsUpdatedAt,
       JSON.stringify(latestPegs),
       blockNumber,
       FeeUtils.toRaw(maxPegUpdate).toString(),
@@ -228,6 +220,15 @@ export class StableSwapClient extends PoolClient {
     return {
       pegsFee: FeeUtils.fromPermill(updatedFeePermill),
       pegs: updatedPegs,
+    };
+  }
+
+  private getDefaultPegs(poolInfo: PalletStableswapPoolInfo) {
+    const defaultFee = poolInfo.fee;
+    const defaultPegs = StableMath.defaultPegs(poolInfo.assets.length);
+    return {
+      pegsFee: FeeUtils.fromPermill(defaultFee.toNumber()),
+      pegs: defaultPegs,
     };
   }
 
@@ -242,7 +243,7 @@ export class StableSwapClient extends PoolClient {
     poolInfo: PalletStableswapPoolInfo,
     poolPegs: PalletStableswapPoolPegInfo,
     blockNumber: string
-  ) {
+  ): Promise<Peg[]> {
     const { source } = poolPegs;
 
     const assets = Array.from(poolInfo.assets.entries()).map(([_, id]) =>
@@ -264,9 +265,12 @@ export class StableSwapClient extends PoolClient {
         const priceNum = price.n.toString();
         const priceDenom = price.d.toString();
 
-        return oracleAsset.toString() === oracleKey[0].toString()
-          ? [[priceNum, priceDenom], updatedAt.toString()]
-          : [[priceDenom, priceNum], updatedAt.toString()];
+        const pair =
+          oracleAsset.toString() === oracleKey[0].toString()
+            ? [priceNum, priceDenom]
+            : [priceDenom, priceNum];
+
+        return { pair, updatedAt: updatedAt.toString(), source: 'ema' };
       } else if (s.isMmOracle) {
         const h160 = s.asMmOracle;
         const { price, decimals, updatedAt } = await this.mmOracle.getData(
@@ -274,12 +278,11 @@ export class StableSwapClient extends PoolClient {
         );
 
         const priceDenom = 10 ** decimals;
-        return [
-          [price.toString(), priceDenom.toString()],
-          updatedAt.toString(),
-        ];
+        const pair = [price.toString(), priceDenom.toString()];
+        return { pair, updatedAt: updatedAt.toString(), source: 'mm' };
       } else if (s.isValue) {
-        return [s.asValue.map((p) => p.toString()), blockNumber];
+        const pair = s.asValue.map((p) => p.toString());
+        return { pair, updatedAt: blockNumber };
       } else {
         throw Error(s.type + ' is not supported');
       }
@@ -287,19 +290,29 @@ export class StableSwapClient extends PoolClient {
     return Promise.all(latest);
   }
 
-  private getPoolAddress(poolId: string) {
-    const pool = Number(poolId);
-    const name = StableMath.getPoolAddress(pool);
-    return encodeAddress(blake2AsHex(name), HYDRADX_SS58_PREFIX);
-  }
+  protected async subscribeUpdates(): UnsubscribePromise {
+    return this.api.query.system.number(async (parachainBlock) => {
+      const blockNumber = parachainBlock.toString();
+      this.pools.forEach(async (p) => {
+        const poolData = this.poolsData.get(p.address);
+        if (poolData) {
+          const [poolDelta, poolPegs] = await Promise.all([
+            this.getPoolDelta(p.id!, poolData, blockNumber),
+            this.getPoolPegs(p.id!, poolData, blockNumber),
+          ]);
 
-  private getPoolLimits(): PoolLimits {
-    const minTradingLimit =
-      this.api.consts.stableswap.minTradingLimit.toNumber();
+          const tokens = p.tokens.map((t) => {
+            if (t.id === p.id) {
     return {
-      maxInRatio: 0,
-      maxOutRatio: 0,
-      minTradingLimit: minTradingLimit,
-    } as PoolLimits;
+                ...t,
+                balance: poolDelta.totalIssuance,
+              };
+            }
+            return t;
+          });
+          Object.assign(p, { tokens: tokens }, poolDelta, poolPegs);
+        }
+      });
+    });
   }
 }

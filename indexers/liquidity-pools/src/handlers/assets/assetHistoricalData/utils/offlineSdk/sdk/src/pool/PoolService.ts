@@ -1,6 +1,9 @@
+// @ts-nocheck
 import { ApiPromise } from '@polkadot/api';
+import { Vec } from '@polkadot/types';
+import { FrameSystemEventRecord } from '@polkadot/types/lookup';
 
-// import { memoize1 } from '@thi.ng/memoize';
+import { memoize1 } from '@thi.ng/memoize';
 
 import { PolkadotApiClient } from '../api';
 import { AssetClient } from '../client';
@@ -13,12 +16,14 @@ import { LbpPoolClient } from './lbp';
 import { OmniPoolClient } from './omni';
 import { XykPoolClient } from './xyk';
 import { StableSwapClient } from './stable';
+import { HsmClient } from './hsm';
 
 import {
   IPoolService,
   Pool,
   PoolBase,
   PoolFees,
+  PoolFilter,
   PoolPair,
   PoolType,
 } from './types';
@@ -26,8 +31,8 @@ import {
 import { PoolClient } from './PoolClient';
 
 export class PoolService extends PolkadotApiClient implements IPoolService {
-  protected readonly api: ApiPromise;
-  protected readonly evm: EvmClient;
+  readonly api: ApiPromise;
+  readonly evm: EvmClient;
 
   protected readonly assetClient: AssetClient;
 
@@ -36,15 +41,20 @@ export class PoolService extends PolkadotApiClient implements IPoolService {
   protected readonly omniClient: OmniPoolClient;
   protected readonly lbpClient: LbpPoolClient;
   protected readonly stableClient: StableSwapClient;
+  protected readonly hsmClient: HsmClient;
 
   protected readonly clients: PoolClient[] = [];
 
   protected onChainAssets: Asset[] = [];
   protected block: number = 0;
 
-  private disconnectSubscribeNewHeads: (() => void) | null = null;
+  private blockHandlers: Array<(block: number) => void> = [];
+  private eventHandlers: Array<(events: Vec<FrameSystemEventRecord>) => void> =
+    [];
 
-  // @ts-ignore
+  private disconnectSubscribeNewHeads: (() => void) | null = null;
+  private disconnectSubscribeEvents: (() => void) | null = null;
+
   private memRegistry = memoize1((mem: number) => {
     this.log(`Registry mem ${mem} sync`);
     return this.syncRegistry();
@@ -61,13 +71,18 @@ export class PoolService extends PolkadotApiClient implements IPoolService {
     this.omniClient = new OmniPoolClient(this.api, evm);
     this.lbpClient = new LbpPoolClient(this.api, evm);
     this.stableClient = new StableSwapClient(this.api, evm);
+    this.hsmClient = new HsmClient(this.api, evm, this.stableClient);
     this.clients = [
       this.aaveClient,
       this.xykClient,
       this.omniClient,
       this.lbpClient,
       this.stableClient,
+      this.hsmClient,
     ];
+
+    this.blockHandlers = this.clients.map((c) => c.onNewBlockHandler);
+    this.eventHandlers = this.clients.map((c) => c.onEventsHandler);
 
     this.api.rpc.chain
       .subscribeNewHeads(async (lastHeader) => {
@@ -77,10 +92,35 @@ export class PoolService extends PolkadotApiClient implements IPoolService {
       .then((subsFn) => {
         this.disconnectSubscribeNewHeads = subsFn;
       });
+
+    this.api.query.system
+      .events((events) => {
+        this.onEvents(events);
+      })
+      .then((subsFn) => {
+        this.disconnectSubscribeEvents = subsFn;
+      });
   }
 
   protected onNewBlock(block: number): void {
     this.block = block;
+    for (const handler of this.blockHandlers) {
+      try {
+        handler(block);
+      } catch (e) {
+        this.log('onNewBlock handler error', e);
+      }
+    }
+  }
+
+  protected onEvents(events: Vec<FrameSystemEventRecord>): void {
+    for (const handler of this.eventHandlers) {
+      try {
+        handler(events);
+      } catch (e) {
+        this.log('onEvents handler error', e);
+      }
+    }
   }
 
   get assets(): Asset[] {
@@ -97,24 +137,34 @@ export class PoolService extends PolkadotApiClient implements IPoolService {
     this.onChainAssets = assets;
   }
 
-  async getPools(includeOnly: PoolType[]): Promise<PoolBase[]> {
+  async getPools(filter: PoolFilter = {}): Promise<PoolBase[]> {
     if (!this.isRegistrySynced) {
       await this.memRegistry(1);
     }
 
-    if (includeOnly.length == 0) {
-      const pools = await Promise.all(
-        this.clients
-          .filter((client) => client.isSupported())
-          .map((client) => client.getPoolsMem())
+    const { includeOnly = [], exclude = [] } = filter;
+
+    if (includeOnly.length > 0) {
+      return this.getFilteredPools((client) =>
+        includeOnly.includes(client.getPoolType())
       );
-      return pools.flat();
     }
 
+    if (exclude.length > 0) {
+      return this.getFilteredPools(
+        (client) => !exclude.includes(client.getPoolType())
+      );
+    }
+
+    return this.getFilteredPools((client) => client.isSupported());
+  }
+
+  private async getFilteredPools(
+    supplier: (client: PoolClient) => boolean
+  ): Promise<PoolBase[]> {
+    const clients = this.clients.filter(supplier);
     const pools = await Promise.all(
-      this.clients
-        .filter((client) => includeOnly.some((t) => t === client.getPoolType()))
-        .map((client) => client.getPoolsMem())
+      clients.map((client) => client.getPoolsMem())
     );
     return pools.flat();
   }
@@ -125,7 +175,9 @@ export class PoolService extends PolkadotApiClient implements IPoolService {
     this.omniClient.unsubscribe();
     this.lbpClient.unsubscribe();
     this.stableClient.unsubscribe();
+    this.hsmClient.unsubscribe();
     this.disconnectSubscribeNewHeads?.();
+    this.disconnectSubscribeEvents?.();
   }
 
   async getPoolFees(poolPair: PoolPair, pool: Pool): Promise<PoolFees> {
@@ -144,6 +196,8 @@ export class PoolService extends PolkadotApiClient implements IPoolService {
           poolPair,
           pool.address
         );
+      case PoolType.HSM:
+        return this.hsmClient.getPoolFees(this.block, poolPair, pool.address);
       default:
         throw new PoolNotFound(pool.type);
     }
