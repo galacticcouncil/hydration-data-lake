@@ -170,6 +170,7 @@ export function getAavePoolAddress(
   atoken: string | number,
   prefix?: number // HYDRADX_SS58_PREFIX
 ): string {
+  // const id = `aave:` + reserve + '/' + atoken;
   const id = reserve + '/' + atoken;
 
   if (prefix) return encodeAddress(stringToU8a(id.padEnd(32, '\0')), prefix);

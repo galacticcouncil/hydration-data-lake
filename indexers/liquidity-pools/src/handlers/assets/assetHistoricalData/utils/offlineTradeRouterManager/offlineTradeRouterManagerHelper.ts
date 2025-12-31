@@ -126,6 +126,9 @@ export class OfflineTradeRouterManagerHelper {
     ctx: SqdProcessorContext<Store>;
   }) {
     const blockNumbersSorted = blockNumbers.sort((a, b) => a - b);
+
+    this.ensureHistDataStorage(blockNumbersSorted);
+
     const promises = [
       ctx.extLogger.measure({
         fn: () =>
@@ -528,6 +531,7 @@ export class OfflineTradeRouterManagerHelper {
           (s) => s.sourceKind === 'MMOracle'
         );
         if (!mmOracleSource || !mmOracleSource.oracleName) continue;
+
         mmOracleContractCalls.push({
           blockHeight: poolData.paraBlockHeight,
           address: mmOracleSource.oracleName,

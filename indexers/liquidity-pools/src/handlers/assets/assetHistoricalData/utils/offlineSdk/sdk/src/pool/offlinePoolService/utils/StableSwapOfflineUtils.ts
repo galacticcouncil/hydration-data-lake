@@ -158,7 +158,8 @@ export class StableSwapOfflineUtils {
 
           return { pair, updatedAt: updatedAt.toString(), source: 'ema' };
         }
-        case 'MmOracle': {
+        case 'MmOracle':
+        case 'MMOracle': {
           const h160Address = source.oracleName;
           const oracleData = mmOraclesData.find(
             (data) => data.address === h160Address
