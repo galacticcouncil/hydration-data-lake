@@ -7,9 +7,7 @@ import {
   OfflinePoolUtils,
   TradeRouter,
 } from '../offlineSdk/sdk/src';
-import {
-  OfflineTradeRouterManagerHelper,
-} from './offlineTradeRouterManagerHelper';
+import { OfflineTradeRouterManagerHelper } from './offlineTradeRouterManagerHelper';
 
 // } from '@galacticcouncil/sdk';
 

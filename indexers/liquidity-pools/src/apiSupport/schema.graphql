@@ -13327,6 +13327,9 @@ type RoutedTrade {
     """
     filter: RoutedTradeOutputFilter
   ): RoutedTradeOutputsConnection!
+  block: Block
+  inputAssetRegistryIds: [String]
+  outputAssetRegistryIds: [String]
 }
 
 """A connection to a list of `RouteTradeInputOutputAssetBalance` values."""
@@ -13856,6 +13859,8 @@ type Swap {
     """
     filter: SwapOutputFilter
   ): SwapOutputsConnection!
+  allInvolvedAssetRegistryIds: [String]
+  paraTimestamp: Datetime
 }
 
 type DcaScheduleExecutionEvent {
@@ -24940,6 +24945,12 @@ input SwapFilter {
   """Filter by the object’s `eventId` field."""
   eventId: StringFilter
 
+  """Filter by the object’s `allInvolvedAssetRegistryIds` field."""
+  allInvolvedAssetRegistryIds: StringListFilter
+
+  """Filter by the object’s `paraTimestamp` field."""
+  paraTimestamp: DatetimeFilter
+
   """Checks for all expressions in this list."""
   and: [SwapFilter!]
 
@@ -24948,6 +24959,48 @@ input SwapFilter {
 
   """Negates the expression."""
   not: SwapFilter
+}
+
+"""
+A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’
+"""
+input DatetimeFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Datetime
+
+  """Not equal to the specified value."""
+  notEqualTo: Datetime
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Datetime
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Datetime
+
+  """Included in the specified list."""
+  in: [Datetime!]
+
+  """Not included in the specified list."""
+  notIn: [Datetime!]
+
+  """Less than the specified value."""
+  lessThan: Datetime
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Datetime
+
+  """Greater than the specified value."""
+  greaterThan: Datetime
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Datetime
 }
 
 type OtcOrderEvent {
@@ -26475,6 +26528,12 @@ type SwapDistinctCountAggregates {
 
   """Distinct count of eventId across the matching connection"""
   eventId: BigInt
+
+  """Distinct count of this field across the matching connection."""
+  allInvolvedAssetRegistryIds: BigInt
+
+  """Distinct count of this field across the matching connection."""
+  paraTimestamp: BigInt
 }
 
 type SwapMinAggregates {
@@ -26579,6 +26638,20 @@ input SwapHavingSumInput {
 input SwapHavingDistinctCountInput {
   swapIndex: HavingIntFilter
   paraBlockHeight: HavingIntFilter
+  paraTimestamp: SwapHavingDistinctCountSwapParaTimestampInput
+}
+
+input SwapHavingDistinctCountSwapParaTimestampInput {
+  filter: HavingDatetimeFilter
+}
+
+input HavingDatetimeFilter {
+  equalTo: Datetime
+  notEqualTo: Datetime
+  greaterThan: Datetime
+  greaterThanOrEqualTo: Datetime
+  lessThan: Datetime
+  lessThanOrEqualTo: Datetime
 }
 
 input SwapHavingMinInput {
@@ -27132,15 +27205,6 @@ input TransferHavingSumInput {
   paraBlockHeight: HavingIntFilter
 }
 
-input HavingDatetimeFilter {
-  equalTo: Datetime
-  notEqualTo: Datetime
-  greaterThan: Datetime
-  greaterThanOrEqualTo: Datetime
-  lessThan: Datetime
-  lessThanOrEqualTo: Datetime
-}
-
 input TransferHavingDistinctCountInput {
   amount: HavingBigfloatFilter
   txFee: HavingBigfloatFilter
@@ -27654,48 +27718,6 @@ input TransferFilter {
 
   """Negates the expression."""
   not: TransferFilter
-}
-
-"""
-A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’
-"""
-input DatetimeFilter {
-  """
-  Is null (if `true` is specified) or is not null (if `false` is specified).
-  """
-  isNull: Boolean
-
-  """Equal to the specified value."""
-  equalTo: Datetime
-
-  """Not equal to the specified value."""
-  notEqualTo: Datetime
-
-  """
-  Not equal to the specified value, treating null like an ordinary value.
-  """
-  distinctFrom: Datetime
-
-  """Equal to the specified value, treating null like an ordinary value."""
-  notDistinctFrom: Datetime
-
-  """Included in the specified list."""
-  in: [Datetime!]
-
-  """Not included in the specified list."""
-  notIn: [Datetime!]
-
-  """Less than the specified value."""
-  lessThan: Datetime
-
-  """Less than or equal to the specified value."""
-  lessThanOrEqualTo: Datetime
-
-  """Greater than the specified value."""
-  greaterThan: Datetime
-
-  """Greater than or equal to the specified value."""
-  greaterThanOrEqualTo: Datetime
 }
 
 """A connection to a list of `StableswapLiquidityEvent` values."""
@@ -70207,6 +70229,15 @@ type RoutedTradeDistinctCountAggregates {
 
   """Distinct count of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigInt
+
+  """Distinct count of this field across the matching connection."""
+  block: BigInt
+
+  """Distinct count of this field across the matching connection."""
+  inputAssetRegistryIds: BigInt
+
+  """Distinct count of this field across the matching connection."""
+  outputAssetRegistryIds: BigInt
 }
 
 type RoutedTradeMinAggregates {
@@ -71275,6 +71306,12 @@ input RoutedTradeFilter {
 
   """Filter by the object’s `paraBlockHeight` field."""
   paraBlockHeight: IntFilter
+
+  """Filter by the object’s `inputAssetRegistryIds` field."""
+  inputAssetRegistryIds: StringListFilter
+
+  """Filter by the object’s `outputAssetRegistryIds` field."""
+  outputAssetRegistryIds: StringListFilter
 
   """Checks for all expressions in this list."""
   and: [RoutedTradeFilter!]
