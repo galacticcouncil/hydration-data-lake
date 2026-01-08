@@ -47,9 +47,10 @@ enum AssetType {
   Erc20
   PoolShare
 }
-enum ResourceType {
+enum AssetResourceType {
   Underlying
   Collateral
+  aToken
   Debt
 }
 
@@ -72,7 +73,7 @@ type Asset @entity {
   bondUnderlyingAssetId: String
 
   assetType: AssetType!
-  resourceType: ResourceType!
+  resourceType: AssetResourceType!
   name: String
   symbol: String
   decimals: Int

@@ -5,7 +5,7 @@ import {
   EvmEventName,
   MmSupply,
   MmWithdraw,
-  ResourceType,
+  AssetResourceType,
   RoutedTrade,
   Swap,
   SwapAssetBalance,
@@ -111,13 +111,13 @@ export async function createMoneyMarketEventsFromRoutedTrades(
     // Filter inputs for collateral assets using fetched asset data
     const collateralInputs = firstSwap.inputs.filter((sab) => {
       const asset = assetCache.get(sab.assetId);
-      return asset?.resourceType === ResourceType.Collateral;
+      return asset?.resourceType === AssetResourceType.aToken;
     });
 
     // Filter outputs for collateral assets using fetched asset data
     const collateralOutputs = lastSwap.outputs.filter((sab) => {
       const asset = assetCache.get(sab.assetId);
-      return asset?.resourceType === ResourceType.Collateral;
+      return asset?.resourceType === AssetResourceType.aToken;
     });
 
     // Skip if no collateral assets found

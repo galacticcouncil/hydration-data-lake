@@ -233,7 +233,7 @@ export async function getXykLiquidityMiningDepositsForAccounts({
   ctx,
 }: {
   involvedAccountsInBatch: Set<string>;
-  involvedAccountsPerBlock: AccountBalancesPerBlock;
+  involvedAccountsPerBlock: Map<number, Set<string>>;
   ctx: SqdProcessorContext<Store>;
 }) {
   const allCachedDeposits = Array.from(
@@ -339,14 +339,14 @@ export async function getXykLiquidityMiningDepositsForAccounts({
   const accountDepositBalancesPerBlockPerAsset: AccountPositionBalancesPerBlockPerAsset =
     new Map();
 
-  for (const [blockHeight, { data }] of involvedAccountsPerBlock.entries()) {
+  for (const [blockHeight, accountsSet] of involvedAccountsPerBlock.entries()) {
     if (!accountDepositBalancesPerBlockPerAsset.has(blockHeight))
       accountDepositBalancesPerBlockPerAsset.set(blockHeight, {
         blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
         data: new Map(),
       });
 
-    for (const accountId of data.keys()) {
+    for (const accountId of accountsSet.values()) {
       const accountActiveDepositsAtBlock =
         allDepositsIndexedByAccountId
           .get(accountId)

@@ -2,7 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, I
 import * as marshal from "./marshal"
 import {AssetMultiLocation} from "./_assetMultiLocation"
 import {AssetType} from "./_assetType"
-import {ResourceType} from "./_resourceType"
+import {AssetResourceType} from "./_assetResourceType"
 
 @Entity_()
 export class Asset {
@@ -60,7 +60,7 @@ export class Asset {
   assetType!: AssetType
 
   @Column_("varchar", {length: 10, nullable: false})
-  resourceType!: ResourceType
+  resourceType!: AssetResourceType
 
   @Column_("text", {nullable: true})
   name!: string | undefined | null

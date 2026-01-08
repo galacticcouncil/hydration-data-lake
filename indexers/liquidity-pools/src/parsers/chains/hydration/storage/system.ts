@@ -2,14 +2,11 @@ import { BlockHeader } from '@subsquid/substrate-processor';
 import { storage } from '../typegenTypes/';
 import {
   BalancesAccountInfoWithAccountId,
-  EmaOracleEntryData,
   GetDataAtBlockInput,
   GetNativeTokenBalanceManyInput,
   SystemAccountInfo,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { hexToString } from '@polkadot/util';
-import { EmaOraclePeriod } from '../../../../model';
 import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 
@@ -60,6 +57,44 @@ async function getSystemAccount(
             flags: resp.data.flags,
           },
         };
+      }
+
+      throw new UnknownVersionError('storage.system.account');
+    },
+  });
+}
+
+async function getAllSystemAccountKeys({
+  block,
+}: GetDataAtBlockInput): Promise<string[] | null> {
+  return measureStorageFetch({
+    storageName: 'system.account',
+    originFn: 'getAllSystemAccountKeys',
+    blockHeight: block.height,
+    fn: async () => {
+      if (storage.system.account.v100.is(block)) {
+        const resp = [];
+
+        for await (const page of storage.system.account.v100.getKeysPaged(
+          500,
+          block
+        )) {
+          resp.push(page);
+        }
+
+        return resp.flat();
+      }
+      if (storage.system.account.v205.is(block)) {
+        const resp = [];
+
+        for await (const page of storage.system.account.v205.getKeysPaged(
+          500,
+          block
+        )) {
+          resp.push(page);
+        }
+
+        return resp.flat();
       }
 
       throw new UnknownVersionError('storage.system.account');
@@ -168,4 +203,8 @@ async function getNativeTokenBalanceMany({
   });
 }
 
-export default { getNativeTokenBalanceMany, getSystemAccount };
+export default {
+  getNativeTokenBalanceMany,
+  getSystemAccount,
+  getAllSystemAccountKeys,
+};

@@ -1,10 +1,6 @@
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Asset,
-  AssetType,
-  ResourceType,
-} from '../../model';
+import { Asset, AssetType, AssetResourceType } from '../../model';
 import parsers from '../../parsers';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import {
@@ -174,7 +170,8 @@ export async function assetRegistered(
       ? [assetMultiLocationFromStorage]
       : [],
     name: getName(),
-    resourceType: evmTokenContractData?.resourceType ?? ResourceType.Underlying,
+    resourceType:
+      evmTokenContractData?.resourceType ?? AssetResourceType.Underlying,
     assetType,
     existentialDeposit,
     symbol: getSymbol(),

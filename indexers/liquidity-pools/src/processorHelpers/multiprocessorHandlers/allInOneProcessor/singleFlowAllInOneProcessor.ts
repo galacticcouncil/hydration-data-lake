@@ -5,6 +5,7 @@ import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers
 import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../../parsers/storageResolver';
 import {
+  initAllAccountsOnColdStart,
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../../../handlers/accounts';
@@ -71,6 +72,10 @@ export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
 ) {
   let parsedData = null;
+
+  console.time('initAllAccountsOnColdStart');
+  await initAllAccountsOnColdStart({ ctx });
+  console.timeEnd('initAllAccountsOnColdStart');
 
   await Promise.all([
     (async () => {

@@ -279,7 +279,7 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
   ctx,
 }: {
   involvedAccountsInBatch: Set<string>;
-  involvedAccountsPerBlock: AccountBalancesPerBlock;
+  involvedAccountsPerBlock: Map<number, Set<string>>;
   ctx: SqdProcessorContext<Store>;
 }) {
   const allCachedPositions = Array.from(
@@ -385,14 +385,14 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
   const accountPositionBalancesPerBlockPerAsset: AccountPositionBalancesPerBlockPerAsset =
     new Map();
 
-  for (const [blockHeight, { data }] of involvedAccountsPerBlock.entries()) {
+  for (const [blockHeight, accountsSet] of involvedAccountsPerBlock.entries()) {
     if (!accountPositionBalancesPerBlockPerAsset.has(blockHeight))
       accountPositionBalancesPerBlockPerAsset.set(blockHeight, {
         blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
         data: new Map(),
       });
 
-    for (const accountId of data.keys()) {
+    for (const accountId of accountsSet.values()) {
       const accountActivePositionsAtBlock =
         allPositionsIndexedByAccountId
           .get(accountId)
@@ -438,11 +438,14 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
          * To ensure historical accuracy, we must use the amount recorded in the event that
          * was closest to the block being processed, rather than the current position state.
          */
+
         const actualPositionAmountAtBlock: string =
           eventsIndexedByPositionId
-            .get(position.id)!
-            .find((e) => e.paraBlockHeight <= blockHeight)
-            ?.amount?.toString() ?? '0';
+            .get(position.id)
+            ?.find((e) => e.paraBlockHeight <= blockHeight)
+            ?.amount?.toString() ??
+          position?.amount.toString() ??
+          '0';
 
         accountPositionBalancesPerBlockPerAsset
           .get(blockHeight)!

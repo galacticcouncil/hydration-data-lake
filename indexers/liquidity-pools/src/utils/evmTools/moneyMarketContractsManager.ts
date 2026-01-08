@@ -6,7 +6,7 @@ import variableDebtTokenHydration from './abi/aave/variableDebtTokenHydration.js
 import uiPoolDataProviderV3 from './abi/aave/uiPoolDataProviderV3.json';
 import poolImplementation from './abi/aave/aavePoolImplementation.json';
 import { Contract, ContractInterface, ethers } from 'ethers';
-import { ResourceType } from '../../model';
+import { AssetResourceType } from '../../model';
 import { AppConfig } from '../../appConfig';
 import {
   AccountMmPositionDataContractData,
@@ -21,7 +21,7 @@ const appConfig = AppConfig.getInstance();
 
 export type MoneyMarketTokenDetails = {
   address: string;
-  resourceType: ResourceType;
+  resourceType: AssetResourceType;
   underlyingAssetAddress?: string;
   name?: string;
   symbol?: string;
@@ -280,7 +280,7 @@ export class MoneyMarketContractsManager {
 
     const response: MoneyMarketTokenDetails = {
       address: addressNormalized.toLowerCase(),
-      resourceType: ResourceType.Underlying,
+      resourceType: AssetResourceType.Underlying,
     };
 
     if (!this.moneyMarketTokenContracts.has(addressNormalized)) return null;
@@ -288,12 +288,12 @@ export class MoneyMarketContractsManager {
     this.moneyMarketReservesDetailsMap.forEach(
       (resourceDetails, underlyingAssetAddress) => {
         if (resourceDetails.aTokenAddress === addressNormalized) {
-          response.resourceType = ResourceType.Collateral;
+          response.resourceType = AssetResourceType.aToken;
           response.underlyingAssetAddress = underlyingAssetAddress;
           return;
         }
         if (resourceDetails.variableDebtTokenAddress === addressNormalized) {
-          response.resourceType = ResourceType.Debt;
+          response.resourceType = AssetResourceType.Debt;
           response.underlyingAssetAddress = underlyingAssetAddress;
           return;
         }

@@ -1,8 +1,12 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { handleCommonAssetAccountBalances } from './commonAssetBalances';
 import {
-  handleDebtAssetBalancesForAccounts,
+  collectAccountsAndAssetsInvolvedToSubstrateEvents,
+  handleCommonAssetAccountBalances,
+} from './commonAssetBalances';
+import {
+  collectAccountsAndAssetsInvolvedToMmEvents,
+  handleMoneyMarketAssetBalancesForAccounts,
   handleMmAssetAccountBalancesPerBlock,
 } from './moneyMarketAssetBalances';
 import { EventName } from '../../parsers/types/events';
@@ -10,7 +14,11 @@ import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EvmEventName } from '../../model';
 import { handleAllAccountsMmPositionDataUpdate } from '../accounts/moneyMarketPosition';
 import parsers from '../../parsers';
-import { handleAccountTotalBalance } from './accountTotalBalance';
+import {
+  handleUnchangedAccountAssetBalances,
+  handleAccountTotalBalance,
+  handleLiquidityBalancesInTotalBalances,
+} from './accountTotalBalance';
 
 /**
  * This function requires the following data, so it should be executed only after
@@ -25,19 +33,90 @@ export async function handleAssetAccountBalances(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
-  const accountIdsToProcess = await handleMmAssetAccountBalancesPerBlock(ctx);
+  /**
+   * IMPORTANT
+   * Account Asset Balances are aggregated based on the following triggers/events:
+   * - account's activity - if an account is involved to any event from a list of
+   *    trigger events defined in ACCOUNT_BALANCE_AGGREGATION_TRIGGERS variable.
+   *    If activity happened only in EMV environment, only involved accounts and
+   *    only involved assets will be aggregated.
+   * - [TODO] periodical balances check for all accounts for all previously
+   *    tracked assets
+   * - indexer cold start debt balances initialization - if indexer launched
+   *    from not deep history, some accounts may already have balances of
+   *    debt tokens. As indexer tracks debt token balance only in case debt token
+   *    has been involved into EMV activity, we checks all accounts MM reserves
+   *    and aggregate balances event without activity.
+   *    (Check function "handleMoneyMarketAssetBalancesForAccounts")
+   */
 
-  const allProcessedAccountsPerBlock = await handleCommonAssetAccountBalances({
-    accountIdsToProcess,
+  /**
+   * Aggregate accounts and assets involved to Money Market and Substrate events.
+   */
+  const mmEventsInvolvedAccountsAndAssets =
+    await collectAccountsAndAssetsInvolvedToMmEvents(ctx);
+
+  const allAccountsInvolvedToSubstrateEvents =
+    await collectAccountsAndAssetsInvolvedToSubstrateEvents({
+      ctx,
+      ...mmEventsInvolvedAccountsAndAssets,
+    });
+
+  /**
+   * Handle Money Market events.
+   *
+   * Aggregate balances only for involved accounts and only for involved assets.
+   */
+  await handleMmAssetAccountBalancesPerBlock({
+    ctx,
+    involvedAccountsAssetsPerBlockMap:
+      mmEventsInvolvedAccountsAndAssets.involvedAccountsAssetsPerBlockMap,
+  });
+
+  /**
+   * Handle All Substrate events.
+   *
+   * Aggregate balances for all involved accounts and all account's assets.
+   */
+  await handleCommonAssetAccountBalances({
+    accountIdsToProcess: { ...allAccountsInvolvedToSubstrateEvents },
     ctx,
   });
 
-  await handleDebtAssetBalancesForAccounts({
-    allProcessedAccountsPerBlock,
+  /**
+   * Handle Money Market Assets balances
+   */
+  await handleMoneyMarketAssetBalancesForAccounts({
+    allProcessedAccountsPerBlock:
+      allAccountsInvolvedToSubstrateEvents.allProcessedAccountsPerBlock,
     ctx,
   });
 
+  /**
+   * Aggregate Account Total Balances
+   */
+  // const allProcessedAccounts = await handleAccountTotalBalance({ ctx });
   await handleAccountTotalBalance({ ctx });
+
+  /**
+   * Include Liquidity Balances in Total Balances.
+   */
+  await handleLiquidityBalancesInTotalBalances({
+    ctx,
+    allProcessedAccountsPerBlock:
+      allAccountsInvolvedToSubstrateEvents.allProcessedAccountsPerBlock,
+  });
+
+  /**
+   * Include Asset Balances unchanged in the current block but existing in the
+   * previous block.
+   *
+   */
+  await handleUnchangedAccountAssetBalances({ ctx });
+
+  /**
+   * Handle Oracle Updates.
+   */
 
   const blocksWithOracleUpdate: Map<number, SqdBlock> = new Map();
 

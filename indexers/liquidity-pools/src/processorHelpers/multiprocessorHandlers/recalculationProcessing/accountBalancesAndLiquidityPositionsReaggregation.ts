@@ -31,7 +31,7 @@ import { handleUniquesEvents } from '../../../handlers/uniques';
 import {
   initAllOmnipoolLiquidityMiningDeposits
 } from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
-import { handleDebtAssetBalancesForAccounts } from '../../../handlers/balances/moneyMarketAssetBalances';
+import { handleMoneyMarketAssetBalancesForAccounts } from '../../../handlers/balances/moneyMarketAssetBalances';
 
 export async function accountBalancesAndLiquidityPositionsReaggregation(
   ctx: SqdProcessorContext<Store>
@@ -185,12 +185,12 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
       ?.add(balanceHistData.accountId);
   }
 
-  console.time('handleDebtAssetBalancesForAccounts');
-  await handleDebtAssetBalancesForAccounts({
+  console.time('handleMoneyMarketAssetBalancesForAccounts');
+  await handleMoneyMarketAssetBalancesForAccounts({
     allProcessedAccountsPerBlock,
     ctx,
   });
-  console.timeEnd('handleDebtAssetBalancesForAccounts');
+  console.timeEnd('handleMoneyMarketAssetBalancesForAccounts');
 
   console.time('initAllXykLiquidityMiningDeposits');
   await initAllXykLiquidityMiningDeposits(ctx);

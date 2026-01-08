@@ -8,7 +8,7 @@ import {
   AssetMultiLocationsInterior,
   AssetMultiLocationsInteriorKind,
   AssetType,
-  ResourceType,
+  AssetResourceType,
 } from '../../model';
 import parsers from '../../parsers';
 import {
@@ -72,7 +72,7 @@ export async function ensureNativeToken(ctx: SqdProcessorContext<Store>) {
     multiLocationIds: ['0'],
     name: 'Hydration',
     assetType: AssetType.Token,
-    resourceType: ResourceType.Underlying,
+    resourceType: AssetResourceType.Underlying,
     decimals: 12,
     existentialDeposit: BigInt('1000000000000'),
     symbol: 'HDX',
@@ -310,7 +310,8 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           name: getName(),
           assetType: data.assetType,
           resourceType:
-            erc20AssetContractDetails?.resourceType ?? ResourceType.Underlying,
+            erc20AssetContractDetails?.resourceType ??
+            AssetResourceType.Underlying,
           existentialDeposit: data.existentialDeposit,
           symbol: getSymbol(),
           decimals: getDecimals(),
@@ -353,7 +354,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           processUnderlyingAsset: false,
         });
         if (aTokenEntity) {
-          aTokenEntity.resourceType = ResourceType.Collateral;
+          aTokenEntity.resourceType = AssetResourceType.aToken;
           // mmTokenUnderlyingAsset.aToken = aTokenEntity;
           // aTokenEntity.underlyingAsset = mmTokenUnderlyingAsset;
           mmAssetsToSave.push(aTokenEntity);
@@ -375,7 +376,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           processUnderlyingAsset: false,
         });
         if (variableDebtTokenEntity) {
-          variableDebtTokenEntity.resourceType = ResourceType.Debt;
+          variableDebtTokenEntity.resourceType = AssetResourceType.Debt;
           // mmTokenUnderlyingAsset.variableDebtToken = variableDebtTokenEntity;
           // variableDebtTokenEntity.underlyingAsset = mmTokenUnderlyingAsset;
           mmAssetsToSave.push(variableDebtTokenEntity);
@@ -457,9 +458,9 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
       if (!underlyingAsset) continue;
 
       erc20Asset.underlyingAssetId = underlyingAsset.id;
-      if (erc20Asset.resourceType === ResourceType.Collateral) {
+      if (erc20Asset.resourceType === AssetResourceType.aToken) {
         underlyingAsset.aTokenId = erc20Asset.id;
-      } else if (erc20Asset.resourceType === ResourceType.Debt) {
+      } else if (erc20Asset.resourceType === AssetResourceType.Debt) {
         underlyingAsset.variableDebtTokenId = erc20Asset.id;
       }
       erc20AssetToSave.set(erc20Asset.id, erc20Asset);

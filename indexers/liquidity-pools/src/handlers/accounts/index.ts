@@ -2,9 +2,39 @@ import { FindOptionsRelations, In, Like } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import { Account, AccountType } from '../../model';
+import { Account, AccountType, OmnipoolLiquidityPosition } from '../../model';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { EvmUtils } from '../../utils/evm';
+import parsers from '../../parsers';
+import pMap from 'p-map';
+
+export function getNewAccount({
+  id,
+  accountType = AccountType.User,
+  boundEvmAddress,
+  ctx,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  id: string;
+  accountType?: AccountType;
+  boundEvmAddress?: string;
+}) {
+  let boundEvmAddressToSave = boundEvmAddress ?? null;
+
+  if (!boundEvmAddressToSave) {
+    boundEvmAddressToSave = EvmUtils.isSr25519AddressDerivedFromH160Address(id)
+      ? EvmUtils.getH160FromDerivedSr25519(id)
+      : EvmUtils.getH160FromOriginalSr25519(id);
+  }
+
+  const acc = new Account();
+  acc.id = id;
+  acc.accountType = accountType;
+  acc.boundEvmAddress = boundEvmAddressToSave;
+  acc.mmReserveBalancesInitialized = false;
+
+  return acc;
+}
 
 export async function getOrCreateAccount({
   ctx,
@@ -37,7 +67,6 @@ export async function getOrCreateAccount({
       acc.boundEvmAddress = boundEvmAddress;
 
     await ctx.storeUtils.runWithRetry(() => ctx.store.save(acc!));
-    // await ctx.store.save(acc);
     ctx.batchState.state.accounts.set(acc.id, acc);
   }
 
@@ -59,26 +88,16 @@ export async function getOrCreateAccount({
       acc.boundEvmAddress = boundEvmAddress;
 
     await ctx.storeUtils.runWithRetry(() => ctx.store.save(acc!));
-    // await ctx.store.save(acc);
   }
 
   if (!acc) {
-    let boundEvmAddressToSave = boundEvmAddress ?? null;
+    acc = getNewAccount({
+      id,
+      boundEvmAddress,
+      accountType,
+      ctx,
+    });
 
-    if (!boundEvmAddressToSave) {
-      boundEvmAddressToSave = EvmUtils.isSr25519AddressDerivedFromH160Address(
-        id
-      )
-        ? EvmUtils.getH160FromDerivedSr25519(id)
-        : EvmUtils.getH160FromOriginalSr25519(id);
-    }
-
-    acc = new Account();
-    acc.id = id;
-    acc.accountType = accountType;
-    acc.boundEvmAddress = boundEvmAddressToSave;
-    acc.mmReserveBalancesInitialized = false;
-    // await ctx.store.save(acc);
     await ctx.storeUtils.runWithRetry(() => ctx.store.save(acc!));
   }
   ctx.batchState.state.accounts.set(acc.id, acc);
@@ -226,4 +245,46 @@ export async function saveAllBatchAccounts(ctx: SqdProcessorContext<Store>) {
   await ctx.storeUtils.upsertWithBatches(
     Array.from(ctx.batchState.state.accounts.values())
   );
+}
+
+export async function initAllAccountsOnColdStart({
+  ctx,
+}: {
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
+    Account,
+    {
+      where: {},
+    },
+    { className: 'Account' }
+  );
+
+  if (hasAnyRecord) return;
+
+  const blockToProcess = ctx.blocks[0];
+
+  const allAccountsAtBlock =
+    await parsers.storage.system.getAllSystemAccountKeys({
+      block: blockToProcess.header,
+    });
+
+  if (!allAccountsAtBlock) return null;
+
+  await pMap(
+    allAccountsAtBlock,
+    async (accountAddress) => {
+      const account = getNewAccount({
+        id: accountAddress,
+        ctx,
+      });
+      ctx.batchState.state.accounts.set(account.id, account);
+    },
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
+  );
+
+  await saveAllBatchAccounts(ctx);
 }

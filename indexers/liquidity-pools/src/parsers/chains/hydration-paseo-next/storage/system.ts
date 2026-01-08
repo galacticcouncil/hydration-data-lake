@@ -2,6 +2,7 @@ import { BlockHeader } from '@subsquid/substrate-processor';
 import { storage } from '../typegenTypes/';
 import {
   BalancesAccountInfoWithAccountId,
+  GetDataAtBlockInput,
   GetNativeTokenBalanceManyInput,
   SystemAccountInfo,
 } from '../../../types/storage';
@@ -95,4 +96,34 @@ async function getNativeTokenBalanceMany({
   });
 }
 
-export default { getSystemAccount, getNativeTokenBalanceMany };
+async function getAllSystemAccountKeys({
+  block,
+}: GetDataAtBlockInput): Promise<string[] | null> {
+  return measureStorageFetch({
+    storageName: 'system.account',
+    originFn: 'getAllSystemAccountKeys',
+    blockHeight: block.height,
+    fn: async () => {
+      if (storage.system.account.v324.is(block)) {
+        const resp = [];
+
+        for await (const page of storage.system.account.v324.getKeysPaged(
+          500,
+          block
+        )) {
+          resp.push(page);
+        }
+
+        return resp.flat();
+      }
+
+      throw new UnknownVersionError('storage.system.account');
+    },
+  });
+}
+
+export default {
+  getSystemAccount,
+  getNativeTokenBalanceMany,
+  getAllSystemAccountKeys,
+};

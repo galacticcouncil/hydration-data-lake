@@ -11,7 +11,7 @@ import {
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
   AssetType,
-  ResourceType,
+  AssetResourceType,
   Xykpool,
 } from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
@@ -169,9 +169,9 @@ async function processAssetSpotPrices({
     let assetIdToProcess = asset.assetRegistryId;
 
     // if (
-    //   [ResourceType.Debt, ResourceType.Collateral].includes(asset.resourceType)
+    //   [AssetResourceType.Debt, AssetResourceType.Collateral].includes(asset.resourceType)
     // ) {
-    if (asset.resourceType === ResourceType.Debt) {
+    if (asset.resourceType === AssetResourceType.Debt) {
       const underlyingAsset = asset.underlyingAssetId
         ? await getOrCreateAsset({
             id: asset.underlyingAssetId,

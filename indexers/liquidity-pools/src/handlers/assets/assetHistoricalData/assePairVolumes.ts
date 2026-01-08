@@ -255,7 +255,7 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
       assetRegistryAId: assetARegistryId?.toString(),
 
       assetBId: assetBId,
-      assetRegistryBId: assetARegistryId?.toString(),
+      assetRegistryBId: assetBRegistryId?.toString(),
 
       assetAVolume,
       assetBVolume,

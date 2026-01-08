@@ -5,7 +5,7 @@ import { getOrderedListByBlockNumber } from '../../utils/helpers';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
 import mmEventHandlers from '../moneyMarket/mmEventHandlers';
-import { EvmEventName, ResourceType, RoutedTrade } from '../../model';
+import { EvmEventName, AssetResourceType } from '../../model';
 import {
   handleFacilitatorBucketCapacityUpdatedEvent,
   handleFacilitatorBucketLevelUpdatedEvent,

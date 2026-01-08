@@ -1,24 +1,12 @@
-import {
-  FindOptionsRelations,
-  In,
-} from 'typeorm';
+import { FindOptionsRelations, In } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Asset,
-  AssetType,
-  ResourceType,
-} from '../../model';
+import { Asset, AssetType, AssetResourceType } from '../../model';
 import parsers from '../../parsers';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { AssetHubManager } from '../../utils/assetHubManager';
-import {
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import {
   getAssetEvmAddressByType,
   getAssetIdFromCustomMultiLocation,
@@ -29,6 +17,8 @@ import {
 /**
  * Batch fetch or create multiple assets in a SINGLE database query.
  * This is 5-10x faster than using Promise.all() with individual getOrCreateAsset() calls.
+ *
+ * IMPORTANT: result map has keys as assetId but not assetRegistryId or EVM address.
  *
  * @param ids - Array of asset IDs to fetch
  * @param assetRegistryIds - Array of asset registry IDs to fetch
@@ -124,7 +114,11 @@ export async function batchGetOrCreateAssets({
   }
 
   // Step 2: Single batch query for ALL missing assets using IN operator
-  if (missingIds.length > 0 || missingRegistryIds.length > 0 || missingEvmAddresses.length > 0) {
+  if (
+    missingIds.length > 0 ||
+    missingRegistryIds.length > 0 ||
+    missingEvmAddresses.length > 0
+  ) {
     const whereConditions: any[] = [];
 
     if (missingIds.length > 0) {
@@ -142,9 +136,8 @@ export async function batchGetOrCreateAssets({
       const foundAssets = await ctx.storeUtils.findWithLogs(
         Asset,
         {
-          where: whereConditions.length === 1
-            ? whereConditions[0]
-            : whereConditions,  // TypeORM automatically ORs array elements
+          where:
+            whereConditions.length === 1 ? whereConditions[0] : whereConditions, // TypeORM automatically ORs array elements
           ...(relations ? { relations } : {}),
         },
         { className: 'Asset' }
@@ -163,9 +156,10 @@ export async function batchGetOrCreateAssets({
   // Step 3: Handle 'ensure' mode for still-missing assets
   if (ensure && blockHeader) {
     // For assets still not found after batch query, try creating them
-    const stillMissingIds = missingIds.filter(id => !assetCache.has(id));
+    const stillMissingIds = missingIds.filter((id) => !assetCache.has(id));
     const stillMissingRegistryIds = missingRegistryIds.filter(
-      regId => ![...assetCache.values()].some(a => a.assetRegistryId === regId)
+      (regId) =>
+        ![...assetCache.values()].some((a) => a.assetRegistryId === regId)
     );
 
     // Fall back to individual getOrCreateAsset for asset creation
@@ -177,13 +171,16 @@ export async function batchGetOrCreateAssets({
           id,
           ensure: true,
           blockHeader,
-          relations
+          relations,
         });
         if (asset) {
           assetCache.set(asset.id, asset);
         }
       } catch (error) {
-        console.error(`batchGetOrCreateAssets :: Error creating asset ${id}:`, error);
+        console.error(
+          `batchGetOrCreateAssets :: Error creating asset ${id}:`,
+          error
+        );
       }
     }
 
@@ -194,13 +191,16 @@ export async function batchGetOrCreateAssets({
           assetRegistryId: registryId,
           ensure: true,
           blockHeader,
-          relations
+          relations,
         });
         if (asset) {
           assetCache.set(asset.id, asset);
         }
       } catch (error) {
-        console.error(`batchGetOrCreateAssets :: Error creating asset with registryId ${registryId}:`, error);
+        console.error(
+          `batchGetOrCreateAssets :: Error creating asset with registryId ${registryId}:`,
+          error
+        );
       }
     }
   }
@@ -275,12 +275,16 @@ export async function getOrCreateAsset({
    * pre-created before indexing start point.
    */
 
-  if (!blockHeader || !assetRegistryId){
-    console.log(`getOrCreateAsset :: Missing blockHeader or assetRegistryId for asset creation.`);
-    return null
-  }; //TODO fix this
-  if(+assetRegistryId > Number.MAX_SAFE_INTEGER) {
-    console.log(`getOrCreateAsset :: assetRegistryId ${assetRegistryId} is too large to process. Skipping...`);
+  if (!blockHeader || !assetRegistryId) {
+    console.log(
+      `getOrCreateAsset :: Missing blockHeader or assetRegistryId for asset creation.`
+    );
+    return null;
+  } //TODO fix this
+  if (+assetRegistryId > Number.MAX_SAFE_INTEGER) {
+    console.log(
+      `getOrCreateAsset :: assetRegistryId ${assetRegistryId} is too large to process. Skipping...`
+    );
     return null;
   }
   const storageData = await parsers.storage.assetRegistry.getAsset(
@@ -288,10 +292,12 @@ export async function getOrCreateAsset({
     blockHeader
   );
 
-  if (!storageData){
-    console.log(`getOrCreateAsset :: No storage data found for assetRegistryId ${assetRegistryId} at block ${blockHeader.height}`);
+  if (!storageData) {
+    console.log(
+      `getOrCreateAsset :: No storage data found for assetRegistryId ${assetRegistryId} at block ${blockHeader.height}`
+    );
     return null;
-  };
+  }
 
   const erc20AssetContractAddress = await getAssetEvmAddressByType({
     assetId: +assetRegistryId,
@@ -405,7 +411,7 @@ export async function getOrCreateAsset({
     assetType: storageData.assetType,
     resourceType: evmTokenContractData
       ? evmTokenContractData.resourceType
-      : ResourceType.Underlying,
+      : AssetResourceType.Underlying,
     existentialDeposit: storageData.existentialDeposit,
     symbol: getSymbol(),
     decimals: getDecimals(),
@@ -435,7 +441,7 @@ export async function getOrCreateMoneyMarketAsset({
   assetRegistryId?: number | string;
   evmAddress?: string;
   ensure?: boolean;
-  resourceType?: ResourceType;
+  resourceType?: AssetResourceType;
   processUnderlyingAsset?: boolean;
   ctx: SqdProcessorContext<Store>;
 }): Promise<Asset | null> {
@@ -535,9 +541,9 @@ export async function getOrCreateMoneyMarketAsset({
   await ctx.store.save(newAsset);
 
   if (underlyingAsset) {
-    if (contractData.resourceType === ResourceType.Collateral) {
+    if (contractData.resourceType === AssetResourceType.aToken) {
       underlyingAsset.aTokenId = newAsset.id;
-    } else if (contractData.resourceType === ResourceType.Debt) {
+    } else if (contractData.resourceType === AssetResourceType.Debt) {
       underlyingAsset.variableDebtTokenId = newAsset.id;
     }
     assetsAllBatch.set(underlyingAsset.id, underlyingAsset);
@@ -549,13 +555,15 @@ export async function getOrCreateMoneyMarketAsset({
   return newAsset;
 }
 
-export async function getAllDebtAssets(
+export async function getAllMoneyMarketAssets(
   ctx: SqdProcessorContext<Store>,
   ensureFromDb: boolean = false
 ) {
   const assetsAllBatch = ctx.batchState.state.assetsAll;
   const debtAssets = [...assetsAllBatch.values()].filter(
-    (a) => a.resourceType === ResourceType.Debt
+    (a) =>
+      a.resourceType === AssetResourceType.aToken ||
+      a.resourceType === AssetResourceType.Debt
   );
   return debtAssets;
 }

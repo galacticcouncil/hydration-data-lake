@@ -449,6 +449,9 @@ export type StorageParserMethods = {
     getNativeTokenBalanceMany: (
       args: GetNativeTokenBalanceManyInput
     ) => Promise<BalancesAccountInfoWithAccountId[]>;
+    getAllSystemAccountKeys: (
+      args: GetDataAtBlockInput
+    ) => Promise<string[] | null>;
   };
   balances: {
     getTotalIssuance: (args: GetConstantsInput) => Promise<bigint | null>;

@@ -1,22 +1,18 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  Account,
-  AccountAssetBalanceHistoricalData,
-  AccountTotalBalanceHistoricalData,
-} from '../../model';
+import { Account, Asset } from '../../model';
 import { In } from 'typeorm';
 import parsers from '../../parsers';
-import { AccountData } from '../../parsers/types/storage';
+import {
+  AccountData,
+  TokenAccountBalancesWithAccountId,
+} from '../../parsers/types/storage';
 import { getOrCreateAccount } from '../accounts';
 import { batchGetOrCreateAssets, getOrCreateAsset } from '../assets/asset';
-import { BigNumber } from '@galacticcouncil/sdk';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';
-import {
-  getOrCreateAccountAssetBalanceHistoricalData,
-  getOrCreateAccountTotalBalanceHistoricalData,
-} from './accountAssetBalance';
+import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
+import { addAssetBalancesToAccumulator } from './utils';
 
 type BlockHeight = number;
 type AccountId = string;
@@ -30,127 +26,73 @@ type AccountBalancesPerBlock = Map<
   }
 >;
 
-type AccountPositionBalancesPerBlockPerAsset = Map<
-  BlockHeight,
-  {
-    blockHeader: SqdBlock;
-    data: Map<AccountId, Map<AssetId, BigNumber>>;
-  }
+export type AssetBalancesStorageDataPerBlockPerAccountMap = Map<
+  number,
+  Map<AccountId, Map<AssetId, AccountData>>
 >;
 
 export async function handleCommonAssetAccountBalances({
   accountIdsToProcess = {
-    accountIdsWithCommonAssetBalanceChanges: new Map(),
+    accountsFromSubstrateEventsPerBlock: new Map(),
     allProcessedAccountsPerBlock: new Map(),
   },
   ctx,
 }: {
   accountIdsToProcess?: {
-    accountIdsWithCommonAssetBalanceChanges: Map<number, Set<string>>;
+    accountsFromSubstrateEventsPerBlock: Map<number, Set<string>>;
     allProcessedAccountsPerBlock: Map<number, Set<string>>;
   };
   ctx: SqdProcessorContext<Store>;
-}): Promise<Map<number, Set<string>>> {
-  const {
-    accountIdsWithCommonAssetBalanceChanges,
-    allProcessedAccountsPerBlock,
-  } = accountIdsToProcess;
+}): Promise<{
+  assetBalancesStorageDataPerBlockPerAccountMap: AssetBalancesStorageDataPerBlockPerAccountMap;
+}> {
+  const { accountsFromSubstrateEventsPerBlock, allProcessedAccountsPerBlock } =
+    accountIdsToProcess;
 
-  const addAccountToProcessedAccountsPerBlock = (
-    blockHeight: number,
-    accountId: string
-  ) => {
-    if (!allProcessedAccountsPerBlock.has(blockHeight))
-      allProcessedAccountsPerBlock.set(blockHeight, new Set());
-    allProcessedAccountsPerBlock.get(blockHeight)?.add(accountId);
-  };
-
-  const allInvolvedAccountsInBatchSet: Set<string> = new Set(
-    Array.from(accountIdsWithCommonAssetBalanceChanges.values())
-      .map((blockSlot) => Array.from(blockSlot.values()))
-      .flat()
-  );
-
-  const palletNamesSet = ctx.appConfig.ACCOUNT_BALANCE_AGGREGATION_TRIGGERS;
   const accountBalancesPerBlock: AccountBalancesPerBlock = new Map();
 
-  blocksLoop: for (const block of ctx.blocks) {
-    const allInvolvedAccountsInBlockSet: Set<string> =
-      accountIdsWithCommonAssetBalanceChanges.get(block.header.height) ??
-      new Set();
+  const assetBalancesStorageDataPerBlockPerAccountMap: AssetBalancesStorageDataPerBlockPerAccountMap =
+    new Map();
 
-    if (!accountBalancesPerBlock.has(block.header.height))
-      accountBalancesPerBlock.set(block.header.height, {
-        blockHeader: block.header,
+  blocksLoop: for (const [
+    blockNumber,
+    accountsSetPerBlock,
+  ] of accountsFromSubstrateEventsPerBlock.entries()) {
+    if (accountsSetPerBlock.size === 0) continue blocksLoop;
+
+    if (!accountBalancesPerBlock.has(blockNumber))
+      accountBalancesPerBlock.set(blockNumber, {
+        blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
         data: new Map(),
       });
 
-    eventsLoop: for (const event of block.events) {
-      const eventPalletName = event.name.split('.')[0];
-
-      if (!palletNamesSet.has(eventPalletName)) continue eventsLoop;
-
-      if (event.args.from) {
-        allInvolvedAccountsInBlockSet.add(event.args.from);
-        allInvolvedAccountsInBatchSet.add(event.args.from);
-        addAccountToProcessedAccountsPerBlock(
-          block.header.height,
-          event.args.from
-        );
-      }
-      if (event.args.to) {
-        allInvolvedAccountsInBlockSet.add(event.args.to);
-        allInvolvedAccountsInBatchSet.add(event.args.to);
-        addAccountToProcessedAccountsPerBlock(
-          block.header.height,
-          event.args.to
-        );
-      }
-      if (event.args.who) {
-        allInvolvedAccountsInBlockSet.add(event.args.who);
-        allInvolvedAccountsInBatchSet.add(event.args.who);
-        addAccountToProcessedAccountsPerBlock(
-          block.header.height,
-          event.args.who
-        );
-      }
-      if (event.args.swapper) {
-        allInvolvedAccountsInBlockSet.add(event.args.swapper);
-        allInvolvedAccountsInBatchSet.add(event.args.swapper);
-        addAccountToProcessedAccountsPerBlock(
-          block.header.height,
-          event.args.swapper
-        );
-      }
-      if (event.args.filler) {
-        allInvolvedAccountsInBlockSet.add(event.args.filler);
-        allInvolvedAccountsInBatchSet.add(event.args.filler);
-        addAccountToProcessedAccountsPerBlock(
-          block.header.height,
-          event.args.filler
-        );
-      }
-    }
-
-    if (allInvolvedAccountsInBlockSet.size === 0) continue blocksLoop;
-
     const allInvolvedAccountsInBlockList = Array.from(
-      allInvolvedAccountsInBlockSet.keys()
+      accountsSetPerBlock.keys()
     );
 
-    const [nativeTokenBalances, otherTokenBalances] = await Promise.all([
+    const [nativeTokenBalances, commonTokenBalances] = await Promise.all([
       parsers.storage.system.getNativeTokenBalanceMany({
-        block: block.header,
+        block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
         accountIds: allInvolvedAccountsInBlockList,
       }),
       parsers.storage.tokens.getTokenBalancesMany({
-        block: block.header,
+        block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
         accountIds: allInvolvedAccountsInBlockList,
       }),
     ]);
 
+    addAssetBalancesToAccumulator({
+      accumulator: assetBalancesStorageDataPerBlockPerAccountMap,
+      nativeTokenBalances,
+      commonTokenBalances,
+      blockNumber,
+    });
+
     // Cache block data reference to avoid repeated Map lookups
-    const currentBlockData = accountBalancesPerBlock.get(block.header.height)!;
+    const currentBlockData = accountBalancesPerBlock.get(blockNumber)!;
+
+    // TODO should be refactored to use assetBalancesStorageDataPerBlockPerAccountMap
+    //   as following logic is duplicated
 
     for (const nativeTokenBalance of nativeTokenBalances) {
       if (!currentBlockData.data.has(nativeTokenBalance.accountId)) {
@@ -162,7 +104,7 @@ export async function handleCommonAssetAccountBalances({
         .set('0', nativeTokenBalance.data);
     }
 
-    for (const otherTokenBalance of otherTokenBalances) {
+    for (const otherTokenBalance of commonTokenBalances) {
       if (!currentBlockData.data.has(otherTokenBalance.accountId)) {
         currentBlockData.data.set(otherTokenBalance.accountId, new Map());
       }
@@ -175,6 +117,12 @@ export async function handleCommonAssetAccountBalances({
       }
     }
   }
+
+  const allInvolvedAccountsInBatchSet = new Set(
+    Array.from(allProcessedAccountsPerBlock.values())
+      .map((accSet) => Array.from(accSet.values()))
+      .flat()
+  );
 
   const persistedAccounts = await ctx.storeUtils.findWithLogs(
     Account,
@@ -206,6 +154,7 @@ export async function handleCommonAssetAccountBalances({
   for (const blockData of accountBalancesPerBlock.values()) {
     // Collect all unique asset registry IDs for this block
     const allAssetRegistryIds = new Set<string>();
+
     for (const accountData of blockData.data.values()) {
       for (const assetRegistryId of accountData.keys()) {
         allAssetRegistryIds.add(assetRegistryId);
@@ -216,12 +165,19 @@ export async function handleCommonAssetAccountBalances({
     const allAccountIds = Array.from(blockData.data.keys());
 
     // Batch fetch all assets for this block in a single DB query
+    // IMPORTANT: assetsCache keysare assetId but not assetRegistryId
     const assetsCache = await batchGetOrCreateAssets({
       assetRegistryIds: Array.from(allAssetRegistryIds),
       ctx,
       ensure: true,
       blockHeader: blockData.blockHeader,
     });
+
+    const assetsCacheIndexedByAssetRegistryId: Map<string, Asset> = new Map();
+    for (const asset of assetsCache.values()) {
+      if (asset.assetRegistryId)
+        assetsCacheIndexedByAssetRegistryId.set(asset.assetRegistryId, asset);
+    }
 
     // Batch fetch all accounts for this block in parallel
     const accountsArray = await Promise.all(
@@ -236,9 +192,15 @@ export async function handleCommonAssetAccountBalances({
     for (const [accountId, accountData] of blockData.data.entries()) {
       const account = accountsMap.get(accountId)!;
 
+      // TODO need to track assets with zero balance if this asset disapeaerd
+      //   from accounts balance at this block. E.g. 252525 added to LP but
+      //   it's still available in history from previous block so it still will
+      //   be added to account total balance.
+      //   Get latest
+
       for (const [assetRegistryId, balances] of accountData.entries()) {
         // Use cached asset instead of sequential DB query
-        const asset = assetsCache.get(assetRegistryId);
+        const asset = assetsCacheIndexedByAssetRegistryId.get(assetRegistryId);
         if (!asset) continue;
 
         const assetSpotPrice = getAssetsPairPrice({
@@ -285,5 +247,88 @@ export async function handleCommonAssetAccountBalances({
       }
     }
   }
-  return allProcessedAccountsPerBlock;
+
+  return { assetBalancesStorageDataPerBlockPerAccountMap };
+}
+
+export async function collectAccountsAndAssetsInvolvedToSubstrateEvents({
+  accountIdsToProcess = {
+    accountIdsWithCommonAssetBalanceChanges: new Map(),
+    allProcessedAccountsPerBlock: new Map(),
+  },
+  ctx,
+}: {
+  accountIdsToProcess?: {
+    accountIdsWithCommonAssetBalanceChanges: Map<number, Set<string>>;
+    allProcessedAccountsPerBlock: Map<number, Set<string>>;
+  };
+  ctx: SqdProcessorContext<Store>;
+}): Promise<{
+  accountsFromSubstrateEventsPerBlock: Map<number, Set<string>>;
+  allProcessedAccountsPerBlock: Map<number, Set<string>>;
+}> {
+  const {
+    accountIdsWithCommonAssetBalanceChanges,
+    allProcessedAccountsPerBlock,
+  } = accountIdsToProcess;
+
+  const accountsFromSubstrateEventsPerBlock: Map<
+    number,
+    Set<string>
+  > = new Map();
+
+  const ensureAccumulatorsPerBlock = (blockHeight: number) => {
+    if (!allProcessedAccountsPerBlock.has(blockHeight))
+      allProcessedAccountsPerBlock.set(
+        blockHeight,
+        accountIdsWithCommonAssetBalanceChanges.get(blockHeight) ?? new Set()
+      );
+
+    if (!accountsFromSubstrateEventsPerBlock.has(blockHeight))
+      accountsFromSubstrateEventsPerBlock.set(
+        blockHeight,
+        accountIdsWithCommonAssetBalanceChanges.get(blockHeight) ?? new Set()
+      );
+  };
+
+  const addAccountToAccumulatorPerBlock = (
+    blockHeight: number,
+    accountId: string
+  ) => {
+    allProcessedAccountsPerBlock.get(blockHeight)?.add(accountId);
+    accountsFromSubstrateEventsPerBlock.get(blockHeight)?.add(accountId);
+  };
+
+  const palletNamesSet = ctx.appConfig.ACCOUNT_BALANCE_AGGREGATION_TRIGGERS;
+
+  blocksLoop: for (const block of ctx.blocks) {
+    ensureAccumulatorsPerBlock(block.header.height);
+
+    eventsLoop: for (const event of block.events) {
+      const eventPalletName = event.name.split('.')[0];
+
+      if (!palletNamesSet.has(eventPalletName)) continue eventsLoop;
+
+      if (event.args.from) {
+        addAccountToAccumulatorPerBlock(block.header.height, event.args.from);
+      }
+      if (event.args.to) {
+        addAccountToAccumulatorPerBlock(block.header.height, event.args.to);
+      }
+      if (event.args.who) {
+        addAccountToAccumulatorPerBlock(block.header.height, event.args.who);
+      }
+      if (event.args.swapper) {
+        addAccountToAccumulatorPerBlock(
+          block.header.height,
+          event.args.swapper
+        );
+      }
+      if (event.args.filler) {
+        addAccountToAccumulatorPerBlock(block.header.height, event.args.filler);
+      }
+    }
+  }
+
+  return { allProcessedAccountsPerBlock, accountsFromSubstrateEventsPerBlock };
 }

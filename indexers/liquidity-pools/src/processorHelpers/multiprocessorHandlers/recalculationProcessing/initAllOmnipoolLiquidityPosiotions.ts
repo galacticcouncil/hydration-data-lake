@@ -51,7 +51,7 @@ export async function initAllOmnipoolLiquidityPosiotions(
   await handleCommonAssetAccountBalances({
     ctx,
     accountIdsToProcess: {
-      accountIdsWithCommonAssetBalanceChanges: new Map([
+      accountsFromSubstrateEventsPerBlock: new Map([
         [
           processingBlockHeader.height,
           new Set(positionsToSave.map((p) => p.accountId)),
