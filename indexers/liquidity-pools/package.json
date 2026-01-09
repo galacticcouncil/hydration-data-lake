@@ -96,6 +96,7 @@
     "postgraphile": "^4.13.0",
     "postgraphile-plugin-connection-filter": "^2.3.0",
     "redis": "^4.7.1",
+    "reflect-metadata": "^0.2.2",
     "scale-ts": "^1.6.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
