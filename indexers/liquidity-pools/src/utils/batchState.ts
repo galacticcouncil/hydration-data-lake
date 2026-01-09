@@ -95,6 +95,7 @@ import {
   XykYieldFarmDepositEvent,
   XykYieldFarmEntry,
   XykpoolHistoricalDataLatest,
+  AccountProcessingStatus,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { SqdBlock, SqdProcessorContext } from '../processor';
@@ -118,6 +119,7 @@ export type BatchStatePayload = {
   constantsHistoricalData: Map<string, ConstantsHistoricalData>;
 
   accounts: Map<string, Account>;
+  accountProcessingStatuses: Map<string, AccountProcessingStatus>;
   accountIdForPrefetch: Set<string>;
 
   transfers: Map<string, Transfer>;
@@ -298,6 +300,7 @@ export class BatchState {
     constantsHistoricalData: new Map(),
 
     accounts: new Map(),
+    accountProcessingStatuses: new Map(),
     accountIdForPrefetch: new Set(),
     transfers: new Map(),
     assetVolumes: new Map(),
@@ -438,6 +441,7 @@ export class BatchState {
       constantsHistoricalData: new Map(),
 
       accounts: new Map(),
+      accountProcessingStatuses: new Map(),
       accountIdForPrefetch: new Set(),
       transfers: new Map(),
       assetVolumes: new Map(),

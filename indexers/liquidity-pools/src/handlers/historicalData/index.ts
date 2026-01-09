@@ -393,6 +393,7 @@ export class HistoricalDataManager {
   static async saveAccountBalancesRelatedDataBulk(
     ctx: SqdProcessorContext<Store>
   ) {
+    console.time(`saveAccountBalancesRelatedDataBulk`);
     const accountAssetBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountAssetBalanceHistoricalData.values()
     );
@@ -413,11 +414,14 @@ export class HistoricalDataManager {
     await ctx.storeUtils.upsertWithBatches(
       accountTotalBalanceHistoricalDataList
     );
+    console.timeEnd(`saveAccountBalancesRelatedDataBulk`);
 
+    console.time(`commitAccountTotalBalancesToRedisTimeSeries`);
     await this.commitAccountTotalBalancesToRedisTimeSeries(
       accountTotalBalanceHistoricalDataList,
       ctx
     );
+    console.timeEnd(`commitAccountTotalBalancesToRedisTimeSeries`);
   }
 
   static async saveAccountMoneyMarketDataBulk(ctx: SqdProcessorContext<Store>) {

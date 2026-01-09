@@ -4,27 +4,23 @@ import { calcPriceNormalized } from '../../utils/helpers';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { getOrCreateAsset } from '../assets/asset';
 import { getOrCreateAccountTotalBalanceHistoricalData } from './accountAssetBalance';
-import { getOrCreateAccount } from '../accounts';
 import { AccountData } from '../../parsers/types/storage';
 import { SqdBlock } from '../../processor';
 import {
   AccountAssetBalanceHistoricalData,
   AssetResourceType,
-  Xykpool,
 } from '../../model';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
 import { getOmnipoolLiquidityMiningDepositsForAccounts } from '../liquidity/omnipool/liquidityMining/depositUtils';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
-import { getLatestXykpoolHistoricalData } from '../../utils/pgConnectionManagers/queries/getLatestXykpoolHistoricalData.sql';
 import { getPreviousAssetAccountBalancesSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
 import {
   createAccountAssetBalancesForOutdatedBalances,
   getUnchangedAccountAssetBalanceFromCachedEntity,
   getUnchangedAccountAssetBalanceFromPersistentEntity,
   indexAccountAssetBalancesAccumulators,
-  updateAccountTotalBalanceHistoricalDataWithUnchangedBalances,
 } from './utils';
 
 type BlockHeight = number;

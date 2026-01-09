@@ -67,6 +67,7 @@ import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/o
 import { initAllOmnipoolLiquidityMiningDeposits } from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
 import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
 import { handleUniquesEvents } from '../../../handlers/uniques';
+import { prefetchOrInitAllAccountProcessingStatuses } from '../../../handlers/accounts/accountProcessingStatus';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -105,6 +106,7 @@ export async function singleFlowAllInOneProcessor(
       });
 
       await prefetchOrInitAllBatchAccounts(ctx);
+      await prefetchOrInitAllAccountProcessingStatuses(ctx);
     })(),
     (async () => {
       console.time('initContractInstances');

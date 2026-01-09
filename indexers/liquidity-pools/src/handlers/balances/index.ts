@@ -19,6 +19,10 @@ import {
   handleAccountTotalBalance,
   handleLiquidityBalancesInTotalBalances,
 } from './accountTotalBalance';
+import {
+  addAccountsToPeriodicalBalancesAggregation,
+  updateAccountProcessingStatusOnTotalBalanceChange,
+} from '../accounts/accountProcessingStatus';
 
 /**
  * This function requires the following data, so it should be executed only after
@@ -56,11 +60,19 @@ export async function handleAssetAccountBalances(
   const mmEventsInvolvedAccountsAndAssets =
     await collectAccountsAndAssetsInvolvedToMmEvents(ctx);
 
-  const allAccountsInvolvedToSubstrateEvents =
+  const involvedAccountsAccumulators =
     await collectAccountsAndAssetsInvolvedToSubstrateEvents({
       ctx,
       ...mmEventsInvolvedAccountsAndAssets,
     });
+
+  /**
+   * Add accounts to periodical balances aggregation.
+   */
+  await addAccountsToPeriodicalBalancesAggregation({
+    involvedAccountsAccumulators,
+    ctx,
+  });
 
   /**
    * Handle Money Market events.
@@ -79,7 +91,7 @@ export async function handleAssetAccountBalances(
    * Aggregate balances for all involved accounts and all account's assets.
    */
   await handleCommonAssetAccountBalances({
-    accountIdsToProcess: { ...allAccountsInvolvedToSubstrateEvents },
+    accountIdsToProcess: { ...involvedAccountsAccumulators },
     ctx,
   });
 
@@ -88,14 +100,13 @@ export async function handleAssetAccountBalances(
    */
   await handleMoneyMarketAssetBalancesForAccounts({
     allProcessedAccountsPerBlock:
-      allAccountsInvolvedToSubstrateEvents.allProcessedAccountsPerBlock,
+      involvedAccountsAccumulators.allProcessedAccountsPerBlock,
     ctx,
   });
 
   /**
    * Aggregate Account Total Balances
    */
-  // const allProcessedAccounts = await handleAccountTotalBalance({ ctx });
   await handleAccountTotalBalance({ ctx });
 
   /**
@@ -104,7 +115,7 @@ export async function handleAssetAccountBalances(
   await handleLiquidityBalancesInTotalBalances({
     ctx,
     allProcessedAccountsPerBlock:
-      allAccountsInvolvedToSubstrateEvents.allProcessedAccountsPerBlock,
+      involvedAccountsAccumulators.allProcessedAccountsPerBlock,
   });
 
   /**
@@ -113,6 +124,8 @@ export async function handleAssetAccountBalances(
    *
    */
   await handleUnchangedAccountAssetBalances({ ctx });
+
+  await updateAccountProcessingStatusOnTotalBalanceChange({ ctx });
 
   /**
    * Handle Oracle Updates.

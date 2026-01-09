@@ -24,9 +24,6 @@ export class Account {
   @Column_("varchar", {length: 10, nullable: false})
   accountType!: AccountType
 
-  @Column_("bool", {nullable: true})
-  mmReserveBalancesInitialized!: boolean | undefined | null
-
   @Column_("text", {nullable: true})
   boundEvmAddress!: string | undefined | null
 

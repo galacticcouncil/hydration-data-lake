@@ -192,12 +192,6 @@ export async function handleCommonAssetAccountBalances({
     for (const [accountId, accountData] of blockData.data.entries()) {
       const account = accountsMap.get(accountId)!;
 
-      // TODO need to track assets with zero balance if this asset disapeaerd
-      //   from accounts balance at this block. E.g. 252525 added to LP but
-      //   it's still available in history from previous block so it still will
-      //   be added to account total balance.
-      //   Get latest
-
       for (const [assetRegistryId, balances] of accountData.entries()) {
         // Use cached asset instead of sequential DB query
         const asset = assetsCacheIndexedByAssetRegistryId.get(assetRegistryId);

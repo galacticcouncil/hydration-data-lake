@@ -7,6 +7,7 @@ import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { EvmUtils } from '../../utils/evm';
 import parsers from '../../parsers';
 import pMap from 'p-map';
+import { getNewAccountProcessingStatus } from './accountProcessingStatus';
 
 export function getNewAccount({
   id,
@@ -31,7 +32,6 @@ export function getNewAccount({
   acc.id = id;
   acc.accountType = accountType;
   acc.boundEvmAddress = boundEvmAddressToSave;
-  acc.mmReserveBalancesInitialized = false;
 
   return acc;
 }
@@ -279,6 +279,11 @@ export async function initAllAccountsOnColdStart({
         ctx,
       });
       ctx.batchState.state.accounts.set(account.id, account);
+
+      ctx.batchState.state.accountProcessingStatuses.set(
+        account.id,
+        getNewAccountProcessingStatus({ id: account.id })
+      );
     },
     {
       concurrency:
@@ -287,4 +292,8 @@ export async function initAllAccountsOnColdStart({
   );
 
   await saveAllBatchAccounts(ctx);
+
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.accountProcessingStatuses.values())
+  );
 }

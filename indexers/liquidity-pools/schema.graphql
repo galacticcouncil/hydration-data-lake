@@ -305,7 +305,6 @@ type Account @entity {
   "<address>"
   id: ID!
   accountType: AccountType!
-  mmReserveBalancesInitialized: Boolean
 
   boundEvmAddress: String
   evmAddressBoundEvent: Event
@@ -321,6 +320,14 @@ type Account @entity {
     @derivedFrom(field: "account")
 
   # TODO: add proxy and multisig tracking
+}
+
+type AccountProcessingStatus @entity {
+  "<account_address>"
+  id: ID!
+
+  mmReserveBalancesInitializedAtParaBlock: Int
+  balancesAggregatedAtParaBlock: Int
 }
 
 type AccountAssetSwapFeeHistoricalData @entity {

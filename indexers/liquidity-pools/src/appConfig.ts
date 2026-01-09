@@ -610,6 +610,12 @@ export class AppConfig {
     'Uniques',
   ]);
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: number = 20;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS: number = 7000;
+
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
 
   readonly redis: RedisConfig = new RedisConfig();

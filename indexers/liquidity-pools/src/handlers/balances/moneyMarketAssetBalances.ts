@@ -19,6 +19,7 @@ import pMap from 'p-map';
 import { StorageResolver } from '../../parsers/storageResolver';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
 import { getAllAccountPositiveAssetBalances } from '../../utils/pgConnectionManagers/queries/getAllAccountPositiveAssetBalances.sql';
+import { getOrCreateAccountProcessingStatus } from '../accounts/accountProcessingStatus';
 
 export async function handleMmAssetAccountBalancesPerBlock({
   ctx,
@@ -568,8 +569,12 @@ async function getAccountMmAssetsPerBlock({
   ] of allProcessedAccountsPerBlock.entries()) {
     for (const accountId of accountsSet) {
       const account = await getOrCreateAccount({ ctx, id: accountId });
+      const accountProcStatus = await getOrCreateAccountProcessingStatus({
+        id: accountId,
+        ctx,
+      });
       if (
-        !account.mmReserveBalancesInitialized &&
+        !accountProcStatus.mmReserveBalancesInitializedAtParaBlock &&
         account.boundEvmAddress &&
         account.boundEvmAddress !== constants.AddressZero
       )
@@ -646,12 +651,20 @@ async function getAccountMmAssetsPerBlock({
       //  "balances init" status will be ensured (aka after saving balances of
       //  debt tokens).
       /**
-       * We need to mark accounts to avoid duplicated debt token balances check
+       * We need to mark accounts to avoid duplicated MM token balances check
        * in further processing looks.
        */
-      account.mmReserveBalancesInitialized = true;
-      ctx.batchState.state.accounts.set(account.id, account);
-      await ctx.storeUtils.upsertWithBatches([account]);
+      const accountProcStatus = await getOrCreateAccountProcessingStatus({
+        id: account.id,
+        ctx,
+      });
+      accountProcStatus.mmReserveBalancesInitializedAtParaBlock =
+        lowestBlockNumberToProcess;
+      ctx.batchState.state.accountProcessingStatuses.set(
+        accountProcStatus.id,
+        accountProcStatus
+      );
+      await ctx.storeUtils.upsertWithBatches([accountProcStatus]);
 
       for (const reserve of accountReserves) {
         if (
