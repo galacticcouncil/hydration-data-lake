@@ -1,7 +1,7 @@
-import { AppConfig } from '../../../appConfig';
+import { AppConfig } from '../../appConfig';
 import { Pool, QueryResult, QueryResultRow } from 'pg';
 import { getApiState, setApiState } from './sql/apiState.sql';
-import { CommonPgPool } from '../../../utils/pgConnectionManagers/pgPool';
+import { CommonPgPool } from '../pgConnectionManagers/pgPool';
 
 export type ApiStateEntity = {
   id: string;

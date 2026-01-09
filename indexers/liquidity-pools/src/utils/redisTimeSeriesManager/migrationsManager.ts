@@ -6,7 +6,7 @@ import {
   RedisDefaultModules,
 } from 'redis';
 import { AppConfig } from '../../appConfig';
-import { ApiSupportPgClient } from '../../apiSupport/utils/timeSeriesSupportManager/apiSupportPgClient';
+import { ApiSupportPgClient } from '../redisTimeSeriesSupport/apiSupportPgClient';
 
 export type RedisInstance = RedisClientType<
   RedisDefaultModules,

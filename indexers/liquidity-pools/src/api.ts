@@ -36,7 +36,7 @@ import { ProxyApiRoute } from './apiSupport/api/rest/proxyApiHandlers/types';
 import restRouter from './apiSupport/api/rest/routes/rest.routes';
 import { runApiDbMigrations } from './apiSupport/apiMigrations/runApiDbMigrations';
 import { swaggerOptions } from './apiSupport/swagger';
-import { TimeSeriesApiSupportManager } from './apiSupport/utils/timeSeriesSupportManager';
+import { TimeSeriesApiSupportManager } from './utils/redisTimeSeriesSupport/timeSeriesApiSupportManager';
 import { AppConfig } from './appConfig';
 import { getEnvPath } from './utils/helpers';
 import { NodeEnv } from './utils/types';

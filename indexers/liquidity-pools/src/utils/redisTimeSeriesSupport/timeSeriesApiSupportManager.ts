@@ -6,8 +6,8 @@ import {
 import {
   RedisTimeSeriesManager,
   RedisTimeSeriesName,
-} from '../../../utils/redisTimeSeriesManager';
-import { AppConfig } from '../../../appConfig';
+} from '../redisTimeSeriesManager';
+import { AppConfig } from '../../appConfig';
 import { getAssetPairVolumesByBlocksRange } from './sql/assetPairVolumes.sql';
 import {
   BullQueueClient,
@@ -91,28 +91,31 @@ export class TimeSeriesApiSupportManager {
       },
     });
 
-    bullQueueClient.assetPriceScrapperQueue
-      .process(HistDataScrapperJobName.assetPriceHistData, (job, done) =>
-        this.assetHistDataScraperHandler(job, done)
-      )
-      .catch((error) => {
-        console.error(
-          `Error setting up ${HistDataScrapperJobName.assetPriceHistData} processor:`,
-          error
-        );
-      });
+    try {
+      // @ts-ignore
+      bullQueueClient.assetPriceScrapperQueue.process(
+        HistDataScrapperJobName.assetPriceHistData,
+        (job, done) => this.assetHistDataScraperHandler(job, done)
+      );
+    } catch (error) {
+      console.error(
+        `Error setting up ${HistDataScrapperJobName.assetPriceHistData} processor:`,
+        error
+      );
+    }
 
-    bullQueueClient.assetPriceScrapperQueue
-      .process(
+    try {
+      // @ts-ignore
+      bullQueueClient.assetPriceScrapperQueue.process(
         HistDataScrapperJobName.accountTotalBalancesHistData,
         (job, done) => this.accTotalBalancesHistDataScraperHandler(job, done)
-      )
-      .catch((error) => {
-        console.error(
-          `Error setting up ${HistDataScrapperJobName.accountTotalBalancesHistData} processor:`,
-          error
-        );
-      });
+      );
+    } catch (error) {
+      console.error(
+        `Error setting up ${HistDataScrapperJobName.accountTotalBalancesHistData} processor:`,
+        error
+      );
+    }
   }
 
   async assetHistDataScraperHandler(

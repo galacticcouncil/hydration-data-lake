@@ -1,7 +1,6 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
-  AccountAssetBalanceHistoricalData,
   AccountTotalBalanceHistoricalData,
   AssetsPairVolumeHistoricalData,
   AssetSpotPriceHistoricalData,
@@ -14,6 +13,7 @@ import {
 import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/assetHistoricalData';
 import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
 import {
+  AddMultiplePricesPayload,
   RedisTimeSeriesManager,
   RedisTimeSeriesName,
 } from '../../utils/redisTimeSeriesManager';
@@ -27,10 +27,12 @@ import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedData
 import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLatest';
 import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/historicalDataLatest';
 import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
-import { ApiSupportPgClient } from '../../apiSupport/utils/timeSeriesSupportManager/apiSupportPgClient';
+import { ApiSupportPgClient } from '../../utils/redisTimeSeriesSupport/apiSupportPgClient';
 import { getXykpoolHistDataWithUniqueData } from '../pools/pools/xykPool/historicalData';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { getXykpoolsHistDataLatest } from '../pools/pools/xykPool/historicalDataLatest';
+import { TimeSeriesDataCommitManager } from '../../utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
+import { DataCommitterJobName } from '../../utils/redisTimeSeriesSupport/queueClient';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -393,7 +395,7 @@ export class HistoricalDataManager {
   static async saveAccountBalancesRelatedDataBulk(
     ctx: SqdProcessorContext<Store>
   ) {
-    console.time(`saveAccountBalancesRelatedDataBulk`);
+    console.time(`saveAccountBalancesRelatedDataBulk :: call`);
     const accountAssetBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountAssetBalanceHistoricalData.values()
     );
@@ -414,14 +416,14 @@ export class HistoricalDataManager {
     await ctx.storeUtils.upsertWithBatches(
       accountTotalBalanceHistoricalDataList
     );
-    console.timeEnd(`saveAccountBalancesRelatedDataBulk`);
+    console.timeEnd(`saveAccountBalancesRelatedDataBulk :: call`);
 
-    console.time(`commitAccountTotalBalancesToRedisTimeSeries`);
+    console.time(`commitAccountTotalBalancesToRedisTimeSeries :: call`);
     await this.commitAccountTotalBalancesToRedisTimeSeries(
       accountTotalBalanceHistoricalDataList,
       ctx
     );
-    console.timeEnd(`commitAccountTotalBalancesToRedisTimeSeries`);
+    console.timeEnd(`commitAccountTotalBalancesToRedisTimeSeries :: call`);
   }
 
   static async saveAccountMoneyMarketDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -441,49 +443,92 @@ export class HistoricalDataManager {
       !ctx.appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES
     )
       return;
+    //
+    // let totalBalanceLatestBlock = 0;
+    // const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
+    // await redisTimeSeriesManager.addMultiplePrices(
+    //   src
+    //     .filter((item) => {
+    //       // Get assets to check if they have registry IDs
+    //       const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
+    //       const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
+    //       return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
+    //     })
+    //     .map((item) => {
+    //       if (item.paraBlockHeight > totalBalanceLatestBlock)
+    //         totalBalanceLatestBlock = item.paraBlockHeight;
+    //
+    //       const block = ctx.batchState.getParaBlockFromCacheByHeight(
+    //         item.paraBlockHeight
+    //       );
+    //       const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+    //
+    //       // Get asset registry IDs from the Asset entities
+    //       const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
+    //       const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
+    //
+    //       return {
+    //         keyPrefix: ctx.appConfig.INDEXER_ID,
+    //         name: RedisTimeSeriesName.price,
+    //         assetAId: assetIn.assetRegistryId!,
+    //         assetBId: assetOut.assetRegistryId!,
+    //         timestamp,
+    //         value: BigNumber(item.priceNormalised).toNumber(),
+    //       };
+    //     })
+    // );
+    //
+    // if (totalBalanceLatestBlock > 0)
+    //   try {
+    //     await ApiSupportPgClient.getInstance().upsertApiState({
+    //       assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
+    //     });
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
 
-    let totalBalanceLatestBlock = 0;
-    const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
-    await redisTimeSeriesManager.addMultiplePrices(
-      src
-        .filter((item) => {
-          // Get assets to check if they have registry IDs
-          const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
-          const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
-          return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
-        })
-        .map((item) => {
-          if (item.paraBlockHeight > totalBalanceLatestBlock)
-            totalBalanceLatestBlock = item.paraBlockHeight;
+    let latestBlock = 0;
 
-          const block = ctx.batchState.getParaBlockFromCacheByHeight(
-            item.paraBlockHeight
-          );
-          const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+    const pricesData = src
+      .filter((item) => {
+        // Get assets to check if they have registry IDs
+        const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
+        const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
+        return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
+      })
+      .map((item) => {
+        if (item.paraBlockHeight > latestBlock)
+          latestBlock = item.paraBlockHeight;
 
-          // Get asset registry IDs from the Asset entities
-          const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
-          const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
+        const block = ctx.batchState.getParaBlockFromCacheByHeight(
+          item.paraBlockHeight
+        );
+        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
 
-          return {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.price,
-            assetAId: assetIn.assetRegistryId!,
-            assetBId: assetOut.assetRegistryId!,
-            timestamp,
-            value: BigNumber(item.priceNormalised).toNumber(),
-          };
-        })
-    );
+        // Get asset registry IDs from the Asset entities
+        const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
+        const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
 
-    if (totalBalanceLatestBlock > 0)
-      try {
-        await ApiSupportPgClient.getInstance().upsertApiState({
-          assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
-        });
-      } catch (e) {
-        console.log(e);
-      }
+        return {
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: RedisTimeSeriesName.price,
+          assetAId: assetIn.assetRegistryId!,
+          assetBId: assetOut.assetRegistryId!,
+          timestamp,
+          value: BigNumber(item.priceNormalised).toNumber(),
+        };
+      });
+
+    await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
+      actionName: DataCommitterJobName.commitAssetPriceVolume,
+      priceVolumeDataLatestProcessedBlock: latestBlock,
+      priceVolumeDataMany: pricesData,
+      metadata: {
+        commitRequestedAtParaBlock:
+          ctx.blocks[ctx.blocks.length - 1].header.height,
+        requestSender: 'processor',
+      },
+    });
   }
 
   static async commitAssetsPairVolumeToRedisTimeSeries(
@@ -497,46 +542,87 @@ export class HistoricalDataManager {
     )
       return;
 
-    let totalBalanceLatestBlock = 0;
+    // let totalBalanceLatestBlock = 0;
+    //
+    // const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
+    // await redisTimeSeriesManager.addMultiplePrices(
+    //   src
+    //     .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
+    //     .map((item) => {
+    //       if (item.paraBlockHeight > totalBalanceLatestBlock)
+    //         totalBalanceLatestBlock = item.paraBlockHeight;
+    //
+    //       const block = ctx.batchState.getParaBlockFromCacheByHeight(
+    //         item.paraBlockHeight
+    //       );
+    //       const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+    //
+    //       return {
+    //         keyPrefix: ctx.appConfig.INDEXER_ID,
+    //         name: RedisTimeSeriesName.volume,
+    //         assetAId:
+    //           +item.assetRegistryAId! < +item.assetRegistryBId!
+    //             ? item.assetRegistryAId!
+    //             : item.assetRegistryBId!,
+    //         assetBId:
+    //           +item.assetRegistryAId! < +item.assetRegistryBId!
+    //             ? item.assetRegistryBId!
+    //             : item.assetRegistryAId!,
+    //
+    //         timestamp,
+    //         value: BigNumber(item.totalVolumeNormalised).toNumber(),
+    //       };
+    //     })
+    // );
+    // if (totalBalanceLatestBlock > 0)
+    //   try {
+    //     await ApiSupportPgClient.getInstance().upsertApiState({
+    //       assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
+    //     });
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
 
-    const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
-    await redisTimeSeriesManager.addMultiplePrices(
-      src
-        .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
-        .map((item) => {
-          if (item.paraBlockHeight > totalBalanceLatestBlock)
-            totalBalanceLatestBlock = item.paraBlockHeight;
+    let latestBlock = 0;
 
-          const block = ctx.batchState.getParaBlockFromCacheByHeight(
-            item.paraBlockHeight
-          );
-          const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+    const volumesData = src
+      .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
+      .map((item): AddMultiplePricesPayload => {
+        if (item.paraBlockHeight > latestBlock)
+          latestBlock = item.paraBlockHeight;
 
-          return {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.volume,
-            assetAId:
-              +item.assetRegistryAId! < +item.assetRegistryBId!
-                ? item.assetRegistryAId!
-                : item.assetRegistryBId!,
-            assetBId:
-              +item.assetRegistryAId! < +item.assetRegistryBId!
-                ? item.assetRegistryBId!
-                : item.assetRegistryAId!,
+        const block = ctx.batchState.getParaBlockFromCacheByHeight(
+          item.paraBlockHeight
+        );
+        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
 
-            timestamp,
-            value: BigNumber(item.totalVolumeNormalised).toNumber(),
-          };
-        })
-    );
-    if (totalBalanceLatestBlock > 0)
-      try {
-        await ApiSupportPgClient.getInstance().upsertApiState({
-          assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
-        });
-      } catch (e) {
-        console.log(e);
-      }
+        return {
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: RedisTimeSeriesName.volume,
+          assetAId:
+            +item.assetRegistryAId! < +item.assetRegistryBId!
+              ? item.assetRegistryAId!
+              : item.assetRegistryBId!,
+          assetBId:
+            +item.assetRegistryAId! < +item.assetRegistryBId!
+              ? item.assetRegistryBId!
+              : item.assetRegistryAId!,
+
+          timestamp,
+          value: BigNumber(item.totalVolumeNormalised).toNumber(),
+        };
+      });
+
+    await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
+      actionName: DataCommitterJobName.commitAssetPriceVolume,
+      priceVolumeDataLatestProcessedBlock: latestBlock,
+      priceVolumeDataMany: volumesData,
+      metadata: {
+        commitRequestedAtParaBlock:
+          ctx.blocks[ctx.blocks.length - 1].header.height,
+        requestSender: 'processor',
+      },
+    });
   }
 
   static async commitAccountTotalBalancesToRedisTimeSeries(
@@ -549,36 +635,67 @@ export class HistoricalDataManager {
       !ctx.appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES
     )
       return;
+    //
+    // let totalBalanceLatestBlock = 0;
+    // await RedisTimeSeriesManager.getInstance().addMultipleAccountTotalBalances(
+    //   src.map((item) => {
+    //     if (item.paraBlockHeight > totalBalanceLatestBlock)
+    //       totalBalanceLatestBlock = item.paraBlockHeight;
+    //
+    //     const block = ctx.batchState.getParaBlockFromCacheByHeight(
+    //       item.paraBlockHeight
+    //     );
+    //     const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+    //
+    //     return {
+    //       keyPrefix: ctx.appConfig.INDEXER_ID,
+    //       name: RedisTimeSeriesName.acc_bal_tot_tns,
+    //       accountId: item.accountId,
+    //       timestamp,
+    //       value: +item.totalTransferableNorm,
+    //     };
+    //   })
+    // );
+    //
+    // if (totalBalanceLatestBlock > 0)
+    //   try {
+    //     await ApiSupportPgClient.getInstance().upsertApiState({
+    //       accTotalBalanceLatestProcBlock: totalBalanceLatestBlock,
+    //     });
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
 
-    let totalBalanceLatestBlock = 0;
-    await RedisTimeSeriesManager.getInstance().addMultipleAccountTotalBalances(
-      src.map((item) => {
-        if (item.paraBlockHeight > totalBalanceLatestBlock)
-          totalBalanceLatestBlock = item.paraBlockHeight;
+    let latestBlock = 0;
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(
-          item.paraBlockHeight
-        );
-        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+    const balancesData = src.map((item) => {
+      if (item.paraBlockHeight > latestBlock)
+        latestBlock = item.paraBlockHeight;
 
-        return {
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.acc_bal_tot_tns,
-          accountId: item.accountId,
-          timestamp,
-          value: +item.totalTransferableNorm,
-        };
-      })
-    );
+      const block = ctx.batchState.getParaBlockFromCacheByHeight(
+        item.paraBlockHeight
+      );
+      const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
 
-    if (totalBalanceLatestBlock > 0)
-      try {
-        await ApiSupportPgClient.getInstance().upsertApiState({
-          accTotalBalanceLatestProcBlock: totalBalanceLatestBlock,
-        });
-      } catch (e) {
-        console.log(e);
-      }
+      return {
+        keyPrefix: ctx.appConfig.INDEXER_ID,
+        name: RedisTimeSeriesName.acc_bal_tot_tns,
+        accountId: item.accountId,
+        timestamp,
+        value: +item.totalTransferableNorm,
+      };
+    });
+
+    await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
+      actionName: DataCommitterJobName.commitAccountTotalBalance,
+      accountTotalBalanceLatestProcessedBlock: latestBlock,
+      accountTotalBalanceMany: balancesData,
+      metadata: {
+        commitRequestedAtParaBlock:
+          ctx.blocks[ctx.blocks.length - 1].header.height,
+        requestSender: 'processor',
+      },
+    });
   }
 
   static async handleHistoricalVolumesBatchEntriesLists(

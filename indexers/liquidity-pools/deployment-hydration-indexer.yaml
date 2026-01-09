@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 806
+slot: 807
 description: Hydration pools indexer
 build:
 deploy:
@@ -21,7 +21,7 @@ deploy:
       REAGGREGATION_PROCESSING_MODE: false
 
       CHAIN: 'hydration'
-      INDEXER_ID: 806
+      INDEXER_ID: 807
       RPC_URL: 'wss://node-subwhale-8.shellfish.hydration.cloud'
       RPC_URL_HTTPS: 'https://node-subwhale-8.shellfish.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
@@ -64,7 +64,7 @@ deploy:
       NODE_ENV: 'production'
       CHAIN: 'hydration'
       GQL_PORT: 8080
-      INDEXER_ID: 806
+      INDEXER_ID: 807
       TS_REDIS_KEY_SPACE_ID: 7
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app::-hydration.netlify.app'

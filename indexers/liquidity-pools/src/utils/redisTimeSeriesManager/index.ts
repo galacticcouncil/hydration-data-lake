@@ -44,6 +44,23 @@ export type TimeSeriesAccTotalBalancesBuckets = {
   locked: Map<number, { timestamp: number; value: number }>;
 };
 
+export type AddMultiplePricesPayload = {
+  name: RedisTimeSeriesName;
+  assetAId: string;
+  assetBId?: string;
+  value: number;
+  timestamp: number;
+  keyPrefix?: string | number;
+};
+
+export type AddMultipleAccountTotalBalancesPayload = {
+  name: RedisTimeSeriesName;
+  accountId: string;
+  value: number;
+  timestamp: number;
+  keyPrefix?: string | number;
+};
+
 export type RedisTimeSeriesKey = string;
 
 const appConfig = AppConfig.getInstance();
@@ -230,16 +247,7 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
     }
   }
 
-  async addMultiplePrices(
-    data: {
-      name: RedisTimeSeriesName;
-      assetAId: string;
-      assetBId?: string;
-      value: number;
-      timestamp: number;
-      keyPrefix?: string | number;
-    }[]
-  ) {
+  async addMultiplePrices(data: AddMultiplePricesPayload[]) {
     if (!appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES) return;
 
     try {
@@ -291,13 +299,7 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
   }
 
   async addMultipleAccountTotalBalances(
-    data: {
-      name: RedisTimeSeriesName;
-      accountId: string;
-      value: number;
-      timestamp: number;
-      keyPrefix?: string | number;
-    }[]
+    data: AddMultipleAccountTotalBalancesPayload[]
   ) {
     if (!appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES) return;
 

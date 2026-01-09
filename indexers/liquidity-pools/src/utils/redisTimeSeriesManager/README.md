@@ -16,7 +16,7 @@ The class extends `RedisTimeSeriesMigrationsManager` to inherit migration manage
 ## Architecture
 
 ```
-RedisTimeSeriesManager (index.ts)
+RedisTimeSeriesManager (timeSeriesApiSupportManager.ts)
     ↓ extends
 RedisTimeSeriesMigrationsManager (migrationsManager.ts)
     ↓ uses
