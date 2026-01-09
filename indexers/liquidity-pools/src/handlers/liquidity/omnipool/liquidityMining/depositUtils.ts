@@ -431,5 +431,8 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
     }
   }
 
-  return accountDepositBalancesPerBlockPerAsset;
+  return {
+    accountDepositBalancesPerBlockPerAsset,
+    allDepositsInvolvedInBatch: Array.from(allDepositsDeduped.values()),
+  };
 }

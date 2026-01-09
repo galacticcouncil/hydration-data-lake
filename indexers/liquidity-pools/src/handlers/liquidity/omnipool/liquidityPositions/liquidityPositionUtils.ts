@@ -4,6 +4,7 @@ import {
   OmnipoolLiquidityPosition,
   OmnipoolLiquidityPositionEvent,
   OmnipoolLiquidityPositionStatus,
+  OmnipoolYieldFarmDeposit,
 } from '../../../../model';
 import parsers from '../../../../parsers';
 import { getOrCreateAsset } from '../../../assets/asset';
@@ -276,12 +277,26 @@ export async function getNewOmnipoolLiquidityPositionEvent({
 export async function getOmnipoolLiquidityPositionsForAccounts({
   involvedAccountsInBatch,
   involvedAccountsPerBlock,
+  allDepositsInvolvedInBatch,
   ctx,
 }: {
   involvedAccountsInBatch: Set<string>;
   involvedAccountsPerBlock: Map<number, Set<string>>;
+  allDepositsInvolvedInBatch: OmnipoolYieldFarmDeposit[];
   ctx: SqdProcessorContext<Store>;
 }) {
+  const allDepositsInvolvedInBatchIndexedByAccountId: Map<
+    string,
+    OmnipoolYieldFarmDeposit[]
+  > = new Map();
+
+  for (const dep of allDepositsInvolvedInBatch) {
+    if (!allDepositsInvolvedInBatchIndexedByAccountId.has(dep.accountId)) {
+      allDepositsInvolvedInBatchIndexedByAccountId.set(dep.accountId, []);
+    }
+    allDepositsInvolvedInBatchIndexedByAccountId.get(dep.accountId)?.push(dep);
+  }
+
   const allCachedPositions = Array.from(
     ctx.batchState.state.omnipoolLiquidityPositions.values()
   ).filter(
@@ -311,13 +326,13 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
   );
 
   const allPositionsDeduped = new Map([
+    ...allPersistentPositions.map(
+      (pos): [string, OmnipoolLiquidityPosition] => [pos.id, pos]
+    ),
     ...allCachedPositions.map((pos): [string, OmnipoolLiquidityPosition] => [
       pos.id,
       pos,
     ]),
-    ...allPersistentPositions.map(
-      (pos): [string, OmnipoolLiquidityPosition] => [pos.id, pos]
-    ),
   ]);
 
   const cachedPositionEvents = Array.from(
@@ -337,10 +352,10 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
   );
 
   const allPositionEventsDeduped = new Map([
-    ...cachedPositionEvents.map(
+    ...persistentPositionEvents.map(
       (e): [string, OmnipoolLiquidityPositionEvent] => [e.id, e]
     ),
-    ...persistentPositionEvents.map(
+    ...cachedPositionEvents.map(
       (e): [string, OmnipoolLiquidityPositionEvent] => [e.id, e]
     ),
   ]);
@@ -404,7 +419,27 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
                   pos.destroyedAtParaBlockHeight > blockHeight))
           ) || [];
 
+      const accountActivePositionsAtBlockWithoutDeposits = [];
+
       for (const position of accountActivePositionsAtBlock) {
+        const activeDepositAtBlock =
+          allDepositsInvolvedInBatchIndexedByAccountId
+            .get(accountId)
+            ?.find(
+              (dep) =>
+                dep.positionId === position.id &&
+                dep.createdAtParaBlockHeight >=
+                  position.createdAtParaBlockHeight &&
+                (!dep.destroyedAtParaBlockHeight ||
+                  (!!dep.destroyedAtParaBlockHeight &&
+                    dep.destroyedAtParaBlockHeight > blockHeight))
+            );
+
+        if (!activeDepositAtBlock)
+          accountActivePositionsAtBlockWithoutDeposits.push(position);
+      }
+
+      for (const position of accountActivePositionsAtBlockWithoutDeposits) {
         if (
           !accountPositionBalancesPerBlockPerAsset
             .get(blockHeight)!

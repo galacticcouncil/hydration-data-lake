@@ -187,18 +187,21 @@ export async function handleLiquidityBalancesInTotalBalances({
       .flat()
   );
 
+  const {
+    accountDepositBalancesPerBlockPerAsset: omnipoolLiquidityMiningDepositsMap,
+    allDepositsInvolvedInBatch,
+  } = await getOmnipoolLiquidityMiningDepositsForAccounts({
+    ctx,
+    involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+    involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
+  });
+
   const omnipoolLiquidityPositionsMap =
     await getOmnipoolLiquidityPositionsForAccounts({
       ctx,
       involvedAccountsPerBlock: allProcessedAccountsPerBlock,
       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
-    });
-
-  const omnipoolLiquidityMiningDepositsMap =
-    await getOmnipoolLiquidityMiningDepositsForAccounts({
-      ctx,
-      involvedAccountsPerBlock: allProcessedAccountsPerBlock,
-      involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
+      allDepositsInvolvedInBatch,
     });
 
   const xykpoolLiquidityDepositsMap =

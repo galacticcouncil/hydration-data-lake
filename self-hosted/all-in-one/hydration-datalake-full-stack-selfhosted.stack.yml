@@ -30,8 +30,8 @@ x-aggregator-rpc-url-https: &aggregator-rpc-url-https "https://node-subwhale-4.s
 x-dictionary-rpc-url-wss: &dictionary-rpc-url-wss "wss://node-subwhale-5.shellfish.hydration.cloud"
 x-dictionary-rpc-url-https: &dictionary-rpc-url-https "https://node-subwhale-5.shellfish.hydration.cloud"
 
-x-aggregator-indexer-image: &aggregator-indexer-image "ghcr.io/mckrava/liquidity-pools-indexer:wip-feat-improve-pools-historical-data-aggregation"
-x-dictionary-indexer-image: &dictionary-indexer-image "ghcr.io/mckrava/storage-dictionary-indexer:wip-feat-improve-pools-historical-data-aggregation"
+x-aggregator-indexer-image: &aggregator-indexer-image "ghcr.io/mckrava/liquidity-pools-indexer:wip-versions-agg-ind-hydration-pools-741"
+x-dictionary-indexer-image: &dictionary-indexer-image "ghcr.io/mckrava/storage-dictionary-indexer:wip-versions-agg-ind-hydration-pools-741"
 
 # ======================================================================================================================
 # ======================================== C O N F I G   S E G M E N T S ===============================================
