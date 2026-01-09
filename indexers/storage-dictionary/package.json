@@ -42,7 +42,7 @@
     "pg": "^8.11.5",
     "postgraphile": "^4.13.0",
     "postgraphile-plugin-connection-filter": "^2.3.0",
-    "reflect-metadata": "^0.2.2",
+    "reflect-metadata": "^0.1.14",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
