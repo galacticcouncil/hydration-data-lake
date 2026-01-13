@@ -20,13 +20,16 @@ import { StorageResolver } from '../../parsers/storageResolver';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
 import { getAllAccountPositiveAssetBalances } from '../../utils/pgConnectionManagers/queries/getAllAccountPositiveAssetBalances.sql';
 import { getOrCreateAccountProcessingStatus } from '../accounts/accountProcessingStatus';
+import { AssetBalancesStorageDataPerBlockPerAccountMap } from './commonAssetBalances';
 
 export async function handleMmAssetAccountBalancesPerBlock({
   ctx,
   involvedAccountsAssetsPerBlockMap,
+  prefetchedBalancesForAccountsInvolvedToMmEvents,
 }: {
   ctx: SqdProcessorContext<Store>;
-  involvedAccountsAssetsPerBlockMap: MmEventsInvolvedAccountsAssetsPerBlockMap;
+  involvedAccountsAssetsPerBlockMap: InvolvedAccountsAndAssetsInMmEventsPerBlockMap;
+  prefetchedBalancesForAccountsInvolvedToMmEvents: AssetBalancesStorageDataPerBlockPerAccountMap;
 }) {
   for (const blockSlotData of [...involvedAccountsAssetsPerBlockMap.values()]) {
     await pMap(
@@ -60,6 +63,11 @@ export async function handleMmAssetAccountBalancesPerBlock({
           balance: bigint | null | undefined;
         }[] = [];
 
+        const prefetchedBalancesAtBlock =
+          prefetchedBalancesForAccountsInvolvedToMmEvents.get(
+            blockSlotData.blockHeader.height
+          );
+
         await pMap(
           Array.from(accountAssetsMap.assets.values()).filter(
             (asset) => !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
@@ -83,6 +91,9 @@ export async function handleMmAssetAccountBalancesPerBlock({
             // console.dir(accountReserves, { depth: null });
 
             const balance =
+              prefetchedBalancesAtBlock
+                ?.get(accountAssetsMap.account.id)
+                ?.get(asset.id)?.free ??
               accountStorageDictionaryBalancesPerAssetMap.get(
                 asset?.assetRegistryId ?? ''
               ) ??
@@ -92,7 +103,8 @@ export async function handleMmAssetAccountBalancesPerBlock({
                   accountAddress: accountAssetsMap.account.boundEvmAddress!,
                   blockNumber: blockSlotData.block.height,
                 }
-              ));
+              )) ??
+              0n;
 
             assetBalances.push({
               asset,
@@ -206,7 +218,7 @@ export async function handleMmAssetAccountBalancesPerBlock({
   }
 }
 
-export type MmEventsInvolvedAccountsAssetsPerBlockMap = Map<
+export type InvolvedAccountsAndAssetsInMmEventsPerBlockMap = Map<
   number,
   {
     block: Block;
@@ -221,11 +233,11 @@ export type MmEventsInvolvedAccountsAssetsPerBlockMap = Map<
 export async function collectAccountsAndAssetsInvolvedToMmEvents(
   ctx: SqdProcessorContext<Store>
 ): Promise<{
-  involvedAccountsAssetsPerBlockMap: MmEventsInvolvedAccountsAssetsPerBlockMap;
+  involvedAccountsAndAssetsInMmEventsPerBlockMap: InvolvedAccountsAndAssetsInMmEventsPerBlockMap;
   accountIdsWithCommonAssetBalanceChanges: Map<number, Set<string>>;
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }> {
-  const involvedAccountsAssetsPerBlockMap: MmEventsInvolvedAccountsAssetsPerBlockMap =
+  const involvedAccountsAndAssetsInMmEventsPerBlockMap: InvolvedAccountsAndAssetsInMmEventsPerBlockMap =
     new Map();
 
   const accountIdsWithCommonAssetBalanceChanges = new Map<
@@ -264,8 +276,8 @@ export async function collectAccountsAndAssetsInvolvedToMmEvents(
     account: Account;
     assets: Asset[];
   }) => {
-    if (!involvedAccountsAssetsPerBlockMap.has(block.height)) {
-      involvedAccountsAssetsPerBlockMap.set(block.height, {
+    if (!involvedAccountsAndAssetsInMmEventsPerBlockMap.has(block.height)) {
+      involvedAccountsAndAssetsInMmEventsPerBlockMap.set(block.height, {
         block,
         blockHeader,
         accountsAssetsMap: new Map([
@@ -278,12 +290,12 @@ export async function collectAccountsAndAssetsInvolvedToMmEvents(
       return;
     }
     if (
-      involvedAccountsAssetsPerBlockMap.has(block.height) &&
-      !involvedAccountsAssetsPerBlockMap
+      involvedAccountsAndAssetsInMmEventsPerBlockMap.has(block.height) &&
+      !involvedAccountsAndAssetsInMmEventsPerBlockMap
         .get(block.height)!
         .accountsAssetsMap.has(account.id)
     ) {
-      involvedAccountsAssetsPerBlockMap
+      involvedAccountsAndAssetsInMmEventsPerBlockMap
         .get(block.height)!
         .accountsAssetsMap.set(account.id, {
           account,
@@ -291,12 +303,12 @@ export async function collectAccountsAndAssetsInvolvedToMmEvents(
         });
       return;
     }
-    involvedAccountsAssetsPerBlockMap
+    involvedAccountsAndAssetsInMmEventsPerBlockMap
       .get(block.height)!
       .accountsAssetsMap.get(account.id)!.assets = new Map(
       [
         ...[
-          ...involvedAccountsAssetsPerBlockMap
+          ...involvedAccountsAndAssetsInMmEventsPerBlockMap
             .get(block.height)!
             .accountsAssetsMap.get(account.id)!
             .assets.values(),
@@ -362,7 +374,7 @@ export async function collectAccountsAndAssetsInvolvedToMmEvents(
   }
 
   return {
-    involvedAccountsAssetsPerBlockMap,
+    involvedAccountsAndAssetsInMmEventsPerBlockMap,
     accountIdsWithCommonAssetBalanceChanges,
     allProcessedAccountsPerBlock,
   };

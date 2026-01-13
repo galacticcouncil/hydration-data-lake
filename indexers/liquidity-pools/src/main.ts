@@ -20,6 +20,15 @@ import { getHydratedLogger, initHydratedLogger } from './utils/hydratedLogger';
 import { DbMigrationsManager } from './utils/pgConnectionManagers/dbMigrationsManager';
 import { runProcessorCustomDbMigrations } from './customDbMigrations/runProcessorCustomDbMigrations';
 import { TimeSeriesDataCommitManager } from './utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
+import { RuntimeApiResolver } from './parsers/runtimeApiResolver';
+import {
+  GetTokenBalancesManyInput,
+  TokenAccountBalancesWithAccountId,
+} from './parsers/types/storage';
+import {
+  RuntimeApiMethodName,
+  RuntimeApiName,
+} from './parsers/runtimeApiResolver/types';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`

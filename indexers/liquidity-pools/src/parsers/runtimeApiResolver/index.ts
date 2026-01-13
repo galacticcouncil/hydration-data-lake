@@ -3,6 +3,8 @@ import {
   AaveTradeExecutorPoolDataWithPoolId,
   AaveTradeExecutorPoolsInput,
   CurrenciesApiAccountInput,
+  CurrenciesApiAccountsBatchInput,
+  CurrenciesApiAccountsDataForAccount,
   CurrenciesApiAccountsInput,
   RuntimeApiMethodName,
   RuntimeApiName,
@@ -50,6 +52,11 @@ export class RuntimeApiResolver {
                   args as unknown as CurrenciesApiAccountsInput
                 )) as R;
               }
+              if (apiMethod === RuntimeApiMethodName.accountsBatch) {
+                return (await this.handleCurrenciesApiGetAccountsBatchCall(
+                  args as unknown as CurrenciesApiAccountsBatchInput
+                )) as R;
+              }
               if (apiMethod === RuntimeApiMethodName.account) {
                 return (await this.handleCurrenciesApiGetAccountCall(
                   args as unknown as CurrenciesApiAccountInput
@@ -80,7 +87,7 @@ export class RuntimeApiResolver {
       // @ts-ignore
       // if (e.message) console.log(e.message);
       // console.log('-->>> resolveRuntimeApiCall ERROR', apiName, apiMethod);
-      // console.log(e);
+      console.log(e);
       return null;
     }
 
@@ -108,6 +115,34 @@ export class RuntimeApiResolver {
     }));
   }
 
+  async handleCurrenciesApiGetAccountsBatchCall(
+    args: CurrenciesApiAccountsBatchInput
+  ): Promise<CurrenciesApiAccountsDataForAccount[] | null> {
+    console.log('----handleCurrenciesApiGetAccountsBatchCall');
+    const runtimeApiResp = await runtimeApiCalls.currenciesApi.getAccountsBatch(
+      args as unknown as CurrenciesApiAccountsBatchInput
+    );
+
+    console.dir(runtimeApiResp, { depth: null });
+
+    console.log(`\n\n\n`);
+    if (!runtimeApiResp) return null;
+
+    return null;
+
+    // return runtimeApiResp.map(({ assetId, data }) => ({
+    //   assetId,
+    //   data: {
+    //     free: BigInt(data.free ?? 0),
+    //     reserved: BigInt(data.reserved ?? 0),
+    //     frozen: BigInt(data.frozen ?? 0),
+    //     miscFrozen: BigInt(0),
+    //     feeFrozen: BigInt(0),
+    //     flags: BigInt(0),
+    //   },
+    // }));
+  }
+
   async handleCurrenciesApiGetAccountCall(
     args: CurrenciesApiAccountInput
   ): Promise<AccountData | null> {
@@ -132,26 +167,41 @@ export class RuntimeApiResolver {
   }: GetTokenBalancesManyInput): Promise<
     TokenAccountBalancesWithAccountId[] | null
   > {
-    const apiResponse = await pMap(
-      accountIds,
-      async (accountId) => {
-        const resp = await this.handleCurrenciesApiGetAccountsCall({
-          block,
-          address: accountId,
-        });
-        return {
-          accountId,
-          assetBalances:
-            resp?.map((assetBalance) => ({
-              assetId: `${assetBalance.assetId}`,
-              data: assetBalance.data,
-            })) ?? [],
-        } as TokenAccountBalancesWithAccountId;
-      },
-      { concurrency: appConfig.concurrency.RUNTIME_API_CALLS_CONCURRENCY }
-    );
+    // const apiResponse = await pMap(
+    //   accountIds,
+    //   async (accountId) => {
+    //     const resp = await this.handleCurrenciesApiGetAccountsCall({
+    //       block,
+    //       address: accountId,
+    //     });
+    //     return {
+    //       accountId,
+    //       assetBalances:
+    //         resp?.map((assetBalance) => ({
+    //           assetId: `${assetBalance.assetId}`,
+    //           data: assetBalance.data,
+    //         })) ?? [],
+    //     } as TokenAccountBalancesWithAccountId;
+    //   },
+    //   { concurrency: appConfig.concurrency.RUNTIME_API_CALLS_CONCURRENCY }
+    // );
+    //
+    // return apiResponse;
 
-    return apiResponse;
+    const apiResponse = (
+      await runtimeApiCalls.currenciesApi.getAccountsBatch({
+        block,
+        accountIds,
+      } as unknown as CurrenciesApiAccountsBatchInput)
+    ).map(({ accountId, assetBalances }) => ({
+      accountId,
+      assetBalances: assetBalances.map(({ assetId, data }) => ({
+        assetId: `${assetId}`,
+        data,
+      })),
+    }));
+
+    return apiResponse as unknown as TokenAccountBalancesWithAccountId[];
   }
 
   async handleAaveTradeExecutorPoolsCall(

@@ -23,6 +23,7 @@ import {
   addAccountsToPeriodicalBalancesAggregation,
   updateAccountProcessingStatusOnTotalBalanceChange,
 } from '../accounts/accountProcessingStatus';
+import { prefetchBalancesForAccountsInvolvedToMmEvents } from './utils';
 
 /**
  * This function requires the following data, so it should be executed only after
@@ -74,6 +75,13 @@ export async function handleAssetAccountBalances(
     ctx,
   });
 
+  const prefetchedBalancesForAccountsInvolvedToMmEvents =
+    await prefetchBalancesForAccountsInvolvedToMmEvents({
+      ctx,
+      involvedAccountsAndAssetsInMmEventsPerBlockMap:
+        mmEventsInvolvedAccountsAndAssets.involvedAccountsAndAssetsInMmEventsPerBlockMap,
+    });
+
   /**
    * Handle Money Market events.
    *
@@ -82,7 +90,8 @@ export async function handleAssetAccountBalances(
   await handleMmAssetAccountBalancesPerBlock({
     ctx,
     involvedAccountsAssetsPerBlockMap:
-      mmEventsInvolvedAccountsAndAssets.involvedAccountsAssetsPerBlockMap,
+      mmEventsInvolvedAccountsAndAssets.involvedAccountsAndAssetsInMmEventsPerBlockMap,
+    prefetchedBalancesForAccountsInvolvedToMmEvents,
   });
 
   /**
@@ -92,6 +101,7 @@ export async function handleAssetAccountBalances(
    */
   await handleCommonAssetAccountBalances({
     accountIdsToProcess: { ...involvedAccountsAccumulators },
+    prefetchedBalancesForAccountsInvolvedToMmEvents,
     ctx,
   });
 

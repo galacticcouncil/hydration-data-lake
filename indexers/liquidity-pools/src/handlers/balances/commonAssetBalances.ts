@@ -12,7 +12,10 @@ import { batchGetOrCreateAssets, getOrCreateAsset } from '../assets/asset';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
-import { addAssetBalancesToAccumulator } from './utils';
+import {
+  addAssetBalancesToAccumulator,
+  fetchBalancesForAccountsPerBlock,
+} from './utils';
 
 type BlockHeight = number;
 type AccountId = string;
@@ -27,7 +30,7 @@ type AccountBalancesPerBlock = Map<
 >;
 
 export type AssetBalancesStorageDataPerBlockPerAccountMap = Map<
-  number,
+  BlockHeight,
   Map<AccountId, Map<AssetId, AccountData>>
 >;
 
@@ -36,12 +39,14 @@ export async function handleCommonAssetAccountBalances({
     accountsFromSubstrateEventsPerBlock: new Map(),
     allProcessedAccountsPerBlock: new Map(),
   },
+  prefetchedBalancesForAccountsInvolvedToMmEvents = new Map(),
   ctx,
 }: {
   accountIdsToProcess?: {
     accountsFromSubstrateEventsPerBlock: Map<number, Set<string>>;
     allProcessedAccountsPerBlock: Map<number, Set<string>>;
   };
+  prefetchedBalancesForAccountsInvolvedToMmEvents?: AssetBalancesStorageDataPerBlockPerAccountMap;
   ctx: SqdProcessorContext<Store>;
 }): Promise<{
   assetBalancesStorageDataPerBlockPerAccountMap: AssetBalancesStorageDataPerBlockPerAccountMap;
@@ -52,13 +57,18 @@ export async function handleCommonAssetAccountBalances({
   const accountBalancesPerBlock: AccountBalancesPerBlock = new Map();
 
   const assetBalancesStorageDataPerBlockPerAccountMap: AssetBalancesStorageDataPerBlockPerAccountMap =
-    new Map();
+    await fetchBalancesForAccountsPerBlock({
+      accountsPerBlock: accountsFromSubstrateEventsPerBlock,
+      cache: prefetchedBalancesForAccountsInvolvedToMmEvents,
+      ctx,
+    });
 
+  // TODO must be refactored as redundant logic
   blocksLoop: for (const [
     blockNumber,
-    accountsSetPerBlock,
-  ] of accountsFromSubstrateEventsPerBlock.entries()) {
-    if (accountsSetPerBlock.size === 0) continue blocksLoop;
+    accountsAssetBalancesPerBlock,
+  ] of assetBalancesStorageDataPerBlockPerAccountMap.entries()) {
+    if (accountsAssetBalancesPerBlock.size === 0) continue blocksLoop;
 
     if (!accountBalancesPerBlock.has(blockNumber))
       accountBalancesPerBlock.set(blockNumber, {
@@ -66,54 +76,20 @@ export async function handleCommonAssetAccountBalances({
         data: new Map(),
       });
 
-    const allInvolvedAccountsInBlockList = Array.from(
-      accountsSetPerBlock.keys()
-    );
-
-    const [nativeTokenBalances, commonTokenBalances] = await Promise.all([
-      parsers.storage.system.getNativeTokenBalanceMany({
-        block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
-        accountIds: allInvolvedAccountsInBlockList,
-      }),
-      parsers.storage.tokens.getTokenBalancesMany({
-        block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
-        accountIds: allInvolvedAccountsInBlockList,
-      }),
-    ]);
-
-    addAssetBalancesToAccumulator({
-      accumulator: assetBalancesStorageDataPerBlockPerAccountMap,
-      nativeTokenBalances,
-      commonTokenBalances,
-      blockNumber,
-    });
-
     // Cache block data reference to avoid repeated Map lookups
     const currentBlockData = accountBalancesPerBlock.get(blockNumber)!;
 
-    // TODO should be refactored to use assetBalancesStorageDataPerBlockPerAccountMap
-    //   as following logic is duplicated
-
-    for (const nativeTokenBalance of nativeTokenBalances) {
-      if (!currentBlockData.data.has(nativeTokenBalance.accountId)) {
-        currentBlockData.data.set(nativeTokenBalance.accountId, new Map());
+    for (const [
+      accountId,
+      accountAssetBalances,
+    ] of accountsAssetBalancesPerBlock.entries()) {
+      if (!currentBlockData.data.has(accountId)) {
+        currentBlockData.data.set(accountId, new Map());
       }
 
-      currentBlockData.data
-        .get(nativeTokenBalance.accountId)!
-        .set('0', nativeTokenBalance.data);
-    }
-
-    for (const otherTokenBalance of commonTokenBalances) {
-      if (!currentBlockData.data.has(otherTokenBalance.accountId)) {
-        currentBlockData.data.set(otherTokenBalance.accountId, new Map());
-      }
-
-      const accountData = currentBlockData.data.get(
-        otherTokenBalance.accountId
-      )!;
-      for (const balance of otherTokenBalance.assetBalances) {
-        accountData.set(balance.assetId, balance.data);
+      const accountData = currentBlockData.data.get(accountId)!;
+      for (const [assetId, balance] of accountAssetBalances.entries()) {
+        accountData.set(assetId, balance);
       }
     }
   }

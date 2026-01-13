@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: hydration-pools
-slot: 807
+slot: 808
 description: Hydration pools indexer
 build:
 deploy:
@@ -21,10 +21,12 @@ deploy:
       REAGGREGATION_PROCESSING_MODE: false
 
       CHAIN: 'hydration'
-      INDEXER_ID: 807
+      INDEXER_ID: 808
       RPC_URL: 'wss://node-subwhale-8.shellfish.hydration.cloud'
       RPC_URL_HTTPS: 'https://node-subwhale-8.shellfish.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
+      ASSET_HUB_RPC_URL: 'wss://polkadot-asset-hub-rpc.polkadot.io'
+      #      ASSET_HUB_RPC_URL: 'wss://statemint.public.curie.radiumblock.co/ws'
       ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
       TS_REDIS_KEY_SPACE_ID: 7
       MAX_JOB_BATCH_SIZE: 10
@@ -40,11 +42,12 @@ deploy:
       USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: false
       HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
       EVM_CONTRACT_CALL_RETRIES: 2
-      ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: 20
+      ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: 50
+      ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS: 3000
 
       ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE: false
 
-      PROCESS_FROM_BLOCK: 10829800
+      PROCESS_FROM_BLOCK: 10430000
       PROCESS_TO_BLOCK: -1
 
       COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: true
@@ -64,7 +67,7 @@ deploy:
       NODE_ENV: 'production'
       CHAIN: 'hydration'
       GQL_PORT: 8080
-      INDEXER_ID: 807
+      INDEXER_ID: 808
       TS_REDIS_KEY_SPACE_ID: 7
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app::-hydration.netlify.app'

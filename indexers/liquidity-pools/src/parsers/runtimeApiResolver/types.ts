@@ -15,6 +15,7 @@ export enum RpcCallName {
 export enum RuntimeApiMethodName {
   account = 'account',
   accounts = 'accounts',
+  accountsBatch = 'accountsBatch',
   synthAccountsMany = 'synthAccountsMany',
   pool = 'pool',
   pools = 'pools',
@@ -27,6 +28,11 @@ export enum RpcCallMethodName {
 export type CurrenciesApiAccountsInput = {
   block: BlockHeader;
   address: string;
+};
+
+export type CurrenciesApiAccountsBatchInput = {
+  block: BlockHeader;
+  accountIds: string[];
 };
 
 export type CurrenciesApiAccountInput = {
@@ -45,6 +51,11 @@ export type CurrenciesApiAccountsData = Array<{
   assetId: number;
   data: CurrenciesApiAccountData;
 }>;
+
+export type CurrenciesApiAccountsDataForAccount = {
+  accountId: string;
+  assetBalances: CurrenciesApiAccountsData;
+};
 
 export type AaveTradeExecutorPoolsInput = {
   block: BlockHeader;

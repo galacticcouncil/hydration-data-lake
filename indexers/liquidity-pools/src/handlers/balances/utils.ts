@@ -18,19 +18,10 @@ import {
 import { AssetBalancesStorageDataPerBlockPerAccountMap } from './commonAssetBalances';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
 import { getOrCreateAccount } from '../accounts';
+import { InvolvedAccountsAndAssetsInMmEventsPerBlockMap } from './moneyMarketAssetBalances';
+import parsers from '../../parsers';
+import pMap from 'p-map';
 type AssetId = string;
-
-export async function initAccountAssetBalancesForExistingParticipants({}: {
-  ctx: SqdProcessorContext<Store>;
-}) {
-  /**
-   * We need
-   * - get all involved accounts from the batch
-   * - filter them by marker isAssetBalancesHistoryInitialized (must be added)
-   * - add these accounts to allProcessedAccountsPerBlock at first block of the batch
-   * to collect balances for all normal assets, aTokens, debtTokens
-   */
-}
 
 export async function getUnchangedAccountAssetBalanceFromCachedEntity({
   previousAssetBalanceFromCache,
@@ -331,4 +322,92 @@ export function addAssetBalancesToAccumulator({
       accountData.set(balance.assetId, balance.data);
     }
   }
+}
+
+export async function fetchBalancesForAccountsPerBlock({
+  accountsPerBlock,
+  cache = new Map(),
+  ctx,
+}: {
+  accountsPerBlock: Map<number, Set<string>>;
+  cache?: AssetBalancesStorageDataPerBlockPerAccountMap;
+  ctx: SqdProcessorContext<Store>;
+}): Promise<AssetBalancesStorageDataPerBlockPerAccountMap> {
+  const assetBalancesStorageDataPerBlockPerAccountMap: AssetBalancesStorageDataPerBlockPerAccountMap =
+    new Map();
+
+  await pMap(
+    Array.from(accountsPerBlock.entries()),
+    async ([blockNumber, accountsSetPerBlock]) => {
+      if (accountsSetPerBlock.size === 0) return;
+
+      const accountsInBlockList: string[] = [];
+
+      for (const accountId of Array.from(accountsSetPerBlock.keys())) {
+        const cachedAccountBalance = cache?.get(blockNumber)?.get(accountId);
+        if (!cachedAccountBalance) {
+          accountsInBlockList.push(accountId);
+          continue;
+        }
+        if (!assetBalancesStorageDataPerBlockPerAccountMap.has(blockNumber))
+          assetBalancesStorageDataPerBlockPerAccountMap.set(
+            blockNumber,
+            new Map()
+          );
+
+        assetBalancesStorageDataPerBlockPerAccountMap
+          .get(blockNumber)!
+          .set(accountId, cachedAccountBalance);
+      }
+
+      const [nativeTokenBalances, commonTokenBalances] = await Promise.all([
+        parsers.storage.system.getNativeTokenBalanceMany({
+          block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
+          accountIds: accountsInBlockList,
+        }),
+        parsers.storage.tokens.getTokenBalancesMany({
+          block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
+          accountIds: accountsInBlockList,
+        }),
+      ]);
+
+      addAssetBalancesToAccumulator({
+        accumulator: assetBalancesStorageDataPerBlockPerAccountMap,
+        nativeTokenBalances,
+        commonTokenBalances,
+        blockNumber,
+      });
+    },
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
+  );
+
+  return assetBalancesStorageDataPerBlockPerAccountMap;
+}
+
+export async function prefetchBalancesForAccountsInvolvedToMmEvents({
+  involvedAccountsAndAssetsInMmEventsPerBlockMap,
+  ctx,
+}: {
+  involvedAccountsAndAssetsInMmEventsPerBlockMap: InvolvedAccountsAndAssetsInMmEventsPerBlockMap;
+  ctx: SqdProcessorContext<Store>;
+}): Promise<AssetBalancesStorageDataPerBlockPerAccountMap> {
+  const accountsPerBlock: Map<number, Set<string>> = new Map();
+
+  for (const [
+    blockNumber,
+    { accountsAssetsMap },
+  ] of involvedAccountsAndAssetsInMmEventsPerBlockMap.entries()) {
+    accountsPerBlock.set(blockNumber, new Set(accountsAssetsMap.keys()));
+  }
+
+  const assetBalancesStorageDataPerBlockPerAccountMap: AssetBalancesStorageDataPerBlockPerAccountMap =
+    await fetchBalancesForAccountsPerBlock({
+      accountsPerBlock,
+      ctx,
+    });
+
+  return assetBalancesStorageDataPerBlockPerAccountMap;
 }

@@ -416,8 +416,8 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
          */
         const actualPositionAmountAtBlock: string =
           positionEventsIndexedByDepositId
-            .get(deposit.id)!
-            .find((e) => e.paraBlockHeight <= blockHeight)
+            .get(deposit.id)
+            ?.find((e) => e.paraBlockHeight <= blockHeight)
             ?.amount?.toString() ?? '0';
 
         accountDepositBalancesPerBlockPerAsset

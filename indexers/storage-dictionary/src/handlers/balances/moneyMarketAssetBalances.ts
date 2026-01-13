@@ -139,7 +139,7 @@ export async function handleMmAssetAccountBalancesPerBlock(
 // export async function handleMmAssetAccountBalancesPerBlock(
 //   ctx: SqdProcessorContext<Store>
 // ) {
-//   const involvedAccountsAssetsPerBlockMap: Map<
+//   const involvedAccountsAndAssetsInMmEventsPerBlockMap: Map<
 //     number,
 //     {
 //       block: Block;
@@ -169,8 +169,8 @@ export async function handleMmAssetAccountBalancesPerBlock(
 //     account: Account;
 //     assets: Asset[];
 //   }) => {
-//     if (!involvedAccountsAssetsPerBlockMap.has(block.height)) {
-//       involvedAccountsAssetsPerBlockMap.set(block.height, {
+//     if (!involvedAccountsAndAssetsInMmEventsPerBlockMap.has(block.height)) {
+//       involvedAccountsAndAssetsInMmEventsPerBlockMap.set(block.height, {
 //         block,
 //         blockHeader,
 //         accountsAssetsMap: new Map([
@@ -183,12 +183,12 @@ export async function handleMmAssetAccountBalancesPerBlock(
 //       return;
 //     }
 //     if (
-//       involvedAccountsAssetsPerBlockMap.has(block.height) &&
-//       !involvedAccountsAssetsPerBlockMap
+//       involvedAccountsAndAssetsInMmEventsPerBlockMap.has(block.height) &&
+//       !involvedAccountsAndAssetsInMmEventsPerBlockMap
 //         .get(block.height)!
 //         .accountsAssetsMap.has(account.id)
 //     ) {
-//       involvedAccountsAssetsPerBlockMap
+//       involvedAccountsAndAssetsInMmEventsPerBlockMap
 //         .get(block.height)!
 //         .accountsAssetsMap.set(account.id, {
 //         account,
@@ -196,12 +196,12 @@ export async function handleMmAssetAccountBalancesPerBlock(
 //       });
 //       return;
 //     }
-//     involvedAccountsAssetsPerBlockMap
+//     involvedAccountsAndAssetsInMmEventsPerBlockMap
 //       .get(block.height)!
 //       .accountsAssetsMap.get(account.id)!.assets = new Map(
 //       [
 //         ...[
-//           ...involvedAccountsAssetsPerBlockMap
+//           ...involvedAccountsAndAssetsInMmEventsPerBlockMap
 //             .get(block.height)!
 //             .accountsAssetsMap.get(account.id)!
 //             .assets.values(),
@@ -260,7 +260,7 @@ export async function handleMmAssetAccountBalancesPerBlock(
 //     }
 //   }
 //
-//   for (const blockSlotData of [...involvedAccountsAssetsPerBlockMap.values()]) {
+//   for (const blockSlotData of [...involvedAccountsAndAssetsInMmEventsPerBlockMap.values()]) {
 //     accountAssetsMapLoop: for (const accountAssetsMap of [
 //       ...blockSlotData.accountsAssetsMap.values(),
 //     ]) {
