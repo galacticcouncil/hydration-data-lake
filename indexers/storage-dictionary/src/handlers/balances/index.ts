@@ -5,10 +5,14 @@ import { Block, BlockWithData, ProcessorContext } from '../../processor';
 import { EvmEventName } from '../../parsers/types/events';
 import { AccountMoneyMarketPositionDataManager } from '../accounts/moneyMarketPosition';
 
+// let totalExecutionTimeBalances = 0;
+
 export async function handleAssetAccountBalancesPerBlock(
   block: BlockWithData,
   ctx: ProcessorContext<Store>
 ) {
+  // const startTimeBalances = performance.now();
+
   const accountIdsToProcess = await handleMmAssetAccountBalancesPerBlock(
     block,
     ctx
@@ -16,22 +20,20 @@ export async function handleAssetAccountBalancesPerBlock(
 
   await handleCommonAssetAccountBalances({ accountIdsToProcess, block, ctx });
 
-  const blocksWithOracleUpdate: Map<number, Block> = new Map();
+  // totalExecutionTimeBalances += performance.now() - startTimeBalances;
 
-  for (const event of Array.from(
+  const oracleUpdateEvent = Array.from(
     ctx.batchState.state.moneyMarketEvents.values()
-  )) {
-    if (event.eventData.params?.eventName === EvmEventName.OracleUpdate)
-      blocksWithOracleUpdate.set(
-        event.eventData.metadata.blockHeader.height,
-        event.eventData.metadata.blockHeader
-      );
-  }
+  ).find(
+    (event) =>
+      (event.eventData.params?.eventName === EvmEventName.OracleUpdate &&
+        event.paraBlockHeight) === block.header.height
+  );
 
-  for (const blockHeader of blocksWithOracleUpdate.values()) {
+  if (oracleUpdateEvent) {
     await AccountMoneyMarketPositionDataManager.getInstance().handleAllAccountsMmPositionDataUpdate(
       {
-        blockHeader,
+        blockHeader: block.header,
         ctx,
       }
     );
@@ -42,4 +44,8 @@ export async function handleAssetAccountBalancesPerBlock(
       Array.from(ctx.batchState.state.accAssetBalanceHistData.values())
     );
   }
+
+  // console.log(
+  //   `Total Balances execution time: ${totalExecutionTimeBalances / 1000} seconds`
+  // );
 }

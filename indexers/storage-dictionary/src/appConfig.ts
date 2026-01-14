@@ -286,6 +286,17 @@ export class AppConfig {
     '0xfb2e66d76d2841443ab41102369ff33df9bc9a93',
   ]);
 
+  @Transform(({ value }: { value: string }) => new Set(value.split(',')))
+  readonly ACCOUNT_BALANCE_AGGREGATION_TRIGGERS: Set<string> = new Set([
+    'Currencies',
+    'Tokens',
+    'Balances',
+    'Duster',
+    'Omnipool',
+    'Broadcast',
+    'Uniques',
+  ]);
+
   readonly evm: EvmConfig = new EvmConfig();
 
   readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();

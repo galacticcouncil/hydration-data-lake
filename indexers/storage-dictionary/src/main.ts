@@ -77,6 +77,8 @@ processor.run(
     isolationLevel: 'READ COMMITTED',
   }),
   async (ctx) => {
+    console.time('TOTAL BATCH EXECUTION TIME');
+
     const ctxWithBatchState: Omit<
       ProcessorContext<Store>,
       'batchState' | 'appConfig'
@@ -266,6 +268,7 @@ processor.run(
       height: ctx.blocks[ctx.blocks.length - 1].header.height,
     });
     console.log('Batch complete');
+    console.timeEnd('TOTAL BATCH EXECUTION TIME');
   }
 );
 

@@ -55,4 +55,18 @@ export async function processNewMoneyMarketEvent({
     newMmEventEntity.id,
     newMmEventEntity
   );
+
+  if (
+    !ctx.batchState.state.moneyMarketEventsIndexedByBlock.has(
+      eventData.metadata.blockHeader.height
+    )
+  )
+    ctx.batchState.state.moneyMarketEventsIndexedByBlock.set(
+      eventData.metadata.blockHeader.height,
+      new Map()
+    );
+
+  ctx.batchState.state.moneyMarketEventsIndexedByBlock
+    .get(eventData.metadata.blockHeader.height)!
+    .set(newMmEventEntity.id, newMmEventEntity);
 }

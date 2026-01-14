@@ -40,12 +40,21 @@ export async function handleMmAssetAccountBalancesPerBlock(
 
   const batchState = ctx.batchState.state;
 
-  for (const mmEvent of [...batchState.moneyMarketEvents.values()]) {
+  if (!batchState.moneyMarketEventsIndexedByBlock.get(block.header.height))
+    return new Set<string>();
+
+  for (const mmEvent of batchState.moneyMarketEventsIndexedByBlock
+    .get(block.header.height)!
+    .values()) {
     const assets: Asset[] = [];
     let isCommonAssetInvolved = false;
 
     for (const assetId of mmEvent.allInvolvedAssetIds) {
-      const asset = await getOrCreateAsset({ ctx, id: assetId, ensure: false });
+      const asset = await getOrCreateAsset({
+        ctx,
+        id: assetId,
+        ensure: false,
+      });
       if (!asset) continue;
       if (asset.assetType !== AssetType.Erc20) isCommonAssetInvolved = true;
 
