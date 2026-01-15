@@ -5,99 +5,151 @@
     "RelayChainInfo": {
       "events": ["CurrentBlockNumbers"]
     },
+    "Sudo": {
+      "calls": ["sudo", "sudo_unchecked_weight", "set_key", "sudo_as"]
+    },
     "AssetRegistry": {
-      "storage": true,
-      "constants": true
+      "events": ["Registered", "Updated", "LocationSet"],
+      "storage": ["Assets", "AssetLocations"]
     },
     "Bonds": {
-      "storage": true,
-      "constants": true
+      "events": [],
+      "storage": true
     },
     "Balances": {
       "events": true,
+      "calls": true,
       "storage": true,
-      "constants": true
+      "constants": []
     },
     "Tokens": {
       "events": true,
-      "storage": true,
-      "constants": true
+      "calls": true,
+      "storage": ["Accounts", "TotalIssuance"]
     },
     "Currencies": {
       "events": true,
-      "storage": true,
-      "constants": true
+      "calls": false,
+      "storage": false
     },
     "Router": {
-      "storage": true,
-      "constants": true
+      "calls": ["sell", "buy"]
     },
     "ParachainSystem": {
+      "calls": ["set_validation_data"],
+      "storage": ["LastRelayChainBlockNumber"]
+    },
+    "XYK": {
+      "events": true,
+      "calls": ["create_pool", "sell", "buy"],
+      "storage": ["PoolAssets", "ShareToken"],
+      "constants": true
+    },
+    "XYKLiquidityMining": {
+      "events": true,
+      "calls": true,
       "storage": true,
       "constants": true
     },
-    "XYK": {
+    "XYKWarehouseLM": {
+      "events": true,
+      "calls": true,
       "storage": true,
       "constants": true
     },
     "Omnipool": {
-      "storage": true,
-      "constants": true
-    },
-    "OmnipoolLiquidityMining": {
+      "events": true,
+      "calls": ["sell", "buy"],
       "storage": true,
       "constants": true
     },
     "Stableswap": {
+      "events": [
+        "PoolCreated",
+        "SellExecuted",
+        "BuyExecuted",
+        "LiquidityAdded",
+        "LiquidityRemoved"
+      ],
+      "calls": ["sell", "buy"],
       "storage": true,
       "constants": true
     },
     "LBP": {
-      "storage": true,
+      "events": ["PoolUpdated", "PoolCreated", "SellExecuted", "BuyExecuted"],
+      "calls": ["create_pool", "sell", "buy"],
+      "storage": ["PoolData"],
       "constants": true
     },
     "System": {
-      "storage": true,
-      "constants": true
+      "storage": ["Account"]
     },
     "DCA": {
-      "storage": true,
-      "constants": true
+      "events": true,
+      "calls": true,
+      "storage": true
     },
     "OTC": {
-      "storage": true,
-      "constants": true
+      "events": true,
+      "calls": true,
+      "storage": true
     },
     "Utility": {
-      "storage": true,
-      "constants": true
+      "calls": true
     },
     "Broadcast": {
-      "storage": true,
-      "constants": true
+      "events": true,
+      "calls": true,
+      "storage": true
     },
     "EVM": {
       "events": true,
-      "storage": true,
-      "constants": true
+      "calls": true,
+      "storage": true
     },
     "EVMAccounts": {
+      "events": ["Bound"],
+      "calls": [],
+      "storage": true
+    },
+    "OmnipoolLiquidityMining": {
+      "events": true,
+      "calls": true,
       "storage": true,
       "constants": true
     },
     "OmnipoolWarehouseLM": {
-      "storage": true,
-      "constants": true
+      "events": true,
+      "calls": [],
+      "storage": true
     },
     "EmaOracle": {
-      "storage": true,
-      "constants": true
+      "events": [],
+      "calls": [],
+      "storage": true
     },
     "DynamicFees": {
+      "events": [],
+      "calls": [],
       "storage": true,
       "constants": true
     },
+    "HSM": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "TransactionPayment": {
+      "events": false,
+      "calls": false,
+      "storage": true
+    },
     "Duster": {
+      "events": true,
+      "calls": true,
+      "storage": true
+    },
+    "Uniques": {
       "events": true,
       "calls": true,
       "storage": true

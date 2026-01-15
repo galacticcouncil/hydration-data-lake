@@ -1,220 +1,25 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export const RuntimeVersion: sts.Type<RuntimeVersion> = sts.struct(() => {
+export type Type_80 = Type_80_V1Ancient | Type_80_V2
+
+export interface Type_80_V1Ancient {
+    __kind: 'V1Ancient'
+}
+
+export interface Type_80_V2 {
+    __kind: 'V2'
+}
+
+export const Type_80: sts.Type<Type_80> = sts.closedEnum(() => {
     return  {
-        specName: sts.string(),
-        implName: sts.string(),
-        authoringVersion: sts.number(),
-        specVersion: sts.number(),
-        implVersion: sts.number(),
-        apis: sts.array(() => sts.tuple(() => [sts.bytes(), sts.number()])),
-        transactionVersion: sts.number(),
+        V1Ancient: sts.unit(),
+        V2: sts.unit(),
     }
 })
 
-export interface RuntimeVersion {
-    specName: string
-    implName: string
-    authoringVersion: number
-    specVersion: number
-    implVersion: number
-    apis: [Bytes, number][]
-    transactionVersion: number
-}
+export type FixedU128 = bigint
 
-export const RuntimeDbWeight: sts.Type<RuntimeDbWeight> = sts.struct(() => {
-    return  {
-        read: sts.bigint(),
-        write: sts.bigint(),
-    }
-})
-
-export interface RuntimeDbWeight {
-    read: bigint
-    write: bigint
-}
-
-export const BlockLength: sts.Type<BlockLength> = sts.struct(() => {
-    return  {
-        max: Type_57,
-    }
-})
-
-export const Type_57: sts.Type<Type_57> = sts.struct(() => {
-    return  {
-        normal: sts.number(),
-        operational: sts.number(),
-        mandatory: sts.number(),
-    }
-})
-
-export interface Type_57 {
-    normal: number
-    operational: number
-    mandatory: number
-}
-
-export interface BlockLength {
-    max: Type_57
-}
-
-export const BlockWeights: sts.Type<BlockWeights> = sts.struct(() => {
-    return  {
-        baseBlock: sts.bigint(),
-        maxBlock: sts.bigint(),
-        perClass: Type_53,
-    }
-})
-
-export const Type_53: sts.Type<Type_53> = sts.struct(() => {
-    return  {
-        normal: WeightsPerClass,
-        operational: WeightsPerClass,
-        mandatory: WeightsPerClass,
-    }
-})
-
-export const WeightsPerClass: sts.Type<WeightsPerClass> = sts.struct(() => {
-    return  {
-        baseExtrinsic: sts.bigint(),
-        maxExtrinsic: sts.option(() => sts.bigint()),
-        maxTotal: sts.option(() => sts.bigint()),
-        reserved: sts.option(() => sts.bigint()),
-    }
-})
-
-export interface WeightsPerClass {
-    baseExtrinsic: bigint
-    maxExtrinsic?: (bigint | undefined)
-    maxTotal?: (bigint | undefined)
-    reserved?: (bigint | undefined)
-}
-
-export interface Type_53 {
-    normal: WeightsPerClass
-    operational: WeightsPerClass
-    mandatory: WeightsPerClass
-}
-
-export interface BlockWeights {
-    baseBlock: bigint
-    maxBlock: bigint
-    perClass: Type_53
-}
-
-export interface OutboundHrmpMessage {
-    recipient: Id
-    data: Bytes
-}
-
-export const OutboundHrmpMessage: sts.Type<OutboundHrmpMessage> = sts.struct(() => {
-    return  {
-        recipient: Id,
-        data: sts.bytes(),
-    }
-})
-
-export type Id = number
-
-export const Id = sts.number()
-
-export type MessageQueueChain = Bytes
-
-export const MessageQueueChain = sts.bytes()
-
-export interface V1AbridgedHostConfiguration {
-    maxCodeSize: number
-    maxHeadDataSize: number
-    maxUpwardQueueCount: number
-    maxUpwardQueueSize: number
-    maxUpwardMessageSize: number
-    maxUpwardMessageNumPerCandidate: number
-    hrmpMaxMessageNumPerCandidate: number
-    validationUpgradeFrequency: number
-    validationUpgradeDelay: number
-}
-
-export const V1AbridgedHostConfiguration: sts.Type<V1AbridgedHostConfiguration> = sts.struct(() => {
-    return  {
-        maxCodeSize: sts.number(),
-        maxHeadDataSize: sts.number(),
-        maxUpwardQueueCount: sts.number(),
-        maxUpwardQueueSize: sts.number(),
-        maxUpwardMessageSize: sts.number(),
-        maxUpwardMessageNumPerCandidate: sts.number(),
-        hrmpMaxMessageNumPerCandidate: sts.number(),
-        validationUpgradeFrequency: sts.number(),
-        validationUpgradeDelay: sts.number(),
-    }
-})
-
-export interface MessagingStateSnapshot {
-    dmqMqcHead: H256
-    relayDispatchQueueSize: [number, number]
-    ingressChannels: [Id, V1AbridgedHrmpChannel][]
-    egressChannels: [Id, V1AbridgedHrmpChannel][]
-}
-
-export interface V1AbridgedHrmpChannel {
-    maxCapacity: number
-    maxTotalSize: number
-    maxMessageSize: number
-    msgCount: number
-    totalSize: number
-    mqcHead?: (H256 | undefined)
-}
-
-export const MessagingStateSnapshot: sts.Type<MessagingStateSnapshot> = sts.struct(() => {
-    return  {
-        dmqMqcHead: H256,
-        relayDispatchQueueSize: sts.tuple(() => [sts.number(), sts.number()]),
-        ingressChannels: sts.array(() => sts.tuple(() => [Id, V1AbridgedHrmpChannel])),
-        egressChannels: sts.array(() => sts.tuple(() => [Id, V1AbridgedHrmpChannel])),
-    }
-})
-
-export const V1AbridgedHrmpChannel: sts.Type<V1AbridgedHrmpChannel> = sts.struct(() => {
-    return  {
-        maxCapacity: sts.number(),
-        maxTotalSize: sts.number(),
-        maxMessageSize: sts.number(),
-        msgCount: sts.number(),
-        totalSize: sts.number(),
-        mqcHead: sts.option(() => H256),
-    }
-})
-
-export type V1UpgradeRestriction = V1UpgradeRestriction_Present
-
-export interface V1UpgradeRestriction_Present {
-    __kind: 'Present'
-}
-
-export const V1UpgradeRestriction: sts.Type<V1UpgradeRestriction> = sts.closedEnum(() => {
-    return  {
-        Present: sts.unit(),
-    }
-})
-
-export interface V1PersistedValidationData {
-    parentHead: HeadData
-    relayParentNumber: number
-    relayParentStorageRoot: H256
-    maxPovSize: number
-}
-
-export type HeadData = Bytes
-
-export const V1PersistedValidationData: sts.Type<V1PersistedValidationData> = sts.struct(() => {
-    return  {
-        parentHead: HeadData,
-        relayParentNumber: sts.number(),
-        relayParentStorageRoot: H256,
-        maxPovSize: sts.number(),
-    }
-})
-
-export const HeadData = sts.bytes()
+export const FixedU128 = sts.bigint()
 
 export type Releases = Releases_V1_0_0 | Releases_V2_0_0
 
@@ -297,798 +102,1031 @@ export const AccountData: sts.Type<AccountData> = sts.struct(() => {
     }
 })
 
-export type Phase = Phase_ApplyExtrinsic | Phase_Finalization | Phase_Initialization
+export type AccountId32 = Bytes
 
-export interface Phase_ApplyExtrinsic {
-    __kind: 'ApplyExtrinsic'
-    value: number
+export interface AccountInfo {
+    nonce: number
+    consumers: number
+    providers: number
+    sufficients: number
+    data: AccountData
 }
 
-export interface Phase_Finalization {
-    __kind: 'Finalization'
-}
-
-export interface Phase_Initialization {
-    __kind: 'Initialization'
-}
-
-export const Phase: sts.Type<Phase> = sts.closedEnum(() => {
+export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
     return  {
-        ApplyExtrinsic: sts.number(),
-        Finalization: sts.unit(),
-        Initialization: sts.unit(),
+        nonce: sts.number(),
+        consumers: sts.number(),
+        providers: sts.number(),
+        sufficients: sts.number(),
+        data: AccountData,
     }
 })
 
-export interface LastRuntimeUpgradeInfo {
-    specVersion: number
-    specName: string
-}
-
-export const LastRuntimeUpgradeInfo: sts.Type<LastRuntimeUpgradeInfo> = sts.struct(() => {
+export const ParachainInherentData: sts.Type<ParachainInherentData> = sts.struct(() => {
     return  {
-        specVersion: sts.number(),
-        specName: sts.string(),
+        validationData: V1PersistedValidationData,
+        relayChainState: StorageProof,
+        downwardMessages: sts.array(() => InboundDownwardMessage),
+        horizontalMessages: sts.array(() => sts.tuple(() => [Id, sts.array(() => InboundHrmpMessage)])),
     }
 })
 
-export interface EventRecord {
-    phase: Phase
-    event: Event
-    topics: H256[]
-}
-
-export type Event = Event_Balances | Event_CollatorSelection | Event_ParachainSystem | Event_Session | Event_Sudo | Event_System | Event_Treasury | Event_Utility
-
-export interface Event_Balances {
-    __kind: 'Balances'
-    value: BalancesEvent
-}
-
-export interface Event_CollatorSelection {
-    __kind: 'CollatorSelection'
-    value: CollatorSelectionEvent
-}
-
-export interface Event_ParachainSystem {
-    __kind: 'ParachainSystem'
-    value: ParachainSystemEvent
-}
-
-export interface Event_Session {
-    __kind: 'Session'
-    value: SessionEvent
-}
-
-export interface Event_Sudo {
-    __kind: 'Sudo'
-    value: SudoEvent
-}
-
-export interface Event_System {
-    __kind: 'System'
-    value: SystemEvent
-}
-
-export interface Event_Treasury {
-    __kind: 'Treasury'
-    value: TreasuryEvent
-}
-
-export interface Event_Utility {
-    __kind: 'Utility'
-    value: UtilityEvent
-}
-
-/**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
- */
-export type UtilityEvent = UtilityEvent_BatchCompleted | UtilityEvent_BatchInterrupted | UtilityEvent_ItemCompleted
-
-/**
- * Batch of dispatches completed fully with no error.
- */
-export interface UtilityEvent_BatchCompleted {
-    __kind: 'BatchCompleted'
-}
-
-/**
- * Batch of dispatches did not complete fully. Index of first failing dispatch given, as
- * well as the error. \[index, error\]
- */
-export interface UtilityEvent_BatchInterrupted {
-    __kind: 'BatchInterrupted'
-    value: [number, DispatchError]
-}
-
-/**
- * A single item within a Batch of dispatches has completed with no error.
- */
-export interface UtilityEvent_ItemCompleted {
-    __kind: 'ItemCompleted'
-}
-
-export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token
-
-export interface DispatchError_Arithmetic {
-    __kind: 'Arithmetic'
-    value: ArithmeticError
-}
-
-export interface DispatchError_BadOrigin {
-    __kind: 'BadOrigin'
-}
-
-export interface DispatchError_CannotLookup {
-    __kind: 'CannotLookup'
-}
-
-export interface DispatchError_ConsumerRemaining {
-    __kind: 'ConsumerRemaining'
-}
-
-export interface DispatchError_Module {
-    __kind: 'Module'
-    index: number
-    error: number
-}
-
-export interface DispatchError_NoProviders {
-    __kind: 'NoProviders'
-}
-
-export interface DispatchError_Other {
-    __kind: 'Other'
-}
-
-export interface DispatchError_Token {
-    __kind: 'Token'
-    value: TokenError
-}
-
-export type TokenError = TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_Frozen | TokenError_NoFunds | TokenError_UnknownAsset | TokenError_Unsupported | TokenError_WouldDie
-
-export interface TokenError_BelowMinimum {
-    __kind: 'BelowMinimum'
-}
-
-export interface TokenError_CannotCreate {
-    __kind: 'CannotCreate'
-}
-
-export interface TokenError_Frozen {
-    __kind: 'Frozen'
-}
-
-export interface TokenError_NoFunds {
-    __kind: 'NoFunds'
-}
-
-export interface TokenError_UnknownAsset {
-    __kind: 'UnknownAsset'
-}
-
-export interface TokenError_Unsupported {
-    __kind: 'Unsupported'
-}
-
-export interface TokenError_WouldDie {
-    __kind: 'WouldDie'
-}
-
-export type ArithmeticError = ArithmeticError_DivisionByZero | ArithmeticError_Overflow | ArithmeticError_Underflow
-
-export interface ArithmeticError_DivisionByZero {
-    __kind: 'DivisionByZero'
-}
-
-export interface ArithmeticError_Overflow {
-    __kind: 'Overflow'
-}
-
-export interface ArithmeticError_Underflow {
-    __kind: 'Underflow'
-}
-
-/**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
- */
-export type TreasuryEvent = TreasuryEvent_Awarded | TreasuryEvent_Burnt | TreasuryEvent_Deposit | TreasuryEvent_Proposed | TreasuryEvent_Rejected | TreasuryEvent_Rollover | TreasuryEvent_Spending
-
-/**
- * Some funds have been allocated. \[proposal_index, award, beneficiary\]
- */
-export interface TreasuryEvent_Awarded {
-    __kind: 'Awarded'
-    value: [number, bigint, AccountId32]
-}
-
-/**
- * Some of our funds have been burnt. \[burn\]
- */
-export interface TreasuryEvent_Burnt {
-    __kind: 'Burnt'
-    value: bigint
-}
-
-/**
- * Some funds have been deposited. \[deposit\]
- */
-export interface TreasuryEvent_Deposit {
-    __kind: 'Deposit'
-    value: bigint
-}
-
-/**
- * New proposal. \[proposal_index\]
- */
-export interface TreasuryEvent_Proposed {
-    __kind: 'Proposed'
-    value: number
-}
-
-/**
- * A proposal was rejected; funds were slashed. \[proposal_index, slashed\]
- */
-export interface TreasuryEvent_Rejected {
-    __kind: 'Rejected'
-    value: [number, bigint]
-}
-
-/**
- * Spending has finished; this is the amount that rolls over until next spend.
- * \[budget_remaining\]
- */
-export interface TreasuryEvent_Rollover {
-    __kind: 'Rollover'
-    value: bigint
-}
-
-/**
- * We have ended a spend period and will now allocate funds. \[budget_remaining\]
- */
-export interface TreasuryEvent_Spending {
-    __kind: 'Spending'
-    value: bigint
-}
-
-/**
- * Event for the System pallet.
- */
-export type SystemEvent = SystemEvent_CodeUpdated | SystemEvent_ExtrinsicFailed | SystemEvent_ExtrinsicSuccess | SystemEvent_KilledAccount | SystemEvent_NewAccount | SystemEvent_Remarked
-
-/**
- * `:code` was updated.
- */
-export interface SystemEvent_CodeUpdated {
-    __kind: 'CodeUpdated'
-}
-
-/**
- * An extrinsic failed. \[error, info\]
- */
-export interface SystemEvent_ExtrinsicFailed {
-    __kind: 'ExtrinsicFailed'
-    value: [DispatchError, DispatchInfo]
-}
-
-/**
- * An extrinsic completed successfully. \[info\]
- */
-export interface SystemEvent_ExtrinsicSuccess {
-    __kind: 'ExtrinsicSuccess'
-    value: DispatchInfo
-}
-
-/**
- * An \[account\] was reaped.
- */
-export interface SystemEvent_KilledAccount {
-    __kind: 'KilledAccount'
-    value: AccountId32
-}
-
-/**
- * A new \[account\] was created.
- */
-export interface SystemEvent_NewAccount {
-    __kind: 'NewAccount'
-    value: AccountId32
-}
-
-/**
- * On on-chain remark happened. \[origin, remark_hash\]
- */
-export interface SystemEvent_Remarked {
-    __kind: 'Remarked'
-    value: [AccountId32, H256]
-}
-
-export interface DispatchInfo {
-    weight: bigint
-    class: DispatchClass
-    paysFee: Pays
-}
-
-export type Pays = Pays_No | Pays_Yes
-
-export interface Pays_No {
-    __kind: 'No'
-}
-
-export interface Pays_Yes {
-    __kind: 'Yes'
-}
-
-export type DispatchClass = DispatchClass_Mandatory | DispatchClass_Normal | DispatchClass_Operational
-
-export interface DispatchClass_Mandatory {
-    __kind: 'Mandatory'
-}
-
-export interface DispatchClass_Normal {
-    __kind: 'Normal'
-}
-
-export interface DispatchClass_Operational {
-    __kind: 'Operational'
-}
-
-/**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
- */
-export type SudoEvent = SudoEvent_KeyChanged | SudoEvent_Sudid | SudoEvent_SudoAsDone
-
-/**
- * The \[sudoer\] just switched identity; the old key is supplied.
- */
-export interface SudoEvent_KeyChanged {
-    __kind: 'KeyChanged'
-    value: AccountId32
-}
-
-/**
- * A sudo just took place. \[result\]
- */
-export interface SudoEvent_Sudid {
-    __kind: 'Sudid'
-    value: Result<null, DispatchError>
-}
-
-/**
- * A sudo just took place. \[result\]
- */
-export interface SudoEvent_SudoAsDone {
-    __kind: 'SudoAsDone'
-    value: Result<null, DispatchError>
-}
-
-/**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
- */
-export type SessionEvent = SessionEvent_NewSession
-
-/**
- * New session has happened. Note that the argument is the \[session_index\], not the
- * block number as the type might suggest.
- */
-export interface SessionEvent_NewSession {
-    __kind: 'NewSession'
-    value: number
-}
-
-/**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
- */
-export type ParachainSystemEvent = ParachainSystemEvent_DownwardMessagesProcessed | ParachainSystemEvent_DownwardMessagesReceived | ParachainSystemEvent_UpgradeAuthorized | ParachainSystemEvent_ValidationFunctionApplied | ParachainSystemEvent_ValidationFunctionDiscarded | ParachainSystemEvent_ValidationFunctionStored
-
-/**
- * Downward messages were processed using the given weight.
- * \[ weight_used, result_mqc_head \]
- */
-export interface ParachainSystemEvent_DownwardMessagesProcessed {
-    __kind: 'DownwardMessagesProcessed'
-    value: [bigint, H256]
-}
-
-/**
- * Some downward messages have been received and will be processed.
- * \[ count \]
- */
-export interface ParachainSystemEvent_DownwardMessagesReceived {
-    __kind: 'DownwardMessagesReceived'
-    value: number
-}
-
-/**
- * An upgrade has been authorized.
- */
-export interface ParachainSystemEvent_UpgradeAuthorized {
-    __kind: 'UpgradeAuthorized'
-    value: H256
-}
-
-/**
- * The validation function was applied as of the contained relay chain block number.
- */
-export interface ParachainSystemEvent_ValidationFunctionApplied {
-    __kind: 'ValidationFunctionApplied'
-    value: number
-}
-
-/**
- * The relay-chain aborted the upgrade process.
- */
-export interface ParachainSystemEvent_ValidationFunctionDiscarded {
-    __kind: 'ValidationFunctionDiscarded'
-}
-
-/**
- * The validation function has been scheduled to apply.
- */
-export interface ParachainSystemEvent_ValidationFunctionStored {
-    __kind: 'ValidationFunctionStored'
-}
-
-/**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
- */
-export type CollatorSelectionEvent = CollatorSelectionEvent_CandidateAdded | CollatorSelectionEvent_CandidateRemoved | CollatorSelectionEvent_NewCandidacyBond | CollatorSelectionEvent_NewDesiredCandidates | CollatorSelectionEvent_NewInvulnerables
-
-export interface CollatorSelectionEvent_CandidateAdded {
-    __kind: 'CandidateAdded'
-    value: [AccountId32, bigint]
-}
-
-export interface CollatorSelectionEvent_CandidateRemoved {
-    __kind: 'CandidateRemoved'
-    value: AccountId32
-}
-
-export interface CollatorSelectionEvent_NewCandidacyBond {
-    __kind: 'NewCandidacyBond'
-    value: bigint
-}
-
-export interface CollatorSelectionEvent_NewDesiredCandidates {
-    __kind: 'NewDesiredCandidates'
-    value: number
-}
-
-export interface CollatorSelectionEvent_NewInvulnerables {
-    __kind: 'NewInvulnerables'
-    value: AccountId32[]
-}
-
-/**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
- */
-export type BalancesEvent = BalancesEvent_BalanceSet | BalancesEvent_Deposit | BalancesEvent_DustLost | BalancesEvent_Endowed | BalancesEvent_ReserveRepatriated | BalancesEvent_Reserved | BalancesEvent_Slashed | BalancesEvent_Transfer | BalancesEvent_Unreserved | BalancesEvent_Withdraw
-
-/**
- * A balance was set by root. \[who, free, reserved\]
- */
-export interface BalancesEvent_BalanceSet {
-    __kind: 'BalanceSet'
-    value: [AccountId32, bigint, bigint]
-}
-
-/**
- * Some amount was deposited into the account (e.g. for transaction fees). \[who,
- * deposit\]
- */
-export interface BalancesEvent_Deposit {
-    __kind: 'Deposit'
-    value: [AccountId32, bigint]
-}
-
-/**
- * An account was removed whose balance was non-zero but below ExistentialDeposit,
- * resulting in an outright loss. \[account, balance\]
- */
-export interface BalancesEvent_DustLost {
-    __kind: 'DustLost'
-    value: [AccountId32, bigint]
-}
-
-/**
- * An account was created with some free balance. \[account, free_balance\]
- */
-export interface BalancesEvent_Endowed {
-    __kind: 'Endowed'
-    value: [AccountId32, bigint]
-}
-
-/**
- * Some balance was moved from the reserve of the first account to the second account.
- * Final argument indicates the destination balance type.
- * \[from, to, balance, destination_status\]
- */
-export interface BalancesEvent_ReserveRepatriated {
-    __kind: 'ReserveRepatriated'
-    value: [AccountId32, AccountId32, bigint, BalanceStatus]
-}
-
-/**
- * Some balance was reserved (moved from free to reserved). \[who, value\]
- */
-export interface BalancesEvent_Reserved {
-    __kind: 'Reserved'
-    value: [AccountId32, bigint]
-}
-
-/**
- * Some amount was removed from the account (e.g. for misbehavior). \[who,
- * amount_slashed\]
- */
-export interface BalancesEvent_Slashed {
-    __kind: 'Slashed'
-    value: [AccountId32, bigint]
-}
-
-/**
- * Transfer succeeded. \[from, to, value\]
- */
-export interface BalancesEvent_Transfer {
-    __kind: 'Transfer'
-    value: [AccountId32, AccountId32, bigint]
-}
-
-/**
- * Some balance was unreserved (moved from reserved to free). \[who, value\]
- */
-export interface BalancesEvent_Unreserved {
-    __kind: 'Unreserved'
-    value: [AccountId32, bigint]
-}
-
-/**
- * Some amount was withdrawn from the account (e.g. for transaction fees). \[who, value\]
- */
-export interface BalancesEvent_Withdraw {
-    __kind: 'Withdraw'
-    value: [AccountId32, bigint]
-}
-
-export type BalanceStatus = BalanceStatus_Free | BalanceStatus_Reserved
-
-export interface BalanceStatus_Free {
-    __kind: 'Free'
-}
-
-export interface BalanceStatus_Reserved {
-    __kind: 'Reserved'
-}
-
-export const EventRecord: sts.Type<EventRecord> = sts.struct(() => {
+export const InboundHrmpMessage: sts.Type<InboundHrmpMessage> = sts.struct(() => {
     return  {
-        phase: Phase,
-        event: Event,
-        topics: sts.array(() => H256),
+        sentAt: sts.number(),
+        data: sts.bytes(),
     }
 })
 
-export const Event: sts.Type<Event> = sts.closedEnum(() => {
+export interface InboundHrmpMessage {
+    sentAt: number
+    data: Bytes
+}
+
+export const Id = sts.number()
+
+export const InboundDownwardMessage: sts.Type<InboundDownwardMessage> = sts.struct(() => {
     return  {
-        Balances: BalancesEvent,
-        CollatorSelection: CollatorSelectionEvent,
-        ParachainSystem: ParachainSystemEvent,
-        Session: SessionEvent,
-        Sudo: SudoEvent,
-        System: SystemEvent,
-        Treasury: TreasuryEvent,
-        Utility: UtilityEvent,
+        sentAt: sts.number(),
+        msg: sts.bytes(),
+    }
+})
+
+export interface InboundDownwardMessage {
+    sentAt: number
+    msg: Bytes
+}
+
+export const StorageProof: sts.Type<StorageProof> = sts.struct(() => {
+    return  {
+        trieNodes: sts.array(() => sts.bytes()),
+    }
+})
+
+export interface StorageProof {
+    trieNodes: Bytes[]
+}
+
+export const V1PersistedValidationData: sts.Type<V1PersistedValidationData> = sts.struct(() => {
+    return  {
+        parentHead: HeadData,
+        relayParentNumber: sts.number(),
+        relayParentStorageRoot: H256,
+        maxPovSize: sts.number(),
+    }
+})
+
+export const H256 = sts.bytes()
+
+export const HeadData = sts.bytes()
+
+export interface V1PersistedValidationData {
+    parentHead: HeadData
+    relayParentNumber: number
+    relayParentStorageRoot: H256
+    maxPovSize: number
+}
+
+export type H256 = Bytes
+
+export type HeadData = Bytes
+
+export interface ParachainInherentData {
+    validationData: V1PersistedValidationData
+    relayChainState: StorageProof
+    downwardMessages: InboundDownwardMessage[]
+    horizontalMessages: [Id, InboundHrmpMessage[]][]
+}
+
+export type Id = number
+
+export const Call: sts.Type<Call> = sts.closedEnum(() => {
+    return  {
+        Authorship: AuthorshipCall,
+        Balances: BalancesCall,
+        CollatorSelection: CollatorSelectionCall,
+        ParachainSystem: ParachainSystemCall,
+        Session: SessionCall,
+        Sudo: SudoCall,
+        System: SystemCall,
+        Timestamp: TimestampCall,
+        Treasury: TreasuryCall,
+        Utility: UtilityCall,
     }
 })
 
 /**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
+ * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export const UtilityEvent: sts.Type<UtilityEvent> = sts.closedEnum(() => {
+export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
-        BatchCompleted: sts.unit(),
-        BatchInterrupted: sts.tuple(() => [sts.number(), DispatchError]),
-        ItemCompleted: sts.unit(),
-    }
-})
-
-export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
-    return  {
-        Arithmetic: ArithmeticError,
-        BadOrigin: sts.unit(),
-        CannotLookup: sts.unit(),
-        ConsumerRemaining: sts.unit(),
-        Module: sts.enumStruct({
+        as_derivative: sts.enumStruct({
             index: sts.number(),
-            error: sts.number(),
+            call: Call,
         }),
-        NoProviders: sts.unit(),
-        Other: sts.unit(),
-        Token: TokenError,
-    }
-})
-
-export const TokenError: sts.Type<TokenError> = sts.closedEnum(() => {
-    return  {
-        BelowMinimum: sts.unit(),
-        CannotCreate: sts.unit(),
-        Frozen: sts.unit(),
-        NoFunds: sts.unit(),
-        UnknownAsset: sts.unit(),
-        Unsupported: sts.unit(),
-        WouldDie: sts.unit(),
-    }
-})
-
-export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
-    return  {
-        DivisionByZero: sts.unit(),
-        Overflow: sts.unit(),
-        Underflow: sts.unit(),
+        batch: sts.enumStruct({
+            calls: sts.array(() => Call),
+        }),
+        batch_all: sts.enumStruct({
+            calls: sts.array(() => Call),
+        }),
     }
 })
 
 /**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch | UtilityCall_batch_all
+
+/**
+ * Send a call through an indexed pseudonym of the sender.
  * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
- */
-export const TreasuryEvent: sts.Type<TreasuryEvent> = sts.closedEnum(() => {
-    return  {
-        Awarded: sts.tuple(() => [sts.number(), sts.bigint(), AccountId32]),
-        Burnt: sts.bigint(),
-        Deposit: sts.bigint(),
-        Proposed: sts.number(),
-        Rejected: sts.tuple(() => [sts.number(), sts.bigint()]),
-        Rollover: sts.bigint(),
-        Spending: sts.bigint(),
-    }
-})
-
-/**
- * Event for the System pallet.
- */
-export const SystemEvent: sts.Type<SystemEvent> = sts.closedEnum(() => {
-    return  {
-        CodeUpdated: sts.unit(),
-        ExtrinsicFailed: sts.tuple(() => [DispatchError, DispatchInfo]),
-        ExtrinsicSuccess: DispatchInfo,
-        KilledAccount: AccountId32,
-        NewAccount: AccountId32,
-        Remarked: sts.tuple(() => [AccountId32, H256]),
-    }
-})
-
-export const DispatchInfo: sts.Type<DispatchInfo> = sts.struct(() => {
-    return  {
-        weight: sts.bigint(),
-        class: DispatchClass,
-        paysFee: Pays,
-    }
-})
-
-export const Pays: sts.Type<Pays> = sts.closedEnum(() => {
-    return  {
-        No: sts.unit(),
-        Yes: sts.unit(),
-    }
-})
-
-export const DispatchClass: sts.Type<DispatchClass> = sts.closedEnum(() => {
-    return  {
-        Mandatory: sts.unit(),
-        Normal: sts.unit(),
-        Operational: sts.unit(),
-    }
-})
-
-/**
+ * Filter from origin are passed along. The call will be dispatched with an origin which
+ * use the same filter as the origin of this call.
  * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
+ * NOTE: If you need to ensure that any account-based filtering is not honored (i.e.
+ * because you expect `proxy` to have been used prior in the call stack and you do not want
+ * the call restrictions to apply to any sub-accounts), then use `as_multi_threshold_1`
+ * in the Multisig pallet instead.
+ * 
+ * NOTE: Prior to version *12, this was called `as_limited_sub`.
+ * 
+ * The dispatch origin for this call must be _Signed_.
  */
-export const SudoEvent: sts.Type<SudoEvent> = sts.closedEnum(() => {
+export interface UtilityCall_as_derivative {
+    __kind: 'as_derivative'
+    index: number
+    call: Call
+}
+
+/**
+ * Send a batch of dispatch calls.
+ * 
+ * May be called from any origin.
+ * 
+ * - `calls`: The calls to be dispatched from the same origin. The number of call must not
+ *   exceed the constant: `batched_calls_limit` (available in constant metadata).
+ * 
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
+ * 
+ * # <weight>
+ * - Complexity: O(C) where C is the number of calls to be batched.
+ * # </weight>
+ * 
+ * This will return `Ok` in all circumstances. To determine the success of the batch, an
+ * event is deposited. If a call failed and the batch was interrupted, then the
+ * `BatchInterrupted` event is deposited, along with the number of successful calls made
+ * and the error of the failed call. If all were successful, then the `BatchCompleted`
+ * event is deposited.
+ */
+export interface UtilityCall_batch {
+    __kind: 'batch'
+    calls: Call[]
+}
+
+/**
+ * Send a batch of dispatch calls and atomically execute them.
+ * The whole transaction will rollback and fail if any of the calls failed.
+ * 
+ * May be called from any origin.
+ * 
+ * - `calls`: The calls to be dispatched from the same origin. The number of call must not
+ *   exceed the constant: `batched_calls_limit` (available in constant metadata).
+ * 
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
+ * 
+ * # <weight>
+ * - Complexity: O(C) where C is the number of calls to be batched.
+ * # </weight>
+ */
+export interface UtilityCall_batch_all {
+    __kind: 'batch_all'
+    calls: Call[]
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
     return  {
-        KeyChanged: AccountId32,
-        Sudid: sts.result(() => sts.unit(), () => DispatchError),
-        SudoAsDone: sts.result(() => sts.unit(), () => DispatchError),
+        approve_proposal: sts.enumStruct({
+            proposalId: sts.number(),
+        }),
+        propose_spend: sts.enumStruct({
+            value: sts.bigint(),
+            beneficiary: AccountId32,
+        }),
+        reject_proposal: sts.enumStruct({
+            proposalId: sts.number(),
+        }),
     }
 })
 
 /**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
+ * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export const SessionEvent: sts.Type<SessionEvent> = sts.closedEnum(() => {
+export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_propose_spend | TreasuryCall_reject_proposal
+
+/**
+ * Approve a proposal. At a later time, the proposal will be allocated to the beneficiary
+ * and the original deposit will be returned.
+ * 
+ * May only be called from `T::ApproveOrigin`.
+ * 
+ * # <weight>
+ * - Complexity: O(1).
+ * - DbReads: `Proposals`, `Approvals`
+ * - DbWrite: `Approvals`
+ * # </weight>
+ */
+export interface TreasuryCall_approve_proposal {
+    __kind: 'approve_proposal'
+    proposalId: number
+}
+
+/**
+ * Put forward a suggestion for spending. A deposit proportional to the value
+ * is reserved and slashed if the proposal is rejected. It is returned once the
+ * proposal is awarded.
+ * 
+ * # <weight>
+ * - Complexity: O(1)
+ * - DbReads: `ProposalCount`, `origin account`
+ * - DbWrites: `ProposalCount`, `Proposals`, `origin account`
+ * # </weight>
+ */
+export interface TreasuryCall_propose_spend {
+    __kind: 'propose_spend'
+    value: bigint
+    beneficiary: AccountId32
+}
+
+/**
+ * Reject a proposed spend. The original deposit will be slashed.
+ * 
+ * May only be called from `T::RejectOrigin`.
+ * 
+ * # <weight>
+ * - Complexity: O(1)
+ * - DbReads: `Proposals`, `rejected proposer account`
+ * - DbWrites: `Proposals`, `rejected proposer account`
+ * # </weight>
+ */
+export interface TreasuryCall_reject_proposal {
+    __kind: 'reject_proposal'
+    proposalId: number
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const TimestampCall: sts.Type<TimestampCall> = sts.closedEnum(() => {
     return  {
-        NewSession: sts.number(),
+        set: sts.enumStruct({
+            now: sts.bigint(),
+        }),
     }
 })
 
 /**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
+ * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export const ParachainSystemEvent: sts.Type<ParachainSystemEvent> = sts.closedEnum(() => {
+export type TimestampCall = TimestampCall_set
+
+/**
+ * Set the current time.
+ * 
+ * This call should be invoked exactly once per block. It will panic at the finalization
+ * phase, if this call hasn't been invoked by that time.
+ * 
+ * The timestamp should be greater than the previous one by the amount specified by
+ * `MinimumPeriod`.
+ * 
+ * The dispatch origin for this call must be `Inherent`.
+ * 
+ * # <weight>
+ * - `O(1)` (Note that implementations of `OnTimestampSet` must also be `O(1)`)
+ * - 1 storage read and 1 storage mutation (codec `O(1)`). (because of `DidUpdate::take` in
+ *   `on_finalize`)
+ * - 1 event handler `on_timestamp_set`. Must be `O(1)`.
+ * # </weight>
+ */
+export interface TimestampCall_set {
+    __kind: 'set'
+    now: bigint
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
     return  {
-        DownwardMessagesProcessed: sts.tuple(() => [sts.bigint(), H256]),
-        DownwardMessagesReceived: sts.number(),
-        UpgradeAuthorized: H256,
-        ValidationFunctionApplied: sts.number(),
-        ValidationFunctionDiscarded: sts.unit(),
-        ValidationFunctionStored: sts.unit(),
+        fill_block: sts.enumStruct({
+            ratio: Perbill,
+        }),
+        kill_prefix: sts.enumStruct({
+            prefix: sts.bytes(),
+            subkeys: sts.number(),
+        }),
+        kill_storage: sts.enumStruct({
+            keys: sts.array(() => sts.bytes()),
+        }),
+        remark: sts.enumStruct({
+            remark: sts.bytes(),
+        }),
+        remark_with_event: sts.enumStruct({
+            remark: sts.bytes(),
+        }),
+        set_changes_trie_config: sts.enumStruct({
+            changesTrieConfig: sts.option(() => ChangesTrieConfiguration),
+        }),
+        set_code: sts.enumStruct({
+            code: sts.bytes(),
+        }),
+        set_code_without_checks: sts.enumStruct({
+            code: sts.bytes(),
+        }),
+        set_heap_pages: sts.enumStruct({
+            pages: sts.bigint(),
+        }),
+        set_storage: sts.enumStruct({
+            items: sts.array(() => sts.tuple(() => [sts.bytes(), sts.bytes()])),
+        }),
+    }
+})
+
+export const ChangesTrieConfiguration: sts.Type<ChangesTrieConfiguration> = sts.struct(() => {
+    return  {
+        digestInterval: sts.number(),
+        digestLevels: sts.number(),
+    }
+})
+
+export interface ChangesTrieConfiguration {
+    digestInterval: number
+    digestLevels: number
+}
+
+export const Perbill = sts.number()
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type SystemCall = SystemCall_fill_block | SystemCall_kill_prefix | SystemCall_kill_storage | SystemCall_remark | SystemCall_remark_with_event | SystemCall_set_changes_trie_config | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_heap_pages | SystemCall_set_storage
+
+/**
+ * A dispatch that will fill the block weight up to the given ratio.
+ */
+export interface SystemCall_fill_block {
+    __kind: 'fill_block'
+    ratio: Perbill
+}
+
+/**
+ * Kill all storage items with a key that starts with the given prefix.
+ * 
+ * **NOTE:** We rely on the Root origin to provide us the number of subkeys under
+ * the prefix we are removing to accurately calculate the weight of this function.
+ * 
+ * # <weight>
+ * - `O(P)` where `P` amount of keys with prefix `prefix`
+ * - `P` storage deletions.
+ * - Base Weight: 0.834 * P µs
+ * - Writes: Number of subkeys + 1
+ * # </weight>
+ */
+export interface SystemCall_kill_prefix {
+    __kind: 'kill_prefix'
+    prefix: Bytes
+    subkeys: number
+}
+
+/**
+ * Kill some items from storage.
+ * 
+ * # <weight>
+ * - `O(IK)` where `I` length of `keys` and `K` length of one key
+ * - `I` storage deletions.
+ * - Base Weight: .378 * i µs
+ * - Writes: Number of items
+ * # </weight>
+ */
+export interface SystemCall_kill_storage {
+    __kind: 'kill_storage'
+    keys: Bytes[]
+}
+
+/**
+ * Make some on-chain remark.
+ * 
+ * # <weight>
+ * - `O(1)`
+ * # </weight>
+ */
+export interface SystemCall_remark {
+    __kind: 'remark'
+    remark: Bytes
+}
+
+/**
+ * Make some on-chain remark and emit event.
+ * 
+ * # <weight>
+ * - `O(b)` where b is the length of the remark.
+ * - 1 event.
+ * # </weight>
+ */
+export interface SystemCall_remark_with_event {
+    __kind: 'remark_with_event'
+    remark: Bytes
+}
+
+/**
+ * Set the new changes trie configuration.
+ * 
+ * # <weight>
+ * - `O(1)`
+ * - 1 storage write or delete (codec `O(1)`).
+ * - 1 call to `deposit_log`: Uses `append` API, so O(1)
+ * - Base Weight: 7.218 µs
+ * - DB Weight:
+ *     - Writes: Changes Trie, System Digest
+ * # </weight>
+ */
+export interface SystemCall_set_changes_trie_config {
+    __kind: 'set_changes_trie_config'
+    changesTrieConfig?: (ChangesTrieConfiguration | undefined)
+}
+
+/**
+ * Set the new runtime code.
+ * 
+ * # <weight>
+ * - `O(C + S)` where `C` length of `code` and `S` complexity of `can_set_code`
+ * - 1 call to `can_set_code`: `O(S)` (calls `sp_io::misc::runtime_version` which is
+ *   expensive).
+ * - 1 storage write (codec `O(C)`).
+ * - 1 digest item.
+ * - 1 event.
+ * The weight of this function is dependent on the runtime, but generally this is very
+ * expensive. We will treat this as a full block.
+ * # </weight>
+ */
+export interface SystemCall_set_code {
+    __kind: 'set_code'
+    code: Bytes
+}
+
+/**
+ * Set the new runtime code without doing any checks of the given `code`.
+ * 
+ * # <weight>
+ * - `O(C)` where `C` length of `code`
+ * - 1 storage write (codec `O(C)`).
+ * - 1 digest item.
+ * - 1 event.
+ * The weight of this function is dependent on the runtime. We will treat this as a full
+ * block. # </weight>
+ */
+export interface SystemCall_set_code_without_checks {
+    __kind: 'set_code_without_checks'
+    code: Bytes
+}
+
+/**
+ * Set the number of pages in the WebAssembly environment's heap.
+ * 
+ * # <weight>
+ * - `O(1)`
+ * - 1 storage write.
+ * - Base Weight: 1.405 µs
+ * - 1 write to HEAP_PAGES
+ * - 1 digest item
+ * # </weight>
+ */
+export interface SystemCall_set_heap_pages {
+    __kind: 'set_heap_pages'
+    pages: bigint
+}
+
+/**
+ * Set some items of storage.
+ * 
+ * # <weight>
+ * - `O(I)` where `I` length of `items`
+ * - `I` storage writes (`O(1)`).
+ * - Base Weight: 0.568 * i µs
+ * - Writes: Number of items
+ * # </weight>
+ */
+export interface SystemCall_set_storage {
+    __kind: 'set_storage'
+    items: [Bytes, Bytes][]
+}
+
+export type Perbill = number
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const SudoCall: sts.Type<SudoCall> = sts.closedEnum(() => {
+    return  {
+        set_key: sts.enumStruct({
+            new: AccountId32,
+        }),
+        sudo: sts.enumStruct({
+            call: Call,
+        }),
+        sudo_as: sts.enumStruct({
+            who: AccountId32,
+            call: Call,
+        }),
+        sudo_unchecked_weight: sts.enumStruct({
+            call: Call,
+            weight: sts.bigint(),
+        }),
     }
 })
 
 /**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
+ * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export const CollatorSelectionEvent: sts.Type<CollatorSelectionEvent> = sts.closedEnum(() => {
+export type SudoCall = SudoCall_set_key | SudoCall_sudo | SudoCall_sudo_as | SudoCall_sudo_unchecked_weight
+
+/**
+ * Authenticates the current sudo key and sets the given AccountId (`new`) as the new sudo
+ * key.
+ * 
+ * The dispatch origin for this call must be _Signed_.
+ * 
+ * # <weight>
+ * - O(1).
+ * - Limited storage reads.
+ * - One DB change.
+ * # </weight>
+ */
+export interface SudoCall_set_key {
+    __kind: 'set_key'
+    new: AccountId32
+}
+
+/**
+ * Authenticates the sudo key and dispatches a function call with `Root` origin.
+ * 
+ * The dispatch origin for this call must be _Signed_.
+ * 
+ * # <weight>
+ * - O(1).
+ * - Limited storage reads.
+ * - One DB write (event).
+ * - Weight of derivative `call` execution + 10,000.
+ * # </weight>
+ */
+export interface SudoCall_sudo {
+    __kind: 'sudo'
+    call: Call
+}
+
+/**
+ * Authenticates the sudo key and dispatches a function call with `Signed` origin from
+ * a given account.
+ * 
+ * The dispatch origin for this call must be _Signed_.
+ * 
+ * # <weight>
+ * - O(1).
+ * - Limited storage reads.
+ * - One DB write (event).
+ * - Weight of derivative `call` execution + 10,000.
+ * # </weight>
+ */
+export interface SudoCall_sudo_as {
+    __kind: 'sudo_as'
+    who: AccountId32
+    call: Call
+}
+
+/**
+ * Authenticates the sudo key and dispatches a function call with `Root` origin.
+ * This function does not check the weight of the call, and instead allows the
+ * Sudo user to specify the weight of the call.
+ * 
+ * The dispatch origin for this call must be _Signed_.
+ * 
+ * # <weight>
+ * - O(1).
+ * - The weight of this call is defined by the caller.
+ * # </weight>
+ */
+export interface SudoCall_sudo_unchecked_weight {
+    __kind: 'sudo_unchecked_weight'
+    call: Call
+    weight: bigint
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
     return  {
-        CandidateAdded: sts.tuple(() => [AccountId32, sts.bigint()]),
-        CandidateRemoved: AccountId32,
-        NewCandidacyBond: sts.bigint(),
-        NewDesiredCandidates: sts.number(),
-        NewInvulnerables: sts.array(() => AccountId32),
+        purge_keys: sts.unit(),
+        set_keys: sts.enumStruct({
+            keys: SessionKeys,
+            proof: sts.bytes(),
+        }),
+    }
+})
+
+export const SessionKeys: sts.Type<SessionKeys> = sts.struct(() => {
+    return  {
+        aura: Public,
+    }
+})
+
+export const Public = sts.bytes()
+
+export interface SessionKeys {
+    aura: Public
+}
+
+export type Public = Bytes
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type SessionCall = SessionCall_purge_keys | SessionCall_set_keys
+
+/**
+ * Removes any session key(s) of the function caller.
+ * 
+ * This doesn't take effect until the next session.
+ * 
+ * The dispatch origin of this function must be Signed and the account must be either be
+ * convertible to a validator ID using the chain's typical addressing system (this usually
+ * means being a controller account) or directly convertible into a validator ID (which
+ * usually means being a stash account).
+ * 
+ * # <weight>
+ * - Complexity: `O(1)` in number of key types. Actual cost depends on the number of length
+ *   of `T::Keys::key_ids()` which is fixed.
+ * - DbReads: `T::ValidatorIdOf`, `NextKeys`, `origin account`
+ * - DbWrites: `NextKeys`, `origin account`
+ * - DbWrites per key id: `KeyOwner`
+ * # </weight>
+ */
+export interface SessionCall_purge_keys {
+    __kind: 'purge_keys'
+}
+
+/**
+ * Sets the session key(s) of the function caller to `keys`.
+ * Allows an account to set its session key prior to becoming a validator.
+ * This doesn't take effect until the next session.
+ * 
+ * The dispatch origin of this function must be signed.
+ * 
+ * # <weight>
+ * - Complexity: `O(1)`. Actual cost depends on the number of length of
+ *   `T::Keys::key_ids()` which is fixed.
+ * - DbReads: `origin account`, `T::ValidatorIdOf`, `NextKeys`
+ * - DbWrites: `origin account`, `NextKeys`
+ * - DbReads per key id: `KeyOwner`
+ * - DbWrites per key id: `KeyOwner`
+ * # </weight>
+ */
+export interface SessionCall_set_keys {
+    __kind: 'set_keys'
+    keys: SessionKeys
+    proof: Bytes
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const ParachainSystemCall: sts.Type<ParachainSystemCall> = sts.closedEnum(() => {
+    return  {
+        authorize_upgrade: sts.enumStruct({
+            codeHash: H256,
+        }),
+        enact_authorized_upgrade: sts.enumStruct({
+            code: sts.bytes(),
+        }),
+        set_validation_data: sts.enumStruct({
+            data: ParachainInherentData,
+        }),
+        sudo_send_upward_message: sts.enumStruct({
+            message: sts.bytes(),
+        }),
     }
 })
 
 /**
- * 
-			The [event](https://docs.substrate.io/v3/runtime/events-and-errors) emitted
-			by this pallet.
-			
+ * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export const BalancesEvent: sts.Type<BalancesEvent> = sts.closedEnum(() => {
+export type ParachainSystemCall = ParachainSystemCall_authorize_upgrade | ParachainSystemCall_enact_authorized_upgrade | ParachainSystemCall_set_validation_data | ParachainSystemCall_sudo_send_upward_message
+
+export interface ParachainSystemCall_authorize_upgrade {
+    __kind: 'authorize_upgrade'
+    codeHash: H256
+}
+
+export interface ParachainSystemCall_enact_authorized_upgrade {
+    __kind: 'enact_authorized_upgrade'
+    code: Bytes
+}
+
+/**
+ * Set the current validation data.
+ * 
+ * This should be invoked exactly once per block. It will panic at the finalization
+ * phase if the call was not invoked.
+ * 
+ * The dispatch origin for this call must be `Inherent`
+ * 
+ * As a side effect, this function upgrades the current validation function
+ * if the appropriate time has come.
+ */
+export interface ParachainSystemCall_set_validation_data {
+    __kind: 'set_validation_data'
+    data: ParachainInherentData
+}
+
+export interface ParachainSystemCall_sudo_send_upward_message {
+    __kind: 'sudo_send_upward_message'
+    message: Bytes
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const CollatorSelectionCall: sts.Type<CollatorSelectionCall> = sts.closedEnum(() => {
     return  {
-        BalanceSet: sts.tuple(() => [AccountId32, sts.bigint(), sts.bigint()]),
-        Deposit: sts.tuple(() => [AccountId32, sts.bigint()]),
-        DustLost: sts.tuple(() => [AccountId32, sts.bigint()]),
-        Endowed: sts.tuple(() => [AccountId32, sts.bigint()]),
-        ReserveRepatriated: sts.tuple(() => [AccountId32, AccountId32, sts.bigint(), BalanceStatus]),
-        Reserved: sts.tuple(() => [AccountId32, sts.bigint()]),
-        Slashed: sts.tuple(() => [AccountId32, sts.bigint()]),
-        Transfer: sts.tuple(() => [AccountId32, AccountId32, sts.bigint()]),
-        Unreserved: sts.tuple(() => [AccountId32, sts.bigint()]),
-        Withdraw: sts.tuple(() => [AccountId32, sts.bigint()]),
+        leave_intent: sts.unit(),
+        register_as_candidate: sts.unit(),
+        set_candidacy_bond: sts.enumStruct({
+            bond: sts.bigint(),
+        }),
+        set_desired_candidates: sts.enumStruct({
+            max: sts.number(),
+        }),
+        set_invulnerables: sts.enumStruct({
+            new: sts.array(() => AccountId32),
+        }),
     }
 })
 
-export interface Digest {
-    logs: DigestItem[]
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type CollatorSelectionCall = CollatorSelectionCall_leave_intent | CollatorSelectionCall_register_as_candidate | CollatorSelectionCall_set_candidacy_bond | CollatorSelectionCall_set_desired_candidates | CollatorSelectionCall_set_invulnerables
+
+export interface CollatorSelectionCall_leave_intent {
+    __kind: 'leave_intent'
+}
+
+export interface CollatorSelectionCall_register_as_candidate {
+    __kind: 'register_as_candidate'
+}
+
+export interface CollatorSelectionCall_set_candidacy_bond {
+    __kind: 'set_candidacy_bond'
+    bond: bigint
+}
+
+export interface CollatorSelectionCall_set_desired_candidates {
+    __kind: 'set_desired_candidates'
+    max: number
+}
+
+export interface CollatorSelectionCall_set_invulnerables {
+    __kind: 'set_invulnerables'
+    new: AccountId32[]
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
+    return  {
+        force_transfer: sts.enumStruct({
+            source: AccountId32,
+            dest: AccountId32,
+            value: sts.bigint(),
+        }),
+        force_unreserve: sts.enumStruct({
+            who: AccountId32,
+            amount: sts.bigint(),
+        }),
+        set_balance: sts.enumStruct({
+            who: AccountId32,
+            newFree: sts.bigint(),
+            newReserved: sts.bigint(),
+        }),
+        transfer: sts.enumStruct({
+            dest: AccountId32,
+            value: sts.bigint(),
+        }),
+        transfer_all: sts.enumStruct({
+            dest: AccountId32,
+            keepAlive: sts.boolean(),
+        }),
+        transfer_keep_alive: sts.enumStruct({
+            dest: AccountId32,
+            value: sts.bigint(),
+        }),
+    }
+})
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type BalancesCall = BalancesCall_force_transfer | BalancesCall_force_unreserve | BalancesCall_set_balance | BalancesCall_transfer | BalancesCall_transfer_all | BalancesCall_transfer_keep_alive
+
+/**
+ * Exactly as `transfer`, except the origin must be root and the source account may be
+ * specified.
+ * # <weight>
+ * - Same as transfer, but additional read and write because the source account is not
+ *   assumed to be in the overlay.
+ * # </weight>
+ */
+export interface BalancesCall_force_transfer {
+    __kind: 'force_transfer'
+    source: AccountId32
+    dest: AccountId32
+    value: bigint
+}
+
+/**
+ * Unreserve some balance from a user by force.
+ * 
+ * Can only be called by ROOT.
+ */
+export interface BalancesCall_force_unreserve {
+    __kind: 'force_unreserve'
+    who: AccountId32
+    amount: bigint
+}
+
+/**
+ * Set the balances of a given account.
+ * 
+ * This will alter `FreeBalance` and `ReservedBalance` in storage. it will
+ * also decrease the total issuance of the system (`TotalIssuance`).
+ * If the new free or reserved balance is below the existential deposit,
+ * it will reset the account nonce (`frame_system::AccountNonce`).
+ * 
+ * The dispatch origin for this call is `root`.
+ * 
+ * # <weight>
+ * - Independent of the arguments.
+ * - Contains a limited number of reads and writes.
+ * ---------------------
+ * - Base Weight:
+ *     - Creating: 27.56 µs
+ *     - Killing: 35.11 µs
+ * - DB Weight: 1 Read, 1 Write to `who`
+ * # </weight>
+ */
+export interface BalancesCall_set_balance {
+    __kind: 'set_balance'
+    who: AccountId32
+    newFree: bigint
+    newReserved: bigint
+}
+
+/**
+ * Transfer some liquid free balance to another account.
+ * 
+ * `transfer` will set the `FreeBalance` of the sender and receiver.
+ * It will decrease the total issuance of the system by the `TransferFee`.
+ * If the sender's account is below the existential deposit as a result
+ * of the transfer, the account will be reaped.
+ * 
+ * The dispatch origin for this call must be `Signed` by the transactor.
+ * 
+ * # <weight>
+ * - Dependent on arguments but not critical, given proper implementations for input config
+ *   types. See related functions below.
+ * - It contains a limited number of reads and writes internally and no complex
+ *   computation.
+ * 
+ * Related functions:
+ * 
+ *   - `ensure_can_withdraw` is always called internally but has a bounded complexity.
+ *   - Transferring balances to accounts that did not exist before will cause
+ *     `T::OnNewAccount::on_new_account` to be called.
+ *   - Removing enough funds from an account will trigger `T::DustRemoval::on_unbalanced`.
+ *   - `transfer_keep_alive` works the same way as `transfer`, but has an additional check
+ *     that the transfer will not kill the origin account.
+ * ---------------------------------
+ * - Base Weight: 73.64 µs, worst case scenario (account created, account removed)
+ * - DB Weight: 1 Read and 1 Write to destination account
+ * - Origin account is already in memory, so no DB operations for them.
+ * # </weight>
+ */
+export interface BalancesCall_transfer {
+    __kind: 'transfer'
+    dest: AccountId32
+    value: bigint
+}
+
+/**
+ * Transfer the entire transferable balance from the caller account.
+ * 
+ * NOTE: This function only attempts to transfer _transferable_ balances. This means that
+ * any locked, reserved, or existential deposits (when `keep_alive` is `true`), will not be
+ * transferred by this function. To ensure that this function results in a killed account,
+ * you might need to prepare the account by removing any reference counters, storage
+ * deposits, etc...
+ * 
+ * The dispatch origin of this call must be Signed.
+ * 
+ * - `dest`: The recipient of the transfer.
+ * - `keep_alive`: A boolean to determine if the `transfer_all` operation should send all
+ *   of the funds the account has, causing the sender account to be killed (false), or
+ *   transfer everything except at least the existential deposit, which will guarantee to
+ *   keep the sender account alive (true). # <weight>
+ * - O(1). Just like transfer, but reading the user's transferable balance first.
+ *   #</weight>
+ */
+export interface BalancesCall_transfer_all {
+    __kind: 'transfer_all'
+    dest: AccountId32
+    keepAlive: boolean
+}
+
+/**
+ * Same as the [`transfer`] call, but with a check that the transfer will not kill the
+ * origin account.
+ * 
+ * 99% of the time you want [`transfer`] instead.
+ * 
+ * [`transfer`]: struct.Pallet.html#method.transfer
+ * # <weight>
+ * - Cheaper than transfer because account cannot be killed.
+ * - Base Weight: 51.4 µs
+ * - DB Weight: 1 Read and 1 Write to dest (sender is in overlay already)
+ * #</weight>
+ */
+export interface BalancesCall_transfer_keep_alive {
+    __kind: 'transfer_keep_alive'
+    dest: AccountId32
+    value: bigint
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const AuthorshipCall: sts.Type<AuthorshipCall> = sts.closedEnum(() => {
+    return  {
+        set_uncles: sts.enumStruct({
+            newUncles: sts.array(() => Header),
+        }),
+    }
+})
+
+export const Header: sts.Type<Header> = sts.struct(() => {
+    return  {
+        parentHash: H256,
+        number: sts.number(),
+        stateRoot: H256,
+        extrinsicsRoot: H256,
+        digest: Digest,
+    }
+})
+
+export const Digest: sts.Type<Digest> = sts.struct(() => {
+    return  {
+        logs: sts.array(() => DigestItem),
+    }
+})
+
+export const DigestItem: sts.Type<DigestItem> = sts.closedEnum(() => {
+    return  {
+        ChangesTrieRoot: H256,
+        ChangesTrieSignal: ChangesTrieSignal,
+        Consensus: sts.tuple(() => [sts.bytes(), sts.bytes()]),
+        Other: sts.bytes(),
+        PreRuntime: sts.tuple(() => [sts.bytes(), sts.bytes()]),
+        RuntimeEnvironmentUpdated: sts.unit(),
+        Seal: sts.tuple(() => [sts.bytes(), sts.bytes()]),
+    }
+})
+
+export const ChangesTrieSignal: sts.Type<ChangesTrieSignal> = sts.closedEnum(() => {
+    return  {
+        NewConfiguration: sts.option(() => ChangesTrieConfiguration),
+    }
+})
+
+export type ChangesTrieSignal = ChangesTrieSignal_NewConfiguration
+
+export interface ChangesTrieSignal_NewConfiguration {
+    __kind: 'NewConfiguration'
+    value?: (ChangesTrieConfiguration | undefined)
 }
 
 export type DigestItem = DigestItem_ChangesTrieRoot | DigestItem_ChangesTrieSignal | DigestItem_Consensus | DigestItem_Other | DigestItem_PreRuntime | DigestItem_RuntimeEnvironmentUpdated | DigestItem_Seal
@@ -1127,86 +1165,82 @@ export interface DigestItem_Seal {
     value: [Bytes, Bytes]
 }
 
-export type ChangesTrieSignal = ChangesTrieSignal_NewConfiguration
-
-export interface ChangesTrieSignal_NewConfiguration {
-    __kind: 'NewConfiguration'
-    value?: (ChangesTrieConfiguration | undefined)
+export interface Digest {
+    logs: DigestItem[]
 }
 
-export interface ChangesTrieConfiguration {
-    digestInterval: number
-    digestLevels: number
+export interface Header {
+    parentHash: H256
+    number: number
+    stateRoot: H256
+    extrinsicsRoot: H256
+    digest: Digest
 }
 
-export const Digest: sts.Type<Digest> = sts.struct(() => {
-    return  {
-        logs: sts.array(() => DigestItem),
-    }
-})
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type AuthorshipCall = AuthorshipCall_set_uncles
 
-export const DigestItem: sts.Type<DigestItem> = sts.closedEnum(() => {
-    return  {
-        ChangesTrieRoot: H256,
-        ChangesTrieSignal: ChangesTrieSignal,
-        Consensus: sts.tuple(() => [sts.bytes(), sts.bytes()]),
-        Other: sts.bytes(),
-        PreRuntime: sts.tuple(() => [sts.bytes(), sts.bytes()]),
-        RuntimeEnvironmentUpdated: sts.unit(),
-        Seal: sts.tuple(() => [sts.bytes(), sts.bytes()]),
-    }
-})
-
-export const ChangesTrieSignal: sts.Type<ChangesTrieSignal> = sts.closedEnum(() => {
-    return  {
-        NewConfiguration: sts.option(() => ChangesTrieConfiguration),
-    }
-})
-
-export const ChangesTrieConfiguration: sts.Type<ChangesTrieConfiguration> = sts.struct(() => {
-    return  {
-        digestInterval: sts.number(),
-        digestLevels: sts.number(),
-    }
-})
-
-export type H256 = Bytes
-
-export const H256 = sts.bytes()
-
-export interface PerDispatchClass {
-    normal: bigint
-    operational: bigint
-    mandatory: bigint
+/**
+ * Provide a set of uncles.
+ */
+export interface AuthorshipCall_set_uncles {
+    __kind: 'set_uncles'
+    newUncles: Header[]
 }
 
-export const PerDispatchClass: sts.Type<PerDispatchClass> = sts.struct(() => {
-    return  {
-        normal: sts.bigint(),
-        operational: sts.bigint(),
-        mandatory: sts.bigint(),
-    }
-})
+export type Call = Call_Authorship | Call_Balances | Call_CollatorSelection | Call_ParachainSystem | Call_Session | Call_Sudo | Call_System | Call_Timestamp | Call_Treasury | Call_Utility
 
-export type AccountId32 = Bytes
-
-export interface AccountInfo {
-    nonce: number
-    consumers: number
-    providers: number
-    sufficients: number
-    data: AccountData
+export interface Call_Authorship {
+    __kind: 'Authorship'
+    value: AuthorshipCall
 }
 
-export const AccountInfo: sts.Type<AccountInfo> = sts.struct(() => {
-    return  {
-        nonce: sts.number(),
-        consumers: sts.number(),
-        providers: sts.number(),
-        sufficients: sts.number(),
-        data: AccountData,
-    }
-})
+export interface Call_Balances {
+    __kind: 'Balances'
+    value: BalancesCall
+}
+
+export interface Call_CollatorSelection {
+    __kind: 'CollatorSelection'
+    value: CollatorSelectionCall
+}
+
+export interface Call_ParachainSystem {
+    __kind: 'ParachainSystem'
+    value: ParachainSystemCall
+}
+
+export interface Call_Session {
+    __kind: 'Session'
+    value: SessionCall
+}
+
+export interface Call_Sudo {
+    __kind: 'Sudo'
+    value: SudoCall
+}
+
+export interface Call_System {
+    __kind: 'System'
+    value: SystemCall
+}
+
+export interface Call_Timestamp {
+    __kind: 'Timestamp'
+    value: TimestampCall
+}
+
+export interface Call_Treasury {
+    __kind: 'Treasury'
+    value: TreasuryCall
+}
+
+export interface Call_Utility {
+    __kind: 'Utility'
+    value: UtilityCall
+}
 
 export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
     return  {
@@ -1214,5 +1248,15 @@ export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
         Reserved: sts.unit(),
     }
 })
+
+export type BalanceStatus = BalanceStatus_Free | BalanceStatus_Reserved
+
+export interface BalanceStatus_Free {
+    __kind: 'Free'
+}
+
+export interface BalanceStatus_Reserved {
+    __kind: 'Reserved'
+}
 
 export const AccountId32 = sts.bytes()

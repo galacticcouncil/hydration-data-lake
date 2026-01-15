@@ -59,31 +59,6 @@ export async function handleCommonAssetAccountBalances({
     allInvolvedAccountsInBlockSet.keys()
   );
 
-  // const nativeTokenBalances =
-  //   await parsers.storage.balances.getNativeTokenBalanceMany({
-  //     block: block.header,
-  //     accountIds: allInvolvedAccountsInBlockList,
-  //   });
-  //
-  // let otherTokenBalances = await new RuntimeApiResolver().resolveRuntimeApiCall<
-  //   GetTokenBalancesManyInput,
-  //   TokenAccountBalancesWithAccountId[] | null
-  // >({
-  //   apiName: RuntimeApiName.CurrenciesApi,
-  //   apiMethod: RuntimeApiMethodName.synthAccountsMany,
-  //   args: {
-  //     block: block.header,
-  //     accountIds: allInvolvedAccountsInBlockList,
-  //   },
-  // });
-  //
-  // if (!otherTokenBalances) {
-  //   otherTokenBalances = await parsers.storage.tokens.getTokenBalancesMany({
-  //     block: block.header,
-  //     accountIds: allInvolvedAccountsInBlockList,
-  //   });
-  // }
-
   const [nativeTokenBalances, otherTokenBalances] = await Promise.all([
     parsers.storage.balances.getNativeTokenBalanceMany({
       block: block.header,

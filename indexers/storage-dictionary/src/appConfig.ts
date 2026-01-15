@@ -340,9 +340,49 @@ export class AppConfig {
 
   getEventsToListen() {
     const eventsToListen = [
-      events.relayChainInfo.currentBlockNumbers.name,
+      events.lbp.poolCreated.name,
+      events.lbp.poolUpdated.name,
+      events.lbp.buyExecuted.name,
+      events.lbp.sellExecuted.name,
 
+      events.xyk.poolCreated.name,
+      events.xyk.poolDestroyed.name,
+      events.xyk.buyExecuted.name,
+      events.xyk.sellExecuted.name,
+
+      events.omnipool.tokenAdded.name,
+      events.omnipool.tokenRemoved.name,
+      events.omnipool.buyExecuted.name,
+      events.omnipool.sellExecuted.name,
+
+      events.stableswap.poolCreated.name,
+      events.stableswap.liquidityAdded.name,
+      events.stableswap.liquidityRemoved.name,
+      events.stableswap.buyExecuted.name,
+      events.stableswap.sellExecuted.name,
+
+      events.dca.scheduled.name,
+      events.dca.completed.name,
+      events.dca.executionPlanned.name,
+      events.dca.executionStarted.name,
+      events.dca.tradeExecuted.name,
+      events.dca.tradeFailed.name,
+      events.dca.randomnessGenerationFailed.name,
+      events.dca.terminated.name,
+
+      events.otc.placed.name,
+      events.otc.filled.name,
+      events.otc.cancelled.name,
+      events.otc.partiallyFilled.name,
+
+      events.assetRegistry.registered.name,
+      events.assetRegistry.updated.name,
+      events.assetRegistry.locationSet.name,
+      events.broadcast.swapped.name,
+      events.broadcast.swapped2.name,
+      events.broadcast.swapped3.name,
       events.evm.log.name,
+      events.evmAccounts.bound.name,
 
       events.currencies.balanceUpdated.name,
       events.currencies.deposited.name,
@@ -389,6 +429,50 @@ export class AppConfig {
       events.balances.unreserved.name,
       events.balances.upgraded.name,
       events.balances.withdraw.name,
+
+      events.duster.dusted.name,
+
+      events.xyk.liquidityAdded.name,
+      events.xyk.liquidityRemoved.name,
+      events.xykLiquidityMining.globalFarmCreated.name,
+      events.xykLiquidityMining.globalFarmUpdated.name,
+      events.xykLiquidityMining.globalFarmTerminated.name,
+      events.xykLiquidityMining.yieldFarmCreated.name,
+      events.xykLiquidityMining.yieldFarmStopped.name,
+      events.xykLiquidityMining.yieldFarmTerminated.name,
+      events.xykLiquidityMining.yieldFarmResumed.name,
+      events.xykLiquidityMining.yieldFarmUpdated.name,
+      events.xykLiquidityMining.sharesDeposited.name,
+      events.xykLiquidityMining.sharesRedeposited.name,
+      events.xykLiquidityMining.sharesWithdrawn.name,
+      events.xykLiquidityMining.depositDestroyed.name,
+      events.xykLiquidityMining.rewardClaimed.name,
+
+      events.omnipool.liquidityAdded.name,
+      events.omnipool.liquidityRemoved.name,
+      events.omnipool.positionCreated.name,
+      events.omnipool.positionUpdated.name,
+      events.omnipool.positionDestroyed.name,
+
+      events.omnipoolLiquidityMining.globalFarmCreated.name,
+      events.omnipoolLiquidityMining.globalFarmUpdated.name,
+      events.omnipoolLiquidityMining.globalFarmTerminated.name,
+      events.omnipoolLiquidityMining.yieldFarmCreated.name,
+      events.omnipoolLiquidityMining.yieldFarmStopped.name,
+      events.omnipoolLiquidityMining.yieldFarmResumed.name,
+      events.omnipoolLiquidityMining.yieldFarmUpdated.name,
+      events.omnipoolLiquidityMining.yieldFarmTerminated.name,
+      events.omnipoolLiquidityMining.sharesDeposited.name,
+      events.omnipoolLiquidityMining.sharesRedeposited.name,
+      events.omnipoolLiquidityMining.sharesWithdrawn.name,
+      events.omnipoolLiquidityMining.rewardClaimed.name,
+      events.omnipoolLiquidityMining.depositDestroyed.name,
+
+      events.omnipoolWarehouseLm.globalFarmAccRpzUpdated.name,
+      events.omnipoolWarehouseLm.yieldFarmAccRpvsUpdated.name,
+      events.omnipoolWarehouseLm.allRewardsDistributed.name,
+
+      events.uniques.transferred.name,
     ];
 
     return eventsToListen;
