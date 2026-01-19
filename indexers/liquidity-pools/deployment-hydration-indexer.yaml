@@ -79,7 +79,7 @@ scale:
   addons:
     postgres:
       profile: large
-      storage: 1700G
+      storage: 1900G
   processor:
     profile: xlarge
   api:
