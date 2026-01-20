@@ -384,11 +384,13 @@ export type GetBondsAllInput = {
 export type GetNativeTokenBalanceManyInput = {
   accountIds: string[];
   block: BlockHeader;
+  skipCache?: boolean;
 };
 
 export type GetTokenBalancesManyInput = {
   accountIds: string[];
   block: BlockHeader;
+  skipCache?: boolean;
 };
 
 export type GetHsmCollateralInput = {

@@ -234,7 +234,7 @@
 
 manifestVersion: subsquid.io/v0.1
 name: hydration-storage-dictionary
-slot: 701
+slot: 703
 description: Hydration storage dictionary for Account data (balances, MM position data)
 build:
 deploy:
@@ -247,8 +247,8 @@ deploy:
     - name: batch-proc-5
       cmd: ['sqd', 'process:prod']
       env:
-        RPC_URL: wss://node-subwhale-10.shellfish.hydration.cloud
-        RPC_URL_HTTPS: https://node-subwhale-10.shellfish.hydration.cloud
+        RPC_URL: wss://node-subwhale-9.shellfish.hydration.cloud
+        RPC_URL_HTTPS: https://node-subwhale-9.shellfish.hydration.cloud
         GATEWAY_HYDRATION_HTTPS: https://v2.archive.subsquid.io/network/hydradx
         PROCESS_LBP_POOLS: false
         PROCESS_XYK_POOLS: false
@@ -261,7 +261,7 @@ deploy:
         GQL_PORT: 8080
         NODE_ENV: production
         OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-        PROCESS_FROM_BLOCK: 10000000
+        PROCESS_FROM_BLOCK: 9000000
         PROCESS_TO_BLOCK: -1
         STATE_SCHEMA_NAME: acc_hist_data__batch_proc_5
         SUB_BATCH_SIZE: 300

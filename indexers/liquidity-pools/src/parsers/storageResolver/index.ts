@@ -20,6 +20,7 @@ import {
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
   StablepoolInfo,
+  TokenAccountBalancesWithAccountId,
   TokensGetTokensTotalIssuanceInput,
   TokensGetTokenTotalIssuanceInput,
   XykGetAssetsInput,
@@ -29,10 +30,10 @@ import {
   XykPoolData,
 } from '../types/storage';
 import { AaveTradeExecutorPoolsInput } from '../runtimeApiResolver/types';
+import { StorageResolverHelpersManager } from './dictionaryUtils/helpers/storageResolverHelpersManager';
 
-export class StorageResolver {
+export class StorageResolver extends StorageResolverHelpersManager {
   private static instance: StorageResolver;
-  storageDictionaryManager: StorageDictionaryManager | null = null;
 
   static getInstance(): StorageResolver {
     if (!StorageResolver.instance) {
@@ -41,42 +42,8 @@ export class StorageResolver {
     return StorageResolver.instance;
   }
 
-  async init({
-    ctx,
-    blockNumberFrom,
-    blockNumberTo,
-  }: {
-    ctx: SqdProcessorContext<Store>;
-    blockNumberFrom: number;
-    blockNumberTo: number;
-  }) {
-    if (!this.storageDictionaryManager)
-      this.storageDictionaryManager = new StorageDictionaryManager({
-        batchCtx: ctx,
-      });
-
-    this.storageDictionaryManager.setBatchContext(ctx);
-
-    this.storageDictionaryManager.wipeBatchStorageState();
-
-    if (ctx.appConfig.USE_STORAGE_DICTIONARY)
-      await this.storageDictionaryManager.fetchBatchStorageStateAllPallets({
-        blockNumberFrom,
-        blockNumberTo,
-      });
-  }
-
-  // TODO add fallback function response status to check is it failed or response is null
-  //  fallbackFn: (args) => Promise<{success: boolean; data: R | null}>
-  private async resolveFallbackFunctions<
-    Args extends { block: BlockHeader },
-    R,
-  >(args: Args, fnsList: Array<(args: Args) => Promise<R>>) {
-    for (const fallbackFn of fnsList) {
-      const result = await fallbackFn(args);
-      if (result) return result;
-    }
-    return null;
+  constructor() {
+    super();
   }
 
   /**
@@ -86,7 +53,10 @@ export class StorageResolver {
    * @param fallbackFns - List of functions which will be executed sequentially
    *                      if previous one returned null or failed
    */
-  async resolveStorageData<Args extends { block: BlockHeader }, R>({
+  async resolveStorageData<
+    Args extends { block: BlockHeader; skipCache?: boolean },
+    R,
+  >({
     pallet,
     method,
     args,
@@ -446,23 +416,17 @@ export class StorageResolver {
         }
         case ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA: {
           if (method === 'getTokenBalancesMany') {
-            const resp = this.storageDictionaryManager.getTokenBalancesMany(
-              args as unknown as GetTokenBalancesManyInput // TODO fix types
-            ) as R;
-
-            if (resp) return resp;
-            return this.resolveFallbackFunctions(args, fallbackFns);
+            return this.resolveAccountAssetBalanceHistDataGetTokenBalancesMany(
+              args,
+              fallbackFns
+            );
           }
 
           if (method === 'getNativeTokenBalanceMany') {
-            const resp =
-              this.storageDictionaryManager.getNativeTokenBalanceMany(
-                args as unknown as GetNativeTokenBalanceManyInput // TODO fix types
-              ) as R;
-
-            if (resp) return resp;
-
-            return this.resolveFallbackFunctions(args, fallbackFns);
+            return this.resolveAccountAssetBalanceHistDataGetNativeTokenBalanceMany(
+              args,
+              fallbackFns
+            );
           }
 
           break;

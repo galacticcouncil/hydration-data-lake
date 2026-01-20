@@ -57,7 +57,6 @@ import {
 import { handleAssetAccountBalances } from '../../../handlers/balances';
 import {
   handleAccountMmPositionData,
-  handleAllAccountsMmPositionDataUpdate,
 } from '../../../handlers/accounts/moneyMarketPosition';
 import { actualizeMoneyMarketReserves } from '../../../handlers/moneyMarket/reserves/moneyMarketReserve';
 import { handleMmReservesConfigsHistoricalData } from '../../../handlers/moneyMarket/reserves';

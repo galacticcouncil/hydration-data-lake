@@ -8,6 +8,7 @@ import { AccountData } from '../../parsers/types/storage';
 import { SqdBlock } from '../../processor';
 import {
   AccountAssetBalanceHistoricalData,
+  Asset,
   AssetResourceType,
 } from '../../model';
 import { BigNumber } from '@galacticcouncil/sdk';
@@ -18,6 +19,7 @@ import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
 import { getPreviousAssetAccountBalancesSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
 import {
   createAccountAssetBalancesForOutdatedBalances,
+  ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData,
   getUnchangedAccountAssetBalanceFromCachedEntity,
   getUnchangedAccountAssetBalanceFromPersistentEntity,
   indexAccountAssetBalancesAccumulators,
@@ -95,74 +97,183 @@ export async function handleAccountTotalBalance({
   if (!refAsset) throw Error('Ref asset not found');
 
   for (const assetBalance of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
-    const asset = await getOrCreateAsset({
-      id: assetBalance.assetId,
+    // const asset = await getOrCreateAsset({
+    //   id: assetBalance.assetId,
+    //   ctx,
+    //   ensure: true,
+    //   blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+    // });
+    //
+    // if (!asset) throw Error(`Asset ${assetBalance.assetId} not found`);
+    //
+    // const accountTotalBalance =
+    //   await getOrCreateAccountTotalBalanceHistoricalData({
+    //     accountId: assetBalance.accountId,
+    //     refAssetId: refAsset.id,
+    //     blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(
+    //       assetBalance.paraBlockHeight
+    //     ),
+    //     ctx,
+    //   });
+    //
+    // // TODO must be moved to proper place
+    // if (assetBalance.assetId === refAsset.id) {
+    //   assetBalance.transferableInRefAssetNorm = calcPriceNormalized({
+    //     amount: BigInt(assetBalance.transferable.toString() ?? '0'),
+    //     assetDecimals: asset.decimals!,
+    //     spotPrice: '1',
+    //   });
+    // }
+    //
+    // /**
+    //  * When we process Debd token, we need to subtract the debt from the total
+    //  * transferable balance.
+    //  */
+    // if (asset.resourceType === AssetResourceType.Debt) {
+    //   const totalBalanceWithoutDebt = BigNumber(
+    //     accountTotalBalance.totalTransferableNorm
+    //   ).minus(assetBalance.transferableInRefAssetNorm || '0');
+    //
+    //   /**
+    //    * At this point we can get negative total balance, if debt token data
+    //    * occurred in the beginning of the list (accountAssetBalanceHistoricalData).
+    //    * But account cannot have debt balance higher that collateral or
+    //    * borrowed amount. So in final result totalBalance always will be positive.
+    //    */
+    //   // accountTotalBalance.totalTransferableNorm = (
+    //   //   totalBalanceWithoutDebt.isLessThan(0)
+    //   //     ? BigNumber(0)
+    //   //     : totalBalanceWithoutDebt
+    //   // ).toFixed();
+    //   accountTotalBalance.totalTransferableNorm =
+    //     totalBalanceWithoutDebt.toFixed();
+    // } else {
+    //   accountTotalBalance.totalTransferableNorm = BigNumber(
+    //     accountTotalBalance.totalTransferableNorm
+    //   )
+    //     .plus(assetBalance.transferableInRefAssetNorm || '0')
+    //     .toFixed();
+    // }
+    //
+    // accountTotalBalance.totalLockedNorm = BigNumber(
+    //   accountTotalBalance.totalLockedNorm
+    // )
+    //   .plus(assetBalance.totalLockedInRefAssetNorm || '0')
+    //   .toFixed();
+    //
+    // ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+    //   assetBalance.id,
+    //   assetBalance
+    // );
+    //
+    // ctx.batchState.state.accountTotalBalanceHistoricalData.set(
+    //   accountTotalBalance.id,
+    //   accountTotalBalance
+    // );
+    await addAssetBalanceToAccountTotalBalance({
+      refAsset,
+      ctx,
+      assetBalanceHistData: assetBalance,
+    });
+  }
+}
+
+export async function addAssetBalanceToAccountTotalBalance({
+  assetBalanceHistData,
+  refAsset,
+  ctx,
+}: {
+  assetBalanceHistData: AccountAssetBalanceHistoricalData;
+  refAsset?: Asset | null;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const refAssetEntity =
+    refAsset ??
+    (await getOrCreateAsset({
+      assetRegistryId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
       ctx,
       ensure: true,
       blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+    }));
+
+  if (!refAssetEntity)
+    throw Error(
+      `Ref asset ${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID} not found`
+    );
+
+  const asset = await getOrCreateAsset({
+    id: assetBalanceHistData.assetId,
+    ctx,
+    ensure: true,
+    blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+  });
+
+  if (!asset) throw Error(`Asset ${assetBalanceHistData.assetId} not found`);
+
+  const accountTotalBalance =
+    await getOrCreateAccountTotalBalanceHistoricalData({
+      accountId: assetBalanceHistData.accountId,
+      refAssetId: refAssetEntity.id,
+      blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(
+        assetBalanceHistData.paraBlockHeight
+      ),
+      ctx,
     });
 
-    if (!asset) throw Error(`Asset ${assetBalance.assetId} not found`);
+  // TODO must be moved to proper place
+  if (assetBalanceHistData.assetId === refAssetEntity.id) {
+    assetBalanceHistData.transferableInRefAssetNorm = calcPriceNormalized({
+      amount: BigInt(assetBalanceHistData.transferable.toString() ?? '0'),
+      assetDecimals: asset.decimals!,
+      spotPrice: '1',
+    });
+  }
 
-    const accountTotalBalance =
-      await getOrCreateAccountTotalBalanceHistoricalData({
-        accountId: assetBalance.accountId,
-        refAssetId: refAsset.id,
-        blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(
-          assetBalance.paraBlockHeight
-        ),
-        ctx,
-      });
-
-    // TODO must be moved to proper place
-    if (assetBalance.assetId === refAsset.id) {
-      assetBalance.transferableInRefAssetNorm = calcPriceNormalized({
-        amount: BigInt(assetBalance.transferable.toString() ?? '0'),
-        assetDecimals: asset.decimals!,
-        spotPrice: '1',
-      });
-    }
+  /**
+   * When we process Debd token, we need to subtract the debt from the total
+   * transferable balance.
+   */
+  if (asset.resourceType === AssetResourceType.Debt) {
+    const totalBalanceWithoutDebt = BigNumber(
+      accountTotalBalance.totalTransferableNorm
+    ).minus(assetBalanceHistData.transferableInRefAssetNorm || '0');
 
     /**
-     * When we process Debd token, we need to subtract the debt from the total
-     * transferable balance.
+     * At this point we can get negative total balance, if debt token data
+     * occurred in the beginning of the list (accountAssetBalanceHistoricalData).
+     * But account cannot have debt balance higher that collateral or
+     * borrowed amount. So in final result totalBalance always will be positive.
      */
-    if (asset.resourceType === AssetResourceType.Debt) {
-      const totalBalanceWithoutDebt = BigNumber(
-        accountTotalBalance.totalTransferableNorm
-      ).minus(assetBalance.transferableInRefAssetNorm || '0');
-
-      // accountTotalBalance.totalTransferableNorm = (
-      //   totalBalanceWithoutDebt.isLessThan(0)
-      //     ? BigNumber(0)
-      //     : totalBalanceWithoutDebt
-      // ).toFixed();
-      accountTotalBalance.totalTransferableNorm =
-        totalBalanceWithoutDebt.toFixed();
-    } else {
-      accountTotalBalance.totalTransferableNorm = BigNumber(
-        accountTotalBalance.totalTransferableNorm
-      )
-        .plus(assetBalance.transferableInRefAssetNorm || '0')
-        .toFixed();
-    }
-
-    accountTotalBalance.totalLockedNorm = BigNumber(
-      accountTotalBalance.totalLockedNorm
+    // accountTotalBalance.totalTransferableNorm = (
+    //   totalBalanceWithoutDebt.isLessThan(0)
+    //     ? BigNumber(0)
+    //     : totalBalanceWithoutDebt
+    // ).toFixed();
+    accountTotalBalance.totalTransferableNorm =
+      totalBalanceWithoutDebt.toFixed();
+  } else {
+    accountTotalBalance.totalTransferableNorm = BigNumber(
+      accountTotalBalance.totalTransferableNorm
     )
-      .plus(assetBalance.totalLockedInRefAssetNorm || '0')
+      .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
       .toFixed();
-
-    ctx.batchState.state.accountAssetBalanceHistoricalData.set(
-      assetBalance.id,
-      assetBalance
-    );
-
-    ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-      accountTotalBalance.id,
-      accountTotalBalance
-    );
   }
+
+  accountTotalBalance.totalLockedNorm = BigNumber(
+    accountTotalBalance.totalLockedNorm
+  )
+    .plus(assetBalanceHistData.totalLockedInRefAssetNorm || '0')
+    .toFixed();
+
+  ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+    assetBalanceHistData.id,
+    assetBalanceHistData
+  );
+
+  ctx.batchState.state.accountTotalBalanceHistoricalData.set(
+    accountTotalBalance.id,
+    accountTotalBalance
+  );
 }
 
 export async function handleLiquidityBalancesInTotalBalances({
@@ -471,12 +582,14 @@ export async function handleUnchangedAccountAssetBalances({
     );
   }
 
+  const ensuredUnchangedAccountAssetBalancesPerBlock =
+    await ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData({
+      unchangedAccountAssetBalancesPerBlock,
+      ctx,
+    });
   await createAccountAssetBalancesForOutdatedBalances({
-    unchangedAccountAssetBalancesPerBlock,
+    unchangedAccountAssetBalancesPerBlock:
+      ensuredUnchangedAccountAssetBalancesPerBlock,
     ctx,
   });
-  // updateAccountTotalBalanceHistoricalDataWithUnchangedBalances({
-  //   unchangedAccountAssetBalancesPerBlock,
-  //   ctx,
-  // });
 }

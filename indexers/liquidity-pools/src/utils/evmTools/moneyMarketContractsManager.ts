@@ -402,7 +402,7 @@ export class MoneyMarketContractsManager {
 
         totalResponse.push(response);
       },
-      { concurrency: appConfig.concurrency.RUNTIME_API_CALLS_CONCURRENCY }
+      { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
     );
 
     return totalResponse;

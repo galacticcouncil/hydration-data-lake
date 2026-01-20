@@ -18,9 +18,11 @@ import { calcPriceNormalized } from '../../utils/helpers';
 import pMap from 'p-map';
 import { StorageResolver } from '../../parsers/storageResolver';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
-import { getAllAccountPositiveAssetBalances } from '../../utils/pgConnectionManagers/queries/getAllAccountPositiveAssetBalances.sql';
+import { getLatestAccountAssetBalancesAtBlock } from '../../utils/pgConnectionManagers/queries/getAllAccountPositiveAssetBalances.sql';
 import { getOrCreateAccountProcessingStatus } from '../accounts/accountProcessingStatus';
 import { AssetBalancesStorageDataPerBlockPerAccountMap } from './commonAssetBalances';
+import { getAssetBalanceInRefAsset } from './utils';
+import { AssetId } from '@polkadot/types/interfaces';
 
 export async function handleMmAssetAccountBalancesPerBlock({
   ctx,
@@ -31,7 +33,7 @@ export async function handleMmAssetAccountBalancesPerBlock({
   involvedAccountsAssetsPerBlockMap: InvolvedAccountsAndAssetsInMmEventsPerBlockMap;
   prefetchedBalancesForAccountsInvolvedToMmEvents: AssetBalancesStorageDataPerBlockPerAccountMap;
 }) {
-  for (const blockSlotData of [...involvedAccountsAssetsPerBlockMap.values()]) {
+  for (const blockSlotData of involvedAccountsAssetsPerBlockMap.values()) {
     await pMap(
       Array.from(blockSlotData.accountsAssetsMap.values()),
       async (accountAssetsMap) => {
@@ -145,67 +147,75 @@ export async function handleMmAssetAccountBalancesPerBlock({
 
           historicalDataEntity.transferable = assetBalance.balance;
 
-          let assetInId = assetBalance.asset.id;
-
-          if (
-            assetBalance.asset.resourceType === AssetResourceType.Debt &&
-            !!assetBalance.asset.underlyingAssetId
-          ) {
-            const assetFull: Asset | undefined = assetBalance.asset;
-            let underlyingAsset: Asset | undefined =
-              ctx.batchState.state.assetsAll.get(
-                assetBalance.asset.underlyingAssetId
-              );
-            if (!underlyingAsset) {
-              /**
-               * We need this re-fetch to be sure that cached Asset contains data
-               * about a related underlyingAsset
-               */
-              // assetFull = await ctx.storeUtils.findOneWithLogs(
-              //   Asset,
-              //   {
-              //     where: { id: assetBalance.asset.id },
-              //     relations: {
-              //       underlyingAsset: true,
-              //     },
-              //   },
-              //   {
-              //     className: 'Asset',
-              //     originCallFn: 'handleMmAssetAccountBalancesPerBlock',
-              //   }
-              // );
-              underlyingAsset =
-                (await ctx.storeUtils.findOneWithLogs(
-                  Asset,
-                  {
-                    where: {
-                      assetRegistryId: assetFull.underlyingAssetId as string,
-                    },
-                    relations: {},
-                  },
-                  {
-                    className: 'Asset',
-                    originCallFn: 'handleMmAssetAccountBalancesPerBlock',
-                  }
-                )) ?? undefined;
-            }
-            if (underlyingAsset) assetInId = underlyingAsset.id;
-          }
-
-          const assetSpotPrice = getAssetsPairPrice({
-            ctx,
-            assetInId,
-            blockHeight: blockSlotData.block.height,
-          });
+          // let assetInId = assetBalance.asset.id;
+          //
+          // if (
+          //   assetBalance.asset.resourceType === AssetResourceType.Debt &&
+          //   !!assetBalance.asset.underlyingAssetId
+          // ) {
+          //   const assetFull: Asset | undefined = assetBalance.asset;
+          //   let underlyingAsset: Asset | undefined =
+          //     ctx.batchState.state.assetsAll.get(
+          //       assetBalance.asset.underlyingAssetId
+          //     );
+          //   if (!underlyingAsset) {
+          //     /**
+          //      * We need this re-fetch to be sure that cached Asset contains data
+          //      * about a related underlyingAsset
+          //      */
+          //     // assetFull = await ctx.storeUtils.findOneWithLogs(
+          //     //   Asset,
+          //     //   {
+          //     //     where: { id: assetBalance.asset.id },
+          //     //     relations: {
+          //     //       underlyingAsset: true,
+          //     //     },
+          //     //   },
+          //     //   {
+          //     //     className: 'Asset',
+          //     //     originCallFn: 'handleMmAssetAccountBalancesPerBlock',
+          //     //   }
+          //     // );
+          //     underlyingAsset =
+          //       (await ctx.storeUtils.findOneWithLogs(
+          //         Asset,
+          //         {
+          //           where: {
+          //             assetRegistryId: assetFull.underlyingAssetId as string,
+          //           },
+          //           relations: {},
+          //         },
+          //         {
+          //           className: 'Asset',
+          //           originCallFn: 'handleMmAssetAccountBalancesPerBlock',
+          //         }
+          //       )) ?? undefined;
+          //   }
+          //   if (underlyingAsset) assetInId = underlyingAsset.id;
+          // }
+          //
+          // const assetSpotPrice = getAssetsPairPrice({
+          //   ctx,
+          //   assetInId,
+          //   blockHeight: blockSlotData.block.height,
+          // });
+          //
+          // historicalDataEntity.transferableInRefAssetNorm =
+          //   assetSpotPrice && assetBalance.asset.decimals
+          //     ? calcPriceNormalized({
+          //         amount: assetBalance.balance,
+          //         assetDecimals: assetBalance.asset.decimals,
+          //         spotPrice: assetSpotPrice,
+          //       })
+          //     : '0';
 
           historicalDataEntity.transferableInRefAssetNorm =
-            assetSpotPrice && assetBalance.asset.decimals
-              ? calcPriceNormalized({
-                  amount: assetBalance.balance,
-                  assetDecimals: assetBalance.asset.decimals,
-                  spotPrice: assetSpotPrice,
-                })
-              : '0';
+            await getAssetBalanceInRefAsset({
+              balance: assetBalance.balance,
+              asset: assetBalance.asset,
+              blockHeight: blockSlotData.block.height,
+              ctx,
+            });
 
           ctx.batchState.state.accountAssetBalanceHistoricalData.set(
             historicalDataEntity.id,
@@ -392,11 +402,11 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
   const allExistingMmAssets = await getAllMoneyMarketAssets(ctx);
 
   /**
-   * Collect debt assets per block for all processing accounts.
+   * Collect Money Market assets (Debt and aToken) per block for all processing accounts.
    * We check all previous balances snapshots, and if somewhere in a history
-   * account had debt asset balance, this asset will be included into the list.
+   * account had MM asset balance, this asset will be included into the list.
    * Also, if an account is newly created and has mmReserveBalancesInitialized: false,
-   * we need to check all debt token balances for such an account.
+   * we need to check all MM asset balances for such an account.
    */
   const accountMmAssetsPerBlock = await getAccountMmAssetsPerBlock({
     ctx,
@@ -408,56 +418,72 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
     async ([blockHeight, accountAssetIds]) => {
       const assetSpotPricesAtBlock: Map<string, string | null> = new Map();
 
+      /**
+       * Get and index spot prices by asset ID for further usage.
+       */
       for (const asset of allExistingMmAssets) {
         if (!asset.underlyingAssetId) continue;
 
-        if (asset.resourceType === AssetResourceType.aToken) {
-          assetSpotPricesAtBlock.set(
-            asset.id,
-            getAssetsPairPrice({
-              assetInId: asset.id,
-              blockHeight,
-              ctx,
-            })
-          );
-          continue;
-        }
-
-        const debtTokenUnderliningAsset = await getOrCreateAsset({
-          id: asset.underlyingAssetId,
-          ctx,
-          ensure: true,
-          blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
-        });
-
-        if (!debtTokenUnderliningAsset) continue;
+        let assetInId = asset.id;
 
         /**
          * As we don't track debtToken spot price because it's equal with
          * underlining asset, we use underlining asset spot price instead.
          */
+        if (asset.resourceType === AssetResourceType.Debt) {
+          const debtTokenUnderliningAsset = await getOrCreateAsset({
+            id: asset.underlyingAssetId,
+            ctx,
+            ensure: true,
+            blockHeader:
+              ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
+          });
+
+          if (!debtTokenUnderliningAsset) continue;
+
+          assetInId = debtTokenUnderliningAsset.id;
+        }
+
         assetSpotPricesAtBlock.set(
           asset.id,
           getAssetsPairPrice({
-            assetInId: debtTokenUnderliningAsset.id,
+            assetInId,
             blockHeight,
             ctx,
           })
         );
       }
 
-      await pMap(
-        Array.from(accountAssetIds.entries()),
-        async ([accountId, debtAssetsSet]) => {
-          const account = await getOrCreateAccount({ ctx, id: accountId });
-          if (!account.boundEvmAddress) {
-            return;
-          }
+      const accountsIndexedByAssetIds = new Map<string, Set<string>>();
 
-          for (const debtAssetId of debtAssetsSet) {
+      for (const [accountId, mmAssetsSet] of accountAssetIds.entries()) {
+        for (const id of mmAssetsSet.values()) {
+          if (!accountsIndexedByAssetIds.has(id))
+            accountsIndexedByAssetIds.set(id, new Set());
+
+          accountsIndexedByAssetIds.get(id)!.add(accountId);
+        }
+      }
+
+      await pMap(
+        Array.from(accountsIndexedByAssetIds.entries()),
+        async ([mmAssetId, accountsSet]) => {
+          const mmAsset = await getOrCreateAsset({
+            ctx,
+            id: mmAssetId,
+            ensure: false,
+          });
+
+          if (!mmAsset) return;
+
+          for (const accountId of accountsSet.values()) {
+            const account = await getOrCreateAccount({ ctx, id: accountId });
+            if (!account.boundEvmAddress) {
+              continue;
+            }
             if (
               ctx.batchState.state.accountAssetBalanceHistoricalData.has(
-                `${accountId}-${debtAssetId}-${blockHeight}`
+                `${accountId}-${mmAssetId}-${blockHeight}`
               )
             ) {
               // To prevent duplicated balance check in case this asset/account
@@ -465,18 +491,10 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
               continue;
             }
 
-            const debtAsset = await getOrCreateAsset({
-              ctx,
-              id: debtAssetId,
-              ensure: false,
-            });
-
-            if (!debtAsset) continue;
-
             const balance =
               await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
                 {
-                  contractAddress: debtAsset.evmAddress!,
+                  contractAddress: mmAsset.evmAddress!,
                   accountAddress: account.boundEvmAddress!,
                   blockNumber: blockHeight,
                 }
@@ -484,8 +502,8 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
 
             if (
               !balance ||
-              !assetSpotPricesAtBlock.has(debtAssetId) ||
-              !assetSpotPricesAtBlock.get(debtAssetId)
+              !assetSpotPricesAtBlock.has(mmAssetId) ||
+              !assetSpotPricesAtBlock.get(mmAssetId)
             ) {
               continue;
             }
@@ -493,7 +511,7 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
             const assetBalanceHistData =
               await getOrCreateAccountAssetBalanceHistoricalData({
                 ctx,
-                assetId: debtAssetId,
+                assetId: mmAssetId,
                 account,
                 blockHeader:
                   ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
@@ -501,11 +519,11 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
               });
 
             assetBalanceHistData.transferable = balance;
-            assetBalanceHistData.transferableInRefAssetNorm = debtAsset.decimals
+            assetBalanceHistData.transferableInRefAssetNorm = mmAsset.decimals
               ? calcPriceNormalized({
                   amount: balance,
-                  assetDecimals: debtAsset.decimals,
-                  spotPrice: assetSpotPricesAtBlock.get(debtAsset.id)!,
+                  assetDecimals: mmAsset.decimals,
+                  spotPrice: assetSpotPricesAtBlock.get(mmAsset.id)!,
                 })
               : '0';
 
@@ -516,7 +534,7 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
           }
         },
         {
-          concurrency: 5,
+          concurrency: ctx.appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY,
         }
       );
     },
@@ -537,6 +555,9 @@ interface RawAccountMmAssetBalances {
  * Collect Money Market assets (aToken || debtToken) per block for all processing
  * accounts. We check all previous balances snapshots, and if somewhere in a history
  * account had MM asset balance, this asset will be included into the list.
+ *
+ * Also, if an account is newly created and has mmReserveBalancesInitialized: false,
+ * we need to check all MM asset balances for such an account.
  */
 async function getAccountMmAssetsPerBlock({
   allProcessedAccountsPerBlock,
@@ -546,8 +567,8 @@ async function getAccountMmAssetsPerBlock({
   ctx: SqdProcessorContext<Store>;
 }): Promise<Map<number, Map<string, Set<string>>>> {
   const allExistingMmAssets = await getAllMoneyMarketAssets(ctx);
-  const assetIdsList = allExistingMmAssets.map((a) => a.id);
-  const assetIdsSet = new Set(assetIdsList);
+  const allExistingMmAssetIdsList = allExistingMmAssets.map((a) => a.id);
+  const allExistingMmAssetIdsSet = new Set(allExistingMmAssetIdsList);
   const accountsMmAssetsPerBlock: Map<
     number,
     Map<string, Set<string>>
@@ -558,6 +579,7 @@ async function getAccountMmAssetsPerBlock({
   ).sort()[0];
 
   const allAccountsForMmReserveBalancesInit = new Set<Account>();
+  const allAccountsForProcessingTmp = new Set<Account>();
 
   const pgPool = CommonPgPool.getInstance();
 
@@ -581,6 +603,7 @@ async function getAccountMmAssetsPerBlock({
   ] of allProcessedAccountsPerBlock.entries()) {
     for (const accountId of accountsSet) {
       const account = await getOrCreateAccount({ ctx, id: accountId });
+      allAccountsForProcessingTmp.add(account);
       const accountProcStatus = await getOrCreateAccountProcessingStatus({
         id: accountId,
         ctx,
@@ -598,8 +621,19 @@ async function getAccountMmAssetsPerBlock({
      */
     try {
       const result = await pgPool.query<RawAccountMmAssetBalances>(
-        getAllAccountPositiveAssetBalances,
-        [Array.from(accountsSet.values()), assetIdsList, blockNumber]
+        getLatestAccountAssetBalancesAtBlock,
+        /**
+         * [
+         *  <accounts to find balances for>,
+         *  <assets to find balances for>,
+         *  <balances must be older than this block number>
+         * ]
+         */
+        [
+          Array.from(accountsSet.values()),
+          allExistingMmAssetIdsList,
+          blockNumber,
+        ]
       );
 
       if (!accountsMmAssetsPerBlock.has(blockNumber))
@@ -626,11 +660,11 @@ async function getAccountMmAssetsPerBlock({
     for (const item of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
       if (
         item.paraBlockHeight >= blockNumber ||
-        !assetIdsSet.has(item.assetId) ||
+        !allExistingMmAssetIdsSet.has(item.assetId) ||
         !accountsSet.has(item.accountId) ||
         (item.paraBlockHeight <= blockNumber &&
           accountsSet.has(item.accountId) &&
-          assetIdsSet.has(item.assetId) &&
+          allExistingMmAssetIdsSet.has(item.assetId) &&
           !item.transferable)
       )
         continue;

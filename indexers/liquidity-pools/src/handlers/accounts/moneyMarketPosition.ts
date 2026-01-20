@@ -3,23 +3,13 @@ import pMap from 'p-map';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  AccountMmPositionHistoricalData,
-  EvmEventName,
-} from '../../model';
+import { AccountMmPositionHistoricalData, EvmEventName } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../parsers/storageResolver';
 import { EventName } from '../../parsers/types/events';
-import {
-  EvmAccountsAccountExtensionWithEvmAddress,
-} from '../../parsers/types/storage';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
-import {
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
+import { EvmAccountsAccountExtensionWithEvmAddress } from '../../parsers/types/storage';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import {
   getOrCreateAccount,
   getOrCreateAccountByBoundEvmAddress,
@@ -116,10 +106,12 @@ export async function handleAccountMmPositionDataOnMmEvent({
     StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(
       { accountId: account.id, block: blockHeader }
     ) ??
-    (await MoneyMarketContractsManager.getInstance().getAccountMmPositionDataWithLogs({
-      accountAddress: accountEvmAddress,
-      blockNumber: blockHeader.height,
-    }));
+    (await MoneyMarketContractsManager.getInstance().getAccountMmPositionDataWithLogs(
+      {
+        accountAddress: accountEvmAddress,
+        blockNumber: blockHeader.height,
+      }
+    ));
 
   if (!positionData) {
     // console.log(`No contract data for address ${accountEvmAddress}`);

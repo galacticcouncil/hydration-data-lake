@@ -129,9 +129,9 @@ export async function handleAssetAccountBalances(
   });
 
   /**
-   * Include Asset Balances unchanged in the current block but existing in the
+   * Includes Asset Balances unchanged in the current block but existing in the
    * previous block.
-   *
+   * IMPORTANT: Can mutate AccountTotalBalanceHistoricalData
    */
   await handleUnchangedAccountAssetBalances({ ctx });
 

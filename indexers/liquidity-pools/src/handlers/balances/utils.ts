@@ -1,9 +1,15 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { AccountAssetBalanceHistoricalData } from '../../model';
+import {
+  AccountAssetBalanceHistoricalData,
+  Asset,
+  AssetResourceType,
+  AssetType,
+} from '../../model';
 import { getOrCreateAsset } from '../assets/asset';
 import { calcPriceNormalized } from '../../utils/helpers';
 import {
+  addAssetBalanceToAccountTotalBalance,
   AssetBalancesIndexedByAccountAndAssetMap,
   AssetBalancesIndexedByBlockAndAccountMap,
   RawAccountAssetBalanceHistoricalData,
@@ -21,6 +27,8 @@ import { getOrCreateAccount } from '../accounts';
 import { InvolvedAccountsAndAssetsInMmEventsPerBlockMap } from './moneyMarketAssetBalances';
 import parsers from '../../parsers';
 import pMap from 'p-map';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 type AssetId = string;
 
 export async function getUnchangedAccountAssetBalanceFromCachedEntity({
@@ -137,6 +145,486 @@ export async function getUnchangedAccountAssetBalanceFromPersistentEntity({
   };
 }
 
+/**
+ * Double-check account asset balances with actual storage data, avoiding data
+ * from storage dictionary or other caching layers.
+ */
+export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData({
+  unchangedAccountAssetBalancesPerBlock,
+  ctx,
+}: {
+  unchangedAccountAssetBalancesPerBlock: UnchangedAccountAssetBalancesPerBlockMap;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const ensuredUnchangedAccountAssetBalancesByOnChainData: UnchangedAccountAssetBalancesPerBlockMap =
+    new Map();
+
+  const refAsset = await getOrCreateAsset({
+    assetRegistryId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+    ctx,
+    ensure: true,
+    blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+  });
+
+  await pMap(
+    Array.from(unchangedAccountAssetBalancesPerBlock.entries()),
+    async ([blockNumber, accountAssetBalancesAtBlock]) => {
+      const blockHeader =
+        ctx.batchState.getBlockHeaderByBlockHeight(blockNumber);
+      if (!ensuredUnchangedAccountAssetBalancesByOnChainData.has(blockNumber))
+        ensuredUnchangedAccountAssetBalancesByOnChainData.set(
+          blockNumber,
+          new Map()
+        );
+
+      for (const [
+        accountId,
+        accountBalances,
+      ] of accountAssetBalancesAtBlock.entries()) {
+        const accountEntity = await getOrCreateAccount({
+          ctx,
+          id: accountId,
+        });
+        if (
+          !ensuredUnchangedAccountAssetBalancesByOnChainData
+            .get(blockNumber)!
+            .has(accountId)
+        )
+          ensuredUnchangedAccountAssetBalancesByOnChainData
+            .get(blockNumber)!
+            .set(accountId, new Map());
+
+        const assetBalancesHistDataWithNoResult =
+          ensuredUnchangedAccountAssetBalancesByOnChainData
+            .get(blockNumber)!
+            .get(accountId)!;
+
+        await pMap(
+          Array.from(accountBalances.entries()),
+          async ([assetId, assetPrevBalanceData]) => {
+            const assetEntity = await getOrCreateAsset({
+              id: assetId,
+              ctx,
+              ensure: false,
+            });
+            if (!assetEntity) {
+              assetBalancesHistDataWithNoResult.set(
+                assetId,
+                assetPrevBalanceData
+              );
+              return;
+            }
+
+            let totalTransferableBalance = 0n;
+            let totalLockedBalance = 0n;
+
+            if (assetEntity.assetType === AssetType.Erc20) {
+              totalTransferableBalance =
+                (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+                  {
+                    contractAddress: assetEntity.evmAddress!,
+                    accountAddress: accountEntity.boundEvmAddress!,
+                    blockNumber,
+                  }
+                )) ?? 0n;
+              if (!totalTransferableBalance) {
+                assetBalancesHistDataWithNoResult.set(
+                  assetId,
+                  assetPrevBalanceData
+                );
+                return;
+              }
+            } else {
+              if (assetId === '0') {
+                const balances =
+                  await parsers.storage.system.getNativeTokenBalanceMany({
+                    block: blockHeader,
+                    accountIds: [accountId],
+                    skipCache: true,
+                  });
+
+                if (balances.length === 0 || !balances[0]?.data) {
+                  assetBalancesHistDataWithNoResult.set(
+                    assetId,
+                    assetPrevBalanceData
+                  );
+                  return;
+                }
+
+                totalTransferableBalance = balances[0].data.free;
+                totalLockedBalance = balances[0].data.reserved;
+              } else {
+                const balances =
+                  await parsers.storage.tokens.getTokenBalancesMany({
+                    block:
+                      ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
+                    accountIds: [accountId],
+                    skipCache: true,
+                  });
+
+                if (balances.length === 0 || !balances[0]?.assetBalances) {
+                  assetBalancesHistDataWithNoResult.set(
+                    assetId,
+                    assetPrevBalanceData
+                  );
+                  return;
+                }
+
+                const assetBalance = balances[0].assetBalances.find(
+                  (b) => b.assetId === assetEntity.assetRegistryId
+                );
+                if (!assetBalance) {
+                  assetBalancesHistDataWithNoResult.set(
+                    assetId,
+                    assetPrevBalanceData
+                  );
+                  return;
+                }
+                totalTransferableBalance = assetBalance.data.free;
+                totalLockedBalance = assetBalance.data.reserved;
+              }
+            }
+
+            const assetBalanceHistDataEntity =
+              await getOrCreateAccountAssetBalanceHistoricalData({
+                ctx,
+                assetId: assetId,
+                account: accountEntity,
+                blockHeader,
+                fetchFromDb: false,
+              });
+
+            assetBalanceHistDataEntity.transferable = totalTransferableBalance;
+            assetBalanceHistDataEntity.totalLocked = totalLockedBalance;
+
+            assetBalanceHistDataEntity.transferableInRefAssetNorm =
+              await getAssetBalanceInRefAsset({
+                balance: totalTransferableBalance ?? 0n,
+                asset: assetEntity,
+                blockHeight: blockNumber,
+                ctx,
+              });
+
+            assetBalanceHistDataEntity.totalLockedInRefAssetNorm =
+              await getAssetBalanceInRefAsset({
+                balance: totalLockedBalance ?? 0n,
+                asset: assetEntity,
+                blockHeight: blockNumber,
+                ctx,
+              });
+
+            ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+              assetBalanceHistDataEntity.id,
+              assetBalanceHistDataEntity
+            );
+
+            await addAssetBalanceToAccountTotalBalance({
+              refAsset,
+              ctx,
+              assetBalanceHistData: assetBalanceHistDataEntity,
+            });
+          },
+          {
+            concurrency:
+              ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+          }
+        );
+      }
+    },
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
+  );
+
+  // for (const [
+  //   blockNumber,
+  //   accountAssetBalancesAtBlock,
+  // ] of unchangedAccountAssetBalancesPerBlock.entries()) {
+  //   const blockHeader = ctx.batchState.getBlockHeaderByBlockHeight(blockNumber);
+  //   if (!ensuredUnchangedAccountAssetBalancesByOnChainData.has(blockNumber))
+  //     ensuredUnchangedAccountAssetBalancesByOnChainData.set(
+  //       blockNumber,
+  //       new Map()
+  //     );
+  //
+  //   for (const [
+  //     accountId,
+  //     accountBalances,
+  //   ] of accountAssetBalancesAtBlock.entries()) {
+  //     const accountEntity = await getOrCreateAccount({ ctx, id: accountId });
+  //     if (
+  //       !ensuredUnchangedAccountAssetBalancesByOnChainData
+  //         .get(blockNumber)!
+  //         .has(accountId)
+  //     )
+  //       ensuredUnchangedAccountAssetBalancesByOnChainData
+  //         .get(blockNumber)!
+  //         .set(accountId, new Map());
+  //
+  //     const assetBalancesHistDataWithNoResult =
+  //       ensuredUnchangedAccountAssetBalancesByOnChainData
+  //         .get(blockNumber)!
+  //         .get(accountId)!;
+  //
+  //     await pMap(
+  //       Array.from(accountBalances.entries()),
+  //       async ([assetId, assetPrevBalanceData]) => {
+  //         const assetEntity = await getOrCreateAsset({
+  //           id: assetId,
+  //           ctx,
+  //           ensure: false,
+  //         });
+  //         if (!assetEntity) {
+  //           assetBalancesHistDataWithNoResult.set(
+  //             assetId,
+  //             assetPrevBalanceData
+  //           );
+  //           return;
+  //         }
+  //
+  //         let totalTransferableBalance = 0n;
+  //         let totalLockedBalance = 0n;
+  //
+  //         if (assetEntity.assetType === AssetType.Erc20) {
+  //           totalTransferableBalance =
+  //             (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+  //               {
+  //                 contractAddress: assetEntity.evmAddress!,
+  //                 accountAddress: accountEntity.boundEvmAddress!,
+  //                 blockNumber,
+  //               }
+  //             )) ?? 0n;
+  //           if (!totalTransferableBalance) {
+  //             assetBalancesHistDataWithNoResult.set(
+  //               assetId,
+  //               assetPrevBalanceData
+  //             );
+  //             return;
+  //           }
+  //         } else {
+  //           if (assetId === '0') {
+  //             const balances =
+  //               await parsers.storage.system.getNativeTokenBalanceMany({
+  //                 block: blockHeader,
+  //                 accountIds: [accountId],
+  //                 skipCache: true,
+  //               });
+  //
+  //             if (balances.length === 0 || !balances[0]?.data) {
+  //               assetBalancesHistDataWithNoResult.set(
+  //                 assetId,
+  //                 assetPrevBalanceData
+  //               );
+  //               return;
+  //             }
+  //
+  //             totalTransferableBalance = balances[0].data.free;
+  //             totalLockedBalance = balances[0].data.reserved;
+  //           } else {
+  //             const balances =
+  //               await parsers.storage.tokens.getTokenBalancesMany({
+  //                 block:
+  //                   ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
+  //                 accountIds: [accountId],
+  //                 skipCache: true,
+  //               });
+  //
+  //             if (balances.length === 0 || !balances[0]?.assetBalances) {
+  //               assetBalancesHistDataWithNoResult.set(
+  //                 assetId,
+  //                 assetPrevBalanceData
+  //               );
+  //               return;
+  //             }
+  //
+  //             const assetBalance = balances[0].assetBalances.find(
+  //               (b) => b.assetId === assetEntity.assetRegistryId
+  //             );
+  //             if (!assetBalance) {
+  //               assetBalancesHistDataWithNoResult.set(
+  //                 assetId,
+  //                 assetPrevBalanceData
+  //               );
+  //               return;
+  //             }
+  //             totalTransferableBalance = assetBalance.data.free;
+  //             totalLockedBalance = assetBalance.data.reserved;
+  //           }
+  //         }
+  //
+  //         const assetBalanceHistDataEntity =
+  //           await getOrCreateAccountAssetBalanceHistoricalData({
+  //             ctx,
+  //             assetId: assetId,
+  //             account: accountEntity,
+  //             blockHeader,
+  //             fetchFromDb: false,
+  //           });
+  //
+  //         assetBalanceHistDataEntity.transferable = totalTransferableBalance;
+  //         assetBalanceHistDataEntity.totalLocked = totalLockedBalance;
+  //
+  //         assetBalanceHistDataEntity.transferableInRefAssetNorm =
+  //           await getAssetBalanceInRefAsset({
+  //             balance: totalTransferableBalance ?? 0n,
+  //             asset: assetEntity,
+  //             blockHeight: blockNumber,
+  //             ctx,
+  //           });
+  //
+  //         assetBalanceHistDataEntity.totalLockedInRefAssetNorm =
+  //           await getAssetBalanceInRefAsset({
+  //             balance: totalLockedBalance ?? 0n,
+  //             asset: assetEntity,
+  //             blockHeight: blockNumber,
+  //             ctx,
+  //           });
+  //
+  //         ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+  //           assetBalanceHistDataEntity.id,
+  //           assetBalanceHistDataEntity
+  //         );
+  //
+  //         await addAssetBalanceToAccountTotalBalance({
+  //           refAsset,
+  //           ctx,
+  //           assetBalanceHistData: assetBalanceHistDataEntity,
+  //         });
+  //       },
+  //       {
+  //         concurrency:
+  //           ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+  //       }
+  //     );
+  //
+  //     // assetsLoop: for (const [
+  //     //   assetId,
+  //     //   assetPrevBalanceData,
+  //     // ] of accountBalances.entries()) {
+  //     //   const assetEntity = await getOrCreateAsset({
+  //     //     id: assetId,
+  //     //     ctx,
+  //     //     ensure: false,
+  //     //   });
+  //     //   if (!assetEntity) {
+  //     //     assetBalancesHistDataWithNoResult.set(assetId, assetPrevBalanceData);
+  //     //     continue assetsLoop;
+  //     //   }
+  //     //
+  //     //   let totalTransferableBalance = 0n;
+  //     //   let totalLockedBalance = 0n;
+  //     //
+  //     //   if (assetEntity.assetType === AssetType.Erc20) {
+  //     //     totalTransferableBalance =
+  //     //       (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+  //     //         {
+  //     //           contractAddress: assetEntity.evmAddress!,
+  //     //           accountAddress: accountEntity.boundEvmAddress!,
+  //     //           blockNumber,
+  //     //         }
+  //     //       )) ?? 0n;
+  //     //     if (!totalTransferableBalance) {
+  //     //       assetBalancesHistDataWithNoResult.set(
+  //     //         assetId,
+  //     //         assetPrevBalanceData
+  //     //       );
+  //     //       continue assetsLoop;
+  //     //     }
+  //     //   } else {
+  //     //     if (assetId === '0') {
+  //     //       const balances =
+  //     //         await parsers.storage.system.getNativeTokenBalanceMany({
+  //     //           block: blockHeader,
+  //     //           accountIds: [accountId],
+  //     //           skipCache: true,
+  //     //         });
+  //     //
+  //     //       if (balances.length === 0 || !balances[0]?.data) {
+  //     //         assetBalancesHistDataWithNoResult.set(
+  //     //           assetId,
+  //     //           assetPrevBalanceData
+  //     //         );
+  //     //         continue assetsLoop;
+  //     //       }
+  //     //
+  //     //       totalTransferableBalance = balances[0].data.free;
+  //     //       totalLockedBalance = balances[0].data.reserved;
+  //     //     } else {
+  //     //       const balances = await parsers.storage.tokens.getTokenBalancesMany({
+  //     //         block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
+  //     //         accountIds: [accountId],
+  //     //         skipCache: true,
+  //     //       });
+  //     //
+  //     //       if (balances.length === 0 || !balances[0]?.assetBalances) {
+  //     //         assetBalancesHistDataWithNoResult.set(
+  //     //           assetId,
+  //     //           assetPrevBalanceData
+  //     //         );
+  //     //         continue assetsLoop;
+  //     //       }
+  //     //
+  //     //       const assetBalance = balances[0].assetBalances.find(
+  //     //         (b) => b.assetId === assetEntity.assetRegistryId
+  //     //       );
+  //     //       if (!assetBalance) {
+  //     //         assetBalancesHistDataWithNoResult.set(
+  //     //           assetId,
+  //     //           assetPrevBalanceData
+  //     //         );
+  //     //         continue assetsLoop;
+  //     //       }
+  //     //       totalTransferableBalance = assetBalance.data.free;
+  //     //       totalLockedBalance = assetBalance.data.reserved;
+  //     //     }
+  //     //   }
+  //     //
+  //     //   const assetBalanceHistDataEntity =
+  //     //     await getOrCreateAccountAssetBalanceHistoricalData({
+  //     //       ctx,
+  //     //       assetId: assetId,
+  //     //       account: accountEntity,
+  //     //       blockHeader,
+  //     //       fetchFromDb: false,
+  //     //     });
+  //     //
+  //     //   assetBalanceHistDataEntity.transferable = totalTransferableBalance;
+  //     //   assetBalanceHistDataEntity.totalLocked = totalLockedBalance;
+  //     //
+  //     //   assetBalanceHistDataEntity.transferableInRefAssetNorm =
+  //     //     await getAssetBalanceInRefAsset({
+  //     //       balance: totalTransferableBalance ?? 0n,
+  //     //       asset: assetEntity,
+  //     //       blockHeight: blockNumber,
+  //     //       ctx,
+  //     //     });
+  //     //
+  //     //   assetBalanceHistDataEntity.totalLockedInRefAssetNorm =
+  //     //     await getAssetBalanceInRefAsset({
+  //     //       balance: totalLockedBalance ?? 0n,
+  //     //       asset: assetEntity,
+  //     //       blockHeight: blockNumber,
+  //     //       ctx,
+  //     //     });
+  //     //
+  //     //   ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+  //     //     assetBalanceHistDataEntity.id,
+  //     //     assetBalanceHistDataEntity
+  //     //   );
+  //     //
+  //     //   await addAssetBalanceToAccountTotalBalance({
+  //     //     refAsset,
+  //     //     ctx,
+  //     //     assetBalanceHistData: assetBalanceHistDataEntity,
+  //     //   });
+  //     // }
+  //   }
+  // }
+
+  return ensuredUnchangedAccountAssetBalancesByOnChainData;
+}
+
 export async function createAccountAssetBalancesForOutdatedBalances({
   unchangedAccountAssetBalancesPerBlock,
   ctx,
@@ -198,13 +686,6 @@ export function updateAccountTotalBalanceHistoricalDataWithUnchangedBalances({
     ).reduce((acc, value) => {
       return acc.plus(value.transferableInRefAssetNorm);
     }, BigNumber(accountTotalBalance.totalTransferableNorm));
-
-    console.log(
-      `accountTotalTransferableBalanceSummaryAtBlock - ${accountTotalBalance.accountId} - ${accountTotalBalance.paraBlockHeight} - ${accountTotalTransferableBalanceSummaryAtBlock.toFixed(
-        18,
-        BigNumber.ROUND_HALF_UP
-      )}`
-    );
 
     accountTotalBalance.totalTransferableNorm =
       accountTotalTransferableBalanceSummaryAtBlock.toFixed(
@@ -410,4 +891,61 @@ export async function prefetchBalancesForAccountsInvolvedToMmEvents({
     });
 
   return assetBalancesStorageDataPerBlockPerAccountMap;
+}
+
+export async function getAssetBalanceInRefAsset({
+  balance,
+  blockHeight,
+  ctx,
+  asset,
+}: {
+  balance: bigint;
+  asset: Asset;
+  blockHeight: number;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let assetInId = asset.id;
+
+  if (
+    asset.resourceType === AssetResourceType.Debt &&
+    !!asset.underlyingAssetId
+  ) {
+    let underlyingAsset: Asset | undefined = ctx.batchState.state.assetsAll.get(
+      asset.underlyingAssetId
+    );
+    if (!underlyingAsset) {
+      underlyingAsset =
+        (await ctx.storeUtils.findOneWithLogs(
+          Asset,
+          {
+            where: {
+              assetRegistryId: asset.underlyingAssetId,
+            },
+            relations: {},
+          },
+          {
+            className: 'Asset',
+            originCallFn: 'handleMmAssetAccountBalancesPerBlock',
+          }
+        )) ?? undefined;
+    }
+    if (underlyingAsset) assetInId = underlyingAsset.id;
+  }
+
+  const assetSpotPrice = getAssetsPairPrice({
+    ctx,
+    assetInId,
+    blockHeight,
+  });
+
+  const balanceInRefAssetNorm =
+    assetSpotPrice && asset.decimals
+      ? calcPriceNormalized({
+          amount: balance,
+          assetDecimals: asset.decimals,
+          spotPrice: assetSpotPrice,
+        })
+      : '0';
+
+  return balanceInRefAssetNorm;
 }

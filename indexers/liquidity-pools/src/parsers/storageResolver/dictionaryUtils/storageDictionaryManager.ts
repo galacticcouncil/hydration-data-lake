@@ -1487,9 +1487,8 @@ export class StorageDictionaryManager extends QueriesHelper {
       )
         continue;
 
-      if (responseMap.get(balanceData.accountId) === undefined) {
+      if (!responseMap.has(balanceData.accountId))
         responseMap.set(balanceData.accountId, []);
-      }
 
       responseMap.get(balanceData.accountId)?.push({
         assetId: balanceData.assetId,

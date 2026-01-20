@@ -1,8 +1,5 @@
 import pMap from 'p-map';
-import {
-  LessThan,
-  Like,
-} from 'typeorm';
+import { LessThan, Like } from 'typeorm';
 
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
@@ -14,12 +11,8 @@ import {
 } from '../../../model';
 import parsers from '../../../parsers';
 import { SqdProcessorContext } from '../../../processor';
-import {
-  MoneyMarketContractsManager,
-} from '../../../utils/evmTools/moneyMarketContractsManager';
-import {
-  LatestProcessedDataCacheManager,
-} from '../../../utils/latestProcessedDataCacheManager';
+import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
+import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 
 export async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -46,29 +39,54 @@ export async function processAssetsHistoricalDataAtBlock({
     }
   }
 
+  // const totalIssuancePerAssetMapByAssetId = new Map(
+  //   (
+  //     await parsers.storage.tokens.getManyTokensTotalIssuance({
+  //       block,
+  //       tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
+  //     })
+  //   )
+  //     .filter((res) => res.amount !== null)
+  //     .map((res) => [indexedAssets.get(res.tokenId)!, res.amount])
+  // );
+  //
+  // totalIssuancePerAssetMapByAssetId.set(
+  //   '0',
+  //   await parsers.storage.balances.getTotalIssuance({ block })
+  // );
+  //
+  // const mmAssetsTotalSupply =
+  //   await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs(
+  //     {
+  //       addresses: mmAssets.map((a) => a.evmAddress!),
+  //       blockNumber: block.height,
+  //     }
+  //   );
+
+  const [
+    otherAssetsTotalIssuance,
+    nativeTokenTotalIssuance,
+    mmAssetsTotalSupply,
+    dynamicFeesAllAssets,
+  ] = await Promise.all([
+    parsers.storage.tokens.getManyTokensTotalIssuance({
+      block,
+      tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
+    }),
+    parsers.storage.balances.getTotalIssuance({ block }),
+    MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs({
+      addresses: mmAssets.map((a) => a.evmAddress!),
+      blockNumber: block.height,
+    }),
+    parsers.storage.dynamicFees.getAssetFeesAll({ block }),
+  ]);
+
   const totalIssuancePerAssetMapByAssetId = new Map(
-    (
-      await parsers.storage.tokens.getManyTokensTotalIssuance({
-        block,
-        tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
-      })
-    )
+    otherAssetsTotalIssuance
       .filter((res) => res.amount !== null)
       .map((res) => [indexedAssets.get(res.tokenId)!, res.amount])
   );
-
-  totalIssuancePerAssetMapByAssetId.set(
-    '0',
-    await parsers.storage.balances.getTotalIssuance({ block })
-  );
-
-  const mmAssetsTotalSupply =
-    await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs(
-      {
-        addresses: mmAssets.map((a) => a.evmAddress!),
-        blockNumber: block.height,
-      }
-    );
+  totalIssuancePerAssetMapByAssetId.set('0', nativeTokenTotalIssuance);
 
   for (const tSupply of mmAssetsTotalSupply) {
     if (tSupply)
@@ -87,18 +105,21 @@ export async function processAssetsHistoricalDataAtBlock({
       totalIssuancePerAssetMapByAssetId.set(asset.id, 0n);
   }
 
-  const existentialDepositPerAssetMap = new Map(
-    (
-      (await parsers.storage.assetRegistry.getAssetsExistentialDepositAll({
-        block,
-      })) || []
-    ).map((res) => [`${res.assetId}`, res])
-  );
+  // const existentialDepositPerAssetMap = new Map(
+  //   (
+  //     (await parsers.storage.assetRegistry.getAssetsExistentialDepositAll({
+  //       block,
+  //     })) || []
+  //   ).map((res) => [`${res.assetId}`, res])
+  // );
 
+  // const dynamicFeePerAssetMap = new Map(
+  //   (await parsers.storage.dynamicFees.getAssetFeesAll({ block })).map(
+  //     (res) => [`${res.assetId}`, res]
+  //   )
+  // );
   const dynamicFeePerAssetMap = new Map(
-    (await parsers.storage.dynamicFees.getAssetFeesAll({ block })).map(
-      (res) => [`${res.assetId}`, res]
-    )
+    dynamicFeesAllAssets.map((res) => [`${res.assetId}`, res])
   );
 
   await pMap(
@@ -108,7 +129,9 @@ export async function processAssetsHistoricalDataAtBlock({
         return null;
       }
 
-      const blockData = ctx.batchState.getParaBlockFromCacheByHeight(block.height);
+      const blockData = ctx.batchState.getParaBlockFromCacheByHeight(
+        block.height
+      );
       if (!blockData) {
         throw new Error(`Block not found in cache for height ${block.height}`);
       }
@@ -139,6 +162,10 @@ export async function processAssetsHistoricalDataAtBlock({
         newAssetHistoricalData.id,
         newAssetHistoricalData
       );
+    },
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
     }
   );
 }
