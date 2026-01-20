@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 
 import {
   AssetAssetsPairVolume,
+  AssetHistoricalData,
   AssetsPairVolumeHistoricalData,
   Swap,
   SwapAssetBalance,
@@ -62,9 +63,14 @@ import { getOrCreateAsset } from '../asset';
 
 export async function handleAssetPairVolumesHistoricalDataAtBlock({
   blockHeader,
+  assetsHistoricalDataBatchIndexedByBlockAndAssetId,
   ctx,
 }: {
   blockHeader: BlockHeader;
+  assetsHistoricalDataBatchIndexedByBlockAndAssetId: Map<
+    number,
+    Map<string, AssetHistoricalData>
+  >;
   ctx: SqdProcessorContext<Store>;
 }) {
   // const routerAssetPairs = await new RouterAssetPairs().init(blockHeader);
@@ -92,17 +98,18 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
       ctx.appConfig.UNIFIED_EVENTS_GENESIS_SPEC_VERSION
     )
   ) {
-    const blockContextRoutedTrades = [
-      ...ctx.batchState.state.routeTrades.values(),
-    ].filter((trade) => trade.paraBlockHeight === blockHeader.height);
+    const blockContextRoutedTrades = Array.from(
+      ctx.batchState.state.routeTrades.values()
+    ).filter((trade) => trade.paraBlockHeight === blockHeader.height);
 
     for (const trade of blockContextRoutedTrades) {
       swapGroupsToProcess.push(trade.swaps);
     }
   } else {
-    const blockContextSwaps = [...ctx.batchState.state.swaps.values()].filter(
-      (trade) => trade.paraBlockHeight === blockHeader.height
-    );
+    const blockContextSwaps = Array.from(
+      ctx.batchState.state.swaps.values()
+    ).filter((trade) => trade.paraBlockHeight === blockHeader.height);
+
     for (const swap of blockContextSwaps) {
       swapGroupsToProcess.push([swap]);
     }
@@ -180,15 +187,13 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
 
     if (!assetInSpotPrice || !assetOutSpotPrice) continue assetsPairLoop;
 
-    const existingPairVolEntity = [
-      ...ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values(),
-    ].find(
-      (item) =>
-        item.id ===
-          `${assetInInfo.id}-${assetOutInfo.id}-${blockHeader.height}` ||
-        item.id ===
-          `${assetOutInfo.id}-${assetInInfo.id}-${blockHeader.height}`
-    );
+    const existingPairVolEntity =
+      ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.get(
+        `${assetInInfo.id}-${assetOutInfo.id}-${blockHeader.height}`
+      ) ||
+      ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.get(
+        `${assetOutInfo.id}-${assetInInfo.id}-${blockHeader.height}`
+      );
 
     const assetsPairVolumeEntityId =
       existingPairVolEntity?.id ??
@@ -271,14 +276,14 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
       assetsPairVolumeEntity
     );
 
-    const assetsHistoricalDataEntities = [
-      ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
-    ].filter(
-      (item) =>
-        item.paraBlockHeight === blockHeader.height &&
-        (item.assetId === assetInInfo.id ||
-          item.assetId === assetOutInfo.id)
-    );
+    const assetsHistoricalDataEntities: Array<AssetHistoricalData> = [
+      assetsHistoricalDataBatchIndexedByBlockAndAssetId
+        ?.get(blockHeader.height)
+        ?.get(assetInInfo.id),
+      assetsHistoricalDataBatchIndexedByBlockAndAssetId
+        ?.get(blockHeader.height)
+        ?.get(assetOutInfo.id),
+    ].filter((item) => !!item);
 
     for (const assetHisData of assetsHistoricalDataEntities) {
       const assetAssetsPairVolumeJunction = new AssetAssetsPairVolume({
@@ -314,18 +319,6 @@ function getAssetSpotPriceFromHistoricalData({
       `${assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
     )?.priceNormalised ?? null
   );
-
-  // const assetPriceHisData =
-  //   [...ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()]
-  //     .sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
-  //     .find(
-  //       (item) =>
-  //         item.paraBlockHeight <= blockHeader.height &&
-  //         item.assetIn.id === assetId &&
-  //         item.assetOut.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
-  //     )?.priceNormalised ?? null;
-
-  // return assetPriceHisData;
 }
 
 function getRelatedAssetPairsFromSwapsChain(swaps: Swap[]) {

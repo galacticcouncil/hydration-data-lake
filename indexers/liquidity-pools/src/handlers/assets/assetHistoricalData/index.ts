@@ -6,6 +6,7 @@ import { handleAssetSpotPricesHistoricalDataAtBlock } from './assetSpotPrices';
 import { handleAssetPairVolumesHistoricalDataAtBlock } from './assePairVolumes';
 import { processAssetsHistoricalDataAtBlock } from './assetHistoricalData';
 import pMap from 'p-map';
+import { AssetHistoricalData } from '../../../model';
 
 export async function handleAssetHistoricalData({
   blockNumbersToProcess,
@@ -115,21 +116,38 @@ export async function handleAssetPairVolumesHistoricalData({
     ? ctx.blocks.filter((b) => blocksNumbersToProcessSet.has(b.header.height))
     : ctx.blocks;
 
-  for (const blocksSubBatch of splitIntoBatches(
-    blocksToProcess,
-    ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
-  )) {
-    await pMap(
-      blocksSubBatch,
-      async (block) =>
-        handleAssetPairVolumesHistoricalDataAtBlock({
-          blockHeader: block.header,
-          ctx,
-        }),
-      {
-        concurrency:
-          ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
-      }
-    );
+  const assetsHistoricalDataBatchIndexedByBlockAndAssetId: Map<
+    number,
+    Map<string, AssetHistoricalData>
+  > = new Map();
+
+  for (const histItem of ctx.batchState.state.assetsHistoricalDataBatch.values()) {
+    if (
+      !assetsHistoricalDataBatchIndexedByBlockAndAssetId.has(
+        histItem.paraBlockHeight
+      )
+    ) {
+      assetsHistoricalDataBatchIndexedByBlockAndAssetId.set(
+        histItem.paraBlockHeight,
+        new Map()
+      );
+    }
+    assetsHistoricalDataBatchIndexedByBlockAndAssetId
+      .get(histItem.paraBlockHeight)!
+      .set(histItem.assetId, histItem);
   }
+
+  await pMap(
+    blocksToProcess,
+    async (block) =>
+      handleAssetPairVolumesHistoricalDataAtBlock({
+        blockHeader: block.header,
+        assetsHistoricalDataBatchIndexedByBlockAndAssetId,
+        ctx,
+      }),
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
+  );
 }
