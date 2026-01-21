@@ -60,6 +60,7 @@ import {
   prefetchAllAccountsExtensions,
 } from './handlers/evm';
 import { getAccMmPosiotionHistDataWithUniqueData } from './handlers/accounts/utils';
+import { runProcessorCustomDbMigrations } from './customDbMigrations/runProcessorCustomDbMigrations';
 
 const appConfig = AppConfig.getInstance();
 
@@ -70,207 +71,231 @@ if (process.env.INDEXING_IS_PAUSED === 'true') {
   while (true) {}
 }
 
-processor.run(
-  new TypeormDatabase({
-    supportHotBlocks: true,
-    stateSchema: appConfig.STATE_SCHEMA_NAME,
-    isolationLevel: 'READ COMMITTED',
-  }),
-  async (ctx) => {
-    console.time('TOTAL BATCH EXECUTION TIME');
+async function runProcessor() {
+  let customDbMigrationsExecuted = false;
 
-    const ctxWithBatchState: Omit<
-      ProcessorContext<Store>,
-      'batchState' | 'appConfig'
-    > = ctx;
-    const batchState = new BatchState();
-    (ctxWithBatchState as ProcessorContext<Store>).batchState = batchState;
-    (ctxWithBatchState as ProcessorContext<Store>).appConfig =
-      AppConfig.getInstance();
+  processor.run(
+    new TypeormDatabase({
+      supportHotBlocks: true,
+      stateSchema: appConfig.STATE_SCHEMA_NAME,
+      isolationLevel: 'READ COMMITTED',
+    }),
+    async (ctx) => {
+      if (
+        !customDbMigrationsExecuted &&
+        appConfig.IS_CUSTOM_DB_MIGRATIONS_RUNNER
+      ) {
+        /**
+         * This execution must be here because native indexer DB migrations
+         * must be executed first.
+         *
+         * Configuring of "IS_CUSTOM_DB_MIGRATIONS_RUNNER" can be useful to
+         * avoid parallel runs of the same bunch of migrations by multiple
+         * processors if the indexer launched in multiprocessor mode. But even
+         * though the migrations runner function will handle such collision with
+         * retries logic, however, it will take more time.
+         */
+        await runProcessorCustomDbMigrations();
+        customDbMigrationsExecuted = true;
+      }
 
-    const subProcessorStatusManager = new SubProcessorStatusManager(
-      ctxWithBatchState as ProcessorContext<Store>
-    );
-    await subProcessorStatusManager.calcSubBatchConfig();
+      console.time('TOTAL BATCH EXECUTION TIME');
 
-    console.log(`Batch size - ${ctx.blocks.length} blocks.`);
+      const ctxWithBatchState: Omit<
+        ProcessorContext<Store>,
+        'batchState' | 'appConfig'
+      > = ctx;
+      const batchState = new BatchState();
+      (ctxWithBatchState as ProcessorContext<Store>).batchState = batchState;
+      (ctxWithBatchState as ProcessorContext<Store>).appConfig =
+        AppConfig.getInstance();
 
-    console.time(`Blocks batch has been processed in`);
-
-    await waitForAssetsActualisation(
-      subProcessorStatusManager,
-      ctxWithBatchState as ProcessorContext<Store>
-    );
-
-    await prefetchAllAssets(ctxWithBatchState as ProcessorContext<Store>);
-
-    await ensureNativeToken(ctxWithBatchState as ProcessorContext<Store>);
-
-    await actualiseAssets(
-      ctxWithBatchState as ProcessorContext<Store>,
-      subProcessorStatusManager
-    );
-
-    const orderedBlockNumbers = (
-      ctxWithBatchState as ProcessorContext<Store>
-    ).blocks
-      .map((b) => b.header.height)
-      .sort((a, b) => a - b);
-
-    await prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-    await prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-    await prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-    await prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-    await prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-    await prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-    await prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-    await prefetchAllMmAggregatorOracleRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-    await prefetchAllAccountHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
-      ctxWithBatchState as ProcessorContext<Store>,
-      orderedBlockNumbers
-    );
-
-    await MoneyMarketContractsManager.getInstance().initContractInstances({
-      ctx: ctxWithBatchState as ProcessorContext<Store>,
-      blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-    });
-
-    /**
-     * This must be processed outside the parallel processing
-     */
-    if (appConfig.PROCESS_ACCOUNTS) {
-      await prefetchAllAccountsExtensions(ctx as ProcessorContext<Store>);
-      await handleEvmEventsInBlocksBatch(ctx as ProcessorContext<Store>);
-    }
-
-    let blocksSubBatchIndex = 1;
-
-    console.log('START processing blocks');
-
-    for (const blocksSubBatch of splitIntoBatches(
-      ctx.blocks,
-      subProcessorStatusManager.subBatchConfig.subBatchSize
-    )) {
-      console.time(
-        `Blocks sub-batch #${blocksSubBatchIndex} with size ${subProcessorStatusManager.subBatchConfig.subBatchSize} blocks has been processed in`
+      const subProcessorStatusManager = new SubProcessorStatusManager(
+        ctxWithBatchState as ProcessorContext<Store>
       );
+      await subProcessorStatusManager.calcSubBatchConfig();
 
-      await handleBlockEntities(
-        blocksSubBatch,
+      console.log(`Batch size - ${ctx.blocks.length} blocks.`);
+
+      console.time(`Blocks batch has been processed in`);
+
+      await waitForAssetsActualisation(
+        subProcessorStatusManager,
         ctxWithBatchState as ProcessorContext<Store>
       );
 
-      await Promise.all(
-        blocksSubBatch.map(async (block) => {
-          if (appConfig.PROCESS_LBP_POOLS)
-            await handleLbpPoolsStorage(
-              ctxWithBatchState as ProcessorContext<Store>,
-              block.header
-            );
-          if (appConfig.PROCESS_XYK_POOLS)
-            await handleXykPoolsStorage(
-              ctxWithBatchState as ProcessorContext<Store>,
-              block.header
-            );
-          if (appConfig.PROCESS_OMNIPOOLS)
-            await handleOmnipoolStorage(
-              ctxWithBatchState as ProcessorContext<Store>,
-              block.header
-            );
-          if (appConfig.PROCESS_STABLEPOOLS)
-            await handleStablepoolStorage(
-              ctxWithBatchState as ProcessorContext<Store>,
-              block.header
-            );
-          if (appConfig.PROCESS_GENERIC_HIST_DATA) {
-            await Promise.all([
-              handleAssetsStorage(
-                ctxWithBatchState as ProcessorContext<Store>,
-                block.header
-              ),
-              handleOracles(
-                ctxWithBatchState as ProcessorContext<Store>,
-                block.header
-              ),
-              handleAavePoolsStorage(
-                ctxWithBatchState as ProcessorContext<Store>,
-                block.header
-              ),
-            ]);
-          }
-          if (appConfig.PROCESS_ACCOUNTS) {
-            // await handleEvmEventsInBlock(
-            //   block,
-            //   ctxWithBatchState as ProcessorContext<Store>
-            // );
-            await handleAssetAccountBalancesPerBlock(
-              block,
-              ctxWithBatchState as ProcessorContext<Store>
-            );
-          }
+      await prefetchAllAssets(ctxWithBatchState as ProcessorContext<Store>);
 
-          /**
-           * Should avoid compressing in this point in case
-           * PERSIST_HIST_DATA_ONLY_ON_CHANGE === true
-           * because compressBlockStorage mutates cached entities.
-           * Will be done in "persistUniqueEntities" function.
-           */
-          if (!appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE)
-            await compressBlockStorage(
-              ctxWithBatchState as ProcessorContext<Store>,
-              block.header
-            );
-        })
+      await ensureNativeToken(ctxWithBatchState as ProcessorContext<Store>);
+
+      await actualiseAssets(
+        ctxWithBatchState as ProcessorContext<Store>,
+        subProcessorStatusManager
       );
 
-      console.timeEnd(
-        `Blocks sub-batch #${blocksSubBatchIndex} with size ${subProcessorStatusManager.subBatchConfig.subBatchSize} blocks has been processed in`
+      const orderedBlockNumbers = (
+        ctxWithBatchState as ProcessorContext<Store>
+      ).blocks
+        .map((b) => b.header.height)
+        .sort((a, b) => a - b);
+
+      await prefetchAllXykPoolRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
       );
-      const exactTimeout = crypto.randomInt(
-        0,
-        appConfig.SUB_BATCH_MAX_TIMEOUT_MS
+      await prefetchAllStablepoolRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
       );
-      await new Promise((res) => setTimeout(res, exactTimeout));
-      console.log(`Sub-batch timeout: ${exactTimeout}ms.`);
-      blocksSubBatchIndex++;
+      await prefetchAllOmnipoolRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
+      );
+      await prefetchAllLbppoolRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
+      );
+      await prefetchAllAavepoolRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
+      );
+      await prefetchAllAssetHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
+      );
+      await prefetchAllEmaOracleRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
+      );
+      await prefetchAllMmAggregatorOracleRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
+      );
+      await prefetchAllAccountHistDataRecordsForBlocksRangeToEnsureMissedBlocks(
+        ctxWithBatchState as ProcessorContext<Store>,
+        orderedBlockNumbers
+      );
+
+      await MoneyMarketContractsManager.getInstance().initContractInstances({
+        ctx: ctxWithBatchState as ProcessorContext<Store>,
+        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+      });
+
+      /**
+       * This must be processed outside the parallel processing
+       */
+      if (appConfig.PROCESS_ACCOUNTS) {
+        await prefetchAllAccountsExtensions(ctx as ProcessorContext<Store>);
+        await handleEvmEventsInBlocksBatch(ctx as ProcessorContext<Store>);
+      }
+
+      let blocksSubBatchIndex = 1;
+
+      console.log('START processing blocks');
+
+      for (const blocksSubBatch of splitIntoBatches(
+        ctx.blocks,
+        subProcessorStatusManager.subBatchConfig.subBatchSize
+      )) {
+        console.time(
+          `Blocks sub-batch #${blocksSubBatchIndex} with size ${subProcessorStatusManager.subBatchConfig.subBatchSize} blocks has been processed in`
+        );
+
+        await handleBlockEntities(
+          blocksSubBatch,
+          ctxWithBatchState as ProcessorContext<Store>
+        );
+
+        await Promise.all(
+          blocksSubBatch.map(async (block) => {
+            if (appConfig.PROCESS_LBP_POOLS)
+              await handleLbpPoolsStorage(
+                ctxWithBatchState as ProcessorContext<Store>,
+                block.header
+              );
+            if (appConfig.PROCESS_XYK_POOLS)
+              await handleXykPoolsStorage(
+                ctxWithBatchState as ProcessorContext<Store>,
+                block.header
+              );
+            if (appConfig.PROCESS_OMNIPOOLS)
+              await handleOmnipoolStorage(
+                ctxWithBatchState as ProcessorContext<Store>,
+                block.header
+              );
+            if (appConfig.PROCESS_STABLEPOOLS)
+              await handleStablepoolStorage(
+                ctxWithBatchState as ProcessorContext<Store>,
+                block.header
+              );
+            if (appConfig.PROCESS_GENERIC_HIST_DATA) {
+              await Promise.all([
+                handleAssetsStorage(
+                  ctxWithBatchState as ProcessorContext<Store>,
+                  block.header
+                ),
+                handleOracles(
+                  ctxWithBatchState as ProcessorContext<Store>,
+                  block.header
+                ),
+                handleAavePoolsStorage(
+                  ctxWithBatchState as ProcessorContext<Store>,
+                  block.header
+                ),
+              ]);
+            }
+            if (appConfig.PROCESS_ACCOUNTS) {
+              // await handleEvmEventsInBlock(
+              //   block,
+              //   ctxWithBatchState as ProcessorContext<Store>
+              // );
+              await handleAssetAccountBalancesPerBlock(
+                block,
+                ctxWithBatchState as ProcessorContext<Store>
+              );
+            }
+
+            /**
+             * Should avoid compressing in this point in case
+             * PERSIST_HIST_DATA_ONLY_ON_CHANGE === true
+             * because compressBlockStorage mutates cached entities.
+             * Will be done in "persistUniqueEntities" function.
+             */
+            if (!appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE)
+              await compressBlockStorage(
+                ctxWithBatchState as ProcessorContext<Store>,
+                block.header
+              );
+          })
+        );
+
+        console.timeEnd(
+          `Blocks sub-batch #${blocksSubBatchIndex} with size ${subProcessorStatusManager.subBatchConfig.subBatchSize} blocks has been processed in`
+        );
+        const exactTimeout = crypto.randomInt(
+          0,
+          appConfig.SUB_BATCH_MAX_TIMEOUT_MS
+        );
+        await new Promise((res) => setTimeout(res, exactTimeout));
+        console.log(`Sub-batch timeout: ${exactTimeout}ms.`);
+        blocksSubBatchIndex++;
+      }
+      console.timeEnd(`Blocks batch has been processed in`);
+
+      console.time(`Unique entities have been saved in`);
+      await persistUniqueEntities(ctxWithBatchState as ProcessorContext<Store>);
+      console.timeEnd(`Unique entities have been saved in`);
+
+      await subProcessorStatusManager.setSubProcessorStatus({
+        height: ctx.blocks[ctx.blocks.length - 1].header.height,
+      });
+      console.log('Batch complete');
+      console.timeEnd('TOTAL BATCH EXECUTION TIME');
     }
-    console.timeEnd(`Blocks batch has been processed in`);
+  );
+}
 
-    console.time(`Unique entities have been saved in`);
-    await persistUniqueEntities(ctxWithBatchState as ProcessorContext<Store>);
-    console.timeEnd(`Unique entities have been saved in`);
-
-    await subProcessorStatusManager.setSubProcessorStatus({
-      height: ctx.blocks[ctx.blocks.length - 1].header.height,
-    });
-    console.log('Batch complete');
-    console.timeEnd('TOTAL BATCH EXECUTION TIME');
-  }
-);
+runProcessor().catch(console.error);
 
 async function persistUniqueEntities(ctx: ProcessorContext<Store>) {
   if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) return;

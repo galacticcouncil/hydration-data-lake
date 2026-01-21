@@ -161,6 +161,33 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_PORT: number = 5432;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_ACTION_RETRIES_NUMBER: number = 3;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_ACTION_RETRIES_BASE_DELAY_MS: number = 50;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_ACTION_RETRIES_MAX_DELAY_MS: number = 1000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_ACTION_MAX_BATCH_SIZE: number = 2500;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_POOL_MAX_SIZE: number = 2;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_CUSTOM_MIGRATIONS_MAX_RETRY: number = 10;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_CUSTOM_MIGRATIONS_BASE_DELAY_MS: number = 10000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly DB_CUSTOM_MIGRATIONS_MAX_DELAY_MS: number = 60000;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly IS_CUSTOM_DB_MIGRATIONS_RUNNER: boolean = true;
+
   /**
    * RPC endpoint URL (either http(s) or ws(s))
    */
