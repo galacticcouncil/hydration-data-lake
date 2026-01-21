@@ -14,6 +14,7 @@ export * from './hsm';
 export * from './omnipool';
 export * from './omnipoolLiquidityMining';
 export * from './omnipoolWarehouseLM';
+export * from './liquidation';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
@@ -111,6 +112,8 @@ export enum EventName {
   'HSM_CollateralUpdated' = 'HSM.CollateralUpdated',
 
   'Uniques_Transferred' = 'Uniques.Transferred',
+
+  'Liquidation_Liquidated' = 'Liquidation.Liquidated',
 }
 
 export type RelayChainInfo = {

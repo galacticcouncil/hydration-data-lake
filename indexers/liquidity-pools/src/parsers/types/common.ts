@@ -71,6 +71,7 @@ import {
   OmnipoolWarehouseLMAllRewardsDistributedEventParams,
   AssetRegistryAssetLocation,
   AssetRegistryLocationWithAssetId,
+  LiquidationLiquidatedEventParams,
 } from './events';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -438,6 +439,11 @@ export type EventParserMethods = {
     parseUniqueTransferredParams: (
       event: SqdEvent
     ) => UniquesTransferredEventParams;
+  };
+  liquidation: {
+    parseLiquidationLiquidatedParams: (
+      event: SqdEvent
+    ) => LiquidationLiquidatedEventParams;
   };
 };
 export type StorageParserMethods = {

@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import {
   MmBorrow,
   MmLiquidationCall,
-  MmMintedToTreasury,
+  MmMintedToTreasuryEvent,
   MmRepay,
   MmReserveUsedAsCollateralDisabledEvent,
   MmReserveUsedAsCollateralEnabledEvent,
@@ -87,7 +87,7 @@ export async function processNewMoneyMarketEvent({
   liquidationCall?: MmLiquidationCall;
   reserveUsedAsCollateralEnabled?: MmReserveUsedAsCollateralEnabledEvent;
   reserveUsedAsCollateralDisabled?: MmReserveUsedAsCollateralDisabledEvent;
-  mintedToTreasury?: MmMintedToTreasury;
+  mintedToTreasury?: MmMintedToTreasuryEvent;
 }) {
   const newMmEventEntity = getNewMoneyMarketEventEntity({
     ctx,

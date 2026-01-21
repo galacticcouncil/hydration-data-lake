@@ -371,8 +371,6 @@ export const CodeMetadata: sts.Type<CodeMetadata> = sts.struct(() => {
     }
 })
 
-export type H160 = Bytes
-
 export interface Type_686 {
     free: bigint
     reserved: bigint
@@ -386,6 +384,8 @@ export const Type_686: sts.Type<Type_686> = sts.struct(() => {
         frozen: sts.bigint(),
     }
 })
+
+export type H160 = Bytes
 
 export interface Pool {
     owner: AccountId32
@@ -16498,8 +16498,6 @@ export const Type_274: sts.Type<Type_274> = sts.struct(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export const Log: sts.Type<Log> = sts.struct(() => {
     return  {
         address: H160,
@@ -16513,6 +16511,8 @@ export interface Log {
     topics: H256[]
     data: Bytes
 }
+
+export const H160 = sts.bytes()
 
 export const Pool: sts.Type<Pool> = sts.struct(() => {
     return  {

@@ -16,6 +16,7 @@ export * from './otc';
 export * from './broadcast';
 export * from './hsm';
 export * from './uniques';
+export * from './liquidation';
 export * from './support/eventData';
 export * from './support/batchBlocksParsedDataScope';
 

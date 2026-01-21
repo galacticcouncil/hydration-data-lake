@@ -1,5 +1,7 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type H160 = Bytes
+
 export const Weight: sts.Type<Weight> = sts.struct(() => {
     return  {
         refTime: sts.bigint(),
@@ -32,8 +34,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
         Signed: AccountId32,
     }
 })
-
-export const AccountId32 = sts.bytes()
 
 export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
 
@@ -493,16 +493,12 @@ export const Type_97: sts.Type<Type_97> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_97 = Type_97_EthereumTransaction
 
 export interface Type_97_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: H160
 }
-
-export type H160 = Bytes
 
 export const Type_114: sts.Type<Type_114> = sts.closedEnum(() => {
     return  {
@@ -15304,3 +15300,7 @@ export interface Call_XYKWarehouseLM {
     __kind: 'XYKWarehouseLM'
     value: XYKWarehouseLMCall
 }
+
+export const H160 = sts.bytes()
+
+export const AccountId32 = sts.bytes()

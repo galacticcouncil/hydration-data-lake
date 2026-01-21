@@ -16,6 +16,7 @@ import evmAccounts from './evmAccounts';
 import currencies from './currencies';
 import hsm from './hsm';
 import uniques from './uniques';
+import liquidation from './liquidation';
 
 import { EventParserMethods } from '../../../types/common';
 
@@ -38,4 +39,5 @@ export default {
   currencies,
   hsm,
   uniques,
+  liquidation,
 } as EventParserMethods;

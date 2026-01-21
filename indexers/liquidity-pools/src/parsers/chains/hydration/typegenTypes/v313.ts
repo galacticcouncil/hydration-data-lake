@@ -496,8 +496,6 @@ export const Type_99: sts.Type<Type_99> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
-
 export type Type_99 = Type_99_EthereumTransaction
 
 export interface Type_99_EthereumTransaction {
@@ -15793,3 +15791,5 @@ export interface Filler_XYK {
 }
 
 export const AccountId32 = sts.bytes()
+
+export const H160 = sts.bytes()

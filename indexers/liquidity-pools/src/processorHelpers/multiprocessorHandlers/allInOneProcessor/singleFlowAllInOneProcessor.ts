@@ -68,6 +68,7 @@ import { initAllOmnipoolLiquidityMiningDeposits } from '../../../handlers/liquid
 import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
 import { handleUniquesEvents } from '../../../handlers/uniques';
 import { prefetchOrInitAllAccountProcessingStatuses } from '../../../handlers/accounts/accountProcessingStatus';
+import { handleLiquidationEvents } from '../../../handlers/liquidation';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -283,6 +284,10 @@ export async function singleFlowAllInOneProcessor(
   console.time('handleEvm');
   await handleEvm(ctx, parsedData);
   console.timeEnd('handleEvm');
+
+  console.time('handleLiquidationEvents');
+  await handleLiquidationEvents(ctx, parsedData);
+  console.timeEnd('handleLiquidationEvents');
 
   console.time('handleAccountMmPositionData');
   await handleAccountMmPositionData(ctx, parsedData);

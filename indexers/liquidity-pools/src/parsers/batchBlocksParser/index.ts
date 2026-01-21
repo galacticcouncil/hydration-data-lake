@@ -1522,6 +1522,18 @@ export async function getParsedEventsData(
           break;
         }
 
+        /**
+         * ===================== L I Q U I D A T I O N =========================
+         */
+
+        case events.liquidation.liquidated.name: {
+          const preparedData =
+            parserHelper.parsers.liquidation.parseLiquidationLiquidatedData();
+          parsedDataManager.set(EventName.Liquidation_Liquidated, preparedData);
+
+          break;
+        }
+
         default:
           totalEventsNumber--;
       }

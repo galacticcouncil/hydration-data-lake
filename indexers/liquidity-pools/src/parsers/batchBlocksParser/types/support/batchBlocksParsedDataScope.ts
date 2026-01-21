@@ -103,6 +103,8 @@ import {
   XykLMYieldFarmUpdatedData,
 } from '../xykLiquidityMining';
 
+import { LiquidationLiquidatedData } from '../liquidation';
+
 export type BatchBlocksParsedDataScope = Map<
   EventName,
   Map<EventId, ParsedEventsCallsData>
@@ -217,6 +219,8 @@ type CurrenciesEventData = CurrenciesTransferredData;
 
 type UniquesEventData = UniquesTransferredData;
 
+type LiquidationEventData = LiquidationLiquidatedData;
+
 export type ParsedEventsCallsData =
   | LbpEventData
   | XykEventData
@@ -235,4 +239,5 @@ export type ParsedEventsCallsData =
   | EvmEventData
   | EvmAccountsEventData
   | CurrenciesEventData
-  | UniquesEventData;
+  | UniquesEventData
+  | LiquidationEventData;

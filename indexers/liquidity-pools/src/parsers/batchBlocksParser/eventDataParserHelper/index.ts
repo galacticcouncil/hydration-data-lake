@@ -12,7 +12,8 @@ import { LbpEventParserHelper } from './helpers/lbp';
 import { OmnipoolLiquidityMiningEventParserHelper } from './helpers/omnipoolLiquidityMining';
 import { OmnipoolWarehouseLMEventParserHelper } from './helpers/omnipoolWarehouseLM';
 import { XykLiquidityMiningEventParserHelper } from './helpers/xykLiquidityMining';
-import { UniquesEventParserHelper } from './helpers/uniques'; // TODO fix for different CHAIN env value
+import { UniquesEventParserHelper } from './helpers/uniques';
+import { LiquidationEventParserHelper } from './helpers/liquidation'; // TODO fix for different CHAIN env value
 
 export class EventDataParserHelper {
   readonly relayChainInfo: RelayChainInfo;
@@ -30,6 +31,7 @@ export class EventDataParserHelper {
     omnipoolLM: OmnipoolLiquidityMiningEventParserHelper;
     omnipoolWarehouseLM: OmnipoolWarehouseLMEventParserHelper;
     uniques: UniquesEventParserHelper;
+    liquidation: LiquidationEventParserHelper;
   };
 
   constructor({
@@ -67,6 +69,7 @@ export class EventDataParserHelper {
       omnipoolLM: new OmnipoolLiquidityMiningEventParserHelper(this),
       omnipoolWarehouseLM: new OmnipoolWarehouseLMEventParserHelper(this),
       uniques: new UniquesEventParserHelper(this),
+      liquidation: new LiquidationEventParserHelper(this),
     };
   }
 

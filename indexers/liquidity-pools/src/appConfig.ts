@@ -767,6 +767,8 @@ export class AppConfig {
       events.omnipoolWarehouseLm.allRewardsDistributed.name,
 
       events.uniques.transferred.name,
+
+      events.liquidation.liquidated.name,
     ];
 
     if (

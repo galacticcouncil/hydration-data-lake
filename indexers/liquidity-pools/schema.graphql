@@ -1732,7 +1732,7 @@ type MmReserveUsedAsCollateralDisabledEvent @entity {
   event: Event!
 }
 
-type MmMintedToTreasury @entity {
+type MmMintedToTreasuryEvent @entity {
   "<event_id>"
   id: ID!
   traceIds: [String!]
@@ -1792,7 +1792,7 @@ type MoneyMarketEvent @entity {
   liquidationCall: MmLiquidationCall
   reserveUsedAsCollateralEnabled: MmReserveUsedAsCollateralEnabledEvent
   reserveUsedAsCollateralDisabled: MmReserveUsedAsCollateralDisabledEvent
-  mintedToTreasury: MmMintedToTreasury
+  mintedToTreasury: MmMintedToTreasuryEvent
 
   paraBlockHeight: Int! @index
   event: Event!
@@ -1864,6 +1864,24 @@ type MmReserveIndexesHistoricalData @entity {
   variableBorrowIndex: BigInt
 
   paraBlockHeight: Int! @index
+}
+
+# ======================================================================================================================
+# *** LIQUIDATION ***
+# ======================================================================================================================
+
+type LiquidationLiquidatedEvent @entity {
+  "<eventId> (e.g. 0000059948-e5832-000007)"
+  id: ID!
+  traceIds: [String!]
+
+  accountId: String!
+  collateralAssetId: String!
+  debtAssetId: String!
+  profit: BigInt!
+
+  paraBlockHeight: Int! @index
+  event: Event!
 }
 
 # ======================================================================================================================

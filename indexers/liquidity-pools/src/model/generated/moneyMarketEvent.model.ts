@@ -10,7 +10,7 @@ import {MmUserEModeSet} from "./mmUserEModeSet.model"
 import {MmLiquidationCall} from "./mmLiquidationCall.model"
 import {MmReserveUsedAsCollateralEnabledEvent} from "./mmReserveUsedAsCollateralEnabledEvent.model"
 import {MmReserveUsedAsCollateralDisabledEvent} from "./mmReserveUsedAsCollateralDisabledEvent.model"
-import {MmMintedToTreasury} from "./mmMintedToTreasury.model"
+import {MmMintedToTreasuryEvent} from "./mmMintedToTreasuryEvent.model"
 import {Event} from "./event.model"
 
 @Entity_()
@@ -84,8 +84,8 @@ export class MoneyMarketEvent {
   reserveUsedAsCollateralDisabled!: MmReserveUsedAsCollateralDisabledEvent | undefined | null
 
   @Index_()
-  @ManyToOne_(() => MmMintedToTreasury, {nullable: true})
-  mintedToTreasury!: MmMintedToTreasury | undefined | null
+  @ManyToOne_(() => MmMintedToTreasuryEvent, {nullable: true})
+  mintedToTreasury!: MmMintedToTreasuryEvent | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})

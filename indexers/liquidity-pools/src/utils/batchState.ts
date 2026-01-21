@@ -96,7 +96,8 @@ import {
   XykYieldFarmEntry,
   XykpoolHistoricalDataLatest,
   AccountProcessingStatus,
-  MmMintedToTreasury,
+  MmMintedToTreasuryEvent,
+  LiquidationLiquidatedEvent,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { SqdBlock, SqdProcessorContext } from '../processor';
@@ -264,7 +265,7 @@ export type BatchStatePayload = {
     string,
     MmReserveUsedAsCollateralDisabledEvent
   >;
-  mmMintedToTreasuryEvents: Map<string, MmMintedToTreasury>;
+  mmMintedToTreasuryEvents: Map<string, MmMintedToTreasuryEvent>;
 
   emaOracleEntriesHistoricalData: Map<string, EmaOracleEntryHistoricalData>;
 
@@ -283,6 +284,8 @@ export type BatchStatePayload = {
   xykYieldFarmDeposits: Map<string, XykYieldFarmDeposit>;
   xykYieldFarmEntries: Map<string, XykYieldFarmEntry>;
   xykYieldFarmDepositEvents: Map<string, XykYieldFarmDepositEvent>;
+
+  liquidationLiquidatedEvents: Map<string, LiquidationLiquidatedEvent>;
 };
 
 export class BatchState {
@@ -420,6 +423,8 @@ export class BatchState {
     xykYieldFarmDeposits: new Map(),
     xykYieldFarmEntries: new Map(),
     xykYieldFarmDepositEvents: new Map(),
+
+    liquidationLiquidatedEvents: new Map(),
   };
 
   constructor(ctx: SqdProcessorContext<Store>) {
@@ -562,6 +567,8 @@ export class BatchState {
       xykYieldFarmDeposits: new Map(),
       xykYieldFarmEntries: new Map(),
       xykYieldFarmDepositEvents: new Map(),
+
+      liquidationLiquidatedEvents: new Map(),
     };
   }
 

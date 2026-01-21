@@ -1,12 +1,15 @@
 import { Store } from '@subsquid/typeorm-store';
 
 import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { EvmEventName, MmMintedToTreasury, MmWithdraw } from '../../../model';
+import { EvmEventName, MmMintedToTreasuryEvent } from '../../../model';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { SqdProcessorContext } from '../../../processor';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { getOrCreateAccountByBoundEvmAddress } from '../../accounts';
-import { getOrCreateMoneyMarketAsset } from '../../assets/asset';
+import {
+  getOrCreateAsset,
+  getOrCreateMoneyMarketAsset,
+} from '../../assets/asset';
 import { processNewMoneyMarketEvent } from '../moneyMarketEvent';
 
 export async function handleMmMintedToTreasuryEvent(
@@ -26,15 +29,15 @@ export async function handleMmMintedToTreasuryEvent(
     callData,
   } = eventCallData;
 
-  const assetEntity = await getOrCreateMoneyMarketAsset({
+  const underliningAsset = await getOrCreateMoneyMarketAsset({
     ctx,
     evmAddress: parsedEvmEventData.reserveAddress,
     ensure: true,
   });
 
-  if (!assetEntity) {
+  if (!underliningAsset) {
     console.log(
-      `Asset with contract address ${parsedEvmEventData.reserveAddress} cannot be found.`
+      `Underlining Asset with contract address ${parsedEvmEventData.reserveAddress} cannot be found.`
     );
     return;
   }
@@ -45,13 +48,13 @@ export async function handleMmMintedToTreasuryEvent(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  const mmMintedToTreasuryEntity = new MmMintedToTreasury({
+  const mmMintedToTreasuryEntity = new MmMintedToTreasuryEvent({
     id: eventMetadata.id,
     traceIds: [
       ...(callData.traceId ? [callData.traceId] : []),
       eventMetadata.traceId,
     ],
-    assetId: assetEntity.id,
+    assetId: underliningAsset.aTokenId ?? underliningAsset.id, // TODO should be fixed
     amount: parsedEvmEventData.amountMinted,
     paraBlockHeight: eventMetadata.blockHeader.height,
     event: ctx.batchState.state.batchEvents.get(eventMetadata.id),
@@ -68,12 +71,29 @@ export async function handleMmMintedToTreasuryEvent(
     ctx,
   });
 
+  let receivedAToken = null;
+
+  if (underliningAsset.aTokenId) {
+    receivedAToken = await getOrCreateAsset({
+      id: underliningAsset.aTokenId,
+      ctx,
+      ensure: false,
+    });
+  }
+
   await processNewMoneyMarketEvent({
     ctx,
     eventCallData,
-    allInvolvedAssetIds: [assetEntity.id],
-    allInvolvedAssetRegistryIds: [assetEntity.assetRegistryId],
-    allInvolvedAssetDetails: [assetEntity.name, assetEntity.symbol],
+    allInvolvedAssetIds: [underliningAsset.id],
+    allInvolvedAssetRegistryIds: [
+      underliningAsset.assetRegistryId,
+      ...(receivedAToken ? [receivedAToken.assetRegistryId] : []),
+    ],
+    allInvolvedAssetDetails: [
+      underliningAsset.name,
+      underliningAsset.symbol,
+      ...(receivedAToken ? [receivedAToken.name, receivedAToken.symbol] : []),
+    ],
     allInvolvedParticipants: [mmTreasuryAccount.id],
     mintedToTreasury: mmMintedToTreasuryEntity,
   });
