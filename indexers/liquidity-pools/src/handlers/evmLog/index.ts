@@ -67,6 +67,9 @@ export async function handleEvmLog(
     case EvmEventName.OracleUpdate:
       await mmEventHandlers.handleOracleUpdatedEvent(ctx, eventCallData);
       break;
+    case EvmEventName.MintedToTreasury:
+      await mmEventHandlers.handleMmMintedToTreasuryEvent(ctx, eventCallData);
+      break;
     case EvmEventName.FacilitatorAdded:
       await handleFacilitatorAddedEvent({ ctx, eventCallData });
       break;

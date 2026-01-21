@@ -96,6 +96,7 @@ import {
   XykYieldFarmEntry,
   XykpoolHistoricalDataLatest,
   AccountProcessingStatus,
+  MmMintedToTreasury,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { SqdBlock, SqdProcessorContext } from '../processor';
@@ -263,6 +264,7 @@ export type BatchStatePayload = {
     string,
     MmReserveUsedAsCollateralDisabledEvent
   >;
+  mmMintedToTreasuryEvents: Map<string, MmMintedToTreasury>;
 
   emaOracleEntriesHistoricalData: Map<string, EmaOracleEntryHistoricalData>;
 
@@ -399,6 +401,7 @@ export class BatchState {
     mmLiquidationCalls: new Map(),
     mmReserveUsedAsCollateralEnabledEvents: new Map(),
     mmReserveUsedAsCollateralDisabledEvents: new Map(),
+    mmMintedToTreasuryEvents: new Map(),
 
     emaOracleEntriesHistoricalData: new Map(),
 
@@ -540,6 +543,7 @@ export class BatchState {
       mmLiquidationCalls: new Map(),
       mmReserveUsedAsCollateralEnabledEvents: new Map(),
       mmReserveUsedAsCollateralDisabledEvents: new Map(),
+      mmMintedToTreasuryEvents: new Map(),
 
       emaOracleEntriesHistoricalData: new Map(),
 

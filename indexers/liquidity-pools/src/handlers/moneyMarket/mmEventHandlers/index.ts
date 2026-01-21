@@ -8,6 +8,7 @@ import { handleMmUserEModeSetEvent } from './mmUserEModeSetEventHandler';
 import { handleMmReserveUsedAsCollateralEnabledEvent } from './mmReserveUsedAsCollateralEnabledEventHandler';
 import { handleMmReserveUsedAsCollateralDisabledEvent } from './mmReserveUsedAsCollateralDisabledEventHandler';
 import { handleOracleUpdatedEvent } from './mmOracleUpdatedEventHandler';
+import { handleMmMintedToTreasuryEvent } from './mmMintedToTreasuryEventHandler';
 
 export default {
   handleMmTransferEvent,
@@ -20,4 +21,5 @@ export default {
   handleMmReserveUsedAsCollateralEnabledEvent,
   handleMmReserveUsedAsCollateralDisabledEvent,
   handleOracleUpdatedEvent,
+  handleMmMintedToTreasuryEvent,
 };

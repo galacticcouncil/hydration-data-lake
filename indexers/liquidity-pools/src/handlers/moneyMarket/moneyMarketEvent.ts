@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import {
   MmBorrow,
   MmLiquidationCall,
+  MmMintedToTreasury,
   MmRepay,
   MmReserveUsedAsCollateralDisabledEvent,
   MmReserveUsedAsCollateralEnabledEvent,
@@ -69,6 +70,7 @@ export async function processNewMoneyMarketEvent({
   liquidationCall,
   reserveUsedAsCollateralEnabled,
   reserveUsedAsCollateralDisabled,
+  mintedToTreasury,
 }: {
   ctx: SqdProcessorContext<Store>;
   eventCallData: EvmLogData;
@@ -85,6 +87,7 @@ export async function processNewMoneyMarketEvent({
   liquidationCall?: MmLiquidationCall;
   reserveUsedAsCollateralEnabled?: MmReserveUsedAsCollateralEnabledEvent;
   reserveUsedAsCollateralDisabled?: MmReserveUsedAsCollateralDisabledEvent;
+  mintedToTreasury?: MmMintedToTreasury;
 }) {
   const newMmEventEntity = getNewMoneyMarketEventEntity({
     ctx,
@@ -114,6 +117,7 @@ export async function processNewMoneyMarketEvent({
     reserveUsedAsCollateralEnabled ?? null;
   newMmEventEntity.reserveUsedAsCollateralDisabled =
     reserveUsedAsCollateralDisabled ?? null;
+  newMmEventEntity.mintedToTreasury = mintedToTreasury ?? null;
 
   ctx.batchState.state.moneyMarketEvents.set(
     newMmEventEntity.id,

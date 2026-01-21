@@ -14,4 +14,5 @@ export enum EvmEventName {
   FacilitatorRemoved = "FacilitatorRemoved",
   FacilitatorBucketCapacityUpdated = "FacilitatorBucketCapacityUpdated",
   FacilitatorBucketLevelUpdated = "FacilitatorBucketLevelUpdated",
+  MintedToTreasury = "MintedToTreasury",
 }

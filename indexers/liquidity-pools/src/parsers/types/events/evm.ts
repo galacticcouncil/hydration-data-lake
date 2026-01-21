@@ -81,6 +81,11 @@ export type MmReserveUsedAsCollateralDisabledEventParams =
     userAddress: string;
   };
 
+export type MmMintedToTreasuryEventParams = MmEventParamsWithEventName & {
+  reserveAddress: string;
+  amountMinted: bigint;
+};
+
 export type OracleUpdateEventParams = MmEventParamsWithEventName & {
   key: string;
   value: bigint;

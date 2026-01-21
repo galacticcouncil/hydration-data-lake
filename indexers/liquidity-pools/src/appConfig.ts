@@ -247,6 +247,11 @@ class EvmConfig {
   readonly HOLLAR_CONTRACT_ADDRESS: string =
     '0x531a654d1696ed52e7275a8cede955e82620f99a';
 
+  @IsNotEmpty()
+  @IsString()
+  readonly MM_TREASURY_ADDRESS: string =
+    '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9';
+
   static getInstance(): EvmConfig {
     if (EvmConfig.instance) return EvmConfig.instance;
 

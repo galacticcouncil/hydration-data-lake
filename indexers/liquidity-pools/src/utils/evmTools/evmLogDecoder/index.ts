@@ -169,6 +169,10 @@ export class EvmLogDecoder extends EvmLogEventParsers {
         return this.parseHsmFacilitatorBucketLevelUpdatedEvent(
           evmLogParams
         ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.MintedToTreasury:
+        return this.parseMintedToTreasuryEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
       default:
         return null;
     }

@@ -1732,6 +1732,18 @@ type MmReserveUsedAsCollateralDisabledEvent @entity {
   event: Event!
 }
 
+type MmMintedToTreasury @entity {
+  "<event_id>"
+  id: ID!
+  traceIds: [String!]
+
+  assetId: String!
+  amount: BigInt
+
+  paraBlockHeight: Int! @index
+  event: Event!
+}
+
 enum EvmEventName {
   Transfer
   Supply
@@ -1748,6 +1760,7 @@ enum EvmEventName {
   FacilitatorRemoved
   FacilitatorBucketCapacityUpdated
   FacilitatorBucketLevelUpdated
+  MintedToTreasury
 }
 enum EvmContractName {
   AavePoolImpl
@@ -1779,6 +1792,7 @@ type MoneyMarketEvent @entity {
   liquidationCall: MmLiquidationCall
   reserveUsedAsCollateralEnabled: MmReserveUsedAsCollateralEnabledEvent
   reserveUsedAsCollateralDisabled: MmReserveUsedAsCollateralDisabledEvent
+  mintedToTreasury: MmMintedToTreasury
 
   paraBlockHeight: Int! @index
   event: Event!

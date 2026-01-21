@@ -5,6 +5,7 @@ import {
   HsmFacilitatorRemovedEventParams,
   MmBorrowEventParams,
   MmLiquidationCallEventParams,
+  MmMintedToTreasuryEventParams,
   MmRepayEventParams,
   MmReserveUsedAsCollateralDisabledEventParams,
   MmReserveUsedAsCollateralEnabledEventParams,
@@ -48,7 +49,9 @@ export type EvmEventParamsTypeDecorated<N extends EvmEventName> =
                               ? HsmFacilitatorAddedEventParams
                               : N extends EvmEventName.FacilitatorRemoved
                                 ? HsmFacilitatorRemovedEventParams
-                                : never;
+                                : N extends EvmEventName.MintedToTreasury
+                                  ? MmMintedToTreasuryEventParams
+                                  : never;
 
 export type AccountMmPositionDataContractData = {
   totalCollateralBase: string;

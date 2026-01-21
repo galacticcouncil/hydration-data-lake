@@ -15,6 +15,7 @@ import {
   MmWithdrawEventParams,
   OracleUpdateEventParams,
   PoolReserveDataUpdatedEventParams,
+  MmMintedToTreasuryEventParams,
 } from '../../../parsers/types/events';
 import { EvmEventName } from '../../../model';
 import { ethers } from 'ethers';
@@ -207,6 +208,16 @@ export class EvmLogEventParsers {
       facilitatorAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
       oldLevel: event.args[1],
       newLevel: event.args[2],
+    };
+  }
+  parseMintedToTreasuryEvent(
+    event: EvmLogEventParams
+  ): MmMintedToTreasuryEventParams {
+    return {
+      eventName: EvmEventName.MintedToTreasury,
+      contractName: event.contractName,
+      reserveAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
+      amountMinted: event.args[1],
     };
   }
 }

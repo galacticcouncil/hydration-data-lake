@@ -33,6 +33,9 @@ export async function saveAllMoneyMarketEvents(
     )
   );
   await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.mmMintedToTreasuryEvents.values())
+  );
+  await ctx.storeUtils.upsertWithBatches(
     Array.from(ctx.batchState.state.moneyMarketEvents.values())
   );
 }
