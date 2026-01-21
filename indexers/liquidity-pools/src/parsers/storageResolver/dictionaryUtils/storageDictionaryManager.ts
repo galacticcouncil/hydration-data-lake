@@ -1369,12 +1369,6 @@ export class StorageDictionaryManager extends QueriesHelper {
   getEmaOracleEntriesAll({
     block,
   }: GetEmaOraclesInput): EmaOracleEntryData[] | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(ProcessingTopic.EMA_ORACLE).entries(),
-    // ].filter(([key, data]) => key === block.height.toString());
-    //
-    // if (nodes.length === 0) return null;
-
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.EMA_ORACLE
     ).getEntitiesByBlockNumber(block.height);

@@ -187,10 +187,6 @@ export async function getAssetHistDataWithUniqueData(
     assetHistoryIndexByAsset.get(i.assetId)!.push(i);
   }
 
-  console.time(
-    `saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData > getLastAssetHistoricalDataItem`
-  );
-
   for (const [assetId, list] of assetHistoryIndexByAsset.entries()) {
     const listToSort = list;
     const latestCachedItem =
@@ -204,13 +200,7 @@ export async function getAssetHistDataWithUniqueData(
     );
     assetHistoryIndexByAsset.set(assetId, orderedList);
   }
-  console.timeEnd(
-    `saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData > getLastAssetHistoricalDataItem`
-  );
 
-  console.time(
-    `saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData > Check`
-  );
   await pMap(
     Array.from(src.values()),
     async (item) => {
@@ -228,9 +218,6 @@ export async function getAssetHistDataWithUniqueData(
       concurrency:
         ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
     }
-  );
-  console.timeEnd(
-    `saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData > Check`
   );
 
   // for (const item of src.values()) {

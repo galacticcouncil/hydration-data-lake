@@ -21,9 +21,7 @@ import {
   getPriceRouteDecorated,
   getXykpoolShareTokenDecimals,
 } from '../../../utils/helpers';
-import {
-  LatestProcessedDataCacheManager,
-} from '../../../utils/latestProcessedDataCacheManager';
+import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
@@ -33,14 +31,21 @@ const appConfig = AppConfig.getInstance();
 
 export async function handleAssetSpotPricesHistoricalDataAtBlock({
   blockHeader,
+  assetsHistoricalDataBatchIndexedByBlock,
   ctx,
 }: {
   blockHeader: BlockHeader;
+  assetsHistoricalDataBatchIndexedByBlock: Map<
+    number,
+    Array<AssetHistoricalData>
+  >;
   ctx: SqdProcessorContext<Store>;
 }) {
-  const blockContextAssetsHistoricalData = [
-    ...ctx.batchState.state.assetsHistoricalDataBatch.values(),
-  ].filter((histData) => histData.paraBlockHeight === blockHeader.height);
+  const blockContextAssetsHistoricalData =
+    assetsHistoricalDataBatchIndexedByBlock.get(blockHeader.height) ??
+    Array.from(ctx.batchState.state.assetsHistoricalDataBatch.values()).filter(
+      (histData) => histData.paraBlockHeight === blockHeader.height
+    );
 
   const xykPoolAssets = getXykOnlyAssets(ctx);
 

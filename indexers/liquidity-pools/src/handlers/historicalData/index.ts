@@ -44,9 +44,7 @@ export class HistoricalDataManager {
         ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
           MultiFlowProcessingPhase.INITIAL)
     ) {
-      console.time('saveHistoricalDataBulk > saveSwapFeeRelatedDataBulk');
       await this.saveSwapFeeRelatedDataBulk(ctx);
-      console.timeEnd('saveHistoricalDataBulk > saveSwapFeeRelatedDataBulk');
     }
 
     if (
@@ -59,18 +57,11 @@ export class HistoricalDataManager {
           ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
             MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
     ) {
-      console.time('saveHistoricalDataBulk > saveAssetRelatedDataBulk');
       await this.saveAssetRelatedDataBulk(ctx);
-      console.timeEnd('saveHistoricalDataBulk > saveAssetRelatedDataBulk');
-
-      console.time('saveHistoricalDataBulk > saveGeneralHistoricalDataBulk');
       await this.saveGeneralHistoricalDataBulk(ctx);
-      console.timeEnd('saveHistoricalDataBulk > saveGeneralHistoricalDataBulk');
     }
 
-    console.time('saveHistoricalDataBulk > savePoolVolumesRelatedDataBulk');
     await this.savePoolVolumesRelatedDataBulk(ctx);
-    console.timeEnd('saveHistoricalDataBulk > savePoolVolumesRelatedDataBulk');
 
     await ctx.store.save(
       Array.from(ctx.batchState.state.moneyMarketReserves.values())
@@ -257,9 +248,6 @@ export class HistoricalDataManager {
   }
 
   static async saveAssetRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
-    console.time(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > commitAssetPrices'
-    );
     await Promise.all([
       this.commitAssetsPairVolumeToRedisTimeSeries(
         Array.from(
@@ -274,12 +262,8 @@ export class HistoricalDataManager {
         ctx
       ),
     ]);
-    console.timeEnd(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > commitAssetPrices'
-    );
 
     if (!ctx.appConfig.PERSIST_HIST_DATA_ONLY_ON_CHANGE) {
-      console.time('saveHistoricalDataBulk > saveAssetRelatedDataBulk > save');
       const assetsSpotPricesListToSave = Array.from(
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
       );
@@ -300,55 +284,24 @@ export class HistoricalDataManager {
         Array.from(ctx.batchState.state.assetAssetsPairVolumesBatch.values())
       );
 
-      console.timeEnd(
-        'saveHistoricalDataBulk > saveAssetRelatedDataBulk > save'
-      );
-
       return;
     }
 
-    console.time(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > prefetchLastAssetHistDataItem'
-    );
     await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetHistDataItem(
       ctx
-    );
-    console.timeEnd(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > prefetchLastAssetHistDataItem'
-    );
-
-    console.time(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > prefetchLastAssetSpotPriceHistDataItem'
     );
     await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
       ctx
     );
-    console.timeEnd(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > prefetchLastAssetSpotPriceHistDataItem'
-    );
-
-    console.time(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData'
-    );
     const assetHistDataToSaveMap = await getAssetHistDataWithUniqueData(
       ctx.batchState.state.assetsHistoricalDataBatch,
       ctx
-    );
-    console.timeEnd(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetHistDataWithUniqueData'
-    );
-
-    console.time(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetSpotPriceHistDataWithUniqueData'
     );
     const assetSpotPriceHistDataToSaveList =
       await getAssetSpotPriceHistDataWithUniqueData(
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch,
         ctx
       );
-    console.timeEnd(
-      'saveHistoricalDataBulk > saveAssetRelatedDataBulk > getAssetSpotPriceHistDataWithUniqueData'
-    );
 
     const assetsPairVolumesHistDataToSaveList = Array.from(
       ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()

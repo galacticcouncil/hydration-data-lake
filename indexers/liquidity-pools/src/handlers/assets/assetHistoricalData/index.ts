@@ -80,6 +80,22 @@ export async function handleAssetSpotPricesHistoricalData({
     ? ctx.blocks.filter((b) => blocksNumbersToProcessSet.has(b.header.height))
     : ctx.blocks;
 
+  const assetsHistoricalDataBatchIndexedByBlock: Map<
+    number,
+    Array<AssetHistoricalData>
+  > = new Map();
+
+  for (const histItem of ctx.batchState.state.assetsHistoricalDataBatch.values()) {
+    if (
+      !assetsHistoricalDataBatchIndexedByBlock.has(histItem.paraBlockHeight)
+    ) {
+      assetsHistoricalDataBatchIndexedByBlock.set(histItem.paraBlockHeight, []);
+    }
+    assetsHistoricalDataBatchIndexedByBlock
+      .get(histItem.paraBlockHeight)!
+      .push(histItem);
+  }
+
   for (const blocksSubBatch of splitIntoBatches(
     blocksToProcess,
     ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
@@ -93,6 +109,7 @@ export async function handleAssetSpotPricesHistoricalData({
       blocksSubBatch,
       async (block) =>
         handleAssetSpotPricesHistoricalDataAtBlock({
+          assetsHistoricalDataBatchIndexedByBlock,
           blockHeader: block.header,
           ctx,
         }),
