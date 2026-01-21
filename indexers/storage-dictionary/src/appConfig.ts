@@ -500,6 +500,8 @@ export class AppConfig {
       events.omnipoolWarehouseLm.allRewardsDistributed.name,
 
       events.uniques.transferred.name,
+
+      events.relayChainInfo.currentBlockNumbers.name,
     ];
 
     return eventsToListen;

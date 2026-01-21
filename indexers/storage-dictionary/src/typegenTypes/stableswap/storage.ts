@@ -2,6 +2,7 @@ import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../sup
 import * as v183 from '../v183'
 import * as v305 from '../v305'
 import * as v323 from '../v323'
+import * as v378 from '../v378'
 
 export const pools =  {
     /**
@@ -65,6 +66,10 @@ export const poolPegs =  {
      *  Pool peg info.
      */
     v323: new StorageType('Stableswap.PoolPegs', 'Optional', [sts.number()], v323.PoolPegInfo) as PoolPegsV323,
+    /**
+     *  Pool peg info.
+     */
+    v378: new StorageType('Stableswap.PoolPegs', 'Optional', [sts.number()], v378.PoolPegInfo) as PoolPegsV378,
 }
 
 /**
@@ -101,11 +106,32 @@ export interface PoolPegsV323  {
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v323.PoolPegInfo | undefined)][]>
 }
 
+/**
+ *  Pool peg info.
+ */
+export interface PoolPegsV378  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v378.PoolPegInfo | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v378.PoolPegInfo | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v378.PoolPegInfo | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v378.PoolPegInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v378.PoolPegInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v378.PoolPegInfo | undefined)][]>
+}
+
 export const poolSnapshots =  {
     /**
      *  Temporary pool state storage. Used to save a state of pool in a single block.
      */
     v323: new StorageType('Stableswap.PoolSnapshots', 'Optional', [sts.number()], v323.PoolSnapshot) as PoolSnapshotsV323,
+    /**
+     *  Temporary pool state storage. Used to save a state of pool in a single block.
+     */
+    v378: new StorageType('Stableswap.PoolSnapshots', 'Optional', [sts.number()], v378.PoolSnapshot) as PoolSnapshotsV378,
 }
 
 /**
@@ -123,4 +149,45 @@ export interface PoolSnapshotsV323  {
     getPairs(block: Block, key: number): Promise<[k: number, v: (v323.PoolSnapshot | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v323.PoolSnapshot | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v323.PoolSnapshot | undefined)][]>
+}
+
+/**
+ *  Temporary pool state storage. Used to save a state of pool in a single block.
+ */
+export interface PoolSnapshotsV378  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v378.PoolSnapshot | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v378.PoolSnapshot | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v378.PoolSnapshot | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v378.PoolSnapshot | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v378.PoolSnapshot | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v378.PoolSnapshot | undefined)][]>
+}
+
+export const blockFee =  {
+    /**
+     *  Temporary pool's trade fee for current block.
+     */
+    v378: new StorageType('Stableswap.BlockFee', 'Optional', [sts.number()], v378.Permill) as BlockFeeV378,
+}
+
+/**
+ *  Temporary pool's trade fee for current block.
+ */
+export interface BlockFeeV378  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v378.Permill | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v378.Permill | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v378.Permill | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v378.Permill | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v378.Permill | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v378.Permill | undefined)][]>
 }
