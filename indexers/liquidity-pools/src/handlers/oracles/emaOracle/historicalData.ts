@@ -104,25 +104,15 @@ export async function handleEmaOracleHistoricalData(
       }
     )
   );
-  //
-  // console.timeEnd(`>>> handleEmaOracleHistoricalData :: predefinedEntities`);
-  //
-  // console.time(
-  //   `>>> handleEmaOracleHistoricalData :: set emaOracleEntriesHistoricalData`
-  // );
   ctx.batchState.state.emaOracleEntriesHistoricalData = new Map(
     predefinedEntities
       .flat(2)
       .filter((item) => !!item)
       .map((item) => [item.id, item])
   );
-  // console.timeEnd(
-  //   `>>> handleEmaOracleHistoricalData :: set emaOracleEntriesHistoricalData`
-  // );
-  //
-  // console.time(`>>> handleEmaOracleHistoricalData :: save`);
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.emaOracleEntriesHistoricalData.values())
-  );
-  // console.timeEnd(`>>> handleEmaOracleHistoricalData :: save`);
+
+  if (ctx.appConfig.PERSIST_HIST_EMA_ORACLE_DATA_TO_DB)
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.emaOracleEntriesHistoricalData.values())
+    );
 }

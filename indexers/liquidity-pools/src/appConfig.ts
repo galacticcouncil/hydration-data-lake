@@ -440,6 +440,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PERSIST_HIST_DATA_ONLY_ON_CHANGE: boolean = false;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly PERSIST_HIST_EMA_ORACLE_DATA_TO_DB: boolean = true;
+
   @IsNotEmpty()
   @IsString()
   readonly INDEXER_ID!: string;
