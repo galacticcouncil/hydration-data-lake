@@ -11,13 +11,8 @@ import {
   StableswapLifeState,
 } from '../../../../model';
 import parsers from '../../../../parsers';
-import {
-  StableswapPoolCreatedData,
-} from '../../../../parsers/batchBlocksParser/types';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../../../processor';
+import { StableswapPoolCreatedData } from '../../../../parsers/batchBlocksParser/types';
+import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { isNotNullOrUndefined } from '../../../../utils/helpers';
 import { getOrCreateAccount } from '../../../accounts';
 import { getOrCreateAsset } from '../../../assets/asset';
@@ -48,9 +43,13 @@ export async function getNewStableswapWithAssets({
   // Calculate the actual pool account address (hex-encoded)
   const poolAccountAddress = blake2AsHex(StableMath.getPoolAddress(+poolId));
 
-  const createdAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  const createdAtBlock = ctx.batchState.getParaBlockFromCacheByHeight(
+    blockHeader.height
+  );
   if (!createdAtBlock) {
-    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+    throw new Error(
+      `Block not found in cache for height ${blockHeader.height}`
+    );
   }
 
   const newPool = new Stableswap({
@@ -130,10 +129,14 @@ export async function getOrCreateStableswap({
   let pool = batchState.stableswapPools.get(`${poolId}`);
   if (pool) return pool;
 
-  pool = await ctx.storeUtils.findOneWithLogs(Stableswap, {
-    where: { id: `${poolId}` },
-    relations: { assets: true },
-  }, { className: 'Stableswap' });
+  pool = await ctx.storeUtils.findOneWithLogs(
+    Stableswap,
+    {
+      where: { id: `${poolId}` },
+      relations: { assets: true },
+    },
+    { className: 'Stableswap' }
+  );
 
   if (pool || (!pool && !ensure)) return pool ?? null;
 
@@ -157,11 +160,11 @@ export async function getOrCreateStableswap({
   }
 
   const stableAccount = await getOrCreateAccount({
-      ctx,
-      id: blake2AsHex(StableMath.getPoolAddress(+poolId)),
-      accountType: AccountType.Stableswap,
-      ensureAccountType: true,
-    })
+    ctx,
+    id: blake2AsHex(StableMath.getPoolAddress(+poolId)),
+    accountType: AccountType.Stableswap,
+    ensureAccountType: true,
+  });
 
   // await ctx.store.save(newPool.account);
   await ctx.storeUtils.runWithRetry(() => ctx.store.save(stableAccount));
@@ -216,6 +219,8 @@ export async function stableswapCreated(
     blockHeader: eventMetadata.blockHeader,
   });
 
+  await ctx.store.upsert(pool); // TODO refactor extra-saves
+
   pool.assets = poolAssets;
 
   const state = ctx.batchState.state;
@@ -229,11 +234,11 @@ export async function stableswapCreated(
   state.stableswapPools.set(pool.id, pool);
 
   const stableAccount = await getOrCreateAccount({
-      ctx,
-      id: blake2AsHex(StableMath.getPoolAddress(+pool.accountId)),
-      accountType: AccountType.Stableswap,
-      ensureAccountType: true,
-    })
+    ctx,
+    id: blake2AsHex(StableMath.getPoolAddress(+pool.accountId)),
+    accountType: AccountType.Stableswap,
+    ensureAccountType: true,
+  });
 
   await ctx.store.save(stableAccount);
 
