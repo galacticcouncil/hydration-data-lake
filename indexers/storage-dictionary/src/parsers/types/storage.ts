@@ -164,7 +164,7 @@ export interface StablepoolAssetState {
 }
 
 export type StableswapPegSource = {
-  sourceKind: 'Oracle' | 'Value' | 'MMOracle';
+  sourceKind: 'Oracle' | 'Value' | 'MMOracle' | 'MmOracle';
   oracleName?: string;
   oraclePeriod?: EmaOraclePeriod;
   oracleAsset?: number;
@@ -177,8 +177,7 @@ export interface StablepoolPoolPegsInfo {
   current: [bigint, bigint][];
 }
 
-export interface StablepoolPoolPegsInfoWithPoolId
-  extends StablepoolPoolPegsInfo {
+export interface StablepoolPoolPegsInfoWithPoolId extends StablepoolPoolPegsInfo {
   poolId: number;
 }
 

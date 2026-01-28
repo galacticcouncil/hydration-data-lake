@@ -138,7 +138,10 @@ export async function handleStablepoolStorage(
             oracleAsset = null,
             valuePoints = null,
           }) => {
-            if (sourceKind === 'MMOracle' && oracleName) {
+            if (
+              (sourceKind === 'MMOracle' || sourceKind === 'MmOracle') &&
+              oracleName
+            ) {
               allMmAggregatorOraclesToBeProcessed.add(oracleName);
             }
 
