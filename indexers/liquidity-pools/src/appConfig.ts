@@ -8,6 +8,7 @@ import {
   IsBoolean,
   ValidationError,
   IsEnum,
+  IsNumber,
 } from 'class-validator';
 import dotenv from 'dotenv';
 
@@ -144,15 +145,19 @@ class LogConfig {
 class ConcurrencyConfig {
   private static instance: ConcurrencyConfig;
 
+  @IsNumber()
   @Transform(({ value }: { value: string }) => +value)
   readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
 
+  @IsNumber()
   @Transform(({ value }: { value: string }) => +value)
   readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 100;
 
+  @IsNumber()
   @Transform(({ value }: { value: string }) => +value)
   readonly EVM_CONTRACT_CALL_RETRIES: number = 2;
 
+  @IsNumber()
   @Transform(({ value }: { value: string }) => +value)
   readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
 
@@ -185,6 +190,7 @@ class ConcurrencyConfig {
 class RedisConfig {
   private static instance: RedisConfig;
 
+  @IsNumber()
   @Transform(({ value }: { value: string }) => +value)
   readonly TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: number = 5_000;
 
@@ -218,6 +224,7 @@ class EvmConfig {
   private static instance: EvmConfig;
 
   @IsNotEmpty()
+  @IsString()
   @IsString()
   readonly ATOKEN_CONTRACT_ADDRESS: string =
     '0xc0DF4c545BaFA1788a4Ee55f79704D12fC2c7B5C';
@@ -624,15 +631,15 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS: number = 7000;
 
-  readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
+  readonly redis: RedisConfig = RedisConfig.getInstance();
 
-  readonly redis: RedisConfig = new RedisConfig();
-
-  readonly evm: EvmConfig = new EvmConfig();
+  readonly evm: EvmConfig = EvmConfig.getInstance();
 
   readonly log: LogConfig = LogConfig.getInstance();
 
   readonly uniques: UniquesConfig = UniquesConfig.getInstance();
+
+  readonly concurrency: ConcurrencyConfig = ConcurrencyConfig.getInstance();
 
   readonly processingMode: ProcessingModeConfig =
     ProcessingModeConfig.getInstance();
