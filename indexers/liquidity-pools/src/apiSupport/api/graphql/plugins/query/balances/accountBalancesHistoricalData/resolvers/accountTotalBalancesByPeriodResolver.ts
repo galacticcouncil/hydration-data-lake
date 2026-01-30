@@ -60,6 +60,8 @@ export async function accountTotalBalancesByPeriodResolver(
   for (const transferableBalance of dbResponse.transferable.values()) {
     const lockedBalance =
       dbResponse.locked.get(transferableBalance.timestamp)?.value || 0;
+    const debtBalance =
+      dbResponse.debt.get(transferableBalance.timestamp)?.value || 0;
 
     const transferableBalanceDecorated =
       !!transferableBalance.value && !Number.isNaN(transferableBalance.value)
@@ -71,10 +73,16 @@ export async function accountTotalBalancesByPeriodResolver(
         ? lockedBalance.toString()
         : '0';
 
+    const debtBalanceDecorated =
+      !!debtBalance && !Number.isNaN(debtBalance)
+        ? debtBalance.toString()
+        : '0';
+
     finalResponseNode.buckets.push({
       timestamp: transferableBalance.timestamp.toString(),
       transferableNorm: transferableBalanceDecorated,
       lockedNorm: lockedBalanceDecorated,
+      debtNorm: debtBalanceDecorated,
     } as AccountTotalBalanceBucket);
   }
 

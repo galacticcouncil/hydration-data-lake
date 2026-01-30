@@ -15,6 +15,7 @@ export const AccountBalancesHistoricalDataPlugin: Plugin =
         type AccountTotalBalanceBucket {
           transferableNorm: String!
           lockedNorm: String!
+          debtNorm: String!
           timestamp: String!
         }
 

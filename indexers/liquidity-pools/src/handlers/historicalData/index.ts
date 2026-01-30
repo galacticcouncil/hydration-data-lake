@@ -392,49 +392,6 @@ export class HistoricalDataManager {
       !ctx.appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES
     )
       return;
-    //
-    // let totalBalanceLatestBlock = 0;
-    // const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
-    // await redisTimeSeriesManager.addMultiplePrices(
-    //   src
-    //     .filter((item) => {
-    //       // Get assets to check if they have registry IDs
-    //       const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
-    //       const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
-    //       return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
-    //     })
-    //     .map((item) => {
-    //       if (item.paraBlockHeight > totalBalanceLatestBlock)
-    //         totalBalanceLatestBlock = item.paraBlockHeight;
-    //
-    //       const block = ctx.batchState.getParaBlockFromCacheByHeight(
-    //         item.paraBlockHeight
-    //       );
-    //       const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
-    //
-    //       // Get asset registry IDs from the Asset entities
-    //       const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
-    //       const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
-    //
-    //       return {
-    //         keyPrefix: ctx.appConfig.INDEXER_ID,
-    //         name: RedisTimeSeriesName.price,
-    //         assetAId: assetIn.assetRegistryId!,
-    //         assetBId: assetOut.assetRegistryId!,
-    //         timestamp,
-    //         value: BigNumber(item.priceNormalised).toNumber(),
-    //       };
-    //     })
-    // );
-    //
-    // if (totalBalanceLatestBlock > 0)
-    //   try {
-    //     await ApiSupportPgClient.getInstance().upsertApiState({
-    //       assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
-    //     });
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
 
     let latestBlock = 0;
 
@@ -491,47 +448,6 @@ export class HistoricalDataManager {
     )
       return;
 
-    // let totalBalanceLatestBlock = 0;
-    //
-    // const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
-    // await redisTimeSeriesManager.addMultiplePrices(
-    //   src
-    //     .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
-    //     .map((item) => {
-    //       if (item.paraBlockHeight > totalBalanceLatestBlock)
-    //         totalBalanceLatestBlock = item.paraBlockHeight;
-    //
-    //       const block = ctx.batchState.getParaBlockFromCacheByHeight(
-    //         item.paraBlockHeight
-    //       );
-    //       const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
-    //
-    //       return {
-    //         keyPrefix: ctx.appConfig.INDEXER_ID,
-    //         name: RedisTimeSeriesName.volume,
-    //         assetAId:
-    //           +item.assetRegistryAId! < +item.assetRegistryBId!
-    //             ? item.assetRegistryAId!
-    //             : item.assetRegistryBId!,
-    //         assetBId:
-    //           +item.assetRegistryAId! < +item.assetRegistryBId!
-    //             ? item.assetRegistryBId!
-    //             : item.assetRegistryAId!,
-    //
-    //         timestamp,
-    //         value: BigNumber(item.totalVolumeNormalised).toNumber(),
-    //       };
-    //     })
-    // );
-    // if (totalBalanceLatestBlock > 0)
-    //   try {
-    //     await ApiSupportPgClient.getInstance().upsertApiState({
-    //       assetPriceLatestProcessedBlock: totalBalanceLatestBlock,
-    //     });
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-
     let latestBlock = 0;
 
     const volumesData = src
@@ -584,36 +500,6 @@ export class HistoricalDataManager {
       !ctx.appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES
     )
       return;
-    //
-    // let totalBalanceLatestBlock = 0;
-    // await RedisTimeSeriesManager.getInstance().addMultipleAccountTotalBalances(
-    //   src.map((item) => {
-    //     if (item.paraBlockHeight > totalBalanceLatestBlock)
-    //       totalBalanceLatestBlock = item.paraBlockHeight;
-    //
-    //     const block = ctx.batchState.getParaBlockFromCacheByHeight(
-    //       item.paraBlockHeight
-    //     );
-    //     const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
-    //
-    //     return {
-    //       keyPrefix: ctx.appConfig.INDEXER_ID,
-    //       name: RedisTimeSeriesName.acc_bal_tot_tns,
-    //       accountId: item.accountId,
-    //       timestamp,
-    //       value: +item.totalTransferableNorm,
-    //     };
-    //   })
-    // );
-    //
-    // if (totalBalanceLatestBlock > 0)
-    //   try {
-    //     await ApiSupportPgClient.getInstance().upsertApiState({
-    //       accTotalBalanceLatestProcBlock: totalBalanceLatestBlock,
-    //     });
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
 
     let latestBlock = 0;
 
@@ -626,19 +512,35 @@ export class HistoricalDataManager {
       );
       const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
 
-      return {
-        keyPrefix: ctx.appConfig.INDEXER_ID,
-        name: RedisTimeSeriesName.acc_bal_tot_tns,
-        accountId: item.accountId,
-        timestamp,
-        value: +item.totalTransferableNorm,
-      };
+      return [
+        {
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: RedisTimeSeriesName.acc_bal_tot_tns,
+          accountId: item.accountId,
+          timestamp,
+          value: +item.totalTransferableNorm,
+        },
+        {
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: RedisTimeSeriesName.acc_bal_tot_loc,
+          accountId: item.accountId,
+          timestamp,
+          value: +item.totalLockedNorm,
+        },
+        {
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: RedisTimeSeriesName.acc_bal_tot_debt,
+          accountId: item.accountId,
+          timestamp,
+          value: +(item.totalDebtNorm ?? '0'),
+        },
+      ];
     });
 
     await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
       actionName: DataCommitterJobName.commitAccountTotalBalance,
       accountTotalBalanceLatestProcessedBlock: latestBlock,
-      accountTotalBalanceMany: balancesData,
+      accountTotalBalanceMany: balancesData.flat(),
       metadata: {
         commitRequestedAtParaBlock:
           ctx.blocks[ctx.blocks.length - 1].header.height,

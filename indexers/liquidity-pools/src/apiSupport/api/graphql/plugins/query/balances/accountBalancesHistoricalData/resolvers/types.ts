@@ -10,6 +10,7 @@ export type AssetPairPricesAndVolumesByPeriodFilter = {
 export type AccountTotalBalanceBucket = {
   transferableNorm: string;
   lockedNorm: string;
+  debtNorm: string;
   timestamp: string;
 };
 

@@ -45,6 +45,7 @@ export interface AccountTotalBalanceHistDataResponse {
   account_id: string;
   total_transferable_norm: string;
   total_locked_norm: string;
+  total_debt_norm: string;
   block_timestamp: number;
   para_block_height: number;
 }
@@ -279,13 +280,31 @@ export class TimeSeriesApiSupportManager {
 
       if (accTotalBalancesHistDataChunk.rows.length > 0)
         await redisTimeSeriesManager.addMultipleAccountTotalBalances(
-          accTotalBalancesHistDataChunk.rows.map((row) => ({
-            name: RedisTimeSeriesName.acc_bal_tot_tns,
-            accountId: row.account_id,
-            timestamp: row.block_timestamp,
-            value: +row.total_transferable_norm,
-            keyPrefix: appConfig.INDEXER_ID,
-          }))
+          accTotalBalancesHistDataChunk.rows
+            .map((row) => [
+              {
+                name: RedisTimeSeriesName.acc_bal_tot_tns,
+                accountId: row.account_id,
+                timestamp: row.block_timestamp,
+                value: +row.total_transferable_norm,
+                keyPrefix: appConfig.INDEXER_ID,
+              },
+              {
+                name: RedisTimeSeriesName.acc_bal_tot_loc,
+                accountId: row.account_id,
+                timestamp: row.block_timestamp,
+                value: +row.total_locked_norm,
+                keyPrefix: appConfig.INDEXER_ID,
+              },
+              {
+                name: RedisTimeSeriesName.acc_bal_tot_debt,
+                accountId: row.account_id,
+                timestamp: row.block_timestamp,
+                value: +row.total_debt_norm,
+                keyPrefix: appConfig.INDEXER_ID,
+              },
+            ])
+            .flat()
         );
 
       await pgClient.upsertApiState({

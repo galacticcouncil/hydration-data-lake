@@ -97,79 +97,6 @@ export async function handleAccountTotalBalance({
   if (!refAsset) throw Error('Ref asset not found');
 
   for (const assetBalance of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
-    // const asset = await getOrCreateAsset({
-    //   id: assetBalance.assetId,
-    //   ctx,
-    //   ensure: true,
-    //   blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
-    // });
-    //
-    // if (!asset) throw Error(`Asset ${assetBalance.assetId} not found`);
-    //
-    // const accountTotalBalance =
-    //   await getOrCreateAccountTotalBalanceHistoricalData({
-    //     accountId: assetBalance.accountId,
-    //     refAssetId: refAsset.id,
-    //     blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(
-    //       assetBalance.paraBlockHeight
-    //     ),
-    //     ctx,
-    //   });
-    //
-    // // TODO must be moved to proper place
-    // if (assetBalance.assetId === refAsset.id) {
-    //   assetBalance.transferableInRefAssetNorm = calcPriceNormalized({
-    //     amount: BigInt(assetBalance.transferable.toString() ?? '0'),
-    //     assetDecimals: asset.decimals!,
-    //     spotPrice: '1',
-    //   });
-    // }
-    //
-    // /**
-    //  * When we process Debd token, we need to subtract the debt from the total
-    //  * transferable balance.
-    //  */
-    // if (asset.resourceType === AssetResourceType.Debt) {
-    //   const totalBalanceWithoutDebt = BigNumber(
-    //     accountTotalBalance.totalTransferableNorm
-    //   ).minus(assetBalance.transferableInRefAssetNorm || '0');
-    //
-    //   /**
-    //    * At this point we can get negative total balance, if debt token data
-    //    * occurred in the beginning of the list (accountAssetBalanceHistoricalData).
-    //    * But account cannot have debt balance higher that collateral or
-    //    * borrowed amount. So in final result totalBalance always will be positive.
-    //    */
-    //   // accountTotalBalance.totalTransferableNorm = (
-    //   //   totalBalanceWithoutDebt.isLessThan(0)
-    //   //     ? BigNumber(0)
-    //   //     : totalBalanceWithoutDebt
-    //   // ).toFixed();
-    //   accountTotalBalance.totalTransferableNorm =
-    //     totalBalanceWithoutDebt.toFixed();
-    // } else {
-    //   accountTotalBalance.totalTransferableNorm = BigNumber(
-    //     accountTotalBalance.totalTransferableNorm
-    //   )
-    //     .plus(assetBalance.transferableInRefAssetNorm || '0')
-    //     .toFixed();
-    // }
-    //
-    // accountTotalBalance.totalLockedNorm = BigNumber(
-    //   accountTotalBalance.totalLockedNorm
-    // )
-    //   .plus(assetBalance.totalLockedInRefAssetNorm || '0')
-    //   .toFixed();
-    //
-    // ctx.batchState.state.accountAssetBalanceHistoricalData.set(
-    //   assetBalance.id,
-    //   assetBalance
-    // );
-    //
-    // ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-    //   accountTotalBalance.id,
-    //   accountTotalBalance
-    // );
     await addAssetBalanceToAccountTotalBalance({
       refAsset,
       ctx,
@@ -251,6 +178,12 @@ export async function addAssetBalanceToAccountTotalBalance({
     // ).toFixed();
     accountTotalBalance.totalTransferableNorm =
       totalBalanceWithoutDebt.toFixed();
+
+    accountTotalBalance.totalDebtNorm = BigNumber(
+      accountTotalBalance.totalDebtNorm ?? '0'
+    )
+      .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
+      .toFixed();
   } else {
     accountTotalBalance.totalTransferableNorm = BigNumber(
       accountTotalBalance.totalTransferableNorm

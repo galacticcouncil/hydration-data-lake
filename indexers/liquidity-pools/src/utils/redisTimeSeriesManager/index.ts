@@ -33,6 +33,7 @@ export enum RedisTimeSeriesName {
 
   acc_bal_tot_tns = 'acc_bal_tot_tns',
   acc_bal_tot_loc = 'acc_bal_tot_loc',
+  acc_bal_tot_debt = 'acc_bal_tot_debt',
 }
 
 export type TimeSeriesPriceAndVolumeBuckets = {
@@ -42,6 +43,7 @@ export type TimeSeriesPriceAndVolumeBuckets = {
 export type TimeSeriesAccTotalBalancesBuckets = {
   transferable: Map<number, { timestamp: number; value: number }>;
   locked: Map<number, { timestamp: number; value: number }>;
+  debt: Map<number, { timestamp: number; value: number }>;
 };
 
 export type AddMultiplePricesPayload = {
@@ -176,7 +178,8 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
 
     if (
       name === RedisTimeSeriesName.acc_bal_tot_loc ||
-      name === RedisTimeSeriesName.acc_bal_tot_tns
+      name === RedisTimeSeriesName.acc_bal_tot_tns ||
+      name === RedisTimeSeriesName.acc_bal_tot_debt
     )
       return key + `:${accountId}`;
 
@@ -481,6 +484,7 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
     const defaultResponse: TimeSeriesAccTotalBalancesBuckets = {
       transferable: new Map(),
       locked: new Map(),
+      debt: new Map(),
     };
 
     if (!appConfig.USE_HIST_DATA_FROM_REDIS_TIME_SERIES) return defaultResponse;
@@ -498,13 +502,18 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
         accountId,
         keyPrefix: indexerId,
       });
+      const totalDebtBalanceKey = this.getSeriesKey({
+        name: RedisTimeSeriesName.acc_bal_tot_debt,
+        accountId,
+        keyPrefix: indexerId,
+      });
 
       const buckets = await openClient.ts.mRange(
         startTimestamp,
         endTimestamp,
         [
           `accountId=${accountId}`,
-          `name=(${RedisTimeSeriesName.acc_bal_tot_tns},${RedisTimeSeriesName.acc_bal_tot_loc})`,
+          `name=(${RedisTimeSeriesName.acc_bal_tot_tns},${RedisTimeSeriesName.acc_bal_tot_loc},${RedisTimeSeriesName.acc_bal_tot_debt})`,
         ],
         bucketSizeMs !== 0
           ? {
@@ -521,11 +530,21 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
       const resultFiltered: TimeSeriesAccTotalBalancesBuckets = {
         transferable: new Map(),
         locked: new Map(),
+        debt: new Map(),
       };
 
       for (const bucket of buckets) {
         if (bucket.key === totalTransferableBalanceKey) {
           resultFiltered.transferable = new Map(
+            this.fillNaNWithPrevious(bucket.samples).map((s) => [
+              s.timestamp,
+              s,
+            ])
+          );
+          continue;
+        }
+        if (bucket.key === totalDebtBalanceKey) {
+          resultFiltered.debt = new Map(
             this.fillNaNWithPrevious(bucket.samples).map((s) => [
               s.timestamp,
               s,
