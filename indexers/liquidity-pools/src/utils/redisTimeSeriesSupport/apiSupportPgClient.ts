@@ -72,7 +72,7 @@ export class ApiSupportPgClient {
         assetPriceLatestProcessedBlock:
           state.asset_price_latest_processed_block,
         accTotalBalanceLatestProcBlock:
-          state.asset_price_latest_processed_block,
+          state.acc_total_balance_latest_proc_block,
       };
     } catch (e) {
       console.log(e);
