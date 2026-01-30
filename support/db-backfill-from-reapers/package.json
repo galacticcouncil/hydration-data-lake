@@ -1,0 +1,16 @@
+{
+  "name": "db-backfill-from-reapers",
+  "version": "1.0.0",
+  "description": "Application to backfill harvester DB from multiple reaper databases",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "check-progress": "node check-progress.js"
+  },
+  "keywords": ["migration", "database", "backfill"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
+}

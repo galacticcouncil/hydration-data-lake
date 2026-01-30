@@ -1,0 +1,21 @@
+services:
+  db-backfill:
+    image: mckrava/reapers-harvester-migrator:1.1
+    command: ["npm", "start"]
+    environment:
+      - HARVESTER_DB_URL=${HARVESTER_DB_URL}
+      - REAPERS_LIST_JSON=${REAPERS_LIST_JSON:-}
+      - REAPERS_LIST_FILE=/app/reapers-list.json
+      - SCHEMA_NAME=${SCHEMA_NAME:-public}
+      - DISABLE_FK_CHECKS=${DISABLE_FK_CHECKS:-false}
+      - BATCH_SIZE=${BATCH_SIZE:-10000}
+      - BULK_INSERT_SIZE=${BULK_INSERT_SIZE:-1000}
+      - PROGRESS_FILE=${PROGRESS_FILE:-./migration-progress.json}
+      - RESUME_MIGRATION=${RESUME_MIGRATION:-false}
+    restart: on-failure
+    networks:
+      - db-network
+
+networks:
+  db-network:
+    driver: bridge

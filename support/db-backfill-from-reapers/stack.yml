@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db-backfill:
+    image: db-backfill-from-reapers:latest
+    command: ["npm", "start"]
+    environment:
+      - HARVESTER_DB_URL=${HARVESTER_DB_URL}
+      - REAPERS_LIST_JSON=${REAPERS_LIST_JSON:-}
+      - REAPERS_LIST_FILE=/app/reapers-list.json
+      - SCHEMA_NAME=${SCHEMA_NAME:-public}
+      - DISABLE_FK_CHECKS=${DISABLE_FK_CHECKS:-false}
+      - BATCH_SIZE=${BATCH_SIZE:-10000}
+      - BULK_INSERT_SIZE=${BULK_INSERT_SIZE:-1000}
+      - PROGRESS_FILE=${PROGRESS_FILE:-/data/migration-progress.json}
+      - RESUME_MIGRATION=${RESUME_MIGRATION:-false}
+    volumes:
+      - migration-data:/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    networks:
+      - db-network
+
+volumes:
+  migration-data:
+    driver: local
+
+networks:
+  db-network:
+    driver: overlay
+
+
