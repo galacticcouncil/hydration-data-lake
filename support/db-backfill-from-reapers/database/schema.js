@@ -149,6 +149,58 @@ function sortTablesByDependencies(tables, dependencies) {
   return sorted;
 }
 
+/**
+ * Group tables into dependency waves for parallel processing
+ * Wave 0: Tables with no dependencies
+ * Wave 1: Tables that only depend on Wave 0 tables
+ * Wave 2: Tables that depend on Wave 0 or Wave 1 tables, etc.
+ *
+ * @param {Array<string>} tables - Array of table names
+ * @param {Object} dependencies - Object mapping table names to dependencies
+ * @returns {Array<Array<string>>} Array of waves, each containing independent tables
+ */
+function groupTablesIntoWaves(tables, dependencies) {
+  const waves = [];
+  const processedTables = new Set();
+  const remainingTables = new Set(tables);
+
+  while (remainingTables.size > 0) {
+    const currentWave = [];
+
+    // Find all tables that can be processed in this wave
+    for (const table of remainingTables) {
+      const tableDeps = dependencies[table] || [];
+
+      // Check if all dependencies have been processed
+      const allDepsProcessed = tableDeps.every(
+        (dep) => processedTables.has(dep) || !tables.includes(dep)
+      );
+
+      if (allDepsProcessed) {
+        currentWave.push(table);
+      }
+    }
+
+    // If no tables can be processed, we have a circular dependency
+    if (currentWave.length === 0) {
+      log(
+        `  Warning: Circular dependency detected. Adding remaining ${remainingTables.size} tables to final wave`,
+        'WARN'
+      );
+      currentWave.push(...Array.from(remainingTables));
+    }
+
+    // Add current wave and mark tables as processed
+    waves.push(currentWave);
+    currentWave.forEach((table) => {
+      processedTables.add(table);
+      remainingTables.delete(table);
+    });
+  }
+
+  return waves;
+}
+
 module.exports = {
   getTables,
   getTableColumns,
@@ -156,4 +208,5 @@ module.exports = {
   hasIdColumn,
   getTableDependencies,
   sortTablesByDependencies,
+  groupTablesIntoWaves,
 };

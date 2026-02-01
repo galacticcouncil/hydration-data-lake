@@ -14,8 +14,9 @@ module.exports = {
 
   // Migration settings
   DISABLE_FK_CHECKS: process.env.DISABLE_FK_CHECKS === 'true',
-  BATCH_SIZE: parseInt(process.env.BATCH_SIZE || '5000'),
-  BULK_INSERT_SIZE: parseInt(process.env.BULK_INSERT_SIZE || '500'),
+  BATCH_SIZE: parseInt(process.env.BATCH_SIZE || '10000'), // Increased for better performance
+  BULK_INSERT_SIZE: parseInt(process.env.BULK_INSERT_SIZE || '2000'), // Increased for better performance
+  MAX_PARALLEL_TABLES: parseInt(process.env.MAX_PARALLEL_TABLES || '5'), // Number of tables to migrate concurrently
 
   // Progress tracking
   PROGRESS_FILE: process.env.PROGRESS_FILE || './migration-progress.json',

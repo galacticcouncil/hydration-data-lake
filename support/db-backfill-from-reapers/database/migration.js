@@ -5,6 +5,7 @@ const { log } = require('../utils/logger');
 const { saveProgress } = require('../utils/progress');
 const { getTableColumnsWithTypes, hasIdColumn } = require('./schema');
 const config = require('../config');
+const reportTracker = require('../utils/reportTracker');
 
 /**
  * Check if a column type is JSON or JSONB
@@ -87,6 +88,9 @@ async function migrateTable(
   try {
     log(`  Migrating table: ${tableName}`);
 
+    // Start tracking this table
+    reportTracker.startTable(reaperIndex, tableName);
+
     // Get columns with types from HARVESTER (target) database, not reaper (source)
     // This ensures we prepare values according to target schema
     const columnsMetadata = await getTableColumnsWithTypes(
@@ -95,6 +99,7 @@ async function migrateTable(
     );
     if (columnsMetadata.length === 0) {
       log(`  No columns found for table ${tableName}, skipping`, 'WARN');
+      reportTracker.endTable(reaperIndex, tableName, 0, 0);
       return;
     }
 
@@ -208,8 +213,17 @@ async function migrateTable(
     }
 
     log(`  Completed ${tableName}: ${totalInserted} rows processed`);
+
+    // Estimate data size (rough estimate: avg 200 bytes per row * number of columns)
+    const estimatedBytesPerRow = columnsMetadata.length * 200;
+    const estimatedBytes = totalInserted * estimatedBytesPerRow;
+
+    // End tracking this table with stats
+    reportTracker.endTable(reaperIndex, tableName, totalInserted, estimatedBytes);
   } catch (error) {
     log(`  Error migrating table ${tableName}: ${error.message}`, 'ERROR');
+    reportTracker.recordError(`Table ${tableName}`, error.message);
+    reportTracker.endTable(reaperIndex, tableName, 0, 0);
     throw error;
   }
 }

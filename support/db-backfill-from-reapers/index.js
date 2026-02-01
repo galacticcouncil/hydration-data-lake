@@ -9,6 +9,7 @@ const { log } = require('./utils/logger');
 const { loadProgress, saveProgress, clearProgress } = require('./utils/progress');
 const { processReaper } = require('./services/reaper');
 const globalProgress = require('./utils/globalProgress');
+const reportTracker = require('./utils/reportTracker');
 
 /**
  * Main application function
@@ -83,6 +84,10 @@ async function main() {
     // Initialize global progress tracker
     globalProgress.setTotalReapers(reapers.length);
 
+    // Start migration report tracking
+    reportTracker.startMigration();
+    log('Migration report tracking started');
+
     // Connect to harvester DB
     log('Connecting to Harvester DB...');
     const harvesterPool = new Pool({ connectionString: config.HARVESTER_DB_URL });
@@ -93,6 +98,21 @@ async function main() {
       for (const reaper of reapers) {
         await processReaper(harvesterClient, reaper, progress);
       }
+
+      // End migration report tracking
+      reportTracker.endMigration();
+
+      // Generate and save migration report
+      log('\nGenerating migration report...');
+      const summary = reportTracker.generateSummary();
+      const reportPaths = await reportTracker.saveReport('./migration-report.json');
+
+      // Display report in logs
+      log('\n' + reportTracker.generateTextReport(summary));
+
+      log(`\n✓ Migration report saved to files:`);
+      log(`  - JSON: ${reportPaths.jsonPath}`);
+      log(`  - Text: ${reportPaths.textPath}`);
 
       // Show final summary
       log('\n=== DB Backfill from Reapers - Completed Successfully ===');
@@ -108,6 +128,26 @@ async function main() {
   } catch (error) {
     log(`Fatal error: ${error.message}`, 'ERROR');
     log(error.stack, 'ERROR');
+
+    // Save report even on error
+    try {
+      reportTracker.endMigration();
+      reportTracker.recordError('migration', error.message);
+      const summary = reportTracker.generateSummary();
+      const reportPaths = await reportTracker.saveReport(
+        './migration-report-failed.json'
+      );
+
+      // Display partial report in logs
+      log('\n' + reportTracker.generateTextReport(summary));
+
+      log(`\n✓ Migration report (partial) saved to files:`);
+      log(`  - JSON: ${reportPaths.jsonPath}`);
+      log(`  - Text: ${reportPaths.textPath}`);
+    } catch (reportError) {
+      log(`Failed to save migration report: ${reportError.message}`, 'WARN');
+    }
+
     log(
       '\nProgress has been saved. You can resume the migration by setting RESUME_MIGRATION=true',
       'INFO'

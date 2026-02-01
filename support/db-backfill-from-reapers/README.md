@@ -11,7 +11,8 @@ This application connects to multiple reaper databases (blockchain indexers with
 - **Large Table Support**: Optimized for tables with millions of rows
   - Cursor-based streaming to process data without loading entire tables into memory
   - Configurable batch processing (default: 10,000 rows per batch)
-  - Bulk INSERT statements (default: 1,000 rows per query)
+  - Bulk INSERT statements (default: 2,000 rows per query)
+  - Parallel table migration within dependency waves (default: 5 tables concurrently)
 - **Resumability**: Automatic progress tracking with ability to resume from crashes
 - **Sequential processing**: Reapers processed in ascending order by index
 - **Automatic table discovery** from the `public` schema
@@ -23,6 +24,16 @@ This application connects to multiple reaper databases (blockchain indexers with
   - Elapsed time and estimated time remaining
   - Current reaper and table being processed
 - **JSON/JSONB Support**: Automatic detection and parsing of JSON/JSONB columns
+- **Migration Reports**: Automatic performance reports with detailed metrics
+  - Total duration, records, data size
+  - Throughput metrics (records/sec, MB/sec)
+  - Per-reaper and per-table statistics
+  - Both JSON and human-readable formats
+- **Migration Validation**: Comprehensive validation script to verify data integrity
+  - Row count comparison
+  - ID range validation
+  - Random record sampling
+  - Checksum verification
 - **Comprehensive logging**: Detailed progress with timestamps and percentages
 - **Error handling**: Strict validation with migration failure on critical errors
 - **Docker support** for easy deployment
@@ -71,7 +82,8 @@ Update the `reapers-list.json` file with your reaper database connections:
 - `SCHEMA_NAME`: Database schema to migrate (default: `public`)
 - `DISABLE_FK_CHECKS`: Set to `true` to disable foreign key checks during migration (default: `false`)
 - `BATCH_SIZE`: Number of rows to fetch per batch from reaper DB (default: `10000`)
-- `BULK_INSERT_SIZE`: Number of rows per bulk INSERT statement (default: `1000`)
+- `BULK_INSERT_SIZE`: Number of rows per bulk INSERT statement (default: `2000`)
+- `MAX_PARALLEL_TABLES`: Number of tables to migrate concurrently within each dependency wave (default: `5`)
 - `PROGRESS_FILE`: Path to save migration progress (default: `./migration-progress.json`)
 - `RESUME_MIGRATION`: Set to `true` to resume from last checkpoint (default: `false`)
 
@@ -271,6 +283,70 @@ rm migration-progress.json
 npm start
 ```
 
+## Validating Migrations
+
+After migration completes, you should validate that data was migrated correctly using the validation script:
+
+```bash
+node validate-migration.js "postgresql://user:pass@host:port/reaper_db" --reaper-index 1
+```
+
+The validation script performs multiple checks:
+- **Row count validation**: Compares total rows in each table
+- **ID range validation**: Ensures MIN/MAX IDs match
+- **Random sampling**: Compares random records field-by-field
+- **Checksum validation**: Verifies entire dataset integrity
+
+**Quick validation** (counts only, fastest):
+```bash
+node validate-migration.js "$REAPER_DB_URL" --reaper-index 1 --skip-sampling --skip-checksums
+```
+
+**Thorough validation** (with larger sample):
+```bash
+node validate-migration.js "$REAPER_DB_URL" --reaper-index 1 --sample-size 50
+```
+
+**Validate specific tables**:
+```bash
+node validate-migration.js "$REAPER_DB_URL" --reaper-index 1 --tables "swap,transfer,pool"
+```
+
+The script exits with:
+- `0` if validation passes (all data matches)
+- `1` if validation fails (mismatches detected)
+
+See [VALIDATION.md](./VALIDATION.md) for detailed documentation.
+
+## Migration Reports
+
+After migration completes, a comprehensive performance report is automatically generated:
+
+**Files created:**
+- `migration-report.json` - Machine-readable JSON report
+- `migration-report.txt` - Human-readable text report
+
+**Report includes:**
+- Migration duration (start/end times)
+- Total records and data size migrated
+- Average throughput (records/second, MB/second)
+- Per-reaper statistics
+- Per-table statistics with top 10 tables
+- Error tracking
+
+**View report:**
+```bash
+# Human-readable text
+cat migration-report.txt
+
+# Extract specific metrics
+cat migration-report.json | jq '.performance.avgSecondsPerRecord'
+```
+
+The report is also displayed in the application logs when migration completes.
+
+See [MIGRATION_REPORTS.md](./MIGRATION_REPORTS.md) for full documentation.
+
 ## Resource Requirements
 
 **Recommended Docker resource limits:**
@@ -281,18 +357,21 @@ npm start
 
 For optimal performance, adjust these environment variables based on your setup:
 
-| Table Size | BATCH_SIZE | BULK_INSERT_SIZE | Memory Usage |
-|------------|------------|------------------|--------------|
-| < 1M rows  | 10000      | 1000            | ~500 MB      |
-| 1-10M rows | 10000      | 1000            | ~1 GB        |
-| 10-50M rows| 10000      | 500             | ~1 GB        |
-| 50M+ rows  | 5000       | 500             | ~1 GB        |
+| Table Size | BATCH_SIZE | BULK_INSERT_SIZE | MAX_PARALLEL_TABLES | Memory Usage |
+|------------|------------|------------------|---------------------|--------------|
+| < 1M rows  | 10000      | 2000            | 5                   | ~1 GB        |
+| 1-10M rows | 10000      | 2000            | 5                   | ~1.5 GB      |
+| 10-50M rows| 10000      | 1000            | 3                   | ~1.5 GB      |
+| 50M+ rows  | 5000       | 1000            | 3                   | ~2 GB        |
 
 **Factors to consider:**
 - **Network speed**: Faster network allows larger `BULK_INSERT_SIZE`
-- **Available memory**: Larger batches use more memory
+- **Available memory**: Larger batches and more parallel tables use more memory
 - **Row width**: Wide rows (many columns) need smaller batch sizes
 - **Database load**: If harvester DB is under load, use smaller batches
+- **Parallel processing**: `MAX_PARALLEL_TABLES` controls concurrent table migrations (default: 5)
+  - Higher values = faster migration but more connections and memory
+  - Safe to use with dependency wave system (respects foreign keys)
 
 ## Troubleshooting
 
