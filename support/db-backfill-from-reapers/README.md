@@ -17,8 +17,14 @@ This application connects to multiple reaper databases (blockchain indexers with
 - **Automatic table discovery** from the `public` schema
 - **Foreign key handling**: Tables sorted by dependencies to prevent constraint violations
 - **Conflict resolution**: Newer reaper data overwrites older data for the same ID
+- **Global Progress Tracking**: Overall migration progress displayed every 5 minutes
+  - Shows completed/total reapers and tables
+  - Overall percentage completion
+  - Elapsed time and estimated time remaining
+  - Current reaper and table being processed
+- **JSON/JSONB Support**: Automatic detection and parsing of JSON/JSONB columns
 - **Comprehensive logging**: Detailed progress with timestamps and percentages
-- **Error handling**: Graceful failures with fallback to row-by-row insertion
+- **Error handling**: Strict validation with migration failure on critical errors
 - **Docker support** for easy deployment
 
 ## Prerequisites
@@ -152,6 +158,34 @@ docker stack deploy -c docker-compose.yml db-backfill
 ```bash
 docker service logs -f db-backfill_db-backfill
 ```
+
+## Progress Monitoring
+
+The application provides two levels of progress tracking:
+
+### Per-Table Progress
+Displayed after each batch during table migration:
+```
+  Processing batch: 0 - 5000 of 1000000
+  Progress: 5000/1000000 (0.50%)
+```
+
+### Global Progress Summary
+Displayed automatically every 5 minutes and at completion:
+```
+========================================
+📊 GLOBAL MIGRATION PROGRESS
+========================================
+Reapers: 2/5 completed
+  → Currently processing: Reaper #3
+Tables: 45/120 completed (37.50%)
+  → Currently processing: omnipool_asset_state_hist
+Elapsed time: 2h 15m 30s
+Estimated time remaining: ~3h 45m
+========================================
+```
+
+This helps you track overall progress when migrating multiple reapers with many tables.
 
 ## How It Works
 
@@ -317,7 +351,7 @@ docker buildx create --use --name multi || docker buildx use multi
 
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t mckrava/reapers-harvester-migrator:1.1 \
+  -t mckrava/reapers-harvester-migrator:1.2 \
   --push .
 ```
 

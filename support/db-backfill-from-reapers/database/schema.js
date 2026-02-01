@@ -39,6 +39,26 @@ async function getTableColumns(client, tableName) {
 }
 
 /**
+ * Get columns with their data types for a table
+ * @param {Object} client - PostgreSQL client
+ * @param {string} tableName - Name of the table
+ * @returns {Promise<Array<{name: string, type: string}>>} Array of column metadata
+ */
+async function getTableColumnsWithTypes(client, tableName) {
+  const query = `
+    SELECT column_name, data_type
+    FROM information_schema.columns
+    WHERE table_schema = $1 AND table_name = $2
+    ORDER BY ordinal_position;
+  `;
+  const result = await client.query(query, [config.SCHEMA_NAME, tableName]);
+  return result.rows.map((row) => ({
+    name: row.column_name,
+    type: row.data_type,
+  }));
+}
+
+/**
  * Check if table has 'id' column
  * @param {Object} client - PostgreSQL client
  * @param {string} tableName - Name of the table
@@ -132,6 +152,7 @@ function sortTablesByDependencies(tables, dependencies) {
 module.exports = {
   getTables,
   getTableColumns,
+  getTableColumnsWithTypes,
   hasIdColumn,
   getTableDependencies,
   sortTablesByDependencies,

@@ -4,6 +4,7 @@
 const { Pool } = require('pg');
 const { log } = require('../utils/logger');
 const { saveProgress } = require('../utils/progress');
+const globalProgress = require('../utils/globalProgress');
 const {
   getTables,
   getTableDependencies,
@@ -65,8 +66,12 @@ async function processReaper(harvesterClient, reaper, progress) {
       const sortedTables = sortTablesByDependencies(tables, dependencies);
       log(`Tables sorted by dependencies`);
 
+      // Update global progress tracker
+      globalProgress.startReaper(reaper.index, sortedTables.length);
+
       // Migrate each table sequentially
       for (const table of sortedTables) {
+        globalProgress.startTable(table);
         await migrateTable(
           harvesterClient,
           reaperClient,
@@ -74,6 +79,7 @@ async function processReaper(harvesterClient, reaper, progress) {
           reaper.index,
           progress
         );
+        globalProgress.completeTable();
       }
 
       // Re-enable foreign key checks if they were disabled
@@ -86,6 +92,7 @@ async function processReaper(harvesterClient, reaper, progress) {
       progress.completedReapers.push(reaper.index);
       progress.currentReaper = null;
       await saveProgress(progress);
+      globalProgress.completeReaper();
 
       log(`Completed processing Reaper #${reaper.index}`);
     } finally {

@@ -8,6 +8,7 @@ const config = require('./config');
 const { log } = require('./utils/logger');
 const { loadProgress, saveProgress, clearProgress } = require('./utils/progress');
 const { processReaper } = require('./services/reaper');
+const globalProgress = require('./utils/globalProgress');
 
 /**
  * Main application function
@@ -79,6 +80,9 @@ async function main() {
     reapers.sort((a, b) => a.index - b.index);
     log(`Loaded ${reapers.length} reapers`);
 
+    // Initialize global progress tracker
+    globalProgress.setTotalReapers(reapers.length);
+
     // Connect to harvester DB
     log('Connecting to Harvester DB...');
     const harvesterPool = new Pool({ connectionString: config.HARVESTER_DB_URL });
@@ -90,7 +94,9 @@ async function main() {
         await processReaper(harvesterClient, reaper, progress);
       }
 
+      // Show final summary
       log('\n=== DB Backfill from Reapers - Completed Successfully ===');
+      globalProgress.forceLogProgress();
 
       // Clear progress on successful completion
       await clearProgress();

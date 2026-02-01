@@ -3,8 +3,71 @@
  */
 const { log } = require('../utils/logger');
 const { saveProgress } = require('../utils/progress');
-const { getTableColumns, hasIdColumn } = require('./schema');
+const { getTableColumnsWithTypes, hasIdColumn } = require('./schema');
 const config = require('../config');
+
+/**
+ * Check if a column type is JSON or JSONB
+ * @param {string} dataType - Column data type
+ * @returns {boolean} True if column is JSON/JSONB
+ */
+function isJsonType(dataType) {
+  if (!dataType) return false;
+  const lowerType = dataType.toLowerCase();
+  return lowerType === 'json' || lowerType === 'jsonb';
+}
+
+/**
+ * Prepare value for insertion based on column type
+ * @param {*} value - Raw value from source database
+ * @param {string} dataType - Target column data type
+ * @param {string} columnName - Column name (for error messages)
+ * @returns {*} Prepared value
+ */
+function prepareValue(value, dataType, columnName = 'unknown') {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  // Handle JSON/JSONB columns - ALWAYS stringify for PostgreSQL
+  if (isJsonType(dataType)) {
+    // If value is a string, validate it by parsing, then return the string
+    if (typeof value === 'string') {
+      try {
+        // Validate by parsing
+        JSON.parse(value);
+        // Return the original string for PostgreSQL to parse
+        return value;
+      } catch (err) {
+        log(
+          `  Warning: Failed to parse JSON in column "${columnName}": ${value.substring(0, 100)}...`,
+          'WARN'
+        );
+        throw new Error(
+          `Invalid JSON value in column "${columnName}": ${err.message}`
+        );
+      }
+    }
+    // If already an object/array, stringify it for PostgreSQL
+    if (typeof value === 'object') {
+      try {
+        return JSON.stringify(value);
+      } catch (err) {
+        log(
+          `  Warning: Failed to stringify JSON in column "${columnName}"`,
+          'WARN'
+        );
+        throw new Error(
+          `Invalid JSON object in column "${columnName}": ${err.message}`
+        );
+      }
+    }
+    // Otherwise return as-is
+    return value;
+  }
+
+  return value;
+}
 
 /**
  * Migrate data from reaper to harvester for a specific table
@@ -24,13 +87,26 @@ async function migrateTable(
   try {
     log(`  Migrating table: ${tableName}`);
 
-    // Get columns
-    const columns = await getTableColumns(reaperClient, tableName);
-    if (columns.length === 0) {
+    // Get columns with types from HARVESTER (target) database, not reaper (source)
+    // This ensures we prepare values according to target schema
+    const columnsMetadata = await getTableColumnsWithTypes(
+      harvesterClient,
+      tableName
+    );
+    if (columnsMetadata.length === 0) {
       log(`  No columns found for table ${tableName}, skipping`, 'WARN');
       return;
     }
 
+    // Log JSON/JSONB columns for debugging
+    const jsonColumns = columnsMetadata.filter((col) => isJsonType(col.type));
+    if (jsonColumns.length > 0) {
+      log(
+        `  Detected ${jsonColumns.length} JSON/JSONB columns: ${jsonColumns.map((c) => `${c.name}(${c.type})`).join(', ')}`
+      );
+    }
+
+    const columnNames = columnsMetadata.map((col) => col.name);
     const hasId = await hasIdColumn(reaperClient, tableName);
 
     // Count rows in reaper table
@@ -64,12 +140,12 @@ async function migrateTable(
     }
 
     // Prepare column list with quoted identifiers to handle reserved keywords
-    const columnsList = columns.map((col) => `"${col}"`).join(', ');
+    const columnsList = columnNames.map((col) => `"${col}"`).join(', ');
 
     // Prepare bulk insert query template
     const insertQueryTemplate = buildInsertQueryTemplate(
       tableName,
-      columns,
+      columnNames,
       columnsList,
       hasId
     );
@@ -107,7 +183,7 @@ async function migrateTable(
         const insertedCount = await processBatch(
           harvesterClient,
           batchResult.rows,
-          columns,
+          columnsMetadata,
           insertQueryTemplate,
           tableName
         );
@@ -170,7 +246,7 @@ function buildInsertQueryTemplate(tableName, columns, columnsList, hasId) {
  * Process a batch of rows with bulk inserts
  * @param {Object} harvesterClient - Harvester database client
  * @param {Array<Object>} rows - Batch of rows to insert
- * @param {Array<string>} columns - Column names
+ * @param {Array<{name: string, type: string}>} columnsMetadata - Column metadata
  * @param {Function} insertQueryTemplate - Insert query template function
  * @param {string} tableName - Name of the table (for error logging)
  * @returns {Promise<number>} Number of rows inserted
@@ -178,7 +254,7 @@ function buildInsertQueryTemplate(tableName, columns, columnsList, hasId) {
 async function processBatch(
   harvesterClient,
   rows,
-  columns,
+  columnsMetadata,
   insertQueryTemplate,
   tableName
 ) {
@@ -197,9 +273,14 @@ async function processBatch(
     let paramIndex = 1;
 
     for (const row of chunk) {
-      const rowPlaceholders = columns.map(() => `$${paramIndex++}`).join(', ');
+      const rowPlaceholders = columnsMetadata
+        .map(() => `$${paramIndex++}`)
+        .join(', ');
       valueClauses.push(`(${rowPlaceholders})`);
-      columns.forEach((col) => allValues.push(row[col]));
+      columnsMetadata.forEach((col) => {
+        const preparedValue = prepareValue(row[col.name], col.type, col.name);
+        allValues.push(preparedValue);
+      });
     }
 
     const insertQuery = insertQueryTemplate(valueClauses.join(', '));
@@ -217,8 +298,9 @@ async function processBatch(
       totalInserted += await processChunkRowByRow(
         harvesterClient,
         chunk,
-        columns,
-        insertQueryTemplate
+        columnsMetadata,
+        insertQueryTemplate,
+        tableName
       );
     }
   }
@@ -230,21 +312,26 @@ async function processBatch(
  * Process chunk row by row (fallback for failed bulk insert)
  * @param {Object} harvesterClient - Harvester database client
  * @param {Array<Object>} chunk - Chunk of rows
- * @param {Array<string>} columns - Column names
+ * @param {Array<{name: string, type: string}>} columnsMetadata - Column metadata
  * @param {Function} insertQueryTemplate - Insert query template function
+ * @param {string} tableName - Name of the table (for error logging)
  * @returns {Promise<number>} Number of rows inserted
  */
 async function processChunkRowByRow(
   harvesterClient,
   chunk,
-  columns,
-  insertQueryTemplate
+  columnsMetadata,
+  insertQueryTemplate,
+  tableName
 ) {
   let inserted = 0;
+  const errors = [];
 
   for (const row of chunk) {
-    const values = columns.map((col) => row[col]);
-    const singleValuePlaceholders = columns
+    const values = columnsMetadata.map((col) =>
+      prepareValue(row[col.name], col.type, col.name)
+    );
+    const singleValuePlaceholders = columnsMetadata
       .map((_, idx) => `$${idx + 1}`)
       .join(', ');
     const singleInsertQuery = insertQueryTemplate(
@@ -256,7 +343,48 @@ async function processChunkRowByRow(
       inserted++;
     } catch (rowErr) {
       log(`  Error inserting single row: ${rowErr.message}`, 'ERROR');
+
+      // Debug: Log the problematic value
+      const jsonCols = columnsMetadata.filter((col) => isJsonType(col.type));
+      if (jsonCols.length > 0) {
+        jsonCols.forEach((col) => {
+          const val = row[col.name];
+          log(
+            `  DEBUG: Column "${col.name}" type=${col.type} valueType=${typeof val} value=${JSON.stringify(val).substring(0, 200)}`,
+            'WARN'
+          );
+        });
+      }
+
+      errors.push({
+        error: rowErr.message,
+        rowData: row,
+      });
     }
+  }
+
+  // If all rows failed, throw an error to stop the migration
+  if (inserted === 0 && errors.length > 0) {
+    log(
+      `  CRITICAL: All ${errors.length} rows in chunk failed to insert in table ${tableName}`,
+      'ERROR'
+    );
+    log(`  First error: ${errors[0].error}`, 'ERROR');
+    throw new Error(
+      `Failed to insert all rows in chunk for table ${tableName}. First error: ${errors[0].error}`
+    );
+  }
+
+  // If some rows failed but not all, log warning but continue
+  if (errors.length > 0) {
+    log(
+      `  WARNING: ${errors.length} out of ${chunk.length} rows failed to insert in table ${tableName}`,
+      'WARN'
+    );
+    log(
+      `  This may indicate data inconsistency. First error: ${errors[0].error}`,
+      'WARN'
+    );
   }
 
   return inserted;

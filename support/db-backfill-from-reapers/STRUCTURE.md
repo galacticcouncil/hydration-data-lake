@@ -16,7 +16,8 @@ db-backfill-from-reapers/
 │
 ├── utils/                    # Utility modules
 │   ├── logger.js            # Logging functionality
-│   └── progress.js          # Progress tracking (save/load/clear)
+│   ├── progress.js          # Progress tracking (save/load/clear)
+│   └── globalProgress.js    # Global migration progress tracking
 │
 ├── database/                 # Database operations
 │   ├── schema.js            # Schema discovery and analysis
@@ -85,6 +86,36 @@ db-backfill-from-reapers/
     "1_event": 1000000
   }
 }
+```
+
+---
+
+### `utils/globalProgress.js` (Global Progress Tracking)
+- Tracks overall migration progress across all reapers and tables
+- Displays periodic summaries every 5 minutes
+- Calculates elapsed time and ETA
+
+**Exports:**
+- Singleton instance `globalProgressTracker`
+
+**Methods:**
+- `setTotalReapers(count)` - Set total number of reapers
+- `startReaper(reaperIndex, tableCount)` - Mark reaper as started
+- `completeReaper()` - Mark current reaper as completed
+- `startTable(tableName)` - Mark table as started
+- `completeTable()` - Mark table as completed (triggers periodic logging)
+- `forceLogProgress()` - Force display of progress summary
+- `maybeLogProgress()` - Log progress if 5 minutes elapsed
+
+**Progress Display:**
+```
+📊 GLOBAL MIGRATION PROGRESS
+Reapers: 2/5 completed
+  → Currently processing: Reaper #3
+Tables: 45/120 completed (37.50%)
+  → Currently processing: omnipool_asset_state_hist
+Elapsed time: 2h 15m 30s
+Estimated time remaining: ~3h 45m
 ```
 
 ---
