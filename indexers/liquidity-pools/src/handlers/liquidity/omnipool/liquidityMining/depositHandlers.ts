@@ -182,6 +182,13 @@ export async function initAllOmnipoolLiquidityMiningDeposits(
       block: blockToProcess.header,
     });
 
+  if (!allDeposits) {
+    console.log(
+      `initAllOmnipoolLiquidityMiningDeposits :: No OmnipoolLM Deposits found`
+    );
+    return;
+  }
+
   await pMap(
     allDeposits || [],
     async (depositData) => {

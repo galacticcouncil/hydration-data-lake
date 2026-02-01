@@ -680,16 +680,18 @@ async function getAccountMmAssetsPerBlock({
   await pMap(
     Array.from(allAccountsForMmReserveBalancesInit.values()),
     async (account) => {
+      const mmContractsManagerInst = MoneyMarketContractsManager.getInstance();
+
       const accountReserves =
-        await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
-          {
-            accountAddress: account.boundEvmAddress!,
-            blockNumber: lowestBlockNumberToProcess,
-          }
-        );
+        mmContractsManagerInst.moneyMarketReservesDetailsMap.size > 0
+          ? await mmContractsManagerInst.getUserReservesDataWithLogs({
+              accountAddress: account.boundEvmAddress!,
+              blockNumber: lowestBlockNumberToProcess,
+            })
+          : [];
 
       if (!accountReserves || accountReserves.length === 0) {
-        console.log(`No reserves found for account ${account.id}`);
+        // console.log(`No reserves found for account ${account.id}`);
         return;
       }
 
@@ -782,7 +784,7 @@ async function getAccountATokensOnBorrowEvents({
     );
 
   if (!accountReserves || accountReserves.length === 0) {
-    console.log(`No reserves found for account (h160) ${accountH160Address}`);
+    // console.log(`No reserves found for account (h160) ${accountH160Address}`);
     return [];
   }
 

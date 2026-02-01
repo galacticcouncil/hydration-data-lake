@@ -214,6 +214,13 @@ export async function initAllOmnipoolLiquidityPositions(
       block: blockToProcess.header,
     });
 
+  if (!allPositions) {
+    console.log(
+      `initAllOmnipoolLiquidityPositions:: No Omnipool Liquidity Position found.`
+    );
+    return;
+  }
+
   await pMap(
     allPositions || [],
     async (positionData) => {

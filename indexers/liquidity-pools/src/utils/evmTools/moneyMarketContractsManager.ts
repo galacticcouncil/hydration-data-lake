@@ -171,6 +171,8 @@ export class MoneyMarketContractsManager {
           }),
       });
 
+      if (!reservesData || reservesData.length === 0) return null;
+
       const reservesDecorated: MoneyMarketResourceDetails[] = [];
 
       for (const reserve of reservesData[0]) {

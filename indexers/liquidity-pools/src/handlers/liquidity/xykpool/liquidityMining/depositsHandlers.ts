@@ -133,6 +133,7 @@ export async function initAllXykLiquidityMiningDeposits(
 
   if (!xykLMNftCollectionId) {
     console.log(`XYK LM NFT collection ID can not be foud`);
+    return;
   }
 
   const [allNftsWithOwners, allExistingDeposits] = await Promise.all([
