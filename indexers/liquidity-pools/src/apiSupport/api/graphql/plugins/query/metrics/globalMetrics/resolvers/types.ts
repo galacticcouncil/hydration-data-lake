@@ -61,6 +61,8 @@ export type PlatformTotalTvlResponse = {
 export type PlatformTotalVolumesByPeriodFilter = {
   startBlockNumber?: number;
   endBlockNumber?: number;
+  startIsoString?: string;
+  endIsoString?: string;
   period?: AggregationTimeRangeLabel;
 };
 

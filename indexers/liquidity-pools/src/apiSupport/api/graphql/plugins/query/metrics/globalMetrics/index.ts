@@ -14,6 +14,8 @@ export const GlobalMetricsPlugin: Plugin = makeExtendSchemaPlugin(
         }
 
         input PlatformTotalVolumesByPeriodFilter {
+          startIsoString: String
+          endIsoString: String
           startBlockNumber: Int
           endBlockNumber: Int
           period: AggregationTimeRange = _24H_

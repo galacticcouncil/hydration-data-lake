@@ -56,6 +56,8 @@ export async function platformTotalVolumesByPeriodResolver(
     pgClient,
     inputStopBlockNumber: filter.endBlockNumber,
     inputStartBlockNumber: filter.startBlockNumber,
+    inputFromIsoString: filter.startIsoString,
+    inputToIsoString: filter.endIsoString,
   });
 
   if (!blocksRange) return { nodes: [], totalCount: 0 };

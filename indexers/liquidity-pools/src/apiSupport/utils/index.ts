@@ -111,3 +111,15 @@ export class AggregationTimeRange {
       );
   }
 }
+
+export class DateTimeHelper {
+  private datetime: dayjs.Dayjs;
+
+  constructor(isoString: string) {
+    this.datetime = dayjs.utc(isoString);
+  }
+
+  getDateObject() {
+    return this.datetime.toDate();
+  }
+}
