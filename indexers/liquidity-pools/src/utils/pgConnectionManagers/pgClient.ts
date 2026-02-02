@@ -34,7 +34,6 @@ export class CommonPgClient {
     const appConfig = AppConfig.getInstance();
 
     while (true) {
-      console.log('CommonPgClient :: p', appConfig.DB_PASS);
       try {
         // Create a new client for each attempt
         const client = new Client({
