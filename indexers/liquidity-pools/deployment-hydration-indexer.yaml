@@ -75,7 +75,7 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
       profile: large
