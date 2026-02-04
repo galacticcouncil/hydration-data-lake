@@ -1,16 +1,16 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
 
 export const endowed =  {
     name: 'Tokens.Endowed',
     /**
      * An account was created with some free balance.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Endowed',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -22,11 +22,11 @@ export const dustLost =  {
      * An account was removed whose balance was non-zero but below
      * ExistentialDeposit, resulting in an outright loss.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.DustLost',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -37,12 +37,12 @@ export const transfer =  {
     /**
      * Transfer succeeded.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Transfer',
         sts.struct({
             currencyId: sts.number(),
-            from: v287.AccountId32,
-            to: v287.AccountId32,
+            from: v347.AccountId32,
+            to: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -53,11 +53,11 @@ export const reserved =  {
     /**
      * Some balance was reserved (moved from free to reserved).
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Reserved',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -68,11 +68,11 @@ export const unreserved =  {
     /**
      * Some balance was unreserved (moved from reserved to free).
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Unreserved',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -84,14 +84,14 @@ export const reserveRepatriated =  {
      * Some reserved balance was repatriated (moved from reserved to
      * another account).
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.ReserveRepatriated',
         sts.struct({
             currencyId: sts.number(),
-            from: v287.AccountId32,
-            to: v287.AccountId32,
+            from: v347.AccountId32,
+            to: v347.AccountId32,
             amount: sts.bigint(),
-            status: v287.BalanceStatus,
+            status: v347.BalanceStatus,
         })
     ),
 }
@@ -101,11 +101,11 @@ export const balanceSet =  {
     /**
      * A balance was set by root.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.BalanceSet',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             free: sts.bigint(),
             reserved: sts.bigint(),
         })
@@ -117,7 +117,7 @@ export const totalIssuanceSet =  {
     /**
      * The total issuance of an currency has been set
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.TotalIssuanceSet',
         sts.struct({
             currencyId: sts.number(),
@@ -131,11 +131,11 @@ export const withdrawn =  {
     /**
      * Some balances were withdrawn (e.g. pay for transaction fee)
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Withdrawn',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -146,11 +146,11 @@ export const slashed =  {
     /**
      * Some balances were slashed (e.g. due to mis-behavior)
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Slashed',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             freeAmount: sts.bigint(),
             reservedAmount: sts.bigint(),
         })
@@ -162,11 +162,11 @@ export const deposited =  {
     /**
      * Deposited some balance into an account
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Deposited',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -177,12 +177,12 @@ export const lockSet =  {
     /**
      * Some funds are locked
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.LockSet',
         sts.struct({
             lockId: sts.bytes(),
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -193,12 +193,12 @@ export const lockRemoved =  {
     /**
      * Some locked funds were unlocked
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.LockRemoved',
         sts.struct({
             lockId: sts.bytes(),
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
         })
     ),
 }
@@ -208,11 +208,11 @@ export const locked =  {
     /**
      * Some free balance was locked.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Locked',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -223,11 +223,11 @@ export const unlocked =  {
     /**
      * Some locked balance was freed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Unlocked',
         sts.struct({
             currencyId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amount: sts.bigint(),
         })
     ),
@@ -235,7 +235,7 @@ export const unlocked =  {
 
 export const issued =  {
     name: 'Tokens.Issued',
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Issued',
         sts.struct({
             currencyId: sts.number(),
@@ -246,7 +246,7 @@ export const issued =  {
 
 export const rescinded =  {
     name: 'Tokens.Rescinded',
-    v287: new EventType(
+    v347: new EventType(
         'Tokens.Rescinded',
         sts.struct({
             currencyId: sts.number(),

@@ -22,7 +22,7 @@ export const placeOrder =  {
      * Events:
      * - `Placed` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'OTC.place_order',
         sts.struct({
             assetIn: sts.number(),
@@ -54,7 +54,7 @@ export const partialFillOrder =  {
      * `PartiallyFilled` event when successful. Deprecated.
      * `pallet_broadcast::Swapped` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'OTC.partial_fill_order',
         sts.struct({
             orderId: sts.number(),
@@ -75,7 +75,7 @@ export const fillOrder =  {
      * `Filled` event when successful. Deprecated.
      * `pallet_broadcast::Swapped` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'OTC.fill_order',
         sts.struct({
             orderId: sts.number(),
@@ -98,7 +98,7 @@ export const cancelOrder =  {
      * 
      * Emits `Cancelled` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'OTC.cancel_order',
         sts.struct({
             orderId: sts.number(),

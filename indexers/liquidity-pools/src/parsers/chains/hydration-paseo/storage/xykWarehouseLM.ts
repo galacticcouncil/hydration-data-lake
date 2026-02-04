@@ -16,14 +16,14 @@ async function getXykpoolLMDeposits({
     originFn: 'getXykpoolLMDeposits',
     blockHeight: block.height,
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
       if (
-        storage.xykWarehouseLm.deposit.v287.is(block) ||
+        storage.xykWarehouseLm.deposit.v347.is(block) ||
         block.specVersion >= 287
       ) {
         try {
-          const resp = await storage.xykWarehouseLm.deposit.v287.getMany(
+          const resp = await storage.xykWarehouseLm.deposit.v347.getMany(
             block,
             depositIds.map((id) => BigInt(id))
           );
@@ -62,13 +62,13 @@ async function getAllDepositsData({
     originFn: 'getAllDepositsData',
     blockHeight: block.height,
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
-      if (storage.xykWarehouseLm.deposit.v287.is(block)) {
+      if (storage.xykWarehouseLm.deposit.v347.is(block)) {
         try {
           const pairsPaged: XykpoolLMDepositDataWithId[] = [];
 
-          for await (const page of storage.xykWarehouseLm.deposit.v287.getPairsPaged(
+          for await (const page of storage.xykWarehouseLm.deposit.v347.getPairsPaged(
             500,
             block
           ))

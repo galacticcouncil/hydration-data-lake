@@ -13,7 +13,7 @@ import { UnknownVersionError } from '../../../../utils/errors';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
 function getConstants({ block }: GetConstantsInput): LbpConstants | null {
-  if (block.specVersion < 287) return null;
+  if (block.specVersion < 347) return null;
 
   let repayFee = null;
   let maxInRatio = null;
@@ -21,24 +21,24 @@ function getConstants({ block }: GetConstantsInput): LbpConstants | null {
   let minPoolLiquidity = null;
   let minTradingLimit = null;
 
-  if (constants.lbp.repayFee.v287.is(block)) {
-    const resp = constants.lbp.repayFee.v287.get(block);
+  if (constants.lbp.repayFee.v347.is(block)) {
+    const resp = constants.lbp.repayFee.v347.get(block);
     if (resp !== undefined) repayFee = resp;
   }
-  if (constants.lbp.maxInRatio.v287.is(block)) {
-    const resp = constants.lbp.maxInRatio.v287.get(block);
+  if (constants.lbp.maxInRatio.v347.is(block)) {
+    const resp = constants.lbp.maxInRatio.v347.get(block);
     if (resp !== undefined) maxInRatio = resp;
   }
-  if (constants.lbp.maxOutRatio.v287.is(block)) {
-    const resp = constants.lbp.maxOutRatio.v287.get(block);
+  if (constants.lbp.maxOutRatio.v347.is(block)) {
+    const resp = constants.lbp.maxOutRatio.v347.get(block);
     if (resp !== undefined) maxOutRatio = resp;
   }
-  if (constants.lbp.minPoolLiquidity.v287.is(block)) {
-    const resp = constants.lbp.minPoolLiquidity.v287.get(block);
+  if (constants.lbp.minPoolLiquidity.v347.is(block)) {
+    const resp = constants.lbp.minPoolLiquidity.v347.get(block);
     if (resp !== undefined) minPoolLiquidity = resp;
   }
-  if (constants.lbp.minTradingLimit.v287.is(block)) {
-    const resp = constants.lbp.minTradingLimit.v287.get(block);
+  if (constants.lbp.minTradingLimit.v347.is(block)) {
+    const resp = constants.lbp.minTradingLimit.v347.get(block);
     if (resp !== undefined) minTradingLimit = resp;
   }
 
@@ -55,12 +55,12 @@ async function getPoolData({
   poolAddress,
   block,
 }: LbpGetPoolDataInput): Promise<LbpPoolData | null> {
-  if (block.specVersion < 287) return null;
+  if (block.specVersion < 347) return null;
 
   let poolStorageData: LbpPoolStorageData | null = null;
 
-  if (storage.lbp.poolData.v287.is(block)) {
-    const resp = await storage.lbp.poolData.v287.get(block, poolAddress);
+  if (storage.lbp.poolData.v347.is(block)) {
+    const resp = await storage.lbp.poolData.v347.get(block, poolAddress);
 
     if (!resp) return null;
 
@@ -88,10 +88,10 @@ async function getAllPoolsData({
 }: LbpGetAllPoolsDataInput): Promise<LbpPoolData[]> {
   let pairsPaged: LbpPoolData[] = [];
 
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.lbp.poolData.v287.is(block)) {
-    for await (const page of storage.lbp.poolData.v287.getPairsPaged(
+  if (storage.lbp.poolData.v347.is(block)) {
+    for await (const page of storage.lbp.poolData.v347.getPairsPaged(
       100,
       block
     ))
@@ -122,10 +122,10 @@ async function getAllPoolsData({
 async function getAllPoolIds({
   block,
 }: LbpGetAllPoolIdsInput): Promise<string[]> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.lbp.poolData.v287.is(block)) {
-    const ids = await storage.lbp.poolData.v287.getKeys(block);
+  if (storage.lbp.poolData.v347.is(block)) {
+    const ids = await storage.lbp.poolData.v347.getKeys(block);
 
     return ids;
   }

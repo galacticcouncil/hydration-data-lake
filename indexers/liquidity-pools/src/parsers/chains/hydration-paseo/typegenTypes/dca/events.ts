@@ -1,13 +1,13 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
-import * as v295 from '../v295'
+import * as v347 from '../v347'
+import * as v390 from '../v390'
 
 export const executionStarted =  {
     name: 'DCA.ExecutionStarted',
     /**
      * The DCA execution is started
      */
-    v287: new EventType(
+    v347: new EventType(
         'DCA.ExecutionStarted',
         sts.struct({
             id: sts.number(),
@@ -21,27 +21,14 @@ export const scheduled =  {
     /**
      * The DCA is scheduled for next execution
      */
-    v287: new EventType(
+    v347: new EventType(
         'DCA.Scheduled',
         sts.struct({
             id: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             period: sts.number(),
             totalAmount: sts.bigint(),
-            order: v287.Order,
-        })
-    ),
-    /**
-     * The DCA is scheduled for next execution
-     */
-    v295: new EventType(
-        'DCA.Scheduled',
-        sts.struct({
-            id: sts.number(),
-            who: v295.AccountId32,
-            period: sts.number(),
-            totalAmount: sts.bigint(),
-            order: v295.Order,
+            order: v347.Order,
         })
     ),
 }
@@ -51,11 +38,11 @@ export const executionPlanned =  {
     /**
      * The DCA is planned for blocknumber
      */
-    v287: new EventType(
+    v347: new EventType(
         'DCA.ExecutionPlanned',
         sts.struct({
             id: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             block: sts.number(),
         })
     ),
@@ -64,14 +51,13 @@ export const executionPlanned =  {
 export const tradeExecuted =  {
     name: 'DCA.TradeExecuted',
     /**
-     * Deprecated. Use pallet_amm::Event::Swapped instead.
      * The DCA trade is successfully executed
      */
-    v287: new EventType(
+    v347: new EventType(
         'DCA.TradeExecuted',
         sts.struct({
             id: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             amountIn: sts.bigint(),
             amountOut: sts.bigint(),
         })
@@ -83,12 +69,23 @@ export const tradeFailed =  {
     /**
      * The DCA trade execution is failed
      */
-    v287: new EventType(
+    v347: new EventType(
         'DCA.TradeFailed',
         sts.struct({
             id: sts.number(),
-            who: v287.AccountId32,
-            error: v287.DispatchError,
+            who: v347.AccountId32,
+            error: v347.DispatchError,
+        })
+    ),
+    /**
+     * The DCA trade execution is failed
+     */
+    v390: new EventType(
+        'DCA.TradeFailed',
+        sts.struct({
+            id: sts.number(),
+            who: v390.AccountId32,
+            error: v390.DispatchError,
         })
     ),
 }
@@ -98,12 +95,23 @@ export const terminated =  {
     /**
      * The DCA is terminated and completely removed from the chain
      */
-    v287: new EventType(
+    v347: new EventType(
         'DCA.Terminated',
         sts.struct({
             id: sts.number(),
-            who: v287.AccountId32,
-            error: v287.DispatchError,
+            who: v347.AccountId32,
+            error: v347.DispatchError,
+        })
+    ),
+    /**
+     * The DCA is terminated and completely removed from the chain
+     */
+    v390: new EventType(
+        'DCA.Terminated',
+        sts.struct({
+            id: sts.number(),
+            who: v390.AccountId32,
+            error: v390.DispatchError,
         })
     ),
 }
@@ -113,11 +121,11 @@ export const completed =  {
     /**
      * The DCA is completed and completely removed from the chain
      */
-    v287: new EventType(
+    v347: new EventType(
         'DCA.Completed',
         sts.struct({
             id: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
         })
     ),
 }
@@ -127,11 +135,35 @@ export const randomnessGenerationFailed =  {
     /**
      * Randomness generation failed possibly coming from missing data about relay chain
      */
-    v287: new EventType(
+    v347: new EventType(
         'DCA.RandomnessGenerationFailed',
         sts.struct({
             block: sts.number(),
-            error: v287.DispatchError,
+            error: v347.DispatchError,
+        })
+    ),
+    /**
+     * Randomness generation failed possibly coming from missing data about relay chain
+     */
+    v390: new EventType(
+        'DCA.RandomnessGenerationFailed',
+        sts.struct({
+            block: sts.number(),
+            error: v390.DispatchError,
+        })
+    ),
+}
+
+export const reserveUnlocked =  {
+    name: 'DCA.ReserveUnlocked',
+    /**
+     * DCA reserve for the given asset have been unlocked for a user
+     */
+    v347: new EventType(
+        'DCA.ReserveUnlocked',
+        sts.struct({
+            who: v347.AccountId32,
+            assetId: sts.number(),
         })
     ),
 }

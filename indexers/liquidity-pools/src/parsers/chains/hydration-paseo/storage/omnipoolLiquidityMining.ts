@@ -12,10 +12,10 @@ import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 function getNftCollectionIdConstant({
   block,
 }: GetDataAtBlockInput): OmnipoolLiquidyMiningNftCollectionId | null {
-  if (block.specVersion < 287) return null;
-  if (constants.omnipoolLiquidityMining.nftCollectionId.v287.is(block)) {
+  if (block.specVersion < 347) return null;
+  if (constants.omnipoolLiquidityMining.nftCollectionId.v347.is(block)) {
     const resp =
-      constants.omnipoolLiquidityMining.nftCollectionId.v287.get(block);
+      constants.omnipoolLiquidityMining.nftCollectionId.v347.get(block);
     return {
       collectionId: resp.toString(),
     };
@@ -35,14 +35,14 @@ async function getOmniPositionId({
     blockHeight: block.height,
     args: { depositId },
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
       if (
-        storage.omnipoolLiquidityMining.omniPositionId.v287.is(block) ||
-        block.specVersion >= 287
+        storage.omnipoolLiquidityMining.omniPositionId.v347.is(block) ||
+        block.specVersion >= 347
       ) {
         return tryExecOrReturnFallback(async () => {
           const resp =
-            await storage.omnipoolLiquidityMining.omniPositionId.v287.get(
+            await storage.omnipoolLiquidityMining.omniPositionId.v347.get(
               block,
               BigInt(depositId)
             );

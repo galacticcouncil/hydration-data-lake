@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
 
 export const createGlobalFarm =  {
     name: 'XYKLiquidityMining.create_global_farm',
@@ -34,7 +34,7 @@ export const createGlobalFarm =  {
      * - `price_adjustment`:
      * Emits `GlobalFarmCreated` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.create_global_farm',
         sts.struct({
             totalRewards: sts.bigint(),
@@ -42,10 +42,10 @@ export const createGlobalFarm =  {
             blocksPerPeriod: sts.number(),
             incentivizedAsset: sts.number(),
             rewardCurrency: sts.number(),
-            owner: v287.AccountId32,
-            yieldPerPeriod: v287.Perquintill,
+            owner: v347.AccountId32,
+            yieldPerPeriod: v347.Perquintill,
             minDeposit: sts.bigint(),
-            priceAdjustment: v287.FixedU128,
+            priceAdjustment: v347.FixedU128,
         })
     ),
 }
@@ -64,11 +64,11 @@ export const updateGlobalFarm =  {
      * 
      * Emits `GlobalFarmUpdated` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.update_global_farm',
         sts.struct({
             globalFarmId: sts.number(),
-            priceAdjustment: v287.FixedU128,
+            priceAdjustment: v347.FixedU128,
         })
     ),
 }
@@ -88,7 +88,7 @@ export const terminateGlobalFarm =  {
      * 
      * Emits `GlobalFarmTerminated` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.terminate_global_farm',
         sts.struct({
             globalFarmId: sts.number(),
@@ -118,13 +118,13 @@ export const createYieldFarm =  {
      * 
      * Emits `YieldFarmCreated` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.create_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
-            assetPair: v287.Type_274,
-            multiplier: v287.FixedU128,
-            loyaltyCurve: sts.option(() => v287.LoyaltyCurve),
+            assetPair: v347.Type_279,
+            multiplier: v347.FixedU128,
+            loyaltyCurve: sts.option(() => v347.LoyaltyCurve),
         })
     ),
 }
@@ -144,12 +144,12 @@ export const updateYieldFarm =  {
      * 
      * Emits `YieldFarmUpdated` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.update_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
-            assetPair: v287.Type_274,
-            multiplier: v287.FixedU128,
+            assetPair: v347.Type_279,
+            multiplier: v347.FixedU128,
         })
     ),
 }
@@ -173,11 +173,11 @@ export const stopYieldFarm =  {
      * 
      * Emits `YieldFarmStopped` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.stop_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
-            assetPair: v287.Type_274,
+            assetPair: v347.Type_279,
         })
     ),
 }
@@ -203,13 +203,13 @@ export const resumeYieldFarm =  {
      * 
      * Emits `YieldFarmResumed` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.resume_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
             yieldFarmId: sts.number(),
-            assetPair: v287.Type_274,
-            multiplier: v287.FixedU128,
+            assetPair: v347.Type_279,
+            multiplier: v347.FixedU128,
         })
     ),
 }
@@ -237,12 +237,12 @@ export const terminateYieldFarm =  {
      * 
      * Emits `YieldFarmTerminated` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.terminate_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
             yieldFarmId: sts.number(),
-            assetPair: v287.Type_274,
+            assetPair: v347.Type_279,
         })
     ),
 }
@@ -265,12 +265,12 @@ export const depositShares =  {
      * 
      * Emits `SharesDeposited` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.deposit_shares',
         sts.struct({
             globalFarmId: sts.number(),
             yieldFarmId: sts.number(),
-            assetPair: v287.Type_274,
+            assetPair: v347.Type_279,
             sharesAmount: sts.bigint(),
         })
     ),
@@ -293,11 +293,11 @@ export const joinFarms =  {
      * Emits `SharesDeposited` event for the first farm entry
      * Emits `SharesRedeposited` event for each farm entry after the first one
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.join_farms',
         sts.struct({
             farmEntries: sts.array(() => sts.tuple(() => [sts.number(), sts.number()])),
-            assetPair: v287.Type_274,
+            assetPair: v347.Type_279,
             sharesAmount: sts.bigint(),
         })
     ),
@@ -322,7 +322,7 @@ export const addLiquidityAndJoinFarms =  {
      * Emits `SharesDeposited` event for the first farm entry
      * Emits `SharesRedeposited` event for each farm entry after the first one
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.add_liquidity_and_join_farms',
         sts.struct({
             assetA: sts.number(),
@@ -353,12 +353,12 @@ export const redepositShares =  {
      * 
      * Emits `SharesRedeposited` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.redeposit_shares',
         sts.struct({
             globalFarmId: sts.number(),
             yieldFarmId: sts.number(),
-            assetPair: v287.Type_274,
+            assetPair: v347.Type_279,
             depositId: sts.bigint(),
         })
     ),
@@ -379,7 +379,7 @@ export const claimRewards =  {
      * 
      * Emits `RewardClaimed` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.claim_rewards',
         sts.struct({
             depositId: sts.bigint(),
@@ -414,12 +414,12 @@ export const withdrawShares =  {
      * * `RewardClaimed` if claim happen
      * * `SharesWithdrawn` event when successful
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.withdraw_shares',
         sts.struct({
             depositId: sts.bigint(),
             yieldFarmId: sts.number(),
-            assetPair: v287.Type_274,
+            assetPair: v347.Type_279,
         })
     ),
 }
@@ -444,11 +444,11 @@ export const exitFarms =  {
      * * `DepositDestroyed` if the deposit is fully withdrawn
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'XYKLiquidityMining.exit_farms',
         sts.struct({
             depositId: sts.bigint(),
-            assetPair: v287.Type_274,
+            assetPair: v347.Type_279,
             farmEntries: sts.array(() => sts.number()),
         })
     ),

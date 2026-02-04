@@ -6,8 +6,8 @@ import { EvmLogDecoder } from '../../../../utils/evmTools/evmLogDecoder';
 import { EvmEventName } from '../../../../model';
 
 function parseLogParams(event: SqdEvent): EvmLogEventParams | null {
-  if (events.evm.log.v287.is(event)) {
-    const { log } = events.evm.log.v287.decode(event);
+  if (events.evm.log.v347.is(event)) {
+    const { log } = events.evm.log.v347.decode(event);
 
     const decodedLog = EvmLogDecoder.getInstance().tryDecodeLog(log);
 

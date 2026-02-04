@@ -1,18 +1,18 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
 
 export const borrowingContract =  {
     /**
      *  Borrowing market contract address
      */
-    v287: new StorageType('Liquidation.BorrowingContract', 'Default', [], v287.H160) as BorrowingContractV287,
+    v347: new StorageType('Liquidation.BorrowingContract', 'Default', [], v347.H160) as BorrowingContractV347,
 }
 
 /**
  *  Borrowing market contract address
  */
-export interface BorrowingContractV287  {
+export interface BorrowingContractV347  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v287.H160
-    get(block: Block): Promise<(v287.H160 | undefined)>
+    getDefault(block: Block): v347.H160
+    get(block: Block): Promise<(v347.H160 | undefined)>
 }

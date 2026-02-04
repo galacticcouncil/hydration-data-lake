@@ -26,16 +26,16 @@ function getConstants({ block }: GetConstantsInput): StableswapConstants {
   let amplificationRange = null;
   let minPoolLiquidity = null;
 
-  if (constants.stableswap.minTradingLimit.v287.is(block)) {
-    const resp = constants.stableswap.minTradingLimit.v287.get(block);
+  if (constants.stableswap.minTradingLimit.v347.is(block)) {
+    const resp = constants.stableswap.minTradingLimit.v347.get(block);
     if (resp !== undefined) minTradingLimit = resp;
   }
-  if (constants.stableswap.minPoolLiquidity.v287.is(block)) {
-    const resp = constants.stableswap.minPoolLiquidity.v287.get(block);
+  if (constants.stableswap.minPoolLiquidity.v347.is(block)) {
+    const resp = constants.stableswap.minPoolLiquidity.v347.get(block);
     if (resp !== undefined) minPoolLiquidity = resp;
   }
-  if (constants.stableswap.amplificationRange.v287.is(block)) {
-    const resp = constants.stableswap.amplificationRange.v287.get(block);
+  if (constants.stableswap.amplificationRange.v347.is(block)) {
+    const resp = constants.stableswap.amplificationRange.v347.get(block);
     if (resp !== undefined) amplificationRange = [resp.start, resp.end];
   }
 
@@ -50,9 +50,9 @@ async function getPoolData({
   poolId,
   block,
 }: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
-  if (storage.stableswap.pools.v287.is(block)) {
+  if (storage.stableswap.pools.v347.is(block)) {
     return tryExecOrReturnFallback(async () => {
-      const resp = await storage.stableswap.pools.v287.get(block, poolId);
+      const resp = await storage.stableswap.pools.v347.get(block, poolId);
       if (resp !== undefined) return resp;
       return null;
     }, null);
@@ -64,14 +64,14 @@ async function getPoolData({
 async function getAllPoolsData({
   block,
 }: GetDataAtBlockInput): Promise<StablepoolAllPoolsInfoWithPoolId[] | null> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.stableswap.pools.v287.is(block) || block.specVersion >= 287) {
+  if (storage.stableswap.pools.v347.is(block) || block.specVersion >= 287) {
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
       try {
-        for await (const page of storage.stableswap.pools.v287.getPairsPaged(
+        for await (const page of storage.stableswap.pools.v347.getPairsPaged(
           500,
           block
         )) {
@@ -101,12 +101,12 @@ async function getPoolAssetStorageData({
 }: GetPoolAssetInfoInput): Promise<StablepoolAssetState | null> {
   let tradable: OmnipoolAssetTradability | null = null;
 
-  if (storage.stableswap.assetTradability.v287.is(block)) {
+  if (storage.stableswap.assetTradability.v347.is(block)) {
     // @ts-ignore
     return tryExecOrReturnFallback<StablepoolAssetState>(async () => {
       // TODO fix call - returns undefined in any case
 
-      const resp = await storage.stableswap.assetTradability.v287.get(
+      const resp = await storage.stableswap.assetTradability.v347.get(
         block,
         poolId!,
         assetId
@@ -125,11 +125,11 @@ async function getPoolAssetStorageData({
 async function getAllPoolIds({
   block,
 }: StablepoolGetAllPoolIdsInput): Promise<number[]> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.stableswap.pools.v287.is(block)) {
+  if (storage.stableswap.pools.v347.is(block)) {
     return tryExecOrReturnFallback(async () => {
-      const ids = await storage.stableswap.pools.v287.getKeys(block);
+      const ids = await storage.stableswap.pools.v347.getKeys(block);
 
       return ids;
     }, []);
@@ -142,11 +142,38 @@ async function getPoolPegs({
   poolId,
   block,
 }: StablepoolGetPoolPegsInput): Promise<StablepoolPoolPegsInfo | null> {
-  if (block.specVersion < 299) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.stableswap.poolPegs.v299.is(block) || block.specVersion >= 299) {
+  if (storage.stableswap.poolPegs.v347.is(block)) {
     return tryExecOrReturnFallback(async () => {
-      const pegsInfo = await storage.stableswap.poolPegs.v299.get(
+      const pegsInfo = await storage.stableswap.poolPegs.v347.get(
+        block,
+        poolId
+      );
+
+      if (!pegsInfo) return null;
+
+      const res = {
+        maxPegUpdate: pegsInfo.maxPegUpdate,
+        current: pegsInfo.current,
+        source: pegsInfo.source.map((s) => ({
+          sourceKind: s.__kind,
+          oracleName: getOracleNameFromStableswapPegsSource(s),
+          oraclePeriod:
+            s.__kind === 'Oracle'
+              ? (s.value[1].__kind as EmaOraclePeriod)
+              : undefined,
+          oracleAsset: s.__kind === 'Oracle' ? s.value[2] : undefined,
+          valuePoints: s.__kind === 'Value' ? s.value : undefined,
+        })),
+      };
+      return res;
+    }, null);
+  }
+
+  if (storage.stableswap.poolPegs.v374.is(block) || block.specVersion >= 374) {
+    return tryExecOrReturnFallback(async () => {
+      const pegsInfo = await storage.stableswap.poolPegs.v374.get(
         block,
         poolId
       );
@@ -179,14 +206,52 @@ async function getAllPoolsPegs({
 }: GetDataAtBlockInput): Promise<
   StablepoolManyPoolsPegsInfoWithPoolId[] | null
 > {
-  if (block.specVersion < 299) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.stableswap.poolPegs.v299.is(block) || block.specVersion >= 299) {
+  if (storage.stableswap.poolPegs.v347.is(block)) {
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
       try {
-        for await (const page of storage.stableswap.poolPegs.v299.getPairsPaged(
+        for await (const page of storage.stableswap.poolPegs.v347.getPairsPaged(
+          500,
+          block
+        )) {
+          pairsPaged.push(
+            ...page
+              .filter((p) => !!p && p[1] !== undefined && p[1] !== null)
+              .map(([poolId, pegsInfo]) => ({
+                poolId,
+                data: {
+                  maxPegUpdate: pegsInfo!.maxPegUpdate,
+                  current: pegsInfo!.current,
+                  source: pegsInfo!.source.map((s) => ({
+                    sourceKind: s.__kind,
+                    oracleName: getOracleNameFromStableswapPegsSource(s),
+                    oraclePeriod:
+                      s.__kind === 'Oracle'
+                        ? (s.value[1].__kind as EmaOraclePeriod)
+                        : undefined,
+                    oracleAsset: s.__kind === 'Oracle' ? s.value[2] : undefined,
+                    valuePoints: s.__kind === 'Value' ? s.value : undefined,
+                  })),
+                },
+              }))
+          );
+        }
+      } catch (e) {
+        throw e;
+      }
+
+      return pairsPaged;
+    }, null);
+  }
+  if (storage.stableswap.poolPegs.v374.is(block)) {
+    return tryExecOrReturnFallback(async () => {
+      const pairsPaged = [];
+
+      try {
+        for await (const page of storage.stableswap.poolPegs.v374.getPairsPaged(
           500,
           block
         )) {

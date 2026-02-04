@@ -14,12 +14,12 @@ function getConstants({
   let assetFeeParameters = null;
   let protocolFeeParameters = null;
 
-  if (constants.dynamicFees.assetFeeParameters.v287.is(block)) {
-    const resp = constants.dynamicFees.assetFeeParameters.v287.get(block);
+  if (constants.dynamicFees.assetFeeParameters.v347.is(block)) {
+    const resp = constants.dynamicFees.assetFeeParameters.v347.get(block);
     if (resp) assetFeeParameters = resp;
   }
-  if (constants.dynamicFees.protocolFeeParameters.v287.is(block)) {
-    const resp = constants.dynamicFees.protocolFeeParameters.v287.get(block);
+  if (constants.dynamicFees.protocolFeeParameters.v347.is(block)) {
+    const resp = constants.dynamicFees.protocolFeeParameters.v347.get(block);
     if (resp) protocolFeeParameters = resp;
   }
 
@@ -32,14 +32,14 @@ function getConstants({
 async function getAssetFeesAll({
   block,
 }: GetAssetsDynamicFeesAllInput): Promise<Array<AssetDynamicFeeData>> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.dynamicFees.assetFee.v287.is(block) || block.specVersion >= 287) {
+  if (storage.dynamicFees.assetFee.v347.is(block) || block.specVersion >= 347) {
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
       try {
-        for await (const page of storage.dynamicFees.assetFee.v287.getPairsPaged(
+        for await (const page of storage.dynamicFees.assetFee.v347.getPairsPaged(
           500,
           block
         ))

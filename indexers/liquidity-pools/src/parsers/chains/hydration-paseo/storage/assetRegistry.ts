@@ -26,10 +26,10 @@ async function getAsset(
   assetId: string | number,
   block: BlockHeader
 ): Promise<AssetDetails | null> {
-  if (block.specVersion < 287) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.assetRegistry.assets.v287.is(block)) {
-    const resp = await storage.assetRegistry.assets.v287.get(block, +assetId);
+  if (storage.assetRegistry.assets.v347.is(block)) {
+    const resp = await storage.assetRegistry.assets.v347.get(block, +assetId);
 
     return !resp
       ? null
@@ -51,10 +51,10 @@ async function getAssetMany(
   assetIds: Array<string | number>,
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.assetRegistry.assets.v287.is(block)) {
-    const resp = await storage.assetRegistry.assets.v287.getMany(
+  if (storage.assetRegistry.assets.v347.is(block)) {
+    const resp = await storage.assetRegistry.assets.v347.getMany(
       block,
       assetIds.map((id) => +id)
     );
@@ -88,12 +88,12 @@ async function getAssetMany(
 async function getAssetAll(
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.assetRegistry.assets.v287.is(block)) {
+  if (storage.assetRegistry.assets.v347.is(block)) {
     const pairsPaged = [];
 
-    for await (const page of storage.assetRegistry.assets.v287.getPairsPaged(
+    for await (const page of storage.assetRegistry.assets.v347.getPairsPaged(
       100,
       block
     ))
@@ -123,14 +123,24 @@ async function getErc20AssetContractAddress(
   assetId: string | number,
   block: BlockHeader
 ): Promise<Erc20AssetContractDetails | null> {
-  if (block.specVersion < 287) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.assetRegistry.assetLocations.v287.is(block)) {
-    const resp = await storage.assetRegistry.assetLocations.v287.get(
+  if (storage.assetRegistry.assetLocations.v347.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v347.get(
       block,
       +assetId
     );
 
+    return getErc20AssetContractFromLocation(resp);
+  }
+
+  if (storage.assetRegistry.assetLocations.v390.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v390.get(
+      block,
+      +assetId
+    );
+
+    // @ts-ignore
     return getErc20AssetContractFromLocation(resp);
   }
 
@@ -154,13 +164,22 @@ async function getAssetLocation({
   assetId,
   block,
 }: GetAssetLocationDataInput): Promise<AssetRegistryAssetLocation | null> {
-  if (block.specVersion < 287) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.assetRegistry.assetLocations.v287.is(block)) {
-    const resp = await storage.assetRegistry.assetLocations.v287.get(
+  if (storage.assetRegistry.assetLocations.v347.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v347.get(
       block,
       +assetId
     );
+    return resp ?? null;
+  }
+
+  if (storage.assetRegistry.assetLocations.v390.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v390.get(
+      block,
+      +assetId
+    );
+    // @ts-ignore
     return resp ?? null;
   }
 
@@ -173,7 +192,7 @@ async function getAssetLocationsMany({
 }: GetAssetLocationsDataManyInput): Promise<
   AssetRegistryLocationWithAssetId[] | null
 > {
-  if (block.specVersion < 287) return null;
+  if (block.specVersion < 347) return null;
 
   const idsDecorated = assetIds.map((id) => +id);
 
@@ -191,9 +210,9 @@ async function getAssetLocationsMany({
     Array.from(responseMap.keys()),
     100
   )) {
-    if (storage.assetRegistry.assetLocations.v287.is(block)) {
+    if (storage.assetRegistry.assetLocations.v347.is(block)) {
       await tryExecOrReturnFallback(async () => {
-        const resp = await storage.assetRegistry.assetLocations.v287.getMany(
+        const resp = await storage.assetRegistry.assetLocations.v347.getMany(
           block,
           idsDecorated
         );
@@ -207,6 +226,30 @@ async function getAssetLocationsMany({
           }
         });
       }, null);
+      continue;
+    }
+
+    if (
+      storage.assetRegistry.assetLocations.v390.is(block) ||
+      block.specVersion >= 390
+    ) {
+      await tryExecOrReturnFallback(async () => {
+        const resp = await storage.assetRegistry.assetLocations.v390.getMany(
+          block,
+          idsDecorated
+        );
+
+        subBatch.forEach((assetId, index) => {
+          if (resp[index]) {
+            responseMap.set(assetId, {
+              assetId: assetId,
+              // @ts-ignore
+              location: resp[index],
+            });
+          }
+        });
+      }, null);
+      continue;
     }
 
     throw new UnknownVersionError('storage.assetRegistry.assetLocations');

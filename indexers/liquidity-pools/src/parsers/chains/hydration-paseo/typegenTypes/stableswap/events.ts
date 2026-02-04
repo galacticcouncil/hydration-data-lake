@@ -1,32 +1,33 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
-import * as v299 from '../v299'
+import * as v347 from '../v347'
+import * as v374 from '../v374'
 
 export const poolCreated =  {
     name: 'Stableswap.PoolCreated',
     /**
      * A pool was created.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Stableswap.PoolCreated',
         sts.struct({
             poolId: sts.number(),
             assets: sts.array(() => sts.number()),
-            amplification: v287.NonZeroU16,
-            fee: v287.Permill,
+            amplification: v347.NonZeroU16,
+            fee: v347.Permill,
+            peg: sts.option(() => v347.PoolPegInfo),
         })
     ),
     /**
      * A pool was created.
      */
-    v299: new EventType(
+    v374: new EventType(
         'Stableswap.PoolCreated',
         sts.struct({
             poolId: sts.number(),
             assets: sts.array(() => sts.number()),
-            amplification: v299.NonZeroU16,
-            fee: v299.Permill,
-            peg: sts.option(() => v299.PoolPegInfo),
+            amplification: v374.NonZeroU16,
+            fee: v374.Permill,
+            peg: sts.option(() => v374.PoolPegInfo),
         })
     ),
 }
@@ -36,13 +37,13 @@ export const liquidityAdded =  {
     /**
      * Liquidity of an asset was added to a pool.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Stableswap.LiquidityAdded',
         sts.struct({
             poolId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             shares: sts.bigint(),
-            assets: sts.array(() => v287.AssetAmount),
+            assets: sts.array(() => v347.AssetAmount),
         })
     ),
 }
@@ -52,13 +53,13 @@ export const liquidityRemoved =  {
     /**
      * Liquidity removed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Stableswap.LiquidityRemoved',
         sts.struct({
             poolId: sts.number(),
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             shares: sts.bigint(),
-            amounts: sts.array(() => v287.AssetAmount),
+            amounts: sts.array(() => v347.AssetAmount),
             fee: sts.bigint(),
         })
     ),
@@ -70,10 +71,10 @@ export const sellExecuted =  {
      * Sell trade executed. Trade fee paid in asset leaving the pool (already subtracted from amount_out).
      * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v287: new EventType(
+    v347: new EventType(
         'Stableswap.SellExecuted',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             poolId: sts.number(),
             assetIn: sts.number(),
             assetOut: sts.number(),
@@ -90,10 +91,10 @@ export const buyExecuted =  {
      * Buy trade executed. Trade fee paid in asset entering the pool (already included in amount_in).
      * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v287: new EventType(
+    v347: new EventType(
         'Stableswap.BuyExecuted',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             poolId: sts.number(),
             assetIn: sts.number(),
             assetOut: sts.number(),

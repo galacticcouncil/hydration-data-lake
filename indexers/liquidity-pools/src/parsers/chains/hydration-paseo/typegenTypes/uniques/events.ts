@@ -1,17 +1,17 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
 
 export const created =  {
     name: 'Uniques.Created',
     /**
      * A `collection` was created.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.Created',
         sts.struct({
             collection: sts.bigint(),
-            creator: v287.AccountId32,
-            owner: v287.AccountId32,
+            creator: v347.AccountId32,
+            owner: v347.AccountId32,
         })
     ),
 }
@@ -21,11 +21,11 @@ export const forceCreated =  {
     /**
      * A `collection` was force-created.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.ForceCreated',
         sts.struct({
             collection: sts.bigint(),
-            owner: v287.AccountId32,
+            owner: v347.AccountId32,
         })
     ),
 }
@@ -35,7 +35,7 @@ export const destroyed =  {
     /**
      * A `collection` was destroyed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.Destroyed',
         sts.struct({
             collection: sts.bigint(),
@@ -48,12 +48,12 @@ export const issued =  {
     /**
      * An `item` was issued.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.Issued',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            owner: v287.AccountId32,
+            owner: v347.AccountId32,
         })
     ),
 }
@@ -63,13 +63,13 @@ export const transferred =  {
     /**
      * An `item` was transferred.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.Transferred',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            from: v287.AccountId32,
-            to: v287.AccountId32,
+            from: v347.AccountId32,
+            to: v347.AccountId32,
         })
     ),
 }
@@ -79,12 +79,12 @@ export const burned =  {
     /**
      * An `item` was destroyed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.Burned',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            owner: v287.AccountId32,
+            owner: v347.AccountId32,
         })
     ),
 }
@@ -94,7 +94,7 @@ export const frozen =  {
     /**
      * Some `item` was frozen.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.Frozen',
         sts.struct({
             collection: sts.bigint(),
@@ -108,7 +108,7 @@ export const thawed =  {
     /**
      * Some `item` was thawed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.Thawed',
         sts.struct({
             collection: sts.bigint(),
@@ -122,7 +122,7 @@ export const collectionFrozen =  {
     /**
      * Some `collection` was frozen.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.CollectionFrozen',
         sts.struct({
             collection: sts.bigint(),
@@ -135,7 +135,7 @@ export const collectionThawed =  {
     /**
      * Some `collection` was thawed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.CollectionThawed',
         sts.struct({
             collection: sts.bigint(),
@@ -148,11 +148,11 @@ export const ownerChanged =  {
     /**
      * The owner changed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.OwnerChanged',
         sts.struct({
             collection: sts.bigint(),
-            newOwner: v287.AccountId32,
+            newOwner: v347.AccountId32,
         })
     ),
 }
@@ -162,13 +162,13 @@ export const teamChanged =  {
     /**
      * The management team changed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.TeamChanged',
         sts.struct({
             collection: sts.bigint(),
-            issuer: v287.AccountId32,
-            admin: v287.AccountId32,
-            freezer: v287.AccountId32,
+            issuer: v347.AccountId32,
+            admin: v347.AccountId32,
+            freezer: v347.AccountId32,
         })
     ),
 }
@@ -179,13 +179,13 @@ export const approvedTransfer =  {
      * An `item` of a `collection` has been approved by the `owner` for transfer by
      * a `delegate`.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.ApprovedTransfer',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            owner: v287.AccountId32,
-            delegate: v287.AccountId32,
+            owner: v347.AccountId32,
+            delegate: v347.AccountId32,
         })
     ),
 }
@@ -196,13 +196,13 @@ export const approvalCancelled =  {
      * An approval for a `delegate` account to transfer the `item` of an item
      * `collection` was cancelled by its `owner`.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.ApprovalCancelled',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            owner: v287.AccountId32,
-            delegate: v287.AccountId32,
+            owner: v347.AccountId32,
+            delegate: v347.AccountId32,
         })
     ),
 }
@@ -212,7 +212,7 @@ export const itemStatusChanged =  {
     /**
      * A `collection` has had its attributes changed by the `Force` origin.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.ItemStatusChanged',
         sts.struct({
             collection: sts.bigint(),
@@ -225,7 +225,7 @@ export const collectionMetadataSet =  {
     /**
      * New metadata has been set for a `collection`.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.CollectionMetadataSet',
         sts.struct({
             collection: sts.bigint(),
@@ -240,7 +240,7 @@ export const collectionMetadataCleared =  {
     /**
      * Metadata has been cleared for a `collection`.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.CollectionMetadataCleared',
         sts.struct({
             collection: sts.bigint(),
@@ -253,7 +253,7 @@ export const metadataSet =  {
     /**
      * New metadata has been set for an item.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.MetadataSet',
         sts.struct({
             collection: sts.bigint(),
@@ -269,7 +269,7 @@ export const metadataCleared =  {
     /**
      * Metadata has been cleared for an item.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.MetadataCleared',
         sts.struct({
             collection: sts.bigint(),
@@ -283,7 +283,7 @@ export const redeposited =  {
     /**
      * Metadata has been cleared for an item.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.Redeposited',
         sts.struct({
             collection: sts.bigint(),
@@ -297,7 +297,7 @@ export const attributeSet =  {
     /**
      * New attribute metadata has been set for a `collection` or `item`.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.AttributeSet',
         sts.struct({
             collection: sts.bigint(),
@@ -313,7 +313,7 @@ export const attributeCleared =  {
     /**
      * Attribute metadata has been cleared for a `collection` or `item`.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.AttributeCleared',
         sts.struct({
             collection: sts.bigint(),
@@ -328,10 +328,10 @@ export const ownershipAcceptanceChanged =  {
     /**
      * Ownership acceptance has changed for an account.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.OwnershipAcceptanceChanged',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             maybeCollection: sts.option(() => sts.bigint()),
         })
     ),
@@ -342,7 +342,7 @@ export const collectionMaxSupplySet =  {
     /**
      * Max supply has been set for a collection.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.CollectionMaxSupplySet',
         sts.struct({
             collection: sts.bigint(),
@@ -356,13 +356,13 @@ export const itemPriceSet =  {
     /**
      * The price was set for the instance.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.ItemPriceSet',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
             price: sts.bigint(),
-            whitelistedBuyer: sts.option(() => v287.AccountId32),
+            whitelistedBuyer: sts.option(() => v347.AccountId32),
         })
     ),
 }
@@ -372,7 +372,7 @@ export const itemPriceRemoved =  {
     /**
      * The price for the instance was removed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.ItemPriceRemoved',
         sts.struct({
             collection: sts.bigint(),
@@ -386,14 +386,14 @@ export const itemBought =  {
     /**
      * An item was bought.
      */
-    v287: new EventType(
+    v347: new EventType(
         'Uniques.ItemBought',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
             price: sts.bigint(),
-            seller: v287.AccountId32,
-            buyer: v287.AccountId32,
+            seller: v347.AccountId32,
+            buyer: v347.AccountId32,
         })
     ),
 }

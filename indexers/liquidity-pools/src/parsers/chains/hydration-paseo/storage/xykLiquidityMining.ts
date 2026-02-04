@@ -6,9 +6,9 @@ import { XykpoolNftCollectionId } from '../../../types/storage/xykpoolLiquidityM
 function getNftCollectionIdConstant({
   block,
 }: GetDataAtBlockInput): XykpoolNftCollectionId | null {
-  if (block.specVersion < 287) return null;
-  if (constants.xykLiquidityMining.nftCollectionId.v287.is(block)) {
-    const resp = constants.xykLiquidityMining.nftCollectionId.v287.get(block);
+  if (block.specVersion < 347) return null;
+  if (constants.xykLiquidityMining.nftCollectionId.v347.is(block)) {
+    const resp = constants.xykLiquidityMining.nftCollectionId.v347.get(block);
     return {
       collectionId: resp.toString(),
     };

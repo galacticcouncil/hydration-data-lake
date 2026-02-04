@@ -6,18 +6,18 @@ import { LiquidationLiquidatedEventParams } from '../../../types/events';
 function parseLiquidationLiquidatedParams(
   event: SqdEvent
 ): LiquidationLiquidatedEventParams {
-  if (events.liquidation.liquidated.v287.is(event)) {
-    const parsedParams = events.liquidation.liquidated.v287.decode(event);
+  if (events.liquidation.liquidated.v347.is(event)) {
+    const parsedParams = events.liquidation.liquidated.v347.decode(event);
 
     return {
-      userEvmAddress: parsedParams.evmAddress,
+      userEvmAddress: parsedParams.user,
       collateralAssetRegistryId: parsedParams.collateralAsset.toString(),
       debtAssetRegistryId: parsedParams.debtAsset.toString(),
       profit: parsedParams.profit,
     };
   }
-  if (events.liquidation.liquidated.v314.is(event)) {
-    const parsedParams = events.liquidation.liquidated.v314.decode(event);
+  if (events.liquidation.liquidated.v362.is(event)) {
+    const parsedParams = events.liquidation.liquidated.v362.decode(event);
 
     return {
       userEvmAddress: parsedParams.user,

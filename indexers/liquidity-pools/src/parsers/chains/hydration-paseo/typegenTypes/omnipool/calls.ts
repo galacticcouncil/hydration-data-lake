@@ -21,7 +21,7 @@ export const sell =  {
      * Emits `pallet_broadcast::Swapped` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'Omnipool.sell',
         sts.struct({
             assetIn: sts.number(),
@@ -53,7 +53,7 @@ export const buy =  {
      * Emits `pallet_broadcast::Swapped` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'Omnipool.buy',
         sts.struct({
             assetOut: sts.number(),

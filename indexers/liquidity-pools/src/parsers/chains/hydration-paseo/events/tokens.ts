@@ -4,9 +4,9 @@ import { TokensTransferEventParams } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseTransferParams(event: SqdEvent): TokensTransferEventParams {
-  if (events.tokens.transfer.v287.is(event)) {
+  if (events.tokens.transfer.v347.is(event)) {
     const { currencyId, to, from, amount } =
-      events.tokens.transfer.v287.decode(event);
+      events.tokens.transfer.v347.decode(event);
     return {
       currencyId,
       to,

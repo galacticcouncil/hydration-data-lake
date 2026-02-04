@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
+import * as v390 from '../v390'
 
 export const createGlobalFarm =  {
     name: 'OmnipoolLiquidityMining.create_global_farm',
@@ -33,17 +34,17 @@ export const createGlobalFarm =  {
      * Emits `GlobalFarmCreated` when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.create_global_farm',
         sts.struct({
             totalRewards: sts.bigint(),
             plannedYieldingPeriods: sts.number(),
             blocksPerPeriod: sts.number(),
             rewardCurrency: sts.number(),
-            owner: v287.AccountId32,
-            yieldPerPeriod: v287.Perquintill,
+            owner: v347.AccountId32,
+            yieldPerPeriod: v347.Perquintill,
             minDeposit: sts.bigint(),
-            lrnaPriceAdjustment: v287.FixedU128,
+            lrnaPriceAdjustment: v347.FixedU128,
         })
     ),
 }
@@ -65,7 +66,7 @@ export const terminateGlobalFarm =  {
      * Emits `GlobalFarmTerminated` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.terminate_global_farm',
         sts.struct({
             globalFarmId: sts.number(),
@@ -95,13 +96,13 @@ export const createYieldFarm =  {
      * Emits `YieldFarmCreated` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.create_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
             assetId: sts.number(),
-            multiplier: v287.FixedU128,
-            loyaltyCurve: sts.option(() => v287.LoyaltyCurve),
+            multiplier: v347.FixedU128,
+            loyaltyCurve: sts.option(() => v347.LoyaltyCurve),
         })
     ),
 }
@@ -122,12 +123,12 @@ export const updateYieldFarm =  {
      * Emits `YieldFarmUpdated` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.update_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
             assetId: sts.number(),
-            multiplier: v287.FixedU128,
+            multiplier: v347.FixedU128,
         })
     ),
 }
@@ -152,7 +153,7 @@ export const stopYieldFarm =  {
      * Emits `YieldFarmStopped` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.stop_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
@@ -184,13 +185,13 @@ export const resumeYieldFarm =  {
      * Emits `YieldFarmResumed` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.resume_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
             yieldFarmId: sts.number(),
             assetId: sts.number(),
-            multiplier: v287.FixedU128,
+            multiplier: v347.FixedU128,
         })
     ),
 }
@@ -219,7 +220,7 @@ export const terminateYieldFarm =  {
      * Emits `YieldFarmTerminated` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.terminate_yield_farm',
         sts.struct({
             globalFarmId: sts.number(),
@@ -247,7 +248,7 @@ export const depositShares =  {
      * Emits `SharesDeposited` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.deposit_shares',
         sts.struct({
             globalFarmId: sts.number(),
@@ -276,7 +277,7 @@ export const redepositShares =  {
      * Emits `SharesRedeposited` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.redeposit_shares',
         sts.struct({
             globalFarmId: sts.number(),
@@ -302,7 +303,7 @@ export const claimRewards =  {
      * Emits `RewardClaimed` event when successful.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.claim_rewards',
         sts.struct({
             depositId: sts.bigint(),
@@ -335,7 +336,7 @@ export const withdrawShares =  {
      * destroyed.
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.withdraw_shares',
         sts.struct({
             depositId: sts.bigint(),
@@ -362,12 +363,12 @@ export const updateGlobalFarm =  {
      * 
      * Emits `GlobalFarmUpdated` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.update_global_farm',
         sts.struct({
             globalFarmId: sts.number(),
             plannedYieldingPeriods: sts.number(),
-            yieldPerPeriod: v287.Perquintill,
+            yieldPerPeriod: v347.Perquintill,
             minDeposit: sts.bigint(),
         })
     ),
@@ -386,7 +387,7 @@ export const joinFarms =  {
      * Emits `SharesDeposited` event for the first farm entry
      * Emits `SharesRedeposited` event for each farm entry after the first one
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.join_farms',
         sts.struct({
             farmEntries: sts.array(() => sts.tuple(() => [sts.number(), sts.number()])),
@@ -410,7 +411,7 @@ export const addLiquidityAndJoinFarms =  {
      * Emits `SharesDeposited` event for the first farm entry
      * Emits `SharesRedeposited` event for each farm entry after the first one
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.add_liquidity_and_join_farms',
         sts.struct({
             farmEntries: sts.array(() => sts.tuple(() => [sts.number(), sts.number()])),
@@ -440,7 +441,7 @@ export const exitFarms =  {
      * * `DepositDestroyed` if the deposit is fully withdrawn
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.exit_farms',
         sts.struct({
             depositId: sts.bigint(),
@@ -469,12 +470,81 @@ export const addLiquidityStableswapOmnipoolAndJoinFarms =  {
      * Emits `SharesRedeposited` event for each farm entry after the first one
      * 
      */
-    v287: new CallType(
+    v347: new CallType(
         'OmnipoolLiquidityMining.add_liquidity_stableswap_omnipool_and_join_farms',
         sts.struct({
             stablePoolId: sts.number(),
-            stableAssetAmounts: sts.array(() => v287.AssetAmount),
+            stableAssetAmounts: sts.array(() => v347.AssetAmount),
             farmEntries: sts.option(() => sts.array(() => sts.tuple(() => [sts.number(), sts.number()]))),
+        })
+    ),
+    /**
+     * This function allows user to add liquidity to stableswap pool,
+     * then adding the stable shares as liquidity to omnipool
+     * then use that omnipool shares to join multiple farms.
+     * 
+     * If farm entries are not specified (empty vectoo), then the liquidities are still added to the pools
+     * 
+     * Parameters:
+     * - `origin`: owner of the omnipool position to deposit into the liquidity mining.
+     * - `stable_pool_id`: id of the stableswap pool to add liquidity to.
+     * - `stable_asset_amounts`: amount of each asset to be deposited into the stableswap pool.
+     * - `farm_entries`: list of farms to join.
+     * - `min_shares_limit`: optional minimum Omnipool shares to receive (slippage protection).
+     *                       Applies to Omnipool step only. None defaults to no protection.
+     * 
+     * Emits `LiquidityAdded` events from both pool
+     * Emits `SharesDeposited` event for the first farm entry
+     * Emits `SharesRedeposited` event for each farm entry after the first one
+     * 
+     */
+    v390: new CallType(
+        'OmnipoolLiquidityMining.add_liquidity_stableswap_omnipool_and_join_farms',
+        sts.struct({
+            stablePoolId: sts.number(),
+            stableAssetAmounts: sts.array(() => v390.AssetAmount),
+            farmEntries: sts.option(() => sts.array(() => sts.tuple(() => [sts.number(), sts.number()]))),
+            minSharesLimit: sts.option(() => sts.bigint()),
+        })
+    ),
+}
+
+export const removeLiquidityStableswapOmnipoolAndExitFarms =  {
+    name: 'OmnipoolLiquidityMining.remove_liquidity_stableswap_omnipool_and_exit_farms',
+    /**
+     * Remove liquidity from stableswap and omnipool, optionally exiting associated yield farms.
+     * 
+     * This extrinsic reverses the operation performed by `add_liquidity_stableswap_omnipool_and_join_farms`,
+     * with optional farm exit to match the optional farm join in the add function.
+     * 
+     * It performs the following steps in order:
+     * 1. [OPTIONAL] If deposit_id is provided: Exits from ALL yield farms associated with the deposit (claiming rewards)
+     * 2. Removes liquidity from the omnipool to retrieve stableswap shares (protected by omnipool_min_limit)
+     * 3. Removes liquidity from the stableswap pool to retrieve underlying assets (protected by stableswap_min_amounts_out)
+     * 
+     * The stabelswap liquidity asset removal strategy is determined by the `min_amounts_out` parameter length:
+     * - If 1 asset is specified: Uses `remove_liquidity_one_asset` (trading fee applies)
+     * - If multiple assets: Uses `remove_liquidity` (proportional, no trading fee)
+     * 
+     * Parameters:
+     * - `origin`: Owner of the omnipool position
+     * - `position_id`: The omnipool position NFT ID to remove liquidity from
+     * - `omnipool_min_limit`: The min amount of asset to be removed from omnipool (slippage protection)
+     * - `stableswap_min_amounts_out`: Asset IDs and minimum amounts minimum amounts of each asset to receive from omnipool.
+     * - `deposit_id`: Optional liquidity mining deposit NFT ID. If provided, exits all farms first.
+     * 
+     * Emits events:
+     * - If deposit_id provided: `RewardClaimed`, `SharesWithdrawn`, `DepositDestroyed`
+     * - Always: Omnipool's `LiquidityRemoved`, Stableswap's `LiquidityRemoved`
+     * 
+     */
+    v390: new CallType(
+        'OmnipoolLiquidityMining.remove_liquidity_stableswap_omnipool_and_exit_farms',
+        sts.struct({
+            positionId: sts.bigint(),
+            omnipoolMinLimit: sts.bigint(),
+            stableswapMinAmountsOut: sts.array(() => v390.AssetAmount),
+            depositId: sts.option(() => sts.bigint()),
         })
     ),
 }

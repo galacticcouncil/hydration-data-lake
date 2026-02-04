@@ -20,8 +20,8 @@ import { UnknownVersionError } from '../../../../utils/errors';
 function parseGlobalFarmCreatedParams(
   event: SqdEvent
 ): OmnipoolLMGlobalFarmCreatedEventParams {
-  if (events.omnipoolLiquidityMining.globalFarmCreated.v287.is(event)) {
-    return events.omnipoolLiquidityMining.globalFarmCreated.v287.decode(event);
+  if (events.omnipoolLiquidityMining.globalFarmCreated.v347.is(event)) {
+    return events.omnipoolLiquidityMining.globalFarmCreated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -30,8 +30,8 @@ function parseGlobalFarmCreatedParams(
 function parseGlobalFarmUpdatedParams(
   event: SqdEvent
 ): OmnipoolLMGlobalFarmUpdatedEventParams {
-  if (events.omnipoolLiquidityMining.globalFarmUpdated.v287.is(event)) {
-    return events.omnipoolLiquidityMining.globalFarmUpdated.v287.decode(event);
+  if (events.omnipoolLiquidityMining.globalFarmUpdated.v347.is(event)) {
+    return events.omnipoolLiquidityMining.globalFarmUpdated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -40,8 +40,8 @@ function parseGlobalFarmUpdatedParams(
 function parseGlobalFarmTerminatedParams(
   event: SqdEvent
 ): OmnipoolLMGlobalFarmTerminatedEventParams {
-  if (events.omnipoolLiquidityMining.globalFarmTerminated.v287.is(event)) {
-    return events.omnipoolLiquidityMining.globalFarmTerminated.v287.decode(
+  if (events.omnipoolLiquidityMining.globalFarmTerminated.v347.is(event)) {
+    return events.omnipoolLiquidityMining.globalFarmTerminated.v347.decode(
       event
     );
   }
@@ -52,8 +52,8 @@ function parseGlobalFarmTerminatedParams(
 function parseYieldFarmCreatedParams(
   event: SqdEvent
 ): OmnipoolLMYieldFarmCreatedEventParams {
-  if (events.omnipoolLiquidityMining.yieldFarmCreated.v287.is(event)) {
-    return events.omnipoolLiquidityMining.yieldFarmCreated.v287.decode(event);
+  if (events.omnipoolLiquidityMining.yieldFarmCreated.v347.is(event)) {
+    return events.omnipoolLiquidityMining.yieldFarmCreated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -62,8 +62,8 @@ function parseYieldFarmCreatedParams(
 function parseYieldFarmStoppedParams(
   event: SqdEvent
 ): OmnipoolLMYieldFarmStoppedEventParams {
-  if (events.omnipoolLiquidityMining.yieldFarmStopped.v287.is(event)) {
-    return events.omnipoolLiquidityMining.yieldFarmStopped.v287.decode(event);
+  if (events.omnipoolLiquidityMining.yieldFarmStopped.v347.is(event)) {
+    return events.omnipoolLiquidityMining.yieldFarmStopped.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -72,8 +72,8 @@ function parseYieldFarmStoppedParams(
 function parseYieldFarmResumedParams(
   event: SqdEvent
 ): OmnipoolLMYieldFarmResumedEventParams {
-  if (events.omnipoolLiquidityMining.yieldFarmResumed.v287.is(event)) {
-    return events.omnipoolLiquidityMining.yieldFarmResumed.v287.decode(event);
+  if (events.omnipoolLiquidityMining.yieldFarmResumed.v347.is(event)) {
+    return events.omnipoolLiquidityMining.yieldFarmResumed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -82,8 +82,8 @@ function parseYieldFarmResumedParams(
 function parseYieldFarmUpdatedParams(
   event: SqdEvent
 ): OmnipoolLMYieldFarmUpdatedEventParams {
-  if (events.omnipoolLiquidityMining.yieldFarmUpdated.v287.is(event)) {
-    return events.omnipoolLiquidityMining.yieldFarmUpdated.v287.decode(event);
+  if (events.omnipoolLiquidityMining.yieldFarmUpdated.v347.is(event)) {
+    return events.omnipoolLiquidityMining.yieldFarmUpdated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -92,8 +92,8 @@ function parseYieldFarmUpdatedParams(
 function parseYieldFarmTerminatedParams(
   event: SqdEvent
 ): OmnipoolLMYieldFarmTerminatedEventParams {
-  if (events.omnipoolLiquidityMining.yieldFarmTerminated.v287.is(event)) {
-    return events.omnipoolLiquidityMining.yieldFarmTerminated.v287.decode(
+  if (events.omnipoolLiquidityMining.yieldFarmTerminated.v347.is(event)) {
+    return events.omnipoolLiquidityMining.yieldFarmTerminated.v347.decode(
       event
     );
   }
@@ -104,8 +104,8 @@ function parseYieldFarmTerminatedParams(
 function parseSharesDepositedParams(
   event: SqdEvent
 ): OmnipoolLMSharesDepositedEventParams {
-  if (events.omnipoolLiquidityMining.sharesDeposited.v287.is(event)) {
-    return events.omnipoolLiquidityMining.sharesDeposited.v287.decode(event);
+  if (events.omnipoolLiquidityMining.sharesDeposited.v347.is(event)) {
+    return events.omnipoolLiquidityMining.sharesDeposited.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -114,8 +114,8 @@ function parseSharesDepositedParams(
 function parseSharesRedepositedParams(
   event: SqdEvent
 ): OmnipoolLMSharesRedepositedEventParams {
-  if (events.omnipoolLiquidityMining.sharesRedeposited.v287.is(event)) {
-    return events.omnipoolLiquidityMining.sharesRedeposited.v287.decode(event);
+  if (events.omnipoolLiquidityMining.sharesRedeposited.v347.is(event)) {
+    return events.omnipoolLiquidityMining.sharesRedeposited.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -124,8 +124,8 @@ function parseSharesRedepositedParams(
 function parseRewardClaimedParams(
   event: SqdEvent
 ): OmnipoolLMRewardClaimedEventParams {
-  if (events.omnipoolLiquidityMining.rewardClaimed.v287.is(event)) {
-    return events.omnipoolLiquidityMining.rewardClaimed.v287.decode(event);
+  if (events.omnipoolLiquidityMining.rewardClaimed.v347.is(event)) {
+    return events.omnipoolLiquidityMining.rewardClaimed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -134,8 +134,8 @@ function parseRewardClaimedParams(
 function parseSharesWithdrawnParams(
   event: SqdEvent
 ): OmnipoolLMSharesWithdrawnEventParams {
-  if (events.omnipoolLiquidityMining.sharesWithdrawn.v287.is(event)) {
-    return events.omnipoolLiquidityMining.sharesWithdrawn.v287.decode(event);
+  if (events.omnipoolLiquidityMining.sharesWithdrawn.v347.is(event)) {
+    return events.omnipoolLiquidityMining.sharesWithdrawn.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -144,8 +144,8 @@ function parseSharesWithdrawnParams(
 function parseDepositDestroyedParams(
   event: SqdEvent
 ): OmnipoolLMDepositDestroyedEventParams {
-  if (events.omnipoolLiquidityMining.depositDestroyed.v287.is(event)) {
-    return events.omnipoolLiquidityMining.depositDestroyed.v287.decode(event);
+  if (events.omnipoolLiquidityMining.depositDestroyed.v347.is(event)) {
+    return events.omnipoolLiquidityMining.depositDestroyed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

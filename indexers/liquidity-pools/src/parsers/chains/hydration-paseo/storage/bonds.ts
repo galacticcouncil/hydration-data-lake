@@ -11,8 +11,8 @@ async function getBond({
   bondId,
   block,
 }: GetBondByIdInput): Promise<BondDetails | null> {
-  if (storage.bonds.bonds.v287.is(block)) {
-    const resp = await storage.bonds.bonds.v287.get(block, bondId);
+  if (storage.bonds.bonds.v347.is(block)) {
+    const resp = await storage.bonds.bonds.v347.get(block, bondId);
     if (!resp) return null;
     return {
       bondId,
@@ -27,14 +27,14 @@ async function getBond({
 async function getBondsAll({
   block,
 }: GetBondsAllInput): Promise<BondDetails[]> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.bonds.bonds.v287.is(block) || block.specVersion >= 287) {
+  if (storage.bonds.bonds.v347.is(block) || block.specVersion >= 347) {
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
       try {
-        for await (const page of storage.bonds.bonds.v287.getPairsPaged(
+        for await (const page of storage.bonds.bonds.v347.getPairsPaged(
           500,
           block
         ))

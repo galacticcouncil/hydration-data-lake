@@ -11,8 +11,8 @@ import {
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parsePoolCreatedParams(event: SqdEvent): XykPoolCreatedEventParams {
-  if (events.xyk.poolCreated.v287.is(event)) {
-    return events.xyk.poolCreated.v287.decode(event);
+  if (events.xyk.poolCreated.v347.is(event)) {
+    return events.xyk.poolCreated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -21,24 +21,24 @@ function parsePoolCreatedParams(event: SqdEvent): XykPoolCreatedEventParams {
 function parsePoolDestroyedParams(
   event: SqdEvent
 ): XykPoolDestroyedEventParams {
-  if (events.xyk.poolDestroyed.v287.is(event)) {
-    return events.xyk.poolDestroyed.v287.decode(event);
+  if (events.xyk.poolDestroyed.v347.is(event)) {
+    return events.xyk.poolDestroyed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseBuyExecutedParams(event: SqdEvent): XykBuyExecutedEventParams {
-  if (events.xyk.buyExecuted.v287.is(event)) {
-    return events.xyk.buyExecuted.v287.decode(event);
+  if (events.xyk.buyExecuted.v347.is(event)) {
+    return events.xyk.buyExecuted.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseSellExecutedParams(event: SqdEvent): XykSellExecutedEventParams {
-  if (events.xyk.sellExecuted.v287.is(event)) {
-    return events.xyk.sellExecuted.v287.decode(event);
+  if (events.xyk.sellExecuted.v347.is(event)) {
+    return events.xyk.sellExecuted.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -47,8 +47,8 @@ function parseSellExecutedParams(event: SqdEvent): XykSellExecutedEventParams {
 function parseLiquidityAddedParams(
   event: SqdEvent
 ): XykLiquidityAddedEventParams {
-  if (events.xyk.liquidityAdded.v287.is(event)) {
-    return events.xyk.liquidityAdded.v287.decode(event);
+  if (events.xyk.liquidityAdded.v347.is(event)) {
+    return events.xyk.liquidityAdded.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -57,8 +57,8 @@ function parseLiquidityAddedParams(
 function parseLiquidityRemovedParams(
   event: SqdEvent
 ): XykLiquidityRemovedEventParams {
-  if (events.xyk.liquidityRemoved.v287.is(event)) {
-    return events.xyk.liquidityRemoved.v287.decode(event);
+  if (events.xyk.liquidityRemoved.v347.is(event)) {
+    return events.xyk.liquidityRemoved.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

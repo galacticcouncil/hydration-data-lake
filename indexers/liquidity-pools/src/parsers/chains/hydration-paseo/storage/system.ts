@@ -14,8 +14,8 @@ async function getSystemAccount(
   account: string,
   block: BlockHeader
 ): Promise<SystemAccountInfo | null> {
-  if (storage.system.account.v287.is(block)) {
-    const resp = await storage.system.account.v287.get(block, account);
+  if (storage.system.account.v347.is(block)) {
+    const resp = await storage.system.account.v347.get(block, account);
     if (!resp) return null;
 
     return {
@@ -49,11 +49,11 @@ async function getNativeTokenBalanceMany({
     blockHeight: block.height,
     args: { accountIds },
     fn: async () => {
-      if (block.specVersion < 287) return [];
+      if (block.specVersion < 347) return [];
 
-      if (storage.system.account.v287.is(block)) {
+      if (storage.system.account.v347.is(block)) {
         return tryExecOrReturnFallback(async () => {
-          const resp = await storage.system.account.v287.getMany(
+          const resp = await storage.system.account.v347.getMany(
             block,
             accountIds
           );
@@ -104,10 +104,10 @@ async function getAllSystemAccountKeys({
     originFn: 'getAllSystemAccountKeys',
     blockHeight: block.height,
     fn: async () => {
-      if (storage.system.account.v287.is(block)) {
+      if (storage.system.account.v347.is(block)) {
         const resp = [];
 
-        for await (const page of storage.system.account.v287.getKeysPaged(
+        for await (const page of storage.system.account.v347.getKeysPaged(
           500,
           block
         )) {

@@ -11,8 +11,8 @@ import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 async function getTotalIssuance({
   block,
 }: GetConstantsInput): Promise<bigint | null> {
-  if (storage.balances.totalIssuance.v287.is(block)) {
-    const resp = await storage.balances.totalIssuance.v287.get(block);
+  if (storage.balances.totalIssuance.v347.is(block)) {
+    const resp = await storage.balances.totalIssuance.v347.get(block);
     return resp ?? null;
   }
 

@@ -29,8 +29,8 @@ import {
 function parseGlobalFarmCreatedParams(
   event: SqdEvent
 ): XykLMGlobalFarmCreatedEventParams {
-  if (events.xykLiquidityMining.globalFarmCreated.v287.is(event)) {
-    return events.xykLiquidityMining.globalFarmCreated.v287.decode(event);
+  if (events.xykLiquidityMining.globalFarmCreated.v347.is(event)) {
+    return events.xykLiquidityMining.globalFarmCreated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -39,8 +39,8 @@ function parseGlobalFarmCreatedParams(
 function parseGlobalFarmUpdatedParams(
   event: SqdEvent
 ): XykLMGlobalFarmUpdatedEventParams {
-  if (events.xykLiquidityMining.globalFarmUpdated.v287.is(event)) {
-    return events.xykLiquidityMining.globalFarmUpdated.v287.decode(event);
+  if (events.xykLiquidityMining.globalFarmUpdated.v347.is(event)) {
+    return events.xykLiquidityMining.globalFarmUpdated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -49,8 +49,8 @@ function parseGlobalFarmUpdatedParams(
 function parseGlobalFarmTerminatedParams(
   event: SqdEvent
 ): XykLMGlobalFarmTerminatedEventParams {
-  if (events.xykLiquidityMining.globalFarmTerminated.v287.is(event)) {
-    return events.xykLiquidityMining.globalFarmTerminated.v287.decode(event);
+  if (events.xykLiquidityMining.globalFarmTerminated.v347.is(event)) {
+    return events.xykLiquidityMining.globalFarmTerminated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -59,8 +59,8 @@ function parseGlobalFarmTerminatedParams(
 function parseYieldFarmCreatedParams(
   event: SqdEvent
 ): XykLMYieldFarmCreatedEventParams {
-  if (events.xykLiquidityMining.yieldFarmCreated.v287.is(event)) {
-    return events.xykLiquidityMining.yieldFarmCreated.v287.decode(event);
+  if (events.xykLiquidityMining.yieldFarmCreated.v347.is(event)) {
+    return events.xykLiquidityMining.yieldFarmCreated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -69,8 +69,8 @@ function parseYieldFarmCreatedParams(
 function parseYieldFarmStopedParams(
   event: SqdEvent
 ): XykLMYieldFarmStoppedEventParams {
-  if (events.xykLiquidityMining.yieldFarmStopped.v287.is(event)) {
-    return events.xykLiquidityMining.yieldFarmStopped.v287.decode(event);
+  if (events.xykLiquidityMining.yieldFarmStopped.v347.is(event)) {
+    return events.xykLiquidityMining.yieldFarmStopped.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -79,8 +79,8 @@ function parseYieldFarmStopedParams(
 function parseYieldFarmTerminatedParams(
   event: SqdEvent
 ): XykLMYieldFarmTerminatedEventParams {
-  if (events.xykLiquidityMining.yieldFarmTerminated.v287.is(event)) {
-    return events.xykLiquidityMining.yieldFarmTerminated.v287.decode(event);
+  if (events.xykLiquidityMining.yieldFarmTerminated.v347.is(event)) {
+    return events.xykLiquidityMining.yieldFarmTerminated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -89,8 +89,8 @@ function parseYieldFarmTerminatedParams(
 function parseYieldFarmResumedParams(
   event: SqdEvent
 ): XykLMYieldFarmResumedEventParams {
-  if (events.xykLiquidityMining.yieldFarmResumed.v287.is(event)) {
-    return events.xykLiquidityMining.yieldFarmResumed.v287.decode(event);
+  if (events.xykLiquidityMining.yieldFarmResumed.v347.is(event)) {
+    return events.xykLiquidityMining.yieldFarmResumed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -99,8 +99,8 @@ function parseYieldFarmResumedParams(
 function parseYieldFarmUpdatedParams(
   event: SqdEvent
 ): XykLMYieldFarmUpdatedEventParams {
-  if (events.xykLiquidityMining.yieldFarmUpdated.v287.is(event)) {
-    return events.xykLiquidityMining.yieldFarmUpdated.v287.decode(event);
+  if (events.xykLiquidityMining.yieldFarmUpdated.v347.is(event)) {
+    return events.xykLiquidityMining.yieldFarmUpdated.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -109,8 +109,8 @@ function parseYieldFarmUpdatedParams(
 function parseSharesDepositedParams(
   event: SqdEvent
 ): XykLMSharesDepositedEventParams {
-  if (events.xykLiquidityMining.sharesDeposited.v287.is(event)) {
-    return events.xykLiquidityMining.sharesDeposited.v287.decode(event);
+  if (events.xykLiquidityMining.sharesDeposited.v347.is(event)) {
+    return events.xykLiquidityMining.sharesDeposited.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -119,8 +119,8 @@ function parseSharesDepositedParams(
 function parseSharesRedepositedParams(
   event: SqdEvent
 ): XykLMSharesRedepositedEventParams {
-  if (events.xykLiquidityMining.sharesRedeposited.v287.is(event)) {
-    return events.xykLiquidityMining.sharesRedeposited.v287.decode(event);
+  if (events.xykLiquidityMining.sharesRedeposited.v347.is(event)) {
+    return events.xykLiquidityMining.sharesRedeposited.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -129,8 +129,8 @@ function parseSharesRedepositedParams(
 function parseSharesWithdrawnParams(
   event: SqdEvent
 ): XykLMSharesWithdrawnEventParams {
-  if (events.xykLiquidityMining.sharesWithdrawn.v287.is(event)) {
-    return events.xykLiquidityMining.sharesWithdrawn.v287.decode(event);
+  if (events.xykLiquidityMining.sharesWithdrawn.v347.is(event)) {
+    return events.xykLiquidityMining.sharesWithdrawn.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -139,8 +139,8 @@ function parseSharesWithdrawnParams(
 function parseDepositDestroyedParams(
   event: SqdEvent
 ): XykLMDepositDestroyedEventParams {
-  if (events.xykLiquidityMining.depositDestroyed.v287.is(event)) {
-    return events.xykLiquidityMining.depositDestroyed.v287.decode(event);
+  if (events.xykLiquidityMining.depositDestroyed.v347.is(event)) {
+    return events.xykLiquidityMining.depositDestroyed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);
@@ -149,8 +149,8 @@ function parseDepositDestroyedParams(
 function parseRewardClaimedParams(
   event: SqdEvent
 ): XykLMRewardClaimedEventParams {
-  if (events.xykLiquidityMining.rewardClaimed.v287.is(event)) {
-    return events.xykLiquidityMining.rewardClaimed.v287.decode(event);
+  if (events.xykLiquidityMining.rewardClaimed.v347.is(event)) {
+    return events.xykLiquidityMining.rewardClaimed.v347.decode(event);
   }
 
   throw new UnknownVersionError(event.name);

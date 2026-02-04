@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
 
 export const create =  {
     name: 'Uniques.create',
@@ -21,11 +21,11 @@ export const create =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.create',
         sts.struct({
             collection: sts.bigint(),
-            admin: v287.AccountId32,
+            admin: v347.AccountId32,
         })
     ),
 }
@@ -51,11 +51,11 @@ export const forceCreate =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.force_create',
         sts.struct({
             collection: sts.bigint(),
-            owner: v287.AccountId32,
+            owner: v347.AccountId32,
             freeHolding: sts.boolean(),
         })
     ),
@@ -80,11 +80,11 @@ export const destroy =  {
      * - `m = witness.item_metadatas`
      * - `a = witness.attributes`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.destroy',
         sts.struct({
             collection: sts.bigint(),
-            witness: v287.DestroyWitness,
+            witness: v347.DestroyWitness,
         })
     ),
 }
@@ -104,12 +104,12 @@ export const mint =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.mint',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            owner: v287.AccountId32,
+            owner: v347.AccountId32,
         })
     ),
 }
@@ -133,12 +133,12 @@ export const burn =  {
      * Weight: `O(1)`
      * Modes: `check_owner.is_some()`.
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.burn',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            checkOwner: sts.option(() => v287.AccountId32),
+            checkOwner: sts.option(() => v347.AccountId32),
         })
     ),
 }
@@ -164,12 +164,12 @@ export const transfer =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.transfer',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            dest: v287.AccountId32,
+            dest: v347.AccountId32,
         })
     ),
 }
@@ -195,7 +195,7 @@ export const redeposit =  {
      * 
      * Weight: `O(items.len())`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.redeposit',
         sts.struct({
             collection: sts.bigint(),
@@ -218,7 +218,7 @@ export const freeze =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.freeze',
         sts.struct({
             collection: sts.bigint(),
@@ -241,7 +241,7 @@ export const thaw =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.thaw',
         sts.struct({
             collection: sts.bigint(),
@@ -263,7 +263,7 @@ export const freezeCollection =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.freeze_collection',
         sts.struct({
             collection: sts.bigint(),
@@ -284,7 +284,7 @@ export const thawCollection =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.thaw_collection',
         sts.struct({
             collection: sts.bigint(),
@@ -307,11 +307,11 @@ export const transferOwnership =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.transfer_ownership',
         sts.struct({
             collection: sts.bigint(),
-            newOwner: v287.AccountId32,
+            newOwner: v347.AccountId32,
         })
     ),
 }
@@ -332,13 +332,13 @@ export const setTeam =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.set_team',
         sts.struct({
             collection: sts.bigint(),
-            issuer: v287.AccountId32,
-            admin: v287.AccountId32,
-            freezer: v287.AccountId32,
+            issuer: v347.AccountId32,
+            admin: v347.AccountId32,
+            freezer: v347.AccountId32,
         })
     ),
 }
@@ -361,12 +361,12 @@ export const approveTransfer =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.approve_transfer',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            delegate: v287.AccountId32,
+            delegate: v347.AccountId32,
         })
     ),
 }
@@ -391,12 +391,12 @@ export const cancelApproval =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.cancel_approval',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
-            maybeCheckDelegate: sts.option(() => v287.AccountId32),
+            maybeCheckDelegate: sts.option(() => v347.AccountId32),
         })
     ),
 }
@@ -421,14 +421,14 @@ export const forceItemStatus =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.force_item_status',
         sts.struct({
             collection: sts.bigint(),
-            owner: v287.AccountId32,
-            issuer: v287.AccountId32,
-            admin: v287.AccountId32,
-            freezer: v287.AccountId32,
+            owner: v347.AccountId32,
+            issuer: v347.AccountId32,
+            admin: v347.AccountId32,
+            freezer: v347.AccountId32,
             freeHolding: sts.boolean(),
             isFrozen: sts.boolean(),
         })
@@ -456,7 +456,7 @@ export const setAttribute =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.set_attribute',
         sts.struct({
             collection: sts.bigint(),
@@ -485,7 +485,7 @@ export const clearAttribute =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.clear_attribute',
         sts.struct({
             collection: sts.bigint(),
@@ -516,7 +516,7 @@ export const setMetadata =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.set_metadata',
         sts.struct({
             collection: sts.bigint(),
@@ -544,7 +544,7 @@ export const clearMetadata =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.clear_metadata',
         sts.struct({
             collection: sts.bigint(),
@@ -573,7 +573,7 @@ export const setCollectionMetadata =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.set_collection_metadata',
         sts.struct({
             collection: sts.bigint(),
@@ -599,7 +599,7 @@ export const clearCollectionMetadata =  {
      * 
      * Weight: `O(1)`
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.clear_collection_metadata',
         sts.struct({
             collection: sts.bigint(),
@@ -621,7 +621,7 @@ export const setAcceptOwnership =  {
      * 
      * Emits `OwnershipAcceptanceChanged`.
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.set_accept_ownership',
         sts.struct({
             maybeCollection: sts.option(() => sts.bigint()),
@@ -644,7 +644,7 @@ export const setCollectionMaxSupply =  {
      * 
      * Emits `CollectionMaxSupplySet` event when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.set_collection_max_supply',
         sts.struct({
             collection: sts.bigint(),
@@ -668,13 +668,13 @@ export const setPrice =  {
      * Emits `ItemPriceSet` on success if the price is not `None`.
      * Emits `ItemPriceRemoved` on success if the price is `None`.
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.set_price',
         sts.struct({
             collection: sts.bigint(),
             item: sts.bigint(),
             price: sts.option(() => sts.bigint()),
-            whitelistedBuyer: sts.option(() => v287.AccountId32),
+            whitelistedBuyer: sts.option(() => v347.AccountId32),
         })
     ),
 }
@@ -692,7 +692,7 @@ export const buyItem =  {
      * 
      * Emits `ItemBought` on success.
      */
-    v287: new CallType(
+    v347: new CallType(
         'Uniques.buy_item',
         sts.struct({
             collection: sts.bigint(),

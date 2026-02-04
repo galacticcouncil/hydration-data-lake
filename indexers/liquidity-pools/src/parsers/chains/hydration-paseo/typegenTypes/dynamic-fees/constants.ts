@@ -1,16 +1,16 @@
 import {sts, Block, Bytes, Option, Result, ConstantType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
 
 export const assetFeeParameters =  {
-    v287: new ConstantType(
+    v347: new ConstantType(
         'DynamicFees.AssetFeeParameters',
-        v287.FeeParams
+        v347.FeeParams
     ),
 }
 
 export const protocolFeeParameters =  {
-    v287: new ConstantType(
+    v347: new ConstantType(
         'DynamicFees.ProtocolFeeParameters',
-        v287.FeeParams
+        v347.FeeParams
     ),
 }

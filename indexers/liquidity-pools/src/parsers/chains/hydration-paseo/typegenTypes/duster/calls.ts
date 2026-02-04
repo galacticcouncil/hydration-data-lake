@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
+import * as v355 from '../v355'
 
 export const dustAccount =  {
     name: 'Duster.dust_account',
@@ -10,10 +11,10 @@ export const dustAccount =  {
      * 
      * Caller is rewarded with chosen reward in native currency.
      */
-    v287: new CallType(
+    v347: new CallType(
         'Duster.dust_account',
         sts.struct({
-            account: v287.AccountId32,
+            account: v347.AccountId32,
             currencyId: sts.number(),
         })
     ),
@@ -26,10 +27,10 @@ export const addNondustableAccount =  {
      * If such account should be dusted - `AccountBlacklisted` error is returned.
      * Only root can perform this action.
      */
-    v287: new CallType(
+    v347: new CallType(
         'Duster.add_nondustable_account',
         sts.struct({
-            account: v287.AccountId32,
+            account: v347.AccountId32,
         })
     ),
 }
@@ -39,10 +40,44 @@ export const removeNondustableAccount =  {
     /**
      * Remove account from list of non-dustable accounts. That means account can be dusted again.
      */
-    v287: new CallType(
+    v347: new CallType(
         'Duster.remove_nondustable_account',
         sts.struct({
-            account: v287.AccountId32,
+            account: v347.AccountId32,
+        })
+    ),
+}
+
+export const whitelistAccount =  {
+    name: 'Duster.whitelist_account',
+    /**
+     * Add account to list of whitelist accounts. Account which are excluded from dusting.
+     * If such account should be dusted - `AccountWhitelisted` error is returned.
+     * Only root can perform this action.
+     * 
+     * Emits `Added` event when successful.
+     * 
+     */
+    v355: new CallType(
+        'Duster.whitelist_account',
+        sts.struct({
+            account: v355.AccountId32,
+        })
+    ),
+}
+
+export const removeFromWhitelist =  {
+    name: 'Duster.remove_from_whitelist',
+    /**
+     * Remove account from list of whitelist accounts. That means account can be dusted again.
+     * 
+     * Emits `Removed` event when successful.
+     * 
+     */
+    v355: new CallType(
+        'Duster.remove_from_whitelist',
+        sts.struct({
+            account: v355.AccountId32,
         })
     ),
 }

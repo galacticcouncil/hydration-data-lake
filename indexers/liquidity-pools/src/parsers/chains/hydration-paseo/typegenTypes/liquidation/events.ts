@@ -1,17 +1,16 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
-import * as v314 from '../v314'
+import * as v347 from '../v347'
+import * as v362 from '../v362'
 
 export const liquidated =  {
     name: 'Liquidation.Liquidated',
     /**
      * Money market position has been liquidated
      */
-    v287: new EventType(
+    v347: new EventType(
         'Liquidation.Liquidated',
         sts.struct({
-            liquidator: v287.AccountId32,
-            evmAddress: v287.H160,
+            user: v347.H160,
             collateralAsset: sts.number(),
             debtAsset: sts.number(),
             debtToCover: sts.bigint(),
@@ -21,13 +20,12 @@ export const liquidated =  {
     /**
      * Money market position has been liquidated
      */
-    v314: new EventType(
+    v362: new EventType(
         'Liquidation.Liquidated',
         sts.struct({
-            user: v314.H160,
+            user: v362.H160,
             collateralAsset: sts.number(),
             debtAsset: sts.number(),
-            debtToCover: sts.bigint(),
             profit: sts.bigint(),
         })
     ),

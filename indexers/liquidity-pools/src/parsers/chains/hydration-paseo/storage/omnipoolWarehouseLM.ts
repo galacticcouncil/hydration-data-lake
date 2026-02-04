@@ -21,15 +21,15 @@ async function getOmnipoolLMGlobalFarms({
     originFn: 'getOmnipoolLMGlobalFarms',
     blockHeight: block.height,
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
       if (
-        storage.omnipoolWarehouseLm.globalFarm.v287.is(block) ||
+        storage.omnipoolWarehouseLm.globalFarm.v347.is(block) ||
         block.specVersion >= 138
       ) {
         try {
           const resp =
-            await storage.omnipoolWarehouseLm.globalFarm.v287.getMany(
+            await storage.omnipoolWarehouseLm.globalFarm.v347.getMany(
               block,
               farmIds.map((id) => +id).filter((id) => !Number.isNaN(id))
             );
@@ -71,13 +71,13 @@ async function getAllDepositsData({
     originFn: 'getAllDepositsData',
     blockHeight: block.height,
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
-      if (storage.omnipoolWarehouseLm.deposit.v287.is(block)) {
+      if (storage.omnipoolWarehouseLm.deposit.v347.is(block)) {
         try {
           const pairsPaged: OmnipoolYieldFarmDepositDataWithId[] = [];
 
-          for await (const page of storage.omnipoolWarehouseLm.deposit.v287.getPairsPaged(
+          for await (const page of storage.omnipoolWarehouseLm.deposit.v347.getPairsPaged(
             500,
             block
           ))
@@ -116,14 +116,14 @@ async function getLMDepositsData({
     originFn: 'getLMDepositsData',
     blockHeight: block.height,
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
       if (
-        storage.omnipoolWarehouseLm.deposit.v287.is(block) ||
-        block.specVersion >= 287
+        storage.omnipoolWarehouseLm.deposit.v347.is(block) ||
+        block.specVersion >= 347
       ) {
         try {
-          const resp = await storage.omnipoolWarehouseLm.deposit.v287.getMany(
+          const resp = await storage.omnipoolWarehouseLm.deposit.v347.getMany(
             block,
             depositIds.map((id) => BigInt(id))
           );

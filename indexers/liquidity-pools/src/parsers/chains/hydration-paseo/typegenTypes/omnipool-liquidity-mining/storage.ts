@@ -4,13 +4,13 @@ export const omniPositionId =  {
     /**
      *  Map of omnipool position's ids to LM's deposit ids.
      */
-    v287: new StorageType('OmnipoolLiquidityMining.OmniPositionId', 'Optional', [sts.bigint()], sts.bigint()) as OmniPositionIdV287,
+    v347: new StorageType('OmnipoolLiquidityMining.OmniPositionId', 'Optional', [sts.bigint()], sts.bigint()) as OmniPositionIdV347,
 }
 
 /**
  *  Map of omnipool position's ids to LM's deposit ids.
  */
-export interface OmniPositionIdV287  {
+export interface OmniPositionIdV347  {
     is(block: RuntimeCtx): boolean
     get(block: Block, key: bigint): Promise<(bigint | undefined)>
     getMany(block: Block, keys: bigint[]): Promise<(bigint | undefined)[]>

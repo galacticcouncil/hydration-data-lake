@@ -17,8 +17,8 @@ async function getTokensAccountsAssetBalances(
   assetId: number,
   block: BlockHeader
 ): Promise<TokensAccountsAssetBalances | null> {
-  if (storage.tokens.accounts.v287.is(block)) {
-    const resp = await storage.tokens.accounts.v287.get(
+  if (storage.tokens.accounts.v347.is(block)) {
+    const resp = await storage.tokens.accounts.v347.get(
       block,
       account,
       assetId
@@ -33,8 +33,8 @@ async function getTokenTotalIssuance({
   tokenId,
   block,
 }: TokensGetTokenTotalIssuanceInput): Promise<bigint | null> {
-  if (storage.tokens.totalIssuance.v287.is(block)) {
-    const resp = await storage.tokens.totalIssuance.v287.get(block, tokenId);
+  if (storage.tokens.totalIssuance.v347.is(block)) {
+    const resp = await storage.tokens.totalIssuance.v347.get(block, tokenId);
     return resp ?? null;
   }
 
@@ -45,10 +45,10 @@ async function getManyTokensTotalIssuance({
   tokenIds,
   block,
 }: TokensGetTokensTotalIssuanceInput): Promise<TokenTotalIssuance[]> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.tokens.totalIssuance.v287.is(block)) {
-    const resp = await storage.tokens.totalIssuance.v287.getMany(
+  if (storage.tokens.totalIssuance.v347.is(block)) {
+    const resp = await storage.tokens.totalIssuance.v347.getMany(
       block,
       tokenIds.map((id) => +id)
     );
@@ -75,16 +75,16 @@ async function getTokenBalancesMany({
   accountIds,
   block,
 }: GetTokenBalancesManyInput): Promise<TokenAccountBalancesWithAccountId[]> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.tokens.accounts.v287.is(block) || block.specVersion >= 287) {
+  if (storage.tokens.accounts.v347.is(block) || block.specVersion >= 287) {
     return tryExecOrReturnFallback(async () => {
       const accountBalances: TokenAccountBalancesWithAccountId[] = [];
 
       for (const accountId of accountIds) {
         const assetBalances: TokenAccountBalanceWithAssetId[] = [];
 
-        for await (const page of storage.tokens.accounts.v287.getPairsPaged(
+        for await (const page of storage.tokens.accounts.v347.getPairsPaged(
           500,
           block,
           accountId

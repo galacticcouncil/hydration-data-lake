@@ -18,11 +18,11 @@ async function getAssetsData({
     blockHeight: block.height,
     args: { collectionId, assetIds },
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
-      if (storage.uniques.asset.v287.is(block)) {
+      if (storage.uniques.asset.v347.is(block)) {
         try {
-          const resp = await storage.uniques.asset.v287.getMany(
+          const resp = await storage.uniques.asset.v347.getMany(
             block,
             assetIds.map((assetId) => [BigInt(collectionId), BigInt(assetId)])
           );
@@ -65,13 +65,13 @@ async function getAllAssetsData({
     blockHeight: block.height,
     args: { collectionId },
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
-      if (storage.uniques.asset.v287.is(block)) {
+      if (storage.uniques.asset.v347.is(block)) {
         try {
           const pairsPaged = [];
 
-          for await (const page of storage.uniques.asset.v287.getPairsPaged(
+          for await (const page of storage.uniques.asset.v347.getPairsPaged(
             500,
             block
           ))

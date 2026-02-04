@@ -8,12 +8,12 @@ import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 async function getOracles({
   block,
 }: GetEmaOraclesInput): Promise<EmaOracleEntryData[]> {
-  if (storage.emaOracle.oracles.v287.is(block) || block.specVersion >= 170) {
+  if (storage.emaOracle.oracles.v347.is(block) || block.specVersion >= 347) {
     return tryExecOrReturnFallback(async () => {
       const pairsPaged = [];
 
       try {
-        for await (const page of storage.emaOracle.oracles.v287.getPairsPaged(
+        for await (const page of storage.emaOracle.oracles.v347.getPairsPaged(
           500,
           block
         ))

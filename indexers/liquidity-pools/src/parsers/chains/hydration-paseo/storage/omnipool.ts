@@ -29,32 +29,32 @@ function getConstants({ block }: GetConstantsInput): OmnipoolConstants {
   let minTradingLimit = null;
   let minWithdrawalFee = null;
 
-  if (constants.omnipool.hdxAssetId.v287.is(block)) {
-    const resp = constants.omnipool.hdxAssetId.v287.get(block);
+  if (constants.omnipool.hdxAssetId.v347.is(block)) {
+    const resp = constants.omnipool.hdxAssetId.v347.get(block);
     if (resp !== undefined) hdxAssetId = resp;
   }
-  if (constants.omnipool.hubAssetId.v287.is(block)) {
-    const resp = constants.omnipool.hubAssetId.v287.get(block);
+  if (constants.omnipool.hubAssetId.v347.is(block)) {
+    const resp = constants.omnipool.hubAssetId.v347.get(block);
     if (resp !== undefined) hubAssetId = resp;
   }
-  if (constants.omnipool.maxInRatio.v287.is(block)) {
-    const resp = constants.omnipool.maxInRatio.v287.get(block);
+  if (constants.omnipool.maxInRatio.v347.is(block)) {
+    const resp = constants.omnipool.maxInRatio.v347.get(block);
     if (resp !== undefined) maxInRatio = resp;
   }
-  if (constants.omnipool.maxOutRatio.v287.is(block)) {
-    const resp = constants.omnipool.maxOutRatio.v287.get(block);
+  if (constants.omnipool.maxOutRatio.v347.is(block)) {
+    const resp = constants.omnipool.maxOutRatio.v347.get(block);
     if (resp !== undefined) maxOutRatio = resp;
   }
-  if (constants.omnipool.minimumPoolLiquidity.v287.is(block)) {
-    const resp = constants.omnipool.minimumPoolLiquidity.v287.get(block);
+  if (constants.omnipool.minimumPoolLiquidity.v347.is(block)) {
+    const resp = constants.omnipool.minimumPoolLiquidity.v347.get(block);
     if (resp !== undefined) minPoolLiquidity = resp;
   }
-  if (constants.omnipool.minimumTradingLimit.v287.is(block)) {
-    const resp = constants.omnipool.minimumTradingLimit.v287.get(block);
+  if (constants.omnipool.minimumTradingLimit.v347.is(block)) {
+    const resp = constants.omnipool.minimumTradingLimit.v347.get(block);
     if (resp !== undefined) minTradingLimit = resp;
   }
-  if (constants.omnipool.minWithdrawalFee.v287.is(block)) {
-    const resp = constants.omnipool.minWithdrawalFee.v287.get(block);
+  if (constants.omnipool.minWithdrawalFee.v347.is(block)) {
+    const resp = constants.omnipool.minWithdrawalFee.v347.get(block);
     if (resp !== undefined) minWithdrawalFee = resp;
   }
 
@@ -73,9 +73,9 @@ function getConstants({ block }: GetConstantsInput): OmnipoolConstants {
 function getNftCollectionIdConstant({
   block,
 }: GetDataAtBlockInput): OmnipoolNftCollectionId | null {
-  if (block.specVersion < 287) return null;
-  if (constants.omnipool.nftCollectionId.v287.is(block)) {
-    const resp = constants.omnipool.burnProtocolFee.v287.get(block);
+  if (block.specVersion < 347) return null;
+  if (constants.omnipool.nftCollectionId.v347.is(block)) {
+    const resp = constants.omnipool.burnProtocolFee.v347.get(block);
     return {
       collectionId: resp.toString(),
     };
@@ -87,8 +87,8 @@ async function getOmnipoolAssetData({
   assetId,
   block,
 }: OmnipoolGetAssetDataInput): Promise<OmnipoolAssetData | null> {
-  if (storage.omnipool.assets.v287.is(block)) {
-    const resp = await storage.omnipool.assets.v287.get(block, assetId);
+  if (storage.omnipool.assets.v347.is(block)) {
+    const resp = await storage.omnipool.assets.v347.get(block, assetId);
     return resp ?? null;
   }
 
@@ -98,10 +98,10 @@ async function getOmnipoolAssetData({
 async function getOmnipoolAllAssetIds({
   block,
 }: OmnipoolGetAllAssetIdsInput): Promise<number[]> {
-  if (block.specVersion < 287) return [];
+  if (block.specVersion < 347) return [];
 
-  if (storage.omnipool.assets.v287.is(block)) {
-    const resp = await storage.omnipool.assets.v287.getKeys(block);
+  if (storage.omnipool.assets.v347.is(block)) {
+    const resp = await storage.omnipool.assets.v347.getKeys(block);
 
     return resp;
   }
@@ -121,10 +121,10 @@ async function getPoolData({
 async function getOmnipoolHubAssetTradability({
   block,
 }: OmnipoolGetHubAssetTradabilityInput): Promise<OmnipoolAssetTradability | null> {
-  if (block.specVersion < 287) return null;
+  if (block.specVersion < 347) return null;
 
-  if (storage.omnipool.assets.v287.is(block)) {
-    const resp = await storage.omnipool.hubAssetTradability.v287.get(block);
+  if (storage.omnipool.assets.v347.is(block)) {
+    const resp = await storage.omnipool.hubAssetTradability.v347.get(block);
 
     return resp ?? null;
   }
@@ -142,11 +142,11 @@ async function getOmnipoolLiquidityPositions({
     originFn: 'getOmnipoolLiquidityPositions',
     blockHeight: block.height,
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
-      if (storage.omnipool.positions.v287.is(block)) {
+      if (storage.omnipool.positions.v347.is(block)) {
         try {
-          const resp = await storage.omnipool.positions.v287.getMany(
+          const resp = await storage.omnipool.positions.v347.getMany(
             block,
             positionIds.map((id) => BigInt(id))
           );
@@ -189,13 +189,13 @@ async function getAllOmnipoolLiquidityPositions({
     originFn: 'getAllPositionsData',
     blockHeight: block.height,
     fn: async () => {
-      if (block.specVersion < 287) return null;
+      if (block.specVersion < 347) return null;
 
-      if (storage.omnipool.positions.v287.is(block)) {
+      if (storage.omnipool.positions.v347.is(block)) {
         try {
           const pairsPaged: OmnipoolLiquidityPositionDataWithId[] = [];
 
-          for await (const page of storage.omnipool.positions.v287.getPairsPaged(
+          for await (const page of storage.omnipool.positions.v347.getPairsPaged(
             500,
             block
           ))

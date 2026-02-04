@@ -6,8 +6,8 @@ import { UniquesTransferredEventParams } from '../../../types/events/uniques';
 function parseUniqueTransferredParams(
   event: SqdEvent
 ): UniquesTransferredEventParams {
-  if (events.uniques.transferred.v287.is(event)) {
-    const parsedParams = events.uniques.transferred.v287.decode(event);
+  if (events.uniques.transferred.v347.is(event)) {
+    const parsedParams = events.uniques.transferred.v347.decode(event);
 
     return {
       collection: parsedParams.collection.toString(),

@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
 
 export const createPool =  {
     name: 'LBP.create_pool',
@@ -38,19 +38,19 @@ export const createPool =  {
      * This increases the price of the sold asset on every trade. Make sure to only run this with
      * previously illiquid assets.
      */
-    v287: new CallType(
+    v347: new CallType(
         'LBP.create_pool',
         sts.struct({
-            poolOwner: v287.AccountId32,
+            poolOwner: v347.AccountId32,
             assetA: sts.number(),
             assetAAmount: sts.bigint(),
             assetB: sts.number(),
             assetBAmount: sts.bigint(),
             initialWeight: sts.number(),
             finalWeight: sts.number(),
-            weightCurve: v287.WeightCurveType,
+            weightCurve: v347.WeightCurveType,
             fee: sts.tuple(() => [sts.number(), sts.number()]),
-            feeCollector: v287.AccountId32,
+            feeCollector: v347.AccountId32,
             repayTarget: sts.bigint(),
         })
     ),
@@ -75,7 +75,7 @@ export const sell =  {
      * Emits `SellExecuted` when successful. Deprecated.
      * Emits `pallet_broadcast::Swapped` when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'LBP.sell',
         sts.struct({
             assetIn: sts.number(),
@@ -105,7 +105,7 @@ export const buy =  {
      * Emits `BuyExecuted` when successful. Deprecated.
      * Emits `pallet_broadcast::Swapped` when successful.
      */
-    v287: new CallType(
+    v347: new CallType(
         'LBP.buy',
         sts.struct({
             assetOut: sts.number(),

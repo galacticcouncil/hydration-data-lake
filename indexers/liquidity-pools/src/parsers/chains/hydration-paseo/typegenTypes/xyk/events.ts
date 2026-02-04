@@ -1,15 +1,15 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v287 from '../v287'
+import * as v347 from '../v347'
 
 export const liquidityAdded =  {
     name: 'XYK.LiquidityAdded',
     /**
      * New liquidity was provided to the pool.
      */
-    v287: new EventType(
+    v347: new EventType(
         'XYK.LiquidityAdded',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             assetA: sts.number(),
             assetB: sts.number(),
             amountA: sts.bigint(),
@@ -23,10 +23,10 @@ export const liquidityRemoved =  {
     /**
      * Liquidity was removed from the pool.
      */
-    v287: new EventType(
+    v347: new EventType(
         'XYK.LiquidityRemoved',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             assetA: sts.number(),
             assetB: sts.number(),
             shares: sts.bigint(),
@@ -39,15 +39,15 @@ export const poolCreated =  {
     /**
      * Pool was created.
      */
-    v287: new EventType(
+    v347: new EventType(
         'XYK.PoolCreated',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             assetA: sts.number(),
             assetB: sts.number(),
             initialSharesAmount: sts.bigint(),
             shareToken: sts.number(),
-            pool: v287.AccountId32,
+            pool: v347.AccountId32,
         })
     ),
 }
@@ -57,14 +57,14 @@ export const poolDestroyed =  {
     /**
      * Pool was destroyed.
      */
-    v287: new EventType(
+    v347: new EventType(
         'XYK.PoolDestroyed',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             assetA: sts.number(),
             assetB: sts.number(),
             shareToken: sts.number(),
-            pool: v287.AccountId32,
+            pool: v347.AccountId32,
         })
     ),
 }
@@ -75,17 +75,17 @@ export const sellExecuted =  {
      * Asset sale executed.
      * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v287: new EventType(
+    v347: new EventType(
         'XYK.SellExecuted',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             assetIn: sts.number(),
             assetOut: sts.number(),
             amount: sts.bigint(),
             salePrice: sts.bigint(),
             feeAsset: sts.number(),
             feeAmount: sts.bigint(),
-            pool: v287.AccountId32,
+            pool: v347.AccountId32,
         })
     ),
 }
@@ -96,17 +96,17 @@ export const buyExecuted =  {
      * Asset purchase executed.
      * Deprecated. Replaced by pallet_broadcast::Swapped
      */
-    v287: new EventType(
+    v347: new EventType(
         'XYK.BuyExecuted',
         sts.struct({
-            who: v287.AccountId32,
+            who: v347.AccountId32,
             assetOut: sts.number(),
             assetIn: sts.number(),
             amount: sts.bigint(),
             buyPrice: sts.bigint(),
             feeAsset: sts.number(),
             feeAmount: sts.bigint(),
-            pool: v287.AccountId32,
+            pool: v347.AccountId32,
         })
     ),
 }
