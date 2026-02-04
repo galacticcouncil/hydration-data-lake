@@ -17,8 +17,29 @@ const reportTracker = require('./utils/reportTracker');
 async function main() {
   try {
     log('=== DB Backfill from Reapers - Starting ===');
+
+    // Check if migration already completed (prevents Docker restart issues)
+    if (config.USE_COMPLETION_MARKER) {
+      const completionMarkerFile = config.PROGRESS_FILE.replace('.json', '-completed.marker');
+      try {
+        await fs.access(completionMarkerFile);
+        log('✓ Migration already completed previously (found completion marker)');
+        log('✓ Skipping migration to prevent duplicate run');
+        log('');
+        log('To re-run migration, delete the completion marker:');
+        log(`  rm ${completionMarkerFile}`);
+        log('');
+        log('Exiting successfully...');
+        process.exit(0);
+      } catch (err) {
+        // Completion marker doesn't exist - proceed with migration
+      }
+    }
+
     log(`Schema: ${config.SCHEMA_NAME}`);
+    log(`Migration mode: ${config.USE_COPY_MODE ? 'COPY (high performance)' : 'INSERT (standard)'}`);
     log(`Batch size: ${config.BATCH_SIZE}, Bulk insert size: ${config.BULK_INSERT_SIZE}`);
+    log(`Parallel tables: ${config.MAX_PARALLEL_TABLES}`);
 
     // Validate environment
     if (!config.HARVESTER_DB_URL) {
@@ -121,6 +142,24 @@ async function main() {
       // Clear progress on successful completion
       await clearProgress();
       log('Migration progress cleared');
+
+      // Create completion marker to prevent re-runs on Docker restart
+      if (config.USE_COMPLETION_MARKER) {
+        const completionMarkerFile = config.PROGRESS_FILE.replace('.json', '-completed.marker');
+        await fs.writeFile(
+          completionMarkerFile,
+          JSON.stringify({
+            completedAt: new Date().toISOString(),
+            reapers: reapers.map(r => r.index),
+            summary: {
+              totalRecords: summary.records.total,
+              totalDuration: summary.migration.totalDuration,
+              avgSecondsPerRecord: summary.performance.avgSecondsPerRecord,
+            },
+          }, null, 2)
+        );
+        log(`✓ Completion marker created: ${completionMarkerFile}`);
+      }
     } finally {
       harvesterClient.release();
       await harvesterPool.end();

@@ -1,0 +1,79 @@
+version: '3.3'
+
+services:
+  db-backfill:
+    image: mckrava/reapers-harvester-migrator:3.2
+
+    command:
+     - sh
+     - -c
+     - node index.js
+
+    # IMPORTANT: Prevents re-runs on success
+    deploy:
+      restart_policy:
+        condition: on-failure    # Only restart on failure, not on success
+        delay: 10s
+        max_attempts: 3
+
+      # Optional: Resource limits
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+
+    environment:
+      # Migration mode (use INSERT if you have array columns)
+      USE_COPY_MODE: 'false'
+
+      # Performance settings
+      BATCH_SIZE: '15000'
+      BULK_INSERT_SIZE: '1000'
+      MAX_PARALLEL_TABLES: '10'
+      DISABLE_FK_CHECKS: 'true'
+
+      # Database connections
+      HARVESTER_DB_URL: postgresql://user:password@host:port/harvester_db
+
+      # Reapers to migrate (JSON array)
+      REAPERS_LIST_JSON: |
+        [
+          {
+            "index": 1,
+            "startBlockHeight": 0,
+            "endBlockHeight": 1000000,
+            "dbConnectionUrl": "postgresql://user:pass@reaper1.example.com:5432/reaper_db"
+          }
+        ]
+
+      # Progress tracking (IMPORTANT: use /data volume path)
+      PROGRESS_FILE: /data/migration-progress.json
+      RESUME_MIGRATION: 'true'
+      USE_COMPLETION_MARKER: 'true'  # Prevents duplicate runs on Docker restart
+
+      # Schema
+      SCHEMA_NAME: public
+
+    # IMPORTANT: Persist progress and completion marker
+    volumes:
+     - migration-data:/data
+
+    networks:
+     - default
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+networks:
+  default:
+    driver: overlay
+
+volumes:
+  migration-data:
+    driver: local

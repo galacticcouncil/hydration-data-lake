@@ -12,8 +12,12 @@ const {
   sortTablesByDependencies,
   groupTablesIntoWaves,
 } = require('../database/schema');
-const { migrateTable } = require('../database/migration');
 const config = require('../config');
+
+// Use COPY-based migration if enabled, otherwise use INSERT-based
+const { migrateTable } = config.USE_COPY_MODE
+  ? require('../database/migration-copy')
+  : require('../database/migration');
 
 /**
  * Process a wave of tables in parallel with concurrency limit

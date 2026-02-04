@@ -34,6 +34,7 @@ db-backfill-from-reapers/
 - Command-line argument and environment validation
 - Orchestrates the overall migration flow
 - Error handling and graceful shutdown
+- Completion marker management (optional - prevents duplicate runs on Docker restart)
 
 **Key Functions:**
 - `main()` - Application entry point
@@ -55,6 +56,7 @@ db-backfill-from-reapers/
 - `BULK_INSERT_SIZE` - Rows per INSERT statement
 - `PROGRESS_FILE` - Progress file path
 - `RESUME_MIGRATION` - Resume mode toggle
+- `USE_COMPLETION_MARKER` - Create completion marker to prevent duplicate runs (default: false)
 
 ---
 

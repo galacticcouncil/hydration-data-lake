@@ -5,7 +5,7 @@ module.exports = {
   // Database
   HARVESTER_DB_URL:
     process.env.HARVESTER_DB_URL ||
-    'postgresql://postgres:postgres@localhost:23798/liquidity_pools_db',
+  'postgresql://postgres:postgres@localhost:23798/liquidity_pools_db',
   SCHEMA_NAME: process.env.SCHEMA_NAME || 'public',
 
   // Reapers configuration
@@ -13,6 +13,7 @@ module.exports = {
   REAPERS_LIST_FILE: process.env.REAPERS_LIST_FILE || './reapers-list.json',
 
   // Migration settings
+  USE_COPY_MODE: process.env.USE_COPY_MODE === 'true', // Use PostgreSQL COPY for 5-10x faster migration
   DISABLE_FK_CHECKS: process.env.DISABLE_FK_CHECKS === 'true',
   BATCH_SIZE: parseInt(process.env.BATCH_SIZE || '10000'), // Increased for better performance
   BULK_INSERT_SIZE: parseInt(process.env.BULK_INSERT_SIZE || '2000'), // Increased for better performance
@@ -21,4 +22,5 @@ module.exports = {
   // Progress tracking
   PROGRESS_FILE: process.env.PROGRESS_FILE || './migration-progress.json',
   RESUME_MIGRATION: process.env.RESUME_MIGRATION === 'true',
+  USE_COMPLETION_MARKER: process.env.USE_COMPLETION_MARKER === 'true', // Create completion marker to prevent Docker restart re-runs (default: false)
 };
