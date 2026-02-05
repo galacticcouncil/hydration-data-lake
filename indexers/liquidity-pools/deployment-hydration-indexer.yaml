@@ -53,12 +53,12 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: false
+  dedicated: true
   addons:
     postgres:
-      profile: medium
+      profile: large
       storage: 300G
   processor:
-    profile: medium
+    profile: large
   api:
-    profile: medium
+    profile: small
