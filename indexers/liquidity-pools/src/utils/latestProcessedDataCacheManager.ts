@@ -155,7 +155,7 @@ export class LatestProcessedDataCacheManager {
    * Batch fetch latest asset spot price historical data using raw SQL with DISTINCT ON
    * Replaces N sequential queries with 1 batch query
    */
-  private async fetchLatestAssetSpotPriceHistDataBatch(
+  async fetchLatestAssetSpotPriceHistDataBatch(
     assetInIds: string[],
     maxBlockHeight: number,
     ctx: SqdProcessorContext<Store>
@@ -207,10 +207,10 @@ export class LatestProcessedDataCacheManager {
       });
 
       const duration = performance.now() - startTime;
-      console.log(
-        `[PERF] fetchLatestAssetSpotPriceHistDataBatch: ` +
-          `${assetInIds.length} assets, ${result.rows.length} results, ${duration.toFixed(2)}ms`
-      );
+      // console.log(
+      //   `[PERF] fetchLatestAssetSpotPriceHistDataBatch: ` +
+      //     `${assetInIds.length} assets, ${result.rows.length} results, ${duration.toFixed(2)}ms`
+      // );
 
       return entities;
     } catch (error: any) {
@@ -485,6 +485,13 @@ export class LatestProcessedDataCacheManager {
     assetInId: string
   ): AssetSpotPriceHistoricalData | undefined {
     return this.assetSpotPriceHistoricalDataItemsCache.get(assetInId);
+  }
+
+  getAllCachedLastAssetSpotPriceHistoricalDataItems(): Map<
+    string,
+    AssetSpotPriceHistoricalData
+  > {
+    return this.assetSpotPriceHistoricalDataItemsCache;
   }
 
   /**

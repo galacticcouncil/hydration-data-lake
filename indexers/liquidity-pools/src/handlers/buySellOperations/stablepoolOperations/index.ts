@@ -5,9 +5,7 @@ import {
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
-import {
-  BatchBlocksParsedDataManager,
-} from '../../../parsers/batchBlocksParser';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import {
   StableswapBuyExecutedData,
   StableswapLiquidityAddedData,
@@ -20,14 +18,11 @@ import {
   getOrderedListByBlockNumber,
   isUnifiedEventsSupportSpecVersion,
 } from '../../../utils/helpers';
-import {
-  stablepoolLiquidityAddedRemoved,
-} from '../../pools/pools/stableswap/liquidity';
+import { stablepoolLiquidityAddedRemoved } from '../../pools/pools/stableswap/liquidity';
 import { getOrCreateStableswap } from '../../pools/pools/stableswap/stablepool';
-import {
-  handleStablepoolVolumeUpdates,
-} from '../../pools/volumes/stablepoolVolume';
+import { handleStablepoolVolumeUpdates } from '../../pools/volumes/stablepoolVolume';
 import { handleSwap } from '../../swap/swap';
+import { handleAssetVolumeUpdates } from '../../assets/volume';
 
 export async function handleStablepoolOperations(
   ctx: SqdProcessorContext<Store>,
@@ -124,7 +119,7 @@ export async function stablepoolBuySellExecuted(
     return;
   }
 
-  const { swap } = await handleSwap({
+  const { swap, swapInputs, swapOutputs, swapFees } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -172,5 +167,13 @@ export async function stablepoolBuySellExecuted(
     ctx,
     swap,
     pool,
+  });
+
+  await handleAssetVolumeUpdates(ctx, {
+    paraBlockHeight: swap.paraBlockHeight,
+    assetInId: swapInputs[0].assetId,
+    assetInAmount: swapInputs[0].amount,
+    assetOutId: swapOutputs[0].assetId,
+    assetOutAmount: swapOutputs[0].amount,
   });
 }

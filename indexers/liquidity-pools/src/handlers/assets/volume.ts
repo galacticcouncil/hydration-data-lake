@@ -6,6 +6,8 @@ import { Store } from '@subsquid/typeorm-store';
 import { AssetVolumeHistoricalData } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { calcPriceNormalized } from '../../utils/helpers';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
+import { getClosestSpotPrice } from './assetHistoricalData/assetSpotPrices';
 
 export async function handleAssetVolumeUpdates(
   ctx: SqdProcessorContext<Store>,
@@ -121,6 +123,10 @@ export async function processAssetNormalizedVolumes({
   blockNumbersToProcess?: number[];
   ctx: SqdProcessorContext<Store>;
 }) {
+  /**
+   * Sorting assetVolume entities is required here to ensure correct processing
+   * order and valid results.
+   */
   let assetVolsByBatchList = Array.from(
     ctx.batchState.state.assetVolumes.values()
   ).sort((a, b) => (a.paraBlockHeight > b.paraBlockHeight ? 1 : -1));
@@ -132,8 +138,10 @@ export async function processAssetNormalizedVolumes({
     );
   }
 
-  const historicalSpotPricesMap =
-    ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
+  await ensureAssetSpotPricesForAssetVolumes({
+    volumes: assetVolsByBatchList,
+    ctx,
+  });
 
   for (const currentAssetVolHistData of assetVolsByBatchList) {
     const asset = ctx.batchState.state.assetsAll.get(
@@ -145,14 +153,31 @@ export async function processAssetNormalizedVolumes({
         `Asset with ID ${currentAssetVolHistData.assetId} cannot be found.`
       );
 
-    let assetSpotPriceNorm = historicalSpotPricesMap.get(
-      `${asset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetVolHistData.paraBlockHeight}`
-    )?.priceNormalised;
+    let assetSpotPriceNorm;
 
-    if (asset.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID)
+    if (asset.id === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) {
       assetSpotPriceNorm = '1';
+    } else {
+      assetSpotPriceNorm =
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+          `${asset.id}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetVolHistData.paraBlockHeight}`
+        )?.priceNormalised;
 
-    if (!assetSpotPriceNorm || !asset.decimals) continue;
+      if (!assetSpotPriceNorm) {
+        assetSpotPriceNorm = getClosestSpotPrice({
+          assetInId: currentAssetVolHistData.assetId,
+          ctx,
+          currenParaBlockHeight: currentAssetVolHistData.paraBlockHeight,
+        })?.priceNormalised;
+      }
+    }
+
+    if (!assetSpotPriceNorm || !asset.decimals) {
+      console.log(
+        `processAssetNormalizedVolumes :: no price : skipping asset ${asset.id}`
+      );
+      continue;
+    }
 
     const previousAssetVolume =
       ctx.batchState.getPreviousHistDataEntity({
@@ -199,6 +224,75 @@ export async function processAssetNormalizedVolumes({
 
   await ctx.storeUtils.upsertWithBatches(
     Array.from(ctx.batchState.state.assetVolumes.values())
+  );
+}
+
+async function ensureAssetSpotPricesForAssetVolumes({
+  volumes,
+  ctx,
+}: {
+  volumes: AssetVolumeHistoricalData[];
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const assetsWithNoCachedSpotPrice: Map<number, Set<string>> = new Map();
+
+  for (const currentAssetVolHistData of volumes) {
+    if (
+      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.has(
+        `${currentAssetVolHistData.assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${currentAssetVolHistData.paraBlockHeight}`
+      )
+    )
+      continue;
+
+    const prevPrice = getClosestSpotPrice({
+      assetInId: currentAssetVolHistData.assetId,
+      ctx,
+      currenParaBlockHeight: currentAssetVolHistData.paraBlockHeight,
+    });
+
+    if (!!prevPrice) continue;
+
+    if (
+      !assetsWithNoCachedSpotPrice.has(currentAssetVolHistData.paraBlockHeight)
+    )
+      assetsWithNoCachedSpotPrice.set(
+        currentAssetVolHistData.paraBlockHeight,
+        new Set()
+      );
+    assetsWithNoCachedSpotPrice
+      .get(currentAssetVolHistData.paraBlockHeight)
+      ?.add(currentAssetVolHistData.assetId);
+  }
+
+  /**
+   * If cache doesn't contain spot prices for some assets, we need to fetch
+   * latest one from the database. This should not happen in normal processing
+   * flow but actual for reaggregation processes when spot price is not calculated
+   * in current processing batch.
+   */
+  console.time(
+    `processAssetNormalizedVolumes :: fetchLatestAssetSpotPriceHistDataBatch`
+  );
+  if (assetsWithNoCachedSpotPrice.size > 0) {
+    for (const [
+      blockNumber,
+      assetIds,
+    ] of assetsWithNoCachedSpotPrice.entries()) {
+      const latestPrices =
+        await LatestProcessedDataCacheManager.getInstance().fetchLatestAssetSpotPriceHistDataBatch(
+          Array.from(assetIds.values()),
+          blockNumber,
+          ctx
+        );
+
+      if (!latestPrices || latestPrices.length === 0) continue;
+
+      for (const p of latestPrices)
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(p.id, p);
+    }
+  }
+  console.timeEnd(
+    `processAssetNormalizedVolumes :: fetchLatestAssetSpotPriceHistDataBatch`
   );
 }
 

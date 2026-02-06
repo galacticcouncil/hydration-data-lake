@@ -8,9 +8,7 @@ import {
   SwapFillerType,
   TradeOperationType,
 } from '../../../model';
-import {
-  BatchBlocksParsedDataManager,
-} from '../../../parsers/batchBlocksParser';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import {
   OmnipoolBuyExecutedData,
   OmnipoolSellExecutedData,
@@ -23,6 +21,7 @@ import {
 } from '../../../utils/helpers';
 import { handleOmnipoolAssetVolumeUpdates } from '../../pools/volumes';
 import { handleSwap } from '../../swap/swap';
+import { handleAssetVolumeUpdates } from '../../assets/volume';
 
 // TODO improve performance of the function
 export async function handleOmnioolOperations(
@@ -64,7 +63,12 @@ export async function omnipoolBuySellExecuted(
   const swapInHubId = `${eventMetadata.id}-01`;
   const swapOutHubId = `${eventMetadata.id}-02`;
 
-  const { swap: swapInHub } = await handleSwap({
+  const {
+    swap: swapInHub,
+    swapOutputs: swapInHubOutputs,
+    swapInputs: swapInHubInputs,
+    swapFees: swapInHubFees,
+  } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -108,7 +112,12 @@ export async function omnipoolBuySellExecuted(
       timestamp: eventMetadata.blockHeader.timestamp ?? Date.now(),
     },
   });
-  const { swap: swapOutHub } = await handleSwap({
+  const {
+    swap: swapOutHub,
+    swapOutputs: swapOutHubOutputs,
+    swapInputs: swapOutHubInputs,
+    swapFees: swapOutHubFees,
+  } = await handleSwap({
     ctx,
     blockHeader: eventMetadata.blockHeader,
     data: {
@@ -163,6 +172,22 @@ export async function omnipoolBuySellExecuted(
     swap: swapOutHub,
     blockHeader: eventMetadata.blockHeader,
   });
+
+  await handleAssetVolumeUpdates(ctx, {
+    paraBlockHeight: swapInHub.paraBlockHeight,
+    assetInId: swapInHubInputs[0].assetId,
+    assetInAmount: swapInHubInputs[0].amount,
+    assetOutId: swapInHubOutputs[0].assetId,
+    assetOutAmount: swapInHubOutputs[0].amount,
+  });
+
+  await handleAssetVolumeUpdates(ctx, {
+    paraBlockHeight: swapOutHub.paraBlockHeight,
+    assetInId: swapOutHubInputs[0].assetId,
+    assetInAmount: swapOutHubInputs[0].amount,
+    assetOutId: swapOutHubOutputs[0].assetId,
+    assetOutAmount: swapOutHubOutputs[0].amount,
+  });
 }
 
 async function prefetchEntities(
@@ -194,10 +219,14 @@ async function prefetchEntities(
 
   const state = ctx.batchState.state;
 
-  const prefetchedOmnipoolAssets = await ctx.storeUtils.findWithLogs(OmnipoolAsset, {
-    where: { id: In(omnipoolAssetsToPrefetch) },
-    relations: { pool: true },
-  }, { className: 'OmnipoolAsset' });
+  const prefetchedOmnipoolAssets = await ctx.storeUtils.findWithLogs(
+    OmnipoolAsset,
+    {
+      where: { id: In(omnipoolAssetsToPrefetch) },
+      relations: { pool: true },
+    },
+    { className: 'OmnipoolAsset' }
+  );
 
   if (omnipoolAssetsToPrefetch.length > 0)
     state.omnipoolAssets = new Map(

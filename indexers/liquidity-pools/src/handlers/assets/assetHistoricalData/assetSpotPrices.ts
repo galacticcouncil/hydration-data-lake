@@ -295,7 +295,9 @@ async function processAssetSpotPrices({
             paraBlockHeight: blockHeader.height,
           })
         );
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -910,4 +912,23 @@ async function processXykShareAssetSpotPrices({
 
   // await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
   await calcAssetSpotPrices();
+}
+
+export function getClosestSpotPrice({
+  ctx,
+  assetInId,
+  currenParaBlockHeight,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  assetInId: string;
+  currenParaBlockHeight: number;
+}) {
+  const assetSpotPricesList = Array.from(
+    ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+  ).sort((a, b) => (a.paraBlockHeight > b.paraBlockHeight ? -1 : 1));
+
+  return assetSpotPricesList.find(
+    (p) =>
+      p.assetInId === assetInId && p.paraBlockHeight < currenParaBlockHeight
+  );
 }

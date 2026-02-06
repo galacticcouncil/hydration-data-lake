@@ -1,16 +1,9 @@
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Lbppool,
-  LbppoolVolumeHistoricalData,
-  Swap,
-} from '../../../model';
+import { Lbppool, LbppoolVolumeHistoricalData, Swap } from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
 import { calculateAveragePrice } from '../../prices/utils';
-import {
-  getLastVolumeFromCache,
-  getOldLbpVolume,
-} from './index';
+import { getLastVolumeFromCache, getOldLbpVolume } from './index';
 
 export function initLbppoolVolume(
   swap: Swap,
@@ -55,38 +48,6 @@ export function initLbppoolVolume(
       oldVolume?.assetBTotalVolOut ||
       BigInt(0),
 
-    // assetAVolInNorm: currentVolume?.assetAVolInNorm || '0',
-    // assetAVolOutNorm: currentVolume?.assetAVolOutNorm || '0',
-    // assetBVolInNorm: currentVolume?.assetBVolInNorm || '0',
-    // assetBVolOutNorm: currentVolume?.assetBVolOutNorm || '0',
-    // assetAFeeVolNorm: currentVolume?.assetAFeeVolNorm || '0',
-    // assetBFeeVolNorm: currentVolume?.assetBFeeVolNorm || '0',
-    //
-    // assetATotalVolInNorm:
-    //   currentVolume?.assetATotalVolInNorm ||
-    //   oldVolume?.assetATotalVolInNorm ||
-    //   '0',
-    // assetATotalVolOutNorm:
-    //   currentVolume?.assetATotalVolOutNorm ||
-    //   oldVolume?.assetATotalVolOutNorm ||
-    //   '0',
-    // assetBTotalVolInNorm:
-    //   currentVolume?.assetBTotalVolInNorm ||
-    //   oldVolume?.assetBTotalVolInNorm ||
-    //   '0',
-    // assetBTotalVolOutNorm:
-    //   currentVolume?.assetBTotalVolOutNorm ||
-    //   oldVolume?.assetBTotalVolOutNorm ||
-    //   '0',
-    // assetAFeesTotalVolNorm:
-    //   currentVolume?.assetAFeesTotalVolNorm ||
-    //   oldVolume?.assetAFeesTotalVolNorm ||
-    //   '0',
-    // assetBFeesTotalVolNorm:
-    //   currentVolume?.assetBFeesTotalVolNorm ||
-    //   oldVolume?.assetBFeesTotalVolNorm ||
-    //   '0',
-
     assetAVolInNorm: '0',
     assetAVolOutNorm: '0',
     assetBVolInNorm: '0',
@@ -105,8 +66,8 @@ export function initLbppoolVolume(
   });
 
   const assetAVolIn =
-    swap.inputs.find((input) => input.assetId === newVolume.assetAId)
-      ?.amount || BigInt(0);
+    swap.inputs.find((input) => input.assetId === newVolume.assetAId)?.amount ||
+    BigInt(0);
 
   const assetAVolOut =
     swap.outputs.find((output) => output.assetId === newVolume.assetAId)
@@ -119,8 +80,8 @@ export function initLbppoolVolume(
   }, 0n);
 
   const assetBVolIn =
-    swap.inputs.find((input) => input.assetId === newVolume.assetBId)
-      ?.amount || BigInt(0);
+    swap.inputs.find((input) => input.assetId === newVolume.assetBId)?.amount ||
+    BigInt(0);
 
   const assetBVolOut =
     swap.outputs.find((output) => output.assetId === newVolume.assetBId)

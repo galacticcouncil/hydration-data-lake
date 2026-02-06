@@ -24,20 +24,24 @@ export async function getOldLbpVolume({
   poolId: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.storeUtils.findOneWithLogs(LbppoolVolumeHistoricalData, {
-    where: {
-      pool: { id: poolId },
-      ...(currentBlockHeight
-        ? { paraBlockHeight: LessThan(currentBlockHeight) }
-        : {}),
+  return await ctx.storeUtils.findOneWithLogs(
+    LbppoolVolumeHistoricalData,
+    {
+      where: {
+        pool: { id: poolId },
+        ...(currentBlockHeight
+          ? { paraBlockHeight: LessThan(currentBlockHeight) }
+          : {}),
+      },
+      relations: {
+        pool: true,
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
     },
-    relations: {
-      pool: true,
-    },
-    order: {
-      paraBlockHeight: 'DESC',
-    },
-  }, { className: 'LbppoolVolumeHistoricalData' });
+    { className: 'LbppoolVolumeHistoricalData' }
+  );
 }
 
 export async function getOldXykVolume({
@@ -49,20 +53,24 @@ export async function getOldXykVolume({
   poolId: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.storeUtils.findOneWithLogs(XykpoolVolumeHistoricalData, {
-    where: {
-      pool: { id: poolId },
-      ...(currentBlockHeight
-        ? { paraBlockHeight: LessThan(currentBlockHeight) }
-        : {}),
+  return await ctx.storeUtils.findOneWithLogs(
+    XykpoolVolumeHistoricalData,
+    {
+      where: {
+        pool: { id: poolId },
+        ...(currentBlockHeight
+          ? { paraBlockHeight: LessThan(currentBlockHeight) }
+          : {}),
+      },
+      relations: {
+        pool: true,
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
     },
-    relations: {
-      pool: true,
-    },
-    order: {
-      paraBlockHeight: 'DESC',
-    },
-  }, { className: 'XykpoolVolumeHistoricalData' });
+    { className: 'XykpoolVolumeHistoricalData' }
+  );
 }
 
 export async function getOldOmnipoolAssetVolume({
@@ -74,20 +82,24 @@ export async function getOldOmnipoolAssetVolume({
   omnipoolAssetId: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.storeUtils.findOneWithLogs(OmnipoolAssetVolumeHistoricalData, {
-    where: {
-      omnipoolAsset: { id: omnipoolAssetId },
-      ...(currentBlockHeight
-        ? { paraBlockHeight: LessThan(currentBlockHeight) }
-        : {}),
+  return await ctx.storeUtils.findOneWithLogs(
+    OmnipoolAssetVolumeHistoricalData,
+    {
+      where: {
+        omnipoolAsset: { id: omnipoolAssetId },
+        ...(currentBlockHeight
+          ? { paraBlockHeight: LessThan(currentBlockHeight) }
+          : {}),
+      },
+      relations: {
+        omnipoolAsset: true,
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
     },
-    relations: {
-      omnipoolAsset: true,
-    },
-    order: {
-      paraBlockHeight: 'DESC',
-    },
-  }, { className: 'OmnipoolAssetVolumeHistoricalData' });
+    { className: 'OmnipoolAssetVolumeHistoricalData' }
+  );
 }
 
 export async function getOldStablepoolAssetVolume({
@@ -101,21 +113,25 @@ export async function getOldStablepoolAssetVolume({
   poolId: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.storeUtils.findOneWithLogs(StableswapAssetVolumeHistoricalData, {
-    where: {
-      assetId: `${assetId}` ,
-      volumesCollection: { pool: { id: poolId } },
-      ...(currentBlockHeight
-        ? { paraBlockHeight: LessThan(currentBlockHeight) }
-        : {}),
+  return await ctx.storeUtils.findOneWithLogs(
+    StableswapAssetVolumeHistoricalData,
+    {
+      where: {
+        assetId: `${assetId}`,
+        volumesCollection: { pool: { id: poolId } },
+        ...(currentBlockHeight
+          ? { paraBlockHeight: LessThan(currentBlockHeight) }
+          : {}),
+      },
+      relations: {
+        volumesCollection: true,
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
     },
-    relations: {
-      volumesCollection: true,
-    },
-    order: {
-      paraBlockHeight: 'DESC',
-    },
-  }, { className: 'StableswapAssetVolumeHistoricalData' });
+    { className: 'StableswapAssetVolumeHistoricalData' }
+  );
 }
 
 export async function getOldStablepoolVolume({
@@ -127,20 +143,24 @@ export async function getOldStablepoolVolume({
   poolId: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.storeUtils.findOneWithLogs(StableswapVolumeHistoricalData, {
-    where: {
-      pool: { id: `${poolId}` },
-      ...(currentBlockHeight
-        ? { paraBlockHeight: LessThan(currentBlockHeight) }
-        : {}),
+  return await ctx.storeUtils.findOneWithLogs(
+    StableswapVolumeHistoricalData,
+    {
+      where: {
+        pool: { id: `${poolId}` },
+        ...(currentBlockHeight
+          ? { paraBlockHeight: LessThan(currentBlockHeight) }
+          : {}),
+      },
+      relations: {
+        pool: true,
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
     },
-    relations: {
-      pool: true,
-    },
-    order: {
-      paraBlockHeight: 'DESC',
-    },
-  }, { className: 'StableswapVolumeHistoricalData' });
+    { className: 'StableswapVolumeHistoricalData' }
+  );
 }
 
 export function getLastVolumeFromCache(

@@ -8,14 +8,9 @@ import {
   HsmpoolAssetHistoricalData,
   Swap,
 } from '../../../../model';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { batchGetOrCreateAssets } from '../../../assets/asset';
-import {
-  getOldAaveFacilitatorHistDataEntity,
-} from '../../../facilitator/historicalData';
+import { getOldAaveFacilitatorHistDataEntity } from '../../../facilitator/historicalData';
 import { getOrCreateHsmCollateral } from './collaterals/hsmCollateral';
 
 export async function handleHsmAssetHistoricalData({
@@ -64,10 +59,7 @@ export async function handleHsmAssetHistoricalData({
   for (const input of swap.inputs) {
     const asset = assetCache.get(input.assetId);
     if (asset) {
-      entries.push([
-        asset.id,
-        { id: asset.id, evmAddress: asset.evmAddress }
-      ]);
+      entries.push([asset.id, { id: asset.id, evmAddress: asset.evmAddress }]);
     }
   }
 
@@ -75,10 +67,7 @@ export async function handleHsmAssetHistoricalData({
   for (const output of swap.outputs) {
     const asset = assetCache.get(output.assetId);
     if (asset) {
-      entries.push([
-        asset.id,
-        { id: asset.id, evmAddress: asset.evmAddress }
-      ]);
+      entries.push([asset.id, { id: asset.id, evmAddress: asset.evmAddress }]);
     }
   }
 
@@ -86,10 +75,7 @@ export async function handleHsmAssetHistoricalData({
   for (const fee of swap.fees) {
     const asset = assetCache.get(fee.assetId);
     if (asset) {
-      entries.push([
-        asset.id,
-        { id: asset.id, evmAddress: asset.evmAddress }
-      ]);
+      entries.push([asset.id, { id: asset.id, evmAddress: asset.evmAddress }]);
     }
   }
 
@@ -101,7 +87,10 @@ export async function handleHsmAssetHistoricalData({
   const collateralCache = new Map<string, any>();
   await Promise.all(
     involvedAssetIds
-      .filter(asset => asset.evmAddress !== ctx.appConfig.evm.HOLLAR_CONTRACT_ADDRESS)
+      .filter(
+        (asset) =>
+          asset.evmAddress !== ctx.appConfig.evm.HOLLAR_CONTRACT_ADDRESS
+      )
       .map(async (asset) => {
         const collateral = await getOrCreateHsmCollateral({
           assetRegistryId: asset.id,
@@ -186,11 +175,12 @@ export async function initHsmAssetHistoricalData({
   // Use cached collateral if available, otherwise fetch
   const collateral =
     processingAsset.evmAddress !== ctx.appConfig.evm.HOLLAR_CONTRACT_ADDRESS
-      ? collateralCache?.get(processingAsset.id) ?? await getOrCreateHsmCollateral({
+      ? (collateralCache?.get(processingAsset.id) ??
+        (await getOrCreateHsmCollateral({
           assetRegistryId: processingAsset.id,
           ctx,
           blockHeader,
-        })
+        })))
       : null;
 
   const newHistDataEntity = new HsmpoolAssetHistoricalData({
@@ -245,8 +235,8 @@ export async function initHsmAssetHistoricalData({
 
   // Use assetId instead of assetInfo (which doesn't exist)
   const assetVolIn =
-    swap.inputs.find((input) => input.assetId === processingAsset.id)
-      ?.amount || BigInt(0);
+    swap.inputs.find((input) => input.assetId === processingAsset.id)?.amount ||
+    BigInt(0);
 
   const assetVolOut =
     swap.outputs.find((output) => output.assetId === processingAsset.id)
@@ -280,20 +270,24 @@ export async function getOldHsmAssetHistDataEntity({
   assetId: string;
   currentBlockHeight?: number;
 }) {
-  return await ctx.storeUtils.findOneWithLogs(HsmpoolAssetHistoricalData, {
-    where: {
-      assetId:  assetId,
-      ...(currentBlockHeight
-        ? { paraBlockHeight: LessThan(currentBlockHeight) }
-        : {}),
+  return await ctx.storeUtils.findOneWithLogs(
+    HsmpoolAssetHistoricalData,
+    {
+      where: {
+        assetId: assetId,
+        ...(currentBlockHeight
+          ? { paraBlockHeight: LessThan(currentBlockHeight) }
+          : {}),
+      },
+      relations: {
+        collateral: true,
+      },
+      order: {
+        paraBlockHeight: 'DESC',
+      },
     },
-    relations: {
-      collateral: true,
-    },
-    order: {
-      paraBlockHeight: 'DESC',
-    },
-  }, { className: 'HsmpoolAssetHistoricalData' });
+    { className: 'HsmpoolAssetHistoricalData' }
+  );
 }
 
 export async function processHsmpoolAssetBalanceHistoricalData({
@@ -330,9 +324,11 @@ export async function processHsmpoolAssetBalanceHistoricalData({
     // Use cached asset instead of fetching
     const asset = assetCache.get(assetId);
     if (!asset) {
-      console.log(`processHsmpoolAssetNormalizedVolumes :: Asset with id ${assetId} cannot be found.`);
-      continue
-    };
+      console.log(
+        `processHsmpoolAssetNormalizedVolumes :: Asset with id ${assetId} cannot be found.`
+      );
+      continue;
+    }
     const assetEvmAddress = asset.evmAddress;
 
     const previousAssetHistData =

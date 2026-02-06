@@ -34,21 +34,8 @@ function parseTokenRemovedParams(
 function parseBuyExecutedParams(
   event: SqdEvent
 ): OmnipoolBuyExecutedEventParams {
-  if (events.omnipool.buyExecuted.v115.is(event)) {
-    const { who, assetIn, assetOut, amountIn, amountOut } =
-      events.omnipool.buyExecuted.v115.decode(event);
-
-    return {
-      who,
-      assetIn,
-      assetOut,
-      amountIn,
-      amountOut,
-      hubAmountIn: BigInt(0),
-      hubAmountOut: BigInt(0),
-      assetFeeAmount: BigInt(0),
-      protocolFeeAmount: BigInt(0),
-    };
+  if (events.omnipool.buyExecuted.v201.is(event)) {
+    return events.omnipool.buyExecuted.v201.decode(event);
   }
   if (events.omnipool.buyExecuted.v170.is(event)) {
     const {
@@ -74,19 +61,9 @@ function parseBuyExecutedParams(
     };
   }
 
-  if (events.omnipool.buyExecuted.v201.is(event)) {
-    return events.omnipool.buyExecuted.v201.decode(event);
-  }
-
-  throw new UnknownVersionError(event.name);
-}
-
-function parseSellExecutedParams(
-  event: SqdEvent
-): OmnipoolSellExecutedEventParams {
-  if (events.omnipool.sellExecuted.v115.is(event)) {
+  if (events.omnipool.buyExecuted.v115.is(event)) {
     const { who, assetIn, assetOut, amountIn, amountOut } =
-      events.omnipool.sellExecuted.v115.decode(event);
+      events.omnipool.buyExecuted.v115.decode(event);
 
     return {
       who,
@@ -99,6 +76,18 @@ function parseSellExecutedParams(
       assetFeeAmount: BigInt(0),
       protocolFeeAmount: BigInt(0),
     };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+function parseSellExecutedParams(
+  event: SqdEvent
+): OmnipoolSellExecutedEventParams {
+  if (events.omnipool.sellExecuted.v201.is(event)) {
+    const resp = events.omnipool.sellExecuted.v201.decode(event);
+    console.dir(resp, { depth: null });
+    return resp;
   }
 
   if (events.omnipool.sellExecuted.v170.is(event)) {
@@ -125,8 +114,21 @@ function parseSellExecutedParams(
     };
   }
 
-  if (events.omnipool.sellExecuted.v201.is(event)) {
-    return events.omnipool.sellExecuted.v201.decode(event);
+  if (events.omnipool.sellExecuted.v115.is(event)) {
+    const { who, assetIn, assetOut, amountIn, amountOut } =
+      events.omnipool.sellExecuted.v115.decode(event);
+
+    return {
+      who,
+      assetIn,
+      assetOut,
+      amountIn,
+      amountOut,
+      hubAmountIn: BigInt(0),
+      hubAmountOut: BigInt(0),
+      assetFeeAmount: BigInt(0),
+      protocolFeeAmount: BigInt(0),
+    };
   }
 
   throw new UnknownVersionError(event.name);
