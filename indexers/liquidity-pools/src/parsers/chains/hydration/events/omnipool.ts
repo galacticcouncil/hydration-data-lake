@@ -86,7 +86,6 @@ function parseSellExecutedParams(
 ): OmnipoolSellExecutedEventParams {
   if (events.omnipool.sellExecuted.v201.is(event)) {
     const resp = events.omnipool.sellExecuted.v201.decode(event);
-    console.dir(resp, { depth: null });
     return resp;
   }
 
