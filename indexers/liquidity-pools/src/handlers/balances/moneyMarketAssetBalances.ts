@@ -77,21 +77,6 @@ export async function handleMmAssetAccountBalancesPerBlock({
           async (asset) => {
             if (!accountAssetsMap.account.boundEvmAddress) return;
 
-            // const accountReserves =
-            //   await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
-            //     {
-            //       accountAddress: accountAssetsMap.account.boundEvmAddress!,
-            //       blockNumber: blockSlotData.block.height,
-            //     }
-            //   );
-            //
-            // console.log(
-            //   'accountReserves - ',
-            //   accountAssetsMap.account.id,
-            //   blockSlotData.block.height
-            // );
-            // console.dir(accountReserves, { depth: null });
-
             const balance =
               prefetchedBalancesAtBlock
                 ?.get(accountAssetsMap.account.id)

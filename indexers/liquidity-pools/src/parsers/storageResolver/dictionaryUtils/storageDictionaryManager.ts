@@ -329,76 +329,123 @@ export class StorageDictionaryManager extends QueriesHelper {
       };
     };
 
-    const allEmaOraclesStorageFetchPromise = async () => {
-      // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-      const data: EmaOracleGql[][] = [];
+    // const allEmaOraclesStorageFetchPromise = async () => {
+    //   const data: EmaOracleGql[][] = [];
+    //   for await (const page of this.fetchAllPages({
+    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+    //     requestPromise: fetchBlockCompressedDataPaginated,
+    //     topic: ProcessingTopic.EMA_ORACLE,
+    //   })) {
+    //     if (!page) continue;
+    //     const encodedPageData: EmaOracleGql[] =
+    //       encodeBlockCompressedData<EmaOracleGql>({
+    //         data: page,
+    //         dataKey: BlockCompressedDataKey.emaOracle,
+    //       });
+    //
+    //     // data.push(...(encodedPageData as EmaOracleGql[]));
+    //     data.push(encodedPageData);
+    //   }
+    //
+    //   return { pallet: ProcessingTopic.EMA_ORACLE, data: data.flat() };
+    // };
+
+    // const allAssetHistDataStorageFetchPromise = async () => {
+    //   // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
+    //   const data: AssetHistoricalDatumGql[][] = [];
+    //
+    //   for await (const page of this.fetchAllPages({
+    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+    //     requestPromise: fetchBlockCompressedDataPaginated,
+    //     topic: ProcessingTopic.ASSET_HIST_DATA,
+    //   })) {
+    //     if (!page) continue;
+    //     const encodedPageData: AssetHistoricalDatumGql[] =
+    //       encodeBlockCompressedData<AssetHistoricalDatumGql>({
+    //         data: page,
+    //         dataKey: BlockCompressedDataKey.assetHistoricalData,
+    //       });
+    //
+    //     // data.push(...(encodedPageData as AssetHistoricalDatumGql[]));
+    //     data.push(encodedPageData as AssetHistoricalDatumGql[]);
+    //   }
+    //
+    //   return { pallet: ProcessingTopic.ASSET_HIST_DATA, data: data.flat() };
+    // };
+
+    // const allAavepoolsStorageFetchPromise = async () => {
+    //   // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
+    //   const data: AavepoolGlq[][] = [];
+    //
+    //   for await (const page of this.fetchAllPages({
+    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+    //     requestPromise: fetchBlockCompressedDataPaginated,
+    //     topic: ProcessingTopic.AAVE,
+    //   })) {
+    //     if (!page) continue;
+    //     const encodedPageData: AavepoolGlq[] =
+    //       encodeBlockCompressedData<AavepoolGlq>({
+    //         data: page,
+    //         dataKey: BlockCompressedDataKey.aavepool,
+    //       });
+    //
+    //     data.push(encodedPageData);
+    //     // data.push(...(encodedPageData as AavepoolGlq[]));
+    //   }
+    //
+    //   return { pallet: ProcessingTopic.AAVE, data: data.flat() };
+    // };
+
+    const allGenericStorageFetchPromise = async () => {
+      const encodedDataAavepool: AavepoolGlq[][] = [];
+      const encodedDataAssetHistoricalDatum: AssetHistoricalDatumGql[][] = [];
+      const encodedDataEmaOracleGql: EmaOracleGql[][] = [];
+
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
         requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.EMA_ORACLE,
+        topic: ProcessingTopic.GENERIC_HIST_DATA,
       })) {
         if (!page) continue;
-        const encodedPageData: EmaOracleGql[] =
-          encodeBlockCompressedData<EmaOracleGql>({
-            data: page,
-            dataKey: BlockCompressedDataKey.emaOracle,
-          });
-
-        // data.push(...(encodedPageData as EmaOracleGql[]));
-        data.push(encodedPageData);
-      }
-
-      return { pallet: ProcessingTopic.EMA_ORACLE, data: data.flat() };
-    };
-
-    const allAssetHistDataStorageFetchPromise = async () => {
-      // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-      const data: AssetHistoricalDatumGql[][] = [];
-
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.ASSET_HIST_DATA,
-      })) {
-        if (!page) continue;
-        const encodedPageData: AssetHistoricalDatumGql[] =
-          encodeBlockCompressedData<AssetHistoricalDatumGql>({
-            data: page,
-            dataKey: BlockCompressedDataKey.assetHistoricalData,
-          });
-
-        // data.push(...(encodedPageData as AssetHistoricalDatumGql[]));
-        data.push(encodedPageData as AssetHistoricalDatumGql[]);
-      }
-
-      return { pallet: ProcessingTopic.ASSET_HIST_DATA, data: data.flat() };
-    };
-
-    const allAavepoolsStorageFetchPromise = async () => {
-      // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-      const data: AavepoolGlq[][] = [];
-
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.AAVE,
-      })) {
-        if (!page) continue;
-        const encodedPageData: AavepoolGlq[] =
+        const aavepoolGqlRespEncoded: AavepoolGlq[] =
           encodeBlockCompressedData<AavepoolGlq>({
             data: page,
             dataKey: BlockCompressedDataKey.aavepool,
           });
 
-        data.push(encodedPageData);
-        // data.push(...(encodedPageData as AavepoolGlq[]));
+        const assetHistoricalDatumGqlRespEncoded: AssetHistoricalDatumGql[] =
+          encodeBlockCompressedData<AssetHistoricalDatumGql>({
+            data: page,
+            dataKey: BlockCompressedDataKey.assetHistoricalData,
+          });
+
+        const emaOracleGqlRespEncoded: EmaOracleGql[] =
+          encodeBlockCompressedData<EmaOracleGql>({
+            data: page,
+            dataKey: BlockCompressedDataKey.emaOracle,
+          });
+
+        encodedDataAavepool.push(aavepoolGqlRespEncoded);
+        encodedDataAssetHistoricalDatum.push(
+          assetHistoricalDatumGqlRespEncoded as AssetHistoricalDatumGql[]
+        );
+        encodedDataEmaOracleGql.push(emaOracleGqlRespEncoded);
       }
 
-      return { pallet: ProcessingTopic.AAVE, data: data.flat() };
+      return [
+        { pallet: ProcessingTopic.AAVE, data: encodedDataAavepool.flat() },
+        {
+          pallet: ProcessingTopic.ASSET_HIST_DATA,
+          data: encodedDataAssetHistoricalDatum.flat(),
+        },
+        {
+          pallet: ProcessingTopic.EMA_ORACLE,
+          data: encodedDataEmaOracleGql.flat(),
+        },
+      ];
     };
 
     const allLbpPoolStorageFetchPromise = async () => {
-      if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
       const data: LbpPoolGlq[][] = [];
 
       for await (const page of this.fetchAllPages({
@@ -417,7 +464,7 @@ export class StorageDictionaryManager extends QueriesHelper {
         // data.push(...(encodedPageData as LbpPoolGlq[]));
       }
 
-      return { pallet: ProcessingTopic.LBP, data: data.flat() };
+      return [{ pallet: ProcessingTopic.LBP, data: data.flat() }];
     };
 
     const allXykPoolStorageFetchPromise = async () => {
@@ -445,7 +492,7 @@ export class StorageDictionaryManager extends QueriesHelper {
         // data.push(...(encodedPageData as XykpoolGlq[]));
       }
 
-      return { pallet: ProcessingTopic.XYK, data: data.flat() };
+      return [{ pallet: ProcessingTopic.XYK, data: data.flat() }];
     };
 
     const allOmnipoolStorageFetchPromise = async () => {
@@ -473,7 +520,7 @@ export class StorageDictionaryManager extends QueriesHelper {
         data.push(encodedPageData);
       }
 
-      return { pallet: ProcessingTopic.OMNIPOOL, data: data.flat() };
+      return [{ pallet: ProcessingTopic.OMNIPOOL, data: data.flat() }];
     };
 
     const allStablepoolStorageFetchPromise = async () => {
@@ -501,7 +548,7 @@ export class StorageDictionaryManager extends QueriesHelper {
         // data.push(...(encodedPageData as StableswapGql[]));
       }
 
-      return { pallet: ProcessingTopic.STABLESWAP, data: data.flat() };
+      return [{ pallet: ProcessingTopic.STABLESWAP, data: data.flat() }];
     };
 
     const allMmAggregatorOraclesStorageFetchPromise = async () => {
@@ -521,10 +568,12 @@ export class StorageDictionaryManager extends QueriesHelper {
         data.push(encodedPageData);
       }
 
-      return {
-        pallet: ProcessingTopic.MM_AGGREGATOR_ORACLE,
-        data: data.flat(),
-      };
+      return [
+        {
+          pallet: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+          data: data.flat(),
+        },
+      ];
     };
 
     const allAccountAssetBalanceHistDataStorageFetchPromise = async () => {
@@ -545,10 +594,12 @@ export class StorageDictionaryManager extends QueriesHelper {
         data.push(encodedPageData as AccountAssetBalanceHistoricalDatumGql[]);
       }
 
-      return {
-        pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
-        data: data.flat(),
-      };
+      return [
+        {
+          pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+          data: data.flat(),
+        },
+      ];
     };
 
     const allAccountMmPositionHistDataStorageFetchPromise = async () => {
@@ -569,24 +620,83 @@ export class StorageDictionaryManager extends QueriesHelper {
         data.push(encodedPageData as AccountMmPositionHistoricalDatumGql[]);
       }
 
-      return {
-        pallet: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
-        data: data.flat(),
-      };
+      return [
+        {
+          pallet: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+          data: data.flat(),
+        },
+      ];
+    };
+
+    const execFetchPromiseWithTimeLog = async (
+      fn: () => Promise<PalletDictionaryCollectedData[]>,
+      fnName: string
+    ): Promise<PalletDictionaryCollectedData[]> => {
+      console.time(`:: >>> Dictionary API call [${fnName}] executed in`);
+      const resp = await fn();
+      console.timeEnd(`:: >>> Dictionary API call [${fnName}] executed in`);
+
+      return resp;
     };
 
     console.time('Dictionary API call executed in');
+    // const fullResponse = await Promise.all([
+    //   allLbpPoolStorageFetchPromise(),
+    //   allXykPoolStorageFetchPromise(),
+    //   allOmnipoolStorageFetchPromise(),
+    //   allStablepoolStorageFetchPromise(),
+    //   allAavepoolsStorageFetchPromise(),
+    //   allEmaOraclesStorageFetchPromise(),
+    //   allAssetHistDataStorageFetchPromise(),
+    //   allMmAggregatorOraclesStorageFetchPromise(),
+    //   allAccountAssetBalanceHistDataStorageFetchPromise(),
+    //   allAccountMmPositionHistDataStorageFetchPromise(),
+    // ]);
     const fullResponse = await Promise.all([
-      allLbpPoolStorageFetchPromise(),
-      allXykPoolStorageFetchPromise(),
-      allOmnipoolStorageFetchPromise(),
-      allStablepoolStorageFetchPromise(),
-      allAavepoolsStorageFetchPromise(),
-      allEmaOraclesStorageFetchPromise(),
-      allAssetHistDataStorageFetchPromise(),
-      allMmAggregatorOraclesStorageFetchPromise(),
-      allAccountAssetBalanceHistDataStorageFetchPromise(),
-      allAccountMmPositionHistDataStorageFetchPromise(),
+      execFetchPromiseWithTimeLog(
+        allLbpPoolStorageFetchPromise,
+        'allLbpPoolStorageFetchPromise'
+      ),
+      execFetchPromiseWithTimeLog(
+        allXykPoolStorageFetchPromise,
+        'allXykPoolStorageFetchPromise'
+      ),
+      execFetchPromiseWithTimeLog(
+        allOmnipoolStorageFetchPromise,
+        'allOmnipoolStorageFetchPromise'
+      ),
+      execFetchPromiseWithTimeLog(
+        allStablepoolStorageFetchPromise,
+        'allStablepoolStorageFetchPromise'
+      ),
+      execFetchPromiseWithTimeLog(
+        allGenericStorageFetchPromise,
+        'allGenericStorageFetchPromise'
+      ),
+      // execFetchPromiseWithTimeLog(
+      //   allAavepoolsStorageFetchPromise,
+      //   'allAavepoolsStorageFetchPromise'
+      // ),
+      // execFetchPromiseWithTimeLog(
+      //   allEmaOraclesStorageFetchPromise,
+      //   'allEmaOraclesStorageFetchPromise'
+      // ),
+      // execFetchPromiseWithTimeLog(
+      //   allAssetHistDataStorageFetchPromise,
+      //   'allAssetHistDataStorageFetchPromise'
+      // ),
+      execFetchPromiseWithTimeLog(
+        allMmAggregatorOraclesStorageFetchPromise,
+        'allMmAggregatorOraclesStorageFetchPromise'
+      ),
+      execFetchPromiseWithTimeLog(
+        allAccountAssetBalanceHistDataStorageFetchPromise,
+        'allAccountAssetBalanceHistDataStorageFetchPromise'
+      ),
+      execFetchPromiseWithTimeLog(
+        allAccountMmPositionHistDataStorageFetchPromise,
+        'allAccountMmPositionHistDataStorageFetchPromise'
+      ),
     ]);
 
     console.log(
@@ -596,7 +706,7 @@ export class StorageDictionaryManager extends QueriesHelper {
     console.timeEnd('Dictionary API call executed in');
 
     this.decorateDictionaryData(
-      fullResponse as Array<PalletDictionaryCollectedData>
+      fullResponse.flat() as Array<PalletDictionaryCollectedData>
     );
   }
 

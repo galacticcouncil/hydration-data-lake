@@ -15,6 +15,7 @@ import { CommonPgPool } from './pgConnectionManagers/pgPool';
 import { getLatestXykpoolHistoricalData } from './pgConnectionManagers/queries/getLatestXykpoolHistoricalData.sql';
 import { getLatestAssetSpotPriceHistoricalData } from './pgConnectionManagers/queries/getLatestAssetSpotPriceHistoricalData.sql';
 import { getLatestAssetHistoricalData } from './pgConnectionManagers/queries/getLatestAssetHistoricalData.sql';
+import { BlockHeader } from '@subsquid/substrate-processor';
 
 // Type definitions for raw PostgreSQL query results
 interface RawAssetHistoricalDataRow {
@@ -406,10 +407,12 @@ export class LatestProcessedDataCacheManager {
    * ======================  Asset Spot Price Historical Data =============================
    */
   async prefetchLastAssetSpotPriceHistDataItem(
-    ctx: SqdProcessorContext<Store>
+    ctx: SqdProcessorContext<Store>,
+    blockHeader?: BlockHeader
   ) {
     if (this.assetSpotPriceHistoricalDataItemsCache.size !== 0) return;
-    const currentBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
+    const currentBlockHeader =
+      blockHeader ?? ctx.blocks[ctx.blocks.length - 1].header;
 
     const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
       AssetSpotPriceHistoricalData,
