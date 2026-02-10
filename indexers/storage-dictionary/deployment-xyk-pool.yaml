@@ -172,10 +172,10 @@ scale:
   dedicated: false
   addons:
     postgres:
-      profile: medium
-      storage: 300G
+      profile: large
+      storage: 350G
   processor:
     profile: large
   api:
     profile: large
-#    replicas: 5
+    replicas: 2
