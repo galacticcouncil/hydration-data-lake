@@ -7,6 +7,7 @@ import {
   Block,
   EvmEventName,
   AssetResourceType,
+  AccountProcessingStatus,
 } from '../../model';
 import { constants } from 'ethers';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
@@ -23,6 +24,7 @@ import { getOrCreateAccountProcessingStatus } from '../accounts/accountProcessin
 import { AssetBalancesStorageDataPerBlockPerAccountMap } from './commonAssetBalances';
 import { getAssetBalanceInRefAsset } from './utils';
 import { AssetId } from '@polkadot/types/interfaces';
+import { In } from 'typeorm';
 
 export async function handleMmAssetAccountBalancesPerBlock({
   ctx,
@@ -76,6 +78,21 @@ export async function handleMmAssetAccountBalancesPerBlock({
           ),
           async (asset) => {
             if (!accountAssetsMap.account.boundEvmAddress) return;
+
+            // const accountReserves =
+            //   await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
+            //     {
+            //       accountAddress: accountAssetsMap.account.boundEvmAddress!,
+            //       blockNumber: blockSlotData.block.height,
+            //     }
+            //   );
+            //
+            // console.log(
+            //   'accountReserves - ',
+            //   accountAssetsMap.account.id,
+            //   blockSlotData.block.height
+            // );
+            // console.dir(accountReserves, { depth: null });
 
             const balance =
               prefetchedBalancesAtBlock
@@ -662,8 +679,25 @@ async function getAccountMmAssetsPerBlock({
     }
   }
 
+  const allAccountsForMmReserveBalancesInitList = Array.from(
+    allAccountsForMmReserveBalancesInit.values()
+  );
+
+  const prefetchedAccountProcessingStatuses = await ctx.storeUtils.findWithLogs(
+    AccountProcessingStatus,
+    {
+      where: {
+        id: In(allAccountsForMmReserveBalancesInitList.map((acc) => acc.id)),
+      },
+    }
+  );
+
+  for (const status of prefetchedAccountProcessingStatuses) {
+    ctx.batchState.state.accountProcessingStatuses.set(status.id, status);
+  }
+
   await pMap(
-    Array.from(allAccountsForMmReserveBalancesInit.values()),
+    allAccountsForMmReserveBalancesInitList,
     async (account) => {
       const mmContractsManagerInst = MoneyMarketContractsManager.getInstance();
 
@@ -697,7 +731,7 @@ async function getAccountMmAssetsPerBlock({
         accountProcStatus.id,
         accountProcStatus
       );
-      await ctx.storeUtils.upsertWithBatches([accountProcStatus]);
+      // await ctx.storeUtils.upsertWithBatches([accountProcStatus]);
 
       for (const reserve of accountReserves) {
         if (
