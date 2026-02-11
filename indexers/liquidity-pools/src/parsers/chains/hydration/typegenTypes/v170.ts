@@ -3711,43 +3711,6 @@ export const ProxyCall: sts.Type<ProxyCall> = sts.closedEnum(() => {
     }
 })
 
-export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
-    return  {
-        Any: sts.unit(),
-        CancelProxy: sts.unit(),
-        Governance: sts.unit(),
-        Liquidity: sts.unit(),
-        LiquidityMining: sts.unit(),
-        Transfer: sts.unit(),
-    }
-})
-
-export type ProxyType = ProxyType_Any | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_Liquidity | ProxyType_LiquidityMining | ProxyType_Transfer
-
-export interface ProxyType_Any {
-    __kind: 'Any'
-}
-
-export interface ProxyType_CancelProxy {
-    __kind: 'CancelProxy'
-}
-
-export interface ProxyType_Governance {
-    __kind: 'Governance'
-}
-
-export interface ProxyType_Liquidity {
-    __kind: 'Liquidity'
-}
-
-export interface ProxyType_LiquidityMining {
-    __kind: 'LiquidityMining'
-}
-
-export interface ProxyType_Transfer {
-    __kind: 'Transfer'
-}
-
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -3949,6 +3912,32 @@ export interface ProxyCall_remove_proxy {
     delegate: AccountId32
     proxyType: ProxyType
     delay: number
+}
+
+export type ProxyType = ProxyType_Any | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_Liquidity | ProxyType_LiquidityMining | ProxyType_Transfer
+
+export interface ProxyType_Any {
+    __kind: 'Any'
+}
+
+export interface ProxyType_CancelProxy {
+    __kind: 'CancelProxy'
+}
+
+export interface ProxyType_Governance {
+    __kind: 'Governance'
+}
+
+export interface ProxyType_Liquidity {
+    __kind: 'Liquidity'
+}
+
+export interface ProxyType_LiquidityMining {
+    __kind: 'LiquidityMining'
+}
+
+export interface ProxyType_Transfer {
+    __kind: 'Transfer'
 }
 
 /**
@@ -10279,5 +10268,16 @@ export interface Call_XTokens {
     __kind: 'XTokens'
     value: XTokensCall
 }
+
+export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
+    return  {
+        Any: sts.unit(),
+        CancelProxy: sts.unit(),
+        Governance: sts.unit(),
+        Liquidity: sts.unit(),
+        LiquidityMining: sts.unit(),
+        Transfer: sts.unit(),
+    }
+})
 
 export const AccountId32 = sts.bytes()

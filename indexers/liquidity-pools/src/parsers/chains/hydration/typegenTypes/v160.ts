@@ -3676,33 +3676,6 @@ export const ProxyCall: sts.Type<ProxyCall> = sts.closedEnum(() => {
     }
 })
 
-export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
-    return  {
-        Any: sts.unit(),
-        CancelProxy: sts.unit(),
-        Governance: sts.unit(),
-        Transfer: sts.unit(),
-    }
-})
-
-export type ProxyType = ProxyType_Any | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_Transfer
-
-export interface ProxyType_Any {
-    __kind: 'Any'
-}
-
-export interface ProxyType_CancelProxy {
-    __kind: 'CancelProxy'
-}
-
-export interface ProxyType_Governance {
-    __kind: 'Governance'
-}
-
-export interface ProxyType_Transfer {
-    __kind: 'Transfer'
-}
-
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -3904,6 +3877,24 @@ export interface ProxyCall_remove_proxy {
     delegate: AccountId32
     proxyType: ProxyType
     delay: number
+}
+
+export type ProxyType = ProxyType_Any | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_Transfer
+
+export interface ProxyType_Any {
+    __kind: 'Any'
+}
+
+export interface ProxyType_CancelProxy {
+    __kind: 'CancelProxy'
+}
+
+export interface ProxyType_Governance {
+    __kind: 'Governance'
+}
+
+export interface ProxyType_Transfer {
+    __kind: 'Transfer'
 }
 
 /**
@@ -10130,6 +10121,31 @@ export interface Call_XTokens {
     value: XTokensCall
 }
 
+export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
+    return  {
+        parents: sts.number(),
+        interior: V3Junctions,
+    }
+})
+
+export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
+    return  {
+        PoolShare: sts.tuple(() => [sts.number(), sts.number()]),
+        Token: sts.unit(),
+    }
+})
+
+export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
+    return  {
+        Any: sts.unit(),
+        CancelProxy: sts.unit(),
+        Governance: sts.unit(),
+        Transfer: sts.unit(),
+    }
+})
+
+export const AccountId32 = sts.bytes()
+
 export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
     return  {
         Arithmetic: ArithmeticError,
@@ -10298,19 +10314,3 @@ export interface DispatchError_Transactional {
 export interface DispatchError_Unavailable {
     __kind: 'Unavailable'
 }
-
-export const AccountId32 = sts.bytes()
-
-export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
-    return  {
-        parents: sts.number(),
-        interior: V3Junctions,
-    }
-})
-
-export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
-    return  {
-        PoolShare: sts.tuple(() => [sts.number(), sts.number()]),
-        Token: sts.unit(),
-    }
-})

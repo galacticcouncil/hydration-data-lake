@@ -17682,6 +17682,32 @@ export interface Call_XYKWarehouseLM {
     value: XYKWarehouseLMCall
 }
 
+export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
+    return  {
+        parents: sts.number(),
+        interior: V5Junctions,
+    }
+})
+
+export const DepositKind: sts.Type<DepositKind> = sts.closedEnum(() => {
+    return  {
+        Announcements: sts.unit(),
+        Proxies: sts.unit(),
+    }
+})
+
+export type DepositKind = DepositKind_Announcements | DepositKind_Proxies
+
+export interface DepositKind_Announcements {
+    __kind: 'Announcements'
+}
+
+export interface DepositKind_Proxies {
+    __kind: 'Proxies'
+}
+
+export const AccountId32 = sts.bytes()
+
 export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
     return  {
         Arithmetic: ArithmeticError,
@@ -17953,12 +17979,3 @@ export interface DispatchError_Trie {
 export interface DispatchError_Unavailable {
     __kind: 'Unavailable'
 }
-
-export const AccountId32 = sts.bytes()
-
-export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
-    return  {
-        parents: sts.number(),
-        interior: V5Junctions,
-    }
-})

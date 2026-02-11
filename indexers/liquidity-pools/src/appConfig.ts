@@ -803,6 +803,12 @@ export class AppConfig {
       events.uniques.transferred.name,
 
       events.liquidation.liquidated.name,
+
+      events.proxy.proxyAdded.name,
+      events.proxy.proxyExecuted.name,
+      events.proxy.pureCreated.name,
+      events.proxy.proxyRemoved.name,
+      events.proxy.announced.name,
     ];
 
     if (

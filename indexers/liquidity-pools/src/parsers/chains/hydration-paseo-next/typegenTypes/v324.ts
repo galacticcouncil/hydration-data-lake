@@ -1315,8 +1315,6 @@ export const Schedule: sts.Type<Schedule> = sts.struct(() => {
     }
 })
 
-export const H256 = sts.bytes()
-
 export const WeightCurveType: sts.Type<WeightCurveType> = sts.closedEnum(() => {
     return  {
         Linear: sts.unit(),
@@ -7121,43 +7119,6 @@ export const ProxyCall: sts.Type<ProxyCall> = sts.closedEnum(() => {
     }
 })
 
-export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
-    return  {
-        Any: sts.unit(),
-        CancelProxy: sts.unit(),
-        Governance: sts.unit(),
-        Liquidity: sts.unit(),
-        LiquidityMining: sts.unit(),
-        Transfer: sts.unit(),
-    }
-})
-
-export type ProxyType = ProxyType_Any | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_Liquidity | ProxyType_LiquidityMining | ProxyType_Transfer
-
-export interface ProxyType_Any {
-    __kind: 'Any'
-}
-
-export interface ProxyType_CancelProxy {
-    __kind: 'CancelProxy'
-}
-
-export interface ProxyType_Governance {
-    __kind: 'Governance'
-}
-
-export interface ProxyType_Liquidity {
-    __kind: 'Liquidity'
-}
-
-export interface ProxyType_LiquidityMining {
-    __kind: 'LiquidityMining'
-}
-
-export interface ProxyType_Transfer {
-    __kind: 'Transfer'
-}
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -7359,6 +7320,32 @@ export interface ProxyCall_remove_proxy {
     delegate: AccountId32
     proxyType: ProxyType
     delay: number
+}
+
+export type ProxyType = ProxyType_Any | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_Liquidity | ProxyType_LiquidityMining | ProxyType_Transfer
+
+export interface ProxyType_Any {
+    __kind: 'Any'
+}
+
+export interface ProxyType_CancelProxy {
+    __kind: 'CancelProxy'
+}
+
+export interface ProxyType_Governance {
+    __kind: 'Governance'
+}
+
+export interface ProxyType_Liquidity {
+    __kind: 'Liquidity'
+}
+
+export interface ProxyType_LiquidityMining {
+    __kind: 'LiquidityMining'
+}
+
+export interface ProxyType_Transfer {
+    __kind: 'Transfer'
 }
 
 /**
@@ -16839,6 +16826,132 @@ export interface Filler_XYK {
     value: number
 }
 
+export const Order: sts.Type<Order> = sts.closedEnum(() => {
+    return  {
+        Buy: sts.enumStruct({
+            assetIn: sts.number(),
+            assetOut: sts.number(),
+            amountOut: sts.bigint(),
+            maxAmountIn: sts.bigint(),
+            route: sts.array(() => Trade),
+        }),
+        Sell: sts.enumStruct({
+            assetIn: sts.number(),
+            assetOut: sts.number(),
+            amountIn: sts.bigint(),
+            minAmountOut: sts.bigint(),
+            route: sts.array(() => Trade),
+        }),
+    }
+})
+
+export const Type_287: sts.Type<Type_287> = sts.struct(() => {
+    return  {
+        assetIn: sts.number(),
+        assetOut: sts.number(),
+    }
+})
+
+export const Log: sts.Type<Log> = sts.struct(() => {
+    return  {
+        address: H160,
+        topics: sts.array(() => H256),
+        data: sts.bytes(),
+    }
+})
+
+export interface Log {
+    address: H160
+    topics: H256[]
+    data: Bytes
+}
+
+export const Perbill = sts.number()
+
+export const H160 = sts.bytes()
+
+export const Pool: sts.Type<Pool> = sts.struct(() => {
+    return  {
+        owner: AccountId32,
+        start: sts.option(() => sts.number()),
+        end: sts.option(() => sts.number()),
+        assets: sts.tuple(() => [sts.number(), sts.number()]),
+        initialWeight: sts.number(),
+        finalWeight: sts.number(),
+        weightCurve: WeightCurveType,
+        fee: sts.tuple(() => [sts.number(), sts.number()]),
+        feeCollector: AccountId32,
+        repayTarget: sts.bigint(),
+    }
+})
+
+export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
+    return  {
+        assetId: sts.number(),
+        amount: sts.bigint(),
+    }
+})
+
+export const PoolPegInfo: sts.Type<PoolPegInfo> = sts.struct(() => {
+    return  {
+        source: sts.array(() => PegSource),
+        maxPegUpdate: Permill,
+        current: sts.array(() => sts.tuple(() => [sts.bigint(), sts.bigint()])),
+    }
+})
+
+export const NonZeroU16 = sts.number()
+
+export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
+    return  {
+        initialRewardPercentage: FixedU128,
+        scaleCoef: sts.number(),
+    }
+})
+
+export const Perquintill = sts.bigint()
+
+export const Permill = sts.number()
+
+export const Tradability: sts.Type<Tradability> = sts.struct(() => {
+    return  {
+        bits: sts.number(),
+    }
+})
+
+export const FixedU128 = sts.bigint()
+
+export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
+    return  {
+        parents: sts.number(),
+        interior: V3Junctions,
+    }
+})
+
+export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
+    return  {
+        Bond: sts.unit(),
+        Erc20: sts.unit(),
+        External: sts.unit(),
+        StableSwap: sts.unit(),
+        Token: sts.unit(),
+        XYK: sts.unit(),
+    }
+})
+
+export const H256 = sts.bytes()
+
+export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
+    return  {
+        Any: sts.unit(),
+        CancelProxy: sts.unit(),
+        Governance: sts.unit(),
+        Liquidity: sts.unit(),
+        LiquidityMining: sts.unit(),
+        Transfer: sts.unit(),
+    }
+})
+
 export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
     return  {
         Arithmetic: ArithmeticError,
@@ -17027,119 +17140,6 @@ export interface DispatchError_Transactional {
 export interface DispatchError_Unavailable {
     __kind: 'Unavailable'
 }
-
-export const Order: sts.Type<Order> = sts.closedEnum(() => {
-    return  {
-        Buy: sts.enumStruct({
-            assetIn: sts.number(),
-            assetOut: sts.number(),
-            amountOut: sts.bigint(),
-            maxAmountIn: sts.bigint(),
-            route: sts.array(() => Trade),
-        }),
-        Sell: sts.enumStruct({
-            assetIn: sts.number(),
-            assetOut: sts.number(),
-            amountIn: sts.bigint(),
-            minAmountOut: sts.bigint(),
-            route: sts.array(() => Trade),
-        }),
-    }
-})
-
-export const Type_287: sts.Type<Type_287> = sts.struct(() => {
-    return  {
-        assetIn: sts.number(),
-        assetOut: sts.number(),
-    }
-})
-
-export const Log: sts.Type<Log> = sts.struct(() => {
-    return  {
-        address: H160,
-        topics: sts.array(() => H256),
-        data: sts.bytes(),
-    }
-})
-
-export interface Log {
-    address: H160
-    topics: H256[]
-    data: Bytes
-}
-
-export const Perbill = sts.number()
-
-export const H160 = sts.bytes()
-
-export const Pool: sts.Type<Pool> = sts.struct(() => {
-    return  {
-        owner: AccountId32,
-        start: sts.option(() => sts.number()),
-        end: sts.option(() => sts.number()),
-        assets: sts.tuple(() => [sts.number(), sts.number()]),
-        initialWeight: sts.number(),
-        finalWeight: sts.number(),
-        weightCurve: WeightCurveType,
-        fee: sts.tuple(() => [sts.number(), sts.number()]),
-        feeCollector: AccountId32,
-        repayTarget: sts.bigint(),
-    }
-})
-
-export const AssetAmount: sts.Type<AssetAmount> = sts.struct(() => {
-    return  {
-        assetId: sts.number(),
-        amount: sts.bigint(),
-    }
-})
-
-export const PoolPegInfo: sts.Type<PoolPegInfo> = sts.struct(() => {
-    return  {
-        source: sts.array(() => PegSource),
-        maxPegUpdate: Permill,
-        current: sts.array(() => sts.tuple(() => [sts.bigint(), sts.bigint()])),
-    }
-})
-
-export const NonZeroU16 = sts.number()
-
-export const LoyaltyCurve: sts.Type<LoyaltyCurve> = sts.struct(() => {
-    return  {
-        initialRewardPercentage: FixedU128,
-        scaleCoef: sts.number(),
-    }
-})
-
-export const Perquintill = sts.bigint()
-
-export const Permill = sts.number()
-
-export const Tradability: sts.Type<Tradability> = sts.struct(() => {
-    return  {
-        bits: sts.number(),
-    }
-})
-
-export const FixedU128 = sts.bigint()
-
-export const AssetLocation: sts.Type<AssetLocation> = sts.struct(() => {
-    return  {
-        parents: sts.number(),
-        interior: V3Junctions,
-    }
-})
-
-export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
-    return  {
-        Bond: sts.unit(),
-        Erc20: sts.unit(),
-        External: sts.unit(),
-        StableSwap: sts.unit(),
-        Token: sts.unit(),
-        XYK: sts.unit(),
-    }
-})
 
 export const BalanceStatus: sts.Type<BalanceStatus> = sts.closedEnum(() => {
     return  {
