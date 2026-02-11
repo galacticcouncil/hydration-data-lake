@@ -248,7 +248,7 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
 
   for (const accountIdsBatch of splitIntoBatches(
     Array.from(involvedAccountsInBatch.values()),
-    500
+    ctx.appConfig.concurrency.BD_FETCH_BATCH_SIZE
   )) {
     const batchResponse = await ctx.storeUtils.findWithLogs(
       OmnipoolYieldFarmDeposit,
@@ -382,7 +382,7 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
 
     for (const accountIdsBatch of splitIntoBatches(
       Array.from(accountsSet.values()),
-      500
+      ctx.appConfig.concurrency.BD_FETCH_BATCH_SIZE
     )) {
       for (const accountId of accountIdsBatch) {
         const accountActiveDepositsAtBlock =

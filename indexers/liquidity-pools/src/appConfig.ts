@@ -161,6 +161,14 @@ class ConcurrencyConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
 
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly BD_FETCH_BATCH_SIZE: number = 200;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly REDIS_TIMESERIES_COMMIT_BATCH_SIZE: number = 500;
+
   static getInstance(): ConcurrencyConfig {
     if (ConcurrencyConfig.instance) return ConcurrencyConfig.instance;
 

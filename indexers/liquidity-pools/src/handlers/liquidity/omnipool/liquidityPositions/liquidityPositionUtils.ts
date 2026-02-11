@@ -314,7 +314,7 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
 
   for (const accountIdsBatch of splitIntoBatches(
     Array.from(involvedAccountsInBatch.values()),
-    500
+    ctx.appConfig.concurrency.BD_FETCH_BATCH_SIZE
   )) {
     const batchResponse = await ctx.storeUtils.findWithLogs(
       OmnipoolLiquidityPosition,
@@ -355,7 +355,7 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
 
   for (const positionIdsBatch of splitIntoBatches(
     Array.from(allPositionsDeduped.keys()),
-    500
+    ctx.appConfig.concurrency.BD_FETCH_BATCH_SIZE
   )) {
     const batchResponse = await ctx.storeUtils.findWithLogs(
       OmnipoolLiquidityPositionEvent,

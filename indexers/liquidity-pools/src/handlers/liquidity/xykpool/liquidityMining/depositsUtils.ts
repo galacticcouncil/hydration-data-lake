@@ -253,7 +253,7 @@ export async function getXykLiquidityMiningDepositsForAccounts({
 
   for (const accountIdsBatch of splitIntoBatches(
     Array.from(involvedAccountsInBatch.values()),
-    500
+    ctx.appConfig.concurrency.BD_FETCH_BATCH_SIZE
   )) {
     const batchResponse = await ctx.storeUtils.findWithLogs(
       XykYieldFarmDeposit,
@@ -295,7 +295,7 @@ export async function getXykLiquidityMiningDepositsForAccounts({
 
   for (const depositIdsBatch of splitIntoBatches(
     Array.from(allDepositsDeduped.keys()),
-    500
+    ctx.appConfig.concurrency.BD_FETCH_BATCH_SIZE
   )) {
     const batchResponse = await ctx.storeUtils.findWithLogs(
       XykYieldFarmDepositEvent,

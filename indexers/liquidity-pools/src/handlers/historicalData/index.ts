@@ -500,7 +500,10 @@ export class HistoricalDataManager {
     )
       return;
 
-    for (const srcBatch of splitIntoBatches(src, 1000)) {
+    for (const srcBatch of splitIntoBatches(
+      src,
+      ctx.appConfig.concurrency.REDIS_TIMESERIES_COMMIT_BATCH_SIZE
+    )) {
       let latestBlock = 0;
 
       const balancesData = srcBatch.map((item) => {

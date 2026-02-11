@@ -221,7 +221,7 @@ export async function prefetchOrInitAllAccountProcessingStatuses(
 ) {
   for (const batch of splitIntoBatches(
     Array.from(ctx.batchState.state.accounts.keys()),
-    500
+    ctx.appConfig.concurrency.BD_FETCH_BATCH_SIZE
   )) {
     const existingAccountStatuses = await ctx.storeUtils.findWithLogs(
       AccountProcessingStatus,
