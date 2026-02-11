@@ -81,6 +81,18 @@ export async function handleAllAccountBalancesInit(
     ? ctx.batchState.getBlockHeaderByBlockHeight(blockHeight)
     : ctx.blocks[0].header;
 
+  const keepDbConnectionAliveInterval = setInterval(async () => {
+    try {
+      await ctx.storeUtils.findOneWithLogs(
+        Account,
+        { where: {} },
+        { className: 'Account' }
+      );
+    } catch (error) {
+      console.error('Keep-alive ping failed:', error);
+    }
+  }, 300000);
+
   if (!processingBlockHeader)
     throw new Error('No processing block header found');
 
@@ -400,6 +412,8 @@ export async function handleAllAccountBalancesInit(
   const processedTotalBalances: Set<string> = new Set(
     Array.from(ctx.batchState.state.accountTotalBalanceHistoricalData.keys())
   );
+
+  clearInterval(keepDbConnectionAliveInterval);
 
   return processedTotalBalances;
 }
