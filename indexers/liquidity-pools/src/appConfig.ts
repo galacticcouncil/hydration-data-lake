@@ -300,6 +300,8 @@ class ProcessingModeConfig {
   @IsBoolean()
   readonly REAGGREGATION_PROCESSING_MODE: boolean = false;
 
+  readonly REAGGREGATION_PROCESSING_FLOW_NAME?: string;
+
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
   readonly IS_CORE_PROCESSOR: boolean = false;
