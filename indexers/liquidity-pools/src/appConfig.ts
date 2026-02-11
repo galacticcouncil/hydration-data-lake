@@ -419,6 +419,17 @@ export class AppConfig {
 
   readonly RPC_URL_HTTPS: string | null = null;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_RPC_HTTPS_URLS_POOL: boolean = false;
+
+  @Transform(({ value }: { value: string }) =>
+    JSON.parse(value ?? '').filter((i: string) => i.length > 0)
+  )
+  readonly RPC_HTTPS_URLS_POOL: string[] = [];
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_RPC_POOL_DEBUG_LOGS: boolean = false;
+
   /**
    * Maximum number of ongoing concurrent requests
    */
@@ -630,6 +641,9 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS: number = 7000;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ALL_ACCOUNT_BALANCES_INIT: boolean = false;
 
   readonly redis: RedisConfig = RedisConfig.getInstance();
 

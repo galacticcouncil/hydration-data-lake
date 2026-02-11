@@ -5,7 +5,6 @@ import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers
 import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../../parsers/storageResolver';
 import {
-  initAllAccountsOnColdStart,
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../../../handlers/accounts';
@@ -69,6 +68,8 @@ import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity
 import { handleUniquesEvents } from '../../../handlers/uniques';
 import { prefetchOrInitAllAccountProcessingStatuses } from '../../../handlers/accounts/accountProcessingStatus';
 import { handleLiquidationEvents } from '../../../handlers/liquidation';
+import { initAllAccountsOnColdStart } from '../../../handlers/accounts/allAccountsInit';
+import { handleAllAccountBalancesInit } from '../../../handlers/balances/allAccountBalancesInit';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -312,6 +313,10 @@ export async function singleFlowAllInOneProcessor(
   console.time('handleAssetPairVolumesHistoricalData');
   await handleAssetPairVolumesHistoricalData({ ctx });
   console.timeEnd('handleAssetPairVolumesHistoricalData');
+
+  console.time('handleAllAccountBalancesInit');
+  await handleAllAccountBalancesInit(ctx);
+  console.timeEnd('handleAllAccountBalancesInit');
 
   console.time('handleAssetAccountBalances');
   await handleAssetAccountBalances(ctx, parsedData);

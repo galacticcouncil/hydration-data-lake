@@ -16,6 +16,7 @@ import { BigNumber } from '@galacticcouncil/sdk';
 import pMap from 'p-map';
 import { retryAsync } from '../helpers';
 import { measureEvmContractCall } from '../hydratedLogger/utils';
+import { ContractsPoolManager } from './contractsPoolManager';
 
 const appConfig = AppConfig.getInstance();
 
@@ -86,12 +87,11 @@ export type AaveFacilitatorContractData = {
 export class MoneyMarketContractsManager {
   private static instance: MoneyMarketContractsManager;
 
-  readonly provider: ethers.providers.JsonRpcProvider;
-  private hollarContractInstance: Contract;
-  private erc20TokenContractInstance: Contract;
-  private uiPoolDataProviderContractInstance: Contract;
-  private poolImplementationContractInstance: Contract;
-  private moneyMarketTokenContracts: Map<string, Contract> = new Map();
+  private readonly contractsPoolManager: ContractsPoolManager;
+
+  // Track available money market token addresses and their ABIs
+  private moneyMarketTokenAddresses: Map<string, ContractInterface> = new Map();
+
   public moneyMarketReservesDetailsMap: Map<
     string,
     MoneyMarketResourceDetails
@@ -102,32 +102,49 @@ export class MoneyMarketContractsManager {
   private facilitatorsCacheBlockNumber: number | null = null;
 
   private constructor() {
-    this.provider = new ethers.providers.JsonRpcProvider(
-      appConfig.RPC_URL_HTTPS || 'https://archive.rpc.hydration.cloud'
-    );
+    this.contractsPoolManager = ContractsPoolManager.getInstance();
+  }
 
-    this.erc20TokenContractInstance = new Contract(
-      appConfig.evm.ATOKEN_CONTRACT_ADDRESS,
-      aTokenHydration.abi,
-      this.provider
-    );
+  /**
+   * Get the next contract instance from the pool for a given address and ABI
+   */
+  private getContract(address: string, abi: ContractInterface): Contract {
+    return this.contractsPoolManager.getContract(address, abi);
+  }
 
-    this.uiPoolDataProviderContractInstance = new Contract(
-      appConfig.evm.UI_POOL_DATA_PROVIDER_CONTRACT_ADDRESS,
-      uiPoolDataProviderV3.abi,
-      this.provider
-    );
+  /**
+   * Get a money market token contract from the pool
+   */
+  private getMoneyMarketTokenContract(address: string): Contract | null {
+    const addressNormalized = ethers.utils.getAddress(address);
+    const abi = this.moneyMarketTokenAddresses.get(addressNormalized);
 
-    this.poolImplementationContractInstance = new Contract(
-      appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS,
-      poolImplementation.abi,
-      this.provider
-    );
+    if (!abi) return null;
 
-    this.hollarContractInstance = new Contract(
+    return this.getContract(addressNormalized, abi);
+  }
+
+  /**
+   * Convenience getters for frequently used contracts
+   */
+  private get hollarContractInstance(): Contract {
+    return this.getContract(
       appConfig.evm.HOLLAR_CONTRACT_ADDRESS,
-      hollarAbi,
-      this.provider
+      hollarAbi as any
+    );
+  }
+
+  private get uiPoolDataProviderContractInstance(): Contract {
+    return this.getContract(
+      appConfig.evm.UI_POOL_DATA_PROVIDER_CONTRACT_ADDRESS,
+      uiPoolDataProviderV3.abi as any
+    );
+  }
+
+  private get poolImplementationContractInstance(): Contract {
+    return this.getContract(
+      appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS,
+      poolImplementation.abi as any
     );
   }
 
@@ -136,13 +153,6 @@ export class MoneyMarketContractsManager {
       MoneyMarketContractsManager.instance = new MoneyMarketContractsManager();
     }
     return MoneyMarketContractsManager.instance;
-  }
-
-  private getContractInstance(
-    address: string,
-    abi: ContractInterface
-  ): Contract {
-    return new Contract(address, abi, this.provider);
   }
 
   async getReservesData({
@@ -258,16 +268,14 @@ export class MoneyMarketContractsManager {
           reserve
         );
 
-        this.moneyMarketTokenContracts.set(
+        // Track available token addresses and their ABIs for pool usage
+        this.moneyMarketTokenAddresses.set(
           reserve.aTokenAddress,
-          this.getContractInstance(reserve.aTokenAddress, aTokenHydration.abi)
+          aTokenHydration.abi as any
         );
-        this.moneyMarketTokenContracts.set(
+        this.moneyMarketTokenAddresses.set(
           reserve.variableDebtTokenAddress,
-          this.getContractInstance(
-            reserve.variableDebtTokenAddress,
-            variableDebtTokenHydration.abi
-          )
+          variableDebtTokenHydration.abi as any
         );
       }
     } catch (e) {
@@ -285,7 +293,8 @@ export class MoneyMarketContractsManager {
       resourceType: AssetResourceType.Underlying,
     };
 
-    if (!this.moneyMarketTokenContracts.has(addressNormalized)) return null;
+    const contract = this.getMoneyMarketTokenContract(addressNormalized);
+    if (!contract) return null;
 
     this.moneyMarketReservesDetailsMap.forEach(
       (resourceDetails, underlyingAssetAddress) => {
@@ -303,19 +312,13 @@ export class MoneyMarketContractsManager {
     );
 
     try {
-      response.name = await this.moneyMarketTokenContracts
-        .get(addressNormalized)!
-        .name();
+      response.name = await contract.name();
     } catch (e) {}
     try {
-      response.symbol = await this.moneyMarketTokenContracts
-        .get(addressNormalized)!
-        .symbol();
+      response.symbol = await contract.symbol();
     } catch (e) {}
     try {
-      response.decimals = await this.moneyMarketTokenContracts
-        .get(addressNormalized)!
-        .decimals();
+      response.decimals = await contract.decimals();
     } catch (e) {}
 
     return response;
@@ -346,17 +349,14 @@ export class MoneyMarketContractsManager {
       value: '0',
     };
 
-    if (!this.moneyMarketTokenContracts.has(addressNormalized)) return null;
+    const contract = this.getMoneyMarketTokenContract(addressNormalized);
+    if (!contract) return null;
 
     try {
       response.value = await retryAsync({
         // passThrough: true,
         fn: async () =>
-          (
-            await this.moneyMarketTokenContracts
-              .get(address)!
-              .totalSupply({ blockTag: blockNumber })
-          ).toString(),
+          (await contract.totalSupply({ blockTag: blockNumber })).toString(),
         fallbackResponse: '0',
         tag: `${address}.totalSupply.at(${blockNumber})`,
       });
@@ -387,20 +387,20 @@ export class MoneyMarketContractsManager {
           value: '0',
         };
 
-        if (this.moneyMarketTokenContracts.has(address))
+        const contract = this.getMoneyMarketTokenContract(address);
+        if (contract) {
           try {
             response.value = await retryAsync({
               // passThrough: true,
               fn: async () =>
                 (
-                  await this.moneyMarketTokenContracts
-                    .get(address)!
-                    .totalSupply({ blockTag: blockNumber })
+                  await contract.totalSupply({ blockTag: blockNumber })
                 ).toString(),
               fallbackResponse: '0',
               tag: `${address}.totalSupply.at(${blockNumber})`,
             });
           } catch (e) {}
+        }
 
         totalResponse.push(response);
       },
@@ -434,19 +434,20 @@ export class MoneyMarketContractsManager {
   }) {
     const contractAddressNormalized = ethers.utils.getAddress(contractAddress);
     const accountAddressNormalized = ethers.utils.getAddress(accountAddress);
-    if (!this.moneyMarketTokenContracts.has(contractAddressNormalized))
-      return null;
+
+    const contract = this.getMoneyMarketTokenContract(
+      contractAddressNormalized
+    );
+    if (!contract) return null;
 
     try {
       const balance: any = await retryAsync({
         // passThrough: true,
         fn: () =>
-          this.moneyMarketTokenContracts
-            .get(contractAddressNormalized)!
-            .balanceOf(
-              accountAddressNormalized,
-              blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-            ),
+          contract.balanceOf(
+            accountAddressNormalized,
+            blockNumber !== undefined ? { blockTag: blockNumber } : undefined
+          ),
         fallbackResponse: null,
         tag: `${contractAddressNormalized}.balanceOf(${accountAddressNormalized}).at(${blockNumber})`,
       });

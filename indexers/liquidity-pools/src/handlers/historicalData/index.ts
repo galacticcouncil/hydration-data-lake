@@ -33,6 +33,7 @@ import { BigNumber } from '@galacticcouncil/sdk';
 import { getXykpoolsHistDataLatest } from '../pools/pools/xykPool/historicalDataLatest';
 import { TimeSeriesDataCommitManager } from '../../utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
 import { DataCommitterJobName } from '../../utils/redisTimeSeriesSupport/queueClient';
+import { splitIntoBatches } from '../../utils/helpers';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -359,20 +360,18 @@ export class HistoricalDataManager {
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
     );
 
-    await ctx.storeUtils.upsertWithBatches(
-      accountAssetBalanceHistoricalDataList
-    );
-
-    await ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest);
-
-    await ctx.storeUtils.upsertWithBatches(
-      accountTotalBalanceHistoricalDataList
-    );
-
-    await this.commitAccountTotalBalancesToRedisTimeSeries(
-      accountTotalBalanceHistoricalDataList,
-      ctx
-    );
+    await Promise.all([
+      ctx.storeUtils.upsertWithBatches(accountAssetBalanceHistoricalDataList),
+      ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest),
+      ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
+      ctx.storeUtils.upsertWithBatches(
+        Array.from(ctx.batchState.state.accountProcessingStatuses.values())
+      ),
+      this.commitAccountTotalBalancesToRedisTimeSeries(
+        accountTotalBalanceHistoricalDataList,
+        ctx
+      ),
+    ]);
   }
 
   static async saveAccountMoneyMarketDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -501,52 +500,54 @@ export class HistoricalDataManager {
     )
       return;
 
-    let latestBlock = 0;
+    for (const srcBatch of splitIntoBatches(src, 1000)) {
+      let latestBlock = 0;
 
-    const balancesData = src.map((item) => {
-      if (item.paraBlockHeight > latestBlock)
-        latestBlock = item.paraBlockHeight;
+      const balancesData = srcBatch.map((item) => {
+        if (item.paraBlockHeight > latestBlock)
+          latestBlock = item.paraBlockHeight;
 
-      const block = ctx.batchState.getParaBlockFromCacheByHeight(
-        item.paraBlockHeight
-      );
-      const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+        const block = ctx.batchState.getParaBlockFromCacheByHeight(
+          item.paraBlockHeight
+        );
+        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
 
-      return [
-        {
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.acc_bal_tot_tns,
-          accountId: item.accountId,
-          timestamp,
-          value: +item.totalTransferableNorm,
+        return [
+          {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.acc_bal_tot_tns,
+            accountId: item.accountId,
+            timestamp,
+            value: +item.totalTransferableNorm,
+          },
+          {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.acc_bal_tot_loc,
+            accountId: item.accountId,
+            timestamp,
+            value: +item.totalLockedNorm,
+          },
+          {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.acc_bal_tot_debt,
+            accountId: item.accountId,
+            timestamp,
+            value: +(item.totalDebtNorm ?? '0'),
+          },
+        ];
+      });
+
+      await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
+        actionName: DataCommitterJobName.commitAccountTotalBalance,
+        accountTotalBalanceLatestProcessedBlock: latestBlock,
+        accountTotalBalanceMany: balancesData.flat(),
+        metadata: {
+          commitRequestedAtParaBlock:
+            ctx.blocks[ctx.blocks.length - 1].header.height,
+          requestSender: 'processor',
         },
-        {
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.acc_bal_tot_loc,
-          accountId: item.accountId,
-          timestamp,
-          value: +item.totalLockedNorm,
-        },
-        {
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.acc_bal_tot_debt,
-          accountId: item.accountId,
-          timestamp,
-          value: +(item.totalDebtNorm ?? '0'),
-        },
-      ];
-    });
-
-    await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
-      actionName: DataCommitterJobName.commitAccountTotalBalance,
-      accountTotalBalanceLatestProcessedBlock: latestBlock,
-      accountTotalBalanceMany: balancesData.flat(),
-      metadata: {
-        commitRequestedAtParaBlock:
-          ctx.blocks[ctx.blocks.length - 1].header.height,
-        requestSender: 'processor',
-      },
-    });
+      });
+    }
   }
 
   static async handleHistoricalVolumesBatchEntriesLists(

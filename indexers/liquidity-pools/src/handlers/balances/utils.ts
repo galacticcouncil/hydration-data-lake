@@ -331,7 +331,6 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
               assetBalancesToIncludeToTotalBalance.push(
                 assetBalanceHistDataEntity
               );
-
             },
             {
               concurrency:
@@ -545,10 +544,12 @@ export function addAssetBalancesToAccumulator({
 export async function fetchBalancesForAccountsPerBlock({
   accountsPerBlock,
   cache = new Map(),
+  skipStorageReadCache = false,
   ctx,
 }: {
   accountsPerBlock: Map<number, Set<string>>;
   cache?: AssetBalancesStorageDataPerBlockPerAccountMap;
+  skipStorageReadCache?: boolean;
   ctx: SqdProcessorContext<Store>;
 }): Promise<AssetBalancesStorageDataPerBlockPerAccountMap> {
   const assetBalancesStorageDataPerBlockPerAccountMap: AssetBalancesStorageDataPerBlockPerAccountMap =
@@ -582,10 +583,12 @@ export async function fetchBalancesForAccountsPerBlock({
         parsers.storage.system.getNativeTokenBalanceMany({
           block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
           accountIds: accountsInBlockList,
+          skipCache: skipStorageReadCache,
         }),
         parsers.storage.tokens.getTokenBalancesMany({
           block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
           accountIds: accountsInBlockList,
+          skipCache: skipStorageReadCache,
         }),
       ]);
 

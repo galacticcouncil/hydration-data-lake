@@ -759,14 +759,20 @@ async function getAccountMmAssetsPerBlock({
           continue;
         }
 
-        if (mmTokenUnderliningAsset.variableDebtTokenId)
+        if (
+          mmTokenUnderliningAsset.variableDebtTokenId &&
+          reserve.scaledVariableDebt !== '0'
+        )
           addAssetIdToAccountsMmAssetsPerBlock(
             lowestBlockNumberToProcess,
             account.id,
             mmTokenUnderliningAsset.variableDebtTokenId
           );
 
-        if (mmTokenUnderliningAsset.aTokenId)
+        if (
+          mmTokenUnderliningAsset.aTokenId &&
+          reserve.scaledATokenBalance !== '0'
+        )
           addAssetIdToAccountsMmAssetsPerBlock(
             lowestBlockNumberToProcess,
             account.id,

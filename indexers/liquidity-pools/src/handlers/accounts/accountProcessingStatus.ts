@@ -6,8 +6,14 @@ import { getPreviousAssetAccountBalancesSql } from '../../utils/pgConnectionMana
 import { RawAccountAssetBalanceHistoricalData } from '../balances/accountTotalBalance';
 import { getAccountProcessingStatusesToProcess } from '../../utils/pgConnectionManagers/queries/getAccountProcessingStatusesToProcess';
 import { In } from 'typeorm';
-import { getOrCreateAccount } from './index';
+import {
+  getNewAccount,
+  getOrCreateAccount,
+  saveAllBatchAccounts,
+} from './index';
 import { splitIntoBatches } from '../../utils/helpers';
+import parsers from '../../parsers';
+import pMap from 'p-map';
 
 export type RawAccountProcessingStatus = {
   id: string;
@@ -235,4 +241,72 @@ export async function prefetchOrInitAllAccountProcessingStatuses(
         accStatus
       );
   }
+}
+
+export async function initAllAccountProcessingStatusesOnColdStart({
+  ctx,
+  keepExistingStatuses = false,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  keepExistingStatuses?: boolean;
+}) {
+  const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
+    AccountProcessingStatus,
+    {
+      where: {},
+    },
+    { className: 'AccountProcessingStatus' }
+  );
+
+  if (!keepExistingStatuses && hasAnyRecord) return;
+
+  const allPersistentAccounts = await ctx.storeUtils.findWithLogs(
+    Account,
+    {
+      where: {},
+    },
+    { className: 'Account' }
+  );
+
+  const allExistingStatusIdsMap = keepExistingStatuses
+    ? new Map(
+        (
+          await ctx.storeUtils.findWithLogs(
+            AccountProcessingStatus,
+            {
+              where: {},
+            },
+            { className: 'AccountProcessingStatus' }
+          )
+        ).map((r) => [r.id, r])
+      )
+    : new Map();
+
+  if (!allPersistentAccounts) return null;
+
+  await pMap(
+    allPersistentAccounts,
+    async (account) => {
+      if (allExistingStatusIdsMap.has(account.id)) {
+        ctx.batchState.state.accountProcessingStatuses.set(
+          account.id,
+          allExistingStatusIdsMap.get(account.id)
+        );
+        return;
+      }
+
+      ctx.batchState.state.accountProcessingStatuses.set(
+        account.id,
+        getNewAccountProcessingStatus({ id: account.id })
+      );
+    },
+    {
+      concurrency:
+        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+    }
+  );
+
+  await ctx.storeUtils.upsertWithBatches(
+    Array.from(ctx.batchState.state.accountProcessingStatuses.values())
+  );
 }

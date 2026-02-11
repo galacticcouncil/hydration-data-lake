@@ -409,3 +409,15 @@ export function getXykpoolShareTokenDecimals({
     ? assetB.decimals!
     : assetA.decimals!;
 }
+
+export function batchArray<T>(array: T[], batchSize: number): T[][] {
+  if (batchSize <= 0) {
+    throw new Error('Batch size must be greater than 0');
+  }
+
+  const batches: T[][] = [];
+  for (let i = 0; i < array.length; i += batchSize) {
+    batches.push(array.slice(i, i + batchSize));
+  }
+  return batches;
+}

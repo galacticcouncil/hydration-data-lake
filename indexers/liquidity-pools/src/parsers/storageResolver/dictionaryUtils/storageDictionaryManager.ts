@@ -329,73 +329,6 @@ export class StorageDictionaryManager extends QueriesHelper {
       };
     };
 
-    // const allEmaOraclesStorageFetchPromise = async () => {
-    //   const data: EmaOracleGql[][] = [];
-    //   for await (const page of this.fetchAllPages({
-    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-    //     requestPromise: fetchBlockCompressedDataPaginated,
-    //     topic: ProcessingTopic.EMA_ORACLE,
-    //   })) {
-    //     if (!page) continue;
-    //     const encodedPageData: EmaOracleGql[] =
-    //       encodeBlockCompressedData<EmaOracleGql>({
-    //         data: page,
-    //         dataKey: BlockCompressedDataKey.emaOracle,
-    //       });
-    //
-    //     // data.push(...(encodedPageData as EmaOracleGql[]));
-    //     data.push(encodedPageData);
-    //   }
-    //
-    //   return { pallet: ProcessingTopic.EMA_ORACLE, data: data.flat() };
-    // };
-
-    // const allAssetHistDataStorageFetchPromise = async () => {
-    //   // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-    //   const data: AssetHistoricalDatumGql[][] = [];
-    //
-    //   for await (const page of this.fetchAllPages({
-    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-    //     requestPromise: fetchBlockCompressedDataPaginated,
-    //     topic: ProcessingTopic.ASSET_HIST_DATA,
-    //   })) {
-    //     if (!page) continue;
-    //     const encodedPageData: AssetHistoricalDatumGql[] =
-    //       encodeBlockCompressedData<AssetHistoricalDatumGql>({
-    //         data: page,
-    //         dataKey: BlockCompressedDataKey.assetHistoricalData,
-    //       });
-    //
-    //     // data.push(...(encodedPageData as AssetHistoricalDatumGql[]));
-    //     data.push(encodedPageData as AssetHistoricalDatumGql[]);
-    //   }
-    //
-    //   return { pallet: ProcessingTopic.ASSET_HIST_DATA, data: data.flat() };
-    // };
-
-    // const allAavepoolsStorageFetchPromise = async () => {
-    //   // if (!this.batchCtx.appConfig.PROCESS_LBP_POOLS) return [];
-    //   const data: AavepoolGlq[][] = [];
-    //
-    //   for await (const page of this.fetchAllPages({
-    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-    //     requestPromise: fetchBlockCompressedDataPaginated,
-    //     topic: ProcessingTopic.AAVE,
-    //   })) {
-    //     if (!page) continue;
-    //     const encodedPageData: AavepoolGlq[] =
-    //       encodeBlockCompressedData<AavepoolGlq>({
-    //         data: page,
-    //         dataKey: BlockCompressedDataKey.aavepool,
-    //       });
-    //
-    //     data.push(encodedPageData);
-    //     // data.push(...(encodedPageData as AavepoolGlq[]));
-    //   }
-    //
-    //   return { pallet: ProcessingTopic.AAVE, data: data.flat() };
-    // };
-
     const allGenericStorageFetchPromise = async () => {
       const encodedDataAavepool: AavepoolGlq[][] = [];
       const encodedDataAssetHistoricalDatum: AssetHistoricalDatumGql[][] = [];
@@ -468,12 +401,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     };
 
     const allXykPoolStorageFetchPromise = async () => {
-      // if (
-      //   !this.batchCtx.appConfig.PROCESS_XYK_POOLS
-      //   // this.batchCtx.batchState.state.xykPoolIdsForStoragePrefetch.size === 0
-      // )
-      //   return [];
-
       const data: XykpoolGlq[][] = [];
 
       for await (const page of this.fetchAllPages({
@@ -496,13 +423,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     };
 
     const allOmnipoolStorageFetchPromise = async () => {
-      // if (
-      //   !this.batchCtx.appConfig.PROCESS_OMNIPOOLS
-      //   // this.batchCtx.batchState.state.omnipoolAssetIdsForStoragePrefetch
-      //   //   .size === 0
-      // )
-      //   return [];
-
       const data = [];
 
       for await (const page of this.fetchAllPages({
@@ -524,12 +444,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     };
 
     const allStablepoolStorageFetchPromise = async () => {
-      // if (
-      //   !this.batchCtx.appConfig.PROCESS_STABLEPOOLS
-      //   // this.batchCtx.batchState.state.stableswapIdsForStoragePrefetch.size ===
-      //   //   0
-      // )
-      //   return [];
       const data = [];
 
       for await (const page of this.fetchAllPages({
