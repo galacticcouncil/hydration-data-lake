@@ -83,8 +83,10 @@ export type AssetBalancesIndexedByAccountAndAssetMap = Map<
 >;
 
 export async function handleAccountTotalBalance({
+  preProcessedTotalBalances,
   ctx,
 }: {
+  preProcessedTotalBalances?: Set<string> | null;
   ctx: SqdProcessorContext<Store>;
 }) {
   const refAsset = await getOrCreateAsset({
@@ -97,6 +99,14 @@ export async function handleAccountTotalBalance({
   if (!refAsset) throw Error('Ref asset not found');
 
   for (const assetBalance of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
+    if (
+      preProcessedTotalBalances &&
+      preProcessedTotalBalances.has(
+        `${assetBalance.accountId}-${assetBalance.paraBlockHeight}`
+      )
+    )
+      continue;
+
     await addAssetBalanceToAccountTotalBalance({
       refAsset,
       ctx,
@@ -210,9 +220,11 @@ export async function addAssetBalanceToAccountTotalBalance({
 }
 
 export async function handleLiquidityBalancesInTotalBalances({
+  preProcessedTotalBalances,
   ctx,
   allProcessedAccountsPerBlock,
 }: {
+  preProcessedTotalBalances?: Set<string> | null;
   ctx: SqdProcessorContext<Store>;
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }) {
@@ -261,6 +273,7 @@ export async function handleLiquidityBalancesInTotalBalances({
   await addLiquidityMiningWorthToTotalBalance({
     lmWorthData: xykpoolLiquidityDepositsMap,
     refAssetId: refAsset.id,
+    preProcessedTotalBalances,
     ctx,
   });
 
@@ -270,6 +283,7 @@ export async function handleLiquidityBalancesInTotalBalances({
   await addLiquidityMiningWorthToTotalBalance({
     lmWorthData: omnipoolLiquidityMiningDepositsMap,
     refAssetId: refAsset.id,
+    preProcessedTotalBalances,
     ctx,
   });
 
@@ -279,21 +293,32 @@ export async function handleLiquidityBalancesInTotalBalances({
   await addLiquidityMiningWorthToTotalBalance({
     lmWorthData: omnipoolLiquidityPositionsMap,
     refAssetId: refAsset.id,
+    preProcessedTotalBalances,
     ctx,
   });
 }
 
 async function addLiquidityMiningWorthToTotalBalance({
+  preProcessedTotalBalances,
   lmWorthData,
   refAssetId,
   ctx,
 }: {
   ctx: SqdProcessorContext<Store>;
+  preProcessedTotalBalances?: Set<string> | null;
   refAssetId: string;
   lmWorthData: AccountPositionBalancesPerBlockPerAsset;
 }) {
   for (const blockData of lmWorthData.values()) {
     for (const [accountId, accountAssetData] of blockData.data.entries()) {
+      if (
+        preProcessedTotalBalances &&
+        preProcessedTotalBalances.has(
+          `${accountId}-${blockData.blockHeader.height}`
+        )
+      )
+        continue;
+
       const accountTotalBalance =
         await getOrCreateAccountTotalBalanceHistoricalData({
           accountId,

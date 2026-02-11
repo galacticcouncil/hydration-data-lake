@@ -24,6 +24,7 @@ import {
   updateAccountProcessingStatusOnTotalBalanceChange,
 } from '../accounts/accountProcessingStatus';
 import { prefetchBalancesForAccountsInvolvedToMmEvents } from './utils';
+import { handleAllAccountBalancesInit } from './allAccountBalancesInit';
 
 /**
  * This function requires the following data, so it should be executed only after
@@ -54,6 +55,14 @@ export async function handleAssetAccountBalances(
    *    and aggregate balances event without activity.
    *    (Check function "handleMoneyMarketAssetBalancesForAccounts")
    */
+
+  let preProcessedTotalBalances = null;
+
+  if (ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_INIT) {
+    console.time('handleAllAccountBalancesInit');
+    preProcessedTotalBalances = await handleAllAccountBalancesInit(ctx);
+    console.timeEnd('handleAllAccountBalancesInit');
+  }
 
   /**
    * Aggregate accounts and assets involved to Money Market and Substrate events.
@@ -117,7 +126,10 @@ export async function handleAssetAccountBalances(
   /**
    * Aggregate Account Total Balances
    */
-  await handleAccountTotalBalance({ ctx });
+  await handleAccountTotalBalance({
+    ctx,
+    preProcessedTotalBalances,
+  });
 
   /**
    * Include Liquidity Balances in Total Balances.
@@ -126,6 +138,7 @@ export async function handleAssetAccountBalances(
     ctx,
     allProcessedAccountsPerBlock:
       involvedAccountsAccumulators.allProcessedAccountsPerBlock,
+    preProcessedTotalBalances,
   });
 
   /**

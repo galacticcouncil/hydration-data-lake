@@ -711,24 +711,50 @@ export function getAssetsPairPrice({
   )
     return '1';
 
-  if (assetOutId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) {
+  const assetInEntity = ctx.batchState.state.assetsAll.get(assetInId);
+  const assetOutEntity = ctx.batchState.state.assetsAll.get(assetOutId);
+  let assetInIdEnsured = assetInId;
+  let assetOutIdEnsured = assetOutId;
+
+  if (
+    assetInEntity &&
+    assetInEntity.resourceType === AssetResourceType.Debt &&
+    assetInEntity.underlyingAssetId
+  ) {
+    const underlyingAsset = ctx.batchState.state.assetsAll.get(
+      assetInEntity.underlyingAssetId
+    );
+    assetInIdEnsured = underlyingAsset?.id ?? assetInId;
+  }
+  if (
+    assetOutEntity &&
+    assetOutEntity.resourceType === AssetResourceType.Debt &&
+    assetOutEntity.underlyingAssetId
+  ) {
+    const underlyingAsset = ctx.batchState.state.assetsAll.get(
+      assetOutEntity.underlyingAssetId
+    );
+    assetOutIdEnsured = underlyingAsset?.id ?? assetInId;
+  }
+
+  if (assetOutIdEnsured === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) {
     const price = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-      `${assetInId}-${assetOutId}-${blockHeight}`
+      `${assetInIdEnsured}-${assetOutIdEnsured}-${blockHeight}`
     )?.priceNormalised;
     return price ?? null;
   }
 
   const assetInRefPrice =
-    assetInId !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+    assetInIdEnsured !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       ? ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-          `${assetInId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
+          `${assetInIdEnsured}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
         )?.priceNormalised
       : '1';
 
   const assetOutRefPrice =
-    assetOutId !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+    assetOutIdEnsured !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       ? ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-          `${assetOutId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
+          `${assetOutIdEnsured}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
         )?.priceNormalised
       : '1';
 

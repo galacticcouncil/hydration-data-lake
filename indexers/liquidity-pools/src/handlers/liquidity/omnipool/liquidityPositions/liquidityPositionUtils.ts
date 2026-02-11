@@ -16,6 +16,7 @@ import {
 } from '../../../balances/accountTotalBalance';
 import { In, IsNull, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { splitIntoBatches } from '../../../../utils/helpers';
 
 export async function getNewOmnipoolLiquidityPosition({
   positionId,
@@ -309,21 +310,32 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
       involvedAccountsInBatch.has(pos?.accountId)
   );
 
-  const allPersistentPositions = await ctx.storeUtils.findWithLogs(
-    OmnipoolLiquidityPosition,
-    {
-      where: {
-        accountId: In(Array.from(involvedAccountsInBatch.values())),
-        createdAtParaBlockHeight: LessThanOrEqual(
-          ctx.blocks[ctx.blocks.length - 1].header.height
-        ),
-        destroyedAtParaBlockHeight: Or(
-          IsNull(),
-          MoreThanOrEqual(ctx.blocks[0].header.height)
-        ),
-      },
+  const allPersistentPositions: OmnipoolLiquidityPosition[] = [];
+
+  for (const accountIdsBatch of splitIntoBatches(
+    Array.from(involvedAccountsInBatch.values()),
+    500
+  )) {
+    const batchResponse = await ctx.storeUtils.findWithLogs(
+      OmnipoolLiquidityPosition,
+      {
+        where: {
+          accountId: In(accountIdsBatch),
+          createdAtParaBlockHeight: LessThanOrEqual(
+            ctx.blocks[ctx.blocks.length - 1].header.height
+          ),
+          destroyedAtParaBlockHeight: Or(
+            IsNull(),
+            MoreThanOrEqual(ctx.blocks[0].header.height)
+          ),
+        },
+      }
+    );
+
+    for (const responseItem of batchResponse) {
+      allPersistentPositions.push(responseItem);
     }
-  );
+  }
 
   const allPositionsDeduped = new Map([
     ...allPersistentPositions.map(
@@ -339,17 +351,28 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
     ctx.batchState.state.omnipoolLiquidityPositionEvents.values()
   ).filter((e) => allPositionsDeduped.has(e.position.id));
 
-  const persistentPositionEvents = await ctx.storeUtils.findWithLogs(
-    OmnipoolLiquidityPositionEvent,
-    {
-      where: {
-        position: { id: In(Array.from(allPositionsDeduped.keys())) },
-      },
-      relations: {
-        position: true,
-      },
+  const persistentPositionEvents: OmnipoolLiquidityPositionEvent[] = [];
+
+  for (const positionIdsBatch of splitIntoBatches(
+    Array.from(allPositionsDeduped.keys()),
+    500
+  )) {
+    const batchResponse = await ctx.storeUtils.findWithLogs(
+      OmnipoolLiquidityPositionEvent,
+      {
+        where: {
+          position: { id: In(positionIdsBatch) },
+        },
+        relations: {
+          position: true,
+        },
+      }
+    );
+
+    for (const responseItem of batchResponse) {
+      persistentPositionEvents.push(responseItem);
     }
-  );
+  }
 
   const allPositionEventsDeduped = new Map([
     ...persistentPositionEvents.map(

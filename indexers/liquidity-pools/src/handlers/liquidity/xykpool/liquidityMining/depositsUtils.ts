@@ -20,6 +20,7 @@ import {
   XykpoolLMDepositData,
   XykpoolLMDepositDataWithId,
 } from '../../../../parsers/types/storage/xykpoolLiquidityMining';
+import { splitIntoBatches } from '../../../../utils/helpers';
 
 export async function getOrCreateXykLiquidityMiningDeposit({
   depositId,
@@ -248,21 +249,32 @@ export async function getXykLiquidityMiningDepositsForAccounts({
       involvedAccountsInBatch.has(deposit?.accountId)
   );
 
-  const allPersistentDeposits = await ctx.storeUtils.findWithLogs(
-    XykYieldFarmDeposit,
-    {
-      where: {
-        accountId: In(Array.from(involvedAccountsInBatch.values())),
-        createdAtParaBlockHeight: LessThanOrEqual(
-          ctx.blocks[ctx.blocks.length - 1].header.height
-        ),
-        destroyedAtParaBlockHeight: Or(
-          IsNull(),
-          MoreThanOrEqual(ctx.blocks[0].header.height)
-        ),
-      },
+  const allPersistentDeposits: XykYieldFarmDeposit[] = [];
+
+  for (const accountIdsBatch of splitIntoBatches(
+    Array.from(involvedAccountsInBatch.values()),
+    500
+  )) {
+    const batchResponse = await ctx.storeUtils.findWithLogs(
+      XykYieldFarmDeposit,
+      {
+        where: {
+          accountId: In(accountIdsBatch),
+          createdAtParaBlockHeight: LessThanOrEqual(
+            ctx.blocks[ctx.blocks.length - 1].header.height
+          ),
+          destroyedAtParaBlockHeight: Or(
+            IsNull(),
+            MoreThanOrEqual(ctx.blocks[0].header.height)
+          ),
+        },
+      }
+    );
+
+    for (const responseItem of batchResponse) {
+      allPersistentDeposits.push(responseItem);
     }
-  );
+  }
 
   const allDepositsDeduped = new Map([
     ...allCachedDeposits.map((deposit): [string, XykYieldFarmDeposit] => [
@@ -279,14 +291,24 @@ export async function getXykLiquidityMiningDepositsForAccounts({
     ctx.batchState.state.xykYieldFarmDepositEvents.values()
   ).filter((e) => allDepositsDeduped.has(e.depositId));
 
-  const persistentDepositEvents = await ctx.storeUtils.findWithLogs(
-    XykYieldFarmDepositEvent,
-    {
-      where: {
-        depositId: In(Array.from(allDepositsDeduped.keys())),
-      },
+  const persistentDepositEvents: XykYieldFarmDepositEvent[] = [];
+
+  for (const depositIdsBatch of splitIntoBatches(
+    Array.from(allDepositsDeduped.keys()),
+    500
+  )) {
+    const batchResponse = await ctx.storeUtils.findWithLogs(
+      XykYieldFarmDepositEvent,
+      {
+        where: {
+          depositId: In(depositIdsBatch),
+        },
+      }
+    );
+    for (const responseItem of batchResponse) {
+      persistentDepositEvents.push(responseItem);
     }
-  );
+  }
 
   const allDepositEventsDeduped = new Map([
     ...cachedDepositEvents.map((e): [string, XykYieldFarmDepositEvent] => [

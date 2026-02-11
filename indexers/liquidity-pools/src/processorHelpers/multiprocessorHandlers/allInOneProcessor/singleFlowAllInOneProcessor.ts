@@ -314,10 +314,6 @@ export async function singleFlowAllInOneProcessor(
   await handleAssetPairVolumesHistoricalData({ ctx });
   console.timeEnd('handleAssetPairVolumesHistoricalData');
 
-  console.time('handleAllAccountBalancesInit');
-  await handleAllAccountBalancesInit(ctx);
-  console.timeEnd('handleAllAccountBalancesInit');
-
   console.time('handleAssetAccountBalances');
   await handleAssetAccountBalances(ctx, parsedData);
   console.timeEnd('handleAssetAccountBalances');

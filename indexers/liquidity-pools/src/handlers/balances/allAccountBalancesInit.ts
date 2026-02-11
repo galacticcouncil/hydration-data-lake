@@ -23,7 +23,8 @@ import parsers from '../../parsers';
 import { updateAccountProcessingStatusOnTotalBalanceChange } from '../accounts/accountProcessingStatus';
 
 export async function handleAllAccountBalancesInit(
-  ctx: SqdProcessorContext<Store>
+  ctx: SqdProcessorContext<Store>,
+  blockHeight?: number
 ) {
   if (!ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_INIT) return;
   console.log(
@@ -76,16 +77,21 @@ export async function handleAllAccountBalancesInit(
     return;
   }
 
-  const processingBlock = ctx.blocks[0];
+  const processingBlockHeader = blockHeight
+    ? ctx.batchState.getBlockHeaderByBlockHeight(blockHeight)
+    : ctx.blocks[0].header;
+
+  if (!processingBlockHeader)
+    throw new Error('No processing block header found');
 
   const accountsPerBlock: Map<number, Set<string>> = new Map([
-    [processingBlock.header.height, new Set(accountIdsList)],
+    [processingBlockHeader.height, new Set(accountIdsList)],
   ]);
+
+  const batchedAccounts = batchArray(allInitializedAccounts, 1000);
 
   const assetBalancesStorageDataPerBlockPerAccountMap: AssetBalancesStorageDataPerBlockPerAccountMap =
     new Map();
-
-  const batchedAccounts = batchArray(allInitializedAccounts, 1000);
 
   await pMap(
     batchedAccounts,
@@ -94,12 +100,12 @@ export async function handleAllAccountBalancesInit(
 
       const [nativeTokenBalances, commonTokenBalances] = await Promise.all([
         parsers.storage.system.getNativeTokenBalanceMany({
-          block: processingBlock.header,
+          block: processingBlockHeader,
           accountIds,
           skipCache: true,
         }),
         parsers.storage.tokens.getTokenBalancesMany({
-          block: processingBlock.header,
+          block: processingBlockHeader,
           accountIds,
           skipCache: true,
         }),
@@ -109,7 +115,7 @@ export async function handleAllAccountBalancesInit(
         accumulator: assetBalancesStorageDataPerBlockPerAccountMap,
         nativeTokenBalances,
         commonTokenBalances,
-        blockNumber: processingBlock.header.height,
+        blockNumber: processingBlockHeader.height,
       });
     },
     {
@@ -124,7 +130,7 @@ export async function handleAllAccountBalancesInit(
     string,
     Map<string, AccountData>
   > = assetBalancesStorageDataPerBlockPerAccountMap.get(
-    processingBlock.header.height
+    processingBlockHeader.height
   ) ?? new Map();
 
   const mmAssetsBalancesIndexedByAccountId: Map<
@@ -162,7 +168,7 @@ export async function handleAllAccountBalancesInit(
           await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
             {
               accountAddress: account.boundEvmAddress!,
-              blockNumber: processingBlock.header.height,
+              blockNumber: processingBlockHeader.height,
             }
           );
 
@@ -254,7 +260,7 @@ export async function handleAllAccountBalancesInit(
               {
                 contractAddress: reserveAddress,
                 accountAddress: accountBoundEvmAddress,
-                blockNumber: processingBlock.header.height,
+                blockNumber: processingBlockHeader.height,
               }
             );
 
@@ -291,7 +297,7 @@ export async function handleAllAccountBalancesInit(
       const assetSpotPrice = getAssetsPairPrice({
         ctx,
         assetInId: asset.id,
-        blockHeight: processingBlock.header.height,
+        blockHeight: processingBlockHeader.height,
       });
 
       const assetBalanceHistData =
@@ -299,7 +305,7 @@ export async function handleAllAccountBalancesInit(
           ctx,
           assetId: asset.id,
           account,
-          blockHeader: processingBlock.header,
+          blockHeader: processingBlockHeader,
           fetchFromDb: false,
         });
 
@@ -347,7 +353,7 @@ export async function handleAllAccountBalancesInit(
       const assetSpotPrice = getAssetsPairPrice({
         ctx,
         assetInId: asset.id,
-        blockHeight: processingBlock.header.height,
+        blockHeight: processingBlockHeader.height,
       });
 
       const assetBalanceHistData =
@@ -355,7 +361,7 @@ export async function handleAllAccountBalancesInit(
           ctx,
           assetId: asset.id,
           account,
-          blockHeader: processingBlock.header,
+          blockHeader: processingBlockHeader,
           fetchFromDb: false,
         });
 
@@ -390,4 +396,10 @@ export async function handleAllAccountBalancesInit(
   });
 
   await updateAccountProcessingStatusOnTotalBalanceChange({ ctx });
+
+  const processedTotalBalances: Set<string> = new Set(
+    Array.from(ctx.batchState.state.accountTotalBalanceHistoricalData.keys())
+  );
+
+  return processedTotalBalances;
 }

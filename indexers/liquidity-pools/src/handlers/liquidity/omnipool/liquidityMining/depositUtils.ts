@@ -17,6 +17,7 @@ import {
 } from '../../../balances/accountTotalBalance';
 import { In, IsNull, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { splitIntoBatches } from '../../../../utils/helpers';
 
 export async function getOrCreateOmnipoolLiquidityMiningDeposit({
   depositId,
@@ -243,21 +244,32 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
       involvedAccountsInBatch.has(deposit?.accountId)
   );
 
-  const allPersistentDeposits = await ctx.storeUtils.findWithLogs(
-    OmnipoolYieldFarmDeposit,
-    {
-      where: {
-        accountId: In(Array.from(involvedAccountsInBatch.values())),
-        createdAtParaBlockHeight: LessThanOrEqual(
-          ctx.blocks[ctx.blocks.length - 1].header.height
-        ),
-        destroyedAtParaBlockHeight: Or(
-          IsNull(),
-          MoreThanOrEqual(ctx.blocks[0].header.height)
-        ),
-      },
+  const allPersistentDeposits: OmnipoolYieldFarmDeposit[] = [];
+
+  for (const accountIdsBatch of splitIntoBatches(
+    Array.from(involvedAccountsInBatch.values()),
+    500
+  )) {
+    const batchResponse = await ctx.storeUtils.findWithLogs(
+      OmnipoolYieldFarmDeposit,
+      {
+        where: {
+          accountId: In(accountIdsBatch),
+          createdAtParaBlockHeight: LessThanOrEqual(
+            ctx.blocks[ctx.blocks.length - 1].header.height
+          ),
+          destroyedAtParaBlockHeight: Or(
+            IsNull(),
+            MoreThanOrEqual(ctx.blocks[0].header.height)
+          ),
+        },
+      }
+    );
+
+    for (const responseItem of batchResponse) {
+      allPersistentDeposits.push(responseItem);
     }
-  );
+  }
 
   const allDepositsDeduped = new Map([
     ...allCachedDeposits.map((deposit): [string, OmnipoolYieldFarmDeposit] => [
@@ -368,65 +380,70 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
         data: new Map(),
       });
 
-    for (const accountId of accountsSet.values()) {
-      const accountActiveDepositsAtBlock =
-        allDepositsIndexedByAccountId
-          .get(accountId)
-          ?.filter(
-            (deposit) =>
-              deposit.createdAtParaBlockHeight <= blockHeight &&
-              (!deposit.destroyedAtParaBlockHeight ||
-                (!!deposit.destroyedAtParaBlockHeight &&
-                  deposit.destroyedAtParaBlockHeight > blockHeight))
-          ) || [];
+    for (const accountIdsBatch of splitIntoBatches(
+      Array.from(accountsSet.values()),
+      500
+    )) {
+      for (const accountId of accountIdsBatch) {
+        const accountActiveDepositsAtBlock =
+          allDepositsIndexedByAccountId
+            .get(accountId)
+            ?.filter(
+              (deposit) =>
+                deposit.createdAtParaBlockHeight <= blockHeight &&
+                (!deposit.destroyedAtParaBlockHeight ||
+                  (!!deposit.destroyedAtParaBlockHeight &&
+                    deposit.destroyedAtParaBlockHeight > blockHeight))
+            ) || [];
 
-      for (const deposit of accountActiveDepositsAtBlock) {
-        if (
-          !accountDepositBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.has(accountId)
-        )
-          accountDepositBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.set(accountId, new Map());
+        for (const deposit of accountActiveDepositsAtBlock) {
+          if (
+            !accountDepositBalancesPerBlockPerAsset
+              .get(blockHeight)!
+              .data.has(accountId)
+          )
+            accountDepositBalancesPerBlockPerAsset
+              .get(blockHeight)!
+              .data.set(accountId, new Map());
 
-        if (
-          !accountDepositBalancesPerBlockPerAsset
+          if (
+            !accountDepositBalancesPerBlockPerAsset
+              .get(blockHeight)!
+              .data.get(accountId)!
+              .has(deposit.assetId)
+          )
+            accountDepositBalancesPerBlockPerAsset
+              .get(blockHeight)!
+              .data.get(accountId)!
+              .set(deposit.assetId, BigNumber(0));
+
+          const currentBalance = accountDepositBalancesPerBlockPerAsset
             .get(blockHeight)!
             .data.get(accountId)!
-            .has(deposit.assetId)
-        )
+            .get(deposit.assetId)!;
+
+          /**
+           * Retrieves the deposit amount from the closest event at or before the target block.
+           *
+           * This is necessary because during batch processing, the deposit entity may already
+           * reflect updates from later blocks (e.g., amount changes or deposit destruction).
+           * To ensure historical accuracy, we must use the amount recorded in the event that
+           * was closest to the block being processed, rather than the current deposit state.
+           */
+          const actualPositionAmountAtBlock: string =
+            positionEventsIndexedByDepositId
+              .get(deposit.id)
+              ?.find((e) => e.paraBlockHeight <= blockHeight)
+              ?.amount?.toString() ?? '0';
+
           accountDepositBalancesPerBlockPerAsset
             .get(blockHeight)!
             .data.get(accountId)!
-            .set(deposit.assetId, BigNumber(0));
-
-        const currentBalance = accountDepositBalancesPerBlockPerAsset
-          .get(blockHeight)!
-          .data.get(accountId)!
-          .get(deposit.assetId)!;
-
-        /**
-         * Retrieves the deposit amount from the closest event at or before the target block.
-         *
-         * This is necessary because during batch processing, the deposit entity may already
-         * reflect updates from later blocks (e.g., amount changes or deposit destruction).
-         * To ensure historical accuracy, we must use the amount recorded in the event that
-         * was closest to the block being processed, rather than the current deposit state.
-         */
-        const actualPositionAmountAtBlock: string =
-          positionEventsIndexedByDepositId
-            .get(deposit.id)
-            ?.find((e) => e.paraBlockHeight <= blockHeight)
-            ?.amount?.toString() ?? '0';
-
-        accountDepositBalancesPerBlockPerAsset
-          .get(blockHeight)!
-          .data.get(accountId)!
-          .set(
-            deposit.assetId,
-            currentBalance.plus(actualPositionAmountAtBlock)
-          );
+            .set(
+              deposit.assetId,
+              currentBalance.plus(actualPositionAmountAtBlock)
+            );
+        }
       }
     }
   }
