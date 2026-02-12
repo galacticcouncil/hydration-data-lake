@@ -20,8 +20,6 @@ export async function handleAssetAccountBalancesPerBlock(
 
   await handleCommonAssetAccountBalances({ accountIdsToProcess, block, ctx });
 
-  // totalExecutionTimeBalances += performance.now() - startTimeBalances;
-
   const oracleUpdateEvent = Array.from(
     ctx.batchState.state.moneyMarketEvents.values()
   ).find(
@@ -44,8 +42,4 @@ export async function handleAssetAccountBalancesPerBlock(
       Array.from(ctx.batchState.state.accAssetBalanceHistData.values())
     );
   }
-
-  // console.log(
-  //   `Total Balances execution time: ${totalExecutionTimeBalances / 1000} seconds`
-  // );
 }

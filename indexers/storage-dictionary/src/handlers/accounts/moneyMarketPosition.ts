@@ -139,10 +139,6 @@ export class AccountMoneyMarketPositionDataManager {
     blockHeader: Block;
     ctx: ProcessorContext<Store>;
   }) {
-    // const allEvmAccounts =
-    //   await parsers.storage.evmAccounts.getAllAccountsExtensions({
-    //     block: blockHeader,
-    //   });
 
     await pMap(
       Array.from(ctx.batchState.state.evmAccountExtensions.entries()) || [],

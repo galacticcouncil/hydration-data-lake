@@ -182,7 +182,7 @@ async function runProcessor() {
       });
 
       /**
-       * This must be processed outside the parallel processing
+       * This must be processed outside of the parallel processing
        */
       if (appConfig.PROCESS_ACCOUNTS) {
         await prefetchAllAccountsExtensions(ctx as ProcessorContext<Store>);

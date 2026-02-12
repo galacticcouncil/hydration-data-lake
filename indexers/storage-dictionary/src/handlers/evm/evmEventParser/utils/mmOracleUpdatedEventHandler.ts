@@ -5,6 +5,7 @@ import {
   EvmEventName,
   EvmLogEventParsedData,
 } from '../../../../parsers/types/events';
+import { processNewMoneyMarketEvent } from './moneyMarketEvent';
 
 export async function handleOracleUpdatedEvent(
   ctx: ProcessorContext<Store>,
@@ -20,4 +21,11 @@ export async function handleOracleUpdatedEvent(
   if (!parsedEvmEventData) return;
 
   const { params: eventParams, metadata: eventMetadata } = eventData;
+
+  await processNewMoneyMarketEvent({
+    ctx,
+    eventData,
+    allInvolvedAssetIds: [],
+    allInvolvedParticipants: [],
+  });
 }
