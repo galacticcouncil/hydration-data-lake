@@ -416,6 +416,9 @@ export async function handleUnchangedAccountAssetBalances({
   });
 
   const pgPool = CommonPgPool.getInstance();
+  console.time(
+    'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: loop'
+  );
 
   /**
    * LOOP L1 :: Iterating block by block. Only blocks are involved where there is at least
@@ -539,12 +542,21 @@ export async function handleUnchangedAccountAssetBalances({
       unchangedAssetBalancesFromPrevBlockIndexedByAccount
     );
   }
+  console.timeEnd(
+    'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: loop'
+  );
 
+  console.time(
+    'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData'
+  );
   const ensuredUnchangedAccountAssetBalancesPerBlock =
     await ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData({
       unchangedAccountAssetBalancesPerBlock,
       ctx,
     });
+  console.timeEnd(
+    'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData'
+  );
   await createAccountAssetBalancesForOutdatedBalances({
     unchangedAccountAssetBalancesPerBlock:
       ensuredUnchangedAccountAssetBalancesPerBlock,

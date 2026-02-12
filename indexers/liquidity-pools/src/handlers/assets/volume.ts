@@ -173,9 +173,9 @@ export async function processAssetNormalizedVolumes({
     }
 
     if (!assetSpotPriceNorm || !asset.decimals) {
-      console.log(
-        `processAssetNormalizedVolumes :: no price : skipping asset ${asset.id}`
-      );
+      // console.log(
+      //   `processAssetNormalizedVolumes :: no price : skipping asset ${asset.id}`
+      // );
       continue;
     }
 

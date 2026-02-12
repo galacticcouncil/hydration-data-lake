@@ -2,14 +2,37 @@ import { Store } from '@subsquid/typeorm-store';
 
 import { SqdProcessorContext } from '../../../../../processor';
 import {
+  Hop,
+  Amount,
   IPersistentDataInput,
   OfflinePoolService,
   OfflinePoolUtils,
   TradeRouter,
 } from '../offlineSdk/sdk/src';
 import { OfflineTradeRouterManagerHelper } from './offlineTradeRouterManagerHelper';
+import { AppConfig } from '../../../../../appConfig';
 
 // } from '@galacticcouncil/sdk';
+
+export class RouterCacheManager {
+  private static instance: RouterCacheManager;
+
+  public mlrCached: Map<string, Hop[]> = new Map();
+  public mlrCachedPerBlock: Map<string, Hop[]> = new Map();
+
+  static getInstance(): RouterCacheManager {
+    if (!RouterCacheManager.instance) {
+      RouterCacheManager.instance = new RouterCacheManager();
+    }
+    return RouterCacheManager.instance;
+  }
+
+  wipeCache() {
+    this.mlrCached = new Map();
+  }
+}
+
+const appConfig = AppConfig.getInstance();
 
 export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
   private static instance: OfflineTradeRouterManager;
@@ -109,5 +132,56 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
     const router = new TradeRouter(offlinePoolService);
 
     this.routerInstancesMap.set(block.height, router);
+  }
+
+  /**
+   * Method to get the best spot price with route for a given asset pair.
+   * Optionally can use cached routes for price calculation to improve performance.
+   */
+  async getBestSpotPriceWitRoute({
+    assetInId,
+    assetOutId,
+    router,
+    blockHeight,
+  }: {
+    assetInId: string;
+    assetOutId: string;
+    router?: TradeRouter;
+    blockHeight?: number;
+  }) {
+    if (!router && !blockHeight)
+      throw new Error('Router or blockHeight required');
+
+    const routerInstance = router ?? this.getRouterForBlock(blockHeight!);
+
+    if (!routerInstance) throw new Error('Router not found');
+
+    let priceWithRoute:
+      | { price: Amount; route: Hop[]; routeKey: string }
+      | undefined;
+
+    if (!appConfig.ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION)
+      return routerInstance.getBestSpotPriceWitRoute(assetInId, assetOutId);
+
+    try {
+      priceWithRoute = await routerInstance.getBestSpotPriceWitRoute(
+        assetInId,
+        assetOutId,
+        RouterCacheManager.getInstance().mlrCached
+      );
+    } catch (e) {
+      priceWithRoute = await routerInstance.getBestSpotPriceWitRoute(
+        assetInId,
+        assetOutId
+      );
+    }
+
+    if (priceWithRoute)
+      RouterCacheManager.getInstance().mlrCached.set(
+        priceWithRoute?.routeKey,
+        priceWithRoute.route
+      );
+
+    return priceWithRoute;
   }
 }

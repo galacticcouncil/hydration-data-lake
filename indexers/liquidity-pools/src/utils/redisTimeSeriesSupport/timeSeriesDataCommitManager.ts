@@ -121,10 +121,6 @@ export class TimeSeriesDataCommitManager {
       accountTotalBalanceLatestProcessedBlock,
     } = job.data;
 
-    console.log(
-      `commitAccountTotalBalancesJobHandler // jobId ${job.id} // blockHeight ${accountTotalBalanceLatestProcessedBlock}`
-    );
-
     if (
       (actionName !== DataCommitterJobName.commitAccountTotalBalance &&
         !accountTotalBalanceMany) ||

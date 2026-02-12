@@ -2,11 +2,12 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { splitIntoBatches } from '../../../utils/helpers';
 import { OfflineTradeRouterManager } from './utils';
-import { handleAssetSpotPricesHistoricalDataAtBlock } from './assetSpotPrices';
 import { handleAssetPairVolumesHistoricalDataAtBlock } from './assePairVolumes';
 import { processAssetsHistoricalDataAtBlock } from './assetHistoricalData';
 import pMap from 'p-map';
 import { AssetHistoricalData } from '../../../model';
+import { handleAssetSpotPricesHistoricalDataAtBlock } from './assetSpotPrices';
+import { RouterCacheManager } from './utils/offlineTradeRouterManager';
 
 export async function handleAssetHistoricalData({
   blockNumbersToProcess,
@@ -74,6 +75,7 @@ export async function handleAssetSpotPricesHistoricalData({
   ctx: SqdProcessorContext<Store>;
 }) {
   OfflineTradeRouterManager.getInstance().wipeCache();
+  RouterCacheManager.getInstance().wipeCache();
 
   const blocksNumbersToProcessSet = new Set(blockNumbersToProcess || []);
   const blocksToProcess = blockNumbersToProcess

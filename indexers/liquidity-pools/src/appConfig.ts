@@ -577,6 +577,10 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: number = 300;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION: boolean = false;
+
   /**
    * Can be configured to "false" in case normal mono-processor run. In normal
    * processing flow spot price calculation requires data which already must be

@@ -25,7 +25,7 @@ import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedD
 import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
-import { PoolType } from './utils/offlineSdk/sdk/src';
+import { Amount, Hop, PoolBase, PoolType } from './utils/offlineSdk/sdk/src';
 
 const appConfig = AppConfig.getInstance();
 
@@ -249,12 +249,15 @@ async function processAssetSpotPrices({
         //   router.getMostLiquidRoute(asset.assetRegistryId, assetOutId),
         // ]);
 
-        const priceWithRoute = await router.getBestSpotPriceWitRoute(
-          asset.assetRegistryId,
-          assetOutId
-        );
+        const priceWithRoute =
+          await OfflineTradeRouterManager.getInstance().getBestSpotPriceWitRoute(
+            {
+              assetInId: asset.assetRegistryId,
+              assetOutId,
+              router,
+            }
+          );
 
-        // if (!price) continue;
         if (!priceWithRoute) {
           // console.log(
           //   `priceWithRoute is not found for asset ${asset.assetRegistryId}`
