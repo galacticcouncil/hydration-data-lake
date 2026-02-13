@@ -564,7 +564,7 @@ export class AppConfig {
 
   @Transform(
     ({ value }: { value: string }) =>
-      new Set(value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id)))
+      new Set(value.split(',').map((e) => e.trim()))
   )
   readonly STORAGE_DICTIONARY_TOPICS_TO_FETCH: Set<string> = new Set([
     'GENERIC_HIST_DATA',

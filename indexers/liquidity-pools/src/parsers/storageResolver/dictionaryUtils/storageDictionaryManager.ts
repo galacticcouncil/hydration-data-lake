@@ -336,7 +336,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       const encodedDataAavepool: AavepoolGlq[][] = [];
       const encodedDataAssetHistoricalDatum: AssetHistoricalDatumGql[][] = [];
       const encodedDataEmaOracleGql: EmaOracleGql[][] = [];
-
+      
       if (
         appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(
           ProcessingTopic.GENERIC_HIST_DATA
