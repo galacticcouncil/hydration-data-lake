@@ -6,6 +6,7 @@ import {
   IsString,
   ValidationError,
   IsPositive,
+  IsNumber,
 } from 'class-validator';
 import dotenv from 'dotenv';
 import { events } from './typegenTypes';
@@ -52,13 +53,13 @@ class EvmConfig {
     '0x1b02e051683b5cfac5929c25e84adb26ecf87b38';
 
   static getInstance(): EvmConfig {
-    if (!EvmConfig.instance) {
-      EvmConfig.instance = new EvmConfig();
-    }
+    if (EvmConfig.instance) return EvmConfig.instance;
+
     try {
-      return transformAndValidateSync(EvmConfig, process.env, {
+      EvmConfig.instance = transformAndValidateSync(EvmConfig, process.env, {
         validator: { stopAtFirstError: true },
       });
+      return EvmConfig.instance;
     } catch (errors) {
       if (Array.isArray(errors) && errors[0] instanceof ValidationError) {
         errors.forEach((error: ValidationError) => {
@@ -71,29 +72,13 @@ class EvmConfig {
       throw new Error('Failed to validate environment variables');
     }
   }
-}
 
-class ConcurrencyConfig {
-  private static instance: ConcurrencyConfig;
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 250;
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly EVM_CONTRACT_CALL_RETRIES: number = 2;
-
-  // static getInstance(): ConcurrencyConfig {
-  //   if (!ConcurrencyConfig.instance) {
-  //     ConcurrencyConfig.instance = new ConcurrencyConfig();
+  // static getInstance(): EvmConfig {
+  //   if (!EvmConfig.instance) {
+  //     EvmConfig.instance = new EvmConfig();
   //   }
   //   try {
-  //     return transformAndValidateSync(ConcurrencyConfig, process.env, {
+  //     return transformAndValidateSync(EvmConfig, process.env, {
   //       validator: { stopAtFirstError: true },
   //     });
   //   } catch (errors) {
@@ -108,6 +93,26 @@ class ConcurrencyConfig {
   //     throw new Error('Failed to validate environment variables');
   //   }
   // }
+}
+
+class ConcurrencyConfig {
+  private static instance: ConcurrencyConfig;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ASYNC_OPERATIONS_CONCURRENCY_COMMON: number = 50;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly EVM_CONTRACT_CALL_CONCURRENCY: number = 250;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly RUNTIME_API_CALLS_CONCURRENCY: number = 50;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly EVM_CONTRACT_CALL_RETRIES: number = 2;
 
   static getInstance(): ConcurrencyConfig {
     if (ConcurrencyConfig.instance) return ConcurrencyConfig.instance;
@@ -117,7 +122,7 @@ class ConcurrencyConfig {
         ConcurrencyConfig,
         process.env,
         {
-          validator: { stopAtFirstError: true, whitelist: true },
+          validator: { stopAtFirstError: true },
         }
       );
       return ConcurrencyConfig.instance;
@@ -324,9 +329,9 @@ export class AppConfig {
     'Uniques',
   ]);
 
-  readonly evm: EvmConfig = new EvmConfig();
+  readonly evm: EvmConfig = EvmConfig.getInstance();
 
-  readonly concurrency: ConcurrencyConfig = new ConcurrencyConfig();
+  readonly concurrency: ConcurrencyConfig = ConcurrencyConfig.getInstance();
 
   static getInstance(): AppConfig {
     if (AppConfig.instance) return AppConfig.instance;
