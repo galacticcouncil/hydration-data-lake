@@ -562,6 +562,20 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE: number = 300;
 
+  @Transform(
+    ({ value }: { value: string }) =>
+      new Set(value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id)))
+  )
+  readonly STORAGE_DICTIONARY_TOPICS_TO_FETCH: Set<string> = new Set([
+    'GENERIC_HIST_DATA',
+    'LBP',
+    'XYK',
+    'OMNIPOOL',
+    'STABLESWAP',
+    'MM_AGGREGATOR_ORACLE',
+    'ACCOUNT_ASSET_BALANCE_HIST_DATA',
+  ]);
+
   @IsString()
   readonly SUBSCAN_PRO_API_SECRET: string = '';
 

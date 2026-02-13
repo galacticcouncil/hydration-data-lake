@@ -290,13 +290,13 @@ export async function whitelistedAccountBalancesTrackingProcessor(
 
   correlateAssetSpotPrices(ctx);
 
-  console.time('handleBroadcastSwappedEvents');
-  await handleBroadcastSwappedEvents(ctx, parsedData);
-  console.timeEnd('handleBroadcastSwappedEvents');
-
-  console.time('handleBuySellOperations');
-  await handleBuySellOperations(ctx, parsedData);
-  console.timeEnd('handleBuySellOperations');
+  // console.time('handleBroadcastSwappedEvents');
+  // await handleBroadcastSwappedEvents(ctx, parsedData);
+  // console.timeEnd('handleBroadcastSwappedEvents');
+  //
+  // console.time('handleBuySellOperations');
+  // await handleBuySellOperations(ctx, parsedData);
+  // console.timeEnd('handleBuySellOperations');
 
   console.time('handleStablepoolLiquidityEvents');
   await handleStablepoolLiquidityEvents(ctx, parsedData);
@@ -379,9 +379,9 @@ export async function whitelistedAccountBalancesTrackingProcessor(
   // await HistoricalDataManager.saveHistoricalDataBulk(ctx);
   // console.timeEnd('saveHistoricalDataBulk');
 
-  console.time('saveActivityTraceEntities');
-  await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
-  console.timeEnd('saveActivityTraceEntities');
+  // console.time('saveActivityTraceEntities');
+  // await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
+  // console.timeEnd('saveActivityTraceEntities');
 
   // console.time('saveDcaEntities');
   // await saveDcaEntities(ctx);

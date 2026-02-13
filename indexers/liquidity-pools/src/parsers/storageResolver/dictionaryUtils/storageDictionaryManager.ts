@@ -82,6 +82,9 @@ import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
 import { MinifiedDataStructureManager } from './helpers/minifiedDataStructureManager';
 import { BatchStorageStateSectionCollection } from './helpers/batchStorageStateSectionCollection';
 import { AccountMmPositionDataContractData } from '../../../utils/evmTools/types';
+import { AppConfig } from '../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export type BatchStorageStateSectionNode<T> = T extends ProcessingTopic.XYK
   ? XykpoolGlq
@@ -334,35 +337,42 @@ export class StorageDictionaryManager extends QueriesHelper {
       const encodedDataAssetHistoricalDatum: AssetHistoricalDatumGql[][] = [];
       const encodedDataEmaOracleGql: EmaOracleGql[][] = [];
 
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.GENERIC_HIST_DATA,
-      })) {
-        if (!page) continue;
-        const aavepoolGqlRespEncoded: AavepoolGlq[] =
-          encodeBlockCompressedData<AavepoolGlq>({
-            data: page,
-            dataKey: BlockCompressedDataKey.aavepool,
-          });
+      if (
+        appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(
+          ProcessingTopic.GENERIC_HIST_DATA
+        )
+      ) {
+        for await (const page of this.fetchAllPages({
+          limit:
+            this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+          requestPromise: fetchBlockCompressedDataPaginated,
+          topic: ProcessingTopic.GENERIC_HIST_DATA,
+        })) {
+          if (!page) continue;
+          const aavepoolGqlRespEncoded: AavepoolGlq[] =
+            encodeBlockCompressedData<AavepoolGlq>({
+              data: page,
+              dataKey: BlockCompressedDataKey.aavepool,
+            });
 
-        const assetHistoricalDatumGqlRespEncoded: AssetHistoricalDatumGql[] =
-          encodeBlockCompressedData<AssetHistoricalDatumGql>({
-            data: page,
-            dataKey: BlockCompressedDataKey.assetHistoricalData,
-          });
+          const assetHistoricalDatumGqlRespEncoded: AssetHistoricalDatumGql[] =
+            encodeBlockCompressedData<AssetHistoricalDatumGql>({
+              data: page,
+              dataKey: BlockCompressedDataKey.assetHistoricalData,
+            });
 
-        const emaOracleGqlRespEncoded: EmaOracleGql[] =
-          encodeBlockCompressedData<EmaOracleGql>({
-            data: page,
-            dataKey: BlockCompressedDataKey.emaOracle,
-          });
+          const emaOracleGqlRespEncoded: EmaOracleGql[] =
+            encodeBlockCompressedData<EmaOracleGql>({
+              data: page,
+              dataKey: BlockCompressedDataKey.emaOracle,
+            });
 
-        encodedDataAavepool.push(aavepoolGqlRespEncoded);
-        encodedDataAssetHistoricalDatum.push(
-          assetHistoricalDatumGqlRespEncoded as AssetHistoricalDatumGql[]
-        );
-        encodedDataEmaOracleGql.push(emaOracleGqlRespEncoded);
+          encodedDataAavepool.push(aavepoolGqlRespEncoded);
+          encodedDataAssetHistoricalDatum.push(
+            assetHistoricalDatumGqlRespEncoded as AssetHistoricalDatumGql[]
+          );
+          encodedDataEmaOracleGql.push(emaOracleGqlRespEncoded);
+        }
       }
 
       return [
@@ -381,107 +391,133 @@ export class StorageDictionaryManager extends QueriesHelper {
     const allLbpPoolStorageFetchPromise = async () => {
       const data: LbpPoolGlq[][] = [];
 
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.LBP,
-      })) {
-        if (!page) continue;
-        const encodedPageData: LbpPoolGlq[] =
-          encodeBlockCompressedData<LbpPoolGlq>({
-            data: page,
-            dataKey: BlockCompressedDataKey.lbppool,
-          });
+      if (
+        appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(ProcessingTopic.LBP)
+      ) {
+        for await (const page of this.fetchAllPages({
+          limit:
+            this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+          requestPromise: fetchBlockCompressedDataPaginated,
+          topic: ProcessingTopic.LBP,
+        })) {
+          if (!page) continue;
+          const encodedPageData: LbpPoolGlq[] =
+            encodeBlockCompressedData<LbpPoolGlq>({
+              data: page,
+              dataKey: BlockCompressedDataKey.lbppool,
+            });
 
-        data.push(encodedPageData);
-        // data.push(...(encodedPageData as LbpPoolGlq[]));
+          data.push(encodedPageData);
+          // data.push(...(encodedPageData as LbpPoolGlq[]));
+        }
       }
-
       return [{ pallet: ProcessingTopic.LBP, data: data.flat() }];
     };
 
     const allXykPoolStorageFetchPromise = async () => {
       const data: XykpoolGlq[][] = [];
 
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.XYK,
-      })) {
-        if (!page) continue;
-        const encodedPageData: XykpoolGlq[] =
-          encodeBlockCompressedData<XykpoolGlq>({
-            data: page,
-            dataKey: BlockCompressedDataKey.xykpool,
-          });
+      if (
+        appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(ProcessingTopic.XYK)
+      ) {
+        for await (const page of this.fetchAllPages({
+          limit:
+            this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+          requestPromise: fetchBlockCompressedDataPaginated,
+          topic: ProcessingTopic.XYK,
+        })) {
+          if (!page) continue;
+          const encodedPageData: XykpoolGlq[] =
+            encodeBlockCompressedData<XykpoolGlq>({
+              data: page,
+              dataKey: BlockCompressedDataKey.xykpool,
+            });
 
-        data.push(encodedPageData);
-        // data.push(...(encodedPageData as XykpoolGlq[]));
+          data.push(encodedPageData);
+          // data.push(...(encodedPageData as XykpoolGlq[]));
+        }
       }
-
       return [{ pallet: ProcessingTopic.XYK, data: data.flat() }];
     };
 
     const allOmnipoolStorageFetchPromise = async () => {
       const data = [];
 
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.OMNIPOOL,
-      })) {
-        if (!page) continue;
-        const encodedPageData: OmnipoolGql[] =
-          encodeBlockCompressedData<OmnipoolGql>({
-            data: page,
-            dataKey: BlockCompressedDataKey.omnipool,
-          });
+      if (
+        appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(
+          ProcessingTopic.OMNIPOOL
+        )
+      ) {
+        for await (const page of this.fetchAllPages({
+          limit:
+            this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+          requestPromise: fetchBlockCompressedDataPaginated,
+          topic: ProcessingTopic.OMNIPOOL,
+        })) {
+          if (!page) continue;
+          const encodedPageData: OmnipoolGql[] =
+            encodeBlockCompressedData<OmnipoolGql>({
+              data: page,
+              dataKey: BlockCompressedDataKey.omnipool,
+            });
 
-        data.push(encodedPageData);
+          data.push(encodedPageData);
+        }
       }
-
       return [{ pallet: ProcessingTopic.OMNIPOOL, data: data.flat() }];
     };
 
     const allStablepoolStorageFetchPromise = async () => {
       const data = [];
 
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.STABLESWAP,
-      })) {
-        if (!page) continue;
-        const encodedPageData: StableswapGql[] =
-          encodeBlockCompressedData<StableswapGql>({
-            data: page,
-            dataKey: BlockCompressedDataKey.stableswap,
-          });
+      if (
+        appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(
+          ProcessingTopic.STABLESWAP
+        )
+      ) {
+        for await (const page of this.fetchAllPages({
+          limit:
+            this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+          requestPromise: fetchBlockCompressedDataPaginated,
+          topic: ProcessingTopic.STABLESWAP,
+        })) {
+          if (!page) continue;
+          const encodedPageData: StableswapGql[] =
+            encodeBlockCompressedData<StableswapGql>({
+              data: page,
+              dataKey: BlockCompressedDataKey.stableswap,
+            });
 
-        data.push(encodedPageData);
-        // data.push(...(encodedPageData as StableswapGql[]));
+          data.push(encodedPageData);
+          // data.push(...(encodedPageData as StableswapGql[]));
+        }
       }
-
       return [{ pallet: ProcessingTopic.STABLESWAP, data: data.flat() }];
     };
 
     const allMmAggregatorOraclesStorageFetchPromise = async () => {
       const data = [];
 
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.MM_AGGREGATOR_ORACLE,
-      })) {
-        if (!page) continue;
-        const encodedPageData: MmAggregatorOracleGlq[] =
-          encodeBlockCompressedData<MmAggregatorOracleGlq>({
-            data: page,
-            dataKey: BlockCompressedDataKey.mmAggregatorOracle,
-          });
-        data.push(encodedPageData);
+      if (
+        appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(
+          ProcessingTopic.MM_AGGREGATOR_ORACLE
+        )
+      ) {
+        for await (const page of this.fetchAllPages({
+          limit:
+            this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+          requestPromise: fetchBlockCompressedDataPaginated,
+          topic: ProcessingTopic.MM_AGGREGATOR_ORACLE,
+        })) {
+          if (!page) continue;
+          const encodedPageData: MmAggregatorOracleGlq[] =
+            encodeBlockCompressedData<MmAggregatorOracleGlq>({
+              data: page,
+              dataKey: BlockCompressedDataKey.mmAggregatorOracle,
+            });
+          data.push(encodedPageData);
+        }
       }
-
       return [
         {
           pallet: ProcessingTopic.MM_AGGREGATOR_ORACLE,
@@ -494,31 +530,37 @@ export class StorageDictionaryManager extends QueriesHelper {
       const accBalancesHistData: AccountAssetBalanceHistoricalDatumGql[][] = [];
       const accMmPositionHistData: AccountMmPositionHistoricalDatumGql[][] = [];
 
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
-      })) {
-        if (!page) continue;
-        const accBalancesEncodedPageData: AccountAssetBalanceHistoricalDatumGql[] =
-          encodeBlockCompressedData<AccountAssetBalanceHistoricalDatumGql>({
-            data: page,
-            dataKey: BlockCompressedDataKey.accAssetBalancesHistoricalData,
-          });
-        const accMmPosEncodedPageData: AccountMmPositionHistoricalDatumGql[] =
-          encodeBlockCompressedData<AccountMmPositionHistoricalDatumGql>({
-            data: page,
-            dataKey: BlockCompressedDataKey.accMmPositionHistoricalData,
-          });
+      if (
+        appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(
+          ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA
+        )
+      ) {
+        for await (const page of this.fetchAllPages({
+          limit:
+            this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+          requestPromise: fetchBlockCompressedDataPaginated,
+          topic: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+        })) {
+          if (!page) continue;
+          const accBalancesEncodedPageData: AccountAssetBalanceHistoricalDatumGql[] =
+            encodeBlockCompressedData<AccountAssetBalanceHistoricalDatumGql>({
+              data: page,
+              dataKey: BlockCompressedDataKey.accAssetBalancesHistoricalData,
+            });
+          const accMmPosEncodedPageData: AccountMmPositionHistoricalDatumGql[] =
+            encodeBlockCompressedData<AccountMmPositionHistoricalDatumGql>({
+              data: page,
+              dataKey: BlockCompressedDataKey.accMmPositionHistoricalData,
+            });
 
-        accBalancesHistData.push(
-          accBalancesEncodedPageData as AccountAssetBalanceHistoricalDatumGql[]
-        );
-        accMmPositionHistData.push(
-          accMmPosEncodedPageData as AccountMmPositionHistoricalDatumGql[]
-        );
+          accBalancesHistData.push(
+            accBalancesEncodedPageData as AccountAssetBalanceHistoricalDatumGql[]
+          );
+          accMmPositionHistData.push(
+            accMmPosEncodedPageData as AccountMmPositionHistoricalDatumGql[]
+          );
+        }
       }
-
       return [
         {
           pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
@@ -530,58 +572,6 @@ export class StorageDictionaryManager extends QueriesHelper {
         },
       ];
     };
-
-    // const allAccountAssetBalanceHistDataStorageFetchPromise = async () => {
-    //   const data: AccountAssetBalanceHistoricalDatumGql[][] = [];
-    //
-    //   for await (const page of this.fetchAllPages({
-    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-    //     requestPromise: fetchBlockCompressedDataPaginated,
-    //     topic: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
-    //   })) {
-    //     if (!page) continue;
-    //     const encodedPageData: AccountAssetBalanceHistoricalDatumGql[] =
-    //       encodeBlockCompressedData<AccountAssetBalanceHistoricalDatumGql>({
-    //         data: page,
-    //         dataKey: BlockCompressedDataKey.accAssetBalancesHistoricalData,
-    //       });
-    //
-    //     data.push(encodedPageData as AccountAssetBalanceHistoricalDatumGql[]);
-    //   }
-    //
-    //   return [
-    //     {
-    //       pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
-    //       data: data.flat(),
-    //     },
-    //   ];
-    // };
-
-    // const allAccountMmPositionHistDataStorageFetchPromise = async () => {
-    //   const data: AccountMmPositionHistoricalDatumGql[][] = [];
-    //
-    //   for await (const page of this.fetchAllPages({
-    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-    //     requestPromise: fetchBlockCompressedDataPaginated,
-    //     topic: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
-    //   })) {
-    //     if (!page) continue;
-    //     const encodedPageData: AccountMmPositionHistoricalDatumGql[] =
-    //       encodeBlockCompressedData<AccountMmPositionHistoricalDatumGql>({
-    //         data: page,
-    //         dataKey: BlockCompressedDataKey.accMmPositionHistoricalData,
-    //       });
-    //
-    //     data.push(encodedPageData as AccountMmPositionHistoricalDatumGql[]);
-    //   }
-    //
-    //   return [
-    //     {
-    //       pallet: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
-    //       data: data.flat(),
-    //     },
-    //   ];
-    // };
 
     const execFetchPromiseWithTimeLog = async (
       fn: () => Promise<PalletDictionaryCollectedData[]>,
