@@ -22,7 +22,6 @@ export async function handleFacilitatorRemovedEvent({
   if (!parsedEvmEventData) return;
 
   console.log('handleFacilitatorRemovedEvent');
-  console.dir(parsedEvmEventData, { depth: null });
 
   const {
     eventData: { params: eventParams, metadata: eventMetadata },

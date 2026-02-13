@@ -490,8 +490,9 @@ export class StorageDictionaryManager extends QueriesHelper {
       ];
     };
 
-    const allAccountAssetBalanceHistDataStorageFetchPromise = async () => {
-      const data: AccountAssetBalanceHistoricalDatumGql[][] = [];
+    const allAccountHistDataStorageFetchPromise = async () => {
+      const accBalancesHistData: AccountAssetBalanceHistoricalDatumGql[][] = [];
+      const accMmPositionHistData: AccountMmPositionHistoricalDatumGql[][] = [];
 
       for await (const page of this.fetchAllPages({
         limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
@@ -499,48 +500,88 @@ export class StorageDictionaryManager extends QueriesHelper {
         topic: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
       })) {
         if (!page) continue;
-        const encodedPageData: AccountAssetBalanceHistoricalDatumGql[] =
+        const accBalancesEncodedPageData: AccountAssetBalanceHistoricalDatumGql[] =
           encodeBlockCompressedData<AccountAssetBalanceHistoricalDatumGql>({
             data: page,
             dataKey: BlockCompressedDataKey.accAssetBalancesHistoricalData,
           });
-
-        data.push(encodedPageData as AccountAssetBalanceHistoricalDatumGql[]);
-      }
-
-      return [
-        {
-          pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
-          data: data.flat(),
-        },
-      ];
-    };
-
-    const allAccountMmPositionHistDataStorageFetchPromise = async () => {
-      const data: AccountMmPositionHistoricalDatumGql[][] = [];
-
-      for await (const page of this.fetchAllPages({
-        limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
-        requestPromise: fetchBlockCompressedDataPaginated,
-        topic: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
-      })) {
-        if (!page) continue;
-        const encodedPageData: AccountMmPositionHistoricalDatumGql[] =
+        const accMmPosEncodedPageData: AccountMmPositionHistoricalDatumGql[] =
           encodeBlockCompressedData<AccountMmPositionHistoricalDatumGql>({
             data: page,
             dataKey: BlockCompressedDataKey.accMmPositionHistoricalData,
           });
 
-        data.push(encodedPageData as AccountMmPositionHistoricalDatumGql[]);
+        accBalancesHistData.push(
+          accBalancesEncodedPageData as AccountAssetBalanceHistoricalDatumGql[]
+        );
+        accMmPositionHistData.push(
+          accMmPosEncodedPageData as AccountMmPositionHistoricalDatumGql[]
+        );
       }
 
       return [
         {
+          pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+          data: accBalancesHistData.flat(),
+        },
+        {
           pallet: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
-          data: data.flat(),
+          data: accMmPositionHistData.flat(),
         },
       ];
     };
+
+    // const allAccountAssetBalanceHistDataStorageFetchPromise = async () => {
+    //   const data: AccountAssetBalanceHistoricalDatumGql[][] = [];
+    //
+    //   for await (const page of this.fetchAllPages({
+    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+    //     requestPromise: fetchBlockCompressedDataPaginated,
+    //     topic: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+    //   })) {
+    //     if (!page) continue;
+    //     const encodedPageData: AccountAssetBalanceHistoricalDatumGql[] =
+    //       encodeBlockCompressedData<AccountAssetBalanceHistoricalDatumGql>({
+    //         data: page,
+    //         dataKey: BlockCompressedDataKey.accAssetBalancesHistoricalData,
+    //       });
+    //
+    //     data.push(encodedPageData as AccountAssetBalanceHistoricalDatumGql[]);
+    //   }
+    //
+    //   return [
+    //     {
+    //       pallet: ProcessingTopic.ACCOUNT_ASSET_BALANCE_HIST_DATA,
+    //       data: data.flat(),
+    //     },
+    //   ];
+    // };
+
+    // const allAccountMmPositionHistDataStorageFetchPromise = async () => {
+    //   const data: AccountMmPositionHistoricalDatumGql[][] = [];
+    //
+    //   for await (const page of this.fetchAllPages({
+    //     limit: this.batchCtx.appConfig.STORAGE_DICTIONARY_PAGINATION_PAGE_SIZE,
+    //     requestPromise: fetchBlockCompressedDataPaginated,
+    //     topic: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+    //   })) {
+    //     if (!page) continue;
+    //     const encodedPageData: AccountMmPositionHistoricalDatumGql[] =
+    //       encodeBlockCompressedData<AccountMmPositionHistoricalDatumGql>({
+    //         data: page,
+    //         dataKey: BlockCompressedDataKey.accMmPositionHistoricalData,
+    //       });
+    //
+    //     data.push(encodedPageData as AccountMmPositionHistoricalDatumGql[]);
+    //   }
+    //
+    //   return [
+    //     {
+    //       pallet: ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA,
+    //       data: data.flat(),
+    //     },
+    //   ];
+    // };
 
     const execFetchPromiseWithTimeLog = async (
       fn: () => Promise<PalletDictionaryCollectedData[]>,
@@ -554,18 +595,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     };
 
     console.time('Dictionary API call executed in');
-    // const fullResponse = await Promise.all([
-    //   allLbpPoolStorageFetchPromise(),
-    //   allXykPoolStorageFetchPromise(),
-    //   allOmnipoolStorageFetchPromise(),
-    //   allStablepoolStorageFetchPromise(),
-    //   allAavepoolsStorageFetchPromise(),
-    //   allEmaOraclesStorageFetchPromise(),
-    //   allAssetHistDataStorageFetchPromise(),
-    //   allMmAggregatorOraclesStorageFetchPromise(),
-    //   allAccountAssetBalanceHistDataStorageFetchPromise(),
-    //   allAccountMmPositionHistDataStorageFetchPromise(),
-    // ]);
     const fullResponse = await Promise.all([
       execFetchPromiseWithTimeLog(
         allLbpPoolStorageFetchPromise,
@@ -587,29 +616,13 @@ export class StorageDictionaryManager extends QueriesHelper {
         allGenericStorageFetchPromise,
         'allGenericStorageFetchPromise'
       ),
-      // execFetchPromiseWithTimeLog(
-      //   allAavepoolsStorageFetchPromise,
-      //   'allAavepoolsStorageFetchPromise'
-      // ),
-      // execFetchPromiseWithTimeLog(
-      //   allEmaOraclesStorageFetchPromise,
-      //   'allEmaOraclesStorageFetchPromise'
-      // ),
-      // execFetchPromiseWithTimeLog(
-      //   allAssetHistDataStorageFetchPromise,
-      //   'allAssetHistDataStorageFetchPromise'
-      // ),
       execFetchPromiseWithTimeLog(
         allMmAggregatorOraclesStorageFetchPromise,
         'allMmAggregatorOraclesStorageFetchPromise'
       ),
       execFetchPromiseWithTimeLog(
-        allAccountAssetBalanceHistDataStorageFetchPromise,
-        'allAccountAssetBalanceHistDataStorageFetchPromise'
-      ),
-      execFetchPromiseWithTimeLog(
-        allAccountMmPositionHistDataStorageFetchPromise,
-        'allAccountMmPositionHistDataStorageFetchPromise'
+        allAccountHistDataStorageFetchPromise,
+        'allAccountHistDataStorageFetchPromise'
       ),
     ]);
 

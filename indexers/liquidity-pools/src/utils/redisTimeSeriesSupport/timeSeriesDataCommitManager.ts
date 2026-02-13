@@ -75,9 +75,6 @@ export class TimeSeriesDataCommitManager {
       priceVolumeDataLatestProcessedBlock,
     } = job.data;
 
-    console.log(
-      `commitAssetPriceVolumeJobHandler // jobId ${job.id} // blockHeight ${priceVolumeDataLatestProcessedBlock}`
-    );
 
     if (
       (actionName !== DataCommitterJobName.commitAssetPriceVolume &&

@@ -74,6 +74,7 @@ import {
   handleLiquidityBalancesInTotalBalances,
   handleUnchangedAccountAssetBalances,
 } from '../../../handlers/balances/accountTotalBalance';
+import { correlateAssetSpotPrices } from './utils';
 
 export async function handleAccountBalancesReaggregation(
   ctx: SqdProcessorContext<Store>
@@ -366,81 +367,4 @@ export async function handleAccountBalancesReaggregation(
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
-}
-
-function correlateAssetSpotPrices(ctx: SqdProcessorContext<Store>) {
-  const spotPricesMap = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
-
-  // Group spot prices by asset pair (assetInId-assetOutId)
-  const spotPricesByAssetPair = new Map<
-    string,
-    AssetSpotPriceHistoricalData[]
-  >();
-
-  for (const spotPrice of spotPricesMap.values()) {
-    const pairKey = `${spotPrice.assetInId}-${spotPrice.assetOutId}`;
-    if (!spotPricesByAssetPair.has(pairKey)) {
-      spotPricesByAssetPair.set(pairKey, []);
-    }
-    spotPricesByAssetPair.get(pairKey)!.push(spotPrice);
-  }
-
-  // Sort spot prices by block height for each asset pair
-  for (const prices of spotPricesByAssetPair.values()) {
-    prices.sort((a, b) => a.paraBlockHeight - b.paraBlockHeight);
-  }
-
-  // Get the block range being processed
-  const blocks = ctx.blocks;
-
-  // For each asset pair, backfill gaps
-  for (const prices of spotPricesByAssetPair.values()) {
-    if (prices.length === 0) continue;
-
-    // Create a map of block height to price for fast lookups
-    const pricesByBlockHeight = new Map<number, AssetSpotPriceHistoricalData>();
-    for (const price of prices) {
-      pricesByBlockHeight.set(price.paraBlockHeight, price);
-    }
-
-    // Track the last known price as we iterate through blocks
-    let lastKnownPrice: AssetSpotPriceHistoricalData | null = null;
-
-    // Find the most recent price before the first block in the range
-    for (let i = prices.length - 1; i >= 0; i--) {
-      if (prices[i].paraBlockHeight < blocks[0].header.height) {
-        lastKnownPrice = prices[i];
-        break;
-      }
-    }
-
-    // For each block in the processing range (assuming blocks are sorted by height)
-    for (const block of blocks) {
-      const blockHeight = block.header.height;
-
-      // Check if there's already a price for this block
-      if (pricesByBlockHeight.has(blockHeight)) {
-        // Update lastKnownPrice to this existing price
-        lastKnownPrice = pricesByBlockHeight.get(blockHeight)!;
-      } else if (lastKnownPrice) {
-        // Create a new spot price entry for this block using the last known price
-        const newId = `${lastKnownPrice.assetInId}-${lastKnownPrice.assetOutId}-${blockHeight}`;
-
-        const newSpotPrice = new AssetSpotPriceHistoricalData({
-          id: newId,
-          assetInId: lastKnownPrice.assetInId,
-          assetOutId: lastKnownPrice.assetOutId,
-          price: lastKnownPrice.price,
-          priceNormalised: lastKnownPrice.priceNormalised,
-          priceRoute: lastKnownPrice.priceRoute,
-          paraBlockHeight: blockHeight,
-        });
-
-        // Add to the global map
-        spotPricesMap.set(newSpotPrice.id, newSpotPrice);
-        // Update the lookup map (though we won't need it since we use lastKnownPrice)
-        pricesByBlockHeight.set(blockHeight, newSpotPrice);
-      }
-    }
-  }
 }

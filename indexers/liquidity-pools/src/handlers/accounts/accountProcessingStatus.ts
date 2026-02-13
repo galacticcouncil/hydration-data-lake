@@ -4,7 +4,10 @@ import { Store } from '@subsquid/typeorm-store';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
 import { getPreviousAssetAccountBalancesSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
 import { RawAccountAssetBalanceHistoricalData } from '../balances/accountTotalBalance';
-import { getAccountProcessingStatusesToProcess } from '../../utils/pgConnectionManagers/queries/getAccountProcessingStatusesToProcess';
+import {
+  getAccountProcessingStatusesToProcess,
+  getWhitelistedAccountProcessingStatusesToProcess,
+} from '../../utils/pgConnectionManagers/queries/getAccountProcessingStatusesToProcess';
 import { In } from 'typeorm';
 import {
   getNewAccount,
@@ -95,12 +98,14 @@ export async function addAccountsToPeriodicalBalancesAggregation({
     accountsFromSubstrateEventsPerBlock: new Map(),
     allProcessedAccountsPerBlock: new Map(),
   },
+  whitelistedAccountIds,
   ctx,
 }: {
   involvedAccountsAccumulators: {
     accountsFromSubstrateEventsPerBlock: Map<number, Set<string>>;
     allProcessedAccountsPerBlock: Map<number, Set<string>>;
   };
+  whitelistedAccountIds?: string[];
   ctx: SqdProcessorContext<Store>;
 }) {
   const allAccountsInBatch = new Set<string>();
@@ -114,17 +119,30 @@ export async function addAccountsToPeriodicalBalancesAggregation({
   let accountStatusesToProcess: RawAccountProcessingStatus[] = [];
 
   try {
-    accountStatusesToProcess = (
-      await pgPool.query<RawAccountProcessingStatus>(
-        getAccountProcessingStatusesToProcess,
-        [
-          Array.from(allAccountsInBatch.values()),
-          ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE,
-          ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS,
-          ctx.blocks[0].header.height,
-        ]
-      )
-    ).rows;
+    if (whitelistedAccountIds && whitelistedAccountIds.length > 0) {
+      accountStatusesToProcess = (
+        await pgPool.query<RawAccountProcessingStatus>(
+          getWhitelistedAccountProcessingStatusesToProcess,
+          [
+            whitelistedAccountIds,
+            ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS,
+            ctx.blocks[0].header.height,
+          ]
+        )
+      ).rows;
+    } else {
+      accountStatusesToProcess = (
+        await pgPool.query<RawAccountProcessingStatus>(
+          getAccountProcessingStatusesToProcess,
+          [
+            Array.from(allAccountsInBatch.values()),
+            ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE,
+            ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS,
+            ctx.blocks[0].header.height,
+          ]
+        )
+      ).rows;
+    }
   } catch (e) {
     console.log(e);
   }

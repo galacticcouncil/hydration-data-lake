@@ -21,11 +21,17 @@ import {
 import { initAllAccountsOnColdStart } from '../accounts/allAccountsInit';
 import parsers from '../../parsers';
 import { updateAccountProcessingStatusOnTotalBalanceChange } from '../accounts/accountProcessingStatus';
+import { getOrCreateAccount } from '../accounts';
 
-export async function handleAllAccountBalancesInit(
-  ctx: SqdProcessorContext<Store>,
-  blockHeight?: number
-) {
+export async function handleAllAccountBalancesInit({
+  ctx,
+  blockHeight,
+  whitelistedAccountIds,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  blockHeight?: number;
+  whitelistedAccountIds?: string[];
+}) {
   if (!ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_INIT) return;
   console.log(
     `[ allAccountBalancesInit ] :: Initializing all account balances.`
@@ -60,9 +66,18 @@ export async function handleAllAccountBalancesInit(
     console.timeEnd('initAllAccountsOnColdStart');
   }
 
-  const allInitializedAccounts = await ctx.storeUtils.findWithLogs(Account, {
+  let allInitializedAccounts = await ctx.storeUtils.findWithLogs(Account, {
     where: {},
   });
+
+  if (whitelistedAccountIds && whitelistedAccountIds.length > 0) {
+    allInitializedAccounts = [];
+    for (const whitelistedAccountId of whitelistedAccountIds) {
+      allInitializedAccounts.push(
+        await getOrCreateAccount({ ctx, id: whitelistedAccountId })
+      );
+    }
+  }
 
   const accountIdsList = allInitializedAccounts.map((acc) => acc.id);
 

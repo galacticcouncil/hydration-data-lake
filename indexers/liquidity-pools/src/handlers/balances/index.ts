@@ -60,7 +60,7 @@ export async function handleAssetAccountBalances(
 
   if (ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_INIT) {
     console.time('handleAllAccountBalancesInit');
-    preProcessedTotalBalances = await handleAllAccountBalancesInit(ctx);
+    preProcessedTotalBalances = await handleAllAccountBalancesInit({ ctx });
     console.timeEnd('handleAllAccountBalancesInit');
   }
 

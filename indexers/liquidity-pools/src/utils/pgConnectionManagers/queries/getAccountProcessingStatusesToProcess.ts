@@ -16,3 +16,21 @@ export const getAccountProcessingStatusesToProcess = `
     balances_aggregated_at_para_block ASC NULLS FIRST
   LIMIT $2;  -- $2: number of records to select
 `;
+
+export const getWhitelistedAccountProcessingStatusesToProcess = `
+  SELECT id,
+         mm_reserve_balances_initialized_at_para_block,
+         balances_aggregated_at_para_block
+  FROM account_processing_status
+  WHERE id = ANY($1::text[])
+    AND (
+      balances_aggregated_at_para_block IS NULL
+      OR balances_aggregated_at_para_block + $2 <= $3
+    )
+  ORDER BY
+    CASE
+        WHEN balances_aggregated_at_para_block IS NULL THEN 0
+    ELSE 1
+  END ASC,
+    balances_aggregated_at_para_block ASC NULLS FIRST;
+`;

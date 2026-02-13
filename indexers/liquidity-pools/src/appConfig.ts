@@ -422,6 +422,14 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly TS_REDIS_KEY_SPACE_ID: number = 3;
 
+  readonly REMOTE_ASSET_SPOT_PRICES_DICTIONARY_DB_CON_STRING?: string;
+
+  @Transform(
+    ({ value }: { value: string }) =>
+      new Set(value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id)))
+  )
+  readonly WHITELISTED_ACCOUNTS_TO_TRACK_BALANCES: Set<string> = new Set();
+
   /**
    * RPC endpoint URL (either http(s) or ws(s))
    */

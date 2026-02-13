@@ -123,9 +123,6 @@ export class RuntimeApiResolver {
       args as unknown as CurrenciesApiAccountsBatchInput
     );
 
-    console.dir(runtimeApiResp, { depth: null });
-
-    console.log(`\n\n\n`);
     if (!runtimeApiResp) return null;
 
     return null;
