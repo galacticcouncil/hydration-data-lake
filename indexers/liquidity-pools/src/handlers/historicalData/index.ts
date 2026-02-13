@@ -292,7 +292,7 @@ export class HistoricalDataManager {
       ctx
     );
     await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
-      ctx
+      { ctx }
     );
     const assetHistDataToSaveMap = await getAssetHistDataWithUniqueData(
       ctx.batchState.state.assetsHistoricalDataBatch,

@@ -13,7 +13,10 @@ import parsers from '../parsers';
 import { SqdProcessorContext } from '../processor';
 import { CommonPgPool } from './pgConnectionManagers/pgPool';
 import { getLatestXykpoolHistoricalData } from './pgConnectionManagers/queries/getLatestXykpoolHistoricalData.sql';
-import { getLatestAssetSpotPriceHistoricalData } from './pgConnectionManagers/queries/getLatestAssetSpotPriceHistoricalData.sql';
+import {
+  getLatestAssetSpotPriceHistoricalData,
+  getLatestAssetSpotPriceHistoricalDataByAssetRegistryId,
+} from './pgConnectionManagers/queries/getLatestAssetSpotPriceHistoricalData.sql';
 import { getLatestAssetHistoricalData } from './pgConnectionManagers/queries/getLatestAssetHistoricalData.sql';
 import { BlockHeader } from '@subsquid/substrate-processor';
 
@@ -156,11 +159,19 @@ export class LatestProcessedDataCacheManager {
    * Batch fetch latest asset spot price historical data using raw SQL with DISTINCT ON
    * Replaces N sequential queries with 1 batch query
    */
-  async fetchLatestAssetSpotPriceHistDataBatch(
-    assetInIds: string[],
-    maxBlockHeight: number,
-    ctx: SqdProcessorContext<Store>
-  ): Promise<AssetSpotPriceHistoricalData[]> {
+  async fetchLatestAssetSpotPriceHistDataBatch({
+    assetInIds,
+    maxBlockHeight,
+    ctx,
+    dbPool,
+    findPricesByAssetRegistryId = false,
+  }: {
+    assetInIds: string[];
+    maxBlockHeight: number;
+    ctx: SqdProcessorContext<Store>;
+    dbPool?: CommonPgPool;
+    findPricesByAssetRegistryId?: boolean;
+  }): Promise<AssetSpotPriceHistoricalData[]> {
     const startTime = performance.now();
 
     try {
@@ -176,10 +187,12 @@ export class LatestProcessedDataCacheManager {
         throw new Error(`Invalid maxBlockHeight: ${maxBlockHeight}`);
       }
 
-      const pgPool = CommonPgPool.getInstance();
+      const pgPool = dbPool ?? CommonPgPool.getInstance();
 
       const result = await pgPool.query<RawAssetSpotPriceHistoricalDataRow>(
-        getLatestAssetSpotPriceHistoricalData,
+        findPricesByAssetRegistryId
+          ? getLatestAssetSpotPriceHistoricalDataByAssetRegistryId
+          : getLatestAssetSpotPriceHistoricalData,
         [assetInIds, maxBlockHeight]
       );
 
@@ -406,11 +419,19 @@ export class LatestProcessedDataCacheManager {
   /**
    * ======================  Asset Spot Price Historical Data =============================
    */
-  async prefetchLastAssetSpotPriceHistDataItem(
-    ctx: SqdProcessorContext<Store>,
-    blockHeader?: BlockHeader
-  ) {
+  async prefetchLastAssetSpotPriceHistDataItem({
+    ctx,
+    blockHeader,
+    dbPool,
+    enforcePrefetch = false,
+  }: {
+    ctx: SqdProcessorContext<Store>;
+    blockHeader?: BlockHeader;
+    dbPool?: CommonPgPool;
+    enforcePrefetch?: boolean;
+  }) {
     if (this.assetSpotPriceHistoricalDataItemsCache.size !== 0) return;
+
     const currentBlockHeader =
       blockHeader ?? ctx.blocks[ctx.blocks.length - 1].header;
 
@@ -420,21 +441,38 @@ export class LatestProcessedDataCacheManager {
       { className: 'AssetSpotPriceHistoricalData' }
     );
 
-    if (!hasAnyRecord) {
+    if (!enforcePrefetch && !hasAnyRecord) {
       console.log(
         'AssetSpotPriceHistoricalData table is empty, skipping prefetch'
       );
       return;
     }
 
-    const storageDataAllAssets = (
-      await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
-    ).filter((res) => !!res.data);
+    let assetInIds: string[] = [];
+    let findPricesByAssetRegistryId = false;
 
-    // Collect asset IDs (as assetInId for spot prices)
-    const assetInIds = storageDataAllAssets.map((assetData) =>
-      assetData.assetId.toString()
-    );
+    if (ctx.batchState.state.assetsAll.size > 0) {
+      assetInIds = Array.from(ctx.batchState.state.assetsAll.values()).map(
+        (a) => a.id
+      );
+    } else {
+      /**
+       * In this case there is tricky situation because
+       * parsers.storage.assetRegistry.getAssetAll returns assetRegistryIds
+       * but not assetIds. This can be a reason that prices for assets
+       * where assetId != assetRegistryId will not be prefetched. That's
+       * why we need to fetch prices with different query (with additional JOIN)
+       */
+      const storageDataAllAssets = (
+        await parsers.storage.assetRegistry.getAssetAll(currentBlockHeader)
+      ).filter((res) => !!res.data);
+
+      // Collect asset IDs (as assetInId for spot prices)
+      assetInIds = storageDataAllAssets.map((assetData) =>
+        assetData.assetId.toString()
+      );
+      findPricesByAssetRegistryId = true;
+    }
 
     if (assetInIds.length === 0) {
       console.log('No assets to prefetch for AssetSpotPriceHistoricalData');
@@ -442,11 +480,13 @@ export class LatestProcessedDataCacheManager {
     }
 
     // OPTIMIZED: Single batch query instead of N sequential queries
-    const latestEntities = await this.fetchLatestAssetSpotPriceHistDataBatch(
+    const latestEntities = await this.fetchLatestAssetSpotPriceHistDataBatch({
       assetInIds,
-      currentBlockHeader.height,
-      ctx
-    );
+      maxBlockHeight: currentBlockHeader.height,
+      ctx,
+      dbPool,
+      findPricesByAssetRegistryId,
+    });
 
     this.setLastAssetSpotPriceHistoricalDataItem(latestEntities);
   }

@@ -90,6 +90,7 @@ import { Pool } from 'pg';
 import { CommonPgPool } from '../../../utils/pgConnectionManagers/pgPool';
 import { AppConfig } from '../../../appConfig';
 import { correlateAssetSpotPrices } from './utils';
+import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 
 const appConfig = AppConfig.getInstance();
 
@@ -282,6 +283,7 @@ export async function whitelistedAccountBalancesTrackingProcessor(
       {
         fromBlock: ctx.blocks[0].header.height,
         toBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
+        ctx,
       }
     );
 
@@ -394,6 +396,10 @@ export async function whitelistedAccountBalancesTrackingProcessor(
   console.time('saveAccountBalancesRelatedDataBulk');
   await HistoricalDataManager.saveAccountBalancesRelatedDataBulk(ctx);
   console.timeEnd('saveAccountBalancesRelatedDataBulk');
+
+  LatestProcessedDataCacheManager.getInstance().setLastAssetSpotPriceHistoricalDataItem(
+    Array.from(ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values())
+  );
 
   console.time('updateInitialIndexingFinishedAtTime');
   await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);
@@ -677,20 +683,41 @@ class RemoteSpotPricesDictionary {
   async getAssetSpotPriceHistoricalDataForBlocksRange({
     fromBlock,
     toBlock,
+    ctx,
   }: {
     fromBlock: number;
     toBlock: number;
+    ctx: SqdProcessorContext<Store>;
   }) {
+    console.time(
+      'getAssetSpotPriceHistoricalDataForBlocksRange :: getAssetSpotPriceHistoricalDataForBlocksRange'
+    );
     const spotPricesAccumulatorMap: Map<string, AssetSpotPriceHistoricalData> =
       new Map();
-
-    console.time('getAssetSpotPriceHistoricalDataForBlocksRange');
 
     const result = await this.pool.query(
       this.getAssetSpotPricesByBlockRangeQuery,
       [fromBlock, toBlock]
     );
-    console.timeEnd('getAssetSpotPriceHistoricalDataForBlocksRange');
+
+    if (!result || result.rows.length === 0) {
+      throw new Error('Spot prices not found in remote dictionary.');
+    }
+
+    await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
+      {
+        ctx,
+        blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(fromBlock),
+        dbPool: this.pool,
+        enforcePrefetch: true,
+      }
+    );
+
+    for (const [id, price] of LatestProcessedDataCacheManager.getInstance()
+      .getAllCachedLastAssetSpotPriceHistoricalDataItems()
+      .entries()) {
+      spotPricesAccumulatorMap.set(id, price);
+    }
 
     for (const {
       id,
@@ -714,6 +741,9 @@ class RemoteSpotPricesDictionary {
       );
     }
 
+    console.timeEnd(
+      'getAssetSpotPriceHistoricalDataForBlocksRange :: getAssetSpotPriceHistoricalDataForBlocksRange'
+    );
     return spotPricesAccumulatorMap;
   }
 }

@@ -181,8 +181,7 @@ export async function handleAccountBalancesReaggregation(
   console.time('prefetchLastAssetSpotPriceHistDataItem');
 
   await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
-    ctx,
-    ctx.blocks[0].header
+    { ctx, blockHeader: ctx.blocks[0].header }
   );
 
   const spotPricesFromPreviousBatch =

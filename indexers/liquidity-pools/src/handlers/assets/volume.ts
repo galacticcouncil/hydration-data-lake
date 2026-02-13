@@ -280,9 +280,11 @@ async function ensureAssetSpotPricesForAssetVolumes({
     ] of assetsWithNoCachedSpotPrice.entries()) {
       const latestPrices =
         await LatestProcessedDataCacheManager.getInstance().fetchLatestAssetSpotPriceHistDataBatch(
-          Array.from(assetIds.values()),
-          blockNumber,
-          ctx
+          {
+            assetInIds: Array.from(assetIds.values()),
+            maxBlockHeight: blockNumber,
+            ctx,
+          }
         );
 
       if (!latestPrices || latestPrices.length === 0) continue;
