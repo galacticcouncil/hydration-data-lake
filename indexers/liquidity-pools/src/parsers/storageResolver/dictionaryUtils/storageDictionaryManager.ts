@@ -336,7 +336,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       const encodedDataAavepool: AavepoolGlq[][] = [];
       const encodedDataAssetHistoricalDatum: AssetHistoricalDatumGql[][] = [];
       const encodedDataEmaOracleGql: EmaOracleGql[][] = [];
-      
+
       if (
         appConfig.STORAGE_DICTIONARY_TOPICS_TO_FETCH.has(
           ProcessingTopic.GENERIC_HIST_DATA
@@ -580,6 +580,11 @@ export class StorageDictionaryManager extends QueriesHelper {
       console.time(`:: >>> Dictionary API call [${fnName}] executed in`);
       const resp = await fn();
       console.timeEnd(`:: >>> Dictionary API call [${fnName}] executed in`);
+      let fetchedResults = `:: >>>>>> `;
+      for (const respItem of resp) {
+        fetchedResults += `${respItem.pallet}: ${respItem.data.length} || `;
+      }
+      console.log(fetchedResults);
 
       return resp;
     };
