@@ -9,7 +9,8 @@ export const getLatestAssetSpotPriceHistoricalData = `
     para_block_height
   FROM asset_spot_price_historical_data
   WHERE asset_in_id = ANY($1::text[])
-    AND para_block_height < $2
+    AND asset_out_id = $2
+    AND para_block_height < $3
   ORDER BY asset_in_id, para_block_height DESC;
 `;
 
@@ -25,6 +26,7 @@ export const getLatestAssetSpotPriceHistoricalDataByAssetRegistryId = `
   FROM asset_spot_price_historical_data asphd
     JOIN asset asset_in ON asset_in.id = asphd.asset_in_id
   WHERE asset_in.asset_registry_id = ANY($1::text[])
-    AND asphd.para_block_height < $2
+    AND asphd.asset_out_id = $2
+    AND asphd.para_block_height < $3
   ORDER BY asphd.asset_in_id, asphd.para_block_height DESC;
 `;

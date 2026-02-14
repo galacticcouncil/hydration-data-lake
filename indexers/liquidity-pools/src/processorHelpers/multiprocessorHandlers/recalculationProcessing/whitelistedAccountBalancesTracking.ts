@@ -689,12 +689,10 @@ class RemoteSpotPricesDictionary {
     toBlock: number;
     ctx: SqdProcessorContext<Store>;
   }) {
-    console.time(
-      'getAssetSpotPriceHistoricalDataForBlocksRange :: getAssetSpotPriceHistoricalDataForBlocksRange'
-    );
     const spotPricesAccumulatorMap: Map<string, AssetSpotPriceHistoricalData> =
       new Map();
 
+    console.log();
     const result = await this.pool.query(
       this.getAssetSpotPricesByBlockRangeQuery,
       [fromBlock, toBlock]
@@ -713,10 +711,10 @@ class RemoteSpotPricesDictionary {
       }
     );
 
-    for (const [id, price] of LatestProcessedDataCacheManager.getInstance()
+    for (const price of LatestProcessedDataCacheManager.getInstance()
       .getAllCachedLastAssetSpotPriceHistoricalDataItems()
-      .entries()) {
-      spotPricesAccumulatorMap.set(id, price);
+      .values()) {
+      spotPricesAccumulatorMap.set(price.id, price);
     }
 
     for (const {
@@ -741,9 +739,6 @@ class RemoteSpotPricesDictionary {
       );
     }
 
-    console.timeEnd(
-      'getAssetSpotPriceHistoricalDataForBlocksRange :: getAssetSpotPriceHistoricalDataForBlocksRange'
-    );
     return spotPricesAccumulatorMap;
   }
 }

@@ -46,11 +46,24 @@ export function correlateAssetSpotPrices(
       pricesByBlockHeight.set(price.paraBlockHeight, price);
     }
 
-    // Find the first price in the range (prices are already sorted by height)
-    const firstPrice = prices[0];
-
-    // Track the last known price as we iterate through blocks
+    // Find the latest price before blocks[0] to use for forward-filling
     let lastKnownPrice: AssetSpotPriceHistoricalData | null = null;
+    for (const price of prices) {
+      if (price.paraBlockHeight < blocks[0].header.height) {
+        lastKnownPrice = price;
+      } else {
+        break; // prices are sorted, no need to continue
+      }
+    }
+
+    // Find the first price within the block range for backward-filling
+    let firstPriceInRange: AssetSpotPriceHistoricalData | null = null;
+    for (const price of prices) {
+      if (price.paraBlockHeight >= blocks[0].header.height) {
+        firstPriceInRange = price;
+        break;
+      }
+    }
 
     // For each block in the processing range (assuming blocks are sorted by height)
     for (const block of blocks) {
@@ -77,17 +90,17 @@ export function correlateAssetSpotPrices(
         // Add to the global map
         spotPricesMap.set(newSpotPrice.id, newSpotPrice);
         pricesByBlockHeight.set(blockHeight, newSpotPrice);
-      } else if (blockHeight < firstPrice.paraBlockHeight) {
+      } else if (firstPriceInRange && blockHeight < firstPriceInRange.paraBlockHeight) {
         // Backward-fill: use the first price in range for blocks before it
-        const newId = `${firstPrice.assetInId}-${firstPrice.assetOutId}-${blockHeight}`;
+        const newId = `${firstPriceInRange.assetInId}-${firstPriceInRange.assetOutId}-${blockHeight}`;
 
         const newSpotPrice = new AssetSpotPriceHistoricalData({
           id: newId,
-          assetInId: firstPrice.assetInId,
-          assetOutId: firstPrice.assetOutId,
-          price: firstPrice.price,
-          priceNormalised: firstPrice.priceNormalised,
-          priceRoute: firstPrice.priceRoute,
+          assetInId: firstPriceInRange.assetInId,
+          assetOutId: firstPriceInRange.assetOutId,
+          price: firstPriceInRange.price,
+          priceNormalised: firstPriceInRange.priceNormalised,
+          priceRoute: firstPriceInRange.priceRoute,
           paraBlockHeight: blockHeight,
         });
 

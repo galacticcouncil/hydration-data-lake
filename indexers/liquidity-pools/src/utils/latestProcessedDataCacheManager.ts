@@ -193,7 +193,7 @@ export class LatestProcessedDataCacheManager {
         findPricesByAssetRegistryId
           ? getLatestAssetSpotPriceHistoricalDataByAssetRegistryId
           : getLatestAssetSpotPriceHistoricalData,
-        [assetInIds, maxBlockHeight]
+        [assetInIds, ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID, maxBlockHeight]
       );
 
       // Map raw rows to entities
