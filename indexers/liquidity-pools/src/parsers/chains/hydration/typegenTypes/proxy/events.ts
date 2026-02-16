@@ -4,6 +4,7 @@ import * as v115 from '../v115'
 import * as v160 from '../v160'
 import * as v170 from '../v170'
 import * as v205 from '../v205'
+import * as v394 from '../v394'
 
 export const proxyExecuted =  {
     name: 'Proxy.ProxyExecuted',
@@ -41,6 +42,15 @@ export const proxyExecuted =  {
         'Proxy.ProxyExecuted',
         sts.struct({
             result: sts.result(() => sts.unit(), () => v205.DispatchError),
+        })
+    ),
+    /**
+     * A proxy was executed correctly, with the given.
+     */
+    v394: new EventType(
+        'Proxy.ProxyExecuted',
+        sts.struct({
+            result: sts.result(() => sts.unit(), () => v394.DispatchError),
         })
     ),
 }
@@ -159,6 +169,22 @@ export const pureCreated =  {
             who: v170.AccountId32,
             proxyType: v170.ProxyType,
             disambiguationIndex: sts.number(),
+        })
+    ),
+}
+
+export const depositPoked =  {
+    name: 'Proxy.DepositPoked',
+    /**
+     * A deposit stored for proxies or announcements was poked / updated.
+     */
+    v394: new EventType(
+        'Proxy.DepositPoked',
+        sts.struct({
+            who: v394.AccountId32,
+            kind: v394.DepositKind,
+            oldDeposit: sts.bigint(),
+            newDeposit: sts.bigint(),
         })
     ),
 }

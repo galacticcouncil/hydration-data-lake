@@ -11,35 +11,20 @@ import {
   AssetResourceType,
 } from '../../model';
 import parsers from '../../parsers';
-import {
-  AssetRegistryLocationSetData,
-} from '../../parsers/batchBlocksParser/types';
-import {
-  getErc20AssetContractFromLocation,
-} from '../../parsers/chains/hydration/utils';
+import { AssetRegistryLocationSetData } from '../../parsers/batchBlocksParser/types';
+import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
 import {
   AssetLocationJunction,
   AssetRegistryAssetLocation,
 } from '../../parsers/types/events';
-import {
-  AssetDetailsWithId,
-  BondDetails,
-} from '../../parsers/types/storage';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
+import { AssetDetailsWithId, BondDetails } from '../../parsers/types/storage';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetHubManager } from '../../utils/assetHubManager';
 import { EvmUtils } from '../../utils/evm';
-import {
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import { anyToStringAllKeys } from '../../utils/helpers';
-import {
-  getOrCreateAsset,
-  getOrCreateMoneyMarketAsset,
-} from './asset';
+import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from './asset';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAll = new Map(
@@ -551,47 +536,18 @@ export async function getNewAssetMultiLocationFromStorageData({
 
   if (storageData.interior.__kind === 'Here') return tpl;
 
-  if (storageData.interior.__kind === 'X1') {
-    // const newInterior = new AssetMultiLocationsInterior({
-    //   kind: storageData.interior.value
-    //     .__kind as AssetMultiLocationsInteriorKind,
-    // });
-    //
-    // const interiorValueKeys = Object.keys(storageData.interior.value).filter(
-    //   (k) => k !== '__kind'
-    // );
-    // for (const k of interiorValueKeys) {
-    //   const valueRaw = storageData.interior.value[k];
-    //   if (k === 'value' && typeof valueRaw === 'object') {
-    //     const newValueInterior = new AssetMultiLocationsInterior({
-    //       kind: valueRaw.__kind as AssetMultiLocationsInteriorKind,
-    //     });
-    //   } else {
-    //     newInterior[k as keyof AssetMultiLocationsInterior] =
-    //       anyToStringAllKeys(valueRaw);
-    //   }
-    // }
-    // tpl.interior.push(newInterior);
+  if (
+    storageData.interior.__kind === 'X1' &&
+    !Array.isArray(storageData.interior.value)
+  ) {
     tpl.interior.push(
       getNewAssetMultiLocationsInterior(storageData.interior.value)
     );
     return tpl;
   }
 
-  for (const interiorValue of storageData.interior.value) {
-    // const newInterior = new AssetMultiLocationsInterior({
-    //   kind: interiorValue.__kind as AssetMultiLocationsInteriorKind,
-    // });
-    //
-    // const interiorValueKeys = Object.keys(interiorValue).filter(
-    //   (k) => k !== '__kind'
-    // );
-    // for (const k of interiorValueKeys) {
-    //   newInterior[k as keyof AssetMultiLocationsInterior] = anyToStringAllKeys(
-    //     interiorValue[k]
-    //   );
-    // }
-    // tpl.interior.push(newInterior);
+  for (const interiorValue of storageData.interior
+    .value as AssetLocationJunction[]) {
     tpl.interior.push(getNewAssetMultiLocationsInterior(interiorValue));
   }
 

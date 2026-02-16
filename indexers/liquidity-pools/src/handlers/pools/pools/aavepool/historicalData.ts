@@ -3,18 +3,10 @@ import pMap from 'p-map';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Aavepool,
-  AavepoolHistoricalData,
-  Asset,
-} from '../../../../model';
+import { Aavepool, AavepoolHistoricalData, Asset } from '../../../../model';
 import parsers from '../../../../parsers';
-import {
-  BatchBlocksParsedDataManager,
-} from '../../../../parsers/batchBlocksParser';
-import {
-  AaveTradeExecutorPoolDataWithPoolId,
-} from '../../../../parsers/runtimeApiResolver/types';
+import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
+import { AaveTradeExecutorPoolDataWithPoolId } from '../../../../parsers/runtimeApiResolver/types';
 import { SqdProcessorContext } from '../../../../processor';
 import { splitIntoBatches } from '../../../../utils/helpers';
 import { getOrCreateAsset } from '../../../assets/asset';
@@ -26,10 +18,14 @@ export async function handleAavepoolHistoricalData(
 ) {
   ctx.batchState.state.aavePools = new Map(
     (
-      await ctx.storeUtils.findWithLogs(Aavepool, {
-        where: {},
-        relations: {},
-      }, { className: 'Aavepool' })
+      await ctx.storeUtils.findWithLogs(
+        Aavepool,
+        {
+          where: {},
+          relations: {},
+        },
+        { className: 'Aavepool' }
+      )
     ).map((p) => [p.id, p])
   );
 
@@ -82,10 +78,12 @@ export async function handleAavepoolHistoricalData(
           ensure: true,
           blockHeader,
           ctx,
-        })
+        });
 
         if (!reserveAsset) {
-          console.log(`handleAavepoolHistoricalData :: reserve asset not found for pool ${pool.id} at block ${blockHeader.height}`);
+          console.log(
+            `handleAavepoolHistoricalData :: reserve asset not found for pool ${pool.id} at block ${blockHeader.height}`
+          );
           return;
         }
 
@@ -102,15 +100,17 @@ export async function handleAavepoolHistoricalData(
               `${reserveAsset.variableDebtTokenId}-${blockHeader.height}`
             );
         } else {
- 
           let debtAsset: Asset | undefined = undefined;
-          if(reserveAsset?.variableDebtTokenId) {
-            debtAsset = await ctx.storeUtils.findOneWithLogs(Asset, {
-              where: { id: reserveAsset?.variableDebtTokenId as string },
-              relations: {},
-            }, { className: 'Asset' });
+          if (reserveAsset?.variableDebtTokenId) {
+            debtAsset = await ctx.storeUtils.findOneWithLogs(
+              Asset,
+              {
+                where: { id: reserveAsset?.variableDebtTokenId as string },
+                relations: {},
+              },
+              { className: 'Asset' }
+            );
           }
-          console.log({debtAsset})
           if (debtAsset)
             variableDebtTokenHistData =
               ctx.batchState.state.assetsHistoricalDataBatch.get(
@@ -124,16 +124,22 @@ export async function handleAavepoolHistoricalData(
           ensure: true,
           blockHeader,
           ctx,
-        })
+        });
 
         if (!aToken) {
-          console.log(`handleAavepoolHistoricalData :: aToken asset not found for pool ${pool.id} at block ${blockHeader.height}`);
+          console.log(
+            `handleAavepoolHistoricalData :: aToken asset not found for pool ${pool.id} at block ${blockHeader.height}`
+          );
           return;
         }
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+        const block = ctx.batchState.getParaBlockFromCacheByHeight(
+          blockHeader.height
+        );
         if (!block) {
-          throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+          throw new Error(
+            `Block not found in cache for height ${blockHeader.height}`
+          );
         }
 
         const poolHistoricalDataEntity = new AavepoolHistoricalData({

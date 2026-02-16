@@ -492,14 +492,21 @@ async function getAssetLocation({
     fn: async () => {
       if (block.specVersion < 108) return null;
 
-      if (storage.assetRegistry.assetLocations.v108.is(block)) {
-        const resp = await storage.assetRegistry.assetLocations.v108.get(
+      if (storage.assetRegistry.assetLocations.v394.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v394.get(
+          block,
+          +assetId
+        );
+        return (resp as AssetRegistryAssetLocation) ?? null;
+      }
+
+      if (storage.assetRegistry.assetLocations.v244.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v244.get(
           block,
           +assetId
         );
         return resp ?? null;
       }
-
       if (storage.assetRegistry.assetLocations.v160.is(block)) {
         const resp = await storage.assetRegistry.assetLocations.v160.get(
           block,
@@ -508,8 +515,8 @@ async function getAssetLocation({
         return resp ?? null;
       }
 
-      if (storage.assetRegistry.assetLocations.v244.is(block)) {
-        const resp = await storage.assetRegistry.assetLocations.v244.get(
+      if (storage.assetRegistry.assetLocations.v108.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v108.get(
           block,
           +assetId
         );
@@ -552,10 +559,29 @@ async function getAssetLocationsMany({
         Array.from(responseMap.keys()),
         200
       )) {
-        if (storage.assetRegistry.assetLocations.v108.is(block)) {
+        if (storage.assetRegistry.assetLocations.v394.is(block)) {
           await tryExecOrReturnFallback(async () => {
             const resp =
-              await storage.assetRegistry.assetLocations.v108.getMany(
+              await storage.assetRegistry.assetLocations.v394.getMany(
+                block,
+                idsDecorated
+              );
+            subBatch.forEach((assetId, index) => {
+              if (resp[index]) {
+                responseMap.set(assetId, {
+                  assetId: assetId,
+                  location: resp[index] as AssetRegistryAssetLocation,
+                });
+              }
+            });
+          }, null);
+          continue;
+        }
+
+        if (storage.assetRegistry.assetLocations.v244.is(block)) {
+          await tryExecOrReturnFallback(async () => {
+            const resp =
+              await storage.assetRegistry.assetLocations.v244.getMany(
                 block,
                 idsDecorated
               );
@@ -592,10 +618,10 @@ async function getAssetLocationsMany({
           continue;
         }
 
-        if (storage.assetRegistry.assetLocations.v244.is(block)) {
+        if (storage.assetRegistry.assetLocations.v108.is(block)) {
           await tryExecOrReturnFallback(async () => {
             const resp =
-              await storage.assetRegistry.assetLocations.v244.getMany(
+              await storage.assetRegistry.assetLocations.v108.getMany(
                 block,
                 idsDecorated
               );

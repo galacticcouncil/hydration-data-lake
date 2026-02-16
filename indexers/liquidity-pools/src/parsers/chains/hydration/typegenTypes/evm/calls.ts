@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
 import * as v193 from '../v193'
+import * as v394 from '../v394'
 
 export const withdraw =  {
     name: 'EVM.withdraw',
@@ -34,6 +35,24 @@ export const call =  {
             accessList: sts.array(() => sts.tuple(() => [v193.H160, sts.array(() => v193.H256)])),
         })
     ),
+    /**
+     * Issue an EVM call operation. This is similar to a message call transaction in Ethereum.
+     */
+    v394: new CallType(
+        'EVM.call',
+        sts.struct({
+            source: v394.H160,
+            target: v394.H160,
+            input: sts.bytes(),
+            value: sts.bigint(),
+            gasLimit: sts.bigint(),
+            maxFeePerGas: sts.bigint(),
+            maxPriorityFeePerGas: sts.option(() => sts.bigint()),
+            nonce: sts.option(() => sts.bigint()),
+            accessList: sts.array(() => sts.tuple(() => [v394.H160, sts.array(() => v394.H256)])),
+            authorizationList: sts.array(() => v394.AuthorizationListItem),
+        })
+    ),
 }
 
 export const create =  {
@@ -55,6 +74,24 @@ export const create =  {
             accessList: sts.array(() => sts.tuple(() => [v193.H160, sts.array(() => v193.H256)])),
         })
     ),
+    /**
+     * Issue an EVM create operation. This is similar to a contract creation transaction in
+     * Ethereum.
+     */
+    v394: new CallType(
+        'EVM.create',
+        sts.struct({
+            source: v394.H160,
+            init: sts.bytes(),
+            value: sts.bigint(),
+            gasLimit: sts.bigint(),
+            maxFeePerGas: sts.bigint(),
+            maxPriorityFeePerGas: sts.option(() => sts.bigint()),
+            nonce: sts.option(() => sts.bigint()),
+            accessList: sts.array(() => sts.tuple(() => [v394.H160, sts.array(() => v394.H256)])),
+            authorizationList: sts.array(() => v394.AuthorizationListItem),
+        })
+    ),
 }
 
 export const create2 =  {
@@ -74,6 +111,24 @@ export const create2 =  {
             maxPriorityFeePerGas: sts.option(() => sts.bigint()),
             nonce: sts.option(() => sts.bigint()),
             accessList: sts.array(() => sts.tuple(() => [v193.H160, sts.array(() => v193.H256)])),
+        })
+    ),
+    /**
+     * Issue an EVM create2 operation.
+     */
+    v394: new CallType(
+        'EVM.create2',
+        sts.struct({
+            source: v394.H160,
+            init: sts.bytes(),
+            salt: v394.H256,
+            value: sts.bigint(),
+            gasLimit: sts.bigint(),
+            maxFeePerGas: sts.bigint(),
+            maxPriorityFeePerGas: sts.option(() => sts.bigint()),
+            nonce: sts.option(() => sts.bigint()),
+            accessList: sts.array(() => sts.tuple(() => [v394.H160, sts.array(() => v394.H256)])),
+            authorizationList: sts.array(() => v394.AuthorizationListItem),
         })
     ),
 }

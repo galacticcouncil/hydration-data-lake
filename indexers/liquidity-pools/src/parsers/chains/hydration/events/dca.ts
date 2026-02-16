@@ -85,8 +85,8 @@ function parseTradeExecutedParams(
 }
 
 function parseTradeFailedParams(event: SqdEvent): DcaTradeFailedEventParams {
-  if (events.dca.tradeFailed.v160.is(event)) {
-    const { id, who, error } = events.dca.tradeFailed.v160.decode(event);
+  if (events.dca.tradeFailed.v394.is(event)) {
+    const { id, who, error } = events.dca.tradeFailed.v394.decode(event);
     return {
       id,
       who,
@@ -103,13 +103,22 @@ function parseTradeFailedParams(event: SqdEvent): DcaTradeFailedEventParams {
       error,
     };
   }
+  if (events.dca.tradeFailed.v160.is(event)) {
+    const { id, who, error } = events.dca.tradeFailed.v160.decode(event);
+    return {
+      id,
+      who,
+      // @ts-ignore
+      error,
+    };
+  }
 
   throw new UnknownVersionError(event.name);
 }
 
 function parseTerminatedParams(event: SqdEvent): DcaTerminatedEventParams {
-  if (events.dca.terminated.v160.is(event)) {
-    const { id, who, error } = events.dca.terminated.v160.decode(event);
+  if (events.dca.terminated.v394.is(event)) {
+    const { id, who, error } = events.dca.terminated.v394.decode(event);
     return {
       id,
       who,
@@ -126,7 +135,15 @@ function parseTerminatedParams(event: SqdEvent): DcaTerminatedEventParams {
       error,
     };
   }
-
+  if (events.dca.terminated.v160.is(event)) {
+    const { id, who, error } = events.dca.terminated.v160.decode(event);
+    return {
+      id,
+      who,
+      // @ts-ignore
+      error,
+    };
+  }
   throw new UnknownVersionError(event.name);
 }
 
@@ -145,19 +162,27 @@ function parseCompletedParams(event: SqdEvent): DcaCompletedEventParams {
 function parseRandomnessGenerationFailedParams(
   event: SqdEvent
 ): DcaRandomnessGenerationFailedEventParams {
-  if (events.dca.randomnessGenerationFailed.v160.is(event)) {
+  if (events.dca.randomnessGenerationFailed.v394.is(event)) {
     const { block, error } =
-      events.dca.randomnessGenerationFailed.v160.decode(event);
+      events.dca.randomnessGenerationFailed.v394.decode(event);
     return {
       block,
       // @ts-ignore
       error,
     };
   }
-
   if (events.dca.randomnessGenerationFailed.v205.is(event)) {
     const { block, error } =
       events.dca.randomnessGenerationFailed.v205.decode(event);
+    return {
+      block,
+      // @ts-ignore
+      error,
+    };
+  }
+  if (events.dca.randomnessGenerationFailed.v160.is(event)) {
+    const { block, error } =
+      events.dca.randomnessGenerationFailed.v160.decode(event);
     return {
       block,
       // @ts-ignore
