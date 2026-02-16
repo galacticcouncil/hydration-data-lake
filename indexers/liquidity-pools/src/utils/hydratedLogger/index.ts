@@ -106,7 +106,7 @@ export class HydratedLogger {
     // DB transport (batched)
     this.dbEnabled = cfg.db?.enabled ?? false;
     if (this.dbEnabled) {
-      this.pgClient = new CommonPgPool();
+      this.pgClient = CommonPgPool.getInstance();
 
       this.maxBatchSize = cfg.db?.maxBatchSize ?? 100;
       this.flushIntervalMs = cfg.db?.flushIntervalMs ?? 1000;

@@ -9,6 +9,7 @@ export class DbMigrationsManager extends CommonPgClient {
   private readonly migrationsPath: string;
   private readonly migrationsTable: string;
 
+
   constructor({
     migrationsPath,
     migrationsTable = 'node_pg_migrations',

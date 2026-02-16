@@ -100,7 +100,7 @@ async function initializeServer() {
   try {
     const app = express();
 
-    await runApiDbMigrations();
+    // await runApiDbMigrations();
 
     let postgraphileInstance = null;
 
