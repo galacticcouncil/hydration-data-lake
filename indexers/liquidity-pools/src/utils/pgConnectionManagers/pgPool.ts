@@ -15,14 +15,27 @@ export class CommonPgPool {
     return CommonPgPool.instance;
   }
 
-  constructor() {
+  constructor({
+    connectionString,
+    maxPoolSize = appConfig.DB_POOL_MAX_SIZE,
+    readOnly = false,
+  }: {
+    connectionString?: string;
+    maxPoolSize?: number;
+    readOnly?: boolean;
+  } = {}) {
     this.pool = new Pool({
-      host: appConfig.DB_HOST,
-      port: appConfig.DB_PORT,
-      database: appConfig.DB_NAME,
-      user: appConfig.DB_USER,
-      password: appConfig.DB_PASS,
-      max: appConfig.DB_POOL_MAX_SIZE,
+      ...(connectionString
+        ? { connectionString }
+        : {
+            host: appConfig.DB_HOST,
+            port: appConfig.DB_PORT,
+            database: appConfig.DB_NAME,
+            user: appConfig.DB_USER,
+            password: appConfig.DB_PASS,
+          }),
+      ...(readOnly ? { options: '-c default_transaction_read_only=on' } : {}),
+      max: maxPoolSize,
     });
   }
 
