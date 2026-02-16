@@ -69,10 +69,16 @@ export function getErc20AssetContractFromLocation(
 
   try {
     switch (location.interior.__kind) {
-      case 'X1':
+      case 'X1': {
+        if (Array.isArray(location.interior.value)) {
+          return {
+            address: location.interior.value[0].key,
+          };
+        }
         return {
           address: location.interior.value.key,
         };
+      }
       case 'X2':
         return {
           address: location.interior.value[1].key,

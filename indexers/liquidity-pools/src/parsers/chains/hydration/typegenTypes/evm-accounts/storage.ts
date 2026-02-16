@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v222 from '../v222'
 import * as v264 from '../v264'
+import * as v378 from '../v378'
 
 export const accountExtension =  {
     /**
@@ -72,4 +73,71 @@ export interface ApprovedContractV264  {
     getPairs(block: Block, key: v264.H160): Promise<[k: v264.H160, v: (null | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v264.H160, v: (null | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v264.H160): AsyncIterable<[k: v264.H160, v: (null | undefined)][]>
+}
+
+export const markedEvmAccounts =  {
+    /**
+     *  Tracks accounts that have been marked as EVM accounts.
+     *  An account is marked as EVM account right before we charge the evm fee
+     *  This is used to avoid resetting frame system nonce of accounts.
+     *  When we mark account as EVM account, we increase its sufficients counter by one.
+     *  We never decrease this sufficients, so side effect is that account can never be reaped
+     */
+    v378: new StorageType('EVMAccounts.MarkedEvmAccounts', 'Optional', [v378.AccountId32], sts.unit()) as MarkedEvmAccountsV378,
+}
+
+/**
+ *  Tracks accounts that have been marked as EVM accounts.
+ *  An account is marked as EVM account right before we charge the evm fee
+ *  This is used to avoid resetting frame system nonce of accounts.
+ *  When we mark account as EVM account, we increase its sufficients counter by one.
+ *  We never decrease this sufficients, so side effect is that account can never be reaped
+ */
+export interface MarkedEvmAccountsV378  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v378.AccountId32): Promise<(null | undefined)>
+    getMany(block: Block, keys: v378.AccountId32[]): Promise<(null | undefined)[]>
+    getKeys(block: Block): Promise<v378.AccountId32[]>
+    getKeys(block: Block, key: v378.AccountId32): Promise<v378.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v378.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v378.AccountId32): AsyncIterable<v378.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v378.AccountId32, v: (null | undefined)][]>
+    getPairs(block: Block, key: v378.AccountId32): Promise<[k: v378.AccountId32, v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v378.AccountId32, v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v378.AccountId32): AsyncIterable<[k: v378.AccountId32, v: (null | undefined)][]>
+}
+
+export const allowances =  {
+    /**
+     *  ERC20-style allowances storage for the MultiCurrency precompile:
+     *  (asset_id, owner, spender) -> allowance
+     */
+    v378: new StorageType('EVMAccounts.Allowances', 'Default', [sts.number(), v378.H160, v378.H160], sts.bigint()) as AllowancesV378,
+}
+
+/**
+ *  ERC20-style allowances storage for the MultiCurrency precompile:
+ *  (asset_id, owner, spender) -> allowance
+ */
+export interface AllowancesV378  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): bigint
+    get(block: Block, key1: number, key2: v378.H160, key3: v378.H160): Promise<(bigint | undefined)>
+    getMany(block: Block, keys: [number, v378.H160, v378.H160][]): Promise<(bigint | undefined)[]>
+    getKeys(block: Block): Promise<[number, v378.H160, v378.H160][]>
+    getKeys(block: Block, key1: number): Promise<[number, v378.H160, v378.H160][]>
+    getKeys(block: Block, key1: number, key2: v378.H160): Promise<[number, v378.H160, v378.H160][]>
+    getKeys(block: Block, key1: number, key2: v378.H160, key3: v378.H160): Promise<[number, v378.H160, v378.H160][]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<[number, v378.H160, v378.H160][]>
+    getKeysPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[number, v378.H160, v378.H160][]>
+    getKeysPaged(pageSize: number, block: Block, key1: number, key2: v378.H160): AsyncIterable<[number, v378.H160, v378.H160][]>
+    getKeysPaged(pageSize: number, block: Block, key1: number, key2: v378.H160, key3: v378.H160): AsyncIterable<[number, v378.H160, v378.H160][]>
+    getPairs(block: Block): Promise<[k: [number, v378.H160, v378.H160], v: (bigint | undefined)][]>
+    getPairs(block: Block, key1: number): Promise<[k: [number, v378.H160, v378.H160], v: (bigint | undefined)][]>
+    getPairs(block: Block, key1: number, key2: v378.H160): Promise<[k: [number, v378.H160, v378.H160], v: (bigint | undefined)][]>
+    getPairs(block: Block, key1: number, key2: v378.H160, key3: v378.H160): Promise<[k: [number, v378.H160, v378.H160], v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [number, v378.H160, v378.H160], v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[k: [number, v378.H160, v378.H160], v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number, key2: v378.H160): AsyncIterable<[k: [number, v378.H160, v378.H160], v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number, key2: v378.H160, key3: v378.H160): AsyncIterable<[k: [number, v378.H160, v378.H160], v: (bigint | undefined)][]>
 }

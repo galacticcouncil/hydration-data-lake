@@ -2,6 +2,7 @@ import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../suppor
 import * as v160 from '../v160'
 import * as v295 from '../v295'
 import * as v323 from '../v323'
+import * as v335 from '../v335'
 
 export const schedule =  {
     name: 'DCA.schedule',
@@ -128,6 +129,32 @@ export const terminate =  {
         sts.struct({
             scheduleId: sts.number(),
             nextExecutionBlock: sts.option(() => sts.number()),
+        })
+    ),
+}
+
+export const unlockReserves =  {
+    name: 'DCA.unlock_reserves',
+    /**
+     * Unlocks DCA reserves of provided asset for the caller if they have no active schedules.
+     * 
+     * This is a utility function to help users recover their reserved funds in case
+     * a DCA schedule was terminated but left some reserved amounts.
+     * 
+     * This can only be called when the user has no active DCA schedules.
+     * 
+     * Parameters:
+     * - `origin`: The account to unlock reserves for (must be signed)
+     * - `asset_id`: The asset ID for which reserves should be unlocked.
+     * 
+     * Emits `ReserveUnlocked` event when successful.
+     * 
+     */
+    v335: new CallType(
+        'DCA.unlock_reserves',
+        sts.struct({
+            who: v335.AccountId32,
+            assetId: sts.number(),
         })
     ),
 }

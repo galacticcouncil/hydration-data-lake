@@ -210,3 +210,32 @@ export interface ScheduleExecutionBlockV282  {
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (number | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (number | undefined)][]>
 }
+
+export const scheduleExtraGas =  {
+    /**
+     *  Stores the current extra gas value for each schedule.
+     *  Initialized to 0, increments on EvmOutOfGas, persists after successful execution.
+     *  Cleaned up when schedule terminates or completes.
+     */
+    v394: new StorageType('DCA.ScheduleExtraGas', 'Default', [sts.number()], sts.bigint()) as ScheduleExtraGasV394,
+}
+
+/**
+ *  Stores the current extra gas value for each schedule.
+ *  Initialized to 0, increments on EvmOutOfGas, persists after successful execution.
+ *  Cleaned up when schedule terminates or completes.
+ */
+export interface ScheduleExtraGasV394  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): bigint
+    get(block: Block, key: number): Promise<(bigint | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(bigint | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (bigint | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (bigint | undefined)][]>
+}

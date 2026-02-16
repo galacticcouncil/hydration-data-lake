@@ -1,6 +1,7 @@
 import { events } from '../typegenTypes';
 import { SqdEvent } from '../../../../processor';
 import {
+  AssetRegistryAssetLocation,
   AssetRegistryLocationSetEventParams,
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
@@ -12,39 +13,26 @@ import { UnknownVersionError } from '../../../../utils/errors';
 function parseRegisteredParams(
   event: SqdEvent
 ): AssetRegistryRegisteredEventParams {
-  if (events.assetRegistry.registered.v108.is(event)) {
-    const [assetId, assetName, assetType] =
-      events.assetRegistry.registered.v108.decode(event);
+  if (events.assetRegistry.registered.v264.is(event)) {
+    const {
+      assetId,
+      assetType,
+      assetName,
+      existentialDeposit,
+      isSufficient,
+      symbol,
+      xcmRateLimit,
+      decimals,
+    } = events.assetRegistry.registered.v264.decode(event);
     return {
       assetId,
-      assetName: hexToStrWithNullCharCheck(assetName),
       assetType: assetType.__kind as AssetType,
-      existentialDeposit: BigInt(0),
-      isSufficient: true,
-    };
-  }
-
-  if (events.assetRegistry.registered.v115.is(event)) {
-    const { assetId, assetType, assetName } =
-      events.assetRegistry.registered.v115.decode(event);
-    return {
-      assetId,
       assetName: hexToStrWithNullCharCheck(assetName),
-      assetType: assetType.__kind as AssetType,
-      existentialDeposit: BigInt(0),
-      isSufficient: true,
-    };
-  }
-  if (events.assetRegistry.registered.v176.is(event)) {
-    const { assetId, assetType, assetName } =
-      events.assetRegistry.registered.v176.decode(event);
-
-    return {
-      assetId,
-      assetName: hexToStrWithNullCharCheck(assetName),
-      assetType: assetType.__kind as AssetType,
-      existentialDeposit: BigInt(0),
-      isSufficient: true,
+      existentialDeposit,
+      isSufficient,
+      symbol: hexToStrWithNullCharCheck(symbol),
+      xcmRateLimit,
+      decimals,
     };
   }
   if (events.assetRegistry.registered.v222.is(event)) {
@@ -69,7 +57,46 @@ function parseRegisteredParams(
       decimals,
     };
   }
-  if (events.assetRegistry.registered.v264.is(event)) {
+  if (events.assetRegistry.registered.v176.is(event)) {
+    const { assetId, assetType, assetName } =
+      events.assetRegistry.registered.v176.decode(event);
+
+    return {
+      assetId,
+      assetName: hexToStrWithNullCharCheck(assetName),
+      assetType: assetType.__kind as AssetType,
+      existentialDeposit: BigInt(0),
+      isSufficient: true,
+    };
+  }
+  if (events.assetRegistry.registered.v115.is(event)) {
+    const { assetId, assetType, assetName } =
+      events.assetRegistry.registered.v115.decode(event);
+    return {
+      assetId,
+      assetName: hexToStrWithNullCharCheck(assetName),
+      assetType: assetType.__kind as AssetType,
+      existentialDeposit: BigInt(0),
+      isSufficient: true,
+    };
+  }
+  if (events.assetRegistry.registered.v108.is(event)) {
+    const [assetId, assetName, assetType] =
+      events.assetRegistry.registered.v108.decode(event);
+    return {
+      assetId,
+      assetName: hexToStrWithNullCharCheck(assetName),
+      assetType: assetType.__kind as AssetType,
+      existentialDeposit: BigInt(0),
+      isSufficient: true,
+    };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
+  if (events.assetRegistry.updated.v264.is(event)) {
     const {
       assetId,
       assetType,
@@ -79,7 +106,7 @@ function parseRegisteredParams(
       symbol,
       xcmRateLimit,
       decimals,
-    } = events.assetRegistry.registered.v264.decode(event);
+    } = events.assetRegistry.updated.v264.decode(event);
     return {
       assetId,
       assetType: assetType.__kind as AssetType,
@@ -89,59 +116,6 @@ function parseRegisteredParams(
       symbol: hexToStrWithNullCharCheck(symbol),
       xcmRateLimit,
       decimals,
-    };
-  }
-
-  throw new UnknownVersionError(event.name);
-}
-
-function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
-  if (events.assetRegistry.updated.v108.is(event)) {
-    const [assetId, assetName, assetType] =
-      events.assetRegistry.updated.v108.decode(event);
-    return {
-      assetId,
-      assetName: hexToStrWithNullCharCheck(assetName),
-      assetType: assetType.__kind as AssetType,
-      existentialDeposit: BigInt(0),
-      isSufficient: true,
-    };
-  }
-
-  if (events.assetRegistry.updated.v115.is(event)) {
-    const { assetId, assetType, assetName } =
-      events.assetRegistry.updated.v115.decode(event);
-    return {
-      assetId,
-      assetName: hexToStrWithNullCharCheck(assetName),
-      assetType: assetType.__kind as AssetType,
-      existentialDeposit: BigInt(0),
-      isSufficient: true,
-    };
-  }
-
-  if (events.assetRegistry.updated.v160.is(event)) {
-    const { assetId, assetType, assetName, existentialDeposit, xcmRateLimit } =
-      events.assetRegistry.updated.v160.decode(event);
-    return {
-      assetId,
-      assetName: hexToStrWithNullCharCheck(assetName),
-      assetType: assetType.__kind as AssetType,
-      xcmRateLimit,
-      existentialDeposit,
-      isSufficient: true,
-    };
-  }
-  if (events.assetRegistry.updated.v176.is(event)) {
-    const { assetId, assetType, assetName, existentialDeposit, xcmRateLimit } =
-      events.assetRegistry.updated.v176.decode(event);
-    return {
-      assetId,
-      assetName: hexToStrWithNullCharCheck(assetName),
-      assetType: assetType.__kind as AssetType,
-      xcmRateLimit,
-      existentialDeposit,
-      isSufficient: true,
     };
   }
   if (events.assetRegistry.updated.v222.is(event)) {
@@ -166,26 +140,50 @@ function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
       decimals,
     };
   }
-  if (events.assetRegistry.updated.v264.is(event)) {
-    const {
-      assetId,
-      assetType,
-      assetName,
-      existentialDeposit,
-      isSufficient,
-      symbol,
-      xcmRateLimit,
-      decimals,
-    } = events.assetRegistry.updated.v264.decode(event);
+  if (events.assetRegistry.updated.v176.is(event)) {
+    const { assetId, assetType, assetName, existentialDeposit, xcmRateLimit } =
+      events.assetRegistry.updated.v176.decode(event);
     return {
       assetId,
-      assetType: assetType.__kind as AssetType,
       assetName: hexToStrWithNullCharCheck(assetName),
-      existentialDeposit,
-      isSufficient,
-      symbol: hexToStrWithNullCharCheck(symbol),
+      assetType: assetType.__kind as AssetType,
       xcmRateLimit,
-      decimals,
+      existentialDeposit,
+      isSufficient: true,
+    };
+  }
+  if (events.assetRegistry.updated.v160.is(event)) {
+    const { assetId, assetType, assetName, existentialDeposit, xcmRateLimit } =
+      events.assetRegistry.updated.v160.decode(event);
+    return {
+      assetId,
+      assetName: hexToStrWithNullCharCheck(assetName),
+      assetType: assetType.__kind as AssetType,
+      xcmRateLimit,
+      existentialDeposit,
+      isSufficient: true,
+    };
+  }
+  if (events.assetRegistry.updated.v115.is(event)) {
+    const { assetId, assetType, assetName } =
+      events.assetRegistry.updated.v115.decode(event);
+    return {
+      assetId,
+      assetName: hexToStrWithNullCharCheck(assetName),
+      assetType: assetType.__kind as AssetType,
+      existentialDeposit: BigInt(0),
+      isSufficient: true,
+    };
+  }
+  if (events.assetRegistry.updated.v108.is(event)) {
+    const [assetId, assetName, assetType] =
+      events.assetRegistry.updated.v108.decode(event);
+    return {
+      assetId,
+      assetName: hexToStrWithNullCharCheck(assetName),
+      assetType: assetType.__kind as AssetType,
+      existentialDeposit: BigInt(0),
+      isSufficient: true,
     };
   }
 
@@ -196,18 +194,17 @@ function parseUpdatedParams(event: SqdEvent): AssetRegistryUpdatedEventParams {
 function parseLocationSetParams(
   event: SqdEvent
 ): AssetRegistryLocationSetEventParams {
-  if (events.assetRegistry.locationSet.v108.is(event)) {
-    const [assetId, location] =
-      events.assetRegistry.locationSet.v108.decode(event);
+  if (events.assetRegistry.locationSet.v394.is(event)) {
+    const { assetId, location } =
+      events.assetRegistry.locationSet.v394.decode(event);
     return {
       assetId,
-      location,
+      location: location as AssetRegistryAssetLocation,
     };
   }
-
-  if (events.assetRegistry.locationSet.v115.is(event)) {
+  if (events.assetRegistry.locationSet.v244.is(event)) {
     const { assetId, location } =
-      events.assetRegistry.locationSet.v115.decode(event);
+      events.assetRegistry.locationSet.v244.decode(event);
     return {
       assetId,
       location,
@@ -221,9 +218,17 @@ function parseLocationSetParams(
       location,
     };
   }
-  if (events.assetRegistry.locationSet.v244.is(event)) {
+  if (events.assetRegistry.locationSet.v115.is(event)) {
     const { assetId, location } =
-      events.assetRegistry.locationSet.v244.decode(event);
+      events.assetRegistry.locationSet.v115.decode(event);
+    return {
+      assetId,
+      location,
+    };
+  }
+  if (events.assetRegistry.locationSet.v108.is(event)) {
+    const [assetId, location] =
+      events.assetRegistry.locationSet.v108.decode(event);
     return {
       assetId,
       location,

@@ -4,6 +4,8 @@ import * as v201 from '../v201'
 import * as v205 from '../v205'
 import * as v295 from '../v295'
 import * as v323 from '../v323'
+import * as v335 from '../v335'
+import * as v394 from '../v394'
 
 export const executionStarted =  {
     name: 'DCA.ExecutionStarted',
@@ -127,6 +129,17 @@ export const tradeFailed =  {
             error: v205.DispatchError,
         })
     ),
+    /**
+     * The DCA trade execution is failed
+     */
+    v394: new EventType(
+        'DCA.TradeFailed',
+        sts.struct({
+            id: sts.number(),
+            who: v394.AccountId32,
+            error: v394.DispatchError,
+        })
+    ),
 }
 
 export const terminated =  {
@@ -151,6 +164,17 @@ export const terminated =  {
             id: sts.number(),
             who: v205.AccountId32,
             error: v205.DispatchError,
+        })
+    ),
+    /**
+     * The DCA is terminated and completely removed from the chain
+     */
+    v394: new EventType(
+        'DCA.Terminated',
+        sts.struct({
+            id: sts.number(),
+            who: v394.AccountId32,
+            error: v394.DispatchError,
         })
     ),
 }
@@ -189,6 +213,30 @@ export const randomnessGenerationFailed =  {
         sts.struct({
             block: sts.number(),
             error: v205.DispatchError,
+        })
+    ),
+    /**
+     * Randomness generation failed possibly coming from missing data about relay chain
+     */
+    v394: new EventType(
+        'DCA.RandomnessGenerationFailed',
+        sts.struct({
+            block: sts.number(),
+            error: v394.DispatchError,
+        })
+    ),
+}
+
+export const reserveUnlocked =  {
+    name: 'DCA.ReserveUnlocked',
+    /**
+     * DCA reserve for the given asset have been unlocked for a user
+     */
+    v335: new EventType(
+        'DCA.ReserveUnlocked',
+        sts.struct({
+            who: v335.AccountId32,
+            assetId: sts.number(),
         })
     ),
 }
