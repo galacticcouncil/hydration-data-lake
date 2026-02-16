@@ -1,5 +1,17 @@
 import { BlockHeader } from '@subsquid/substrate-processor';
-import { storage } from '../typegenTypes/';
+
+import { AssetType } from '../../../../model';
+import { UnknownVersionError } from '../../../../utils/errors';
+import {
+  hexToStrWithNullCharCheck,
+  splitIntoBatches,
+  tryExecOrReturnFallback,
+} from '../../../../utils/helpers';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
+import {
+  AssetRegistryAssetLocation,
+  AssetRegistryLocationWithAssetId,
+} from '../../../types/events';
 import {
   AssetDetails,
   AssetDetailsWithId,
@@ -9,20 +21,8 @@ import {
   GetAssetLocationsDataManyInput,
   GetDataAtBlockInput,
 } from '../../../types/storage';
-import {
-  hexToStrWithNullCharCheck,
-  splitIntoBatches,
-  tryExecOrReturnFallback,
-} from '../../../../utils/helpers';
-import { AssetType } from '../../../../model';
-import { UnknownVersionError } from '../../../../utils/errors';
+import { storage } from '../typegenTypes/';
 import { getErc20AssetContractFromLocation } from '../utils';
-import {
-  AssetRegistryAssetLocation,
-  AssetRegistryLocationWithAssetId,
-} from '../../../types/events';
-import { getHydratedLogger } from '../../../../utils/hydratedLogger';
-import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 
 async function getAsset(
   assetId: string | number,
@@ -451,8 +451,18 @@ async function getErc20AssetContractAddress(
     fn: async () => {
       if (block.specVersion < 108) return null;
 
-      if (storage.assetRegistry.assetLocations.v108.is(block)) {
-        const resp = await storage.assetRegistry.assetLocations.v108.get(
+      if (storage.assetRegistry.assetLocations.v394.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v394.get(
+          block,
+          +assetId
+        );
+        return getErc20AssetContractFromLocation(
+          resp as AssetRegistryAssetLocation
+        );
+      }
+
+      if (storage.assetRegistry.assetLocations.v244.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v244.get(
           block,
           +assetId
         );
@@ -467,8 +477,8 @@ async function getErc20AssetContractAddress(
         return getErc20AssetContractFromLocation(resp);
       }
 
-      if (storage.assetRegistry.assetLocations.v244.is(block)) {
-        const resp = await storage.assetRegistry.assetLocations.v244.get(
+      if (storage.assetRegistry.assetLocations.v108.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v108.get(
           block,
           +assetId
         );
@@ -492,14 +502,21 @@ async function getAssetLocation({
     fn: async () => {
       if (block.specVersion < 108) return null;
 
-      if (storage.assetRegistry.assetLocations.v108.is(block)) {
-        const resp = await storage.assetRegistry.assetLocations.v108.get(
+      if (storage.assetRegistry.assetLocations.v394.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v394.get(
+          block,
+          +assetId
+        );
+        return (resp as AssetRegistryAssetLocation) ?? null;
+      }
+
+      if (storage.assetRegistry.assetLocations.v244.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v244.get(
           block,
           +assetId
         );
         return resp ?? null;
       }
-
       if (storage.assetRegistry.assetLocations.v160.is(block)) {
         const resp = await storage.assetRegistry.assetLocations.v160.get(
           block,
@@ -508,8 +525,8 @@ async function getAssetLocation({
         return resp ?? null;
       }
 
-      if (storage.assetRegistry.assetLocations.v244.is(block)) {
-        const resp = await storage.assetRegistry.assetLocations.v244.get(
+      if (storage.assetRegistry.assetLocations.v108.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v108.get(
           block,
           +assetId
         );
@@ -552,10 +569,29 @@ async function getAssetLocationsMany({
         Array.from(responseMap.keys()),
         200
       )) {
-        if (storage.assetRegistry.assetLocations.v108.is(block)) {
+        if (storage.assetRegistry.assetLocations.v394.is(block)) {
           await tryExecOrReturnFallback(async () => {
             const resp =
-              await storage.assetRegistry.assetLocations.v108.getMany(
+              await storage.assetRegistry.assetLocations.v394.getMany(
+                block,
+                idsDecorated
+              );
+            subBatch.forEach((assetId, index) => {
+              if (resp[index]) {
+                responseMap.set(assetId, {
+                  assetId: assetId,
+                  location: resp[index] as AssetRegistryAssetLocation,
+                });
+              }
+            });
+          }, null);
+          continue;
+        }
+
+        if (storage.assetRegistry.assetLocations.v244.is(block)) {
+          await tryExecOrReturnFallback(async () => {
+            const resp =
+              await storage.assetRegistry.assetLocations.v244.getMany(
                 block,
                 idsDecorated
               );
@@ -592,10 +628,10 @@ async function getAssetLocationsMany({
           continue;
         }
 
-        if (storage.assetRegistry.assetLocations.v244.is(block)) {
+        if (storage.assetRegistry.assetLocations.v108.is(block)) {
           await tryExecOrReturnFallback(async () => {
             const resp =
-              await storage.assetRegistry.assetLocations.v244.getMany(
+              await storage.assetRegistry.assetLocations.v108.getMany(
                 block,
                 idsDecorated
               );

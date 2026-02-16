@@ -6,6 +6,7 @@ import * as v176 from '../v176'
 import * as v222 from '../v222'
 import * as v244 from '../v244'
 import * as v264 from '../v264'
+import * as v394 from '../v394'
 
 export const registered =  {
     name: 'AssetRegistry.Registered',
@@ -189,6 +190,16 @@ export const locationSet =  {
         sts.struct({
             assetId: sts.number(),
             location: v244.AssetLocation,
+        })
+    ),
+    /**
+     * Native location set for an asset.
+     */
+    v394: new EventType(
+        'AssetRegistry.LocationSet',
+        sts.struct({
+            assetId: sts.number(),
+            location: v394.AssetLocation,
         })
     ),
 }
