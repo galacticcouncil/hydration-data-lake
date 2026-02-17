@@ -11,6 +11,7 @@ import { hexToStrWithNullCharCheck } from '../../utils/helpers';
 import { AssetType } from '../../model';
 import { UnknownVersionError } from '../../utils/errors';
 import { getErc20AssetContractFromLocation } from '../utils';
+import { AssetRegistryAssetLocation } from '../types/events';
 
 async function getAsset(
   assetId: string | number,
@@ -380,6 +381,15 @@ async function getErc20AssetContractAddress(
       +assetId
     );
     return getErc20AssetContractFromLocation(resp);
+  }
+  if (storage.assetRegistry.assetLocations.v394.is(block)) {
+    const resp = await storage.assetRegistry.assetLocations.v394.get(
+      block,
+      +assetId
+    );
+    return getErc20AssetContractFromLocation(
+      resp as AssetRegistryAssetLocation
+    );
   }
 
   throw new UnknownVersionError('storage.assetRegistry.assetLocations');

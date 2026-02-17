@@ -2,6 +2,7 @@ import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../suppor
 import * as v138 from '../v138'
 import * as v257 from '../v257'
 import * as v282 from '../v282'
+import * as v394 from '../v394'
 
 export const createGlobalFarm =  {
     name: 'OmnipoolLiquidityMining.create_global_farm',
@@ -504,6 +505,75 @@ export const addLiquidityStableswapOmnipoolAndJoinFarms =  {
             stablePoolId: sts.number(),
             stableAssetAmounts: sts.array(() => v282.AssetAmount),
             farmEntries: sts.option(() => sts.array(() => sts.tuple(() => [sts.number(), sts.number()]))),
+        })
+    ),
+    /**
+     * This function allows user to add liquidity to stableswap pool,
+     * then adding the stable shares as liquidity to omnipool
+     * then use that omnipool shares to join multiple farms.
+     * 
+     * If farm entries are not specified (empty vectoo), then the liquidities are still added to the pools
+     * 
+     * Parameters:
+     * - `origin`: owner of the omnipool position to deposit into the liquidity mining.
+     * - `stable_pool_id`: id of the stableswap pool to add liquidity to.
+     * - `stable_asset_amounts`: amount of each asset to be deposited into the stableswap pool.
+     * - `farm_entries`: list of farms to join.
+     * - `min_shares_limit`: optional minimum Omnipool shares to receive (slippage protection).
+     *                       Applies to Omnipool step only. None defaults to no protection.
+     * 
+     * Emits `LiquidityAdded` events from both pool
+     * Emits `SharesDeposited` event for the first farm entry
+     * Emits `SharesRedeposited` event for each farm entry after the first one
+     * 
+     */
+    v394: new CallType(
+        'OmnipoolLiquidityMining.add_liquidity_stableswap_omnipool_and_join_farms',
+        sts.struct({
+            stablePoolId: sts.number(),
+            stableAssetAmounts: sts.array(() => v394.AssetAmount),
+            farmEntries: sts.option(() => sts.array(() => sts.tuple(() => [sts.number(), sts.number()]))),
+            minSharesLimit: sts.option(() => sts.bigint()),
+        })
+    ),
+}
+
+export const removeLiquidityStableswapOmnipoolAndExitFarms =  {
+    name: 'OmnipoolLiquidityMining.remove_liquidity_stableswap_omnipool_and_exit_farms',
+    /**
+     * Remove liquidity from stableswap and omnipool, optionally exiting associated yield farms.
+     * 
+     * This extrinsic reverses the operation performed by `add_liquidity_stableswap_omnipool_and_join_farms`,
+     * with optional farm exit to match the optional farm join in the add function.
+     * 
+     * It performs the following steps in order:
+     * 1. [OPTIONAL] If deposit_id is provided: Exits from ALL yield farms associated with the deposit (claiming rewards)
+     * 2. Removes liquidity from the omnipool to retrieve stableswap shares (protected by omnipool_min_limit)
+     * 3. Removes liquidity from the stableswap pool to retrieve underlying assets (protected by stableswap_min_amounts_out)
+     * 
+     * The stabelswap liquidity asset removal strategy is determined by the `min_amounts_out` parameter length:
+     * - If 1 asset is specified: Uses `remove_liquidity_one_asset` (trading fee applies)
+     * - If multiple assets: Uses `remove_liquidity` (proportional, no trading fee)
+     * 
+     * Parameters:
+     * - `origin`: Owner of the omnipool position
+     * - `position_id`: The omnipool position NFT ID to remove liquidity from
+     * - `omnipool_min_limit`: The min amount of asset to be removed from omnipool (slippage protection)
+     * - `stableswap_min_amounts_out`: Asset IDs and minimum amounts minimum amounts of each asset to receive from omnipool.
+     * - `deposit_id`: Optional liquidity mining deposit NFT ID. If provided, exits all farms first.
+     * 
+     * Emits events:
+     * - If deposit_id provided: `RewardClaimed`, `SharesWithdrawn`, `DepositDestroyed`
+     * - Always: Omnipool's `LiquidityRemoved`, Stableswap's `LiquidityRemoved`
+     * 
+     */
+    v394: new CallType(
+        'OmnipoolLiquidityMining.remove_liquidity_stableswap_omnipool_and_exit_farms',
+        sts.struct({
+            positionId: sts.bigint(),
+            omnipoolMinLimit: sts.bigint(),
+            stableswapMinAmountsOut: sts.array(() => v394.AssetAmount),
+            depositId: sts.option(() => sts.bigint()),
         })
     ),
 }

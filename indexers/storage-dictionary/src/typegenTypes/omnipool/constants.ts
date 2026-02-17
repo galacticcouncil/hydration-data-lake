@@ -2,6 +2,7 @@ import {sts, Block, Bytes, Option, Result, ConstantType, RuntimeCtx} from '../su
 import * as v115 from '../v115'
 import * as v148 from '../v148'
 import * as v287 from '../v287'
+import * as v394 from '../v394'
 
 export const hdxAssetId =  {
     /**
@@ -127,5 +128,15 @@ export const burnProtocolFee =  {
     v287: new ConstantType(
         'Omnipool.BurnProtocolFee',
         v287.Permill
+    ),
+}
+
+export const hubDestination =  {
+    /**
+     *  Destination account when hub asset is sold
+     */
+    v394: new ConstantType(
+        'Omnipool.HubDestination',
+        v394.AccountId32
     ),
 }

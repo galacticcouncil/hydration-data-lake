@@ -2,6 +2,7 @@ import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../sup
 import * as v100 from '../v100'
 import * as v205 from '../v205'
 import * as v244 from '../v244'
+import * as v394 from '../v394'
 
 export const totalIssuance =  {
     /**
@@ -213,6 +214,10 @@ export const holds =  {
      *  Holds on account balances.
      */
     v244: new StorageType('Balances.Holds', 'Default', [v244.AccountId32], sts.array(() => v244.IdAmount)) as HoldsV244,
+    /**
+     *  Holds on account balances.
+     */
+    v394: new StorageType('Balances.Holds', 'Default', [v394.AccountId32], sts.array(() => v394.IdAmount)) as HoldsV394,
 }
 
 /**
@@ -249,6 +254,24 @@ export interface HoldsV244  {
     getPairs(block: Block, key: v244.AccountId32): Promise<[k: v244.AccountId32, v: (v244.IdAmount[] | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v244.AccountId32, v: (v244.IdAmount[] | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v244.AccountId32): AsyncIterable<[k: v244.AccountId32, v: (v244.IdAmount[] | undefined)][]>
+}
+
+/**
+ *  Holds on account balances.
+ */
+export interface HoldsV394  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): v394.IdAmount[]
+    get(block: Block, key: v394.AccountId32): Promise<(v394.IdAmount[] | undefined)>
+    getMany(block: Block, keys: v394.AccountId32[]): Promise<(v394.IdAmount[] | undefined)[]>
+    getKeys(block: Block): Promise<v394.AccountId32[]>
+    getKeys(block: Block, key: v394.AccountId32): Promise<v394.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v394.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v394.AccountId32): AsyncIterable<v394.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v394.AccountId32, v: (v394.IdAmount[] | undefined)][]>
+    getPairs(block: Block, key: v394.AccountId32): Promise<[k: v394.AccountId32, v: (v394.IdAmount[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v394.AccountId32, v: (v394.IdAmount[] | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v394.AccountId32): AsyncIterable<[k: v394.AccountId32, v: (v394.IdAmount[] | undefined)][]>
 }
 
 export const freezes =  {
