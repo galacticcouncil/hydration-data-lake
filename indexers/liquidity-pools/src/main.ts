@@ -66,7 +66,7 @@ async function runProcessor() {
          * though the migrations runner function will handle such collision with
          * retries logic, however, it will take more time.
          */
-        await runProcessorCustomDbMigrations();
+        // await runProcessorCustomDbMigrations();
         customDbMigrationsExecuted = true;
       }
       printV8MemoryHeap();
