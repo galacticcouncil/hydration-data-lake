@@ -263,7 +263,8 @@ async function initializeServer() {
 
     app.use(express.json());
 
-    app.use('/rest', cors(corsOptions), restRouter);
+    // app.use('/rest', cors(corsOptions), restRouter);
+    app.use('/rest', restRouter);
 
     const swaggerDocsPath = appConfig.BASE_PATH
       ? `${appConfig.BASE_PATH}/api/rest/docs`
@@ -282,14 +283,14 @@ async function initializeServer() {
 
     app.post(
       `${ProxyApiRoute.subscan}/*all`,
-      cors(corsOptions),
+      // cors(corsOptions),
       // @ts-ignore
       handleProxyReqSubscan
     );
 
     app.get(
       `${ProxyApiRoute.defillama}/*all`,
-      cors(corsOptions),
+      // cors(corsOptions),
       // @ts-ignore
       handleProxyReqDefillama
     );
