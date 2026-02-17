@@ -76,6 +76,7 @@ async function initializeServer() {
             },
             'public',
             {
+              enableCors: true,
               graphiql: true,
               watchPg: true,
               showErrorStack: false,
