@@ -86,4 +86,4 @@ scale:
     profile: xlarge
   api:
     profile: large
-    replicas: 2
+#    replicas: 2
