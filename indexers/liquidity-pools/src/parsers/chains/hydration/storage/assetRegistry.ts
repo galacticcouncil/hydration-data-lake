@@ -474,6 +474,15 @@ async function getErc20AssetContractAddress(
         );
         return getErc20AssetContractFromLocation(resp);
       }
+      if (storage.assetRegistry.assetLocations.v394.is(block)) {
+        const resp = await storage.assetRegistry.assetLocations.v394.get(
+          block,
+          +assetId
+        );
+        return getErc20AssetContractFromLocation(
+          resp as AssetRegistryAssetLocation
+        );
+      }
 
       throw new UnknownVersionError('storage.assetRegistry.assetLocations');
     },
