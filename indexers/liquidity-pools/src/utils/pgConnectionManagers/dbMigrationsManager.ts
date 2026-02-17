@@ -5,10 +5,10 @@ import { AppConfig } from '../../appConfig';
 
 const migrations = require('node-pg-migrate');
 
-export class DbMigrationsManager extends CommonPgClient {
+export class DbMigrationsManager {
   private readonly migrationsPath: string;
   private readonly migrationsTable: string;
-
+  private pgClient: CommonPgClient;
 
   constructor({
     migrationsPath,
@@ -17,15 +17,16 @@ export class DbMigrationsManager extends CommonPgClient {
     migrationsPath: string;
     migrationsTable?: string;
   }) {
-    super();
     this.migrationsPath = migrationsPath;
     this.migrationsTable = migrationsTable;
+    // Use singleton instance to avoid creating multiple connections
+    this.pgClient = CommonPgClient.getInstance();
   }
 
   async runMigrations() {
     const appConfig = AppConfig.getInstance();
 
-    await this.connectWithRetry();
+    await this.pgClient.connectWithRetry();
 
     const runWithRetries = async (
       max = appConfig.DB_CUSTOM_MIGRATIONS_MAX_RETRY,
@@ -40,7 +41,7 @@ export class DbMigrationsManager extends CommonPgClient {
             migrationsSchema: appConfig.STATE_SCHEMA_NAME,
             migrationsTable: this.migrationsTable,
             schema: 'public',
-            dbClient: this.pgClient,
+            dbClient: this.pgClient.pgClient,
             // dir: getEnvPath('apiSupport/apiMigrations/migrations'),
             dir: getEnvPath(this.migrationsPath),
             direction: 'up',
@@ -51,12 +52,12 @@ export class DbMigrationsManager extends CommonPgClient {
           } else {
             console.log(`There are no pending DB migrations.`);
           }
-          await this.pgClient.end();
+          await this.pgClient.pgClient.end();
           return;
         } catch (err: any) {
           // Try to rollback any active transaction before proceeding
           try {
-            await this.pgClient.query('ROLLBACK');
+            await this.pgClient.pgClient.query('ROLLBACK');
           } catch (rollbackErr) {
             // Ignore rollback errors - transaction may not be active
           }
@@ -65,7 +66,7 @@ export class DbMigrationsManager extends CommonPgClient {
             console.error('Error executing migrations:', err);
 
             try {
-              await this.pgClient.end();
+              await this.pgClient.pgClient.end();
             } catch (closeErr) {
               console.error('Error closing database connection:', closeErr);
             }

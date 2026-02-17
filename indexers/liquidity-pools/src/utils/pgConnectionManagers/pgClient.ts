@@ -14,15 +14,8 @@ export class CommonPgClient {
   }
 
   constructor() {
-    const appConfig = AppConfig.getInstance();
-
-    this.pgClient = new Client({
-      host: appConfig.DB_HOST,
-      port: appConfig.DB_PORT,
-      database: appConfig.DB_NAME,
-      user: appConfig.DB_USER,
-      password: appConfig.DB_PASS,
-    });
+    // Client will be created during connectWithRetry()
+    this.pgClient = null as any;
   }
 
   async connectWithRetry(
@@ -32,11 +25,12 @@ export class CommonPgClient {
   ): Promise<void> {
     let attempt = 0;
     const appConfig = AppConfig.getInstance();
+    let client: Client | null = null;
 
     while (true) {
       try {
         // Create a new client for each attempt
-        const client = new Client({
+        client = new Client({
           host: appConfig.DB_HOST,
           port: appConfig.DB_PORT,
           database: appConfig.DB_NAME,
@@ -54,6 +48,16 @@ export class CommonPgClient {
         );
         return;
       } catch (e: any) {
+        // Clean up failed client to avoid connection leak
+        if (client) {
+          try {
+            await client.end();
+          } catch (endErr) {
+            // Ignore errors when closing failed connection
+          }
+          client = null;
+        }
+
         if (attempt >= max) {
           console.error(
             `Failed to connect to [PostgreSQL :: CommonPgClient] after ${max} attempts:`,

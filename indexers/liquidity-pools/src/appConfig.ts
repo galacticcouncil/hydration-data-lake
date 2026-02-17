@@ -368,7 +368,7 @@ export class AppConfig {
   readonly DB_ACTION_MAX_BATCH_SIZE: number = 2500;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly DB_POOL_MAX_SIZE: number = 2;
+  readonly DB_POOL_MAX_SIZE: number = 1;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_CUSTOM_MIGRATIONS_MAX_RETRY: number = 10;
