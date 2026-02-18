@@ -15,8 +15,8 @@ deploy:
     env:
       INDEXER_ID: 615
       CHAIN: 'hydration'
-      RPC_URL: 'wss://node-subwhale-6.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-6.shellfish.hydration.cloud'
+      RPC_URL: 'wss://node-owl-5.owl.shadow-senate.com'
+      RPC_URL_HTTPS: 'https://node-owl-5.owl.shadow-senate.com'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
       PROCESS_XYK_POOLS: true
@@ -31,7 +31,7 @@ deploy:
       PROCESS_FROM_BLOCK: 1439857
       PROCESS_TO_BLOCK: -1
 
-      USE_STORAGE_DICTIONARY: true
+      USE_STORAGE_DICTIONARY: false
       STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool/api/graphql'
       STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool/api/graphql'
       STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool/api/graphql'
