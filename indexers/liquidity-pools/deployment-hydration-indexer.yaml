@@ -78,13 +78,13 @@ deploy:
       - sqd
       - api:prod
 scale:
-  dedicated: true
+  dedicated: false
   addons:
     postgres:
-      profile: large
+      profile: small
       storage: 2600G
   processor:
-    profile: xlarge
+    profile: small
   api:
-    profile: xlarge
+    profile: small
 #    replicas: 3
