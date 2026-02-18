@@ -379,6 +379,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_CUSTOM_MIGRATIONS_MAX_DELAY_MS: number = 60000;
 
+  @Transform(({ value }: { value: string }) => (value ? +value : null))
+  readonly API_POSTGRAPHILE_DB_POOL_MAX_SIZE: number | null = null;
+
   @IsNotEmpty()
   readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
 

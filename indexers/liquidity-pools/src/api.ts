@@ -71,6 +71,9 @@ async function initializeServer() {
               database: appConfig.DB_NAME,
               user: appConfig.DB_USER,
               password: appConfig.DB_PASS,
+              ...(appConfig.API_POSTGRAPHILE_DB_POOL_MAX_SIZE
+                ? { max: appConfig.API_POSTGRAPHILE_DB_POOL_MAX_SIZE }
+                : {}),
               // types: pgTypes,
             },
             'public',
