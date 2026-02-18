@@ -8,7 +8,7 @@ import { CacheManager } from '../../../utils/cacheManager';
 import { OmnipoolAssetsLatestTvlResponse } from '../../graphql/plugins/query/omnipool/omnipoolTvlMetrics/resolvers';
 
 export const getReserves = async (
-  req: Request,
+  req: Request<{ underliningAssetId: string; aTokenId: string }>,
   res: Response
 ): Promise<void> => {
   try {

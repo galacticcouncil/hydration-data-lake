@@ -75,7 +75,6 @@ export class TimeSeriesDataCommitManager {
       priceVolumeDataLatestProcessedBlock,
     } = job.data;
 
-
     if (
       (actionName !== DataCommitterJobName.commitAssetPriceVolume &&
         !priceVolumeDataMany) ||
@@ -89,6 +88,8 @@ export class TimeSeriesDataCommitManager {
     await redisTimeSeriesManager.addMultiplePrices(
       job.data.priceVolumeDataMany!
     );
+
+    if (!appConfig.redis.ENABLE_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT) return;
 
     const apiStatePgClient = ApiSupportPgClient.getInstance();
 
@@ -131,6 +132,8 @@ export class TimeSeriesDataCommitManager {
     await redisTimeSeriesManager.addMultipleAccountTotalBalances(
       job.data.accountTotalBalanceMany!
     );
+
+    if (!appConfig.redis.ENABLE_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT) return;
 
     const apiStatePgClient = ApiSupportPgClient.getInstance();
 

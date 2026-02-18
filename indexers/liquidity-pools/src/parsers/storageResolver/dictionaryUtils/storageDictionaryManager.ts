@@ -577,14 +577,14 @@ export class StorageDictionaryManager extends QueriesHelper {
       fn: () => Promise<PalletDictionaryCollectedData[]>,
       fnName: string
     ): Promise<PalletDictionaryCollectedData[]> => {
-      console.time(`:: >>> Dictionary API call [${fnName}] executed in`);
+      // console.time(`:: >>> Dict. API call [${fnName}]`);
       const resp = await fn();
-      console.timeEnd(`:: >>> Dictionary API call [${fnName}] executed in`);
-      let fetchedResults = `:: >>>>>> `;
+      // console.timeEnd(`:: >>> Dict. API call [${fnName}]`);
+      const fetchedResults = [];
       for (const respItem of resp) {
-        fetchedResults += `${respItem.pallet}: ${respItem.data.length} || `;
+        fetchedResults.push(`${respItem.pallet}: ${respItem.data.length}`);
       }
-      console.log(fetchedResults);
+      console.log(`- [${fnName}]: ${fetchedResults.join(' | ')}`);
 
       return resp;
     };

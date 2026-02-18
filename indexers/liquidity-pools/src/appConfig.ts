@@ -202,6 +202,10 @@ class RedisConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: number = 5_000;
 
+  @IsBoolean()
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT: boolean = true;
+
   static getInstance(): RedisConfig {
     if (RedisConfig.instance) return RedisConfig.instance;
 

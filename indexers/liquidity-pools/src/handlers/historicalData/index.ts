@@ -34,6 +34,7 @@ import { getXykpoolsHistDataLatest } from '../pools/pools/xykPool/historicalData
 import { TimeSeriesDataCommitManager } from '../../utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
 import { DataCommitterJobName } from '../../utils/redisTimeSeriesSupport/queueClient';
 import { splitIntoBatches } from '../../utils/helpers';
+import { getAccountTotalBalancesLatest } from '../balances/accountTotalBalanceLatest';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -359,11 +360,15 @@ export class HistoricalDataManager {
     const accountTotalBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
     );
-
+    const accountTotalBalancesLatest = getAccountTotalBalancesLatest({
+      balances: accountTotalBalanceHistoricalDataList,
+      ctx,
+    });
     await Promise.all([
       ctx.storeUtils.upsertWithBatches(accountAssetBalanceHistoricalDataList),
       ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest),
       ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
+      ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest),
       ctx.storeUtils.upsertWithBatches(
         Array.from(ctx.batchState.state.accountProcessingStatuses.values())
       ),
