@@ -67,7 +67,7 @@ deploy:
       TS_REDIS_PORT: 6377
       TS_REDIS_KEY_SPACE_ID: 6
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
-      SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app::-hydration.netlify.app'
+      SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'next-app.hydration.net::hydration.net::-hydra-app.netlify.app::-hydration.netlify.app'
       SUBSCAN_PROXY_API_CORS_ALLOW_LOCALHOST: true
       RPC_URL: 'wss://3.rpc.hydration.cloud'
       RPC_URL_HTTPS: 'https://3.rpc.hydration.cloud'

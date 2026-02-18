@@ -209,7 +209,7 @@ async function initializeServer() {
 
     // app.use('/admin/queues', getBullBoardExpressAdapter().getRouter());
 
-    app.use(cors());
+    app.use(cors({ origin: '*' }));
 
     app.use(postgraphileInstance);
 
