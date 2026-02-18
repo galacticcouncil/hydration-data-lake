@@ -214,6 +214,7 @@ async function initializeServer() {
 
     app.use('/rest', cors(corsOptions), restRouter);
 
+    
     const swaggerDocsPath = appConfig.BASE_PATH
       ? `${appConfig.BASE_PATH}/api/rest/docs`
       : '/api/rest/docs';
