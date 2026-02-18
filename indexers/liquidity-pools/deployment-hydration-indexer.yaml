@@ -72,8 +72,8 @@ deploy:
       RPC_URL: 'wss://3.rpc.hydration.cloud'
       RPC_URL_HTTPS: 'https://3.rpc.hydration.cloud'
       DB_POOL_MAX_SIZE: 1
-      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
-      API_POSTGRAPHILE_DB_POOL_MAX_SIZE: 2
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: true
+#      API_POSTGRAPHILE_DB_POOL_MAX_SIZE: 2
     cmd:
       - sqd
       - api:prod
@@ -86,5 +86,5 @@ scale:
   processor:
     profile: xlarge
   api:
-    profile: large
-    replicas: 3
+    profile: xlarge
+#    replicas: 3
