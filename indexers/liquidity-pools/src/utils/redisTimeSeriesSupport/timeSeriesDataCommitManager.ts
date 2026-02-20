@@ -7,6 +7,7 @@ import {
 } from './queueClient';
 import { DoneCallback, Job } from 'bull';
 import { ApiSupportPgClient } from './apiSupportPgClient';
+import { splitIntoBatches } from '../helpers';
 
 const appConfig = AppConfig.getInstance();
 
@@ -85,11 +86,15 @@ export class TimeSeriesDataCommitManager {
 
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
 
-    await redisTimeSeriesManager.addMultiplePrices(
-      job.data.priceVolumeDataMany!
-    );
+    for (const subBatch of splitIntoBatches(
+      job.data.priceVolumeDataMany!,
+      appConfig.redis.TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE
+    )) {
+      await redisTimeSeriesManager.addMultiplePrices(subBatch);
+    }
 
-    if (!appConfig.redis.ENABLE_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT) return;
+    if (!appConfig.redis.ENABLE_REDIS_TS_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT)
+      return;
 
     const apiStatePgClient = ApiSupportPgClient.getInstance();
 
@@ -129,11 +134,15 @@ export class TimeSeriesDataCommitManager {
 
     const redisTimeSeriesManager = RedisTimeSeriesManager.getInstance();
 
-    await redisTimeSeriesManager.addMultipleAccountTotalBalances(
-      job.data.accountTotalBalanceMany!
-    );
+    for (const subBatch of splitIntoBatches(
+      job.data.accountTotalBalanceMany!,
+      appConfig.redis.TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE
+    )) {
+      await redisTimeSeriesManager.addMultipleAccountTotalBalances(subBatch);
+    }
 
-    if (!appConfig.redis.ENABLE_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT) return;
+    if (!appConfig.redis.ENABLE_REDIS_TS_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT)
+      return;
 
     const apiStatePgClient = ApiSupportPgClient.getInstance();
 

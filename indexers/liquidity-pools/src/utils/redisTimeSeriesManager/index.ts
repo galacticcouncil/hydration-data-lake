@@ -205,16 +205,36 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
       [label: string]: string;
     } = {}
   ) {
-    if (await this.isTimeSeriesExists(key)) return;
     const openClient = await this.getOpenClient();
-    await openClient.ts.create(key, {
-      RETENTION: 0,
-      DUPLICATE_POLICY: TimeSeriesDuplicatePolicies.LAST,
-      LABELS: {
-        indVer: appConfig.INDEXER_ID,
-        ...labels,
-      },
-    });
+    try {
+      // Try to create first (atomic operation)
+      await openClient.ts.create(key, {
+        RETENTION: 0,
+        DUPLICATE_POLICY: TimeSeriesDuplicatePolicies.LAST,
+        LABELS: {
+          indVer: appConfig.INDEXER_ID,
+          ...labels,
+        },
+      });
+    } catch (err: any) {
+      // Gracefully handle concurrent creation attempts
+      if (
+        err.message &&
+        (err.message.includes('TSDB: key already exists') ||
+          err.message.includes('key already exists'))
+      ) {
+        // Key exists, verify it's a valid TimeSeries
+        if (await this.isTimeSeriesExists(key)) {
+          return;
+        }
+        // Key exists but isn't a TimeSeries - this is a problem
+        throw new Error(
+          `Key ${key} exists but is not a TimeSeries. Manual cleanup required.`
+        );
+      }
+      // Re-throw other errors
+      throw err;
+    }
   }
 
   async addToTimeSeries({
@@ -280,20 +300,31 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
         listToSave.push({ key, timestamp, value });
       }
 
-      await pMap(
-        Array.from(keysMap.entries()),
-        ([uniqueKey, indexerData]) =>
-          this.ensureTimeSeries(uniqueKey, {
-            name: indexerData.name,
-            astAId: indexerData.assetAId,
-            astBId: indexerData.assetBId,
-            ...this.getVolumeSeriesLabel(
-              indexerData.assetAId,
-              indexerData.assetBId
-            ),
-          }),
-        { concurrency: 10 }
-      );
+      // await pMap(
+      //   Array.from(keysMap.entries()),
+      //   ([uniqueKey, indexerData]) =>
+      //     this.ensureTimeSeries(uniqueKey, {
+      //       name: indexerData.name,
+      //       astAId: indexerData.assetAId,
+      //       astBId: indexerData.assetBId,
+      //       ...this.getVolumeSeriesLabel(
+      //         indexerData.assetAId,
+      //         indexerData.assetBId
+      //       ),
+      //     }),
+      //   { concurrency: 10 }
+      // );
+      for (const [uniqueKey, indexerData] of keysMap.entries()) {
+        await this.ensureTimeSeries(uniqueKey, {
+          name: indexerData.name,
+          astAId: indexerData.assetAId,
+          astBId: indexerData.assetBId,
+          ...this.getVolumeSeriesLabel(
+            indexerData.assetAId,
+            indexerData.assetBId
+          ),
+        });
+      }
 
       await openClient.ts.mAdd(listToSave);
     } catch (e) {

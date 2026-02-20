@@ -146,9 +146,16 @@ async function processReaper(harvesterClient, reaper, progress) {
         );
       }
 
-      // Get all tables
-      const tables = await getTables(reaperClient);
-      log(`Found ${tables.length} tables to migrate`);
+      // Get all tables (auto-detect or use manual list)
+      let tables;
+      if (config.TABLES_LIST) {
+        tables = config.TABLES_LIST.split(',').map(t => t.trim()).filter(t => t);
+        log(`Using manually specified tables list: ${tables.length} tables`);
+        log(`Tables: ${tables.join(', ')}`);
+      } else {
+        tables = await getTables(reaperClient);
+        log(`Auto-detected ${tables.length} tables from schema`);
+      }
 
       // Get foreign key dependencies
       const dependencies = await getTableDependencies(reaperClient);

@@ -21,6 +21,7 @@ import {
   getFirstAvailableAccTotalBalanceEntity,
 } from './sql/accTotalBalanceHistData.sql';
 import { BigNumber } from '@galacticcouncil/sdk';
+import { splitIntoBatches } from '../helpers';
 
 export interface AssetSpotPriceHistDataResponse {
   id: string;
@@ -62,6 +63,10 @@ export class TimeSeriesApiSupportManager {
     return TimeSeriesApiSupportManager.instance;
   }
 
+  getJobPrefix(name: HistDataScrapperJobName) {
+    return `${HistDataScrapperJobName.assetPriceHistData}_v2`;
+  }
+
   async initHistDataScraper() {
     if (!appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES) return;
 
@@ -71,18 +76,21 @@ export class TimeSeriesApiSupportManager {
     const pgClient = ApiSupportPgClient.getInstance();
     const apiState = await pgClient.getApiState();
 
-    await bullQueueClient.cleanUpScrapperNextTickJobs(
-      HistDataScrapperJobName.assetPriceHistData
-    );
-    await bullQueueClient.cleanUpScrapperNextTickJobs(
-      HistDataScrapperJobName.accountTotalBalancesHistData
-    );
+    // await bullQueueClient.cleanUpScrapperNextTickJobs(
+    //   HistDataScrapperJobName.assetPriceHistData
+    // );
+    // await bullQueueClient.cleanUpScrapperNextTickJobs(
+    //   HistDataScrapperJobName.accountTotalBalancesHistData
+    // );
+
+    await bullQueueClient.wipeScrapperQueue();
 
     await bullQueueClient.setScrapperNextTickJob({
       jobName: HistDataScrapperJobName.assetPriceHistData,
       data: {
         blockHeight: apiState.assetPriceLatestProcessedBlock,
       },
+      customId: `${this.getJobPrefix(HistDataScrapperJobName.assetPriceHistData)}_${apiState.assetPriceLatestProcessedBlock}`,
     });
 
     await bullQueueClient.setScrapperNextTickJob({
@@ -90,6 +98,7 @@ export class TimeSeriesApiSupportManager {
       data: {
         blockHeight: apiState.accTotalBalanceLatestProcBlock,
       },
+      customId: `${this.getJobPrefix(HistDataScrapperJobName.accountTotalBalancesHistData)}_${apiState.accTotalBalanceLatestProcBlock}`,
     });
 
     try {
@@ -123,6 +132,14 @@ export class TimeSeriesApiSupportManager {
     job: Job<HistDataScrapperJobData>,
     done: DoneCallback
   ) {
+    if (
+      !`${job.id}`.startsWith(
+        this.getJobPrefix(HistDataScrapperJobName.assetPriceHistData)
+      )
+    ) {
+      done();
+      return;
+    }
     const processingBlocksRange =
       appConfig.ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE;
     const apiStatePgClient = ApiSupportPgClient.getInstance();
@@ -152,47 +169,52 @@ export class TimeSeriesApiSupportManager {
 
     let processedBlockHeight = 0;
 
-    while (!isResultEmpty) {
-      const assetSpotPriceHistDataChunk =
-        await apiStatePgClient.query<AssetSpotPriceHistDataResponse>(
-          getAssetSpotPricesByBlocksRange,
-          [fromBlockHeight, toBlockHeight]
+    try {
+      while (!isResultEmpty) {
+        const assetSpotPriceHistDataChunk =
+          await apiStatePgClient.query<AssetSpotPriceHistDataResponse>(
+            getAssetSpotPricesByBlocksRange,
+            [fromBlockHeight, toBlockHeight]
+          );
+
+        if (assetSpotPriceHistDataChunk.rows.length === 0) {
+          isResultEmpty = true;
+          break;
+        }
+        console.log(
+          `AssetPriceVol :: Pushing data to TS: ${fromBlockHeight}/${toBlockHeight} >>>`
         );
 
-      if (assetSpotPriceHistDataChunk.rows.length === 0) {
-        isResultEmpty = true;
-        break;
-      }
-      // console.log(
-      //   `AssetPriceVol :: Pushing data to TS: ${fromBlockHeight}/${toBlockHeight}`
-      // );
+        processedBlockHeight =
+          assetSpotPriceHistDataChunk.rows[
+            assetSpotPriceHistDataChunk.rows.length - 1
+          ].para_block_height;
 
-      processedBlockHeight =
-        assetSpotPriceHistDataChunk.rows[
-          assetSpotPriceHistDataChunk.rows.length - 1
-        ].para_block_height;
+        const assetPairVolumesChunk =
+          await apiStatePgClient.query<AssetPairVolumeResponse>(
+            getAssetPairVolumesByBlocksRange,
+            [fromBlockHeight, toBlockHeight]
+          );
 
-      const assetPairVolumesChunk =
-        await apiStatePgClient.query<AssetPairVolumeResponse>(
-          getAssetPairVolumesByBlocksRange,
-          [fromBlockHeight, toBlockHeight]
-        );
-
-      if (assetSpotPriceHistDataChunk.rows.length > 0)
-        await redisTimeSeriesManager.addMultiplePrices(
-          assetSpotPriceHistDataChunk.rows.map((row) => ({
+        if (assetSpotPriceHistDataChunk.rows.length > 0) {
+          const preparedData = assetSpotPriceHistDataChunk.rows.map((row) => ({
             keyPrefix: appConfig.INDEXER_ID,
             name: RedisTimeSeriesName.price,
             assetAId: row.asset_in_asset_registry_id,
             assetBId: row.asset_out_asset_registry_id,
             timestamp: row.block_timestamp,
             value: BigNumber(row.price_normalised).toNumber(),
-          }))
-        );
+          }));
+          for (const subBatch of splitIntoBatches(
+            preparedData,
+            appConfig.redis.TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE
+          )) {
+            await redisTimeSeriesManager.addMultiplePrices(subBatch);
+          }
+        }
 
-      if (assetPairVolumesChunk.rows.length > 0)
-        await redisTimeSeriesManager.addMultiplePrices(
-          assetPairVolumesChunk.rows.map((row) => ({
+        if (assetPairVolumesChunk.rows.length > 0) {
+          const preparedData = assetPairVolumesChunk.rows.map((row) => ({
             keyPrefix: appConfig.INDEXER_ID,
             name: RedisTimeSeriesName.volume,
             assetAId:
@@ -206,21 +228,44 @@ export class TimeSeriesApiSupportManager {
 
             timestamp: row.block_timestamp,
             value: BigNumber(row.total_volume_normalised).toNumber(),
-          }))
+          }));
+
+          for (const subBatch of splitIntoBatches(
+            preparedData,
+            appConfig.redis.TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE
+          )) {
+            await redisTimeSeriesManager.addMultiplePrices(subBatch);
+          }
+        }
+
+        await apiStatePgClient.upsertApiState({
+          assetPriceLatestProcessedBlock: processedBlockHeight,
+        });
+
+        console.log(
+          `AssetPriceVol :: Finished: ${fromBlockHeight}/${toBlockHeight} |`
         );
 
-      await apiStatePgClient.upsertApiState({
-        assetPriceLatestProcessedBlock: processedBlockHeight,
-      });
+        fromBlockHeight = processedBlockHeight + 1;
+        toBlockHeight = fromBlockHeight + processingBlocksRange;
 
-      fromBlockHeight = processedBlockHeight + 1;
-      toBlockHeight = fromBlockHeight + processingBlocksRange;
+        await new Promise((res) =>
+          setTimeout(res, appConfig.redis.TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS)
+        );
+      }
+    } catch (e) {
+      console.log(e);
     }
 
     await bullQueueClient.setScrapperNextTickJob({
       jobName: HistDataScrapperJobName.assetPriceHistData,
-      data: { blockHeight: processedBlockHeight },
+      data: {
+        blockHeight:
+          processedBlockHeight || apiState.assetPriceLatestProcessedBlock,
+      },
+      customId: `${this.getJobPrefix(HistDataScrapperJobName.assetPriceHistData)}_${processedBlockHeight || apiState.assetPriceLatestProcessedBlock}`,
     });
+
     done();
   }
 
@@ -228,6 +273,14 @@ export class TimeSeriesApiSupportManager {
     job: Job<HistDataScrapperJobData>,
     done: DoneCallback
   ) {
+    if (
+      !`${job.id}`.startsWith(
+        this.getJobPrefix(HistDataScrapperJobName.accountTotalBalancesHistData)
+      )
+    ) {
+      done();
+      return;
+    }
     const processingBlocksRange =
       appConfig.ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE;
     const pgClient = ApiSupportPgClient.getInstance();
@@ -235,6 +288,7 @@ export class TimeSeriesApiSupportManager {
     const bullQueueClient = BullQueueClient.getInstance();
     const apiState = await pgClient.getApiState();
     let latestProcessedBlockHeight = apiState.accTotalBalanceLatestProcBlock;
+    console.log(`accTotalBalancesHistDataScraperHandler jobId ${job.id} >>>`);
 
     if (latestProcessedBlockHeight === 0) {
       const firstAvailableAccTotalBalance = await pgClient.query(
@@ -257,30 +311,30 @@ export class TimeSeriesApiSupportManager {
 
     let processedBlockHeight = 0;
 
-    while (!isResultEmpty) {
-      const accTotalBalancesHistDataChunk =
-        await pgClient.query<AccountTotalBalanceHistDataResponse>(
-          getAccTotalBalancesByBlocksRange,
-          [fromBlockHeight, toBlockHeight]
+    try {
+      while (!isResultEmpty) {
+        const accTotalBalancesHistDataChunk =
+          await pgClient.query<AccountTotalBalanceHistDataResponse>(
+            getAccTotalBalancesByBlocksRange,
+            [fromBlockHeight, toBlockHeight]
+          );
+
+        if (accTotalBalancesHistDataChunk.rows.length === 0) {
+          isResultEmpty = true;
+          break;
+        }
+
+        console.log(
+          `AccTotalBal :: Pulling data (${accTotalBalancesHistDataChunk.rows.length} records) to TS: ${fromBlockHeight}/${toBlockHeight} >>>`
         );
 
-      if (accTotalBalancesHistDataChunk.rows.length === 0) {
-        isResultEmpty = true;
-        break;
-      }
+        processedBlockHeight =
+          accTotalBalancesHistDataChunk.rows[
+            accTotalBalancesHistDataChunk.rows.length - 1
+          ].para_block_height;
 
-      console.log(
-        `AccTotalBal :: Pulling data to TS: ${fromBlockHeight}/${toBlockHeight}`
-      );
-
-      processedBlockHeight =
-        accTotalBalancesHistDataChunk.rows[
-          accTotalBalancesHistDataChunk.rows.length - 1
-        ].para_block_height;
-
-      if (accTotalBalancesHistDataChunk.rows.length > 0)
-        await redisTimeSeriesManager.addMultipleAccountTotalBalances(
-          accTotalBalancesHistDataChunk.rows
+        if (accTotalBalancesHistDataChunk.rows.length > 0) {
+          const preparedData = accTotalBalancesHistDataChunk.rows
             .map((row) => [
               {
                 name: RedisTimeSeriesName.acc_bal_tot_tns,
@@ -304,21 +358,45 @@ export class TimeSeriesApiSupportManager {
                 keyPrefix: appConfig.INDEXER_ID,
               },
             ])
-            .flat()
+            .flat();
+          for (const subBatch of splitIntoBatches(
+            preparedData,
+            appConfig.redis.TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE
+          )) {
+            await redisTimeSeriesManager.addMultipleAccountTotalBalances(
+              subBatch
+            );
+          }
+        }
+
+        await pgClient.upsertApiState({
+          accTotalBalanceLatestProcBlock: processedBlockHeight,
+        });
+
+        console.log(
+          `AccTotalBal :: Finished ${fromBlockHeight}/${toBlockHeight} |`
         );
 
-      await pgClient.upsertApiState({
-        accTotalBalanceLatestProcBlock: processedBlockHeight,
-      });
+        fromBlockHeight = processedBlockHeight + 1;
+        toBlockHeight = fromBlockHeight + processingBlocksRange;
 
-      fromBlockHeight = processedBlockHeight + 1;
-      toBlockHeight = fromBlockHeight + processingBlocksRange;
+        await new Promise((res) =>
+          setTimeout(res, appConfig.redis.TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS)
+        );
+      }
+    } catch (e) {
+      console.log(e);
     }
 
     await bullQueueClient.setScrapperNextTickJob({
       jobName: HistDataScrapperJobName.accountTotalBalancesHistData,
-      data: { blockHeight: processedBlockHeight },
+      data: {
+        blockHeight:
+          processedBlockHeight || apiState.accTotalBalanceLatestProcBlock,
+      },
+      customId: `${this.getJobPrefix(HistDataScrapperJobName.accountTotalBalancesHistData)}_${processedBlockHeight || apiState.accTotalBalanceLatestProcBlock}`,
     });
+
     done();
   }
 }

@@ -12,6 +12,9 @@ module.exports = {
   REAPERS_LIST_JSON: process.env.REAPERS_LIST_JSON,
   REAPERS_LIST_FILE: process.env.REAPERS_LIST_FILE || './reapers-list.json',
 
+  // Tables configuration (optional - if not set, auto-detect from schema)
+  TABLES_LIST: process.env.TABLES_LIST, // Comma-separated list of tables to migrate
+
   // Migration settings
   USE_COPY_MODE: process.env.USE_COPY_MODE === 'true', // Use PostgreSQL COPY for 5-10x faster migration
   DISABLE_FK_CHECKS: process.env.DISABLE_FK_CHECKS === 'true',

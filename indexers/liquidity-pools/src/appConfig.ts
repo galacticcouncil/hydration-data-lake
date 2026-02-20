@@ -202,9 +202,13 @@ class RedisConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: number = 5_000;
 
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE: number = 1000;
+
   @IsBoolean()
   @Transform(({ value }: { value: string }) => value === 'true')
-  readonly ENABLE_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT: boolean = true;
+  readonly ENABLE_REDIS_TS_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT: boolean = true;
 
   static getInstance(): RedisConfig {
     if (RedisConfig.instance) return RedisConfig.instance;
