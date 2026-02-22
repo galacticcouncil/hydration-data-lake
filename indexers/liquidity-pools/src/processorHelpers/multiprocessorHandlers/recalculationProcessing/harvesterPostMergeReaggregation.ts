@@ -45,6 +45,7 @@ import {
 } from '../../../handlers/balances/accountTotalBalance';
 import { HistoricalDataManager } from '../../../handlers/historicalData';
 import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
+import { correlateAssetSpotPrices } from './utils';
 
 export async function handleHarvesterPostMergeReaggregation(
   ctx: SqdProcessorContext<Store>
@@ -99,6 +100,10 @@ export async function handleHarvesterPostMergeReaggregation(
     ).map((p) => [p.id, p])
   );
 
+  await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
+    { ctx, blockHeader: ctx.blocks[0].header }
+  );
+
   const spotPricesFromPreviousBatch =
     LatestProcessedDataCacheManager.getInstance().getAllCachedLastAssetSpotPriceHistoricalDataItems();
 
@@ -108,6 +113,8 @@ export async function handleHarvesterPostMergeReaggregation(
       prevBatchSpotPrice
     );
   }
+
+  correlateAssetSpotPrices(ctx);
 
   ctx.batchState.state.assetsPairVolumeHistoricalDataBatch = new Map(
     (
@@ -283,25 +290,25 @@ export async function handleHarvesterPostMergeReaggregation(
     ).map((p) => [p.id, p])
   );
 
-  ctx.batchState.state.accountAssetBalanceHistoricalData = new Map(
-    (
-      await ctx.storeUtils.findWithLogs(
-        AccountAssetBalanceHistoricalData,
-        {
-          where: {
-            paraBlockHeight: Between(
-              ctx.blocks[0].header.height,
-              ctx.blocks[ctx.blocks.length - 1].header.height
-            ),
-          },
-          order: {
-            paraBlockHeight: 'ASC',
-          },
-        },
-        { className: 'AccountAssetBalanceHistoricalData' }
-      )
-    ).map((p) => [p.id, p])
-  );
+  // ctx.batchState.state.accountAssetBalanceHistoricalData = new Map(
+  //   (
+  //     await ctx.storeUtils.findWithLogs(
+  //       AccountAssetBalanceHistoricalData,
+  //       {
+  //         where: {
+  //           paraBlockHeight: Between(
+  //             ctx.blocks[0].header.height,
+  //             ctx.blocks[ctx.blocks.length - 1].header.height
+  //           ),
+  //         },
+  //         order: {
+  //           paraBlockHeight: 'ASC',
+  //         },
+  //       },
+  //       { className: 'AccountAssetBalanceHistoricalData' }
+  //     )
+  //   ).map((p) => [p.id, p])
+  // );
   console.timeEnd('prefetchSpecificData');
 
   /**
