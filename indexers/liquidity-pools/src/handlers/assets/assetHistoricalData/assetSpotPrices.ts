@@ -170,55 +170,6 @@ async function processAssetSpotPrices({
     return;
   }
 
-  const calcAssetUsdPriceNormalised = async () => {
-    let assetIdToProcess = asset.assetRegistryId;
-
-    // if (
-    //   [AssetResourceType.Debt, AssetResourceType.Collateral].includes(asset.resourceType)
-    // ) {
-    if (asset.resourceType === AssetResourceType.Debt) {
-      const underlyingAsset = asset.underlyingAssetId
-        ? await getOrCreateAsset({
-            id: asset.underlyingAssetId,
-            blockHeader,
-            ensure: true,
-            ctx,
-          })
-        : null;
-      assetIdToProcess = underlyingAsset?.assetRegistryId;
-    }
-
-    if (!assetIdToProcess) {
-      // console.log({ asset });
-      // console.log(
-      //   `Asset spot price calculation skipped for asset ${asset.id}/${asset.symbol} at block ${blockHeader.height} due to missing assetRegistryId.`
-      // );
-      return;
-    }
-
-    try {
-      /**
-       * USD price must be calculation based on DIA Oracle data
-       */
-      const usdPriceDetails = await router.getBestSpotPrice(
-        assetIdToProcess,
-        ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
-      );
-
-      if (usdPriceDetails) {
-        assetHistData.usdPriceNormalised = fromExponentialToDecimalNotation(
-          usdPriceDetails.amount.toFixed(0, BigNumber.ROUND_HALF_UP),
-          usdPriceDetails.decimals
-        ).toFixed();
-
-        ctx.batchState.state.assetsHistoricalDataBatch.set(
-          assetHistData.id,
-          assetHistData
-        );
-      }
-    } catch (e) {}
-  };
-
   const calcAssetSpotPrices = async () => {
     for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
       /**
@@ -249,7 +200,7 @@ async function processAssetSpotPrices({
         //   router.getMostLiquidRoute(asset.assetRegistryId, assetOutId),
         // ]);
 
-        const priceWithRoute =
+        let priceWithRoute =
           await OfflineTradeRouterManager.getInstance().getBestSpotPriceWitRoute(
             {
               assetInId: asset.assetRegistryId,
@@ -262,7 +213,66 @@ async function processAssetSpotPrices({
           // console.log(
           //   `priceWithRoute is not found for asset ${asset.assetRegistryId}`
           // );
-          continue;
+
+          if (
+            asset.resourceType === AssetResourceType.aToken &&
+            !!asset.underlyingAssetId &&
+            asset.underlyingAssetId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
+          ) {
+            const baseAssetEntity = await getOrCreateAsset({
+              id: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+              ctx,
+              ensure: false,
+            });
+            if (!baseAssetEntity) continue;
+
+            priceWithRoute = {
+              price: {
+                amount: BigNumber(1000000),
+                decimals: baseAssetEntity.decimals || 6,
+              },
+              route: [],
+              routeKey: 'ASSET_PRICE_BASE_ASSET_ID',
+            };
+            if (!priceWithRoute) continue;
+          } else if (
+            asset.resourceType === AssetResourceType.aToken &&
+            !!asset.underlyingAssetId
+          ) {
+            const underliningAssetEntity = await getOrCreateAsset({
+              id: asset.underlyingAssetId,
+              ctx,
+              ensure: false,
+            });
+
+            if (
+              !underliningAssetEntity ||
+              !underliningAssetEntity.assetRegistryId
+            ) {
+              // console.log(
+              //   `Underlining asset ${asset.underlyingAssetId} is not found for asset ${asset.assetRegistryId}`
+              // );
+              continue;
+            }
+
+            priceWithRoute =
+              await OfflineTradeRouterManager.getInstance().getBestSpotPriceWitRoute(
+                {
+                  assetInId: underliningAssetEntity.assetRegistryId,
+                  assetOutId,
+                  router,
+                }
+              );
+
+            if (!priceWithRoute) {
+              // console.log(
+              //   `priceWithRoute of underlining asset ${asset.underlyingAssetId} is not found for asset ${asset.assetRegistryId}`
+              // );
+              continue;
+            }
+          } else {
+            continue;
+          }
         }
 
         const { price, route } = priceWithRoute;
@@ -304,7 +314,6 @@ async function processAssetSpotPrices({
     }
   };
 
-  // await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
   await calcAssetSpotPrices();
 }
 
@@ -584,28 +593,6 @@ async function processXykInvolvedAssetSpotPrices({
       ? assetBBalanceNormalised.div(assetABalanceNormalised)
       : assetABalanceNormalised.div(assetBBalanceNormalised);
 
-  const calcAssetUsdPriceNormalised = async () => {
-    if (asset.assetRegistryId === undefined || asset.assetRegistryId === null)
-      return;
-    /**
-     * USD price must be calculation based on DIA Oracle data
-     */
-
-    const interimAssetSpotPrice =
-      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-        `${interimAssetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
-      );
-    if (!interimAssetSpotPrice) return;
-
-    const xykAssetSpotPrice = priceInInterimAssetNormalised.multipliedBy(
-      interimAssetSpotPrice.priceNormalised
-    );
-
-    if (xykAssetSpotPrice) {
-      assetHistData.usdPriceNormalised = xykAssetSpotPrice.toFixed();
-    }
-  };
-
   const calcAssetSpotPrices = async () => {
     for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
       const assetOut = await getOrCreateAsset({
@@ -691,7 +678,6 @@ async function processXykInvolvedAssetSpotPrices({
     }
   };
 
-  // await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
   await calcAssetSpotPrices();
 }
 
@@ -729,6 +715,7 @@ export function getAssetsPairPrice({
     );
     assetInIdEnsured = underlyingAsset?.id ?? assetInId;
   }
+
   if (
     assetOutEntity &&
     assetOutEntity.resourceType === AssetResourceType.Debt &&
@@ -817,55 +804,6 @@ async function processXykShareAssetSpotPrices({
     return;
   }
 
-  const calcAssetUsdPriceNormalised = async () => {
-    const assetPriceBaseAsst = await getOrCreateAsset({
-      assetRegistryId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
-      ctx,
-      blockHeader,
-      ensure: true,
-    });
-    if (!assetPriceBaseAsst) return;
-    const poolAssetASpotPrice =
-      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-        `${originXykpool.assetAId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
-      )?.priceNormalised;
-
-    if (!poolAssetASpotPrice) return;
-
-    const originPoolTvlInRefAssetNormalised = fromExponentialToDecimalNotation(
-      xykPoolHistData.assetABalance.toString(),
-      assetA.decimals!
-    )
-      .multipliedBy(poolAssetASpotPrice)
-      .multipliedBy(2);
-
-    let shareAssetDecimals = 0;
-
-    try {
-      shareAssetDecimals = getXykpoolShareTokenDecimals({
-        poolAssets: [assetA, assetB],
-      });
-    } catch (e) {
-      console.log(e);
-    }
-
-    if (!shareAssetDecimals) return;
-
-    const shareAssetPriceNormalised = originPoolTvlInRefAssetNormalised.div(
-      fromExponentialToDecimalNotation(
-        assetHistData.totalIssuance.toString(),
-        shareAssetDecimals
-      )
-    );
-
-    assetHistData.usdPriceNormalised = shareAssetPriceNormalised.toFixed();
-
-    ctx.batchState.state.assetsHistoricalDataBatch.set(
-      assetHistData.id,
-      assetHistData
-    );
-  };
-
   const calcAssetSpotPrices = async () => {
     for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
       const assetOut = await getOrCreateAsset({
@@ -939,7 +877,6 @@ async function processXykShareAssetSpotPrices({
     }
   };
 
-  // await Promise.all([calcAssetUsdPriceNormalised(), calcAssetSpotPrices()]);
   await calcAssetSpotPrices();
 }
 
