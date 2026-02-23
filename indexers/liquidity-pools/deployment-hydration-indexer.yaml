@@ -15,8 +15,8 @@ deploy:
     env:
       INDEXER_ID: 615
       CHAIN: 'hydration'
-      RPC_URL: 'wss://node-subwhale-6.shellfish.hydration.cloud'
-      RPC_URL_HTTPS: 'https://node-subwhale-6.shellfish.hydration.cloud'
+      RPC_URL: 'wss://node-subwhale-7.shellfish.hydration.cloud'
+      RPC_URL_HTTPS: 'https://node-subwhale-7.shellfish.hydration.cloud'
       GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
       PROCESS_LBP_POOLS: true
       PROCESS_XYK_POOLS: true
@@ -56,7 +56,7 @@ scale:
   dedicated: true
   addons:
     postgres:
-      profile: large
+      profile: medium
       storage: 300G
   processor:
     profile: large
