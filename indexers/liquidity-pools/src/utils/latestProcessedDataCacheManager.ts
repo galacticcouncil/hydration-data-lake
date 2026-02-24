@@ -74,6 +74,31 @@ export class LatestProcessedDataCacheManager {
   }
 
   /**
+   * Starts a keep-alive interval to prevent DB connection timeout
+   * Pings the database every 30 seconds with a lightweight query
+   */
+  private startKeepAlive(): NodeJS.Timeout {
+    const pgPool = CommonPgPool.getInstance();
+
+    const intervalId = setInterval(async () => {
+      try {
+        await pgPool.query('SELECT 1 FROM block LIMIT 1');
+      } catch (error) {
+        console.warn('[WARN] Keep-alive ping failed:', error);
+      }
+    }, 30000);
+
+    return intervalId;
+  }
+
+  /**
+   * Stops the keep-alive interval
+   */
+  private stopKeepAlive(intervalId: NodeJS.Timeout): void {
+    clearInterval(intervalId);
+  }
+
+  /**
    * Batch fetch latest asset historical data using raw SQL with DISTINCT ON
    * Replaces N sequential queries with 1 batch query
    */
@@ -83,6 +108,7 @@ export class LatestProcessedDataCacheManager {
     ctx: SqdProcessorContext<Store>
   ): Promise<AssetHistoricalData[]> {
     const startTime = performance.now();
+    const keepAliveInterval = this.startKeepAlive();
 
     try {
       // Validate inputs
@@ -152,6 +178,8 @@ export class LatestProcessedDataCacheManager {
       throw new Error(
         `Batch fetch failed for ${assetIds?.length} assets at block ${maxBlockHeight}: ${error.message}`
       );
+    } finally {
+      this.stopKeepAlive(keepAliveInterval);
     }
   }
 
@@ -173,6 +201,7 @@ export class LatestProcessedDataCacheManager {
     findPricesByAssetRegistryId?: boolean;
   }): Promise<AssetSpotPriceHistoricalData[]> {
     const startTime = performance.now();
+    const keepAliveInterval = this.startKeepAlive();
 
     try {
       // Validate inputs
@@ -243,6 +272,8 @@ export class LatestProcessedDataCacheManager {
       throw new Error(
         `Batch fetch failed for ${assetInIds?.length} assets at block ${maxBlockHeight}: ${error.message}`
       );
+    } finally {
+      this.stopKeepAlive(keepAliveInterval);
     }
   }
 
@@ -256,6 +287,7 @@ export class LatestProcessedDataCacheManager {
     ctx: SqdProcessorContext<Store>
   ): Promise<XykpoolHistoricalData[]> {
     const startTime = performance.now();
+    const keepAliveInterval = this.startKeepAlive();
 
     try {
       // Validate inputs
@@ -339,6 +371,8 @@ export class LatestProcessedDataCacheManager {
       throw new Error(
         `Batch fetch failed for ${poolIds?.length} assets at block ${maxBlockHeight}: ${error.message}`
       );
+    } finally {
+      this.stopKeepAlive(keepAliveInterval);
     }
   }
 
