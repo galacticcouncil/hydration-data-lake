@@ -93,6 +93,48 @@ export class HistoricalDataManager {
     });
   }
 
+  static async saveSwapRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.routeTrades.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.routeTradesInputs.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.routeTradesOutputs.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.swaps.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.swapFees.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.swapInputs.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.swapOutputs.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.assetVolumes.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.lbpPoolVolumes.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.xykPoolVolumes.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.omnipoolAssetVolumes.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.stablepoolVolumeCollections.values())
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      Array.from(ctx.batchState.state.stablepoolAssetVolumes.values())
+    );
+  }
+
   static async saveSwapFeeRelatedDataBulk(ctx: SqdProcessorContext<Store>) {
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.historicalAssetSwapFees.values())

@@ -28,72 +28,44 @@ export async function handleBroadcastSwappedEvents(
   )) {
     await handleBroadcastSwappedEvent(ctx, eventData);
   }
-
-  // await OperationStackManager.saveOperationStackEntities(ctx);
-
-  // await ctx.store.save([...ctx.batchState.state.routeTrades.values()]);
-
-  // await ctx.store.save([
-  //   ...ctx.batchState.state.routeTradesInputs.values(),
-  //   ...ctx.batchState.state.routeTradesOutputs.values(),
-  // ]);
   //
-  // await ctx.store.save([...ctx.batchState.state.swaps.values()]);
-  // await ctx.store.save([...ctx.batchState.state.swapFees.values()]);
-  // await ctx.store.save([
-  //   ...ctx.batchState.state.swapInputs.values(),
-  //   ...ctx.batchState.state.swapOutputs.values(),
-  // ]);
-  //
-  // await ctx.store.save([...ctx.batchState.state.assetVolumes.values()]);
-  // await ctx.store.save([...ctx.batchState.state.lbpPoolVolumes.values()]);
-  // await ctx.store.save([...ctx.batchState.state.xykPoolVolumes.values()]);
-  // await ctx.store.save([...ctx.batchState.state.omnipoolAssetVolumes.values()]);
-  //
-  // await ctx.store.save([
-  //   ...ctx.batchState.state.stablepoolVolumeCollections.values(),
-  // ]);
-  // await ctx.store.save([
-  //   ...ctx.batchState.state.stablepoolAssetVolumes.values(),
-  // ]);
-
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.routeTrades.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.routeTradesInputs.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.routeTradesOutputs.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.swaps.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.swapFees.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.swapInputs.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.swapOutputs.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.assetVolumes.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.lbpPoolVolumes.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.xykPoolVolumes.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.omnipoolAssetVolumes.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.stablepoolVolumeCollections.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.stablepoolAssetVolumes.values())
-  );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.routeTrades.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.routeTradesInputs.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.routeTradesOutputs.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.swaps.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.swapFees.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.swapInputs.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.swapOutputs.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.assetVolumes.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.lbpPoolVolumes.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.xykPoolVolumes.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.omnipoolAssetVolumes.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.stablepoolVolumeCollections.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.stablepoolAssetVolumes.values())
+  // );
 }

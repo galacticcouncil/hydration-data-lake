@@ -79,7 +79,7 @@ export async function handleDcaSchedules(
     await handleDcaTradeFailed(ctx, eventData);
   }
 
-  await saveDcaEntities(ctx);
+  // await saveDcaEntities(ctx);
 }
 
 export async function saveDcaEntities(ctx: SqdProcessorContext<Store>) {

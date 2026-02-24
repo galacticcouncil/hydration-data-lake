@@ -265,6 +265,10 @@ export async function singleFlowAllInOneProcessor(
   await handleStablepoolLiquidityEvents(ctx, parsedData);
   console.timeEnd('handleStablepoolLiquidityEvents');
 
+  console.time('saveSwapRelatedDataBulk');
+  await HistoricalDataManager.saveSwapRelatedDataBulk(ctx);
+  console.timeEnd('saveSwapRelatedDataBulk');
+
   console.time('handleDcaSchedules');
   await handleDcaSchedules(ctx, parsedData);
   console.timeEnd('handleDcaSchedules');
