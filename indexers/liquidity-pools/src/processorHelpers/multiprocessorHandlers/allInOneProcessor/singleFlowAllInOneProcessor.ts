@@ -273,6 +273,10 @@ export async function singleFlowAllInOneProcessor(
   await handleDcaSchedules(ctx, parsedData);
   console.timeEnd('handleDcaSchedules');
 
+  console.time('saveDcaEntities');
+  await saveDcaEntities(ctx);
+  console.timeEnd('saveDcaEntities');
+
   console.time('handleOtcOrders');
   await handleOtcOrders(ctx, parsedData);
   console.timeEnd('handleOtcOrders');
