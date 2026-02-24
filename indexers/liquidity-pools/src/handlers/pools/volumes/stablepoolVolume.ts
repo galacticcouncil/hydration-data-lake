@@ -36,10 +36,11 @@ export async function handleStablepoolVolumeUpdates({
     ? swap.paraBlockHeight
     : liquidityAction!.paraBlockHeight;
 
-
   // Fetch Asset entities from cache using assetId
   const allAssetsToProcess: Asset[] = pool.assets
-    .map((stableswapAsset) => ctx.batchState.state.assetsAll.get(stableswapAsset.assetId))
+    .map((stableswapAsset) =>
+      ctx.batchState.state.assetsAll.get(stableswapAsset.assetId)
+    )
     .filter((asset): asset is Asset => !!asset);
 
   const stablepoolAssetVolumes = ctx.batchState.state.stablepoolAssetVolumes;
@@ -162,10 +163,6 @@ export function initStablepoolAssetVolume({
     ? swap.paraBlockHeight
     : liquidityActionData!.actionData.paraBlockHeight;
 
-  const block = swap
-    ? swap.event.block
-    : liquidityActionData?.actionData.event.block;
-
   const newVolume = new StableswapAssetVolumeHistoricalData({
     id: `${poolId}-${asset.id}-${paraBlockHeight}`,
     assetId: asset.id,
@@ -225,6 +222,7 @@ export function initStablepoolAssetVolume({
       swap.outputs.find((output) => output.assetId === newVolume.assetId)
         ?.amount || BigInt(0);
 
+    // TODO should be fixed in case multiple fee assets involved to swap, fee will be wrong
     const assetFeeVol = swap.fees.reduce((acc, feeData) => {
       if (feeData.assetId !== newVolume.assetId || !feeData.recipientId)
         return acc;
@@ -240,19 +238,11 @@ export function initStablepoolAssetVolume({
     newVolume.assetTotalVolIn += assetVolIn;
     newVolume.assetTotalVolOut += assetVolOut;
     newVolume.assetTotalFeesVol += assetFeeVol;
-  }
-
-  if (liquidityActionData) {
+  } else if (liquidityActionData) {
     const isRoutedLiqAction = isRoutedStablepoolLiquidityAction({
       liquidityAction: liquidityActionData.actionData,
       ctx,
     });
-
-    routedLiqFee =
-      isRoutedLiqAction &&
-      liquidityActionData.actionData.actionType === LiquidityActionEvent.Remove
-        ? liquidityActionData.actionData.feeAmount
-        : BigInt(0);
 
     routedLiqAddedAmount =
       liquidityActionData.actionData.actionType === LiquidityActionEvent.Add &&
@@ -260,12 +250,21 @@ export function initStablepoolAssetVolume({
       liquidityActionData.assetData
         ? liquidityActionData.assetData.amount
         : BigInt(0);
+
     routedLiqRemovedAmount =
       liquidityActionData.actionData.actionType ===
         LiquidityActionEvent.Remove &&
       isRoutedLiqAction &&
       liquidityActionData.assetData
         ? liquidityActionData.assetData.amount
+        : BigInt(0);
+
+    routedLiqFee =
+      isRoutedLiqAction &&
+      liquidityActionData.actionData.actionType ===
+        LiquidityActionEvent.Remove &&
+      liquidityActionData.assetData
+        ? liquidityActionData.actionData.feeAmount
         : BigInt(0);
 
     // Block volumes

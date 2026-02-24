@@ -54,11 +54,6 @@ export async function handleStablepoolOperations(
         )
     )
   )) {
-    // console.log(
-    //   'handleStablepoolOperations - ',
-    //   eventData.eventData.metadata.blockHeader.specVersion,
-    //   eventData.eventData.metadata.blockHeader.height
-    // );
     switch (eventData.eventData.name) {
       case EventName.Stableswap_LiquidityAdded:
       case EventName.Stableswap_LiquidityRemoved:
