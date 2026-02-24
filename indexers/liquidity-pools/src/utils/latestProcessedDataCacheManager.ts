@@ -2,9 +2,11 @@ import { Store } from '@subsquid/typeorm-store';
 
 import { getOrCreateXykPool } from '../handlers/pools/pools/xykPool/xykPool';
 import {
+  Asset,
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
   AssetSpotPriceRoute,
+  Block,
   Xykpool,
   XykpoolHistoricalData,
 } from '../model';
@@ -77,12 +79,17 @@ export class LatestProcessedDataCacheManager {
    * Starts a keep-alive interval to prevent DB connection timeout
    * Pings the database every 30 seconds with a lightweight query
    */
-  private startKeepAlive(): NodeJS.Timeout {
+  private startKeepAlive(ctx: SqdProcessorContext<Store>): NodeJS.Timeout {
     const pgPool = CommonPgPool.getInstance();
 
     const intervalId = setInterval(async () => {
       try {
         await pgPool.query('SELECT 1 FROM block LIMIT 1');
+      } catch (error) {
+        console.warn('[WARN] Keep-alive ping failed:', error);
+      }
+      try {
+        await ctx.store.findOne(Asset, { where: {} });
       } catch (error) {
         console.warn('[WARN] Keep-alive ping failed:', error);
       }
@@ -108,7 +115,7 @@ export class LatestProcessedDataCacheManager {
     ctx: SqdProcessorContext<Store>
   ): Promise<AssetHistoricalData[]> {
     const startTime = performance.now();
-    const keepAliveInterval = this.startKeepAlive();
+    const keepAliveInterval = this.startKeepAlive(ctx);
 
     try {
       // Validate inputs
@@ -201,7 +208,7 @@ export class LatestProcessedDataCacheManager {
     findPricesByAssetRegistryId?: boolean;
   }): Promise<AssetSpotPriceHistoricalData[]> {
     const startTime = performance.now();
-    const keepAliveInterval = this.startKeepAlive();
+    const keepAliveInterval = this.startKeepAlive(ctx);
 
     try {
       // Validate inputs
@@ -287,7 +294,7 @@ export class LatestProcessedDataCacheManager {
     ctx: SqdProcessorContext<Store>
   ): Promise<XykpoolHistoricalData[]> {
     const startTime = performance.now();
-    const keepAliveInterval = this.startKeepAlive();
+    const keepAliveInterval = this.startKeepAlive(ctx);
 
     try {
       // Validate inputs

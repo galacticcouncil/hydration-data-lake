@@ -18,10 +18,7 @@ export async function handleProxyReqKamino(req: Request, res: Response) {
     const requestPath = req.params.all || [];
     const [apiName, section, query] = requestPath;
 
-    if (
-      !allowedQueriesKamino.has(apiName) ||
-      !allowedQueriesDefillama.get(apiName)!.has(section)
-    ) {
+    if (!allowedQueriesKamino.has(apiName)) {
       return res.status(403).send('Forbidden');
     }
 
