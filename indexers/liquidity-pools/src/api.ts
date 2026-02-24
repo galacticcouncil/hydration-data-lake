@@ -41,6 +41,7 @@ import { AppConfig } from './appConfig';
 import { getEnvPath } from './utils/helpers';
 import { NodeEnv } from './utils/types';
 import postgraphileSmartTagPlugins from './apiSupport/smartTags';
+import { handleProxyReqKamino } from './apiSupport/api/rest/proxyApiHandlers/resources/kamino';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -242,6 +243,13 @@ async function initializeServer() {
       cors(corsOptions),
       // @ts-ignore
       handleProxyReqDefillama
+    );
+
+    app.get(
+      `${ProxyApiRoute.kamino}/*all`,
+      cors(corsOptions),
+      // @ts-ignore
+      handleProxyReqKamino
     );
 
     app.listen(appConfig.GQL_PORT, () => {
