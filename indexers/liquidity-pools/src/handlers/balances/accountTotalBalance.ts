@@ -24,6 +24,10 @@ import {
   getUnchangedAccountAssetBalanceFromPersistentEntity,
   indexAccountAssetBalancesAccumulators,
 } from './utils';
+import {
+  BalanceLogInput,
+  BalancesLoggerManager,
+} from './balancesLoggerManager';
 
 type BlockHeight = number;
 type AccountId = string;
@@ -111,6 +115,7 @@ export async function handleAccountTotalBalance({
       refAsset,
       ctx,
       assetBalanceHistData: assetBalance,
+      dataSource: 'ASSET_BALANCE_EXPLICIT',
     });
   }
 }
@@ -119,10 +124,12 @@ export async function addAssetBalanceToAccountTotalBalance({
   assetBalanceHistData,
   refAsset,
   ctx,
+  dataSource,
 }: {
   assetBalanceHistData: AccountAssetBalanceHistoricalData;
   refAsset?: Asset | null;
   ctx: SqdProcessorContext<Store>;
+  dataSource?: string;
 }) {
   const refAssetEntity =
     refAsset ??
@@ -208,6 +215,19 @@ export async function addAssetBalanceToAccountTotalBalance({
     .plus(assetBalanceHistData.totalLockedInRefAssetNorm || '0')
     .toFixed();
 
+  BalancesLoggerManager.getInstance().addLog({
+    accountId: accountTotalBalance.accountId,
+    assetId: assetBalanceHistData.assetId,
+    source:
+      (dataSource as BalanceLogInput['source']) ?? 'ASSET_BALANCE_EXPLICIT',
+    memo: 'fn :: addAssetBalanceToAccountTotalBalance',
+    paraBlockHeight: accountTotalBalance.paraBlockHeight,
+    transferable: assetBalanceHistData.transferable,
+    totalLocked: assetBalanceHistData.totalLocked,
+    transferableNorm: assetBalanceHistData.transferableInRefAssetNorm,
+    totalLockedNorm: assetBalanceHistData.totalLockedInRefAssetNorm,
+  });
+
   ctx.batchState.state.accountAssetBalanceHistoricalData.set(
     assetBalanceHistData.id,
     assetBalanceHistData
@@ -275,6 +295,7 @@ export async function handleLiquidityBalancesInTotalBalances({
     refAssetId: refAsset.id,
     preProcessedTotalBalances,
     ctx,
+    dataSource: 'XYK_DEPOSIT',
   });
 
   /**
@@ -285,6 +306,7 @@ export async function handleLiquidityBalancesInTotalBalances({
     refAssetId: refAsset.id,
     preProcessedTotalBalances,
     ctx,
+    dataSource: 'OMNIPOOL_DEPOSIT',
   });
 
   /**
@@ -295,6 +317,7 @@ export async function handleLiquidityBalancesInTotalBalances({
     refAssetId: refAsset.id,
     preProcessedTotalBalances,
     ctx,
+    dataSource: 'OMNIPOOL_POSITION',
   });
 }
 
@@ -302,12 +325,14 @@ async function addLiquidityMiningWorthToTotalBalance({
   preProcessedTotalBalances,
   lmWorthData,
   refAssetId,
+  dataSource,
   ctx,
 }: {
   ctx: SqdProcessorContext<Store>;
   preProcessedTotalBalances?: Set<string> | null;
   refAssetId: string;
   lmWorthData: AccountPositionBalancesPerBlockPerAsset;
+  dataSource?: string;
 }) {
   for (const blockData of lmWorthData.values()) {
     for (const [accountId, accountAssetData] of blockData.data.entries()) {
@@ -342,22 +367,35 @@ async function addLiquidityMiningWorthToTotalBalance({
           blockHeight: blockData.blockHeader.height,
         });
 
+        const portionAmountNorm =
+          assetSpotPrice && asset.decimals
+            ? calcPriceNormalized({
+                amount: BigInt(balanceBn.toFixed() ?? '0'),
+                assetDecimals: asset.decimals,
+                spotPrice: assetSpotPrice,
+              })
+            : '0';
+
         /**
          * Account total balance calculation
          */
         accountTotalBalance.totalTransferableNorm = BigNumber(
           accountTotalBalance.totalTransferableNorm
         )
-          .plus(
-            assetSpotPrice && asset.decimals
-              ? calcPriceNormalized({
-                  amount: BigInt(balanceBn.toFixed() ?? '0'),
-                  assetDecimals: asset.decimals,
-                  spotPrice: assetSpotPrice,
-                })
-              : '0'
-          )
+          .plus(portionAmountNorm)
           .toFixed();
+
+        BalancesLoggerManager.getInstance().addLog({
+          accountId: accountTotalBalance.accountId,
+          assetId: asset.id,
+          source:
+            (dataSource as BalanceLogInput['source']) ??
+            'ASSET_BALANCE_IMPLICIT',
+          memo: 'fn :: addLiquidityMiningWorthToTotalBalance',
+          paraBlockHeight: accountTotalBalance.paraBlockHeight,
+          transferable: BigInt(balanceBn.toFixed() ?? '0'),
+          transferableNorm: portionAmountNorm,
+        });
       }
 
       ctx.batchState.state.accountTotalBalanceHistoricalData.set(

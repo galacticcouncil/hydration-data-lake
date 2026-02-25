@@ -284,6 +284,21 @@ type AccountTotalBalanceHistoricalData @entity {
   paraBlockHeight: Int! @index
 }
 
+type AccountTotalBalanceHistoricalDataLog @entity {
+  "uuid"
+  id: ID!
+  accountId: String!
+  assetId: String!
+  source: String!
+  memo: String
+  transferable: BigInt
+  totalLocked: BigInt
+  transferableNorm: String
+  totalLockedNorm: String
+
+  paraBlockHeight: Int! @index
+}
+
 type AccountTotalBalanceLatest @entity {
   "<address>"
   id: ID!

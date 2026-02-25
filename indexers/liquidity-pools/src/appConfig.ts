@@ -120,6 +120,9 @@ class LogConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly HLOG_DB_FLUSH_INTERVAL_MS: number = 1000;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly BALANCES_LOG_ENABLED: boolean = false;
+
   static getInstance(): LogConfig {
     if (LogConfig.instance) return LogConfig.instance;
 

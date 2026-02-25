@@ -355,6 +355,7 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
       refAsset,
       ctx,
       assetBalanceHistData: assetBalance,
+      dataSource: 'ASSET_BALANCE_ENSURED',
     });
   }
 

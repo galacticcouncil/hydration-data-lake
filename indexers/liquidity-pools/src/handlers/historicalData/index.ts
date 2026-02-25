@@ -35,6 +35,7 @@ import { TimeSeriesDataCommitManager } from '../../utils/redisTimeSeriesSupport/
 import { DataCommitterJobName } from '../../utils/redisTimeSeriesSupport/queueClient';
 import { splitIntoBatches } from '../../utils/helpers';
 import { getAccountTotalBalancesLatest } from '../balances/accountTotalBalanceLatest';
+import { BalancesLoggerManager } from '../balances/balancesLoggerManager';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -419,6 +420,8 @@ export class HistoricalDataManager {
         ctx
       ),
     ]);
+
+    await BalancesLoggerManager.getInstance().flushLogs(ctx);
   }
 
   static async saveAccountMoneyMarketDataBulk(ctx: SqdProcessorContext<Store>) {
