@@ -185,18 +185,22 @@ export async function getOrCreateAccountLiquidityBalanceWithAmounts({
     actualSharesAmount,
   });
 
-  balanceEntity.liquidityAmount = BigInt(positionOutputAtBlock.liquidity);
-  balanceEntity.hubLiquidityAmount = BigInt(positionOutputAtBlock.hubLiquidity);
+  balanceEntity.liquidityAmount = BigInt(
+    positionOutputAtBlock?.liquidity ?? '0'
+  );
+  balanceEntity.hubLiquidityAmount = BigInt(
+    positionOutputAtBlock?.hubLiquidity ?? '0'
+  );
   balanceEntity.liquidityAmountNorm = asset.decimals
     ? calcPriceNormalized({
-        amount: BigInt(positionOutputAtBlock.liquidity),
+        amount: BigInt(positionOutputAtBlock?.liquidity ?? '0'),
         assetDecimals: asset.decimals,
         spotPrice: assetSpotPrice ?? '0',
       })
     : '0';
   balanceEntity.hubLiquidityAmountNorm = hubAsset.decimals
     ? calcPriceNormalized({
-        amount: BigInt(positionOutputAtBlock.hubLiquidity),
+        amount: BigInt(positionOutputAtBlock?.hubLiquidity ?? '0'),
         assetDecimals: hubAsset.decimals,
         spotPrice: hubAssetSpotPrice ?? '0',
       })

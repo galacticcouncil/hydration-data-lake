@@ -570,7 +570,7 @@ export async function getOmnipoolLiquidityPositionAmountOut({
   position: OmnipoolLiquidityPosition;
   blockHeader: SqdBlock;
   ctx: SqdProcessorContext<Store>;
-}): Promise<{ liquidity: string; hubLiquidity: string }> {
+}): Promise<{ liquidity: string; hubLiquidity: string } | null> {
   let positionPriceExpNotation = position.price;
 
   if (!positionPriceExpNotation || positionPriceExpNotation === 0n) {
@@ -585,16 +585,18 @@ export async function getOmnipoolLiquidityPositionAmountOut({
       !positionStorageData[0] ||
       !positionStorageData[0].data
     ) {
-      throw Error(`Storage data for position ${position.id} cannot be found;`);
+      console.log(`Storage data for position ${position.id} cannot be found;`);
+      return null;
     }
 
     positionPriceExpNotation = positionStorageData[0].data.price;
   }
 
   if (!positionPriceExpNotation) {
-    throw Error(
+    console.log(
       `getOmnipoolLiquidityPositionAmountOut :: position price is not set for position ${position.id};`
     );
+    return null;
   }
 
   const omnipoolAssetHistData =
@@ -603,9 +605,10 @@ export async function getOmnipoolLiquidityPositionAmountOut({
     );
 
   if (!omnipoolAssetHistData) {
-    throw Error(
+    console.log(
       `getOmnipoolLiquidityPositionAmountOut :: historical data for omnipool asset ${position.assetId} at block ${blockHeader.height} cannot be found;`
     );
+    return null;
   }
 
   let positionAmount = position.amount.toString();
