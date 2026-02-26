@@ -98,6 +98,7 @@ import {
   AccountProcessingStatus,
   MmMintedToTreasuryEvent,
   LiquidationLiquidatedEvent,
+  AccountLiquidityBalanceHistoricalData,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { SqdBlock, SqdProcessorContext } from '../processor';
@@ -141,6 +142,10 @@ export type BatchStatePayload = {
   accountAssetBalanceHistoricalData: Map<
     string,
     AccountAssetBalanceHistoricalData
+  >;
+  accountLiquidityBalanceHistoricalData: Map<
+    string,
+    AccountLiquidityBalanceHistoricalData
   >;
   accountTotalBalanceHistoricalData: Map<
     string,
@@ -319,6 +324,7 @@ export class BatchState {
     assetsAll: new Map(),
 
     accountAssetBalanceHistoricalData: new Map(),
+    accountLiquidityBalanceHistoricalData: new Map(),
     accountTotalBalanceHistoricalData: new Map(),
     balanceImpactingEvents: new Map(),
     accountMmPositionHistoricalData: new Map(),
@@ -463,6 +469,7 @@ export class BatchState {
       assetsAll: new Map(),
 
       accountAssetBalanceHistoricalData: new Map(),
+      accountLiquidityBalanceHistoricalData: new Map(),
       accountTotalBalanceHistoricalData: new Map(),
       balanceImpactingEvents: new Map(),
       accountMmPositionHistoricalData: new Map(),

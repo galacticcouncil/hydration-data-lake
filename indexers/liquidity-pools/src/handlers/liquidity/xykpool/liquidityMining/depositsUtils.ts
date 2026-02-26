@@ -1,6 +1,7 @@
 import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
+  AccountLiquidityType,
   XykYieldFarmDeposit,
   XykYieldFarmDepositEvent,
   XykYieldFarmEntry,
@@ -21,6 +22,7 @@ import {
   XykpoolLMDepositDataWithId,
 } from '../../../../parsers/types/storage/xykpoolLiquidityMining';
 import { splitIntoBatches } from '../../../../utils/helpers';
+import { getOrCreateAccountLiquidityBalanceWithAmounts } from '../../../balances/accountLiquidityBalance';
 
 export async function getOrCreateXykLiquidityMiningDeposit({
   depositId,
@@ -381,30 +383,30 @@ export async function getXykLiquidityMiningDepositsForAccounts({
           ) || [];
 
       for (const deposit of accountActiveDepositsAtBlock) {
-        if (
-          !accountDepositBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.has(accountId)
-        )
-          accountDepositBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.set(accountId, new Map());
-
-        if (
-          !accountDepositBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.get(accountId)!
-            .has(deposit.lpAssetId)
-        )
-          accountDepositBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.get(accountId)!
-            .set(deposit.lpAssetId, BigNumber(0));
-
-        const currentBalance = accountDepositBalancesPerBlockPerAsset
-          .get(blockHeight)!
-          .data.get(accountId)!
-          .get(deposit.lpAssetId)!;
+        // if (
+        //   !accountDepositBalancesPerBlockPerAsset
+        //     .get(blockHeight)!
+        //     .data.has(accountId)
+        // )
+        //   accountDepositBalancesPerBlockPerAsset
+        //     .get(blockHeight)!
+        //     .data.set(accountId, new Map());
+        //
+        // if (
+        //   !accountDepositBalancesPerBlockPerAsset
+        //     .get(blockHeight)!
+        //     .data.get(accountId)!
+        //     .has(deposit.lpAssetId)
+        // )
+        //   accountDepositBalancesPerBlockPerAsset
+        //     .get(blockHeight)!
+        //     .data.get(accountId)!
+        //     .set(deposit.lpAssetId, BigNumber(0));
+        //
+        // const currentBalance = accountDepositBalancesPerBlockPerAsset
+        //   .get(blockHeight)!
+        //   .data.get(accountId)!
+        //   .get(deposit.lpAssetId)!;
 
         /**
          * Retrieves the deposit amount from the closest event at or before the target block.
@@ -414,19 +416,35 @@ export async function getXykLiquidityMiningDepositsForAccounts({
          * To ensure historical accuracy, we must use the amount recorded in the event that
          * was closest to the block being processed, rather than the current deposit state.
          */
-        const actualDepositAmountAtBlock: string =
+        const actualDepositAmountAtBlock =
           eventsIndexedByDepositId
             .get(deposit.id)!
-            .find((e) => e.paraBlockHeight <= blockHeight)
-            ?.amount?.toString() ?? '0';
+            .find((e) => e.paraBlockHeight <= blockHeight)?.amount ?? 0n;
+        //
+        // accountDepositBalancesPerBlockPerAsset
+        //   .get(blockHeight)!
+        //   .data.get(accountId)!
+        //   .set(
+        //     deposit.lpAssetId,
+        //     currentBalance.plus(actualDepositAmountAtBlock)
+        //   );
 
-        accountDepositBalancesPerBlockPerAsset
-          .get(blockHeight)!
-          .data.get(accountId)!
-          .set(
-            deposit.lpAssetId,
-            currentBalance.plus(actualDepositAmountAtBlock)
-          );
+        const liquidityBalanceEntity =
+          await getOrCreateAccountLiquidityBalanceWithAmounts({
+            accountId,
+            assetId: deposit.lpAssetId,
+            depositId: deposit.id,
+            liquidityType: AccountLiquidityType.XykDeposit,
+            actualAssetAmount: actualDepositAmountAtBlock,
+            ctx,
+            blockHeader:
+              ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
+          });
+
+        ctx.batchState.state.accountLiquidityBalanceHistoricalData.set(
+          liquidityBalanceEntity.id,
+          liquidityBalanceEntity
+        );
       }
     }
   }

@@ -2,19 +2,8 @@ import { FindOptionsRelations } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import { AppConfig } from '../../appConfig';
-import {
-  Account,
-  AccountAssetBalanceHistoricalData,
-  AccountTotalBalanceHistoricalData,
-} from '../../model';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
-import { getOrCreateAsset } from '../assets/asset';
-
-const appConfig = AppConfig.getInstance();
+import { Account, AccountAssetBalanceHistoricalData } from '../../model';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 
 export async function getOrCreateAccountAssetBalanceHistoricalData({
   account,
@@ -84,83 +73,5 @@ export async function getOrCreateAccountAssetBalanceHistoricalData({
     dataEntity.id,
     dataEntity
   );
-  return dataEntity;
-}
-
-export async function getOrCreateAccountTotalBalanceHistoricalData({
-  accountId,
-  refAssetId = appConfig.ASSET_PRICE_BASE_ASSET_ID,
-  ctx,
-  blockHeader,
-  fetchFromDb = false,
-  relations = {},
-}: {
-  accountId: string;
-  refAssetId?: string;
-  ctx: SqdProcessorContext<Store>;
-  blockHeader: SqdBlock;
-  fetchFromDb?: boolean;
-  relations?: FindOptionsRelations<AccountTotalBalanceHistoricalData>;
-}) {
-  const batchState = ctx.batchState.state;
-
-  const entityId = `${accountId}-${blockHeader.height}`;
-
-  let dataEntity = batchState.accountTotalBalanceHistoricalData.get(entityId);
-
-  if (dataEntity) return dataEntity;
-
-  if (!dataEntity && fetchFromDb) {
-    dataEntity = await ctx.storeUtils.findOneWithLogs(
-      AccountTotalBalanceHistoricalData,
-      {
-        where: { id: entityId },
-        relations,
-      },
-      { className: 'AccountTotalBalanceHistoricalData' }
-    );
-
-    if (dataEntity) {
-      ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-        dataEntity.id,
-        dataEntity
-      );
-      return dataEntity;
-    }
-  }
-
-  const refAsset = await getOrCreateAsset({
-    id: refAssetId,
-    ctx,
-    ensure: true,
-    blockHeader,
-  });
-
-  if (!refAsset) throw Error('Ref asset not found');
-
-  const totalBlock = ctx.batchState.getParaBlockFromCacheByHeight(
-    blockHeader.height
-  );
-  if (!totalBlock) {
-    throw new Error(
-      `Block not found in cache for height ${blockHeader.height}`
-    );
-  }
-
-  dataEntity = new AccountTotalBalanceHistoricalData({
-    id: `${accountId}-${blockHeader.height}`,
-    accountId: accountId,
-    refAssetId: refAsset.id,
-    totalTransferableNorm: '0',
-    totalLockedNorm: '0',
-    totalDebtNorm: '0',
-    paraBlockHeight: blockHeader.height,
-  });
-
-  ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-    dataEntity.id,
-    dataEntity
-  );
-
   return dataEntity;
 }

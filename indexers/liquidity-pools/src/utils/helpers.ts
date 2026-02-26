@@ -392,7 +392,16 @@ export function anyToStringAllKeys(maybeObj: any): any {
 export function getOmnipoolLiquidityPositionPriceDecorated(
   priceParts: bigint[]
 ) {
-  // return BigInt(BigNumber(priceParts[0]).div(priceParts[1]).toString());
+  try {
+    return BigInt(
+      fromDecimalToExponentialNotation(
+        BigNumber(priceParts[0]).div(priceParts[1]),
+        18
+      ).toFixed(0)
+    );
+  } catch (e) {
+    console.log(e);
+  }
   return 0n;
 }
 

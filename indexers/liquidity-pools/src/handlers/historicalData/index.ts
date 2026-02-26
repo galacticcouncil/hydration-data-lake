@@ -36,6 +36,7 @@ import { DataCommitterJobName } from '../../utils/redisTimeSeriesSupport/queueCl
 import { splitIntoBatches } from '../../utils/helpers';
 import { getAccountTotalBalancesLatest } from '../balances/accountTotalBalanceLatest';
 import { BalancesLoggerManager } from '../balances/balancesLoggerManager';
+import { getAccountLiquidityBalancesLatest } from '../balances/accountLiquidityBalanceLatest';
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
@@ -407,11 +408,25 @@ export class HistoricalDataManager {
       balances: accountTotalBalanceHistoricalDataList,
       ctx,
     });
+
+    const accountLiquidityBalanceHistoricalDataList = Array.from(
+      ctx.batchState.state.accountLiquidityBalanceHistoricalData.values()
+    );
+
+    const accountLiquidityBalancesLatest = getAccountLiquidityBalancesLatest({
+      balances: accountLiquidityBalanceHistoricalDataList,
+      ctx,
+    });
+
     await Promise.all([
       ctx.storeUtils.upsertWithBatches(accountAssetBalanceHistoricalDataList),
       ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest),
       ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
       ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest),
+      ctx.storeUtils.upsertWithBatches(
+        accountLiquidityBalanceHistoricalDataList
+      ),
+      ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
       ctx.storeUtils.upsertWithBatches(
         Array.from(ctx.batchState.state.accountProcessingStatuses.values())
       ),

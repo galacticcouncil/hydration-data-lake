@@ -2,6 +2,8 @@ import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { XykpoolLMDepositDataWithId } from '../../../../parsers/types/storage/xykpoolLiquidityMining';
 import {
+  AccountLiquidityType,
+  OmnipoolLiquidityPosition,
   OmnipoolLiquidityPositionEvent,
   OmnipoolYieldFarmDeposit,
   OmnipoolYieldFarmDepositEvent,
@@ -18,6 +20,11 @@ import {
 import { In, IsNull, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { splitIntoBatches } from '../../../../utils/helpers';
+import { getOmnipoolLiquidityPositionAmountOut } from '../liquidityPositions/liquidityPositionUtils';
+import {
+  getOrCreateAccountLiquidityBalanceHistoricalData,
+  getOrCreateAccountLiquidityBalanceWithAmounts,
+} from '../../../balances/accountLiquidityBalance';
 
 export async function getOrCreateOmnipoolLiquidityMiningDeposit({
   depositId,
@@ -281,13 +288,55 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
     ),
   ]);
 
-  const allDepositsIndexerByPositionId = new Map<
+  const allDepositsIndexedByPositionId = new Map<
     string,
     OmnipoolYieldFarmDeposit
   >();
   for (const deposit of allDepositsDeduped.values()) {
-    allDepositsIndexerByPositionId.set(deposit.positionId, deposit);
+    allDepositsIndexedByPositionId.set(deposit.positionId, deposit);
   }
+
+  /**
+   * Collect Positions related with involved Deposits
+   */
+
+  const cachedDepositPositions = Array.from(
+    ctx.batchState.state.omnipoolLiquidityPositions.values()
+  ).filter((p) => allDepositsIndexedByPositionId.has(p.id));
+
+  const persistentDepositPositions = await ctx.storeUtils.findWithLogs(
+    OmnipoolLiquidityPosition,
+    {
+      where: {
+        id: In(Array.from(allDepositsIndexedByPositionId.keys())),
+      },
+    }
+  );
+
+  const allDepositPositionsDeduped = new Map([
+    ...cachedDepositPositions.map((p): [string, OmnipoolLiquidityPosition] => [
+      p.id,
+      p,
+    ]),
+    ...persistentDepositPositions.map(
+      (p): [string, OmnipoolLiquidityPosition] => [p.id, p]
+    ),
+  ]);
+
+  const positionsIndexedByDepositId = new Map<
+    string,
+    OmnipoolLiquidityPosition
+  >();
+
+  for (const position of allDepositPositionsDeduped.values()) {
+    const positionDeposit = allDepositsIndexedByPositionId.get(position.id);
+    if (!positionDeposit) continue;
+    positionsIndexedByDepositId.set(positionDeposit.id, position);
+  }
+
+  /**
+   * Collect Position Events related with involved Deposits
+   */
 
   /**
    * To aggregate deposited asset amounts, we need to use related to deposits
@@ -297,14 +346,14 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
 
   const cachedDepositPositionEvents = Array.from(
     ctx.batchState.state.omnipoolLiquidityPositionEvents.values()
-  ).filter((e) => allDepositsIndexerByPositionId.has(e.position.id));
+  ).filter((e) => allDepositsIndexedByPositionId.has(e.position.id));
 
   const persistentDepositPositionEvents = await ctx.storeUtils.findWithLogs(
     OmnipoolLiquidityPositionEvent,
     {
       where: {
         position: {
-          id: In(Array.from(allDepositsIndexerByPositionId.keys())),
+          id: In(Array.from(allDepositsIndexedByPositionId.keys())),
         },
       },
       relations: {
@@ -332,7 +381,7 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
   >();
 
   for (const event of allDepositPositionEventsDeduped.values()) {
-    const positionDeposit = allDepositsIndexerByPositionId.get(
+    const positionDeposit = allDepositsIndexedByPositionId.get(
       event.position.id
     );
     if (!positionDeposit) continue;
@@ -397,30 +446,30 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
             ) || [];
 
         for (const deposit of accountActiveDepositsAtBlock) {
-          if (
-            !accountDepositBalancesPerBlockPerAsset
-              .get(blockHeight)!
-              .data.has(accountId)
-          )
-            accountDepositBalancesPerBlockPerAsset
-              .get(blockHeight)!
-              .data.set(accountId, new Map());
-
-          if (
-            !accountDepositBalancesPerBlockPerAsset
-              .get(blockHeight)!
-              .data.get(accountId)!
-              .has(deposit.assetId)
-          )
-            accountDepositBalancesPerBlockPerAsset
-              .get(blockHeight)!
-              .data.get(accountId)!
-              .set(deposit.assetId, BigNumber(0));
-
-          const currentBalance = accountDepositBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.get(accountId)!
-            .get(deposit.assetId)!;
+          // if (
+          //   !accountDepositBalancesPerBlockPerAsset
+          //     .get(blockHeight)!
+          //     .data.has(accountId)
+          // )
+          //   accountDepositBalancesPerBlockPerAsset
+          //     .get(blockHeight)!
+          //     .data.set(accountId, new Map());
+          //
+          // if (
+          //   !accountDepositBalancesPerBlockPerAsset
+          //     .get(blockHeight)!
+          //     .data.get(accountId)!
+          //     .has(deposit.assetId)
+          // )
+          //   accountDepositBalancesPerBlockPerAsset
+          //     .get(blockHeight)!
+          //     .data.get(accountId)!
+          //     .set(deposit.assetId, BigNumber(0));
+          //
+          // const currentBalance = accountDepositBalancesPerBlockPerAsset
+          //   .get(blockHeight)!
+          //   .data.get(accountId)!
+          //   .get(deposit.assetId)!;
 
           /**
            * Retrieves the deposit amount from the closest event at or before the target block.
@@ -430,19 +479,41 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
            * To ensure historical accuracy, we must use the amount recorded in the event that
            * was closest to the block being processed, rather than the current deposit state.
            */
-          const actualPositionAmountAtBlock: string =
-            positionEventsIndexedByDepositId
-              .get(deposit.id)
-              ?.find((e) => e.paraBlockHeight <= blockHeight)
-              ?.amount?.toString() ?? '0';
 
-          accountDepositBalancesPerBlockPerAsset
-            .get(blockHeight)!
-            .data.get(accountId)!
-            .set(
-              deposit.assetId,
-              currentBalance.plus(actualPositionAmountAtBlock)
-            );
+          const latestPositionEvent = positionEventsIndexedByDepositId
+            .get(deposit.id)
+            ?.find((e) => e.paraBlockHeight <= blockHeight);
+
+          // accountDepositBalancesPerBlockPerAsset
+          //   .get(blockHeight)!
+          //   .data.get(accountId)!
+          //   .set(
+          //     deposit.assetId,
+          //     currentBalance.plus(actualPositionAmountAtBlock)
+          //   );
+
+          const position = positionsIndexedByDepositId.get(deposit.id);
+
+          if (!position) continue;
+
+          const liquidityBalanceEntity =
+            await getOrCreateAccountLiquidityBalanceWithAmounts({
+              accountId,
+              assetId: position.assetId,
+              position,
+              depositId: deposit.id,
+              actualAssetAmount: latestPositionEvent?.amount ?? 0n,
+              actualSharesAmount: latestPositionEvent?.sharesAmount ?? 0n,
+              liquidityType: AccountLiquidityType.OmnipoolDeposit,
+              ctx,
+              blockHeader:
+                ctx.batchState.getBlockHeaderByBlockHeight(blockHeight),
+            });
+
+          ctx.batchState.state.accountLiquidityBalanceHistoricalData.set(
+            liquidityBalanceEntity.id,
+            liquidityBalanceEntity
+          );
         }
       }
     }

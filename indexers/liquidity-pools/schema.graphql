@@ -271,6 +271,48 @@ type AccountAssetBalanceLatest @entity {
   paraBlockHeight: Int!
 }
 
+enum AccountLiquidityType {
+  OmnipoolPosition
+  OmnipoolDeposit
+  XykDeposit
+}
+
+type AccountLiquidityBalanceHistoricalData @entity {
+  "<address>-<positionId>-<paraBlockHeight>"
+  id: ID!
+  liquidityType: AccountLiquidityType!
+  accountId: String! @index
+  assetId: String! @index
+  positionId: String
+  depositId: String
+
+  liquidityAmount: BigInt!
+  hubLiquidityAmount: BigInt
+
+  liquidityAmountNorm: String
+  hubLiquidityAmountNorm: String
+
+  paraBlockHeight: Int! @index
+}
+
+type AccountLiquidityBalanceLatest @entity {
+  "<address>-<positionId>"
+  id: ID!
+  liquidityType: AccountLiquidityType!
+  accountId: String! @index
+  assetId: String! @index
+  positionId: String
+  depositId: String
+
+  liquidityAmount: BigInt!
+  hubLiquidityAmount: BigInt
+
+  liquidityAmountNorm: String
+  hubLiquidityAmountNorm: String
+
+  paraBlockHeight: Int! @index
+}
+
 type AccountTotalBalanceHistoricalData @entity {
   "<address>-<paraBlockHeight>"
   id: ID!
