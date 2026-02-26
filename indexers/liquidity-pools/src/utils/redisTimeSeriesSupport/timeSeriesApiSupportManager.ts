@@ -64,7 +64,7 @@ export class TimeSeriesApiSupportManager {
   }
 
   getJobPrefix(name: HistDataScrapperJobName) {
-    return `${HistDataScrapperJobName.assetPriceHistData}_v2`;
+    return `${HistDataScrapperJobName.assetPriceHistData}_v3`;
   }
 
   async initHistDataScraper() {
@@ -147,6 +147,8 @@ export class TimeSeriesApiSupportManager {
     const bullQueueClient = BullQueueClient.getInstance();
     const apiState = await apiStatePgClient.getApiState();
     let latestProcessedBlockHeight = apiState.assetPriceLatestProcessedBlock;
+
+    console.log(`assetHistDataScraperHandler jobId ${job.id} >>>`);
 
     if (latestProcessedBlockHeight === 0) {
       const firstAvailableAssetSpotPrice = await apiStatePgClient.query(
