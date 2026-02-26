@@ -441,14 +441,14 @@ async function addLiquidityBalancesToTotalBalance({
         ctx,
       });
 
-    const portionAmountNorm = BigNumber(
+    let portionAmountNorm = BigNumber(
       liquidityBalanceData.liquidityAmountNorm ?? '0'
     );
 
     if (
       liquidityBalanceData.liquidityType !== AccountLiquidityType.XykDeposit
     ) {
-      portionAmountNorm.plus(
+      portionAmountNorm = portionAmountNorm.plus(
         liquidityBalanceData.hubLiquidityAmountNorm ?? '0'
       );
     }
