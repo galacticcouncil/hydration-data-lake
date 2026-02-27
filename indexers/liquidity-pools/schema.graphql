@@ -1069,7 +1069,7 @@ type DcaSchedule @entity {
   status: DcaScheduleStatus @index
   owner: Account!
   startExecutionBlock: Int
-  period: Int
+  period: BigInt
   totalAmount: BigInt
   slippage: Int
   maxRetries: Int

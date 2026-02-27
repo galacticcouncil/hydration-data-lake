@@ -64,7 +64,7 @@ export async function createDcaSchedule({
     id: id.toString(),
     startExecutionBlock: startExecutionBlock ?? null,
     owner: await getOrCreateAccount({ ctx, id: owner }),
-    period: period ?? null,
+    period: period ? BigInt(period) : null,
     totalAmount: totalAmount ?? null,
     slippage: slippage ?? null,
     maxRetries: maxRetries ?? null,
