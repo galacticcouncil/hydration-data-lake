@@ -12,6 +12,11 @@ export async function handleReaggregationProcessing(
   if (!ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_FLOW_NAME)
     throw new Error('No reaggregation flow name specified.');
 
+  console.log(
+    '[ REAGGREGATION_PROCESSING_FLOW_NAME ] - ',
+    ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_FLOW_NAME
+  );
+
   switch (ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_FLOW_NAME) {
     case 'ACCOUNT_BALANCES_REAGGREGATION': {
       await handleAccountBalancesReaggregation(ctx);

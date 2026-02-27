@@ -13,18 +13,10 @@ import {
 import parsers from '../../../../parsers';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { getOrCreateAccount } from '../../../accounts';
-import {
-  AccountBalancesPerBlock,
-  AccountPositionBalancesPerBlockPerAsset,
-} from '../../../balances/accountTotalBalance';
+import { AccountPositionBalancesPerBlockPerAsset } from '../../../balances/accountTotalBalance';
 import { In, IsNull, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
-import { BigNumber } from '@galacticcouncil/sdk';
 import { splitIntoBatches } from '../../../../utils/helpers';
-import { getOmnipoolLiquidityPositionAmountOut } from '../liquidityPositions/liquidityPositionUtils';
-import {
-  getOrCreateAccountLiquidityBalanceHistoricalData,
-  getOrCreateAccountLiquidityBalanceWithAmounts,
-} from '../../../balances/accountLiquidityBalance';
+import { getOrCreateAccountLiquidityBalanceWithAmounts } from '../../../balances/accountLiquidityBalance';
 
 export async function getOrCreateOmnipoolLiquidityMiningDeposit({
   depositId,
@@ -504,6 +496,7 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
               depositId: deposit.id,
               actualAssetAmount: latestPositionEvent?.amount ?? 0n,
               actualSharesAmount: latestPositionEvent?.sharesAmount ?? 0n,
+              actualPrice: latestPositionEvent?.price ?? 0n,
               liquidityType: AccountLiquidityType.OmnipoolDeposit,
               ctx,
               blockHeader:

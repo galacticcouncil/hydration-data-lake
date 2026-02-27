@@ -35,8 +35,8 @@ export class DcaSchedule {
   @Column_("int4", {nullable: true})
   startExecutionBlock!: number | undefined | null
 
-  @Column_("int4", {nullable: true})
-  period!: number | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  period!: bigint | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   totalAmount!: bigint | undefined | null

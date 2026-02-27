@@ -79,7 +79,7 @@ export async function getOrCreateAccountLiquidityBalanceHistoricalData({
   if (!block) throw Error('Block not found');
 
   dataEntity = new AccountLiquidityBalanceHistoricalData({
-    id: `${accountId}-${positionId}-${blockHeader.height}`,
+    id: entityId,
     accountId,
     assetId,
     positionId: positionId ?? null,
@@ -108,6 +108,7 @@ export async function getOrCreateAccountLiquidityBalanceWithAmounts({
   position,
   actualAssetAmount,
   actualSharesAmount,
+  actualPrice,
   depositId,
   liquidityType,
   ctx,
@@ -119,6 +120,7 @@ export async function getOrCreateAccountLiquidityBalanceWithAmounts({
   depositId?: string;
   actualAssetAmount?: bigint;
   actualSharesAmount?: bigint;
+  actualPrice?: bigint;
   liquidityType: AccountLiquidityType;
   ctx: SqdProcessorContext<Store>;
   blockHeader: SqdBlock;
@@ -183,6 +185,7 @@ export async function getOrCreateAccountLiquidityBalanceWithAmounts({
     position,
     actualAssetAmount,
     actualSharesAmount,
+    actualPrice,
   });
 
   balanceEntity.liquidityAmount = BigInt(

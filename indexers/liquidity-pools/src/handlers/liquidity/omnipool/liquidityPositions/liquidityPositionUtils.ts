@@ -11,21 +11,14 @@ import parsers from '../../../../parsers';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { getOrCreateAccount } from '../../../accounts';
 import { getOrCreateOmnipoolAsset } from '../../../pools/pools/omnipool/omnipoolAssets';
-import {
-  AccountBalancesPerBlock,
-  AccountPositionBalancesPerBlockPerAsset,
-} from '../../../balances/accountTotalBalance';
+import { AccountPositionBalancesPerBlockPerAsset } from '../../../balances/accountTotalBalance';
 import { In, IsNull, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
-import { BigNumber } from '@galacticcouncil/sdk';
 import { splitIntoBatches } from '../../../../utils/helpers';
 import {
   calculate_liquidity_lrna_out,
   calculate_liquidity_out,
 } from '@galacticcouncil/math-omnipool';
-import {
-  getOrCreateAccountLiquidityBalanceHistoricalData,
-  getOrCreateAccountLiquidityBalanceWithAmounts,
-} from '../../../balances/accountLiquidityBalance';
+import { getOrCreateAccountLiquidityBalanceWithAmounts } from '../../../balances/accountLiquidityBalance';
 
 export async function getNewOmnipoolLiquidityPosition({
   positionId,
@@ -525,6 +518,7 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
             position,
             actualAssetAmount: latestPositionEvent?.amount ?? 0n,
             actualSharesAmount: latestPositionEvent?.sharesAmount ?? 0n,
+            actualPrice: latestPositionEvent?.price ?? 0n,
             liquidityType: AccountLiquidityType.OmnipoolPosition,
             ctx,
             blockHeader:
@@ -561,17 +555,20 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
 export async function getOmnipoolLiquidityPositionAmountOut({
   actualAssetAmount = null,
   actualSharesAmount = null,
+  actualPrice = null,
   position,
   blockHeader,
   ctx,
 }: {
   actualAssetAmount?: bigint | null;
   actualSharesAmount?: bigint | null;
+  actualPrice?: bigint | null;
   position: OmnipoolLiquidityPosition;
   blockHeader: SqdBlock;
   ctx: SqdProcessorContext<Store>;
 }): Promise<{ liquidity: string; hubLiquidity: string } | null> {
-  let positionPriceExpNotation = position.price;
+  let positionPriceExpNotation =
+    actualPrice !== null ? actualPrice : position.price;
 
   if (!positionPriceExpNotation || positionPriceExpNotation === 0n) {
     const positionStorageData =

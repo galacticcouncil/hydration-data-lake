@@ -17,10 +17,7 @@ import {
 } from '../../parsers/batchBlocksParser/types';
 import { DcaScheduleCallArgs } from '../../parsers/types/calls';
 import { DcaScheduledEventParams } from '../../parsers/types/events';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { getOrCreateAccount } from '../accounts';
 import { getOrCreateAsset } from '../assets/asset';
 import { processDcaScheduleEvent } from './dcaScheduleEvents';
@@ -69,7 +66,7 @@ export async function createDcaSchedule({
     id: id.toString(),
     startExecutionBlock: startExecutionBlock ?? null,
     ownerId: owner.toString(),
-    period: period ?? null,
+    period: period ? BigInt(period) : null,
     totalAmount: totalAmount ?? null,
     slippage: slippage ?? null,
     maxRetries: maxRetries ?? null,
@@ -119,7 +116,10 @@ export async function createDcaSchedule({
   }
   newSchedule.orderRouteHops = orderRouteHops;
 
-  const ownerAccount = await getOrCreateAccount({ ctx, id: newSchedule.ownerId });
+  const ownerAccount = await getOrCreateAccount({
+    ctx,
+    id: newSchedule.ownerId,
+  });
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newSchedule.traceIds,
@@ -146,10 +146,14 @@ export async function getDcaSchedule({
   let schedule = batchState.dcaSchedules.get(id);
   if (schedule || (!schedule && !fetchFromDb)) return schedule ?? null;
 
-  schedule = await ctx.storeUtils.findOneWithLogs(DcaSchedule, {
-    where: { id },
-    relations,
-  }, { className: 'DcaSchedule' });
+  schedule = await ctx.storeUtils.findOneWithLogs(
+    DcaSchedule,
+    {
+      where: { id },
+      relations,
+    },
+    { className: 'DcaSchedule' }
+  );
 
   if (!schedule) return null;
   ctx.batchState.state.dcaSchedules.set(schedule.id, schedule);
@@ -196,7 +200,10 @@ export async function handleDcaScheduleCreated(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  const ownerAccount = await getOrCreateAccount({ ctx, id: newSchedule.ownerId });
+  const ownerAccount = await getOrCreateAccount({
+    ctx,
+    id: newSchedule.ownerId,
+  });
 
   newSchedule.events = [...(newSchedule.events || []), scheduleEvent];
 

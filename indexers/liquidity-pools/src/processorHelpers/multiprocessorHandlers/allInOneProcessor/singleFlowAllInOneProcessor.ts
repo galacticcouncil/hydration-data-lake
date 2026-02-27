@@ -69,7 +69,6 @@ import { handleUniquesEvents } from '../../../handlers/uniques';
 import { prefetchOrInitAllAccountProcessingStatuses } from '../../../handlers/accounts/accountProcessingStatus';
 import { handleLiquidationEvents } from '../../../handlers/liquidation';
 import { initAllAccountsOnColdStart } from '../../../handlers/accounts/allAccountsInit';
-import { handleAllAccountBalancesInit } from '../../../handlers/balances/allAccountBalancesInit';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>

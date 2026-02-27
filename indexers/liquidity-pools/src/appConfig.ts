@@ -321,6 +321,14 @@ class ProcessingModeConfig {
 
   readonly REAGGREGATION_PROCESSING_FLOW_NAME?: string;
 
+  @Transform(
+    ({ value }: { value: string }) =>
+      new Set(value.split(',').map((e) => e.trim()))
+  )
+  readonly REAGGREGATION_PROCESSING_FLOW_TRIGGERS: Set<string> = new Set([
+    'NONE',
+  ]);
+
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
   readonly IS_CORE_PROCESSOR: boolean = false;
@@ -688,6 +696,9 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS: number = 7000;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ACCOUNT_BALANCES_REAGGREGATION_ENABLED: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ALL_ACCOUNT_BALANCES_INIT: boolean = false;

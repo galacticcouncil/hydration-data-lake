@@ -141,7 +141,10 @@ export async function stablepoolBuySellExecuted(
       fees: [
         {
           amount: eventParams.fee,
-          assetId: eventParams.assetOut,
+          assetId:
+            eventMetadata.name === EventName.Stableswap_BuyExecuted
+              ? eventParams.assetIn
+              : eventParams.assetOut,
           destinationType: SwapFeeDestinationType.Account,
           recipientId: pool.accountId,
         },

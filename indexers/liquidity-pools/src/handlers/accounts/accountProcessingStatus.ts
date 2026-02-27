@@ -108,6 +108,11 @@ export async function addAccountsToPeriodicalBalancesAggregation({
   whitelistedAccountIds?: string[];
   ctx: SqdProcessorContext<Store>;
 }) {
+  if (!ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_ENABLED) {
+    console.log(`Periodical balances aggregation is disabled.`);
+    return;
+  }
+
   const allAccountsInBatch = new Set<string>();
   for (const accounts of allProcessedAccountsPerBlock.values()) {
     for (const accountId of accounts) {

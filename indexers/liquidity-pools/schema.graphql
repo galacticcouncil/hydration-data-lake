@@ -1521,7 +1521,7 @@ type DcaSchedule @entity {
   status: DcaScheduleStatus @index
   ownerId: String!
   startExecutionBlock: Int
-  period: Int
+  period: BigInt
   totalAmount: BigInt
   slippage: Int
   maxRetries: Int

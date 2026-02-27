@@ -14297,7 +14297,7 @@ type DcaSchedule {
   status: String
   ownerId: String!
   startExecutionBlock: Int
-  period: Int
+  period: BigFloat
   totalAmount: BigFloat
   slippage: Int
   maxRetries: Int
@@ -15032,7 +15032,7 @@ type DcaScheduleSumAggregates {
   startExecutionBlock: BigInt!
 
   """Sum of period across the matching connection"""
-  period: BigInt!
+  period: BigFloat!
 
   """Sum of totalAmount across the matching connection"""
   totalAmount: BigFloat!
@@ -15143,7 +15143,7 @@ type DcaScheduleMinAggregates {
   startExecutionBlock: Int
 
   """Minimum of period across the matching connection"""
-  period: Int
+  period: BigFloat
 
   """Minimum of totalAmount across the matching connection"""
   totalAmount: BigFloat
@@ -15184,7 +15184,7 @@ type DcaScheduleMaxAggregates {
   startExecutionBlock: Int
 
   """Maximum of period across the matching connection"""
-  period: Int
+  period: BigFloat
 
   """Maximum of totalAmount across the matching connection"""
   totalAmount: BigFloat
@@ -15519,7 +15519,7 @@ input DcaScheduleHavingInput {
 
 input DcaScheduleHavingSumInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -15535,7 +15535,7 @@ input DcaScheduleHavingSumInput {
 
 input DcaScheduleHavingDistinctCountInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -15551,7 +15551,7 @@ input DcaScheduleHavingDistinctCountInput {
 
 input DcaScheduleHavingMinInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -15567,7 +15567,7 @@ input DcaScheduleHavingMinInput {
 
 input DcaScheduleHavingMaxInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -15583,7 +15583,7 @@ input DcaScheduleHavingMaxInput {
 
 input DcaScheduleHavingAverageInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -15599,7 +15599,7 @@ input DcaScheduleHavingAverageInput {
 
 input DcaScheduleHavingStddevSampleInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -15615,7 +15615,7 @@ input DcaScheduleHavingStddevSampleInput {
 
 input DcaScheduleHavingStddevPopulationInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -15631,7 +15631,7 @@ input DcaScheduleHavingStddevPopulationInput {
 
 input DcaScheduleHavingVarianceSampleInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -15647,7 +15647,7 @@ input DcaScheduleHavingVarianceSampleInput {
 
 input DcaScheduleHavingVariancePopulationInput {
   startExecutionBlock: HavingIntFilter
-  period: HavingIntFilter
+  period: HavingBigfloatFilter
   totalAmount: HavingBigfloatFilter
   slippage: HavingIntFilter
   maxRetries: HavingIntFilter
@@ -16048,7 +16048,7 @@ input DcaScheduleCondition {
   startExecutionBlock: Int
 
   """Checks for equality with the object’s `period` field."""
-  period: Int
+  period: BigFloat
 
   """Checks for equality with the object’s `totalAmount` field."""
   totalAmount: BigFloat
@@ -16119,7 +16119,7 @@ input DcaScheduleFilter {
   startExecutionBlock: IntFilter
 
   """Filter by the object’s `period` field."""
-  period: IntFilter
+  period: BigFloatFilter
 
   """Filter by the object’s `totalAmount` field."""
   totalAmount: BigFloatFilter
@@ -48857,6 +48857,904 @@ input AccountAssetSwapFeeHistoricalDataHavingVariancePopulationInput {
   paraBlockHeight: HavingIntFilter
 }
 
+"""
+A connection to a list of `AccountLiquidityBalanceHistoricalDatum` values.
+"""
+type AccountLiquidityBalanceHistoricalDataConnection {
+  """A list of `AccountLiquidityBalanceHistoricalDatum` objects."""
+  nodes: [AccountLiquidityBalanceHistoricalDatum]!
+
+  """
+  A list of edges which contains the `AccountLiquidityBalanceHistoricalDatum` and cursor to aid in pagination.
+  """
+  edges: [AccountLiquidityBalanceHistoricalDataEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `AccountLiquidityBalanceHistoricalDatum` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: AccountLiquidityBalanceHistoricalDatumAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `AccountLiquidityBalanceHistoricalDatum` for these aggregates.
+    """
+    groupBy: [AccountLiquidityBalanceHistoricalDataGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: AccountLiquidityBalanceHistoricalDataHavingInput
+  ): [AccountLiquidityBalanceHistoricalDatumAggregates!]
+}
+
+type AccountLiquidityBalanceHistoricalDatum {
+  id: String!
+  liquidityType: String!
+  accountId: String!
+  assetId: String!
+  positionId: String
+  depositId: String
+  liquidityAmount: BigFloat!
+  hubLiquidityAmount: BigFloat
+  liquidityAmountNorm: String
+  hubLiquidityAmountNorm: String
+  paraBlockHeight: Int!
+}
+
+"""A `AccountLiquidityBalanceHistoricalDatum` edge in the connection."""
+type AccountLiquidityBalanceHistoricalDataEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `AccountLiquidityBalanceHistoricalDatum` at the end of the edge."""
+  node: AccountLiquidityBalanceHistoricalDatum
+}
+
+type AccountLiquidityBalanceHistoricalDatumAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: AccountLiquidityBalanceHistoricalDatumSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: AccountLiquidityBalanceHistoricalDatumDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: AccountLiquidityBalanceHistoricalDatumMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: AccountLiquidityBalanceHistoricalDatumMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: AccountLiquidityBalanceHistoricalDatumAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: AccountLiquidityBalanceHistoricalDatumStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: AccountLiquidityBalanceHistoricalDatumStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: AccountLiquidityBalanceHistoricalDatumVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: AccountLiquidityBalanceHistoricalDatumVariancePopulationAggregates
+}
+
+type AccountLiquidityBalanceHistoricalDatumSumAggregates {
+  """Sum of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat!
+
+  """Sum of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat!
+
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type AccountLiquidityBalanceHistoricalDatumDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of liquidityType across the matching connection"""
+  liquidityType: BigInt
+
+  """Distinct count of accountId across the matching connection"""
+  accountId: BigInt
+
+  """Distinct count of assetId across the matching connection"""
+  assetId: BigInt
+
+  """Distinct count of positionId across the matching connection"""
+  positionId: BigInt
+
+  """Distinct count of depositId across the matching connection"""
+  depositId: BigInt
+
+  """Distinct count of liquidityAmount across the matching connection"""
+  liquidityAmount: BigInt
+
+  """Distinct count of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigInt
+
+  """Distinct count of liquidityAmountNorm across the matching connection"""
+  liquidityAmountNorm: BigInt
+
+  """
+  Distinct count of hubLiquidityAmountNorm across the matching connection
+  """
+  hubLiquidityAmountNorm: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+}
+
+type AccountLiquidityBalanceHistoricalDatumMinAggregates {
+  """Minimum of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """Minimum of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat
+
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountLiquidityBalanceHistoricalDatumMaxAggregates {
+  """Maximum of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """Maximum of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat
+
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountLiquidityBalanceHistoricalDatumAverageAggregates {
+  """Mean average of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """Mean average of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat
+
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountLiquidityBalanceHistoricalDatumStddevSampleAggregates {
+  """
+  Sample standard deviation of liquidityAmount across the matching connection
+  """
+  liquidityAmount: BigFloat
+
+  """
+  Sample standard deviation of hubLiquidityAmount across the matching connection
+  """
+  hubLiquidityAmount: BigFloat
+
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountLiquidityBalanceHistoricalDatumStddevPopulationAggregates {
+  """
+  Population standard deviation of liquidityAmount across the matching connection
+  """
+  liquidityAmount: BigFloat
+
+  """
+  Population standard deviation of hubLiquidityAmount across the matching connection
+  """
+  hubLiquidityAmount: BigFloat
+
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountLiquidityBalanceHistoricalDatumVarianceSampleAggregates {
+  """Sample variance of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """Sample variance of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat
+
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountLiquidityBalanceHistoricalDatumVariancePopulationAggregates {
+  """Population variance of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """
+  Population variance of hubLiquidityAmount across the matching connection
+  """
+  hubLiquidityAmount: BigFloat
+
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `AccountLiquidityBalanceHistoricalDatum` for usage during aggregation.
+"""
+enum AccountLiquidityBalanceHistoricalDataGroupBy {
+  LIQUIDITY_TYPE
+  ACCOUNT_ID
+  ASSET_ID
+  POSITION_ID
+  DEPOSIT_ID
+  LIQUIDITY_AMOUNT
+  HUB_LIQUIDITY_AMOUNT
+  LIQUIDITY_AMOUNT_NORM
+  HUB_LIQUIDITY_AMOUNT_NORM
+  PARA_BLOCK_HEIGHT
+}
+
+"""Conditions for `AccountLiquidityBalanceHistoricalDatum` aggregates."""
+input AccountLiquidityBalanceHistoricalDataHavingInput {
+  AND: [AccountLiquidityBalanceHistoricalDataHavingInput!]
+  OR: [AccountLiquidityBalanceHistoricalDataHavingInput!]
+  sum: AccountLiquidityBalanceHistoricalDataHavingSumInput
+  distinctCount: AccountLiquidityBalanceHistoricalDataHavingDistinctCountInput
+  min: AccountLiquidityBalanceHistoricalDataHavingMinInput
+  max: AccountLiquidityBalanceHistoricalDataHavingMaxInput
+  average: AccountLiquidityBalanceHistoricalDataHavingAverageInput
+  stddevSample: AccountLiquidityBalanceHistoricalDataHavingStddevSampleInput
+  stddevPopulation: AccountLiquidityBalanceHistoricalDataHavingStddevPopulationInput
+  varianceSample: AccountLiquidityBalanceHistoricalDataHavingVarianceSampleInput
+  variancePopulation: AccountLiquidityBalanceHistoricalDataHavingVariancePopulationInput
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingSumInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingDistinctCountInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingMinInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingMaxInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingAverageInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingStddevSampleInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingStddevPopulationInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingVarianceSampleInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceHistoricalDataHavingVariancePopulationInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `AccountLiquidityBalanceHistoricalDatum`."""
+enum AccountLiquidityBalanceHistoricalDataOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  LIQUIDITY_TYPE_ASC
+  LIQUIDITY_TYPE_DESC
+  ACCOUNT_ID_ASC
+  ACCOUNT_ID_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  POSITION_ID_ASC
+  POSITION_ID_DESC
+  DEPOSIT_ID_ASC
+  DEPOSIT_ID_DESC
+  LIQUIDITY_AMOUNT_ASC
+  LIQUIDITY_AMOUNT_DESC
+  HUB_LIQUIDITY_AMOUNT_ASC
+  HUB_LIQUIDITY_AMOUNT_DESC
+  LIQUIDITY_AMOUNT_NORM_ASC
+  LIQUIDITY_AMOUNT_NORM_DESC
+  HUB_LIQUIDITY_AMOUNT_NORM_ASC
+  HUB_LIQUIDITY_AMOUNT_NORM_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `AccountLiquidityBalanceHistoricalDatum` object
+types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input AccountLiquidityBalanceHistoricalDatumCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `liquidityType` field."""
+  liquidityType: String
+
+  """Checks for equality with the object’s `accountId` field."""
+  accountId: String
+
+  """Checks for equality with the object’s `assetId` field."""
+  assetId: String
+
+  """Checks for equality with the object’s `positionId` field."""
+  positionId: String
+
+  """Checks for equality with the object’s `depositId` field."""
+  depositId: String
+
+  """Checks for equality with the object’s `liquidityAmount` field."""
+  liquidityAmount: BigFloat
+
+  """Checks for equality with the object’s `hubLiquidityAmount` field."""
+  hubLiquidityAmount: BigFloat
+
+  """Checks for equality with the object’s `liquidityAmountNorm` field."""
+  liquidityAmountNorm: String
+
+  """Checks for equality with the object’s `hubLiquidityAmountNorm` field."""
+  hubLiquidityAmountNorm: String
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+}
+
+"""
+A filter to be used against `AccountLiquidityBalanceHistoricalDatum` object types. All fields are combined with a logical ‘and.’
+"""
+input AccountLiquidityBalanceHistoricalDatumFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `liquidityType` field."""
+  liquidityType: StringFilter
+
+  """Filter by the object’s `accountId` field."""
+  accountId: StringFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: StringFilter
+
+  """Filter by the object’s `positionId` field."""
+  positionId: StringFilter
+
+  """Filter by the object’s `depositId` field."""
+  depositId: StringFilter
+
+  """Filter by the object’s `liquidityAmount` field."""
+  liquidityAmount: BigFloatFilter
+
+  """Filter by the object’s `hubLiquidityAmount` field."""
+  hubLiquidityAmount: BigFloatFilter
+
+  """Filter by the object’s `liquidityAmountNorm` field."""
+  liquidityAmountNorm: StringFilter
+
+  """Filter by the object’s `hubLiquidityAmountNorm` field."""
+  hubLiquidityAmountNorm: StringFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [AccountLiquidityBalanceHistoricalDatumFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [AccountLiquidityBalanceHistoricalDatumFilter!]
+
+  """Negates the expression."""
+  not: AccountLiquidityBalanceHistoricalDatumFilter
+}
+
+"""A connection to a list of `AccountLiquidityBalanceLatest` values."""
+type AccountLiquidityBalanceLatestsConnection {
+  """A list of `AccountLiquidityBalanceLatest` objects."""
+  nodes: [AccountLiquidityBalanceLatest]!
+
+  """
+  A list of edges which contains the `AccountLiquidityBalanceLatest` and cursor to aid in pagination.
+  """
+  edges: [AccountLiquidityBalanceLatestsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `AccountLiquidityBalanceLatest` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: AccountLiquidityBalanceLatestAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `AccountLiquidityBalanceLatest` for these aggregates.
+    """
+    groupBy: [AccountLiquidityBalanceLatestGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: AccountLiquidityBalanceLatestHavingInput
+  ): [AccountLiquidityBalanceLatestAggregates!]
+}
+
+type AccountLiquidityBalanceLatest {
+  id: String!
+  liquidityType: String!
+  accountId: String!
+  assetId: String!
+  positionId: String
+  depositId: String
+  liquidityAmount: BigFloat!
+  hubLiquidityAmount: BigFloat
+  liquidityAmountNorm: String
+  hubLiquidityAmountNorm: String
+  paraBlockHeight: Int!
+}
+
+"""A `AccountLiquidityBalanceLatest` edge in the connection."""
+type AccountLiquidityBalanceLatestsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `AccountLiquidityBalanceLatest` at the end of the edge."""
+  node: AccountLiquidityBalanceLatest
+}
+
+type AccountLiquidityBalanceLatestAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: AccountLiquidityBalanceLatestSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: AccountLiquidityBalanceLatestDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: AccountLiquidityBalanceLatestMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: AccountLiquidityBalanceLatestMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: AccountLiquidityBalanceLatestAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: AccountLiquidityBalanceLatestStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: AccountLiquidityBalanceLatestStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: AccountLiquidityBalanceLatestVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: AccountLiquidityBalanceLatestVariancePopulationAggregates
+}
+
+type AccountLiquidityBalanceLatestSumAggregates {
+  """Sum of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat!
+
+  """Sum of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat!
+
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type AccountLiquidityBalanceLatestDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of liquidityType across the matching connection"""
+  liquidityType: BigInt
+
+  """Distinct count of accountId across the matching connection"""
+  accountId: BigInt
+
+  """Distinct count of assetId across the matching connection"""
+  assetId: BigInt
+
+  """Distinct count of positionId across the matching connection"""
+  positionId: BigInt
+
+  """Distinct count of depositId across the matching connection"""
+  depositId: BigInt
+
+  """Distinct count of liquidityAmount across the matching connection"""
+  liquidityAmount: BigInt
+
+  """Distinct count of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigInt
+
+  """Distinct count of liquidityAmountNorm across the matching connection"""
+  liquidityAmountNorm: BigInt
+
+  """
+  Distinct count of hubLiquidityAmountNorm across the matching connection
+  """
+  hubLiquidityAmountNorm: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+}
+
+type AccountLiquidityBalanceLatestMinAggregates {
+  """Minimum of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """Minimum of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat
+
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountLiquidityBalanceLatestMaxAggregates {
+  """Maximum of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """Maximum of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat
+
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountLiquidityBalanceLatestAverageAggregates {
+  """Mean average of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """Mean average of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat
+
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountLiquidityBalanceLatestStddevSampleAggregates {
+  """
+  Sample standard deviation of liquidityAmount across the matching connection
+  """
+  liquidityAmount: BigFloat
+
+  """
+  Sample standard deviation of hubLiquidityAmount across the matching connection
+  """
+  hubLiquidityAmount: BigFloat
+
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountLiquidityBalanceLatestStddevPopulationAggregates {
+  """
+  Population standard deviation of liquidityAmount across the matching connection
+  """
+  liquidityAmount: BigFloat
+
+  """
+  Population standard deviation of hubLiquidityAmount across the matching connection
+  """
+  hubLiquidityAmount: BigFloat
+
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountLiquidityBalanceLatestVarianceSampleAggregates {
+  """Sample variance of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """Sample variance of hubLiquidityAmount across the matching connection"""
+  hubLiquidityAmount: BigFloat
+
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountLiquidityBalanceLatestVariancePopulationAggregates {
+  """Population variance of liquidityAmount across the matching connection"""
+  liquidityAmount: BigFloat
+
+  """
+  Population variance of hubLiquidityAmount across the matching connection
+  """
+  hubLiquidityAmount: BigFloat
+
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `AccountLiquidityBalanceLatest` for usage during aggregation.
+"""
+enum AccountLiquidityBalanceLatestGroupBy {
+  LIQUIDITY_TYPE
+  ACCOUNT_ID
+  ASSET_ID
+  POSITION_ID
+  DEPOSIT_ID
+  LIQUIDITY_AMOUNT
+  HUB_LIQUIDITY_AMOUNT
+  LIQUIDITY_AMOUNT_NORM
+  HUB_LIQUIDITY_AMOUNT_NORM
+  PARA_BLOCK_HEIGHT
+}
+
+"""Conditions for `AccountLiquidityBalanceLatest` aggregates."""
+input AccountLiquidityBalanceLatestHavingInput {
+  AND: [AccountLiquidityBalanceLatestHavingInput!]
+  OR: [AccountLiquidityBalanceLatestHavingInput!]
+  sum: AccountLiquidityBalanceLatestHavingSumInput
+  distinctCount: AccountLiquidityBalanceLatestHavingDistinctCountInput
+  min: AccountLiquidityBalanceLatestHavingMinInput
+  max: AccountLiquidityBalanceLatestHavingMaxInput
+  average: AccountLiquidityBalanceLatestHavingAverageInput
+  stddevSample: AccountLiquidityBalanceLatestHavingStddevSampleInput
+  stddevPopulation: AccountLiquidityBalanceLatestHavingStddevPopulationInput
+  varianceSample: AccountLiquidityBalanceLatestHavingVarianceSampleInput
+  variancePopulation: AccountLiquidityBalanceLatestHavingVariancePopulationInput
+}
+
+input AccountLiquidityBalanceLatestHavingSumInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceLatestHavingDistinctCountInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceLatestHavingMinInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceLatestHavingMaxInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceLatestHavingAverageInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceLatestHavingStddevSampleInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceLatestHavingStddevPopulationInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceLatestHavingVarianceSampleInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountLiquidityBalanceLatestHavingVariancePopulationInput {
+  liquidityAmount: HavingBigfloatFilter
+  hubLiquidityAmount: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `AccountLiquidityBalanceLatest`."""
+enum AccountLiquidityBalanceLatestsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  LIQUIDITY_TYPE_ASC
+  LIQUIDITY_TYPE_DESC
+  ACCOUNT_ID_ASC
+  ACCOUNT_ID_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  POSITION_ID_ASC
+  POSITION_ID_DESC
+  DEPOSIT_ID_ASC
+  DEPOSIT_ID_DESC
+  LIQUIDITY_AMOUNT_ASC
+  LIQUIDITY_AMOUNT_DESC
+  HUB_LIQUIDITY_AMOUNT_ASC
+  HUB_LIQUIDITY_AMOUNT_DESC
+  LIQUIDITY_AMOUNT_NORM_ASC
+  LIQUIDITY_AMOUNT_NORM_DESC
+  HUB_LIQUIDITY_AMOUNT_NORM_ASC
+  HUB_LIQUIDITY_AMOUNT_NORM_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `AccountLiquidityBalanceLatest` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input AccountLiquidityBalanceLatestCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `liquidityType` field."""
+  liquidityType: String
+
+  """Checks for equality with the object’s `accountId` field."""
+  accountId: String
+
+  """Checks for equality with the object’s `assetId` field."""
+  assetId: String
+
+  """Checks for equality with the object’s `positionId` field."""
+  positionId: String
+
+  """Checks for equality with the object’s `depositId` field."""
+  depositId: String
+
+  """Checks for equality with the object’s `liquidityAmount` field."""
+  liquidityAmount: BigFloat
+
+  """Checks for equality with the object’s `hubLiquidityAmount` field."""
+  hubLiquidityAmount: BigFloat
+
+  """Checks for equality with the object’s `liquidityAmountNorm` field."""
+  liquidityAmountNorm: String
+
+  """Checks for equality with the object’s `hubLiquidityAmountNorm` field."""
+  hubLiquidityAmountNorm: String
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+}
+
+"""
+A filter to be used against `AccountLiquidityBalanceLatest` object types. All fields are combined with a logical ‘and.’
+"""
+input AccountLiquidityBalanceLatestFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `liquidityType` field."""
+  liquidityType: StringFilter
+
+  """Filter by the object’s `accountId` field."""
+  accountId: StringFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: StringFilter
+
+  """Filter by the object’s `positionId` field."""
+  positionId: StringFilter
+
+  """Filter by the object’s `depositId` field."""
+  depositId: StringFilter
+
+  """Filter by the object’s `liquidityAmount` field."""
+  liquidityAmount: BigFloatFilter
+
+  """Filter by the object’s `hubLiquidityAmount` field."""
+  hubLiquidityAmount: BigFloatFilter
+
+  """Filter by the object’s `liquidityAmountNorm` field."""
+  liquidityAmountNorm: StringFilter
+
+  """Filter by the object’s `hubLiquidityAmountNorm` field."""
+  hubLiquidityAmountNorm: StringFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [AccountLiquidityBalanceLatestFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [AccountLiquidityBalanceLatestFilter!]
+
+  """Negates the expression."""
+  not: AccountLiquidityBalanceLatestFilter
+}
+
 """A connection to a list of `AccountMmPositionHistoricalDatum` values."""
 type AccountMmPositionHistoricalDataConnection {
   """A list of `AccountMmPositionHistoricalDatum` objects."""
@@ -50272,6 +51170,744 @@ input AccountTotalBalanceHistoricalDatumFilter {
 
   """Negates the expression."""
   not: AccountTotalBalanceHistoricalDatumFilter
+}
+
+"""
+A connection to a list of `AccountTotalBalanceHistoricalDataLog` values.
+"""
+type AccountTotalBalanceHistoricalDataLogsConnection {
+  """A list of `AccountTotalBalanceHistoricalDataLog` objects."""
+  nodes: [AccountTotalBalanceHistoricalDataLog]!
+
+  """
+  A list of edges which contains the `AccountTotalBalanceHistoricalDataLog` and cursor to aid in pagination.
+  """
+  edges: [AccountTotalBalanceHistoricalDataLogsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `AccountTotalBalanceHistoricalDataLog` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: AccountTotalBalanceHistoricalDataLogAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `AccountTotalBalanceHistoricalDataLog` for these aggregates.
+    """
+    groupBy: [AccountTotalBalanceHistoricalDataLogGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: AccountTotalBalanceHistoricalDataLogHavingInput
+  ): [AccountTotalBalanceHistoricalDataLogAggregates!]
+}
+
+type AccountTotalBalanceHistoricalDataLog {
+  id: String!
+  accountId: String!
+  assetId: String!
+  source: String!
+  memo: String
+  transferable: BigFloat
+  totalLocked: BigFloat
+  transferableNorm: String
+  totalLockedNorm: String
+  paraBlockHeight: Int!
+}
+
+"""A `AccountTotalBalanceHistoricalDataLog` edge in the connection."""
+type AccountTotalBalanceHistoricalDataLogsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `AccountTotalBalanceHistoricalDataLog` at the end of the edge."""
+  node: AccountTotalBalanceHistoricalDataLog
+}
+
+type AccountTotalBalanceHistoricalDataLogAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: AccountTotalBalanceHistoricalDataLogSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: AccountTotalBalanceHistoricalDataLogDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: AccountTotalBalanceHistoricalDataLogMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: AccountTotalBalanceHistoricalDataLogMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: AccountTotalBalanceHistoricalDataLogAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: AccountTotalBalanceHistoricalDataLogStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: AccountTotalBalanceHistoricalDataLogStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: AccountTotalBalanceHistoricalDataLogVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: AccountTotalBalanceHistoricalDataLogVariancePopulationAggregates
+}
+
+type AccountTotalBalanceHistoricalDataLogSumAggregates {
+  """Sum of transferable across the matching connection"""
+  transferable: BigFloat!
+
+  """Sum of totalLocked across the matching connection"""
+  totalLocked: BigFloat!
+
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type AccountTotalBalanceHistoricalDataLogDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of accountId across the matching connection"""
+  accountId: BigInt
+
+  """Distinct count of assetId across the matching connection"""
+  assetId: BigInt
+
+  """Distinct count of source across the matching connection"""
+  source: BigInt
+
+  """Distinct count of memo across the matching connection"""
+  memo: BigInt
+
+  """Distinct count of transferable across the matching connection"""
+  transferable: BigInt
+
+  """Distinct count of totalLocked across the matching connection"""
+  totalLocked: BigInt
+
+  """Distinct count of transferableNorm across the matching connection"""
+  transferableNorm: BigInt
+
+  """Distinct count of totalLockedNorm across the matching connection"""
+  totalLockedNorm: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+}
+
+type AccountTotalBalanceHistoricalDataLogMinAggregates {
+  """Minimum of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Minimum of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountTotalBalanceHistoricalDataLogMaxAggregates {
+  """Maximum of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Maximum of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountTotalBalanceHistoricalDataLogAverageAggregates {
+  """Mean average of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Mean average of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountTotalBalanceHistoricalDataLogStddevSampleAggregates {
+  """
+  Sample standard deviation of transferable across the matching connection
+  """
+  transferable: BigFloat
+
+  """
+  Sample standard deviation of totalLocked across the matching connection
+  """
+  totalLocked: BigFloat
+
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountTotalBalanceHistoricalDataLogStddevPopulationAggregates {
+  """
+  Population standard deviation of transferable across the matching connection
+  """
+  transferable: BigFloat
+
+  """
+  Population standard deviation of totalLocked across the matching connection
+  """
+  totalLocked: BigFloat
+
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountTotalBalanceHistoricalDataLogVarianceSampleAggregates {
+  """Sample variance of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Sample variance of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountTotalBalanceHistoricalDataLogVariancePopulationAggregates {
+  """Population variance of transferable across the matching connection"""
+  transferable: BigFloat
+
+  """Population variance of totalLocked across the matching connection"""
+  totalLocked: BigFloat
+
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `AccountTotalBalanceHistoricalDataLog` for usage during aggregation.
+"""
+enum AccountTotalBalanceHistoricalDataLogGroupBy {
+  ACCOUNT_ID
+  ASSET_ID
+  SOURCE
+  MEMO
+  TRANSFERABLE
+  TOTAL_LOCKED
+  TRANSFERABLE_NORM
+  TOTAL_LOCKED_NORM
+  PARA_BLOCK_HEIGHT
+}
+
+"""Conditions for `AccountTotalBalanceHistoricalDataLog` aggregates."""
+input AccountTotalBalanceHistoricalDataLogHavingInput {
+  AND: [AccountTotalBalanceHistoricalDataLogHavingInput!]
+  OR: [AccountTotalBalanceHistoricalDataLogHavingInput!]
+  sum: AccountTotalBalanceHistoricalDataLogHavingSumInput
+  distinctCount: AccountTotalBalanceHistoricalDataLogHavingDistinctCountInput
+  min: AccountTotalBalanceHistoricalDataLogHavingMinInput
+  max: AccountTotalBalanceHistoricalDataLogHavingMaxInput
+  average: AccountTotalBalanceHistoricalDataLogHavingAverageInput
+  stddevSample: AccountTotalBalanceHistoricalDataLogHavingStddevSampleInput
+  stddevPopulation: AccountTotalBalanceHistoricalDataLogHavingStddevPopulationInput
+  varianceSample: AccountTotalBalanceHistoricalDataLogHavingVarianceSampleInput
+  variancePopulation: AccountTotalBalanceHistoricalDataLogHavingVariancePopulationInput
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingSumInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingDistinctCountInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingMinInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingMaxInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingAverageInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingStddevSampleInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingStddevPopulationInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingVarianceSampleInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceHistoricalDataLogHavingVariancePopulationInput {
+  transferable: HavingBigfloatFilter
+  totalLocked: HavingBigfloatFilter
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `AccountTotalBalanceHistoricalDataLog`."""
+enum AccountTotalBalanceHistoricalDataLogsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ACCOUNT_ID_ASC
+  ACCOUNT_ID_DESC
+  ASSET_ID_ASC
+  ASSET_ID_DESC
+  SOURCE_ASC
+  SOURCE_DESC
+  MEMO_ASC
+  MEMO_DESC
+  TRANSFERABLE_ASC
+  TRANSFERABLE_DESC
+  TOTAL_LOCKED_ASC
+  TOTAL_LOCKED_DESC
+  TRANSFERABLE_NORM_ASC
+  TRANSFERABLE_NORM_DESC
+  TOTAL_LOCKED_NORM_ASC
+  TOTAL_LOCKED_NORM_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `AccountTotalBalanceHistoricalDataLog` object
+types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input AccountTotalBalanceHistoricalDataLogCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `accountId` field."""
+  accountId: String
+
+  """Checks for equality with the object’s `assetId` field."""
+  assetId: String
+
+  """Checks for equality with the object’s `source` field."""
+  source: String
+
+  """Checks for equality with the object’s `memo` field."""
+  memo: String
+
+  """Checks for equality with the object’s `transferable` field."""
+  transferable: BigFloat
+
+  """Checks for equality with the object’s `totalLocked` field."""
+  totalLocked: BigFloat
+
+  """Checks for equality with the object’s `transferableNorm` field."""
+  transferableNorm: String
+
+  """Checks for equality with the object’s `totalLockedNorm` field."""
+  totalLockedNorm: String
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+}
+
+"""
+A filter to be used against `AccountTotalBalanceHistoricalDataLog` object types. All fields are combined with a logical ‘and.’
+"""
+input AccountTotalBalanceHistoricalDataLogFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `accountId` field."""
+  accountId: StringFilter
+
+  """Filter by the object’s `assetId` field."""
+  assetId: StringFilter
+
+  """Filter by the object’s `source` field."""
+  source: StringFilter
+
+  """Filter by the object’s `memo` field."""
+  memo: StringFilter
+
+  """Filter by the object’s `transferable` field."""
+  transferable: BigFloatFilter
+
+  """Filter by the object’s `totalLocked` field."""
+  totalLocked: BigFloatFilter
+
+  """Filter by the object’s `transferableNorm` field."""
+  transferableNorm: StringFilter
+
+  """Filter by the object’s `totalLockedNorm` field."""
+  totalLockedNorm: StringFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [AccountTotalBalanceHistoricalDataLogFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [AccountTotalBalanceHistoricalDataLogFilter!]
+
+  """Negates the expression."""
+  not: AccountTotalBalanceHistoricalDataLogFilter
+}
+
+"""A connection to a list of `AccountTotalBalanceLatest` values."""
+type AccountTotalBalanceLatestsConnection {
+  """A list of `AccountTotalBalanceLatest` objects."""
+  nodes: [AccountTotalBalanceLatest]!
+
+  """
+  A list of edges which contains the `AccountTotalBalanceLatest` and cursor to aid in pagination.
+  """
+  edges: [AccountTotalBalanceLatestsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `AccountTotalBalanceLatest` you could get from the connection.
+  """
+  totalCount: Int!
+
+  """
+  Aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  aggregates: AccountTotalBalanceLatestAggregates
+
+  """
+  Grouped aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  groupedAggregates(
+    """
+    The method to use when grouping `AccountTotalBalanceLatest` for these aggregates.
+    """
+    groupBy: [AccountTotalBalanceLatestGroupBy!]!
+
+    """Conditions on the grouped aggregates."""
+    having: AccountTotalBalanceLatestHavingInput
+  ): [AccountTotalBalanceLatestAggregates!]
+}
+
+type AccountTotalBalanceLatest {
+  id: String!
+  refAssetId: String!
+  totalTransferableNorm: String!
+  totalLockedNorm: String!
+  totalDebtNorm: String
+  paraBlockHeight: Int!
+}
+
+"""A `AccountTotalBalanceLatest` edge in the connection."""
+type AccountTotalBalanceLatestsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `AccountTotalBalanceLatest` at the end of the edge."""
+  node: AccountTotalBalanceLatest
+}
+
+type AccountTotalBalanceLatestAggregates {
+  keys: [String!]
+
+  """
+  Sum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  sum: AccountTotalBalanceLatestSumAggregates
+
+  """
+  Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  distinctCount: AccountTotalBalanceLatestDistinctCountAggregates
+
+  """
+  Minimum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  min: AccountTotalBalanceLatestMinAggregates
+
+  """
+  Maximum aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  max: AccountTotalBalanceLatestMaxAggregates
+
+  """
+  Mean average aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  average: AccountTotalBalanceLatestAverageAggregates
+
+  """
+  Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevSample: AccountTotalBalanceLatestStddevSampleAggregates
+
+  """
+  Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  stddevPopulation: AccountTotalBalanceLatestStddevPopulationAggregates
+
+  """
+  Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  varianceSample: AccountTotalBalanceLatestVarianceSampleAggregates
+
+  """
+  Population variance aggregates across the matching connection (ignoring before/after/first/last/offset)
+  """
+  variancePopulation: AccountTotalBalanceLatestVariancePopulationAggregates
+}
+
+type AccountTotalBalanceLatestSumAggregates {
+  """Sum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt!
+}
+
+type AccountTotalBalanceLatestDistinctCountAggregates {
+  """Distinct count of id across the matching connection"""
+  id: BigInt
+
+  """Distinct count of refAssetId across the matching connection"""
+  refAssetId: BigInt
+
+  """Distinct count of totalTransferableNorm across the matching connection"""
+  totalTransferableNorm: BigInt
+
+  """Distinct count of totalLockedNorm across the matching connection"""
+  totalLockedNorm: BigInt
+
+  """Distinct count of totalDebtNorm across the matching connection"""
+  totalDebtNorm: BigInt
+
+  """Distinct count of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigInt
+}
+
+type AccountTotalBalanceLatestMinAggregates {
+  """Minimum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountTotalBalanceLatestMaxAggregates {
+  """Maximum of paraBlockHeight across the matching connection"""
+  paraBlockHeight: Int
+}
+
+type AccountTotalBalanceLatestAverageAggregates {
+  """Mean average of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountTotalBalanceLatestStddevSampleAggregates {
+  """
+  Sample standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountTotalBalanceLatestStddevPopulationAggregates {
+  """
+  Population standard deviation of paraBlockHeight across the matching connection
+  """
+  paraBlockHeight: BigFloat
+}
+
+type AccountTotalBalanceLatestVarianceSampleAggregates {
+  """Sample variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+type AccountTotalBalanceLatestVariancePopulationAggregates {
+  """Population variance of paraBlockHeight across the matching connection"""
+  paraBlockHeight: BigFloat
+}
+
+"""
+Grouping methods for `AccountTotalBalanceLatest` for usage during aggregation.
+"""
+enum AccountTotalBalanceLatestGroupBy {
+  REF_ASSET_ID
+  TOTAL_TRANSFERABLE_NORM
+  TOTAL_LOCKED_NORM
+  TOTAL_DEBT_NORM
+  PARA_BLOCK_HEIGHT
+}
+
+"""Conditions for `AccountTotalBalanceLatest` aggregates."""
+input AccountTotalBalanceLatestHavingInput {
+  AND: [AccountTotalBalanceLatestHavingInput!]
+  OR: [AccountTotalBalanceLatestHavingInput!]
+  sum: AccountTotalBalanceLatestHavingSumInput
+  distinctCount: AccountTotalBalanceLatestHavingDistinctCountInput
+  min: AccountTotalBalanceLatestHavingMinInput
+  max: AccountTotalBalanceLatestHavingMaxInput
+  average: AccountTotalBalanceLatestHavingAverageInput
+  stddevSample: AccountTotalBalanceLatestHavingStddevSampleInput
+  stddevPopulation: AccountTotalBalanceLatestHavingStddevPopulationInput
+  varianceSample: AccountTotalBalanceLatestHavingVarianceSampleInput
+  variancePopulation: AccountTotalBalanceLatestHavingVariancePopulationInput
+}
+
+input AccountTotalBalanceLatestHavingSumInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceLatestHavingDistinctCountInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceLatestHavingMinInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceLatestHavingMaxInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceLatestHavingAverageInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceLatestHavingStddevSampleInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceLatestHavingStddevPopulationInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceLatestHavingVarianceSampleInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+input AccountTotalBalanceLatestHavingVariancePopulationInput {
+  paraBlockHeight: HavingIntFilter
+}
+
+"""Methods to use when ordering `AccountTotalBalanceLatest`."""
+enum AccountTotalBalanceLatestsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  REF_ASSET_ID_ASC
+  REF_ASSET_ID_DESC
+  TOTAL_TRANSFERABLE_NORM_ASC
+  TOTAL_TRANSFERABLE_NORM_DESC
+  TOTAL_LOCKED_NORM_ASC
+  TOTAL_LOCKED_NORM_DESC
+  TOTAL_DEBT_NORM_ASC
+  TOTAL_DEBT_NORM_DESC
+  PARA_BLOCK_HEIGHT_ASC
+  PARA_BLOCK_HEIGHT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `AccountTotalBalanceLatest` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input AccountTotalBalanceLatestCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `refAssetId` field."""
+  refAssetId: String
+
+  """Checks for equality with the object’s `totalTransferableNorm` field."""
+  totalTransferableNorm: String
+
+  """Checks for equality with the object’s `totalLockedNorm` field."""
+  totalLockedNorm: String
+
+  """Checks for equality with the object’s `totalDebtNorm` field."""
+  totalDebtNorm: String
+
+  """Checks for equality with the object’s `paraBlockHeight` field."""
+  paraBlockHeight: Int
+}
+
+"""
+A filter to be used against `AccountTotalBalanceLatest` object types. All fields are combined with a logical ‘and.’
+"""
+input AccountTotalBalanceLatestFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `refAssetId` field."""
+  refAssetId: StringFilter
+
+  """Filter by the object’s `totalTransferableNorm` field."""
+  totalTransferableNorm: StringFilter
+
+  """Filter by the object’s `totalLockedNorm` field."""
+  totalLockedNorm: StringFilter
+
+  """Filter by the object’s `totalDebtNorm` field."""
+  totalDebtNorm: StringFilter
+
+  """Filter by the object’s `paraBlockHeight` field."""
+  paraBlockHeight: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [AccountTotalBalanceLatestFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [AccountTotalBalanceLatestFilter!]
+
+  """Negates the expression."""
+  not: AccountTotalBalanceLatestFilter
 }
 
 """A connection to a list of `Asset` values."""
@@ -80428,6 +82064,80 @@ type Query {
   ): AccountChainActivityTracesConnection
 
   """
+  Reads and enables pagination through a set of `AccountLiquidityBalanceHistoricalDatum`.
+  """
+  accountLiquidityBalanceHistoricalData(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    The method to use when ordering `AccountLiquidityBalanceHistoricalDatum`.
+    """
+    orderBy: [AccountLiquidityBalanceHistoricalDataOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountLiquidityBalanceHistoricalDatumCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountLiquidityBalanceHistoricalDatumFilter
+  ): AccountLiquidityBalanceHistoricalDataConnection
+
+  """
+  Reads and enables pagination through a set of `AccountLiquidityBalanceLatest`.
+  """
+  accountLiquidityBalanceLatests(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `AccountLiquidityBalanceLatest`."""
+    orderBy: [AccountLiquidityBalanceLatestsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountLiquidityBalanceLatestCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountLiquidityBalanceLatestFilter
+  ): AccountLiquidityBalanceLatestsConnection
+
+  """
   Reads and enables pagination through a set of `AccountMmPositionHistoricalDatum`.
   """
   accountMmPositionHistoricalData(
@@ -80570,6 +82280,80 @@ type Query {
     """
     filter: AccountTotalBalanceHistoricalDatumFilter
   ): AccountTotalBalanceHistoricalDataConnection
+
+  """
+  Reads and enables pagination through a set of `AccountTotalBalanceHistoricalDataLog`.
+  """
+  accountTotalBalanceHistoricalDataLogs(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """
+    The method to use when ordering `AccountTotalBalanceHistoricalDataLog`.
+    """
+    orderBy: [AccountTotalBalanceHistoricalDataLogsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountTotalBalanceHistoricalDataLogCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountTotalBalanceHistoricalDataLogFilter
+  ): AccountTotalBalanceHistoricalDataLogsConnection
+
+  """
+  Reads and enables pagination through a set of `AccountTotalBalanceLatest`.
+  """
+  accountTotalBalanceLatests(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `AccountTotalBalanceLatest`."""
+    orderBy: [AccountTotalBalanceLatestsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AccountTotalBalanceLatestCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: AccountTotalBalanceLatestFilter
+  ): AccountTotalBalanceLatestsConnection
 
   """Reads and enables pagination through a set of `Asset`."""
   assets(
@@ -83851,10 +85635,14 @@ type Query {
   accountAssetBalanceLatest(id: String!): AccountAssetBalanceLatest
   accountAssetSwapFeeHistoricalDatum(id: String!): AccountAssetSwapFeeHistoricalDatum
   accountChainActivityTrace(id: String!): AccountChainActivityTrace
+  accountLiquidityBalanceHistoricalDatum(id: String!): AccountLiquidityBalanceHistoricalDatum
+  accountLiquidityBalanceLatest(id: String!): AccountLiquidityBalanceLatest
   accountMmPositionHistoricalDatum(id: String!): AccountMmPositionHistoricalDatum
   accountProcessingStatus(id: String!): AccountProcessingStatus
   accountSwapFeeHistoricalDatum(id: String!): AccountSwapFeeHistoricalDatum
   accountTotalBalanceHistoricalDatum(id: String!): AccountTotalBalanceHistoricalDatum
+  accountTotalBalanceHistoricalDataLog(id: String!): AccountTotalBalanceHistoricalDataLog
+  accountTotalBalanceLatest(id: String!): AccountTotalBalanceLatest
   asset(id: String!): Asset
   assetAssetsPairVolume(id: String!): AssetAssetsPairVolume
   assetHistoricalDatum(id: String!): AssetHistoricalDatum

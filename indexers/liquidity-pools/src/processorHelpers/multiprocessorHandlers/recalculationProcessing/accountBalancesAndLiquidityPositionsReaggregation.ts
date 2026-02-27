@@ -196,10 +196,6 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
   await initAllXykLiquidityMiningDeposits(ctx);
   console.timeEnd('initAllXykLiquidityMiningDeposits');
 
-  console.time('initAllXykLiquidityMiningDeposits');
-  await initAllXykLiquidityMiningDeposits(ctx);
-  console.timeEnd('initAllXykLiquidityMiningDeposits');
-
   console.time('initAllOmnipoolLiquidityPositions');
   await initAllOmnipoolLiquidityPositions(ctx);
   console.timeEnd('initAllOmnipoolLiquidityPositions');
