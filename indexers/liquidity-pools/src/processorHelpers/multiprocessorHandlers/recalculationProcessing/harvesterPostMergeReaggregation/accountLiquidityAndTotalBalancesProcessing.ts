@@ -92,6 +92,13 @@ export async function accountLiquidityAndTotalBalancesProcessing(
     'accountLiquidityAndTotalBalancesProcessing:: handleLiquidityBalancesInTotalBalances'
   );
 
+  const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
+    balances: Array.from(
+      ctx.batchState.state.accountAssetBalanceHistoricalData.values()
+    ),
+    ctx,
+  });
+
   const accountTotalBalanceHistoricalDataList = Array.from(
     ctx.batchState.state.accountTotalBalanceHistoricalData.values()
   );
@@ -110,6 +117,7 @@ export async function accountLiquidityAndTotalBalancesProcessing(
   });
 
   await Promise.all([
+    ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest),
     ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
     ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest),
     ctx.storeUtils.upsertWithBatches(accountLiquidityBalanceHistoricalDataList),

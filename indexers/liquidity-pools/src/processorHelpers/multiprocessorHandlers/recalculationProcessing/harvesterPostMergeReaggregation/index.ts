@@ -61,6 +61,9 @@ import { MoneyMarketContractsManager } from '../../../../utils/evmTools/moneyMar
 import { omnipoolPositionsDepositsProcessing } from './omnipoolPositionsDepositsProcessing';
 import { xykDepositsProcessing } from './xykDepositsProcessing';
 import { handleUniquesEvents } from '../../../../handlers/uniques';
+import { getOrCreateAsset } from '../../../../handlers/assets/asset';
+import { getAssetsPairPrice } from '../../../../handlers/assets/assetHistoricalData/assetSpotPrices';
+import { calcPriceNormalized } from '../../../../utils/helpers';
 
 /**
  *  Current reaggregation logic normalize and reaggregate data after merging from
@@ -816,7 +819,7 @@ export async function handleHarvesterPostMergeReaggregation(
         (previousAssetHistVolume?.assetTotalFeesVol ?? 0n) +
         processingAssetVolume.assetFeeVol;
 
-      // -------
+      // ---------
 
       processingAssetVolume.assetTotalVolInNorm = BigNumber(
         previousAssetHistVolume?.assetTotalVolInNorm ?? '0'
@@ -830,11 +833,46 @@ export async function handleHarvesterPostMergeReaggregation(
         .plus(processingAssetVolume.assetVolOutNorm ?? '0')
         .toFixed();
 
-      processingAssetVolume.assetTotalFeesVolNorm = BigNumber(
-        previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0'
-      )
-        .plus(processingAssetVolume.assetFeeVolNorm ?? '0')
-        .toFixed();
+      // --------
+
+      if (processingAssetVolume.paraBlockHeight >= 6837787) {
+        processingAssetVolume.assetTotalFeesVolNorm = BigNumber(
+          previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0'
+        )
+          .plus(processingAssetVolume.assetFeeVolNorm ?? '0')
+          .toFixed();
+      } else {
+        const asset = await getOrCreateAsset({
+          ctx,
+          id: processingAssetVolume.assetId,
+          ensure: false,
+        });
+        if (!asset) {
+          console.log(
+            `Asset ${processingAssetVolume.assetId} not found in the database. Skipping normalization.`
+          );
+        }
+
+        const assetSpotPrice = getAssetsPairPrice({
+          assetInId: processingAssetVolume.assetId,
+          blockHeight: processingAssetVolume.paraBlockHeight,
+          ctx,
+        });
+
+        if (assetSpotPrice && asset && asset.decimals) {
+          const assetFeeVolNorm = calcPriceNormalized({
+            amount: processingAssetVolume.assetFeeVol,
+            spotPrice: assetSpotPrice,
+            assetDecimals: asset.decimals,
+          });
+
+          processingAssetVolume.assetTotalFeesVolNorm = BigNumber(
+            previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0'
+          )
+            .plus(assetFeeVolNorm)
+            .toFixed();
+        }
+      }
 
       ctx.batchState.state.stablepoolAssetVolumes.set(
         processingAssetVolume.id,
