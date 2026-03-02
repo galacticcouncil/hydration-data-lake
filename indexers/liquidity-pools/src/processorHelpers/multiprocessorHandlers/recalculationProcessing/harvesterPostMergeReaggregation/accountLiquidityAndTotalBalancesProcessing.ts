@@ -18,9 +18,11 @@ export async function accountLiquidityAndTotalBalancesProcessing(
   ctx: SqdProcessorContext<Store>
 ) {
   console.time('accountLiquidityAndTotalBalancesProcessing');
-  ctx.batchState.state.accountAssetBalanceHistoricalData = new Map(
-    (
-      await ctx.storeUtils.findWithLogs(
+
+  console.time('accountLiquidityAndTotalBalancesProcessing::Prefetch');
+  const [accountAssetBalanceHistoricalData, omnipoolAssetAllHistoricalData] =
+    await Promise.all([
+      ctx.storeUtils.findWithLogs(
         AccountAssetBalanceHistoricalData,
         {
           where: {
@@ -34,13 +36,8 @@ export async function accountLiquidityAndTotalBalancesProcessing(
           },
         },
         { className: 'MoneyMarketEvent' }
-      )
-    ).map((p) => [p.id, p])
-  );
-
-  ctx.batchState.state.omnipoolAssetAllHistoricalData = new Map(
-    (
-      await ctx.storeUtils.findWithLogs(
+      ),
+      ctx.storeUtils.findWithLogs(
         OmnipoolAssetHistoricalData,
         {
           where: {
@@ -54,9 +51,57 @@ export async function accountLiquidityAndTotalBalancesProcessing(
           },
         },
         { className: 'OmnipoolAssetHistoricalData' }
-      )
-    ).map((p) => [p.id, p])
-  );
+      ),
+    ]);
+
+  for (const item of accountAssetBalanceHistoricalData) {
+    ctx.batchState.state.accountAssetBalanceHistoricalData.set(item.id, item);
+  }
+
+  for (const item of omnipoolAssetAllHistoricalData) {
+    ctx.batchState.state.omnipoolAssetAllHistoricalData.set(item.id, item);
+  }
+
+  // ctx.batchState.state.accountAssetBalanceHistoricalData = new Map(
+  //   (
+  //     await ctx.storeUtils.findWithLogs(
+  //       AccountAssetBalanceHistoricalData,
+  //       {
+  //         where: {
+  //           paraBlockHeight: Between(
+  //             ctx.blocks[0].header.height,
+  //             ctx.blocks[ctx.blocks.length - 1].header.height
+  //           ),
+  //         },
+  //         order: {
+  //           paraBlockHeight: 'ASC',
+  //         },
+  //       },
+  //       { className: 'MoneyMarketEvent' }
+  //     )
+  //   ).map((p) => [p.id, p])
+  // );
+
+  // ctx.batchState.state.omnipoolAssetAllHistoricalData = new Map(
+  //   (
+  //     await ctx.storeUtils.findWithLogs(
+  //       OmnipoolAssetHistoricalData,
+  //       {
+  //         where: {
+  //           paraBlockHeight: Between(
+  //             ctx.blocks[0].header.height,
+  //             ctx.blocks[ctx.blocks.length - 1].header.height
+  //           ),
+  //         },
+  //         order: {
+  //           paraBlockHeight: 'ASC',
+  //         },
+  //       },
+  //       { className: 'OmnipoolAssetHistoricalData' }
+  //     )
+  //   ).map((p) => [p.id, p])
+  // );
+  console.timeEnd('accountLiquidityAndTotalBalancesProcessing::Prefetch');
 
   console.time(
     'accountLiquidityAndTotalBalancesProcessing:: handleAccountTotalBalance'
@@ -91,7 +136,11 @@ export async function accountLiquidityAndTotalBalancesProcessing(
   console.timeEnd(
     'accountLiquidityAndTotalBalancesProcessing:: handleLiquidityBalancesInTotalBalances'
   );
+  console.time('accountLiquidityAndTotalBalancesProcessing:: Save');
 
+  console.time(
+    'accountLiquidityAndTotalBalancesProcessing:: Save :: Preparation'
+  );
   const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
     balances: Array.from(
       ctx.batchState.state.accountAssetBalanceHistoricalData.values()
@@ -115,6 +164,11 @@ export async function accountLiquidityAndTotalBalancesProcessing(
     balances: accountLiquidityBalanceHistoricalDataList,
     ctx,
   });
+  console.timeEnd(
+    'accountLiquidityAndTotalBalancesProcessing:: Save :: Preparation'
+  );
+
+  console.time('accountLiquidityAndTotalBalancesProcessing:: Save :: Flush');
 
   await Promise.all([
     ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest),
@@ -124,6 +178,11 @@ export async function accountLiquidityAndTotalBalancesProcessing(
     ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
   ]);
 
+  console.timeEnd('accountLiquidityAndTotalBalancesProcessing:: Save :: Flush');
+
   await BalancesLoggerManager.getInstance().flushLogs(ctx);
+
+  console.timeEnd('accountLiquidityAndTotalBalancesProcessing:: Save');
+
   console.timeEnd('accountLiquidityAndTotalBalancesProcessing');
 }

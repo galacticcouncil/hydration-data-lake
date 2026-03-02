@@ -104,9 +104,9 @@ import { calcPriceNormalized } from '../../../../utils/helpers';
  *  - [ ACCOUNT_LIQUIDITY_AND_TOTAL_BALANCES ]:
  *      - account_total_balance_historical_data,
  *      - account_total_balance_historical_data_log,
+ *      - account_total_balance_latest
  *      - account_liquidity_balance_historical_data,
  *      - account_liquidity_balance_latest
- *      - account_total_balance_latest
  *
  *  - [ ACCOUNT_TOTAL_BALANCES ]:
  *      - account_total_balance_historical_data,
