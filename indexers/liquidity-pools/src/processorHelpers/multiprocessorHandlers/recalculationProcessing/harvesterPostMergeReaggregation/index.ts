@@ -793,6 +793,12 @@ export async function handleHarvesterPostMergeReaggregation(
    */
   if (dataSectionsToProcess.has('STABLESWAP_VOLUME_HISTORICAL_DATA_TOTALS')) {
     console.time('Stableswap Asset volume');
+
+    const assetVolumesIndexedByBlockAndPool: Map<
+      string,
+      StableswapAssetVolumeHistoricalData[]
+    > = new Map();
+
     for (const processingAssetVolume of ctx.batchState.state.stablepoolAssetVolumes.values()) {
       const previousAssetHistVolume =
         (getPoolAssetPreviousVolumeFromCache(
@@ -874,6 +880,20 @@ export async function handleHarvesterPostMergeReaggregation(
         }
       }
 
+      if (
+        !assetVolumesIndexedByBlockAndPool.has(
+          processingAssetVolume.volumesCollection.id
+        )
+      ) {
+        assetVolumesIndexedByBlockAndPool.set(
+          processingAssetVolume.volumesCollection.id,
+          []
+        );
+      }
+      assetVolumesIndexedByBlockAndPool
+        .get(processingAssetVolume.volumesCollection.id)
+        ?.push(processingAssetVolume);
+
       ctx.batchState.state.stablepoolAssetVolumes.set(
         processingAssetVolume.id,
         processingAssetVolume
@@ -892,6 +912,28 @@ export async function handleHarvesterPostMergeReaggregation(
           poolId: processingPoolVolume.pool.id,
           currentBlockHeight: processingPoolVolume.paraBlockHeight,
         }));
+
+      let currentPoolVolInNorm = BigNumber(0);
+      let currentPoolVolOutNorm = BigNumber(0);
+      let currentPoolFeesVolNorm = BigNumber(0);
+
+      for (const assetVolumes of assetVolumesIndexedByBlockAndPool
+        .get(processingPoolVolume.id)
+        ?.values() || []) {
+        currentPoolVolInNorm = currentPoolVolInNorm.plus(
+          assetVolumes.assetVolInNorm
+        );
+        currentPoolVolOutNorm = currentPoolVolOutNorm.plus(
+          assetVolumes.assetVolOutNorm
+        );
+        currentPoolFeesVolNorm = currentPoolFeesVolNorm.plus(
+          assetVolumes.assetFeeVolNorm
+        );
+      }
+
+      processingPoolVolume.poolVolInNorm = currentPoolVolInNorm.toFixed();
+      processingPoolVolume.poolVolOutNorm = currentPoolVolOutNorm.toFixed();
+      processingPoolVolume.poolFeesVolNorm = currentPoolFeesVolNorm.toFixed();
 
       processingPoolVolume.poolTotalVolInNorm = BigNumber(
         previousStableswapVolume?.poolTotalVolInNorm ?? '0'

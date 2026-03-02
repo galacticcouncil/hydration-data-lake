@@ -3,6 +3,7 @@ import { Store } from '@subsquid/typeorm-store';
 import { handleAccountBalancesReaggregation } from './accountBalancesReaggregation';
 import { handleHarvesterPostMergeReaggregation } from './harvesterPostMergeReaggregation';
 import { whitelistedAccountBalancesTrackingProcessor } from './whitelistedAccountBalancesTracking';
+import { handleStableSwapVolumesReaggregation } from './stableswapVolumesReaggregation';
 
 export async function handleReaggregationProcessing(
   ctx: SqdProcessorContext<Store>
@@ -28,6 +29,10 @@ export async function handleReaggregationProcessing(
     }
     case 'WHITELISTED_ACCOUNT_BALANCES_AGGREGATION': {
       await whitelistedAccountBalancesTrackingProcessor(ctx);
+      break;
+    }
+    case 'STABLESWAP_VOLUMES_REAGGREGATION': {
+      await handleStableSwapVolumesReaggregation(ctx);
       break;
     }
     default:
