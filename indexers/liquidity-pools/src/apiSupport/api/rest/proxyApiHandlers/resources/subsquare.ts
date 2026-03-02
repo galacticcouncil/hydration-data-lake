@@ -1,42 +1,38 @@
 import { Request, Response } from 'express';
 import axios, { AxiosRequestConfig } from 'axios';
-import { allowedQueriesDefillama, allowedQueriesSubscan } from '../types';
-import { AppConfig } from '../../../../../appConfig';
+import { allowedQueriesSubsquare } from '../types';
 import crypto from 'node:crypto';
-import { YieldMetricsInterval } from '../../../../types';
 import { CacheManager } from '../../../../utils/cacheManager';
-import { OmnipoolAssetsYieldMetricsResponse } from '../../../graphql/plugins/query/omnipool/omnipoolYieldMetrics/resolvers';
 
-const appConfig = AppConfig.getInstance();
-
-export async function handleProxyReqDefillama(req: Request, res: Response) {
+export async function handleProxyReqSubsquare(req: Request, res: Response) {
   try {
     const requestPath = req.params.all || [];
-    const [apiName, section, query] = requestPath;
+    const [usersRoute, userAddress, apiName, section] = requestPath;
 
     if (
-      !allowedQueriesDefillama.has(apiName) ||
-      !allowedQueriesDefillama.get(apiName)!.has(section)
+      !allowedQueriesSubsquare.has(apiName) ||
+      !allowedQueriesSubsquare.get(apiName)!.has(section)
     ) {
       return res.status(403).send('Forbidden');
     }
 
-    const reqUrl = `https://${apiName}.llama.fi/${section}/${query}`;
+    // https://hydration-api.subsquare.io/users/<address>/referenda/votes?page=1&page_size=25&includes_title=1
+    const reqUrl = `https://hydration-api.subsquare.io/users/${userAddress}/${apiName}/${section}`;
 
-    return handleProxyReqDefillamaAny(reqUrl, req, res);
+    return handleProxyReqSubsquareAny(reqUrl, req, res);
   } catch (error) {
     console.error('Unexpected Error:', error);
     return res.status(500).send(`Internal Proxy Error`);
   }
 }
 
-export async function handleProxyReqDefillamaAny(
+export async function handleProxyReqSubsquareAny(
   reqUrl: string,
   req: Request,
   res: Response
 ) {
   try {
-    const cacheKey = `PROXY_DEFILLAMA::${crypto
+    const cacheKey = `PROXY_SUBSQUARE::${crypto
       .createHash('md5')
       .update(req.url)
       .digest('hex')}`;
@@ -66,7 +62,7 @@ export async function handleProxyReqDefillamaAny(
     await CacheManager.getInstance().cache.set<any>(
       cacheKey,
       response.data,
-      43_200_000
+      10_800_000
     );
 
     res.status(response.status).send(response.data);

@@ -42,6 +42,7 @@ import { getEnvPath } from './utils/helpers';
 import { NodeEnv } from './utils/types';
 import postgraphileSmartTagPlugins from './apiSupport/smartTags';
 import { handleProxyReqKamino } from './apiSupport/api/rest/proxyApiHandlers/resources/kamino';
+import proxyRouter from './apiSupport/api/rest/routes/proxy.routes';
 
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
@@ -215,7 +216,6 @@ async function initializeServer() {
 
     app.use('/rest', cors(corsOptions), restRouter);
 
-    
     const swaggerDocsPath = appConfig.BASE_PATH
       ? `${appConfig.BASE_PATH}/api/rest/docs`
       : '/api/rest/docs';
@@ -231,26 +231,7 @@ async function initializeServer() {
       })
     );
 
-    app.post(
-      `${ProxyApiRoute.subscan}/*all`,
-      cors(corsOptions),
-      // @ts-ignore
-      handleProxyReqSubscan
-    );
-
-    app.get(
-      `${ProxyApiRoute.defillama}/*all`,
-      cors(corsOptions),
-      // @ts-ignore
-      handleProxyReqDefillama
-    );
-
-    app.get(
-      `${ProxyApiRoute.kamino}/*all`,
-      cors(corsOptions),
-      // @ts-ignore
-      handleProxyReqKamino
-    );
+    app.use('/proxy', cors(corsOptions), proxyRouter);
 
     app.listen(appConfig.GQL_PORT, () => {
       console.log(`Squid API listening on port ${appConfig.GQL_PORT}`);

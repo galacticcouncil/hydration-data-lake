@@ -1,7 +1,8 @@
 export enum ProxyApiRoute {
-  'subscan' = '/proxy/subscan',
-  'defillama' = '/proxy/defillama',
-  'kamino' = '/proxy/kamino',
+  'subscan' = '/subscan',
+  'defillama' = '/defillama',
+  'kamino' = '/kamino',
+  'subsquare' = '/subsquare',
 }
 
 export enum SubscanAllowedSection {
@@ -24,3 +25,8 @@ export const allowedQueriesDefillama: Map<
 export const allowedQueriesKamino: Map<string, boolean> = new Map([
   ['yields', true],
 ]);
+
+export const allowedQueriesSubsquare: Map<
+  string,
+  Map<string, boolean>
+> = new Map([['referenda', new Map([['votes', true]])]]);

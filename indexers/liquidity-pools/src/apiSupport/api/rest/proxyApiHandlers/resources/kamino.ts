@@ -40,7 +40,7 @@ export async function handleProxyReqKaminoAny(
   try {
     const cacheKey = `PROXY_KAMINO::${crypto
       .createHash('md5')
-      .update(reqUrl)
+      .update(req.url)
       .digest('hex')}`;
 
     const cachedData =
