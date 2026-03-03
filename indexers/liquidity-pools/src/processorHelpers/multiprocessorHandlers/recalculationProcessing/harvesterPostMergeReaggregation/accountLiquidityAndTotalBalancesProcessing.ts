@@ -199,22 +199,25 @@ export async function accountLiquidityAndTotalBalancesProcessing(
   console.timeEnd(
     'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountTotalBalancesLatest'
   );
-  console.time(
-    'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalanceHistoricalDataList'
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    accountLiquidityBalanceHistoricalDataList
-  );
-  console.timeEnd(
-    'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalanceHistoricalDataList'
-  );
-  console.time(
-    'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalancesLatest'
-  );
-  await ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest);
-  console.timeEnd(
-    'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalancesLatest'
-  );
+
+  if (ctx.appConfig.processingMode.ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED) {
+    console.time(
+      'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalanceHistoricalDataList'
+    );
+    await ctx.storeUtils.upsertWithBatches(
+      accountLiquidityBalanceHistoricalDataList
+    );
+    console.timeEnd(
+      'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalanceHistoricalDataList'
+    );
+    console.time(
+      'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalancesLatest'
+    );
+    await ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest);
+    console.timeEnd(
+      'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalancesLatest'
+    );
+  }
 
   console.timeEnd('accountLiquidityAndTotalBalancesProcessing:: Save :: Flush');
 

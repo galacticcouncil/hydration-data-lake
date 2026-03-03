@@ -341,6 +341,10 @@ class ProcessingModeConfig {
   readonly MULTI_FLOW_PROCESSING_PHASE: MultiFlowProcessingPhase =
     MultiFlowProcessingPhase.INITIAL;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED: boolean = true;
+
   static getInstance(): ProcessingModeConfig {
     if (ProcessingModeConfig.instance) return ProcessingModeConfig.instance;
 
