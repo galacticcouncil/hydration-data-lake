@@ -170,14 +170,21 @@ export async function accountLiquidityAndTotalBalancesProcessing(
 
   console.time('accountLiquidityAndTotalBalancesProcessing:: Save :: Flush');
 
-  await Promise.all([
-    ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest),
-    ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
-    ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest),
-    ctx.storeUtils.upsertWithBatches(accountLiquidityBalanceHistoricalDataList),
-    ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
-  ]);
+  // await Promise.all([
+  //   ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest),
+  //   ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
+  //   ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest),
+  //   ctx.storeUtils.upsertWithBatches(accountLiquidityBalanceHistoricalDataList),
+  //   ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
+  // ]);
 
+  await ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest);
+  await ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList);
+  await ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest);
+  await ctx.storeUtils.upsertWithBatches(
+    accountLiquidityBalanceHistoricalDataList
+  );
+  await ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest);
   console.timeEnd('accountLiquidityAndTotalBalancesProcessing:: Save :: Flush');
 
   await BalancesLoggerManager.getInstance().flushLogs(ctx);
