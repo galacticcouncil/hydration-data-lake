@@ -53,34 +53,16 @@ export async function handleStablepoolVolumeUpdates({
     );
 
   if (!currentVolumesCollection) {
-    const oldVolumesCollection =
-      currentVolumesCollection ||
-      (getPoolPreviousVolumeFromCache(
-        ctx.batchState.state.stablepoolVolumeCollections,
-        `${pool.id}`,
-        paraBlockHeight
-      ) as StableswapVolumeHistoricalData | undefined) ||
-      (await getOldStablepoolVolume({
-        ctx,
-        poolId: pool.id,
-        // currentBlockHeight: paraBlockHeight,
-      }));
-
-    const block = ctx.batchState.getParaBlockFromCacheByHeight(paraBlockHeight);
-    if (!block) {
-      throw new Error(`Block not found in cache for height ${paraBlockHeight}`);
-    }
-
     currentVolumesCollection = new StableswapVolumeHistoricalData({
       id: `${pool.id}-${paraBlockHeight}`,
       pool,
 
-      poolVolInNorm: oldVolumesCollection?.poolVolInNorm || '0',
-      poolVolOutNorm: oldVolumesCollection?.poolVolOutNorm || '0',
-      poolFeesVolNorm: oldVolumesCollection?.poolFeesVolNorm || '0',
-      poolTotalVolInNorm: oldVolumesCollection?.poolTotalVolInNorm || '0',
-      poolTotalVolOutNorm: oldVolumesCollection?.poolTotalVolOutNorm || '0',
-      poolTotalFeesVolNorm: oldVolumesCollection?.poolTotalFeesVolNorm || '0',
+      poolVolInNorm: '0',
+      poolVolOutNorm: '0',
+      poolFeesVolNorm: '0',
+      poolTotalVolInNorm: '0',
+      poolTotalVolOutNorm: '0',
+      poolTotalFeesVolNorm: '0',
       paraBlockHeight,
     });
     ctx.batchState.state.stablepoolVolumeCollections.set(

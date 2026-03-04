@@ -81,18 +81,9 @@ export async function processStableswapAssetNormalizedVolumes({
       continue;
     }
 
-    currentAssetVolsHistData.assetFeeVolNorm = calcPriceNormalized({
-      amount: currentAssetVolsHistData.assetFeeVol,
-      spotPrice: assetSpotPriceNorm,
-      assetDecimals: asset.decimals,
-    });
-
-    currentAssetVolsHistData.assetTotalFeesVolNorm = BigNumber(
-      previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0'
-    )
-      .plus(currentAssetVolsHistData.assetFeeVolNorm)
-      .toFixed();
-
+    /**
+     * Current block asset volumes
+     */
     currentAssetVolsHistData.assetVolInNorm = calcPriceNormalized({
       amount: currentAssetVolsHistData.assetVolIn,
       spotPrice: assetSpotPriceNorm,
@@ -104,6 +95,16 @@ export async function processStableswapAssetNormalizedVolumes({
       spotPrice: assetSpotPriceNorm,
       assetDecimals: asset.decimals,
     });
+
+    currentAssetVolsHistData.assetFeeVolNorm = calcPriceNormalized({
+      amount: currentAssetVolsHistData.assetFeeVol,
+      spotPrice: assetSpotPriceNorm,
+      assetDecimals: asset.decimals,
+    });
+
+    /**
+     * Total asset volumes
+     */
 
     currentAssetVolsHistData.assetTotalVolInNorm = BigNumber(
       previousAssetHistVolume?.assetTotalVolInNorm ?? '0'
@@ -117,12 +118,25 @@ export async function processStableswapAssetNormalizedVolumes({
       .plus(currentAssetVolsHistData.assetVolOutNorm)
       .toFixed();
 
+    currentAssetVolsHistData.assetTotalFeesVolNorm = BigNumber(
+      previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0'
+    )
+      .plus(currentAssetVolsHistData.assetFeeVolNorm)
+      .toFixed();
+
+
+    /**
+     * Pool normalized volumes
+     */
     const currentPoolVolsHistData =
       ctx.batchState.state.stablepoolVolumeCollections.get(
         currentAssetVolsHistData.volumesCollection.id
       );
 
     if (currentPoolVolsHistData) {
+      /**
+       * Current block pool volumes
+       */
       currentPoolVolsHistData.poolVolInNorm = BigNumber(
         currentPoolVolsHistData.poolVolInNorm || '0'
       )
@@ -140,6 +154,10 @@ export async function processStableswapAssetNormalizedVolumes({
       )
         .plus(currentAssetVolsHistData.assetFeeVolNorm)
         .toFixed();
+
+      /**
+       * Total pool volumes
+       */
 
       currentPoolVolsHistData.poolTotalVolInNorm = BigNumber(
         currentPoolVolsHistData.poolTotalVolInNorm === '0'

@@ -107,6 +107,7 @@ import { calcPriceNormalized } from '../../../../utils/helpers';
  *      - account_total_balance_latest
  *      - account_liquidity_balance_historical_data,
  *      - account_liquidity_balance_latest
+ *      - account_asset_balance_latest
  *
  *  - [ ACCOUNT_TOTAL_BALANCES ]:
  *      - account_total_balance_historical_data,
@@ -964,7 +965,7 @@ export async function handleHarvesterPostMergeReaggregation(
     );
   }
 
-  
+
 
   /**
    * ===========================================================================
