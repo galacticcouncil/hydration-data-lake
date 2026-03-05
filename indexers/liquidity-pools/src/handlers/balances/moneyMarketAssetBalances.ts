@@ -149,68 +149,6 @@ export async function handleMmAssetAccountBalancesPerBlock({
 
           historicalDataEntity.transferable = assetBalance.balance;
 
-          // let assetInId = assetBalance.asset.id;
-          //
-          // if (
-          //   assetBalance.asset.resourceType === AssetResourceType.Debt &&
-          //   !!assetBalance.asset.underlyingAssetId
-          // ) {
-          //   const assetFull: Asset | undefined = assetBalance.asset;
-          //   let underlyingAsset: Asset | undefined =
-          //     ctx.batchState.state.assetsAll.get(
-          //       assetBalance.asset.underlyingAssetId
-          //     );
-          //   if (!underlyingAsset) {
-          //     /**
-          //      * We need this re-fetch to be sure that cached Asset contains data
-          //      * about a related underlyingAsset
-          //      */
-          //     // assetFull = await ctx.storeUtils.findOneWithLogs(
-          //     //   Asset,
-          //     //   {
-          //     //     where: { id: assetBalance.asset.id },
-          //     //     relations: {
-          //     //       underlyingAsset: true,
-          //     //     },
-          //     //   },
-          //     //   {
-          //     //     className: 'Asset',
-          //     //     originCallFn: 'handleMmAssetAccountBalancesPerBlock',
-          //     //   }
-          //     // );
-          //     underlyingAsset =
-          //       (await ctx.storeUtils.findOneWithLogs(
-          //         Asset,
-          //         {
-          //           where: {
-          //             assetRegistryId: assetFull.underlyingAssetId as string,
-          //           },
-          //           relations: {},
-          //         },
-          //         {
-          //           className: 'Asset',
-          //           originCallFn: 'handleMmAssetAccountBalancesPerBlock',
-          //         }
-          //       )) ?? undefined;
-          //   }
-          //   if (underlyingAsset) assetInId = underlyingAsset.id;
-          // }
-          //
-          // const assetSpotPrice = getAssetsPairPrice({
-          //   ctx,
-          //   assetInId,
-          //   blockHeight: blockSlotData.block.height,
-          // });
-          //
-          // historicalDataEntity.transferableInRefAssetNorm =
-          //   assetSpotPrice && assetBalance.asset.decimals
-          //     ? calcPriceNormalized({
-          //         amount: assetBalance.balance,
-          //         assetDecimals: assetBalance.asset.decimals,
-          //         spotPrice: assetSpotPrice,
-          //       })
-          //     : '0';
-
           historicalDataEntity.transferableInRefAssetNorm =
             await getAssetBalanceInRefAsset({
               balance: assetBalance.balance,

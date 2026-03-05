@@ -685,13 +685,13 @@ export function getAssetsPairPrice({
   assetInId,
   assetOutId = appConfig.ASSET_PRICE_BASE_ASSET_ID,
   blockHeight,
-  usePersistentData = false,
+  recursionExec = false,
   ctx,
 }: {
   assetInId: string;
   assetOutId?: string;
   blockHeight: number;
-  usePersistentData?: boolean;
+  recursionExec?: boolean;
   ctx: SqdProcessorContext<Store>;
 }) {
   if (
@@ -748,9 +748,42 @@ export function getAssetsPairPrice({
         )?.priceNormalised
       : '1';
 
-  if (!assetInRefPrice || !assetOutRefPrice) return null;
+  if (recursionExec && (!assetInRefPrice || !assetOutRefPrice)) return null;
 
-  return BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
+  if (assetInRefPrice && assetOutRefPrice)
+    return BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
+
+  if (
+    !assetInRefPrice &&
+    assetInEntity &&
+    assetInEntity.resourceType === AssetResourceType.aToken &&
+    assetInEntity.underlyingAssetId
+  ) {
+    const underlyingAsset = ctx.batchState.state.assetsAll.get(
+      assetInEntity.underlyingAssetId
+    );
+    assetInIdEnsured = underlyingAsset?.id ?? assetInId;
+  }
+
+  if (
+    !assetOutRefPrice &&
+    assetOutEntity &&
+    assetOutEntity.resourceType === AssetResourceType.aToken &&
+    assetOutEntity.underlyingAssetId
+  ) {
+    const underlyingAsset = ctx.batchState.state.assetsAll.get(
+      assetOutEntity.underlyingAssetId
+    );
+    assetOutIdEnsured = underlyingAsset?.id ?? assetInId;
+  }
+
+  return getAssetsPairPrice({
+    assetInId: assetInIdEnsured,
+    assetOutId: assetOutIdEnsured,
+    recursionExec: true,
+    blockHeight,
+    ctx,
+  });
 }
 
 async function processXykShareAssetSpotPrices({

@@ -14426,6 +14426,7 @@ type DcaSchedule {
     """
     filter: DcaScheduleExecutionFilter
   ): DcaScheduleExecutionsConnection!
+  involvedAtParaBlock: Int
 }
 
 type Asset {
@@ -15066,6 +15067,9 @@ type DcaScheduleSumAggregates {
 
   """Sum of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigInt!
+
+  """Sum of this field across the matching connection."""
+  involvedAtParaBlock: BigInt
 }
 
 type DcaScheduleDistinctCountAggregates {
@@ -15136,6 +15140,9 @@ type DcaScheduleDistinctCountAggregates {
 
   """Distinct count of eventId across the matching connection"""
   eventId: BigInt
+
+  """Distinct count of this field across the matching connection."""
+  involvedAtParaBlock: BigInt
 }
 
 type DcaScheduleMinAggregates {
@@ -15177,6 +15184,9 @@ type DcaScheduleMinAggregates {
 
   """Minimum of paraBlockHeight across the matching connection"""
   paraBlockHeight: Int
+
+  """Minimum of this field across the matching connection."""
+  involvedAtParaBlock: Int
 }
 
 type DcaScheduleMaxAggregates {
@@ -15218,6 +15228,9 @@ type DcaScheduleMaxAggregates {
 
   """Maximum of paraBlockHeight across the matching connection"""
   paraBlockHeight: Int
+
+  """Maximum of this field across the matching connection."""
+  involvedAtParaBlock: Int
 }
 
 type DcaScheduleAverageAggregates {
@@ -15259,6 +15272,9 @@ type DcaScheduleAverageAggregates {
 
   """Mean average of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
+
+  """Mean average of this field across the matching connection."""
+  involvedAtParaBlock: BigFloat
 }
 
 type DcaScheduleStddevSampleAggregates {
@@ -15316,6 +15332,11 @@ type DcaScheduleStddevSampleAggregates {
   Sample standard deviation of paraBlockHeight across the matching connection
   """
   paraBlockHeight: BigFloat
+
+  """
+  Sample standard deviation of this field across the matching connection.
+  """
+  involvedAtParaBlock: BigFloat
 }
 
 type DcaScheduleStddevPopulationAggregates {
@@ -15381,6 +15402,11 @@ type DcaScheduleStddevPopulationAggregates {
   Population standard deviation of paraBlockHeight across the matching connection
   """
   paraBlockHeight: BigFloat
+
+  """
+  Population standard deviation of this field across the matching connection.
+  """
+  involvedAtParaBlock: BigFloat
 }
 
 type DcaScheduleVarianceSampleAggregates {
@@ -15426,6 +15452,9 @@ type DcaScheduleVarianceSampleAggregates {
 
   """Sample variance of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
+
+  """Sample variance of this field across the matching connection."""
+  involvedAtParaBlock: BigFloat
 }
 
 type DcaScheduleVariancePopulationAggregates {
@@ -15475,6 +15504,9 @@ type DcaScheduleVariancePopulationAggregates {
 
   """Population variance of paraBlockHeight across the matching connection"""
   paraBlockHeight: BigFloat
+
+  """Population variance of this field across the matching connection."""
+  involvedAtParaBlock: BigFloat
 }
 
 """Grouping methods for `DcaSchedule` for usage during aggregation."""
@@ -15531,6 +15563,11 @@ input DcaScheduleHavingSumInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingSumDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingSumDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 input DcaScheduleHavingDistinctCountInput {
@@ -15547,6 +15584,11 @@ input DcaScheduleHavingDistinctCountInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingDistinctCountDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingDistinctCountDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 input DcaScheduleHavingMinInput {
@@ -15563,6 +15605,11 @@ input DcaScheduleHavingMinInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingMinDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingMinDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 input DcaScheduleHavingMaxInput {
@@ -15579,6 +15626,11 @@ input DcaScheduleHavingMaxInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingMaxDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingMaxDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 input DcaScheduleHavingAverageInput {
@@ -15595,6 +15647,11 @@ input DcaScheduleHavingAverageInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingAverageDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingAverageDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 input DcaScheduleHavingStddevSampleInput {
@@ -15611,6 +15668,11 @@ input DcaScheduleHavingStddevSampleInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingStddevSampleDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingStddevSampleDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 input DcaScheduleHavingStddevPopulationInput {
@@ -15627,6 +15689,11 @@ input DcaScheduleHavingStddevPopulationInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingStddevPopulationDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingStddevPopulationDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 input DcaScheduleHavingVarianceSampleInput {
@@ -15643,6 +15710,11 @@ input DcaScheduleHavingVarianceSampleInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingVarianceSampleDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingVarianceSampleDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 input DcaScheduleHavingVariancePopulationInput {
@@ -15659,6 +15731,11 @@ input DcaScheduleHavingVariancePopulationInput {
   amountOut: HavingBigfloatFilter
   minAmountOut: HavingBigfloatFilter
   paraBlockHeight: HavingIntFilter
+  involvedAtParaBlock: DcaScheduleHavingVariancePopulationDcaScheduleInvolvedAtParaBlockInput
+}
+
+input DcaScheduleHavingVariancePopulationDcaScheduleInvolvedAtParaBlockInput {
+  filter: HavingIntFilter
 }
 
 """Methods to use when ordering `DcaSchedule`."""
@@ -16165,6 +16242,9 @@ input DcaScheduleFilter {
 
   """Filter by the object’s `eventId` field."""
   eventId: StringFilter
+
+  """Filter by the object’s `involvedAtParaBlock` field."""
+  involvedAtParaBlock: IntFilter
 
   """Checks for all expressions in this list."""
   and: [DcaScheduleFilter!]

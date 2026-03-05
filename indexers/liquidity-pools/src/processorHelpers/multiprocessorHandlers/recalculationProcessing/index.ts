@@ -4,6 +4,7 @@ import { handleAccountBalancesReaggregation } from './accountBalancesReaggregati
 import { handleHarvesterPostMergeReaggregation } from './harvesterPostMergeReaggregation';
 import { whitelistedAccountBalancesTrackingProcessor } from './whitelistedAccountBalancesTracking';
 import { handleStableSwapVolumesReaggregation } from './stableswapVolumesReaggregation';
+import { handleAccountNormalisedBalancesReaggregation } from './accountNormalisedBalancesReaggregation';
 
 export async function handleReaggregationProcessing(
   ctx: SqdProcessorContext<Store>
@@ -33,6 +34,10 @@ export async function handleReaggregationProcessing(
     }
     case 'STABLESWAP_VOLUMES_REAGGREGATION': {
       await handleStableSwapVolumesReaggregation(ctx);
+      break;
+    }
+    case 'ACCOUNT_NORMALISED_BALANCES_REAGGREGATION': {
+      await handleAccountNormalisedBalancesReaggregation(ctx);
       break;
     }
     default:

@@ -170,14 +170,6 @@ export async function accountLiquidityAndTotalBalancesProcessing(
 
   console.time('accountLiquidityAndTotalBalancesProcessing:: Save :: Flush');
 
-  // await Promise.all([
-  //   ctx.storeUtils.upsertWithBatches(accountAssetBalancesLatest),
-  //   ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
-  //   ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest),
-  //   ctx.storeUtils.upsertWithBatches(accountLiquidityBalanceHistoricalDataList),
-  //   ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
-  // ]);
-
   console.time(
     'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountAssetBalancesLatest'
   );

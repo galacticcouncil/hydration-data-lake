@@ -647,31 +647,31 @@ export async function getAssetBalanceInRefAsset({
 }) {
   let assetInId = asset.id;
 
-  if (
-    asset.resourceType === AssetResourceType.Debt &&
-    !!asset.underlyingAssetId
-  ) {
-    let underlyingAsset: Asset | undefined = ctx.batchState.state.assetsAll.get(
-      asset.underlyingAssetId
-    );
-    if (!underlyingAsset) {
-      underlyingAsset =
-        (await ctx.storeUtils.findOneWithLogs(
-          Asset,
-          {
-            where: {
-              assetRegistryId: asset.underlyingAssetId,
-            },
-            relations: {},
-          },
-          {
-            className: 'Asset',
-            originCallFn: 'handleMmAssetAccountBalancesPerBlock',
-          }
-        )) ?? undefined;
-    }
-    if (underlyingAsset) assetInId = underlyingAsset.id;
-  }
+  // if (
+  //   asset.resourceType === AssetResourceType.Debt &&
+  //   !!asset.underlyingAssetId
+  // ) {
+  //   let underlyingAsset: Asset | undefined = ctx.batchState.state.assetsAll.get(
+  //     asset.underlyingAssetId
+  //   );
+  //   if (!underlyingAsset) {
+  //     underlyingAsset =
+  //       (await ctx.storeUtils.findOneWithLogs(
+  //         Asset,
+  //         {
+  //           where: {
+  //             assetRegistryId: asset.underlyingAssetId,
+  //           },
+  //           relations: {},
+  //         },
+  //         {
+  //           className: 'Asset',
+  //           originCallFn: 'handleMmAssetAccountBalancesPerBlock',
+  //         }
+  //       )) ?? undefined;
+  //   }
+  //   if (underlyingAsset) assetInId = underlyingAsset.id;
+  // }
 
   const assetSpotPrice = getAssetsPairPrice({
     ctx,

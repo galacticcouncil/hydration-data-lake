@@ -438,31 +438,6 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
             ) || [];
 
         for (const deposit of accountActiveDepositsAtBlock) {
-          // if (
-          //   !accountDepositBalancesPerBlockPerAsset
-          //     .get(blockHeight)!
-          //     .data.has(accountId)
-          // )
-          //   accountDepositBalancesPerBlockPerAsset
-          //     .get(blockHeight)!
-          //     .data.set(accountId, new Map());
-          //
-          // if (
-          //   !accountDepositBalancesPerBlockPerAsset
-          //     .get(blockHeight)!
-          //     .data.get(accountId)!
-          //     .has(deposit.assetId)
-          // )
-          //   accountDepositBalancesPerBlockPerAsset
-          //     .get(blockHeight)!
-          //     .data.get(accountId)!
-          //     .set(deposit.assetId, BigNumber(0));
-          //
-          // const currentBalance = accountDepositBalancesPerBlockPerAsset
-          //   .get(blockHeight)!
-          //   .data.get(accountId)!
-          //   .get(deposit.assetId)!;
-
           /**
            * Retrieves the deposit amount from the closest event at or before the target block.
            *
@@ -475,14 +450,6 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
           const latestPositionEvent = positionEventsIndexedByDepositId
             .get(deposit.id)
             ?.find((e) => e.paraBlockHeight <= blockHeight);
-
-          // accountDepositBalancesPerBlockPerAsset
-          //   .get(blockHeight)!
-          //   .data.get(accountId)!
-          //   .set(
-          //     deposit.assetId,
-          //     currentBalance.plus(actualPositionAmountAtBlock)
-          //   );
 
           const position = positionsIndexedByDepositId.get(deposit.id);
 
