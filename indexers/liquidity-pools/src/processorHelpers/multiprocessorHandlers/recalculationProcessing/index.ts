@@ -5,6 +5,7 @@ import { handleHarvesterPostMergeReaggregation } from './harvesterPostMergeReagg
 import { whitelistedAccountBalancesTrackingProcessor } from './whitelistedAccountBalancesTracking';
 import { handleStableSwapVolumesReaggregation } from './stableswapVolumesReaggregation';
 import { handleAccountNormalisedBalancesReaggregation } from './accountNormalisedBalancesReaggregation';
+import { handleCommitHistoricalDataToRedis } from './commitHistoricalDataToRedisHandler';
 
 export async function handleReaggregationProcessing(
   ctx: SqdProcessorContext<Store>
@@ -38,6 +39,10 @@ export async function handleReaggregationProcessing(
     }
     case 'ACCOUNT_NORMALISED_BALANCES_REAGGREGATION': {
       await handleAccountNormalisedBalancesReaggregation(ctx);
+      break;
+    }
+    case 'COMMIT_HISTORICAL_DATA_TO_REDIS': {
+      await handleCommitHistoricalDataToRedis(ctx);
       break;
     }
     default:
