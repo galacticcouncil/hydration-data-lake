@@ -64,11 +64,13 @@ export class TimeSeriesApiSupportManager {
   }
 
   getJobPrefix(name: HistDataScrapperJobName) {
-    return `${HistDataScrapperJobName.assetPriceHistData}_v3`;
+    return `${name}_v4`;
   }
 
   async initHistDataScraper() {
     if (!appConfig.COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES) return;
+
+    await new Promise((res) => setTimeout(res, 90000));
 
     console.log('initHistDataScraper');
 
