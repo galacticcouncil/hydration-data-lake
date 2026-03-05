@@ -731,7 +731,32 @@ export function getAssetsPairPrice({
     const price = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
       `${assetInIdEnsured}-${assetOutIdEnsured}-${blockHeight}`
     )?.priceNormalised;
-    return price ?? null;
+
+    if (price) return price;
+
+    if (
+      (recursionExec && !price) ||
+      !assetInEntity ||
+      (assetInEntity &&
+        assetInEntity.resourceType !== AssetResourceType.aToken) ||
+      (assetInEntity &&
+        assetInEntity.resourceType === AssetResourceType.aToken &&
+        !assetInEntity.underlyingAssetId)
+    )
+      return null;
+
+    const underlyingAsset = ctx.batchState.state.assetsAll.get(
+      assetInEntity.underlyingAssetId || assetInEntity.id
+    );
+    assetInIdEnsured = underlyingAsset?.id ?? assetInId;
+
+    return getAssetsPairPrice({
+      assetInId: assetInIdEnsured,
+      assetOutId: assetOutIdEnsured,
+      recursionExec: true,
+      blockHeight,
+      ctx,
+    });
   }
 
   const assetInRefPrice =
@@ -750,8 +775,10 @@ export function getAssetsPairPrice({
 
   if (recursionExec && (!assetInRefPrice || !assetOutRefPrice)) return null;
 
-  if (assetInRefPrice && assetOutRefPrice)
-    return BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
+  if (assetInRefPrice && assetOutRefPrice) {
+    const price = BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
+    return price;
+  }
 
   if (
     !assetInRefPrice &&

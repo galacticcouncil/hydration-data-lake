@@ -201,14 +201,19 @@ export class TimeSeriesApiSupportManager {
           );
 
         if (assetSpotPriceHistDataChunk.rows.length > 0) {
-          const preparedData = assetSpotPriceHistDataChunk.rows.map((row) => ({
-            keyPrefix: appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.price,
-            assetAId: row.asset_in_asset_registry_id,
-            assetBId: row.asset_out_asset_registry_id,
-            timestamp: row.block_timestamp,
-            value: BigNumber(row.price_normalised).toNumber(),
-          }));
+          const preparedData = [];
+
+          for (const row of assetSpotPriceHistDataChunk.rows) {
+            preparedData.push({
+              keyPrefix: appConfig.INDEXER_ID,
+              name: RedisTimeSeriesName.price,
+              assetAId: row.asset_in_asset_registry_id,
+              assetBId: row.asset_out_asset_registry_id,
+              timestamp: row.block_timestamp,
+              value: BigNumber(row.price_normalised).toNumber(),
+            });
+          }
+
           for (const subBatch of splitIntoBatches(
             preparedData,
             appConfig.redis.TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE
@@ -218,21 +223,25 @@ export class TimeSeriesApiSupportManager {
         }
 
         if (assetPairVolumesChunk.rows.length > 0) {
-          const preparedData = assetPairVolumesChunk.rows.map((row) => ({
-            keyPrefix: appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.volume,
-            assetAId:
-              +row.asset_a_registry_id < +row.asset_b_registry_id
-                ? row.asset_a_registry_id
-                : row.asset_b_registry_id,
-            assetBId:
-              +row.asset_a_registry_id < +row.asset_b_registry_id
-                ? row.asset_b_registry_id
-                : row.asset_a_registry_id,
+          const preparedData = [];
 
-            timestamp: row.block_timestamp,
-            value: BigNumber(row.total_volume_normalised).toNumber(),
-          }));
+          for (const row of assetPairVolumesChunk.rows) {
+            preparedData.push({
+              keyPrefix: appConfig.INDEXER_ID,
+              name: RedisTimeSeriesName.volume,
+              assetAId:
+                +row.asset_a_registry_id < +row.asset_b_registry_id
+                  ? row.asset_a_registry_id
+                  : row.asset_b_registry_id,
+              assetBId:
+                +row.asset_a_registry_id < +row.asset_b_registry_id
+                  ? row.asset_b_registry_id
+                  : row.asset_a_registry_id,
+
+              timestamp: row.block_timestamp,
+              value: BigNumber(row.total_volume_normalised).toNumber(),
+            });
+          }
 
           for (const subBatch of splitIntoBatches(
             preparedData,
@@ -338,8 +347,10 @@ export class TimeSeriesApiSupportManager {
           ].para_block_height;
 
         if (accTotalBalancesHistDataChunk.rows.length > 0) {
-          const preparedData = accTotalBalancesHistDataChunk.rows
-            .map((row) => [
+          const preparedData = [];
+
+          for (const row of accTotalBalancesHistDataChunk.rows) {
+            preparedData.push([
               {
                 name: RedisTimeSeriesName.acc_bal_tot_tns,
                 accountId: row.account_id,
@@ -361,10 +372,11 @@ export class TimeSeriesApiSupportManager {
                 value: +row.total_debt_norm,
                 keyPrefix: appConfig.INDEXER_ID,
               },
-            ])
-            .flat();
+            ]);
+          }
+
           for (const subBatch of splitIntoBatches(
-            preparedData,
+            preparedData.flat(),
             appConfig.redis.TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE
           )) {
             await redisTimeSeriesManager.addMultipleAccountTotalBalances(
