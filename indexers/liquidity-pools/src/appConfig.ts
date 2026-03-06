@@ -380,6 +380,10 @@ export class AppConfig {
   @IsNotEmpty()
   readonly CHAIN!: ChainName;
 
+  @IsBoolean()
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly IS_MASTER_INSTANCE: boolean = false;
+
   @Transform(({ value }: { value: string }) => +value)
   readonly GQL_PORT: number = 8080;
 
@@ -505,6 +509,10 @@ export class AppConfig {
   @IsNotEmpty()
   @IsString()
   readonly INDEXER_ID!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly INDEXER_VERSION: string = 'unversioned';
 
   @IsString()
   readonly STATE_SCHEMA_NAME: string = 'squid_processor';
