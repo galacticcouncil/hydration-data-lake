@@ -2,10 +2,7 @@ import { In } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  DcaSchedule,
-  DcaScheduleExecution,
-} from '../../model';
+import { DcaSchedule, DcaScheduleExecution } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
 import { SqdProcessorContext } from '../../processor';
@@ -167,23 +164,31 @@ async function prefetchEntities(
 
   const [prefetchedSchedules, prefetchedScheduleExecutions] = await Promise.all(
     [
-      ctx.storeUtils.findWithLogs(DcaSchedule, {
-        where: { id: In(scheduleIds) },
-        relations: {
-          executions: true,
-        },
-      }, { className: 'DcaSchedule' }),
-      ctx.storeUtils.findWithLogs(DcaScheduleExecution, {
-        where: { id: In(scheduleExecutions) },
-        relations: {
-          schedule: true,
-          events: {
-            scheduleExecution: true,
-            swaps: true,
-            event: true,
+      ctx.storeUtils.findWithLogs(
+        DcaSchedule,
+        {
+          where: { id: In(scheduleIds) },
+          relations: {
+            executions: true,
           },
         },
-      }, { className: 'DcaScheduleExecution' }),
+        { className: 'DcaSchedule' }
+      ),
+      ctx.storeUtils.findWithLogs(
+        DcaScheduleExecution,
+        {
+          where: { id: In(scheduleExecutions) },
+          relations: {
+            schedule: true,
+            events: {
+              scheduleExecution: true,
+              swaps: true,
+              event: true,
+            },
+          },
+        },
+        { className: 'DcaScheduleExecution' }
+      ),
     ]
   );
 

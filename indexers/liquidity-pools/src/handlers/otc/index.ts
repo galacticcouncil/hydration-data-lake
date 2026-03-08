@@ -2,10 +2,7 @@ import { In } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  OtcOrder,
-  OtcOrderEvent,
-} from '../../model';
+import { OtcOrder, OtcOrderEvent } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
 import { SqdProcessorContext } from '../../processor';
@@ -21,8 +18,6 @@ export async function handleOtcOrders(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
-  if (!ctx.appConfig.PROCESS_OTC) return;
-
   await prefetchEntities(ctx, parsedEvents);
 
   for (const eventData of getOrderedListByBlockNumber([
@@ -82,16 +77,20 @@ async function prefetchEntities(
     ]).values(),
   ];
 
-  const prefetchedOrders = await ctx.storeUtils.findWithLogs(OtcOrder, {
-    where: { id: In(orderIds) },
-    relations: {
-      events: {
-        order: true,
-        swap: true,
-        event: true,
+  const prefetchedOrders = await ctx.storeUtils.findWithLogs(
+    OtcOrder,
+    {
+      where: { id: In(orderIds) },
+      relations: {
+        events: {
+          order: true,
+          swap: true,
+          event: true,
+        },
       },
     },
-  }, { className: 'OtcOrder' });
+    { className: 'OtcOrder' }
+  );
 
   const state = ctx.batchState.state;
 

@@ -346,29 +346,25 @@ export async function handleLiquidityBalancesInTotalBalances({
       .flat()
   );
 
-  const {
-    accountDepositBalancesPerBlockPerAsset: omnipoolLiquidityMiningDepositsMap,
+  const { allDepositsInvolvedInBatch } =
+    await getOmnipoolLiquidityMiningDepositsForAccounts({
+      ctx,
+      involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+      involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
+    });
+
+  await getOmnipoolLiquidityPositionsForAccounts({
+    ctx,
+    involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+    involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     allDepositsInvolvedInBatch,
-  } = await getOmnipoolLiquidityMiningDepositsForAccounts({
+  });
+
+  await getXykLiquidityMiningDepositsForAccounts({
     ctx,
     involvedAccountsPerBlock: allProcessedAccountsPerBlock,
     involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
   });
-
-  const omnipoolLiquidityPositionsMap =
-    await getOmnipoolLiquidityPositionsForAccounts({
-      ctx,
-      involvedAccountsPerBlock: allProcessedAccountsPerBlock,
-      involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
-      allDepositsInvolvedInBatch,
-    });
-
-  const xykpoolLiquidityDepositsMap =
-    await getXykLiquidityMiningDepositsForAccounts({
-      ctx,
-      involvedAccountsPerBlock: allProcessedAccountsPerBlock,
-      involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
-    });
 
   await addLiquidityBalancesToTotalBalance({
     refAssetId: refAsset.id,
@@ -376,39 +372,6 @@ export async function handleLiquidityBalancesInTotalBalances({
     ctx,
     dataSource: 'XYK_DEPOSIT',
   });
-
-  // /**
-  //  * Add Omnipool liquidity positions to the total transferable balance.
-  //  */
-  // await addLiquidityMiningWorthToTotalBalance({
-  //   lmWorthData: xykpoolLiquidityDepositsMap,
-  //   refAssetId: refAsset.id,
-  //   preProcessedTotalBalances,
-  //   ctx,
-  //   dataSource: 'XYK_DEPOSIT',
-  // });
-  //
-  // /**
-  //  * Add Omnipool Liquidity Mining deposits to the total transferable balance.
-  //  */
-  // await addLiquidityMiningWorthToTotalBalance({
-  //   lmWorthData: omnipoolLiquidityMiningDepositsMap,
-  //   refAssetId: refAsset.id,
-  //   preProcessedTotalBalances,
-  //   ctx,
-  //   dataSource: 'OMNIPOOL_DEPOSIT',
-  // });
-  //
-  // /**
-  //  * Add XYK Liquidity Mining deposits to the total transferable balance.
-  //  */
-  // await addLiquidityMiningWorthToTotalBalance({
-  //   lmWorthData: omnipoolLiquidityPositionsMap,
-  //   refAssetId: refAsset.id,
-  //   preProcessedTotalBalances,
-  //   ctx,
-  //   dataSource: 'OMNIPOOL_POSITION',
-  // });
 }
 
 async function addLiquidityBalancesToTotalBalance({

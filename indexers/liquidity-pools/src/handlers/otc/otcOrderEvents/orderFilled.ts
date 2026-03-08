@@ -75,7 +75,10 @@ export async function handleOtcOrderFilled(
   });
 
   // Get Account object for activity trace (already fetched at line 45)
-  const fillerAccount = await getOrCreateAccount({ ctx, id: newOrderEvent.fillerId! });
+  const fillerAccount = await getOrCreateAccount({
+    ctx,
+    id: newOrderEvent.fillerId!,
+  });
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     traceIds: newOrderEvent.traceIds,

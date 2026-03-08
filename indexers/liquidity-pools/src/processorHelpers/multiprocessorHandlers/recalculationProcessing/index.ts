@@ -6,6 +6,8 @@ import { whitelistedAccountBalancesTrackingProcessor } from './whitelistedAccoun
 import { handleStableSwapVolumesReaggregation } from './stableswapVolumesReaggregation';
 import { handleAccountNormalisedBalancesReaggregation } from './accountNormalisedBalancesReaggregation';
 import { handleCommitHistoricalDataToRedis } from './commitHistoricalDataToRedisHandler';
+import { handleOmnipoolPositionPriceReaggregation } from './omnipoolPositionPriceReaggregation';
+import { handleDcaSchedulesAndOtcOrders } from './dcaSchedulesAndOtcOrdersReaggregation';
 
 export async function handleReaggregationProcessing(
   ctx: SqdProcessorContext<Store>
@@ -43,6 +45,14 @@ export async function handleReaggregationProcessing(
     }
     case 'COMMIT_HISTORICAL_DATA_TO_REDIS': {
       await handleCommitHistoricalDataToRedis(ctx);
+      break;
+    }
+    case 'OMNIPOOL_POSITION_PRICE_REAGGREGATION': {
+      await handleOmnipoolPositionPriceReaggregation(ctx);
+      break;
+    }
+    case 'DCA_OTC_REAGGREGATION': {
+      await handleDcaSchedulesAndOtcOrders(ctx);
       break;
     }
     default:

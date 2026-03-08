@@ -35,10 +35,14 @@ export async function getDcaScheduleExecution({
 
   if (execution || (!execution && !fetchFromDb)) return execution ?? null;
 
-  execution = await ctx.storeUtils.findOneWithLogs(DcaScheduleExecution, {
-    where: { id },
-    relations,
-  }, { className: 'DcaScheduleExecution' });
+  execution = await ctx.storeUtils.findOneWithLogs(
+    DcaScheduleExecution,
+    {
+      where: { id },
+      relations,
+    },
+    { className: 'DcaScheduleExecution' }
+  );
 
   if (!execution) return null;
 
@@ -64,7 +68,9 @@ export async function handleDcaScheduleExecutionPlanned(
     },
   });
 
-  if (!scheduleEntity) return;
+  if (!scheduleEntity) {
+    return;
+  }
 
   const executionId = `${eventParams.id}-${eventParams.blockNumber}`;
 
@@ -73,13 +79,13 @@ export async function handleDcaScheduleExecutionPlanned(
     id: executionId,
   });
 
-  if (plannedExecution) return;
-
-  plannedExecution = new DcaScheduleExecution({
-    id: executionId,
-    schedule: scheduleEntity,
-    status: DcaScheduleExecutionStatus.Planned,
-  });
+  if (!plannedExecution) {
+    plannedExecution = new DcaScheduleExecution({
+      id: executionId,
+      schedule: scheduleEntity,
+      status: DcaScheduleExecutionStatus.Planned,
+    });
+  }
 
   const executionAction = await processDcaScheduleExecutionEvent({
     ctx,
@@ -164,7 +170,10 @@ export async function handleDcaTradeExecuted(
     scheduleExecutionEntity
   );
 
-  const ownerAccount = await getOrCreateAccount({ ctx, id: scheduleExecutionEntity.schedule.ownerId });
+  const ownerAccount = await getOrCreateAccount({
+    ctx,
+    id: scheduleExecutionEntity.schedule.ownerId,
+  });
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     participants: [ownerAccount],
@@ -232,7 +241,10 @@ export async function handleDcaTradeFailed(
     scheduleExecutionEntity
   );
 
-  const ownerAccount = await getOrCreateAccount({ ctx, id: scheduleExecutionEntity.schedule.ownerId });
+  const ownerAccount = await getOrCreateAccount({
+    ctx,
+    id: scheduleExecutionEntity.schedule.ownerId,
+  });
 
   await ChainActivityTraceManager.addParticipantsToActivityTracesBulk({
     participants: [ownerAccount],

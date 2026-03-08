@@ -1,8 +1,6 @@
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  ChainActivityTraceManager,
-} from '../../../chainActivityTracingManagers';
+import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
 import { OtcOrderStatus } from '../../../model';
 import parsers from '../../../parsers';
 import { OtcOrderPlacedData } from '../../../parsers/batchBlocksParser/types';
@@ -50,7 +48,6 @@ export async function handleOtcOrderPlaced(
   });
 
   newOrder.events = [...(newOrder.events || []), newOrderEvent];
-
 
   const ownerAccount = await getOrCreateAccount({ ctx, id: newOrder.ownerId });
 
