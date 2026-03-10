@@ -6,6 +6,7 @@ import FilterPlugin from 'postgraphile-plugin-connection-filter';
 import { makePgSmartTagsFromFilePlugin } from 'postgraphile/plugins';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import { Pool } from 'pg';
 
 import SimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
 import AggregatesPluggin from '@graphile/pg-aggregates';
@@ -30,9 +31,6 @@ import { OmnipoolAssetVolumeSubscriptionsPlugin } from './apiSupport/api/graphql
 import { RoutedTradesSubscriptionsPlugin } from './apiSupport/api/graphql/plugins/subscription/routedTradesSubscriptions';
 import { StableswapVolumeSubscriptionsPlugin } from './apiSupport/api/graphql/plugins/subscription/stableswapVolumeSubscriptions';
 import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/api/graphql/plugins/subscription/xykPoolVolumeSubscriptions';
-import { handleProxyReqDefillama } from './apiSupport/api/rest/proxyApiHandlers/resources/defillama';
-import { handleProxyReqSubscan } from './apiSupport/api/rest/proxyApiHandlers/resources/subscan';
-import { ProxyApiRoute } from './apiSupport/api/rest/proxyApiHandlers/types';
 import restRouter from './apiSupport/api/rest/routes/rest.routes';
 import { runApiDbMigrations } from './apiSupport/apiMigrations/runApiDbMigrations';
 import { swaggerOptions } from './apiSupport/swagger';
@@ -41,9 +39,12 @@ import { AppConfig } from './appConfig';
 import { getEnvPath } from './utils/helpers';
 import { NodeEnv } from './utils/types';
 import postgraphileSmartTagPlugins from './apiSupport/smartTags';
-import { handleProxyReqKamino } from './apiSupport/api/rest/proxyApiHandlers/resources/kamino';
 import proxyRouter from './apiSupport/api/rest/routes/proxy.routes';
-
+import {
+  createDatabasePool,
+  testDatabaseConnection,
+  shutdownPool,
+} from './apiSupport/dbPoolConfig';
 // const pgTypes = new TypeOverrides();
 // pgTypes.setTypeParser(1700, function (val) {
 //   return val;
@@ -51,10 +52,21 @@ import proxyRouter from './apiSupport/api/rest/routes/proxy.routes';
 const appConfig = AppConfig.getInstance();
 
 async function initializeServer() {
+  let dbPool: Pool | null = null;
+
   try {
     const app = express();
 
     await runApiDbMigrations();
+
+    // Create database pool with reconnection handling
+    dbPool = createDatabasePool();
+
+    // Test initial connection
+    const isConnected = await testDatabaseConnection(dbPool);
+    if (!isConnected) {
+      throw new Error('Failed to establish initial database connection');
+    }
 
     let postgraphileInstance = null;
 
@@ -67,65 +79,58 @@ async function initializeServer() {
 
       while (true) {
         try {
-          postgraphileInstance = postgraphile(
-            {
-              host: appConfig.DB_HOST,
-              port: appConfig.DB_PORT,
-              database: appConfig.DB_NAME,
-              user: appConfig.DB_USER,
-              password: appConfig.DB_PASS,
-
-              // types: pgTypes,
+          // Use the pool instead of direct connection config
+          postgraphileInstance = postgraphile(dbPool!, 'public', {
+            // PostGraphile options
+            retryOnInitFail: true, // Retry if initialization fails
+            graphiql: true,
+            watchPg: true,
+            showErrorStack: false,
+            enhanceGraphiql: true,
+            dynamicJson: true,
+            disableDefaultMutations: true,
+            skipPlugins: [NodePlugin],
+            subscriptions: true,
+            pluginHook: makePluginHook([PgPubsub]),
+            // Configure watch settings for better reconnection handling
+            ownerConnectionString: `postgresql://${appConfig.DB_USER}:${appConfig.DB_PASS}@${appConfig.DB_HOST}:${appConfig.DB_PORT}/${appConfig.DB_NAME}`,
+            appendPlugins: [
+              CommonApiTypesDefinitionPlugin,
+              AggregatesPluggin,
+              FilterPlugin,
+              SimplifyInflectorPlugin,
+              ProcessorStatusPlugin,
+              XykpoolsVolumePlugin,
+              XykpoolsVolumeSubscriptionsPlugin,
+              XykpoolTvlMetricsPlugin,
+              OmnipoolAssetVolumePlugin,
+              OmnipoolAssetVolumeSubscriptionsPlugin,
+              StableswapVolumePlugin,
+              StableswapVolumeSubscriptionsPlugin,
+              RoutedTradesSubscriptionsPlugin,
+              SwapPlugin,
+              StableswapYieldMetricsPlugin,
+              StableswapTvlMetricsPlugin,
+              OmnipoolYieldMetricsPlugin,
+              OmnipoolTvlMetricsPlugin,
+              GlobalMetricsPlugin,
+              AssetHistoricalDataPlugin,
+              AccountBalancesHistoricalDataPlugin,
+              DustableAccountsPlugin,
+              ...postgraphileSmartTagPlugins,
+            ],
+            disableQueryLog: appConfig.NODE_ENV !== NodeEnv.DEV,
+            externalUrlBase: process.env.BASE_PATH
+              ? process.env.BASE_PATH + '/api'
+              : undefined,
+            graphileBuildOptions: {
+              stateSchemas: appConfig.SUB_PROCESSOR_SCHEMAS,
+              omnipoolAddress: appConfig.OMNIPOOL_ADDRESS,
+              enableSmartTags: true,
             },
-            'public',
-            {
-              graphiql: true,
-              watchPg: true,
-              showErrorStack: false,
-              enhanceGraphiql: true,
-              dynamicJson: true,
-              disableDefaultMutations: true,
-              skipPlugins: [NodePlugin],
-              subscriptions: true,
-              pluginHook: makePluginHook([PgPubsub]),
-              appendPlugins: [
-                CommonApiTypesDefinitionPlugin,
-                AggregatesPluggin,
-                FilterPlugin,
-                SimplifyInflectorPlugin,
-                ProcessorStatusPlugin,
-                XykpoolsVolumePlugin,
-                XykpoolsVolumeSubscriptionsPlugin,
-                XykpoolTvlMetricsPlugin,
-                OmnipoolAssetVolumePlugin,
-                OmnipoolAssetVolumeSubscriptionsPlugin,
-                StableswapVolumePlugin,
-                StableswapVolumeSubscriptionsPlugin,
-                RoutedTradesSubscriptionsPlugin,
-                SwapPlugin,
-                StableswapYieldMetricsPlugin,
-                StableswapTvlMetricsPlugin,
-                OmnipoolYieldMetricsPlugin,
-                OmnipoolTvlMetricsPlugin,
-                GlobalMetricsPlugin,
-                AssetHistoricalDataPlugin,
-                AccountBalancesHistoricalDataPlugin,
-                DustableAccountsPlugin,
-                ...postgraphileSmartTagPlugins,
-              ],
-              disableQueryLog: appConfig.NODE_ENV !== NodeEnv.DEV,
-              externalUrlBase: process.env.BASE_PATH
-                ? process.env.BASE_PATH + '/api'
-                : undefined,
-              graphileBuildOptions: {
-                stateSchemas: appConfig.SUB_PROCESSOR_SCHEMAS,
-                omnipoolAddress: appConfig.OMNIPOOL_ADDRESS,
-                enableSmartTags: true,
-              },
-              allowExplain: true,
-              exportGqlSchemaPath: getEnvPath('apiSupport/schema.graphql'),
-            }
-          );
+            allowExplain: true,
+            exportGqlSchemaPath: getEnvPath('apiSupport/schema.graphql'),
+          });
           console.log('[postgraphileInstance] initialized successfully');
           return;
         } catch (e: any) {
@@ -210,6 +215,44 @@ async function initializeServer() {
 
     app.use(cors());
 
+    // Health check endpoint
+    app.get('/health', async (_req: Request, res: Response) => {
+      try {
+        const client = await dbPool!.connect();
+        try {
+          const result = await client.query(
+            'SELECT NOW() as time, current_database() as db'
+          );
+          res.json({
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            database: {
+              connected: true,
+              database: result.rows[0].db,
+              serverTime: result.rows[0].time,
+              poolInfo: {
+                totalCount: dbPool!.totalCount,
+                idleCount: dbPool!.idleCount,
+                waitingCount: dbPool!.waitingCount,
+              },
+            },
+          });
+        } finally {
+          client.release();
+        }
+      } catch (error: any) {
+        console.error('Health check failed:', error);
+        res.status(503).json({
+          status: 'unhealthy',
+          timestamp: new Date().toISOString(),
+          database: {
+            connected: false,
+            error: error.message,
+          },
+        });
+      }
+    });
+
     app.use(postgraphileInstance);
 
     app.use(express.json());
@@ -239,8 +282,36 @@ async function initializeServer() {
     });
 
     TimeSeriesApiSupportManager.getInstance().initHistDataScraper().then();
+
+    // Graceful shutdown handling
+    const shutdown = async (signal: string) => {
+      console.log(`Received ${signal}, starting graceful shutdown...`);
+
+      try {
+        // Close the database pool
+        if (dbPool) {
+          await shutdownPool(dbPool);
+        }
+
+        console.log('Graceful shutdown complete');
+        process.exit(0);
+      } catch (err) {
+        console.error('Error during shutdown:', err);
+        process.exit(1);
+      }
+    };
+
+    // Register shutdown handlers
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
   } catch (error) {
     console.error('Failed to initialize server:', error);
+
+    // Ensure pool is closed on error
+    if (dbPool) {
+      await shutdownPool(dbPool).catch(console.error);
+    }
+
     process.exit(1);
   }
 }
