@@ -187,12 +187,8 @@ async function processAssetSpotPrices({
         !assetOut ||
         asset.assetRegistryId === undefined ||
         asset.assetRegistryId === null
-      ) {
-        // console.log(
-        //   `Asset spot price calculation skipped for asset ${asset.id} at block ${blockHeader.height} due to missing assetOut or assetRegistryId.`
-        // );
+      )
         continue;
-      }
 
       try {
         // const [price, route] = await Promise.all([
@@ -210,10 +206,6 @@ async function processAssetSpotPrices({
           );
 
         if (!priceWithRoute) {
-          // console.log(
-          //   `priceWithRoute is not found for asset ${asset.assetRegistryId}`
-          // );
-
           if (
             asset.resourceType === AssetResourceType.aToken &&
             !!asset.underlyingAssetId &&
@@ -249,9 +241,6 @@ async function processAssetSpotPrices({
               !underliningAssetEntity ||
               !underliningAssetEntity.assetRegistryId
             ) {
-              // console.log(
-              //   `Underlining asset ${asset.underlyingAssetId} is not found for asset ${asset.assetRegistryId}`
-              // );
               continue;
             }
 
@@ -265,9 +254,6 @@ async function processAssetSpotPrices({
               );
 
             if (!priceWithRoute) {
-              // console.log(
-              //   `priceWithRoute of underlining asset ${asset.underlyingAssetId} is not found for asset ${asset.assetRegistryId}`
-              // );
               continue;
             }
           } else {
