@@ -24,8 +24,11 @@ export async function handleDcaSchedules(
 ) {
   if (!ctx.appConfig.PROCESS_DCA) return;
 
+  console.time(`handleDcaSchedules :: prefetchEntities`);
   await prefetchEntities(ctx, parsedEvents);
+  console.timeEnd(`handleDcaSchedules :: prefetchEntities`);
 
+  console.time(`handleDcaSchedules :: handleDcaScheduleCreated`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_Scheduled).values()
@@ -33,7 +36,9 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaScheduleCreated(ctx, eventData);
   }
+  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleCreated`);
 
+  console.time(`handleDcaSchedules :: handleDcaScheduleCompleted`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_Completed).values()
@@ -41,7 +46,9 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaScheduleCompleted(ctx, eventData);
   }
+  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleCompleted`);
 
+  console.time(`handleDcaSchedules :: handleDcaScheduleTerminated`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_Terminated).values()
@@ -49,7 +56,9 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaScheduleTerminated(ctx, eventData);
   }
+  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleTerminated`);
 
+  console.time(`handleDcaSchedules :: handleDcaScheduleExecutionPlanned`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents
@@ -59,7 +68,9 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaScheduleExecutionPlanned(ctx, eventData);
   }
+  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleExecutionPlanned`);
 
+  console.time(`handleDcaSchedules :: handleDcaTradeExecuted`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_TradeExecuted).values()
@@ -67,7 +78,9 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaTradeExecuted(ctx, eventData);
   }
+  console.timeEnd(`handleDcaSchedules :: handleDcaTradeExecuted`);
 
+  console.time(`handleDcaSchedules :: handleDcaTradeFailed`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_TradeFailed).values()
@@ -75,6 +88,7 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaTradeFailed(ctx, eventData);
   }
+  console.timeEnd(`handleDcaSchedules :: handleDcaTradeFailed`);
 
   // await saveDcaEntities(ctx);
 }
