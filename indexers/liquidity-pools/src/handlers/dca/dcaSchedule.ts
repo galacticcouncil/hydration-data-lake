@@ -169,6 +169,31 @@ export async function handleDcaScheduleCreated(
     callData: { args, traceId: callTraceId },
   } = eventCallData;
 
+  const scheduleId = eventParams.id.toString();
+
+  const existingSchedule = ctx.batchState.state.dcaSchedules.get(scheduleId);
+
+  if (existingSchedule) {
+    const scheduleEvent = await processDcaScheduleEvent({
+      ctx,
+      schedule: existingSchedule,
+      eventId: eventMetadata.id,
+      eventName: DcaScheduleStatus.Created,
+      traceIds: [...(callTraceId ? [callTraceId] : []), eventMetadata.traceId],
+      blockHeader: eventMetadata.blockHeader,
+    });
+
+    existingSchedule.events = [
+      ...(existingSchedule.events || []),
+      scheduleEvent,
+    ];
+
+    const state = ctx.batchState.state;
+
+    state.dcaSchedules.set(existingSchedule.id, existingSchedule);
+    return;
+  }
+
   const callArgs = args ?? {
     scheduleData: await parsers.storage.dca.getDcaSchedule({
       scheduleId: eventParams.id,
@@ -209,7 +234,7 @@ export async function handleDcaScheduleCreated(
 
   const state = ctx.batchState.state;
 
-  state.accounts.set(ownerAccount.id, ownerAccount);
+  // state.accounts.set(ownerAccount.id, ownerAccount);
   state.dcaSchedules.set(newSchedule.id, newSchedule);
 
   for (const orderRoute of newSchedule.orderRouteHops)

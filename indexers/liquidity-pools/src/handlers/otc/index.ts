@@ -2,7 +2,7 @@ import { In } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import { OtcOrder, OtcOrderEvent } from '../../model';
+import { OtcOrder } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { EventName } from '../../parsers/types/events';
 import { SqdProcessorContext } from '../../processor';
@@ -58,24 +58,41 @@ async function prefetchEntities(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
-  const orderIds = [
-    ...new Set([
-      ...[
-        ...parsedEvents.getSectionByEventName(EventName.OTC_Placed).values(),
-      ].map((event) => event.eventData.params.orderId),
-      ...[
-        ...parsedEvents.getSectionByEventName(EventName.OTC_Cancelled).values(),
-      ].map((event) => event.eventData.params.orderId),
-      ...[
-        ...parsedEvents.getSectionByEventName(EventName.OTC_Filled).values(),
-      ].map((event) => event.eventData.params.orderId),
-      ...[
-        ...parsedEvents
-          .getSectionByEventName(EventName.OTC_PartiallyFilled)
-          .values(),
-      ].map((event) => event.eventData.params.orderId),
-    ]).values(),
-  ];
+  // Use Set directly for deduplication, avoid multiple spreads and maps
+  const orderIdsSet = new Set<string>();
+
+  // Single pass through each event type, directly adding to Set
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.OTC_Placed)
+    .values()) {
+    orderIdsSet.add(event.eventData.params.orderId.toString());
+  }
+
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.OTC_Cancelled)
+    .values()) {
+    orderIdsSet.add(event.eventData.params.orderId.toString());
+  }
+
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.OTC_Filled)
+    .values()) {
+    orderIdsSet.add(event.eventData.params.orderId.toString());
+  }
+
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.OTC_PartiallyFilled)
+    .values()) {
+    orderIdsSet.add(event.eventData.params.orderId.toString());
+  }
+
+  // Convert Set to Array only once, right before the query
+  const orderIds = Array.from(orderIdsSet);
+
+  // Skip database query if there's nothing to fetch
+  if (orderIds.length === 0) {
+    return;
+  }
 
   const prefetchedOrders = await ctx.storeUtils.findWithLogs(
     OtcOrder,
@@ -94,25 +111,17 @@ async function prefetchEntities(
 
   const state = ctx.batchState.state;
 
-  let prefetchedOrderActions: OtcOrderEvent[] = [];
-
   if (prefetchedOrders.length > 0) {
-    state.otcOrders = new Map(
-      [...state.otcOrders.values(), ...prefetchedOrders].map((item) => [
-        item.id,
-        item,
-      ])
-    );
+    // Directly set each order without recreating the entire Map
+    for (const order of prefetchedOrders) {
+      state.otcOrders.set(order.id, order);
 
-    prefetchedOrderActions = prefetchedOrders
-      .map((order) => order.events)
-      .flat();
+      // Process events while iterating
+      if (order.events && order.events.length > 0) {
+        for (const event of order.events) {
+          state.otcOrderEvents.set(event.id, event);
+        }
+      }
+    }
   }
-
-  if (prefetchedOrderActions.length > 0)
-    state.otcOrderEvents = new Map(
-      [...state.otcOrderEvents.values(), ...prefetchedOrderActions].map(
-        (item) => [item.id, item]
-      )
-    );
 }

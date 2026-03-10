@@ -38,26 +38,6 @@ export async function handleDcaSchedules(
   }
   console.timeEnd(`handleDcaSchedules :: handleDcaScheduleCreated`);
 
-  console.time(`handleDcaSchedules :: handleDcaScheduleCompleted`);
-  for (const eventData of getOrderedListByBlockNumber(
-    Array.from(
-      parsedEvents.getSectionByEventName(EventName.DCA_Completed).values()
-    )
-  )) {
-    await handleDcaScheduleCompleted(ctx, eventData);
-  }
-  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleCompleted`);
-
-  console.time(`handleDcaSchedules :: handleDcaScheduleTerminated`);
-  for (const eventData of getOrderedListByBlockNumber(
-    Array.from(
-      parsedEvents.getSectionByEventName(EventName.DCA_Terminated).values()
-    )
-  )) {
-    await handleDcaScheduleTerminated(ctx, eventData);
-  }
-  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleTerminated`);
-
   console.time(`handleDcaSchedules :: handleDcaScheduleExecutionPlanned`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
@@ -90,7 +70,27 @@ export async function handleDcaSchedules(
   }
   console.timeEnd(`handleDcaSchedules :: handleDcaTradeFailed`);
 
-  // await saveDcaEntities(ctx);
+  console.time(`handleDcaSchedules :: handleDcaScheduleCompleted`);
+  for (const eventData of getOrderedListByBlockNumber(
+    Array.from(
+      parsedEvents.getSectionByEventName(EventName.DCA_Completed).values()
+    )
+  )) {
+    await handleDcaScheduleCompleted(ctx, eventData);
+  }
+  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleCompleted`);
+
+  console.time(`handleDcaSchedules :: handleDcaScheduleTerminated`);
+  for (const eventData of getOrderedListByBlockNumber(
+    Array.from(
+      parsedEvents.getSectionByEventName(EventName.DCA_Terminated).values()
+    )
+  )) {
+    await handleDcaScheduleTerminated(ctx, eventData);
+  }
+  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleTerminated`);
+
+  await saveDcaEntities(ctx);
 }
 
 export async function saveDcaEntities(ctx: SqdProcessorContext<Store>) {
@@ -118,66 +118,66 @@ async function prefetchEntities(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
-  const scheduleIds = Array.from(
-    new Set(
-      [
-        Array.from(
-          parsedEvents.getSectionByEventName(EventName.DCA_Scheduled).values()
-        ).map((event) => event.eventData.params.id),
-        Array.from(
-          parsedEvents.getSectionByEventName(EventName.DCA_Completed).values()
-        ).map((event) => event.eventData.params.id),
-        Array.from(
-          parsedEvents.getSectionByEventName(EventName.DCA_Terminated).values()
-        ).map((event) => event.eventData.params.id),
-        Array.from(
-          parsedEvents
-            .getSectionByEventName(EventName.DCA_ExecutionPlanned)
-            .values()
-        ).map((event) => event.eventData.params.id),
-        Array.from(
-          parsedEvents
-            .getSectionByEventName(EventName.DCA_TradeExecuted)
-            .values()
-        ).map((event) => event.eventData.params.id),
-        Array.from(
-          parsedEvents.getSectionByEventName(EventName.DCA_TradeFailed).values()
-        ).map((event) => event.eventData.params.id),
-      ].flat()
-    ).values()
-  );
+  const scheduleIdsSet = new Set<string>();
+  const scheduleExecutionsSet = new Set<string>();
 
-  const scheduleExecutions = Array.from(
-    new Set(
-      [
-        Array.from(
-          parsedEvents
-            .getSectionByEventName(EventName.DCA_ExecutionPlanned)
-            .values()
-        ).map(
-          (event) =>
-            `${event.eventData.params.id}-${event.eventData.params.blockNumber}`
-        ),
-        Array.from(
-          parsedEvents
-            .getSectionByEventName(EventName.DCA_TradeExecuted)
-            .values()
-        ).map(
-          (event) =>
-            `${event.eventData.params.id}-${event.eventData.metadata.blockHeader.height}`
-        ),
-        Array.from(
-          parsedEvents.getSectionByEventName(EventName.DCA_TradeFailed).values()
-        ).map(
-          (event) =>
-            `${event.eventData.params.id}-${event.eventData.metadata.blockHeader.height}`
-        ),
-      ].flat()
-    ).values()
-  );
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.DCA_Scheduled)
+    .values()) {
+    scheduleIdsSet.add(event.eventData.params.id.toString());
+  }
 
-  const [prefetchedSchedules, prefetchedScheduleExecutions] = await Promise.all(
-    [
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.DCA_Completed)
+    .values()) {
+    scheduleIdsSet.add(event.eventData.params.id.toString());
+  }
+
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.DCA_Terminated)
+    .values()) {
+    scheduleIdsSet.add(event.eventData.params.id.toString());
+  }
+
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.DCA_ExecutionPlanned)
+    .values()) {
+    const id = event.eventData.params.id.toString();
+    scheduleIdsSet.add(id);
+    scheduleExecutionsSet.add(`${id}-${event.eventData.params.blockNumber}`);
+  }
+
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.DCA_TradeExecuted)
+    .values()) {
+    const id = event.eventData.params.id.toString();
+    scheduleIdsSet.add(id);
+    scheduleExecutionsSet.add(
+      `${id}-${event.eventData.metadata.blockHeader.height}`
+    );
+  }
+
+  for (const event of parsedEvents
+    .getSectionByEventName(EventName.DCA_TradeFailed)
+    .values()) {
+    const id = event.eventData.params.id.toString();
+    scheduleIdsSet.add(id);
+    scheduleExecutionsSet.add(
+      `${id}-${event.eventData.metadata.blockHeader.height}`
+    );
+  }
+
+  const scheduleIds = Array.from(scheduleIdsSet);
+  const scheduleExecutions = Array.from(scheduleExecutionsSet);
+
+  if (scheduleIds.length === 0 && scheduleExecutions.length === 0) {
+    return;
+  }
+
+  const promises = [];
+
+  if (scheduleIds.length > 0) {
+    promises.push(
       ctx.storeUtils.findWithLogs(
         DcaSchedule,
         {
@@ -187,7 +187,14 @@ async function prefetchEntities(
           },
         },
         { className: 'DcaSchedule' }
-      ),
+      )
+    );
+  } else {
+    promises.push(Promise.resolve([]));
+  }
+
+  if (scheduleExecutions.length > 0) {
+    promises.push(
       ctx.storeUtils.findWithLogs(
         DcaScheduleExecution,
         {
@@ -202,9 +209,14 @@ async function prefetchEntities(
           },
         },
         { className: 'DcaScheduleExecution' }
-      ),
-    ]
-  );
+      )
+    );
+  } else {
+    promises.push(Promise.resolve([]));
+  }
+
+  const [prefetchedSchedules, prefetchedScheduleExecutions] =
+    (await Promise.all(promises)) as [DcaSchedule[], DcaScheduleExecution[]];
 
   if (prefetchedSchedules.length > 0)
     for (const prefetchedSchedule of prefetchedSchedules) {
