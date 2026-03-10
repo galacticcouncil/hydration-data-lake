@@ -638,4 +638,89 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
       throw e;
     }
   }
+
+  async clearTimeSeriesByKeyPrefixAndTimeRange({
+    keyPrefix,
+    fromTimestamp,
+    toTimestamp,
+    scanBatchSize = 1000,
+    deleteBatchSize = 100,
+  }: {
+    keyPrefix: string | number;
+    fromTimestamp: number;
+    toTimestamp: number;
+    scanBatchSize?: number;
+    deleteBatchSize?: number;
+  }): Promise<{ keysProcessed: number; totalRangesDeleted: number }> {
+    try {
+      const openClient = await this.getOpenClient();
+      const pattern = `ts:${keyPrefix}:*`;
+      let cursor = 0;
+      let keysProcessed = 0;
+      let totalRangesDeleted = 0;
+
+      console.log(
+        `Starting deletion of time series datapoints with pattern: ${pattern}, timerange: ${fromTimestamp} - ${toTimestamp}`
+      );
+
+      do {
+        const result = await openClient.scan(cursor, {
+          MATCH: pattern,
+          COUNT: scanBatchSize,
+        });
+
+        cursor = result.cursor;
+        const keys = result.keys;
+
+        if (keys.length > 0) {
+          // Process keys in smaller batches sequentially to avoid overwhelming Redis
+          for (let i = 0; i < keys.length; i += deleteBatchSize) {
+            const batch = keys.slice(i, i + deleteBatchSize);
+
+            const deleteResults = await Promise.all(
+              batch.map(async (key) => {
+                try {
+                  const deletedCount = await openClient.ts.del(
+                    key,
+                    fromTimestamp,
+                    toTimestamp
+                  );
+                  return deletedCount;
+                } catch (err: any) {
+                  console.log(
+                    `Error deleting range for key ${key}:`,
+                    err.message
+                  );
+                  return 0;
+                }
+              })
+            );
+
+            const rangesDeleted = deleteResults.reduce(
+              (sum, count) => sum + count,
+              0
+            );
+            keysProcessed += batch.length;
+            totalRangesDeleted += rangesDeleted;
+
+            console.log(
+              `Processed ${batch.length} keys, deleted ${rangesDeleted} datapoints (total: ${keysProcessed} keys, ${totalRangesDeleted} datapoints)`
+            );
+          }
+        }
+      } while (cursor !== 0);
+
+      console.log(
+        `Completed deletion: ${keysProcessed} keys processed, ${totalRangesDeleted} datapoints removed for prefix ${keyPrefix} in range ${fromTimestamp}-${toTimestamp}`
+      );
+
+      return { keysProcessed, totalRangesDeleted };
+    } catch (e) {
+      console.log(
+        `Error clearing time series by prefix ${keyPrefix} and time range:`,
+        e
+      );
+      throw e;
+    }
+  }
 }

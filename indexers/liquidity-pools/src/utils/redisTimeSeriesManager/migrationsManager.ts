@@ -72,6 +72,26 @@ export class RedisTimeSeriesMigrationsManager {
     );
   }
 
+  /**
+   * This method should be implemented by the child class (RedisTimeSeriesManager)
+   * to clear time series records by key prefix
+   */
+  protected async clearTimeSeriesByKeyPrefixAndTimeRange({
+    keyPrefix,
+    fromTimestamp,
+    toTimestamp,
+    batchSize,
+  }: {
+    keyPrefix: string | number;
+    fromTimestamp: number;
+    toTimestamp: number;
+    batchSize?: number;
+  }): Promise<{ keysProcessed: number; totalRangesDeleted: number }> {
+    throw new Error(
+      'clearTimeSeriesByKeyPrefixAndTimeRange must be implemented by child class'
+    );
+  }
+
   async runTimeSeriesMigrations(
     migrations: TimeSeriesMigration[]
   ): Promise<void> {
