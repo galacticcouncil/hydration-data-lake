@@ -10,7 +10,10 @@ import {
 import { getOrCreateAccount } from '../accounts';
 import { batchGetOrCreateAssets, getOrCreateAsset } from '../assets/asset';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
-import { calcPriceNormalized } from '../../utils/helpers';
+import {
+  calcPriceNormalized,
+  fromExponentialToDecimalNotation,
+} from '../../utils/helpers';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
 import {
   addAssetBalancesToAccumulator,

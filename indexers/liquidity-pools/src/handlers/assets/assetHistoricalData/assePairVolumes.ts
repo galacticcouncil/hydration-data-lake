@@ -15,6 +15,7 @@ import {
   stringToMd5Hash,
 } from '../../../utils/helpers';
 import { getOrCreateAsset } from '../asset';
+import { getAssetsPairPrice } from './assetSpotPrices';
 
 // class RouterAssetPairs {
 //   public pairsSet: Set<string> = new Set();
@@ -173,16 +174,28 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
     //   continue assetsPairLoop;
     // }
 
-    const assetInSpotPrice = getAssetSpotPriceFromHistoricalData({
-      assetId: assetInInfo.id,
-      blockHeader,
+    // const assetInSpotPrice = getAssetSpotPriceFromHistoricalData({
+    //   assetId: assetInInfo.id,
+    //   blockHeader,
+    //   ctx,
+    // });
+    //
+    // const assetOutSpotPrice = getAssetSpotPriceFromHistoricalData({
+    //   assetId: assetOutInfo.id,
+    //   blockHeader,
+    //   ctx,
+    // });
+
+    const assetInSpotPrice = getAssetsPairPrice({
       ctx,
+      assetInId: assetInInfo.id,
+      blockHeight: blockHeader.height,
     });
 
-    const assetOutSpotPrice = getAssetSpotPriceFromHistoricalData({
-      assetId: assetOutInfo.id,
-      blockHeader,
+    const assetOutSpotPrice = getAssetsPairPrice({
       ctx,
+      assetInId: assetOutInfo.id,
+      blockHeight: blockHeader.height,
     });
 
     if (!assetInSpotPrice || !assetOutSpotPrice) continue assetsPairLoop;
@@ -303,23 +316,23 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
   }
 }
 
-function getAssetSpotPriceFromHistoricalData({
-  assetId,
-  blockHeader,
-  ctx,
-}: {
-  assetId: string;
-  blockHeader: BlockHeader;
-  ctx: SqdProcessorContext<Store>;
-}) {
-  if (assetId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) return '1';
-
-  return (
-    ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-      `${assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
-    )?.priceNormalised ?? null
-  );
-}
+// function getAssetSpotPriceFromHistoricalData({
+//   assetId,
+//   blockHeader,
+//   ctx,
+// }: {
+//   assetId: string;
+//   blockHeader: BlockHeader;
+//   ctx: SqdProcessorContext<Store>;
+// }) {
+//   if (assetId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) return '1';
+//
+//   return (
+//     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+//       `${assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
+//     )?.priceNormalised ?? null
+//   );
+// }
 
 function getRelatedAssetPairsFromSwapsChain(swaps: Swap[]) {
   const orderedSwaps = swaps.sort(

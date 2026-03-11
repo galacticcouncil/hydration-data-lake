@@ -15,7 +15,6 @@ import {
   TimeSeriesDuplicatePolicies,
 } from '@redis/time-series';
 import { TimeSeriesBucketTimestamp } from '@redis/time-series/dist/commands';
-import pMap from 'p-map';
 import { RedisTimeSeriesMigrationsManager } from './migrationsManager';
 import timeSeriesMigrations from './migrations';
 
@@ -456,10 +455,11 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
         ]);
       }
 
-      const buckets = await openClient.ts.mRange(
+      // Fetch price data with AVG aggregation
+      const priceBuckets = await openClient.ts.mRange(
         startTimestamp,
         endTimestamp,
-        [assetAIdFilter, assetBIdFilter, `name=(price,volume)`],
+        [assetAIdFilter, assetBIdFilter, `name=price`],
         bucketSizeMs !== 0
           ? {
               AGGREGATION: {
@@ -471,6 +471,26 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
             }
           : undefined
       );
+
+      // Fetch volume data with SUM aggregation
+      const volumeBuckets = await openClient.ts.mRange(
+        startTimestamp,
+        endTimestamp,
+        [assetAIdFilter, assetBIdFilter, `name=volume`],
+        bucketSizeMs !== 0
+          ? {
+              AGGREGATION: {
+                type: TimeSeriesAggregationType.SUM,
+                timeBucket: bucketSizeMs,
+                EMPTY: true,
+                BUCKETTIMESTAMP: TimeSeriesBucketTimestamp.MID,
+              },
+            }
+          : undefined
+      );
+
+      // Combine both results
+      const buckets = [...priceBuckets, ...volumeBuckets];
 
       const resultFiltered: TimeSeriesPriceAndVolumeBuckets = {
         priceData: new Map(),

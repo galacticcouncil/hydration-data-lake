@@ -215,44 +215,6 @@ async function initializeServer() {
 
     app.use(cors());
 
-    // Health check endpoint
-    app.get('/health', async (_req: Request, res: Response) => {
-      try {
-        const client = await dbPool!.connect();
-        try {
-          const result = await client.query(
-            'SELECT NOW() as time, current_database() as db'
-          );
-          res.json({
-            status: 'healthy',
-            timestamp: new Date().toISOString(),
-            database: {
-              connected: true,
-              database: result.rows[0].db,
-              serverTime: result.rows[0].time,
-              poolInfo: {
-                totalCount: dbPool!.totalCount,
-                idleCount: dbPool!.idleCount,
-                waitingCount: dbPool!.waitingCount,
-              },
-            },
-          });
-        } finally {
-          client.release();
-        }
-      } catch (error: any) {
-        console.error('Health check failed:', error);
-        res.status(503).json({
-          status: 'unhealthy',
-          timestamp: new Date().toISOString(),
-          database: {
-            connected: false,
-            error: error.message,
-          },
-        });
-      }
-    });
-
     app.use(postgraphileInstance);
 
     app.use(express.json());
@@ -302,8 +264,8 @@ async function initializeServer() {
     };
 
     // Register shutdown handlers
-    process.on('SIGTERM', () => shutdown('SIGTERM'));
-    process.on('SIGINT', () => shutdown('SIGINT'));
+    // process.on('SIGTERM', () => shutdown('SIGTERM'));
+    // process.on('SIGINT', () => shutdown('SIGINT'));
   } catch (error) {
     console.error('Failed to initialize server:', error);
 

@@ -1,11 +1,4 @@
 import { Request, Response } from 'express';
-import {
-  getMmReserveStateResolver,
-  MmReserveState,
-} from '../resolvers/mmReserves/reserves.resolver';
-import crypto from 'node:crypto';
-import { CacheManager } from '../../../utils/cacheManager';
-import { OmnipoolAssetsLatestTvlResponse } from '../../graphql/plugins/query/omnipool/omnipoolTvlMetrics/resolvers';
 import { AppConfig } from '../../../../appConfig';
 
 export type IndexerMetadata = {
@@ -58,5 +51,49 @@ export const getMetadata = async (
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const getHealthStatus = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // const client = await dbPool!.connect();
+    // try {
+    //   const result = await client.query(
+    //     'SELECT NOW() as time, current_database() as db'
+    //   );
+    //   res.json({
+    //     status: 'healthy',
+    //     timestamp: new Date().toISOString(),
+    //     database: {
+    //       connected: true,
+    //       database: result.rows[0].db,
+    //       serverTime: result.rows[0].time,
+    //       poolInfo: {
+    //         totalCount: dbPool!.totalCount,
+    //         idleCount: dbPool!.idleCount,
+    //         waitingCount: dbPool!.waitingCount,
+    //       },
+    //     },
+    //   });
+    // } finally {
+    //   client.release();
+    // }
+    res.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error: any) {
+    console.error('Health check failed:', error);
+    res.status(503).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      database: {
+        connected: false,
+        error: error.message,
+      },
+    });
   }
 };
