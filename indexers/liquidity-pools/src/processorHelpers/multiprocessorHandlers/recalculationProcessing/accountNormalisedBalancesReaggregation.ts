@@ -161,6 +161,8 @@ export async function handleAccountNormalisedBalancesReaggregation(
    * ===========================================================================
    */
 
+  let totalBalancesToIgnore: Set<string> | null = new Set();
+
   const allProcessedAccountsPerBlock: Map<number, Set<string>> = new Map();
 
   for (const assetBalance of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
@@ -178,6 +180,8 @@ export async function handleAccountNormalisedBalancesReaggregation(
     });
     if (!asset) continue;
 
+    let isNormBalanceUpdated = false;
+
     if (
       assetBalance.transferable > 0 &&
       assetBalance.transferableInRefAssetNorm === '0'
@@ -190,6 +194,7 @@ export async function handleAccountNormalisedBalancesReaggregation(
           ctx,
         }
       );
+      isNormBalanceUpdated = true;
     }
 
     if (
@@ -202,21 +207,45 @@ export async function handleAccountNormalisedBalancesReaggregation(
         blockHeight: assetBalance.paraBlockHeight,
         ctx,
       });
+      isNormBalanceUpdated = true;
     }
 
+    if (
+      ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_FLOW_TRIGGERS.has(
+        `PROCESS_ACCOUNT_NORMALISED_BALANCES_ONLY_ON_ASSET_BALANCE_CHANGE`
+      ) &&
+      !isNormBalanceUpdated
+    ) {
+      totalBalancesToIgnore.add(
+        `${assetBalance.accountId}-${assetBalance.paraBlockHeight}`
+      );
+      allProcessedAccountsPerBlock
+        .get(assetBalance.paraBlockHeight)!
+        .delete(assetBalance.accountId);
+    }
     ctx.batchState.state.accountAssetBalanceHistoricalData.set(
       assetBalance.id,
       assetBalance
     );
   }
 
+  if (
+    !ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_FLOW_TRIGGERS.has(
+      `PROCESS_ACCOUNT_NORMALISED_BALANCES_ONLY_ON_ASSET_BALANCE_CHANGE`
+    )
+  ) {
+    totalBalancesToIgnore = null;
+  }
+
   await handleAccountTotalBalance({
     ctx,
+    preProcessedTotalBalances: totalBalancesToIgnore,
   });
 
   await handleLiquidityBalancesInTotalBalances({
     ctx,
     allProcessedAccountsPerBlock,
+    preProcessedTotalBalances: totalBalancesToIgnore,
   });
 
   console.time('accountLiquidityAndTotalBalancesProcessing:: Save');
