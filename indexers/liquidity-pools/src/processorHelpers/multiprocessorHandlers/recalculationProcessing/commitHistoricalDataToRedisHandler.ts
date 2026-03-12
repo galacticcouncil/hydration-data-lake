@@ -37,18 +37,14 @@ export async function handleCommitHistoricalDataToRedis(
    * Asset prices and volumes
    */
 
-  if (dataSectionsToProcess.has('COMMIT_ASSET_HISTORICAL_DATA_TO_REDIS')) {
+  if (
+    dataSectionsToProcess.has('COMMIT_ASSET_PRICE_HISTORICAL_DATA_TO_REDIS')
+  ) {
     console.time('Asset prices and volumes');
 
     const assetSpotPriceHistDataChunk =
       await apiStatePgClient.query<AssetSpotPriceHistDataResponse>(
         getAssetSpotPricesByBlocksRange,
-        [fromBlockHeight, toBlockHeight]
-      );
-
-    const assetPairVolumesChunk =
-      await apiStatePgClient.query<AssetPairVolumeResponse>(
-        getAssetPairVolumesByBlocksRange,
         [fromBlockHeight, toBlockHeight]
       );
 
@@ -73,6 +69,24 @@ export async function handleCommitHistoricalDataToRedis(
         await redisTimeSeriesManager.addMultiplePrices(subBatch);
       }
     }
+
+    console.timeEnd('Asset prices and volumes');
+  }
+
+  if (dataSectionsToProcess.has('COMMIT_ASSET_PAIR_VOLUMES_TO_REDIS')) {
+    console.time('Asset pair volumes and volumes');
+
+    const assetPairVolumesChunk =
+      await apiStatePgClient.query<AssetPairVolumeResponse>(
+        getAssetPairVolumesByBlocksRange,
+        [fromBlockHeight, toBlockHeight]
+      );
+
+    console.log(
+      'assetPairVolumesChunk - count: ',
+      assetPairVolumesChunk.rows.length
+    );
+
     if (assetPairVolumesChunk.rows.length > 0) {
       const preparedData = [];
 
@@ -94,14 +108,17 @@ export async function handleCommitHistoricalDataToRedis(
         });
       }
 
+      let i = 0;
       for (const subBatch of splitIntoBatches(
         preparedData,
         ctx.appConfig.redis.TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE
       )) {
         await redisTimeSeriesManager.addMultiplePrices(subBatch);
+        i++;
+        console.log(`addMultiplePrices - batch ${i}`);
       }
     }
-    console.timeEnd('Asset prices and volumes');
+    console.timeEnd('Asset pair volumes and volumes');
   }
   /**
    * Account total balances

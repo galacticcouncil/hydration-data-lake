@@ -120,7 +120,9 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
    */
   async initClientAndRunMigrations() {
     await this.getOpenClient();
-    await this.runTimeSeriesMigrations(timeSeriesMigrations);
+    await this.runTimeSeriesMigrations(
+      appConfig.redis.REDIS_MIGRATIONS ?? timeSeriesMigrations
+    );
   }
 
   private fillNaNWithPrevious(

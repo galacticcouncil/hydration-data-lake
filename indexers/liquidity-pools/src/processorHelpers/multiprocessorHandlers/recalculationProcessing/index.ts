@@ -22,6 +22,11 @@ export async function handleReaggregationProcessing(
     ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_FLOW_NAME
   );
 
+  console.log(
+    '[ REAGGREGATION_PROCESSING_FLOW_TRIGGERS ] - ',
+    ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_FLOW_TRIGGERS
+  );
+
   switch (ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_FLOW_NAME) {
     case 'ACCOUNT_BALANCES_REAGGREGATION': {
       await handleAccountBalancesReaggregation(ctx);

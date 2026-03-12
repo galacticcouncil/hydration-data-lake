@@ -36,6 +36,15 @@ const timeSeriesMigrations: TimeSeriesMigration[] = [
   //   description:
   //     'Clear time series data from old indexer version (acc_bal_tot_tns)',
   // },
+  // {
+  //   id: '1773269673713',
+  //   action: 'CLEAR_BY_KEY_PREFIX_AND_TIME_RANGE',
+  //   keyPrefix: 'swarm_1:volume',
+  //   fromTimestamp: 1769955108000,
+  //   toTimestamp: 1773281940000,
+  //   description:
+  //     'Clear time series data from old indexer version (acc_bal_tot_tns)',
+  // },
 ];
 
 export default timeSeriesMigrations;

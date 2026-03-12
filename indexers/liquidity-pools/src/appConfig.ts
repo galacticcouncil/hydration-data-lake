@@ -26,6 +26,7 @@ import {
 } from './parsers/chains/hydration-paseo-next/typegenTypes';
 import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
+import { TimeSeriesMigration } from './utils/redisTimeSeriesManager/migrationsManager';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
@@ -212,6 +213,9 @@ class RedisConfig {
   @IsBoolean()
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_REDIS_TS_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT: boolean = true;
+
+  @Transform(({ value }: { value: string }) => JSON.parse(value ?? ''))
+  readonly REDIS_MIGRATIONS: TimeSeriesMigration[] | null = null;
 
   static getInstance(): RedisConfig {
     if (RedisConfig.instance) return RedisConfig.instance;

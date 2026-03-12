@@ -18,12 +18,16 @@ export enum MigrationKey {
   TS_DB_MIGRATIONS_ALL = 'ts_db_migrations:all',
 }
 
-export type TimeSeriesMigrationAction = 'CLEAR_BY_INDEXER_ID';
+export type TimeSeriesMigrationAction =
+  | 'CLEAR_BY_INDEXER_ID'
+  | 'CLEAR_BY_KEY_PREFIX_AND_TIME_RANGE';
 
 export interface TimeSeriesMigration {
   id: string;
   action: TimeSeriesMigrationAction;
   keyPrefix?: string | number;
+  fromTimestamp?: number;
+  toTimestamp?: number;
   description?: string;
 }
 
@@ -76,12 +80,7 @@ export class RedisTimeSeriesMigrationsManager {
    * This method should be implemented by the child class (RedisTimeSeriesManager)
    * to clear time series records by key prefix
    */
-  protected async clearTimeSeriesByKeyPrefixAndTimeRange({
-    keyPrefix,
-    fromTimestamp,
-    toTimestamp,
-    batchSize,
-  }: {
+  protected async clearTimeSeriesByKeyPrefixAndTimeRange(args: {
     keyPrefix: string | number;
     fromTimestamp: number;
     toTimestamp: number;
@@ -126,19 +125,18 @@ export class RedisTimeSeriesMigrationsManager {
 
       if (!migrationDetails) continue;
 
+      if (!migrationDetails.keyPrefix) {
+        throw new Error(
+          `Migration ${migrationId} requires keyPrefix parameter`
+        );
+      }
+
       try {
+        console.log(
+          `RedisTimeSeries :: Running migration [id: ${migrationDetails.id}] - ${migrationDetails.description || 'Clearing time series by indexer ID'}`
+        );
         switch (migrationDetails.action) {
           case 'CLEAR_BY_INDEXER_ID': {
-            if (!migrationDetails.keyPrefix) {
-              throw new Error(
-                `Migration ${migrationId} requires keyPrefix parameter`
-              );
-            }
-
-            console.log(
-              `RedisTimeSeries :: Running migration [id: ${migrationDetails.id}] - ${migrationDetails.description || 'Clearing time series by indexer ID'}`
-            );
-
             await this.clearTimeSeriesByKeyPrefix(migrationDetails.keyPrefix);
 
             try {
@@ -154,16 +152,48 @@ export class RedisTimeSeriesMigrationsManager {
               migrationDetails.id
             );
 
-            console.log(
-              `RedisTimeSeries :: Migration completed [id: ${migrationDetails.id} // action: ${migrationDetails.action} // keyPrefix: ${migrationDetails.keyPrefix}]`
-            );
             break;
           }
+          case 'CLEAR_BY_KEY_PREFIX_AND_TIME_RANGE': {
+            if (
+              !migrationDetails.fromTimestamp ||
+              !migrationDetails.toTimestamp
+            ) {
+              throw new Error(
+                `Migration ${migrationId} requires keyPrefix parameter`
+              );
+            }
+            await this.clearTimeSeriesByKeyPrefixAndTimeRange({
+              keyPrefix: migrationDetails.keyPrefix,
+              fromTimestamp: migrationDetails.fromTimestamp,
+              toTimestamp: migrationDetails.toTimestamp,
+            });
+
+            // try {
+            //   await ApiSupportPgClient.getInstance().upsertApiState({
+            //     accTotalBalanceLatestProcBlock: 0,
+            //   });
+            // } catch (error) {
+            //   console.log(error);
+            // }
+
+            await client.sAdd(
+              MigrationKey.TS_DB_MIGRATIONS_ALL,
+              migrationDetails.id
+            );
+
+            break;
+          }
+
           default:
             console.warn(
               `RedisTimeSeries :: Unknown migration action: ${migrationDetails.action}`
             );
         }
+
+        console.log(
+          `RedisTimeSeries :: Migration completed [id: ${migrationDetails.id} // action: ${migrationDetails.action} // keyPrefix: ${migrationDetails.keyPrefix}]`
+        );
       } catch (error) {
         console.error(
           `RedisTimeSeries :: Migration failed [id: ${migrationId}]:`,
