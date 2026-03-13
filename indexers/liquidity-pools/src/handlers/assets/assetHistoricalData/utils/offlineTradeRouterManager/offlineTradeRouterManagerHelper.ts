@@ -971,6 +971,7 @@ export class OfflineTradeRouterManagerHelper {
         blockConstants.omnipoolMinimumTradingLimit!
       ), //TODO fix type
       hubAssetId: `${blockConstants.omnipoolHubAssetId}`,
+      maxSlipFee: 0, // Zero value is enough for spot price calculation but should be provided storage value for any other cases.
     };
 
     return [poolData];

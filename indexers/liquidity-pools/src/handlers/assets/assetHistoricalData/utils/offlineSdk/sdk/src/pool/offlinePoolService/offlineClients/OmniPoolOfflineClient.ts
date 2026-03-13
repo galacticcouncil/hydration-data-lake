@@ -105,11 +105,14 @@ export class OmniPoolOfflineClient extends OfflinePoolClient {
     const min = assetFeeMin + protocolFeeMin;
     const max = assetFeeMax + protocolFeeMax;
 
+    const maxSlipFee = this.extras.omnipool.maxSlipFee;
+
     return {
       assetFee: FeeUtils.fromPermill(assetFee),
       protocolFee: FeeUtils.fromPermill(protocolFee),
       min: FeeUtils.fromPermill(min),
       max: FeeUtils.fromPermill(max),
+      maxSlipFee: FeeUtils.fromPermill(maxSlipFee),
     } as OmniPoolFees;
   }
 

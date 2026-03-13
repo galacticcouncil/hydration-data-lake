@@ -170,7 +170,7 @@ export class Router {
 
     if (this.routeProposals.has(key)) {
       return this.routeProposals.get(key)!;
-  }
+    }
 
     const proposals = this.routeSuggester.getProposals(
       assetIn,

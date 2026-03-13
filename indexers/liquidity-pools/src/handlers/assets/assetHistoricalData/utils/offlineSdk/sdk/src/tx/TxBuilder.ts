@@ -47,14 +47,25 @@ export abstract class TxBuilder extends PolkadotApiClient {
     account: string,
     extrinsic: SubmittableExtrinsic
   ): Promise<CallDryRunEffects> {
-    let result;
-    try {
-      result = await this.api.call.dryRunApi.dryRunCall(
+    const dryRunCallFn = this.api.call.dryRunApi.dryRunCall;
+
+    const dryRunArgs: [
+      {
+        System: any;
+      },
+      string,
+      number,
+    ] = [
         {
           System: { Signed: account },
         },
-        extrinsic.inner.toHex()
-      );
+      extrinsic.inner.toHex(),
+      4,
+    ];
+
+    let result;
+    try {
+      result = await dryRunCallFn(...dryRunArgs);
     } catch (e) {
       console.error(e);
       throw new Error('Dry run execution failed!');
