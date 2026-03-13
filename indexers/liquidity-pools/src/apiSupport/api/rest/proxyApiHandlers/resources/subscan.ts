@@ -2,23 +2,25 @@ import { Request, Response } from 'express';
 import axios, { AxiosRequestConfig } from 'axios';
 import { allowedQueriesSubscan } from '../types';
 import { AppConfig } from '../../../../../appConfig';
+import crypto from 'node:crypto';
+import { CacheManager } from '../../../../utils/cacheManager';
 
 const appConfig = AppConfig.getInstance();
 
 export async function handleProxyReqSubscan(req: Request, res: Response) {
   try {
     const requestPath = req.params.all || [];
-    const [network, section, query] = requestPath;
+    const [network, section, query = '##none##'] = requestPath;
 
     if (
       !allowedQueriesSubscan.has(network) ||
-      !allowedQueriesSubscan.get(network)!.has(section) ||
-      !allowedQueriesSubscan.get(network)!.get(section)!.has(query)
+      !allowedQueriesSubscan.get(network)!.has(section)
+      // !allowedQueriesSubscan.get(network)!.get(section)!.has(query)
     ) {
       return res.status(403).send('Forbidden');
     }
 
-    const reqUrl = `https://${network}.api.subscan.io/api/scan/${section}/${query}`;
+    const reqUrl = `https://${network}.api.subscan.io/api/scan/${section}${query === '##none##' ? '' : `/${query}`}`;
 
     return handleProxyReqSubscanAny(reqUrl, req, res);
   } catch (error) {
@@ -37,6 +39,23 @@ export async function handleProxyReqSubscanAny(
       'Content-Type': 'application/json',
       'x-api-key': appConfig.SUBSCAN_PRO_API_SECRET,
     };
+    const allExistingHeaders = req.headers;
+    const isCacheRequested = allExistingHeaders['x-custom-cache-on'] === 'true';
+
+    const cacheKey = `PROXY_SUBSCAN::${crypto
+      .createHash('md5')
+      .update(req.url)
+      .digest('hex')}`;
+
+    if (isCacheRequested) {
+      const cachedData =
+        await CacheManager.getInstance().cache.get<any>(cacheKey);
+
+      if (cachedData) {
+        res.status(200).send(cachedData);
+        return;
+      }
+    }
 
     const axiosConfig: AxiosRequestConfig = {
       method: req.method as AxiosRequestConfig['method'],
@@ -47,6 +66,14 @@ export async function handleProxyReqSubscanAny(
     };
 
     const response = await axios(axiosConfig);
+
+    if (isCacheRequested) {
+      await CacheManager.getInstance().cache.set<any>(
+        cacheKey,
+        response.data,
+        900_000
+      );
+    }
 
     res.status(response.status).send(response.data);
   } catch (error) {

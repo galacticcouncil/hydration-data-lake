@@ -8,6 +8,7 @@ import { handleProxyReqSubsquare } from '../proxyApiHandlers/resources/subsquare
 const proxyRouter = Router();
 
 proxyRouter.post(`${ProxyApiRoute.subscan}/*all`, handleProxyReqSubscan);
+proxyRouter.get(`${ProxyApiRoute.subscan}/*all`, handleProxyReqSubscan);
 proxyRouter.get(`${ProxyApiRoute.defillama}/*all`, handleProxyReqDefillama);
 proxyRouter.get(`${ProxyApiRoute.kamino}/*all`, handleProxyReqKamino);
 proxyRouter.get(`${ProxyApiRoute.subsquare}/*all`, handleProxyReqSubsquare);

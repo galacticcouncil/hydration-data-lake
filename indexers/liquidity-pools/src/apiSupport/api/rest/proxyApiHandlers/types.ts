@@ -17,7 +17,7 @@ export const allowedQueriesSubscan: Map<
   Map<string, Map<string, boolean>>
 > = new Map([
   ['polkadot', new Map([['xcm', new Map([['list', true]])]])],
-  ['hydration', new Map([['scan', new Map([['token', true]])]])],
+  ['hydration', new Map([['token', new Map([['##none##', true]])]])],
 ]);
 
 export const allowedQueriesDefillama: Map<
