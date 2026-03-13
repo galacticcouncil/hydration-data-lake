@@ -15,7 +15,10 @@ export enum SubscanAllowedXcmQuery {
 export const allowedQueriesSubscan: Map<
   string,
   Map<string, Map<string, boolean>>
-> = new Map([['polkadot', new Map([['xcm', new Map([['list', true]])]])]]);
+> = new Map([
+  ['polkadot', new Map([['xcm', new Map([['list', true]])]])],
+  ['hydration', new Map([['scan', new Map([['token', true]])]])],
+]);
 
 export const allowedQueriesDefillama: Map<
   string,
