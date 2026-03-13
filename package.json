@@ -21,6 +21,7 @@
     "@aave/contract-helpers": "1.28.0",
     "@aave/math-utils": "^1.32.1",
     "@galacticcouncil/api-augment": "^0.9.0",
+    "@galacticcouncil/math-omnipool": "^1.4.0",
     "@keyv/postgres": "^2.1.6",
     "graphile-build": "^4.13.0",
     "p-map": "^7.0.3",
