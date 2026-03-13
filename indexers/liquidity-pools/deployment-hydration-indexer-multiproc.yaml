@@ -75,12 +75,13 @@ deploy:
         - sqd
         - process:prod
 
-    - name: omni-pos-price-proc-1
+    - name: vol-redis-committer
       env:
         REAGGREGATION_PROCESSING_MODE: true
-        STATE_SCHEMA_NAME: 'omni-pos-price-proc-1'
+        STATE_SCHEMA_NAME: 'vol-redis-committer-1'
         IS_CUSTOM_DB_MIGRATIONS_RUNNER: "false"
-        REAGGREGATION_PROCESSING_FLOW_NAME: 'OMNIPOOL_POSITION_PRICE_REAGGREGATION'
+        REAGGREGATION_PROCESSING_FLOW_NAME: 'COMMIT_HISTORICAL_DATA_TO_REDIS'
+        REAGGREGATION_PROCESSING_FLOW_TRIGGERS: 'COMMIT_ASSET_PAIR_VOLUMES_TO_REDIS'
         PROCESS_FROM_BLOCK: 11635000
         PROCESS_TO_BLOCK: 11635000
         COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: false
@@ -143,7 +144,7 @@ deploy:
       GQL_PORT: 8080
       INDEXER_ID: 808
       INDEXER_VERSION: 'sqd-808'
-      IS_MASTER_INSTANCE: true
+      IS_MASTER_INSTANCE: false
       TS_REDIS_KEY_SPACE_ID: 7
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app::-hydration.netlify.app'
@@ -165,7 +166,7 @@ scale:
   addons:
     postgres:
       profile: large
-      storage: 450G
+      storage: 480G
   processor:
     profile: xlarge
   api:

@@ -51,7 +51,7 @@ deploy:
       EVM_CONTRACT_CALL_CONCURRENCY: 15
       RUNTIME_API_CALLS_CONCURRENCY: 15
 
-      BALANCES_LOG_ENABLED: true
+      BALANCES_LOG_ENABLED: false
 
       ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION: true
 
@@ -80,7 +80,7 @@ deploy:
       GQL_PORT: 8080
       INDEXER_ID: 808
       INDEXER_VERSION: 'sqd-808'
-      IS_MASTER_INSTANCE: true
+      IS_MASTER_INSTANCE: false
       TS_REDIS_KEY_SPACE_ID: 7
       SUBSCAN_PRO_API_SECRET: ${{ secrets.SUBSCAN_PRO_API_SECRET }}
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: 'hydration.net::-hydra-app.netlify.app::-hydration.netlify.app'
@@ -102,7 +102,7 @@ scale:
   addons:
     postgres:
       profile: large
-      storage: 450G
+      storage: 480G
   processor:
     profile: xlarge
   api:
