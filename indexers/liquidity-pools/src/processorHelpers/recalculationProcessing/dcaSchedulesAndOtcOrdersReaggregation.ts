@@ -1,29 +1,29 @@
 import { Between } from 'typeorm/find-options/operator/Between';
 
 import { Store } from '@subsquid/typeorm-store';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { prefetchGenericPersistentDataWithLogs } from '../../prefetchHelpers';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
+import { prefetchGenericPersistentDataWithLogs } from '../prefetchHelpers';
+import { handleRelayChainBlocks } from '../../handlers/relayChain';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import {
   BatchBlocksParsedDataManager,
   getParsedEventsData,
-} from '../../../parsers/batchBlocksParser';
-import { StorageResolver } from '../../../parsers/storageResolver';
-import { prefetchOrInitAllBatchAccounts } from '../../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
-import { handleDcaSchedules, saveDcaEntities } from '../../../handlers/dca';
-import { handleOtcOrders } from '../../../handlers/otc';
-import { Swap, SwapAssetBalanceType } from '../../../model';
-import { handleAssetVolumeUpdates } from '../../../handlers/assets/volume';
+} from '../../parsers/batchBlocksParser';
+import { StorageResolver } from '../../parsers/storageResolver';
+import { prefetchOrInitAllBatchAccounts } from '../../handlers/accounts';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { handleDcaSchedules, saveDcaEntities } from '../../handlers/dca';
+import { handleOtcOrders } from '../../handlers/otc';
+import { Swap, SwapAssetBalanceType } from '../../model';
+import { handleAssetVolumeUpdates } from '../../handlers/assets/volume';
 import {
   getOrderedListByBlockNumber,
   isUnifiedEventsSupportSpecVersion,
-} from '../../../utils/helpers';
-import { EventName } from '../../../parsers/types/events';
-import { handleBroadcastSwappedEvent } from '../../../handlers/swap/swap';
-import { getFillerContextData } from '../../../handlers/swap/helpers';
+} from '../../utils/helpers';
+import { EventName } from '../../parsers/types/events';
+import { handleBroadcastSwappedEvent } from '../../handlers/swap/swap';
+import { getFillerContextData } from '../../handlers/swap/helpers';
 
 export async function handleDcaSchedulesAndOtcOrders(
   ctx: SqdProcessorContext<Store>

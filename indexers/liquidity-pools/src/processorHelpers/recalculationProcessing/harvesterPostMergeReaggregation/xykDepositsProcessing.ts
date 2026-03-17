@@ -1,8 +1,8 @@
-import { SqdProcessorContext } from '../../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { initAllXykLiquidityMiningDeposits } from '../../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
-import { handleXykPoolLiquidityMiningEvents } from '../../../../handlers/liquidity/xykpool/liquidityMining';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
+import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
+import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 
 export async function xykDepositsProcessing(
   ctx: SqdProcessorContext<Store>,

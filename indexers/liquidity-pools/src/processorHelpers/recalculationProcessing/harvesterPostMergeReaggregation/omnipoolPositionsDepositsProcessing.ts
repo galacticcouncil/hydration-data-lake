@@ -1,14 +1,14 @@
-import { SqdProcessorContext } from '../../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
+import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import {
   initAllOmnipoolLiquidityPositions
-} from '../../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
+} from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
 import {
   initAllOmnipoolLiquidityMiningDeposits
-} from '../../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
-import { handleOmnipoolLiquidityPositions } from '../../../../handlers/liquidity/omnipool/liquidityPositions';
-import { handleOmnipoolLiquidityMiningEvents } from '../../../../handlers/liquidity/omnipool/liquidityMining';
+} from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
+import { handleOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions';
+import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
 
 export async function omnipoolPositionsDepositsProcessing(
   ctx: SqdProcessorContext<Store>,

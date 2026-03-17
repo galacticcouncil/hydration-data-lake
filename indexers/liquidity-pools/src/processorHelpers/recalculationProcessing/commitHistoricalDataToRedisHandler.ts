@@ -1,22 +1,22 @@
 import { Store } from '@subsquid/typeorm-store';
 
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
   RedisTimeSeriesManager,
   RedisTimeSeriesName,
-} from '../../../utils/redisTimeSeriesManager';
-import { getAssetSpotPricesByBlocksRange } from '../../../utils/redisTimeSeriesSupport/sql/assetSpotPrice.sql';
+} from '../../utils/redisTimeSeriesManager';
+import { getAssetSpotPricesByBlocksRange } from '../../utils/redisTimeSeriesSupport/sql/assetSpotPrice.sql';
 import {
   AccountTotalBalanceHistDataResponse,
   AssetPairVolumeResponse,
   AssetSpotPriceHistDataResponse,
-} from '../../../utils/redisTimeSeriesSupport/timeSeriesApiSupportManager';
-import { ApiSupportPgClient } from '../../../utils/redisTimeSeriesSupport/apiSupportPgClient';
-import { getAssetPairVolumesByBlocksRange } from '../../../utils/redisTimeSeriesSupport/sql/assetPairVolumes.sql';
+} from '../../utils/redisTimeSeriesSupport/timeSeriesApiSupportManager';
+import { ApiSupportPgClient } from '../../utils/redisTimeSeriesSupport/apiSupportPgClient';
+import { getAssetPairVolumesByBlocksRange } from '../../utils/redisTimeSeriesSupport/sql/assetPairVolumes.sql';
 import { BigNumber } from '@galacticcouncil/sdk';
-import { splitIntoBatches } from '../../../utils/helpers';
-import { getAccTotalBalancesByBlocksRange } from '../../../utils/redisTimeSeriesSupport/sql/accTotalBalanceHistData.sql';
+import { splitIntoBatches } from '../../utils/helpers';
+import { getAccTotalBalancesByBlocksRange } from '../../utils/redisTimeSeriesSupport/sql/accTotalBalanceHistData.sql';
 
 export async function handleCommitHistoricalDataToRedis(
   ctx: SqdProcessorContext<Store>

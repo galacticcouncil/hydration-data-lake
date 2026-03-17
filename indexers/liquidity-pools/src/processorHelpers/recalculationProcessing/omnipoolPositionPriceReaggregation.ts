@@ -11,21 +11,21 @@ import {
   OmnipoolLiquidityPosition,
   OmnipoolLiquidityPositionEvent,
   OmnipoolLiquidityPositionStatus,
-} from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
+} from '../../model';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
   handleAccountTotalBalance,
   handleLiquidityBalancesInTotalBalances,
-} from '../../../handlers/balances/accountTotalBalance';
-import { HistoricalDataManager } from '../../../handlers/historicalData';
-import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
+} from '../../handlers/balances/accountTotalBalance';
+import { HistoricalDataManager } from '../../handlers/historicalData';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 import { correlateAssetSpotPrices } from './utils';
-import { getOrCreateAsset } from '../../../handlers/assets/asset';
-import { prefetchAllAssets } from '../../../handlers/assets/utils';
-import { getAssetBalanceInRefAsset } from '../../../handlers/balances/utils';
-import { BalancesLoggerManager } from '../../../handlers/balances/balancesLoggerManager';
-import parsers from '../../../parsers';
+import { getOrCreateAsset } from '../../handlers/assets/asset';
+import { prefetchAllAssets } from '../../handlers/assets/utils';
+import { getAssetBalanceInRefAsset } from '../../handlers/balances/utils';
+import { BalancesLoggerManager } from '../../handlers/balances/balancesLoggerManager';
+import parsers from '../../parsers';
 
 export async function handleOmnipoolPositionPriceReaggregation(
   ctx: SqdProcessorContext<Store>

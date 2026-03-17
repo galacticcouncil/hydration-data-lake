@@ -15,14 +15,14 @@ import {
   Swap,
   SwapAssetBalanceType,
   XykpoolVolumeHistoricalData,
-} from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
+} from '../../model';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
   getOldAssetVolume,
   handleAssetVolumeUpdates,
   processAssetNormalizedVolumes,
-} from '../../../handlers/assets/volume';
+} from '../../handlers/assets/volume';
 import { BigNumber } from '@galacticcouncil/sdk';
 import {
   getOldLbpVolume,
@@ -32,12 +32,12 @@ import {
   getOldXykVolume,
   getPoolAssetPreviousVolumeFromCache,
   getPoolPreviousVolumeFromCache,
-} from '../../../handlers/pools/volumes';
-import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
+} from '../../handlers/pools/volumes';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 import { correlateAssetSpotPrices } from './utils';
-import { getOrCreateAsset } from '../../../handlers/assets/asset';
-import { getAssetsPairPrice } from '../../../handlers/assets/assetHistoricalData/assetSpotPrices';
-import { calcPriceNormalized } from '../../../utils/helpers';
+import { getOrCreateAsset } from '../../handlers/assets/asset';
+import { getAssetsPairPrice } from '../../handlers/assets/assetHistoricalData/assetSpotPrices';
+import { calcPriceNormalized } from '../../utils/helpers';
 
 export async function handleStableSwapVolumesReaggregation(
   ctx: SqdProcessorContext<Store>

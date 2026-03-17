@@ -2,7 +2,7 @@ import { Between } from 'typeorm/find-options/operator/Between';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import { processPoolsNormalizedVolumes } from '../../../../handlers/pools/normalizedVolumesInBaseAsset';
+import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
 import {
   AccountAssetBalanceHistoricalData,
   Asset,
@@ -18,18 +18,18 @@ import {
   Swap,
   SwapAssetBalanceType,
   XykpoolVolumeHistoricalData,
-} from '../../../../model';
-import { SqdProcessorContext } from '../../../../processor';
-import { ProcessorStatusManager } from '../../../../processorStatusManager';
+} from '../../../model';
+import { SqdProcessorContext } from '../../../processor';
+import { ProcessorStatusManager } from '../../../processorStatusManager';
 import {
   prefetchGenericPersistentData,
   prefetchGenericPersistentDataWithLogs,
-} from '../../../prefetchHelpers';
+} from '../../prefetchHelpers';
 import {
   getOldAssetVolume,
   handleAssetVolumeUpdates,
   processAssetNormalizedVolumes,
-} from '../../../../handlers/assets/volume';
+} from '../../../handlers/assets/volume';
 import { BigNumber } from '@galacticcouncil/sdk';
 import {
   getOldLbpVolume,
@@ -39,31 +39,31 @@ import {
   getOldXykVolume,
   getPoolAssetPreviousVolumeFromCache,
   getPoolPreviousVolumeFromCache,
-} from '../../../../handlers/pools/volumes';
-import { getOldHsmAssetHistDataEntity } from '../../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
+} from '../../../handlers/pools/volumes';
+import { getOldHsmAssetHistDataEntity } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import {
   handleAccountTotalBalance,
   handleLiquidityBalancesInTotalBalances,
   handleUnchangedAccountAssetBalances,
-} from '../../../../handlers/balances/accountTotalBalance';
-import { HistoricalDataManager } from '../../../../handlers/historicalData';
-import { LatestProcessedDataCacheManager } from '../../../../utils/latestProcessedDataCacheManager';
+} from '../../../handlers/balances/accountTotalBalance';
+import { HistoricalDataManager } from '../../../handlers/historicalData';
+import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
 import { correlateAssetSpotPrices } from '../utils';
 import { accountLiquidityAndTotalBalancesProcessing } from './accountLiquidityAndTotalBalancesProcessing';
 import { accountBalancesFullProcessing } from './accountBalancesFullProcessing';
 import { accountTotalBalancesProcessing } from './accountTotalBalancesProcessing';
-import { handleRelayChainBlocks } from '../../../../handlers/relayChain';
-import { ChainActivityTraceManager } from '../../../../chainActivityTracingManagers';
-import { getParsedEventsData } from '../../../../parsers/batchBlocksParser';
-import { StorageResolver } from '../../../../parsers/storageResolver';
-import { prefetchOrInitAllBatchAccounts } from '../../../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../../../utils/evmTools/moneyMarketContractsManager';
+import { handleRelayChainBlocks } from '../../../handlers/relayChain';
+import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
+import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
+import { StorageResolver } from '../../../parsers/storageResolver';
+import { prefetchOrInitAllBatchAccounts } from '../../../handlers/accounts';
+import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
 import { omnipoolPositionsDepositsProcessing } from './omnipoolPositionsDepositsProcessing';
 import { xykDepositsProcessing } from './xykDepositsProcessing';
-import { handleUniquesEvents } from '../../../../handlers/uniques';
-import { getOrCreateAsset } from '../../../../handlers/assets/asset';
-import { getAssetsPairPrice } from '../../../../handlers/assets/assetHistoricalData/assetSpotPrices';
-import { calcPriceNormalized } from '../../../../utils/helpers';
+import { handleUniquesEvents } from '../../../handlers/uniques';
+import { getOrCreateAsset } from '../../../handlers/assets/asset';
+import { getAssetsPairPrice } from '../../../handlers/assets/assetHistoricalData/assetSpotPrices';
+import { calcPriceNormalized } from '../../../utils/helpers';
 
 /**
  *  Current reaggregation logic normalize and reaggregate data after merging from

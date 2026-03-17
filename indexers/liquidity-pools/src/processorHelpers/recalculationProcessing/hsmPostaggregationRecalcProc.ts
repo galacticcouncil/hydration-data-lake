@@ -4,40 +4,40 @@ import { Store } from '@subsquid/typeorm-store';
 
 import {
   ChainActivityTraceManager,
-} from '../../../chainActivityTracingManagers';
-import { saveAllBatchAccounts } from '../../../handlers/accounts';
-import { handleBuySellOperations } from '../../../handlers/buySellOperations';
-import { handleEvm } from '../../../handlers/evmLog';
-import { ensureAaveFacilitators } from '../../../handlers/facilitator';
-import { HistoricalDataManager } from '../../../handlers/historicalData';
+} from '../../chainActivityTracingManagers';
+import { saveAllBatchAccounts } from '../../handlers/accounts';
+import { handleBuySellOperations } from '../../handlers/buySellOperations';
+import { handleEvm } from '../../handlers/evmLog';
+import { ensureAaveFacilitators } from '../../handlers/facilitator';
+import { HistoricalDataManager } from '../../handlers/historicalData';
 import {
   processHsmpoolAssetNormalizedVolumes,
-} from '../../../handlers/pools/normalizedVolumesInBaseAsset/hsmpoolAssetVolumesNormalized';
+} from '../../handlers/pools/normalizedVolumesInBaseAsset/hsmpoolAssetVolumesNormalized';
 import {
   handleHsmCollateralEvents,
-} from '../../../handlers/pools/pools/hsmpool/collaterals';
+} from '../../handlers/pools/pools/hsmpool/collaterals';
 import {
   ensureHsmCollaterals,
-} from '../../../handlers/pools/pools/hsmpool/collaterals/hsmCollateral';
-import { ensureHsmpool } from '../../../handlers/pools/pools/hsmpool/hsmPool';
+} from '../../handlers/pools/pools/hsmpool/collaterals/hsmCollateral';
+import { ensureHsmpool } from '../../handlers/pools/pools/hsmpool/hsmPool';
 import {
   processHsmpoolAssetBalanceHistoricalData,
-} from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
-import { handleBroadcastSwappedEvents } from '../../../handlers/swap';
+} from '../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
+import { handleRelayChainBlocks } from '../../handlers/relayChain';
+import { handleBroadcastSwappedEvents } from '../../handlers/swap';
 import {
   AccountAssetBalanceHistoricalData,
   Asset,
   AssetSpotPriceHistoricalData,
-} from '../../../model';
-import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
-import { StorageResolver } from '../../../parsers/storageResolver';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
+} from '../../model';
+import { getParsedEventsData } from '../../parsers/batchBlocksParser';
+import { StorageResolver } from '../../parsers/storageResolver';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
   MoneyMarketContractsManager,
-} from '../../../utils/evmTools/moneyMarketContractsManager';
-import { prefetchGenericPersistentData } from '../../prefetchHelpers';
+} from '../../utils/evmTools/moneyMarketContractsManager';
+import { prefetchGenericPersistentData } from '../prefetchHelpers';
 
 export async function aggregateHsmRelatedDataOnPostAggregationMode(
   ctx: SqdProcessorContext<Store>

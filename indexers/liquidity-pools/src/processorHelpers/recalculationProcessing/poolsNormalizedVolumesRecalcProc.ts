@@ -4,7 +4,7 @@ import { Store } from '@subsquid/typeorm-store';
 
 import {
   processPoolsNormalizedVolumes,
-} from '../../../handlers/pools/normalizedVolumesInBaseAsset';
+} from '../../handlers/pools/normalizedVolumesInBaseAsset';
 import {
   Asset,
   AssetSpotPriceHistoricalData,
@@ -13,10 +13,10 @@ import {
   StableswapAssetVolumeHistoricalData,
   StableswapVolumeHistoricalData,
   XykpoolVolumeHistoricalData,
-} from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { prefetchGenericPersistentData } from '../../prefetchHelpers';
+} from '../../model';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
+import { prefetchGenericPersistentData } from '../prefetchHelpers';
 
 export async function recalculatePoolsNormalizedVolumes(
   ctx: SqdProcessorContext<Store>

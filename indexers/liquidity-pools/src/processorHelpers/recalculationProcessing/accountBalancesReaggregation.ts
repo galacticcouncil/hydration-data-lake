@@ -19,18 +19,18 @@ import {
   Swap,
   SwapAssetBalanceType,
   XykpoolVolumeHistoricalData,
-} from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
+} from '../../model';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
   prefetchGenericPersistentData,
   prefetchGenericPersistentDataWithLogs,
-} from '../../prefetchHelpers';
+} from '../prefetchHelpers';
 import {
   getOldAssetVolume,
   handleAssetVolumeUpdates,
   processAssetNormalizedVolumes,
-} from '../../../handlers/assets/volume';
+} from '../../handlers/assets/volume';
 import { BigNumber } from '@galacticcouncil/sdk';
 import {
   getOldLbpVolume,
@@ -40,40 +40,40 @@ import {
   getOldXykVolume,
   getPoolAssetPreviousVolumeFromCache,
   getPoolPreviousVolumeFromCache,
-} from '../../../handlers/pools/volumes';
-import { getOldHsmAssetHistDataEntity } from '../../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
-import { HistoricalDataManager } from '../../../handlers/historicalData';
-import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
-import { StorageResolver } from '../../../parsers/storageResolver';
-import { prefetchOrInitAllBatchAccounts } from '../../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
+} from '../../handlers/pools/volumes';
+import { getOldHsmAssetHistDataEntity } from '../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
+import { HistoricalDataManager } from '../../handlers/historicalData';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
+import { handleRelayChainBlocks } from '../../handlers/relayChain';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { getParsedEventsData } from '../../parsers/batchBlocksParser';
+import { StorageResolver } from '../../parsers/storageResolver';
+import { prefetchOrInitAllBatchAccounts } from '../../handlers/accounts';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
 import {
   addAccountsToPeriodicalBalancesAggregation,
   initAllAccountProcessingStatusesOnColdStart,
   prefetchOrInitAllAccountProcessingStatuses,
   updateAccountProcessingStatusOnTotalBalanceChange,
-} from '../../../handlers/accounts/accountProcessingStatus';
-import { handleEvm } from '../../../handlers/evmLog';
-import { saveAllMoneyMarketEvents } from '../../../handlers/moneyMarket';
-import { createMoneyMarketEventsFromRoutedTrades } from '../../../handlers/moneyMarket/routedTradeToMmEventHandler';
+} from '../../handlers/accounts/accountProcessingStatus';
+import { handleEvm } from '../../handlers/evmLog';
+import { saveAllMoneyMarketEvents } from '../../handlers/moneyMarket';
+import { createMoneyMarketEventsFromRoutedTrades } from '../../handlers/moneyMarket/routedTradeToMmEventHandler';
 import {
   collectAccountsAndAssetsInvolvedToMmEvents,
   handleMmAssetAccountBalancesPerBlock,
   handleMoneyMarketAssetBalancesForAccounts,
-} from '../../../handlers/balances/moneyMarketAssetBalances';
+} from '../../handlers/balances/moneyMarketAssetBalances';
 import {
   collectAccountsAndAssetsInvolvedToSubstrateEvents,
   handleCommonAssetAccountBalances,
-} from '../../../handlers/balances/commonAssetBalances';
-import { prefetchBalancesForAccountsInvolvedToMmEvents } from '../../../handlers/balances/utils';
+} from '../../handlers/balances/commonAssetBalances';
+import { prefetchBalancesForAccountsInvolvedToMmEvents } from '../../handlers/balances/utils';
 import {
   handleAccountTotalBalance,
   handleLiquidityBalancesInTotalBalances,
   handleUnchangedAccountAssetBalances,
-} from '../../../handlers/balances/accountTotalBalance';
+} from '../../handlers/balances/accountTotalBalance';
 import { correlateAssetSpotPrices } from './utils';
 
 export async function handleAccountBalancesReaggregation(

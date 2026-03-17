@@ -1,13 +1,13 @@
-import { SqdProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   getNewAssetMultiLocationFromStorageData,
   prefetchAllAssets,
-} from '../../../handlers/assets/utils';
-import { AssetRegistryAssetLocation } from '../../../parsers/types/events';
-import parsers from '../../../parsers';
-import { AssetHubManager } from '../../../utils/assetHubManager';
-import { AssetType } from '../../../model';
+} from '../../handlers/assets/utils';
+import { AssetRegistryAssetLocation } from '../../parsers/types/events';
+import parsers from '../../parsers';
+import { AssetHubManager } from '../../utils/assetHubManager';
+import { AssetType } from '../../model';
 import pMap from 'p-map';
 
 export async function updateAssetsOnPostAggregationMode(

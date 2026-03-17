@@ -1,18 +1,18 @@
-import { SqdProcessorContext } from '../../../../processor';
+import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import {
   AccountAssetBalanceHistoricalData,
   OmnipoolAssetHistoricalData,
-} from '../../../../model';
+} from '../../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 import {
   handleAccountTotalBalance,
   handleLiquidityBalancesInTotalBalances,
-} from '../../../../handlers/balances/accountTotalBalance';
-import { getAccountAssetBalancesLatest } from '../../../../handlers/balances/accountAssetBalanceLatest';
-import { getAccountTotalBalancesLatest } from '../../../../handlers/balances/accountTotalBalanceLatest';
-import { getAccountLiquidityBalancesLatest } from '../../../../handlers/balances/accountLiquidityBalanceLatest';
-import { BalancesLoggerManager } from '../../../../handlers/balances/balancesLoggerManager';
+} from '../../../handlers/balances/accountTotalBalance';
+import { getAccountAssetBalancesLatest } from '../../../handlers/balances/accountAssetBalanceLatest';
+import { getAccountTotalBalancesLatest } from '../../../handlers/balances/accountTotalBalanceLatest';
+import { getAccountLiquidityBalancesLatest } from '../../../handlers/balances/accountLiquidityBalanceLatest';
+import { BalancesLoggerManager } from '../../../handlers/balances/balancesLoggerManager';
 
 export async function accountLiquidityAndTotalBalancesProcessing(
   ctx: SqdProcessorContext<Store>

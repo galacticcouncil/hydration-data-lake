@@ -1,5 +1,5 @@
-import { SqdProcessorContext } from '../../../processor';
-import { AssetSpotPriceHistoricalData } from '../../../model';
+import { SqdProcessorContext } from '../../processor';
+import { AssetSpotPriceHistoricalData } from '../../model';
 import { Store } from '@subsquid/typeorm-store';
 
 /**

@@ -1,7 +1,7 @@
-import { SqdProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { prefetchGenericPersistentDataWithLogs } from '../../prefetchHelpers';
+import { ProcessorStatusManager } from '../../processorStatusManager';
+import { prefetchGenericPersistentDataWithLogs } from '../prefetchHelpers';
 import {
   AccountAssetBalanceHistoricalData,
   Asset,
@@ -9,29 +9,29 @@ import {
   Block,
   MoneyMarketEvent,
   OmnipoolAsset,
-} from '../../../model';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
-import { StorageResolver } from '../../../parsers/storageResolver';
+} from '../../model';
+import { handleRelayChainBlocks } from '../../handlers/relayChain';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
+import { getParsedEventsData } from '../../parsers/batchBlocksParser';
+import { StorageResolver } from '../../parsers/storageResolver';
 import {
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
-} from '../../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
-import { handleOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions';
-import { HistoricalDataManager } from '../../../handlers/historicalData';
+} from '../../handlers/accounts';
+import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { handleOmnipoolLiquidityPositions } from '../../handlers/liquidity/omnipool/liquidityPositions';
+import { HistoricalDataManager } from '../../handlers/historicalData';
 import { Between } from 'typeorm/find-options/operator/Between';
-import { handleAccountTotalBalance } from '../../../handlers/balances/accountTotalBalance';
-import { handleXykPoolLiquidityMiningEvents } from '../../../handlers/liquidity/xykpool/liquidityMining';
-import { initAllOmnipoolLiquidityPositions } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
-import { initAllXykLiquidityMiningDeposits } from '../../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
-import { handleOmnipoolLiquidityMiningEvents } from '../../../handlers/liquidity/omnipool/liquidityMining';
-import { handleUniquesEvents } from '../../../handlers/uniques';
+import { handleAccountTotalBalance } from '../../handlers/balances/accountTotalBalance';
+import { handleXykPoolLiquidityMiningEvents } from '../../handlers/liquidity/xykpool/liquidityMining';
+import { initAllOmnipoolLiquidityPositions } from '../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionHandlers';
+import { initAllXykLiquidityMiningDeposits } from '../../handlers/liquidity/xykpool/liquidityMining/depositsHandlers';
+import { handleOmnipoolLiquidityMiningEvents } from '../../handlers/liquidity/omnipool/liquidityMining';
+import { handleUniquesEvents } from '../../handlers/uniques';
 import {
   initAllOmnipoolLiquidityMiningDeposits
-} from '../../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
-import { handleMoneyMarketAssetBalancesForAccounts } from '../../../handlers/balances/moneyMarketAssetBalances';
+} from '../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
+import { handleMoneyMarketAssetBalancesForAccounts } from '../../handlers/balances/moneyMarketAssetBalances';
 
 export async function accountBalancesAndLiquidityPositionsReaggregation(
   ctx: SqdProcessorContext<Store>

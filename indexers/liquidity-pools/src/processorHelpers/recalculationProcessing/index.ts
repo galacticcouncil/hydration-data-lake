@@ -1,4 +1,4 @@
-import { SqdProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { handleAccountBalancesReaggregation } from './accountBalancesReaggregation';
 import { handleHarvesterPostMergeReaggregation } from './harvesterPostMergeReaggregation';

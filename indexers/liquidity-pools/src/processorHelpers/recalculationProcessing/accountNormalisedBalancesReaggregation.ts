@@ -8,20 +8,20 @@ import {
   AssetSpotPriceHistoricalData,
   Block,
   OmnipoolAssetHistoricalData,
-} from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
+} from '../../model';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
   handleAccountTotalBalance,
   handleLiquidityBalancesInTotalBalances,
-} from '../../../handlers/balances/accountTotalBalance';
-import { HistoricalDataManager } from '../../../handlers/historicalData';
-import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
+} from '../../handlers/balances/accountTotalBalance';
+import { HistoricalDataManager } from '../../handlers/historicalData';
+import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 import { correlateAssetSpotPrices } from './utils';
-import { getOrCreateAsset } from '../../../handlers/assets/asset';
-import { prefetchAllAssets } from '../../../handlers/assets/utils';
-import { getAssetBalanceInRefAsset } from '../../../handlers/balances/utils';
-import { BalancesLoggerManager } from '../../../handlers/balances/balancesLoggerManager';
+import { getOrCreateAsset } from '../../handlers/assets/asset';
+import { prefetchAllAssets } from '../../handlers/assets/utils';
+import { getAssetBalanceInRefAsset } from '../../handlers/balances/utils';
+import { BalancesLoggerManager } from '../../handlers/balances/balancesLoggerManager';
 
 export async function handleAccountNormalisedBalancesReaggregation(
   ctx: SqdProcessorContext<Store>

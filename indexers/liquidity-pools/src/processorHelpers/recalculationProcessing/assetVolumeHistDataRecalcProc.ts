@@ -5,17 +5,17 @@ import { Store } from '@subsquid/typeorm-store';
 import {
   handleAssetVolumeUpdates,
   processAssetNormalizedVolumes,
-} from '../../../handlers/assets/volume';
+} from '../../handlers/assets/volume';
 import {
   Asset,
   AssetSpotPriceHistoricalData,
   Block,
   Swap,
   SwapAssetBalanceType,
-} from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { prefetchGenericPersistentData } from '../../prefetchHelpers';
+} from '../../model';
+import { SqdProcessorContext } from '../../processor';
+import { ProcessorStatusManager } from '../../processorStatusManager';
+import { prefetchGenericPersistentData } from '../prefetchHelpers';
 
 export async function assetVolumeHistDataRecalcProc(
   ctx: SqdProcessorContext<Store>

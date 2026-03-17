@@ -1,12 +1,12 @@
-import { SqdProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { prefetchAllAssets } from '../../../handlers/assets/utils';
-import parsers from '../../../parsers';
-import { AssetType, OmnipoolLiquidityPosition } from '../../../model';
+import { prefetchAllAssets } from '../../handlers/assets/utils';
+import parsers from '../../parsers';
+import { AssetType, OmnipoolLiquidityPosition } from '../../model';
 import pMap from 'p-map';
-import { getOrCreateOmnipoolLiquidityPosition } from '../../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
-import { handleCommonAssetAccountBalances } from '../../../handlers/balances/commonAssetBalances';
-import { HistoricalDataManager } from '../../../handlers/historicalData';
+import { getOrCreateOmnipoolLiquidityPosition } from '../../handlers/liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
+import { handleCommonAssetAccountBalances } from '../../handlers/balances/commonAssetBalances';
+import { HistoricalDataManager } from '../../handlers/historicalData';
 
 export async function initAllOmnipoolLiquidityPosiotions(
   ctx: SqdProcessorContext<Store>
