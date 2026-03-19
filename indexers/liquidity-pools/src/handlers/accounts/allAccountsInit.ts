@@ -30,25 +30,36 @@ export async function initAllAccountsOnColdStart({
 
   if (!allAccountsAtBlock) return null;
 
-  await pMap(
-    allAccountsAtBlock,
-    async (accountAddress) => {
-      const account = getNewAccount({
-        id: accountAddress,
-        ctx,
-      });
-      ctx.batchState.state.accounts.set(account.id, account);
+  const allEvmAccounts =
+    await parsers.storage.evmAccounts.getAllAccountsExtensions({
+      block: blockToProcess.header,
+    });
 
-      ctx.batchState.state.accountProcessingStatuses.set(
-        account.id,
-        getNewAccountProcessingStatus({ id: account.id })
-      );
-    },
-    {
-      concurrency:
-        ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
-    }
+  const accountEvmAddressMapping = new Map(
+    (allEvmAccounts || []).map((ext) => [
+      `${ext.h160Address}${ext.extension.slice(2)}`,
+      ext.h160Address,
+    ])
   );
+
+  /**
+   * IMPORTANT!
+   * Do not use parallel processing here to avoid creation of phantom accounts
+   * with the same bounded EVM address.
+   */
+  for (const accountAddress of allAccountsAtBlock) {
+    const account = getNewAccount({
+      id: accountAddress,
+      boundEvmAddress: accountEvmAddressMapping.get(accountAddress),
+      ctx,
+    });
+    ctx.batchState.state.accounts.set(account.id, account);
+
+    ctx.batchState.state.accountProcessingStatuses.set(
+      account.id,
+      getNewAccountProcessingStatus({ id: account.id })
+    );
+  }
 
   await saveAllBatchAccounts(ctx);
 
