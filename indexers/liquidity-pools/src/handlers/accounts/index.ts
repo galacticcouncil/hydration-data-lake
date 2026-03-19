@@ -2,12 +2,9 @@ import { FindOptionsRelations, In, Like } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import { Account, AccountType, OmnipoolLiquidityPosition } from '../../model';
+import { Account, AccountType } from '../../model';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { EvmUtils } from '../../utils/evm';
-import parsers from '../../parsers';
-import pMap from 'p-map';
-import { getNewAccountProcessingStatus } from './accountProcessingStatus';
 
 export function getNewAccount({
   id,
@@ -116,12 +113,25 @@ export async function getAccountByBoundEvmAddress({
 }) {
   const batchState = ctx.batchState.state;
 
-  let accout = [...batchState.accounts.values()].find(
+  const accountsCached = Array.from(batchState.accounts.values()).filter(
     (acc) => acc.boundEvmAddress === evmAddress
   );
-  if (accout) return accout;
 
-  accout = await ctx.storeUtils.findOneWithLogs(
+  let accountCached =
+    accountsCached && accountsCached.length === 1
+      ? accountsCached[0]
+      : undefined;
+
+  if (accountCached) return accountCached;
+
+  if (accountsCached && accountsCached.length > 1) {
+    accountCached = accountsCached.find(
+      (acc) => !EvmUtils.isSr25519AddressDerivedFromH160Address(acc.id)
+    );
+    if (accountCached) return accountCached;
+  }
+
+  const accountsPersisted = await ctx.storeUtils.findWithLogs(
     Account,
     {
       where: { boundEvmAddress: evmAddress },
@@ -130,43 +140,40 @@ export async function getAccountByBoundEvmAddress({
     { className: 'Account' }
   );
 
-  if (!accout) return null;
+  let accountPersisted =
+    accountsPersisted && accountsPersisted.length === 1
+      ? accountsPersisted[0]
+      : undefined;
 
-  ctx.batchState.state.accounts.set(accout.id, accout);
+  if (accountPersisted) {
+    ctx.batchState.state.accounts.set(accountPersisted.id, accountPersisted);
+    return accountPersisted;
+  }
 
-  return accout;
-}
+  if (accountsPersisted && accountsPersisted.length > 1) {
+    accountPersisted = accountsPersisted.find(
+      (acc) => !EvmUtils.isSr25519AddressDerivedFromH160Address(acc.id)
+    );
+    if (accountPersisted) {
+      ctx.batchState.state.accounts.set(accountPersisted.id, accountPersisted);
+      return accountPersisted;
+    }
+  }
 
-export async function getAccountByAddressPart({
-  ctx,
-  substring,
-  relations = {},
-}: {
-  ctx: SqdProcessorContext<Store>;
-  substring: string;
-  relations?: FindOptionsRelations<Account>;
-}) {
-  const batchState = ctx.batchState.state;
+  if (accountsCached && accountsCached.length > 0) {
+    ctx.batchState.state.accounts.set(accountsCached[0].id, accountsCached[0]);
+    return accountsCached[0];
+  }
 
-  let account = [...batchState.accounts.values()].find(
-    (acc) => acc.id.indexOf(substring) !== -1
-  );
-  if (account) return account;
+  if (accountsPersisted && accountsPersisted.length > 0) {
+    ctx.batchState.state.accounts.set(
+      accountsPersisted[0].id,
+      accountsPersisted[0]
+    );
+    return accountsPersisted[0];
+  }
 
-  account = await ctx.storeUtils.findOneWithLogs(
-    Account,
-    {
-      where: { id: Like(substring) },
-      relations,
-    },
-    { className: 'Account' }
-  );
-
-  if (!account) return null;
-
-  ctx.batchState.state.accounts.set(account.id, account);
-
-  return account;
+  return null;
 }
 
 export async function getOrCreateAccountByBoundEvmAddress({
@@ -185,35 +192,12 @@ export async function getOrCreateAccountByBoundEvmAddress({
 
   if (existingAccount) return existingAccount;
 
-  // const accountExtension =
-  //   await parsers.storage.evmAccounts.getAccountExtension({
-  //     evmAddress,
-  //     block: blockHeader,
-  //   });
-  //
-  // const accountId = EvmUtils.getSr25519FromH160AndExtension(
-  //   evmAddress,
-  //   accountExtension
-  // );
-
   return getOrCreateAccount({
     ctx,
     id: EvmUtils.addressToHex(EvmUtils.getDerivedSs58FromH160(evmAddress)),
     boundEvmAddress: evmAddress,
     ensureBoundEvmAddress: true,
   });
-
-  // if (!accountExtension) {
-  //   // const accountId = addressToHex(convertFromH160(evmAddress));
-  //   return getOrCreateAccount({ ctx, id: accountId });
-  // }
-  //
-  // existingAccount = await getAccountByAddressPart({
-  //   ctx,
-  //   substring: accountExtension,
-  // });
-  //
-  // return existingAccount;
 }
 
 export async function prefetchOrInitAllBatchAccounts(
@@ -233,12 +217,6 @@ export async function prefetchOrInitAllBatchAccounts(
 
   for (const existingAccount of existingAccounts)
     ctx.batchState.state.accounts.set(existingAccount.id, existingAccount);
-
-  for (const existingAccount of existingAccounts)
-    await getOrCreateAccount({
-      ctx,
-      id: existingAccount.id,
-    });
 }
 
 export async function saveAllBatchAccounts(ctx: SqdProcessorContext<Store>) {
@@ -246,5 +224,3 @@ export async function saveAllBatchAccounts(ctx: SqdProcessorContext<Store>) {
     Array.from(ctx.batchState.state.accounts.values())
   );
 }
-
-

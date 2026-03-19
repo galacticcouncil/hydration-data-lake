@@ -20,25 +20,6 @@ async function getSystemAccount(
     blockHeight: block.height,
     args: { account },
     fn: async () => {
-      if (storage.system.account.v100.is(block)) {
-        const resp = await storage.system.account.v100.get(block, account);
-        if (!resp) return null;
-
-        return {
-          nonce: resp.nonce,
-          consumers: resp.consumers,
-          providers: resp.providers,
-          sufficients: resp.sufficients,
-          data: {
-            free: resp.data.free,
-            reserved: resp.data.reserved,
-            miscFrozen: resp.data.miscFrozen,
-            feeFrozen: resp.data.feeFrozen,
-            flags: BigInt(0),
-            frozen: BigInt(0),
-          },
-        };
-      }
       if (storage.system.account.v205.is(block)) {
         const resp = await storage.system.account.v205.get(block, account);
         if (!resp) return null;
@@ -59,6 +40,26 @@ async function getSystemAccount(
         };
       }
 
+      if (storage.system.account.v100.is(block)) {
+        const resp = await storage.system.account.v100.get(block, account);
+        if (!resp) return null;
+
+        return {
+          nonce: resp.nonce,
+          consumers: resp.consumers,
+          providers: resp.providers,
+          sufficients: resp.sufficients,
+          data: {
+            free: resp.data.free,
+            reserved: resp.data.reserved,
+            miscFrozen: resp.data.miscFrozen,
+            feeFrozen: resp.data.feeFrozen,
+            flags: BigInt(0),
+            frozen: BigInt(0),
+          },
+        };
+      }
+
       throw new UnknownVersionError('storage.system.account');
     },
   });
@@ -72,10 +73,10 @@ async function getAllSystemAccountKeys({
     originFn: 'getAllSystemAccountKeys',
     blockHeight: block.height,
     fn: async () => {
-      if (storage.system.account.v100.is(block)) {
+      if (storage.system.account.v205.is(block)) {
         const resp = [];
 
-        for await (const page of storage.system.account.v100.getKeysPaged(
+        for await (const page of storage.system.account.v205.getKeysPaged(
           500,
           block
         )) {
@@ -84,10 +85,11 @@ async function getAllSystemAccountKeys({
 
         return resp.flat();
       }
-      if (storage.system.account.v205.is(block)) {
+
+      if (storage.system.account.v100.is(block)) {
         const resp = [];
 
-        for await (const page of storage.system.account.v205.getKeysPaged(
+        for await (const page of storage.system.account.v100.getKeysPaged(
           500,
           block
         )) {
