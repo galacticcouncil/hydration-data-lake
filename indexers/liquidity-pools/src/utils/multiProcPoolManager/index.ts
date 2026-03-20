@@ -279,7 +279,7 @@ export class MultiProcPoolManager {
       try {
         // Check if we have READY_TO_PICK_UP jobs for the entire block range
         const checkQuery = `
-          SELECT id, data, singleton_key
+          SELECT id, data, singleton_key, state
           FROM pgboss.job
           WHERE name = $1
             AND (
@@ -310,13 +310,17 @@ export class MultiProcPoolManager {
           const jobIds = result.rows.map((row: any) => row.id);
 
           // Use FOR UPDATE SKIP LOCKED to prevent race conditions
+          // Handle both: new jobs (created state) and jobs from failed runs (active state with same consumedBy)
           const updateQuery = `
             WITH jobs_to_update AS (
               SELECT id
               FROM pgboss.job
               WHERE id = ANY($2::uuid[])
-                AND state = 'created'
                 AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
+                AND (
+                  state = 'created'
+                  OR (state = 'active' AND data->>'consumedBy' = $1)
+                )
               FOR UPDATE SKIP LOCKED
             )
             UPDATE pgboss.job j
@@ -336,9 +340,21 @@ export class MultiProcPoolManager {
 
           // Check if we successfully locked all required jobs
           if (updateResult.rows.length < expectedBlockCount) {
-            // Some jobs were locked by another processor, retry
+            // Debug: Let's see what jobs we found vs what we could lock
+            const foundJobStates = result.rows.map((row: any) => ({
+              id: row.id,
+              state: row.state || 'created',
+              blockNumber: row.data.blockNumber,
+              consumedBy: row.data.consumedBy
+            }));
+
+            const lockedJobIds = new Set(updateResult.rows.map((row: any) => row.id));
+            const unlockedJobs = foundJobStates.filter(job => !lockedJobIds.has(job.id));
+
             console.log(
-              `Only locked ${updateResult.rows.length} of ${expectedBlockCount} jobs, retrying...`
+              `Only locked ${updateResult.rows.length} of ${expectedBlockCount} jobs. ` +
+              `Unable to lock: ${JSON.stringify(unlockedJobs.slice(0, 3))}... ` +
+              `Retrying...`
             );
             await new Promise((resolve) => setTimeout(resolve, retryInterval));
             continue;
