@@ -94,15 +94,29 @@ export class MultiProcPoolManager {
       for (const [queueName, jobs] of jobsMap) {
         if (jobs.length === 0) continue;
 
-        // Use Promise.all for batch publishing with send method
+        // Use Promise.allSettled to handle individual job failures
         const jobPromises = jobs.map((job) =>
-          this.bossInstance.send(queueName, job, {
-            singletonKey: `${job.blockNumber}-${job.producedBy}`,
-            retryLimit: 15,
-            retryDelay: 60,
-            retryBackoff: true,
-            expireInSeconds: 3600, // 1 hour
-          })
+          this.bossInstance
+            .send(queueName, job, {
+              singletonKey: `${job.blockNumber}-${job.producedBy}`,
+              retryLimit: 15,
+              retryDelay: 60,
+              retryBackoff: true,
+              expireInSeconds: 3600, // 1 hour
+            })
+            .catch((error) => {
+              // Log but don't fail if it's a duplicate key error (job already exists)
+              if (
+                error.message?.includes('duplicate key') ||
+                error.code === '23505'
+              ) {
+                console.log(
+                  `Job for block ${job.blockNumber} already exists, skipping`
+                );
+                return null;
+              }
+              throw error;
+            })
         );
 
         // Execute all job insertions in parallel
@@ -150,6 +164,31 @@ export class MultiProcPoolManager {
     const db = this.bossInstance.getDb();
 
     try {
+      // // Clean up stale active jobs (jobs that were picked up but never completed - likely from crashed processors)
+      // const cleanupStaleJobsQuery = `
+      //   UPDATE pgboss.job
+      //   SET
+      //     state = 'created',
+      //     started_on = NULL,
+      //     data = data - 'consumedBy'
+      //   WHERE name = $1
+      //     AND state = 'active'
+      //     AND (data->>'blockNumber')::integer < $2
+      //     AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
+      //     AND started_on < NOW() - INTERVAL '5 minutes'
+      // `;
+      //
+      // const cleanupResult = await db.executeSql(cleanupStaleJobsQuery, [
+      //   currentProcQueueName,
+      //   batchStartBlockHeight,
+      // ]);
+      //
+      // if (cleanupResult.rows.length > 0) {
+      //   console.log(
+      //     `Cleaned up ${cleanupResult.rows.length} stale active jobs`
+      //   );
+      // }
+
       if (derivativeQueueNames && derivativeQueueNames.length > 0) {
         // 1. Update PENDING jobs to READY_TO_PICK_UP in OTHER queues (jobs created by this processor for other processors)
         const updatePendingQuery = `
@@ -270,21 +309,40 @@ export class MultiProcPoolManager {
           // We have all required blocks, update jobs to active state
           const jobIds = result.rows.map((row: any) => row.id);
 
+          // Use FOR UPDATE SKIP LOCKED to prevent race conditions
           const updateQuery = `
-            UPDATE pgboss.job
+            WITH jobs_to_update AS (
+              SELECT id
+              FROM pgboss.job
+              WHERE id = ANY($2::uuid[])
+                AND state = 'created'
+                AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
+              FOR UPDATE SKIP LOCKED
+            )
+            UPDATE pgboss.job j
             SET
               state = 'active',
               started_on = NOW(),
               data = jsonb_set(data, '{consumedBy}', $1::jsonb, true)
-            WHERE id = ANY($2::uuid[])
-              AND (state = 'created' OR state = 'active')
-            RETURNING id, data, singleton_key
+            FROM jobs_to_update jtu
+            WHERE j.id = jtu.id
+            RETURNING j.id, j.data, j.singleton_key
           `;
 
           const updateResult = await db.executeSql(updateQuery, [
             JSON.stringify(schemaName),
             jobIds,
           ]);
+
+          // Check if we successfully locked all required jobs
+          if (updateResult.rows.length < expectedBlockCount) {
+            // Some jobs were locked by another processor, retry
+            console.log(
+              `Only locked ${updateResult.rows.length} of ${expectedBlockCount} jobs, retrying...`
+            );
+            await new Promise((resolve) => setTimeout(resolve, retryInterval));
+            continue;
+          }
 
           // Return the job payloads
           const jobs: MultiProcPoolJobPayload[] = updateResult.rows.map(
