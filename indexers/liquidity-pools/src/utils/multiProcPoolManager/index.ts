@@ -287,7 +287,7 @@ export class MultiProcPoolManager {
             AND (
               (state = 'created' AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}')
               OR
-              (state = ANY($5::text[]) AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}' AND data->>'consumedBy' = $2)
+              (state = ANY($5::pgboss.job_state[]) AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}' AND data->>'consumedBy' = $2)
             )
             AND (data->>'blockNumber')::integer >= $3
             AND (data->>'blockNumber')::integer <= $4
@@ -322,7 +322,7 @@ export class MultiProcPoolManager {
                 AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
                 AND (
                   state = 'created'
-                  OR (state = ANY($3::text[]) AND data->>'consumedBy' = $1)
+                  OR (state = ANY($3::pgboss.job_state[]) AND data->>'consumedBy' = $1)
                 )
               FOR UPDATE SKIP LOCKED
             )
