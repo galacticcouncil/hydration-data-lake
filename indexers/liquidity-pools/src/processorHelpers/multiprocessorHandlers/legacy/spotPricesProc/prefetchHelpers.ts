@@ -16,8 +16,8 @@ import {
   SwapAssetBalanceType,
   XykpoolHistoricalData,
   XykpoolVolumeHistoricalData,
-} from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
+} from '../../../../model';
+import { SqdProcessorContext } from '../../../../processor';
 
 export async function prefetchAllAvailableRoutedTradesForBlocksRange({
   fromBlockNumber,

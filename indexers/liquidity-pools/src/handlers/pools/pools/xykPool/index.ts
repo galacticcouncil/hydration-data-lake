@@ -10,8 +10,6 @@ export async function handleXykPools(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
-  if (!ctx.appConfig.PROCESS_XYK_POOLS) return;
-
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents.getSectionByEventName(EventName.XYK_PoolCreated).values(),
   ])) {

@@ -1,6 +1,8 @@
-import { SqdProcessorContext } from '../../processor';
-import { AssetSpotPriceHistoricalData } from '../../model';
+import { SqdProcessorContext } from '../processor';
+import { AssetSpotPriceHistoricalData } from '../model';
 import { Store } from '@subsquid/typeorm-store';
+import { Between } from 'typeorm/find-options/operator/Between';
+import { LatestProcessedDataCacheManager } from '../utils/latestProcessedDataCacheManager';
 
 /**
  * Fills missing asset spot prices across all blocks in the processing range.
@@ -90,7 +92,10 @@ export function correlateAssetSpotPrices(
         // Add to the global map
         spotPricesMap.set(newSpotPrice.id, newSpotPrice);
         pricesByBlockHeight.set(blockHeight, newSpotPrice);
-      } else if (firstPriceInRange && blockHeight < firstPriceInRange.paraBlockHeight) {
+      } else if (
+        firstPriceInRange &&
+        blockHeight < firstPriceInRange.paraBlockHeight
+      ) {
         // Backward-fill: use the first price in range for blocks before it
         const newId = `${firstPriceInRange.assetInId}-${firstPriceInRange.assetOutId}-${blockHeight}`;
 
@@ -110,4 +115,44 @@ export function correlateAssetSpotPrices(
       }
     }
   }
+}
+
+export async function fetchAndCorrelateAssetSpotPrices(
+  ctx: SqdProcessorContext<Store>
+) {
+  ctx.batchState.state.assetsSpotPriceHistoricalDataBatch = new Map(
+    (
+      await ctx.storeUtils.findWithLogs(
+        AssetSpotPriceHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          order: {
+            paraBlockHeight: 'ASC',
+          },
+        },
+        { className: 'AssetSpotPriceHistoricalData' }
+      )
+    ).map((p) => [p.id, p])
+  );
+
+  await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
+    { ctx, blockHeader: ctx.blocks[0].header }
+  );
+
+  const spotPricesFromPreviousBatch =
+    LatestProcessedDataCacheManager.getInstance().getAllCachedLastAssetSpotPriceHistoricalDataItems();
+
+  for (const prevBatchSpotPrice of spotPricesFromPreviousBatch.values()) {
+    ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
+      prevBatchSpotPrice.id,
+      prevBatchSpotPrice
+    );
+  }
+
+  correlateAssetSpotPrices(ctx);
 }

@@ -27,6 +27,7 @@ import {
 import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
 import { TimeSeriesMigration } from './utils/redisTimeSeriesManager/migrationsManager';
+import { PgBossQueueName } from './utils/multiProcPoolManager';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
@@ -332,6 +333,10 @@ class ProcessingModeConfig {
   readonly REAGGREGATION_PROCESSING_FLOW_TRIGGERS: Set<string> = new Set([
     'NONE',
   ]);
+
+  @IsEnum(PgBossQueueName)
+  readonly MULTI_FLOW_PROCESSOR_TOPIC: PgBossQueueName =
+    PgBossQueueName.CORE_PROCESSOR;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()

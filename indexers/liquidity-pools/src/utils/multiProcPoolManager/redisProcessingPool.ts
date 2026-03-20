@@ -15,8 +15,8 @@ export type JobPayload = {
 
 const appConfig = AppConfig.getInstance();
 
-export class ProcessingPoolManager {
-  private static instance: ProcessingPoolManager;
+export class ProcessingPoolManagerRedis {
+  private static instance: ProcessingPoolManagerRedis;
   private processingPoolQueue: Queue.Queue<JobPayload>;
   private pendingBlocks: number[] = [];
   private queueName = `${appConfig.INDEXER_ID}_PROCESSING_POOL`;
@@ -25,11 +25,11 @@ export class ProcessingPoolManager {
   private completedJobs: Map<string, Queue.Job> = new Map();
   private maxJobsBatchNumber = appConfig.MAX_JOB_BATCH_SIZE;
 
-  static getInstance(): ProcessingPoolManager {
-    if (!ProcessingPoolManager.instance) {
-      ProcessingPoolManager.instance = new ProcessingPoolManager();
+  static getInstance(): ProcessingPoolManagerRedis {
+    if (!ProcessingPoolManagerRedis.instance) {
+      ProcessingPoolManagerRedis.instance = new ProcessingPoolManagerRedis();
     }
-    return ProcessingPoolManager.instance;
+    return ProcessingPoolManagerRedis.instance;
   }
 
   constructor() {
@@ -208,7 +208,7 @@ export class ProcessingPoolManager {
 
     console.log(`Waiting for pending jobs change status`);
     await new Promise((resolve) => setTimeout(resolve, 5_000));
-    return await ProcessingPoolManager.getInstance().takeJobsToProcessing(
+    return await ProcessingPoolManagerRedis.getInstance().takeJobsToProcessing(
       allowedIds
     );
   }

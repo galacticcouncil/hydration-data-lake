@@ -89,7 +89,7 @@ import { Account, Asset, AssetSpotPriceHistoricalData } from '../../model';
 import { Pool } from 'pg';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
 import { AppConfig } from '../../appConfig';
-import { correlateAssetSpotPrices } from './utils';
+import { correlateAssetSpotPrices } from '../utils';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 
 const appConfig = AppConfig.getInstance();

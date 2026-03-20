@@ -40,30 +40,30 @@ import { getAccountLiquidityBalancesLatest } from '../balances/accountLiquidityB
 
 export class HistoricalDataManager {
   static async saveHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
-    if (
-      getProcessingMode(ctx) !==
-        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR ||
-      (getProcessingMode(ctx) ===
-        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR &&
-        ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
-          MultiFlowProcessingPhase.INITIAL)
-    ) {
-      await this.saveSwapFeeRelatedDataBulk(ctx);
-    }
+    // if (
+    //   getProcessingMode(ctx) !== ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR
+    // ) {
+    //   await this.saveSwapFeeRelatedDataBulk(ctx);
+    // }
 
-    if (
-      getProcessingMode(ctx) !==
-        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR ||
-      (getProcessingMode(ctx) ===
-        ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR &&
-        (ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
-          MultiFlowProcessingPhase.HIST_DATA_AGGREGATION ||
-          ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
-            MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
-    ) {
-      await this.saveAssetRelatedDataBulk(ctx);
-      await this.saveGeneralHistoricalDataBulk(ctx);
-    }
+    // if (
+    //   getProcessingMode(ctx) !==
+    //     ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR ||
+    //   (getProcessingMode(ctx) ===
+    //     ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR &&
+    //     (ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+    //       MultiFlowProcessingPhase.HIST_DATA_AGGREGATION ||
+    //       ctx.appConfig.processingMode.MULTI_FLOW_PROCESSING_PHASE ===
+    //         MultiFlowProcessingPhase.SPOT_PRICES_CALCULATION))
+    // ) {
+    //   await this.saveAssetRelatedDataBulk(ctx);
+    //   await this.saveGeneralHistoricalDataBulk(ctx);
+    // }
+
+    await this.saveSwapFeeRelatedDataBulk(ctx);
+
+    await this.saveAssetRelatedDataBulk(ctx);
+    await this.saveGeneralHistoricalDataBulk(ctx);
 
     await this.savePoolVolumesRelatedDataBulk(ctx);
 

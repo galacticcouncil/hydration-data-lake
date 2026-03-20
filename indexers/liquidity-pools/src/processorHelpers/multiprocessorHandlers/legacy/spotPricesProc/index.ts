@@ -1,23 +1,23 @@
-import { SqdProcessorContext } from '../../../processor';
+import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { handleRelayChainBlocks } from '../../../handlers/relayChain';
-import { prefetchAllAssets } from '../../../handlers/assets/utils';
+import { handleRelayChainBlocks } from '../../../../handlers/relayChain';
+import { prefetchAllAssets } from '../../../../handlers/assets/utils';
 import {
   handleAssetHistoricalData,
   handleAssetSpotPricesHistoricalData,
-} from '../../../handlers/assets/assetHistoricalData';
-import { processAssetNormalizedVolumes } from '../../../handlers/assets/volume';
-import { processPoolsNormalizedVolumes } from '../../../handlers/pools/normalizedVolumesInBaseAsset';
-import { ProcessorStatusManager } from '../../../processorStatusManager';
-import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers';
-import { ProcessingPoolManager } from '../../../utils/processingPoolManager';
-import { StorageResolver } from '../../../parsers/storageResolver';
+} from '../../../../handlers/assets/assetHistoricalData';
+import { processAssetNormalizedVolumes } from '../../../../handlers/assets/volume';
+import { processPoolsNormalizedVolumes } from '../../../../handlers/pools/normalizedVolumesInBaseAsset';
+import { ProcessorStatusManager } from '../../../../processorStatusManager';
+import { ChainActivityTraceManager } from '../../../../chainActivityTracingManagers';
+import { ProcessingPoolManagerRedis } from '../../../../utils/multiProcPoolManager/redisProcessingPool';
+import { StorageResolver } from '../../../../parsers/storageResolver';
 import {
   checkAndWaitForCoreProcStatus,
   waitForSpotPricesRelatedHistoricalData,
 } from './statusWaitingHelpers';
-import { savePreprocessedData } from '../../../handlers/preprocessedDataBucket/persist';
-import { processPoolsTvlNormalized } from '../../../handlers/pools/normalizedTvlBaseAsset';
+import { savePreprocessedData } from '../../../../handlers/preprocessedDataBucket/persist';
+import { processPoolsTvlNormalized } from '../../../../handlers/pools/normalizedTvlBaseAsset';
 
 export async function execSpotPricesProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -36,13 +36,13 @@ export async function execSpotPricesProcessorHandlers(
 
   await checkAndWaitForCoreProcStatus(ctx);
 
-  await ProcessingPoolManager.getInstance().releaseCompletedJobs();
+  await ProcessingPoolManagerRedis.getInstance().releaseCompletedJobs();
 
   const batchBlockNumbers = ctx.blocks.map((b) => b.header.height);
 
   while (true) {
     const blockNumbersToProcess =
-      await ProcessingPoolManager.getInstance().takeJobsToProcessing(
+      await ProcessingPoolManagerRedis.getInstance().takeJobsToProcessing(
         batchBlockNumbers
       );
 
@@ -51,7 +51,7 @@ export async function execSpotPricesProcessorHandlers(
 
     await processLockedBlocksBatch(blockNumbersToProcess, ctx);
 
-    ProcessingPoolManager.getInstance().completeProcessedJobs(
+    ProcessingPoolManagerRedis.getInstance().completeProcessedJobs(
       batchBlockNumbers
     );
   }

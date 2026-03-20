@@ -34,7 +34,7 @@ import {
   getPoolPreviousVolumeFromCache,
 } from '../../handlers/pools/volumes';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
-import { correlateAssetSpotPrices } from './utils';
+import { correlateAssetSpotPrices } from '../utils';
 import { getOrCreateAsset } from '../../handlers/assets/asset';
 import { getAssetsPairPrice } from '../../handlers/assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';

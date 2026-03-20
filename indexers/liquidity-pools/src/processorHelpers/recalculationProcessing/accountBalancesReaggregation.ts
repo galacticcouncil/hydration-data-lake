@@ -74,7 +74,7 @@ import {
   handleLiquidityBalancesInTotalBalances,
   handleUnchangedAccountAssetBalances,
 } from '../../handlers/balances/accountTotalBalance';
-import { correlateAssetSpotPrices } from './utils';
+import { correlateAssetSpotPrices } from '../utils';
 
 export async function handleAccountBalancesReaggregation(
   ctx: SqdProcessorContext<Store>

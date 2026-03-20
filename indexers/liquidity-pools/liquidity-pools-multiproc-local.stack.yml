@@ -1,304 +1,99 @@
-#version: '3.7'
-#
-#x-chain-name: &chain-name 'hydration'
-#x-postgres-db: &postgres-db 'liquidity_pools_db_multyproc'
-#x-postgres-user: &postgres-user 'postgres'
-#x-postgres-password: &postgres-password 'postgres'
-#x-postgres-host: &postgres-host 'liquidity-pools-db'
-#
-#x-liquidity-pools-db-creds: &liquidity-pools-db-creds
-#  DB_PORT: 5432
-#  DB_NAME: *postgres-db
-#  DB_USER: *postgres-user
-#  DB_PASS: *postgres-password
-#  DB_HOST: *postgres-host
-#
-#x-proc-default-envs: &proc-default-envs
-#  INDEXER_ID: 'swarm_1'
-#  NODE_OPTIONS: '--max-old-space-size=4048'
-#  NODE_ENV: 'self-hosted'
-#  CHAIN: *chain-name
-#  RPC_URL: 'wss://node.kril.hydration.cloud'
-#  RPC_URL_HTTPS: 'https://archive.rpc.hydration.cloud'
-#  # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
-#  IGNORE_ARCHIVE_DATA_SOURCE: 'false'
-#  GATEWAY_HYDRATION_HTTPS: 'https://v2.archive.subsquid.io/network/hydradx'
-#  OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
-#
-#  ORCHESTRATOR_QUEUE_REDIS_HOST: 'redis'
-#  ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-#  ORCHESTRATOR_QUEUE_REDIS_PASS: 'orchestra'
-#  MAX_JOB_BATCH_SIZE: 20
-#
-#  HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
-#
-#  PROCESS_FROM_BLOCK: 7300000
-#  PROCESS_TO_BLOCK: 7310000
-#
-#  PROCESS_LBP_POOLS: 'true'
-#  PROCESS_XYK_POOLS: 'true'
-#  PROCESS_OMNIPOOLS: 'true'
-#  PROCESS_STABLEPOOLS: 'true'
-#  PROCESS_DCA: 'true'
-#  PROCESS_OTC: 'true'
-#  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-#  INDEXING_IS_PAUSED: 'false'
-#  # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
-#  USE_STORAGE_DICTIONARY: 'true'
-#  # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
-#  # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
-#  # For example, if the Storage Dictionary is running as a single processor indexer
-#  # within the same Swarm stack as the Liquidity Pools indexer,
-#  # the URL for all pools should be set uniformly, such as:
-#  #   http://storage-dictionary-api:8090/graphql
-#  STORAGE_DICTIONARY_LBPPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql'
-#  STORAGE_DICTIONARY_XYKPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql'
-#  STORAGE_DICTIONARY_OMNIPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql'
-#  STORAGE_DICTIONARY_STABLEPOOL_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql'
-#  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: 'https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql'
-#
-#x-proc-default-config: &proc-default-config
-#  #  image: node:20 # Use a base Node.js image (choose appropriate version)
-#  #  volumes:
-#  #    - ../indexers/liquidity-pools:/app # Mount your code directory into /app
-#  #  working_dir: /app
-#  image: indexer
-#  networks:
-#    - default
-#  command:
-#    - sh
-#    - -c
-#    - 'node lib/main.js'
-#  deploy:
-#    restart_policy:
-#      condition: on-failure
-#
-#networks:
-#  default:
-#    driver: overlay
-#
-##volumes:
-##  liquidity-pools-db:
-##    driver: local
-##  core-processor:
-##    driver: local
-##  spot-prices-processor:
-##    driver: local
-##  liquidity-pools-api:
-##    driver: local
-#
-#services:
-#  redis:
-#    image: redis:6.2-alpine
-#    environment:
-#      - ALLOW_EMPTY_PASSWORD=true
-#    ports:
-#      - '6379:6379'
-#
-#  liquidity-pools-db:
-#    image: postgres:15
-#    environment:
-#      POSTGRES_DB: *postgres-db
-#      POSTGRES_USER: *postgres-user
-#      POSTGRES_PASSWORD: *postgres-password
-#    #    volumes:
-#    #      - liquidity-pools-db:/var/lib/postgresql/data
-#    ports:
-#      - '5488:5432'
-#    logging:
-#      driver: json-file
-#    networks:
-#      - default
-#    deploy:
-#      restart_policy:
-#        condition: on-failure
-#
-#  core-processor:
-#    <<: *proc-default-config
-#    depends_on:
-#      - liquidity-pools-db
-#      - redis
-#    environment:
-#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-#      STATE_SCHEMA_NAME: 'squid_processor'
-#
-#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-#      IS_CORE_PROCESSOR: 'true'
-#      IS_SPOT_PRICES_PROCESSOR: 'false'
-#    command:
-#      - sh
-#      - -c
-#      - 'sqd migration:apply && node lib/main.js'
-#
-#  spot-prices-processor-1:
-#    <<: *proc-default-config
-#    depends_on:
-#      - liquidity-pools-db
-#      - redis
-#    environment:
-#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-#      STATE_SCHEMA_NAME: 'spot_price_processor_1'
-#
-#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-#      IS_CORE_PROCESSOR: 'false'
-#      IS_SPOT_PRICES_PROCESSOR: 'true'
-#    command:
-#      - sh
-#      - -c
-#      - 'sqd migration:apply && node lib/main.js'
-#
-#  spot-prices-processor-2:
-#    <<: *proc-default-config
-#    depends_on:
-#      - liquidity-pools-db
-#      - redis
-#    environment:
-#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-#      STATE_SCHEMA_NAME: 'spot_price_processor_2'
-#
-#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-#      IS_CORE_PROCESSOR: 'false'
-#      IS_SPOT_PRICES_PROCESSOR: 'true'
-#    command:
-#      - sh
-#      - -c
-#      - 'sqd migration:apply && node lib/main.js'
-#
-#  spot-prices-processor-3:
-#    <<: *proc-default-config
-#    depends_on:
-#      - liquidity-pools-db
-#      - redis
-#    environment:
-#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-#      STATE_SCHEMA_NAME: 'spot_price_processor_3'
-#
-#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-#      IS_CORE_PROCESSOR: 'false'
-#      IS_SPOT_PRICES_PROCESSOR: 'true'
-#    command:
-#      - sh
-#      - -c
-#      - 'sqd migration:apply && node lib/main.js'
-#
-#  spot-prices-processor-4:
-#    <<: *proc-default-config
-#    depends_on:
-#      - liquidity-pools-db
-#      - redis
-#    environment:
-#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-#      STATE_SCHEMA_NAME: 'spot_price_processor_4'
-#
-#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-#      IS_CORE_PROCESSOR: 'false'
-#      IS_SPOT_PRICES_PROCESSOR: 'true'
-#    command:
-#      - sh
-#      - -c
-#      - 'sqd migration:apply && node lib/main.js'
-#
-#  spot-prices-processor-5:
-#    <<: *proc-default-config
-#    depends_on:
-#      - liquidity-pools-db
-#      - redis
-#    environment:
-#      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-#      STATE_SCHEMA_NAME: 'spot_price_processor_5'
-#
-#      ALL_IN_ONE_PROCESSOR_MODE: 'false'
-#      IS_CORE_PROCESSOR: 'false'
-#      IS_SPOT_PRICES_PROCESSOR: 'true'
-#    command:
-#      - sh
-#      - -c
-#      - 'sqd migration:apply && node lib/main.js'
-#
-#  liquidity-pools-api:
-#    image: indexer
-#    depends_on:
-#      - liquidity-pools-db
-#      - redis
-#    environment:
-#      INDEXER_ID: 'swarm_1'
-#      ORCHESTRATOR_QUEUE_REDIS_HOST: 'redis'
-#      ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-#      ORCHESTRATOR_QUEUE_REDIS_PASS: 'orchestra'
-#      NODE_ENV: 'self-hosted'
-#      CHAIN: *chain-name
-#      GQL_PORT: 8080
-#      <<: *liquidity-pools-db-creds
-#      SUB_PROCESSOR_SCHEMAS: 'squid_processor;spot_price_processor'
-#    ports:
-#      - '8088:8080'
-#    networks:
-#      - default
-#    logging:
-#      driver: json-file
-#    command:
-#      - sh
-#      - -c
-#      - 'sqd api:prod'
-#    deploy:
-#      restart_policy:
-#        condition: on-failure
-
-
 version: "3.7"
 
+# ======================================================================================================================
+# =============================================== V A R I A B L E S ====================================================
+# ======================================================================================================================
+
 x-chain-name: &chain-name "hydration"
-x-postgres-db: &postgres-db "liquidity_pools_db_multyproc"
-x-postgres-user: &postgres-user "postgres"
-x-postgres-password: &postgres-password "postgres"
-x-postgres-host: &postgres-host "liquidity-pools-db"
 
-x-indexer-id: &indexer-id "swarm_3"
+x-aggregator-pg-db: &aggregator-pg-db "aggregator_indexer"
+x-aggregator-pg-user: &aggregator-pg-user "postgres"
+x-aggregator-pg-password: &aggregator-pg-password "postgres"
+x-aggregator-pg-host: &aggregator-pg-host "db-aggregator-pgbouncer-local-dep"
 
-#x-image: &image "ghcr.io/mckrava/liquidity-pools-indexer:9dd3c506535ed50c59e61caa0f42ef696e49c8b2"
-x-image: &image "indexer"
+x-ts-redis-host: &ts-redis-host "db-ts-redis-local-dep"
+x-ts-redis-pass: &ts-redis-pass "password"
+x-ts-redis-port: &ts-redis-port 6379
 
-x-traefic-labels: &traefic-labels
-  labels:
-    traefik.http.routers.node.rule: Host(`whale-recent-sh.kril.hydration.cloud`)
-    traefik.http.routers.node.tls: "true"
-    traefik.http.routers.node.tls.certresolver: myresolver
+x-aggregator-indexer-id: &aggregator-indexer-id "local-dep"
+x-aggregator-indexer-version: &aggregator-indexer-version "local-dep"
 
-x-liquidity-pools-db-creds: &liquidity-pools-db-creds
+x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
+
+x-aggregator-rpc-url-wss: &aggregator-rpc-url-wss "wss://node-sparrow-3.sparrow.shadow-senate.com"
+x-aggregator-rpc-url-https: &aggregator-rpc-url-https "https://node-sparrow-3.sparrow.shadow-senate.com"
+x-asset-hub-rpc-url-wws: &asset-hub-rpc-url-wws "wss://rpc-asset-hub-polkadot.luckyfriday.io"
+
+
+#x-aggregator-indexer-image: &aggregator-indexer-image "ghcr.io/mckrava/liquidity-pools-indexer:98322242bc0cfbea5de9cfd8a52a7c71a46bbff6"
+x-aggregator-indexer-image: &aggregator-indexer-image "indexer-local"
+
+# ======================================================================================================================
+# ======================================== C O N F I G   S E G M E N T S ===============================================
+# ======================================================================================================================
+
+x-db-ts-redis-creds: &db-ts-redis-creds
+  TS_REDIS_HOST: *ts-redis-host
+  TS_REDIS_PORT: *ts-redis-port
+  TS_REDIS_PASS: *ts-redis-pass
+  TS_REDIS_KEY_SPACE_ID: 5
+
+# ------------------------------------ A G G R E G A T I O N   I N D E X E R -------------------------------------------
+
+x-db-aggregator-creds: &db-aggregator-creds
   DB_PORT: 5432
-  DB_NAME: *postgres-db
-  DB_USER: *postgres-user
-  DB_PASS: *postgres-password
-  DB_HOST: *postgres-host
+  DB_NAME: *aggregator-pg-db
+  DB_USER: *aggregator-pg-user
+  DB_PASS: *aggregator-pg-password
+  DB_HOST: *aggregator-pg-host
 
-x-proc-default-envs: &proc-default-envs
-  INDEXER_ID: *indexer-id
+x-aggregator-proc-default-envs: &aggregator-proc-default-envs
+
+  REAGGREGATION_PROCESSING_MODE: "false"
+
+  PROCESS_FROM_BLOCK: 11600000
+  PROCESS_TO_BLOCK: -1
+
+  INDEXER_ID: *aggregator-indexer-id
   NODE_OPTIONS: "--max-old-space-size=8048"
   NODE_ENV: "self-hosted"
   CHAIN: *chain-name
-  RPC_URL: "wss://node.kril.hydration.cloud"
-  RPC_URL_HTTPS: "https://archive.rpc.hydration.cloud"
+  RPC_URL: *aggregator-rpc-url-wss
+  RPC_URL_HTTPS: *aggregator-rpc-url-https
+  ASSET_HUB_RPC_URL: *asset-hub-rpc-url-wws
+
   # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
   IGNORE_ARCHIVE_DATA_SOURCE: "false"
-  GATEWAY_HYDRATION_HTTPS: "https://v2.archive.subsquid.io/network/hydradx"
+  GATEWAY_HYDRATION_HTTPS: *gateway-hydration-url
+
   OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
+  HSMPOOL_ADDRESS: "0x6d6f646c70792f68736d6f640000000000000000000000000000000000000000"
+  HOLLAR_CONTRACT_ADDRESS: "0x531a654d1696ed52e7275a8cede955e82620f99a"
 
-  ORCHESTRATOR_QUEUE_REDIS_HOST: "orchestration-redis"
-  ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-  ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
   MAX_JOB_BATCH_SIZE: 20
+  HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 10
 
-  HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 20
+  USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: "false"
+  EVM_CONTRACT_CALL_RETRIES: 2
+  ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: 4
+  ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS: 14000
 
-  PROCESS_FROM_BLOCK: 7800000
-  PROCESS_TO_BLOCK: -1
+  ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE: "false"
+  PERSIST_HIST_EMA_ORACLE_DATA_TO_DB: "false"
 
-  PROCESS_LBP_POOLS: "true"
-  PROCESS_XYK_POOLS: "true"
-  PROCESS_OMNIPOOLS: "true"
-  PROCESS_STABLEPOOLS: "true"
-  PROCESS_DCA: "true"
-  PROCESS_OTC: "true"
+  ASYNC_OPERATIONS_CONCURRENCY_COMMON: 10
+  EVM_CONTRACT_CALL_CONCURRENCY: 10
+  RUNTIME_API_CALLS_CONCURRENCY: 10
+
+  BD_FETCH_BATCH_SIZE: 1000
+  DB_ACTION_MAX_BATCH_SIZE: 300
+
+  ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION: 'true'
+
+  COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: 'true'
+  ENABLE_REDIS_TS_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT: 'false'
+
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
   UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
   INDEXING_IS_PAUSED: "false"
   # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
@@ -309,194 +104,351 @@ x-proc-default-envs: &proc-default-envs
   # within the same Swarm stack as the Liquidity Pools indexer,
   # the URL for all pools should be set uniformly, such as:
   #   http://storage-dictionary-api:8090/graphql
-  STORAGE_DICTIONARY_LBPPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql"
-  STORAGE_DICTIONARY_XYKPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql"
-  STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql"
-  STORAGE_DICTIONARY_STABLEPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql"
-  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql"
 
-x-proc-default-config: &proc-default-config
-  image: *image
+  STORAGE_DICTIONARY_LBPPOOL_URL: "https://storage-dict-lbp-hist-data-v2.orca.hydration.cloud/graphql"
+  STORAGE_DICTIONARY_XYKPOOL_URL: "https://storage-dict-xyk-hist-data-v2.orca.hydration.cloud/graphql"
+  STORAGE_DICTIONARY_OMNIPOOL_URL: "https://storage-dict-omnipool-hist-data-v2.orca.hydration.cloud/graphql"
+  STORAGE_DICTIONARY_STABLEPOOL_URL: "https://storage-dict-stableswap-hist-data-v2.orca.hydration.cloud/graphql"
+  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://storage-dict-generic-hist-data-v2.orca.hydration.cloud/graphql"
+  STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: "https://storage-dict-accounts-hist-data-v2.orca.hydration.cloud/graphql"
+
+x-aggregator-proc-default-config: &aggregator-proc-default-config
+  image: *aggregator-indexer-image
   networks:
     - default
   command:
     - sh
     - -c
-    - "node lib/main.js"
+    - "sqd migration:apply && node lib/main.js"
   deploy:
     restart_policy:
       condition: on-failure
 
+# ======================================================================================================================
+# ============================================ S T A C K   C O N F I G =================================================
+# ======================================================================================================================
+
 networks:
   default:
     driver: overlay
+  gateway:
+    external: true
 
 volumes:
-  liquidity-pools-db:
+  db-aggregator-indexer:
     driver: local
-  orchestration-redis:
+  orca-sh-p1-102-external-v-db-ts-redis-ext:
+    external: true
+  prometheus-data:
     driver: local
-#  core-processor:
-#    driver: local
+  prometheus-config:
+    driver: local
+
+#secrets:
+#  SUBSCAN_PRO_API_SECRET:
+#    external: true
 
 services:
-  orchestration-redis:
-    image: redis:6.2-alpine
-    environment:
-      - ALLOW_EMPTY_PASSWORD=true
+  # ------------------------------------ A G G R E G A T I O N   I N D E X E R -------------------------------------------
+  db-ts-redis-local-dep:
+    image: redis/redis-stack:latest
+    command:
+      - sh
+      - -c
+      - |
+        redis-stack-server \
+        --requirepass password \
+        --dir /data \
+        --appendonly yes \
+        --appendfsync everysec \
+        --save 900 1 \
+        --save 300 10 \
+        --save 60 10000
     ports:
-      - "6394:6379"
+      - 17201:6379
     volumes:
-      - "orchestration-redis:/data"
-
-  liquidity-pools-db:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: *postgres-db
-      POSTGRES_USER: *postgres-user
-      POSTGRES_PASSWORD: *postgres-password
-    volumes:
-      - "liquidity-pools-db:/var/lib/postgresql/data"
-    ports:
-      - "5494:5432"
-    logging:
-      driver: json-file
+      - "orca-sh-p1-102-external-v-db-ts-redis-ext:/data"
     networks:
       - default
+    logging:
+      driver: json-file
     deploy:
       restart_policy:
         condition: on-failure
 
-  core-processor:
-    <<: *proc-default-config
-    depends_on:
-      - liquidity-pools-db
-      - orchestration-redis
+  db-aggregator-indexer-local-dep:
+    image: postgres:15
+    shm_size: '2gb'
     environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "squid_processor"
-
-      ALL_IN_ONE_PROCESSOR_MODE: "false"
-      IS_CORE_PROCESSOR: "true"
-      IS_SPOT_PRICES_PROCESSOR: "false"
-#    volumes:
-#      - "core-processor:/squid"
+      POSTGRES_DB: *aggregator-pg-db
+      POSTGRES_USER: *aggregator-pg-user
+      POSTGRES_PASSWORD: *aggregator-pg-password
     command:
-      - sh
-      - -c
-      - "sqd migration:apply && node lib/main.js"
+      - "postgres"
+      - "-c"
+      - "shared_buffers=12GB"
+      - "-c"
+      - "effective_cache_size=12GB"
+      - "-c"
+      - "work_mem=128MB"
+      - "-c"
+      - "maintenance_work_mem=1GB"
+      - "-c"
+      - "checkpoint_completion_target=0.9"
+      - "-c"
+      - "wal_buffers=16MB"
+      - "-c"
+      - "max_wal_size=4GB"
+      - "-c"
+      - "wal_compression=on"
+      - "-c"
+      - "synchronous_commit=off"
+      - "-c"
+      - "commit_delay=10000"
+      - "-c"
+      - "wal_writer_delay=10ms"
+      - "-c"
+      - "bgwriter_delay=50ms"
+      - "-c"
+      - "bgwriter_lru_maxpages=1000"
+      - "-c"
+      - "checkpoint_timeout=15min"
+      - "-c"
+      - "max_parallel_maintenance_workers=4"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "effective_io_concurrency=200"
+      - "-c"
+      - "autovacuum_max_workers=4"
+      - "-c"
+      - "autovacuum_naptime=10s"
+      - "-c"
+      - "autovacuum_vacuum_scale_factor=0.01"
+      - "-c"
+      - "autovacuum_analyze_scale_factor=0.005"
+      - "-c"
+      - "statement_timeout=0"
+      - "-c"
+      - "tcp_keepalives_idle=3600"
+      - "-c"
+      - "tcp_keepalives_interval=30"
+      - "-c"
+      - "tcp_keepalives_count=3"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "idle_in_transaction_session_timeout=0"
+      - "-c"
+      - "log_disconnections=on"
+      - "-c"
+      - "log_connections=on"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "log_statement=ddl"
+      - "-c"
+      - "log_min_duration_statement=5000"
+      - "-c"
+      - "track_io_timing=on"
+      - "-c"
+      - "logging_collector=on"
+      - "-c"
+      - "log_directory=/var/log/postgresql"
+      - "-c"
+      - "log_filename=postgresql-%Y-%m-%d_%H%M%S.log"
+      - "-c"
+      - "log_rotation_age=1d"
+      - "-c"
+      - "log_rotation_size=100MB"
+      - "-c"
+      - "log_line_prefix=%t [%p]: [ %l-1 ] user=%u,db=%d,app=%a,client=%h"
+      - "-c"
+      - "log_checkpoints=on"
+      - "-c"
+      - "log_lock_waits=on"
+      - "-c"
+      - "log_temp_files=0"
+      - "-c"
+      - "log_autovacuum_min_duration=0"
+    volumes:
+      - "db-aggregator-indexer:/var/lib/postgresql/data"
+      - "/dev/shm:/dev/shm"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d aggregator_indexer"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging:
+      driver: json-file
+    networks:
+      - default
+    ports:
+      - "16201:5432"
+    deploy:
+      restart_policy:
+        condition: on-failure
 
-  spot-prices-processor-1:
-    <<: *proc-default-config
-    depends_on:
-      - liquidity-pools-db
-      - orchestration-redis
+  db-aggregator-pgbouncer-local-dep:
+    image: edoburu/pgbouncer:latest
     environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "spot_price_processor_1"
-
-      ALL_IN_ONE_PROCESSOR_MODE: "false"
-      IS_CORE_PROCESSOR: "false"
-      IS_SPOT_PRICES_PROCESSOR: "true"
-    command:
-      - sh
-      - -c
-      - "sqd migration:apply && node lib/main.js"
-
-  spot-prices-processor-2:
-    <<: *proc-default-config
+      DB_HOST: db-aggregator-indexer-local-dep
+      DB_PORT: 5432
+      DB_USER: *aggregator-pg-user
+      DB_PASSWORD: *aggregator-pg-password
+      DB_DBNAME: *aggregator-pg-db
+      AUTH_TYPE: scram-sha-256
+      DNS_MAX_TTL: 15
+      DNS_NXDOMAIN_TTL: 15
+      POOL_MODE: session
+      # SERVER_RESET_QUERY: DISCARD ALL
+      MAX_CLIENT_CONN: 100
+      DEFAULT_POOL_SIZE: 20
+      MIN_POOL_SIZE: 5
+      RESERVE_POOL_SIZE: 5
+      SERVER_LIFETIME: 14400
+      SERVER_IDLE_TIMEOUT: 14400
+      SERVER_QUERY_TIMEOUT: 14400
+    #    ports:
+    #      - "5494:5432"
     depends_on:
-      - liquidity-pools-db
-      - orchestration-redis
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "spot_price_processor_2"
+      - db-aggregator-indexer-local-dep
+    networks:
+      - default
+    logging:
+      driver: json-file
+    deploy:
+      restart_policy:
+        condition: on-failure
 
-      ALL_IN_ONE_PROCESSOR_MODE: "false"
-      IS_CORE_PROCESSOR: "false"
-      IS_SPOT_PRICES_PROCESSOR: "true"
-    command:
-      - sh
-      - -c
-      - "sqd migration:apply && node lib/main.js"
-
-  spot-prices-processor-3:
-    <<: *proc-default-config
+  aggregator-api-local-dep:
+    image: *aggregator-indexer-image
     depends_on:
-      - liquidity-pools-db
-      - orchestration-redis
+      - db-aggregator-pgbouncer-local-dep
     environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "spot_price_processor_3"
-
-      ALL_IN_ONE_PROCESSOR_MODE: "false"
-      IS_CORE_PROCESSOR: "false"
-      IS_SPOT_PRICES_PROCESSOR: "true"
-    command:
-      - sh
-      - -c
-      - "sqd migration:apply && node lib/main.js"
-
-  spot-prices-processor-4:
-    <<: *proc-default-config
-    depends_on:
-      - liquidity-pools-db
-      - orchestration-redis
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "spot_price_processor_4"
-
-      ALL_IN_ONE_PROCESSOR_MODE: "false"
-      IS_CORE_PROCESSOR: "false"
-      IS_SPOT_PRICES_PROCESSOR: "true"
-    command:
-      - sh
-      - -c
-      - "sqd migration:apply && node lib/main.js"
-
-  spot-prices-processor-5:
-    <<: *proc-default-config
-    depends_on:
-      - liquidity-pools-db
-      - orchestration-redis
-    environment:
-      <<: [*liquidity-pools-db-creds, *proc-default-envs]
-      STATE_SCHEMA_NAME: "spot_price_processor_5"
-
-      ALL_IN_ONE_PROCESSOR_MODE: "false"
-      IS_CORE_PROCESSOR: "false"
-      IS_SPOT_PRICES_PROCESSOR: "true"
-    command:
-      - sh
-      - -c
-      - "sqd migration:apply && node lib/main.js"
-
-  liquidity-pools-api:
-    image: *image
-    depends_on:
-      - liquidity-pools-db
-      - orchestration-redis
-    environment:
-      INDEXER_ID: *indexer-id
-      ORCHESTRATOR_QUEUE_REDIS_HOST: "orchestration-redis"
-      ORCHESTRATOR_QUEUE_REDIS_PORT: 6379
-      ORCHESTRATOR_QUEUE_REDIS_PASS: "orchestra"
+      <<: [*db-aggregator-creds, *db-ts-redis-creds]
+      INDEXER_ID: *aggregator-indexer-id
+      INDEXER_VERSION: *aggregator-indexer-version
+      IS_MASTER_INSTANCE: false
       NODE_ENV: "self-hosted"
       CHAIN: *chain-name
       GQL_PORT: 8080
-      <<: *liquidity-pools-db-creds
-      SUB_PROCESSOR_SCHEMAS: "squid_processor;spot_price_processor"
-    ports:
-      - "8094:8080"
+      SUB_PROCESSOR_SCHEMAS: "core_processor"
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: 'false'
+      TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE: 1500
+      ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE: 600
+      TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: 2000
+      DB_POOL_MAX_SIZE: 1
+    #    ports:
+    #      - "8094:8080"
+#    secrets:
+#      - SUBSCAN_PRO_API_SECRET
     networks:
       - default
+      - gateway
     logging:
       driver: json-file
     command:
       - sh
       - -c
-      - "sqd api:prod"
+      - "export SUBSCAN_PRO_API_SECRET=$$(cat /run/secrets/SUBSCAN_PRO_API_SECRET) && sqd api:prod"
     deploy:
-#      <<: *traefic-labels
       restart_policy:
         condition: on-failure
+
+
+  aggregator-processor-local-dep-core:
+    <<: *aggregator-proc-default-config
+    depends_on:
+      - db-aggregator-pgbouncer-local-dep
+    environment:
+      <<:
+        [
+          *db-aggregator-creds,
+          *db-ts-redis-creds,
+          *aggregator-proc-default-envs,
+        ]
+      SIMPLIFIED_PROCESSING: "false"
+      ALL_IN_ONE_PROCESSOR_MODE: "true"
+      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
+      MULTI_FLOW_PROCESSOR_TOPIC: CORE_PROCESSOR
+      STATE_SCHEMA_NAME: squid_processor
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 15
+        window: 300s
+
+  aggregator-processor-local-dep-price:
+    <<: *aggregator-proc-default-config
+    depends_on:
+      - db-aggregator-pgbouncer-local-dep
+    environment:
+      <<:
+        [
+          *db-aggregator-creds,
+          *db-ts-redis-creds,
+          *aggregator-proc-default-envs,
+        ]
+      SIMPLIFIED_PROCESSING: "false"
+      ALL_IN_ONE_PROCESSOR_MODE: "true"
+      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
+      MULTI_FLOW_PROCESSOR_TOPIC: SPOT_PRICES_PROCESSOR
+      STATE_SCHEMA_NAME: spot_prices_processor_1
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 15
+        window: 300s
+
+
+  aggregator-processor-local-dep-metrics:
+    <<: *aggregator-proc-default-config
+    depends_on:
+      - db-aggregator-pgbouncer-local-dep
+    environment:
+      <<:
+        [
+          *db-aggregator-creds,
+          *db-ts-redis-creds,
+          *aggregator-proc-default-envs,
+        ]
+      SIMPLIFIED_PROCESSING: "false"
+      ALL_IN_ONE_PROCESSOR_MODE: "true"
+      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
+      MULTI_FLOW_PROCESSOR_TOPIC: POOL_AND_ASSET_METRICS_PROCESSOR
+      STATE_SCHEMA_NAME: p_a_metrics_processor_1
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 15
+        window: 300s
+
+  aggregator-processor-local-dep-balance:
+    <<: *aggregator-proc-default-config
+    depends_on:
+      - db-aggregator-pgbouncer-local-dep
+    environment:
+      <<:
+        [
+          *db-aggregator-creds,
+          *db-ts-redis-creds,
+          *aggregator-proc-default-envs,
+        ]
+      SIMPLIFIED_PROCESSING: "false"
+      ALL_IN_ONE_PROCESSOR_MODE: "true"
+      ALL_IN_ONE_MULTI_FLOW_PROCESSOR_MODE: "true"
+      MULTI_FLOW_PROCESSOR_TOPIC: BALANCES_PROCESSOR
+      STATE_SCHEMA_NAME: balances_processor_1
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 15
+        window: 300s
+
+

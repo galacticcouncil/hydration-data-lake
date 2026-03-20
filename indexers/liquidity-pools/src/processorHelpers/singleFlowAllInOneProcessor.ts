@@ -9,10 +9,7 @@ import {
   saveAllBatchAccounts,
 } from '../handlers/accounts';
 import { MoneyMarketContractsManager } from '../utils/evmTools/moneyMarketContractsManager';
-import {
-  actualiseAssets,
-  ensureNativeToken,
-} from '../handlers/assets/utils';
+import { actualiseAssets, ensureNativeToken } from '../handlers/assets/utils';
 import { handleAssetRegistry } from '../handlers/assets';
 import { handleLbpPools } from '../handlers/pools/pools/lbpPool';
 import { handleXykPools } from '../handlers/pools/pools/xykPool';
@@ -69,6 +66,10 @@ import { handleUniquesEvents } from '../handlers/uniques';
 import { prefetchOrInitAllAccountProcessingStatuses } from '../handlers/accounts/accountProcessingStatus';
 import { handleLiquidationEvents } from '../handlers/liquidation';
 import { initAllAccountsOnColdStart } from '../handlers/accounts/allAccountsInit';
+import { MultiProcPoolManager } from '../utils/multiProcPoolManager';
+import { CoreProcPoolManager } from '../utils/multiProcPoolManager/subProcessors/coreProcPoolManager';
+import { BalancesProcPoolManager } from '../utils/multiProcPoolManager/subProcessors/balancesProcPoolManager';
+import { handleHsmAssetHistoricalDataOnAllSwaps } from '../handlers/pools/pools/hsmpool';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -263,6 +264,10 @@ export async function singleFlowAllInOneProcessor(
   console.time('handleStablepoolLiquidityEvents');
   await handleStablepoolLiquidityEvents(ctx, parsedData);
   console.timeEnd('handleStablepoolLiquidityEvents');
+
+  console.time('handleHsmAssetHistoricalDataOnAllSwaps');
+  await handleHsmAssetHistoricalDataOnAllSwaps(ctx);
+  console.timeEnd('handleHsmAssetHistoricalDataOnAllSwaps');
 
   console.time('saveSwapRelatedDataBulk');
   await HistoricalDataManager.saveSwapRelatedDataBulk(ctx);

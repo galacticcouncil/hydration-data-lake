@@ -8,8 +8,8 @@ import {
   EmaOracleEntryHistoricalData,
   ProcessorStatus,
   XykpoolHistoricalData,
-} from '../../../model';
-import { SqdProcessorContext } from '../../../processor';
+} from '../../../../model';
+import { SqdProcessorContext } from '../../../../processor';
 import {
   prefetchAllAvailableLbppoolHistDataForBlocksRange,
   prefetchAllAvailableLbppoolVolumesForBlocksRange,
