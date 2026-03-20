@@ -145,6 +145,7 @@ export async function poolAndAssetMetricsProcessorHandler(
 
   if (!parsedData) throw new Error('parsedData is null');
 
+  console.time('custom prefetch');
   ctx.batchState.state.swaps = new Map(
     (
       await ctx.storeUtils.findWithLogs(
@@ -184,6 +185,7 @@ export async function poolAndAssetMetricsProcessorHandler(
     swap.outputs = outputs;
     ctx.batchState.state.swaps.set(swap.id, swap);
   }
+  console.timeEnd('custom prefetch');
 
   console.time('handlePoolAndAssetMetricsOnBroadcastSwappedEvents');
   await handlePoolAndAssetMetricsOnBroadcastSwappedEvents(ctx, parsedData);

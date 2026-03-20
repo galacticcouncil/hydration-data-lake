@@ -92,6 +92,8 @@ export async function spotPriceProcessorHandler(ctx: SqdProcessorContext<Store>)
     toBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
 
+  console.time('custom prefetch');
+
   ctx.batchState.state.batchBlocks = new Map(
     (
       await ctx.storeUtils.findWithLogs(
@@ -193,6 +195,7 @@ export async function spotPriceProcessorHandler(ctx: SqdProcessorContext<Store>)
       swap.outputs = outputs;
     }
   }
+  console.timeEnd('custom prefetch');
   // console.time('initAllAccountsOnColdStart');
   // await initAllAccountsOnColdStart({ ctx });
   // console.timeEnd('initAllAccountsOnColdStart');

@@ -120,6 +120,7 @@ export function correlateAssetSpotPrices(
 export async function fetchAndCorrelateAssetSpotPrices(
   ctx: SqdProcessorContext<Store>
 ) {
+  console.time('fetchAndCorrelateAssetSpotPrices');
   ctx.batchState.state.assetsSpotPriceHistoricalDataBatch = new Map(
     (
       await ctx.storeUtils.findWithLogs(
@@ -155,4 +156,5 @@ export async function fetchAndCorrelateAssetSpotPrices(
   }
 
   correlateAssetSpotPrices(ctx);
+  console.timeEnd('fetchAndCorrelateAssetSpotPrices');
 }

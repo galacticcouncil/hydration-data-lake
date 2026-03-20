@@ -150,6 +150,8 @@ export async function balancesProcessorHandler(
 
   if (!parsedData) throw new Error('parsedData is null');
 
+  console.time('custom prefetch');
+
   ctx.batchState.state.moneyMarketEvents = new Map(
     (
       await ctx.storeUtils.findWithLogs(
@@ -194,6 +196,7 @@ export async function balancesProcessorHandler(
       )
     ).map((p) => [p.id, p])
   );
+  console.timeEnd('custom prefetch');
 
   // await ensureNativeToken(ctx);
 
