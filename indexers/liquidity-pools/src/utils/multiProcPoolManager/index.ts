@@ -322,7 +322,7 @@ export class MultiProcPoolManager {
                 AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
                 AND (
                   state = 'created'
-                  OR (state = ANY($3::pgboss.job_state[]) AND data->>'consumedBy' = $1)
+                  OR (state = ANY($4::pgboss.job_state[]) AND data->>'consumedBy' = $1)
                 )
               FOR UPDATE SKIP LOCKED
             )
@@ -330,16 +330,17 @@ export class MultiProcPoolManager {
             SET
               state = 'active',
               started_on = NOW(),
-              data = jsonb_set(data, '{consumedBy}', $1::jsonb, true)
+              data = jsonb_set(data, '{consumedBy}', $3::jsonb, true)
             FROM jobs_to_update jtu
             WHERE j.id = jtu.id
             RETURNING j.id, j.data, j.singleton_key
           `;
 
           const updateResult = await db.executeSql(updateQuery, [
-            JSON.stringify(schemaName),
-            jobIds,
-            states,
+            schemaName, // $1 - for text comparison with ->>
+            jobIds, // $2
+            JSON.stringify(schemaName), // $3 - for jsonb_set
+            states, // $4
           ]);
 
           // Check if we successfully locked all required jobs
