@@ -249,11 +249,13 @@ export class MultiProcPoolManager {
     fromBlock,
     toBlock,
     schemaName,
+    states = ['active', 'retry', 'failed'], // Default to ['active'] for backward compatibility
   }: {
     queueName: PgBossQueueName;
     fromBlock: number;
     toBlock: number;
     schemaName: string; // STATE_SCHEMA for current processor
+    states?: string[]; // Array of states to check for READY_TO_PICK_UP jobs
   }): Promise<MultiProcPoolJobPayload[]> {
     /**
      * Run after changeJobsStatusFromPreviousBatch
@@ -285,7 +287,7 @@ export class MultiProcPoolManager {
             AND (
               (state = 'created' AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}')
               OR
-              (state = 'active' AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}' AND data->>'consumedBy' = $2)
+              (state = ANY($5::text[]) AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}' AND data->>'consumedBy' = $2)
             )
             AND (data->>'blockNumber')::integer >= $3
             AND (data->>'blockNumber')::integer <= $4
@@ -297,6 +299,7 @@ export class MultiProcPoolManager {
           schemaName,
           fromBlock,
           toBlock,
+          states,
         ]);
 
         // Check if we have jobs for all blocks in the range
@@ -310,7 +313,7 @@ export class MultiProcPoolManager {
           const jobIds = result.rows.map((row: any) => row.id);
 
           // Use FOR UPDATE SKIP LOCKED to prevent race conditions
-          // Handle both: new jobs (created state) and jobs from failed runs (active state with same consumedBy)
+          // Handle both: new jobs (created state) and jobs from failed runs (states array with same consumedBy)
           const updateQuery = `
             WITH jobs_to_update AS (
               SELECT id
@@ -319,7 +322,7 @@ export class MultiProcPoolManager {
                 AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
                 AND (
                   state = 'created'
-                  OR (state = 'active' AND data->>'consumedBy' = $1)
+                  OR (state = ANY($3::text[]) AND data->>'consumedBy' = $1)
                 )
               FOR UPDATE SKIP LOCKED
             )
@@ -336,6 +339,7 @@ export class MultiProcPoolManager {
           const updateResult = await db.executeSql(updateQuery, [
             JSON.stringify(schemaName),
             jobIds,
+            states,
           ]);
 
           // Check if we successfully locked all required jobs
@@ -345,16 +349,20 @@ export class MultiProcPoolManager {
               id: row.id,
               state: row.state || 'created',
               blockNumber: row.data.blockNumber,
-              consumedBy: row.data.consumedBy
+              consumedBy: row.data.consumedBy,
             }));
 
-            const lockedJobIds = new Set(updateResult.rows.map((row: any) => row.id));
-            const unlockedJobs = foundJobStates.filter(job => !lockedJobIds.has(job.id));
+            const lockedJobIds = new Set(
+              updateResult.rows.map((row: any) => row.id)
+            );
+            const unlockedJobs = foundJobStates.filter(
+              (job) => !lockedJobIds.has(job.id)
+            );
 
             console.log(
               `Only locked ${updateResult.rows.length} of ${expectedBlockCount} jobs. ` +
-              `Unable to lock: ${JSON.stringify(unlockedJobs.slice(0, 3))}... ` +
-              `Retrying...`
+                `Unable to lock: ${JSON.stringify(unlockedJobs.slice(0, 3))}... ` +
+                `Retrying...`
             );
             await new Promise((resolve) => setTimeout(resolve, retryInterval));
             continue;
