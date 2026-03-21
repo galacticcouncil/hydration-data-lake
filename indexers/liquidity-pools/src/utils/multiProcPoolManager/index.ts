@@ -314,9 +314,10 @@ export class MultiProcPoolManager {
 
           // Use FOR UPDATE SKIP LOCKED to prevent race conditions
           // Handle both: new jobs (created state) and jobs from failed runs (states array with same consumedBy)
+          // IMPORTANT: Don't update jobs that are already 'active' - just return them
           const updateQuery = `
             WITH jobs_to_update AS (
-              SELECT id
+              SELECT id, state, data
               FROM pgboss.job
               WHERE id = ANY($2::uuid[])
                 AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
@@ -325,15 +326,27 @@ export class MultiProcPoolManager {
                   OR (state = ANY($4::pgboss.job_state[]) AND data->>'consumedBy' = $1)
                 )
               FOR UPDATE SKIP LOCKED
+            ),
+            updated_jobs AS (
+              UPDATE pgboss.job j
+              SET
+                state = 'active',
+                started_on = NOW(),
+                data = jsonb_set(data, '{consumedBy}', $3::jsonb, true)
+              FROM jobs_to_update jtu
+              WHERE j.id = jtu.id
+                AND jtu.state != 'active'  -- Don't update already active jobs
+              RETURNING j.id, j.data, j.singleton_key
+            ),
+            already_active_jobs AS (
+              SELECT jtu.id, jtu.data, j.singleton_key
+              FROM jobs_to_update jtu
+              JOIN pgboss.job j ON j.id = jtu.id
+              WHERE jtu.state = 'active'
             )
-            UPDATE pgboss.job j
-            SET
-              state = 'active',
-              started_on = NOW(),
-              data = jsonb_set(data, '{consumedBy}', $3::jsonb, true)
-            FROM jobs_to_update jtu
-            WHERE j.id = jtu.id
-            RETURNING j.id, j.data, j.singleton_key
+            SELECT * FROM updated_jobs
+            UNION ALL
+            SELECT * FROM already_active_jobs
           `;
 
           const updateResult = await db.executeSql(updateQuery, [
