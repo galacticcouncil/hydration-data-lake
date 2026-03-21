@@ -332,7 +332,7 @@ export class MultiProcPoolManager {
               SET
                 state = 'active',
                 started_on = NOW(),
-                data = jsonb_set(data, '{consumedBy}', $3::jsonb, true)
+                data = jsonb_set(j.data, '{consumedBy}', $3::jsonb, true)
               FROM jobs_to_update jtu
               WHERE j.id = jtu.id
                 AND jtu.state != 'active'  -- Don't update already active jobs
