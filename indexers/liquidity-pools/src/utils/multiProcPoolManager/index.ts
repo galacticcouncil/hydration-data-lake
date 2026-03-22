@@ -59,7 +59,7 @@ export class MultiProcPoolManager {
       });
       await this.bossInstance.createQueue(qName, {
         deadLetter: `${qName}_DL`,
-        policy: 'singleton',
+        policy: 'exclusive', // Enforces uniqueness for state <= 'active' (created, retry, failed, active)
         expireInSeconds: 3600,
       });
     };
@@ -280,8 +280,9 @@ export class MultiProcPoolManager {
     while (true) {
       try {
         // Check if we have READY_TO_PICK_UP jobs for the entire block range
+        // Use DISTINCT ON to get only one job per singleton_key, preferring created state
         const checkQuery = `
-          SELECT id, data, singleton_key, state
+          SELECT DISTINCT ON (singleton_key) id, data, singleton_key, state
           FROM pgboss.job
           WHERE name = $1
             AND (
@@ -291,7 +292,15 @@ export class MultiProcPoolManager {
             )
             AND (data->>'blockNumber')::integer >= $3
             AND (data->>'blockNumber')::integer <= $4
-          ORDER BY (data->>'blockNumber')::integer ASC
+          ORDER BY singleton_key,
+                   CASE
+                     WHEN state = 'created' THEN 1
+                     WHEN state = 'retry' THEN 2
+                     WHEN state = 'failed' THEN 3
+                     WHEN state = 'active' THEN 4
+                     ELSE 5
+                   END,
+                   created_on
         `;
 
         const result = await db.executeSql(checkQuery, [

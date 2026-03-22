@@ -67,9 +67,13 @@ export class HistoricalDataManager {
 
     await this.savePoolVolumesRelatedDataBulk(ctx);
 
-    await ctx.store.save(
-      Array.from(ctx.batchState.state.moneyMarketReserves.values())
-    );
+    if (
+      getProcessingMode(ctx) !== ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR
+    ) {
+      await ctx.store.save(
+        Array.from(ctx.batchState.state.moneyMarketReserves.values())
+      );
+    }
 
     // if (
     //   getProcessingMode(ctx) !==
