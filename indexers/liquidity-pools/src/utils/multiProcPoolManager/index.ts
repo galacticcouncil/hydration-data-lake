@@ -180,8 +180,8 @@ export class MultiProcPoolManager {
             -- Option 1: Job is VERY old (definitely stuck)
             started_on < NOW() - INTERVAL '10 minutes'
             OR
-            -- Option 2: Job in retry state but past its retry time
-            (state = 'retry' AND retry_on IS NOT NULL AND retry_on < NOW())
+            -- Option 2: Job in retry state but scheduled retry time has passed
+            (state = 'retry' AND (start_after IS NULL OR start_after < NOW()))
             OR
             -- Option 3: Job failed with no more retries left
             (state = 'failed' AND retry_count >= retry_limit)
