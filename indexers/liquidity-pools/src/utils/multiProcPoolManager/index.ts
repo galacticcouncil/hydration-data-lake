@@ -164,30 +164,48 @@ export class MultiProcPoolManager {
     const db = this.bossInstance.getDb();
 
     try {
-      // // Clean up stale active jobs (jobs that were picked up but never completed - likely from crashed processors)
-      // const cleanupStaleJobsQuery = `
-      //   UPDATE pgboss.job
-      //   SET
-      //     state = 'created',
-      //     started_on = NULL,
-      //     data = data - 'consumedBy'
-      //   WHERE name = $1
-      //     AND state = 'active'
-      //     AND (data->>'blockNumber')::integer < $2
-      //     AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
-      //     AND started_on < NOW() - INTERVAL '5 minutes'
-      // `;
-      //
-      // const cleanupResult = await db.executeSql(cleanupStaleJobsQuery, [
-      //   currentProcQueueName,
-      //   batchStartBlockHeight,
-      // ]);
-      //
-      // if (cleanupResult.rows.length > 0) {
-      //   console.log(
-      //     `Cleaned up ${cleanupResult.rows.length} stale active jobs`
-      //   );
-      // }
+      // Clean up stale retry/failed jobs before processing
+      // This resets jobs that are stuck due to crashes or PgBoss maintenance locks
+      const cleanupStaleJobsQuery = `
+        UPDATE pgboss.job
+        SET
+          state = 'created',
+          started_on = NULL,
+          retry_count = 0
+        WHERE name = $1
+          AND state IN ('retry', 'failed')
+          AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}'
+          AND data->>'consumedBy' = $2
+          AND (
+            -- Option 1: Job is VERY old (definitely stuck)
+            started_on < NOW() - INTERVAL '10 minutes'
+            OR
+            -- Option 2: Job in retry state but past its retry time
+            (state = 'retry' AND retry_on IS NOT NULL AND retry_on < NOW())
+            OR
+            -- Option 3: Job failed with no more retries left
+            (state = 'failed' AND retry_count >= retry_limit)
+          )
+        RETURNING (data->>'blockNumber')::integer as block_number
+      `;
+
+      const cleanupResult = await db.executeSql(cleanupStaleJobsQuery, [
+        currentProcQueueName,
+        schemaName,
+      ]);
+
+      if (cleanupResult.rows.length > 0) {
+        const blockNumbers = cleanupResult.rows
+          .map((r) => r.block_number)
+          .sort((a, b) => a - b);
+        console.log(
+          `Reset ${cleanupResult.rows.length} stale retry/failed jobs: ` +
+            `blocks ${blockNumbers.slice(0, 5).join(', ')}` +
+            (blockNumbers.length > 5
+              ? `... +${blockNumbers.length - 5} more`
+              : '')
+        );
+      }
 
       if (derivativeQueueNames && derivativeQueueNames.length > 0) {
         // 1. Update PENDING jobs to READY_TO_PICK_UP in OTHER queues (jobs created by this processor for other processors)
