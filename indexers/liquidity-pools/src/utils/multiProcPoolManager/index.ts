@@ -297,6 +297,38 @@ export class MultiProcPoolManager {
 
     while (true) {
       try {
+        // Handle blockchain reorgs: reset completed jobs back to created state if we need to reprocess them
+        const resetCompletedJobsQuery = `
+          UPDATE pgboss.job
+          SET
+            state = 'created',
+            started_on = NULL,
+            completed_on = NULL,
+            data = jsonb_set(data, '{jobStatus}', '"${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}"')
+          WHERE name = $1
+            AND state = 'completed'
+            AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.COMPLETED}'
+            AND (data->>'blockNumber')::integer >= $2
+            AND (data->>'blockNumber')::integer <= $3
+          RETURNING (data->>'blockNumber')::integer as block_number
+        `;
+
+        const resetResult = await db.executeSql(resetCompletedJobsQuery, [
+          queueName,
+          fromBlock,
+          toBlock,
+        ]);
+
+        if (resetResult.rows.length > 0) {
+          const blockNumbers = resetResult.rows
+            .map((r) => r.block_number)
+            .sort((a, b) => a - b);
+          console.log(
+            `Reset ${resetResult.rows.length} completed jobs for reprocessing: ` +
+              `blocks ${blockNumbers[0]}-${blockNumbers[blockNumbers.length - 1]}`
+          );
+        }
+
         // Check if we have READY_TO_PICK_UP jobs for the entire block range
         // Use DISTINCT ON to get only one job per singleton_key, preferring created state
         const checkQuery = `
