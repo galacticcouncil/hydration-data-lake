@@ -94,8 +94,77 @@ export class MultiProcPoolManager {
       for (const [queueName, jobs] of jobsMap) {
         if (jobs.length === 0) continue;
 
-        // Use Promise.allSettled to handle individual job failures
-        const jobPromises = jobs.map((job) =>
+        // Get block range and producer info
+        const blockNumbers = jobs.map((j) => j.blockNumber);
+        const minBlock = Math.min(...blockNumbers);
+        const maxBlock = Math.max(...blockNumbers);
+        const producedBy = jobs[0].producedBy; // All jobs in batch have same producer
+
+        const db = this.bossInstance.getDb();
+
+        // STEP 1: Delete completed jobs for blocks we're republishing (for reorg handling)
+        // Only delete jobs produced by this producer
+        const deleteQuery = `
+          DELETE FROM pgboss.job
+          WHERE name = $1
+            AND state = 'completed'
+            AND data->>'producedBy' = $2
+            AND (data->>'blockNumber')::integer >= $3
+            AND (data->>'blockNumber')::integer <= $4
+          RETURNING (data->>'blockNumber')::integer as block_number
+        `;
+
+        const deleteResult = await db.executeSql(deleteQuery, [
+          queueName,
+          producedBy,
+          minBlock,
+          maxBlock,
+        ]);
+
+        if (deleteResult.rows.length > 0) {
+          console.log(
+            `Deleted ${deleteResult.rows.length} completed jobs from ${queueName} ` +
+              `for reprocessing blocks ${minBlock}-${maxBlock}`
+          );
+        }
+
+        // STEP 2: Check which jobs already exist in non-terminal states
+        // Only check jobs produced by this producer
+        const checkExistingQuery = `
+          SELECT (data->>'blockNumber')::integer as block_number
+          FROM pgboss.job
+          WHERE name = $1
+            AND data->>'producedBy' = $2
+            AND state IN ('created', 'active', 'retry', 'failed')
+            AND (data->>'blockNumber')::integer >= $3
+            AND (data->>'blockNumber')::integer <= $4
+        `;
+
+        const existingResult = await db.executeSql(checkExistingQuery, [
+          queueName,
+          producedBy,
+          minBlock,
+          maxBlock,
+        ]);
+
+        const existingBlocks = new Set(
+          existingResult.rows.map((r) => r.block_number)
+        );
+
+        // STEP 3: Filter jobs to only publish those that don't already exist
+        const jobsToPublish = jobs.filter(
+          (job) => !existingBlocks.has(job.blockNumber)
+        );
+
+        if (existingBlocks.size > 0) {
+          console.log(
+            `Skipping ${existingBlocks.size} jobs that already exist in ${queueName} ` +
+              `for blocks: ${Array.from(existingBlocks).sort((a, b) => a - b).slice(0, 10).join(', ')}${existingBlocks.size > 10 ? '...' : ''}`
+          );
+        }
+
+        // STEP 4: Publish new jobs
+        const jobPromises = jobsToPublish.map((job) =>
           this.bossInstance
             .send(queueName, job, {
               singletonKey: `${job.blockNumber}-${job.producedBy}`,
@@ -297,38 +366,6 @@ export class MultiProcPoolManager {
 
     while (true) {
       try {
-        // Handle blockchain reorgs: reset completed jobs back to created state if we need to reprocess them
-        const resetCompletedJobsQuery = `
-          UPDATE pgboss.job
-          SET
-            state = 'created',
-            started_on = NULL,
-            completed_on = NULL,
-            data = jsonb_set(data, '{jobStatus}', '"${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}"')
-          WHERE name = $1
-            AND state = 'completed'
-            AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.COMPLETED}'
-            AND (data->>'blockNumber')::integer >= $2
-            AND (data->>'blockNumber')::integer <= $3
-          RETURNING (data->>'blockNumber')::integer as block_number
-        `;
-
-        const resetResult = await db.executeSql(resetCompletedJobsQuery, [
-          queueName,
-          fromBlock,
-          toBlock,
-        ]);
-
-        if (resetResult.rows.length > 0) {
-          const blockNumbers = resetResult.rows
-            .map((r) => r.block_number)
-            .sort((a, b) => a - b);
-          console.log(
-            `Reset ${resetResult.rows.length} completed jobs for reprocessing: ` +
-              `blocks ${blockNumbers[0]}-${blockNumbers[blockNumbers.length - 1]}`
-          );
-        }
-
         // Check if we have READY_TO_PICK_UP jobs for the entire block range
         // Use DISTINCT ON to get only one job per singleton_key, preferring created state
         const checkQuery = `
