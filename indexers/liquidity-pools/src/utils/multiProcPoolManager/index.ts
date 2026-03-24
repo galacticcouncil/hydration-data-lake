@@ -389,7 +389,6 @@ export class MultiProcPoolManager {
           queueName,
           fromBlock,
           toBlock,
-          schemaName,
         ]);
 
         if (resetResult.rows.length > 0) {
