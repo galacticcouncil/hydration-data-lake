@@ -326,6 +326,14 @@ class ProcessingModeConfig {
 
   readonly REAGGREGATION_PROCESSING_FLOW_NAME?: string;
 
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_WAITING_BATCH_OFFSET_FROM_BLOCK: number = 0;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_WAITING_BATCH_OFFSET_TO_BLOCK: number = 0;
+
   @Transform(
     ({ value }: { value: string }) =>
       new Set(value.split(',').map((e) => e.trim()))

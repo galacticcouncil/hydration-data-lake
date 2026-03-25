@@ -365,6 +365,15 @@ export class MultiProcPoolManager {
     const db = this.bossInstance.getDb();
     const retryInterval = 300; // milliseconds
 
+    const fromBlockNumberWithOffset =
+      fromBlock +
+      this.appConfig.processingMode
+        .ALL_IN_ONE_MULTI_FLOW_PROCESSOR_WAITING_BATCH_OFFSET_FROM_BLOCK;
+    const toBlockNumberWithOffset =
+      toBlock +
+      this.appConfig.processingMode
+        .ALL_IN_ONE_MULTI_FLOW_PROCESSOR_WAITING_BATCH_OFFSET_TO_BLOCK;
+
     while (true) {
       try {
         // Check if we have READY_TO_PICK_UP jobs for the entire block range
@@ -394,13 +403,14 @@ export class MultiProcPoolManager {
         const result = await db.executeSql(checkQuery, [
           queueName,
           schemaName,
-          fromBlock,
-          toBlock,
+          fromBlockNumberWithOffset,
+          toBlockNumberWithOffset,
           states,
         ]);
 
         // Check if we have jobs for all blocks in the range
-        const expectedBlockCount = toBlock - fromBlock + 1;
+        const expectedBlockCount =
+          toBlockNumberWithOffset - fromBlockNumberWithOffset + 1;
         const blockNumbers = new Set(
           result.rows.map((row) => row.data.blockNumber)
         );
@@ -411,7 +421,11 @@ export class MultiProcPoolManager {
         } else {
           // Not all blocks are available yet
           const missingBlocks: number[] = [];
-          for (let block = fromBlock; block <= toBlock; block++) {
+          for (
+            let block = fromBlockNumberWithOffset;
+            block <= toBlockNumberWithOffset;
+            block++
+          ) {
             if (!blockNumbers.has(block)) {
               missingBlocks.push(block);
             }
