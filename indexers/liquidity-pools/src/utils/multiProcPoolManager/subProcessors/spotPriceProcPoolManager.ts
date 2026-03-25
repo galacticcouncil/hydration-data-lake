@@ -82,4 +82,19 @@ export class SpotPriceProcPoolManager {
       toBlock,
     });
   }
+
+  static async waitJobsToProcess({
+    fromBlock,
+    toBlock,
+  }: {
+    fromBlock: number;
+    toBlock: number;
+  }) {
+    await MultiProcPoolManager.getInstance().waitJobsToProcess({
+      queueName: PgBossQueueName.SPOT_PRICES_PROCESSOR,
+      schemaName: appConfig.STATE_SCHEMA_NAME,
+      fromBlock,
+      toBlock,
+    });
+  }
 }

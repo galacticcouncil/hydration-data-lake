@@ -35,4 +35,18 @@ export class BalancesProcPoolManager {
       toBlock,
     });
   }
+  static async waitJobsToProcess({
+    fromBlock,
+    toBlock,
+  }: {
+    fromBlock: number;
+    toBlock: number;
+  }) {
+    await MultiProcPoolManager.getInstance().waitJobsToProcess({
+      queueName: PgBossQueueName.BALANCES_PROCESSOR,
+      schemaName: appConfig.STATE_SCHEMA_NAME,
+      fromBlock,
+      toBlock,
+    });
+  }
 }

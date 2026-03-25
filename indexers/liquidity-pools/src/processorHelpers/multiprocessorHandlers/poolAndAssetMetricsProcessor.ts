@@ -470,4 +470,9 @@ export async function poolAndAssetMetricsProcessorHandler(
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  await PoolAndAssetMetricsProcPoolManager.waitJobsToProcess({
+    fromBlock: ctx.blocks[0].header.height,
+    toBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
 }
