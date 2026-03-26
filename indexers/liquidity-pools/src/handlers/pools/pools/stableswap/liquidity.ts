@@ -49,15 +49,18 @@ export async function handleStablepoolLiquidityEvents(
     );
   }
 
-  await ctx.store.save([...ctx.batchState.state.stableswapPools.values()]);
-  await ctx.store.save([...ctx.batchState.state.stableswapAssets.values()]);
+  // TODO Check necessity
+  // await ctx.store.save([...ctx.batchState.state.stableswapPools.values()]);
+  // await ctx.store.save([...ctx.batchState.state.stableswapAssets.values()]);
 
-  await ctx.store.save([
-    ...ctx.batchState.state.stablepoolBatchLiquidityActions.values(),
-  ]);
-  await ctx.store.save([
-    ...ctx.batchState.state.stablepoolAssetBatchLiquidityAmounts.values(),
-  ]);
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.stablepoolBatchLiquidityActions.values())
+  );
+  await ctx.store.save(
+    Array.from(
+      ctx.batchState.state.stablepoolAssetBatchLiquidityAmounts.values()
+    )
+  );
 }
 
 export async function stablepoolLiquidityAddedRemoved(
