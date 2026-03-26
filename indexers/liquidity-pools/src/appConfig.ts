@@ -328,11 +328,8 @@ class ProcessingModeConfig {
 
   @IsNumber()
   @Transform(({ value }: { value: string }) => +value)
-  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_WAITING_BATCH_OFFSET_FROM_BLOCK: number = 0;
-
-  @IsNumber()
-  @Transform(({ value }: { value: string }) => +value)
-  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_WAITING_BATCH_OFFSET_TO_BLOCK: number = 0;
+  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_NEXT_BATCH_OFFSET_BLOCKS: number =
+    0;
 
   @Transform(
     ({ value }: { value: string }) =>

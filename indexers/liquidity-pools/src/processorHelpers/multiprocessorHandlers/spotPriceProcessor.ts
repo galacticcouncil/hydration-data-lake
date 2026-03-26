@@ -503,4 +503,8 @@ export async function spotPriceProcessorHandler(ctx: SqdProcessorContext<Store>)
     ],
   });
   console.timeEnd('publishPendingJobs');
+
+  await SpotPriceProcPoolManager.checkNextAvailableBatchToProcess({
+    currentHeadBlockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
 }

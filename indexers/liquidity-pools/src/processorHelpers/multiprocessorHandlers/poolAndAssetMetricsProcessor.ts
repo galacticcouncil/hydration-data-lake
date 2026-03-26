@@ -471,8 +471,7 @@ export async function poolAndAssetMetricsProcessorHandler(
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
 
-  await PoolAndAssetMetricsProcPoolManager.waitJobsToProcess({
-    fromBlock: ctx.blocks[0].header.height,
-    toBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
+  await PoolAndAssetMetricsProcPoolManager.checkNextAvailableBatchToProcess({
+    currentHeadBlockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
 }

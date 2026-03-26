@@ -332,107 +332,55 @@ export class MultiProcPoolManager {
     }
   }
 
-  async waitJobsToProcess({
+  async checkNextAvailableBatchToProcess({
     queueName,
-    fromBlock,
-    toBlock,
+    currentHeadBlockNumber,
     schemaName,
     states = ['active', 'retry', 'failed'], // Default to ['active'] for backward compatibility
   }: {
     queueName: PgBossQueueName;
-    fromBlock: number;
-    toBlock: number;
+    currentHeadBlockNumber: number;
     schemaName: string; // STATE_SCHEMA for current processor
     states?: string[]; // Array of states to check for READY_TO_PICK_UP jobs
   }): Promise<MultiProcPoolJobPayload[]> {
-    /**
-     * Run after changeJobsStatusFromPreviousBatch
-     *
-     * Periodically fetch READE_TO_PICK_UP jobs related with current processor by queueName.
-     *
-     * WHERE:
-     * - (state = "created" && jobStatus = READE_TO_PICK_UP && name = queueName) || (state = "active" && jobStatus = READE_TO_PICK_UP && consumedBy = STATE_SCHEMA && name = queueName)
-     *
-     * Don't lock them.
-     *
-     * If queue contains jobs for each block within fromBlock - toBlock range (based on data.blockNumber),
-     * pick these jobs up (set state => "active"), return block range which can be processed by
-     * current processor (or return jobs list whith some extra payload - for future).
-     *
-     * If queue doesn't contain enough jobs for range fromBlock - toBlock, wait and
-     * retry in some interval (300ms).
-     */
     const db = this.bossInstance.getDb();
     const retryInterval = 300; // milliseconds
 
-    const fromBlockNumberWithOffset =
-      fromBlock +
+    const nextBatchStartBlock =
+      currentHeadBlockNumber +
+      1 +
       this.appConfig.processingMode
-        .ALL_IN_ONE_MULTI_FLOW_PROCESSOR_WAITING_BATCH_OFFSET_FROM_BLOCK;
-    const toBlockNumberWithOffset =
-      toBlock +
-      this.appConfig.processingMode
-        .ALL_IN_ONE_MULTI_FLOW_PROCESSOR_WAITING_BATCH_OFFSET_TO_BLOCK;
+        .ALL_IN_ONE_MULTI_FLOW_PROCESSOR_NEXT_BATCH_OFFSET_BLOCKS;
 
     while (true) {
       try {
         // Check if we have READY_TO_PICK_UP jobs for the entire block range
         // Use DISTINCT ON to get only one job per singleton_key, preferring created state
         const checkQuery = `
-          SELECT DISTINCT ON (singleton_key) id, data, singleton_key, state
+          SELECT id, data, singleton_key, state
           FROM pgboss.job
           WHERE name = $1
             AND (
               (state = 'created' AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}')
               OR
-              (state = ANY($5::pgboss.job_state[]) AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}' AND data->>'consumedBy' = $2)
+              (state = ANY($4::pgboss.job_state[]) AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}' AND data->>'consumedBy' = $2)
             )
-            AND (data->>'blockNumber')::integer >= $3
-            AND (data->>'blockNumber')::integer <= $4
-          ORDER BY singleton_key,
-                   CASE
-                     WHEN state = 'created' THEN 1
-                     WHEN state = 'retry' THEN 2
-                     WHEN state = 'failed' THEN 3
-                     WHEN state = 'active' THEN 4
-                     ELSE 5
-                   END,
-                   created_on
+            AND (data->>'blockNumber')::integer = $3
+        
         `;
 
         const result = await db.executeSql(checkQuery, [
           queueName,
           schemaName,
-          fromBlockNumberWithOffset,
-          toBlockNumberWithOffset,
+          nextBatchStartBlock,
           states,
         ]);
 
-        // Check if we have jobs for all blocks in the range
-        const expectedBlockCount =
-          toBlockNumberWithOffset - fromBlockNumberWithOffset + 1;
-        const blockNumbers = new Set(
-          result.rows.map((row) => row.data.blockNumber)
-        );
-
-        if (blockNumbers.size === expectedBlockCount) {
-          // We have all required blocks, update jobs to active state
+        if (result.rows && result.rows.length > 0) {
           return result.rows;
         } else {
-          // Not all blocks are available yet
-          const missingBlocks: number[] = [];
-          for (
-            let block = fromBlockNumberWithOffset;
-            block <= toBlockNumberWithOffset;
-            block++
-          ) {
-            if (!blockNumbers.has(block)) {
-              missingBlocks.push(block);
-            }
-          }
-
           console.log(
-            `Waiting for blocks in queue ${queueName} ... (${missingBlocks.length} missing)`
+            `Waiting for next batch job (block - ${nextBatchStartBlock} / offset - ${this.appConfig.processingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR_NEXT_BATCH_OFFSET_BLOCKS})`
           );
 
           // Wait before retrying

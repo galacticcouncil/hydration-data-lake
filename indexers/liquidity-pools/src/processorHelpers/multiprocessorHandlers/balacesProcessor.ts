@@ -444,4 +444,8 @@ export async function balancesProcessorHandler(
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  await BalancesProcPoolManager.checkNextAvailableBatchToProcess({
+    currentHeadBlockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
 }

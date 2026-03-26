@@ -83,18 +83,15 @@ export class SpotPriceProcPoolManager {
     });
   }
 
-  static async waitJobsToProcess({
-    fromBlock,
-    toBlock,
+  static async checkNextAvailableBatchToProcess({
+    currentHeadBlockNumber,
   }: {
-    fromBlock: number;
-    toBlock: number;
+    currentHeadBlockNumber: number;
   }) {
-    await MultiProcPoolManager.getInstance().waitJobsToProcess({
+    await MultiProcPoolManager.getInstance().checkNextAvailableBatchToProcess({
       queueName: PgBossQueueName.SPOT_PRICES_PROCESSOR,
       schemaName: appConfig.STATE_SCHEMA_NAME,
-      fromBlock,
-      toBlock,
+      currentHeadBlockNumber,
     });
   }
 }

@@ -35,18 +35,15 @@ export class PoolAndAssetMetricsProcPoolManager {
       toBlock,
     });
   }
-  static async waitJobsToProcess({
-    fromBlock,
-    toBlock,
+  static async checkNextAvailableBatchToProcess({
+    currentHeadBlockNumber,
   }: {
-    fromBlock: number;
-    toBlock: number;
+    currentHeadBlockNumber: number;
   }) {
-    await MultiProcPoolManager.getInstance().waitJobsToProcess({
+    await MultiProcPoolManager.getInstance().checkNextAvailableBatchToProcess({
       queueName: PgBossQueueName.POOL_AND_ASSET_METRICS_PROCESSOR,
       schemaName: appConfig.STATE_SCHEMA_NAME,
-      fromBlock,
-      toBlock,
+      currentHeadBlockNumber,
     });
   }
 }
