@@ -336,7 +336,7 @@ export class MultiProcPoolManager {
     queueName,
     currentHeadBlockNumber,
     schemaName,
-    states = ['active', 'retry', 'failed'], // Default to ['active'] for backward compatibility
+    states = ['active', 'retry', 'failed', 'completed'], // Default to ['active'] for backward compatibility
   }: {
     queueName: PgBossQueueName;
     currentHeadBlockNumber: number;
