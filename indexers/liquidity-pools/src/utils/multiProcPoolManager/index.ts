@@ -363,7 +363,7 @@ export class MultiProcPoolManager {
             AND (
               (state = 'created' AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}')
               OR
-              (state = ANY($4::pgboss.job_state[]) AND data->>'jobStatus' = '${MultiProcPoolJobProcessingStatus.READY_TO_PICK_UP}' AND data->>'consumedBy' = $2)
+              (state = ANY($4::pgboss.job_state[]) AND data->>'jobStatus' != '${MultiProcPoolJobProcessingStatus.PENDING}' AND data->>'consumedBy' = $2)
             )
             AND (data->>'blockNumber')::integer = $3
         
