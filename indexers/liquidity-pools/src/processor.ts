@@ -69,11 +69,15 @@ let processor = new SubstrateBatchProcessor()
     },
   })
   .includeAllBlocks()
-  .setFinalityConfirmation(200)
   .setBlockRange({
     from: appConfig.PROCESS_FROM_BLOCK,
     to: appConfig.PROCESS_TO_BLOCK > 0 ? appConfig.PROCESS_TO_BLOCK : undefined,
   });
+
+if (appConfig.BLOCKS_FINALITY_OFFSET && appConfig.BLOCKS_FINALITY_OFFSET > 0)
+  processor = processor.setFinalityConfirmation(
+    appConfig.BLOCKS_FINALITY_OFFSET
+  );
 
 if (appConfig.GATEWAY_HYDRATION_HTTPS && !appConfig.IGNORE_ARCHIVE_DATA_SOURCE)
   // Lookup archive by the network name in Subsquid registry

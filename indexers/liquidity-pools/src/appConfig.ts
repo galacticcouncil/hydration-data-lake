@@ -554,6 +554,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly PROCESS_TO_BLOCK: number = -1;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly BLOCKS_FINALITY_OFFSET: number = 0;
+
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_LBP_POOLS: boolean = true;
 
