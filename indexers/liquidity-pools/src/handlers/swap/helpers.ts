@@ -257,6 +257,7 @@ export async function handleSwapFeeHistoricalData({
   assetId: string;
   feeAmount: bigint;
 }) {
+  if (ctx.appConfig.ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION)
   await handleAccountAssetSwapFee({
     ctx,
     feeAmount,
@@ -265,10 +266,11 @@ export async function handleSwapFeeHistoricalData({
     block,
   });
 
+  if (ctx.appConfig.ENABLE_ASSET_SWAP_FEE_AGGREGATION)
   await handleAssetSwapFee({
     ctx,
     feeAmount,
-    assetId,
+  assetId,
     block,
   });
 }
