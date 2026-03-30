@@ -9,6 +9,7 @@ import {
 } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { SwappedExecutionTypeKind } from '../../utils/types';
+import { mergeUniqueArrayItems } from '../../utils/helpers';
 
 export function getRouteTradeFromCache({
   ctx,
@@ -77,33 +78,57 @@ export function processRouteTradeHop({
   }
 
   if (routeTradeEntity) {
-    routeTradeEntity.swaps = [...(routeTradeEntity.swaps || []), swap];
-    routeTradeEntity.allInvolvedAssetIds = [
-      ...new Set([
-        ...(routeTradeEntity.allInvolvedAssetIds || []),
-        ...swap.allInvolvedAssetIds,
-      ]).values(),
-    ];
-    routeTradeEntity.participantFillers = [
-      ...new Set([
-        ...(routeTradeEntity.participantFillers || []),
-        swap.fillerId,
-      ]).values(),
-    ];
-    routeTradeEntity.participantSwappers = [
-      ...new Set([
-        ...(routeTradeEntity.participantSwappers || []),
-        swap.swapperId,
-      ]).values(),
-    ];
-    routeTradeEntity.feeRecipients = [
-      ...new Set([
-        ...(routeTradeEntity.feeRecipients || []),
-        ...swap.fees
-          .map((swapFee) => swapFee.recipientId)
-          .filter((recipientId) => !!recipientId),
-      ]).values(),
-    ] as string[];
+    if (!routeTradeEntity.swaps) routeTradeEntity.swaps = [];
+    routeTradeEntity.swaps.push(swap);
+
+    // routeTradeEntity.allInvolvedAssetIds = [
+    //   ...new Set([
+    //     ...(routeTradeEntity.allInvolvedAssetIds || []),
+    //     ...swap.allInvolvedAssetIds,
+    //   ]).values(),
+    // ];
+    // routeTradeEntity.participantFillers = [
+    //   ...new Set([
+    //     ...(routeTradeEntity.participantFillers || []),
+    //     swap.fillerId,
+    //   ]).values(),
+    // ];
+    // routeTradeEntity.participantSwappers = [
+    //   ...new Set([
+    //     ...(routeTradeEntity.participantSwappers || []),
+    //     swap.swapperId,
+    //   ]).values(),
+    // ];
+    // routeTradeEntity.feeRecipients = [
+    //   ...new Set([
+    //     ...(routeTradeEntity.feeRecipients || []),
+    //     ...swap.fees
+    //       .map((swapFee) => swapFee.recipientId)
+    //       .filter((recipientId) => !!recipientId),
+    //   ]).values(),
+    // ] as string[];
+
+    routeTradeEntity.allInvolvedAssetIds = mergeUniqueArrayItems(
+      routeTradeEntity.allInvolvedAssetIds,
+      swap.allInvolvedAssetIds
+    );
+
+    routeTradeEntity.participantFillers = mergeUniqueArrayItems(
+      routeTradeEntity.participantFillers,
+      [swap.fillerId]
+    );
+
+    routeTradeEntity.participantSwappers = mergeUniqueArrayItems(
+      routeTradeEntity.participantSwappers,
+      [swap.swapperId]
+    );
+
+    routeTradeEntity.feeRecipients = mergeUniqueArrayItems(
+      routeTradeEntity.feeRecipients,
+      swap.fees
+        .map((fee) => fee.recipientId)
+        .filter((recipientId) => !!recipientId)
+    ) as string[];
 
     for (const assetOut of routeTradeEntity.outputs) {
       ctx.batchState.state.routeTradesOutputs.delete(assetOut.id);
@@ -123,10 +148,10 @@ export function processRouteTradeHop({
       routeTradeEntity.outputs.push(tradeOutput);
     }
 
-    const {
-      inputAssetIds,
-      outputAssetIds,
-    } = getRouterTradeInputOutputPoints(routeTradeEntity, ctx);
+    const { inputAssetIds, outputAssetIds } = getRouterTradeInputOutputPoints(
+      routeTradeEntity,
+      ctx
+    );
 
     routeTradeEntity.inputAssetIds = inputAssetIds;
     routeTradeEntity.outputAssetIds = outputAssetIds;
@@ -138,9 +163,13 @@ export function processRouteTradeHop({
 
   const newRouteTradeEntityId = `${swap.paraBlockHeight}-${routeId ?? swap.id}`;
 
-  const block = ctx.batchState.getParaBlockFromCacheByHeight(swap.paraBlockHeight);
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(
+    swap.paraBlockHeight
+  );
   if (!block) {
-    throw new Error(`Block not found in cache for height ${swap.paraBlockHeight}`);
+    throw new Error(
+      `Block not found in cache for height ${swap.paraBlockHeight}`
+    );
   }
 
   routeTradeEntity = new RoutedTrade({
@@ -180,10 +209,10 @@ export function processRouteTradeHop({
     return tradeOutput;
   });
 
-  const {
-    inputAssetIds,
-    outputAssetIds,
-  } = getRouterTradeInputOutputPoints(routeTradeEntity, ctx);
+  const { inputAssetIds, outputAssetIds } = getRouterTradeInputOutputPoints(
+    routeTradeEntity,
+    ctx
+  );
 
   routeTradeEntity.inputAssetIds = inputAssetIds;
   routeTradeEntity.outputAssetIds = outputAssetIds;
@@ -196,16 +225,8 @@ export function processRouteTradeHop({
 export function getRouterTradeInputOutputPoints(
   routedTrade: RoutedTrade,
   ctx: SqdProcessorContext<Store>
-): Pick<
-  RoutedTrade,
-  | 'inputAssetIds'
-  | 'outputAssetIds'
-> {
-  const res: Pick<
-    RoutedTrade,
-    | 'inputAssetIds'
-    | 'outputAssetIds'
-  > = {
+): Pick<RoutedTrade, 'inputAssetIds' | 'outputAssetIds'> {
+  const res: Pick<RoutedTrade, 'inputAssetIds' | 'outputAssetIds'> = {
     inputAssetIds: [],
     outputAssetIds: [],
   };
@@ -226,7 +247,7 @@ export function getRouterTradeInputOutputPoints(
   // Process outputs from last swap
   for (const outputAsset of orderedSwaps[orderedSwaps.length - 1].outputs) {
     const asset = assetsAll.get(outputAsset.assetId);
-    res.outputAssetIds.push(outputAsset.assetId);  // Fixed: was assetInfo.id
+    res.outputAssetIds.push(outputAsset.assetId); // Fixed: was assetInfo.id
   }
 
   return res;
