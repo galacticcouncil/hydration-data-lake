@@ -96,7 +96,11 @@ async function prefetchChainActivityTracesForSwaps(
     const chainActivityTraceId = ChainActivityTraceManager.getTraceIdRoot(
       callTraceId ?? eventMetadata.traceId
     );
-    if (chainActivityTraceId) idsToPrefetchSet.add(chainActivityTraceId);
+    if (
+      chainActivityTraceId &&
+      !ctx.batchState.state.chainActivityTraces.has(chainActivityTraceId)
+    )
+      idsToPrefetchSet.add(chainActivityTraceId);
   }
 
   const entities = await ctx.storeUtils.findWithLogs(

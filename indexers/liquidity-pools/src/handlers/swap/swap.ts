@@ -1,15 +1,10 @@
-import {
-  FindOptionsRelations,
-  In,
-} from 'typeorm';
+import { FindOptionsRelations, In } from 'typeorm';
 
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
 
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import {
-  OperationStackManager,
-} from '../../chainActivityTracingManagers/operationStackManager';
+import { OperationStackManager } from '../../chainActivityTracingManagers/operationStackManager';
 import {
   RoutedTrade,
   Swap,
@@ -67,13 +62,17 @@ export async function getSwap({
   }
   if (swap || (!swap && !fetchFromDb)) return swap ?? null;
 
-  swap = await ctx.storeUtils.findOneWithLogs(Swap, {
-    where: {
-      ...(id ? { id } : {}),
-      ...(eventTraceId ? { traceIds: In([eventTraceId]) } : {}),
+  swap = await ctx.storeUtils.findOneWithLogs(
+    Swap,
+    {
+      where: {
+        ...(id ? { id } : {}),
+        ...(eventTraceId ? { traceIds: In([eventTraceId]) } : {}),
+      },
+      relations,
     },
-    relations,
-  }, { className: 'Swap' });
+    { className: 'Swap' }
+  );
 
   if (!swap) return null;
   ctx.batchState.state.swaps.set(swap.id, swap);

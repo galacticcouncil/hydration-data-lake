@@ -10,14 +10,10 @@ import {
 import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
 import { SqdProcessorContext } from '../../processor';
 import { SwapFillerContextDetails } from '../../utils/types';
-import {
-  handleAccountAssetSwapFee,
-} from '../accounts/historicalAccountSwapFee';
+import { handleAccountAssetSwapFee } from '../accounts/historicalAccountSwapFee';
 import { handleAssetSwapFee } from '../assets/historicalAssetSwapFee';
 import { handleAssetVolumeUpdates } from '../assets/volume';
-import {
-  handleHsmAssetHistoricalData,
-} from '../pools/pools/hsmpool/hsmpoolAssetHistData';
+import { handleHsmAssetHistoricalData } from '../pools/pools/hsmpool/hsmpoolAssetHistData';
 import { getOrCreateLbppool } from '../pools/pools/lbpPool/lbpPool';
 import { getOrCreateStableswap } from '../pools/pools/stableswap/stablepool';
 import { getOrCreateXykPool } from '../pools/pools/xykPool/xykPool';
@@ -26,9 +22,7 @@ import {
   handleOmnipoolAssetVolumeUpdates,
   handleXykPoolVolumeUpdates,
 } from '../pools/volumes';
-import {
-  handleStablepoolVolumeUpdates,
-} from '../pools/volumes/stablepoolVolume';
+import { handleStablepoolVolumeUpdates } from '../pools/volumes/stablepoolVolume';
 
 export async function getFillerContextData(
   ctx: SqdProcessorContext<Store>,
@@ -250,18 +244,20 @@ export async function handleSwapFeeHistoricalData({
   assetId: string;
   feeAmount: bigint;
 }) {
-  await handleAccountAssetSwapFee({
-    ctx,
-    feeAmount,
-    assetId,
-    account,
-    block,
-  });
+  if (ctx.appConfig.ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION)
+    await handleAccountAssetSwapFee({
+      ctx,
+      feeAmount,
+      assetId,
+      account,
+      block,
+    });
 
-  await handleAssetSwapFee({
-    ctx,
-    feeAmount,
-  assetId,
-    block,
-  });
+  if (ctx.appConfig.ENABLE_ASSET_SWAP_FEE_AGGREGATION)
+    await handleAssetSwapFee({
+      ctx,
+      feeAmount,
+      assetId,
+      block,
+    });
 }

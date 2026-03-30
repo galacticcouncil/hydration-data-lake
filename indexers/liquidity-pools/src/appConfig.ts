@@ -719,6 +719,12 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ALL_ACCOUNT_BALANCES_INIT: boolean = false;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
+
   readonly redis: RedisConfig = RedisConfig.getInstance();
 
   readonly evm: EvmConfig = EvmConfig.getInstance();
