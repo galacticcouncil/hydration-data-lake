@@ -430,3 +430,14 @@ export function batchArray<T>(array: T[], batchSize: number): T[][] {
   }
   return batches;
 }
+
+export function mergeUniqueArrayItems<T>(
+  current: T[] | undefined,
+  incoming: Iterable<T>
+): T[] {
+  const set = new Set(current ?? []);
+  for (const item of incoming) {
+    if (!!item) set.add(item);
+  }
+  return Array.from(set.values());
+}
