@@ -97,47 +97,86 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
   await initAllAccountsOnColdStart({ ctx });
   console.timeEnd('initAllAccountsOnColdStart');
 
-  await Promise.all([
-    (async () => {
-      await handleRelayChainBlocks(ctx);
+  await handleRelayChainBlocks(ctx);
 
-      console.time('processExtrinsics');
-      await ChainActivityTraceManager.processExtrinsics(ctx);
-      console.timeEnd('processExtrinsics');
+  console.time('processExtrinsics');
+  await ChainActivityTraceManager.processExtrinsics(ctx);
+  console.timeEnd('processExtrinsics');
 
-      console.time('saveActivityTraceEntities');
-      await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
-      console.timeEnd('saveActivityTraceEntities');
+  console.time('saveActivityTraceEntities');
+  await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
+  console.timeEnd('saveActivityTraceEntities');
 
-      console.time('getParsedEventsData');
-      /**
-       * getParsedEventsData must be executed ONLY after
-       * ChainActivityTraceManager.processExtrinsics method execution, because
-       * getParsedEventsData needs already compiled traceIds.
-       */
-      parsedData = await getParsedEventsData(ctx);
-      console.timeEnd('getParsedEventsData');
+  console.time('getParsedEventsData');
+  /**
+   * getParsedEventsData must be executed ONLY after
+   * ChainActivityTraceManager.processExtrinsics method execution, because
+   * getParsedEventsData needs already compiled traceIds.
+   */
+  parsedData = await getParsedEventsData(ctx);
+  console.timeEnd('getParsedEventsData');
 
-      await StorageResolver.getInstance().init({
-        ctx: ctx,
-        blockNumberFrom: ctx.blocks[0].header.height,
-        blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
-      });
+  await StorageResolver.getInstance().init({
+    ctx: ctx,
+    blockNumberFrom: ctx.blocks[0].header.height,
+    blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
 
-      await prefetchOrInitAllBatchAccounts(ctx);
-      await prefetchOrInitAllAccountProcessingStatuses(ctx);
-    })(),
-    (async () => {
-      console.time('initContractInstances');
-      await MoneyMarketContractsManager.getInstance().initContractInstances({
-        ctx: ctx,
-        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-      });
-      console.timeEnd('initContractInstances');
-      return null;
-    })(),
-    prefetchGenericPersistentDataWithLogs(ctx, false),
-  ]);
+  await prefetchOrInitAllBatchAccounts(ctx);
+  await prefetchOrInitAllAccountProcessingStatuses(ctx);
+
+  console.time('initContractInstances');
+  await MoneyMarketContractsManager.getInstance().initContractInstances({
+    ctx: ctx,
+    blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+  });
+  console.timeEnd('initContractInstances');
+
+  console.time('prefetchGenericPersistentDataWithLogs');
+  await prefetchGenericPersistentDataWithLogs(ctx, false);
+  console.timeEnd('prefetchGenericPersistentDataWithLogs');
+
+  // await Promise.all([
+  //   (async () => {
+  //     await handleRelayChainBlocks(ctx);
+  //
+  //     console.time('processExtrinsics');
+  //     await ChainActivityTraceManager.processExtrinsics(ctx);
+  //     console.timeEnd('processExtrinsics');
+  //
+  //     console.time('saveActivityTraceEntities');
+  //     await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
+  //     console.timeEnd('saveActivityTraceEntities');
+  //
+  //     console.time('getParsedEventsData');
+  //     /**
+  //      * getParsedEventsData must be executed ONLY after
+  //      * ChainActivityTraceManager.processExtrinsics method execution, because
+  //      * getParsedEventsData needs already compiled traceIds.
+  //      */
+  //     parsedData = await getParsedEventsData(ctx);
+  //     console.timeEnd('getParsedEventsData');
+  //
+  //     await StorageResolver.getInstance().init({
+  //       ctx: ctx,
+  //       blockNumberFrom: ctx.blocks[0].header.height,
+  //       blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
+  //     });
+  //
+  //     await prefetchOrInitAllBatchAccounts(ctx);
+  //     await prefetchOrInitAllAccountProcessingStatuses(ctx);
+  //   })(),
+  //   (async () => {
+  //     console.time('initContractInstances');
+  //     await MoneyMarketContractsManager.getInstance().initContractInstances({
+  //       ctx: ctx,
+  //       blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+  //     });
+  //     console.timeEnd('initContractInstances');
+  //     return null;
+  //   })(),
+  //   prefetchGenericPersistentDataWithLogs(ctx, false),
+  // ]);
 
   if (!parsedData) throw new Error('parsedData is null');
 
