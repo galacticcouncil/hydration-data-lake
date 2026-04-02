@@ -4,8 +4,6 @@ import { AGGREGATOR_V3_ABI } from './abi/mmOracle/mmOracleAbi';
 import { PQueueManager } from '../pQueueManager';
 import { IPersistentMmOracleEntry } from '../../handlers/assets/assetHistoricalData/utils/offlineSdk/sdk/src';
 
-const appConfig = AppConfig.getInstance();
-
 export class MmOracleManager {
   private static instance: MmOracleManager;
   private readonly provider: ethers.providers.JsonRpcProvider;
@@ -18,6 +16,7 @@ export class MmOracleManager {
   }
 
   constructor() {
+    const appConfig = AppConfig.getInstance();
     this.provider = new ethers.providers.JsonRpcProvider(
       appConfig.RPC_URL_HTTPS || 'https://archive.rpc.hydration.cloud'
     );
