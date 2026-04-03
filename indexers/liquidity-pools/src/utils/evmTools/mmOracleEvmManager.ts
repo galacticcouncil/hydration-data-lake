@@ -3,6 +3,7 @@ import { AppConfig } from '../../appConfig';
 import { AGGREGATOR_V3_ABI } from './abi/mmOracle/mmOracleAbi';
 import { PQueueManager } from '../pQueueManager';
 import { IPersistentMmOracleEntry } from '../../handlers/assets/assetHistoricalData/utils/offlineSdk/sdk/src';
+import { retryAsync } from '../helpers';
 
 export class MmOracleManager {
   private static instance: MmOracleManager;
@@ -38,15 +39,43 @@ export class MmOracleManager {
     try {
       const aggregatorContract = this.getAggregatorContractInstance(address);
 
+      // const [data, decimals, block] = await Promise.all([
+      //   aggregatorContract.latestRoundData({
+      //     blockTag: blockHeight,
+      //   }),
+      //   aggregatorContract.decimals({
+      //     blockTag: blockHeight,
+      //   }),
+      //   this.provider.getBlock(blockHeight),
+      // ]);
       const [data, decimals, block] = await Promise.all([
-        aggregatorContract.latestRoundData({
-          blockTag: blockHeight,
+        retryAsync({
+          fn: async () =>
+            aggregatorContract.latestRoundData({
+              blockTag: blockHeight,
+            }),
+          throwErrorOnRetriesLimit: true,
+          fallbackResponse: 0,
+          tag: `aggregatorContract.latestRoundData.at(${blockHeight})`,
         }),
-        aggregatorContract.decimals({
-          blockTag: blockHeight,
+        retryAsync({
+          fn: async () =>
+            aggregatorContract.decimals({
+              blockTag: blockHeight,
+            }),
+          throwErrorOnRetriesLimit: true,
+          fallbackResponse: 0,
+          tag: `aggregatorContract.decimals.at(${blockHeight})`,
         }),
-        this.provider.getBlock(blockHeight),
+        retryAsync({
+          fn: async () => this.provider.getBlock(blockHeight),
+          throwErrorOnRetriesLimit: true,
+          fallbackResponse: {} as unknown as any,
+          tag: `provider.getBlock.at(${blockHeight})`,
+        }),
       ]);
+
+      if (decimals === 0) throw Error('Decimals is 0');
 
       const [roundId, answer, startedAt, updatedAt] = data;
       const updatedAtBlock =
