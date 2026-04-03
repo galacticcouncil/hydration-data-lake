@@ -353,13 +353,13 @@ export class MoneyMarketContractsManager {
     if (!contract) return null;
 
     try {
-      response.value = await retryAsync({
-        // passThrough: true,
-        fn: async () =>
-          (await contract.totalSupply({ blockTag: blockNumber })).toString(),
-        fallbackResponse: '0',
-        tag: `${address}.totalSupply.at(${blockNumber})`,
-      });
+        response.value = await retryAsync({
+          // passThrough: true,
+          fn: async () =>
+            (await contract.totalSupply({ blockTag: blockNumber })).toString(),
+          fallbackResponse: '0',
+          tag: `${address}.totalSupply.at(${blockNumber})`,
+        });
     } catch (e) {
       console.log(e);
     }

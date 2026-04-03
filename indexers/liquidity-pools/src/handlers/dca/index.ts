@@ -17,6 +17,8 @@ import {
   handleDcaTradeExecuted,
   handleDcaTradeFailed,
 } from './dcaScheduleExecution';
+import { DcaScheduleDataWithId } from '../../parsers/types/storage';
+import parsers from '../../parsers';
 
 export async function handleDcaSchedules(
   ctx: SqdProcessorContext<Store>,
@@ -24,11 +26,8 @@ export async function handleDcaSchedules(
 ) {
   if (!ctx.appConfig.PROCESS_DCA) return;
 
-  console.time(`handleDcaSchedules :: prefetchEntities`);
   await prefetchEntities(ctx, parsedEvents);
-  console.timeEnd(`handleDcaSchedules :: prefetchEntities`);
 
-  console.time(`handleDcaSchedules :: handleDcaScheduleCreated`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_Scheduled).values()
@@ -36,9 +35,7 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaScheduleCreated(ctx, eventData);
   }
-  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleCreated`);
 
-  console.time(`handleDcaSchedules :: handleDcaScheduleExecutionPlanned`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents
@@ -48,9 +45,7 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaScheduleExecutionPlanned(ctx, eventData);
   }
-  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleExecutionPlanned`);
 
-  console.time(`handleDcaSchedules :: handleDcaTradeExecuted`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_TradeExecuted).values()
@@ -58,9 +53,7 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaTradeExecuted(ctx, eventData);
   }
-  console.timeEnd(`handleDcaSchedules :: handleDcaTradeExecuted`);
 
-  console.time(`handleDcaSchedules :: handleDcaTradeFailed`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_TradeFailed).values()
@@ -68,9 +61,7 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaTradeFailed(ctx, eventData);
   }
-  console.timeEnd(`handleDcaSchedules :: handleDcaTradeFailed`);
 
-  console.time(`handleDcaSchedules :: handleDcaScheduleCompleted`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_Completed).values()
@@ -78,9 +69,7 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaScheduleCompleted(ctx, eventData);
   }
-  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleCompleted`);
 
-  console.time(`handleDcaSchedules :: handleDcaScheduleTerminated`);
   for (const eventData of getOrderedListByBlockNumber(
     Array.from(
       parsedEvents.getSectionByEventName(EventName.DCA_Terminated).values()
@@ -88,7 +77,6 @@ export async function handleDcaSchedules(
   )) {
     await handleDcaScheduleTerminated(ctx, eventData);
   }
-  console.timeEnd(`handleDcaSchedules :: handleDcaScheduleTerminated`);
 
   await saveDcaEntities(ctx);
 }
@@ -121,11 +109,11 @@ async function prefetchEntities(
   const scheduleIdsSet = new Set<string>();
   const scheduleExecutionsSet = new Set<string>();
 
-  for (const event of parsedEvents
-    .getSectionByEventName(EventName.DCA_Scheduled)
-    .values()) {
-    scheduleIdsSet.add(event.eventData.params.id.toString());
-  }
+  // for (const event of parsedEvents
+  //   .getSectionByEventName(EventName.DCA_Scheduled)
+  //   .values()) {
+  //   scheduleIdsForStoragePrefetchSet.add(event.eventData.params.id);
+  // }
 
   for (const event of parsedEvents
     .getSectionByEventName(EventName.DCA_Completed)
@@ -144,7 +132,7 @@ async function prefetchEntities(
     .values()) {
     const id = event.eventData.params.id.toString();
     scheduleIdsSet.add(id);
-    scheduleExecutionsSet.add(`${id}-${event.eventData.params.blockNumber}`);
+    // scheduleExecutionsSet.add(`${id}-${event.eventData.params.blockNumber}`);
   }
 
   for (const event of parsedEvents
@@ -182,9 +170,9 @@ async function prefetchEntities(
         DcaSchedule,
         {
           where: { id: In(scheduleIds) },
-          relations: {
-            executions: true,
-          },
+          // relations: {
+          //   executions: true,
+          // },
         },
         { className: 'DcaSchedule' }
       )
@@ -201,11 +189,11 @@ async function prefetchEntities(
           where: { id: In(scheduleExecutions) },
           relations: {
             schedule: true,
-            events: {
-              scheduleExecution: true,
-              swaps: true,
-              event: true,
-            },
+            // events: {
+            //   scheduleExecution: true,
+            //   swaps: true,
+            //   event: true,
+            // },
           },
         },
         { className: 'DcaScheduleExecution' }

@@ -150,6 +150,7 @@ import {
   OmnipoolNftCollectionId,
   OmnipoolYieldFarmDepositDataWithId,
   OmnipoolLMGetDepositsInput,
+  DcaGetSchedulesManyInput,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -622,6 +623,9 @@ export type StorageParserMethods = {
     getDcaSchedule: (
       args: DcaGetScheduleInput
     ) => Promise<DcaScheduleData | null>;
+    getDcaSchedulesMany: (
+      args: DcaGetSchedulesManyInput
+    ) => Promise<DcaScheduleData[] | null>;
   };
   otc: {
     getOtcOrder: (args: OtcGetOrderInput) => Promise<OtcOrderData | null>;

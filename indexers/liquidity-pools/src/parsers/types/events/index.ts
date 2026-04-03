@@ -5,6 +5,7 @@ import {
   TradeOperationType,
 } from '../../../model';
 import { SwappedExecutionTypeKind } from '../../../utils/types';
+import { DcaScheduleOrderData } from '../calls';
 
 export * from './xyk';
 export * from './evm';
