@@ -40,14 +40,33 @@ export class MmOracleManager {
       const aggregatorContract = this.getAggregatorContractInstance(address);
 
       const [data, decimals, block] = await Promise.all([
+        retryAsync({
+          fn: async () =>
         aggregatorContract.latestRoundData({
           blockTag: blockHeight,
         }),
+          throwErrorOnRetriesLimit: true,
+          fallbackResponse: 0,
+          tag: `aggregatorContract.latestRoundData.at(${blockHeight})`,
+        }),
+        retryAsync({
+          fn: async () =>
         aggregatorContract.decimals({
           blockTag: blockHeight,
         }),
-        this.provider.getBlock(blockHeight),
+          throwErrorOnRetriesLimit: true,
+          fallbackResponse: 0,
+          tag: `aggregatorContract.decimals.at(${blockHeight})`,
+        }),
+        retryAsync({
+          fn: async () => this.provider.getBlock(blockHeight),
+          throwErrorOnRetriesLimit: true,
+          fallbackResponse: {} as unknown as any,
+          tag: `provider.getBlock.at(${blockHeight})`,
+        }),
       ]);
+
+      if (decimals === 0) throw Error('Decimals is 0');
 
       const [roundId, answer, startedAt, updatedAt] = data;
       const updatedAtBlock =
