@@ -105,7 +105,9 @@ async function runProcessor() {
         ProcessorContext<Store>,
         'batchState' | 'appConfig'
       > = ctx;
-      const batchState = new BatchState();
+      const batchState = new BatchState(
+        ctxWithBatchState as ProcessorContext<Store>
+      );
       (ctxWithBatchState as ProcessorContext<Store>).batchState = batchState;
       (ctxWithBatchState as ProcessorContext<Store>).appConfig =
         AppConfig.getInstance();
