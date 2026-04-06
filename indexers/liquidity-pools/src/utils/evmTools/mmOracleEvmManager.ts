@@ -4,6 +4,8 @@ import { AGGREGATOR_V3_ABI } from './abi/mmOracle/mmOracleAbi';
 import { PQueueManager } from '../pQueueManager';
 import { IPersistentMmOracleEntry } from '../../handlers/assets/assetHistoricalData/utils/offlineSdk/sdk/src';
 import { retryAsync } from '../helpers';
+import { SqdProcessorContext } from '../../processor';
+import { Store } from '@subsquid/typeorm-store';
 
 export class MmOracleManager {
   private static instance: MmOracleManager;
@@ -31,10 +33,12 @@ export class MmOracleManager {
     address,
     blockHeight,
     blockTimeInSec = 6,
+    ctx,
   }: {
     blockHeight: number;
     address: string;
     blockTimeInSec?: number;
+    ctx: SqdProcessorContext<Store>;
   }): Promise<IPersistentMmOracleEntry | null> {
     try {
       const aggregatorContract = this.getAggregatorContractInstance(address);
@@ -77,9 +81,22 @@ export class MmOracleManager {
 
       if (decimals === 0) throw Error('Decimals is 0');
 
+      let evmBlockNumber = block?.number;
+      let evmBlockTimestamp = block?.timestamp;
+
+      if (!block) {
+        const substrateBlock =
+          ctx.batchState.getBlockHeaderByBlockHeight(blockHeight);
+        evmBlockNumber = blockHeight;
+
+        if (!substrateBlock.timestamp) throw Error('No timestamp');
+
+        evmBlockTimestamp = substrateBlock.timestamp / 1000;
+      }
+
       const [roundId, answer, startedAt, updatedAt] = data;
       const updatedAtBlock =
-        block.number - (block.timestamp - updatedAt) / blockTimeInSec;
+        evmBlockNumber - (evmBlockTimestamp - updatedAt) / blockTimeInSec;
       const updatedAtNum = Math.round(updatedAtBlock);
 
       return {
