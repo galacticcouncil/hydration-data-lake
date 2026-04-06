@@ -549,6 +549,7 @@ export class OfflineTradeRouterManagerHelper {
           (await MmOracleManager.getInstance().getAggregatorMmOracleData({
             address,
             blockHeight,
+            ctx
           }));
 
         if (oracleData)
