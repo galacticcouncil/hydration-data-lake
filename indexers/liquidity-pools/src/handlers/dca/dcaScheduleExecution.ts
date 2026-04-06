@@ -63,9 +63,9 @@ export async function handleDcaScheduleExecutionPlanned(
   const scheduleEntity = await getDcaSchedule({
     ctx,
     id: eventParams.id.toString(),
-    relations: {
-      executions: true,
-    },
+    // relations: {
+    //   executions: true,
+    // },
   });
 
   if (!scheduleEntity) {
@@ -77,6 +77,7 @@ export async function handleDcaScheduleExecutionPlanned(
   let plannedExecution = await getDcaScheduleExecution({
     ctx,
     id: executionId,
+    relations: {},
   });
 
   if (!plannedExecution) {
@@ -104,10 +105,10 @@ export async function handleDcaScheduleExecutionPlanned(
     ],
   });
 
-  plannedExecution.events = [
-    ...(plannedExecution.events || []),
-    executionAction,
-  ];
+  // plannedExecution.events = [
+  //   ...(plannedExecution.events || []),
+  //   executionAction,
+  // ];
 
   ctx.batchState.state.dcaScheduleExecutions.set(
     plannedExecution.id,
@@ -134,7 +135,7 @@ export async function handleDcaTradeExecuted(
     id: `${eventParams.id}-${eventMetadata.blockHeader.height}`,
     relations: {
       schedule: true,
-      events: true,
+      // events: true,
     },
   });
 
@@ -158,10 +159,10 @@ export async function handleDcaTradeExecuted(
     traceIds,
   });
 
-  scheduleExecutionEntity.events = [
-    ...(scheduleExecutionEntity.events || []),
-    executionEvents,
-  ];
+  // scheduleExecutionEntity.events = [
+  //   ...(scheduleExecutionEntity.events || []),
+  //   executionEvents,
+  // ];
 
   const state = ctx.batchState.state;
 
@@ -229,10 +230,10 @@ export async function handleDcaTradeFailed(
     traceIds,
   });
 
-  scheduleExecutionEntity.events = [
-    ...(scheduleExecutionEntity.events || []),
-    executionAction,
-  ];
+  // scheduleExecutionEntity.events = [
+  //   ...(scheduleExecutionEntity.events || []),
+  //   executionAction,
+  // ];
 
   const state = ctx.batchState.state;
 

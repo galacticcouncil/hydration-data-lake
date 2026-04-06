@@ -216,37 +216,45 @@ export async function singleFlowAllInOneProcessor(
   await handleAssetHistoricalData({ ctx });
   console.timeEnd('handleAssetHistoricalData');
 
-  console.time('handleAavepoolHistoricalData');
-  await handleAavepoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleAavepoolHistoricalData');
+  console.time('Historical data Promise.all');
+  await Promise.all([
+    (async () => {
+      console.time('handleAavepoolHistoricalData');
+      await handleAavepoolHistoricalData(ctx, parsedData);
+      console.timeEnd('handleAavepoolHistoricalData');
 
-  console.time('handleStableswapHistoricalData');
-  await handleStableswapHistoricalData(ctx, parsedData);
-  console.timeEnd('handleStableswapHistoricalData');
+      console.time('handleOmnipoolHistoricalData');
+      await handleOmnipoolHistoricalData(ctx, parsedData);
+      console.timeEnd('handleOmnipoolHistoricalData');
 
-  console.time('handleOmnipoolHistoricalData');
-  await handleOmnipoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleOmnipoolHistoricalData');
+      console.time('handleLbppoolHistoricalData');
+      await handleLbppoolHistoricalData(ctx, parsedData);
+      console.timeEnd('handleLbppoolHistoricalData');
 
-  console.time('handleXykPoolHistoricalData');
-  await handleXykPoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleXykPoolHistoricalData');
+      console.time('handleConstantsHistoricalData');
+      await handleConstantsHistoricalData(ctx);
+      console.timeEnd('handleConstantsHistoricalData');
 
-  console.time('handleLbppoolHistoricalData');
-  await handleLbppoolHistoricalData(ctx, parsedData);
-  console.timeEnd('handleLbppoolHistoricalData');
-
-  console.time('handleConstantsHistoricalData');
-  await handleConstantsHistoricalData(ctx);
-  console.timeEnd('handleConstantsHistoricalData');
+      console.time('handleStableswapHistoricalData');
+      await handleStableswapHistoricalData(ctx, parsedData);
+      console.timeEnd('handleStableswapHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleXykPoolHistoricalData');
+      await handleXykPoolHistoricalData(ctx, parsedData);
+      console.timeEnd('handleXykPoolHistoricalData');
+    })(),
+    (async () => {
+      console.time('handleOracles');
+      await handleOracles(ctx);
+      console.timeEnd('handleOracles');
+    })(),
+  ]);
+  console.timeEnd('Historical data Promise.all');
 
   console.time('handleTransactionPaymentHistoricalData');
   await handleTransactionPaymentHistoricalData(ctx);
   console.timeEnd('handleTransactionPaymentHistoricalData');
-
-  console.time('handleOracles');
-  await handleOracles(ctx);
-  console.timeEnd('handleOracles');
 
   console.time('handleAssetSpotPricesHistoricalData');
   await handleAssetSpotPricesHistoricalData({ ctx });

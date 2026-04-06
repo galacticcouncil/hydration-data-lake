@@ -14,9 +14,11 @@ export async function processPoolsTvlNormalized({
   blockNumbersToProcess?: number[];
   ctx: SqdProcessorContext<Store>;
 }) {
-  processXykPoolsNormalizedTvl({ ctx, blockNumbersToProcess });
-  processLbppoolsNormalizedTvl({ ctx, blockNumbersToProcess });
-  processStableswapNormalizedTvl({ ctx, blockNumbersToProcess });
-  processOmnipoolNormalizedTvl({ ctx, blockNumbersToProcess });
-  await processAavepoolsNormalizedTvl({ ctx, blockNumbersToProcess });
+  await Promise.all([
+    processXykPoolsNormalizedTvl({ ctx, blockNumbersToProcess }),
+    processLbppoolsNormalizedTvl({ ctx, blockNumbersToProcess }),
+    processStableswapNormalizedTvl({ ctx, blockNumbersToProcess }),
+    processOmnipoolNormalizedTvl({ ctx, blockNumbersToProcess }),
+    processAavepoolsNormalizedTvl({ ctx, blockNumbersToProcess }),
+  ]);
 }

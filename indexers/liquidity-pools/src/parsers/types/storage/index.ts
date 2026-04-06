@@ -177,6 +177,11 @@ export type AccountDataMultiple = Array<{
   data: AccountData;
 }>;
 
+export type DcaScheduleDataWithId = {
+  scheduleId: number;
+  data: DcaScheduleData | null;
+};
+
 export type DcaScheduleData = DcaScheduleCallData;
 
 export type OtcOrderData = {
@@ -347,6 +352,10 @@ export type TokensGetTokensTotalIssuanceInput = {
 
 export type DcaGetScheduleInput = {
   scheduleId: number;
+  block: BlockHeader;
+};
+export type DcaGetSchedulesManyInput = {
+  scheduleIds: number[];
   block: BlockHeader;
 };
 export type OtcGetOrderInput = {

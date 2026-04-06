@@ -27,12 +27,19 @@ export async function processAavepoolsNormalizedTvl({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const poolHistData of aaveoolHistDataByBatchList) {
-    const reserveAsset = poolHistData.pool.reserveAssetId ? await getOrCreateAsset({
-      assetRegistryId: poolHistData.pool.reserveAssetId, blockHeader: undefined, ctx, ensure: true
-    }) : null;
+    const reserveAsset = poolHistData.pool.reserveAssetId
+      ? await getOrCreateAsset({
+          assetRegistryId: poolHistData.pool.reserveAssetId,
+          blockHeader: undefined,
+          ctx,
+          ensure: true,
+        })
+      : null;
 
-    if (!reserveAsset){ 
-      console.log(`Reserve asset not found for Aavepool ${poolHistData.pool.id}`);
+    if (!reserveAsset) {
+      console.log(
+        `Reserve asset not found for Aavepool ${poolHistData.pool.id}`
+      );
       continue;
     }
 
@@ -50,8 +57,10 @@ export async function processAavepoolsNormalizedTvl({
       continue;
     }
 
-    if(!reserveAsset.decimals) {
-      console.log(`Reserve asset decimals not found for asset ${reserveAsset.id}. Skipping.`);
+    if (!reserveAsset.decimals) {
+      console.log(
+        `Reserve asset decimals not found for asset ${reserveAsset.id}. Skipping.`
+      );
       continue;
     }
 
