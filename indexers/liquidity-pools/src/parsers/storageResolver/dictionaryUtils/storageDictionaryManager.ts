@@ -1100,16 +1100,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
-    //   `${poolAddress}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-    // const asset = node.xykpoolAssetsDataByPoolId.nodes.find(
-    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
-    // );
-    // if (!asset) return null;
-
     const asset = this.getBatchStorageStatePart(ProcessingTopic.XYK)
       .getAssetsByParentId(`${poolAddress}-${block.height}`)
       ?.get(assetId);
@@ -1131,6 +1121,16 @@ export class StorageDictionaryManager extends QueriesHelper {
       feeFrozen: BigInt(balances.feeFrozen ?? 0),
       flags: BigInt(balances.flags ?? 0),
     };
+  }
+
+  isXykPoolAssetInfoAvailable({
+    poolAddress,
+    assetId,
+    block,
+  }: GetPoolAssetInfoInput): boolean {
+    return !!this.getBatchStorageStatePart(ProcessingTopic.XYK)
+      .getAssetsByParentId(`${poolAddress}-${block.height}`)
+      ?.has(assetId);
   }
 
   getLbpPoolData({

@@ -135,7 +135,7 @@ export default {
           tokens.getTokenBalancesMany,
         ],
       }),
-
+    getTokenBalancesManyStorageCall: tokens.getTokenBalancesMany,
     getTokenTotalIssuance: (
       args: TokensGetTokenTotalIssuanceInput
     ): Promise<bigint | null> =>

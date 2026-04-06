@@ -487,6 +487,9 @@ export type StorageParserMethods = {
     getTokenBalancesMany: (
       args: GetTokenBalancesManyInput
     ) => Promise<TokenAccountBalancesWithAccountId[]>;
+    getTokenBalancesManyStorageCall: (
+      args: GetTokenBalancesManyInput
+    ) => Promise<TokenAccountBalancesWithAccountId[]>;
   };
   assetRegistry: {
     getAsset: (
