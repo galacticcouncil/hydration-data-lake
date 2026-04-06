@@ -2,7 +2,8 @@ import { Contract, ContractInterface, ethers, BigNumber } from 'ethers';
 import { AppConfig } from '../../appConfig';
 import { AGGREGATOR_V3_ABI } from './abi/mmOracle/mmOracleAbi';
 import { PQueueManager } from '../pQueueManager';
-import { IPersistentMmOracleEntry } from '../../handlers/assets/assetHistoricalData/utils/offlineSdk/sdk/src';
+import type { pool } from '@galacticcouncil/sdk-next';
+type IPersistentMmOracleEntry = pool.IPersistentMmOracleEntry;
 
 export class MmOracleManager {
   private static instance: MmOracleManager;

@@ -79,6 +79,7 @@ export async function fetchStableswapHistoricalData({
   ].filter(
     (histData) =>
       histData.paraBlockHeight === blockNumber &&
+      histData.pool != null &&
       allActiveStablewaps.has(histData.pool.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
@@ -253,6 +254,7 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
     (histData) =>
       histData.paraBlockHeight > blockFromNumber - 1 &&
       histData.paraBlockHeight < blockToNumber + 1 &&
+      histData.pool != null &&
       allActiveStablewaps.has(histData.pool.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 

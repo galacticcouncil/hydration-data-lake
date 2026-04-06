@@ -1,7 +1,7 @@
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
 
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, PoolType } from '@galacticcouncil/sdk';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
 
@@ -25,7 +25,7 @@ import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedD
 import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
-import { Amount, Hop, PoolBase, PoolType } from './utils/offlineSdk/sdk/src';
+import type { Amount } from '@galacticcouncil/sdk-next';
 
 const appConfig = AppConfig.getInstance();
 
@@ -220,11 +220,10 @@ async function processAssetSpotPrices({
 
             priceWithRoute = {
               price: {
-                amount: BigNumber(1000000),
+                amount: BigInt(1000000),
                 decimals: baseAssetEntity.decimals || 6,
               },
               route: [],
-              routeKey: 'ASSET_PRICE_BASE_ASSET_ID',
             };
             if (!priceWithRoute) continue;
           } else if (
@@ -274,7 +273,7 @@ async function processAssetSpotPrices({
           );
         }
 
-        const decoratedRoute = getPriceRouteDecorated(route);
+        const decoratedRoute = getPriceRouteDecorated(route as any);
         const priceRoute = getOrCreatePriceRoute(decoratedRoute, ctx);
 
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
@@ -284,10 +283,10 @@ async function processAssetSpotPrices({
             assetInId: asset.id,
             assetOutId: assetOut.id,
 
-            price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
+            price: price.amount,
 
             priceNormalised: fromExponentialToDecimalNotation(
-              price.amount.toFixed(18, BigNumber.ROUND_HALF_UP),
+              price.amount.toString(),
               price.decimals
             ).toFixed(18, BigNumber.ROUND_HALF_UP),
             priceRoute,
@@ -487,17 +486,20 @@ function getXykPoolsIndexedByInterimAssetPair({
       (pool.assetAId === interimAssetId && xykPoolAssets.has(pool.assetBId)) ||
       (pool.assetBId === interimAssetId && xykPoolAssets.has(pool.assetAId))
     ) {
-      if (pool.assetAId === interimAssetId) pools.set(pool.assetBId, pool);
-      pools.set(pool.assetAId, pool);
+      const targetId =
+        pool.assetAId === interimAssetId ? pool.assetBId : pool.assetAId;
+      pools.set(targetId, pool);
     } else if (
       (pool.assetAId === interimFallbackAssetId &&
         xykPoolAssets.has(pool.assetBId)) ||
       (pool.assetBId === interimFallbackAssetId &&
         xykPoolAssets.has(pool.assetAId))
     ) {
-      if (pool.assetAId === interimFallbackAssetId)
-        pools.set(pool.assetBId, pool);
-      pools.set(pool.assetAId, pool);
+      const targetId =
+        pool.assetAId === interimFallbackAssetId
+          ? pool.assetBId
+          : pool.assetAId;
+      if (!pools.has(targetId)) pools.set(targetId, pool);
     }
   }
 

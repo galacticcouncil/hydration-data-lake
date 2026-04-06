@@ -1,18 +1,21 @@
+import {
+  pool,
+  sor,
+} from '@galacticcouncil/sdk-next';
 import { Store } from '@subsquid/typeorm-store';
 
+import { AppConfig } from '../../../../../appConfig';
 import { SqdProcessorContext } from '../../../../../processor';
 import {
-  Hop,
-  Amount,
-  IPersistentDataInput,
-  OfflinePoolService,
-  OfflinePoolUtils,
-  TradeRouter,
-} from '../offlineSdk/sdk/src';
-import { OfflineTradeRouterManagerHelper } from './offlineTradeRouterManagerHelper';
-import { AppConfig } from '../../../../../appConfig';
+  OfflineTradeRouterManagerHelper,
+} from './offlineTradeRouterManagerHelper';
 
-// } from '@galacticcouncil/sdk';
+const OfflinePoolService = pool.OfflinePoolService;
+const OfflinePoolUtils = pool.OfflinePoolUtils;
+const TradeRouter = sor.TradeRouter;
+type TradeRouterInstance = InstanceType<typeof TradeRouter>;
+type Hop = pool.Hop;
+type IPersistentDataInput = pool.IPersistentDataInput;
 
 export class RouterCacheManager {
   private static instance: RouterCacheManager;
@@ -37,7 +40,7 @@ const appConfig = AppConfig.getInstance();
 export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
   private static instance: OfflineTradeRouterManager;
 
-  private routerInstancesMap: Map<number, TradeRouter> = new Map();
+  private routerInstancesMap: Map<number, TradeRouterInstance> = new Map();
 
   static getInstance(): OfflineTradeRouterManager {
     if (!OfflineTradeRouterManager.instance) {
@@ -49,7 +52,7 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
     super();
   }
 
-  getRouterForBlock(blockNumber: number): TradeRouter | null {
+  getRouterForBlock(blockNumber: number): TradeRouterInstance | null {
     return this.routerInstancesMap.get(blockNumber) ?? null;
   }
 
@@ -81,7 +84,7 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
 
     if (!block) throw new Error(`Block ${blockNumber} not found in cache`);
 
-    const persistentDataSource: IPersistentDataInput = {
+    const persistentDataSource = {
       meta: {
         paraBlockNumber: block.height,
         paraBlockHash: block.hash,
@@ -127,8 +130,8 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
     };
 
     const offlinePoolService = new OfflinePoolService(
-      OfflinePoolUtils.fromPersistentDataToDataSource(persistentDataSource)
-    );
+      OfflinePoolUtils.fromPersistentDataToDataSource(persistentDataSource as unknown as IPersistentDataInput)
+    ).withOmnipool().withXyk().withStableswap().withLbp().withAave();
     const router = new TradeRouter(offlinePoolService);
 
     this.routerInstancesMap.set(block.height, router);
@@ -146,7 +149,7 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
   }: {
     assetInId: string;
     assetOutId: string;
-    router?: TradeRouter;
+    router?: TradeRouterInstance;
     blockHeight?: number;
   }) {
     if (!router && !blockHeight)
@@ -156,32 +159,30 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
 
     if (!routerInstance) throw new Error('Router not found');
 
-    let priceWithRoute:
-      | { price: Amount; route: Hop[]; routeKey: string }
-      | undefined;
+    const assetInNum = Number(assetInId);
+    const assetOutNum = Number(assetOutId);
 
-    if (!appConfig.ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION)
-      return routerInstance.getBestSpotPriceWitRoute(assetInId, assetOutId);
-
-    try {
-      priceWithRoute = await routerInstance.getBestSpotPriceWitRoute(
-        assetInId,
-        assetOutId,
-        RouterCacheManager.getInstance().mlrCached
-      );
-    } catch (e) {
-      priceWithRoute = await routerInstance.getBestSpotPriceWitRoute(
-        assetInId,
-        assetOutId
-      );
+    if (!appConfig.ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION) {
+      const price = await routerInstance.getSpotPrice(assetInNum, assetOutNum);
+      if (!price) return undefined;
+      const route = await routerInstance.getMostLiquidRoute(assetInNum, assetOutNum);
+      return { price, route };
     }
 
-    if (priceWithRoute)
-      RouterCacheManager.getInstance().mlrCached.set(
-        priceWithRoute?.routeKey,
-        priceWithRoute.route
-      );
+    const cacheKey = `${assetInId}-${assetOutId}`;
+    const cachedRoute = RouterCacheManager.getInstance().mlrCached.get(cacheKey);
 
-    return priceWithRoute;
+    let route: Hop[];
+    if (cachedRoute) {
+      route = cachedRoute;
+    } else {
+      route = await routerInstance.getMostLiquidRoute(assetInNum, assetOutNum);
+      if (route?.length) RouterCacheManager.getInstance().mlrCached.set(cacheKey, route);
+    }
+
+    const price = await routerInstance.getSpotPrice(assetInNum, assetOutNum);
+    if (!price) return undefined;
+
+    return { price, route };
   }
 }
