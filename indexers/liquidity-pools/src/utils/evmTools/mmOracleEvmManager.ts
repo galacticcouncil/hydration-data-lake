@@ -31,29 +31,40 @@ export class MmOracleManager {
     address,
     blockHeight,
     blockTimeInSec = 6,
+    ctx,
   }: {
     blockHeight: number;
     address: string;
     blockTimeInSec?: number;
+    ctx: SqdProcessorContext<Store>;
   }): Promise<IPersistentMmOracleEntry | null> {
     try {
       const aggregatorContract = this.getAggregatorContractInstance(address);
 
+      // const [data, decimals, block] = await Promise.all([
+      //   aggregatorContract.latestRoundData({
+      //     blockTag: blockHeight,
+      //   }),
+      //   aggregatorContract.decimals({
+      //     blockTag: blockHeight,
+      //   }),
+      //   this.provider.getBlock(blockHeight),
+      // ]);
       const [data, decimals, block] = await Promise.all([
         retryAsync({
           fn: async () =>
-        aggregatorContract.latestRoundData({
-          blockTag: blockHeight,
-        }),
+            aggregatorContract.latestRoundData({
+              blockTag: blockHeight,
+            }),
           throwErrorOnRetriesLimit: true,
           fallbackResponse: 0,
           tag: `aggregatorContract.latestRoundData.at(${blockHeight})`,
         }),
         retryAsync({
           fn: async () =>
-        aggregatorContract.decimals({
-          blockTag: blockHeight,
-        }),
+            aggregatorContract.decimals({
+              blockTag: blockHeight,
+            }),
           throwErrorOnRetriesLimit: true,
           fallbackResponse: 0,
           tag: `aggregatorContract.decimals.at(${blockHeight})`,
@@ -68,9 +79,22 @@ export class MmOracleManager {
 
       if (decimals === 0) throw Error('Decimals is 0');
 
+      let evmBlockNumber = block?.number;
+      let evmBlockTimestamp = block?.timestamp;
+
+      if (!block) {
+        const substrateBlock =
+          ctx.batchState.getBlockHeaderByBlockHeight(blockHeight);
+        evmBlockNumber = blockHeight;
+
+        if (!substrateBlock.timestamp) throw Error('No timestamp');
+
+        evmBlockTimestamp = substrateBlock.timestamp / 1000;
+      }
+
       const [roundId, answer, startedAt, updatedAt] = data;
       const updatedAtBlock =
-        block.number - (block.timestamp - updatedAt) / blockTimeInSec;
+        evmBlockNumber - (evmBlockTimestamp - updatedAt) / blockTimeInSec;
       const updatedAtNum = Math.round(updatedAtBlock);
 
       return {
