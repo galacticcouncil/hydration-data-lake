@@ -121,16 +121,24 @@ export async function handleXykPoolHistoricalData(
 ) {
   const predefinedEntities: XykpoolHistoricalData[] = [];
 
-  const allPoolAddresses = Array.from(
-    ctx.batchState.state.xykAllBatchPools.keys()
-  );
+  const allPoolAddresses: string[] = [];
+  const allPoolAddressesWithNativeToken: string[] = [];
+
+  for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
+    if (pool.isDestroyed) continue;
+    if (pool.assetAId === '0' || pool.assetBId === '0') {
+      allPoolAddressesWithNativeToken.push(pool.id);
+    }
+    allPoolAddresses.push(pool.id);
+  }
+
   await pMap(
     ctx.blocks,
     async ({ header: blockHeader }) => {
       const nativeTokenBalancesMap = new Map(
         (
           await parsers.storage.system.getNativeTokenBalanceMany({
-            accountIds: allPoolAddresses,
+            accountIds: allPoolAddressesWithNativeToken,
             block: blockHeader,
           })
         )
