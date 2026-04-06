@@ -54,7 +54,11 @@ export class StorageResolver extends StorageResolverHelpersManager {
    *                      if previous one returned null or failed
    */
   async resolveStorageData<
-    Args extends { block: BlockHeader; skipCache?: boolean },
+    Args extends {
+      block: BlockHeader;
+      skipCache?: boolean;
+      allowZeroBalance?: boolean;
+    },
     R,
   >({
     pallet,
@@ -261,9 +265,13 @@ export class StorageResolver extends StorageResolverHelpersManager {
               args as unknown as GetPoolAssetInfoInput // TODO fix types
             ) as R;
 
+            // TODO fix type casting
             if (
-              resp &&
-              this.isFreeBalanceExisting(resp as unknown as AccountData) // TODO fix type casting
+              (resp &&
+                this.isFreeBalanceExisting(resp as unknown as AccountData)) ||
+              (resp &&
+                !this.isFreeBalanceExisting(resp as unknown as AccountData) &&
+                args.allowZeroBalance)
             )
               return resp;
 

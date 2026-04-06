@@ -306,6 +306,7 @@ export type GetPoolAssetInfoInput = {
   poolAddress?: string;
   assetId: number;
   block: BlockHeader;
+  allowZeroBalance?: boolean;
 };
 
 export type XykGetPoolDataInput = {

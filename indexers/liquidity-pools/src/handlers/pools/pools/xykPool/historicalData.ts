@@ -4,13 +4,16 @@ import { LessThan } from 'typeorm';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
 
-import { XykpoolHistoricalData } from '../../../../model';
+import { Xykpool, XykpoolHistoricalData } from '../../../../model';
 import parsers from '../../../../parsers';
 import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import { SqdProcessorContext } from '../../../../processor';
 import { splitIntoBatches } from '../../../../utils/helpers';
 import { getOrCreateXykPool } from './xykPool';
 import { LatestProcessedDataCacheManager } from '../../../../utils/latestProcessedDataCacheManager';
+import { StorageResolver } from '../../../../parsers/storageResolver';
+import { getOrCreateAsset } from '../../../assets/asset';
+
 //
 // export async function handleXykPoolHistoricalData(
 //   ctx: SqdProcessorContext<Store>,
@@ -121,8 +124,8 @@ export async function handleXykPoolHistoricalData(
 ) {
   const predefinedEntities: XykpoolHistoricalData[] = [];
 
-  const allPoolAddresses: string[] = [];
-  const allPoolAddressesWithNativeToken: string[] = [];
+  let allPoolAddresses: string[] = [];
+  let allPoolAddressesWithNativeToken: string[] = [];
 
   for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
     if (pool.isDestroyed) continue;
@@ -135,44 +138,151 @@ export async function handleXykPoolHistoricalData(
   await pMap(
     ctx.blocks,
     async ({ header: blockHeader }) => {
-      const nativeTokenBalancesMap = new Map(
-        (
-          await parsers.storage.system.getNativeTokenBalanceMany({
-            accountIds: allPoolAddressesWithNativeToken,
-            block: blockHeader,
-          })
-        )
-          .filter((balance) => !!balance.data)
-          .map((balance) => [balance.accountId, balance.data])
-      );
-
-      const otherTokenBalancesMap = new Map(
-        (
-          await parsers.storage.tokens.getTokenBalancesMany({
-            accountIds: allPoolAddresses,
-            block: blockHeader,
-          })
-        ).map((balance) => [
-          balance.accountId,
-          new Map(
-            balance.assetBalances.map((assetBal) => [
-              assetBal.assetId,
-              assetBal.data,
-            ])
-          ),
-        ])
-      );
+      const poolsWithStorageDictionaryData: Map<string, Xykpool> = new Map();
 
       for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
-        const assetABalance =
-          pool.assetAId === '0'
-            ? nativeTokenBalancesMap.get(pool.id)?.free
-            : otherTokenBalancesMap.get(pool.id)?.get(pool.assetAId)?.free;
+        if (pool.isDestroyed) continue;
 
-        const assetBBalance =
-          pool.assetBId === '0'
-            ? nativeTokenBalancesMap.get(pool.id)?.free
-            : otherTokenBalancesMap.get(pool.id)?.get(pool.assetBId)?.free;
+        const assetAEntity = await getOrCreateAsset({
+          id: pool.assetAId,
+          ctx,
+          ensure: false,
+        });
+        const assetBEntity = await getOrCreateAsset({
+          id: pool.assetBId,
+          ctx,
+          ensure: false,
+        });
+
+        if (
+          !assetAEntity ||
+          !assetAEntity.assetRegistryId ||
+          !assetBEntity ||
+          !assetBEntity.assetRegistryId
+        )
+          continue;
+
+        const isStDictDataAvailableAssetA =
+          StorageResolver.getInstance().storageDictionaryManager?.isXykPoolAssetInfoAvailable(
+            {
+              poolAddress: pool.id,
+              block: blockHeader,
+              assetId: +assetAEntity.assetRegistryId,
+            }
+          );
+        const isStDictDataAvailableAssetB =
+          StorageResolver.getInstance().storageDictionaryManager?.isXykPoolAssetInfoAvailable(
+            {
+              poolAddress: pool.id,
+              block: blockHeader,
+              assetId: +assetBEntity.assetRegistryId,
+            }
+          );
+
+        if (isStDictDataAvailableAssetA && isStDictDataAvailableAssetB)
+          poolsWithStorageDictionaryData.set(pool.id, pool);
+      }
+
+      allPoolAddressesWithNativeToken = allPoolAddressesWithNativeToken.filter(
+        (id) => !poolsWithStorageDictionaryData.has(id)
+      );
+
+      allPoolAddresses = allPoolAddresses.filter(
+        (id) => !poolsWithStorageDictionaryData.has(id)
+      );
+
+      const nativeTokenBalancesMap =
+        allPoolAddressesWithNativeToken.length === 0
+          ? new Map()
+          : new Map(
+              (
+                await parsers.storage.system.getNativeTokenBalanceMany({
+                  accountIds: allPoolAddressesWithNativeToken,
+                  block: blockHeader,
+                })
+              )
+                .filter((balance) => !!balance.data)
+                .map((balance) => [balance.accountId, balance.data])
+            );
+
+      const otherTokenBalancesMap =
+        allPoolAddresses.length === 0
+          ? new Map()
+          : new Map(
+              (
+                await parsers.storage.tokens.getTokenBalancesMany({
+                  accountIds: allPoolAddresses,
+                  block: blockHeader,
+                })
+              ).map((balance) => [
+                balance.accountId,
+                new Map(
+                  balance.assetBalances.map((assetBal) => [
+                    assetBal.assetId,
+                    assetBal.data,
+                  ])
+                ),
+              ])
+            );
+
+      for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
+        if (pool.isDestroyed) continue;
+
+        const assetAEntity = await getOrCreateAsset({
+          id: pool.assetAId,
+          ctx,
+          ensure: false,
+        });
+        const assetBEntity = await getOrCreateAsset({
+          id: pool.assetBId,
+          ctx,
+          ensure: false,
+        });
+
+        if (
+          !assetAEntity ||
+          !assetAEntity.assetRegistryId ||
+          !assetBEntity ||
+          !assetBEntity.assetRegistryId
+        )
+          continue;
+
+        let assetABalance: bigint | undefined;
+        let assetBBalance: bigint | undefined;
+
+        if (poolsWithStorageDictionaryData.has(pool.id)) {
+          const [assetABalanceRaw, assetBBalanceRaw] = await Promise.all([
+            parsers.storage.xyk.getPoolAssetInfo({
+              assetId: +assetAEntity.assetRegistryId,
+              block: blockHeader,
+              poolAddress: pool.id,
+              allowZeroBalance: true,
+            }),
+            parsers.storage.xyk.getPoolAssetInfo({
+              assetId: +assetBEntity.assetRegistryId,
+              block: blockHeader,
+              poolAddress: pool.id,
+              allowZeroBalance: true,
+            }),
+          ]);
+
+          assetABalance = assetABalanceRaw?.free;
+          assetBBalance = assetBBalanceRaw?.free;
+        } else {
+          assetABalance =
+            pool.assetAId === '0'
+              ? nativeTokenBalancesMap.get(pool.id)?.free
+              : otherTokenBalancesMap
+                  .get(pool.id)
+                  ?.get(assetBEntity.assetRegistryId)?.free;
+
+          assetBBalance =
+            pool.assetBId === '0'
+              ? nativeTokenBalancesMap.get(pool.id)?.free
+              : otherTokenBalancesMap
+                  .get(pool.id)
+                  ?.get(assetBEntity.assetRegistryId)?.free;
+        }
 
         const poolHistoricalDataEntity = new XykpoolHistoricalData({
           id: `${pool.id}-${blockHeader.height}`,

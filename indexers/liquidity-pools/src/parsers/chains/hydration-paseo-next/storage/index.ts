@@ -55,6 +55,7 @@ export default {
     ...tokens,
     getTokenTotalIssuance: tokens.getTokenTotalIssuance,
     getManyTokensTotalIssuance: tokens.getManyTokensTotalIssuance,
+    getTokenBalancesManyStorageCall: tokens.getTokenBalancesMany,
     getTokenBalancesMany: (
       args: GetTokenBalancesManyInput
     ): Promise<TokenAccountBalancesWithAccountId[] | null> =>
