@@ -1,14 +1,9 @@
-import {
-  pool,
-  sor,
-} from '@galacticcouncil/sdk-next';
+import { pool, sor } from '@galacticcouncil/sdk-next';
 import { Store } from '@subsquid/typeorm-store';
 
 import { AppConfig } from '../../../../../appConfig';
 import { SqdProcessorContext } from '../../../../../processor';
-import {
-  OfflineTradeRouterManagerHelper,
-} from './offlineTradeRouterManagerHelper';
+import { OfflineTradeRouterManagerHelper } from './offlineTradeRouterManagerHelper';
 
 const OfflinePoolService = pool.OfflinePoolService;
 const OfflinePoolUtils = pool.OfflinePoolUtils;
@@ -130,8 +125,15 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
     };
 
     const offlinePoolService = new OfflinePoolService(
-      OfflinePoolUtils.fromPersistentDataToDataSource(persistentDataSource as unknown as IPersistentDataInput)
-    ).withOmnipool().withXyk().withStableswap().withLbp().withAave();
+      OfflinePoolUtils.fromPersistentDataToDataSource(
+        persistentDataSource as unknown as IPersistentDataInput
+      )
+    )
+      .withOmnipool()
+      .withXyk()
+      .withStableswap()
+      .withLbp()
+      .withAave();
     const router = new TradeRouter(offlinePoolService);
 
     this.routerInstancesMap.set(block.height, router);
@@ -165,19 +167,24 @@ export class OfflineTradeRouterManager extends OfflineTradeRouterManagerHelper {
     if (!appConfig.ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION) {
       const price = await routerInstance.getSpotPrice(assetInNum, assetOutNum);
       if (!price) return undefined;
-      const route = await routerInstance.getMostLiquidRoute(assetInNum, assetOutNum);
+      const route = await routerInstance.getMostLiquidRoute(
+        assetInNum,
+        assetOutNum
+      );
       return { price, route };
     }
 
     const cacheKey = `${assetInId}-${assetOutId}`;
-    const cachedRoute = RouterCacheManager.getInstance().mlrCached.get(cacheKey);
+    const cachedRoute =
+      RouterCacheManager.getInstance().mlrCached.get(cacheKey);
 
     let route: Hop[];
     if (cachedRoute) {
       route = cachedRoute;
     } else {
       route = await routerInstance.getMostLiquidRoute(assetInNum, assetOutNum);
-      if (route?.length) RouterCacheManager.getInstance().mlrCached.set(cacheKey, route);
+      if (route?.length)
+        RouterCacheManager.getInstance().mlrCached.set(cacheKey, route);
     }
 
     const price = await routerInstance.getSpotPrice(assetInNum, assetOutNum);
