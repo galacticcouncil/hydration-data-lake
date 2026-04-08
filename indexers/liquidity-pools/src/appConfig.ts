@@ -738,6 +738,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly XYKPOOL_HIST_DATA_TRACKING_BATCH_SIZE_PER_BLOCK: number = -1;
+
   readonly redis: RedisConfig = RedisConfig.getInstance();
 
   readonly evm: EvmConfig = EvmConfig.getInstance();

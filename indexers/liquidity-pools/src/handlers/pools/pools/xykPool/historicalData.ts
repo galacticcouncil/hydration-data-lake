@@ -13,110 +13,7 @@ import { getOrCreateXykPool } from './xykPool';
 import { LatestProcessedDataCacheManager } from '../../../../utils/latestProcessedDataCacheManager';
 import { StorageResolver } from '../../../../parsers/storageResolver';
 import { getOrCreateAsset } from '../../../assets/asset';
-
-//
-// export async function handleXykPoolHistoricalData(
-//   ctx: SqdProcessorContext<Store>,
-//   parsedEvents: BatchBlocksParsedDataManager
-// ) {
-//   if (!ctx.appConfig.PROCESS_XYK_POOLS) return;
-//
-//   const predefinedEntities: XykpoolHistoricalData[] = [];
-//
-//   for (const blocksSubBatch of splitIntoBatches(
-//     ctx.blocks,
-//     ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
-//   )) {
-//     const allPoolsPerBlock: Array<{
-//       blockHeader: BlockHeader;
-//       poolId: string;
-//     }> = [];
-//
-//     await pMap(
-//       blocksSubBatch,
-//       async ({ header: blockHeader }) => {
-//         const poolShareTokenPairs =
-//           await parsers.storage.xyk.getPoolShareTokenPairsMany({
-//             block: blockHeader,
-//           });
-//
-//         for (const item of poolShareTokenPairs) {
-//           allPoolsPerBlock.push({ blockHeader, poolId: item.poolId });
-//         }
-//       },
-//       {
-//         concurrency:
-//           ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
-//       }
-//     );
-//
-//     await pMap(
-//       allPoolsPerBlock,
-//       async ({ poolId, blockHeader }) => {
-//         const pool = await getOrCreateXykPool({
-//           ctx,
-//           id: poolId,
-//           ensure: true,
-//           blockHeader,
-//         });
-//
-//         // TODO after merge check
-//         if (!pool || !pool.assetAId || !pool.assetBId) return;
-//
-//         const assetsData = new Map(
-//           (
-//             await Promise.all(
-//               // TODO assetRegistryId should be used instead
-//               [+pool.assetAId, +pool.assetBId].map(async (assetId) => ({
-//                 assetId,
-//                 data: await parsers.storage.xyk.getPoolAssetInfo({
-//                   assetId: assetId!,
-//                   block: blockHeader,
-//                   poolAddress: poolId,
-//                 }),
-//               }))
-//             )
-//           )
-//             .filter((assetData) => !!assetData)
-//             .map((assetData) => [`${assetData.assetId}`, assetData.data])
-//         );
-//
-//         const block = ctx.batchState.getParaBlockFromCacheByHeight(
-//           blockHeader.height
-//         );
-//         if (!block) {
-//           throw new Error(
-//             `Block not found in cache for height ${blockHeader.height}`
-//           );
-//         }
-//
-//         const poolHistoricalDataEntity = new XykpoolHistoricalData({
-//           id: `${poolId}-${blockHeader.height}`,
-//           pool,
-//           assetAId: pool.assetAId,
-//           assetBId: pool.assetBId,
-//           assetABalance: assetsData.get(pool.assetAId)?.free ?? BigInt(0),
-//           assetBBalance: assetsData.get(pool.assetBId)?.free ?? BigInt(0),
-//           tvlInRefAssetNorm: '0',
-//
-//           paraBlockHeight: blockHeader.height,
-//         });
-//
-//         predefinedEntities.push(poolHistoricalDataEntity);
-//       },
-//       {
-//         concurrency:
-//           ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
-//       }
-//     );
-//   }
-//
-//   ctx.batchState.state.xykPoolAllHistoricalData = new Map(
-//     predefinedEntities.map((item) => [item.id, item])
-//   );
-//
-//   // await ctx.storeUtils.upsertWithBatches(predefinedEntities);
-// }
+import { XykpoolHistoricalDataManager } from './historicalDataManager';
 
 export async function handleXykPoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -127,7 +24,17 @@ export async function handleXykPoolHistoricalData(
   let allPoolAddresses: string[] = [];
   let allPoolAddressesWithNativeToken: string[] = [];
 
-  for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
+  const poolIdsSetToProcess =
+    await XykpoolHistoricalDataManager.getInstance().getPoolIdsSetToProcessAndPrefillHistData(
+      ctx.blocks[0].header.height,
+      ctx
+    );
+
+  const poolsToProcess = Array.from(
+    ctx.batchState.state.xykAllBatchPools.values()
+  ).filter((pool) => poolIdsSetToProcess.has(pool.id));
+
+  for (const pool of poolsToProcess) {
     if (pool.isDestroyed) continue;
     if (pool.assetAId === '0' || pool.assetBId === '0') {
       allPoolAddressesWithNativeToken.push(pool.id);
@@ -140,7 +47,7 @@ export async function handleXykPoolHistoricalData(
     async ({ header: blockHeader }) => {
       const poolsWithStorageDictionaryData: Map<string, Xykpool> = new Map();
 
-      for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
+      for (const pool of poolsToProcess) {
         if (pool.isDestroyed) continue;
 
         const assetAEntity = await getOrCreateAsset({
@@ -225,7 +132,7 @@ export async function handleXykPoolHistoricalData(
               ])
             );
 
-      for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
+      for (const pool of poolsToProcess) {
         if (pool.isDestroyed) continue;
 
         const assetAEntity = await getOrCreateAsset({
@@ -274,7 +181,7 @@ export async function handleXykPoolHistoricalData(
               ? nativeTokenBalancesMap.get(pool.id)?.free
               : otherTokenBalancesMap
                   .get(pool.id)
-                  ?.get(assetBEntity.assetRegistryId)?.free;
+                  ?.get(assetAEntity.assetRegistryId)?.free;
 
           assetBBalance =
             pool.assetBId === '0'
@@ -305,11 +212,12 @@ export async function handleXykPoolHistoricalData(
     }
   );
 
-  ctx.batchState.state.xykPoolAllHistoricalData = new Map(
-    predefinedEntities.map((item) => [item.id, item])
-  );
-
-  // await ctx.storeUtils.upsertWithBatches(predefinedEntities);
+  for (const histDataItem of predefinedEntities) {
+    ctx.batchState.state.xykPoolAllHistoricalData.set(
+      histDataItem.id,
+      histDataItem
+    );
+  }
 }
 
 export async function getXykpoolHistDataWithUniqueData(
