@@ -36,23 +36,23 @@ export function getProcessingMode(
     return ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR;
   }
 
-  if (
-    !ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_MODE &&
-    !ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE &&
-    !ctx.appConfig.processingMode.IS_SPOT_PRICES_PROCESSOR &&
-    ctx.appConfig.processingMode.IS_CORE_PROCESSOR
-  ) {
-    return ProcessingMode.MULTI_PROCESSOR_CORE_PROCESSOR;
-  }
-
-  if (
-    !ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_MODE &&
-    !ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE &&
-    !ctx.appConfig.processingMode.IS_CORE_PROCESSOR &&
-    ctx.appConfig.processingMode.IS_SPOT_PRICES_PROCESSOR
-  ) {
-    return ProcessingMode.MULTI_PROCESSOR_SPOT_PRICES_PROCESSOR;
-  }
+  // if (
+  //   !ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_MODE &&
+  //   !ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE &&
+  //   !ctx.appConfig.processingMode.IS_SPOT_PRICES_PROCESSOR &&
+  //   ctx.appConfig.processingMode.IS_CORE_PROCESSOR
+  // ) {
+  //   return ProcessingMode.MULTI_PROCESSOR_CORE_PROCESSOR;
+  // }
+  //
+  // if (
+  //   !ctx.appConfig.processingMode.REAGGREGATION_PROCESSING_MODE &&
+  //   !ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE &&
+  //   !ctx.appConfig.processingMode.IS_CORE_PROCESSOR &&
+  //   ctx.appConfig.processingMode.IS_SPOT_PRICES_PROCESSOR
+  // ) {
+  //   return ProcessingMode.MULTI_PROCESSOR_SPOT_PRICES_PROCESSOR;
+  // }
 
   throw new Error('Unknown processing mode. Possible misconfiguration.');
 }

@@ -19,11 +19,14 @@ import {
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/common';
 import { MoneyMarketEvent } from '../handlers/evm/evmEventParser/utils/moneyMarketEvent';
+import { Block as SqdBlock, ProcessorContext } from '../processor';
+import { Store } from '@subsquid/typeorm-store';
 
 type ParachainBlockNumber = number;
 
 export type BatchStatePayload = {
   relayChainInfo: Map<ParachainBlockNumber, RelayChainInfo>;
+  blockHeadersByHeight: Map<ParachainBlockNumber, SqdBlock>;
 
   blocks: Map<number, Block>;
 
@@ -75,6 +78,7 @@ export type BatchStatePayload = {
 export class BatchState {
   public state: BatchStatePayload = {
     relayChainInfo: new Map(),
+    blockHeadersByHeight: new Map(),
     blocks: new Map(),
 
     accounts: new Map(),
@@ -122,13 +126,15 @@ export class BatchState {
     evmAccountExtensions: new Map(),
   };
 
-  // get state(): BatchStatePayload {
-  //   return { ...this.statePayload };
-  // }
-  //
-  // set state(partialState: Partial<BatchStatePayload>) {
-  //   this.statePayload = { ...this.statePayload, ...partialState };
-  // }
+  constructor(ctx: ProcessorContext<Store>) {
+    this.indexBlockHeadersByHeight(ctx);
+  }
+
+  indexBlockHeadersByHeight(ctx: ProcessorContext<Store>) {
+    this.state.blockHeadersByHeight = new Map(
+      ctx.blocks.map((b) => [b.header.height, b.header])
+    );
+  }
 
   getRelayChainBlockDataFromCache(paraBlockHeight: number): {
     height: number;
@@ -138,5 +144,11 @@ export class BatchState {
     return {
       height: blockData?.relayBlockHeight ?? 0,
     };
+  }
+  getBlockHeaderByBlockHeight(height: number): SqdBlock {
+    if (!this.state.blockHeadersByHeight.has(height))
+      throw new Error(`Block header cannot be found for height ${height}`);
+
+    return this.state.blockHeadersByHeight.get(height)!;
   }
 }

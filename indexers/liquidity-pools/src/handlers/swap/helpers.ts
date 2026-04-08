@@ -10,10 +10,14 @@ import {
 import { BroadcastSwappedData } from '../../parsers/batchBlocksParser/types';
 import { SqdProcessorContext } from '../../processor';
 import { SwapFillerContextDetails } from '../../utils/types';
-import { handleAccountAssetSwapFee } from '../accounts/historicalAccountSwapFee';
+import {
+  handleAccountAssetSwapFee,
+} from '../accounts/historicalAccountSwapFee';
 import { handleAssetSwapFee } from '../assets/historicalAssetSwapFee';
 import { handleAssetVolumeUpdates } from '../assets/volume';
-import { handleHsmAssetHistoricalData } from '../pools/pools/hsmpool/hsmpoolAssetHistData';
+import {
+  handleHsmAssetHistoricalData,
+} from '../pools/pools/hsmpool/hsmpoolAssetHistData';
 import { getOrCreateLbppool } from '../pools/pools/lbpPool/lbpPool';
 import { getOrCreateStableswap } from '../pools/pools/stableswap/stablepool';
 import { getOrCreateXykPool } from '../pools/pools/xykPool/xykPool';
@@ -23,6 +27,10 @@ import {
   handleXykPoolVolumeUpdates,
 } from '../pools/volumes';
 import { handleStablepoolVolumeUpdates } from '../pools/volumes/stablepoolVolume';
+import {
+  getProcessingMode,
+  ProcessingMode,
+} from '../../processorHelpers/getProcessingMode';
 
 export async function getFillerContextData(
   ctx: SqdProcessorContext<Store>,
@@ -79,15 +87,24 @@ export async function broadcastSwappedEventPostHook({
   ctx,
   eventCallData,
   chainActivityTrace,
+  forceExec = false,
 }: {
   swap: Swap;
   ctx: SqdProcessorContext<Store>;
   eventCallData: BroadcastSwappedData;
   chainActivityTrace?: ChainActivityTrace | null;
+  forceExec?: boolean;
 }) {
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
   } = eventCallData;
+
+  if (
+    !forceExec &&
+    getProcessingMode(ctx) === ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR
+  ) {
+    return;
+  }
 
   switch (eventParams.fillerType.kind) {
     case SwapFillerType.LBP: {
@@ -202,11 +219,11 @@ export async function broadcastSwappedEventPostHook({
       break;
     }
     case SwapFillerType.HSM: {
-      await handleHsmAssetHistoricalData({
-        ctx,
-        swap,
-        blockHeader: eventCallData.eventData.metadata.blockHeader,
-      });
+      // await handleHsmAssetHistoricalData({
+      //   ctx,
+      //   swap,
+      //   blockHeader: eventCallData.eventData.metadata.blockHeader,
+      // });
 
       await handleAssetVolumeUpdates(ctx, {
         paraBlockHeight: swap.paraBlockHeight,
@@ -245,19 +262,19 @@ export async function handleSwapFeeHistoricalData({
   feeAmount: bigint;
 }) {
   if (ctx.appConfig.ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION)
-    await handleAccountAssetSwapFee({
-      ctx,
-      feeAmount,
-      assetId,
-      account,
-      block,
-    });
+  await handleAccountAssetSwapFee({
+    ctx,
+    feeAmount,
+    assetId,
+    account,
+    block,
+  });
 
   if (ctx.appConfig.ENABLE_ASSET_SWAP_FEE_AGGREGATION)
-    await handleAssetSwapFee({
-      ctx,
-      feeAmount,
-      assetId,
-      block,
-    });
+  await handleAssetSwapFee({
+    ctx,
+    feeAmount,
+  assetId,
+    block,
+  });
 }

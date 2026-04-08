@@ -4,13 +4,10 @@ import { processor, SqdProcessorContext } from './processor';
 import { BatchState } from './utils/batchState';
 import { AppConfig } from './appConfig';
 import { printV8MemoryHeap } from './utils/helpers';
-import {
-  execAllInOneProcessorHandlers,
-  execCoreProcessorHandlers,
-} from './processorHelpers/multiprocessorHandlers';
-import { execSpotPricesProcessorHandlers } from './processorHelpers/multiprocessorHandlers/spotPricesProc';
+import { execCoreProcessorHandlers } from './processorHelpers/multiprocessorHandlers/legacy';
+import { execSpotPricesProcessorHandlers } from './processorHelpers/multiprocessorHandlers/legacy/spotPricesProc';
 import { RedisTimeSeriesManager } from './utils/redisTimeSeriesManager';
-import { handleReaggregationProcessing } from './processorHelpers/multiprocessorHandlers/recalculationProcessing';
+import { handleReaggregationProcessing } from './processorHelpers/recalculationProcessing';
 import {
   getProcessingMode,
   ProcessingMode,
@@ -20,6 +17,8 @@ import { getHydratedLogger, initHydratedLogger } from './utils/hydratedLogger';
 import { DbMigrationsManager } from './utils/pgConnectionManagers/dbMigrationsManager';
 import { runProcessorCustomDbMigrations } from './customDbMigrations/runProcessorCustomDbMigrations';
 import { TimeSeriesDataCommitManager } from './utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
+import { singleFlowAllInOneProcessor } from './processorHelpers/singleFlowAllInOneProcessor';
+import { handleAllInOneMultiprocessorMode } from './processorHelpers/multiprocessorHandlers';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -96,14 +95,17 @@ async function runProcessor() {
       );
 
       switch (getProcessingMode(ctxWithBatchState)) {
-        case ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR:
         case ProcessingMode.ALL_IN_ONE_SINGLE_FLOW_PROCESSOR:
           /**
            * ----- A L L  I N  O N E  S I N G L E  P R O C E S S O R ---------->>>
-           *                            A N D
-           * --- A L L  I N  O N E  M U L T I F L O W  P R O C E S S O R ------>>>
            */
-          await execAllInOneProcessorHandlers(ctxWithBatchState);
+          await singleFlowAllInOneProcessor(ctxWithBatchState);
+          break;
+        case ProcessingMode.ALL_IN_ONE_MULTI_FLOW_PROCESSOR:
+          /**
+           * --------- M U L T I  F L O W  P R O C E S S O R ------------------>>>
+           */
+          await handleAllInOneMultiprocessorMode(ctxWithBatchState);
           break;
         case ProcessingMode.REAGGREGATION_SINGLE_PROCESSOR:
           /**

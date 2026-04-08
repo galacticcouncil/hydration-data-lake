@@ -1,0 +1,1 @@
+export { execCoreProcessorHandlers } from './coreProc';

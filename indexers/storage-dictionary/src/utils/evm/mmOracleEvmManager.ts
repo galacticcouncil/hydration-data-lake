@@ -1,6 +1,8 @@
 import { Contract, ContractInterface, ethers, BigNumber } from 'ethers';
 import { AppConfig } from '../../appConfig';
 import { AGGREGATOR_V3_ABI } from './abi/mmOracle/mmOracleAbi';
+import { Store } from '@subsquid/typeorm-store';
+import { ProcessorContext } from '../../processor';
 
 export interface IPersistentMmOracleEntry {
   address: string;
@@ -36,10 +38,12 @@ export class MmOracleManager {
     address,
     blockHeight,
     blockTimeInSec = 6,
+    ctx,
   }: {
     blockHeight: number;
     address: string;
     blockTimeInSec?: number;
+    ctx: ProcessorContext<Store>;
   }): Promise<IPersistentMmOracleEntry | null> {
     try {
       const aggregatorContract = this.getAggregatorContractInstance(address);
@@ -54,9 +58,22 @@ export class MmOracleManager {
         this.provider.getBlock(blockHeight),
       ]);
 
+      let evmBlockNumber = block?.number;
+      let evmBlockTimestamp = block?.timestamp;
+
+      if (!block) {
+        const substrateBlock =
+          ctx.batchState.getBlockHeaderByBlockHeight(blockHeight);
+        evmBlockNumber = blockHeight;
+
+        if (!substrateBlock.timestamp) throw Error('No timestamp');
+
+        evmBlockTimestamp = substrateBlock.timestamp / 1000;
+      }
+
       const [roundId, answer, startedAt, updatedAt] = data;
       const updatedAtBlock =
-        block.number - (block.timestamp - updatedAt) / blockTimeInSec;
+        evmBlockNumber - (evmBlockTimestamp - updatedAt) / blockTimeInSec;
       const updatedAtNum = Math.round(updatedAtBlock);
 
       return {

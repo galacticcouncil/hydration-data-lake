@@ -24,6 +24,7 @@ export async function handleMmAggregatorOracleHistoricalData({
     await MmOracleManager.getInstance().getAggregatorMmOracleData({
       address,
       blockHeight: blockHeader.height,
+      ctx,
     });
 
   if (!oracleContractState) return null;

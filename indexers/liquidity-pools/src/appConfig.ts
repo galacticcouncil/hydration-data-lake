@@ -27,6 +27,7 @@ import {
 import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
 import { TimeSeriesMigration } from './utils/redisTimeSeriesManager/migrationsManager';
+import { PgBossQueueName } from './utils/multiProcPoolManager';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
@@ -325,6 +326,11 @@ class ProcessingModeConfig {
 
   readonly REAGGREGATION_PROCESSING_FLOW_NAME?: string;
 
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_NEXT_BATCH_OFFSET_BLOCKS: number =
+    0;
+
   @Transform(
     ({ value }: { value: string }) =>
       new Set(value.split(',').map((e) => e.trim()))
@@ -332,6 +338,10 @@ class ProcessingModeConfig {
   readonly REAGGREGATION_PROCESSING_FLOW_TRIGGERS: Set<string> = new Set([
     'NONE',
   ]);
+
+  @IsEnum(PgBossQueueName)
+  readonly MULTI_FLOW_PROCESSOR_TOPIC: PgBossQueueName =
+    PgBossQueueName.CORE_PROCESSOR;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
@@ -543,6 +553,9 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly PROCESS_TO_BLOCK: number = -1;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly BLOCKS_FINALITY_OFFSET: number = 0;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_LBP_POOLS: boolean = true;
